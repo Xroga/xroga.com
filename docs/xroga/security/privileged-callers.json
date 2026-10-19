@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "1de39710b4e38306319486945ab51ffa620b995a8aa71292914719cf9a5c376e",
+  "reviewRegistrySha256": "e7c6671b055c15072af0e5d48b727b6c284b0b608057555549ee494cc96981aa",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -296,7 +296,7 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-9557fb9d0f7a38f5"
+        "id": "OB-a62986ae34b4c118"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -11365,7 +11365,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in encodeVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -11386,7 +11386,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in parseVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -11407,7 +11407,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11428,7 +11428,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11449,7 +11449,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11470,7 +11470,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11491,7 +11491,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in buildVercelAuthorizeUrl. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -11512,7 +11512,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in parseVercelOAuthState. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -11533,7 +11533,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11554,7 +11554,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11575,7 +11575,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11588,15 +11588,15 @@
       }
     },
     {
-      "id": "47c7ebecb62681738d31",
+      "id": "bc094f879c6c567e670b",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 490,
+      "line": 491,
       "enclosing": "loadVercelConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11609,15 +11609,15 @@
       }
     },
     {
-      "id": "1e8333f9bd44c6fd05c9",
+      "id": "5c8cf02d349ac91cfb0e",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 491,
+      "line": 492,
       "enclosing": "loadVercelConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11630,15 +11630,15 @@
       }
     },
     {
-      "id": "305fd58c0a7af15af239",
+      "id": "0a6d81aa80ada5c7b14d",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 715,
+      "line": 718,
       "enclosing": "saveVercelConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11651,15 +11651,15 @@
       }
     },
     {
-      "id": "307321f23e7727be36c8",
+      "id": "832762c1055a84889f0d",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 745,
+      "line": 748,
       "enclosing": "saveVercelConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11672,15 +11672,15 @@
       }
     },
     {
-      "id": "bf911ba6ff5494563807",
+      "id": "ae203bf10a8747bfd6de",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 756,
+      "line": 759,
       "enclosing": "clearVercelConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",
@@ -11693,15 +11693,15 @@
       }
     },
     {
-      "id": "6a995df3c50a346f6d81",
+      "id": "52bb46e68e4a103d4782",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 757,
+      "line": 760,
       "enclosing": "clearVercelConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "semanticReview": {
         "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
         "reason": "Negative loopback tests cover outages, public buckets, lost refresh leases and cleanup failures; real CAS/disconnect/owner tests await CI. Remaining gaps include all primitive-userId caller provenance, OAuth exchange input/response validation, external token revocation, PKCE cleanup, secret project-target selection, in-flight provider calls and production encryption/KMS. This review does not certify Command009/010 or mark the entire helper safe.",

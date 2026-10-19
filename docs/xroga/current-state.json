@@ -22449,6 +22449,7 @@
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:7",
         "backend/src/security/supabaseBundle.local.integration.ts:6",
         "backend/src/security/tenantIsolation.local.integration.ts:27",
+        "backend/src/security/vercelRefreshAccount.local.integration.ts:6",
         "backend/src/services/integrations/githubTokenStore.ts:3",
         "backend/src/services/integrations/oauthPkceStore.test.ts:4",
         "backend/src/services/integrations/userProviderKeys.ts:13",
@@ -22470,6 +22471,7 @@
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/security/vercelRefreshAccount.local.integration.ts",
         "backend/src/services/integrations/oauthPkceStore.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -23642,7 +23644,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:828",
+        "backend/src/security/tenantIsolation.local.integration.ts:838",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -24227,7 +24229,7 @@
       "id": "surface:083de6ff7f0ffdcc0165",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/vercelAuth.ts",
-      "sha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "symbols": [
         "ALLOWED_CALLBACK_ORIGINS",
         "CALLBACK_PATH",
@@ -24356,9 +24358,11 @@
         "backend/src/routes/vercel.ts:5",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:9",
         "backend/src/security/tenantIsolation.local.integration.ts:29",
+        "backend/src/security/vercelRefreshAccount.local.integration.ts:5",
         "backend/src/services/integrations/githubDeploy.ts:16",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:5",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:6",
+        "backend/src/services/integrations/vercelAccountReceipt.test.ts:4",
         "backend/src/services/integrations/vercelAuth.refresh.test.ts:3",
         "backend/src/services/integrations/vercelAuth.revocation.test.ts:4",
         "backend/src/services/integrations/vercelAuth.scope.test.ts:3",
@@ -24399,7 +24403,7 @@
       "tenantBoundary": [
         "backend/src/services/integrations/vercelAuth.ts:448 (user_id)",
         "backend/src/services/integrations/vercelAuth.ts:472 (user_id)",
-        "backend/src/services/integrations/vercelAuth.ts:491 (user_id)"
+        "backend/src/services/integrations/vercelAuth.ts:492 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/integrations/vercelAuth.ts#buildVercelAuthorizeUrl"
@@ -24413,8 +24417,10 @@
       "testCoverage": [
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "backend/src/security/vercelRefreshAccount.local.integration.ts",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+        "backend/src/services/integrations/vercelAccountReceipt.test.ts",
         "backend/src/services/integrations/vercelAuth.refresh.test.ts",
         "backend/src/services/integrations/vercelAuth.revocation.test.ts",
         "backend/src/services/integrations/vercelAuth.scope.test.ts",
@@ -104814,6 +104820,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:fb1e11b905168e4b2c8e",
+      "sourcePath": "backend/src/security/vercelRefreshAccount.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:b6c1689821a4a1470a31",
       "sourcePath": "backend/src/security/workerProjectAdmission.local.integration.ts",
       "declaredTests": 1,
@@ -105125,6 +105138,13 @@
       "id": "test-suite:5c2e5dbb2449708a9b7b",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.test.ts",
       "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:bad6810cb8c865e71d36",
+      "sourcePath": "backend/src/services/integrations/vercelAccountReceipt.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

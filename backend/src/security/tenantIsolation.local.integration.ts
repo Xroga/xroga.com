@@ -46,6 +46,7 @@ import {registerConnectedAccountRouteTests} from './connectedAccountRoutes.local
 import {registerOAuthWrapperOwnershipTests} from './oauthWrapperOwnership.local.integration.js';
 import {registerRuntimeEventParentTests} from './runtimeEventParent.local.integration.js';
 import {registerAdminReadTests} from './adminReads.local.integration.js';
+import {registerVercelRefreshAccountTests} from './vercelRefreshAccount.local.integration.js';
 import { registerOAuthSessionTests } from './oauthSession.local.integration.js';
 import { registerBuildOutcomeAttemptTests } from './buildOutcomeAttempt.local.integration.js';
 import { registerActionIntentTests } from '../operations/actionIntent.local.integration.js';
@@ -165,6 +166,7 @@ registerConnectedAccountRouteTests(() => users);
 registerOAuthWrapperOwnershipTests(admin);
 registerRuntimeEventParentTests(admin,()=>users);
 registerAdminReadTests(admin,request);
+registerVercelRefreshAccountTests(admin,request);
 async function request(path:string,token?:string,method='GET',body?:unknown) {
   return fetch(`${api}${path}`,{method,headers:{...(token?{Authorization:`Bearer ${token}`} : {}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
 }
@@ -723,6 +725,8 @@ test('real private OAuth storage cannot be downloaded or signed by browser roles
     assert.equal(await saveGitHubTokenToStorage(owner.id,{access_token:canary,username:'fixture',provider_user_id:'fixture',repo_strategy:'auto',default_repo:null,updated_at:new Date().toISOString()}),true);
     const config=await admin.storage.getBucket(bucket);assert.equal(config.error,null);assert.equal(config.data?.public,false);
     assert.equal((await getGitHubTokenFromStorage(owner.id))?.access_token,canary);
+    const ownStatus=await request(`/api/github/status?userId=${other.id}`,owner.token);assert.equal(ownStatus.status,200);
+    const ownText=await ownStatus.text();assert.equal((JSON.parse(ownText) as {connected:boolean}).connected,true);assert.ok(!ownText.includes(canary));
     assert.equal(await getGitHubTokenFromStorage(other.id),null);
     for(const bearer of [undefined,owner.token,other.token]) {
       const client=createClient(url,process.env.SUPABASE_ANON_KEY!,{...(bearer?{global:{headers:{Authorization:`Bearer ${bearer}`}}}:{}),auth:{persistSession:false,autoRefreshToken:false}});
@@ -730,7 +734,7 @@ test('real private OAuth storage cannot be downloaded or signed by browser roles
       const signed=await client.storage.from(bucket).createSignedUrl(path,60);assert.ok(signed.error);assert.equal(signed.data,null);
     }
     const publicRead=await fetch(`${url}/storage/v1/object/public/${bucket}/${path}`,{headers:{apikey:process.env.SUPABASE_ANON_KEY!}});assert.equal(publicRead.ok,false);assert.ok(!(await publicRead.text()).includes(canary));
-    const status=await request('/api/github/status',other.token);assert.equal(status.status,200);assert.equal((await status.json() as {connected:boolean}).connected,false);
+    const status=await request(`/api/github/status?userId=${owner.id}`,other.token);assert.equal(status.status,200);assert.equal((await status.json() as {connected:boolean}).connected,false);
   } finally {
     const removed=await admin.storage.from(bucket).remove([path]);assert.equal(removed.error,null,'temporary private object cleanup failed');
     assert.equal((await admin.from('user_integrations').delete().eq('user_id',owner.id).eq('provider','github')).error,null);
@@ -781,9 +785,15 @@ test('real GitHub disconnect persists owner-bound revocation despite a delayed l
   try {
     await saveGitHubConnection(owner.id,'SYNTHETIC_OWNER_GITHUB',{providerUserId:'owner-fixture',username:'owner-fixture',authorizationRevision:await authorize(owner.id)});
     await saveGitHubConnection(other.id,'SYNTHETIC_OTHER_GITHUB',{providerUserId:'other-fixture',username:'other-fixture',authorizationRevision:await authorize(other.id)});
+    assert.equal(await saveGitHubTokenToStorage(owner.id,{...payload,access_token:'SYNTHETIC_OWNER_GITHUB'}),true);
+    assert.equal(await saveGitHubTokenToStorage(other.id,{...payload,access_token:'SYNTHETIC_OTHER_GITHUB'}),true);
+    const foreignMirrorBefore=await admin.storage.from(bucket).download(`${other.id}/github.json`);assert.equal(foreignMirrorBefore.error,null);
+    const foreignMirrorBytes=await foreignMirrorBefore.data!.text();
     assert.equal(await getGitHubToken(owner.id),'SYNTHETIC_OWNER_GITHUB');
-    const disconnect=await request('/api/github/disconnect',owner.token,'DELETE');
+    const disconnect=await request('/api/github/disconnect',owner.token,'DELETE',{userId:other.id});
     assert.equal(disconnect.status,200);assert.equal((await disconnect.json() as {disconnected:boolean}).disconnected,true);
+    const ownMirror=await admin.storage.from(bucket).download(`${owner.id}/github.json`);assert.ok(ownMirror.error);assert.equal(ownMirror.data,null);
+    const foreignMirrorAfter=await admin.storage.from(bucket).download(`${other.id}/github.json`);assert.equal(foreignMirrorAfter.error,null);assert.equal(await foreignMirrorAfter.data!.text(),foreignMirrorBytes);
     assert.equal(await saveGitHubTokenToStorage(owner.id,payload),true);
     assert.equal(await getGitHubToken(owner.id),null);
     assert.equal(await getGitHubToken(other.id),'SYNTHETIC_OTHER_GITHUB');

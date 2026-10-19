@@ -831,7 +831,7 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "callIds": [
         "c47cd353f14ba5046be8",
         "2d2eae5cbd895d303fc1",
@@ -840,12 +840,12 @@
         "50cfec47a00c8f934d4c",
         "9536d36325c5502652c0",
         "ff1b1bd1a685d5e751ee",
-        "47c7ebecb62681738d31",
-        "1e8333f9bd44c6fd05c9",
-        "305fd58c0a7af15af239",
-        "307321f23e7727be36c8",
-        "bf911ba6ff5494563807",
-        "6a995df3c50a346f6d81"
+        "bc094f879c6c567e670b",
+        "5c8cf02d349ac91cfb0e",
+        "0a6d81aa80ada5c7b14d",
+        "832762c1055a84889f0d",
+        "ae203bf10a8747bfd6de",
+        "52bb46e68e4a103d4782"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Inspected full OAuth/connection/refresh helper and shared private bucket admission. Reads bind internal userId/provider; unavailable DB or revoked/empty authoritative row denies legacy fallback. Save requires DB success. Refresh updates match exact owner/provider/observed lease, and disconnect persists a tombstone before cleanup. Storage writes now require independently confirmed private bucket configuration.",
@@ -1517,7 +1517,7 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "callIds": [
         "7202e4ceaf1fab023f7d"
       ],
@@ -1533,7 +1533,7 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "callIds": [
         "914547501e0ad5d35cbb"
       ],
@@ -1549,7 +1549,7 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "callIds": [
         "d32647f80bd545a451f4"
       ],
@@ -1565,7 +1565,7 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "callIds": [
         "795e7e19975095f341c6"
       ],

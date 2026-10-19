@@ -486,11 +486,12 @@ async function loadVercelConnection(userId: string): Promise<{
   expires_at?: string;
   auth_kind?: VercelAuthKind;
   credential_revision?: string;
+  provider_user_id?: string;
 } | null> {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from('user_integrations')
-    .select('access_token, refresh_token, metadata, credential_revision')
+    .select('access_token, refresh_token, metadata, credential_revision, provider_user_id')
     .eq('user_id', userId)
     .eq('provider', 'vercel')
     .maybeSingle();
@@ -506,6 +507,7 @@ async function loadVercelConnection(userId: string): Promise<{
       access_token: data.access_token.trim(),
       refresh_token: data.refresh_token,
       credential_revision: data.credential_revision,
+      provider_user_id: typeof data.provider_user_id === 'string' ? data.provider_user_id : undefined,
       username: meta.username,
       expires_at: meta.expires_at,
       auth_kind:
@@ -555,6 +557,7 @@ export async function refreshVercelOAuthToken(
   }
   await saveVercelConnection(userId, tokenData.access_token, {
     username: username || 'vercel-user',
+    providerUserId: observed.provider_user_id,
     refreshToken: tokenData.refresh_token || refreshToken,
     expiresIn: tokenData.expires_in,
   }, expectedRefreshToken, observed.credential_revision);

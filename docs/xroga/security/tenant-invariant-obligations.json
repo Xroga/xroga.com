@@ -1247,7 +1247,7 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-9557fb9d0f7a38f5",
+      "id": "OB-a62986ae34b4c118",
       "callerIds": [
         "c47cd353f14ba5046be8",
         "2d2eae5cbd895d303fc1",
@@ -1256,15 +1256,15 @@
         "50cfec47a00c8f934d4c",
         "9536d36325c5502652c0",
         "ff1b1bd1a685d5e751ee",
-        "47c7ebecb62681738d31",
-        "1e8333f9bd44c6fd05c9",
-        "305fd58c0a7af15af239",
-        "307321f23e7727be36c8",
-        "bf911ba6ff5494563807",
-        "6a995df3c50a346f6d81"
+        "bc094f879c6c567e670b",
+        "5c8cf02d349ac91cfb0e",
+        "0a6d81aa80ada5c7b14d",
+        "832762c1055a84889f0d",
+        "ae203bf10a8747bfd6de",
+        "52bb46e68e4a103d4782"
       ],
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -2463,7 +2463,7 @@
         "7202e4ceaf1fab023f7d"
       ],
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "state": "NOT_PERSISTENCE",
       "legacyDispositionPreserved": "NOT_PERSISTENCE",
       "criterionIds": [
@@ -2484,7 +2484,7 @@
       "review": {
         "path": "backend/src/services/integrations/vercelAuth.ts",
         "marker": "  return `${REFRESH_LEASE_PREFIX}${Buffer.from(JSON.stringify(lease), 'utf8').toString('base64url')}`;\n}\n",
-        "sha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1"
+        "sha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875"
       },
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
@@ -2494,7 +2494,7 @@
         "914547501e0ad5d35cbb"
       ],
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "state": "NOT_PERSISTENCE",
       "legacyDispositionPreserved": "NOT_PERSISTENCE",
       "criterionIds": [
@@ -2515,7 +2515,7 @@
       "review": {
         "path": "backend/src/services/integrations/vercelAuth.ts",
         "marker": "      Buffer.from(value.slice(REFRESH_LEASE_PREFIX.length), 'base64url').toString('utf8'),\n    ) as Partial<VercelRefreshLease>;\n    if (",
-        "sha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1"
+        "sha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875"
       },
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
@@ -2525,7 +2525,7 @@
         "d32647f80bd545a451f4"
       ],
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "state": "NOT_PERSISTENCE",
       "legacyDispositionPreserved": "NOT_PERSISTENCE",
       "criterionIds": [
@@ -2546,7 +2546,7 @@
       "review": {
         "path": "backend/src/services/integrations/vercelAuth.ts",
         "marker": "  const state = Buffer.from(\n    JSON.stringify({ userId, t: Date.now(), n: randomBytes(8).toString('hex') }),\n  ).toString('base64url');",
-        "sha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1"
+        "sha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875"
       },
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
@@ -2556,7 +2556,7 @@
         "795e7e19975095f341c6"
       ],
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
       "state": "NOT_PERSISTENCE",
       "legacyDispositionPreserved": "NOT_PERSISTENCE",
       "criterionIds": [
@@ -2577,7 +2577,7 @@
       "review": {
         "path": "backend/src/services/integrations/vercelAuth.ts",
         "marker": "    const parsed = JSON.parse(Buffer.from(state, 'base64url').toString('utf8')) as {\n      userId?: string;\n      t?: number;",
-        "sha256": "6f2c15e9aa3ae79b3a99542111df7933fa6823adb8bdcf556005b7eca66c63d1"
+        "sha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875"
       },
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
