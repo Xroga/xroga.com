@@ -23661,7 +23661,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:869",
+        "backend/src/security/tenantIsolation.local.integration.ts:871",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -104299,6 +104299,13 @@
       "id": "test-suite:f6faf6a4cb563665a59b",
       "sourcePath": "backend/src/operations/providerAdapters.test.ts",
       "declaredTests": 9,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:aaf91470d500e7f872e8",
+      "sourcePath": "backend/src/operations/readMatrix.local.integration.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
