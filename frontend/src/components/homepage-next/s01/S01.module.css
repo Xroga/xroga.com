@@ -11,7 +11,7 @@
   z-index: 1;
   /* continues the hero's near-black (#050506) into the section base without a seam */
   /* a neutral coal field (#0d1017) rising out of the hero's near-black over ~480px, so there is no seam */
-  background: linear-gradient(180deg, #050608 0, #0a0c12 220px, #10131b 500px, #10131b calc(100% - 340px), #050607 100%);
+  background: linear-gradient(180deg, #050608 0, #090b10 220px, #0d1017 500px, #0d1017 calc(100% - 340px), #050607 100%);
   color: var(--ink);
   font-family: var(--font-inter), system-ui, sans-serif;
   overflow-x: clip;
@@ -130,21 +130,60 @@
   0% { background-position: 125% 0; }
   12%, 100% { background-position: -25% 0; }
 }
-/* the star field sits behind everything on the stage, kept out of the heading area and faded at the edges */
-.galaxy {
+/* Xroga S01 precision lattice: the user's 20px white-dot + moving noise-mask concept,
+   adapted to a quiet mineral-carbon field. No canvas, WebGL, third-party fetch or font.
+   Two local masks intersect: perfect round dots and a soft, deterministic noise texture.
+   The outer vignette keeps the heading and section edges visually calm. */
+.precisionField {
   position: absolute;
   inset: 0;
+  overflow: hidden;
   pointer-events: none;
-  opacity: 0.55;
-  -webkit-mask-image: radial-gradient(80% 70% at 50% 62%, #000 30%, transparent 85%);
-  mask-image: radial-gradient(80% 70% at 50% 62%, #000 30%, transparent 85%);
-  transition: opacity 600ms ease;
+  -webkit-mask-image: radial-gradient(ellipse 82% 73% at 50% 61%, #000 14%, rgba(0, 0, 0, 0.9) 42%, rgba(0, 0, 0, 0.37) 73%, transparent 94%);
+  mask-image: radial-gradient(ellipse 82% 73% at 50% 61%, #000 14%, rgba(0, 0, 0, 0.9) 42%, rgba(0, 0, 0, 0.37) 73%, transparent 94%);
 }
-.galaxy[data-state='off'] {
-  opacity: 0;
-}
-.galaxy canvas {
+.precisionDots {
+  position: absolute;
+  inset: 0;
   display: block;
+  background: #f3f5f8;
+  opacity: 0.82;
+  -webkit-mask-image:
+    radial-gradient(circle at 50% 50%, #fff 1.32px, transparent 1.95px),
+    url('/homepage/s01/dot-noise.svg');
+  mask-image:
+    radial-gradient(circle at 50% 50%, #fff 1.32px, transparent 1.95px),
+    url('/homepage/s01/dot-noise.svg');
+  -webkit-mask-size: 20px 20px, 256px 256px;
+  mask-size: 20px 20px, 256px 256px;
+  -webkit-mask-repeat: repeat, repeat;
+  mask-repeat: repeat, repeat;
+  -webkit-mask-position: 50% 50%, 0 50%;
+  mask-position: 50% 50%, 0 50%;
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+  animation: s01NoiseDrift 24s linear infinite;
+  animation-play-state: paused;
+}
+.section[data-field-active] .precisionDots {
+  animation-play-state: running;
+}
+@keyframes s01NoiseDrift {
+  to {
+    -webkit-mask-position: 50% 50%, 256px 50%;
+    mask-position: 50% 50%, 256px 50%;
+  }
+}
+/* Gallery and first-paint fallback share the same noninteractive background. */
+.flow > :not(.precisionField) {
+  position: relative;
+  z-index: 1;
+}
+@media (max-width: 699px) {
+  .precisionDots { opacity: 0.55; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .precisionDots { animation: none; }
 }
 .statement {
   margin: 16px 0 0;
@@ -375,6 +414,7 @@
 
 /* ---------------------------------------------------------------------------------------- carousel and grid */
 .flow {
+  position: relative;
   max-width: 1280px;
   margin: 0 auto;
   padding: 104px 24px 8px;
