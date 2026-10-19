@@ -1995,7 +1995,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real growth event replay cannot disclose a different project event",
-          "sourceSha256": "f09ddb2e8df06614f55d4bdc7275d5f93732bda135aca3e869ef0bf1db8e2b0f",
+          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -3197,7 +3197,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real durable database file delivery is owner-only",
-          "sourceSha256": "f09ddb2e8df06614f55d4bdc7275d5f93732bda135aca3e869ef0bf1db8e2b0f",
+          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4126,7 +4126,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes",
-          "sourceSha256": "f09ddb2e8df06614f55d4bdc7275d5f93732bda135aca3e869ef0bf1db8e2b0f",
+          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4341,7 +4341,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "f09ddb2e8df06614f55d4bdc7275d5f93732bda135aca3e869ef0bf1db8e2b0f",
+          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4454,7 +4454,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "f09ddb2e8df06614f55d4bdc7275d5f93732bda135aca3e869ef0bf1db8e2b0f",
+          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4722,7 +4722,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real failed-build notification cannot disclose raw backend diagnostic text",
-          "sourceSha256": "f09ddb2e8df06614f55d4bdc7275d5f93732bda135aca3e869ef0bf1db8e2b0f",
+          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4893,7 +4893,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real profile column grants reject self-promotion",
-          "sourceSha256": "f09ddb2e8df06614f55d4bdc7275d5f93732bda135aca3e869ef0bf1db8e2b0f",
+          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5281,7 +5281,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "Legitimate membership must remain visible",
-          "sourceSha256": "f09ddb2e8df06614f55d4bdc7275d5f93732bda135aca3e869ef0bf1db8e2b0f",
+          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5534,7 +5534,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant",
-          "sourceSha256": "f09ddb2e8df06614f55d4bdc7275d5f93732bda135aca3e869ef0bf1db8e2b0f",
+          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5603,7 +5603,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "generated external-project memory SQL denies browser roles",
-          "sourceSha256": "f09ddb2e8df06614f55d4bdc7275d5f93732bda135aca3e869ef0bf1db8e2b0f",
+          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6052,7 +6052,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real Whop fulfillment rolls back foreign membership collisions",
-          "sourceSha256": "f09ddb2e8df06614f55d4bdc7275d5f93732bda135aca3e869ef0bf1db8e2b0f",
+          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6555,7 +6555,7 @@
       "id": "B1-P2-680a665952e714b9",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/githubTokenStore.ts",
-      "sourceSha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
+      "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
       "baselineCallerIds": [
         "3606e6e2a2c84f5d37fd",
         "8ea0355a7a40e6d35fef",
@@ -6566,69 +6566,94 @@
         "08adc22ee116d34993ce"
       ],
       "currentCallerIds": [
-        "3606e6e2a2c84f5d37fd",
-        "8ea0355a7a40e6d35fef",
-        "0be2ba1bb19f870be5da",
-        "843eba0ea3da35256af4",
-        "fb5f2a438e4dca7a88b5",
-        "ead5dae371b81c43c54a",
-        "4b2a022c7513e234b002"
+        "541c1bc5f61f88e7c873",
+        "254a09774311f04897b1",
+        "1ac34398173cf0fedf3a",
+        "9b97e6de9a2c6c753011",
+        "d12c617bb45c7981e210",
+        "9e95745053a0044758eb",
+        "474d98f6d07da849e67a"
       ],
       "mapping": [
         {
           "baselineCallerId": "3606e6e2a2c84f5d37fd",
           "currentCallerIds": [
-            "3606e6e2a2c84f5d37fd"
+            "541c1bc5f61f88e7c873"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "8ea0355a7a40e6d35fef",
           "currentCallerIds": [
-            "8ea0355a7a40e6d35fef"
+            "254a09774311f04897b1"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "0be2ba1bb19f870be5da",
           "currentCallerIds": [
-            "0be2ba1bb19f870be5da"
+            "1ac34398173cf0fedf3a"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "55573ca462209ab422c3",
           "currentCallerIds": [
-            "843eba0ea3da35256af4"
+            "9b97e6de9a2c6c753011"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "36464f94938ad7240220",
           "currentCallerIds": [
-            "fb5f2a438e4dca7a88b5"
+            "d12c617bb45c7981e210"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "8a8f49466dccccc652af",
           "currentCallerIds": [
-            "ead5dae371b81c43c54a"
+            "9e95745053a0044758eb"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "08adc22ee116d34993ce",
           "currentCallerIds": [
-            "4b2a022c7513e234b002"
+            "474d98f6d07da849e67a"
           ],
           "change": "RETAINED"
         }
       ],
       "state": "EVIDENCE_GAP",
-      "executionStatus": "READY",
+      "executionStatus": "IN_PROGRESS",
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
-      "semanticProgress": null,
+      "semanticProgress": {
+        "packetId": "B1-P2-680a665952e714b9",
+        "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "LEGACY_MIRROR_WRITER_MISSING_ISSUED_CONTEXT_FIXED_PENDING_REAL_PROOF",
+        "actorTrace": "No production caller of this legacy writer exists. Absence of callers is not certification. The export now requires original server-issued TenantContext before bucket inspection or upload and derives its object owner from that context. Fixed bucket and owner/github.json path remain. Payload is serialized before the first await. Seven existing canonical read/delete boundaries remain byte-identical and their previous evidence is retained.",
+        "invariant": "Unissued primitive, body object or cloned context cannot inspect a privileged bucket or overwrite an owner mirror. Issued context writes only its exact owner path. A mirror never establishes canonical connection authority.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubTokenStore.writerContext.test.ts",
+            "type": "ACTUAL_SDK_SYNTHETIC_TRANSPORT",
+            "result": "PRE_FIX_TRUE_INSTEAD_OF_FALSE_THEN_PASS",
+            "scope": "Three forged context shapes make zero transport requests. Original issued context uploads exact own bytes. This is not real Storage proof."
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "type": "DISPOSABLE_STORAGE_TEST_PREPARED",
+            "result": "NOT_EXECUTED_ON_CHANGED_SOURCE",
+            "scope": "Original private Storage and canonical revocation cases retain positives. Added forged/cloned-context denial and exact unchanged object bytes."
+          }
+        ],
+        "remaining": [
+          "Execute final-source disposable Storage and branch/integrated regression before certifying the three writer sites",
+          "Preserve independent Phase3 custody and live provider lifecycle obligations"
+        ]
+      },
       "actor": {
         "existingTrace": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
         "currentSemanticVerification": "PENDING"
@@ -6649,7 +6674,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "f09ddb2e8df06614f55d4bdc7275d5f93732bda135aca3e869ef0bf1db8e2b0f",
+          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6738,7 +6763,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "f09ddb2e8df06614f55d4bdc7275d5f93732bda135aca3e869ef0bf1db8e2b0f",
+          "sourceSha256": "6e71e46dd9e16aa074f20f5f0bdba9239853fe4fe82968b772c7fc2f53bc7116",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6850,36 +6875,36 @@
       "id": "B1-P2-08a1009a4a9b93a5",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/githubTokenStore.ts",
-      "sourceSha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
+      "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
       "baselineCallerIds": [
         "5af0dfecb133879330e2",
         "2aa98c887631896938dc",
         "e8a7ea96116a374773c0"
       ],
       "currentCallerIds": [
-        "61adf56646ed13a11fed",
-        "06533d636013a0aca788",
-        "cf7709de7979144f2f42"
+        "d87e4598104184aa00dd",
+        "2d83b6fa32b99099b19e",
+        "da8ff71a038a365d4e60"
       ],
       "mapping": [
         {
           "baselineCallerId": "5af0dfecb133879330e2",
           "currentCallerIds": [
-            "61adf56646ed13a11fed"
+            "d87e4598104184aa00dd"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "2aa98c887631896938dc",
           "currentCallerIds": [
-            "06533d636013a0aca788"
+            "2d83b6fa32b99099b19e"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e8a7ea96116a374773c0",
           "currentCallerIds": [
-            "cf7709de7979144f2f42"
+            "da8ff71a038a365d4e60"
           ],
           "change": "RETAINED"
         }
@@ -6889,7 +6914,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-08a1009a4a9b93a5",
-        "sourceSha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
+        "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
         "executionStatus": "IN_PROGRESS",
         "finding": "DEMONSTRATED_ORPHAN_MIRROR_GRANT_FIXED_PENDING_REAL_DATABASE_PROOF",
         "actorTrace": "GitHub mirror path is owner-derived, but both canonical rows could be absent while the helper treated a private object as authority. A delayed legacy object after canonical deletion could restore credential access. Missing/error/revoked authority now denies. A matching active github_integrations or legacy user_integrations grant remains supported and is rechecked after download.",

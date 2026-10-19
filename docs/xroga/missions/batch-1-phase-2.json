@@ -7,6 +7,8 @@
   "risk": "high",
   "scope": "Founder-approved Phase2 only. All ten original007 criteria, finite73 packets, tenant/parent/account/worker lineage and genuine proof. No008/009/010 implementation or production authority.",
   "changedFiles": [
+    "backend/src/security/credentialReadMatrix.local.integration.ts",
+    "backend/src/services/integrations/githubTokenStore.writerContext.test.ts",
     "backend/src/operations/readMatrix.local.integration.ts",
     "backend/src/growth/growthService.campaignReceipt.test.ts",
     "backend/src/growth/campaignReceipt.local.integration.ts",

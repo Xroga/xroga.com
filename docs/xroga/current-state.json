@@ -21377,6 +21377,8 @@
         "backend/src/security/workerProjectAdmission.test.ts:7",
         "backend/src/services/ensureUserRecords.receipt.test.ts:5",
         "backend/src/services/ensureUserRecords.ts:4",
+        "backend/src/services/integrations/githubTokenStore.ts:4",
+        "backend/src/services/integrations/githubTokenStore.writerContext.test.ts:4",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:8",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:5",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:8",
@@ -21455,6 +21457,7 @@
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/workerProjectAdmission.test.ts",
         "backend/src/services/ensureUserRecords.receipt.test.ts",
+        "backend/src/services/integrations/githubTokenStore.writerContext.test.ts",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
@@ -22463,6 +22466,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/security/credentialReadMatrix.local.integration.ts:7",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:7",
         "backend/src/security/supabaseBundle.local.integration.ts:6",
         "backend/src/security/tenantIsolation.local.integration.ts:27",
@@ -22485,6 +22489,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/credentialReadMatrix.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
@@ -23411,7 +23416,7 @@
       "id": "surface:f780b953b9a0b38aa89b",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/githubTokenStore.ts",
-      "sha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
+      "sha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
       "symbols": [
         "BUCKET",
         "StoredGitHubAuth",
@@ -23434,11 +23439,13 @@
       ],
       "imports": [
         "../../config/supabase.js",
+        "../../security/tenantContext.js",
         "./credentialStorageBucket.js",
         "./githubAuth.js"
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
+        "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/credentialStorageBucket.ts"
       ],
       "entryPoints": [
@@ -23449,6 +23456,7 @@
         "backend/src/services/integrations/absentCredentialAuthority.test.ts:3",
         "backend/src/services/integrations/credentialMirrorRace.test.ts:5",
         "backend/src/services/integrations/githubAuth.ts:2",
+        "backend/src/services/integrations/githubTokenStore.writerContext.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.ts:12"
       ],
       "reachable": true,
@@ -23464,8 +23472,8 @@
         "backend/src/services/integrations/githubTokenStore.ts#ensurePrivateOAuthBucket"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/githubTokenStore.ts:70 (user_id)",
-        "backend/src/services/integrations/githubTokenStore.ts:73 (user_id)"
+        "backend/src/services/integrations/githubTokenStore.ts:72 (user_id)",
+        "backend/src/services/integrations/githubTokenStore.ts:75 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -23473,7 +23481,8 @@
       "testCoverage": [
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/absentCredentialAuthority.test.ts",
-        "backend/src/services/integrations/credentialMirrorRace.test.ts"
+        "backend/src/services/integrations/credentialMirrorRace.test.ts",
+        "backend/src/services/integrations/githubTokenStore.writerContext.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -23661,7 +23670,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:871",
+        "backend/src/security/tenantIsolation.local.integration.ts:876",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -24172,6 +24181,7 @@
         "backend/src/routes/integrations.ts:638",
         "backend/src/routes/publish.ts:13",
         "backend/src/routes/supabaseOAuth.ts:28",
+        "backend/src/security/credentialReadMatrix.local.integration.ts:6",
         "backend/src/security/providerKeyRevision.local.integration.ts:6",
         "backend/src/security/supabaseBundle.local.integration.ts:5",
         "backend/src/security/tenantIsolation.local.integration.ts:11",
@@ -24219,6 +24229,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/credentialReadMatrix.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
@@ -104620,6 +104631,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:053182d951fad41d7ded",
+      "sourcePath": "backend/src/security/credentialReadMatrix.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:640551d38883d98b1bdc",
       "sourcePath": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
       "declaredTests": 2,
@@ -105064,6 +105082,13 @@
       "id": "test-suite:ef3e2d4a6413dccbc36a",
       "sourcePath": "backend/src/services/integrations/githubRunBranch.test.ts",
       "declaredTests": 11,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:359a248180556c13c8e1",
+      "sourcePath": "backend/src/services/integrations/githubTokenStore.writerContext.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

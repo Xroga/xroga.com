@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "ad28d83d00abeea6514a1e44f99159007e7810b256af007f4065725b94ad78df",
+  "reviewRegistrySha256": "d2acee57780a32c16fdece99a9e4104ca026bbf5b529115d4e41d73da42cd683",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -432,7 +432,7 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-6397b417cc4e8ee7"
+        "id": "OB-c76f9e3aa1868599"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -464,7 +464,7 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-0223b90696564d1e"
+        "id": "OB-16f6f8a252f9327b"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -9771,15 +9771,15 @@
       }
     },
     {
-      "id": "3606e6e2a2c84f5d37fd",
+      "id": "541c1bc5f61f88e7c873",
       "path": "backend/src/services/integrations/githubTokenStore.ts",
-      "line": 41,
+      "line": 44,
       "enclosing": "saveGitHubTokenToStorage",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
+      "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
       "semanticReview": {
         "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
         "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
@@ -9792,15 +9792,15 @@
       }
     },
     {
-      "id": "8ea0355a7a40e6d35fef",
+      "id": "254a09774311f04897b1",
       "path": "backend/src/services/integrations/githubTokenStore.ts",
-      "line": 43,
+      "line": 45,
       "enclosing": "saveGitHubTokenToStorage",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
+      "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
       "semanticReview": {
         "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
         "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
@@ -9813,15 +9813,15 @@
       }
     },
     {
-      "id": "0be2ba1bb19f870be5da",
+      "id": "1ac34398173cf0fedf3a",
       "path": "backend/src/services/integrations/githubTokenStore.ts",
-      "line": 50,
+      "line": 52,
       "enclosing": "saveGitHubTokenToStorage",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
+      "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
       "semanticReview": {
         "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
         "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
@@ -9834,15 +9834,15 @@
       }
     },
     {
-      "id": "61adf56646ed13a11fed",
+      "id": "d87e4598104184aa00dd",
       "path": "backend/src/services/integrations/githubTokenStore.ts",
-      "line": 69,
+      "line": 71,
       "enclosing": "currentGitHubAuthority",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
+      "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
       "semanticReview": {
         "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Post-download revalidation closes the tested download-versus-revocation window. Concurrent save/revoke ordering, already-issued credentials, provider revocation and encrypted vault migration remain unresolved. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -9855,15 +9855,15 @@
       }
     },
     {
-      "id": "06533d636013a0aca788",
+      "id": "2d83b6fa32b99099b19e",
       "path": "backend/src/services/integrations/githubTokenStore.ts",
-      "line": 70,
+      "line": 72,
       "enclosing": "currentGitHubAuthority",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "github_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
+      "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
       "semanticReview": {
         "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Post-download revalidation closes the tested download-versus-revocation window. Concurrent save/revoke ordering, already-issued credentials, provider revocation and encrypted vault migration remain unresolved. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -9876,15 +9876,15 @@
       }
     },
     {
-      "id": "cf7709de7979144f2f42",
+      "id": "da8ff71a038a365d4e60",
       "path": "backend/src/services/integrations/githubTokenStore.ts",
-      "line": 73,
+      "line": 75,
       "enclosing": "currentGitHubAuthority",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
+      "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
       "semanticReview": {
         "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",
         "reason": "Post-download revalidation closes the tested download-versus-revocation window. Concurrent save/revoke ordering, already-issued credentials, provider revocation and encrypted vault migration remain unresolved. Prior pending revision and epoch database cases passed at31940c75. New absent-authority tests first returned orphan secrets, then passed after the fix. The actual orphan-object and grant-deletion-during-download case still requires new-source CI. This does not certify all callers or implement vault cutover.",
@@ -9897,15 +9897,15 @@
       }
     },
     {
-      "id": "843eba0ea3da35256af4",
+      "id": "9b97e6de9a2c6c753011",
       "path": "backend/src/services/integrations/githubTokenStore.ts",
-      "line": 84,
+      "line": 86,
       "enclosing": "getGitHubTokenFromStorage",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
+      "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
       "semanticReview": {
         "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
         "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
@@ -9918,15 +9918,15 @@
       }
     },
     {
-      "id": "fb5f2a438e4dca7a88b5",
+      "id": "d12c617bb45c7981e210",
       "path": "backend/src/services/integrations/githubTokenStore.ts",
-      "line": 85,
+      "line": 87,
       "enclosing": "getGitHubTokenFromStorage",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
+      "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
       "semanticReview": {
         "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
         "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
@@ -9939,15 +9939,15 @@
       }
     },
     {
-      "id": "ead5dae371b81c43c54a",
+      "id": "9e95745053a0044758eb",
       "path": "backend/src/services/integrations/githubTokenStore.ts",
-      "line": 102,
+      "line": 104,
       "enclosing": "deleteGitHubTokenFromStorage",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
+      "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
       "semanticReview": {
         "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
         "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",
@@ -9960,15 +9960,15 @@
       }
     },
     {
-      "id": "4b2a022c7513e234b002",
+      "id": "474d98f6d07da849e67a",
       "path": "backend/src/services/integrations/githubTokenStore.ts",
-      "line": 103,
+      "line": 105,
       "enclosing": "deleteGitHubTokenFromStorage",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
+      "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
       "semanticReview": {
         "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
         "reason": "Reinspected after deletion now reports failure and storage logs omit raw provider errors. Full provenance of all publishing/execution/helper callers remains unverified; a user-derived path is not an authorization context. Legacy token JSON remains plaintext and the raw read primitive does not independently enforce revocation. Connection resolver tombstones and real Storage browser denials are separate evidence, not complete credential lifecycle or production migration acceptance.",

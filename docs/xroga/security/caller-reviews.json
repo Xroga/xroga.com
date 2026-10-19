@@ -3456,15 +3456,15 @@
     },
     {
       "path": "backend/src/services/integrations/githubTokenStore.ts",
-      "sourceSha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
+      "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
       "callIds": [
-        "3606e6e2a2c84f5d37fd",
-        "8ea0355a7a40e6d35fef",
-        "0be2ba1bb19f870be5da",
-        "843eba0ea3da35256af4",
-        "fb5f2a438e4dca7a88b5",
-        "ead5dae371b81c43c54a",
-        "4b2a022c7513e234b002"
+        "541c1bc5f61f88e7c873",
+        "254a09774311f04897b1",
+        "1ac34398173cf0fedf3a",
+        "9b97e6de9a2c6c753011",
+        "d12c617bb45c7981e210",
+        "9e95745053a0044758eb",
+        "474d98f6d07da849e67a"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Full token-store and GitHub connection helper sources were examined. Fixed bucket and user-derived object path, now private-admitted on both initial upload and retry. Primitive userId is supplied internally and no browser Storage policies grant access.",
@@ -3653,11 +3653,11 @@
     },
     {
       "path": "backend/src/services/integrations/githubTokenStore.ts",
-      "sourceSha256": "a7563b43d3e80ccabebc3fdd54b032a440f92dab314aa3b6e0cf9813b2945aff",
+      "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
       "callIds": [
-        "61adf56646ed13a11fed",
-        "06533d636013a0aca788",
-        "cf7709de7979144f2f42"
+        "d87e4598104184aa00dd",
+        "2d83b6fa32b99099b19e",
+        "da8ff71a038a365d4e60"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "Credential authority queries bind exact owner and provider after legacy Storage resolution; database errors, tombstones and changed canonical token deny stale mirror admission. Missing canonical authority now denies orphaned mirrors. Matching active primary and legacy database grants remain supported.",

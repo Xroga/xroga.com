@@ -1,6 +1,7 @@
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import type { GitHubRepoStrategy } from './githubAuth.js';
 import { ensurePrivateOAuthBucket } from './credentialStorageBucket.js';
+import { requireTenantContext, type TenantContext } from '../../security/tenantContext.js';
 
 const BUCKET = 'xroga-github-tokens';
 
@@ -28,10 +29,12 @@ function isBucketMissingError(message: string): boolean {
 }
 
 export async function saveGitHubTokenToStorage(
-  userId: string,
+  context: TenantContext,
   data: StoredGitHubAuth
 ): Promise<boolean> {
   try {
+    const { userId } = requireTenantContext(context);
+    const body = JSON.stringify(data);
     const ready = await ensurePrivateOAuthBucket();
     if (!ready) {
       console.warn('[githubTokenStore] bucket not available');
@@ -39,7 +42,6 @@ export async function saveGitHubTokenToStorage(
     }
 
     const supabase = getSupabaseAdmin();
-    const body = JSON.stringify(data);
     let { error } = await supabase.storage.from(BUCKET).upload(storagePath(userId), body, {
       upsert: true,
       contentType: 'application/json',

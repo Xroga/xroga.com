@@ -52,6 +52,7 @@ import { registerBuildOutcomeAttemptTests } from './buildOutcomeAttempt.local.in
 import { registerActionIntentTests } from '../operations/actionIntent.local.integration.js';
 import {registerSharedGrowthWriteTests} from '../growth/sharedWriteAdmission.local.integration.js';
 import {registerOperationsReadMatrixTests} from '../operations/readMatrix.local.integration.js';
+import {registerCredentialReadMatrixTests} from './credentialReadMatrix.local.integration.js';
 import { registerActionCompletionTests } from '../operations/actionCompletion.local.integration.js';
 import { registerActionApprovalTests } from '../operations/actionApproval.local.integration.js';
 import { registerActionClaimClockTests } from '../operations/actionClaimClock.local.integration.js';
@@ -133,6 +134,7 @@ registerBusinessConfirmationClaimTests(admin, () => users);
 registerProjectCreationTests(admin, () => users);
 registerSharedGrowthWriteTests(admin,()=>users);
 registerOperationsReadMatrixTests(admin,()=>users,request);
+registerCredentialReadMatrixTests(admin,request);
 registerProfileDeletionTests(admin);
 registerGrowthReferralTests(admin, () => users);
 registerTerminalIdentityTests(admin, () => users);
@@ -755,7 +757,10 @@ test('real private OAuth storage cannot be downloaded or signed by browser roles
   const canary='SYNTHETIC_PRIVATE_STORAGE_CANARY_NOT_A_PROVIDER_CREDENTIAL';
   try {
     assert.equal((await admin.from('user_integrations').insert({user_id:owner.id,provider:'github',access_token:canary,metadata:{}})).error,null);
-    assert.equal(await saveGitHubTokenToStorage(owner.id,{access_token:canary,username:'fixture',provider_user_id:'fixture',repo_strategy:'auto',default_repo:null,updated_at:new Date().toISOString()}),true);
+    const mirror={access_token:canary,username:'fixture',provider_user_id:'fixture',repo_strategy:'auto' as const,default_repo:null,updated_at:new Date().toISOString()};
+    assert.equal(await saveGitHubTokenToStorage(owner.context,mirror),true);
+    for(const forged of [owner.id,{...owner.context}]) assert.equal(await saveGitHubTokenToStorage(forged as typeof owner.context,{...mirror,access_token:'SYNTHETIC_REJECTED'}),false);
+    const unchanged=await admin.storage.from(bucket).download(path);assert.equal(unchanged.error,null);assert.deepEqual(JSON.parse(await unchanged.data!.text()),mirror);
     const config=await admin.storage.getBucket(bucket);assert.equal(config.error,null);assert.equal(config.data?.public,false);
     assert.equal((await getGitHubTokenFromStorage(owner.id))?.access_token,canary);
     const ownStatus=await request(`/api/github/status?userId=${other.id}`,owner.token);assert.equal(ownStatus.status,200);
@@ -782,7 +787,7 @@ test('real orphaned GitHub and BYOK mirrors cannot restore absent authority but 
   t.after(async()=>{assert.equal((await admin.storage.from(bucket).remove(paths)).error,null);assert.equal((await admin.auth.admin.deleteUser(owner)).error,null);});
   assert.equal(await ensurePrivateOAuthBucket(),true);
   const github='SYNTHETIC_ORPHAN_GITHUB_CANARY',byok='SYNTHETIC_ORPHAN_BYOK_CANARY',encoded='enc:'+Buffer.from(`fixture:${byok}`).toString('base64');
-  assert.equal(await saveGitHubTokenToStorage(owner,{access_token:github,username:'fixture',provider_user_id:'fixture',repo_strategy:'auto',default_repo:null,updated_at:new Date().toISOString()}),true);
+  assert.equal(await saveGitHubTokenToStorage(createTenantContext({userId:owner,via:'persisted_owner'}),{access_token:github,username:'fixture',provider_user_id:'fixture',repo_strategy:'auto',default_repo:null,updated_at:new Date().toISOString()}),true);
   assert.equal((await admin.storage.from(bucket).upload(paths[1],JSON.stringify({access_token:encoded,metadata:{provider,env_var:'ORPHAN_PRIVATE_KEY'}}),{contentType:'application/json'})).error,null);
   assert.equal(await getGitHubTokenFromStorage(owner),null);assert.equal(await getGitHubToken(owner),null);
   assert.equal(await getUserProviderKey(owner,provider),null);assert.deepEqual(await listUserProviderKeys(owner),[]);
@@ -818,8 +823,8 @@ test('real GitHub disconnect persists owner-bound revocation despite a delayed l
   try {
     await saveGitHubConnection(owner.id,'SYNTHETIC_OWNER_GITHUB',{providerUserId:'owner-fixture',username:'owner-fixture',authorizationRevision:await authorize(owner.id)});
     await saveGitHubConnection(other.id,'SYNTHETIC_OTHER_GITHUB',{providerUserId:'other-fixture',username:'other-fixture',authorizationRevision:await authorize(other.id)});
-    assert.equal(await saveGitHubTokenToStorage(owner.id,{...payload,access_token:'SYNTHETIC_OWNER_GITHUB'}),true);
-    assert.equal(await saveGitHubTokenToStorage(other.id,{...payload,access_token:'SYNTHETIC_OTHER_GITHUB'}),true);
+    assert.equal(await saveGitHubTokenToStorage(owner.context,{...payload,access_token:'SYNTHETIC_OWNER_GITHUB'}),true);
+    assert.equal(await saveGitHubTokenToStorage(other.context,{...payload,access_token:'SYNTHETIC_OTHER_GITHUB'}),true);
     const foreignMirrorBefore=await admin.storage.from(bucket).download(`${other.id}/github.json`);assert.equal(foreignMirrorBefore.error,null);
     const foreignMirrorBytes=await foreignMirrorBefore.data!.text();
     assert.equal(await getGitHubToken(owner.id),'SYNTHETIC_OWNER_GITHUB');
@@ -827,7 +832,7 @@ test('real GitHub disconnect persists owner-bound revocation despite a delayed l
     assert.equal(disconnect.status,200);assert.equal((await disconnect.json() as {disconnected:boolean}).disconnected,true);
     const ownMirror=await admin.storage.from(bucket).download(`${owner.id}/github.json`);assert.ok(ownMirror.error);assert.equal(ownMirror.data,null);
     const foreignMirrorAfter=await admin.storage.from(bucket).download(`${other.id}/github.json`);assert.equal(foreignMirrorAfter.error,null);assert.equal(await foreignMirrorAfter.data!.text(),foreignMirrorBytes);
-    assert.equal(await saveGitHubTokenToStorage(owner.id,payload),true);
+    assert.equal(await saveGitHubTokenToStorage(owner.context,payload),true);
     assert.equal(await getGitHubToken(owner.id),null);
     assert.equal(await getGitHubToken(other.id),'SYNTHETIC_OTHER_GITHUB');
     const revoked=await admin.from('github_integrations').select('access_token').eq('user_id',owner.id).single();
@@ -923,7 +928,7 @@ test('real credential writer refuses a public bucket without uploading or silent
   try {
     const changed=await admin.storage.updateBucket(bucket,{public:true});assert.equal(changed.error,null);
     assert.equal(await ensurePrivateOAuthBucket(admin),false);
-    assert.equal(await saveGitHubTokenToStorage(owner.id,{access_token:'SYNTHETIC_REFUSED_WRITE_NOT_A_CREDENTIAL',username:'fixture',provider_user_id:'fixture',repo_strategy:'auto',default_repo:null,updated_at:new Date().toISOString()}),false);
+    assert.equal(await saveGitHubTokenToStorage(owner.context,{access_token:'SYNTHETIC_REFUSED_WRITE_NOT_A_CREDENTIAL',username:'fixture',provider_user_id:'fixture',repo_strategy:'auto',default_repo:null,updated_at:new Date().toISOString()}),false);
     const absent=await admin.storage.from(bucket).download(path);assert.ok(absent.error);assert.equal(absent.data,null);
     const afterAttempt=await admin.storage.getBucket(bucket);assert.equal(afterAttempt.data?.public,true,'writer must not silently mutate existing bucket policy');
   } finally {
