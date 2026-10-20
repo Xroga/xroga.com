@@ -241,7 +241,14 @@ test('the send button takes the wheel at rest and keeps the rest of its states',
 
 test('the composer takes the ring, the bars and the wheel', () => {
   assert.match(ACTIONS, /icon=\{CirclePlayIcon\}/, 'the composer menu trigger is not the ring');
-  assert.ok(!/<Plus\b/.test(ACTIONS), 'the static plus is back');
+  // Ordinary composer keeps the ring. Only the explicit starter opts into Plus.
+  assert.match(ACTIONS, /plusIcon\s*=\s*false/, 'ordinary composer defaults to the ring');
+  assert.match(ACTIONS, /plusIcon\?:\s*boolean/, 'starter icon is an explicit opt-in');
+  assert.match(ACTIONS, /plusIcon\s*\?\s*<Plus\b[^>]*\/?>\s*:\s*<AnimatedIcon icon=\{CirclePlayIcon\}/);
+  assert.equal((ACTIONS.match(/<Plus\b/g) ?? []).length, 1, 'no unconditional or duplicate plus');
+  const CHATBAR = read('../../terminal/TerminalChatBar.tsx');
+  assert.match(CHATBAR, /starter\s*=\s*false/);
+  assert.match(CHATBAR, /plusIcon=\{starter\}/);
   /*
    * The mic renders the meter directly rather than through `AnimatedIcon`, because it
    * drives the animation from the recording state rather than from a pointer. What it
