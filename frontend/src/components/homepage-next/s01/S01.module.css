@@ -138,25 +138,38 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: #ecf1fa;
-  opacity: 0.3;
-  -webkit-mask-image:
-    radial-gradient(circle at 50% 50%, #000 1.2px, transparent 1.65px),
-    url('/s01/noise-mask.svg'),
-    radial-gradient(78% 70% at 50% 63%, #000 8%, rgba(0, 0, 0, 0.82) 60%, transparent 100%);
-  mask-image:
-    radial-gradient(circle at 50% 50%, #000 1.2px, transparent 1.65px),
-    url('/s01/noise-mask.svg'),
-    radial-gradient(78% 70% at 50% 63%, #000 8%, rgba(0, 0, 0, 0.82) 60%, transparent 100%);
-  -webkit-mask-size: var(--particle-pitch) var(--particle-pitch), 256px 256px, 100% 100%;
-  mask-size: var(--particle-pitch) var(--particle-pitch), 256px 256px, 100% 100%;
-  -webkit-mask-repeat: repeat, repeat, no-repeat;
-  mask-repeat: repeat, repeat, no-repeat;
-  -webkit-mask-position: 0 0, 0 50%, center;
-  mask-position: 0 0, 0 50%, center;
-  -webkit-mask-composite: source-in, source-in;
-  mask-composite: intersect, intersect;
-  animation: s01NoisePass 20s linear infinite;
+  /* Safe static dot fallback if multi-mask intersection is unavailable. */
+  background: radial-gradient(circle, #ecf1fa 1.7px, transparent 2.5px) 0 0 /
+    var(--particle-pitch) var(--particle-pitch);
+  opacity: 0.17;
+  -webkit-mask-image: radial-gradient(78% 70% at 50% 63%, #000 8%, rgba(0, 0, 0, 0.82) 60%, transparent 100%);
+  mask-image: radial-gradient(78% 70% at 50% 63%, #000 8%, rgba(0, 0, 0, 0.82) 60%, transparent 100%);
+}
+
+/* Use the founder's intersected 20px white-dot/256px noise mask only when mask composition is supported.
+   Without it, the static fallback above never turns into an opaque light rectangle over the deck. */
+@supports (mask-composite: intersect) or (-webkit-mask-composite: source-in) {
+  .particles {
+    background: #ecf1fa;
+    opacity: 0.21;
+    -webkit-mask-image:
+      radial-gradient(circle at 50% 50%, #000 1.7px, transparent 2.5px),
+      url('/s01/noise-mask.svg'),
+      radial-gradient(78% 70% at 50% 63%, #000 8%, rgba(0, 0, 0, 0.82) 60%, transparent 100%);
+    mask-image:
+      radial-gradient(circle at 50% 50%, #000 1.7px, transparent 2.5px),
+      url('/s01/noise-mask.svg'),
+      radial-gradient(78% 70% at 50% 63%, #000 8%, rgba(0, 0, 0, 0.82) 60%, transparent 100%);
+    -webkit-mask-size: var(--particle-pitch) var(--particle-pitch), 256px 256px, 100% 100%;
+    mask-size: var(--particle-pitch) var(--particle-pitch), 256px 256px, 100% 100%;
+    -webkit-mask-repeat: repeat, repeat, no-repeat;
+    mask-repeat: repeat, repeat, no-repeat;
+    -webkit-mask-position: 0 0, 0 50%, center;
+    mask-position: 0 0, 0 50%, center;
+    -webkit-mask-composite: source-in, source-in;
+    mask-composite: intersect, intersect;
+    animation: s01NoisePass 20s linear infinite;
+  }
 }
 @keyframes s01NoisePass {
   to {
@@ -583,7 +596,7 @@
 /* On constrained/touch screens the pattern is quieter and stays still to keep carousel swiping cheap. */
 @media (max-width: 1024px), (pointer: coarse) {
   .particles {
-    opacity: 0.18;
+    opacity: 0.13;
     animation: none;
   }
 }
