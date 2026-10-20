@@ -1,4 +1,5 @@
-/* S03 — Search & Growth. One softly lit midnight-blue section with two selectable modes that keep their own personality:
+/* S03 — Search & Growth. One section in a graphite discovery atelier (../ambient) with two selectable modes whose
+   interfaces keep their own personality:
    A · a precision-lit authority atlas (petrol ink, cool mint and cyan relationships, periwinkle AI citations, gold
    local signals) and B · a warm creative atelier (graphite set, warm product objects, apricot campaign accents).
    Xroga blue is used only for focus and the one route into the product. Local tokens only. */
@@ -30,28 +31,16 @@
   isolation: isolate;
   overflow-x: clip;
   scroll-margin-top: 88px;
-  padding: clamp(96px, 8vw, 128px) 0 clamp(72px, 7vw, 104px);
-  background:
-    radial-gradient(90% 60% at -8% 6%, rgba(69, 154, 173, 0.26), transparent 72%),
-    radial-gradient(70% 52% at 105% 16%, rgba(120, 101, 172, 0.24), transparent 74%),
-    radial-gradient(78% 58% at 70% 90%, rgba(196, 118, 90, 0.17), transparent 72%),
-    linear-gradient(145deg, #142639 0%, #182b3d 37%, #23283b 73%, #282735 100%);
+  --pad-top: clamp(96px, 8vw, 128px);
+  padding: var(--pad-top) 0 clamp(72px, 7vw, 104px);
   color: var(--text);
   font-family: var(--font-inter), system-ui, sans-serif;
 }
-/* The homepage stylesheet clears every section's background (.xv-home-coding > :not(.xv-hc-hero): background-image none
-   !important, and a near-black colour under the black theme), which hid the approved S03 background above. Re-assert
-   exactly the same layers with higher specificity so it renders; nothing outside S03 is affected. The first two layers
-   only soften the very top and bottom edges into the near-black sections above and below, so there is no hard wall. */
+/* The homepage stylesheet clears every section's background image and paints a near-black colour under the black
+   theme. S03's search-signals environment (graphite light, contours and the discovery arc) is painted by its ambient
+   layer (../ambient); the section itself only asserts the shared near-black ground so the seams stay continuous. */
 .section.section.section {
-  background-color: #142639 !important;
-  background-image:
-    linear-gradient(180deg, #030303 0, rgba(3, 3, 3, 0) 140px),
-    linear-gradient(0deg, #050607 0, rgba(5, 6, 7, 0) 160px),
-    radial-gradient(90% 60% at -8% 6%, rgba(69, 154, 173, 0.26), transparent 72%),
-    radial-gradient(70% 52% at 105% 16%, rgba(120, 101, 172, 0.24), transparent 74%),
-    radial-gradient(78% 58% at 70% 90%, rgba(196, 118, 90, 0.17), transparent 72%),
-    linear-gradient(145deg, #142639 0%, #182b3d 37%, #23283b 73%, #282735 100%) !important;
+  background-color: #050607 !important;
 }
 /* the homepage stylesheet adds halos, stacking and position: relative to text and controls; S03 owns its own */
 .section.section :is(h1, h2, h3, h4, h5, h6, p, small, label) {
@@ -110,8 +99,11 @@
   top: 0;
   z-index: 30;
   height: 92px;
-  margin-bottom: -92px;
-  background: linear-gradient(180deg, rgba(20, 38, 57, 0.98) 0%, rgba(20, 38, 57, 0.96) 62%, rgba(20, 38, 57, 0));
+  /* the shield rests at the section's own top edge, inside the empty top padding, so it can only ever cover content
+     once it is actually stuck under the site header (never the eyebrow and heading below the padding) */
+  margin-top: calc(-1 * var(--pad-top));
+  margin-bottom: calc(var(--pad-top) - 92px);
+  background: linear-gradient(180deg, rgba(8, 9, 11, 0.98) 0%, rgba(8, 9, 11, 0.95) 62%, rgba(8, 9, 11, 0));
   pointer-events: none;
   opacity: 0;
   transition: opacity 160ms linear;
@@ -120,6 +112,7 @@
   opacity: 1;
 }
 .inner {
+  position: relative;
   width: min(1312px, calc(100% - 48px));
   margin: 0 auto;
 }
@@ -155,33 +148,62 @@
   font-weight: 620;
   color: var(--text) !important;
   white-space: nowrap;
-  background: linear-gradient(112deg, #ffffff 0%, #e2f1f1 58%, #d9e1f4 100%);
+  /* high-contrast primary white, with only a whisper of falloff toward the baseline */
+  background: linear-gradient(180deg, #f6f7f8 0%, #f3f4f5 64%, #e9eaec 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 .titleAccent {
-  display: inline;
-  /* the left part is the mint/cyan highlight (the resting state); the right part matches the title, so until the final
-     beat the word reads like the rest of the heading and the highlight then sweeps across it from the left */
-  background-image: linear-gradient(105deg, #7fdbc1 0%, #a5ebda 20%, #7fcfe6 38%, #e2f1f1 56%, #e2f1f1 100%);
-  background-size: 265% 100%;
-  background-position: 0 50%;
+  /* "customers.": machined platinum. One step heavier and a touch more open than the line, so it reads as the payoff
+     without shouting. The material is vertical, as light falls on a turned metal part: a bright specular top edge, a
+     narrow cooler steel band just under the x-height, and a lifted lower edge; a hairline shadow underneath gives the
+     letters physical depth on the black. Where the hero's "everything." is an italic serif, this stays in the sans and
+     earns its emphasis from material and weight. */
+  display: inline-block;
+  font-weight: 700;
+  letter-spacing: -0.038em;
+  background-image: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #f2f4f6 34%,
+    #dde1e6 50%,
+    #b9c0ca 57%,
+    #e4e7eb 70%,
+    #f1f3f5 88%,
+    #d3d7dd 100%
+  );
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-weight: 720;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.55));
+  padding: 0.12em 0.05em 0.16em;
+  margin: -0.12em -0.05em -0.16em;
+}
+/* the last beat of the heading sequence: the word is unveiled left to right behind a soft edge (it holds its space and
+   stays legible in the line's own white until then) */
+.section[data-title-ready]:not([data-title-seen]) .titleAccent {
+  opacity: 0.001;
 }
 .section[data-title-seen] .titleAccent {
-  /* the last beat of the heading sequence: the payoff word receives the mint/cyan highlight */
-  animation: s03TitleHighlight 920ms var(--ease) 2250ms both;
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 42%, rgba(0, 0, 0, 0) 58%, rgba(0, 0, 0, 0) 100%);
+  mask-image: linear-gradient(90deg, #000 0%, #000 42%, rgba(0, 0, 0, 0) 58%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-size: 300% 100%;
+  mask-size: 300% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: 0 0;
+  mask-position: 0 0;
+  animation: s03TitleReveal 920ms cubic-bezier(0.3, 0, 0.2, 1) 2250ms both;
 }
-@keyframes s03TitleHighlight {
+@keyframes s03TitleReveal {
   from {
-    background-position: 100% 50%;
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
   }
   to {
-    background-position: 0 50%;
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
   }
 }
 /* A restrained, stationary accent gives the first screen a visual hook without
@@ -208,12 +230,12 @@
   width: fit-content;
   max-width: 100%;
 }
-/* the connector below carries the brand accent that the short bar under the title used to */
+/* the connector below replaces the short bar under the title */
 .titleBlock > .title.title::after {
   content: none;
 }
 .titleLead {
-  background-image: linear-gradient(100deg, #f4f8ff 0%, #f4f8ff 38%, #ffffff 50%, #eaf6ff 62%, #f4f8ff 100%);
+  background-image: linear-gradient(100deg, #f3f1ec 0%, #f3f1ec 38%, #ffffff 50%, #ecebe7 62%, #f3f1ec 100%);
   background-size: 260% 100%;
   background-position: 0 50%;
   background-clip: text;
@@ -275,7 +297,7 @@
   height: 2px;
   margin-right: 6px;
   border-radius: 2px;
-  background: linear-gradient(90deg, rgba(112, 215, 183, 0.18), var(--mint) 55%, var(--cyan));
+  background: linear-gradient(90deg, rgba(214, 220, 230, 0.12), rgba(214, 220, 230, 0.55) 55%, #e9ecf1);
   transform-origin: left center;
 }
 .cueLine::after {
@@ -285,8 +307,8 @@
   top: 50%;
   width: 7px;
   height: 7px;
-  border-top: 2px solid var(--cyan);
-  border-right: 2px solid var(--cyan);
+  border-top: 2px solid #e9ecf1;
+  border-right: 2px solid #e9ecf1;
   transform: translateY(-50%) rotate(45deg);
 }
 .section[data-title-ready]:not([data-title-seen]) .cue,
@@ -3983,10 +4005,10 @@
   }
   .shield {
     height: 76px;
-    margin-bottom: -76px;
+    margin-bottom: calc(var(--pad-top) - 76px);
   }
   .section {
-    padding-top: 84px;
+    --pad-top: 84px;
   }
   .title.title {
     font-size: clamp(27px, 5.2vw, 36px);

@@ -71,8 +71,13 @@ test('restraint: near-black ground, pearl headline, flat tiles, no overshoot, a 
     const [, y1, , y2] = m[1].split(',').map(Number);
     assert.ok(y1 <= 1 && y2 <= 1 && y1 >= 0 && y2 >= 0, `no overshoot: ${m[0]}`);
   }
-  // the headline accent is one solid colour; tiles carry no coloured glow
-  assert.match(css, /\.s5-title \.s5-accent \{\s*color: #[0-9a-f]{6};\s*\}/);
+  // the headline accent is a neutral silver material (lighter weight, no hue: every stop is a grey); tiles carry no
+  // coloured glow
+  const accent = css.match(/\.s5-title \.s5-accent \{[\s\S]*?\n\}/)?.[0] ?? '';
+  assert.match(accent, /font-weight: 380;/);
+  const stops = [...accent.matchAll(/#([0-9a-f]{6})/g)].map((m) => [0, 2, 4].map((i) => parseInt(m[1].slice(i, i + 2), 16)));
+  assert.ok(stops.length >= 3);
+  for (const [r, g, b] of stops) assert.ok(Math.max(r, g, b) - Math.min(r, g, b) <= 20, `neutral stop ${r},${g},${b}`);
   assert.doesNotMatch(css, /\.s5-tile::before/);
   assert.match(css, /\.s5-tile \{[^}]*background: #0b0e14;/);
   // the background is near-black with at most one faint light
