@@ -481,3 +481,16 @@ test('Galaxy field: budgeted, behind the cards, never takes the pointer, release
   assert.ok(stage.indexOf('<GalaxyField') < stage.indexOf('<ol className={s.deck}'), 'the field is behind the cards');
   assert.doesNotMatch(deck.slice(deck.indexOf('function Gallery(')), /<GalaxyField/, 'no WebGL field on phones and tablets');
 });
+
+test('S01 uses restrained white dots and noise, not the old WebGL galaxy', () => {
+  const deck = read('./S01CapabilityDeck.tsx');
+  const css = read('./S01.module.css');
+  assert.doesNotMatch(deck, /GalaxyField|\.\/GalaxyField/);
+  assert.equal((deck.match(/className=\{s\.dotField\}/g) ?? []).length, 3, 'desktop, mobile and loading states all receive the field');
+  assert.match(css, /\.dotField::before/);
+  assert.match(css, /\.dotField::after/);
+  assert.match(css, /20px 20px, 256px 256px/);
+  assert.match(css, /s01-noise-mask\.svg/);
+  assert.match(css, /mask-composite: intersect/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.dotField::after \{ animation: none; \}/);
+});
