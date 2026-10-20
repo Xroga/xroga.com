@@ -9,6 +9,13 @@
   "risk": "high",
   "scope": "Founder-approved Phase2 only. All ten original007 criteria, finite73 packets, tenant/parent/account/worker lineage and genuine proof. No008/009/010 implementation or production authority.",
   "changedFiles": [
+    "frontend/src/lib/untrustedProxyRoutes.test.ts",
+    ".github/workflows/command3-auth-browser.yml",
+    "frontend/e2e/proxy-origin-local.spec.ts",
+    "frontend/src/lib/untrustedProxyResponse.test.ts",
+    "frontend/src/lib/untrustedProxyResponse.ts",
+    "frontend/src/app/api/image-fetch/route.ts",
+    "frontend/src/app/api/browser-view/route.ts",
     "backend/src/ai/routingOutcomes.receipt.test.ts",
     "backend/src/ai/routingOutcomes.ts",
     "backend/src/security/budgetOwner.local.integration.ts",
@@ -219,6 +226,12 @@
     }
   },
   "tests": [
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/lib/untrustedProxyResponse.test.ts frontend/src/lib/untrustedProxyRoutes.test.ts backend/src/security/serviceRoleGuard.test.ts",
+      "scope": "Response sandbox, opaque application origin, active image isolation, escaping and uncallable review-only global key. Actual browser/Auth proof remains mandatory.",
+      "negative": true,
+      "reference": "frontend/e2e/proxy-origin-local.spec.ts"
+    },
     {
       "command": "node --import tsx --test backend/src/ai/routingOutcomes.receipt.test.ts backend/src/ai/routingPersistence.test.ts backend/src/ai/buildOutcomeOwnership.test.ts backend/src/security/serviceRoleGuard.test.ts",
       "scope": "Issued routing ownership, exact optional persistence and private cache boundaries. Actual database security cases remain mandatory.",

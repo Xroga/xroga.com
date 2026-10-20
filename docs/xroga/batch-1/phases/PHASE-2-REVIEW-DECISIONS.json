@@ -1064,7 +1064,7 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "reviewPacketId": "B1-P2-f8cb123dcb4c4a53",
-      "reason": "Only one fixed private routing bootstrap exception is added. All tenant/global constructor and readiness-probe function bytes are unchanged. Exact operation-order source mapping retains all original factory/read obligations, without claiming RLS or certifying any recipient."
+      "reason": "Only one fixed private routing bootstrap exception is added. All tenant/global constructor and readiness-probe function bytes are unchanged. Exact operation-order source mapping retains all original factory/read obligations, without claiming RLS or certifying any recipient. The subsequent exact constructor-policy change adds review metadata only and explicitly rejects its key before SDK creation. It grants no runtime operation."
     }
   ],
   "decisions": [
@@ -3081,15 +3081,15 @@
     },
     {
       "packetId": "B1-P2-f8cb123dcb4c4a53",
-      "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
+      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
       "executionStatus": "IN_PROGRESS",
-      "finding": "SHARED_FACTORY_RECIPIENT_PROOF_PENDING_FIXED_ROUTING_EXCEPTION_ADDED",
+      "finding": "UNAVAILABLE_REVIEW_ONLY_CONSTRUCTOR_POLICY_AND_INDEPENDENT_RECIPIENT_PROOF_PENDING",
       "originalCriteria": [
         2,
         4,
         10
       ],
-      "actorTrace": "Constructors return a privileged SDK handle, not an RLS sandbox. Tenant construction requires an original issued context and named global construction requires an exact own registry key. The actual receiving operations must each independently prove owner binding or a legitimate narrow exception before these shared constructors can close. The new bootstrap registration grants only fixed bounded private telemetry reads.",
+      "actorTrace": "Tenant construction still requires original issued context. Named global construction still accepts only the same17 actual data-operation keys. A separate explicit review-only constructor exception now documents its real receiving-path proof obligations, while its key is excluded from the accepted type and rejected at runtime before SDK construction. It grants no query or additional runtime capability. All actual receivers require independent proof, and neither SDK handle is an RLS sandbox.",
       "invariant": "No foreign subject or telemetry association may replace the admitted owner. Bounded internal bootstrap never exposes private identities through an endpoint or another owner terminal evidence. Factory construction never substitutes for receiver-level authorization.",
       "evidence": [
         {
@@ -3107,7 +3107,37 @@
         "Authenticate exact changed-source disposable and full branch/integrated regression",
         "Prove every actual shared-constructor recipient before factory closure",
         "Preserve later authority, credential custody and egress obligations"
-      ]
+      ],
+      "historicalBeforeReviewOnlyConstructorPolicy": {
+        "packetId": "B1-P2-f8cb123dcb4c4a53",
+        "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "SHARED_FACTORY_RECIPIENT_PROOF_PENDING_FIXED_ROUTING_EXCEPTION_ADDED",
+        "originalCriteria": [
+          2,
+          4,
+          10
+        ],
+        "actorTrace": "Constructors return a privileged SDK handle, not an RLS sandbox. Tenant construction requires an original issued context and named global construction requires an exact own registry key. The actual receiving operations must each independently prove owner binding or a legitimate narrow exception before these shared constructors can close. The new bootstrap registration grants only fixed bounded private telemetry reads.",
+        "invariant": "No foreign subject or telemetry association may replace the admitted owner. Bounded internal bootstrap never exposes private identities through an endpoint or another owner terminal evidence. Factory construction never substitutes for receiver-level authorization.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/routingOutcomes.receipt.test.ts",
+            "type": "EXACT_RECEIPT_AND_ISSUED_OWNER_NEGATIVES",
+            "result": "PASS"
+          },
+          {
+            "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+            "type": "REAL_DATABASE_AND_DEFAULT_CONSUMER_PROOF_PREPARED",
+            "result": "NOT_EXECUTED"
+          }
+        ],
+        "remaining": [
+          "Authenticate exact changed-source disposable and full branch/integrated regression",
+          "Prove every actual shared-constructor recipient before factory closure",
+          "Preserve later authority, credential custody and egress obligations"
+        ]
+      }
     },
     {
       "packetId": "B1-P2-4a588dd074761414",
@@ -3139,5 +3169,38 @@
         "Keep arbitrary injected store authorization, model effects and Phase3/4 obligations separate"
       ]
     }
-  ]
+  ],
+  "endpointIsolationReview": {
+    "originalCriterion": "XB01-C007-AC04",
+    "status": "DEMONSTRATED_ORIGIN_DEFECT_REPAIRED_LOCAL_REAL_AUTH_PROOF_PENDING",
+    "finding": "Browser-view returned arbitrary upstream HTML with scripts in the application origin, including a same-origin-capable iframe. Image-fetch accepted active non-image MIME without isolation. A real local Chrome probe reproduced cookie/storage/parent/credentialed-read access before the policy and denied all four after the response sandbox.",
+    "scope": "Response-origin isolation only. Original Command010 destination/DNS/redirect/size/network enforcement remains mandatory and unimplemented here.",
+    "sourcePaths": [
+      "frontend/src/app/api/browser-view/route.ts",
+      "frontend/src/app/api/image-fetch/route.ts",
+      "frontend/src/lib/untrustedProxyResponse.ts"
+    ],
+    "evidence": [
+      {
+        "path": "frontend/src/lib/untrustedProxyResponse.test.ts",
+        "type": "OPAQUE_ORIGIN_SCRIPT_POLICY_AND_ERROR_ESCAPING",
+        "result": "PASS"
+      },
+      {
+        "path": "artifacts/proxy-origin-local/browser-probe.json",
+        "type": "LOCAL_SYNTHETIC_BROWSER_RUNTIME_OLD_AND_FIXED_HEADER_POLICY",
+        "result": "PASS_NOT_REAL_AUTH_OR_PROVIDER_ACCEPTANCE"
+      },
+      {
+        "path": "frontend/e2e/proxy-origin-local.spec.ts",
+        "type": "ACTUAL_DISPOSABLE_AUTH_FILES_CANARIES_RASTER_SVG_AND_ERROR_CASE_PREPARED",
+        "result": "NOT_EXECUTED"
+      }
+    ],
+    "remaining": [
+      "New-source actual browser and receipt TAP case",
+      "Complete source-bound branch/integrated regression",
+      "Original evaluator and manual agreement"
+    ]
+  }
 }

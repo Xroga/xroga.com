@@ -21286,8 +21286,9 @@
       "id": "surface:e31c62507c56bf4fa325",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/serviceRoleGuard.ts",
-      "sha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
+      "sha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
       "symbols": [
+        "GlobalDataOperation",
         "getGlobalSupabaseAdmin",
         "getTenantSupabaseAdmin",
         "globalServiceExceptions",
@@ -21323,6 +21324,7 @@
         "backend/src/routes/projects.ts:3",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts:11",
         "backend/src/security/communityPublicException.test.ts:5",
+        "backend/src/security/frontendScope.local.integration.ts:6",
         "backend/src/security/ownership.ts:2",
         "backend/src/security/platformHealth.local.integration.ts:7",
         "backend/src/security/serviceRoleGuard.test.ts:3",
@@ -21350,6 +21352,7 @@
       "testCoverage": [
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/communityPublicException.test.ts",
+        "backend/src/security/frontendScope.local.integration.ts",
         "backend/src/security/platformHealth.local.integration.ts",
         "backend/src/security/serviceRoleGuard.test.ts",
         "backend/src/security/tenantContext.test.ts"
@@ -35986,7 +35989,7 @@
       "id": "surface:2f7b75fe3c4934823f4a",
       "subsystem": "browser_sandbox",
       "sourcePath": "frontend/src/app/api/browser-view/route.ts",
-      "sha256": "4927a29c9b84872aab51dc1211e0bab179440024e7d6cf5b749829b54269b741",
+      "sha256": "fde077374fd308e3322ee3cfcca5a7c7eb26e0c58284caa1485d2544b4fb77bd",
       "symbols": [
         "GET",
         "browserHtml",
@@ -35997,13 +36000,18 @@
         "target"
       ],
       "imports": [
+        "@/lib/untrustedProxyResponse",
         "next/server"
       ],
-      "runtimeImports": [],
+      "runtimeImports": [
+        "frontend/src/lib/untrustedProxyResponse.ts"
+      ],
       "entryPoints": [
         "frontend/src/app/api/browser-view/route.ts"
       ],
-      "callers": [],
+      "callers": [
+        "frontend/src/lib/untrustedProxyRoutes.test.ts:4"
+      ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
@@ -36014,7 +36022,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "frontend/src/lib/untrustedProxyRoutes.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -36065,23 +36075,27 @@
       "id": "surface:9c3c483b59f00d2a3438",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/api/image-fetch/route.ts",
-      "sha256": "50490203265cecbb3e03a0a42e914d6bad15dd9cd492fe5352fbe0c115ef9d81",
+      "sha256": "4d77a9db680dcc7bd30d4cff26398c2e0c50058a4b28439dd92016b4e7dc0f25",
       "symbols": [
         "GET",
         "blob",
         "contentType",
-        "err",
         "res",
         "url"
       ],
       "imports": [
+        "@/lib/untrustedProxyResponse",
         "next/server"
       ],
-      "runtimeImports": [],
+      "runtimeImports": [
+        "frontend/src/lib/untrustedProxyResponse.ts"
+      ],
       "entryPoints": [
         "frontend/src/app/api/image-fetch/route.ts"
       ],
-      "callers": [],
+      "callers": [
+        "frontend/src/lib/untrustedProxyRoutes.test.ts:5"
+      ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
@@ -36092,7 +36106,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "frontend/src/lib/untrustedProxyRoutes.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -80942,6 +80958,46 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:1400afdfcd6b8caf480b",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/untrustedProxyResponse.ts",
+      "sha256": "39bc9116e6b62297403e5032f3afd245696a1a872972264264f3ceb9356ce0a6",
+      "symbols": [
+        "browserProxyHeaders",
+        "entities",
+        "escapeProxyHtml",
+        "imageProxyHeaders"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/api/browser-view/route.ts",
+        "frontend/src/app/api/image-fetch/route.ts"
+      ],
+      "callers": [
+        "frontend/src/app/api/browser-view/route.ts:2",
+        "frontend/src/app/api/image-fetch/route.ts:2",
+        "frontend/src/lib/untrustedProxyResponse.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/untrustedProxyResponse.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:865d3e44b4024966f043",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/uploadCoalescing.ts",
@@ -96696,7 +96752,7 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "e6f7d6b906f0738f8bfdb0c20daacf419f6cc807912ca299c21967119b20ab3b",
+      "sha256": "1d69df118205b990307d45a179e03432c2b48425142f2b495f326ec6146715c3",
       "sourceEntrypoints": [
         "scripts/security/collect-local-security-logs.mjs",
         "scripts/security/disposable-supabase.mjs",
@@ -100645,16 +100701,16 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:e4a09d41f94ccebd5ddf",
+      "id": "frontend-call:51594e1a109e7f2ca982",
       "sourcePath": "frontend/src/app/api/browser-view/route.ts",
-      "line": 42,
+      "line": 44,
       "callee": "fetch",
       "reachable": true
     },
     {
-      "id": "frontend-call:379cb4cebc325e614bc3",
+      "id": "frontend-call:dc3de805fc759a21fc3b",
       "sourcePath": "frontend/src/app/api/image-fetch/route.ts",
-      "line": 15,
+      "line": 16,
       "callee": "fetch",
       "reachable": true
     },
@@ -105019,7 +105075,7 @@
     {
       "id": "test-suite:d8181ec88e6e2712a84b",
       "sourcePath": "backend/src/security/frontendScope.local.integration.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -106496,6 +106552,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:671f43311278a7567780",
+      "sourcePath": "frontend/e2e/proxy-origin-local.spec.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:86ab650f1348beffbd23",
       "sourcePath": "frontend/e2e/rich-results.spec.ts",
       "declaredTests": 3,
@@ -107451,6 +107514,20 @@
       "id": "test-suite:fc612744a4b30eeead28",
       "sourcePath": "frontend/src/lib/universalOutput.test.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:43f9380abab994673a59",
+      "sourcePath": "frontend/src/lib/untrustedProxyResponse.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:d899f2d70a1a5ceb7be0",
+      "sourcePath": "frontend/src/lib/untrustedProxyRoutes.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

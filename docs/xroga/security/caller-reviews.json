@@ -7631,14 +7631,14 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
+      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
       "callIds": [
         "d84df34ff692e4fb31c1",
-        "58a049cd8c83e182b9a6"
+        "5c97508c3ec30ba78c4e"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "Constructors return a privileged SDK handle, not an RLS sandbox. Tenant construction requires an original issued context and named global construction requires an exact own registry key. The actual receiving operations must each independently prove owner binding or a legitimate narrow exception before these shared constructors can close. The new bootstrap registration grants only fixed bounded private telemetry reads.",
-      "reason": "Original007 bounded source repair, not security acceptance. Seven focused routing/ownership/exception cases and backend typechecking pass. Registered actual Auth/database telemetry, restart/owner learning, browser denial, concurrent owner writes, immutable input, SQL failure and recovery proof is prepared. Existing original context and default receiver negative tests are retained. Every affected caller remains REVIEWED_GAP until authenticated final-source proof and complete branch/integrated regressions. No replacement storage engine, public telemetry route, paid provider, Phase3 authority or Phase4 egress is introduced.",
+      "authority": "Tenant construction still requires original issued context. Named global construction still accepts only the same17 actual data-operation keys. A separate explicit review-only constructor exception now documents its real receiving-path proof obligations, while its key is excluded from the accepted type and rejected at runtime before SDK construction. It grants no query or additional runtime capability. All actual receivers require independent proof, and neither SDK handle is an RLS sandbox.",
+      "reason": "Constructor classification remains REVIEWED_GAP. Original strict audit accepts only exceptions in the real central registry, so the legitimate internal constructor review must be represented there rather than injected only into external proof. The review-only key is explicitly uncallable and tested as a denied name. Existing seventeen named data operations and all other constructor/receiver semantics remain unchanged. New-source real evidence and final source acceptance are mandatory.",
       "evidence": [
         {
           "path": "backend/src/security/serviceRoleGuard.test.ts",
@@ -7651,6 +7651,14 @@
         {
           "path": "backend/src/ai/routingOutcomes.receipt.test.ts",
           "marker": "optional routing persistence never treats a substituted or unavailable receipt as cached success"
+        },
+        {
+          "path": "backend/src/security/serviceRoleGuard.test.ts",
+          "marker": "reviewed_named_internal_client_construction"
+        },
+        {
+          "path": "backend/src/security/frontendScope.local.integration.ts",
+          "marker": "review-only constructor keys grant no access"
         }
       ],
       "sourceRegistrationCorrection": {
@@ -7715,14 +7723,102 @@
           },
           "scope": "Fixed registered operation metadata/default factory only. Every original caller retained. No manual promotion or security certificate. Actual changed-source allow/denial proof required."
         }
+      },
+      "historicalBeforeReviewOnlyConstructorPolicy": {
+        "path": "backend/src/security/serviceRoleGuard.ts",
+        "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
+        "callIds": [
+          "d84df34ff692e4fb31c1",
+          "58a049cd8c83e182b9a6"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Constructors return a privileged SDK handle, not an RLS sandbox. Tenant construction requires an original issued context and named global construction requires an exact own registry key. The actual receiving operations must each independently prove owner binding or a legitimate narrow exception before these shared constructors can close. The new bootstrap registration grants only fixed bounded private telemetry reads.",
+        "reason": "Original007 bounded source repair, not security acceptance. Seven focused routing/ownership/exception cases and backend typechecking pass. Registered actual Auth/database telemetry, restart/owner learning, browser denial, concurrent owner writes, immutable input, SQL failure and recovery proof is prepared. Existing original context and default receiver negative tests are retained. Every affected caller remains REVIEWED_GAP until authenticated final-source proof and complete branch/integrated regressions. No replacement storage engine, public telemetry route, paid provider, Phase3 authority or Phase4 egress is introduced.",
+        "evidence": [
+          {
+            "path": "backend/src/security/serviceRoleGuard.test.ts",
+            "marker": "unregistered or prototype-derived global operations fail"
+          },
+          {
+            "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+            "marker": "real routing telemetry writes bind issued owners and private restart history never crosses terminal learning ownership"
+          },
+          {
+            "path": "backend/src/ai/routingOutcomes.receipt.test.ts",
+            "marker": "optional routing persistence never treats a substituted or unavailable receipt as cached success"
+          }
+        ],
+        "sourceRegistrationCorrection": {
+          "previousSourceSha256": "016608c9391f676eab59da8d3d232d1ccca9a0285a92aab0f836f9eb7d3ba6ad",
+          "currentSourceSha256": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
+          "callerMapping": {
+            "d84df34ff692e4fb31c1": "d84df34ff692e4fb31c1",
+            "3182a013220000508dad": "3ca8e5d316bd9fafc9fe",
+            "428afb8386c4474f5abb": "cfd6a567629e5ea8ea8d",
+            "331a1be3d1ee639d294f": "e1a9ecc6141d3fe69902"
+          },
+          "scope": "Fixed existing readiness exception source to the actual data-query module. All three functions and the exact query remain byte-identical. No new authority or operation. Actual disposable allow/outage/restore proof remains required."
+        },
+        "platformExceptionSourceMapping": {
+          "base": "30d94a26ad1a84060216939b79e197b4896c2d0a",
+          "beforeHash": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
+          "afterHash": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
+          "mapping": {
+            "d84df34ff692e4fb31c1": "d84df34ff692e4fb31c1",
+            "3ca8e5d316bd9fafc9fe": "fd91a4c4ec87b33c520f",
+            "cfd6a567629e5ea8ea8d": "2a21a68145fa80a09652",
+            "e1a9ecc6141d3fe69902": "31bdf4b1891a57808b2f"
+          },
+          "scope": "Fixed registered operation metadata/default factory only. Every original caller retained. No manual promotion or security certificate. Actual changed-source allow/denial proof required."
+        },
+        "historicalBeforeRoutingOwnerRepair": {
+          "path": "backend/src/security/serviceRoleGuard.ts",
+          "sourceSha256": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
+          "callIds": [
+            "d84df34ff692e4fb31c1",
+            "fd91a4c4ec87b33c520f"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "Tenant factory validates issued identity; global factory admits only own registry keys. Both nevertheless return the unrestricted service-role Supabase SDK to internal callers.",
+          "reason": "These are admission helpers, not automatic RLS or constrained query proxies. The full control flow of every recipient must be reviewed. Registry names cannot certify their callers, raw diagnostic redaction, account authority or arbitrary subsequent queries. Keep unresolved rather than pretending this shared factory completes tenant isolation.",
+          "evidence": [
+            {
+              "path": "backend/src/security/serviceRoleGuard.test.ts",
+              "marker": "unregistered or prototype-derived global operations fail"
+            }
+          ],
+          "sourceRegistrationCorrection": {
+            "previousSourceSha256": "016608c9391f676eab59da8d3d232d1ccca9a0285a92aab0f836f9eb7d3ba6ad",
+            "currentSourceSha256": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
+            "callerMapping": {
+              "d84df34ff692e4fb31c1": "d84df34ff692e4fb31c1",
+              "3182a013220000508dad": "3ca8e5d316bd9fafc9fe",
+              "428afb8386c4474f5abb": "cfd6a567629e5ea8ea8d",
+              "331a1be3d1ee639d294f": "e1a9ecc6141d3fe69902"
+            },
+            "scope": "Fixed existing readiness exception source to the actual data-query module. All three functions and the exact query remain byte-identical. No new authority or operation. Actual disposable allow/outage/restore proof remains required."
+          },
+          "platformExceptionSourceMapping": {
+            "base": "30d94a26ad1a84060216939b79e197b4896c2d0a",
+            "beforeHash": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
+            "afterHash": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
+            "mapping": {
+              "d84df34ff692e4fb31c1": "d84df34ff692e4fb31c1",
+              "3ca8e5d316bd9fafc9fe": "fd91a4c4ec87b33c520f",
+              "cfd6a567629e5ea8ea8d": "2a21a68145fa80a09652",
+              "e1a9ecc6141d3fe69902": "31bdf4b1891a57808b2f"
+            },
+            "scope": "Fixed registered operation metadata/default factory only. Every original caller retained. No manual promotion or security certificate. Actual changed-source allow/denial proof required."
+          }
+        }
       }
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
+      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
       "callIds": [
-        "cfa4935b633eda7f4503",
-        "213a48f144d86ac38fa9"
+        "fae128d168b634c4b083",
+        "8e4b6e7d9718371f3e6b"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
@@ -7794,6 +7890,86 @@
             "e1a9ecc6141d3fe69902": "31bdf4b1891a57808b2f"
           },
           "scope": "Fixed registered operation metadata/default factory only. Every original caller retained. No manual promotion or security certificate. Actual changed-source allow/denial proof required."
+        }
+      },
+      "historicalBeforeReviewOnlyConstructorPolicy": {
+        "path": "backend/src/security/serviceRoleGuard.ts",
+        "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
+        "callIds": [
+          "cfa4935b633eda7f4503",
+          "213a48f144d86ac38fa9"
+        ],
+        "disposition": "NARROW_EXCEPTION",
+        "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
+        "reason": "Only error presence is used to report infrastructure readiness; selected identities are not returned, persisted or logged. This is a read-only platform readiness exception and grants neither user access nor founder privileges. Other registered global operations require their own recipient review.",
+        "evidence": [
+          {
+            "path": "backend/src/security/serviceRoleGuard.ts",
+            "marker": ".from('profiles').select('id').limit(1)"
+          }
+        ],
+        "sourceRegistrationCorrection": {
+          "previousSourceSha256": "016608c9391f676eab59da8d3d232d1ccca9a0285a92aab0f836f9eb7d3ba6ad",
+          "currentSourceSha256": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
+          "callerMapping": {
+            "d84df34ff692e4fb31c1": "d84df34ff692e4fb31c1",
+            "3182a013220000508dad": "3ca8e5d316bd9fafc9fe",
+            "428afb8386c4474f5abb": "cfd6a567629e5ea8ea8d",
+            "331a1be3d1ee639d294f": "e1a9ecc6141d3fe69902"
+          },
+          "scope": "Fixed existing readiness exception source to the actual data-query module. All three functions and the exact query remain byte-identical. No new authority or operation. Actual disposable allow/outage/restore proof remains required."
+        },
+        "platformExceptionSourceMapping": {
+          "base": "30d94a26ad1a84060216939b79e197b4896c2d0a",
+          "beforeHash": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
+          "afterHash": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
+          "mapping": {
+            "d84df34ff692e4fb31c1": "d84df34ff692e4fb31c1",
+            "3ca8e5d316bd9fafc9fe": "fd91a4c4ec87b33c520f",
+            "cfd6a567629e5ea8ea8d": "2a21a68145fa80a09652",
+            "e1a9ecc6141d3fe69902": "31bdf4b1891a57808b2f"
+          },
+          "scope": "Fixed registered operation metadata/default factory only. Every original caller retained. No manual promotion or security certificate. Actual changed-source allow/denial proof required."
+        },
+        "historicalBeforeRoutingOwnerRepair": {
+          "path": "backend/src/security/serviceRoleGuard.ts",
+          "sourceSha256": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
+          "callIds": [
+            "2a21a68145fa80a09652",
+            "31bdf4b1891a57808b2f"
+          ],
+          "disposition": "NARROW_EXCEPTION",
+          "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
+          "reason": "Only error presence is used to report infrastructure readiness; selected identities are not returned, persisted or logged. This is a read-only platform readiness exception and grants neither user access nor founder privileges. Other registered global operations require their own recipient review.",
+          "evidence": [
+            {
+              "path": "backend/src/security/serviceRoleGuard.ts",
+              "marker": ".from('profiles').select('id').limit(1)"
+            }
+          ],
+          "sourceRegistrationCorrection": {
+            "previousSourceSha256": "016608c9391f676eab59da8d3d232d1ccca9a0285a92aab0f836f9eb7d3ba6ad",
+            "currentSourceSha256": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
+            "callerMapping": {
+              "d84df34ff692e4fb31c1": "d84df34ff692e4fb31c1",
+              "3182a013220000508dad": "3ca8e5d316bd9fafc9fe",
+              "428afb8386c4474f5abb": "cfd6a567629e5ea8ea8d",
+              "331a1be3d1ee639d294f": "e1a9ecc6141d3fe69902"
+            },
+            "scope": "Fixed existing readiness exception source to the actual data-query module. All three functions and the exact query remain byte-identical. No new authority or operation. Actual disposable allow/outage/restore proof remains required."
+          },
+          "platformExceptionSourceMapping": {
+            "base": "30d94a26ad1a84060216939b79e197b4896c2d0a",
+            "beforeHash": "ae9166a72aaaea17211893ac1960f4abb5eae27c55f234e051936b8acb8ac238",
+            "afterHash": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
+            "mapping": {
+              "d84df34ff692e4fb31c1": "d84df34ff692e4fb31c1",
+              "3ca8e5d316bd9fafc9fe": "fd91a4c4ec87b33c520f",
+              "cfd6a567629e5ea8ea8d": "2a21a68145fa80a09652",
+              "e1a9ecc6141d3fe69902": "31bdf4b1891a57808b2f"
+            },
+            "scope": "Fixed registered operation metadata/default factory only. Every original caller retained. No manual promotion or security certificate. Actual changed-source allow/denial proof required."
+          }
         }
       }
     },

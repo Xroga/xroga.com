@@ -117,7 +117,7 @@ jobs:
         working-directory: frontend
         # Invoke the test package's own CLI so npm's nested workspace install
         # cannot select the transitive playwright binary from another copy.
-        run: node ../node_modules/@playwright/test/cli.js test e2e/command3-auth.spec.ts e2e/companion-public.spec.ts e2e/batch01-founder-local.spec.ts
+        run: node ../node_modules/@playwright/test/cli.js test e2e/command3-auth.spec.ts e2e/companion-public.spec.ts e2e/batch01-founder-local.spec.ts e2e/proxy-origin-local.spec.ts
       - name: Real tenant authorization and concurrency integration
         # Independent evidence still runs after a browser assertion fails, but
         # never against an app that failed readiness; failures remain fatal.
@@ -136,6 +136,7 @@ jobs:
             frontend/test-results/command3-auth-evidence.json
             frontend/test-results/batch01-founder-evidence.json
             frontend/test-results/batch01-private-delivery-evidence.json
+            frontend/test-results/proxy-origin-evidence.json
             frontend/test-results/**/test-failed-*.png
             artifacts/batch-01-local-security/migration-history.json
             artifacts/batch-01-local-security/schema-catalog.json

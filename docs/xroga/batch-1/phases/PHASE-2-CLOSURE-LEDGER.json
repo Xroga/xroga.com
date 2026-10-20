@@ -7801,14 +7801,14 @@
       "id": "B1-P2-f8cb123dcb4c4a53",
       "family": "other-source-bound-boundaries",
       "sourcePath": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
+      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
       "baselineCallerIds": [
         "d84df34ff692e4fb31c1",
         "bda2ddc16c7864ef18d8"
       ],
       "currentCallerIds": [
         "d84df34ff692e4fb31c1",
-        "58a049cd8c83e182b9a6"
+        "5c97508c3ec30ba78c4e"
       ],
       "mapping": [
         {
@@ -7821,7 +7821,7 @@
         {
           "baselineCallerId": "bda2ddc16c7864ef18d8",
           "currentCallerIds": [
-            "58a049cd8c83e182b9a6"
+            "5c97508c3ec30ba78c4e"
           ],
           "change": "RETAINED"
         }
@@ -7831,15 +7831,15 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-f8cb123dcb4c4a53",
-        "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
+        "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
         "executionStatus": "IN_PROGRESS",
-        "finding": "SHARED_FACTORY_RECIPIENT_PROOF_PENDING_FIXED_ROUTING_EXCEPTION_ADDED",
+        "finding": "UNAVAILABLE_REVIEW_ONLY_CONSTRUCTOR_POLICY_AND_INDEPENDENT_RECIPIENT_PROOF_PENDING",
         "originalCriteria": [
           2,
           4,
           10
         ],
-        "actorTrace": "Constructors return a privileged SDK handle, not an RLS sandbox. Tenant construction requires an original issued context and named global construction requires an exact own registry key. The actual receiving operations must each independently prove owner binding or a legitimate narrow exception before these shared constructors can close. The new bootstrap registration grants only fixed bounded private telemetry reads.",
+        "actorTrace": "Tenant construction still requires original issued context. Named global construction still accepts only the same17 actual data-operation keys. A separate explicit review-only constructor exception now documents its real receiving-path proof obligations, while its key is excluded from the accepted type and rejected at runtime before SDK construction. It grants no query or additional runtime capability. All actual receivers require independent proof, and neither SDK handle is an RLS sandbox.",
         "invariant": "No foreign subject or telemetry association may replace the admitted owner. Bounded internal bootstrap never exposes private identities through an endpoint or another owner terminal evidence. Factory construction never substitutes for receiver-level authorization.",
         "evidence": [
           {
@@ -7857,7 +7857,37 @@
           "Authenticate exact changed-source disposable and full branch/integrated regression",
           "Prove every actual shared-constructor recipient before factory closure",
           "Preserve later authority, credential custody and egress obligations"
-        ]
+        ],
+        "historicalBeforeReviewOnlyConstructorPolicy": {
+          "packetId": "B1-P2-f8cb123dcb4c4a53",
+          "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
+          "executionStatus": "IN_PROGRESS",
+          "finding": "SHARED_FACTORY_RECIPIENT_PROOF_PENDING_FIXED_ROUTING_EXCEPTION_ADDED",
+          "originalCriteria": [
+            2,
+            4,
+            10
+          ],
+          "actorTrace": "Constructors return a privileged SDK handle, not an RLS sandbox. Tenant construction requires an original issued context and named global construction requires an exact own registry key. The actual receiving operations must each independently prove owner binding or a legitimate narrow exception before these shared constructors can close. The new bootstrap registration grants only fixed bounded private telemetry reads.",
+          "invariant": "No foreign subject or telemetry association may replace the admitted owner. Bounded internal bootstrap never exposes private identities through an endpoint or another owner terminal evidence. Factory construction never substitutes for receiver-level authorization.",
+          "evidence": [
+            {
+              "path": "backend/src/ai/routingOutcomes.receipt.test.ts",
+              "type": "EXACT_RECEIPT_AND_ISSUED_OWNER_NEGATIVES",
+              "result": "PASS"
+            },
+            {
+              "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+              "type": "REAL_DATABASE_AND_DEFAULT_CONSUMER_PROOF_PREPARED",
+              "result": "NOT_EXECUTED"
+            }
+          ],
+          "remaining": [
+            "Authenticate exact changed-source disposable and full branch/integrated regression",
+            "Prove every actual shared-constructor recipient before factory closure",
+            "Preserve later authority, credential custody and egress obligations"
+          ]
+        }
       },
       "actor": {
         "existingTrace": "Tenant factory validates issued identity; global factory admits only own registry keys. Both nevertheless return the unrestricted service-role Supabase SDK to internal callers.",
@@ -7875,7 +7905,7 @@
         {
           "path": "backend/src/security/serviceRoleGuard.test.ts",
           "marker": "unregistered or prototype-derived global operations fail",
-          "sourceSha256": "b4faa487d88f6712b2f899d700c5dbdd35d96e1dd9cbbac52ffac8730ad78782",
+          "sourceSha256": "ce84bc9242d5e07586459d51ce6f5117194016187df6e485a922be4e51402874",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "f703fd6a46b441d7d7a4e58abb0a371e50ead020",
+  "source_sha": "ef2bec1d29885440941858a09e14c26707bb89c1",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -628,6 +628,7 @@
         "COMPOSIO_API_KEY",
         "E2E_BACKEND_URL",
         "E2E_ISOLATED_PROJECT_REF",
+        "EXPECTED_RELEASE_SHA",
         "FRONTEND_URL",
         "GITHUB_CLIENT_ID",
         "GITHUB_CLIENT_SECRET",
@@ -661,6 +662,7 @@
         "WHOP_WEBHOOK_SECRET",
         "XB01_DISPOSABLE_SUPABASE",
         "XB01_LOCAL_DATABASE_URL",
+        "XB01_TEST_SOURCE_SHA",
         "XROGA_DEPLOYMENT_ENVIRONMENT",
         "XROGA_ISOLATED_AUTH_BUILD",
         "XROGA_LEARNING_ENABLED",
@@ -7840,6 +7842,25 @@
       ]
     },
     {
+      "name": "EXPECTED_RELEASE_SHA",
+      "consuming_sources": [
+        "backend/src/security/frontendScope.local.integration.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-127-0-0-1"
+      ]
+    },
+    {
       "name": "FAL_API_KEY",
       "consuming_sources": [
         "backend/src/config/envSecrets.ts",
@@ -11146,6 +11167,25 @@
       ]
     },
     {
+      "name": "XB01_TEST_SOURCE_SHA",
+      "consuming_sources": [
+        "backend/src/security/frontendScope.local.integration.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-127-0-0-1"
+      ]
+    },
+    {
       "name": "XROGA_ALLOWED_MODELS",
       "consuming_sources": [
         "backend/src/ai/routerConfig.ts"
@@ -11962,7 +12002,7 @@
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "e6f7d6b906f0738f8bfdb0c20daacf419f6cc807912ca299c21967119b20ab3b"
+      "sha256": "1d69df118205b990307d45a179e03432c2b48425142f2b495f326ec6146715c3"
     },
     {
       "path": ".github/workflows/command4-authority.yml",
@@ -13410,7 +13450,7 @@
     },
     {
       "path": "backend/src/security/frontendScope.local.integration.ts",
-      "sha256": "ba4ed782d2165a92705642c44de6126f6ce29b052f529eb65e1ed454217da1d6"
+      "sha256": "c22cec41b514d28098fa4af3b446a28c2a97c7209a4106e0fad520f3a9d65828"
     },
     {
       "path": "backend/src/security/githubConsumer.local.integration.ts",
@@ -13526,7 +13566,7 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675"
+      "sha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0"
     },
     {
       "path": "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
@@ -14394,7 +14434,7 @@
     },
     {
       "path": "frontend/src/app/api/browser-view/route.ts",
-      "sha256": "4927a29c9b84872aab51dc1211e0bab179440024e7d6cf5b749829b54269b741"
+      "sha256": "fde077374fd308e3322ee3cfcca5a7c7eb26e0c58284caa1485d2544b4fb77bd"
     },
     {
       "path": "frontend/src/app/api/geo/route.ts",
@@ -14402,7 +14442,7 @@
     },
     {
       "path": "frontend/src/app/api/image-fetch/route.ts",
-      "sha256": "50490203265cecbb3e03a0a42e914d6bad15dd9cd492fe5352fbe0c115ef9d81"
+      "sha256": "4d77a9db680dcc7bd30d4cff26398c2e0c50058a4b28439dd92016b4e7dc0f25"
     },
     {
       "path": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
@@ -17497,6 +17537,10 @@
       "sha256": "d9a8796d906dfc4e1dd242f690e898e49701636dcf2ca40479ff18e30051ce20"
     },
     {
+      "path": "frontend/src/lib/untrustedProxyResponse.ts",
+      "sha256": "39bc9116e6b62297403e5032f3afd245696a1a872972264264f3ceb9356ce0a6"
+    },
+    {
       "path": "frontend/src/lib/uploadCoalescing.ts",
       "sha256": "467cabbe1ab0812b541b7be554f1c48a05773b3f81ae3ca5d7f32302a3be0913"
     },
@@ -19498,21 +19542,28 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/frontendScope.local.integration.ts",
-      "line": 16,
+      "line": 18,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/frontendScope.local.integration.ts",
-      "line": 28,
+      "line": 25,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/frontendScope.local.integration.ts",
-      "line": 30,
+      "line": 37,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/frontendScope.local.integration.ts",
+      "line": 39,
       "credentialsInUrl": false
     },
     {
@@ -26246,7 +26297,7 @@
     },
     {
       "path": "backend/src/security/frontendScope.local.integration.ts",
-      "line": 17,
+      "line": 26,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

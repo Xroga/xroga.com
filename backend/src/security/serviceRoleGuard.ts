@@ -9,6 +9,7 @@ export function getTenantSupabaseAdmin(context: TenantContext) {
 
 /** Narrow registered global operation, not an unbounded administrative client grant. */
 export const globalServiceExceptions = Object.freeze({
+  reviewed_named_internal_client_construction: Object.freeze({source:'backend/src/security/serviceRoleGuard.ts',table:'not_applicable_constructor',action:'constructNamedInternalClient',reason:'Review-only exception for this internal privileged constructor, never a callable data operation. It accepts only exact registered data-operation names. Every actual recipient independently requires its own source-bound narrow operation proof before constructor certification. The returned SDK is not an RLS/query sandbox or authorization for future arbitrary consumers. This review-only key is explicitly denied by getGlobalSupabaseAdmin and grants no new runtime access.'}),
   private_routing_history_bootstrap: Object.freeze({source:'backend/src/ai/routingOutcomes.ts',table:'model_routing_outcomes',action:'select',reason:'Server-internal restart bootstrap of at most500 fixed telemetry DTOs. User/run IDs remain inside the private process cache because terminal learning filters both original owner and run. The only production loader caller is issued-owner pipeline startup, which discards returned rows. Global model-quality routing consumes numeric checks only and returns an aggregate score, never user/run identities. No prompt, file, credential, arbitrary provider payload or public raw-history route. This grants no telemetry write, provider execution or spending authority.'}),
   platform_benchmark_read: Object.freeze({ source: 'backend/src/ai/measuredEvidence.ts', table: 'model_benchmark_runs', action: 'select', reason: 'Internal bounded platform benchmark aggregates for model routing. Only fixed validated model/case identifiers, executable result flags, counts, timing and cost are mapped. No prompts, source files, tenant IDs, credentials or provider payloads. No public raw-results endpoint or customer query.' }),
   platform_benchmark_write: Object.freeze({ source: 'backend/src/ai/benchmarkRunner.ts', table: 'model_benchmark_runs', action: 'insert', reason: 'Existing authorized operations benchmark adapter stores fixed validated platform measurement fields only. The deterministic catalog supplies cases. No customer prompt, file, user/project identity, credential or raw provider result is persisted. This exception never authorizes model execution or paid provider use.' }),
@@ -29,8 +30,9 @@ export const globalServiceExceptions = Object.freeze({
 });
 
 /** Internal reviewed exceptions, not a client-selectable admin endpoint or RLS proxy. */
-export function getGlobalSupabaseAdmin(operation: keyof typeof globalServiceExceptions) {
-  if (!Object.hasOwn(globalServiceExceptions, operation)) throw new Error('Unregistered service operation');
+type GlobalDataOperation = Exclude<keyof typeof globalServiceExceptions, 'reviewed_named_internal_client_construction'>;
+export function getGlobalSupabaseAdmin(operation: GlobalDataOperation) {
+  if ((operation as string) === 'reviewed_named_internal_client_construction' || !Object.hasOwn(globalServiceExceptions, operation)) throw new Error('Unregistered service operation');
   return getSupabaseAdmin();
 }
 

@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import {createHmac,randomUUID} from 'node:crypto';
 import {test} from 'node:test';
 import {createRequire} from 'node:module';
+import {readFileSync} from 'node:fs';
+import {getGlobalSupabaseAdmin} from './serviceRoleGuard.js';
 import {createClient,type SupabaseClient} from '@supabase/supabase-js';
 // Use the frontend's existing SSR dependency, regardless of npm hoisting.
 type Cookie={name:string;value:string;options:{maxAge?:number}};
@@ -12,6 +14,13 @@ const createServerClient=createRequire(new URL('../../../frontend/package.json',
  * No browser hydration, external provider request or mocked success response.
  */
 export function registerFrontendScopeTests(admin:SupabaseClient):void{
+ test('real browser proxy origin receipt binds the current disposable source and review-only constructor keys grant no access',()=>{
+  assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');
+  const source=process.env.XB01_TEST_SOURCE_SHA??process.env.EXPECTED_RELEASE_SHA;assert.match(source??'',/^[a-f0-9]{40}$/);
+  const receipt=JSON.parse(readFileSync(new URL('../../../frontend/test-results/proxy-origin-evidence.json',import.meta.url),'utf8'));
+  assert.deepEqual(receipt,{sourceSha:source,disposableOnly:true,authenticatedOwnFile:true,foreignFileDenied:true,untrustedScriptExecutesInOpaqueOrigin:true,appCookieStorageParentAndPrivateFileDenied:true,rasterBytesRetained:true,htmlImageRefused:true,svgScriptDenied:true,escapedErrorReflection:true,externalProviderCalled:false,command010EgressVerified:false});
+  assert.throws(()=>getGlobalSupabaseAdmin('reviewed_named_internal_client_construction' as never),/Unregistered service operation/);
+ });
  test('real server page reads bind verified cookies to own profile and current role despite forged query ownership',async t=>{
   assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');
   const actors:{id:string;email:string;label:string}[]=[],password=`Synthetic-${randomUUID()}!`,cookies=new Map<string,string>();let publicPost:string|undefined;

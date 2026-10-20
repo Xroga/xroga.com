@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "8c0436e63420d497aa3fc72ba1ee572b9bd04efdadc261fc69bf52fe27275089",
+  "reviewRegistrySha256": "fcab07aad6897d3fda9001159a224ac0b21807c31ac28758ee4924a8e0d84519",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -14,7 +14,7 @@
     "reviewedCandidates": 636,
     "unresolvedSafetyCandidates": 7,
     "certifiedScopedPrivilegedCallers": 0,
-    "registeredNarrowGlobalExceptions": 17
+    "registeredNarrowGlobalExceptions": 18
   },
   "outcomes": {
     "REVIEW_REQUIRED": 0,
@@ -456,11 +456,11 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-b86c3c7b35bc6482"
+        "id": "OB-efb3ff72a0bb848e"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-7fa4bc8d1ee4e65e"
+        "id": "OB-32bc08c286507c08"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -800,7 +800,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "58a049cd8c83e182b9a6"
+        "id": "5c97508c3ec30ba78c4e"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -1948,11 +1948,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "cfa4935b633eda7f4503"
+        "id": "fae128d168b634c4b083"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "213a48f144d86ac38fa9"
+        "id": "8e4b6e7d9718371f3e6b"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -10611,10 +10611,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
+      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
       "semanticReview": {
-        "authority": "Constructors return a privileged SDK handle, not an RLS sandbox. Tenant construction requires an original issued context and named global construction requires an exact own registry key. The actual receiving operations must each independently prove owner binding or a legitimate narrow exception before these shared constructors can close. The new bootstrap registration grants only fixed bounded private telemetry reads.",
-        "reason": "Original007 bounded source repair, not security acceptance. Seven focused routing/ownership/exception cases and backend typechecking pass. Registered actual Auth/database telemetry, restart/owner learning, browser denial, concurrent owner writes, immutable input, SQL failure and recovery proof is prepared. Existing original context and default receiver negative tests are retained. Every affected caller remains REVIEWED_GAP until authenticated final-source proof and complete branch/integrated regressions. No replacement storage engine, public telemetry route, paid provider, Phase3 authority or Phase4 egress is introduced.",
+        "authority": "Tenant construction still requires original issued context. Named global construction still accepts only the same17 actual data-operation keys. A separate explicit review-only constructor exception now documents its real receiving-path proof obligations, while its key is excluded from the accepted type and rejected at runtime before SDK construction. It grants no query or additional runtime capability. All actual receivers require independent proof, and neither SDK handle is an RLS sandbox.",
+        "reason": "Constructor classification remains REVIEWED_GAP. Original strict audit accepts only exceptions in the real central registry, so the legitimate internal constructor review must be represented there rather than injected only into external proof. The review-only key is explicitly uncallable and tested as a denied name. Existing seventeen named data operations and all other constructor/receiver semantics remain unchanged. New-source real evidence and final source acceptance are mandatory.",
         "evidence": [
           {
             "path": "backend/src/security/serviceRoleGuard.test.ts",
@@ -10627,23 +10627,31 @@
           {
             "path": "backend/src/ai/routingOutcomes.receipt.test.ts",
             "marker": "optional routing persistence never treats a substituted or unavailable receipt as cached success"
+          },
+          {
+            "path": "backend/src/security/serviceRoleGuard.test.ts",
+            "marker": "reviewed_named_internal_client_construction"
+          },
+          {
+            "path": "backend/src/security/frontendScope.local.integration.ts",
+            "marker": "review-only constructor keys grant no access"
           }
         ]
       }
     },
     {
-      "id": "58a049cd8c83e182b9a6",
+      "id": "5c97508c3ec30ba78c4e",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 34,
+      "line": 36,
       "enclosing": "getGlobalSupabaseAdmin",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
+      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
       "semanticReview": {
-        "authority": "Constructors return a privileged SDK handle, not an RLS sandbox. Tenant construction requires an original issued context and named global construction requires an exact own registry key. The actual receiving operations must each independently prove owner binding or a legitimate narrow exception before these shared constructors can close. The new bootstrap registration grants only fixed bounded private telemetry reads.",
-        "reason": "Original007 bounded source repair, not security acceptance. Seven focused routing/ownership/exception cases and backend typechecking pass. Registered actual Auth/database telemetry, restart/owner learning, browser denial, concurrent owner writes, immutable input, SQL failure and recovery proof is prepared. Existing original context and default receiver negative tests are retained. Every affected caller remains REVIEWED_GAP until authenticated final-source proof and complete branch/integrated regressions. No replacement storage engine, public telemetry route, paid provider, Phase3 authority or Phase4 egress is introduced.",
+        "authority": "Tenant construction still requires original issued context. Named global construction still accepts only the same17 actual data-operation keys. A separate explicit review-only constructor exception now documents its real receiving-path proof obligations, while its key is excluded from the accepted type and rejected at runtime before SDK construction. It grants no query or additional runtime capability. All actual receivers require independent proof, and neither SDK handle is an RLS sandbox.",
+        "reason": "Constructor classification remains REVIEWED_GAP. Original strict audit accepts only exceptions in the real central registry, so the legitimate internal constructor review must be represented there rather than injected only into external proof. The review-only key is explicitly uncallable and tested as a denied name. Existing seventeen named data operations and all other constructor/receiver semantics remain unchanged. New-source real evidence and final source acceptance are mandatory.",
         "evidence": [
           {
             "path": "backend/src/security/serviceRoleGuard.test.ts",
@@ -10656,20 +10664,28 @@
           {
             "path": "backend/src/ai/routingOutcomes.receipt.test.ts",
             "marker": "optional routing persistence never treats a substituted or unavailable receipt as cached success"
+          },
+          {
+            "path": "backend/src/security/serviceRoleGuard.test.ts",
+            "marker": "reviewed_named_internal_client_construction"
+          },
+          {
+            "path": "backend/src/security/frontendScope.local.integration.ts",
+            "marker": "review-only constructor keys grant no access"
           }
         ]
       }
     },
     {
-      "id": "cfa4935b633eda7f4503",
+      "id": "fae128d168b634c4b083",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 38,
+      "line": 40,
       "enclosing": "probeDatabaseReadiness",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
+      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
       "semanticReview": {
         "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
         "reason": "Only error presence is used to report infrastructure readiness; selected identities are not returned, persisted or logged. This is a read-only platform readiness exception and grants neither user access nor founder privileges. Other registered global operations require their own recipient review.",
@@ -10682,15 +10698,15 @@
       }
     },
     {
-      "id": "213a48f144d86ac38fa9",
+      "id": "8e4b6e7d9718371f3e6b",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 38,
+      "line": 40,
       "enclosing": "probeDatabaseReadiness",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
+      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
       "semanticReview": {
         "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
         "reason": "Only error presence is used to report infrastructure readiness; selected identities are not returned, persisted or logged. This is a read-only platform readiness exception and grants neither user access nor founder privileges. Other registered global operations require their own recipient review.",
