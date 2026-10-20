@@ -12,6 +12,7 @@ import {
   useComposerToolsStore,
 } from '@/store/useComposerToolsStore';
 import { cn } from '@/lib/utils';
+import controls from './WorkspaceControls.module.css';
 
 /**
  * The composer's extra actions, behind one compact trigger.
@@ -164,7 +165,7 @@ export function ChatBarActionsMenu({
       </button>
 
       {open && typeof document !== 'undefined' ? createPortal(
-        <div ref={menuRef} className="xv-cba-menu" role="dialog" aria-label="Composer actions" style={menuStyle}>
+        <div ref={menuRef} className={cn('xv-cba-menu', controls.actions)} role="dialog" aria-label="Composer actions" style={menuStyle}>
           {panel === 'menu' && (
             <div className="xv-cba-grid">
               {recentTerminal && (

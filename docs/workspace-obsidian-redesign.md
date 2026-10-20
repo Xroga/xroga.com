@@ -1,5 +1,13 @@
 # New-terminal workspace, October 2026
 
+## Interactive monochrome refinement
+
+The starter composer is capped at 740px. Black now uses a true black main surface, with neutral raised controls. The heading no longer has a trademark mark, and its larger subtitle cycles through work, automation, code, building, testing, research and creation every six seconds. A pause control and reduced-motion preferences stop automatic movement.
+
+Cards use serif headings and neutral hover decoration. Hover or click opens a compact feature menu above the card; keyboard arrows, Escape and outside-click dismissal are supported. Selecting a feature fills the canonical composer without sending. Existing user text is retained, with the new feature prompt appended; previous untouched starter prompts can be replaced.
+
+The fifth card cycles through AI Employees, Browser automation and Apps & plugins, with three direct-selection dots and a pause control. Hover/open menus pause rotation; keyboard focus and manual selection stop rotation until resumed. Model and composer-action menus use opaque monochrome palettes. The model trigger is text-only on desktop and a black-hole vector symbol on mobile; approval policy and model behavior are unchanged.
+
 ## Theme-aware charcoal refinement
 
 The black-hole artwork is no longer rendered in the starter or composer. The five capabilities use spacious, readable cards with small colored icons and quiet CSS/SVG geometry, inspired by the supplied reference. Desktop has four wide cards and one taller AI Employees card; smaller panes use two columns and a full-width employee card. Descriptions stay at 12px or above, with no truncation or miniature text inside decorations.
