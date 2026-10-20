@@ -1250,7 +1250,7 @@
     },
     {
       "packetId": "B1-P2-9557fb9d0f7a38f5",
-      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
+      "sourceSha256": "8f0245fc5462026b8133fdf8256172c5a83e10560a2c4a506f179ff669f810dd",
       "executionStatus": "IN_PROGRESS",
       "finding": "NATIVE_REFRESH_DROPPED_KNOWN_PROVIDER_ACCOUNT_FIXED_PENDING_ACTUAL_DATABASE_PROOF",
       "originalCriteria": [
@@ -1554,7 +1554,7 @@
     },
     {
       "packetId": "B1-P2-d068943836963a9c",
-      "sourceSha256": "9d16f7bbc4d5239e19d440b13afa828b91ff9a4df8fb662ec22d919a24420039",
+      "sourceSha256": "d0d00b074aee1a1c610abbe6dd2424f8b9f581c3c73f7780619317d69ce7fc96",
       "executionStatus": "IN_PROGRESS",
       "finding": "ALL_SIXTEEN_ISSUED_OWNER_PKCE_TOKEN_AND_STORAGE_CALLS_PROVEN_AT_7BE44030",
       "actorTrace": "index.ts authenticates GitHub, Supabase, Vercel and publishing mounts. Start/callback/disconnect producers require the original issued TenantContext and pass it unchanged to the four fixed provider PKCE wrappers. Store/consume/clear derive only its verified owner. SQL binds exact owner/provider/authorization revision, current one-use state and database expiry. Raw token/policy and shared storage primitives are separate callers and remain unresolved.",

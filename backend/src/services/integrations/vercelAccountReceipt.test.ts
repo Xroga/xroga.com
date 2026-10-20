@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {test} from 'node:test';
-import {refreshVercelOAuthToken} from './vercelAuth.js';
+import {refreshVercelOAuthToken,getVercelToken} from './vercelAuth.js';
 import {sealRuntimeCredential} from './credentialVaultRuntime.js';
 
 test('Vercel native refresh retains the exact canonical provider account with its original revision',async()=>{
@@ -40,6 +40,19 @@ test('Vercel native refresh retains the exact canonical provider account with it
     await assert.rejects(refreshVercelOAuthToken(owner,'synthetic-current-refresh','synthetic-user',lease,randomUUID()),/connection changed before refresh/);
     await assert.rejects(refreshVercelOAuthToken(owner,'synthetic-current-refresh','synthetic-user','different-lease',revision),/connection changed before refresh/);
     assert.equal(providerCalls,calls);
+    let reads=0;
+    const winnerRevision=randomUUID(),winnerVaultRevision=randomUUID();
+    const winnerEnvelope=await sealRuntimeCredential(owner,{provider:'vercel',account:'vercel',credentialType:'oauth-token',
+      recordId:'vercel',revision:winnerVaultRevision,scope:'oauth-connection'},
+      JSON.stringify({access_token:'synthetic-winner-access',refresh_token:'synthetic-new-refresh'}));
+    globalThis.fetch=async input=>{
+      const url=new URL(String(input instanceof Request?input.url:input));assert.equal(url.origin,process.env.SUPABASE_URL);
+      const winner=reads++>0;
+      return Response.json([{user_id:owner,provider:'vercel',provider_user_id:account,access_token:winner?winnerEnvelope:envelope,
+        refresh_token:null,credential_revision:winner?winnerRevision:revision,
+        metadata:{vault_revision:winner?winnerVaultRevision:vaultRevision,vault_format:'oauth-v1',expires_at:new Date(Date.now()+3600000).toISOString()}}]);
+    };
+    assert.equal(await getVercelToken(owner),'synthetic-winner-access');assert.equal(reads,4);
   }finally{
     globalThis.fetch=original;
     if(previous.url===undefined)delete process.env.SUPABASE_URL;else process.env.SUPABASE_URL=previous.url;

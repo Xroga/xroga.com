@@ -9764,7 +9764,7 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
+      "sourceSha256": "8f0245fc5462026b8133fdf8256172c5a83e10560a2c4a506f179ff669f810dd",
       "callIds": [
         "f5a449e18aa070e708bf"
       ],
@@ -9787,7 +9787,7 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
+      "sourceSha256": "8f0245fc5462026b8133fdf8256172c5a83e10560a2c4a506f179ff669f810dd",
       "callIds": [
         "2f4adaffabba4e9c17b8"
       ],
@@ -9810,7 +9810,7 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
+      "sourceSha256": "8f0245fc5462026b8133fdf8256172c5a83e10560a2c4a506f179ff669f810dd",
       "callIds": [
         "4e906804cf01a3be86b8"
       ],
@@ -9833,7 +9833,7 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
+      "sourceSha256": "8f0245fc5462026b8133fdf8256172c5a83e10560a2c4a506f179ff669f810dd",
       "callIds": [
         "3c6dd575e54ba2b2717c"
       ],
@@ -10629,7 +10629,7 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sourceSha256": "9d16f7bbc4d5239e19d440b13afa828b91ff9a4df8fb662ec22d919a24420039",
+      "sourceSha256": "d0d00b074aee1a1c610abbe6dd2424f8b9f581c3c73f7780619317d69ce7fc96",
       "callIds": [
         "86ef2fd4e7978d4403fe",
         "0fef437b70958624f811",
@@ -10639,8 +10639,8 @@
         "4b224789557c61aa08aa",
         "e048987bc4abfb1f8db9",
         "39c5335d86a238a91087",
-        "51dc8f6c0359fb76bd82",
-        "9b5cfd8f675b5450106c"
+        "1856557f92c741e0f414",
+        "d23d37fea68abdab00bb"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "saveOAuthConnection is consumed only by the epoch branch of storeProviderToken and saveVercelConnection. Supabase callbacks derive original issued actor and consume its exact one-use session. Vercel callback independently equates context and req.userId, obtains remote account only through the newly exchanged token and carries its consumed revision. Refresh captures exact current owner/provider/revision/refresh before provider I/O and CAS rejects changed authority. The compatibility server rotation branch performs no external exchange. SQL holds exact owner/provider and expiry/revision. loadProviderToken is consumed only by fixed-provider Supabase access/refresh and canonical plugin preferences. Supabase route owners are authenticated req.userId or checked context. Management-token helper consumers are the authenticated integrations route and issued-owner pipeline. Policy getter consumers are authenticated integrations route and business action inputs from authenticated phase1 route or exact owner/digest-checked durable confirmation claim. No token or body owner is substituted by these consumers. No Storage mirror participates in authority.\nThe only production clearProviderToken consumer is clearSupabaseOAuth, which derives userId from original requireTenantContext. Its only route consumer independently checks that context against req.userId before disconnect. Provider is the fixed supabase_oauth constant. The private unexported removePath has only clearProviderToken and clearPkceSession consumers. Both derive validated owner/provider paths, with no traversal characters, in the one fixed private bucket. The remaining PKCE producer chain is separately source-bound above.\nOnly these two SQL/factory sites occur in storeProviderToken policy-preference branch. Epoch token writes return through saveOAuthConnection before these sites. The sole policy setter consumer is the authenticated integrations route, which passes req.tenantContext and validated enum/toolkit, never an owner from its body. Setter requires the original context and derives exact owner and canonical global/toolkit provider namespace. This branch only accepts known preference enum, null refresh token and exact mode/type/scope/toolkit metadata. It validates every persisted owner/provider/value/metadata receipt.",
@@ -10712,7 +10712,7 @@
         "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
       },
       "structuredOrigin": {
-        "id": "OB-e793738f216b9850",
+        "id": "OB-6e8422da1ba66597",
         "callIds": [
           "86ef2fd4e7978d4403fe",
           "0fef437b70958624f811",
@@ -10722,8 +10722,8 @@
           "4b224789557c61aa08aa",
           "e048987bc4abfb1f8db9",
           "39c5335d86a238a91087",
-          "51dc8f6c0359fb76bd82",
-          "9b5cfd8f675b5450106c"
+          "1856557f92c741e0f414",
+          "d23d37fea68abdab00bb"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -10746,7 +10746,7 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sourceSha256": "9d16f7bbc4d5239e19d440b13afa828b91ff9a4df8fb662ec22d919a24420039",
+      "sourceSha256": "d0d00b074aee1a1c610abbe6dd2424f8b9f581c3c73f7780619317d69ce7fc96",
       "callIds": [
         "d1428a2ff470c82a5576",
         "c4d272d36fd17081c885",
@@ -13002,15 +13002,15 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
+      "sourceSha256": "8f0245fc5462026b8133fdf8256172c5a83e10560a2c4a506f179ff669f810dd",
       "callIds": [
         "6cd8c24a9e60be01c103",
         "1f7990192c0a2ca3a76f",
-        "090a1378d41f5f16f7f8",
-        "12db6c0413e72e7d991c",
-        "23a6e19d497634606d2c",
-        "d84c16808fc87aa62772",
-        "ad15f1539585635cb726"
+        "05048acae9b1850cc04a",
+        "5c951f6e7fdbc9713651",
+        "7865641cd30c1a0e72b5",
+        "7a2acf8694991f2fecf6",
+        "eba320f0c59bba39be70"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing authenticated Vercel, integration and Supabase OAuth handlers use req.userId and the admitted pipeline uses opts.userId. Publishing status and GitHub deployment helpers propagate that same actor. Delivery reads the authenticated owned revision before using its userId, not model/body identity. getVercelToken/getVercelUsername/isVercelConnected/live verification and project selection share loadVercelConnection exact owner/provider predicates. Reads never revive an absent or revoked canonical connection from mirrors. Single-flight is keyed by owner. Refresh leases update only that owner/provider/observed refresh token; cleanup restores only its exact marker. Native refresh observes the canonical revision and known account before provider response and the atomic save CAS retains both. Only clearVercelConnection invokes private mirror deletion using the original authenticated context owner. Actual distinct-account rows, concurrent same-owner and foreign-owner refresh, foreign input denial before transport, held response against authenticated disconnect, unchanged tombstone/foreign row and exact foreign mirror bytes exercise these seven persistence boundaries.\nThe sole production clearVercelConnection caller is authenticated Vercel disconnect with the original req.tenantContext. requireTenantContext and getTenantSupabaseAdmin both validate that original issued context before the fixed owner/vercel upsert. The owner-inclusive conflict key cannot revoke another account. Empty token, fresh revision and revoked tombstone are persisted before clearing the same context PKCE session and owner-namespace mirror. Actual authenticated disconnect, other-owner retention and stale refresh persistence denial exercise this function. No body field can choose its actor or provider.",
@@ -13075,15 +13075,15 @@
         "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
       },
       "structuredOrigin": {
-        "id": "OB-46771da49c04869b",
+        "id": "OB-5560c7f70c85745d",
         "callIds": [
           "6cd8c24a9e60be01c103",
           "1f7990192c0a2ca3a76f",
-          "090a1378d41f5f16f7f8",
-          "12db6c0413e72e7d991c",
-          "23a6e19d497634606d2c",
-          "d84c16808fc87aa62772",
-          "ad15f1539585635cb726"
+          "05048acae9b1850cc04a",
+          "5c951f6e7fdbc9713651",
+          "7865641cd30c1a0e72b5",
+          "7a2acf8694991f2fecf6",
+          "eba320f0c59bba39be70"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -15128,7 +15128,7 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sourceSha256": "9d16f7bbc4d5239e19d440b13afa828b91ff9a4df8fb662ec22d919a24420039",
+      "sourceSha256": "d0d00b074aee1a1c610abbe6dd2424f8b9f581c3c73f7780619317d69ce7fc96",
       "callIds": [
         "007ea6cd943530023202"
       ],
@@ -15149,7 +15149,7 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sourceSha256": "9d16f7bbc4d5239e19d440b13afa828b91ff9a4df8fb662ec22d919a24420039",
+      "sourceSha256": "d0d00b074aee1a1c610abbe6dd2424f8b9f581c3c73f7780619317d69ce7fc96",
       "callIds": [
         "b0706acd19f74cf79aa3"
       ],
@@ -15170,7 +15170,7 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sourceSha256": "9d16f7bbc4d5239e19d440b13afa828b91ff9a4df8fb662ec22d919a24420039",
+      "sourceSha256": "d0d00b074aee1a1c610abbe6dd2424f8b9f581c3c73f7780619317d69ce7fc96",
       "callIds": [
         "0401ef685a68e0335b5b"
       ],
@@ -15191,7 +15191,7 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sourceSha256": "9d16f7bbc4d5239e19d440b13afa828b91ff9a4df8fb662ec22d919a24420039",
+      "sourceSha256": "d0d00b074aee1a1c610abbe6dd2424f8b9f581c3c73f7780619317d69ce7fc96",
       "callIds": [
         "7f78c962cb931d03f3ce"
       ],
@@ -15212,7 +15212,7 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sourceSha256": "9d16f7bbc4d5239e19d440b13afa828b91ff9a4df8fb662ec22d919a24420039",
+      "sourceSha256": "d0d00b074aee1a1c610abbe6dd2424f8b9f581c3c73f7780619317d69ce7fc96",
       "callIds": [
         "6187e7ce8ad7416fb038"
       ],

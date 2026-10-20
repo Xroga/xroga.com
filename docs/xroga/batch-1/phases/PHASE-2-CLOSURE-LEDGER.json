@@ -4016,7 +4016,7 @@
       "id": "B1-P2-9557fb9d0f7a38f5",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
+      "sourceSha256": "8f0245fc5462026b8133fdf8256172c5a83e10560a2c4a506f179ff669f810dd",
       "baselineCallerIds": [
         "c47cd353f14ba5046be8",
         "2d2eae5cbd895d303fc1",
@@ -4035,11 +4035,11 @@
       "currentCallerIds": [
         "6cd8c24a9e60be01c103",
         "1f7990192c0a2ca3a76f",
-        "090a1378d41f5f16f7f8",
-        "12db6c0413e72e7d991c",
-        "23a6e19d497634606d2c",
-        "d84c16808fc87aa62772",
-        "ad15f1539585635cb726"
+        "05048acae9b1850cc04a",
+        "5c951f6e7fdbc9713651",
+        "7865641cd30c1a0e72b5",
+        "7a2acf8694991f2fecf6",
+        "eba320f0c59bba39be70"
       ],
       "mapping": [
         {
@@ -4069,21 +4069,21 @@
         {
           "baselineCallerId": "50cfec47a00c8f934d4c",
           "currentCallerIds": [
-            "090a1378d41f5f16f7f8"
+            "05048acae9b1850cc04a"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "9536d36325c5502652c0",
           "currentCallerIds": [
-            "12db6c0413e72e7d991c"
+            "5c951f6e7fdbc9713651"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "ff1b1bd1a685d5e751ee",
           "currentCallerIds": [
-            "23a6e19d497634606d2c"
+            "7865641cd30c1a0e72b5"
           ],
           "change": "RETAINED"
         },
@@ -4110,14 +4110,14 @@
         {
           "baselineCallerId": "bf911ba6ff5494563807",
           "currentCallerIds": [
-            "d84c16808fc87aa62772"
+            "7a2acf8694991f2fecf6"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "6a995df3c50a346f6d81",
           "currentCallerIds": [
-            "ad15f1539585635cb726"
+            "eba320f0c59bba39be70"
           ],
           "change": "RETAINED"
         }
@@ -4127,7 +4127,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-9557fb9d0f7a38f5",
-        "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
+        "sourceSha256": "8f0245fc5462026b8133fdf8256172c5a83e10560a2c4a506f179ff669f810dd",
         "executionStatus": "IN_PROGRESS",
         "finding": "NATIVE_REFRESH_DROPPED_KNOWN_PROVIDER_ACCOUNT_FIXED_PENDING_ACTUAL_DATABASE_PROOF",
         "originalCriteria": [
@@ -7181,7 +7181,7 @@
       "id": "B1-P2-d068943836963a9c",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sourceSha256": "9d16f7bbc4d5239e19d440b13afa828b91ff9a4df8fb662ec22d919a24420039",
+      "sourceSha256": "d0d00b074aee1a1c610abbe6dd2424f8b9f581c3c73f7780619317d69ce7fc96",
       "baselineCallerIds": [
         "b8d0ad5c152e8ec1c565",
         "5d90ff0ff5c303419423",
@@ -7215,8 +7215,8 @@
         "4b224789557c61aa08aa",
         "e048987bc4abfb1f8db9",
         "39c5335d86a238a91087",
-        "51dc8f6c0359fb76bd82",
-        "9b5cfd8f675b5450106c"
+        "1856557f92c741e0f414",
+        "d23d37fea68abdab00bb"
       ],
       "mapping": [
         {
@@ -7320,14 +7320,14 @@
         {
           "baselineCallerId": "7595558fe3d8cbd76faa",
           "currentCallerIds": [
-            "51dc8f6c0359fb76bd82"
+            "1856557f92c741e0f414"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "3028f7fe3ff9804dd3e6",
           "currentCallerIds": [
-            "9b5cfd8f675b5450106c"
+            "d23d37fea68abdab00bb"
           ],
           "change": "RETAINED"
         }
@@ -7337,7 +7337,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-d068943836963a9c",
-        "sourceSha256": "9d16f7bbc4d5239e19d440b13afa828b91ff9a4df8fb662ec22d919a24420039",
+        "sourceSha256": "d0d00b074aee1a1c610abbe6dd2424f8b9f581c3c73f7780619317d69ce7fc96",
         "executionStatus": "IN_PROGRESS",
         "finding": "ALL_SIXTEEN_ISSUED_OWNER_PKCE_TOKEN_AND_STORAGE_CALLS_PROVEN_AT_7BE44030",
         "actorTrace": "index.ts authenticates GitHub, Supabase, Vercel and publishing mounts. Start/callback/disconnect producers require the original issued TenantContext and pass it unchanged to the four fixed provider PKCE wrappers. Store/consume/clear derive only its verified owner. SQL binds exact owner/provider/authorization revision, current one-use state and database expiry. Raw token/policy and shared storage primitives are separate callers and remain unresolved.",

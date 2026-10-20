@@ -241,9 +241,16 @@ export async function loadProviderToken(
       const current = await supabase.from('user_integrations')
         .select('user_id,provider,access_token,refresh_token,metadata,credential_revision,provider_user_id')
         .eq('user_id', userId).eq('provider', provider).maybeSingle();
+      // Lease-only changes coordinate readers while KMS waits. They cannot
+      // replace the credential epoch or provider account checked below.
+      const currentRefreshLease = provider === 'vercel' && typeof current.data?.refresh_token === 'string'
+        && current.data.refresh_token.startsWith('xroga-refresh-lease:') ? current.data.refresh_token : null;
       if (current.error || !current.data || current.data.user_id !== userId || current.data.provider !== provider
-        || current.data.access_token !== data.access_token || current.data.refresh_token !== data.refresh_token
+        || current.data.access_token !== data.access_token
+        || (provider === 'vercel' ? current.data.refresh_token !== null && !currentRefreshLease
+          : current.data.refresh_token !== data.refresh_token)
         || current.data.credential_revision !== data.credential_revision
+        || current.data.provider_user_id !== data.provider_user_id
         || current.data.metadata?.revoked === true || current.data.metadata?.vault_revision !== vaultRevision
         || typeof opened.access_token !== 'string' || !opened.access_token
         || (opened.refresh_token !== null && typeof opened.refresh_token !== 'string')) return null;
@@ -251,7 +258,7 @@ export async function loadProviderToken(
         refresh_token: opened.refresh_token as string | null,
         metadata: { ...(data.metadata as Record<string, unknown>),
           ...(typeof data.provider_user_id === 'string' ? { provider_user_id: data.provider_user_id } : {}),
-          ...(refreshLease ? { refresh_lease_marker: refreshLease } : {}) },
+          ...(currentRefreshLease ? { refresh_lease_marker: currentRefreshLease } : {}) },
         credential_revision: data.credential_revision };
     }
     requireLegacyCredentialMigrationWindow();

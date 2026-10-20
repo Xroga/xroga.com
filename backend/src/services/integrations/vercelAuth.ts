@@ -298,6 +298,9 @@ export function parseVercelOAuthState(state: string): { userId: string } | null 
 
 export async function getVercelToken(userId: string): Promise<string | null> {
   let row = await loadVercelConnection(userId);
+  // A refresh winner can replace the envelope during the first unwrap. Read
+  // the current authority once more, never reuse the rejected plaintext.
+  if (!row) row = await loadVercelConnection(userId);
   if (!row?.access_token?.trim()) return null;
 
   if (!isVercelAccessTokenExpiring(row.expires_at)) return row.access_token.trim();
