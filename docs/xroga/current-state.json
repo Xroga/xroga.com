@@ -2293,7 +2293,7 @@
         "backend/src/ai/runStore.ts:16",
         "backend/src/ai/step7LearningStrategy.test.ts:12",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:32",
+        "backend/src/security/tenantIsolation.local.integration.ts:33",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:41"
       ],
       "reachable": true,
@@ -3472,7 +3472,7 @@
         "backend/src/hardening/launchHardening.test.ts:47",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts:7",
         "backend/src/security/recoveryMemoryRead.local.integration.ts:5",
-        "backend/src/security/tenantIsolation.local.integration.ts:28",
+        "backend/src/security/tenantIsolation.local.integration.ts:29",
         "backend/src/security/workerProjectAdmission.local.integration.ts:8",
         "backend/src/security/workerProjectAdmission.test.ts:6",
         "backend/src/security/workerRevision.local.integration.ts:8",
@@ -3956,7 +3956,7 @@
         "backend/src/ai/buildOutcomeMemory.ts:10",
         "backend/src/ai/buildOutcomeRoutingMemory.ts:9",
         "backend/src/ai/buildStrategyMemory.ts:5",
-        "backend/src/security/tenantIsolation.local.integration.ts:35",
+        "backend/src/security/tenantIsolation.local.integration.ts:36",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:24"
       ],
       "reachable": true,
@@ -5947,7 +5947,7 @@
         "backend/src/routes/dashboard.ts:4",
         "backend/src/routes/phase1.ts:27",
         "backend/src/security/confirmationMetadata.local.integration.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:41",
+        "backend/src/security/tenantIsolation.local.integration.ts:42",
         "backend/src/services/BillingService.ts:14",
         "backend/src/services/integrations/businessAction.ts:11",
         "backend/src/services/integrations/businessRead.ts:7"
@@ -7017,7 +7017,7 @@
       "callers": [
         "backend/src/ai/runReconciler.test.ts:3",
         "backend/src/index.ts:49",
-        "backend/src/security/tenantIsolation.local.integration.ts:22"
+        "backend/src/security/tenantIsolation.local.integration.ts:23"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -7204,7 +7204,7 @@
         "backend/src/security/runTraceAttempt.local.integration.ts:7",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts:7",
         "backend/src/security/tenantIsolation.integration.test.ts:13",
-        "backend/src/security/tenantIsolation.local.integration.ts:42",
+        "backend/src/security/tenantIsolation.local.integration.ts:43",
         "backend/src/security/workerProjectAdmission.local.integration.ts:7",
         "backend/src/security/workerProjectAdmission.test.ts:8",
         "backend/src/security/workerRevision.local.integration.ts:7",
@@ -12360,7 +12360,7 @@
         "backend/src/growth/sharedWriteAdmission.test.ts:4",
         "backend/src/routes/growth.ts:5",
         "backend/src/security/growthReferral.local.integration.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:43"
+        "backend/src/security/tenantIsolation.local.integration.ts:44"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -15727,7 +15727,7 @@
       "id": "surface:76cea854f8de0332417a",
       "subsystem": "operations_approvals",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "symbols": [
         "DbRow",
         "OperationsService",
@@ -15856,6 +15856,7 @@
         "backend/src/operations/automationAdmission.test.ts:4",
         "backend/src/operations/automationCreation.local.integration.ts:8",
         "backend/src/operations/automationCreation.test.ts:4",
+        "backend/src/operations/automationFinalization.local.integration.ts:7",
         "backend/src/operations/internalControlReceipt.test.ts:4",
         "backend/src/operations/internalEffect.local.integration.ts:7",
         "backend/src/operations/operationsService.owner.test.ts:4",
@@ -15925,8 +15926,7 @@
         "backend/src/operations/operationsService.ts:568 (user_id)",
         "backend/src/operations/operationsService.ts:574 (user_id)",
         "backend/src/operations/operationsService.ts:575 (user_id)",
-        "backend/src/operations/operationsService.ts:613 (user_id)",
-        "backend/src/operations/operationsService.ts:659 (user_id)"
+        "backend/src/operations/operationsService.ts:613 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/operations/operationsService.ts#OperationsPermission",
@@ -15963,6 +15963,7 @@
         "backend/src/operations/automationAdmission.test.ts",
         "backend/src/operations/automationCreation.local.integration.ts",
         "backend/src/operations/automationCreation.test.ts",
+        "backend/src/operations/automationFinalization.local.integration.ts",
         "backend/src/operations/internalControlReceipt.test.ts",
         "backend/src/operations/internalEffect.local.integration.ts",
         "backend/src/operations/operationsService.owner.test.ts",
@@ -18010,7 +18011,7 @@
       "callers": [
         "backend/src/index.ts:24",
         "backend/src/routes/billingWebhook.test.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:16",
+        "backend/src/security/tenantIsolation.local.integration.ts:17",
         "backend/src/services/billingOwnership.local.integration.ts:6"
       ],
       "reachable": true,
@@ -21063,7 +21064,7 @@
         "backend/src/security/ownedRunHeartbeat.test.ts:5",
         "backend/src/security/ownedRunPersistence.test.ts:4",
         "backend/src/security/swarmHeartbeat.local.integration.ts:8",
-        "backend/src/security/tenantIsolation.local.integration.ts:20",
+        "backend/src/security/tenantIsolation.local.integration.ts:21",
         "backend/src/synthesis/projectRuntime/store.ts:11",
         "backend/src/synthesis/universalPersistence.ts:25"
       ],
@@ -21185,7 +21186,7 @@
         "backend/src/ai/pipeline.ts:3",
         "backend/src/security/ownership.test.ts:5",
         "backend/src/security/tenantIsolation.integration.test.ts:16",
-        "backend/src/security/tenantIsolation.local.integration.ts:19",
+        "backend/src/security/tenantIsolation.local.integration.ts:20",
         "backend/src/services/storage/projectFiles.ts:5"
       ],
       "reachable": true,
@@ -21411,7 +21412,7 @@
         "backend/src/security/swarmHeartbeat.local.integration.ts:7",
         "backend/src/security/tenantContext.test.ts:3",
         "backend/src/security/tenantIsolation.integration.test.ts:15",
-        "backend/src/security/tenantIsolation.local.integration.ts:18",
+        "backend/src/security/tenantIsolation.local.integration.ts:19",
         "backend/src/security/terminalIdentity.local.integration.ts:5",
         "backend/src/security/usageAccounting.local.integration.ts:8",
         "backend/src/security/workerProjectAdmission.test.ts:7",
@@ -21731,7 +21732,7 @@
         "backend/src/routes/billing.ts:3",
         "backend/src/routes/billingWebhook.test.ts:7",
         "backend/src/routes/billingWebhook.ts:3",
-        "backend/src/security/tenantIsolation.local.integration.ts:51",
+        "backend/src/security/tenantIsolation.local.integration.ts:52",
         "backend/src/services/BillingService.budget.test.ts:3",
         "backend/src/services/BillingService.checkoutOwnership.test.ts:3",
         "backend/src/services/BillingService.test.ts:4",
@@ -22524,7 +22525,7 @@
         "backend/src/security/credentialReadMatrix.local.integration.ts:7",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:8",
         "backend/src/security/supabaseBundle.local.integration.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:37",
+        "backend/src/security/tenantIsolation.local.integration.ts:38",
         "backend/src/security/vercelRefreshAccount.local.integration.ts:6",
         "backend/src/services/integrations/githubTokenStore.ts:3",
         "backend/src/services/integrations/oauthPkceStore.test.ts:4",
@@ -22755,7 +22756,7 @@
         "backend/src/ai/universal/semanticRequestPlanner.ts:58",
         "backend/src/routes/github.settings.test.ts:17",
         "backend/src/routes/github.ts:8",
-        "backend/src/security/tenantIsolation.local.integration.ts:38",
+        "backend/src/security/tenantIsolation.local.integration.ts:39",
         "backend/src/services/integrations/githubAuth.revocation.test.ts:4",
         "backend/src/services/integrations/githubDeploy.ts:15",
         "backend/src/services/publish/easPublish.ts:12",
@@ -23509,7 +23510,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:36",
+        "backend/src/security/tenantIsolation.local.integration.ts:37",
         "backend/src/services/integrations/absentCredentialAuthority.test.ts:3",
         "backend/src/services/integrations/credentialMirrorRace.test.ts:5",
         "backend/src/services/integrations/githubAuth.ts:2",
@@ -23649,7 +23650,7 @@
       "callers": [
         "backend/src/routes/github.ts:7",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:40",
+        "backend/src/security/tenantIsolation.local.integration.ts:41",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:6",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:4",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:5",
@@ -23727,7 +23728,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:902",
+        "backend/src/security/tenantIsolation.local.integration.ts:904",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -24014,7 +24015,7 @@
         "backend/src/routes/supabaseOAuth.ts:21",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:6",
         "backend/src/security/providerKeyRevision.local.integration.ts:5",
-        "backend/src/security/tenantIsolation.local.integration.ts:52",
+        "backend/src/security/tenantIsolation.local.integration.ts:53",
         "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts:4",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:6",
@@ -24249,7 +24250,7 @@
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:11",
         "backend/src/security/providerKeyRevision.local.integration.ts:6",
         "backend/src/security/supabaseBundle.local.integration.ts:5",
-        "backend/src/security/tenantIsolation.local.integration.ts:21",
+        "backend/src/security/tenantIsolation.local.integration.ts:22",
         "backend/src/services/integrations/absentCredentialAuthority.test.ts:4",
         "backend/src/services/integrations/credentialMirrorRace.test.ts:4",
         "backend/src/services/integrations/githubDeploy.ts:58",
@@ -24452,7 +24453,7 @@
         "backend/src/routes/supabaseOAuth.ts:35",
         "backend/src/routes/vercel.ts:5",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:10",
-        "backend/src/security/tenantIsolation.local.integration.ts:39",
+        "backend/src/security/tenantIsolation.local.integration.ts:40",
         "backend/src/security/vercelRefreshAccount.local.integration.ts:5",
         "backend/src/services/integrations/githubDeploy.ts:16",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:5",
@@ -24767,7 +24768,7 @@
       ],
       "callers": [
         "backend/src/routes/swarm.ts:11",
-        "backend/src/security/tenantIsolation.local.integration.ts:24",
+        "backend/src/security/tenantIsolation.local.integration.ts:25",
         "backend/src/services/notificationService.receipt.test.ts:4",
         "backend/src/services/notificationService.test.ts:3"
       ],
@@ -25557,7 +25558,7 @@
       ],
       "entryPoints": [],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:23",
+        "backend/src/security/tenantIsolation.local.integration.ts:24",
         "backend/src/services/responseCache.receipt.test.ts:4",
         "backend/src/services/responseCache.test.ts:4"
       ],
@@ -26281,7 +26282,7 @@
       "callers": [
         "backend/src/lib/r2.ts:3",
         "backend/src/routes/projects.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:46",
+        "backend/src/security/tenantIsolation.local.integration.ts:47",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:4",
         "backend/src/services/storage/privateFileDelivery.ts:6",
         "backend/src/services/storage/projectFiles.receipt.test.ts:6",
@@ -26395,7 +26396,7 @@
       ],
       "callers": [
         "backend/src/routes/projects.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:45",
+        "backend/src/security/tenantIsolation.local.integration.ts:46",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:5"
       ],
       "reachable": true,
@@ -26462,7 +26463,7 @@
       "entryPoints": [],
       "callers": [
         "backend/src/security/tenantIsolation.integration.test.ts:14",
-        "backend/src/security/tenantIsolation.local.integration.ts:44",
+        "backend/src/security/tenantIsolation.local.integration.ts:45",
         "backend/src/services/memory/buildProjectStore.ts:8",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:7",
         "backend/src/services/storage/projectFiles.receipt.test.ts:5"
@@ -26854,7 +26855,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:31",
+        "backend/src/security/tenantIsolation.local.integration.ts:32",
         "backend/src/security/universalOwnerReads.local.integration.ts:9",
         "backend/src/synthesis/followUpAndRegression.test.ts:23",
         "backend/src/synthesis/securityControls.test.ts:14",
@@ -28841,7 +28842,7 @@
       ],
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:29",
-        "backend/src/security/tenantIsolation.local.integration.ts:47",
+        "backend/src/security/tenantIsolation.local.integration.ts:48",
         "backend/src/synthesis/livePreview/access.test.ts:5",
         "backend/src/synthesis/livePreview/store.ts:9"
       ],
@@ -29366,7 +29367,7 @@
         "backend/src/routes/projectRuntime.ts:21",
         "backend/src/security/previewConsumer.local.integration.ts:8",
         "backend/src/security/previewGrantAdmission.local.integration.ts:9",
-        "backend/src/security/tenantIsolation.local.integration.ts:50",
+        "backend/src/security/tenantIsolation.local.integration.ts:51",
         "backend/src/synthesis/livePreview/coordinator.ts:28",
         "backend/src/synthesis/livePreview/index.ts:3",
         "backend/src/synthesis/livePreview/store.receipt.test.ts:6"
@@ -30555,7 +30556,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:27",
+        "backend/src/security/tenantIsolation.local.integration.ts:28",
         "backend/src/synthesis/projectRuntime/index.ts:5",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:36"
       ],
@@ -30733,7 +30734,7 @@
         "backend/src/security/runtimeProjectBinding.test.ts:6",
         "backend/src/security/runtimeSecretRead.local.integration.ts:5",
         "backend/src/security/runtimeTerminal.local.integration.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:26",
+        "backend/src/security/tenantIsolation.local.integration.ts:27",
         "backend/src/security/workerProjectAdmission.local.integration.ts:11",
         "backend/src/security/workerRevision.local.integration.ts:9",
         "backend/src/synthesis/livePreview/store.receipt.test.ts:4",
@@ -31281,7 +31282,7 @@
       "runtimeImports": [],
       "entryPoints": [],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:33",
+        "backend/src/security/tenantIsolation.local.integration.ts:34",
         "backend/src/synthesis/researchEvidence.test.ts:15",
         "backend/src/synthesis/universalPersistence.test.ts:20"
       ],
@@ -33009,7 +33010,7 @@
       ],
       "callers": [
         "backend/src/security/repositorySnapshot.local.integration.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:29",
+        "backend/src/security/tenantIsolation.local.integration.ts:30",
         "backend/src/security/universalOwnerReads.local.integration.ts:7",
         "backend/src/synthesis/followUpAndRegression.test.ts:24",
         "backend/src/synthesis/universalEntrypoint.test.ts:20",
@@ -33133,7 +33134,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:30",
+        "backend/src/security/tenantIsolation.local.integration.ts:31",
         "backend/src/security/universalOwnerReads.local.integration.ts:8",
         "backend/src/synthesis/followUpAndRegression.test.ts:22",
         "backend/src/synthesis/securityControls.test.ts:15",
@@ -96587,6 +96588,13 @@
       "version": "20261019000900",
       "order": 127,
       "sha256": "5cd74734ed309202c0d3cb5d50e582cf405380c5e5933820e371835797de0de4"
+    },
+    {
+      "id": "migration:0695aeb56136842774b2",
+      "sourcePath": "supabase/migrations/20261020000100_operations_automation_finalization.sql",
+      "version": "20261020000100",
+      "order": 128,
+      "sha256": "7d8d44c8ccc3d47fb1fe944f7b149c5259ad33b4e1e764f9b7708f35619ecd4b"
     }
   ],
   "workflows": [
@@ -104470,7 +104478,7 @@
     {
       "id": "test-suite:70247d028f04b4f535e8",
       "sourcePath": "backend/src/operations/automationAdmission.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -104485,6 +104493,13 @@
       "id": "test-suite:2b73597be8f2af942b49",
       "sourcePath": "backend/src/operations/automationCreation.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:33d23251110fd03def65",
+      "sourcePath": "backend/src/operations/automationFinalization.local.integration.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

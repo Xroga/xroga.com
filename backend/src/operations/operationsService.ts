@@ -643,22 +643,33 @@ export class OperationsService {
         || (admission.replayed ? decision !== 'duplicate' : decision === 'duplicate' || run.status !== statusMap[decision])) {
         throw new OperationsServiceError('unknown', 'Automation admission receipt is invalid', 503);
       }
-      if (admission.replayed) { results.push(run); continue; }
-      const eligible = ['execute','approval_required'].includes(decision);
-      if ((!['execute','approval_required'].includes(baseline) ? decision !== baseline
+      if (admission.replayed && run.status !== 'evaluating') { results.push(run); continue; }
+      const eligible = ['execute','approval_required'].includes(admission.replayed ? baseline : decision);
+      if ((!admission.replayed && (!['execute','approval_required'].includes(baseline) ? decision !== baseline
         : ![baseline,'rate_limited','maintenance_blocked'].includes(decision))
+        ) || (admission.replayed && !eligible)
         || run.action_id !== null || typeof run.started_at !== 'string' || !Number.isFinite(Date.parse(run.started_at))
         || (eligible ? run.safe_error !== null || run.completed_at !== null
           : run.safe_error !== decision || typeof run.completed_at !== 'string' || !Number.isFinite(Date.parse(run.completed_at)))) {
         throw new OperationsServiceError('unknown', 'Automation decision receipt is invalid', 503);
       }
-      if (['execute','approval_required'].includes(decision)) {
+      if (eligible) {
         try {
-          const action = await this.createAction(userId, { actionType: rule.action_type, projectId, environmentId: signal.environmentId, targetType: signal.targetType, targetId: signal.targetId, targetVersion: signal.targetVersion, idempotencyKey: run.id, confirmed: true, parameters: { triggerId: signal.triggerId, evidenceReference: signal.evidenceReference } });
+          const action = snapshotIntent(await this.createAction(userId, { actionType: rule.action_type, projectId, environmentId: signal.environmentId, targetType: signal.targetType, targetId: signal.targetId, targetVersion: signal.targetVersion, idempotencyKey: run.id, confirmed: true, parameters: { triggerId: signal.triggerId, evidenceReference: signal.evidenceReference } }));
+          if (!action || typeof action.id !== 'string' || !action.id || action.user_id !== access.ownerId
+            || action.project_id !== projectId || action.requested_by !== userId || action.action_type !== rule.action_type
+            || action.idempotency_key !== run.id || action.target_type !== signal.targetType || action.target_id !== signal.targetId
+            || action.target_version !== signal.targetVersion || action.environment_id !== (signal.environmentId ?? null)) {
+            throw new OperationsServiceError('unknown', 'Automation action receipt is invalid', 503);
+          }
           const runStatus = action.status === 'approval_required' ? 'approval_required' : action.status === 'verified' ? 'verified' : 'action_created';
-          const updated = await queryOrThrow<DbRow[]>(this.db.from('operations_automation_runs').update({ status: runStatus, action_id: action.id, completed_at: action.status === 'verified' ? new Date().toISOString() : null })
-            .eq('id', run.id).eq('user_id', access.ownerId).eq('rule_id', rule.id).eq('trigger_digest', digest).eq('status', 'evaluating').is('action_id', null).select('*'), 'Automation run update failed');
-          if (updated.length !== 1 || !runMatches(updated[0]) || updated[0].status !== runStatus || updated[0].action_id !== action.id) {
+          const updated = await queryOrThrow<DbRow[]>(this.db.rpc('finalize_operations_automation_run', {
+            p_actor: userId, p_owner: access.ownerId, p_project: projectId, p_expected_rule: rule,
+            p_expected_run: run, p_attributes: attributes, p_action: action, p_environment: signal.environmentId ?? null,
+          }), 'Automation action link and audit could not be verified');
+          if (!Array.isArray(updated) || updated.length !== 1 || !runMatches(updated[0]) || updated[0].status !== runStatus || updated[0].action_id !== action.id
+            || updated[0].started_at !== run.started_at || updated[0].safe_error !== null
+            || (runStatus === 'verified' ? !Number.isFinite(Date.parse(updated[0].completed_at)) : updated[0].completed_at !== null)) {
             throw new OperationsServiceError('unknown', 'Automation action link could not be verified', 503);
           }
           run = updated[0];
@@ -669,7 +680,8 @@ export class OperationsService {
           throw new OperationsServiceError('unknown', 'Automation action outcome requires reconciliation before another attempt', 503);
         }
       }
-      await this.audit({ userId: access.ownerId, actorId: userId, projectId, environmentId: signal.environmentId, action: 'operations.automation.evaluated', targetType: 'automation_run', targetId: run.id, outcome: run.status, reason: run.safe_error ?? undefined, correlationId: digest, evidenceReference: signal.evidenceReference });
+      if (!eligible) await this.audit({ userId: access.ownerId, actorId: userId, projectId, environmentId: signal.environmentId,
+        expectedRule: rule, expectedRun: run, attributes });
       results.push(run);
     }
     return results;
@@ -677,14 +689,14 @@ export class OperationsService {
 
   providerContracts(): ReturnType<ProviderAdapterRegistry['describe']> { return this.registry.describe(); }
 
-  private async audit(input: { userId: string; actorId: string; projectId: string; environmentId?: string | null; action: string; targetType: string; targetId: string; outcome: string; reason?: string; beforeState?: unknown; afterState?: unknown; correlationId: string; evidenceReference?: string }): Promise<void> {
-    const { error } = await this.db.from('production_audit_log').insert({
-      user_id: input.userId, actor_id: input.actorId, project_id: input.projectId,
-      environment_id: input.environmentId ?? null, action: input.action, target_type: input.targetType,
-      target_id: input.targetId, outcome: input.outcome, reason: input.reason?.slice(0, 500) ?? null,
-      before_state: redactOperationsValue(input.beforeState ?? null), after_state: redactOperationsValue(input.afterState ?? null),
-      correlation_id: input.correlationId, evidence_reference: input.evidenceReference ?? null, metadata: {},
-    });
-    if (error) throw new OperationsServiceError('action_failed', 'Audit evidence could not be stored; action was not accepted as complete', 503);
+  private async audit(input: { userId: string; actorId: string; projectId: string; environmentId?: string | null;
+    expectedRule: DbRow; expectedRun: DbRow; attributes: Record<string, unknown> }): Promise<void> {
+    const rows = await queryOrThrow<DbRow[]>(this.db.rpc('finalize_operations_automation_run', {
+      p_actor: input.actorId, p_owner: input.userId, p_project: input.projectId, p_expected_rule: input.expectedRule,
+      p_expected_run: input.expectedRun, p_attributes: input.attributes, p_action: null, p_environment: input.environmentId ?? null,
+    }), 'Audit evidence could not be stored; action was not accepted as complete');
+    if (!Array.isArray(rows) || rows.length !== 1 || !isDeepStrictEqual(rows[0], input.expectedRun)) {
+      throw new OperationsServiceError('unknown', 'Automation decision audit receipt is invalid', 503);
+    }
   }
 }

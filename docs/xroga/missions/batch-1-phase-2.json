@@ -9,6 +9,9 @@
   "risk": "high",
   "scope": "Founder-approved Phase2 only. All ten original007 criteria, finite73 packets, tenant/parent/account/worker lineage and genuine proof. No008/009/010 implementation or production authority.",
   "changedFiles": [
+    "supabase/migrations/20261020000100_operations_automation_finalization.sql",
+    "backend/src/operations/automationFinalization.local.integration.ts",
+    "backend/src/operations/automationAdmission.test.ts",
     "backend/src/operations/actionIntent.local.integration.ts",
     "frontend/src/components/homepage-next/s03/s03.test.ts",
     "supabase/migrations/20261019000900_operations_internal_effect_admission.sql",
@@ -152,6 +155,7 @@
   "schemaImpact": {
     "changed": true,
     "migrations": [
+      "supabase/migrations/20261020000100_operations_automation_finalization.sql",
       "supabase/migrations/20261019000900_operations_internal_effect_admission.sql",
       "supabase/migrations/20261019000800_universal_plan_spec_owner.sql",
       "supabase/migrations/20261019000700_web_usage_cycle_owner.sql",
@@ -165,7 +169,7 @@
       "supabase/migrations/20261019000300_worker_database_project_admission.sql"
     ],
     "rollout": "Disposable CI only. A composite web-accounting cycle/owner FK serializes current-parent writes, preserves null-cycle deletion and stops on existing invalid rows without rewriting them. No-argument current-subject setup projection retains restrictive public profile columns and policies. Shared growth admission retains existing locks. No new tables, data rewrite or production DDL. Preserve browser grants/RLS, worker guards and safe cancellation. Composite universal plan/spec owner/project FK likewise serializes current-parent writes, preserves optional spec deletion and refuses invalid history without rewrite. Disposable only.",
-    "rollback": "Withhold affected accounting/setup entry points before withdrawing their FK/projection. Do not re-enable cross-owner cycle attribution or grant private onboarding to public readers. Preserve restrictive grants, RLS and verified growth/worker fences. Any production rollout or privilege/constraint rollback requires separate approval. Preserve the universal parent FK. Any withdrawal requires first withholding its sensitive plan entry point and separate production approval. Retain the new internal admission helper and atomic completion coupling. Withhold affected internal capabilities before separately approved withdrawal. No table rewrite or production change is authorized."
+    "rollback": "Withhold affected accounting/setup entry points before withdrawing their FK/projection. Do not re-enable cross-owner cycle attribution or grant private onboarding to public readers. Preserve restrictive grants, RLS and verified growth/worker fences. Any production rollout or privilege/constraint rollback requires separate approval. Preserve the universal parent FK. Any withdrawal requires first withholding its sensitive plan entry point and separate production approval. Retain the new internal admission helper and atomic completion coupling. Withhold affected internal capabilities before separately approved withdrawal. No table rewrite or production change is authorized. Retain the automation finalization RPC and its canonical admitted-run checks. Withhold affected signals before withdrawal. No live schema/data change is authorized."
   },
   "securityImpact": {
     "auth": {
@@ -198,6 +202,12 @@
     }
   },
   "tests": [
+    {
+      "command": "node --import tsx --test backend/src/operations/automationAdmission.test.ts",
+      "scope": "Exact canonical action receipt, original run key, evaluating replay and fail-closed finalization. Actual new-source current-parent race and atomic link/audit witnesses remain mandatory.",
+      "negative": true,
+      "reference": "backend/src/operations/automationFinalization.local.integration.ts"
+    },
     {
       "command": "node --import tsx --test backend/src/operations/internalControlReceipt.test.ts backend/src/operations/operationsService.owner.test.ts",
       "scope": "Original actor/admitted intent, exact target and atomic completion receipts. Actual disposable 11-capability, current-authority races, completion rollback and lost-response recovery remain mandatory.",

@@ -430,7 +430,7 @@
     "rlsEnabled": 118,
     "privilegedFactorySites": 161,
     "persistenceCandidates": 639,
-    "ownerPredicateCandidates": 144,
+    "ownerPredicateCandidates": 143,
     "reviewRequired": 0,
     "reviewedCandidates": 639,
     "unresolvedSafetyCandidates": 38,
@@ -545,8 +545,8 @@
           "8d4b368daaafa2527fdb",
           "7b6b74d024cad1ca24e0",
           "1432ffb1661e42ad2afd",
-          "847701cbbdfc7ce070ec",
-          "7201394971e7edb953ff"
+          "889de9bf998a6a1b47f0",
+          "c316ee518cf610c4056b"
         ]
       }
     },

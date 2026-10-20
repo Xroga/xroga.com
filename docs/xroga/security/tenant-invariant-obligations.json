@@ -5750,7 +5750,7 @@
         "7215f4419b9fff60e893"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -5809,7 +5809,7 @@
         "5412270a1f23caa82419"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -5876,7 +5876,7 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-1478ebcda982a717",
+      "id": "OB-f67734cbd9816a80",
       "callerIds": [
         "58357b840ab8890eba45",
         "9ea21ff62008b510bd7f",
@@ -5896,10 +5896,10 @@
         "8d4b368daaafa2527fdb",
         "7b6b74d024cad1ca24e0",
         "1432ffb1661e42ad2afd",
-        "7201394971e7edb953ff"
+        "c316ee518cf610c4056b"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -5909,7 +5909,7 @@
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
-      "authorityTrace": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.\ncurrentTargetVersion is private to createAction after canonical access and executeAction after canonical access plus action owner equality. Its dynamic table and key/version fields come from a fixed server lookup map, never request SQL identifiers. Every selected target query applies the original action project and owner, using tenant_id only for growth campaigns. Releases additionally validate the exact returned id/user/project. No selected raw target row is returned. The post-empty-claim action read does not return a changed or foreign record: it returns only verified status with the same exact previously admitted owner/project/requester/type/target/version/key/digest/plan/max-attempt tuple. Otherwise execution fails with conflict before an adapter.\nThe sole external operations router is auth-mounted and passes req.userId. Growth and automation callers retain that same verified actor, not a persisted action requester supplied by the browser. access derives current project owner and canonical role. Creation environment/maintenance reads are exact project/owner and remain internal. Other selected action reads use requested ID internally, then compare persisted action owner against current project owner before any return or effect. Approvals are exact action/owner, canonical role and pending state. Confirm requires the original requester. Existing decisive service-only create/approve/confirm/claim transactions recheck their current locked parent/actor/plan and receipt before proceeding. No selected preflight row is exposed on forbidden ownership.\nexecuteInternal is a private callback registered only on this OperationsService internal adapter. Its sole invocation follows executeAction current project/actor authorization, canonical definition/target/plan checks and the separately proven admitted claim. The adapter input overwrites any execution-plan userId, actorId, projectId, targetId and version with the checked server action/owner. These selected two updates use exact target ID, project, owner, expected version/attempt and eligible state. No provider request is performed by these mutations. Completion retains the same exact admitted plan and owner receipt.",
+      "authorityTrace": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit. The existing automation link and non-action decision audit now invoke a fixed service-only finalization RPC. It reuses admitted-run current actor/project/member/rule locks, checks exact canonical run and action owner/project/requester/run-idempotency relationship, and commits the link with its audit. An evaluating replay reconciles the original action key, never a new consequential action.\nThe auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.\ncurrentTargetVersion is private to createAction after canonical access and executeAction after canonical access plus action owner equality. Its dynamic table and key/version fields come from a fixed server lookup map, never request SQL identifiers. Every selected target query applies the original action project and owner, using tenant_id only for growth campaigns. Releases additionally validate the exact returned id/user/project. No selected raw target row is returned. The post-empty-claim action read does not return a changed or foreign record: it returns only verified status with the same exact previously admitted owner/project/requester/type/target/version/key/digest/plan/max-attempt tuple. Otherwise execution fails with conflict before an adapter.\nThe sole external operations router is auth-mounted and passes req.userId. Growth and automation callers retain that same verified actor, not a persisted action requester supplied by the browser. access derives current project owner and canonical role. Creation environment/maintenance reads are exact project/owner and remain internal. Other selected action reads use requested ID internally, then compare persisted action owner against current project owner before any return or effect. Approvals are exact action/owner, canonical role and pending state. Confirm requires the original requester. Existing decisive service-only create/approve/confirm/claim transactions recheck their current locked parent/actor/plan and receipt before proceeding. No selected preflight row is exposed on forbidden ownership.\nexecuteInternal is a private callback registered only on this OperationsService internal adapter. Its sole invocation follows executeAction current project/actor authorization, canonical definition/target/plan checks and the separately proven admitted claim. The adapter input overwrites any execution-plan userId, actorId, projectId, targetId and version with the checked server action/owner. These selected two updates use exact target ID, project, owner, expected version/attempt and eligible state. No provider request is performed by these mutations. Completion retains the same exact admitted plan and owner receipt.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -5927,6 +5927,14 @@
         {
           "path": "backend/src/operations/internalControlReceipt.test.ts",
           "marker": "single-rule controls reject empty, substituted and duplicate mutation receipts"
+        },
+        {
+          "path": "backend/src/operations/automationFinalization.local.integration.ts",
+          "marker": "real automation finalization rechecks locked current parents and rolls back links when its required audit fails"
+        },
+        {
+          "path": "backend/src/operations/automationAdmission.test.ts",
+          "marker": "foreign or substituted automation action receipts cannot reach the finalization transaction"
         }
       ],
       "manualPartitions": [
@@ -5939,7 +5947,7 @@
             "d6f7994c8a29114879a2",
             "8d4b368daaafa2527fdb",
             "1432ffb1661e42ad2afd",
-            "7201394971e7edb953ff"
+            "c316ee518cf610c4056b"
           ],
           "disposition": "REVIEWED_GAP"
         },
@@ -8631,7 +8639,7 @@
         "823e5f2a3bdf5991cb4d"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8661,7 +8669,7 @@
         "f175f84e5afd902c17c0"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8721,7 +8729,7 @@
         "ed0903282a7144871281"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8751,7 +8759,7 @@
         "00aea7c9a2f2d60601a1"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8777,7 +8785,7 @@
         "e1b151df5a5cc43046f5"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8803,7 +8811,7 @@
         "3511bf786d2e1a877754"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -8893,7 +8901,7 @@
         "6abbcd4bdc2a8835113a"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8923,7 +8931,7 @@
         "67ddc3c9a3c2badcee94"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8948,12 +8956,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-828f5683d5fdf967",
+      "id": "OB-26a4b6619d4d6464",
       "callerIds": [
-        "847701cbbdfc7ce070ec"
+        "889de9bf998a6a1b47f0"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -8962,8 +8970,8 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Eight focused admission/intent tests pass. Empty or substituted link receipts and every unreturned action outcome, including4xx after possible queued-action persistence, preserve pending admission and return typed503 without falsely recording failure or retrying. Link remains separate from action creation and final audit. Crash reconciliation, post-admission current-rule/actor authority and parent lifecycle races remain unresolved. This write is reviewed but not security-certified.",
-      "authorityTrace": "After exact service-only admission, the existing action creator receives the stable run UUID key. Linking updates only the admitted owner/rule/digest/run in evaluating state with no action, then verifies its returned identity and action/status. No replay executes another action.",
+      "reason": "Eight focused admission/intent tests pass. Empty or substituted link receipts and every unreturned action outcome, including4xx after possible queued-action persistence, preserve pending admission and return typed503 without falsely recording failure or retrying. Link remains separate from action creation and final audit. Crash reconciliation, post-admission current-rule/actor authority and parent lifecycle races remain unresolved. This write is reviewed but not security-certified. The two demonstrated parent/write and split-audit gaps are repaired locally. Substituted action/receipt denials, replay recovery and SQL rollback pass locally. New real owner/member/rule/run/action lock-wait, lost reply, audit rollback, concurrency and browser tests are prepared but NOT_EXECUTED. No promotion from these tests is authorized.",
+      "authorityTrace": "After exact service-only admission, the existing action creator receives the stable run UUID key. Linking updates only the admitted owner/rule/digest/run in evaluating state with no action, then verifies its returned identity and action/status. No replay executes another action. The existing automation link and non-action decision audit now invoke a fixed service-only finalization RPC. It reuses admitted-run current actor/project/member/rule locks, checks exact canonical run and action owner/project/requester/run-idempotency relationship, and commits the link with its audit. An evaluating replay reconciles the original action key, never a new consequential action.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -8973,6 +8981,14 @@
         {
           "path": "backend/src/operations/automationAdmission.test.ts",
           "marker": "a 4xx after action persistence"
+        },
+        {
+          "path": "backend/src/operations/automationFinalization.local.integration.ts",
+          "marker": "real automation finalization rechecks locked current parents and rolls back links when its required audit fails"
+        },
+        {
+          "path": "backend/src/operations/automationAdmission.test.ts",
+          "marker": "foreign or substituted automation action receipts cannot reach the finalization transaction"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -8983,7 +8999,7 @@
         "d8571ea361a453805958"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -9013,7 +9029,7 @@
         "8d4bf26a3a0a5c932b8a"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [

@@ -454,7 +454,7 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_resources",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     },
     {
       "previousCallerId": "539d0ab8217671b70450",
@@ -464,7 +464,7 @@
       "kind": "RPC_CANDIDATE",
       "target": "complete_operations_action",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     },
     {
       "previousCallerId": "2911d37adf1475f417aa",
@@ -474,7 +474,7 @@
       "kind": "RPC_CANDIDATE",
       "target": "mutate_operations_internal_target",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     },
     {
       "previousCallerId": "31c477708b626e5ae6b1",
@@ -484,7 +484,7 @@
       "kind": "RPC_CANDIDATE",
       "target": "mutate_operations_internal_target",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     },
     {
       "previousCallerId": "8cdd04617aa0332099d0",
@@ -494,7 +494,7 @@
       "kind": "RPC_CANDIDATE",
       "target": "mutate_operations_internal_target",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     },
     {
       "previousCallerId": "7bf8a723f11bf121e654",
@@ -504,7 +504,7 @@
       "kind": "RPC_CANDIDATE",
       "target": "mutate_operations_internal_target",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     },
     {
       "previousCallerId": "632b728acac1574f31ed",
@@ -514,7 +514,7 @@
       "kind": "RPC_CANDIDATE",
       "target": "mutate_operations_internal_target",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     },
     {
       "previousCallerId": "a5e91bac1a6cb8ed6bd0",
@@ -524,7 +524,7 @@
       "kind": "RPC_CANDIDATE",
       "target": "mutate_operations_internal_target",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     },
     {
       "previousCallerId": "777506055ab8972780cc",
@@ -534,7 +534,7 @@
       "kind": "RPC_CANDIDATE",
       "target": "mutate_operations_internal_target",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     },
     {
       "previousCallerId": "9e56a2c47c6fae03a7d4",
@@ -544,7 +544,7 @@
       "kind": "RPC_CANDIDATE",
       "target": "mutate_operations_internal_target",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     },
     {
       "previousCallerId": "06e83cfecb1ce0da5c95",
@@ -554,7 +554,7 @@
       "kind": "RPC_CANDIDATE",
       "target": "mutate_operations_internal_target",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     },
     {
       "previousCallerId": "24a309847f8eca992cc6",
@@ -564,7 +564,7 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_actions",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     },
     {
       "previousCallerId": "7508855b6526c9b0573b",
@@ -574,7 +574,7 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_audit_log",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     },
     {
       "previousCallerId": "4ba0ca7ad1c556cea41b",
@@ -584,7 +584,7 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "production_evidence",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     },
     {
       "previousCallerId": "09ef892d8c2ce312509d",
@@ -594,7 +594,7 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_automation_rules",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     },
     {
       "previousCallerId": "6cc4c8844f6d1a5e575c",
@@ -604,7 +604,7 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_automation_runs",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     },
     {
       "previousCallerId": "8fde4920c7d2097b67bc",
@@ -614,7 +614,7 @@
       "kind": "RPC_CANDIDATE",
       "target": "create_operations_automation_rule",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     },
     {
       "previousCallerId": "101c25c8bf0d04a3d6ee",
@@ -624,7 +624,7 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "operations_automation_rules",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     },
     {
       "previousCallerId": "7d1ab277d5e269727ea1",
@@ -634,33 +634,33 @@
       "kind": "RPC_CANDIDATE",
       "target": "admit_operations_automation_run",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     },
     {
       "previousCallerId": "ca3d605bac7cc0acb742",
-      "currentCallerId": "847701cbbdfc7ce070ec",
+      "currentCallerId": "889de9bf998a6a1b47f0",
       "path": "backend/src/operations/operationsService.ts",
       "enclosing": "evaluateAutomationSignal",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_automation_runs",
+      "kind": "RPC_CANDIDATE",
+      "target": "finalize_operations_automation_run",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     },
     {
       "previousCallerId": "5168c80257e8d4f829be",
-      "currentCallerId": "7201394971e7edb953ff",
+      "currentCallerId": "c316ee518cf610c4056b",
       "path": "backend/src/operations/operationsService.ts",
       "enclosing": "audit",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "production_audit_log",
+      "kind": "RPC_CANDIDATE",
+      "target": "finalize_operations_automation_run",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
-      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source."
+      "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
     }
   ],
   "decisions": [
     {
       "packetId": "B1-P2-037c6eb9107f3736",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "executionStatus": "IN_PROGRESS",
       "finding": "SHARED_READ_OWNERSHIP_MATRIX_PREPARED_NO_PRODUCTION_DEFECT_DEMONSTRATED",
       "originalCriteria": [
@@ -2413,7 +2413,7 @@
     },
     {
       "packetId": "B1-P2-4bd11f790ddabef6",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "executionStatus": "IN_PROGRESS",
       "finding": "POST_CLAIM_INTERNAL_EFFECT_CURRENT_AUTHORITY_AND_ATOMIC_COMPLETION_REPAIRED_PROOF_PENDING",
       "originalCriteria": [
@@ -2441,6 +2441,36 @@
         "Preserve Phase3 grants/budgets/vault and Phase4 egress independently"
       ],
       "rollback": "Do not withdraw current authority or atomic receipts from enabled internal effects. The additive helper and whitelisted RPC can remain installed. Withhold affected internal actions before separately approved withdrawal, preserve original claim/completion and all restrictive grants. No production rollout authorized."
+    },
+    {
+      "packetId": "B1-P2-6504b624f22f69fa",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
+      "executionStatus": "IN_PROGRESS",
+      "finding": "AUTOMATION_CANONICAL_ACTION_LINK_AND_REQUIRED_AUDIT_CURRENT_PARENT_ATOMICITY_REPAIRED_PROOF_PENDING",
+      "originalCriteria": [
+        2,
+        4,
+        10
+      ],
+      "actorTrace": "The only production signal route is authenticated and passes req.userId. Existing access resolves project owner. Rule/run admission is reused. Finalization retains original actor/project/owner/rule/run and exact action receipt, with current authority locks through link plus audit. Existing createAction and its run ID idempotency key remain canonical.",
+      "invariant": "An automation run may link only its current owned rule and the exact same-owner/project/requester action in the run ID namespace. Changed ownership or rule admission denies. The required link and audit are atomic and replay cannot create a second action after an uncertain committed result.",
+      "evidence": [
+        {
+          "path": "backend/src/operations/automationAdmission.test.ts",
+          "type": "EXACT_FOREIGN_ACTION_AND_FINAL_RECEIPT_NEGATIVES_AND_EVALUATING_REPLAY",
+          "result": "PASS"
+        },
+        {
+          "path": "backend/src/operations/automationFinalization.local.integration.ts",
+          "type": "REAL_AUTH_DATABASE_CURRENT_PARENT_RACES_LOST_REPLIES_CONCURRENCY_AUDIT_ROLLBACK_AND_BROWSER_DENIAL",
+          "result": "NOT_EXECUTED"
+        }
+      ],
+      "remaining": [
+        "Run and authenticate exact new-source disposable witnesses and full regression",
+        "Reconcile only original007 caller obligations. Preserve008 grants/budgets,009 custody and010 egress"
+      ],
+      "rollback": "Retain existing admission, restrictive grants and run/action idempotency. Withhold automation signal finalization before separately approved withdrawal. Never restore the demonstrated unguarded link/audit. No production migration authorized."
     }
   ]
 }

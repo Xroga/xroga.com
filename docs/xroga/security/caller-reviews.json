@@ -5491,7 +5491,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "callIds": [
         "dd0917f84f2764fd0472",
         "c841bcae277927c0b193",
@@ -5531,11 +5531,21 @@
             "marker": "browser cannot mint operations membership"
           }
         ]
+      },
+      "previousAutomationLinkSource": {
+        "source": "1d16a2fea8d0e0c173f599712ba12dcacf5dbd8d",
+        "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+        "callIds": [
+          "dd0917f84f2764fd0472",
+          "c841bcae277927c0b193",
+          "7215f4419b9fff60e893"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
       }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "callIds": [
         "cd8790e39c3283f05482"
       ],
@@ -5643,11 +5653,19 @@
           ],
           "disposition": "REVIEWED_GAP"
         }
+      },
+      "previousAutomationLinkSource": {
+        "source": "1d16a2fea8d0e0c173f599712ba12dcacf5dbd8d",
+        "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+        "callIds": [
+          "cd8790e39c3283f05482"
+        ],
+        "disposition": "REVIEWED_GAP"
       }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "callIds": [
         "db901ea4f35f29872b83",
         "62993f74348668414e94",
@@ -5656,11 +5674,11 @@
         "d6f7994c8a29114879a2",
         "8d4b368daaafa2527fdb",
         "1432ffb1661e42ad2afd",
-        "7201394971e7edb953ff"
+        "c316ee518cf610c4056b"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.",
-      "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open.",
+      "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit. The existing automation link and non-action decision audit now invoke a fixed service-only finalization RPC. It reuses admitted-run current actor/project/member/rule locks, checks exact canonical run and action owner/project/requester/run-idempotency relationship, and commits the link with its audit. An evaluating replay reconciles the original action key, never a new consequential action.",
+      "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open. The two demonstrated parent/write and split-audit gaps are repaired locally. Substituted action/receipt denials, replay recovery and SQL rollback pass locally. New real owner/member/rule/run/action lock-wait, lost reply, audit rollback, concurrency and browser tests are prepared but NOT_EXECUTED. No promotion from these tests is authorized.",
       "evidence": [
         {
           "path": "backend/src/operations/operationsService.owner.test.ts",
@@ -5677,10 +5695,18 @@
         {
           "path": "backend/src/operations/internalControlReceipt.test.ts",
           "marker": "single-rule controls reject empty, substituted and duplicate mutation receipts"
+        },
+        {
+          "path": "backend/src/operations/automationFinalization.local.integration.ts",
+          "marker": "real automation finalization rechecks locked current parents and rolls back links when its required audit fails"
+        },
+        {
+          "path": "backend/src/operations/automationAdmission.test.ts",
+          "marker": "foreign or substituted automation action receipts cannot reach the finalization transaction"
         }
       ],
       "structuredOrigin": {
-        "id": "OB-1478ebcda982a717",
+        "id": "OB-f67734cbd9816a80",
         "callIds": [
           "58357b840ab8890eba45",
           "9ea21ff62008b510bd7f",
@@ -5700,7 +5726,7 @@
           "8d4b368daaafa2527fdb",
           "7b6b74d024cad1ca24e0",
           "1432ffb1661e42ad2afd",
-          "7201394971e7edb953ff"
+          "c316ee518cf610c4056b"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -5755,6 +5781,21 @@
           ],
           "disposition": "REVIEWED_GAP"
         }
+      },
+      "previousAutomationLinkSource": {
+        "source": "1d16a2fea8d0e0c173f599712ba12dcacf5dbd8d",
+        "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+        "callIds": [
+          "db901ea4f35f29872b83",
+          "62993f74348668414e94",
+          "ed9a76f66fdce2fa62cb",
+          "251a62ca944e59b4d35c",
+          "d6f7994c8a29114879a2",
+          "8d4b368daaafa2527fdb",
+          "1432ffb1661e42ad2afd",
+          "7201394971e7edb953ff"
+        ],
+        "disposition": "REVIEWED_GAP"
       }
     },
     {
@@ -8633,7 +8674,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "callIds": [
         "823e5f2a3bdf5991cb4d"
       ],
@@ -8669,11 +8710,19 @@
             "marker": "one atomic completion, no fallback persistence or provider retry"
           }
         ]
+      },
+      "previousAutomationLinkSource": {
+        "source": "1d16a2fea8d0e0c173f599712ba12dcacf5dbd8d",
+        "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+        "callIds": [
+          "823e5f2a3bdf5991cb4d"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
       }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "callIds": [
         "f175f84e5afd902c17c0"
       ],
@@ -8797,6 +8846,14 @@
           "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
           "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
         }
+      },
+      "previousAutomationLinkSource": {
+        "source": "1d16a2fea8d0e0c173f599712ba12dcacf5dbd8d",
+        "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+        "callIds": [
+          "f175f84e5afd902c17c0"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
       }
     },
     {
@@ -8821,7 +8878,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "callIds": [
         "ed0903282a7144871281"
       ],
@@ -8857,11 +8914,19 @@
             "marker": "approval delegates one role-bound transaction and rejects changed or uncertain receipts"
           }
         ]
+      },
+      "previousAutomationLinkSource": {
+        "source": "1d16a2fea8d0e0c173f599712ba12dcacf5dbd8d",
+        "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+        "callIds": [
+          "ed0903282a7144871281"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
       }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "callIds": [
         "00aea7c9a2f2d60601a1"
       ],
@@ -8889,11 +8954,19 @@
             "marker": "registerActionConfirmationTests"
           }
         ]
+      },
+      "previousAutomationLinkSource": {
+        "source": "1d16a2fea8d0e0c173f599712ba12dcacf5dbd8d",
+        "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+        "callIds": [
+          "00aea7c9a2f2d60601a1"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
       }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "callIds": [
         "e1b151df5a5cc43046f5"
       ],
@@ -8921,11 +8994,19 @@
             "marker": "registerActionAdmissionTests"
           }
         ]
+      },
+      "previousAutomationLinkSource": {
+        "source": "1d16a2fea8d0e0c173f599712ba12dcacf5dbd8d",
+        "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+        "callIds": [
+          "e1b151df5a5cc43046f5"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
       }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "callIds": [
         "3511bf786d2e1a877754"
       ],
@@ -8961,6 +9042,14 @@
             "marker": "real project-wide automation control increments each version"
           }
         ]
+      },
+      "previousAutomationLinkSource": {
+        "source": "1d16a2fea8d0e0c173f599712ba12dcacf5dbd8d",
+        "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+        "callIds": [
+          "3511bf786d2e1a877754"
+        ],
+        "disposition": "REVIEWED_GAP"
       }
     },
     {
@@ -9001,7 +9090,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "callIds": [
         "6abbcd4bdc2a8835113a"
       ],
@@ -9037,11 +9126,19 @@
             "marker": "real concurrent action creation preserves one actor plan"
           }
         ]
+      },
+      "previousAutomationLinkSource": {
+        "source": "1d16a2fea8d0e0c173f599712ba12dcacf5dbd8d",
+        "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+        "callIds": [
+          "6abbcd4bdc2a8835113a"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
       }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "callIds": [
         "67ddc3c9a3c2badcee94"
       ],
@@ -9077,17 +9174,25 @@
             "marker": "uncertain action creation or linking preserves admission"
           }
         ]
+      },
+      "previousAutomationLinkSource": {
+        "source": "1d16a2fea8d0e0c173f599712ba12dcacf5dbd8d",
+        "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+        "callIds": [
+          "67ddc3c9a3c2badcee94"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
       }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "callIds": [
-        "847701cbbdfc7ce070ec"
+        "889de9bf998a6a1b47f0"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "After exact service-only admission, the existing action creator receives the stable run UUID key. Linking updates only the admitted owner/rule/digest/run in evaluating state with no action, then verifies its returned identity and action/status. No replay executes another action.",
-      "reason": "Eight focused admission/intent tests pass. Empty or substituted link receipts and every unreturned action outcome, including4xx after possible queued-action persistence, preserve pending admission and return typed503 without falsely recording failure or retrying. Link remains separate from action creation and final audit. Crash reconciliation, post-admission current-rule/actor authority and parent lifecycle races remain unresolved. This write is reviewed but not security-certified.",
+      "authority": "After exact service-only admission, the existing action creator receives the stable run UUID key. Linking updates only the admitted owner/rule/digest/run in evaluating state with no action, then verifies its returned identity and action/status. No replay executes another action. The existing automation link and non-action decision audit now invoke a fixed service-only finalization RPC. It reuses admitted-run current actor/project/member/rule locks, checks exact canonical run and action owner/project/requester/run-idempotency relationship, and commits the link with its audit. An evaluating replay reconciles the original action key, never a new consequential action.",
+      "reason": "Eight focused admission/intent tests pass. Empty or substituted link receipts and every unreturned action outcome, including4xx after possible queued-action persistence, preserve pending admission and return typed503 without falsely recording failure or retrying. Link remains separate from action creation and final audit. Crash reconciliation, post-admission current-rule/actor authority and parent lifecycle races remain unresolved. This write is reviewed but not security-certified. The two demonstrated parent/write and split-audit gaps are repaired locally. Substituted action/receipt denials, replay recovery and SQL rollback pass locally. New real owner/member/rule/run/action lock-wait, lost reply, audit rollback, concurrency and browser tests are prepared but NOT_EXECUTED. No promotion from these tests is authorized.",
       "evidence": [
         {
           "path": "backend/src/operations/automationAdmission.test.ts",
@@ -9096,6 +9201,14 @@
         {
           "path": "backend/src/operations/automationAdmission.test.ts",
           "marker": "a 4xx after action persistence"
+        },
+        {
+          "path": "backend/src/operations/automationFinalization.local.integration.ts",
+          "marker": "real automation finalization rechecks locked current parents and rolls back links when its required audit fails"
+        },
+        {
+          "path": "backend/src/operations/automationAdmission.test.ts",
+          "marker": "foreign or substituted automation action receipts cannot reach the finalization transaction"
         }
       ],
       "historicalInternalEffectReview": {
@@ -9117,11 +9230,19 @@
             "marker": "a 4xx after action persistence"
           }
         ]
+      },
+      "previousAutomationLinkSource": {
+        "source": "1d16a2fea8d0e0c173f599712ba12dcacf5dbd8d",
+        "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+        "callIds": [
+          "847701cbbdfc7ce070ec"
+        ],
+        "disposition": "REVIEWED_GAP"
       }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "callIds": [
         "d8571ea361a453805958"
       ],
@@ -9157,11 +9278,19 @@
             "marker": "automation creation rejects substituted missing and duplicate receipts"
           }
         ]
+      },
+      "previousAutomationLinkSource": {
+        "source": "1d16a2fea8d0e0c173f599712ba12dcacf5dbd8d",
+        "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+        "callIds": [
+          "d8571ea361a453805958"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
       }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "callIds": [
         "8d4bf26a3a0a5c932b8a"
       ],
@@ -9197,6 +9326,14 @@
             "marker": "registerVerificationTargetTests"
           }
         ]
+      },
+      "previousAutomationLinkSource": {
+        "source": "1d16a2fea8d0e0c173f599712ba12dcacf5dbd8d",
+        "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+        "callIds": [
+          "8d4bf26a3a0a5c932b8a"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
       }
     },
     {
@@ -9673,7 +9810,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "callIds": [
         "e99258e8fe888ab954f2",
         "2c208df1de69d1f07815",
@@ -9983,11 +10120,47 @@
           ],
           "disposition": "REVIEWED_GAP"
         }
+      },
+      "previousAutomationLinkSource": {
+        "source": "1d16a2fea8d0e0c173f599712ba12dcacf5dbd8d",
+        "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+        "callIds": [
+          "e99258e8fe888ab954f2",
+          "2c208df1de69d1f07815",
+          "7b8df2255ca0983e614a",
+          "09bb9c60fbd0fd04be96",
+          "5787838213972784b847",
+          "5c17851ca38b07bb7ffb",
+          "2888bfffa0c836cfe4d0",
+          "6c91bf08973230eae654",
+          "209cb80277f955a0b2ef",
+          "049ee8c1e87f4ac7f5d8",
+          "6f59ac6dda85bb3fbb9c",
+          "b44752820b98684f3403",
+          "cad9b3cf4560fbd519a6",
+          "80f60224ace1fcf16149",
+          "67c858caffe8cc6b8a2d",
+          "15864a27c46a501fafd1",
+          "230afc26fd02a5f73e5c",
+          "1482b8a9c1d9ae835bdb",
+          "267d14135fb3bd1d98a1",
+          "42fc90e399eed5c0de97",
+          "044cf8649bf888fbbc93",
+          "b499a6018afaf6b8b490",
+          "2623d45568826e06288e",
+          "af2e0acf3186708a5107",
+          "e9b9cdd86cd68f7e67a2",
+          "d4c63bed6343238269db",
+          "45a30098dbb7ff275b41",
+          "2191a3a351b0999fd707",
+          "5412270a1f23caa82419"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
       }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "callIds": [
         "0541a105ff0d867f7ea6",
         "7b6b74d024cad1ca24e0"
@@ -10059,7 +10232,7 @@
         "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
       },
       "structuredOrigin": {
-        "id": "OB-1478ebcda982a717",
+        "id": "OB-f67734cbd9816a80",
         "callIds": [
           "58357b840ab8890eba45",
           "9ea21ff62008b510bd7f",
@@ -10079,7 +10252,7 @@
           "8d4b368daaafa2527fdb",
           "7b6b74d024cad1ca24e0",
           "1432ffb1661e42ad2afd",
-          "7201394971e7edb953ff"
+          "c316ee518cf610c4056b"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -10207,6 +10380,15 @@
           ],
           "disposition": "REVIEWED_GAP"
         }
+      },
+      "previousAutomationLinkSource": {
+        "source": "1d16a2fea8d0e0c173f599712ba12dcacf5dbd8d",
+        "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+        "callIds": [
+          "0541a105ff0d867f7ea6",
+          "7b6b74d024cad1ca24e0"
+        ],
+        "disposition": "REVIEWED_GAP"
       }
     },
     {
@@ -10803,7 +10985,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "callIds": [
         "9fc45d30478dc34f0ea6",
         "1087d778492ba0d90fe8"
@@ -10822,7 +11004,7 @@
         }
       ],
       "structuredOrigin": {
-        "id": "OB-1478ebcda982a717",
+        "id": "OB-f67734cbd9816a80",
         "callIds": [
           "58357b840ab8890eba45",
           "9ea21ff62008b510bd7f",
@@ -10842,7 +11024,7 @@
           "8d4b368daaafa2527fdb",
           "7b6b74d024cad1ca24e0",
           "1432ffb1661e42ad2afd",
-          "7201394971e7edb953ff"
+          "c316ee518cf610c4056b"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -11047,6 +11229,15 @@
           "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
           "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
         }
+      },
+      "previousAutomationLinkSource": {
+        "source": "1d16a2fea8d0e0c173f599712ba12dcacf5dbd8d",
+        "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+        "callIds": [
+          "9fc45d30478dc34f0ea6",
+          "1087d778492ba0d90fe8"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
       }
     },
     {
@@ -11371,7 +11562,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "callIds": [
         "58357b840ab8890eba45",
         "9ea21ff62008b510bd7f",
@@ -11467,7 +11658,7 @@
         "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
       },
       "structuredOrigin": {
-        "id": "OB-1478ebcda982a717",
+        "id": "OB-f67734cbd9816a80",
         "callIds": [
           "58357b840ab8890eba45",
           "9ea21ff62008b510bd7f",
@@ -11487,7 +11678,7 @@
           "8d4b368daaafa2527fdb",
           "7b6b74d024cad1ca24e0",
           "1432ffb1661e42ad2afd",
-          "7201394971e7edb953ff"
+          "c316ee518cf610c4056b"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -11615,6 +11806,20 @@
           ],
           "disposition": "REVIEWED_GAP"
         }
+      },
+      "previousAutomationLinkSource": {
+        "source": "1d16a2fea8d0e0c173f599712ba12dcacf5dbd8d",
+        "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+        "callIds": [
+          "58357b840ab8890eba45",
+          "9ea21ff62008b510bd7f",
+          "b88fc4f8215d76b34ea8",
+          "82752ae689b24bd04b63",
+          "fd2a647124264e9a2f63",
+          "9cd0878995ac81bc7fa1",
+          "0790e2862f113cd5cb2a"
+        ],
+        "disposition": "SCOPED_BOUNDARY"
       }
     }
   ]

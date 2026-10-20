@@ -13,6 +13,7 @@ import {registerUniversalOwnerReadTests} from './universalOwnerReads.local.integ
 import {registerDeliveryEvidenceReadTests} from './deliveryEvidenceRead.local.integration.js';
 import {registerLegacyBuildHistoryTests} from './legacyBuildHistory.local.integration.js';
 import {registerInternalEffectTests} from '../operations/internalEffect.local.integration.js';
+import {registerAutomationFinalizationTests} from '../operations/automationFinalization.local.integration.js';
 import billingWebhookRouter from '../routes/billingWebhook.js';
 import { createClient } from '@supabase/supabase-js';
 import { createTenantContext, type TenantContext } from './tenantContext.js';
@@ -198,6 +199,7 @@ registerUniversalOwnerReadTests(admin,()=>users);
 registerDeliveryEvidenceReadTests(admin,request);
 registerLegacyBuildHistoryTests(admin,()=>users);
 registerInternalEffectTests(admin,request);
+registerAutomationFinalizationTests(admin,()=>users);
 registerVercelRefreshAccountTests(admin,request);
 async function request(path:string,token?:string,method='GET',body?:unknown) {
   return fetch(`${api}${path}`,{method,headers:{...(token?{Authorization:`Bearer ${token}`} : {}),'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});

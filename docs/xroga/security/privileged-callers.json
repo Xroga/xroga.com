@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "c46835bc6f4f1c1e4cbd6a11d37c05126415b1365f402e716fd49cd0d4e436d4",
+  "reviewRegistrySha256": "e6aa85778f7a5bbd801b901ca646dbcd0e363fc5008c21764499d7124e795de5",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -9,7 +9,7 @@
     "rlsEnabled": 118,
     "privilegedFactorySites": 161,
     "persistenceCandidates": 639,
-    "ownerPredicateCandidates": 144,
+    "ownerPredicateCandidates": 143,
     "reviewRequired": 0,
     "reviewedCandidates": 639,
     "unresolvedSafetyCandidates": 38,
@@ -404,7 +404,7 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-1478ebcda982a717"
+        "id": "OB-f67734cbd9816a80"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -736,7 +736,7 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-828f5683d5fdf967"
+        "id": "OB-26a4b6619d4d6464"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -856,11 +856,11 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "847701cbbdfc7ce070ec"
+        "id": "889de9bf998a6a1b47f0"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "7201394971e7edb953ff"
+        "id": "c316ee518cf610c4056b"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6985,7 +6985,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
         "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
@@ -7010,7 +7010,7 @@
       "target": "projects",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "Inspected authenticated route mounting, project access resolution and the persisted profiles role. Project identity is fetched by exact ID; a non-owner/non-admin must have membership matching both the current parent owner and authenticated member. Injected clients do not supply request actor identity.",
         "reason": "This certifies only these three lookup boundaries, not the entire service or concurrent revocation. Existing platform admin access remains deliberately broader than founder access. The real API membership/revocation and forged-parent tests exercise this distinction.",
@@ -7035,7 +7035,7 @@
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "Inspected authenticated route mounting, project access resolution and the persisted profiles role. Project identity is fetched by exact ID; a non-owner/non-admin must have membership matching both the current parent owner and authenticated member. Injected clients do not supply request actor identity.",
         "reason": "This certifies only these three lookup boundaries, not the entire service or concurrent revocation. Existing platform admin access remains deliberately broader than founder access. The real API membership/revocation and forged-parent tests exercise this distinction.",
@@ -7060,7 +7060,7 @@
       "target": "operations_memberships",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "Inspected authenticated route mounting, project access resolution and the persisted profiles role. Project identity is fetched by exact ID; a non-owner/non-admin must have membership matching both the current parent owner and authenticated member. Injected clients do not supply request actor identity.",
         "reason": "This certifies only these three lookup boundaries, not the entire service or concurrent revocation. Existing platform admin access remains deliberately broader than founder access. The real API membership/revocation and forged-parent tests exercise this distinction.",
@@ -7085,7 +7085,7 @@
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7110,7 +7110,7 @@
       "target": "operations_memberships",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7135,7 +7135,7 @@
       "target": "projects",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7160,7 +7160,7 @@
       "target": "operations_environments",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7185,7 +7185,7 @@
       "target": "operations_resources",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7210,7 +7210,7 @@
       "target": "production_incidents",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7235,7 +7235,7 @@
       "target": "operations_alerts",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7260,7 +7260,7 @@
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7285,7 +7285,7 @@
       "target": "deployment_status",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7310,7 +7310,7 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7335,7 +7335,7 @@
       "target": "operations_environments",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7360,7 +7360,7 @@
       "target": "operations_resources",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7385,7 +7385,7 @@
       "target": "production_releases",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7410,7 +7410,7 @@
       "target": "deployment_status",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7435,7 +7435,7 @@
       "target": "production_incidents",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7460,7 +7460,7 @@
       "target": "operations_alerts",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7485,7 +7485,7 @@
       "target": "operations_actions",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7510,7 +7510,7 @@
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7535,7 +7535,7 @@
       "target": "swarm_job_queue",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7560,7 +7560,7 @@
       "target": "webhook_deliveries",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7585,7 +7585,7 @@
       "target": "operations_maintenance_windows",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7610,7 +7610,7 @@
       "target": "operations_resources",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7635,7 +7635,7 @@
       "target": "operations_config_checks",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7660,7 +7660,7 @@
       "target": "operations_slo_snapshots",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7685,7 +7685,7 @@
       "target": "operations_environments",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The sole external operations router is auth-mounted and passes req.userId. Growth and automation callers retain that same verified actor, not a persisted action requester supplied by the browser. access derives current project owner and canonical role. Creation environment/maintenance reads are exact project/owner and remain internal. Other selected action reads use requested ID internally, then compare persisted action owner against current project owner before any return or effect. Approvals are exact action/owner, canonical role and pending state. Confirm requires the original requester. Existing decisive service-only create/approve/confirm/claim transactions recheck their current locked parent/actor/plan and receipt before proceeding. No selected preflight row is exposed on forbidden ownership.\nexecuteInternal is a private callback registered only on this OperationsService internal adapter. Its sole invocation follows executeAction current project/actor authorization, canonical definition/target/plan checks and the separately proven admitted claim. The adapter input overwrites any execution-plan userId, actorId, projectId, targetId and version with the checked server action/owner. These selected two updates use exact target ID, project, owner, expected version/attempt and eligible state. No provider request is performed by these mutations. Completion retains the same exact admitted plan and owner receipt.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Seven exact preliminary persistence reads across four existing methods, not their entire shared service. Actual real service cases reach current-role, environment, maintenance and plan lock boundaries and demonstrate allowed completion plus denial/rollback. The misbound action API case separately denies execute/confirm/approve without exposing its canary or changing the row. The post-empty-claim fallback, adapter effects, dynamic target selector, generic audit, complete product/portfolio reads and shared constructor remain open. Existing separately accepted transactional RPC proof is retained.\nOnly the existing job-retry and growth-campaign-approval table calls. Real HTTP owner job retry changes exactly the owned queued/attempt state while a project-limited member cannot target another project and leaves both denied records unchanged. Real campaign seed uses the actual approved action and executeAction, persists its owned pending-to-running version, then delivery verifies that canonical action. The separate misbound-action API case denies before either private effect and leaves exact rows unchanged. No certificate is inferred for incident/webhook/maintenance/automation adapters, post-claim revocation semantics,008 authority or external effects. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7710,7 +7710,7 @@
       "target": "operations_maintenance_windows",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The sole external operations router is auth-mounted and passes req.userId. Growth and automation callers retain that same verified actor, not a persisted action requester supplied by the browser. access derives current project owner and canonical role. Creation environment/maintenance reads are exact project/owner and remain internal. Other selected action reads use requested ID internally, then compare persisted action owner against current project owner before any return or effect. Approvals are exact action/owner, canonical role and pending state. Confirm requires the original requester. Existing decisive service-only create/approve/confirm/claim transactions recheck their current locked parent/actor/plan and receipt before proceeding. No selected preflight row is exposed on forbidden ownership.\nexecuteInternal is a private callback registered only on this OperationsService internal adapter. Its sole invocation follows executeAction current project/actor authorization, canonical definition/target/plan checks and the separately proven admitted claim. The adapter input overwrites any execution-plan userId, actorId, projectId, targetId and version with the checked server action/owner. These selected two updates use exact target ID, project, owner, expected version/attempt and eligible state. No provider request is performed by these mutations. Completion retains the same exact admitted plan and owner receipt.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Seven exact preliminary persistence reads across four existing methods, not their entire shared service. Actual real service cases reach current-role, environment, maintenance and plan lock boundaries and demonstrate allowed completion plus denial/rollback. The misbound action API case separately denies execute/confirm/approve without exposing its canary or changing the row. The post-empty-claim fallback, adapter effects, dynamic target selector, generic audit, complete product/portfolio reads and shared constructor remain open. Existing separately accepted transactional RPC proof is retained.\nOnly the existing job-retry and growth-campaign-approval table calls. Real HTTP owner job retry changes exactly the owned queued/attempt state while a project-limited member cannot target another project and leaves both denied records unchanged. Real campaign seed uses the actual approved action and executeAction, persists its owned pending-to-running version, then delivery verifies that canonical action. The separate misbound-action API case denies before either private effect and leaves exact rows unchanged. No certificate is inferred for incident/webhook/maintenance/automation adapters, post-claim revocation semantics,008 authority or external effects. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7735,7 +7735,7 @@
       "target": "create_operations_action",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "Authenticated actor and canonical action definitions supply immutable intent, allowed roles and confirmation/approval policy. Service-only create transaction locks current actor/project/member/environment and existing maintenance rows, uses database admission time, and atomically persists action, optional approval and redacted immutable audit. Exact same-intent replay is explicitly reported and cannot confirm or execute.",
         "reason": "Creation persistence boundary VERIFIED at eb73e9e7ffe5181d7417beb6a8145e2ad39831fa, disposable39120329897:106 fresh/upgrade migrations,140 security tests and3 browser tests pass with zero failures/skips. Actual held membership/environment changes, maintenance start while waiting, all three write rollbacks, concurrent immutable replay and browser-role denial pass. Invocation, SQL and fixture are unchanged. Only atomic creation persistence is closed. Mutable target admission, concurrent new maintenance windows, external effects and full operations lifecycle remain unresolved. No whole caller certification.",
@@ -7760,7 +7760,7 @@
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The sole external operations router is auth-mounted and passes req.userId. Growth and automation callers retain that same verified actor, not a persisted action requester supplied by the browser. access derives current project owner and canonical role. Creation environment/maintenance reads are exact project/owner and remain internal. Other selected action reads use requested ID internally, then compare persisted action owner against current project owner before any return or effect. Approvals are exact action/owner, canonical role and pending state. Confirm requires the original requester. Existing decisive service-only create/approve/confirm/claim transactions recheck their current locked parent/actor/plan and receipt before proceeding. No selected preflight row is exposed on forbidden ownership.\nexecuteInternal is a private callback registered only on this OperationsService internal adapter. Its sole invocation follows executeAction current project/actor authorization, canonical definition/target/plan checks and the separately proven admitted claim. The adapter input overwrites any execution-plan userId, actorId, projectId, targetId and version with the checked server action/owner. These selected two updates use exact target ID, project, owner, expected version/attempt and eligible state. No provider request is performed by these mutations. Completion retains the same exact admitted plan and owner receipt.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Seven exact preliminary persistence reads across four existing methods, not their entire shared service. Actual real service cases reach current-role, environment, maintenance and plan lock boundaries and demonstrate allowed completion plus denial/rollback. The misbound action API case separately denies execute/confirm/approve without exposing its canary or changing the row. The post-empty-claim fallback, adapter effects, dynamic target selector, generic audit, complete product/portfolio reads and shared constructor remain open. Existing separately accepted transactional RPC proof is retained.\nOnly the existing job-retry and growth-campaign-approval table calls. Real HTTP owner job retry changes exactly the owned queued/attempt state while a project-limited member cannot target another project and leaves both denied records unchanged. Real campaign seed uses the actual approved action and executeAction, persists its owned pending-to-running version, then delivery verifies that canonical action. The separate misbound-action API case denies before either private effect and leaves exact rows unchanged. No certificate is inferred for incident/webhook/maintenance/automation adapters, post-claim revocation semantics,008 authority or external effects. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7785,7 +7785,7 @@
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The sole external operations router is auth-mounted and passes req.userId. Growth and automation callers retain that same verified actor, not a persisted action requester supplied by the browser. access derives current project owner and canonical role. Creation environment/maintenance reads are exact project/owner and remain internal. Other selected action reads use requested ID internally, then compare persisted action owner against current project owner before any return or effect. Approvals are exact action/owner, canonical role and pending state. Confirm requires the original requester. Existing decisive service-only create/approve/confirm/claim transactions recheck their current locked parent/actor/plan and receipt before proceeding. No selected preflight row is exposed on forbidden ownership.\nexecuteInternal is a private callback registered only on this OperationsService internal adapter. Its sole invocation follows executeAction current project/actor authorization, canonical definition/target/plan checks and the separately proven admitted claim. The adapter input overwrites any execution-plan userId, actorId, projectId, targetId and version with the checked server action/owner. These selected two updates use exact target ID, project, owner, expected version/attempt and eligible state. No provider request is performed by these mutations. Completion retains the same exact admitted plan and owner receipt.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Seven exact preliminary persistence reads across four existing methods, not their entire shared service. Actual real service cases reach current-role, environment, maintenance and plan lock boundaries and demonstrate allowed completion plus denial/rollback. The misbound action API case separately denies execute/confirm/approve without exposing its canary or changing the row. The post-empty-claim fallback, adapter effects, dynamic target selector, generic audit, complete product/portfolio reads and shared constructor remain open. Existing separately accepted transactional RPC proof is retained.\nOnly the existing job-retry and growth-campaign-approval table calls. Real HTTP owner job retry changes exactly the owned queued/attempt state while a project-limited member cannot target another project and leaves both denied records unchanged. Real campaign seed uses the actual approved action and executeAction, persists its owned pending-to-running version, then delivery verifies that canonical action. The separate misbound-action API case denies before either private effect and leaves exact rows unchanged. No certificate is inferred for incident/webhook/maintenance/automation adapters, post-claim revocation semantics,008 authority or external effects. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7810,7 +7810,7 @@
       "target": "decide_operations_action_approval",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "Authenticated operations route supplies actor/action/validated decision and reason. Existing service derives required role from ACTION_DEFINITIONS, never from request body. Service-only transaction locks current actor profile/project/membership, exact action intent and pending approval, checks requester separation, role, confirmation, version/digest and DB expiry, then atomically writes approval/action/audit.",
         "reason": "Fixed approval-decision transaction VERIFIED at2e752b76f2d1932ea8e3e3543644b137efac79fa, disposable39117021162: actual held membership revocation, competing decisions, all three write rollbacks, browser-role denial and rejection without execution pass. SQL and fixture are unchanged from that source. Focused receipt/error tests and24 local SQL assertions/replay also pass. Only this atomic current-role approval boundary is closed. Creation atomicity, mutable target and full execution/provider lifecycle remain unresolved. No whole caller or Command008 certification.",
@@ -7835,7 +7835,7 @@
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The sole external operations router is auth-mounted and passes req.userId. Growth and automation callers retain that same verified actor, not a persisted action requester supplied by the browser. access derives current project owner and canonical role. Creation environment/maintenance reads are exact project/owner and remain internal. Other selected action reads use requested ID internally, then compare persisted action owner against current project owner before any return or effect. Approvals are exact action/owner, canonical role and pending state. Confirm requires the original requester. Existing decisive service-only create/approve/confirm/claim transactions recheck their current locked parent/actor/plan and receipt before proceeding. No selected preflight row is exposed on forbidden ownership.\nexecuteInternal is a private callback registered only on this OperationsService internal adapter. Its sole invocation follows executeAction current project/actor authorization, canonical definition/target/plan checks and the separately proven admitted claim. The adapter input overwrites any execution-plan userId, actorId, projectId, targetId and version with the checked server action/owner. These selected two updates use exact target ID, project, owner, expected version/attempt and eligible state. No provider request is performed by these mutations. Completion retains the same exact admitted plan and owner receipt.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Seven exact preliminary persistence reads across four existing methods, not their entire shared service. Actual real service cases reach current-role, environment, maintenance and plan lock boundaries and demonstrate allowed completion plus denial/rollback. The misbound action API case separately denies execute/confirm/approve without exposing its canary or changing the row. The post-empty-claim fallback, adapter effects, dynamic target selector, generic audit, complete product/portfolio reads and shared constructor remain open. Existing separately accepted transactional RPC proof is retained.\nOnly the existing job-retry and growth-campaign-approval table calls. Real HTTP owner job retry changes exactly the owned queued/attempt state while a project-limited member cannot target another project and leaves both denied records unchanged. Real campaign seed uses the actual approved action and executeAction, persists its owned pending-to-running version, then delivery verifies that canonical action. The separate misbound-action API case denies before either private effect and leaves exact rows unchanged. No certificate is inferred for incident/webhook/maintenance/automation adapters, post-claim revocation semantics,008 authority or external effects. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7860,7 +7860,7 @@
       "target": "confirm_operations_action",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "Authenticated requester and canonical action definitions supply role permissions. Service-only confirmation RPC locks current actor/project/membership and exact confirmation-required action intent before atomically recording confirmation, optional approval request and immutable audit. Server derives allowed roles from existing permission map, never request input.",
         "reason": "Fixed confirmation transaction VERIFIED at2e752b76f2d1932ea8e3e3543644b137efac79fa, disposable39117021162: actual held-plan mutation, competing confirmations, all three write rollbacks and browser-role denial pass. SQL and fixture are unchanged from that source. Focused exact receipt/input tests and29 local SQL assertions/replay also pass. Only atomic requester/intent confirmation and optional approval creation is closed. Creation atomicity, mutable target admission and provider recovery remain unresolved. No whole caller certification.",
@@ -7881,7 +7881,7 @@
       "target": "production_releases",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "currentTargetVersion is private to createAction after canonical access and executeAction after canonical access plus action owner equality. Its dynamic table and key/version fields come from a fixed server lookup map, never request SQL identifiers. Every selected target query applies the original action project and owner, using tenant_id only for growth campaigns. Releases additionally validate the exact returned id/user/project. No selected raw target row is returned. The post-empty-claim action read does not return a changed or foreign record: it returns only verified status with the same exact previously admitted owner/project/requester/type/target/version/key/digest/plan/max-attempt tuple. Otherwise execution fails with conflict before an adapter.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original private target/replay read sites only, no source changes. Existing actual release/deployment fixtures preserve a legitimate release-manager membership, reject foreign targets and admit the exact owned drafts without adapter runs. Actual owned automation target executes once, verified replay returns the same receipt and foreign replay denies. Existing misbound persisted action denial preserves private receipts and authority. Dynamic lookup SQL is fixed and owner/project-filtered at the same caller. This does not certify remaining internal mutation adapters or create a post-admission authority policy. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
@@ -7906,7 +7906,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "currentTargetVersion is private to createAction after canonical access and executeAction after canonical access plus action owner equality. Its dynamic table and key/version fields come from a fixed server lookup map, never request SQL identifiers. Every selected target query applies the original action project and owner, using tenant_id only for growth campaigns. Releases additionally validate the exact returned id/user/project. No selected raw target row is returned. The post-empty-claim action read does not return a changed or foreign record: it returns only verified status with the same exact previously admitted owner/project/requester/type/target/version/key/digest/plan/max-attempt tuple. Otherwise execution fails with conflict before an adapter.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original private target/replay read sites only, no source changes. Existing actual release/deployment fixtures preserve a legitimate release-manager membership, reject foreign targets and admit the exact owned drafts without adapter runs. Actual owned automation target executes once, verified replay returns the same receipt and foreign replay denies. Existing misbound persisted action denial preserves private receipts and authority. Dynamic lookup SQL is fixed and owner/project-filtered at the same caller. This does not certify remaining internal mutation adapters or create a post-admission authority policy. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
@@ -7931,7 +7931,7 @@
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The sole external operations router is auth-mounted and passes req.userId. Growth and automation callers retain that same verified actor, not a persisted action requester supplied by the browser. access derives current project owner and canonical role. Creation environment/maintenance reads are exact project/owner and remain internal. Other selected action reads use requested ID internally, then compare persisted action owner against current project owner before any return or effect. Approvals are exact action/owner, canonical role and pending state. Confirm requires the original requester. Existing decisive service-only create/approve/confirm/claim transactions recheck their current locked parent/actor/plan and receipt before proceeding. No selected preflight row is exposed on forbidden ownership.\nexecuteInternal is a private callback registered only on this OperationsService internal adapter. Its sole invocation follows executeAction current project/actor authorization, canonical definition/target/plan checks and the separately proven admitted claim. The adapter input overwrites any execution-plan userId, actorId, projectId, targetId and version with the checked server action/owner. These selected two updates use exact target ID, project, owner, expected version/attempt and eligible state. No provider request is performed by these mutations. Completion retains the same exact admitted plan and owner receipt.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Seven exact preliminary persistence reads across four existing methods, not their entire shared service. Actual real service cases reach current-role, environment, maintenance and plan lock boundaries and demonstrate allowed completion plus denial/rollback. The misbound action API case separately denies execute/confirm/approve without exposing its canary or changing the row. The post-empty-claim fallback, adapter effects, dynamic target selector, generic audit, complete product/portfolio reads and shared constructor remain open. Existing separately accepted transactional RPC proof is retained.\nOnly the existing job-retry and growth-campaign-approval table calls. Real HTTP owner job retry changes exactly the owned queued/attempt state while a project-limited member cannot target another project and leaves both denied records unchanged. Real campaign seed uses the actual approved action and executeAction, persists its owned pending-to-running version, then delivery verifies that canonical action. The separate misbound-action API case denies before either private effect and leaves exact rows unchanged. No certificate is inferred for incident/webhook/maintenance/automation adapters, post-claim revocation semantics,008 authority or external effects. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7956,7 +7956,7 @@
       "target": "operations_action_approvals",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The sole external operations router is auth-mounted and passes req.userId. Growth and automation callers retain that same verified actor, not a persisted action requester supplied by the browser. access derives current project owner and canonical role. Creation environment/maintenance reads are exact project/owner and remain internal. Other selected action reads use requested ID internally, then compare persisted action owner against current project owner before any return or effect. Approvals are exact action/owner, canonical role and pending state. Confirm requires the original requester. Existing decisive service-only create/approve/confirm/claim transactions recheck their current locked parent/actor/plan and receipt before proceeding. No selected preflight row is exposed on forbidden ownership.\nexecuteInternal is a private callback registered only on this OperationsService internal adapter. Its sole invocation follows executeAction current project/actor authorization, canonical definition/target/plan checks and the separately proven admitted claim. The adapter input overwrites any execution-plan userId, actorId, projectId, targetId and version with the checked server action/owner. These selected two updates use exact target ID, project, owner, expected version/attempt and eligible state. No provider request is performed by these mutations. Completion retains the same exact admitted plan and owner receipt.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Seven exact preliminary persistence reads across four existing methods, not their entire shared service. Actual real service cases reach current-role, environment, maintenance and plan lock boundaries and demonstrate allowed completion plus denial/rollback. The misbound action API case separately denies execute/confirm/approve without exposing its canary or changing the row. The post-empty-claim fallback, adapter effects, dynamic target selector, generic audit, complete product/portfolio reads and shared constructor remain open. Existing separately accepted transactional RPC proof is retained.\nOnly the existing job-retry and growth-campaign-approval table calls. Real HTTP owner job retry changes exactly the owned queued/attempt state while a project-limited member cannot target another project and leaves both denied records unchanged. Real campaign seed uses the actual approved action and executeAction, persists its owned pending-to-running version, then delivery verifies that canonical action. The separate misbound-action API case denies before either private effect and leaves exact rows unchanged. No certificate is inferred for incident/webhook/maintenance/automation adapters, post-claim revocation semantics,008 authority or external effects. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -7981,7 +7981,7 @@
       "target": "claim_operations_action_admitted",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "Authenticated actor and canonical action definitions supply execution permission roles, confirmation requirement and approval role. Service-only admission locks current actor/project/member, exact action intent/state/attempt, current approved receipt and current approver role before reusing the original lease/retry function.",
         "reason": "Fixed current-authority claim admission VERIFIED at2e752b76f2d1932ea8e3e3543644b137efac79fa, disposable39117021162: actual held actor and approver revocation, intervening plan mutation, approval expiry while blocked, competing claim exclusion and browser-role denial pass before adapter effects. SQL and fixture are unchanged from that source. Focused exact receipt/error tests and29 local SQL assertions/replay also pass. Only transactional admission before the existing lease function is closed. Mutable target admission, legacy raw service-role RPC access and post-claim effects/recovery remain unresolved. No whole caller certification.",
@@ -8002,7 +8002,7 @@
       "target": "operations_actions",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "currentTargetVersion is private to createAction after canonical access and executeAction after canonical access plus action owner equality. Its dynamic table and key/version fields come from a fixed server lookup map, never request SQL identifiers. Every selected target query applies the original action project and owner, using tenant_id only for growth campaigns. Releases additionally validate the exact returned id/user/project. No selected raw target row is returned. The post-empty-claim action read does not return a changed or foreign record: it returns only verified status with the same exact previously admitted owner/project/requester/type/target/version/key/digest/plan/max-attempt tuple. Otherwise execution fails with conflict before an adapter.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original private target/replay read sites only, no source changes. Existing actual release/deployment fixtures preserve a legitimate release-manager membership, reject foreign targets and admit the exact owned drafts without adapter runs. Actual owned automation target executes once, verified replay returns the same receipt and foreign replay denies. Existing misbound persisted action denial preserves private receipts and authority. Dynamic lookup SQL is fixed and owner/project-filtered at the same caller. This does not certify remaining internal mutation adapters or create a post-admission authority policy. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
@@ -8027,7 +8027,7 @@
       "target": "operations_resources",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "Only an exact verified running action claim reaches this owner/project/target-filtered resource read. After any claim wait, the fetched row must match target ID, server owner/project and exact finite integer planned version before the existing HTTP adapter can execute. Missing, misbound or stale rows complete as blocked through the existing atomic evidence/run/action/audit transaction.",
         "reason": "Exact post-claim read boundary VERIFIED atd60292bbd91b552ba2bef33ceb48368e4b1c15c5, disposable39123094921. Actual claim waits followed by resource version or tenant/project mutation produce durable blocked run/evidence without reaching the adapter. Two focused tests reject substituted parent/ID and changed/malformed versions, and preserve valid unchanged-target compatibility via a synthetic adapter. Invocation and fixture unchanged. Only owner/project/target/version read binding closes. Post-read target/provider lifetime, URL writers without generation increments, DNS/redirect/address egress and full Command010 acceptance remain unresolved. No live provider calls or whole caller certification.",
@@ -8052,7 +8052,7 @@
       "target": "complete_operations_action",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "Existing authenticated action executor passes the exact admitted claimed row and server actor. Service-only completion RPC locks current project owner and action, verifies immutable plan/owner/attempt/lease against database time, then commits evidence, run, action and immutable audit together. No provider action or authority admission is performed inside this persistence boundary.",
         "reason": "Fixed completion-persistence boundary VERIFIED at e47030615e13f75045e4434cddcb1294f05095f3, disposable39114496584: actual four-write rollback, browser-role denial, held-row changed attempt and competing completions pass. SQL and integration fixture are unchanged from that source.34 local SQL assertions and focused exact receipt/uncertain completion negatives also pass. Only atomic persistence of an already-admitted attempt is closed. External-effect reconciliation, mutable target admission, actor/approval lifetime and full executor certification remain separate unresolved requirements. No Command008 acceptance.",
@@ -8077,10 +8077,10 @@
       "target": "mutate_operations_internal_target",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
-        "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.",
-        "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open.",
+        "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit. The existing automation link and non-action decision audit now invoke a fixed service-only finalization RPC. It reuses admitted-run current actor/project/member/rule locks, checks exact canonical run and action owner/project/requester/run-idempotency relationship, and commits the link with its audit. An evaluating replay reconciles the original action key, never a new consequential action.",
+        "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open. The two demonstrated parent/write and split-audit gaps are repaired locally. Substituted action/receipt denials, replay recovery and SQL rollback pass locally. New real owner/member/rule/run/action lock-wait, lost reply, audit rollback, concurrency and browser tests are prepared but NOT_EXECUTED. No promotion from these tests is authorized.",
         "evidence": [
           {
             "path": "backend/src/operations/operationsService.owner.test.ts",
@@ -8097,6 +8097,14 @@
           {
             "path": "backend/src/operations/internalControlReceipt.test.ts",
             "marker": "single-rule controls reject empty, substituted and duplicate mutation receipts"
+          },
+          {
+            "path": "backend/src/operations/automationFinalization.local.integration.ts",
+            "marker": "real automation finalization rechecks locked current parents and rolls back links when its required audit fails"
+          },
+          {
+            "path": "backend/src/operations/automationAdmission.test.ts",
+            "marker": "foreign or substituted automation action receipts cannot reach the finalization transaction"
           }
         ]
       }
@@ -8110,10 +8118,10 @@
       "target": "mutate_operations_internal_target",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
-        "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.",
-        "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open.",
+        "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit. The existing automation link and non-action decision audit now invoke a fixed service-only finalization RPC. It reuses admitted-run current actor/project/member/rule locks, checks exact canonical run and action owner/project/requester/run-idempotency relationship, and commits the link with its audit. An evaluating replay reconciles the original action key, never a new consequential action.",
+        "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open. The two demonstrated parent/write and split-audit gaps are repaired locally. Substituted action/receipt denials, replay recovery and SQL rollback pass locally. New real owner/member/rule/run/action lock-wait, lost reply, audit rollback, concurrency and browser tests are prepared but NOT_EXECUTED. No promotion from these tests is authorized.",
         "evidence": [
           {
             "path": "backend/src/operations/operationsService.owner.test.ts",
@@ -8130,6 +8138,14 @@
           {
             "path": "backend/src/operations/internalControlReceipt.test.ts",
             "marker": "single-rule controls reject empty, substituted and duplicate mutation receipts"
+          },
+          {
+            "path": "backend/src/operations/automationFinalization.local.integration.ts",
+            "marker": "real automation finalization rechecks locked current parents and rolls back links when its required audit fails"
+          },
+          {
+            "path": "backend/src/operations/automationAdmission.test.ts",
+            "marker": "foreign or substituted automation action receipts cannot reach the finalization transaction"
           }
         ]
       }
@@ -8143,7 +8159,7 @@
       "target": "mutate_operations_internal_target",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.",
         "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open.",
@@ -8176,10 +8192,10 @@
       "target": "mutate_operations_internal_target",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
-        "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.",
-        "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open.",
+        "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit. The existing automation link and non-action decision audit now invoke a fixed service-only finalization RPC. It reuses admitted-run current actor/project/member/rule locks, checks exact canonical run and action owner/project/requester/run-idempotency relationship, and commits the link with its audit. An evaluating replay reconciles the original action key, never a new consequential action.",
+        "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open. The two demonstrated parent/write and split-audit gaps are repaired locally. Substituted action/receipt denials, replay recovery and SQL rollback pass locally. New real owner/member/rule/run/action lock-wait, lost reply, audit rollback, concurrency and browser tests are prepared but NOT_EXECUTED. No promotion from these tests is authorized.",
         "evidence": [
           {
             "path": "backend/src/operations/operationsService.owner.test.ts",
@@ -8196,6 +8212,14 @@
           {
             "path": "backend/src/operations/internalControlReceipt.test.ts",
             "marker": "single-rule controls reject empty, substituted and duplicate mutation receipts"
+          },
+          {
+            "path": "backend/src/operations/automationFinalization.local.integration.ts",
+            "marker": "real automation finalization rechecks locked current parents and rolls back links when its required audit fails"
+          },
+          {
+            "path": "backend/src/operations/automationAdmission.test.ts",
+            "marker": "foreign or substituted automation action receipts cannot reach the finalization transaction"
           }
         ]
       }
@@ -8209,7 +8233,7 @@
       "target": "mutate_operations_internal_target",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.",
         "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open.",
@@ -8238,10 +8262,10 @@
       "target": "mutate_operations_internal_target",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
-        "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.",
-        "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open.",
+        "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit. The existing automation link and non-action decision audit now invoke a fixed service-only finalization RPC. It reuses admitted-run current actor/project/member/rule locks, checks exact canonical run and action owner/project/requester/run-idempotency relationship, and commits the link with its audit. An evaluating replay reconciles the original action key, never a new consequential action.",
+        "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open. The two demonstrated parent/write and split-audit gaps are repaired locally. Substituted action/receipt denials, replay recovery and SQL rollback pass locally. New real owner/member/rule/run/action lock-wait, lost reply, audit rollback, concurrency and browser tests are prepared but NOT_EXECUTED. No promotion from these tests is authorized.",
         "evidence": [
           {
             "path": "backend/src/operations/operationsService.owner.test.ts",
@@ -8258,6 +8282,14 @@
           {
             "path": "backend/src/operations/internalControlReceipt.test.ts",
             "marker": "single-rule controls reject empty, substituted and duplicate mutation receipts"
+          },
+          {
+            "path": "backend/src/operations/automationFinalization.local.integration.ts",
+            "marker": "real automation finalization rechecks locked current parents and rolls back links when its required audit fails"
+          },
+          {
+            "path": "backend/src/operations/automationAdmission.test.ts",
+            "marker": "foreign or substituted automation action receipts cannot reach the finalization transaction"
           }
         ]
       }
@@ -8271,10 +8303,10 @@
       "target": "mutate_operations_internal_target",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
-        "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.",
-        "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open.",
+        "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit. The existing automation link and non-action decision audit now invoke a fixed service-only finalization RPC. It reuses admitted-run current actor/project/member/rule locks, checks exact canonical run and action owner/project/requester/run-idempotency relationship, and commits the link with its audit. An evaluating replay reconciles the original action key, never a new consequential action.",
+        "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open. The two demonstrated parent/write and split-audit gaps are repaired locally. Substituted action/receipt denials, replay recovery and SQL rollback pass locally. New real owner/member/rule/run/action lock-wait, lost reply, audit rollback, concurrency and browser tests are prepared but NOT_EXECUTED. No promotion from these tests is authorized.",
         "evidence": [
           {
             "path": "backend/src/operations/operationsService.owner.test.ts",
@@ -8291,6 +8323,14 @@
           {
             "path": "backend/src/operations/internalControlReceipt.test.ts",
             "marker": "single-rule controls reject empty, substituted and duplicate mutation receipts"
+          },
+          {
+            "path": "backend/src/operations/automationFinalization.local.integration.ts",
+            "marker": "real automation finalization rechecks locked current parents and rolls back links when its required audit fails"
+          },
+          {
+            "path": "backend/src/operations/automationAdmission.test.ts",
+            "marker": "foreign or substituted automation action receipts cannot reach the finalization transaction"
           }
         ]
       }
@@ -8304,10 +8344,10 @@
       "target": "mutate_operations_internal_target",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
-        "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.",
-        "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open.",
+        "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit. The existing automation link and non-action decision audit now invoke a fixed service-only finalization RPC. It reuses admitted-run current actor/project/member/rule locks, checks exact canonical run and action owner/project/requester/run-idempotency relationship, and commits the link with its audit. An evaluating replay reconciles the original action key, never a new consequential action.",
+        "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open. The two demonstrated parent/write and split-audit gaps are repaired locally. Substituted action/receipt denials, replay recovery and SQL rollback pass locally. New real owner/member/rule/run/action lock-wait, lost reply, audit rollback, concurrency and browser tests are prepared but NOT_EXECUTED. No promotion from these tests is authorized.",
         "evidence": [
           {
             "path": "backend/src/operations/operationsService.owner.test.ts",
@@ -8324,6 +8364,14 @@
           {
             "path": "backend/src/operations/internalControlReceipt.test.ts",
             "marker": "single-rule controls reject empty, substituted and duplicate mutation receipts"
+          },
+          {
+            "path": "backend/src/operations/automationFinalization.local.integration.ts",
+            "marker": "real automation finalization rechecks locked current parents and rolls back links when its required audit fails"
+          },
+          {
+            "path": "backend/src/operations/automationAdmission.test.ts",
+            "marker": "foreign or substituted automation action receipts cannot reach the finalization transaction"
           }
         ]
       }
@@ -8337,7 +8385,7 @@
       "target": "mutate_operations_internal_target",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.",
         "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open.",
@@ -8370,7 +8418,7 @@
       "target": "operations_actions",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -8395,7 +8443,7 @@
       "target": "production_audit_log",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -8420,7 +8468,7 @@
       "target": "production_evidence",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -8445,7 +8493,7 @@
       "target": "operations_automation_rules",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -8470,7 +8518,7 @@
       "target": "operations_automation_runs",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -8495,7 +8543,7 @@
       "target": "create_operations_automation_rule",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "Authenticated existing rule endpoint supplies server actor and project. Canonical action definitions still derive approval policy and validate high-risk compatibility. Service-only creation locks current actor/project/member, verifies owner/project and bounded rule shape, then commits the rule and mandatory immutable audit together. Caller checks every submitted field in exactly one returned row. No action executes during creation.",
         "reason": "Fixed creation persistence boundary VERIFIED atd60292bbd91b552ba2bef33ceb48368e4b1c15c5, disposable39123094921:108 fresh/upgrade migrations,143 security tests and3 browser tests pass with zero failures/skips. Actual held current-member revocation and owner mutation reject both writes, concurrent same-key creators yield one rule/audit and one conflict, both write failures roll back, exact redacted audit and browser denial pass. Invocation, SQL and fixture unchanged. Only creation persistence closes. Later rule mutation, stop/create concurrency and full automation lifecycle remain unresolved. No whole caller certification.",
@@ -8520,10 +8568,10 @@
       "target": "operations_automation_rules",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
-        "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.",
-        "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open.",
+        "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit. The existing automation link and non-action decision audit now invoke a fixed service-only finalization RPC. It reuses admitted-run current actor/project/member/rule locks, checks exact canonical run and action owner/project/requester/run-idempotency relationship, and commits the link with its audit. An evaluating replay reconciles the original action key, never a new consequential action.",
+        "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open. The two demonstrated parent/write and split-audit gaps are repaired locally. Substituted action/receipt denials, replay recovery and SQL rollback pass locally. New real owner/member/rule/run/action lock-wait, lost reply, audit rollback, concurrency and browser tests are prepared but NOT_EXECUTED. No promotion from these tests is authorized.",
         "evidence": [
           {
             "path": "backend/src/operations/operationsService.owner.test.ts",
@@ -8540,6 +8588,14 @@
           {
             "path": "backend/src/operations/internalControlReceipt.test.ts",
             "marker": "single-rule controls reject empty, substituted and duplicate mutation receipts"
+          },
+          {
+            "path": "backend/src/operations/automationFinalization.local.integration.ts",
+            "marker": "real automation finalization rechecks locked current parents and rolls back links when its required audit fails"
+          },
+          {
+            "path": "backend/src/operations/automationAdmission.test.ts",
+            "marker": "foreign or substituted automation action receipts cannot reach the finalization transaction"
           }
         ]
       }
@@ -8553,7 +8609,7 @@
       "target": "admit_operations_automation_run",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
         "authority": "Existing authenticated signal endpoint supplies server actor and admitted owner/project. Service-only transaction locks current profile/project/member and exact current rule, verifies dedup owner/evidence, computes canonical condition/stop/maintenance/risk decisions and serializes database-time rate admission. Run and immutable admission audit commit together; caller validates exact receipt against existing decision engine before creating any action with the stable run UUID as key.",
         "reason": "Fixed run-admission persistence boundary VERIFIED at25295230cc26995d56e6717b9afc7c431795212a, disposable39121745945:107 fresh/upgrade migrations,141 security tests and3 browser tests pass with zero failures/skips. Actual observed two-client different-trigger quota and duplicate-trigger replay, held rule/member mutations, both write rollbacks and browser denial pass without external execution. Invocation, SQL and fixture are unchanged. Only reservation/dedup/rate/admission audit are closed. Later rule-stop/authority changes, action/link recovery and complete automated lifecycle remain unresolved. No whole caller certification.",
@@ -8570,18 +8626,18 @@
       }
     },
     {
-      "id": "847701cbbdfc7ce070ec",
+      "id": "889de9bf998a6a1b47f0",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 659,
+      "line": 666,
       "enclosing": "evaluateAutomationSignal",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "operations_automation_runs",
-      "ownerPredicateCandidate": true,
+      "kind": "RPC_CANDIDATE",
+      "target": "finalize_operations_automation_run",
+      "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
-        "authority": "After exact service-only admission, the existing action creator receives the stable run UUID key. Linking updates only the admitted owner/rule/digest/run in evaluating state with no action, then verifies its returned identity and action/status. No replay executes another action.",
-        "reason": "Eight focused admission/intent tests pass. Empty or substituted link receipts and every unreturned action outcome, including4xx after possible queued-action persistence, preserve pending admission and return typed503 without falsely recording failure or retrying. Link remains separate from action creation and final audit. Crash reconciliation, post-admission current-rule/actor authority and parent lifecycle races remain unresolved. This write is reviewed but not security-certified.",
+        "authority": "After exact service-only admission, the existing action creator receives the stable run UUID key. Linking updates only the admitted owner/rule/digest/run in evaluating state with no action, then verifies its returned identity and action/status. No replay executes another action. The existing automation link and non-action decision audit now invoke a fixed service-only finalization RPC. It reuses admitted-run current actor/project/member/rule locks, checks exact canonical run and action owner/project/requester/run-idempotency relationship, and commits the link with its audit. An evaluating replay reconciles the original action key, never a new consequential action.",
+        "reason": "Eight focused admission/intent tests pass. Empty or substituted link receipts and every unreturned action outcome, including4xx after possible queued-action persistence, preserve pending admission and return typed503 without falsely recording failure or retrying. Link remains separate from action creation and final audit. Crash reconciliation, post-admission current-rule/actor authority and parent lifecycle races remain unresolved. This write is reviewed but not security-certified. The two demonstrated parent/write and split-audit gaps are repaired locally. Substituted action/receipt denials, replay recovery and SQL rollback pass locally. New real owner/member/rule/run/action lock-wait, lost reply, audit rollback, concurrency and browser tests are prepared but NOT_EXECUTED. No promotion from these tests is authorized.",
         "evidence": [
           {
             "path": "backend/src/operations/automationAdmission.test.ts",
@@ -8590,23 +8646,31 @@
           {
             "path": "backend/src/operations/automationAdmission.test.ts",
             "marker": "a 4xx after action persistence"
+          },
+          {
+            "path": "backend/src/operations/automationFinalization.local.integration.ts",
+            "marker": "real automation finalization rechecks locked current parents and rolls back links when its required audit fails"
+          },
+          {
+            "path": "backend/src/operations/automationAdmission.test.ts",
+            "marker": "foreign or substituted automation action receipts cannot reach the finalization transaction"
           }
         ]
       }
     },
     {
-      "id": "7201394971e7edb953ff",
+      "id": "c316ee518cf610c4056b",
       "path": "backend/src/operations/operationsService.ts",
-      "line": 681,
+      "line": 694,
       "enclosing": "audit",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "production_audit_log",
+      "kind": "RPC_CANDIDATE",
+      "target": "finalize_operations_automation_run",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "semanticReview": {
-        "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.",
-        "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open.",
+        "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit. The existing automation link and non-action decision audit now invoke a fixed service-only finalization RPC. It reuses admitted-run current actor/project/member/rule locks, checks exact canonical run and action owner/project/requester/run-idempotency relationship, and commits the link with its audit. An evaluating replay reconciles the original action key, never a new consequential action.",
+        "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open. The two demonstrated parent/write and split-audit gaps are repaired locally. Substituted action/receipt denials, replay recovery and SQL rollback pass locally. New real owner/member/rule/run/action lock-wait, lost reply, audit rollback, concurrency and browser tests are prepared but NOT_EXECUTED. No promotion from these tests is authorized.",
         "evidence": [
           {
             "path": "backend/src/operations/operationsService.owner.test.ts",
@@ -8623,6 +8687,14 @@
           {
             "path": "backend/src/operations/internalControlReceipt.test.ts",
             "marker": "single-rule controls reject empty, substituted and duplicate mutation receipts"
+          },
+          {
+            "path": "backend/src/operations/automationFinalization.local.integration.ts",
+            "marker": "real automation finalization rechecks locked current parents and rolls back links when its required audit fails"
+          },
+          {
+            "path": "backend/src/operations/automationAdmission.test.ts",
+            "marker": "foreign or substituted automation action receipts cannot reach the finalization transaction"
           }
         ]
       }
