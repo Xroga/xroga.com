@@ -4948,7 +4948,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+      "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -6933,12 +6933,11 @@
       "id": "surface:9a08f7f10599fa7839b4",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/routingOutcomes.ts",
-      "sha256": "9df63688a91945be504e650dea0aec9dc220a53913707ea6df9fb8d1354b8bb9",
+      "sha256": "52c9d3ebf8b96fe36765c597b5cfac7a8321dd926aab63296ce92f2aca37646e",
       "symbols": [
         "RoutingOutcome",
         "ageDays",
         "checks",
-        "error",
         "historicalModelQuality",
         "loadRoutingOutcomes",
         "loaded",
@@ -6947,20 +6946,26 @@
         "recent",
         "recentRoutingOutcomes",
         "recordRoutingOutcome",
+        "remember",
         "resetRoutingOutcomeCache",
+        "row",
         "rows",
+        "subject",
         "supabase",
         "total",
         "weight",
         "weighted"
       ],
       "imports": [
-        "../config/supabase.js",
+        "../security/serviceRoleGuard.js",
+        "../security/tenantContext.js",
         "./models.js",
-        "./routerConfig.js"
+        "./routerConfig.js",
+        "node:util"
       ],
       "runtimeImports": [
-        "backend/src/config/supabase.ts"
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -6970,6 +6975,7 @@
         "backend/src/ai/buildOutcomeMemory.ts:5",
         "backend/src/ai/intelligentRouter.ts:11",
         "backend/src/ai/pipeline.ts:231",
+        "backend/src/ai/routingOutcomes.receipt.test.ts:5",
         "backend/src/ai/routingPersistence.test.ts:3",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts:9"
       ],
@@ -6977,7 +6983,9 @@
       "persistenceDependencies": [
         "model_routing_outcomes"
       ],
-      "externalProviderDependencies": [],
+      "externalProviderDependencies": [
+        "node:util"
+      ],
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
@@ -6986,6 +6994,7 @@
       "testCoverage": [
         "backend/src/ai/buildOutcomeMemory.test.ts",
         "backend/src/ai/buildOutcomeOwnership.test.ts",
+        "backend/src/ai/routingOutcomes.receipt.test.ts",
         "backend/src/ai/routingPersistence.test.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts"
       ],
@@ -11923,7 +11932,6 @@
         "backend/src/ai/projectMemory.ts:6",
         "backend/src/ai/providerBudget.ts:2",
         "backend/src/ai/quota.ts:1",
-        "backend/src/ai/routingOutcomes.ts:1",
         "backend/src/ai/runStore.ts:10",
         "backend/src/ai/runTrace.ts:5",
         "backend/src/ai/sessionMemory.ts:6",
@@ -21278,7 +21286,7 @@
       "id": "surface:e31c62507c56bf4fa325",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/serviceRoleGuard.ts",
-      "sha256": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
+      "sha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
       "symbols": [
         "getGlobalSupabaseAdmin",
         "getTenantSupabaseAdmin",
@@ -21301,6 +21309,7 @@
         "backend/src/ai/executionRuntime.ts:7",
         "backend/src/ai/measuredEvidence.ts:33",
         "backend/src/ai/providerHealthStore.ts:29",
+        "backend/src/ai/routingOutcomes.ts:2",
         "backend/src/ai/runReconciler.ts:1",
         "backend/src/ai/usageAccounting.ts:1",
         "backend/src/index.ts:55",
@@ -21312,6 +21321,7 @@
         "backend/src/routes/operations.ts:4",
         "backend/src/routes/profile.ts:3",
         "backend/src/routes/projects.ts:3",
+        "backend/src/security/buildOutcomeAttempt.local.integration.ts:11",
         "backend/src/security/communityPublicException.test.ts:5",
         "backend/src/security/ownership.ts:2",
         "backend/src/security/platformHealth.local.integration.ts:7",
@@ -21338,6 +21348,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/communityPublicException.test.ts",
         "backend/src/security/platformHealth.local.integration.ts",
         "backend/src/security/serviceRoleGuard.test.ts",
@@ -21387,6 +21398,8 @@
         "backend/src/ai/providerBudget.ts:3",
         "backend/src/ai/quota.failure.test.ts:4",
         "backend/src/ai/quota.ts:2",
+        "backend/src/ai/routingOutcomes.receipt.test.ts:4",
+        "backend/src/ai/routingOutcomes.ts:3",
         "backend/src/ai/runStore.ts:11",
         "backend/src/ai/universal/resumeProjectContext.test.ts:6",
         "backend/src/ai/usageAccounting.test.ts:4",
@@ -21415,6 +21428,7 @@
         "backend/src/routes/terminalSessions.ts:16",
         "backend/src/routes/vercel.ts:4",
         "backend/src/security/budgetOwner.local.integration.ts:8",
+        "backend/src/security/buildOutcomeAttempt.local.integration.ts:10",
         "backend/src/security/buildProjectReceipt.local.integration.ts:6",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:9",
         "backend/src/security/legacyBuildHistory.local.integration.ts:9",
@@ -21503,6 +21517,7 @@
         "backend/src/ai/buildOutcomeMemory.test.ts",
         "backend/src/ai/providerBudget.test.ts",
         "backend/src/ai/quota.failure.test.ts",
+        "backend/src/ai/routingOutcomes.receipt.test.ts",
         "backend/src/ai/universal/resumeProjectContext.test.ts",
         "backend/src/ai/usageAccounting.test.ts",
         "backend/src/middleware/admin.test.ts",
@@ -21517,6 +21532,7 @@
         "backend/src/routes/supabaseOAuth.disconnect.test.ts",
         "backend/src/routes/terminalSessions.failure.test.ts",
         "backend/src/security/budgetOwner.local.integration.ts",
+        "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts",
         "backend/src/security/legacyBuildHistory.local.integration.ts",
@@ -103739,6 +103755,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:5ae23eac9d0df65b605b",
+      "sourcePath": "backend/src/ai/routingOutcomes.receipt.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:e7b9ff7db789b7bf97eb",
       "sourcePath": "backend/src/ai/routingPersistence.test.ts",
       "declaredTests": 2,
@@ -104905,7 +104928,7 @@
     {
       "id": "test-suite:b4661f97348c378971b1",
       "sourcePath": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
-      "declaredTests": 5,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },

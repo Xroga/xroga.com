@@ -935,9 +935,38 @@
         }
       ],
       "state": "EVIDENCE_GAP",
-      "executionStatus": "READY",
+      "executionStatus": "IN_PROGRESS",
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
-      "semanticProgress": null,
+      "semanticProgress": {
+        "packetId": "B1-P2-4a588dd074761414",
+        "sourceSha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "EXISTING_ISSUED_PIPELINE_TO_REQUEST_SCOPED_STORE_CONSTRUCTION_PROOF_PREPARED",
+        "originalCriteria": [
+          2,
+          4,
+          10
+        ],
+        "actorTrace": "The sole production tryUniversalBuild consumer is runBuildPipeline. At pipeline entry the original issued context is required, its owner must equal opts.userId, and a fresh server option object retains that subject before asynchronous work. The actual tryUniversalBuild call supplies a fresh owner/run/project literal, not an untrusted model or request object. Its only SDK construction goes directly into universalStore with an internal issued context for that already admitted subject. The default privileged store is per invocation, never the global memory singleton, and every receiving persistence operation separately scopes and verifies that context/owner. Injected stores remain an internal test seam, not a client parameter.",
+        "invariant": "No global retained SDK identity or raw request/model owner can select another subject default universal persistence. A constructor closes only when every actual receiving store operation independently verifies.",
+        "evidence": [
+          {
+            "path": "backend/src/security/universalOwnerReads.local.integration.ts",
+            "type": "DEFAULT_PRIVILEGED_FACTORY_TWO_OWNER_NAMESPACE_CLONE_DENIAL_AND_DISTINCT_INSTANCE_PROOF_PREPARED",
+            "result": "NOT_EXECUTED"
+          },
+          {
+            "path": "backend/src/ai/pipeline.ts",
+            "type": "ONE_LINE_ROUTING_CONTEXT_ADDITION_ONLY_OTHER_ADMISSION_AND_UNIVERSAL_PRODUCER_BYTES_UNCHANGED",
+            "result": "SOURCE_TRACED"
+          }
+        ],
+        "remaining": [
+          "Authenticate changed-source disposable default-factory fixture and full source-bound regressions",
+          "Require all universal store receiving operations independently verified before original factory closure",
+          "Keep arbitrary injected store authorization, model effects and Phase3/4 obligations separate"
+        ]
+      },
       "actor": {
         "existingTrace": "tryUniversalBuild constructs the existing SupabaseUniversalStore with issued persisted-owner context from input.userId and passes owner/run to executeUniversalRun.",
         "currentSemanticVerification": "PENDING"
@@ -974,7 +1003,7 @@
       "id": "B1-P2-103e8086735074b6",
       "family": "other-source-bound-boundaries",
       "sourcePath": "backend/src/ai/routingOutcomes.ts",
-      "sourceSha256": "9df63688a91945be504e650dea0aec9dc220a53913707ea6df9fb8d1354b8bb9",
+      "sourceSha256": "52c9d3ebf8b96fe36765c597b5cfac7a8321dd926aab63296ce92f2aca37646e",
       "baselineCallerIds": [
         "8c57a0debf51a7a340f8",
         "1740e151510be65ae1da",
@@ -982,45 +1011,74 @@
         "952ba0881d01437685bf"
       ],
       "currentCallerIds": [
-        "8c57a0debf51a7a340f8",
-        "1740e151510be65ae1da",
-        "a11bf3e4f0c999a36b58",
-        "952ba0881d01437685bf"
+        "64b99cfd7d4a42c04576",
+        "fc68c1025702714090d7",
+        "0200f68b9f576c910b0e",
+        "2bad87b739ae47c2e1c1"
       ],
       "mapping": [
         {
           "baselineCallerId": "8c57a0debf51a7a340f8",
           "currentCallerIds": [
-            "8c57a0debf51a7a340f8"
+            "64b99cfd7d4a42c04576"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "1740e151510be65ae1da",
           "currentCallerIds": [
-            "1740e151510be65ae1da"
+            "fc68c1025702714090d7"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "a11bf3e4f0c999a36b58",
           "currentCallerIds": [
-            "a11bf3e4f0c999a36b58"
+            "0200f68b9f576c910b0e"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "952ba0881d01437685bf",
           "currentCallerIds": [
-            "952ba0881d01437685bf"
+            "2bad87b739ae47c2e1c1"
           ],
           "change": "RETAINED"
         }
       ],
       "state": "EVIDENCE_GAP",
-      "executionStatus": "READY",
+      "executionStatus": "IN_PROGRESS",
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
-      "semanticProgress": null,
+      "semanticProgress": {
+        "packetId": "B1-P2-103e8086735074b6",
+        "sourceSha256": "52c9d3ebf8b96fe36765c597b5cfac7a8321dd926aab63296ce92f2aca37646e",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "ISSUED_ROUTING_WRITER_AND_BOUNDED_PRIVATE_BOOTSTRAP_REPAIRED_PROOF_PENDING",
+        "originalCriteria": [
+          2,
+          4,
+          10
+        ],
+        "actorTrace": "The sole production writer is the issued-owner pipeline, which now passes its original context. Original owner equality is checked before access, input is captured, exact receipt is required, and failed optional telemetry remains uncached without exposing raw error text. Restart loader is server-internal, bounded500 and fixed-column, with an explicit narrow exception. Its sole production caller discards returned rows. Terminal learning independently filters owner AND run, and global quality exposes numeric aggregation only.",
+        "invariant": "No foreign subject or telemetry association may replace the admitted owner. Bounded internal bootstrap never exposes private identities through an endpoint or another owner terminal evidence. Factory construction never substitutes for receiver-level authorization.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/routingOutcomes.receipt.test.ts",
+            "type": "EXACT_RECEIPT_AND_ISSUED_OWNER_NEGATIVES",
+            "result": "PASS"
+          },
+          {
+            "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+            "type": "REAL_DATABASE_AND_DEFAULT_CONSUMER_PROOF_PREPARED",
+            "result": "NOT_EXECUTED"
+          }
+        ],
+        "remaining": [
+          "Authenticate exact changed-source disposable and full branch/integrated regression",
+          "Prove every actual shared-constructor recipient before factory closure",
+          "Preserve later authority, credential custody and egress obligations"
+        ]
+      },
       "actor": {
         "existingTrace": "Pipeline reads global model routing history and records outcomes with opts.userId/runId. The global cache deliberately aggregates all users for model quality, but contains raw user/run identities as well as numeric signals.",
         "currentSemanticVerification": "PENDING"
@@ -1039,7 +1097,7 @@
         {
           "path": "backend/src/ai/routingOutcomes.ts",
           "marker": "loadRoutingOutcomes",
-          "sourceSha256": "9df63688a91945be504e650dea0aec9dc220a53913707ea6df9fb8d1354b8bb9",
+          "sourceSha256": "52c9d3ebf8b96fe36765c597b5cfac7a8321dd926aab63296ce92f2aca37646e",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6541,7 +6599,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "loadSessionHistory(opts.userId",
-          "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+          "sourceSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6668,7 +6726,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "const saved = await setProjectMemoryDurable({",
-          "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+          "sourceSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -7743,14 +7801,14 @@
       "id": "B1-P2-f8cb123dcb4c4a53",
       "family": "other-source-bound-boundaries",
       "sourcePath": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
+      "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
       "baselineCallerIds": [
         "d84df34ff692e4fb31c1",
         "bda2ddc16c7864ef18d8"
       ],
       "currentCallerIds": [
         "d84df34ff692e4fb31c1",
-        "fd91a4c4ec87b33c520f"
+        "58a049cd8c83e182b9a6"
       ],
       "mapping": [
         {
@@ -7763,15 +7821,44 @@
         {
           "baselineCallerId": "bda2ddc16c7864ef18d8",
           "currentCallerIds": [
-            "fd91a4c4ec87b33c520f"
+            "58a049cd8c83e182b9a6"
           ],
           "change": "RETAINED"
         }
       ],
       "state": "EVIDENCE_GAP",
-      "executionStatus": "READY",
+      "executionStatus": "IN_PROGRESS",
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
-      "semanticProgress": null,
+      "semanticProgress": {
+        "packetId": "B1-P2-f8cb123dcb4c4a53",
+        "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "SHARED_FACTORY_RECIPIENT_PROOF_PENDING_FIXED_ROUTING_EXCEPTION_ADDED",
+        "originalCriteria": [
+          2,
+          4,
+          10
+        ],
+        "actorTrace": "Constructors return a privileged SDK handle, not an RLS sandbox. Tenant construction requires an original issued context and named global construction requires an exact own registry key. The actual receiving operations must each independently prove owner binding or a legitimate narrow exception before these shared constructors can close. The new bootstrap registration grants only fixed bounded private telemetry reads.",
+        "invariant": "No foreign subject or telemetry association may replace the admitted owner. Bounded internal bootstrap never exposes private identities through an endpoint or another owner terminal evidence. Factory construction never substitutes for receiver-level authorization.",
+        "evidence": [
+          {
+            "path": "backend/src/ai/routingOutcomes.receipt.test.ts",
+            "type": "EXACT_RECEIPT_AND_ISSUED_OWNER_NEGATIVES",
+            "result": "PASS"
+          },
+          {
+            "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+            "type": "REAL_DATABASE_AND_DEFAULT_CONSUMER_PROOF_PREPARED",
+            "result": "NOT_EXECUTED"
+          }
+        ],
+        "remaining": [
+          "Authenticate exact changed-source disposable and full branch/integrated regression",
+          "Prove every actual shared-constructor recipient before factory closure",
+          "Preserve later authority, credential custody and egress obligations"
+        ]
+      },
       "actor": {
         "existingTrace": "Tenant factory validates issued identity; global factory admits only own registry keys. Both nevertheless return the unrestricted service-role Supabase SDK to internal callers.",
         "currentSemanticVerification": "PENDING"
@@ -7990,7 +8077,7 @@
         {
           "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
           "marker": "real worker learning fence binds owner",
-          "sourceSha256": "a270fb0183f8f5dd8b4930e7970476e1b37a8f98153415aafbc900de8e3ca29e",
+          "sourceSha256": "412c4838ed06b1073b0f26756aa4169d6f8e2488225219033e6f5764fad6ebef",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -8111,7 +8198,7 @@
         "relatedSourceBindings": [
           {
             "path": "backend/src/ai/pipeline.ts",
-            "sha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99"
+            "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
           },
           {
             "path": "backend/src/routes/swarm.ts",

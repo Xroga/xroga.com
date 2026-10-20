@@ -3691,7 +3691,7 @@ publicationReason:
   }
   await executionStore.save(executionState);
 
-  await recordRoutingOutcome({
+  await recordRoutingOutcome(tenantContext, {
     runId,
     userId: opts.userId,
     taskClass: implementationTask?.taskClass ?? route.kind,

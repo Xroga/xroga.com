@@ -6,7 +6,9 @@ import pg from 'pg';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { buildOutcomeFromTerminalRun, SupabaseBuildOutcomeStore } from '../ai/buildOutcomeMemory.js';
 import { isRunCancellationRequested, requestRunCancellation } from '../ai/runStore.js';
-import {loadRoutingOutcomes,resetRoutingOutcomeCache} from '../ai/routingOutcomes.js';
+import {loadRoutingOutcomes,recordRoutingOutcome,recentRoutingOutcomes,resetRoutingOutcomeCache,type RoutingOutcome} from '../ai/routingOutcomes.js';
+import {createTenantContext,type TenantContext} from './tenantContext.js';
+import {getTenantSupabaseAdmin,getGlobalSupabaseAdmin,probeDatabaseReadiness} from './serviceRoleGuard.js';
 
 type FixtureUser = { id: string; token: string };
 function guard(): void {
@@ -17,6 +19,44 @@ function guard(): void {
 
 /** Uses the canonical disposable users. Never runs against a provider project. */
 export function registerBuildOutcomeAttemptTests(admin: SupabaseClient, getUsers: () => readonly FixtureUser[]): void {
+  test('real routing telemetry writes bind issued owners and private restart history never crosses terminal learning ownership',async t=>{
+    guard();const[owner,other]=getUsers(),runId=randomUUID(),contexts=[owner,other].map(actor=>createTenantContext({userId:actor.id,via:'remote_getuser'}));
+    for(const forged of [owner.id,{...contexts[0]},structuredClone(contexts[0])])assert.throws(()=>getTenantSupabaseAdmin(forged as TenantContext),{status:401});
+    for(const operation of ['unknown','__proto__','constructor',undefined])assert.throws(()=>getGlobalSupabaseAdmin(operation as never),/Unregistered service operation/);
+    const ownedProfile=await getTenantSupabaseAdmin(contexts[0]).from('profiles').select('id').eq('id',owner.id).single();assert.equal(ownedProfile.error,null);assert.deepEqual(ownedProfile.data,{id:owner.id});
+    assert.equal(await probeDatabaseReadiness(),undefined);
+    t.after(async()=>{resetRoutingOutcomeCache();assert.equal((await admin.from('model_routing_outcomes').delete().eq('run_id',runId)).error,null);});
+    const row=(userId:string):RoutingOutcome=>({runId,userId,taskClass:'routing_owner_fixture',modelId:'deepseek_v4_flash',mode:'balanced',inputTokens:1,outputTokens:2,repairLoops:0,modelSwitches:0,requiredCapabilities:['fixture'],finalVerificationOk:true});
+    const rows=async()=>{const result=await admin.from('model_routing_outcomes').select('*').eq('run_id',runId).order('user_id');assert.equal(result.error,null);return result.data!;};
+    for(const forged of [owner.id,{...contexts[0]},structuredClone(contexts[0])])await assert.rejects(recordRoutingOutcome(forged as TenantContext,row(owner.id)),{status:401});
+    await assert.rejects(recordRoutingOutcome(contexts[0],row(other.id)),{status:404});assert.deepEqual(await rows(),[]);
+    await Promise.all([recordRoutingOutcome(contexts[0],row(owner.id)),recordRoutingOutcome(contexts[1],row(other.id))]);
+    const saved=await rows();assert.equal(saved.length,2);assert.deepEqual(saved.map(row=>row.user_id).sort(),[owner.id,other.id].sort());
+    assert.ok(saved.every(row=>row.run_id===runId&&row.input_tokens===1&&row.output_tokens===2&&row.required_capabilities[0]==='fixture'));
+    resetRoutingOutcomeCache();const loaded=await loadRoutingOutcomes();assert.ok(loaded.length<=500);assert.equal(loaded.filter(row=>row.runId===runId).length,2);
+    for(const actor of [owner,other]){
+      const learned=buildOutcomeFromTerminalRun({runId,userId:actor.id,terminalStatus:'error',iterationCount:0,output:null});assert.equal(learned.modelTelemetry.length,1);
+      const browser:SupabaseClient=createClient(process.env.SUPABASE_URL!,process.env.SUPABASE_ANON_KEY!,{auth:{persistSession:false,autoRefreshToken:false},global:{headers:{Authorization:`Bearer ${actor.token}`}}});
+      const visible=await browser.from('model_routing_outcomes').select('user_id,run_id').eq('run_id',runId);assert.equal(visible.error,null);assert.deepEqual(visible.data,[{user_id:actor.id,run_id:runId}]);
+      assert.ok((await browser.from('model_routing_outcomes').insert({run_id:runId,user_id:actor.id,task_class:'denied',model_id:'deepseek_v4_flash',routing_mode:'balanced'})).error);
+    }
+    const mutable=row(owner.id),originalFetch=globalThis.fetch;let intercepted=false;
+    t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
+      const url=new URL(String(input));assert.equal(url.origin,'http://127.0.0.1:54321');
+      if(url.pathname.endsWith('/model_routing_outcomes')&&init?.method==='POST'){
+        intercepted=true;mutable.userId=other.id;mutable.requiredCapabilities![0]='mutated';
+      }
+      return originalFetch(input,init);
+    });
+    await recordRoutingOutcome(contexts[0],mutable);assert.equal(intercepted,true);
+    const final=await rows();assert.equal(final.length,3);assert.equal(final.filter(row=>row.user_id===owner.id).length,2);assert.equal(final.filter(row=>row.user_id===other.id).length,1);
+    assert.ok(final.every(row=>row.required_capabilities[0]==='fixture'));
+    assert.ok(recentRoutingOutcomes().filter(row=>row.runId===runId&&row.userId===owner.id).every(row=>row.requiredCapabilities?.[0]==='fixture'));
+    const cached=recentRoutingOutcomes();
+    await recordRoutingOutcome(contexts[0],{...row(owner.id),mode:'invalid' as RoutingOutcome['mode']});
+    assert.deepEqual(await rows(),final);assert.deepEqual(recentRoutingOutcomes(),cached);
+    await recordRoutingOutcome(contexts[0],row(owner.id));assert.equal((await rows()).length,4);
+  });
   async function fixture(t: TestContext) {
     guard();
     const [owner, other] = getUsers();

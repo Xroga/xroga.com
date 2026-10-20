@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "fb2a3f1fcd12e7dca9a768e6ab08ea7d1dcdeb306cd7203089bfad105ee4a2c4",
+  "reviewRegistrySha256": "8c0436e63420d497aa3fc72ba1ee572b9bd04efdadc261fc69bf52fe27275089",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -12,16 +12,16 @@
     "ownerPredicateCandidates": 142,
     "reviewRequired": 0,
     "reviewedCandidates": 636,
-    "unresolvedSafetyCandidates": 11,
+    "unresolvedSafetyCandidates": 7,
     "certifiedScopedPrivilegedCallers": 0,
-    "registeredNarrowGlobalExceptions": 16
+    "registeredNarrowGlobalExceptions": 17
   },
   "outcomes": {
     "REVIEW_REQUIRED": 0,
-    "SCOPED_BOUNDARY": 448,
+    "SCOPED_BOUNDARY": 452,
     "NARROW_EXCEPTION": 37,
     "NOT_PERSISTENCE": 140,
-    "REVIEWED_GAP": 11
+    "REVIEWED_GAP": 7
   },
   "acceptance": {
     "version": 1,
@@ -216,7 +216,7 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-103e8086735074b6"
+        "id": "OB-bfd4c6541eec2a2c"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -456,11 +456,11 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-01cdbf2817e3c0b4"
+        "id": "OB-b86c3c7b35bc6482"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-fc872e2e421090a4"
+        "id": "OB-7fa4bc8d1ee4e65e"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -780,35 +780,19 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "046674e946dedc2dbd0a"
+        "id": "64b99cfd7d4a42c04576"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "f7d8e33dac1c0de787f8"
+        "id": "fc68c1025702714090d7"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "7632727b3c8b02cf14d5"
+        "id": "0200f68b9f576c910b0e"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "77bc9a9a205796da009c"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "8c57a0debf51a7a340f8"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "1740e151510be65ae1da"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "a11bf3e4f0c999a36b58"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "952ba0881d01437685bf"
+        "id": "2bad87b739ae47c2e1c1"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -816,7 +800,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "fd91a4c4ec87b33c520f"
+        "id": "58a049cd8c83e182b9a6"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -912,6 +896,14 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "046674e946dedc2dbd0a"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "f7d8e33dac1c0de787f8"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "2384f6f1c188f4f6ce83"
       },
       {
@@ -989,6 +981,14 @@
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "77af2b12d27cb727addf"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "7632727b3c8b02cf14d5"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "77bc9a9a205796da009c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -1948,11 +1948,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "2a21a68145fa80a09652"
+        "id": "cfa4935b633eda7f4503"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "31bdf4b1891a57808b2f"
+        "id": "213a48f144d86ac38fa9"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -2768,8 +2768,8 @@
     "currentCallers": 636,
     "structuredVerified": 140,
     "structuredUnproven": 496,
-    "manualUnresolved": 11,
-    "manualUnsupported": 485,
+    "manualUnresolved": 7,
+    "manualUnsupported": 489,
     "agreedVerified": 140,
     "proofAwaitingManualReconciliation": 0
   },
@@ -3237,7 +3237,7 @@
       }
     },
     {
-      "id": "f816225ee7eecbfbd7ae",
+      "id": "01d5efe9b761bc670212",
       "path": "backend/src/ai/pipeline.ts",
       "line": 3782,
       "enclosing": "runBuildPipeline",
@@ -3245,7 +3245,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+      "sourceSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -3258,7 +3258,7 @@
       }
     },
     {
-      "id": "4b3b93bfa4bbc1f26e10",
+      "id": "944a58bb15dca85b3ddd",
       "path": "backend/src/ai/pipeline.ts",
       "line": 3962,
       "enclosing": "runBuildPipeline",
@@ -3266,7 +3266,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+      "sourceSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -3476,11 +3476,11 @@
       "kind": "RPC_CANDIDATE",
       "target": "activate_xroga_paid_cycle",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
       "semanticReview": {
-        "authority": "No active production consumer exists for this dormant helper. The callable contract requires the original issued TenantContext before any privileged access. It retains the captured subject through canonical RPC and final read. Paid-cycle input is snapshotted and must declare that same subject. Exact owner/period/evidence receipts or same-owner tier/budget read-back are required. No payment route, provider grant or Phase3 authority is invented.",
-        "reason": "Four original007 dormant budget constructor/RPC obligations are repaired locally and remain unproven. Fifteen focused tests pass, including cloned/primitive context denial, foreign receipt rejection, exact budget/period checks and pre-await mutable-input capture. The registered actual disposable case covers two real subjects, concurrent replay, exact persistence, SQL failure rollback/recovery and browser denial. Actual new-source disposable and full regression remain mandatory. Existing billing fulfilment, accounting and later authority interfaces are unchanged.",
+        "authority": "No active production consumer exists for this export and none is invented. Every callable invocation now requires the original WeakSet-issued tenant context before SDK access. syncPlanBudget derives only that subject, delegates the unchanged fixed service-only set_user_ai_plan_budget RPC and reads the existing owner-bound validated usage row to confirm exact tier/budget before touching its local usage floor. activatePaidCycle requires its input subject to equal that issued actor and snapshots all input, including Dates, before waits. Its unchanged canonical service-only activation routine retains owner-keyed advisory serialization and returns the paid cycle. The helper validates exact original subject, UUID, paid kind, evidence reference and captured period before reading only that same subject status. All other accounting/pacing/read functions and module bytes are independently identical to accepted5722.",
+        "reason": "Four exact dormant original007 callable budget contracts verified at f703fd6a46b441d7d7a4e58abb0a371e50ead020, disposable39408219627/job118579265766 and aggregate39408219586. Original issued context, exact captured subject and payment period, full paid-cycle receipt, owner/tier/budget read-back, actual two-owner concurrent replay, browser denial and forced SQL rollback/recovery pass. Four complete21-stage branch/integrated baselines pass. No active payment producer is invented, no real provider payment is made, and Phase3 grant/approval/financial authority isn't certified.",
         "evidence": [
           {
             "path": "backend/src/ai/providerBudget.evidence.test.ts",
@@ -3509,11 +3509,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
       "semanticReview": {
-        "authority": "No active production consumer exists for this dormant helper. The callable contract requires the original issued TenantContext before any privileged access. It retains the captured subject through canonical RPC and final read. Paid-cycle input is snapshotted and must declare that same subject. Exact owner/period/evidence receipts or same-owner tier/budget read-back are required. No payment route, provider grant or Phase3 authority is invented.",
-        "reason": "Four original007 dormant budget constructor/RPC obligations are repaired locally and remain unproven. Fifteen focused tests pass, including cloned/primitive context denial, foreign receipt rejection, exact budget/period checks and pre-await mutable-input capture. The registered actual disposable case covers two real subjects, concurrent replay, exact persistence, SQL failure rollback/recovery and browser denial. Actual new-source disposable and full regression remain mandatory. Existing billing fulfilment, accounting and later authority interfaces are unchanged.",
+        "authority": "No active production consumer exists for this export and none is invented. Every callable invocation now requires the original WeakSet-issued tenant context before SDK access. syncPlanBudget derives only that subject, delegates the unchanged fixed service-only set_user_ai_plan_budget RPC and reads the existing owner-bound validated usage row to confirm exact tier/budget before touching its local usage floor. activatePaidCycle requires its input subject to equal that issued actor and snapshots all input, including Dates, before waits. Its unchanged canonical service-only activation routine retains owner-keyed advisory serialization and returns the paid cycle. The helper validates exact original subject, UUID, paid kind, evidence reference and captured period before reading only that same subject status. All other accounting/pacing/read functions and module bytes are independently identical to accepted5722.",
+        "reason": "Four exact dormant original007 callable budget contracts verified at f703fd6a46b441d7d7a4e58abb0a371e50ead020, disposable39408219627/job118579265766 and aggregate39408219586. Original issued context, exact captured subject and payment period, full paid-cycle receipt, owner/tier/budget read-back, actual two-owner concurrent replay, browser denial and forced SQL rollback/recovery pass. Four complete21-stage branch/integrated baselines pass. No active payment producer is invented, no real provider payment is made, and Phase3 grant/approval/financial authority isn't certified.",
         "evidence": [
           {
             "path": "backend/src/ai/providerBudget.evidence.test.ts",
@@ -4018,11 +4018,11 @@
       "kind": "RPC_CANDIDATE",
       "target": "set_user_ai_plan_budget",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
       "semanticReview": {
-        "authority": "No active production consumer exists for this dormant helper. The callable contract requires the original issued TenantContext before any privileged access. It retains the captured subject through canonical RPC and final read. Paid-cycle input is snapshotted and must declare that same subject. Exact owner/period/evidence receipts or same-owner tier/budget read-back are required. No payment route, provider grant or Phase3 authority is invented.",
-        "reason": "Four original007 dormant budget constructor/RPC obligations are repaired locally and remain unproven. Fifteen focused tests pass, including cloned/primitive context denial, foreign receipt rejection, exact budget/period checks and pre-await mutable-input capture. The registered actual disposable case covers two real subjects, concurrent replay, exact persistence, SQL failure rollback/recovery and browser denial. Actual new-source disposable and full regression remain mandatory. Existing billing fulfilment, accounting and later authority interfaces are unchanged.",
+        "authority": "No active production consumer exists for this export and none is invented. Every callable invocation now requires the original WeakSet-issued tenant context before SDK access. syncPlanBudget derives only that subject, delegates the unchanged fixed service-only set_user_ai_plan_budget RPC and reads the existing owner-bound validated usage row to confirm exact tier/budget before touching its local usage floor. activatePaidCycle requires its input subject to equal that issued actor and snapshots all input, including Dates, before waits. Its unchanged canonical service-only activation routine retains owner-keyed advisory serialization and returns the paid cycle. The helper validates exact original subject, UUID, paid kind, evidence reference and captured period before reading only that same subject status. All other accounting/pacing/read functions and module bytes are independently identical to accepted5722.",
+        "reason": "Four exact dormant original007 callable budget contracts verified at f703fd6a46b441d7d7a4e58abb0a371e50ead020, disposable39408219627/job118579265766 and aggregate39408219586. Original issued context, exact captured subject and payment period, full paid-cycle receipt, owner/tier/budget read-back, actual two-owner concurrent replay, browser denial and forced SQL rollback/recovery pass. Four complete21-stage branch/integrated baselines pass. No active payment producer is invented, no real provider payment is made, and Phase3 grant/approval/financial authority isn't certified.",
         "evidence": [
           {
             "path": "backend/src/ai/quota.ts",
@@ -4047,11 +4047,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
       "semanticReview": {
-        "authority": "No active production consumer exists for this dormant helper. The callable contract requires the original issued TenantContext before any privileged access. It retains the captured subject through canonical RPC and final read. Paid-cycle input is snapshotted and must declare that same subject. Exact owner/period/evidence receipts or same-owner tier/budget read-back are required. No payment route, provider grant or Phase3 authority is invented.",
-        "reason": "Four original007 dormant budget constructor/RPC obligations are repaired locally and remain unproven. Fifteen focused tests pass, including cloned/primitive context denial, foreign receipt rejection, exact budget/period checks and pre-await mutable-input capture. The registered actual disposable case covers two real subjects, concurrent replay, exact persistence, SQL failure rollback/recovery and browser denial. Actual new-source disposable and full regression remain mandatory. Existing billing fulfilment, accounting and later authority interfaces are unchanged.",
+        "authority": "No active production consumer exists for this export and none is invented. Every callable invocation now requires the original WeakSet-issued tenant context before SDK access. syncPlanBudget derives only that subject, delegates the unchanged fixed service-only set_user_ai_plan_budget RPC and reads the existing owner-bound validated usage row to confirm exact tier/budget before touching its local usage floor. activatePaidCycle requires its input subject to equal that issued actor and snapshots all input, including Dates, before waits. Its unchanged canonical service-only activation routine retains owner-keyed advisory serialization and returns the paid cycle. The helper validates exact original subject, UUID, paid kind, evidence reference and captured period before reading only that same subject status. All other accounting/pacing/read functions and module bytes are independently identical to accepted5722.",
+        "reason": "Four exact dormant original007 callable budget contracts verified at f703fd6a46b441d7d7a4e58abb0a371e50ead020, disposable39408219627/job118579265766 and aggregate39408219586. Original issued context, exact captured subject and payment period, full paid-cycle receipt, owner/tier/budget read-back, actual two-owner concurrent replay, browser denial and forced SQL rollback/recovery pass. Four complete21-stage branch/integrated baselines pass. No active payment producer is invented, no real provider payment is made, and Phase3 grant/approval/financial authority isn't certified.",
         "evidence": [
           {
             "path": "backend/src/ai/quota.ts",
@@ -4174,85 +4174,117 @@
       }
     },
     {
-      "id": "8c57a0debf51a7a340f8",
+      "id": "64b99cfd7d4a42c04576",
       "path": "backend/src/ai/routingOutcomes.ts",
-      "line": 53,
+      "line": 55,
       "enclosing": "loadRoutingOutcomes",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "model_routing_outcomes",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "9df63688a91945be504e650dea0aec9dc220a53913707ea6df9fb8d1354b8bb9",
+      "sourceSha256": "52c9d3ebf8b96fe36765c597b5cfac7a8321dd926aab63296ce92f2aca37646e",
       "semanticReview": {
-        "authority": "Pipeline reads global model routing history and records outcomes with opts.userId/runId. The global cache deliberately aggregates all users for model quality, but contains raw user/run identities as well as numeric signals.",
-        "reason": "Global aggregate admission is not registered here. Raw identity retention, output consumers, valid run-owner relationships, numeric validation and fail-open persistence remain unresolved.",
+        "authority": "The sole production writer is the issued-owner pipeline, which now passes its original context. Original owner equality is checked before access, input is captured, exact receipt is required, and failed optional telemetry remains uncached without exposing raw error text. Restart loader is server-internal, bounded500 and fixed-column, with an explicit narrow exception. Its sole production caller discards returned rows. Terminal learning independently filters owner AND run, and global quality exposes numeric aggregation only.",
+        "reason": "Original007 bounded source repair, not security acceptance. Seven focused routing/ownership/exception cases and backend typechecking pass. Registered actual Auth/database telemetry, restart/owner learning, browser denial, concurrent owner writes, immutable input, SQL failure and recovery proof is prepared. Existing original context and default receiver negative tests are retained. Every affected caller remains REVIEWED_GAP until authenticated final-source proof and complete branch/integrated regressions. No replacement storage engine, public telemetry route, paid provider, Phase3 authority or Phase4 egress is introduced.",
         "evidence": [
           {
             "path": "backend/src/ai/routingOutcomes.ts",
             "marker": "loadRoutingOutcomes"
+          },
+          {
+            "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+            "marker": "real routing telemetry writes bind issued owners and private restart history never crosses terminal learning ownership"
+          },
+          {
+            "path": "backend/src/ai/routingOutcomes.receipt.test.ts",
+            "marker": "optional routing persistence never treats a substituted or unavailable receipt as cached success"
           }
         ]
       }
     },
     {
-      "id": "1740e151510be65ae1da",
+      "id": "fc68c1025702714090d7",
       "path": "backend/src/ai/routingOutcomes.ts",
-      "line": 53,
+      "line": 55,
       "enclosing": "loadRoutingOutcomes",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "9df63688a91945be504e650dea0aec9dc220a53913707ea6df9fb8d1354b8bb9",
+      "sourceSha256": "52c9d3ebf8b96fe36765c597b5cfac7a8321dd926aab63296ce92f2aca37646e",
       "semanticReview": {
-        "authority": "Pipeline reads global model routing history and records outcomes with opts.userId/runId. The global cache deliberately aggregates all users for model quality, but contains raw user/run identities as well as numeric signals.",
-        "reason": "Global aggregate admission is not registered here. Raw identity retention, output consumers, valid run-owner relationships, numeric validation and fail-open persistence remain unresolved.",
+        "authority": "The sole production writer is the issued-owner pipeline, which now passes its original context. Original owner equality is checked before access, input is captured, exact receipt is required, and failed optional telemetry remains uncached without exposing raw error text. Restart loader is server-internal, bounded500 and fixed-column, with an explicit narrow exception. Its sole production caller discards returned rows. Terminal learning independently filters owner AND run, and global quality exposes numeric aggregation only.",
+        "reason": "Original007 bounded source repair, not security acceptance. Seven focused routing/ownership/exception cases and backend typechecking pass. Registered actual Auth/database telemetry, restart/owner learning, browser denial, concurrent owner writes, immutable input, SQL failure and recovery proof is prepared. Existing original context and default receiver negative tests are retained. Every affected caller remains REVIEWED_GAP until authenticated final-source proof and complete branch/integrated regressions. No replacement storage engine, public telemetry route, paid provider, Phase3 authority or Phase4 egress is introduced.",
         "evidence": [
           {
             "path": "backend/src/ai/routingOutcomes.ts",
             "marker": "loadRoutingOutcomes"
+          },
+          {
+            "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+            "marker": "real routing telemetry writes bind issued owners and private restart history never crosses terminal learning ownership"
+          },
+          {
+            "path": "backend/src/ai/routingOutcomes.receipt.test.ts",
+            "marker": "optional routing persistence never treats a substituted or unavailable receipt as cached success"
           }
         ]
       }
     },
     {
-      "id": "a11bf3e4f0c999a36b58",
+      "id": "0200f68b9f576c910b0e",
       "path": "backend/src/ai/routingOutcomes.ts",
-      "line": 108,
+      "line": 115,
       "enclosing": "recordRoutingOutcome",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "9df63688a91945be504e650dea0aec9dc220a53913707ea6df9fb8d1354b8bb9",
+      "sourceSha256": "52c9d3ebf8b96fe36765c597b5cfac7a8321dd926aab63296ce92f2aca37646e",
       "semanticReview": {
-        "authority": "Pipeline reads global model routing history and records outcomes with opts.userId/runId. The global cache deliberately aggregates all users for model quality, but contains raw user/run identities as well as numeric signals.",
-        "reason": "Global aggregate admission is not registered here. Raw identity retention, output consumers, valid run-owner relationships, numeric validation and fail-open persistence remain unresolved.",
+        "authority": "The sole production writer is the issued-owner pipeline, which now passes its original context. Original owner equality is checked before access, input is captured, exact receipt is required, and failed optional telemetry remains uncached without exposing raw error text. Restart loader is server-internal, bounded500 and fixed-column, with an explicit narrow exception. Its sole production caller discards returned rows. Terminal learning independently filters owner AND run, and global quality exposes numeric aggregation only.",
+        "reason": "Original007 bounded source repair, not security acceptance. Seven focused routing/ownership/exception cases and backend typechecking pass. Registered actual Auth/database telemetry, restart/owner learning, browser denial, concurrent owner writes, immutable input, SQL failure and recovery proof is prepared. Existing original context and default receiver negative tests are retained. Every affected caller remains REVIEWED_GAP until authenticated final-source proof and complete branch/integrated regressions. No replacement storage engine, public telemetry route, paid provider, Phase3 authority or Phase4 egress is introduced.",
         "evidence": [
           {
             "path": "backend/src/ai/routingOutcomes.ts",
             "marker": "loadRoutingOutcomes"
+          },
+          {
+            "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+            "marker": "real routing telemetry writes bind issued owners and private restart history never crosses terminal learning ownership"
+          },
+          {
+            "path": "backend/src/ai/routingOutcomes.receipt.test.ts",
+            "marker": "optional routing persistence never treats a substituted or unavailable receipt as cached success"
           }
         ]
       }
     },
     {
-      "id": "952ba0881d01437685bf",
+      "id": "2bad87b739ae47c2e1c1",
       "path": "backend/src/ai/routingOutcomes.ts",
-      "line": 109,
+      "line": 142,
       "enclosing": "recordRoutingOutcome",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "model_routing_outcomes",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "9df63688a91945be504e650dea0aec9dc220a53913707ea6df9fb8d1354b8bb9",
+      "sourceSha256": "52c9d3ebf8b96fe36765c597b5cfac7a8321dd926aab63296ce92f2aca37646e",
       "semanticReview": {
-        "authority": "Pipeline reads global model routing history and records outcomes with opts.userId/runId. The global cache deliberately aggregates all users for model quality, but contains raw user/run identities as well as numeric signals.",
-        "reason": "Global aggregate admission is not registered here. Raw identity retention, output consumers, valid run-owner relationships, numeric validation and fail-open persistence remain unresolved.",
+        "authority": "The sole production writer is the issued-owner pipeline, which now passes its original context. Original owner equality is checked before access, input is captured, exact receipt is required, and failed optional telemetry remains uncached without exposing raw error text. Restart loader is server-internal, bounded500 and fixed-column, with an explicit narrow exception. Its sole production caller discards returned rows. Terminal learning independently filters owner AND run, and global quality exposes numeric aggregation only.",
+        "reason": "Original007 bounded source repair, not security acceptance. Seven focused routing/ownership/exception cases and backend typechecking pass. Registered actual Auth/database telemetry, restart/owner learning, browser denial, concurrent owner writes, immutable input, SQL failure and recovery proof is prepared. Existing original context and default receiver negative tests are retained. Every affected caller remains REVIEWED_GAP until authenticated final-source proof and complete branch/integrated regressions. No replacement storage engine, public telemetry route, paid provider, Phase3 authority or Phase4 egress is introduced.",
         "evidence": [
           {
             "path": "backend/src/ai/routingOutcomes.ts",
             "marker": "loadRoutingOutcomes"
+          },
+          {
+            "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+            "marker": "real routing telemetry writes bind issued owners and private restart history never crosses terminal learning ownership"
+          },
+          {
+            "path": "backend/src/ai/routingOutcomes.receipt.test.ts",
+            "marker": "optional routing persistence never treats a substituted or unavailable receipt as cached success"
           }
         ]
       }
@@ -10579,49 +10611,65 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
+      "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
       "semanticReview": {
-        "authority": "Tenant factory validates issued identity; global factory admits only own registry keys. Both nevertheless return the unrestricted service-role Supabase SDK to internal callers.",
-        "reason": "These are admission helpers, not automatic RLS or constrained query proxies. The full control flow of every recipient must be reviewed. Registry names cannot certify their callers, raw diagnostic redaction, account authority or arbitrary subsequent queries. Keep unresolved rather than pretending this shared factory completes tenant isolation.",
+        "authority": "Constructors return a privileged SDK handle, not an RLS sandbox. Tenant construction requires an original issued context and named global construction requires an exact own registry key. The actual receiving operations must each independently prove owner binding or a legitimate narrow exception before these shared constructors can close. The new bootstrap registration grants only fixed bounded private telemetry reads.",
+        "reason": "Original007 bounded source repair, not security acceptance. Seven focused routing/ownership/exception cases and backend typechecking pass. Registered actual Auth/database telemetry, restart/owner learning, browser denial, concurrent owner writes, immutable input, SQL failure and recovery proof is prepared. Existing original context and default receiver negative tests are retained. Every affected caller remains REVIEWED_GAP until authenticated final-source proof and complete branch/integrated regressions. No replacement storage engine, public telemetry route, paid provider, Phase3 authority or Phase4 egress is introduced.",
         "evidence": [
           {
             "path": "backend/src/security/serviceRoleGuard.test.ts",
             "marker": "unregistered or prototype-derived global operations fail"
+          },
+          {
+            "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+            "marker": "real routing telemetry writes bind issued owners and private restart history never crosses terminal learning ownership"
+          },
+          {
+            "path": "backend/src/ai/routingOutcomes.receipt.test.ts",
+            "marker": "optional routing persistence never treats a substituted or unavailable receipt as cached success"
           }
         ]
       }
     },
     {
-      "id": "fd91a4c4ec87b33c520f",
+      "id": "58a049cd8c83e182b9a6",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 33,
+      "line": 34,
       "enclosing": "getGlobalSupabaseAdmin",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
+      "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
       "semanticReview": {
-        "authority": "Tenant factory validates issued identity; global factory admits only own registry keys. Both nevertheless return the unrestricted service-role Supabase SDK to internal callers.",
-        "reason": "These are admission helpers, not automatic RLS or constrained query proxies. The full control flow of every recipient must be reviewed. Registry names cannot certify their callers, raw diagnostic redaction, account authority or arbitrary subsequent queries. Keep unresolved rather than pretending this shared factory completes tenant isolation.",
+        "authority": "Constructors return a privileged SDK handle, not an RLS sandbox. Tenant construction requires an original issued context and named global construction requires an exact own registry key. The actual receiving operations must each independently prove owner binding or a legitimate narrow exception before these shared constructors can close. The new bootstrap registration grants only fixed bounded private telemetry reads.",
+        "reason": "Original007 bounded source repair, not security acceptance. Seven focused routing/ownership/exception cases and backend typechecking pass. Registered actual Auth/database telemetry, restart/owner learning, browser denial, concurrent owner writes, immutable input, SQL failure and recovery proof is prepared. Existing original context and default receiver negative tests are retained. Every affected caller remains REVIEWED_GAP until authenticated final-source proof and complete branch/integrated regressions. No replacement storage engine, public telemetry route, paid provider, Phase3 authority or Phase4 egress is introduced.",
         "evidence": [
           {
             "path": "backend/src/security/serviceRoleGuard.test.ts",
             "marker": "unregistered or prototype-derived global operations fail"
+          },
+          {
+            "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+            "marker": "real routing telemetry writes bind issued owners and private restart history never crosses terminal learning ownership"
+          },
+          {
+            "path": "backend/src/ai/routingOutcomes.receipt.test.ts",
+            "marker": "optional routing persistence never treats a substituted or unavailable receipt as cached success"
           }
         ]
       }
     },
     {
-      "id": "2a21a68145fa80a09652",
+      "id": "cfa4935b633eda7f4503",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 37,
+      "line": 38,
       "enclosing": "probeDatabaseReadiness",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
+      "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
       "semanticReview": {
         "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
         "reason": "Only error presence is used to report infrastructure readiness; selected identities are not returned, persisted or logged. This is a read-only platform readiness exception and grants neither user access nor founder privileges. Other registered global operations require their own recipient review.",
@@ -10634,15 +10682,15 @@
       }
     },
     {
-      "id": "31bdf4b1891a57808b2f",
+      "id": "213a48f144d86ac38fa9",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 37,
+      "line": 38,
       "enclosing": "probeDatabaseReadiness",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
+      "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
       "semanticReview": {
         "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
         "reason": "Only error presence is used to report infrastructure readiness; selected identities are not returned, persisted or logged. This is a read-only platform readiness exception and grants neither user access nor founder privileges. Other registered global operations require their own recipient review.",

@@ -4,7 +4,7 @@ import {setTimeout as delay} from 'node:timers/promises';
 import {test} from 'node:test';
 import pg from 'pg';
 import type {SupabaseClient} from '@supabase/supabase-js';
-import {SupabaseUniversalStore} from '../synthesis/universalPersistence.js';
+import {SupabaseUniversalStore,universalStore} from '../synthesis/universalPersistence.js';
 import {synthesizeUniversalProductSpec} from '../synthesis/universalProductSpec.js';
 import {planArchitecture} from '../synthesis/architecturePlan.js';
 import type {PlanMutation} from '../synthesis/dynamicPlanning.js';
@@ -14,7 +14,9 @@ type Actor={id:string;context:TenantContext};
 export function registerUniversalOwnerReadTests(admin:SupabaseClient,getUsers:()=>readonly Actor[]):void{
  test('real universal default readers and index removal preserve issued owner project and run namespaces',async t=>{
   assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');
-  const [owner,other]=getUsers(),a=new SupabaseUniversalStore(admin,owner.context),b=new SupabaseUniversalStore(admin,other.context),projectId=`read-fixture-${randomUUID()}`,runId=randomUUID(),actor={userId:owner.id,projectId},foreign={userId:other.id,projectId};
+  const [owner,other]=getUsers(),a=universalStore(admin,owner.context),b=universalStore(admin,other.context),projectId=`read-fixture-${randomUUID()}`,runId=randomUUID(),actor={userId:owner.id,projectId},foreign={userId:other.id,projectId};
+  assert.notEqual(a,b,'Privileged request stores must never share the global memory singleton');
+  for(const context of [owner.id,{...owner.context},structuredClone(owner.context)])assert.throws(()=>universalStore(admin,context as TenantContext),{status:401});
   const specs=[owner,other].map((_,n)=>({...synthesizeUniversalProductSpec({prompt:'Build a fictional task API'}),title:`OWN_SPEC_${n}`,createdAt:new Date(Date.now()-n*1000).toISOString()})),plans=specs.map(spec=>planArchitecture({spec}));
   const specIds=specs.map(spec=>`${projectId}:${spec.createdAt}`),planIds=plans.map(plan=>`${projectId}:${plan.createdAt}`),mutationKeys=[randomUUID(),randomUUID()];
   // The real planner can create both plans in one millisecond. Keep the fixture

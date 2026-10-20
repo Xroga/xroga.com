@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "5722bb9afdd81359a57ac84adcb7fb95b2fcc729",
+  "source_sha": "f703fd6a46b441d7d7a4e58abb0a371e50ead020",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12270,7 +12270,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99"
+      "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -12338,7 +12338,7 @@
     },
     {
       "path": "backend/src/ai/routingOutcomes.ts",
-      "sha256": "9df63688a91945be504e650dea0aec9dc220a53913707ea6df9fb8d1354b8bb9"
+      "sha256": "52c9d3ebf8b96fe36765c597b5cfac7a8321dd926aab63296ce92f2aca37646e"
     },
     {
       "path": "backend/src/ai/runReconciler.ts",
@@ -13366,7 +13366,7 @@
     },
     {
       "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
-      "sha256": "a270fb0183f8f5dd8b4930e7970476e1b37a8f98153415aafbc900de8e3ca29e"
+      "sha256": "412c4838ed06b1073b0f26756aa4169d6f8e2488225219033e6f5764fad6ebef"
     },
     {
       "path": "backend/src/security/buildProjectReceipt.local.integration.ts",
@@ -13526,7 +13526,7 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sha256": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813"
+      "sha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675"
     },
     {
       "path": "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
@@ -13562,7 +13562,7 @@
     },
     {
       "path": "backend/src/security/universalOwnerReads.local.integration.ts",
-      "sha256": "0be85066ee3b8c3ae9247a43574ff33e2817c7c11f5e18ee7d5c0e4abbdcc49d"
+      "sha256": "d1c73d5a9946df80bdc42856d6f21cf0dad909452c7ef023f143b3c2334c0a60"
     },
     {
       "path": "backend/src/security/usageAccounting.local.integration.ts",
@@ -19344,7 +19344,14 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
-      "line": 15,
+      "line": 17,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+      "line": 45,
       "credentialsInUrl": false
     },
     {
@@ -19953,7 +19960,7 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/universalOwnerReads.local.integration.ts",
-      "line": 41,
+      "line": 43,
       "credentialsInUrl": false
     },
     {

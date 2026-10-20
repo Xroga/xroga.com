@@ -509,15 +509,15 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-103e8086735074b6",
+      "id": "OB-bfd4c6541eec2a2c",
       "callerIds": [
-        "8c57a0debf51a7a340f8",
-        "1740e151510be65ae1da",
-        "a11bf3e4f0c999a36b58",
-        "952ba0881d01437685bf"
+        "64b99cfd7d4a42c04576",
+        "fc68c1025702714090d7",
+        "0200f68b9f576c910b0e",
+        "2bad87b739ae47c2e1c1"
       ],
       "path": "backend/src/ai/routingOutcomes.ts",
-      "sourceSha256": "9df63688a91945be504e650dea0aec9dc220a53913707ea6df9fb8d1354b8bb9",
+      "sourceSha256": "52c9d3ebf8b96fe36765c597b5cfac7a8321dd926aab63296ce92f2aca37646e",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -526,13 +526,21 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Global aggregate admission is not registered here. Raw identity retention, output consumers, valid run-owner relationships, numeric validation and fail-open persistence remain unresolved.",
-      "authorityTrace": "Pipeline reads global model routing history and records outcomes with opts.userId/runId. The global cache deliberately aggregates all users for model quality, but contains raw user/run identities as well as numeric signals.",
+      "reason": "Original007 bounded source repair, not security acceptance. Seven focused routing/ownership/exception cases and backend typechecking pass. Registered actual Auth/database telemetry, restart/owner learning, browser denial, concurrent owner writes, immutable input, SQL failure and recovery proof is prepared. Existing original context and default receiver negative tests are retained. Every affected caller remains REVIEWED_GAP until authenticated final-source proof and complete branch/integrated regressions. No replacement storage engine, public telemetry route, paid provider, Phase3 authority or Phase4 egress is introduced.",
+      "authorityTrace": "The sole production writer is the issued-owner pipeline, which now passes its original context. Original owner equality is checked before access, input is captured, exact receipt is required, and failed optional telemetry remains uncached without exposing raw error text. Restart loader is server-internal, bounded500 and fixed-column, with an explicit narrow exception. Its sole production caller discards returned rows. Terminal learning independently filters owner AND run, and global quality exposes numeric aggregation only.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/ai/routingOutcomes.ts",
           "marker": "loadRoutingOutcomes"
+        },
+        {
+          "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+          "marker": "real routing telemetry writes bind issued owners and private restart history never crosses terminal learning ownership"
+        },
+        {
+          "path": "backend/src/ai/routingOutcomes.receipt.test.ts",
+          "marker": "optional routing persistence never treats a substituted or unavailable receipt as cached success"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -1122,7 +1130,7 @@
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
-      "authorityTrace": "No active production consumer exists for this dormant helper. The callable contract requires the original issued TenantContext before any privileged access. It retains the captured subject through canonical RPC and final read. Paid-cycle input is snapshotted and must declare that same subject. Exact owner/period/evidence receipts or same-owner tier/budget read-back are required. No payment route, provider grant or Phase3 authority is invented.\nThe actual producer set is the issued-owner pipeline and server business/agent/planner callbacks already traced for provider reservations. No route accepts a meter userId from the client. The selected method parameters are immutable primitives. readUsageRow first verifies exact original owner and current configured durable evidence. All three fixed increment/model/ledger RPCs retain exactly that owner and current period, and the final getUsage uses the same owner. Authenticated status separately obtains requireUserId(req), not a query actor. Browser roles have no execute grant on the exact legacy RPC signatures.",
+      "authorityTrace": "No active production consumer exists for this export and none is invented. Every callable invocation now requires the original WeakSet-issued tenant context before SDK access. syncPlanBudget derives only that subject, delegates the unchanged fixed service-only set_user_ai_plan_budget RPC and reads the existing owner-bound validated usage row to confirm exact tier/budget before touching its local usage floor. activatePaidCycle requires its input subject to equal that issued actor and snapshots all input, including Dates, before waits. Its unchanged canonical service-only activation routine retains owner-keyed advisory serialization and returns the paid cycle. The helper validates exact original subject, UUID, paid kind, evidence reference and captured period before reading only that same subject status. All other accounting/pacing/read functions and module bytes are independently identical to accepted5722.\nThe actual producer set is the issued-owner pipeline and server business/agent/planner callbacks already traced for provider reservations. No route accepts a meter userId from the client. The selected method parameters are immutable primitives. readUsageRow first verifies exact original owner and current configured durable evidence. All three fixed increment/model/ledger RPCs retain exactly that owner and current period, and the final getUsage uses the same owner. Authenticated status separately obtains requireUserId(req), not a query actor. Browser roles have no execute grant on the exact legacy RPC signatures.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -1144,7 +1152,7 @@
             "7632727b3c8b02cf14d5",
             "77bc9a9a205796da009c"
           ],
-          "disposition": "REVIEWED_GAP"
+          "disposition": "SCOPED_BOUNDARY"
         },
         {
           "callIds": [
@@ -1326,7 +1334,7 @@
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
-      "authorityTrace": "No active production consumer exists for this dormant helper. The callable contract requires the original issued TenantContext before any privileged access. It retains the captured subject through canonical RPC and final read. Paid-cycle input is snapshotted and must declare that same subject. Exact owner/period/evidence receipts or same-owner tier/budget read-back are required. No payment route, provider grant or Phase3 authority is invented.\nActive public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.\nReservation fallback retains the same original userId of reserveProviderBudget and passes it to fixed ensure_xroga_free_cycle only after missing-active-cycle error. It cannot choose a paid amount or a different account. Failed reservation finalization is private to withProviderReservation flow, which retains the same owner and reservation captured before execute. The release RPC matches both reservation ID and owner and locks that exact owner cycle before accounting. Definite pre-completion failures release only this hold, uncertain outcomes retain it. Logging a failed foreign release does not grant success or mutate rows.",
+      "authorityTrace": "No active production consumer exists for this export and none is invented. Every callable invocation now requires the original WeakSet-issued tenant context before SDK access. syncPlanBudget derives only that subject, delegates the unchanged fixed service-only set_user_ai_plan_budget RPC and reads the existing owner-bound validated usage row to confirm exact tier/budget before touching its local usage floor. activatePaidCycle requires its input subject to equal that issued actor and snapshots all input, including Dates, before waits. Its unchanged canonical service-only activation routine retains owner-keyed advisory serialization and returns the paid cycle. The helper validates exact original subject, UUID, paid kind, evidence reference and captured period before reading only that same subject status. All other accounting/pacing/read functions and module bytes are independently identical to accepted5722.\nActive public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.\nReservation fallback retains the same original userId of reserveProviderBudget and passes it to fixed ensure_xroga_free_cycle only after missing-active-cycle error. It cannot choose a paid amount or a different account. Failed reservation finalization is private to withProviderReservation flow, which retains the same owner and reservation captured before execute. The release RPC matches both reservation ID and owner and locks that exact owner cycle before accounting. Definite pre-completion failures release only this hold, uncertain outcomes retain it. Logging a failed foreign release does not grant success or mutate rows.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -1352,7 +1360,7 @@
             "046674e946dedc2dbd0a",
             "f7d8e33dac1c0de787f8"
           ],
-          "disposition": "REVIEWED_GAP"
+          "disposition": "SCOPED_BOUNDARY"
         },
         {
           "callIds": [
@@ -2131,12 +2139,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-de3c3d00b9f6a6d4",
+      "id": "OB-5c8c1624c93a6551",
       "callerIds": [
-        "f816225ee7eecbfbd7ae"
+        "01d5efe9b761bc670212"
       ],
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+      "sourceSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
       "state": "NOT_PERSISTENCE",
       "legacyDispositionPreserved": "NOT_PERSISTENCE",
       "criterionIds": [
@@ -2157,17 +2165,17 @@
       "review": {
         "path": "backend/src/ai/pipeline.ts",
         "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {",
-        "sha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99"
+        "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
       },
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-7b8e4d060c1f7483",
+      "id": "OB-2896537a30c1276a",
       "callerIds": [
-        "4b3b93bfa4bbc1f26e10"
+        "944a58bb15dca85b3ddd"
       ],
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99",
+      "sourceSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
       "state": "NOT_PERSISTENCE",
       "legacyDispositionPreserved": "NOT_PERSISTENCE",
       "criterionIds": [
@@ -2188,7 +2196,7 @@
       "review": {
         "path": "backend/src/ai/pipeline.ts",
         "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }",
-        "sha256": "b08569d50708bdf90c6daf45bbee2efe4539ad1fd8007db6ebd6383702aa6e99"
+        "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
       },
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
@@ -6607,13 +6615,13 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-01cdbf2817e3c0b4",
+      "id": "OB-b86c3c7b35bc6482",
       "callerIds": [
         "d84df34ff692e4fb31c1",
-        "fd91a4c4ec87b33c520f"
+        "58a049cd8c83e182b9a6"
       ],
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
+      "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -6622,25 +6630,33 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "These are admission helpers, not automatic RLS or constrained query proxies. The full control flow of every recipient must be reviewed. Registry names cannot certify their callers, raw diagnostic redaction, account authority or arbitrary subsequent queries. Keep unresolved rather than pretending this shared factory completes tenant isolation.",
-      "authorityTrace": "Tenant factory validates issued identity; global factory admits only own registry keys. Both nevertheless return the unrestricted service-role Supabase SDK to internal callers.",
+      "reason": "Original007 bounded source repair, not security acceptance. Seven focused routing/ownership/exception cases and backend typechecking pass. Registered actual Auth/database telemetry, restart/owner learning, browser denial, concurrent owner writes, immutable input, SQL failure and recovery proof is prepared. Existing original context and default receiver negative tests are retained. Every affected caller remains REVIEWED_GAP until authenticated final-source proof and complete branch/integrated regressions. No replacement storage engine, public telemetry route, paid provider, Phase3 authority or Phase4 egress is introduced.",
+      "authorityTrace": "Constructors return a privileged SDK handle, not an RLS sandbox. Tenant construction requires an original issued context and named global construction requires an exact own registry key. The actual receiving operations must each independently prove owner binding or a legitimate narrow exception before these shared constructors can close. The new bootstrap registration grants only fixed bounded private telemetry reads.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/security/serviceRoleGuard.test.ts",
           "marker": "unregistered or prototype-derived global operations fail"
+        },
+        {
+          "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+          "marker": "real routing telemetry writes bind issued owners and private restart history never crosses terminal learning ownership"
+        },
+        {
+          "path": "backend/src/ai/routingOutcomes.receipt.test.ts",
+          "marker": "optional routing persistence never treats a substituted or unavailable receipt as cached success"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-fc872e2e421090a4",
+      "id": "OB-7fa4bc8d1ee4e65e",
       "callerIds": [
-        "2a21a68145fa80a09652",
-        "31bdf4b1891a57808b2f"
+        "cfa4935b633eda7f4503",
+        "213a48f144d86ac38fa9"
       ],
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "bf9704e17bea53a401f7f41e98c17643e109384db8902d91a97a511d590a2813",
+      "sourceSha256": "d1548220093bb7f421db822c8b7ee0254133dd17fa2caa07b00e02aa6b149675",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "NARROW_EXCEPTION",
       "criterionIds": [

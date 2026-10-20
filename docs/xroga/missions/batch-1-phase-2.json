@@ -9,6 +9,8 @@
   "risk": "high",
   "scope": "Founder-approved Phase2 only. All ten original007 criteria, finite73 packets, tenant/parent/account/worker lineage and genuine proof. No008/009/010 implementation or production authority.",
   "changedFiles": [
+    "backend/src/ai/routingOutcomes.receipt.test.ts",
+    "backend/src/ai/routingOutcomes.ts",
     "backend/src/security/budgetOwner.local.integration.ts",
     "backend/src/ai/budgetOwnerBoundary.test.ts",
     "backend/src/services/BillingService.budget.test.ts",
@@ -217,6 +219,12 @@
     }
   },
   "tests": [
+    {
+      "command": "node --import tsx --test backend/src/ai/routingOutcomes.receipt.test.ts backend/src/ai/routingPersistence.test.ts backend/src/ai/buildOutcomeOwnership.test.ts backend/src/security/serviceRoleGuard.test.ts",
+      "scope": "Issued routing ownership, exact optional persistence and private cache boundaries. Actual database security cases remain mandatory.",
+      "negative": true,
+      "reference": "backend/src/security/buildOutcomeAttempt.local.integration.ts"
+    },
     {
       "command": "node --import tsx --test backend/src/ai/budgetOwnerBoundary.test.ts backend/src/ai/quota.failure.test.ts backend/src/ai/providerBudget.test.ts backend/src/services/BillingService.budget.test.ts",
       "scope": "Original issued ownership and exact budget receipt tests. Actual database integration requires new source CI.",

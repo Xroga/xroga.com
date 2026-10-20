@@ -398,7 +398,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:11 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:7 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -433,9 +433,9 @@
     "ownerPredicateCandidates": 142,
     "reviewRequired": 0,
     "reviewedCandidates": 636,
-    "unresolvedSafetyCandidates": 11,
+    "unresolvedSafetyCandidates": 7,
     "certifiedScopedPrivilegedCallers": 0,
-    "registeredNarrowGlobalExceptions": 16
+    "registeredNarrowGlobalExceptions": 17
   },
   "dependency": {
     "downstreamPatchStatus": "VERIFIED_SCOPE at4f8c56acdf6b9c90a5ea1147dfd79151bffe6c46: four targeted fixtures and18 combined dependency/Cline tests, frozen workspace/standalone38806776199, Docker38806776574 and repeated branch/integrated21-stage baseline38806776471 pass. Integrated7377b5a5ffc76d49c7dcb4094ddc9055c4062eeb. Versions/audit findings retained, no waiver. Current later-source CI still required.",
@@ -540,14 +540,9 @@
       "existingImplementation": "Existing billing functions and provider reservations",
       "missingBehavior": "Remaining source-bound billing/budget replay, numeric and caller authority gaps",
       "acceptanceTest": "Concurrent replay, foreign account, failed reservation/settlement and compensation",
-      "pendingCandidates": 2,
+      "pendingCandidates": 0,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
-      "callersByPath": {
-        "backend/src/ai/providerBudget.ts": [
-          "046674e946dedc2dbd0a",
-          "f7d8e33dac1c0de787f8"
-        ]
-      }
+      "callersByPath": {}
     },
     {
       "rootCause": "projects-files-runtime",
@@ -579,22 +574,18 @@
       "existingImplementation": "Existing services and source-bound register",
       "missingBehavior": "Inspect the exact remaining reason for each listed caller, grouping shared helpers",
       "acceptanceTest": "Per-caller negative verification proportional to risk",
-      "pendingCandidates": 8,
+      "pendingCandidates": 6,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
-        "backend/src/ai/quota.ts": [
-          "7632727b3c8b02cf14d5",
-          "77bc9a9a205796da009c"
-        ],
         "backend/src/ai/routingOutcomes.ts": [
-          "8c57a0debf51a7a340f8",
-          "1740e151510be65ae1da",
-          "a11bf3e4f0c999a36b58",
-          "952ba0881d01437685bf"
+          "64b99cfd7d4a42c04576",
+          "fc68c1025702714090d7",
+          "0200f68b9f576c910b0e",
+          "2bad87b739ae47c2e1c1"
         ],
         "backend/src/security/serviceRoleGuard.ts": [
           "d84df34ff692e4fb31c1",
-          "fd91a4c4ec87b33c520f"
+          "58a049cd8c83e182b9a6"
         ]
       }
     }

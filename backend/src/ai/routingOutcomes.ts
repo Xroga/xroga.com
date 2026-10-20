@@ -1,4 +1,6 @@
-import { getSupabaseAdmin } from '../config/supabase.js';
+import {isDeepStrictEqual} from 'node:util';
+import {getGlobalSupabaseAdmin, getTenantSupabaseAdmin} from '../security/serviceRoleGuard.js';
+import {requireResourceOwner, requireTenantContext, type TenantContext} from '../security/tenantContext.js';
 import type { ModelId } from './models.js';
 import type { RoutingMode } from './routerConfig.js';
 
@@ -50,9 +52,9 @@ export async function loadRoutingOutcomes(
   if (loader) rows = await loader();
   else if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
     try {
-      const { data, error } = await getSupabaseAdmin()
+      const { data, error } = await getGlobalSupabaseAdmin('private_routing_history_bootstrap')
         .from('model_routing_outcomes')
-        .select('*')
+        .select('run_id,user_id,task_class,model_id,routing_mode,latency_ms,input_tokens,output_tokens,estimated_cost_usd,patch_applied,typecheck_ok,test_ok,build_ok,preview_ok,repair_loops,model_switches,recovery_succeeded,framework,required_capabilities,provider,provider_failure_type,review_ok,deployment_ok,final_verification_ok,created_at')
         .order('created_at', { ascending: false })
         .limit(500);
       if (error) throw error;
@@ -69,8 +71,8 @@ export async function loadRoutingOutcomes(
         reviewOk: row.review_ok ?? undefined, deploymentOk: row.deployment_ok ?? undefined,
         finalVerificationOk: row.final_verification_ok ?? undefined, createdAt: row.created_at ?? undefined,
       }));
-    } catch (error) {
-      console.warn('[routingOutcomes] reload skipped:', (error as Error).message);
+    } catch {
+      console.warn('[routingOutcomes] reload unavailable');
     }
   }
   recent.push(...rows.slice(0, 500));
@@ -100,15 +102,20 @@ export function historicalModelQuality(input: { modelId: ModelId; taskClass: str
   return total >= 2 ? weighted / total : null;
 }
 
-export async function recordRoutingOutcome(outcome: RoutingOutcome): Promise<void> {
-  recent.push({ createdAt: new Date().toISOString(), ...outcome });
-  if (recent.length > 500) recent.splice(0, recent.length - 500);
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return;
+export async function recordRoutingOutcome(context: TenantContext, outcome: RoutingOutcome): Promise<void> {
+  const subject=requireTenantContext(context);
+  requireResourceOwner(subject,outcome.userId);
+  outcome=structuredClone(outcome);
+  const remember=()=>{
+    recent.push({createdAt:new Date().toISOString(),...outcome});
+    if(recent.length>500)recent.splice(0,recent.length-500);
+  };
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {remember();return;}
   try {
-    const supabase = getSupabaseAdmin();
-    const { error } = await supabase.from('model_routing_outcomes').insert({
+    const supabase = getTenantSupabaseAdmin(subject);
+    const row={
       run_id: outcome.runId,
-      user_id: outcome.userId,
+      user_id: subject.userId,
       task_class: outcome.taskClass,
       model_id: outcome.modelId,
       routing_mode: outcome.mode,
@@ -131,9 +138,12 @@ export async function recordRoutingOutcome(outcome: RoutingOutcome): Promise<voi
       review_ok: outcome.reviewOk ?? null,
       deployment_ok: outcome.deploymentOk ?? null,
       final_verification_ok: outcome.finalVerificationOk ?? null,
-    });
-    if (error) console.warn('[routingOutcomes] persist skipped:', error.message);
-  } catch (error) {
-    console.warn('[routingOutcomes] persist skipped:', (error as Error).message);
+    };
+    const {data,error}=await supabase.from('model_routing_outcomes').insert(row).select(Object.keys(row).join(',')).single();
+    if(error||!data||!isDeepStrictEqual(data,row))throw new Error('Invalid routing persistence receipt');
+    remember();
+  } catch {
+    // Optional telemetry failure never becomes persisted or cached success.
+    console.warn('[routingOutcomes] persistence unavailable');
   }
 }
