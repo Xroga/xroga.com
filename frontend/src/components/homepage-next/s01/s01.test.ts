@@ -462,22 +462,27 @@ test('one S01 narrative: no separate six-item strip or footer disclaimer; its us
   assert.equal(CAPABILITIES.length, 8);
 });
 
-test('Galaxy field: budgeted, behind the cards, never takes the pointer, released on unmount', () => {
-  const g = read('./GalaxyField.tsx');
-  assert.match(g, /GALAXY_SCALE = 0\.5;/);
-  assert.match(g, /GALAXY_FRAME_MS = 1000 \/ 30;/);
-  assert.match(g, /new IntersectionObserver/);
-  assert.match(g, /document\.hidden/);
-  assert.match(g, /if \(reduced\) \{\s*draw\(4000\);/, 'reduced motion: one static frame');
-  assert.match(g, /GALAXY_PROBE_LIMIT_MS/);
-  assert.match(g, /loseContext\(\)/);
-  assert.doesNotMatch(g, /mousemove|addEventListener\('mouse/);
-  assert.match(g, /saturation: 0\.12,/);
-  const css = read('./S01.module.css');
-  assert.match(css, /\.galaxy \{[\s\S]*?pointer-events: none;[\s\S]*?mask-image/);
+test('precision-dot background replaces the galaxy only in S01, and respects motion and hit testing', () => {
   const deck = read('./S01CapabilityDeck.tsx');
-  assert.match(deck, /dynamic\(\(\) => import\('\.\/GalaxyField'\)[\s\S]*?ssr: false/);
+  const css = read('./S01.module.css');
+  const noise = read('../../../../public/homepage/s01/dot-noise.svg');
+  assert.doesNotMatch(deck, /GalaxyField|next\/dynamic|WebGL/);
+  assert.match(deck, /function PrecisionField\(\)/);
+  assert.equal((deck.match(/<PrecisionField \/>/g) ?? []).length, 4, 'deck, static, carousel and first-paint');
+  assert.match(deck, /new IntersectionObserver\(\(\[entry\]\) =>/);
+  assert.match(deck, /data-field-active/);
+  assert.match(deck, /aria-hidden="true"/);
+  assert.match(css, /\.precisionField \{[\s\S]*?pointer-events: none/);
+  assert.match(css, /radial-gradient\(circle at 50% 50%, #fff 1\.32px, transparent 1\.95px\)/);
+  assert.match(css, /mask-size: 20px 20px, 256px 256px/);
+  assert.match(css, /mask-composite: intersect/);
+  assert.match(css, /-webkit-mask-composite: source-in/);
+  assert.match(css, /animation-play-state: paused/);
+  assert.match(css, /\.section\[data-field-active\] \.precisionDots/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.precisionDots \{ animation: none; \}/);
+  assert.doesNotMatch(css, /assets\.codepen\.io|@font-face|position:\s*fixed/);
+  assert.match(noise, /<svg xmlns=/);
+  assert.ok((noise.match(/<rect /g) ?? []).length >= 200);
   const stage = deck.slice(deck.indexOf('function DeckStage('), deck.indexOf('function Gallery('));
-  assert.ok(stage.indexOf('<GalaxyField') < stage.indexOf('<ol className={s.deck}'), 'the field is behind the cards');
-  assert.doesNotMatch(deck.slice(deck.indexOf('function Gallery(')), /<GalaxyField/, 'no WebGL field on phones and tablets');
+  assert.ok(stage.indexOf('<PrecisionField />') < stage.indexOf('<ol className={s.deck}'), 'field stays behind cards');
 });
