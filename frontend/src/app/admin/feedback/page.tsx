@@ -86,7 +86,7 @@ export default async function FeedbackAdminPage() {
           </div>
           <div className={styles.adminIdentity}>
             <span>Authorized account</span>
-            <strong>{FEEDBACK_ADMIN_EMAIL}</strong>
+            <strong>{user.email}</strong>
           </div>
         </header>
 
