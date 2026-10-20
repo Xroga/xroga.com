@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { getUsage, assertHasQuota, recordUsage, syncPlanBudget } from './quota.js';
+import { createTenantContext } from '../security/tenantContext.js';
 
 test('quota admission requires current owner-bound durable evidence and never invents paid credit', async t => {
   const keys = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY']; const previous = keys.map(key => process.env[key]);
@@ -47,7 +48,7 @@ test('quota admission requires current owner-bound durable evidence and never in
   row = valid; reads = 0;
   assert.equal((await assertHasQuota(owner)).creditRemainingUsd, 17); assert.equal(reads, 1);
   await recordUsage(owner, 'kimi_k3', 10, 5);
-  await syncPlanBudget(owner, 'spark');
+  await syncPlanBudget(createTenantContext({userId: owner, via: 'local_jwt'}), 'spark');
   row = { ...valid, plan_tier: 'free', plan_budget_usd: '1.65', spent_usd: '0', input_tokens: '0', output_tokens: '0' };
   const downgraded = await getUsage(owner);
   assert.equal(downgraded.planTier, 'free'); assert.equal(downgraded.planBudgetUsd, 1.65);

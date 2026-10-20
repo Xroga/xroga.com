@@ -398,7 +398,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:22 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:11 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -433,7 +433,7 @@
     "ownerPredicateCandidates": 142,
     "reviewRequired": 0,
     "reviewedCandidates": 636,
-    "unresolvedSafetyCandidates": 22,
+    "unresolvedSafetyCandidates": 11,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 16
   },
@@ -544,8 +544,8 @@
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/providerBudget.ts": [
-          "00d351afbe045a136c66",
-          "254a91383e3a8af0310b"
+          "046674e946dedc2dbd0a",
+          "f7d8e33dac1c0de787f8"
         ]
       }
     },
@@ -555,24 +555,9 @@
       "existingImplementation": "Existing owner checks, project/file stores and runtime",
       "missingBehavior": "Inherited parent identity, durable receipt, revision and runtime ownership gaps",
       "acceptanceTest": "Wrong parent, orphan, stale revision, failed persistence and cross-tenant download",
-      "pendingCandidates": 12,
+      "pendingCandidates": 1,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
-        "backend/src/services/memory/buildProjectStore.ts": [
-          "ea087c9551ee69b9b0d3",
-          "7392ec424976019ecaa1",
-          "0906e7cc348611500a9a",
-          "237b112c6ed82b8b5494",
-          "86ab46317dfaadcb7a8b",
-          "3c877ece7514d0bb2943",
-          "8e4069835c8064de08e4",
-          "66e3c91fc33e27084a31",
-          "a763d5560b8956ecb580"
-        ],
-        "backend/src/services/storage/projectFiles.ts": [
-          "25757992dc2e9cf1d564",
-          "40004623c4ecf74640f6"
-        ],
         "backend/src/synthesis/universalEntrypoint.ts": [
           "10b5e279dd241e2f40ec"
         ]
@@ -598,8 +583,8 @@
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/ai/quota.ts": [
-          "3faa7ece6a312b431802",
-          "09c18505660bd25e7f05"
+          "7632727b3c8b02cf14d5",
+          "77bc9a9a205796da009c"
         ],
         "backend/src/ai/routingOutcomes.ts": [
           "8c57a0debf51a7a340f8",

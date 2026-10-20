@@ -116,6 +116,7 @@ import { registerBillingOwnershipTests } from '../services/billingOwnership.loca
 import { registerBillingRouteTests } from '../services/billingRoutes.local.integration.js';
 import { registerProviderCycleParentTests } from './providerCycleParent.local.integration.js';
 import { registerBuildProjectReceiptTests } from './buildProjectReceipt.local.integration.js';
+import { registerBudgetOwnerTests } from './budgetOwner.local.integration.js';
 import { registerGrowthEventReplayTests } from '../growth/eventReplay.local.integration.js';
 import { registerChatBoundaryTests } from './chatBoundary.local.integration.js';
 
@@ -182,6 +183,7 @@ registerBillingOwnershipTests(admin);
 registerBillingRouteTests(admin,request);
 registerProviderCycleParentTests(admin);
 registerBuildProjectReceiptTests(admin, () => users);
+registerBudgetOwnerTests(admin);
 registerGrowthEventReplayTests(admin, () => users);
 registerChatBoundaryTests(admin, () => users, request);
 registerWorkerProjectAdmissionTests(admin, () => users);

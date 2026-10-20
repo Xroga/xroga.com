@@ -1,4 +1,5 @@
 import { getSupabaseAdmin } from '../config/supabase.js';
+import { requireTenantContext, type TenantContext } from '../security/tenantContext.js';
 import {
   MODELS,
   POOL_PUBLIC_ID_BY_ROLE,
@@ -252,7 +253,9 @@ export async function getUsage(userId: string): Promise<UsageSnapshot> {
   });
 }
 
-export async function syncPlanBudget(userId: string, planTier: string): Promise<void> {
+export async function syncPlanBudget(context: TenantContext, planTier: string): Promise<void> {
+  const { userId } = requireTenantContext(context);
+  if (!getPlanByTier(planTier)) throw unavailable();
   const budget = getApiBudgetUsd(planTier);
   if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
     try {
@@ -260,6 +263,10 @@ export async function syncPlanBudget(userId: string, planTier: string): Promise<
         p_user_id: userId, p_plan_tier: planTier, p_plan_budget_usd: budget,
       });
       if (error) throw unavailable();
+      // The canonical RPC returns void. A successful transport alone isn't a
+      // durable receipt, and must never advance the process cache.
+      const receipt = await readUsageRow(userId);
+      if (receipt.plan_tier !== planTier || receipt.budget !== budget) throw unavailable();
     } catch { throw unavailable(); }
   }
   // Preserve the explicit no-database test fallback, but never mutate the

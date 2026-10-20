@@ -2815,7 +2815,7 @@
       ],
       "callers": [
         "backend/src/ai/capacityUnavailable.test.ts:3",
-        "backend/src/ai/providerBudget.ts:5"
+        "backend/src/ai/providerBudget.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -4404,10 +4404,10 @@
         "backend/src/ai/openaiCompat.ts:3",
         "backend/src/ai/pipeline.ts:19",
         "backend/src/ai/postCompletionAccounting.ts:3",
-        "backend/src/ai/providerBudget.ts:3",
+        "backend/src/ai/providerBudget.ts:4",
         "backend/src/ai/providerPolicy.test.ts:15",
         "backend/src/ai/quota.test.ts:4",
-        "backend/src/ai/quota.ts:2",
+        "backend/src/ai/quota.ts:3",
         "backend/src/ai/routerConfig.ts:1",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:24",
         "backend/src/ai/universal/semanticRequestPlanner.ts:7",
@@ -5593,7 +5593,7 @@
       "callers": [
         "backend/src/ai/postCompletionAccounting.persistence.test.ts:4",
         "backend/src/ai/postCompletionAccounting.test.ts:3",
-        "backend/src/ai/providerBudget.ts:6",
+        "backend/src/ai/providerBudget.ts:7",
         "backend/src/ai/providerRuntime.ts:2",
         "backend/src/ai/universal/semanticRequestPlanner.ts:27",
         "backend/src/security/usageAccounting.local.integration.ts:6",
@@ -5840,7 +5840,7 @@
       "id": "surface:faad5cf834fc5eb65afc",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/providerBudget.ts",
-      "sha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+      "sha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
       "symbols": [
         "BudgetPurpose",
         "EntitlementStatus",
@@ -5916,6 +5916,7 @@
       ],
       "imports": [
         "../config/supabase.js",
+        "../security/tenantContext.js",
         "./capacityUnavailable.js",
         "./models.js",
         "./postCompletionAccounting.js",
@@ -5927,7 +5928,8 @@
         "backend/src/ai/models.ts",
         "backend/src/ai/postCompletionAccounting.ts",
         "backend/src/ai/providerRuntime.ts",
-        "backend/src/config/supabase.ts"
+        "backend/src/config/supabase.ts",
+        "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -5935,17 +5937,19 @@
       "callers": [
         "backend/src/ai/architect.ts:6",
         "backend/src/ai/black-hole/webIntelligence.ts:15",
+        "backend/src/ai/budgetOwnerBoundary.test.ts:6",
         "backend/src/ai/converter.ts:2",
         "backend/src/ai/pipeline.ts:44",
         "backend/src/ai/providerBudget.evidence.test.ts:4",
         "backend/src/ai/providerBudget.settlement.test.ts:4",
-        "backend/src/ai/providerBudget.test.ts:3",
+        "backend/src/ai/providerBudget.test.ts:4",
         "backend/src/ai/repoSummarize.ts:18",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:14",
         "backend/src/ai/universal/semanticRequestPlanner.ts:12",
         "backend/src/routes/billing.ts:5",
         "backend/src/routes/dashboard.ts:4",
         "backend/src/routes/phase1.ts:27",
+        "backend/src/security/budgetOwner.local.integration.ts:7",
         "backend/src/security/confirmationMetadata.local.integration.ts:7",
         "backend/src/security/tenantIsolation.local.integration.ts:42",
         "backend/src/services/BillingService.ts:14",
@@ -5961,7 +5965,7 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/ai/providerBudget.ts:190 (user_id)"
+        "backend/src/ai/providerBudget.ts:200 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [
@@ -5982,9 +5986,11 @@
       ],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/ai/budgetOwnerBoundary.test.ts",
         "backend/src/ai/providerBudget.evidence.test.ts",
         "backend/src/ai/providerBudget.settlement.test.ts",
         "backend/src/ai/providerBudget.test.ts",
+        "backend/src/security/budgetOwner.local.integration.ts",
         "backend/src/security/confirmationMetadata.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts"
       ],
@@ -6282,7 +6288,7 @@
         "backend/src/ai/pipeline.ts:228",
         "backend/src/ai/postCompletionAccounting.test.ts:4",
         "backend/src/ai/providerBudget.settlement.test.ts:5",
-        "backend/src/ai/providerBudget.ts:4",
+        "backend/src/ai/providerBudget.ts:5",
         "backend/src/ai/providerHealthStore.test.ts:9",
         "backend/src/ai/providerRuntime.test.ts:3",
         "backend/src/ai/research.ts:2",
@@ -6422,7 +6428,7 @@
       "id": "surface:4f4e874ab49e2fbcd255",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/quota.ts",
-      "sha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
+      "sha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
       "symbols": [
         "MemRow",
         "UsageSnapshot",
@@ -6467,6 +6473,7 @@
         "publicId",
         "quotaError",
         "readUsageRow",
+        "receipt",
         "recordUsage",
         "role",
         "rollover",
@@ -6492,17 +6499,20 @@
       "imports": [
         "../config/plans.js",
         "../config/supabase.js",
+        "../security/tenantContext.js",
         "./models.js"
       ],
       "runtimeImports": [
         "backend/src/ai/models.ts",
         "backend/src/config/plans.ts",
-        "backend/src/config/supabase.ts"
+        "backend/src/config/supabase.ts",
+        "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/ai/budgetOwnerBoundary.test.ts:5",
         "backend/src/ai/pipeline.ts:60",
         "backend/src/ai/postCompletionAccounting.ts:2",
         "backend/src/ai/quota.failure.test.ts:3",
@@ -6511,6 +6521,7 @@
         "backend/src/ai/universal/semanticRequestPlanner.ts:23",
         "backend/src/routes/phase1.ts:17",
         "backend/src/routes/phase1BusinessPreflight.ts:3",
+        "backend/src/security/budgetOwner.local.integration.ts:6",
         "backend/src/security/quotaEvidence.local.integration.ts:6",
         "backend/src/services/BillingService.budget.test.ts:4"
       ],
@@ -6521,7 +6532,7 @@
       "externalProviderDependencies": [],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/ai/quota.ts:182 (user_id)"
+        "backend/src/ai/quota.ts:183 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [
@@ -6535,10 +6546,14 @@
         "backend/src/ai/quota.ts#quotaError",
         "backend/src/ai/quota.ts#syncPlanBudget"
       ],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/ai/quota.ts#receipt"
+      ],
       "testCoverage": [
+        "backend/src/ai/budgetOwnerBoundary.test.ts",
         "backend/src/ai/quota.failure.test.ts",
         "backend/src/ai/quota.test.ts",
+        "backend/src/security/budgetOwner.local.integration.ts",
         "backend/src/security/quotaEvidence.local.integration.ts",
         "backend/src/services/BillingService.budget.test.ts"
       ],
@@ -11810,7 +11825,7 @@
       ],
       "callers": [
         "backend/src/ai/quota.test.ts:11",
-        "backend/src/ai/quota.ts:9",
+        "backend/src/ai/quota.ts:10",
         "backend/src/services/BillingService.ts:9",
         "backend/src/services/ensureUserRecords.ts:1"
       ],
@@ -21362,11 +21377,16 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/ai/budgetOwnerBoundary.test.ts:4",
         "backend/src/ai/buildOutcomeMemory.test.ts:12",
         "backend/src/ai/buildOutcomeMemory.ts:2",
         "backend/src/ai/executionRuntime.ts:6",
         "backend/src/ai/pipeline.ts:2",
         "backend/src/ai/postCompletionAccounting.ts:5",
+        "backend/src/ai/providerBudget.test.ts:3",
+        "backend/src/ai/providerBudget.ts:3",
+        "backend/src/ai/quota.failure.test.ts:4",
+        "backend/src/ai/quota.ts:2",
         "backend/src/ai/runStore.ts:11",
         "backend/src/ai/universal/resumeProjectContext.test.ts:6",
         "backend/src/ai/usageAccounting.test.ts:4",
@@ -21394,6 +21414,7 @@
         "backend/src/routes/terminalSessions.failure.test.ts:6",
         "backend/src/routes/terminalSessions.ts:16",
         "backend/src/routes/vercel.ts:4",
+        "backend/src/security/budgetOwner.local.integration.ts:8",
         "backend/src/security/buildProjectReceipt.local.integration.ts:6",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:9",
         "backend/src/security/legacyBuildHistory.local.integration.ts:9",
@@ -21417,6 +21438,7 @@
         "backend/src/security/terminalIdentity.local.integration.ts:5",
         "backend/src/security/usageAccounting.local.integration.ts:8",
         "backend/src/security/workerProjectAdmission.test.ts:7",
+        "backend/src/services/BillingService.budget.test.ts:5",
         "backend/src/services/ensureUserRecords.receipt.test.ts:5",
         "backend/src/services/ensureUserRecords.ts:4",
         "backend/src/services/integrations/githubTokenStore.ts:4",
@@ -21477,7 +21499,10 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/ai/budgetOwnerBoundary.test.ts",
         "backend/src/ai/buildOutcomeMemory.test.ts",
+        "backend/src/ai/providerBudget.test.ts",
+        "backend/src/ai/quota.failure.test.ts",
         "backend/src/ai/universal/resumeProjectContext.test.ts",
         "backend/src/ai/usageAccounting.test.ts",
         "backend/src/middleware/admin.test.ts",
@@ -21491,6 +21516,7 @@
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
         "backend/src/routes/supabaseOAuth.disconnect.test.ts",
         "backend/src/routes/terminalSessions.failure.test.ts",
+        "backend/src/security/budgetOwner.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts",
         "backend/src/security/legacyBuildHistory.local.integration.ts",
@@ -21511,6 +21537,7 @@
         "backend/src/security/universalOwnerReads.local.integration.ts",
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/security/workerProjectAdmission.test.ts",
+        "backend/src/services/BillingService.budget.test.ts",
         "backend/src/services/ensureUserRecords.receipt.test.ts",
         "backend/src/services/integrations/githubTokenStore.writerContext.test.ts",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
@@ -23737,7 +23764,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:904",
+        "backend/src/security/tenantIsolation.local.integration.ts:906",
         "backend/src/services/integrations/businessAction.ts:39",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -103229,6 +103256,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:9427271f8893b735c560",
+      "sourcePath": "backend/src/ai/budgetOwnerBoundary.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:3bb9d516c31017e5b975",
       "sourcePath": "backend/src/ai/buildImprovementMemory.test.ts",
       "declaredTests": 11,
@@ -104858,6 +104892,13 @@
       "id": "test-suite:a81f16421b56a04b9ee6",
       "sourcePath": "backend/src/security/boundedPublicGet.test.ts",
       "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:ae2c6dfac6889a1b7301",
+      "sourcePath": "backend/src/security/budgetOwner.local.integration.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { getSupabaseAdmin } from '../config/supabase.js';
+import { requireResourceOwner, requireTenantContext, type TenantContext } from '../security/tenantContext.js';
 import { MODELS, requirePricing, type ModelId } from './models.js';
 import { normalizeProviderError } from './providerRuntime.js';
 import { capacityUnavailableError } from './capacityUnavailable.js';
@@ -143,25 +144,34 @@ function hasDurableStore(): boolean {
   return configured;
 }
 
-export async function activatePaidCycle(input: {
+export async function activatePaidCycle(context: TenantContext, input: {
   userId: string;
   providerReference: string;
   startsAt: Date;
   endsAt: Date;
 }): Promise<EntitlementStatus> {
+  const { userId } = requireTenantContext(context);
+  requireResourceOwner(context, input.userId);
+  // Keep the verified subject and payment-period intent fixed across RPC waits.
+  input = structuredClone(input);
   if (!input.providerReference.trim()) throw new Error('Paid cycle evidence reference is required');
   const duration = input.endsAt.getTime() - input.startsAt.getTime();
   if (!Number.isFinite(duration) || duration <= 0 || duration > 31 * 86_400_000) throw new Error('Invalid paid cycle period');
   if (hasDurableStore()) {
-    const { error } = await getSupabaseAdmin().rpc('activate_xroga_paid_cycle', {
-      p_user_id: input.userId,
+    const { data, error } = await getSupabaseAdmin().rpc('activate_xroga_paid_cycle', {
+      p_user_id: userId,
       p_provider_reference: input.providerReference,
       p_starts_at: input.startsAt.toISOString(),
       p_ends_at: input.endsAt.toISOString(),
     });
-    if (error) throw new Error('Paid entitlement could not be activated');
+    if (error || !data || Array.isArray(data) || typeof data !== 'object'
+      || typeof data.id !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(data.id)
+      || data.user_id !== userId || data.cycle_kind !== 'paid'
+      || data.provider_reference !== input.providerReference.trim()
+      || Date.parse(data.starts_at) !== input.startsAt.getTime()
+      || Date.parse(data.ends_at) !== input.endsAt.getTime()) throw new Error('Paid entitlement could not be activated');
   } else {
-    memoryCycles.set(input.userId, {
+    memoryCycles.set(userId, {
       kind: 'paid',
       startsAt: input.startsAt,
       endsAt: input.endsAt,
@@ -172,7 +182,7 @@ export async function activatePaidCycle(input: {
       entitlement: SHARED_PROVIDER_ENTITLEMENT_MICRO_USD,
     });
   }
-  return getProviderEntitlementStatus(input.userId);
+  return getProviderEntitlementStatus(userId);
 }
 
 function nextCycleUnlock(startsAt: Date, now: Date, endsAt: Date): string | null {

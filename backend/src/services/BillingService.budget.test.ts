@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { BillingService } from './BillingService.js';
 import { syncPlanBudget } from '../ai/quota.js';
+import { createTenantContext } from '../security/tenantContext.js';
 
 test('billing leaves durable budget changes inside canonical transactions and propagates synchronization failure', async t => {
   const keys = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY','WHOP_API_KEY','WHOP_COMPANY_ID','WHOP_PLAN_ID','WHOP_REDIRECT_URL']; const prior = keys.map(key => process.env[key]);
@@ -9,6 +10,7 @@ test('billing leaves durable budget changes inside canonical transactions and pr
   process.env.SUPABASE_URL = 'http://127.0.0.1:49193'; process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic';
   Object.assign(process.env,{WHOP_API_KEY:'synthetic',WHOP_COMPANY_ID:'biz_qhYONL4RebGX96',WHOP_PLAN_ID:'plan_hlV1A10I5QfSP',WHOP_REDIRECT_URL:'https://xroga.com/workspace?billing=success'});
   const owner = '11111111-1111-4111-8111-111111111111';
+  const context = createTenantContext({userId: owner, via: 'local_jwt'});
   let fulfilled = true, mode = 'ok'; const calls: string[] = [];
   let recorded=false,checkoutReads=0;
   t.mock.method(globalThis, 'fetch', async (input: Parameters<typeof fetch>[0], init?: RequestInit) => {
@@ -24,6 +26,8 @@ test('billing leaves durable budget changes inside canonical transactions and pr
       assert.equal(JSON.parse(String(init?.body)).p_user_id, owner); return Response.json(null);
     }
     if (url.pathname.endsWith('/profiles')) return Response.json({ id: owner });
+    if (url.pathname.endsWith('/user_token_usage')) return Response.json({user_id:owner,plan_tier:'spark',plan_budget_usd:20,
+      quota_period_start:`${new Date().toISOString().slice(0,7)}-01`,input_tokens:0,output_tokens:0,spent_usd:0,rollover_usd:0,model_usage:{}});
     if (url.pathname.endsWith('/whop_payment_fulfillments'))return Response.json(recorded?{user_id:owner,whop_payment_id:'payment'}:null);
     if (url.pathname.endsWith('/fulfill_whop_payment')) {recorded=true;return Response.json(fulfilled);}
     if (url.pathname.endsWith('/whop_memberships')) {
@@ -47,8 +51,8 @@ test('billing leaves durable budget changes inside canonical transactions and pr
   await BillingService.handleWebhookEvent({ type: 'membership.deactivated', account_id: 'biz_qhYONL4RebGX96', data: { id: 'old', metadata: { xroga_user_id: owner } } }, 'deactivation');
   assert.ok(calls.includes('/rest/v1/rpc/ensure_xroga_free_cycle'));
   assert.equal(calls.some(call => call.endsWith('/set_user_ai_plan_budget')), false);
-  for (mode of ['error', 'transport']) await assert.rejects(syncPlanBudget(owner, 'spark'), { code: 'QUOTA_UNAVAILABLE', message: 'AI usage could not be verified. Retry shortly.' });
-  mode = 'ok'; await syncPlanBudget(owner, 'spark');
+  for (mode of ['error', 'transport']) await assert.rejects(syncPlanBudget(context, 'spark'), { code: 'QUOTA_UNAVAILABLE', message: 'AI usage could not be verified. Retry shortly.' });
+  mode = 'ok'; await syncPlanBudget(context, 'spark');
   const before = calls.length; delete process.env.SUPABASE_SERVICE_ROLE_KEY;
-  await syncPlanBudget(owner, 'free'); assert.equal(calls.length, before);
+  await syncPlanBudget(context, 'free'); assert.equal(calls.length, before);
 });

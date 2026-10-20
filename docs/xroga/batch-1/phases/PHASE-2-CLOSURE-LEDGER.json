@@ -2238,7 +2238,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real growth event replay cannot disclose a different project event",
-          "sourceSha256": "4e85b75f2d97f720ca990d51320115c8951959d24454ffc15597b33e3bf6a557",
+          "sourceSha256": "f2cf5c47630bb9b67920eb2417b85d5d6c9bbe573b77a8399b20b79eb0816d57",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -2624,7 +2624,7 @@
       "id": "B1-P2-346186bea635be22",
       "family": "other-source-bound-boundaries",
       "sourcePath": "backend/src/ai/quota.ts",
-      "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
+      "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
       "baselineCallerIds": [
         "3faa7ece6a312b431802",
         "09c18505660bd25e7f05",
@@ -2634,53 +2634,53 @@
         "f1aaacc8e5daf32fdba1"
       ],
       "currentCallerIds": [
-        "3faa7ece6a312b431802",
-        "09c18505660bd25e7f05",
-        "ab1702a45a7ccb57ac8f",
-        "1990f5c97beb40b8b783",
-        "e27b9abaf3fe02c61229",
-        "f1aaacc8e5daf32fdba1"
+        "7632727b3c8b02cf14d5",
+        "77bc9a9a205796da009c",
+        "e8076c86facca1bb0721",
+        "baee9857b82180aaf497",
+        "611df8756b24bd23b167",
+        "fb624c5ca127ce5d4da8"
       ],
       "mapping": [
         {
           "baselineCallerId": "3faa7ece6a312b431802",
           "currentCallerIds": [
-            "3faa7ece6a312b431802"
+            "7632727b3c8b02cf14d5"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "09c18505660bd25e7f05",
           "currentCallerIds": [
-            "09c18505660bd25e7f05"
+            "77bc9a9a205796da009c"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "ab1702a45a7ccb57ac8f",
           "currentCallerIds": [
-            "ab1702a45a7ccb57ac8f"
+            "e8076c86facca1bb0721"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "1990f5c97beb40b8b783",
           "currentCallerIds": [
-            "1990f5c97beb40b8b783"
+            "baee9857b82180aaf497"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e27b9abaf3fe02c61229",
           "currentCallerIds": [
-            "e27b9abaf3fe02c61229"
+            "611df8756b24bd23b167"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "f1aaacc8e5daf32fdba1",
           "currentCallerIds": [
-            "f1aaacc8e5daf32fdba1"
+            "fb624c5ca127ce5d4da8"
           ],
           "change": "RETAINED"
         }
@@ -2690,22 +2690,51 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-346186bea635be22",
-        "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
+        "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
         "executionStatus": "IN_PROGRESS",
-        "finding": "EXISTING_AUTHENTICATED_CONSUMER_OWNERSHIP_PROOF_PREPARED_NO_PRODUCTION_CHANGE",
-        "actorTrace": "The four selected recordUsage sites retain the original server user primitive through readUsageRow, three fixed usage RPCs and the final same-owner read. Actual producers are the issued-owner pipeline, server business read/action callbacks and admitted software-agent/planner hooks. The new real default-consumer case checks two isolated Auth subjects, exact durable counters and ledger rows, concurrent same-owner deltas, authenticated status ignoring foreign query identity, browser denial and missing authority. No provider or paid credit is used.",
+        "finding": "DORMANT_ISSUED_OWNER_AND_EXACT_BUDGET_RECEIPTS_REPAIRED_PROOF_PENDING",
+        "actorTrace": "All active accounting, pacing and read functions are byte-identical to accepted5722. Only the dormant export and context import change. Its callable contract now binds an original issued context and exact canonical persistence receipt. No active producer is invented or financial execution authorized.",
         "invariant": "The actual consumer retains its original verified subject, exact owned namespace and result without foreign-owner substitution. Missing authority cannot select a foreign account or row.",
         "evidence": [
           {
             "path": "backend/src/security/quotaEvidence.local.integration.ts",
             "type": "REAL_DEFAULT_CONSUMER_AND_AUTHENTICATED_ENDPOINT_CASE_PREPARED",
             "result": "NOT_EXECUTED"
+          },
+          {
+            "path": "backend/src/ai/budgetOwnerBoundary.test.ts",
+            "type": "ORIGINAL_CONTEXT_AND_EXACT_RECEIPT_NEGATIVES",
+            "result": "PASS"
+          },
+          {
+            "path": "backend/src/security/budgetOwner.local.integration.ts",
+            "type": "REAL_TWO_OWNER_CONCURRENT_REPLAY_ROLLBACK_BROWSER_PROOF_PREPARED",
+            "result": "NOT_EXECUTED"
           }
         ],
         "remaining": [
-          "Exactly four usage writer/factory sites await proof. Two dormant syncPlanBudget caller sites remain unproven for original007 issuance and must not inherit this proof. Split accounting uncertainty and unified008 spending authority remain separately recorded, not certified.",
-          "Require complete successful final-source disposable and repeated branch/integrated verification before manual or structured promotion"
-        ]
+          "Authenticate actual changed-source disposable and repeated branch/integrated regressions before any new four-caller security promotion",
+          "Full Phase3 spending/payment/approval authority remains separately mandatory. No real provider payment or grant is performed."
+        ],
+        "historicalBeforeDormantBudgetOwnerRepair": {
+          "packetId": "B1-P2-346186bea635be22",
+          "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
+          "executionStatus": "IN_PROGRESS",
+          "finding": "EXISTING_AUTHENTICATED_CONSUMER_OWNERSHIP_PROOF_PREPARED_NO_PRODUCTION_CHANGE",
+          "actorTrace": "The four selected recordUsage sites retain the original server user primitive through readUsageRow, three fixed usage RPCs and the final same-owner read. Actual producers are the issued-owner pipeline, server business read/action callbacks and admitted software-agent/planner hooks. The new real default-consumer case checks two isolated Auth subjects, exact durable counters and ledger rows, concurrent same-owner deltas, authenticated status ignoring foreign query identity, browser denial and missing authority. No provider or paid credit is used.",
+          "invariant": "The actual consumer retains its original verified subject, exact owned namespace and result without foreign-owner substitution. Missing authority cannot select a foreign account or row.",
+          "evidence": [
+            {
+              "path": "backend/src/security/quotaEvidence.local.integration.ts",
+              "type": "REAL_DEFAULT_CONSUMER_AND_AUTHENTICATED_ENDPOINT_CASE_PREPARED",
+              "result": "NOT_EXECUTED"
+            }
+          ],
+          "remaining": [
+            "Exactly four usage writer/factory sites await proof. Two dormant syncPlanBudget caller sites remain unproven for original007 issuance and must not inherit this proof. Split accounting uncertainty and unified008 spending authority remain separately recorded, not certified.",
+            "Require complete successful final-source disposable and repeated branch/integrated verification before manual or structured promotion"
+          ]
+        }
       },
       "actor": {
         "existingTrace": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
@@ -2727,7 +2756,7 @@
         {
           "path": "backend/src/ai/quota.ts",
           "marker": "export async function recordUsage",
-          "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
+          "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -3259,7 +3288,7 @@
       "id": "B1-P2-392b9b628a9b92be",
       "family": "billing-budget",
       "sourcePath": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+      "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
       "baselineCallerIds": [
         "00d351afbe045a136c66",
         "254a91383e3a8af0310b",
@@ -3279,133 +3308,133 @@
         "3fc72ec34d884b871909"
       ],
       "currentCallerIds": [
-        "00d351afbe045a136c66",
-        "254a91383e3a8af0310b",
-        "590df28cdc2b297e03b6",
-        "39a1f4163240597da04d",
-        "613d8e71ddafb0d6bd0c",
-        "a80e4804742dfd6bcc0a",
-        "6285818c6e8220770b29",
-        "090fe734dc5d1d3dc6e3",
-        "3f66673813dee0d85b85",
-        "746985044f7d3ee62aff",
-        "e030677c7ecb6b0dd90e",
-        "e35278adbe80b78c8d41",
-        "b5a82155e981259a207e",
-        "564673e6f6b21c690fce",
-        "5ed8ef26b72e26561f26",
-        "3fc72ec34d884b871909"
+        "046674e946dedc2dbd0a",
+        "f7d8e33dac1c0de787f8",
+        "2384f6f1c188f4f6ce83",
+        "03557d58e528c5852636",
+        "e2e547f8796cd0aad243",
+        "f602ab2d6bfebc170a02",
+        "8a48ae3957449eee9587",
+        "685bdab3b4b31bd28d43",
+        "9a847ab5769bb707c1f2",
+        "e489f9a48f400005cb2d",
+        "d9435c22813b64a1f1f5",
+        "1d3ef9e110d2f000f590",
+        "0b24ee0eecebdda0e6f3",
+        "ace18dec175b4875e7f7",
+        "c07b5b1f63ae0e361ae7",
+        "fba07b765dafacccf133"
       ],
       "mapping": [
         {
           "baselineCallerId": "00d351afbe045a136c66",
           "currentCallerIds": [
-            "00d351afbe045a136c66"
+            "046674e946dedc2dbd0a"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "254a91383e3a8af0310b",
           "currentCallerIds": [
-            "254a91383e3a8af0310b"
+            "f7d8e33dac1c0de787f8"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "590df28cdc2b297e03b6",
           "currentCallerIds": [
-            "590df28cdc2b297e03b6"
+            "2384f6f1c188f4f6ce83"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "39a1f4163240597da04d",
           "currentCallerIds": [
-            "39a1f4163240597da04d"
+            "03557d58e528c5852636"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "613d8e71ddafb0d6bd0c",
           "currentCallerIds": [
-            "613d8e71ddafb0d6bd0c"
+            "e2e547f8796cd0aad243"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "a80e4804742dfd6bcc0a",
           "currentCallerIds": [
-            "a80e4804742dfd6bcc0a"
+            "f602ab2d6bfebc170a02"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "6285818c6e8220770b29",
           "currentCallerIds": [
-            "6285818c6e8220770b29"
+            "8a48ae3957449eee9587"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "090fe734dc5d1d3dc6e3",
           "currentCallerIds": [
-            "090fe734dc5d1d3dc6e3"
+            "685bdab3b4b31bd28d43"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "3f66673813dee0d85b85",
           "currentCallerIds": [
-            "3f66673813dee0d85b85"
+            "9a847ab5769bb707c1f2"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "746985044f7d3ee62aff",
           "currentCallerIds": [
-            "746985044f7d3ee62aff"
+            "e489f9a48f400005cb2d"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e030677c7ecb6b0dd90e",
           "currentCallerIds": [
-            "e030677c7ecb6b0dd90e"
+            "d9435c22813b64a1f1f5"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e35278adbe80b78c8d41",
           "currentCallerIds": [
-            "e35278adbe80b78c8d41"
+            "1d3ef9e110d2f000f590"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "b5a82155e981259a207e",
           "currentCallerIds": [
-            "b5a82155e981259a207e"
+            "0b24ee0eecebdda0e6f3"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "564673e6f6b21c690fce",
           "currentCallerIds": [
-            "564673e6f6b21c690fce"
+            "ace18dec175b4875e7f7"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "5ed8ef26b72e26561f26",
           "currentCallerIds": [
-            "5ed8ef26b72e26561f26"
+            "c07b5b1f63ae0e361ae7"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "3fc72ec34d884b871909",
           "currentCallerIds": [
-            "3fc72ec34d884b871909"
+            "fba07b765dafacccf133"
           ],
           "change": "RETAINED"
         }
@@ -3415,9 +3444,9 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-392b9b628a9b92be",
-        "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+        "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
         "executionStatus": "IN_PROGRESS",
-        "finding": "DEMONSTRATED_MISBOUND_BUDGET_CYCLE_PARENT_FIXED_ACTUAL_LOCK_PROOF_VERIFIED",
+        "finding": "DORMANT_ISSUED_OWNER_AND_EXACT_BUDGET_RECEIPTS_REPAIRED_PROOF_PENDING",
         "actualVerification": {
           "sourceSha": "aaefe24138ddfaa790751b46a49dde21c7499161",
           "disposableRun": "39165967730",
@@ -3428,7 +3457,7 @@
           "browserTests": 3,
           "scope": "All eight actual parent-lock waits, misbound status variants, own replay, exact receipts, rollback and browser denial. Caller provenance for all16 operations remains independent."
         },
-        "actorTrace": "Existing request/pipeline accounting callers and service-only RPCs remain unchanged. SQL formerly checked reservation.user_id but used cycle_id alone for balance mutation, or returned a replay without checking the cycle owner. A synthetic inconsistent reservation proved reserve accepting the foreign parent and settle/release changing its balance. This is a misbound-state authorization defect, not a claimed browser-created row or production exploit.",
+        "actorTrace": "All active accounting, pacing and read functions are byte-identical to accepted5722. Only the dormant export and context import change. Its callable contract now binds an original issued context and exact canonical persistence receipt. No active producer is invented or financial execution authorized.",
         "invariant": "Current reservation and cycle owner must both match the admitted user before replay, settlement, release or uncertainty transition. A competing cycle-owner change that wins the row lock must deny without touching balances or the receipt. Preserve existing accounting and RPC defaults, no new engine or constraint/backfill.",
         "relatedSourceBindings": [
           {
@@ -3448,37 +3477,115 @@
             "type": "DISPOSABLE_DATABASE_LOCK_TEST",
             "result": "NOT_EXECUTED_AT_RECORD_CREATION",
             "scope": "Misbound states, own concurrency/replay, exact balance/receipt, foreign/browser denial, four cycle-owner and four reservation-parent lock waits and rollback"
+          },
+          {
+            "path": "backend/src/ai/budgetOwnerBoundary.test.ts",
+            "type": "ORIGINAL_CONTEXT_AND_EXACT_RECEIPT_NEGATIVES",
+            "result": "PASS"
+          },
+          {
+            "path": "backend/src/security/budgetOwner.local.integration.ts",
+            "type": "REAL_TWO_OWNER_CONCURRENT_REPLAY_ROLLBACK_BROWSER_PROOF_PREPARED",
+            "result": "NOT_EXECUTED"
           }
         ],
         "remaining": [
-          "Reconcile owner provenance for the remaining budget callers instead of treating this parent fix as all16 caller certification",
-          "Keep universal spend/settlement authority and dormant activatePaidCycle activation in Phase3"
+          "Authenticate actual changed-source disposable and repeated branch/integrated regressions before any new four-caller security promotion",
+          "Full Phase3 spending/payment/approval authority remains separately mandatory. No real provider payment or grant is performed."
         ],
         "current007Evidence": {
           "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
           "verifiedCurrentCallerIds": [
-            "590df28cdc2b297e03b6",
-            "39a1f4163240597da04d",
-            "613d8e71ddafb0d6bd0c",
-            "a80e4804742dfd6bcc0a",
-            "6285818c6e8220770b29",
-            "090fe734dc5d1d3dc6e3",
-            "3f66673813dee0d85b85",
-            "746985044f7d3ee62aff",
-            "b5a82155e981259a207e",
-            "564673e6f6b21c690fce"
+            "2384f6f1c188f4f6ce83",
+            "03557d58e528c5852636",
+            "e2e547f8796cd0aad243",
+            "f602ab2d6bfebc170a02",
+            "8a48ae3957449eee9587",
+            "685bdab3b4b31bd28d43",
+            "9a847ab5769bb707c1f2",
+            "e489f9a48f400005cb2d",
+            "0b24ee0eecebdda0e6f3",
+            "ace18dec175b4875e7f7"
           ],
           "remainingCurrentCallerIds": [
-            "00d351afbe045a136c66",
-            "254a91383e3a8af0310b",
-            "e030677c7ecb6b0dd90e",
-            "e35278adbe80b78c8d41",
-            "5ed8ef26b72e26561f26",
-            "3fc72ec34d884b871909"
+            "046674e946dedc2dbd0a",
+            "f7d8e33dac1c0de787f8",
+            "d9435c22813b64a1f1f5",
+            "1d3ef9e110d2f000f590",
+            "c07b5b1f63ae0e361ae7",
+            "fba07b765dafacccf133"
           ],
           "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
-          "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+          "scope": "BYTE_IDENTICAL_EXISTING_FUNCTIONS_MAPPED_NOT_NEW_SOURCE_ACCEPTANCE",
           "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "historicalBeforeDormantBudgetOwnerRepair": {
+          "packetId": "B1-P2-392b9b628a9b92be",
+          "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+          "executionStatus": "IN_PROGRESS",
+          "finding": "DEMONSTRATED_MISBOUND_BUDGET_CYCLE_PARENT_FIXED_ACTUAL_LOCK_PROOF_VERIFIED",
+          "actualVerification": {
+            "sourceSha": "aaefe24138ddfaa790751b46a49dde21c7499161",
+            "disposableRun": "39165967730",
+            "aggregateRun": "39165967766",
+            "integratedSha": "edd3b8759d301861e1a7b0cb27d707085e63fc8b",
+            "migrations": 120,
+            "securityTests": 160,
+            "browserTests": 3,
+            "scope": "All eight actual parent-lock waits, misbound status variants, own replay, exact receipts, rollback and browser denial. Caller provenance for all16 operations remains independent."
+          },
+          "actorTrace": "Existing request/pipeline accounting callers and service-only RPCs remain unchanged. SQL formerly checked reservation.user_id but used cycle_id alone for balance mutation, or returned a replay without checking the cycle owner. A synthetic inconsistent reservation proved reserve accepting the foreign parent and settle/release changing its balance. This is a misbound-state authorization defect, not a claimed browser-created row or production exploit.",
+          "invariant": "Current reservation and cycle owner must both match the admitted user before replay, settlement, release or uncertainty transition. A competing cycle-owner change that wins the row lock must deny without touching balances or the receipt. Preserve existing accounting and RPC defaults, no new engine or constraint/backfill.",
+          "relatedSourceBindings": [
+            {
+              "path": "supabase/migrations/20261019000200_provider_budget_cycle_parent.sql",
+              "sha256": "34cf14100a03e4ac0178e18e55b623365dddc5728f71848680c515a46a780d2c"
+            }
+          ],
+          "evidence": [
+            {
+              "path": "supabase/migrations/20261019000200_provider_budget_cycle_parent.sql",
+              "type": "SYNTHETIC_SQL_PROBE",
+              "result": "THREE_PRE_FIX_MISSING_REJECTIONS_THEN21_ASSERTIONS_PASS_WITH_REAPPLY",
+              "scope": "Actual function definitions in PGlite, not real Supabase, real locks or production data"
+            },
+            {
+              "path": "backend/src/security/providerCycleParent.local.integration.ts",
+              "type": "DISPOSABLE_DATABASE_LOCK_TEST",
+              "result": "NOT_EXECUTED_AT_RECORD_CREATION",
+              "scope": "Misbound states, own concurrency/replay, exact balance/receipt, foreign/browser denial, four cycle-owner and four reservation-parent lock waits and rollback"
+            }
+          ],
+          "remaining": [
+            "Reconcile owner provenance for the remaining budget callers instead of treating this parent fix as all16 caller certification",
+            "Keep universal spend/settlement authority and dormant activatePaidCycle activation in Phase3"
+          ],
+          "current007Evidence": {
+            "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+            "verifiedCurrentCallerIds": [
+              "590df28cdc2b297e03b6",
+              "39a1f4163240597da04d",
+              "613d8e71ddafb0d6bd0c",
+              "a80e4804742dfd6bcc0a",
+              "6285818c6e8220770b29",
+              "090fe734dc5d1d3dc6e3",
+              "3f66673813dee0d85b85",
+              "746985044f7d3ee62aff",
+              "b5a82155e981259a207e",
+              "564673e6f6b21c690fce"
+            ],
+            "remainingCurrentCallerIds": [
+              "00d351afbe045a136c66",
+              "254a91383e3a8af0310b",
+              "e030677c7ecb6b0dd90e",
+              "e35278adbe80b78c8d41",
+              "5ed8ef26b72e26561f26",
+              "3fc72ec34d884b871909"
+            ],
+            "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+            "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
+            "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+          }
         }
       },
       "actor": {
@@ -3516,7 +3623,7 @@
         {
           "path": "backend/src/ai/providerBudget.test.ts",
           "marker": "production cannot authorize provider execution using process-memory accounting",
-          "sourceSha256": "8e26286e1956c4ec101e92af2bd477b352931a840c5b9e6348568ddea53e7586",
+          "sourceSha256": "4b40e4e7bfc24521e13a8e94407efa954e244e6b594dd1379490ea42da14f4c7",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -3638,7 +3745,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real durable database file delivery is owner-only",
-          "sourceSha256": "4e85b75f2d97f720ca990d51320115c8951959d24454ffc15597b33e3bf6a557",
+          "sourceSha256": "f2cf5c47630bb9b67920eb2417b85d5d6c9bbe573b77a8399b20b79eb0816d57",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4642,7 +4749,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes",
-          "sourceSha256": "4e85b75f2d97f720ca990d51320115c8951959d24454ffc15597b33e3bf6a557",
+          "sourceSha256": "f2cf5c47630bb9b67920eb2417b85d5d6c9bbe573b77a8399b20b79eb0816d57",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4884,7 +4991,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "4e85b75f2d97f720ca990d51320115c8951959d24454ffc15597b33e3bf6a557",
+          "sourceSha256": "f2cf5c47630bb9b67920eb2417b85d5d6c9bbe573b77a8399b20b79eb0816d57",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4997,7 +5104,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "4e85b75f2d97f720ca990d51320115c8951959d24454ffc15597b33e3bf6a557",
+          "sourceSha256": "f2cf5c47630bb9b67920eb2417b85d5d6c9bbe573b77a8399b20b79eb0816d57",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -5314,7 +5421,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real failed-build notification cannot disclose raw backend diagnostic text",
-          "sourceSha256": "4e85b75f2d97f720ca990d51320115c8951959d24454ffc15597b33e3bf6a557",
+          "sourceSha256": "f2cf5c47630bb9b67920eb2417b85d5d6c9bbe573b77a8399b20b79eb0816d57",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5506,7 +5613,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real profile column grants reject self-promotion",
-          "sourceSha256": "4e85b75f2d97f720ca990d51320115c8951959d24454ffc15597b33e3bf6a557",
+          "sourceSha256": "f2cf5c47630bb9b67920eb2417b85d5d6c9bbe573b77a8399b20b79eb0816d57",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5934,7 +6041,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "Legitimate membership must remain visible",
-          "sourceSha256": "4e85b75f2d97f720ca990d51320115c8951959d24454ffc15597b33e3bf6a557",
+          "sourceSha256": "f2cf5c47630bb9b67920eb2417b85d5d6c9bbe573b77a8399b20b79eb0816d57",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6217,7 +6324,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant",
-          "sourceSha256": "4e85b75f2d97f720ca990d51320115c8951959d24454ffc15597b33e3bf6a557",
+          "sourceSha256": "f2cf5c47630bb9b67920eb2417b85d5d6c9bbe573b77a8399b20b79eb0816d57",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6309,7 +6416,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "generated external-project memory SQL denies browser roles",
-          "sourceSha256": "4e85b75f2d97f720ca990d51320115c8951959d24454ffc15597b33e3bf6a557",
+          "sourceSha256": "f2cf5c47630bb9b67920eb2417b85d5d6c9bbe573b77a8399b20b79eb0816d57",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6784,7 +6891,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real Whop fulfillment rolls back foreign membership collisions",
-          "sourceSha256": "4e85b75f2d97f720ca990d51320115c8951959d24454ffc15597b33e3bf6a557",
+          "sourceSha256": "f2cf5c47630bb9b67920eb2417b85d5d6c9bbe573b77a8399b20b79eb0816d57",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -7482,7 +7589,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "4e85b75f2d97f720ca990d51320115c8951959d24454ffc15597b33e3bf6a557",
+          "sourceSha256": "f2cf5c47630bb9b67920eb2417b85d5d6c9bbe573b77a8399b20b79eb0816d57",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -7589,7 +7696,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "4e85b75f2d97f720ca990d51320115c8951959d24454ffc15597b33e3bf6a557",
+          "sourceSha256": "f2cf5c47630bb9b67920eb2417b85d5d6c9bbe573b77a8399b20b79eb0816d57",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }

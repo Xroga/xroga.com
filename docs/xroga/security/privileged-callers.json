@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "c052fa22b6dc79847702946d1839983c125ad4ab598c13d0114df365aa6bbd88",
+  "reviewRegistrySha256": "fb2a3f1fcd12e7dca9a768e6ab08ea7d1dcdeb306cd7203089bfad105ee4a2c4",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -12,16 +12,16 @@
     "ownerPredicateCandidates": 142,
     "reviewRequired": 0,
     "reviewedCandidates": 636,
-    "unresolvedSafetyCandidates": 22,
+    "unresolvedSafetyCandidates": 11,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 16
   },
   "outcomes": {
     "REVIEW_REQUIRED": 0,
-    "SCOPED_BOUNDARY": 437,
+    "SCOPED_BOUNDARY": 448,
     "NARROW_EXCEPTION": 37,
     "NOT_PERSISTENCE": 140,
-    "REVIEWED_GAP": 22
+    "REVIEWED_GAP": 11
   },
   "acceptance": {
     "version": 1,
@@ -272,7 +272,7 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-346186bea635be22"
+        "id": "OB-42ed640d7cc00b94"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -292,7 +292,7 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-392b9b628a9b92be"
+        "id": "OB-4a863cd8672fa6c2"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -536,7 +536,7 @@
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
-        "id": "OB-15ccc9f62c7b567f"
+        "id": "OB-1aeee435b7276e9b"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -780,19 +780,19 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "00d351afbe045a136c66"
+        "id": "046674e946dedc2dbd0a"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "254a91383e3a8af0310b"
+        "id": "f7d8e33dac1c0de787f8"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "3faa7ece6a312b431802"
+        "id": "7632727b3c8b02cf14d5"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "09c18505660bd25e7f05"
+        "id": "77bc9a9a205796da009c"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -817,50 +817,6 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "fd91a4c4ec87b33c520f"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "ea087c9551ee69b9b0d3"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "7392ec424976019ecaa1"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "0906e7cc348611500a9a"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "237b112c6ed82b8b5494"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "86ab46317dfaadcb7a8b"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "3c877ece7514d0bb2943"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "8e4069835c8064de08e4"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "66e3c91fc33e27084a31"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "a763d5560b8956ecb580"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "25757992dc2e9cf1d564"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "40004623c4ecf74640f6"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -956,59 +912,59 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "590df28cdc2b297e03b6"
+        "id": "2384f6f1c188f4f6ce83"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "39a1f4163240597da04d"
+        "id": "03557d58e528c5852636"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "613d8e71ddafb0d6bd0c"
+        "id": "e2e547f8796cd0aad243"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "a80e4804742dfd6bcc0a"
+        "id": "f602ab2d6bfebc170a02"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "6285818c6e8220770b29"
+        "id": "8a48ae3957449eee9587"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "090fe734dc5d1d3dc6e3"
+        "id": "685bdab3b4b31bd28d43"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "3f66673813dee0d85b85"
+        "id": "9a847ab5769bb707c1f2"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "746985044f7d3ee62aff"
+        "id": "e489f9a48f400005cb2d"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "e030677c7ecb6b0dd90e"
+        "id": "d9435c22813b64a1f1f5"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "e35278adbe80b78c8d41"
+        "id": "1d3ef9e110d2f000f590"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "b5a82155e981259a207e"
+        "id": "0b24ee0eecebdda0e6f3"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "564673e6f6b21c690fce"
+        "id": "ace18dec175b4875e7f7"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "5ed8ef26b72e26561f26"
+        "id": "c07b5b1f63ae0e361ae7"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "3fc72ec34d884b871909"
+        "id": "fba07b765dafacccf133"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -1028,27 +984,27 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "52edc4559577671284c2"
+        "id": "e490c31dcee80b1d1915"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "39d17e6c2a9120f50030"
+        "id": "77af2b12d27cb727addf"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "ab1702a45a7ccb57ac8f"
+        "id": "e8076c86facca1bb0721"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "1990f5c97beb40b8b783"
+        "id": "baee9857b82180aaf497"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "e27b9abaf3fe02c61229"
+        "id": "611df8756b24bd23b167"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "f1aaacc8e5daf32fdba1"
+        "id": "fb624c5ca127ce5d4da8"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -2480,6 +2436,42 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "ea087c9551ee69b9b0d3"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "7392ec424976019ecaa1"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "0906e7cc348611500a9a"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "237b112c6ed82b8b5494"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "86ab46317dfaadcb7a8b"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "3c877ece7514d0bb2943"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "8e4069835c8064de08e4"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "66e3c91fc33e27084a31"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "a763d5560b8956ecb580"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "988c4217a8b8b781b43c"
       },
       {
@@ -2561,6 +2553,14 @@
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "c0d01dcfb09596ce1894"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "25757992dc2e9cf1d564"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "40004623c4ecf74640f6"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -2768,8 +2768,8 @@
     "currentCallers": 636,
     "structuredVerified": 140,
     "structuredUnproven": 496,
-    "manualUnresolved": 22,
-    "manualUnsupported": 474,
+    "manualUnresolved": 11,
+    "manualUnsupported": 485,
     "agreedVerified": 140,
     "proofAwaitingManualReconciliation": 0
   },
@@ -3469,18 +3469,18 @@
       }
     },
     {
-      "id": "00d351afbe045a136c66",
+      "id": "046674e946dedc2dbd0a",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 156,
+      "line": 161,
       "enclosing": "activatePaidCycle",
       "kind": "RPC_CANDIDATE",
       "target": "activate_xroga_paid_cycle",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+      "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
       "semanticReview": {
-        "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
-        "reason": "Exact reservation replay intent/status and durable settlement receipt binding now have 14 passing focused tests. Uncertain post-provider accounting retains the hold. Real replay transition assertions await disposable CI. Complete caller identity, provider accounting reconciliation and end-to-end spend authority remain unresolved.",
+        "authority": "No active production consumer exists for this dormant helper. The callable contract requires the original issued TenantContext before any privileged access. It retains the captured subject through canonical RPC and final read. Paid-cycle input is snapshotted and must declare that same subject. Exact owner/period/evidence receipts or same-owner tier/budget read-back are required. No payment route, provider grant or Phase3 authority is invented.",
+        "reason": "Four original007 dormant budget constructor/RPC obligations are repaired locally and remain unproven. Fifteen focused tests pass, including cloned/primitive context denial, foreign receipt rejection, exact budget/period checks and pre-await mutable-input capture. The registered actual disposable case covers two real subjects, concurrent replay, exact persistence, SQL failure rollback/recovery and browser denial. Actual new-source disposable and full regression remain mandatory. Existing billing fulfilment, accounting and later authority interfaces are unchanged.",
         "evidence": [
           {
             "path": "backend/src/ai/providerBudget.evidence.test.ts",
@@ -3489,23 +3489,31 @@
           {
             "path": "backend/src/ai/providerBudget.test.ts",
             "marker": "production cannot authorize provider execution using process-memory accounting"
+          },
+          {
+            "path": "backend/src/ai/budgetOwnerBoundary.test.ts",
+            "marker": "dormant budget writers require original issued owners and exact durable receipts"
+          },
+          {
+            "path": "backend/src/security/budgetOwner.local.integration.ts",
+            "marker": "real dormant budget contracts retain issued owners through concurrent replay and SQL failures"
           }
         ]
       }
     },
     {
-      "id": "254a91383e3a8af0310b",
+      "id": "f7d8e33dac1c0de787f8",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 156,
+      "line": 161,
       "enclosing": "activatePaidCycle",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+      "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
       "semanticReview": {
-        "authority": "Application pipeline, architect, converter, business read/action, planner and SoftwareAgent invoke the existing reservation wrapper. BillingService invokes paid-cycle activation. RPCs receive p_user_id; cycle read has an owner predicate. The wrapper awaits reservation before execute, then settles or records uncertainty.",
-        "reason": "Exact reservation replay intent/status and durable settlement receipt binding now have 14 passing focused tests. Uncertain post-provider accounting retains the hold. Real replay transition assertions await disposable CI. Complete caller identity, provider accounting reconciliation and end-to-end spend authority remain unresolved.",
+        "authority": "No active production consumer exists for this dormant helper. The callable contract requires the original issued TenantContext before any privileged access. It retains the captured subject through canonical RPC and final read. Paid-cycle input is snapshotted and must declare that same subject. Exact owner/period/evidence receipts or same-owner tier/budget read-back are required. No payment route, provider grant or Phase3 authority is invented.",
+        "reason": "Four original007 dormant budget constructor/RPC obligations are repaired locally and remain unproven. Fifteen focused tests pass, including cloned/primitive context denial, foreign receipt rejection, exact budget/period checks and pre-await mutable-input capture. The registered actual disposable case covers two real subjects, concurrent replay, exact persistence, SQL failure rollback/recovery and browser denial. Actual new-source disposable and full regression remain mandatory. Existing billing fulfilment, accounting and later authority interfaces are unchanged.",
         "evidence": [
           {
             "path": "backend/src/ai/providerBudget.evidence.test.ts",
@@ -3514,20 +3522,28 @@
           {
             "path": "backend/src/ai/providerBudget.test.ts",
             "marker": "production cannot authorize provider execution using process-memory accounting"
+          },
+          {
+            "path": "backend/src/ai/budgetOwnerBoundary.test.ts",
+            "marker": "dormant budget writers require original issued owners and exact durable receipts"
+          },
+          {
+            "path": "backend/src/security/budgetOwner.local.integration.ts",
+            "marker": "real dormant budget contracts retain issued owners through concurrent replay and SQL failures"
           }
         ]
       }
     },
     {
-      "id": "590df28cdc2b297e03b6",
+      "id": "2384f6f1c188f4f6ce83",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 188,
+      "line": 198,
       "enclosing": "getProviderEntitlementStatus",
       "kind": "RPC_CANDIDATE",
       "target": "ensure_xroga_free_cycle",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+      "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
       "semanticReview": {
         "authority": "Active public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Four exact free-cycle ensure/read/factory sites only. The actual two-Auth-actor HTTP case initializes both own free states, seeds only the owner paid fixture, verifies paid/free entitlement and status despite forged opposite user/tenant query, rejects anonymous access and forged pacing, and preserves exact foreign cycle rows. Browser own/foreign paid activation is separately denied in that same case. Dormant activatePaidCycle, reservation fallback, failure release, billing provider receipt validation and Phase3 unified budgets remain independent.\nOnly the two pacing RPC/factory callers. Reuse actual same-owner positive and foreign/forged/confirmation negatives, with exact preserved foreign cycle rows. No provider request, paid grant, unified008 budget approval or dormant activatePaidCycle certification. Other fourteen original budget caller obligations stay open.\nFour exact primary reserve/settle RPC and factory sites only. Actual two-owner same-key reservations remain distinct, concurrent owner replays have one ID, altered intent cannot mutate existing holds, foreign settlement leaves exact rows unchanged, and successful settlement changes only the owned reservation. Browser billing authority is separately denied. No paid AI call occurs in this proof. Free-cycle fallback, entitlement reads, failure-release wrapper, dormant activatePaidCycle, complete008 budgets/approvals and provider exactly-once effects remain open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -3544,15 +3560,15 @@
       }
     },
     {
-      "id": "39a1f4163240597da04d",
+      "id": "03557d58e528c5852636",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 188,
+      "line": 198,
       "enclosing": "getProviderEntitlementStatus",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+      "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
       "semanticReview": {
         "authority": "Active public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Four exact free-cycle ensure/read/factory sites only. The actual two-Auth-actor HTTP case initializes both own free states, seeds only the owner paid fixture, verifies paid/free entitlement and status despite forged opposite user/tenant query, rejects anonymous access and forged pacing, and preserves exact foreign cycle rows. Browser own/foreign paid activation is separately denied in that same case. Dormant activatePaidCycle, reservation fallback, failure release, billing provider receipt validation and Phase3 unified budgets remain independent.\nOnly the two pacing RPC/factory callers. Reuse actual same-owner positive and foreign/forged/confirmation negatives, with exact preserved foreign cycle rows. No provider request, paid grant, unified008 budget approval or dormant activatePaidCycle certification. Other fourteen original budget caller obligations stay open.\nFour exact primary reserve/settle RPC and factory sites only. Actual two-owner same-key reservations remain distinct, concurrent owner replays have one ID, altered intent cannot mutate existing holds, foreign settlement leaves exact rows unchanged, and successful settlement changes only the owned reservation. Browser billing authority is separately denied. No paid AI call occurs in this proof. Free-cycle fallback, entitlement reads, failure-release wrapper, dormant activatePaidCycle, complete008 budgets/approvals and provider exactly-once effects remain open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -3569,15 +3585,15 @@
       }
     },
     {
-      "id": "613d8e71ddafb0d6bd0c",
+      "id": "e2e547f8796cd0aad243",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 190,
+      "line": 200,
       "enclosing": "getProviderEntitlementStatus",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_billing_cycles",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+      "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
       "semanticReview": {
         "authority": "Active public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Four exact free-cycle ensure/read/factory sites only. The actual two-Auth-actor HTTP case initializes both own free states, seeds only the owner paid fixture, verifies paid/free entitlement and status despite forged opposite user/tenant query, rejects anonymous access and forged pacing, and preserves exact foreign cycle rows. Browser own/foreign paid activation is separately denied in that same case. Dormant activatePaidCycle, reservation fallback, failure release, billing provider receipt validation and Phase3 unified budgets remain independent.\nOnly the two pacing RPC/factory callers. Reuse actual same-owner positive and foreign/forged/confirmation negatives, with exact preserved foreign cycle rows. No provider request, paid grant, unified008 budget approval or dormant activatePaidCycle certification. Other fourteen original budget caller obligations stay open.\nFour exact primary reserve/settle RPC and factory sites only. Actual two-owner same-key reservations remain distinct, concurrent owner replays have one ID, altered intent cannot mutate existing holds, foreign settlement leaves exact rows unchanged, and successful settlement changes only the owned reservation. Browser billing authority is separately denied. No paid AI call occurs in this proof. Free-cycle fallback, entitlement reads, failure-release wrapper, dormant activatePaidCycle, complete008 budgets/approvals and provider exactly-once effects remain open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -3594,15 +3610,15 @@
       }
     },
     {
-      "id": "a80e4804742dfd6bcc0a",
+      "id": "f602ab2d6bfebc170a02",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 190,
+      "line": 200,
       "enclosing": "getProviderEntitlementStatus",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+      "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
       "semanticReview": {
         "authority": "Active public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Four exact free-cycle ensure/read/factory sites only. The actual two-Auth-actor HTTP case initializes both own free states, seeds only the owner paid fixture, verifies paid/free entitlement and status despite forged opposite user/tenant query, rejects anonymous access and forged pacing, and preserves exact foreign cycle rows. Browser own/foreign paid activation is separately denied in that same case. Dormant activatePaidCycle, reservation fallback, failure release, billing provider receipt validation and Phase3 unified budgets remain independent.\nOnly the two pacing RPC/factory callers. Reuse actual same-owner positive and foreign/forged/confirmation negatives, with exact preserved foreign cycle rows. No provider request, paid grant, unified008 budget approval or dormant activatePaidCycle certification. Other fourteen original budget caller obligations stay open.\nFour exact primary reserve/settle RPC and factory sites only. Actual two-owner same-key reservations remain distinct, concurrent owner replays have one ID, altered intent cannot mutate existing holds, foreign settlement leaves exact rows unchanged, and successful settlement changes only the owned reservation. Browser billing authority is separately denied. No paid AI call occurs in this proof. Free-cycle fallback, entitlement reads, failure-release wrapper, dormant activatePaidCycle, complete008 budgets/approvals and provider exactly-once effects remain open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -3619,15 +3635,15 @@
       }
     },
     {
-      "id": "6285818c6e8220770b29",
+      "id": "8a48ae3957449eee9587",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 283,
+      "line": 293,
       "enclosing": "setUsagePacing",
       "kind": "RPC_CANDIDATE",
       "target": "set_xroga_usage_pacing",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+      "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
       "semanticReview": {
         "authority": "Active public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Four exact free-cycle ensure/read/factory sites only. The actual two-Auth-actor HTTP case initializes both own free states, seeds only the owner paid fixture, verifies paid/free entitlement and status despite forged opposite user/tenant query, rejects anonymous access and forged pacing, and preserves exact foreign cycle rows. Browser own/foreign paid activation is separately denied in that same case. Dormant activatePaidCycle, reservation fallback, failure release, billing provider receipt validation and Phase3 unified budgets remain independent.\nOnly the two pacing RPC/factory callers. Reuse actual same-owner positive and foreign/forged/confirmation negatives, with exact preserved foreign cycle rows. No provider request, paid grant, unified008 budget approval or dormant activatePaidCycle certification. Other fourteen original budget caller obligations stay open.\nFour exact primary reserve/settle RPC and factory sites only. Actual two-owner same-key reservations remain distinct, concurrent owner replays have one ID, altered intent cannot mutate existing holds, foreign settlement leaves exact rows unchanged, and successful settlement changes only the owned reservation. Browser billing authority is separately denied. No paid AI call occurs in this proof. Free-cycle fallback, entitlement reads, failure-release wrapper, dormant activatePaidCycle, complete008 budgets/approvals and provider exactly-once effects remain open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -3644,15 +3660,15 @@
       }
     },
     {
-      "id": "090fe734dc5d1d3dc6e3",
+      "id": "685bdab3b4b31bd28d43",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 283,
+      "line": 293,
       "enclosing": "setUsagePacing",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+      "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
       "semanticReview": {
         "authority": "Active public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Four exact free-cycle ensure/read/factory sites only. The actual two-Auth-actor HTTP case initializes both own free states, seeds only the owner paid fixture, verifies paid/free entitlement and status despite forged opposite user/tenant query, rejects anonymous access and forged pacing, and preserves exact foreign cycle rows. Browser own/foreign paid activation is separately denied in that same case. Dormant activatePaidCycle, reservation fallback, failure release, billing provider receipt validation and Phase3 unified budgets remain independent.\nOnly the two pacing RPC/factory callers. Reuse actual same-owner positive and foreign/forged/confirmation negatives, with exact preserved foreign cycle rows. No provider request, paid grant, unified008 budget approval or dormant activatePaidCycle certification. Other fourteen original budget caller obligations stay open.\nFour exact primary reserve/settle RPC and factory sites only. Actual two-owner same-key reservations remain distinct, concurrent owner replays have one ID, altered intent cannot mutate existing holds, foreign settlement leaves exact rows unchanged, and successful settlement changes only the owned reservation. Browser billing authority is separately denied. No paid AI call occurs in this proof. Free-cycle fallback, entitlement reads, failure-release wrapper, dormant activatePaidCycle, complete008 budgets/approvals and provider exactly-once effects remain open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -3669,15 +3685,15 @@
       }
     },
     {
-      "id": "3f66673813dee0d85b85",
+      "id": "9a847ab5769bb707c1f2",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 311,
+      "line": 321,
       "enclosing": "reserveProviderBudget",
       "kind": "RPC_CANDIDATE",
       "target": "reserve_xroga_provider_budget",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+      "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
       "semanticReview": {
         "authority": "Active public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Four exact free-cycle ensure/read/factory sites only. The actual two-Auth-actor HTTP case initializes both own free states, seeds only the owner paid fixture, verifies paid/free entitlement and status despite forged opposite user/tenant query, rejects anonymous access and forged pacing, and preserves exact foreign cycle rows. Browser own/foreign paid activation is separately denied in that same case. Dormant activatePaidCycle, reservation fallback, failure release, billing provider receipt validation and Phase3 unified budgets remain independent.\nOnly the two pacing RPC/factory callers. Reuse actual same-owner positive and foreign/forged/confirmation negatives, with exact preserved foreign cycle rows. No provider request, paid grant, unified008 budget approval or dormant activatePaidCycle certification. Other fourteen original budget caller obligations stay open.\nFour exact primary reserve/settle RPC and factory sites only. Actual two-owner same-key reservations remain distinct, concurrent owner replays have one ID, altered intent cannot mutate existing holds, foreign settlement leaves exact rows unchanged, and successful settlement changes only the owned reservation. Browser billing authority is separately denied. No paid AI call occurs in this proof. Free-cycle fallback, entitlement reads, failure-release wrapper, dormant activatePaidCycle, complete008 budgets/approvals and provider exactly-once effects remain open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -3694,15 +3710,15 @@
       }
     },
     {
-      "id": "746985044f7d3ee62aff",
+      "id": "e489f9a48f400005cb2d",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 311,
+      "line": 321,
       "enclosing": "reserveProviderBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+      "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
       "semanticReview": {
         "authority": "Active public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Four exact free-cycle ensure/read/factory sites only. The actual two-Auth-actor HTTP case initializes both own free states, seeds only the owner paid fixture, verifies paid/free entitlement and status despite forged opposite user/tenant query, rejects anonymous access and forged pacing, and preserves exact foreign cycle rows. Browser own/foreign paid activation is separately denied in that same case. Dormant activatePaidCycle, reservation fallback, failure release, billing provider receipt validation and Phase3 unified budgets remain independent.\nOnly the two pacing RPC/factory callers. Reuse actual same-owner positive and foreign/forged/confirmation negatives, with exact preserved foreign cycle rows. No provider request, paid grant, unified008 budget approval or dormant activatePaidCycle certification. Other fourteen original budget caller obligations stay open.\nFour exact primary reserve/settle RPC and factory sites only. Actual two-owner same-key reservations remain distinct, concurrent owner replays have one ID, altered intent cannot mutate existing holds, foreign settlement leaves exact rows unchanged, and successful settlement changes only the owned reservation. Browser billing authority is separately denied. No paid AI call occurs in this proof. Free-cycle fallback, entitlement reads, failure-release wrapper, dormant activatePaidCycle, complete008 budgets/approvals and provider exactly-once effects remain open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -3719,15 +3735,15 @@
       }
     },
     {
-      "id": "e030677c7ecb6b0dd90e",
+      "id": "d9435c22813b64a1f1f5",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 323,
+      "line": 333,
       "enclosing": "reserveProviderBudget",
       "kind": "RPC_CANDIDATE",
       "target": "ensure_xroga_free_cycle",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+      "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
       "semanticReview": {
         "authority": "Reservation fallback retains the same original userId of reserveProviderBudget and passes it to fixed ensure_xroga_free_cycle only after missing-active-cycle error. It cannot choose a paid amount or a different account. Failed reservation finalization is private to withProviderReservation flow, which retains the same owner and reservation captured before execute. The release RPC matches both reservation ID and owner and locks that exact owner cycle before accounting. Definite pre-completion failures release only this hold, uncertain outcomes retain it. Logging a failed foreign release does not grant success or mutate rows.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Four fallback/release RPC/factory sites. Two fresh actual Auth users begin with no cycle and acquire separate fixed free cycles via the real reservation wrapper fallback. Passing another owner with the reservation leaves exact reservations and cycles unchanged. Matching owner releases its hold, replay preserves exact rows, another actor hold/cycle remains unchanged and timeout keeps that actor hold pending_reconciliation. Existing observed cycle-parent and browser billing denial proofs are retained. Dormant paid activation, full008 spending authority and acknowledgement/recovery reliability remain independent. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
@@ -3744,15 +3760,15 @@
       }
     },
     {
-      "id": "e35278adbe80b78c8d41",
+      "id": "1d3ef9e110d2f000f590",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 323,
+      "line": 333,
       "enclosing": "reserveProviderBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+      "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
       "semanticReview": {
         "authority": "Reservation fallback retains the same original userId of reserveProviderBudget and passes it to fixed ensure_xroga_free_cycle only after missing-active-cycle error. It cannot choose a paid amount or a different account. Failed reservation finalization is private to withProviderReservation flow, which retains the same owner and reservation captured before execute. The release RPC matches both reservation ID and owner and locks that exact owner cycle before accounting. Definite pre-completion failures release only this hold, uncertain outcomes retain it. Logging a failed foreign release does not grant success or mutate rows.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Four fallback/release RPC/factory sites. Two fresh actual Auth users begin with no cycle and acquire separate fixed free cycles via the real reservation wrapper fallback. Passing another owner with the reservation leaves exact reservations and cycles unchanged. Matching owner releases its hold, replay preserves exact rows, another actor hold/cycle remains unchanged and timeout keeps that actor hold pending_reconciliation. Existing observed cycle-parent and browser billing denial proofs are retained. Dormant paid activation, full008 spending authority and acknowledgement/recovery reliability remain independent. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
@@ -3769,15 +3785,15 @@
       }
     },
     {
-      "id": "b5a82155e981259a207e",
+      "id": "0b24ee0eecebdda0e6f3",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 404,
+      "line": 414,
       "enclosing": "settleProviderBudget",
       "kind": "RPC_CANDIDATE",
       "target": "settle_xroga_provider_budget",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+      "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
       "semanticReview": {
         "authority": "Active public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Four exact free-cycle ensure/read/factory sites only. The actual two-Auth-actor HTTP case initializes both own free states, seeds only the owner paid fixture, verifies paid/free entitlement and status despite forged opposite user/tenant query, rejects anonymous access and forged pacing, and preserves exact foreign cycle rows. Browser own/foreign paid activation is separately denied in that same case. Dormant activatePaidCycle, reservation fallback, failure release, billing provider receipt validation and Phase3 unified budgets remain independent.\nOnly the two pacing RPC/factory callers. Reuse actual same-owner positive and foreign/forged/confirmation negatives, with exact preserved foreign cycle rows. No provider request, paid grant, unified008 budget approval or dormant activatePaidCycle certification. Other fourteen original budget caller obligations stay open.\nFour exact primary reserve/settle RPC and factory sites only. Actual two-owner same-key reservations remain distinct, concurrent owner replays have one ID, altered intent cannot mutate existing holds, foreign settlement leaves exact rows unchanged, and successful settlement changes only the owned reservation. Browser billing authority is separately denied. No paid AI call occurs in this proof. Free-cycle fallback, entitlement reads, failure-release wrapper, dormant activatePaidCycle, complete008 budgets/approvals and provider exactly-once effects remain open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -3794,15 +3810,15 @@
       }
     },
     {
-      "id": "564673e6f6b21c690fce",
+      "id": "ace18dec175b4875e7f7",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 404,
+      "line": 414,
       "enclosing": "settleProviderBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+      "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
       "semanticReview": {
         "authority": "Active public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Four exact free-cycle ensure/read/factory sites only. The actual two-Auth-actor HTTP case initializes both own free states, seeds only the owner paid fixture, verifies paid/free entitlement and status despite forged opposite user/tenant query, rejects anonymous access and forged pacing, and preserves exact foreign cycle rows. Browser own/foreign paid activation is separately denied in that same case. Dormant activatePaidCycle, reservation fallback, failure release, billing provider receipt validation and Phase3 unified budgets remain independent.\nOnly the two pacing RPC/factory callers. Reuse actual same-owner positive and foreign/forged/confirmation negatives, with exact preserved foreign cycle rows. No provider request, paid grant, unified008 budget approval or dormant activatePaidCycle certification. Other fourteen original budget caller obligations stay open.\nFour exact primary reserve/settle RPC and factory sites only. Actual two-owner same-key reservations remain distinct, concurrent owner replays have one ID, altered intent cannot mutate existing holds, foreign settlement leaves exact rows unchanged, and successful settlement changes only the owned reservation. Browser billing authority is separately denied. No paid AI call occurs in this proof. Free-cycle fallback, entitlement reads, failure-release wrapper, dormant activatePaidCycle, complete008 budgets/approvals and provider exactly-once effects remain open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
@@ -3819,15 +3835,15 @@
       }
     },
     {
-      "id": "5ed8ef26b72e26561f26",
+      "id": "c07b5b1f63ae0e361ae7",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 451,
+      "line": 461,
       "enclosing": "finishFailedProviderReservation",
       "kind": "RPC_CANDIDATE",
       "target": "release_xroga_provider_budget",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+      "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
       "semanticReview": {
         "authority": "Reservation fallback retains the same original userId of reserveProviderBudget and passes it to fixed ensure_xroga_free_cycle only after missing-active-cycle error. It cannot choose a paid amount or a different account. Failed reservation finalization is private to withProviderReservation flow, which retains the same owner and reservation captured before execute. The release RPC matches both reservation ID and owner and locks that exact owner cycle before accounting. Definite pre-completion failures release only this hold, uncertain outcomes retain it. Logging a failed foreign release does not grant success or mutate rows.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Four fallback/release RPC/factory sites. Two fresh actual Auth users begin with no cycle and acquire separate fixed free cycles via the real reservation wrapper fallback. Passing another owner with the reservation leaves exact reservations and cycles unchanged. Matching owner releases its hold, replay preserves exact rows, another actor hold/cycle remains unchanged and timeout keeps that actor hold pending_reconciliation. Existing observed cycle-parent and browser billing denial proofs are retained. Dormant paid activation, full008 spending authority and acknowledgement/recovery reliability remain independent. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
@@ -3844,15 +3860,15 @@
       }
     },
     {
-      "id": "3fc72ec34d884b871909",
+      "id": "fba07b765dafacccf133",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 451,
+      "line": 461,
       "enclosing": "finishFailedProviderReservation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "55d3647f49948243cf1684c15ea08da2f757b1db2661517ac4466820c223a8f9",
+      "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
       "semanticReview": {
         "authority": "Reservation fallback retains the same original userId of reserveProviderBudget and passes it to fixed ensure_xroga_free_cycle only after missing-active-cycle error. It cannot choose a paid amount or a different account. Failed reservation finalization is private to withProviderReservation flow, which retains the same owner and reservation captured before execute. The release RPC matches both reservation ID and owner and locks that exact owner cycle before accounting. Definite pre-completion failures release only this hold, uncertain outcomes retain it. Logging a failed foreign release does not grant success or mutate rows.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Four fallback/release RPC/factory sites. Two fresh actual Auth users begin with no cycle and acquire separate fixed free cycles via the real reservation wrapper fallback. Passing another owner with the reservation leaves exact reservations and cycles unchanged. Matching owner releases its hold, replay preserves exact rows, another actor hold/cycle remains unchanged and timeout keeps that actor hold pending_reconciliation. Existing observed cycle-parent and browser billing denial proofs are retained. Dormant paid activation, full008 spending authority and acknowledgement/recovery reliability remain independent. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
@@ -3953,15 +3969,15 @@
       }
     },
     {
-      "id": "52edc4559577671284c2",
+      "id": "e490c31dcee80b1d1915",
       "path": "backend/src/ai/quota.ts",
-      "line": 182,
+      "line": 183,
       "enclosing": "readUsageRow",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_token_usage",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
+      "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
       "semanticReview": {
         "authority": "Usage admission reads one exact server-actor row, validates returned owner, known plan, period and finite nonnegative numeric evidence. Missing configuration, missing row, malformed values and transport/store errors fail closed with QUOTA_UNAVAILABLE503. No paid default or memory entitlement override. This read is not a spend reservation.",
         "reason": "Exact read boundary VERIFIED at01bd07160817927799a043bbfb46d2c433ab85a8 disposable38822065088: dedicated real owner rows return distinct balances, zero budget denies, deleted usage row returns503 and other owner remains unchanged. Focused malformed/configuration/substituted-owner negatives pass. This disposition closes only truthful owner-bound read evidence, not caller-wide authorization, reservation, atomic accounting or concurrent spending.",
@@ -3974,15 +3990,15 @@
       }
     },
     {
-      "id": "39d17e6c2a9120f50030",
+      "id": "77af2b12d27cb727addf",
       "path": "backend/src/ai/quota.ts",
-      "line": 182,
+      "line": 183,
       "enclosing": "readUsageRow",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
+      "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
       "semanticReview": {
         "authority": "Usage admission reads one exact server-actor row, validates returned owner, known plan, period and finite nonnegative numeric evidence. Missing configuration, missing row, malformed values and transport/store errors fail closed with QUOTA_UNAVAILABLE503. No paid default or memory entitlement override. This read is not a spend reservation.",
         "reason": "Exact read boundary VERIFIED at01bd07160817927799a043bbfb46d2c433ab85a8 disposable38822065088: dedicated real owner rows return distinct balances, zero budget denies, deleted usage row returns503 and other owner remains unchanged. Focused malformed/configuration/substituted-owner negatives pass. This disposition closes only truthful owner-bound read evidence, not caller-wide authorization, reservation, atomic accounting or concurrent spending.",
@@ -3995,57 +4011,73 @@
       }
     },
     {
-      "id": "3faa7ece6a312b431802",
+      "id": "7632727b3c8b02cf14d5",
       "path": "backend/src/ai/quota.ts",
-      "line": 259,
+      "line": 262,
       "enclosing": "syncPlanBudget",
       "kind": "RPC_CANDIDATE",
       "target": "set_user_ai_plan_budget",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
+      "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
       "semanticReview": {
-        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
-        "reason": "Read evidence now fails closed and preserves zero entitlement, verified at01bd0716. These six remaining legacy sync/meter callers still omit RPC result checks and update local counters before split durable accounting. New atomic wrapper affects only three separately reviewed consumers. Full payment admission and concurrent spending remain unresolved. No credit or tenant acceptance is granted. Sixth-source syncPlanBudget checks durable RPC acknowledgement before memory update and rejects returned/thrown errors with a fixed safe error. Existing explicit no-database test behavior retained. Durable billing consumers no longer issue redundant nontransactional budget changes. Complete usage writer provenance and concurrency remain separate gaps.",
+        "authority": "No active production consumer exists for this dormant helper. The callable contract requires the original issued TenantContext before any privileged access. It retains the captured subject through canonical RPC and final read. Paid-cycle input is snapshotted and must declare that same subject. Exact owner/period/evidence receipts or same-owner tier/budget read-back are required. No payment route, provider grant or Phase3 authority is invented.",
+        "reason": "Four original007 dormant budget constructor/RPC obligations are repaired locally and remain unproven. Fifteen focused tests pass, including cloned/primitive context denial, foreign receipt rejection, exact budget/period checks and pre-await mutable-input capture. The registered actual disposable case covers two real subjects, concurrent replay, exact persistence, SQL failure rollback/recovery and browser denial. Actual new-source disposable and full regression remain mandatory. Existing billing fulfilment, accounting and later authority interfaces are unchanged.",
         "evidence": [
           {
             "path": "backend/src/ai/quota.ts",
             "marker": "export async function recordUsage"
+          },
+          {
+            "path": "backend/src/ai/budgetOwnerBoundary.test.ts",
+            "marker": "dormant budget writers require original issued owners and exact durable receipts"
+          },
+          {
+            "path": "backend/src/security/budgetOwner.local.integration.ts",
+            "marker": "real dormant budget contracts retain issued owners through concurrent replay and SQL failures"
           }
         ]
       }
     },
     {
-      "id": "09c18505660bd25e7f05",
+      "id": "77bc9a9a205796da009c",
       "path": "backend/src/ai/quota.ts",
-      "line": 259,
+      "line": 262,
       "enclosing": "syncPlanBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
+      "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
       "semanticReview": {
-        "authority": "Plan and usage reads constrain user_id supplied by server consumers; quota sync and ledger RPCs receive supplied user identity. This legacy usage meter is distinct from providerBudget reservation. Memory accounting is process-local and RPC calls are after usage in recordUsage.",
-        "reason": "Read evidence now fails closed and preserves zero entitlement, verified at01bd0716. These six remaining legacy sync/meter callers still omit RPC result checks and update local counters before split durable accounting. New atomic wrapper affects only three separately reviewed consumers. Full payment admission and concurrent spending remain unresolved. No credit or tenant acceptance is granted. Sixth-source syncPlanBudget checks durable RPC acknowledgement before memory update and rejects returned/thrown errors with a fixed safe error. Existing explicit no-database test behavior retained. Durable billing consumers no longer issue redundant nontransactional budget changes. Complete usage writer provenance and concurrency remain separate gaps.",
+        "authority": "No active production consumer exists for this dormant helper. The callable contract requires the original issued TenantContext before any privileged access. It retains the captured subject through canonical RPC and final read. Paid-cycle input is snapshotted and must declare that same subject. Exact owner/period/evidence receipts or same-owner tier/budget read-back are required. No payment route, provider grant or Phase3 authority is invented.",
+        "reason": "Four original007 dormant budget constructor/RPC obligations are repaired locally and remain unproven. Fifteen focused tests pass, including cloned/primitive context denial, foreign receipt rejection, exact budget/period checks and pre-await mutable-input capture. The registered actual disposable case covers two real subjects, concurrent replay, exact persistence, SQL failure rollback/recovery and browser denial. Actual new-source disposable and full regression remain mandatory. Existing billing fulfilment, accounting and later authority interfaces are unchanged.",
         "evidence": [
           {
             "path": "backend/src/ai/quota.ts",
             "marker": "export async function recordUsage"
+          },
+          {
+            "path": "backend/src/ai/budgetOwnerBoundary.test.ts",
+            "marker": "dormant budget writers require original issued owners and exact durable receipts"
+          },
+          {
+            "path": "backend/src/security/budgetOwner.local.integration.ts",
+            "marker": "real dormant budget contracts retain issued owners through concurrent replay and SQL failures"
           }
         ]
       }
     },
     {
-      "id": "ab1702a45a7ccb57ac8f",
+      "id": "e8076c86facca1bb0721",
       "path": "backend/src/ai/quota.ts",
-      "line": 319,
+      "line": 326,
       "enclosing": "recordUsage",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
+      "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
       "semanticReview": {
         "authority": "The actual producer set is the issued-owner pipeline and server business/agent/planner callbacks already traced for provider reservations. No route accepts a meter userId from the client. The selected method parameters are immutable primitives. readUsageRow first verifies exact original owner and current configured durable evidence. All three fixed increment/model/ledger RPCs retain exactly that owner and current period, and the final getUsage uses the same owner. Authenticated status separately obtains requireUserId(req), not a query actor. Browser roles have no execute grant on the exact legacy RPC signatures.",
         "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Four original tenant writer/factory sites only. Actual two fresh Auth owners retain distinct counters and ledger entries, concurrent same-owner deltas persist without changing the other owner, real HTTP status ignores forged user/tenant query and denies anonymous access, catalog proves the exact routines exist with browser EXECUTE denied, actual browser calls cannot mutate either owner, and missing durable owner evidence denies before additional ledger rows. This does not certify split-write atomicity, reliable acknowledgement after later RPC failure, retry/credit policy, dormant syncPlanBudget or canonical008 spending authority. Those independent concerns remain in the existing review history and later-phase mappings, never turned into another owner grant. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
@@ -4058,15 +4090,15 @@
       }
     },
     {
-      "id": "1990f5c97beb40b8b783",
+      "id": "baee9857b82180aaf497",
       "path": "backend/src/ai/quota.ts",
-      "line": 320,
+      "line": 327,
       "enclosing": "recordUsage",
       "kind": "RPC_CANDIDATE",
       "target": "increment_user_token_usage",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
+      "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
       "semanticReview": {
         "authority": "The actual producer set is the issued-owner pipeline and server business/agent/planner callbacks already traced for provider reservations. No route accepts a meter userId from the client. The selected method parameters are immutable primitives. readUsageRow first verifies exact original owner and current configured durable evidence. All three fixed increment/model/ledger RPCs retain exactly that owner and current period, and the final getUsage uses the same owner. Authenticated status separately obtains requireUserId(req), not a query actor. Browser roles have no execute grant on the exact legacy RPC signatures.",
         "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Four original tenant writer/factory sites only. Actual two fresh Auth owners retain distinct counters and ledger entries, concurrent same-owner deltas persist without changing the other owner, real HTTP status ignores forged user/tenant query and denies anonymous access, catalog proves the exact routines exist with browser EXECUTE denied, actual browser calls cannot mutate either owner, and missing durable owner evidence denies before additional ledger rows. This does not certify split-write atomicity, reliable acknowledgement after later RPC failure, retry/credit policy, dormant syncPlanBudget or canonical008 spending authority. Those independent concerns remain in the existing review history and later-phase mappings, never turned into another owner grant. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
@@ -4079,15 +4111,15 @@
       }
     },
     {
-      "id": "e27b9abaf3fe02c61229",
+      "id": "611df8756b24bd23b167",
       "path": "backend/src/ai/quota.ts",
-      "line": 329,
+      "line": 336,
       "enclosing": "recordUsage",
       "kind": "RPC_CANDIDATE",
       "target": "merge_user_model_usage",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
+      "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
       "semanticReview": {
         "authority": "The actual producer set is the issued-owner pipeline and server business/agent/planner callbacks already traced for provider reservations. No route accepts a meter userId from the client. The selected method parameters are immutable primitives. readUsageRow first verifies exact original owner and current configured durable evidence. All three fixed increment/model/ledger RPCs retain exactly that owner and current period, and the final getUsage uses the same owner. Authenticated status separately obtains requireUserId(req), not a query actor. Browser roles have no execute grant on the exact legacy RPC signatures.",
         "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Four original tenant writer/factory sites only. Actual two fresh Auth owners retain distinct counters and ledger entries, concurrent same-owner deltas persist without changing the other owner, real HTTP status ignores forged user/tenant query and denies anonymous access, catalog proves the exact routines exist with browser EXECUTE denied, actual browser calls cannot mutate either owner, and missing durable owner evidence denies before additional ledger rows. This does not certify split-write atomicity, reliable acknowledgement after later RPC failure, retry/credit policy, dormant syncPlanBudget or canonical008 spending authority. Those independent concerns remain in the existing review history and later-phase mappings, never turned into another owner grant. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
@@ -4100,15 +4132,15 @@
       }
     },
     {
-      "id": "f1aaacc8e5daf32fdba1",
+      "id": "fb624c5ca127ce5d4da8",
       "path": "backend/src/ai/quota.ts",
-      "line": 336,
+      "line": 343,
       "enclosing": "recordUsage",
       "kind": "RPC_CANDIDATE",
       "target": "insert_ai_usage_ledger",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "507e426a479932f6a7f14c175b1e0eeeb5ec706d4e6328c3133dc72beab373c6",
+      "sourceSha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
       "semanticReview": {
         "authority": "The actual producer set is the issued-owner pipeline and server business/agent/planner callbacks already traced for provider reservations. No route accepts a meter userId from the client. The selected method parameters are immutable primitives. readUsageRow first verifies exact original owner and current configured durable evidence. All three fixed increment/model/ledger RPCs retain exactly that owner and current period, and the final getUsage uses the same owner. Authenticated status separately obtains requireUserId(req), not a query actor. Browser roles have no execute grant on the exact legacy RPC signatures.",
         "reason": "Exact original007 boundary proof at 8b3adfc9b6cdedc56c442e70ff84eb22685e626b, independently successful disposable39291971424/job118194644639,192 actual security cases with zero failures/skips and126 fresh/upgrade migration histories. Four original tenant writer/factory sites only. Actual two fresh Auth owners retain distinct counters and ledger entries, concurrent same-owner deltas persist without changing the other owner, real HTTP status ignores forged user/tenant query and denies anonymous access, catalog proves the exact routines exist with browser EXECUTE denied, actual browser calls cannot mutate either owner, and missing durable owner evidence denies before additional ledger rows. This does not certify split-write atomicity, reliable acknowledgement after later RPC failure, retry/credit policy, dormant syncPlanBudget or canonical008 spending authority. Those independent concerns remain in the existing review history and later-phase mappings, never turned into another owner grant. Full changed-main integrated regression is BLOCKED at39291971422 and is not claimed passing. Earlier review and independent008/009/010, custody, egress, provider-success and recovery scope remain preserved. No whole phase or new-source certification is inferred.",
@@ -14062,11 +14094,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "df1dd631c4631480558890e38e888c5e36b4dabeae1d8bef46778b5d547dd895",
       "semanticReview": {
-        "authority": "No active production caller was found or invented for these legacy exports. Every callable reader/ensurer/writer now requires an original issued TenantContext before SDK access, with explicit owner equality for captured build input. Reads and ignore-conflict identity writes check full owner/repository receipts. Required parent/message writes reuse save_owned_project_atomic inside one service-only wrapper that holds current owner/repository/expected project through all initial writes. Files retain the same issued context and completion checks the exact current owned project receipt.",
-        "reason": "Original007 actor/parent and persistence obligations repaired locally, with no invented public route or memory/storage engine. Canonical project save and existing file metadata trigger are reused. Four old project/message write identities map to one real transactional caller, not removed obligations. Pure conversions are unchanged. Local original-context/substituted-receipt tests and synthetic SQL parent/rollback checks are prepared or passing. Actual default database owner separation, same-repo concurrency, collision, project transfer while waiting, required child rollback/recovery and browser cases require new-source disposable execution. This remains REVIEWED_GAP. Full authority, credential custody, egress, provider delivery and actual R2 acceptance remain separate.",
+        "authority": "No active production consumer exists for the three legacy build exports, and no public endpoint is invented. Each callable export requires the original issued context before SDK access. Captured write input must match that owner. Lookup/ensure queries retain only its owner/repository, ignore-conflict insertion never replaces another owner, and returned identity must match the full owner/repository tuple. The only project/message mutation call passes that original owner and observed expected project to a service-only wrapper of unchanged save_owned_project_atomic. It uses the same owner/repository advisory lock, locks/checks current expected parent, and commits initial owned parent, required user/summary messages and canonical activity together, preserving in-progress status until files acknowledge. Each file receives the identical original context. Completion updates only current exact owned parent and validates id/owner/completed receipt. All SDK construction sites are private to these guarded receiving operations, not generic RLS promises.",
+        "reason": "Exact original007 callable project/file scope verified at 5722bb9afdd81359a57ac84adcb7fb95b2fcc729, actual disposable39404339811 attempt2/job118571636920,201 security cases,129 migration histories and four complete21-stage branch/integrated baselines. Issued-owner denial, exact owned receipts, current parent transfer behind an observed wait, required-child rollback, concurrent recovery and browser denial pass. Attempt1 public-theme timeout remains preserved and isn't used as an acceptance receipt. Private R2 mocks aren't provider acceptance. No active legacy producer, production parity, full authority, custody or egress certificate is invented.",
         "evidence": [
           {
             "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
@@ -14095,11 +14127,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "df1dd631c4631480558890e38e888c5e36b4dabeae1d8bef46778b5d547dd895",
       "semanticReview": {
-        "authority": "No active production caller was found or invented for these legacy exports. Every callable reader/ensurer/writer now requires an original issued TenantContext before SDK access, with explicit owner equality for captured build input. Reads and ignore-conflict identity writes check full owner/repository receipts. Required parent/message writes reuse save_owned_project_atomic inside one service-only wrapper that holds current owner/repository/expected project through all initial writes. Files retain the same issued context and completion checks the exact current owned project receipt.",
-        "reason": "Original007 actor/parent and persistence obligations repaired locally, with no invented public route or memory/storage engine. Canonical project save and existing file metadata trigger are reused. Four old project/message write identities map to one real transactional caller, not removed obligations. Pure conversions are unchanged. Local original-context/substituted-receipt tests and synthetic SQL parent/rollback checks are prepared or passing. Actual default database owner separation, same-repo concurrency, collision, project transfer while waiting, required child rollback/recovery and browser cases require new-source disposable execution. This remains REVIEWED_GAP. Full authority, credential custody, egress, provider delivery and actual R2 acceptance remain separate.",
+        "authority": "No active production consumer exists for the three legacy build exports, and no public endpoint is invented. Each callable export requires the original issued context before SDK access. Captured write input must match that owner. Lookup/ensure queries retain only its owner/repository, ignore-conflict insertion never replaces another owner, and returned identity must match the full owner/repository tuple. The only project/message mutation call passes that original owner and observed expected project to a service-only wrapper of unchanged save_owned_project_atomic. It uses the same owner/repository advisory lock, locks/checks current expected parent, and commits initial owned parent, required user/summary messages and canonical activity together, preserving in-progress status until files acknowledge. Each file receives the identical original context. Completion updates only current exact owned parent and validates id/owner/completed receipt. All SDK construction sites are private to these guarded receiving operations, not generic RLS promises.",
+        "reason": "Exact original007 callable project/file scope verified at 5722bb9afdd81359a57ac84adcb7fb95b2fcc729, actual disposable39404339811 attempt2/job118571636920,201 security cases,129 migration histories and four complete21-stage branch/integrated baselines. Issued-owner denial, exact owned receipts, current parent transfer behind an observed wait, required-child rollback, concurrent recovery and browser denial pass. Attempt1 public-theme timeout remains preserved and isn't used as an acceptance receipt. Private R2 mocks aren't provider acceptance. No active legacy producer, production parity, full authority, custody or egress certificate is invented.",
         "evidence": [
           {
             "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
@@ -14128,11 +14160,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "df1dd631c4631480558890e38e888c5e36b4dabeae1d8bef46778b5d547dd895",
       "semanticReview": {
-        "authority": "No active production caller was found or invented for these legacy exports. Every callable reader/ensurer/writer now requires an original issued TenantContext before SDK access, with explicit owner equality for captured build input. Reads and ignore-conflict identity writes check full owner/repository receipts. Required parent/message writes reuse save_owned_project_atomic inside one service-only wrapper that holds current owner/repository/expected project through all initial writes. Files retain the same issued context and completion checks the exact current owned project receipt.",
-        "reason": "Original007 actor/parent and persistence obligations repaired locally, with no invented public route or memory/storage engine. Canonical project save and existing file metadata trigger are reused. Four old project/message write identities map to one real transactional caller, not removed obligations. Pure conversions are unchanged. Local original-context/substituted-receipt tests and synthetic SQL parent/rollback checks are prepared or passing. Actual default database owner separation, same-repo concurrency, collision, project transfer while waiting, required child rollback/recovery and browser cases require new-source disposable execution. This remains REVIEWED_GAP. Full authority, credential custody, egress, provider delivery and actual R2 acceptance remain separate.",
+        "authority": "No active production consumer exists for the three legacy build exports, and no public endpoint is invented. Each callable export requires the original issued context before SDK access. Captured write input must match that owner. Lookup/ensure queries retain only its owner/repository, ignore-conflict insertion never replaces another owner, and returned identity must match the full owner/repository tuple. The only project/message mutation call passes that original owner and observed expected project to a service-only wrapper of unchanged save_owned_project_atomic. It uses the same owner/repository advisory lock, locks/checks current expected parent, and commits initial owned parent, required user/summary messages and canonical activity together, preserving in-progress status until files acknowledge. Each file receives the identical original context. Completion updates only current exact owned parent and validates id/owner/completed receipt. All SDK construction sites are private to these guarded receiving operations, not generic RLS promises.",
+        "reason": "Exact original007 callable project/file scope verified at 5722bb9afdd81359a57ac84adcb7fb95b2fcc729, actual disposable39404339811 attempt2/job118571636920,201 security cases,129 migration histories and four complete21-stage branch/integrated baselines. Issued-owner denial, exact owned receipts, current parent transfer behind an observed wait, required-child rollback, concurrent recovery and browser denial pass. Attempt1 public-theme timeout remains preserved and isn't used as an acceptance receipt. Private R2 mocks aren't provider acceptance. No active legacy producer, production parity, full authority, custody or egress certificate is invented.",
         "evidence": [
           {
             "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
@@ -14161,11 +14193,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "df1dd631c4631480558890e38e888c5e36b4dabeae1d8bef46778b5d547dd895",
       "semanticReview": {
-        "authority": "No active production caller was found or invented for these legacy exports. Every callable reader/ensurer/writer now requires an original issued TenantContext before SDK access, with explicit owner equality for captured build input. Reads and ignore-conflict identity writes check full owner/repository receipts. Required parent/message writes reuse save_owned_project_atomic inside one service-only wrapper that holds current owner/repository/expected project through all initial writes. Files retain the same issued context and completion checks the exact current owned project receipt.",
-        "reason": "Original007 actor/parent and persistence obligations repaired locally, with no invented public route or memory/storage engine. Canonical project save and existing file metadata trigger are reused. Four old project/message write identities map to one real transactional caller, not removed obligations. Pure conversions are unchanged. Local original-context/substituted-receipt tests and synthetic SQL parent/rollback checks are prepared or passing. Actual default database owner separation, same-repo concurrency, collision, project transfer while waiting, required child rollback/recovery and browser cases require new-source disposable execution. This remains REVIEWED_GAP. Full authority, credential custody, egress, provider delivery and actual R2 acceptance remain separate.",
+        "authority": "No active production consumer exists for the three legacy build exports, and no public endpoint is invented. Each callable export requires the original issued context before SDK access. Captured write input must match that owner. Lookup/ensure queries retain only its owner/repository, ignore-conflict insertion never replaces another owner, and returned identity must match the full owner/repository tuple. The only project/message mutation call passes that original owner and observed expected project to a service-only wrapper of unchanged save_owned_project_atomic. It uses the same owner/repository advisory lock, locks/checks current expected parent, and commits initial owned parent, required user/summary messages and canonical activity together, preserving in-progress status until files acknowledge. Each file receives the identical original context. Completion updates only current exact owned parent and validates id/owner/completed receipt. All SDK construction sites are private to these guarded receiving operations, not generic RLS promises.",
+        "reason": "Exact original007 callable project/file scope verified at 5722bb9afdd81359a57ac84adcb7fb95b2fcc729, actual disposable39404339811 attempt2/job118571636920,201 security cases,129 migration histories and four complete21-stage branch/integrated baselines. Issued-owner denial, exact owned receipts, current parent transfer behind an observed wait, required-child rollback, concurrent recovery and browser denial pass. Attempt1 public-theme timeout remains preserved and isn't used as an acceptance receipt. Private R2 mocks aren't provider acceptance. No active legacy producer, production parity, full authority, custody or egress certificate is invented.",
         "evidence": [
           {
             "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
@@ -14194,11 +14226,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "df1dd631c4631480558890e38e888c5e36b4dabeae1d8bef46778b5d547dd895",
       "semanticReview": {
-        "authority": "No active production caller was found or invented for these legacy exports. Every callable reader/ensurer/writer now requires an original issued TenantContext before SDK access, with explicit owner equality for captured build input. Reads and ignore-conflict identity writes check full owner/repository receipts. Required parent/message writes reuse save_owned_project_atomic inside one service-only wrapper that holds current owner/repository/expected project through all initial writes. Files retain the same issued context and completion checks the exact current owned project receipt.",
-        "reason": "Original007 actor/parent and persistence obligations repaired locally, with no invented public route or memory/storage engine. Canonical project save and existing file metadata trigger are reused. Four old project/message write identities map to one real transactional caller, not removed obligations. Pure conversions are unchanged. Local original-context/substituted-receipt tests and synthetic SQL parent/rollback checks are prepared or passing. Actual default database owner separation, same-repo concurrency, collision, project transfer while waiting, required child rollback/recovery and browser cases require new-source disposable execution. This remains REVIEWED_GAP. Full authority, credential custody, egress, provider delivery and actual R2 acceptance remain separate.",
+        "authority": "No active production consumer exists for the three legacy build exports, and no public endpoint is invented. Each callable export requires the original issued context before SDK access. Captured write input must match that owner. Lookup/ensure queries retain only its owner/repository, ignore-conflict insertion never replaces another owner, and returned identity must match the full owner/repository tuple. The only project/message mutation call passes that original owner and observed expected project to a service-only wrapper of unchanged save_owned_project_atomic. It uses the same owner/repository advisory lock, locks/checks current expected parent, and commits initial owned parent, required user/summary messages and canonical activity together, preserving in-progress status until files acknowledge. Each file receives the identical original context. Completion updates only current exact owned parent and validates id/owner/completed receipt. All SDK construction sites are private to these guarded receiving operations, not generic RLS promises.",
+        "reason": "Exact original007 callable project/file scope verified at 5722bb9afdd81359a57ac84adcb7fb95b2fcc729, actual disposable39404339811 attempt2/job118571636920,201 security cases,129 migration histories and four complete21-stage branch/integrated baselines. Issued-owner denial, exact owned receipts, current parent transfer behind an observed wait, required-child rollback, concurrent recovery and browser denial pass. Attempt1 public-theme timeout remains preserved and isn't used as an acceptance receipt. Private R2 mocks aren't provider acceptance. No active legacy producer, production parity, full authority, custody or egress certificate is invented.",
         "evidence": [
           {
             "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
@@ -14227,11 +14259,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "df1dd631c4631480558890e38e888c5e36b4dabeae1d8bef46778b5d547dd895",
       "semanticReview": {
-        "authority": "No active production caller was found or invented for these legacy exports. Every callable reader/ensurer/writer now requires an original issued TenantContext before SDK access, with explicit owner equality for captured build input. Reads and ignore-conflict identity writes check full owner/repository receipts. Required parent/message writes reuse save_owned_project_atomic inside one service-only wrapper that holds current owner/repository/expected project through all initial writes. Files retain the same issued context and completion checks the exact current owned project receipt.",
-        "reason": "Original007 actor/parent and persistence obligations repaired locally, with no invented public route or memory/storage engine. Canonical project save and existing file metadata trigger are reused. Four old project/message write identities map to one real transactional caller, not removed obligations. Pure conversions are unchanged. Local original-context/substituted-receipt tests and synthetic SQL parent/rollback checks are prepared or passing. Actual default database owner separation, same-repo concurrency, collision, project transfer while waiting, required child rollback/recovery and browser cases require new-source disposable execution. This remains REVIEWED_GAP. Full authority, credential custody, egress, provider delivery and actual R2 acceptance remain separate.",
+        "authority": "No active production consumer exists for the three legacy build exports, and no public endpoint is invented. Each callable export requires the original issued context before SDK access. Captured write input must match that owner. Lookup/ensure queries retain only its owner/repository, ignore-conflict insertion never replaces another owner, and returned identity must match the full owner/repository tuple. The only project/message mutation call passes that original owner and observed expected project to a service-only wrapper of unchanged save_owned_project_atomic. It uses the same owner/repository advisory lock, locks/checks current expected parent, and commits initial owned parent, required user/summary messages and canonical activity together, preserving in-progress status until files acknowledge. Each file receives the identical original context. Completion updates only current exact owned parent and validates id/owner/completed receipt. All SDK construction sites are private to these guarded receiving operations, not generic RLS promises.",
+        "reason": "Exact original007 callable project/file scope verified at 5722bb9afdd81359a57ac84adcb7fb95b2fcc729, actual disposable39404339811 attempt2/job118571636920,201 security cases,129 migration histories and four complete21-stage branch/integrated baselines. Issued-owner denial, exact owned receipts, current parent transfer behind an observed wait, required-child rollback, concurrent recovery and browser denial pass. Attempt1 public-theme timeout remains preserved and isn't used as an acceptance receipt. Private R2 mocks aren't provider acceptance. No active legacy producer, production parity, full authority, custody or egress certificate is invented.",
         "evidence": [
           {
             "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
@@ -14260,11 +14292,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "df1dd631c4631480558890e38e888c5e36b4dabeae1d8bef46778b5d547dd895",
       "semanticReview": {
-        "authority": "No active production caller was found or invented for these legacy exports. Every callable reader/ensurer/writer now requires an original issued TenantContext before SDK access, with explicit owner equality for captured build input. Reads and ignore-conflict identity writes check full owner/repository receipts. Required parent/message writes reuse save_owned_project_atomic inside one service-only wrapper that holds current owner/repository/expected project through all initial writes. Files retain the same issued context and completion checks the exact current owned project receipt.",
-        "reason": "Original007 actor/parent and persistence obligations repaired locally, with no invented public route or memory/storage engine. Canonical project save and existing file metadata trigger are reused. Four old project/message write identities map to one real transactional caller, not removed obligations. Pure conversions are unchanged. Local original-context/substituted-receipt tests and synthetic SQL parent/rollback checks are prepared or passing. Actual default database owner separation, same-repo concurrency, collision, project transfer while waiting, required child rollback/recovery and browser cases require new-source disposable execution. This remains REVIEWED_GAP. Full authority, credential custody, egress, provider delivery and actual R2 acceptance remain separate.",
+        "authority": "No active production consumer exists for the three legacy build exports, and no public endpoint is invented. Each callable export requires the original issued context before SDK access. Captured write input must match that owner. Lookup/ensure queries retain only its owner/repository, ignore-conflict insertion never replaces another owner, and returned identity must match the full owner/repository tuple. The only project/message mutation call passes that original owner and observed expected project to a service-only wrapper of unchanged save_owned_project_atomic. It uses the same owner/repository advisory lock, locks/checks current expected parent, and commits initial owned parent, required user/summary messages and canonical activity together, preserving in-progress status until files acknowledge. Each file receives the identical original context. Completion updates only current exact owned parent and validates id/owner/completed receipt. All SDK construction sites are private to these guarded receiving operations, not generic RLS promises.",
+        "reason": "Exact original007 callable project/file scope verified at 5722bb9afdd81359a57ac84adcb7fb95b2fcc729, actual disposable39404339811 attempt2/job118571636920,201 security cases,129 migration histories and four complete21-stage branch/integrated baselines. Issued-owner denial, exact owned receipts, current parent transfer behind an observed wait, required-child rollback, concurrent recovery and browser denial pass. Attempt1 public-theme timeout remains preserved and isn't used as an acceptance receipt. Private R2 mocks aren't provider acceptance. No active legacy producer, production parity, full authority, custody or egress certificate is invented.",
         "evidence": [
           {
             "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
@@ -14293,11 +14325,11 @@
       "kind": "RPC_CANDIDATE",
       "target": "save_owned_build_project_atomic",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "df1dd631c4631480558890e38e888c5e36b4dabeae1d8bef46778b5d547dd895",
       "semanticReview": {
-        "authority": "No active production caller was found or invented for these legacy exports. Every callable reader/ensurer/writer now requires an original issued TenantContext before SDK access, with explicit owner equality for captured build input. Reads and ignore-conflict identity writes check full owner/repository receipts. Required parent/message writes reuse save_owned_project_atomic inside one service-only wrapper that holds current owner/repository/expected project through all initial writes. Files retain the same issued context and completion checks the exact current owned project receipt.",
-        "reason": "Original007 actor/parent and persistence obligations repaired locally, with no invented public route or memory/storage engine. Canonical project save and existing file metadata trigger are reused. Four old project/message write identities map to one real transactional caller, not removed obligations. Pure conversions are unchanged. Local original-context/substituted-receipt tests and synthetic SQL parent/rollback checks are prepared or passing. Actual default database owner separation, same-repo concurrency, collision, project transfer while waiting, required child rollback/recovery and browser cases require new-source disposable execution. This remains REVIEWED_GAP. Full authority, credential custody, egress, provider delivery and actual R2 acceptance remain separate.",
+        "authority": "No active production consumer exists for the three legacy build exports, and no public endpoint is invented. Each callable export requires the original issued context before SDK access. Captured write input must match that owner. Lookup/ensure queries retain only its owner/repository, ignore-conflict insertion never replaces another owner, and returned identity must match the full owner/repository tuple. The only project/message mutation call passes that original owner and observed expected project to a service-only wrapper of unchanged save_owned_project_atomic. It uses the same owner/repository advisory lock, locks/checks current expected parent, and commits initial owned parent, required user/summary messages and canonical activity together, preserving in-progress status until files acknowledge. Each file receives the identical original context. Completion updates only current exact owned parent and validates id/owner/completed receipt. All SDK construction sites are private to these guarded receiving operations, not generic RLS promises.",
+        "reason": "Exact original007 callable project/file scope verified at 5722bb9afdd81359a57ac84adcb7fb95b2fcc729, actual disposable39404339811 attempt2/job118571636920,201 security cases,129 migration histories and four complete21-stage branch/integrated baselines. Issued-owner denial, exact owned receipts, current parent transfer behind an observed wait, required-child rollback, concurrent recovery and browser denial pass. Attempt1 public-theme timeout remains preserved and isn't used as an acceptance receipt. Private R2 mocks aren't provider acceptance. No active legacy producer, production parity, full authority, custody or egress certificate is invented.",
         "evidence": [
           {
             "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
@@ -14326,11 +14358,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "df1dd631c4631480558890e38e888c5e36b4dabeae1d8bef46778b5d547dd895",
       "semanticReview": {
-        "authority": "No active production caller was found or invented for these legacy exports. Every callable reader/ensurer/writer now requires an original issued TenantContext before SDK access, with explicit owner equality for captured build input. Reads and ignore-conflict identity writes check full owner/repository receipts. Required parent/message writes reuse save_owned_project_atomic inside one service-only wrapper that holds current owner/repository/expected project through all initial writes. Files retain the same issued context and completion checks the exact current owned project receipt.",
-        "reason": "Original007 actor/parent and persistence obligations repaired locally, with no invented public route or memory/storage engine. Canonical project save and existing file metadata trigger are reused. Four old project/message write identities map to one real transactional caller, not removed obligations. Pure conversions are unchanged. Local original-context/substituted-receipt tests and synthetic SQL parent/rollback checks are prepared or passing. Actual default database owner separation, same-repo concurrency, collision, project transfer while waiting, required child rollback/recovery and browser cases require new-source disposable execution. This remains REVIEWED_GAP. Full authority, credential custody, egress, provider delivery and actual R2 acceptance remain separate.",
+        "authority": "No active production consumer exists for the three legacy build exports, and no public endpoint is invented. Each callable export requires the original issued context before SDK access. Captured write input must match that owner. Lookup/ensure queries retain only its owner/repository, ignore-conflict insertion never replaces another owner, and returned identity must match the full owner/repository tuple. The only project/message mutation call passes that original owner and observed expected project to a service-only wrapper of unchanged save_owned_project_atomic. It uses the same owner/repository advisory lock, locks/checks current expected parent, and commits initial owned parent, required user/summary messages and canonical activity together, preserving in-progress status until files acknowledge. Each file receives the identical original context. Completion updates only current exact owned parent and validates id/owner/completed receipt. All SDK construction sites are private to these guarded receiving operations, not generic RLS promises.",
+        "reason": "Exact original007 callable project/file scope verified at 5722bb9afdd81359a57ac84adcb7fb95b2fcc729, actual disposable39404339811 attempt2/job118571636920,201 security cases,129 migration histories and four complete21-stage branch/integrated baselines. Issued-owner denial, exact owned receipts, current parent transfer behind an observed wait, required-child rollback, concurrent recovery and browser denial pass. Attempt1 public-theme timeout remains preserved and isn't used as an acceptance receipt. Private R2 mocks aren't provider acceptance. No active legacy producer, production parity, full authority, custody or egress certificate is invented.",
         "evidence": [
           {
             "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
@@ -15203,11 +15235,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_files",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "839aa8c20f46c7c5c923f23287b376e41f082274df0fcfdb893a002b0d068a9e",
       "semanticReview": {
-        "authority": "The only production-source receiver is the legacy build helper, for which no active production consumer exists. This callable file contract now requires the original issued context instead of minting one from an arbitrary owner string. Existing owned-project preflight precedes private upload. Metadata owner/key derives from that original subject, input Buffer is copied before waits, and the existing database guard locks/rechecks current project ownership through insertion. Exact file/project/name/path/type/URL/content/metadata receipt is required. No missing acknowledgement deletes an uncertain referenced object.",
-        "reason": "Original007 actor/parent and persistence obligations repaired locally, with no invented public route or memory/storage engine. Canonical project save and existing file metadata trigger are reused. Four old project/message write identities map to one real transactional caller, not removed obligations. Pure conversions are unchanged. Local original-context/substituted-receipt tests and synthetic SQL parent/rollback checks are prepared or passing. Actual default database owner separation, same-repo concurrency, collision, project transfer while waiting, required child rollback/recovery and browser cases require new-source disposable execution. This remains REVIEWED_GAP. Full authority, credential custody, egress, provider delivery and actual R2 acceptance remain separate.",
+        "authority": "The only production-source receiver is the legacy build helper, whose absent active producer is recorded rather than invented. This callable file writer now requires an original issued context instead of minting authority from an arbitrary ID. Existing owned-project preflight runs before private upload. Immutable Buffer bytes and the original owner select only its users/owner private key in the fixed verified platform bucket. The fixed inserted file metadata contains that exact owner, project and captured content. Its existing metadata trigger locks current project ownership through insertion, compares metadata owner and rechecks current browser ownership after waits, while retaining server-only metadata and monotonic delivery versions. All selected file/project/name/path/type/URL/content/metadata acknowledgement fields must exactly match. The SDK handle is private to that one fixed guarded insert and is never a tenant-sandbox claim.",
+        "reason": "Exact original007 callable project/file scope verified at 5722bb9afdd81359a57ac84adcb7fb95b2fcc729, actual disposable39404339811 attempt2/job118571636920,201 security cases,129 migration histories and four complete21-stage branch/integrated baselines. Issued-owner denial, exact owned receipts, current parent transfer behind an observed wait, required-child rollback, concurrent recovery and browser denial pass. Attempt1 public-theme timeout remains preserved and isn't used as an acceptance receipt. Private R2 mocks aren't provider acceptance. No active legacy producer, production parity, full authority, custody or egress certificate is invented.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
@@ -15240,11 +15272,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "839aa8c20f46c7c5c923f23287b376e41f082274df0fcfdb893a002b0d068a9e",
       "semanticReview": {
-        "authority": "The only production-source receiver is the legacy build helper, for which no active production consumer exists. This callable file contract now requires the original issued context instead of minting one from an arbitrary owner string. Existing owned-project preflight precedes private upload. Metadata owner/key derives from that original subject, input Buffer is copied before waits, and the existing database guard locks/rechecks current project ownership through insertion. Exact file/project/name/path/type/URL/content/metadata receipt is required. No missing acknowledgement deletes an uncertain referenced object.",
-        "reason": "Original007 actor/parent and persistence obligations repaired locally, with no invented public route or memory/storage engine. Canonical project save and existing file metadata trigger are reused. Four old project/message write identities map to one real transactional caller, not removed obligations. Pure conversions are unchanged. Local original-context/substituted-receipt tests and synthetic SQL parent/rollback checks are prepared or passing. Actual default database owner separation, same-repo concurrency, collision, project transfer while waiting, required child rollback/recovery and browser cases require new-source disposable execution. This remains REVIEWED_GAP. Full authority, credential custody, egress, provider delivery and actual R2 acceptance remain separate.",
+        "authority": "The only production-source receiver is the legacy build helper, whose absent active producer is recorded rather than invented. This callable file writer now requires an original issued context instead of minting authority from an arbitrary ID. Existing owned-project preflight runs before private upload. Immutable Buffer bytes and the original owner select only its users/owner private key in the fixed verified platform bucket. The fixed inserted file metadata contains that exact owner, project and captured content. Its existing metadata trigger locks current project ownership through insertion, compares metadata owner and rechecks current browser ownership after waits, while retaining server-only metadata and monotonic delivery versions. All selected file/project/name/path/type/URL/content/metadata acknowledgement fields must exactly match. The SDK handle is private to that one fixed guarded insert and is never a tenant-sandbox claim.",
+        "reason": "Exact original007 callable project/file scope verified at 5722bb9afdd81359a57ac84adcb7fb95b2fcc729, actual disposable39404339811 attempt2/job118571636920,201 security cases,129 migration histories and four complete21-stage branch/integrated baselines. Issued-owner denial, exact owned receipts, current parent transfer behind an observed wait, required-child rollback, concurrent recovery and browser denial pass. Attempt1 public-theme timeout remains preserved and isn't used as an acceptance receipt. Private R2 mocks aren't provider acceptance. No active legacy producer, production parity, full authority, custody or egress certificate is invented.",
         "evidence": [
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",

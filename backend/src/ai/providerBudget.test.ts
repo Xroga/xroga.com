@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { createTenantContext } from '../security/tenantContext.js';
 import {
   SHARED_PROVIDER_ENTITLEMENT_MICRO_USD,
   activatePaidCycle,
@@ -93,14 +94,15 @@ test('idempotent replay returns one reservation without double accounting', asyn
 test('verified payment cycle becomes the active paid entitlement', async () => {
   resetProviderBudgetMemoryForTests();
   const startsAt = new Date();
-  const status = await activatePaidCycle({
-    userId: 'paid-user',
+  const userId = '11111111-1111-4111-8111-111111111111';
+  const status = await activatePaidCycle(createTenantContext({userId, via: 'local_jwt'}), {
+    userId,
     providerReference: 'event:subscription:period',
     startsAt,
     endsAt: new Date(startsAt.getTime() + 30 * 86_400_000),
   });
   assert.equal(status.state, 'paid_active');
-  assert.equal((await getProviderEntitlementStatus('paid-user')).requiresCard, true);
+  assert.equal((await getProviderEntitlementStatus(userId)).requiresCard, true);
 });
 
 test('same-key memory replays bind exact intent and deny settled, released or uncertain reservations', async () => {
