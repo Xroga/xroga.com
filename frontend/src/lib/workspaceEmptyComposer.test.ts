@@ -710,11 +710,11 @@ test('new terminal renders theme-aware readable cards without black-hole artwork
   assert.match(START, /Super Intelligence/);
   assert.match(START, /One AI workspace for every kind of work\./);
   assert.doesNotMatch(START, /DESCRIBE IT\.|SHIP IT\./);
-  assert.match(START, /<CapabilityVisual id=\{id\}/);
+  assert.match(START, /<CapabilityVisual id=\{card.id\}/);
   assert.doesNotMatch(START, /cardImage|1536/);
   assert.doesNotMatch(DASHBOARD, /BetaExpectationBanner/);
   assert.match(START_CSS, /background-clip: text/);
-  assert.equal((START.match(/id: '/g) ?? []).length, 5);
+  assert.equal((START.match(/id: '/g) ?? []).length, 7);
   assert.match(START_CSS, /background: var\(--terminal-ui-surface\) !important/);
   assert.match(START_CSS, /color: var\(--foreground\)/);
   assert.match(START_CSS, /font: 12px\/1\.5/);
@@ -725,7 +725,11 @@ test('new terminal renders theme-aware readable cards without black-hole artwork
 
 test('starter cards preserve immediate local drafts and do not auto-submit', () => {
   assert.match(START, /composer\?\.value \?\? prompt/);
-  assert.match(START, /if \(!currentDraft\.trim\(\) \|\| isStarter\) setPrompt\(prefix\)/);
+  assert.match(START, /setPrompt\(!currentDraft\.trim\(\) \|\| isStarter \? text/);
+  assert.match(START, /currentDraft\.trimEnd\(\)/);
+  assert.match(START, /6000/);
+  assert.match(START, /aria-haspopup="menu"/);
+  assert.doesNotMatch(START, /<sup>/);
   assert.doesNotMatch(START, /\bsubmit\s*\(/);
   assert.match(START, /preventScroll: true/);
 });

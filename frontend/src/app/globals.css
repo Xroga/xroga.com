@@ -14241,6 +14241,34 @@ body.theme-beige .xv-cba-kbd { color: var(--muted) !important; background: color
   }
 }
 
+/* Mobile workspace: one connected frame, with the toolbar as its top edge. */
+@media (max-width: 639px) {
+  body:has(.xv-workspace-main) { --xv-mobile-connected-surface: var(--app-panel); }
+  body:has(.xv-workspace-shell.terminal-skin-dark) { --xv-mobile-connected-surface: #000; }
+  body:has(.xv-workspace-main) .xv-mobile-workspace-header {
+    left: 8px; right: 8px; top: max(8px,env(safe-area-inset-top));
+  }
+  body:has(.xv-workspace-main) .xv-mobile-workspace-pill {
+    min-height: 44px; height: 44px; border-radius: 14px 14px 0 0;
+    border-bottom: 0; background: var(--xv-mobile-connected-surface);
+    box-shadow: none;
+  }
+  body:has(.xv-workspace-main) .xv-mobile-workspace-pill::before,
+  body:has(.xv-workspace-main) .xv-mobile-workspace-pill::after { display: none; }
+  body:has(.xv-workspace-main) .xv-mobile-workspace-actions { filter: grayscale(1); --accent: var(--foreground); }
+  body:not(.xv-terminal-fullscreen-active):not(.xv-workspace-expanded-active):not(.xv-page-fullscreen-active) .xv-workspace-main {
+    padding-top: calc(max(8px,env(safe-area-inset-top)) + 44px) !important;
+  }
+  body:not(.xv-terminal-fullscreen-active):not(.xv-workspace-expanded-active) .xv-workspace-main .xv-app-stage {
+    padding: 0 8px max(8px,env(safe-area-inset-bottom)) !important;
+  }
+  body:not(.xv-terminal-fullscreen-active):not(.xv-workspace-expanded-active) .xv-workspace-shell {
+    border-top: 0 !important; border-top-left-radius: 0 !important; border-top-right-radius: 0 !important;
+  }
+  .xv-workspace-identity .xv-term-title--button h3 { display: block; font-size: 11px; max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
+  .xv-workspace-identity .xv-term-title--button .xv-term-path { display: none; }
+}
+
 .xv-workspace-identity-cluster {
   display: inline-flex;
   min-width: 0;

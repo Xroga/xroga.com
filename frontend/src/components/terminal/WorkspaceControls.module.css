@@ -1,0 +1,51 @@
+/* Portals live outside the terminal: give them an opaque monochrome palette. */
+.modelPanel,.actions,.featureMenu {
+  --mono-bg: #161616; --mono-raised: #252525; --mono-ink: #f0f0f0; --mono-muted: #b0b0b0; --mono-border: #424242;
+  --foreground: var(--mono-ink); --muted: var(--mono-muted); --accent: var(--mono-ink); --accent-dim: #ffffff12;
+  color: var(--mono-ink) !important; background: var(--mono-bg) !important;
+  border: 1px solid var(--mono-border) !important; border-radius: 16px;
+  box-shadow: 0 14px 36px #00000035, inset 0 1px #ffffff18 !important;
+  backdrop-filter: none !important; opacity: 1;
+}
+:global(body.theme-white) :is(.modelPanel,.actions,.featureMenu),
+:global(body.theme-beige) :is(.modelPanel,.actions,.featureMenu) {
+  --mono-bg: #fafafa; --mono-raised: #ededed; --mono-ink: #171717; --mono-muted: #626262; --mono-border: #d2d2d2; --accent-dim: #00000008;
+}
+.modelPanel { padding: 12px; max-height: min(420px,calc(100dvh - 24px)); overflow-y: auto; background: linear-gradient(135deg,var(--mono-raised),var(--mono-bg) 55%) var(--mono-bg) !important; }
+.modelHeading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.modelHeading strong { font: 500 18px/1.2 Georgia,serif; }
+.modelHeading span { border: 1px solid var(--mono-border); border-radius: 5px; padding: 3px 6px; font-size: 9px; letter-spacing: .08em; }
+.modelPanel p { font-size: 11px; line-height: 1.45; color: var(--mono-muted); margin-bottom: 9px; }
+.permissionChoice { display: grid; gap: 7px; margin-top: 12px; font-size: 11px; }
+.permissionChoice select { width: 100%; min-height: 36px; padding: 7px; border: 1px solid var(--mono-border); border-radius: 8px; background: var(--mono-raised); color: var(--mono-ink); font-size: 12px; }
+.permissionChoice select:focus-visible { outline: 2px solid var(--mono-ink); outline-offset: 2px; }
+.permissionChoice select:disabled { opacity: .65; }
+.permissionChoice p { margin: 0; }
+.modelSafety { display: flex; align-items: center; gap: 7px; font-size: 11px; margin-bottom: 6px; }
+.modelFoot { display: flex; justify-content: space-between; font-size: 11px; padding-top: 10px; border-top: 1px solid var(--mono-border); }
+.modelButton { display: flex; align-items: center; gap: 5px; border: 0; background: transparent; color: var(--foreground); font-size: 11px; cursor: pointer; }
+.modelButton:hover { color: var(--foreground); opacity: .8; }
+.modelText { white-space: nowrap; }
+.compactModel { font-size: 11px; }
+.mobileModelIcon { display: none; }
+.chevron { width: 12px; height: 12px; opacity: .6; }
+.actions.actions { filter: grayscale(1); }
+.actions.actions :global(.xv-cba-item) { color: var(--mono-ink) !important; background: transparent; }
+.actions.actions :global(.xv-cba-item):hover,.actions.actions :global(.xv-cba-item.is-active) { background: var(--mono-raised) !important; }
+.actions.actions :global(.xv-cba-item) svg,.actions.actions :global(.xv-cba-item) code { color: var(--mono-ink) !important; }
+.actions.actions :global(.xv-cba-textarea),.actions.actions :global(.xv-cba-integration-preview) { color: var(--mono-ink); background: var(--mono-bg); border-color: var(--mono-border); }
+.actions.actions :global(.xv-cba-check.is-on) { background: var(--mono-ink); color: var(--mono-bg); border-color: var(--mono-border); }
+.actions.actions :global(.xv-cba-check.is-on) svg { color: var(--mono-bg) !important; }
+.featureMenu { padding: 8px; max-height: min(360px,calc(100dvh - 24px)); overflow-y: auto; font-family: Arial,sans-serif; }
+.featureHeading { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px 0; }
+.featureHeading strong { font: 500 18px/1.2 Georgia,serif; }
+.featureHeading button { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 6px; }
+.featureMenu p { margin: 5px 8px 10px; font-size: 11px; color: var(--mono-muted); }
+.featureMenu [role='menuitem'] { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; text-align: left; color: var(--mono-ink); }
+.featureMenu button:hover,.featureMenu button:focus-visible { background: var(--mono-raised); outline: none; }
+.featureMenu button:focus-visible { box-shadow: inset 0 0 0 1px var(--mono-border); }
+@media (max-width: 639px) {
+  .modelText { display: none; }
+  .mobileModelIcon { display: block; width: 24px; height: 24px; flex-shrink: 0; }
+  .modelButton .chevron { display: none; }
+}
