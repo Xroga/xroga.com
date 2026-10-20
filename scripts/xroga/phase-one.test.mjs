@@ -37,3 +37,10 @@ test('later caller changes cannot rewrite the founder-approved frozen Phase2 wor
   const approved=execFileSync('git',['show',`8a1a0bfa7878603dd488db98568577b2fb1896da:${path}`],{cwd:root,encoding:'utf8'}).replace(/\r\n/g,'\n');
   assert.equal(buildPhaseOne().outputs.get(path),approved);
 });
+
+test('current authority deltas cannot rewrite the accepted historical obligation scaffold',()=>{
+  const path='docs/xroga/security/tenant-invariant-obligations.json';
+  const accepted=execFileSync('git',['show',`a21a82029276d38d53c9e17c580a15f57b653fe3:${path}`],{cwd:root,encoding:'utf8'}).replace(/\r\n/g,'\n');
+  assert.equal(buildPhaseOne().outputs.get(path),accepted);
+  assert.equal(readFileSync(resolve(root,path),'utf8').replace(/\r\n/g,'\n'),accepted);
+});

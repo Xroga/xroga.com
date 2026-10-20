@@ -6,7 +6,6 @@ import {dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {parseCommandRequirements} from './reconcile-requirements.mjs';
 import {tenantCriteria} from '../security/tenant-acceptance.mjs';
-import {structuredCallerReviewRecords} from '../security/caller-reviews.mjs';
 import {validatePhaseReceipt,implementationBindingsAtSource,evidencePath} from './verify-phase-one.mjs';
 
 export const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
@@ -32,7 +31,6 @@ export function buildPhaseOne(){
   for(const c of commands)assert.equal(c.criteria.length,['009','010'].includes(c.number)?12:10,`Exact original criteria:${c.number}`);
   assert.deepEqual(commands.find(c=>c.number==='007').criteria,tenantCriteria);
   const old=historical('docs/xroga/security/privileged-callers.json'),oldReviews=historical('docs/xroga/security/caller-reviews.json');
-  const reviews=JSON.parse(read('docs/xroga/security/caller-reviews.json'));
   const pending=old.callers.filter(c=>c.review==='REVIEWED_GAP'),groups=oldReviews.reviews.filter(r=>r.disposition==='REVIEWED_GAP');
   assert.equal(pending.length,371);assert.equal(groups.length,73);assert.equal(new Set(pending.map(c=>c.path)).size,55);
   // Founder admitted Phase2 at this immutable Phase1 source. Current caller
@@ -50,20 +48,14 @@ export function buildPhaseOne(){
     implementationEvidence:fixtures[command.number]??[],testType:'FINAL_SOURCE_CI_REQUIRED',proofIds:[],
     ...(verified?.criteria.find(c=>c.id===cid(command.number,i+1))??{})})));
   const phase2=approvedFrozen;
-  const obligations=structuredCallerReviewRecords(reviews).map(record=>({id:record.id,
-    callerIds:record.callIds,path:record.path,sourceSha256:record.sourceSha256,
-    state:record.legacyDisposition==='NOT_PERSISTENCE'?'NOT_PERSISTENCE':'EVIDENCE_GAP',legacyDispositionPreserved:record.legacyDisposition,
-    criterionIds:[cid('007',2),cid('007',10)],actorOrigin:'UNPROVEN_IN_STRUCTURED_RECEIPT',ownerBinding:'UNPROVEN_IN_STRUCTURED_RECEIPT',
-    reason:record.reason,authorityTrace:record.authority,proofIds:[],
-    existingEvidence:record.evidence,
-    ...(record.manualPartitions?{manualPartitions:record.manualPartitions}:{}),
-    ...(record.disposition==='NOT_PERSISTENCE'?{review:{...record.evidence[0],sha256:hash(read(record.evidence[0].path))}}:{}),
-    note:'Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code.'}));
+  // Phase 3 has a separate current-source authority delta and closure ledger.
+  // Its caller edits must not regenerate this historical Phase 1 scaffold or
+  // replace the accepted Phase 2 snapshot with current, unverified dispositions.
+  const frozenObligations=JSON.parse(git(['show','a21a82029276d38d53c9e17c580a15f57b653fe3:docs/xroga/security/tenant-invariant-obligations.json']));
   const outputs=new Map([
     [basePath+'PHASE-2-FROZEN-WORKLIST.json',json(phase2)],
     [basePath+'BATCH-1-CRITERION-SCOREBOARD.json',json({version:1,contractSha256:hash(read('docs/xroga/research/inputs/batch-one-report.txt')),scope:'ORIGINAL_WORDING_NO_REQUIREMENT_REMOVED',criteria:criterionScoreboard})],
-    ['docs/xroga/security/tenant-invariant-obligations.json',json({version:1,sourceSha:baseline,scope:'STRUCTURED_PROOF_LINKAGE_PENDING_PHASE_2',obligations,
-      criteria:tenantCriteria.map((text,i)=>({id:cid('007',i+1),text,status:'BLOCKED',proofIds:[],reason:'Actual original criterion is not certified by Phase1 evaluator fixtures'})),proofs:[]})],
+    ['docs/xroga/security/tenant-invariant-obligations.json',json(frozenObligations)],
     [basePath+'BATCH-1-FOUR-PHASE-TRACEABILITY.md',`# Original Batch 1 traceability\n\nOriginal report SHA256: \`${hash(read('docs/xroga/research/inputs/batch-one-report.txt'))}\`. Original wording is preserved in BATCH-1-CRITERION-SCOREBOARD.json. No mandatory requirement moves to Batch1.5.\n\n| Phase | Original acceptance ownership | Admission |\n| --- | --- | --- |\n| 1 | 001–006,60 criteria; 007 evaluator only; overlay recovery and frozen mapping | Founder approved Phase1 |\n| 2 | 007,10 actual tenant criteria; frozen371 historical records/73 groups | Founder review after Phase1 |\n| 3 | 008,10 authority criteria; 009,12 vault criteria | Phase2 accepted and founder admission |\n| 4 | 010,12 egress criteria; original final GO/NO-GO; provider decisions | Phase3 accepted and founder admission |\n\nThe synthetic valid evaluator fixture does not satisfy007. The12 blocked product journeys do not fail005's trustworthy-harness stop condition. KMS/R2/schema/commercial hosting remain explicit external or activation gates, never fabricated PASS.\n`],
   ]);
   return {outputs,phase2,scoreboard:criterionScoreboard};
