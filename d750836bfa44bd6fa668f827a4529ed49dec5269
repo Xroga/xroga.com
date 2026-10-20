@@ -1,0 +1,996 @@
+{
+  "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+  "status": "CODE_READY_KMS_CUTOVER_BLOCKED",
+  "files": {
+    "workflow-receipts.json": [
+      {
+        "id": 39481586215,
+        "name": "Xroga mission operating policy",
+        "headSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/39481586215",
+        "event": "pull_request",
+        "attempt": 1
+      },
+      {
+        "id": 39481586189,
+        "name": "Isolated Supabase authenticated browser verification",
+        "headSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/39481586189",
+        "event": "pull_request",
+        "attempt": 1
+      },
+      {
+        "id": 39481586150,
+        "name": "Xroga tenant security fixtures",
+        "headSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/39481586150",
+        "event": "pull_request",
+        "attempt": 1
+      },
+      {
+        "id": 39481586045,
+        "name": "Xroga golden acceptance harness",
+        "headSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/39481586045",
+        "event": "pull_request",
+        "attempt": 1
+      },
+      {
+        "id": 39481585954,
+        "name": "Frontend production build check",
+        "headSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/39481585954",
+        "event": "pull_request",
+        "attempt": 1
+      },
+      {
+        "id": 39481585947,
+        "name": "Growth technical publishing",
+        "headSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/39481585947",
+        "event": "pull_request",
+        "attempt": 1
+      },
+      {
+        "id": 39481586043,
+        "name": "Command 4 authority distribution",
+        "headSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/39481586043",
+        "event": "pull_request",
+        "attempt": 1
+      },
+      {
+        "id": 39481586039,
+        "name": "Supabase migration gate",
+        "headSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/39481586039",
+        "event": "pull_request",
+        "attempt": 1
+      },
+      {
+        "id": 39481586027,
+        "name": "API Docker build check",
+        "headSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/39481586027",
+        "event": "pull_request",
+        "attempt": 1
+      },
+      {
+        "id": 39481586092,
+        "name": "Agent V2 dependency lock",
+        "headSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/39481586092",
+        "event": "pull_request",
+        "attempt": 1
+      },
+      {
+        "id": 39481586073,
+        "name": "Unit tests",
+        "headSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/39481586073",
+        "event": "pull_request",
+        "attempt": 1
+      }
+    ],
+    "job-receipts.json": [
+      {
+        "id": 118831465979,
+        "runId": 39481586073,
+        "name": "unit",
+        "status": "completed",
+        "conclusion": "success",
+        "logSha256": "51d01a59664459b7b5deaf85c859c38b0ec35edb89c841a305d50d050fb3b3a6",
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v5",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v6",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npm ci",
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify frozen Phase 2 register before expensive regression",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install pinned browser for existing local browser integration tests",
+            "conclusion": "success"
+          },
+          {
+            "name": "Canonical build, test and security baseline",
+            "conclusion": "success"
+          },
+          {
+            "name": "Preserve redacted build and test summaries",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v6",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v5",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 118831466391,
+        "runId": 39481586073,
+        "name": "integrated-candidate",
+        "status": "completed",
+        "conclusion": "success",
+        "logSha256": "5c19a7ad0545e87703dabda2388810aeaf413cf8a688f8488b3e816bb18d4f16",
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v5",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v6",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npm ci",
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify and record the actual virtual merge inventory",
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify integrated Phase 2 register before expensive regression",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install the same pinned browser for integrated regression",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete integrated baseline twice without source mutation",
+            "conclusion": "success"
+          },
+          {
+            "name": "Preserve separately labelled candidate evidence (never committed automatically)",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v6",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v5",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 118831239692,
+        "runId": 39481586189,
+        "name": "authenticated-browser",
+        "status": "completed",
+        "conclusion": "success",
+        "logSha256": "5b3417e90b1d1d98d92274d428ab48e8af6ba59330b1ab9e6b9704fb73d60dab",
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install isolated workspace dependencies",
+            "conclusion": "success"
+          },
+          {
+            "name": "Test disposable environment admission",
+            "conclusion": "success"
+          },
+          {
+            "name": "Start disposable Supabase with per-run keys",
+            "conclusion": "success"
+          },
+          {
+            "name": "Full migration history and sanitized upgrade compatibility",
+            "conclusion": "success"
+          },
+          {
+            "name": "Compile the browser specs",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npm run build --prefix backend --workspaces=false",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npm run build --prefix frontend --workspaces=false",
+            "conclusion": "success"
+          },
+          {
+            "name": "Restore Playwright browsers",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npx playwright install --with-deps chromium",
+            "conclusion": "success"
+          },
+          {
+            "name": "Save Playwright browsers",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Start isolated application",
+            "conclusion": "success"
+          },
+          {
+            "name": "Authenticated browser and tenant isolation",
+            "conclusion": "success"
+          },
+          {
+            "name": "Real tenant authorization and concurrency integration",
+            "conclusion": "success"
+          },
+          {
+            "name": "Collect bounded redacted local application logs",
+            "conclusion": "success"
+          },
+          {
+            "name": "Upload redacted verification evidence",
+            "conclusion": "success"
+          },
+          {
+            "name": "Cleanup processes",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success"
+          }
+        ]
+      }
+    ],
+    "baseline-receipts.json": {
+      "branch": {
+        "result": "PASS_REPEATED_CLEAN_BASELINE",
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "stagesPerRun": 21,
+        "installedDependencySha256": "0129794d14689e6aabb38676bc9f0345ac4a86c4ebfc237025a48a8de5f4a7f8",
+        "sourceTreeMutated": false
+      },
+      "integrated": {
+        "result": "PASS_REPEATED_CLEAN_BASELINE",
+        "sourceSha": "5985d7a03207608a28c3073b0ce1e9f0d5e6c54f",
+        "stagesPerRun": 21,
+        "installedDependencySha256": "0129794d14689e6aabb38676bc9f0345ac4a86c4ebfc237025a48a8de5f4a7f8",
+        "sourceTreeMutated": false
+      },
+      "provenance": {
+        "sourceSha": "5985d7a03207608a28c3073b0ce1e9f0d5e6c54f",
+        "baseSha": "49066a9bc5d35f2effc07a3f1ed9cfd1f00e8fa6",
+        "reportedBaseSnapshot": "6aa3963b972fbb22f45398d0e9b7cf17c74bef1e",
+        "featureSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "scope": "VIRTUAL_MERGE_CANDIDATE_NOT_COMMITTED_TRUTH_OR_RELEASE_APPROVAL",
+        "changedDerivedFiles": [
+          "docs/xroga/blockers.md",
+          "docs/xroga/current-state.json",
+          "docs/xroga/current-state.md",
+          "docs/xroga/dependency-inventory.json",
+          "docs/xroga/deployment-topology.md",
+          "docs/xroga/deployment-topology.mmd",
+          "docs/xroga/requirements-ledger.json",
+          "docs/xroga/requirements-ledger.md",
+          "docs/xroga/research/source-manifest.json",
+          "docs/xroga/research/source-reconciliation.md",
+          "docs/xroga/runtime-contract.md",
+          "docs/xroga/secret-inventory.md",
+          "docs/xroga/security/caller-reviews.json",
+          "docs/xroga/security/privileged-callers.json",
+          "docs/xroga/security/rls-audit.md"
+        ],
+        "retiredNonPersistenceReviews": [
+          {
+            "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
+            "callIds": [
+              "2d98522349041018aafe"
+            ],
+            "originalSourceSha256": "e975c68b0642525b5a900f2bb062be17b0d33e346222596a6d05f6ce1cfaa1df",
+            "integratedSourceSha256": "88eb738d8ed6b02124ce502f7a318db500619fd0fd7a15c80bba4a515ac2c525",
+            "reason": "Previously reviewed NOT_PERSISTENCE expressions are absent. The integrated file has zero scanner candidates. No security boundary is certified or waived."
+          },
+          {
+            "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
+            "callIds": [
+              "0481d4c53113a3184a8b"
+            ],
+            "originalSourceSha256": "e975c68b0642525b5a900f2bb062be17b0d33e346222596a6d05f6ce1cfaa1df",
+            "integratedSourceSha256": "88eb738d8ed6b02124ce502f7a318db500619fd0fd7a15c80bba4a515ac2c525",
+            "reason": "Previously reviewed NOT_PERSISTENCE expressions are absent. The integrated file has zero scanner candidates. No security boundary is certified or waived."
+          }
+        ],
+        "productionEffects": false,
+        "releaseGate": "BLOCKED"
+      },
+      "branchStages": [
+        {
+          "name": "lockfile-integrity",
+          "exitCode": 0,
+          "durationMs": 61
+        },
+        {
+          "name": "focused-and-skipped-tests",
+          "exitCode": 0,
+          "durationMs": 1165
+        },
+        {
+          "name": "backend-typecheck",
+          "exitCode": 0,
+          "durationMs": 18724
+        },
+        {
+          "name": "backend-build",
+          "exitCode": 0,
+          "durationMs": 22567
+        },
+        {
+          "name": "backend-unit-tests",
+          "exitCode": 0,
+          "durationMs": 170019,
+          "tests": 3123,
+          "pass": 3123,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "frontend-route-type-generation",
+          "exitCode": 0,
+          "durationMs": 678
+        },
+        {
+          "name": "frontend-typecheck",
+          "exitCode": 0,
+          "durationMs": 29661
+        },
+        {
+          "name": "frontend-lint",
+          "exitCode": 0,
+          "durationMs": 14762
+        },
+        {
+          "name": "frontend-build",
+          "exitCode": 0,
+          "durationMs": 119605
+        },
+        {
+          "name": "frontend-unit-tests",
+          "exitCode": 0,
+          "durationMs": 35318,
+          "tests": 1051,
+          "pass": 1051,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "migration-syntax-and-order",
+          "exitCode": 0,
+          "durationMs": 277
+        },
+        {
+          "name": "inventory-drift",
+          "exitCode": 0,
+          "durationMs": 7229
+        },
+        {
+          "name": "requirements-integrity",
+          "exitCode": 0,
+          "durationMs": 601
+        },
+        {
+          "name": "runtime-config-integrity",
+          "exitCode": 0,
+          "durationMs": 4730
+        },
+        {
+          "name": "golden-contract-integrity",
+          "exitCode": 0,
+          "durationMs": 131
+        },
+        {
+          "name": "mission-operating-policy",
+          "exitCode": 0,
+          "durationMs": 147
+        },
+        {
+          "name": "tenant-audit-integrity",
+          "exitCode": 0,
+          "durationMs": 2052
+        },
+        {
+          "name": "baseline-negative-fixtures",
+          "exitCode": 0,
+          "durationMs": 1441,
+          "tests": 38,
+          "pass": 38,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "inventory-and-ledger-fixtures",
+          "exitCode": 0,
+          "durationMs": 18301,
+          "tests": 131,
+          "pass": 131,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "agent-dependency-resolution",
+          "exitCode": 0,
+          "durationMs": 292
+        },
+        {
+          "name": "git-diff-whitespace",
+          "exitCode": 0,
+          "durationMs": 8
+        }
+      ],
+      "integratedStages": [
+        {
+          "name": "lockfile-integrity",
+          "exitCode": 0,
+          "durationMs": 55
+        },
+        {
+          "name": "focused-and-skipped-tests",
+          "exitCode": 0,
+          "durationMs": 1012
+        },
+        {
+          "name": "backend-typecheck",
+          "exitCode": 0,
+          "durationMs": 16991
+        },
+        {
+          "name": "backend-build",
+          "exitCode": 0,
+          "durationMs": 20591
+        },
+        {
+          "name": "backend-unit-tests",
+          "exitCode": 0,
+          "durationMs": 158834,
+          "tests": 3123,
+          "pass": 3123,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "frontend-route-type-generation",
+          "exitCode": 0,
+          "durationMs": 573
+        },
+        {
+          "name": "frontend-typecheck",
+          "exitCode": 0,
+          "durationMs": 28501
+        },
+        {
+          "name": "frontend-lint",
+          "exitCode": 0,
+          "durationMs": 13453
+        },
+        {
+          "name": "frontend-build",
+          "exitCode": 0,
+          "durationMs": 108778
+        },
+        {
+          "name": "frontend-unit-tests",
+          "exitCode": 0,
+          "durationMs": 32261,
+          "tests": 1111,
+          "pass": 1111,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "migration-syntax-and-order",
+          "exitCode": 0,
+          "durationMs": 249
+        },
+        {
+          "name": "inventory-drift",
+          "exitCode": 0,
+          "durationMs": 6408
+        },
+        {
+          "name": "requirements-integrity",
+          "exitCode": 0,
+          "durationMs": 544
+        },
+        {
+          "name": "runtime-config-integrity",
+          "exitCode": 0,
+          "durationMs": 4264
+        },
+        {
+          "name": "golden-contract-integrity",
+          "exitCode": 0,
+          "durationMs": 111
+        },
+        {
+          "name": "mission-operating-policy",
+          "exitCode": 0,
+          "durationMs": 128
+        },
+        {
+          "name": "tenant-audit-integrity",
+          "exitCode": 0,
+          "durationMs": 1809
+        },
+        {
+          "name": "baseline-negative-fixtures",
+          "exitCode": 0,
+          "durationMs": 1244,
+          "tests": 38,
+          "pass": 38,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "inventory-and-ledger-fixtures",
+          "exitCode": 0,
+          "durationMs": 16288,
+          "tests": 131,
+          "pass": 131,
+          "fail": 0,
+          "skipped": 0
+        },
+        {
+          "name": "agent-dependency-resolution",
+          "exitCode": 0,
+          "durationMs": 219
+        },
+        {
+          "name": "git-diff-whitespace",
+          "exitCode": 0,
+          "durationMs": 114
+        }
+      ]
+    },
+    "criterion-receipts.json": [
+      {
+        "id": "XB01-C008-AC01",
+        "originalText": "One canonical authority API exists.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "backend/src/security/authority/enforce.test.ts",
+          "marker": "canonical executor dispatches only an exact issued actor and durable adapter claim, once"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "68dd57fcb8b6ce03f51658b6b0219aab54d5876740c7731d8e32e92f4d68c2b4",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C008-AC02",
+        "originalText": "businessAction consequential writes use it.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "backend/src/security/businessAuthority.local.integration.ts",
+          "marker": "real canonical business confirmation claims once and persists exact dispatch and terminal receipts with a synthetic provider"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "9b3195e648555bc2b3815d4b835202d649ed95d93a81c87ebfc1950fda57dff1",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C008-AC03",
+        "originalText": "operationsEngine high-risk operations use it or a documented compatibility adapter.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
+          "marker": "real Operations reservations bind current two-person authority and serialize the approved spend ceiling"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "10f38124af684baaf96c9bfda962b89735980a02d4672062c0eaaf881b5cb67f",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C008-AC04",
+        "originalText": "Grant binds tenant, user, action, target and digest.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "backend/src/security/authority/digest.test.ts",
+          "marker": "canonical authority digest binds exact nested payload without redaction or locale-dependent ordering"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "3ce58d8533712ecac0b57180bcd9ce67ab8ab02b786ad565c04349bc4dbee3b3",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C008-AC05",
+        "originalText": "Replay tests pass.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "backend/src/security/authority/enforce.test.ts",
+          "marker": "canonical executor dispatches only an exact issued actor and durable adapter claim, once"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "68dd57fcb8b6ce03f51658b6b0219aab54d5876740c7731d8e32e92f4d68c2b4",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C008-AC06",
+        "originalText": "Mutation-after-confirmation tests pass.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "backend/src/security/authority/enforce.test.ts",
+          "marker": "boolean, cloned, serialized, wrong-account and mutated-scope authorities never dispatch"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "68dd57fcb8b6ce03f51658b6b0219aab54d5876740c7731d8e32e92f4d68c2b4",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C008-AC07",
+        "originalText": "Expiry/revocation tests pass.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "backend/src/security/businessAuthority.local.integration.ts",
+          "marker": "real business dispatch rechecks expiry, cancellation and plan after lock waits and rolls admission back"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "9b3195e648555bc2b3815d4b835202d649ed95d93a81c87ebfc1950fda57dff1",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C008-AC08",
+        "originalText": "Spend-bound tests pass.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
+          "marker": "serialize the approved spend ceiling"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "10f38124af684baaf96c9bfda962b89735980a02d4672062c0eaaf881b5cb67f",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C008-AC09",
+        "originalText": "LLM text alone cannot create authority.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "backend/src/security/authority/enforce.test.ts",
+          "marker": "boolean, cloned, serialized, wrong-account and mutated-scope authorities never dispatch"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "68dd57fcb8b6ce03f51658b6b0219aab54d5876740c7731d8e32e92f4d68c2b4",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C008-AC10",
+        "originalText": "Every canonical consequential action class has a policy entry.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "backend/src/security/authority/enforce.test.ts",
+          "marker": "all twelve server policies exist"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "68dd57fcb8b6ce03f51658b6b0219aab54d5876740c7731d8e32e92f4d68c2b4",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C009-AC01",
+        "originalText": "All newly stored OAuth/provider secrets use CredentialVault.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "docs/xroga/security/credential-caller-dispositions.md",
+          "marker": "Current v3 writer and private consumer"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "eabaa6464373344da245905cd9efb8f07391ea5b62494b7fe0deabceb5849c79",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C009-AC02",
+        "originalText": "No frontend endpoint returns raw secrets.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "frontend/src/lib/credentialVault.test.ts",
+          "marker": "browser vault has no new secret writer or general reveal API"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "a6bc1b01c9f14c1c900c295d88cc2772d50fb01041a67196bdd79c72922f2fcc",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C009-AC03",
+        "originalText": "No LLM/task prompt receives raw provider credential.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "backend/src/e2e/xrogaGoldenJourneys.test.ts",
+          "marker": "strips provider credentials before a prompt or client can consume the result"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "a3fd30ec2d29bb1adb37cc8026f7527ff46a4e5b98200b9ad31f418cd0dcaa04",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C009-AC04",
+        "originalText": "Wrong-tenant retrieval test passes.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "backend/src/services/integrations/credentialVault.test.ts",
+          "marker": "binds every identity field"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "c5f8a071561672f080a2c4b241c0fcc0e69eb23cc75c81a78292b489bfe94191",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C009-AC05",
+        "originalText": "Ciphertext tamper test passes.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "backend/src/services/integrations/credentialVault.test.ts",
+          "marker": "vault rejects ciphertext, tag, wrapped-key and key identity substitution"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "c5f8a071561672f080a2c4b241c0fcc0e69eb23cc75c81a78292b489bfe94191",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C009-AC06",
+        "originalText": "Rotation test passes.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "backend/src/services/integrations/credentialVault.test.ts",
+          "marker": "vault rotation uses a new revision and key"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "c5f8a071561672f080a2c4b241c0fcc0e69eb23cc75c81a78292b489bfe94191",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C009-AC07",
+        "originalText": "Revocation test passes.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "backend/src/services/integrations/credentialMirrorRace.test.ts",
+          "marker": "legacy downloads recheck authoritative revocation, rotation and outages"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "5796cca7f3ee391ec345cd4094b45ed7b8532f05f040ee121e6c7f1fd4a4af1c",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C009-AC08",
+        "originalText": "PKCE has TTL + one-time semantics.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+          "marker": "one-use OAuth admission fails closed"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "23eddde7cfbc09d6f7a65227512ab8e95f92b358f1c517a55040756a393b1376",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C009-AC09",
+        "originalText": "Legacy migration is idempotent.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "backend/src/services/integrations/userProviderKeys.migration.test.ts",
+          "marker": "legacy provider-key migration is owner-bound, CAS protected and idempotent"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "208d37e18411a6f3c4f7c4fa96c34bcbb7445d8d51bf8adb193cde1667faaee1",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C009-AC10",
+        "originalText": "Production cannot use development crypto provider.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.test.ts",
+          "marker": "managed KMS adapter binds the exact key and AAD"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "675404fbd537d172bb2c6981e0f2576f052f2382d123ea6ab186242b19ee67de",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C009-AC11",
+        "originalText": "Credential audit reports remaining direct storage callers.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "docs/xroga/security/credential-usage-audit.json",
+          "marker": "PRIVATE_CREDENTIAL_CONSUMER_CANDIDATE"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "41dc2e0ba1eb17405ab7ee1111bb5ee01145833fbaa9323b4085ee6beaeddc01",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      },
+      {
+        "id": "XB01-C009-AC12",
+        "originalText": "Remaining legacy callers are zero or explicitly blocked from production cutover.",
+        "status": "SOFTWARE_VERIFIED",
+        "proof": {
+          "path": "docs/xroga/security/credential-migration.md",
+          "marker": "Enable the temporary migration window"
+        },
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "proofSha256": "7e0281be034fb1101daf5bb220eddda4c816024a0c140ab8248ea2756ad2e53b",
+        "softwareCiRunId": 39481586073,
+        "disposableRunId": 39481586189,
+        "certification": "SOFTWARE_SCOPE_ONLY_PRODUCTION_KMS_BLOCKED"
+      }
+    ],
+    "observations.json": {
+      "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+      "finalSourceCi": {
+        "status": "PASS",
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/39481586073",
+        "jobId": 118831465979
+      },
+      "integratedCi": {
+        "status": "PASS",
+        "featureSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "integratedSha": "5985d7a03207608a28c3073b0ce1e9f0d5e6c54f",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/39481586073",
+        "jobId": 118831466391
+      },
+      "disposableCi": {
+        "status": "PASS",
+        "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/39481586189",
+        "jobId": 118831239692,
+        "tests": 209,
+        "passed": 209,
+        "failed": 0
+      },
+      "productionKms": {
+        "status": "CODE_READY_GOOGLE_CLOUD_KMS_NOT_PROVISIONED_OR_VERIFIED",
+        "billing": "CLOSED",
+        "adc": "UNAVAILABLE",
+        "providerCalls": 0
+      },
+      "scope": "AUTHENTICATED_GITHUB_SOURCE_AND_ARTIFACT_RECEIPTS_NO_PRODUCTION_KMS_PROOF"
+    },
+    "acceptance-results.json": {
+      "sourceSha": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+      "software": {
+        "result": "CODE_READY_KMS_CUTOVER_BLOCKED",
+        "criteria": 22,
+        "command008": "10/10_SOFTWARE_VERIFIED",
+        "command009": "12/12_SOFTWARE_VERIFIED",
+        "productionKms": "CODE_READY_GOOGLE_CLOUD_KMS_NOT_PROVISIONED_OR_VERIFIED"
+      },
+      "strictCompleteGate": {
+        "exitCode": 1,
+        "reason": "Phase3 acceptance BLOCKED:CODE_READY_KMS_CUTOVER_BLOCKED"
+      },
+      "evaluatorModified": false
+    },
+    "FINAL-ACCEPTANCE.md": "# Phase 3 final software acceptance\n\nStatus: CODE_READY_KMS_CUTOVER_BLOCKED\n\nFrozen implementation source: d750836bfa44bd6fa668f827a4529ed49dec5269. Accepted Phase 2 source remains a21a82029276d38d53c9e17c580a15f57b653fe3. This separate Git note does not change the implementation source or authorize Phase 4.\n\nCommand 008: 10/10 original software criteria supported. Command 009: 12/12 original software criteria supported. Production managed key custody and real KMS cutover remain blocked. The unchanged evaluator returns CODE_READY_KMS_CUTOVER_BLOCKED. Its --require-complete gate exits 1 for that exact blocker.\n\n## Authenticated verification\n\n- Eleven source-bound workflows passed. Their IDs and conclusions are in workflow-receipts.json.\n- Branch and integrated baseline each ran all 21 mandatory stages twice without source mutation or dependency drift.\n- Integrated source: 5985d7a03207608a28c3073b0ce1e9f0d5e6c54f. GitHub API parent identity and downloaded integration provenance bind it to the frozen feature source.\n- Backend tests: 3123 total, 3123 passing, 0 failures.\n- Frontend tests: 1051 total, 1051 passing, 0 failures.\n- Disposable Supabase: full fresh and upgrade migrations, authenticated browser tests and 209/209 real authorization/concurrency tests passed. Provider responses were intercepted synthetic responses.\n- Exact job IDs, step conclusions and normalized log SHA256 values are in job-receipts.json. Per-criterion source hashes and proof bindings are in criterion-receipts.json.\n\n## Demonstrated defects corrected\n\nThe runtime persistence reader now accepts valid v3 envelopes. Per-run test vault keys are shared across the isolated API and verifier without production fallback. Runtime AAD canonicalizes equivalent database timestamps. Vercel refresh rechecks current revision and lease while preserving the exact provider account. Operations spend admission rejects missing requester or approver membership. Negative, replay, revocation and concurrency assertions remain enabled.\n\nFinal regression fixtures were reconciled with current owner/provider/revision receipts and authenticated PKCE/vault envelopes. All 14 demonstrated backend failures are covered by 16 passing focused tests. The remaining historical-mapping drift was fixed by anchoring the scaffold to accepted Git objects, with a new preservation assertion and 131/131 passing inventory/ledger fixtures. No positive or negative assertions were removed. The final-source CI results above verify the corrected complete suites.\n\n## Remaining external dependency\n\nGoogle Cloud billing is closed, no active trial credits were displayed, and runtime ADC is unavailable. No KMS resource, identity grant, provider call, live secret migration or payment was performed. Real managed-key wrap/unwrap, AAD rejection, unavailable-key behavior, key rotation compatibility and isolated cutover receipts still require an eligible authorized account and least-privilege runtime authentication. Local crypto and mocked transport tests do not supply this proof. Existing google-cloud-observation.json retains the account inspection.\n\n## Original criteria\n\n| Criterion | Original requirement | Software result |\n| --- | --- | --- |\n| XB01-C008-AC01 | One canonical authority API exists. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C008-AC02 | businessAction consequential writes use it. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C008-AC03 | operationsEngine high-risk operations use it or a documented compatibility adapter. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C008-AC04 | Grant binds tenant, user, action, target and digest. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C008-AC05 | Replay tests pass. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C008-AC06 | Mutation-after-confirmation tests pass. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C008-AC07 | Expiry/revocation tests pass. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C008-AC08 | Spend-bound tests pass. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C008-AC09 | LLM text alone cannot create authority. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C008-AC10 | Every canonical consequential action class has a policy entry. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C009-AC01 | All newly stored OAuth/provider secrets use CredentialVault. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C009-AC02 | No frontend endpoint returns raw secrets. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C009-AC03 | No LLM/task prompt receives raw provider credential. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C009-AC04 | Wrong-tenant retrieval test passes. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C009-AC05 | Ciphertext tamper test passes. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C009-AC06 | Rotation test passes. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C009-AC07 | Revocation test passes. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C009-AC08 | PKCE has TTL + one-time semantics. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C009-AC09 | Legacy migration is idempotent. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C009-AC10 | Production cannot use development crypto provider. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C009-AC11 | Credential audit reports remaining direct storage callers. | SOFTWARE_VERIFIED, production KMS remains blocked |\n| XB01-C009-AC12 | Remaining legacy callers are zero or explicitly blocked from production cutover. | SOFTWARE_VERIFIED, production KMS remains blocked |\n\n## Restrictions and handoff\n\nAdditional spend: $0. No production changes, merge, deployment, live credential migration or Phase 4 implementation. The original Phase 4 handoff and its 12 Command 010 criteria remain in docs/xroga/batch-1/phases/phase-4 at the frozen implementation source. Founder authorization is required before Phase 4 begins.\n"
+  }
+}
