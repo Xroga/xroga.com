@@ -18,6 +18,7 @@ import { useScene } from './useScene';
 import { StageIOS } from './stage/StageIOS';
 import { StageAndroid } from './stage/StageAndroid';
 import { StageChrome } from './stage/StageChrome';
+import { Ambient } from '../ambient/Ambient';
 import s from './S04.module.css';
 
 function tabKeys(ev: ReactKeyboardEvent<HTMLElement>) {
@@ -72,6 +73,7 @@ export function S04Publish({ loggedIn = false }: { loggedIn?: boolean }) {
   const stage = { beat, phase, playing, acted, act: sc.act, href };
   return (
     <section ref={root} id="s04" aria-labelledby="s04-title" className={s.section} data-under={under || undefined} data-intro={intro}>
+      <Ambient kind="s04" />
       <div className={s.shield} aria-hidden="true" />
       <div className={s.inner}>
         {/* ---------------------------------------------------------------- the editorial head */}

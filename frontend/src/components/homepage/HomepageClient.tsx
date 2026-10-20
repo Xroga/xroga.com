@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
@@ -15,12 +15,16 @@ import { S02Work } from '@/components/homepage-next/s02/S02Work';
 import { S03Growth } from '@/components/homepage-next/s03/S03Growth';
 import { S04Publish } from '@/components/homepage-next/s04/S04Publish';
 import { S05Capabilities } from '@/components/homepage-next/s05/S05Capabilities';
+import { Ambient } from '@/components/homepage-next/ambient/Ambient';
+import { useSeen } from '@/components/homepage-next/ambient/useSeen';
 import { AiCodingAgentSquaresTerminal } from '@/components/marketing/AiCodingAgentSquaresTerminal';
 
 export function HomepageClient() {
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const closingRef = useRef<HTMLElement>(null);
+  const closingSeen = useSeen(closingRef, 0.35);
 
   useLayoutEffect(() => {
     if (window.location.hash) return;
@@ -108,7 +112,11 @@ export function HomepageClient() {
       <S03Growth loggedIn={loggedIn} />
       <S04Publish loggedIn={loggedIn} />
       <S05Capabilities />
+      {/* Closing: the graphite horizon (homepage-closing-animation.css) frames the closing card and runs into the footer */}
+      <div className="xv-horizon" data-seen={closingSeen || undefined}>
+      <Ambient kind="horizon" />
       <section
+  ref={closingRef}
   className="xv-closing-frame"
   aria-label="Community, support, and getting started"
 >
@@ -137,6 +145,7 @@ export function HomepageClient() {
           </div>
         </section>
       </section>
+      </div>
 
       <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
     </div>

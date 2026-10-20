@@ -492,7 +492,7 @@ test('V12-03: keyword research is a visible chain, with each data source beside 
   assert.doesNotMatch(CONTENT_SRC, /Connected and authorized|Ahrefs analyzed|Semrush analyzed/);
 });
 
-test('S03 headline remains concise, its supporting copy stays approved, and the V12 background is preserved', () => {
+test('S03 headline remains concise, its supporting copy stays approved, and it stands in the graphite discovery atelier', () => {
   assert.equal(COPY.title, 'Turn visibility into customers.');
   assert.match(CSS, /white-space: nowrap;/);
   assert.match(CSS, /\.titleAccent \{/);
@@ -501,18 +501,18 @@ test('S03 headline remains concise, its supporting copy stays approved, and the 
   assert.equal(COPY.search.line, 'See why customers can’t find you');
   assert.equal(COPY.growth.line, 'Reach the right people. Win more customers.');
   assert.match(CSS, /--ink: #142236;/);
-  assert.match(CSS, /linear-gradient\(145deg, #142639 0%, #182b3d 37%, #23283b 73%, #282735 100%\)/);
-  assert.match(CSS, /radial-gradient\(70% 52% at 105% 16%, rgba\(120, 101, 172, 0\.24\), transparent 74%\)/);
   assert.match(CSS, /\.title\.title::after \{/);
-  // the homepage stylesheet clears section backgrounds; S03 re-asserts the same layers with higher specificity so they render
-  assert.match(CSS, /\.section\.section\.section \{\s*background-color: #142639 !important;\s*background-image:/);
-  assert.match(CSS, /linear-gradient\(145deg, #142639 0%, #182b3d 37%, #23283b 73%, #282735 100%\) !important;/);
-  // Preserve the approved V12 backdrop without adding a competing full-section effect.
+  // Atmosphere V3: the section asserts only the shared near-black ground; its graphite environment (shaped light, no
+  // drawn motifs) is the ambient layer, and the old teal/violet/apricot section washes are gone
+  assert.match(CSS, /\.section\.section\.section \{\s*background-color: #050607 !important;\s*\}/);
+  assert.match(SHELL, /<Ambient kind="s03" \/>/);
+  assert.doesNotMatch(CSS, /rgba\(69, 154, 173|rgba\(120, 101, 172|rgba\(196, 118, 90|#182b3d/);
+  // no competing full-section effect inside the section itself
   assert.doesNotMatch(CSS + SHELL, /titleMark|titleSweep|data-lit=/);
   assert.doesNotMatch(CSS, /\.section::before|\.section::after/);
 });
 
-test('the heading sequence plays once in ~3.2 s: visibility lit, three cues, a connector, then the customers highlight', () => {
+test('the heading sequence plays once in ~3.2 s: visibility lit, three cues, a connector, then customers unveiled in platinum', () => {
   // the heading text itself is unchanged and fully readable; the two words are only wrapped
   assert.equal(COPY.titleLead, 'visibility');
   assert.ok(COPY.title.includes(COPY.titleLead));
@@ -529,12 +529,12 @@ test('the heading sequence plays once in ~3.2 s: visibility lit, three cues, a c
   ])
     assert.match(CSS, new RegExp(`\\.cue\\[data-cue='${i}'\\] \\{\\s*animation-delay: ${ms}ms;`));
   assert.match(CSS, /animation: s03CueLine 860ms cubic-bezier\(0\.65, 0, 0\.35, 1\) 1450ms both;/);
-  assert.match(CSS, /animation: s03TitleHighlight 920ms var\(--ease\) 2250ms both;/);
+  assert.match(CSS, /animation: s03TitleReveal 920ms cubic-bezier\(0\.3, 0, 0\.2, 1\) 2250ms both;/);
   // no looping, no layout properties animated
-  const keyframes = CSS.match(/@keyframes s03(TitleLead|CueIn|CueLine|CueTip|TitleHighlight) \{[\s\S]*?\n\}/g) ?? [];
+  const keyframes = CSS.match(/@keyframes s03(TitleLead|CueIn|CueLine|CueTip|TitleReveal) \{[\s\S]*?\n\}/g) ?? [];
   assert.equal(keyframes.length, 5);
   for (const k of keyframes) assert.doesNotMatch(k, /\b(width|height|top|left|margin|padding|font-size|letter-spacing)\s*:/, k.slice(0, 40));
-  assert.doesNotMatch(CSS, /s03(TitleLead|CueIn|CueLine|CueTip|TitleHighlight)[^;]*infinite/);
+  assert.doesNotMatch(CSS, /s03(TitleLead|CueIn|CueLine|CueTip|TitleReveal)[^;]*infinite/);
   // cues are hidden before the sequence only when script runs and motion is allowed; reduced motion shows the final state
   assert.match(SHELL, /setTitleReady\(!reduced\)/);
   assert.match(CSS, /\.section\[data-title-ready\]:not\(\[data-title-seen\]\) \.cue,/);

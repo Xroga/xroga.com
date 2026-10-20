@@ -9562,10 +9562,11 @@ body .xv-home-coding .xv-hc-category-group li {
   width: min(1240px, calc(100% - 1.5rem));
   margin: clamp(2rem, 5vw, 4rem) auto;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--hc-blue) 20%, var(--hc-border));
+  border: 1px solid var(--hc-border);
   border-radius: clamp(26px, 3.5vw, 42px);
   background: var(--hc-bg);
-  box-shadow: 0 40px 100px -72px color-mix(in srgb, var(--hc-blue) 72%, var(--hc-ink));
+  /* a neutral silver lift into the graphite horizon below (homepage-closing-animation.css) */
+  box-shadow: 0 40px 100px -72px rgba(206, 212, 222, 0.32);
 }
 
 .xv-home-coding .xv-closing-terminal {
@@ -9644,7 +9645,7 @@ body .xv-home-coding .xv-hc-category-group li {
 }
 
 body .xv-home-coding .xv-closing-frame .xv-hc-community .xv-hc-pixel-kicker {
-  color: var(--hc-blue) !important;
+  color: color-mix(in srgb, var(--hc-ink) 64%, transparent) !important;
   text-shadow: none !important;
 }
 
