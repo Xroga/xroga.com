@@ -1,0 +1,18 @@
+.menu { color: var(--foreground); background: var(--surface-raised); border: 1px solid var(--card-border); border-radius: 14px; box-shadow: 0 14px 40px #0006; overflow: hidden; }
+.menu :global(.xv-plugins-popover) { position: static !important; width: 100% !important; max-width: none !important; max-height: min(440px,calc(100dvh - 32px)); overflow-y: auto; transform: none !important; margin: 0 !important; padding: 8px !important; border: 0 !important; box-shadow: none !important; background: var(--surface-raised) !important; font-family: Arial,sans-serif; }
+.menu :global(.xv-plugins-popover__header) { padding: 2px 2px 8px; display: flex; }
+.menu :global(.xv-plugins-popover__search) { min-width: 0; flex: 1; }
+.menu :global(.xv-plugins-popover__search) input { width: 100%; font-size: 12px; }
+.menu :global(.xv-plugins-popover__body) { display: block; }
+.menu :global(.xv-plugins-popover__primary) { padding: 0; max-height: 220px; overflow-y: auto; }
+.menu :global(.xv-plugins-popover__item) { min-height: 34px; padding: 7px 6px; gap: 9px; }
+.menu :global(.xv-plugins-popover__name) strong { font-size: 12px; font-weight: 400; }
+.menu :global(.xv-plugins-popover__name) small { font-size: 9px; }
+.menu :global(.xv-plugins-popover__eyebrow) { display: none; }
+.menu :global(.xv-plugins-popover__aside) { padding: 7px 0 0; border: 0; border-top: 1px solid var(--card-border); background: transparent; display: block; }
+.menu :global(.xv-plugins-popover__browse) { margin: 4px 0 0; padding: 8px; font-size: 11px; }
+.connect { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 8px; border-radius: 7px; font-size: 12px; }
+.connect:hover,.connectList a:hover { background: var(--surface-inset); }
+.connectList { max-height: 140px; overflow: auto; }
+.connectList a { display: flex; align-items: center; gap: 8px; padding: 8px; font-size: 12px; }
+.connectList a>svg:last-child { margin-left: auto; }

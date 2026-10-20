@@ -13,13 +13,11 @@ export function BlackHoleVButton({ className, compact = false }: { className?: s
   const btnRef = useRef<HTMLButtonElement>(null);
   return (
     <div className={cn('relative shrink-0', className)}>
-      <ChatBarPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={btnRef} width={276}>
+      <ChatBarPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={btnRef} width={250}>
         <div className={styles.modelPanel} data-testid="black-hole-model-panel">
           <div className={styles.modelHeading}><strong>Black Hole V∞</strong><span>ON</span></div>
-          <p>Our first and last model — every update ships in this one model. All Xroga AI capabilities, balanced for complex tasks.</p>
-          <div className={styles.modelSafety}><ShieldCheck size={16} /><span>Safe tasks can continue automatically</span></div>
-          <p>Production, destructive, paid, or irreversible actions remain blocked until the required approval is recorded.</p>
-          <div className={styles.modelFoot}><span>Sensitive-action approvals</span><strong>Required</strong></div>
+          <p>One model. All Xroga capabilities.</p>
+          <div className={styles.modelSafety}><ShieldCheck size={14} /><span>Sensitive actions require approval.</span></div>
           {open ? <ModelAppPermissions /> : null}
         </div>
       </ChatBarPortalPopover>

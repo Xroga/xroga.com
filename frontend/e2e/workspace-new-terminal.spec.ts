@@ -212,14 +212,14 @@ test('model app preference saves through the existing policy API and keeps failu
   await setting.selectOption('full_access');
   await expect(page.getByText('Could not save. Your previous setting is unchanged.')).toBeVisible();
   await expect(setting).toHaveValue('always_ask');
-  await expect(page.getByTestId('black-hole-model-panel')).toContainText('Required');
+  await expect(page.getByTestId('black-hole-model-panel')).toContainText('Sensitive actions require approval.');
 });
 
 test('compact sidebar keeps utilities and primary destinations in two aligned rows', async ({ page }) => {
   await page.goto('/workspace');
   const sidebar = page.locator('.xv-sidebar-root');
   const utilities = sidebar.locator('.xv-sidebar-utilities button');
-  await expect(utilities).toHaveCount(4);
+  await expect(utilities).toHaveCount(3);
   const boxes = await utilities.evaluateAll(nodes => nodes.map(node => { const r = node.getBoundingClientRect(); return { y: r.y, right: r.right }; }));
   expect(new Set(boxes.map(box => box.y)).size).toBe(1);
   const bounds = await sidebar.boundingBox();
@@ -229,4 +229,40 @@ test('compact sidebar keeps utilities and primary destinations in two aligned ro
   await sidebar.getByRole('button', { name: 'Close sidebar', exact: true }).click();
   await expect(sidebar).toHaveClass(/is-collapsed/);
   await expect(sidebar.getByRole('link', { name: 'Dashboard', exact: true })).toBeVisible();
+  await sidebar.locator('img').first().hover();
+  await page.waitForTimeout(500);
+  await expect(sidebar).toHaveClass(/is-collapsed/);
+  await sidebar.locator('img').first().click();
+  await expect(sidebar).not.toHaveClass(/is-collapsed/);
+  const handle = await page.getByRole('separator', { name: 'Resize sidebar' }).boundingBox();
+  await page.mouse.move(handle!.x + handle!.width / 2, handle!.y + 100);
+  await page.mouse.down();
+  await page.mouse.move(80, handle!.y + 100, { steps: 12 });
+  await page.mouse.up();
+  await expect(sidebar).toHaveClass(/is-collapsed/);
+});
+
+test('plus menu follows the empty or working composer and model stays uncovered', async ({ page }) => {
+  await page.goto('/workspace');
+  await expect(page.getByTestId('workspace-start-cards')).toBeVisible();
+  await page.getByRole('button', { name: 'More composer actions' }).click();
+  let composer = await page.locator('.xv-chatbar-solid').boundingBox();
+  let menu = await page.getByRole('dialog', { name: 'Composer actions' }).boundingBox();
+  expect(menu!.y).toBeGreaterThan(composer!.y + composer!.height);
+  expect(Math.abs(menu!.width - composer!.width)).toBeLessThan(2);
+  await page.keyboard.press('Escape');
+  const model = page.getByRole('button', { name: 'Black Hole V∞ model', exact: true });
+  await model.click();
+  const panel = await page.getByTestId('black-hole-model-panel').boundingBox();
+  const trigger = await model.boundingBox();
+  expect(panel!.height).toBeLessThan(230);
+  expect(panel!.y + panel!.height).toBeLessThanOrEqual(trigger!.y);
+  await page.keyboard.press('Escape');
+  await page.locator('[data-terminal-composer]').fill('Check active composer');
+  await page.getByRole('button', { name: 'Send prompt', exact: true }).click();
+  await expect(page.getByText('Local UI fixture reply verified.', { exact: false }).first()).toBeVisible();
+  await page.getByRole('button', { name: 'More composer actions' }).click();
+  composer = await page.locator('.xv-chatbar-solid').boundingBox();
+  menu = await page.getByRole('dialog', { name: 'Composer actions' }).boundingBox();
+  expect(menu!.y + menu!.height).toBeLessThan(composer!.y);
 });

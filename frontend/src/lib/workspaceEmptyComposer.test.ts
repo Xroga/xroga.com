@@ -410,7 +410,7 @@ test('connection management reads real provider status and routes full managemen
 
   assert.match(
     INTEGRATIONS,
-    /Manage Plugins/,
+    /Browse all plugins/,
   );
 
   assert.match(INTEGRATIONS, /placeholder="Search plugins…"/);

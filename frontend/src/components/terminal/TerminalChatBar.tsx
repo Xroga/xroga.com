@@ -106,6 +106,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     return () => window.clearTimeout(timer);
   }, [draft, prompt, setPrompt]);
   const [integrationsOpen, setIntegrationsOpen] = useState(false);
+  const pluginsButtonRef = useRef<HTMLButtonElement>(null);
   const [githubOpen, setGithubOpen] = useState(false);
   const [githubConnected, setGithubConnected] = useState(false);
   const [vercelConnected, setVercelConnected] = useState(false);
@@ -479,7 +480,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
 
   return (
     <>
-      <IntegrationsModal open={integrationsOpen} onClose={() => setIntegrationsOpen(false)} />
+      <IntegrationsModal open={integrationsOpen} onClose={() => setIntegrationsOpen(false)} anchorRef={pluginsButtonRef} />
       <GithubRepoModal
         open={githubOpen}
         onClose={() => setGithubOpen(false)}
@@ -601,11 +602,11 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
                         if (isGuest) { requestAuthGate('integration'); return; }
                         setGithubOpen(true);
                       }}><Folder aria-hidden="true" /><span>Projects</span></button>
-                      <button type="button" className={startStyles.tool} aria-label="Plugins" onClick={() => {
+                      <button ref={pluginsButtonRef} type="button" className={startStyles.tool} aria-label="Plugins" onPointerEnter={event => { if (event.pointerType === 'mouse' && !isGuest) setIntegrationsOpen(true); }} onClick={() => {
                         if (isGuest) { requestAuthGate('integration'); return; }
                         setIntegrationsOpen(true);
                       }}><Puzzle aria-hidden="true" /><span>Plugins</span></button>
-                    </> : null}
+                    </> : <button ref={pluginsButtonRef} type="button" className={startStyles.tool} aria-label="Plugins" onPointerEnter={event => { if (event.pointerType === 'mouse' && !isGuest) setIntegrationsOpen(true); }} onClick={() => { if (isGuest) { requestAuthGate('integration'); return; } setIntegrationsOpen(true); }}><Puzzle aria-hidden="true" /><span>Plugins</span></button>}
                   </div>
                 ) : null
               }

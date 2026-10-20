@@ -91,6 +91,16 @@ export function ChatBarActionsMenu({
       const composer = rootRef.current?.closest<HTMLElement>('.xv-chatbar-solid');
       if (!composer) return;
       const rect = composer.getBoundingClientRect();
+      const idle = Boolean(composer.closest('.xv-terminal-dock--idle'));
+      if (idle) {
+        const available = window.innerHeight - rect.bottom - 16;
+        setMenuStyle({
+          position: 'fixed', left: rect.left, top: rect.bottom + 8,
+          bottom: 'auto', width: rect.width,
+          maxHeight: Math.max(80, Math.min(360, available)),
+        });
+        return;
+      }
       const mobile = window.innerWidth < 640;
       if (mobile) {
         setMenuStyle({
@@ -103,12 +113,12 @@ export function ChatBarActionsMenu({
         });
         return;
       }
-      const width = Math.min(rect.width, 520);
+      const width = rect.width;
       setMenuStyle({
         position: 'fixed',
         left: Math.min(Math.max(8, rect.left), window.innerWidth - width - 8),
         bottom: Math.max(8, window.innerHeight - rect.top + 11),
-        width: Math.min(width, 480),
+        width,
         maxHeight: Math.min(panel === 'menu' ? 330 : 340, Math.max(176, rect.top - 12)),
       });
     };
@@ -165,7 +175,7 @@ export function ChatBarActionsMenu({
       </button>
 
       {open && typeof document !== 'undefined' ? createPortal(
-        <div ref={menuRef} className={cn('xv-cba-menu', controls.actions)} role="dialog" aria-label="Composer actions" style={menuStyle}>
+        <div ref={menuRef} className={cn('xv-cba-menu', controls.actions)} role="dialog" aria-label="Composer actions" style={{ ...menuStyle, '--xv-actions-width': `${menuStyle.width}px` } as React.CSSProperties}>
           {panel === 'menu' && (
             <div className="xv-cba-grid">
               {recentTerminal && (

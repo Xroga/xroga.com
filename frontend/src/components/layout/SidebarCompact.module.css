@@ -1,4 +1,6 @@
 .compact { container-type: inline-size; }
+:global(body.xv-sidebar-resizing) .compact,:global(body.xv-sidebar-resizing) .compact :global(.xv-sidebar-floating) { transition: none !important; }
+.compact:global(.is-collapsed) { cursor: pointer; }
 .compact.compact :global(.xv-sidebar-brand)>div:first-child { flex-wrap: nowrap !important; gap: 4px !important; }
 .compact.compact:not(:global(.is-collapsed)) :global(.xv-sidebar-brand) { padding: 8px !important; }
 .compact.compact:not(:global(.is-collapsed)) :global(.xv-sidebar-brand) a>div { width: 86px !important; height: 34px !important; }

@@ -325,12 +325,18 @@ export function Sidebar({ displayName, email }: SidebarProps) {
 
   function beginResize(startX: number) {
     const startW = sidebarWidth;
+    let pendingWidth = startW;
+    let frame = 0;
     document.body.classList.add('xv-sidebar-resizing');
 
     function onMove(ev: PointerEvent) {
-      setSidebarWidth(startW + (ev.clientX - startX));
+      pendingWidth = startW + (ev.clientX - startX);
+      if (!frame) frame = requestAnimationFrame(() => { frame = 0; setSidebarWidth(pendingWidth); });
     }
     function onUp() {
+      if (frame) cancelAnimationFrame(frame);
+      if (pendingWidth < SIDEBAR_MIN_WIDTH - 40) toggleSidebar();
+      else setSidebarWidth(pendingWidth);
       document.body.classList.remove('xv-sidebar-resizing');
       document.removeEventListener('pointermove', onMove);
       document.removeEventListener('pointerup', onUp);
@@ -667,14 +673,11 @@ export function Sidebar({ displayName, email }: SidebarProps) {
           */}
           <HoverTip
             label="Xroga AI"
-            description={navExpanded ? 'Workspace home' : 'Hover to open the sidebar'}
+            description={navExpanded ? 'Workspace home' : 'Click to open the sidebar'}
             className={navExpanded ? 'shrink min-w-0' : 'shrink-0'}
           >
             <span
-              onMouseEnter={openSidebarOnHover}
-              onMouseLeave={cancelSidebarHover}
-              onFocus={openSidebarOnHover}
-              onBlur={cancelSidebarHover}
+              onClick={event => { if (!effectiveSidebarOpen && !isMobile) { event.preventDefault(); toggleSidebar(); } }}
             >
               {navExpanded ? (
                 <Logo
@@ -697,10 +700,9 @@ export function Sidebar({ displayName, email }: SidebarProps) {
           </HoverTip>
           {navExpanded ? (
             <div className="xv-sidebar-utilities" aria-label="Sidebar utilities">
+              <ThemeToggle />
               {!incognito ? isGuest ? <button type="button" aria-label="Notifications" onClick={() => requestAuthGate('history')}><Bell size={14} /></button> : <SidebarNotificationButton open={notificationsOpen} onToggle={() => setNotificationsOpen(value => !value)} /> : null}
               <button type="button" aria-label="Close sidebar" onPointerDown={isMobile ? undefined : startEdgeToggleDrag} onClick={() => { if (edgeToggleDraggedRef.current) { edgeToggleDraggedRef.current = false; return; } if (isMobile) closeMobile(); else toggleSidebar(); }}><PanelLeftClose size={14} /></button>
-              <button type="button" aria-label="Search" onClick={() => setSearchOpen(true)}><AnimatedIcon icon={LocateFixedIcon} size={14} /></button>
-              <ThemeToggle />
             </div>
           ) : (
             <div className="xv-sidebar-collapsed-actions" aria-label="Workspace shortcuts">
@@ -858,9 +860,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
           >
             <PanelLeft className="h-4 w-4" aria-hidden="true" />
           </button>
-          <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
-            <AnimatedIcon icon={LocateFixedIcon} />
-          </button>
+          <button type="button" onClick={() => { if (isGuest) requestAuthGate('history'); else { setMobileOpen(true); setNotificationsOpen(true); } }} aria-label="Notifications"><Bell size={16} /></button>
           <button type="button" onClick={handleNewChat} aria-label="New Terminal">
             <AnimatedIcon icon={NewTerminalIcon} size={16} intro={false} />
           </button>
@@ -891,6 +891,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
 
       <div
         className={cn(compactStyles.compact, 'xv-sidebar-root relative hidden lg:block shrink-0', !effectiveSidebarOpen && 'is-collapsed')}
+        onClickCapture={event => { if (!effectiveSidebarOpen && !terminalFullscreen) { event.preventDefault(); event.stopPropagation(); toggleSidebar(); } }}
         style={{ width: asideWidth }}
       >
         <aside

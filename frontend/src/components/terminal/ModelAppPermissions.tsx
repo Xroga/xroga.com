@@ -15,7 +15,7 @@ export function ModelAppPermissions() {
     xrogaConnect.permissionPolicy.get().then(result => {
       if (active) setMode(result.mode);
     }).catch(() => {
-      if (active) setError('Sign in or reconnect to load your saved app permissions.');
+      if (active) setError('Sign in to manage permissions.');
     }).finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, []);
@@ -38,6 +38,6 @@ export function ModelAppPermissions() {
       <option value="read_only">Read-only</option>
       <option value="full_access">Full access — requested app actions</option>
     </select>
-    {error ? <p role="status">{error}</p> : <p role="status">{saving ? 'Saving…' : loading ? 'Loading saved preference…' : mode === 'full_access' ? 'Requested app actions skip extra Xroga checks. Provider permissions and platform safeguards still apply.' : mode === 'always_ask' ? 'Ask before every connected-app change. Requested reads can continue.' : mode === 'read_only' ? 'Requested reads run directly. External changes require approval.' : 'Auto runs routine requested app actions. Sensitive actions still require approval.'}</p>}
+    {error ? <p role="status">{error}</p> : <p role="status">{saving ? 'Saving…' : loading ? 'Loading saved preference…' : mode === 'full_access' ? 'Requested app actions only; safeguards still apply.' : mode === 'always_ask' ? 'Ask before app changes.' : mode === 'read_only' ? 'Reads only; changes need approval.' : 'Routine app actions run automatically.'}</p>}
   </div>;
 }
