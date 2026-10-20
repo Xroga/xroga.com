@@ -462,22 +462,26 @@ test('one S01 narrative: no separate six-item strip or footer disclaimer; its us
   assert.equal(CAPABILITIES.length, 8);
 });
 
-test('Galaxy field: budgeted, behind the cards, never takes the pointer, released on unmount', () => {
-  const g = read('./GalaxyField.tsx');
-  assert.match(g, /GALAXY_SCALE = 0\.5;/);
-  assert.match(g, /GALAXY_FRAME_MS = 1000 \/ 30;/);
-  assert.match(g, /new IntersectionObserver/);
-  assert.match(g, /document\.hidden/);
-  assert.match(g, /if \(reduced\) \{\s*draw\(4000\);/, 'reduced motion: one static frame');
-  assert.match(g, /GALAXY_PROBE_LIMIT_MS/);
-  assert.match(g, /loseContext\(\)/);
-  assert.doesNotMatch(g, /mousemove|addEventListener\('mouse/);
-  assert.match(g, /saturation: 0\.12,/);
-  const css = read('./S01.module.css');
-  assert.match(css, /\.galaxy \{[\s\S]*?pointer-events: none;[\s\S]*?mask-image/);
+test('S01 uses a section-scoped moving particle mask, never the old WebGL galaxy', () => {
   const deck = read('./S01CapabilityDeck.tsx');
-  assert.match(deck, /dynamic\(\(\) => import\('\.\/GalaxyField'\)[\s\S]*?ssr: false/);
+  const css = read('./S01.module.css');
+  assert.ok(!deck.includes('GalaxyField'));
+  assert.ok(!deck.includes('next/dynamic'));
+  assert.ok(!css.includes('.galaxy {'));
+  assert.ok(css.includes('.particles {'));
+  assert.ok(css.includes('--size: 20px;'), 'the reference 20px dot pitch');
+  assert.ok(css.includes("url('/s01/noise-mask.svg')"));
+  assert.ok(css.includes('mask-composite: intersect, intersect;'));
+  assert.ok(css.includes('background: radial-gradient(circle, #f5f7fb 2px, transparent 2.5px) 0 0 / var(--size) var(--size);'), 'safe static dot fallback');
+  assert.ok(css.includes('@supports (mask-composite: intersect) or (-webkit-mask-composite: source-in)'), 'intersection feature guard');
+  assert.ok(css.includes('radial-gradient(circle at 50% 50%, black 2px, transparent 2.5px)'), 'the reference dot mask, intersected with the noise');
+  assert.ok(css.includes('mask-position: 50% 50%, 256px 50%, center;'), 'noise starts a tile to the right of the dots');
+  assert.ok(css.includes('mask-position: 50% 50%, 0 50%, center;'), 'and drifts one tile left over the animation');
+  assert.ok(css.includes('pointer-events: none;'), 'decorative layer does not intercept cards');
+  assert.ok(css.includes('animation: s01Flicker 20s linear infinite;'));
+  assert.ok(css.includes('@media (prefers-reduced-motion: reduce)'));
+  assert.ok(css.includes('@media (max-width: 1024px), (pointer: coarse)'));
   const stage = deck.slice(deck.indexOf('function DeckStage('), deck.indexOf('function Gallery('));
-  assert.ok(stage.indexOf('<GalaxyField') < stage.indexOf('<ol className={s.deck}'), 'the field is behind the cards');
-  assert.doesNotMatch(deck.slice(deck.indexOf('function Gallery(')), /<GalaxyField/, 'no WebGL field on phones and tablets');
+  assert.ok(stage.indexOf('className={s.particles}') < stage.indexOf('<ol className={s.deck}'), 'particles are behind cards');
+  assert.equal(deck.split('className={s.particles}').length - 1, 4, 'stage, carousel, static and first paint all receive the pattern');
 });
