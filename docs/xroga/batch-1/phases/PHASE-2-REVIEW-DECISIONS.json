@@ -2555,7 +2555,7 @@
     },
     {
       "packetId": "B1-P2-84b9011a0d2b4754",
-      "sourceSha256": "32229709ed4da07e64bd576390678e34900d0165e98ad458d55c19c12f6dba99",
+      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
       "executionStatus": "IN_PROGRESS",
       "finding": "UNCHANGED_CONFIRMATION_METADATA_BOUNDARY_TARGETED_POSITIVE_PROOF_PREPARED",
       "actorTrace": "The auth-mounted phase1 router obtains actor only from requireUserId(req). Create is reached only after the existing prepared execution returns confirmation_required. Read, cancel and confirm ignore request-body owner and apply exact server actor plus confirmation ID. Private expiry updates reuse only owner-bound rows. Claim binds full plan, digest, expiry and current pending status. The original finish routine binds immutable claimed identity and plan. No production code changed.",
@@ -2576,20 +2576,26 @@
         "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
         "verifiedCurrentCallerIds": [],
         "remainingCurrentCallerIds": [
-          "c37a93be0605e64b3156",
-          "94fb30ec710f32d062c2",
-          "36d0fbfc5ddf864ad6ea",
-          "bda77ff34ad9e973cbde",
-          "a1e1f647efb6e7002993",
-          "7c2970e3ea0940d5d136",
-          "986c86eebabfae033939",
-          "884cad1975974abc0599",
-          "b6708d08741254f6da06",
-          "85d5a147aa59e4f62e68"
+          "dc9d01d4c27358caf5da",
+          "06e761f5c6b91187e0f1",
+          "b0f96a98ef22f4219868",
+          "8f11aa76ec30ae75114b",
+          "092adf323ed9ea215868",
+          "c11d29e029639fe48d96",
+          "311957bf5928f85dd670",
+          "fdca02ff88285b1eb979",
+          "0722421da2174e4db49b",
+          "8a33cc576605814a9b22"
         ],
         "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
         "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
         "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+      },
+      "phase3SourceDelta": {
+        "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+        "historicalSourceSha256": "32229709ed4da07e64bd576390678e34900d0165e98ad458d55c19c12f6dba99",
+        "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+        "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
       }
     },
     {

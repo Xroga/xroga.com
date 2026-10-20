@@ -6,7 +6,10 @@ import { EventEmitter } from 'node:events';
 import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import express from 'express';
-import { prepareBusinessAction, executePreparedBusinessAction, type BusinessActionPlan } from '../services/integrations/businessAction.js';
+import { prepareBusinessAction, executePreparedBusinessAction, businessActionAuthorityScope, type BusinessActionPlan } from '../services/integrations/businessAction.js';
+import { createTenantContext } from '../security/tenantContext.js';
+import { executeAuthorizedAction } from '../security/authority/enforce.js';
+import { preparedActionDigest } from '../security/authority/digest.js';
 import { createActionComposioSession, executeComposioActionTool, executeComposioReadTool } from '../services/integrations/composioClient.js';
 import { goalContractSchema } from '../ai/universal/goalContract.js';
 import { dispatchForGoal } from '../ai/universal/semanticRequestPlanner.js';
@@ -23,24 +26,25 @@ const TOOL = 'SLACK_DELETE_MESSAGE';
 type Mode = 'success' | 'failure' | 'timeout' | 'empty';
 
 /** Intercepts actual adapter calls, not a replacement runtime. Never forwards a request. */
-function providerStub(t: TestContext, mode: Mode = 'success') {
+function providerStub(t: TestContext, mode: Mode = 'success', connected = false) {
   const previous = new Map(['COMPOSIO_API_KEY','SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','SUPABASE_JWT_SECRET'].map(key=>[key,process.env[key]]));
   process.env.COMPOSIO_API_KEY = 'golden-test-canary-not-a-real-key';
   delete process.env.SUPABASE_SERVICE_ROLE_KEY; delete process.env.SUPABASE_URL; delete process.env.SUPABASE_JWT_SECRET;
   t.after(()=>{for(const[key,value]of previous)value===undefined?delete process.env[key]:process.env[key]=value;});
   const paths: string[] = [];
-  t.mock.method(globalThis,'fetch',async (input: string | URL | Request) => {
+  t.mock.method(globalThis,'fetch',async (input: string | URL | Request, init?: RequestInit) => {
     const url = new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);
     assert.equal(url.origin,'https://backend.composio.dev','No unexpected provider/production traffic is allowed');
     const path=url.pathname; paths.push(path);
     const response=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json'}});
     if(path.endsWith('/execute')) {
+      assert.equal(JSON.parse(String(init?.body)).account,'fixture-account-A','Actual adapter must explicitly select the approved account');
       if(mode==='timeout')throw new DOMException('Fixture timeout','AbortError');
       return response(mode==='failure'?{error:'SIMULATED_PROVIDER_FAILURE',data:null}:{data:{fixture:true,reference:'fixture-deletion-1'},error:null});
     }
     if(path.includes('/tools/'))return response({slug:TOOL,toolkit:{slug:'slack'},tags:['destructiveHint'],input_parameters:{type:'object'},scopes:['fixture.message.delete']});
     if(path.endsWith('/search'))return response({tool_schemas:mode==='empty'?{}:{fixture:{tool_slug:TOOL,toolkit:'slack',description:'Fixture deletion only',input_schema:{type:'object'}}}});
-    if(path.endsWith('/toolkits'))return response({items:[{slug:'slack',name:'Slack',connected_account:null}]});
+    if(path.endsWith('/toolkits'))return response({items:[{slug:'slack',name:'Slack',connected_account:connected?{id:'fixture-account-A',status:'ACTIVE'}:null}]});
     if(path.endsWith('/session')||path.endsWith(`/${SESSION}`))return response({session_id:SESSION,config:{user_id:`xroga:${OWNER}`,workbench:{enable:false,enable_proxy_execution:false},execute:{enable_multi_execute:false},tags:['readOnlyHint']}});
     assert.fail('Unexpected adapter path: no call is forwarded');
   });
@@ -53,9 +57,19 @@ function canonical(value: unknown): unknown {
   return value;
 }
 /** Fixture digest follows the existing wire contract; it is NOT a newly issued authority grant. */
-function preparedPlan(): BusinessActionPlan {
-  const unsigned = {version:'1.0' as const,sessionId:SESSION,useCase:'Delete the selected fixture Slack message',toolkit:'slack',toolSlug:TOOL,arguments:{message_id:'fixture-message'},risk:'destructive' as const,requiresConfirmation:true,requiredScopes:['fixture.message.delete'],scopeRequirements:null,summary:'Delete fixture message'};
+function preparedPlan(userId = OWNER): BusinessActionPlan {
+  const authority: NonNullable<BusinessActionPlan['authority']> = {version:'1',userId,tenantId:userId,
+    connectedAccountId:'fixture-account-A',actionClass:'DELETE',projectId:null,runId:null,
+    issuedAt:new Date(Date.now()-1000).toISOString(),expiresAt:new Date(Date.now()+60_000).toISOString(),nonce:'fixture-server-nonce',maxSpendMicroUsd:null,currency:null};
+  const unsigned = {version:'1.0' as const,sessionId:SESSION,useCase:'Delete the selected fixture Slack message',toolkit:'slack',toolSlug:TOOL,arguments:{message_id:'fixture-message'},risk:'destructive' as const,requiresConfirmation:true,requiredScopes:['fixture.message.delete'],scopeRequirements:null,summary:'Delete fixture message',authority};
   return {...unsigned,planDigest:createHash('sha256').update(JSON.stringify(canonical(unsigned))).digest('hex')};
+}
+/** Unit-only durable adapter receipt. Real claim/cancellation races require DB tests. */
+async function executeFixture(plan = preparedPlan(), userId = OWNER) {
+  const scope=businessActionAuthorityScope(plan),context=createTenantContext({userId,via:'remote_getuser'});
+  const claim={id:'fixture-claimed-confirmation',userId,scopeDigest:preparedActionDigest(scope),expiresAt:scope.expiresAt,claimedAt:new Date().toISOString()};
+  return executeAuthorizedAction({context,scope,claim,revalidateBeforeEffect:async()=>claim},authorityPermit=>
+    executePreparedBusinessAction({userId,plan,authorization:{explicitUserAuthorization:true,confirmedHighRisk:true},authorityPermit}));
 }
 const code = (expected:string)=>(error:unknown)=>Boolean(error&&typeof error==='object'&&(error as {code?:string}).code===expected);
 
@@ -78,25 +92,39 @@ test('GJ unsupported action remains unavailable instead of a fabricated success'
   providerStub(t,'empty'); assert.equal((await prepareBusinessAction({userId:OWNER,useCase:'Unsupported fixture operation'})).status,'unavailable');
 });
 test('GJ business write rejects absent user authority and changed prepared arguments',async t=>{
-  const paths=providerStub(t),plan=preparedPlan();
+  const paths=providerStub(t,'success',true),plan=preparedPlan();
   await assert.rejects(executePreparedBusinessAction({userId:OWNER,plan,authorization:{explicitUserAuthorization:false as unknown as true}}),code('BUSINESS_ACTION_USER_AUTHORIZATION_REQUIRED'));
   await assert.rejects(executePreparedBusinessAction({userId:OWNER,plan:{...plan,arguments:{message_id:'other-message'}},authorization:{explicitUserAuthorization:true,confirmedHighRisk:true}}),code('BUSINESS_ACTION_PLAN_CHANGED'));
   assert.equal(paths.length,0);
 });
 test('GJ exact prepared destructive action requires confirmation before the actual adapter executes',async t=>{
-  const paths=providerStub(t),plan=preparedPlan();
+  const paths=providerStub(t,'success',true),plan=preparedPlan();
   const blocked=await executePreparedBusinessAction({userId:OWNER,plan,authorization:{explicitUserAuthorization:true}});
   assert.equal(blocked.status,'confirmation_required'); assert.equal(paths.filter(path=>path.endsWith('/execute')).length,0);
-  const accepted=await executePreparedBusinessAction({userId:OWNER,plan,authorization:{explicitUserAuthorization:true,confirmedHighRisk:true}});
+  const booleanOnly=await executePreparedBusinessAction({userId:OWNER,plan,authorization:{explicitUserAuthorization:true,confirmedHighRisk:true}});
+  assert.equal(booleanOnly.status,'confirmation_required');
+  const accepted=await executeFixture(plan);
   assert.equal(accepted.status,'success'); if(accepted.status==='success')assert.match(accepted.resultText,/fixture-deletion-1/);
   assert.equal(paths.filter(path=>path.endsWith('/execute')).length,1);
   // This does not certify durable confirmation consumption/replay: that needs an isolated DB.
 });
 test('GJ second tenant cannot execute through the owner session; read lane rejects mutations',async t=>{
   const paths=providerStub(t);
-  await assert.rejects(executePreparedBusinessAction({userId:OUTSIDER,plan:preparedPlan(),authorization:{explicitUserAuthorization:true,confirmedHighRisk:true}}),code('COMPOSIO_SESSION_FORBIDDEN'));
+  await assert.rejects(executeFixture(preparedPlan(OUTSIDER),OUTSIDER),code('COMPOSIO_SESSION_FORBIDDEN'));
   await assert.rejects(executeComposioReadTool(OWNER,{sessionId:SESSION,useCase:'Delete fixture',toolSlug:TOOL,arguments:{}}),code('COMPOSIO_MUTATION_BLOCKED'));
   assert.equal(paths.filter(path=>path.endsWith('/execute')).length,0);
+});
+
+test('GJ changed or disconnected account blocks the real action adapter before dispatch',async t=>{
+  const paths=providerStub(t,'success',false);
+  await assert.rejects(executeFixture(),code('COMPOSIO_ACTION_ACCOUNT_CHANGED'));
+  assert.equal(paths.filter(path=>path.endsWith('/execute')).length,0);
+});
+
+test('GJ a forged permit fails before provider metadata or execution',async t=>{
+  const paths=providerStub(t,'success',true);
+  await assert.rejects(executePreparedBusinessAction({userId:OWNER,plan:preparedPlan(),authorization:{explicitUserAuthorization:true,confirmedHighRisk:true},authorityPermit:{grantId:'forged'}}),code('AUTHORITY_ALREADY_USED_OR_MISSING'));
+  assert.equal(paths.length,0);
 });
 test('GJ anonymous identity and unconfirmed direct provider action are rejected',async t=>{
   const paths=providerStub(t);
@@ -105,10 +133,10 @@ test('GJ anonymous identity and unconfirmed direct provider action are rejected'
   assert.equal(paths.length,0);
 });
 test('GJ provider failure is sanitized and cannot become a success receipt',async t=>{
-  providerStub(t,'failure'); await assert.rejects(executePreparedBusinessAction({userId:OWNER,plan:preparedPlan(),authorization:{explicitUserAuthorization:true,confirmedHighRisk:true}}),code('BUSINESS_ACTION_EXECUTION_FAILED'));
+  providerStub(t,'failure',true); await assert.rejects(executeFixture(),code('BUSINESS_ACTION_EXECUTION_FAILED'));
 });
 test('GJ provider timeout is classified; uncertain writes are not blindly replayed',async t=>{
-  const paths=providerStub(t,'timeout'); await assert.rejects(executePreparedBusinessAction({userId:OWNER,plan:preparedPlan(),authorization:{explicitUserAuthorization:true,confirmedHighRisk:true}}),code('COMPOSIO_TIMEOUT'));
+  const paths=providerStub(t,'timeout',true); await assert.rejects(executeFixture(),code('COMPOSIO_TIMEOUT'));
   assert.equal(paths.filter(path=>path.endsWith('/execute')).length,1);
 });
 test('GJ false-success and runtime diagnostic leakage are refused by existing output helpers',()=>{

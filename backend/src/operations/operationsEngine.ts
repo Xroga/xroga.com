@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { canonicalAuthorityValue } from '../security/authority/digest.js';
 import type {
   ActionDefinition, ActionStatus, OperationalResource, PortfolioProduct,
   ProviderResult, RiskLevel, SafeActionRequest, TruthStatus,
@@ -92,15 +93,7 @@ export function actionPlanDigest(request: SafeActionRequest): string {
  * what the plan says.
  */
 function canonicalParameters(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(canonicalParameters);
-  if (value && typeof value === 'object') {
-    return Object.fromEntries(
-      Object.entries(value as Record<string, unknown>)
-        .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
-        .map(([key, item]) => [key, canonicalParameters(item)]),
-    );
-  }
-  return value;
+  return canonicalAuthorityValue(value);
 }
 
 export function initialActionStatus(definition: ActionDefinition, confirmed: boolean): ActionStatus {

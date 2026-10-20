@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {createHash,randomUUID} from 'node:crypto';
 import {test} from 'node:test';
+import {createTenantContext} from './tenantContext.js';
 import type {SupabaseClient} from '@supabase/supabase-js';
 import {createBusinessActionConfirmation,confirmBusinessAction} from '../services/integrations/businessActionConfirmations.js';
 import {verifyPlanDigest,type BusinessActionPlan} from '../services/integrations/businessAction.js';
@@ -39,7 +40,8 @@ export function registerConfirmationMetadataTests(admin:SupabaseClient,getUsers:
   // canonical digest before any tool metadata, account lookup or provider I/O.
   const failed=await seed(owner.id),invalid={...plan,planDigest:'a'.repeat(64)};
   assert.equal(verifyPlanDigest(invalid),false);assert.equal((await admin.from('business_action_confirmations').update({plan:invalid,plan_digest:invalid.planDigest}).eq('id',failed)).error,null);
-  const outcomes=await Promise.allSettled(Array.from({length:2},()=>confirmBusinessAction(owner.id,failed)));
+  const context=createTenantContext({userId:owner.id,via:'persisted_owner'});
+  const outcomes=await Promise.allSettled(Array.from({length:2},()=>confirmBusinessAction(context,failed)));
   const codes:string[]=[];for(const outcome of outcomes){assert.equal(outcome.status,'rejected');if(outcome.status==='rejected')codes.push(outcome.reason.code);}
   assert.deepEqual(codes.sort(),['BUSINESS_ACTION_CONFIRMATION_ALREADY_USED','BUSINESS_ACTION_PLAN_CHANGED'].sort());
   const failedRow=await persisted(failed);assert.equal(failedRow.user_id,owner.id);assert.equal(failedRow.status,'failed');assert.equal(failedRow.failure_code,'BUSINESS_ACTION_PLAN_CHANGED');assert.ok(Number.isFinite(Date.parse(failedRow.claimed_at)));assert.ok(Number.isFinite(Date.parse(failedRow.completed_at)));assert.deepEqual(failedRow.plan,invalid);assert.deepEqual(await persisted(foreign),foreignBefore);

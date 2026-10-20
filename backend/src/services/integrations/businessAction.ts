@@ -1,6 +1,11 @@
 import {
   createHash,
+  randomUUID,
 } from 'node:crypto';
+import { canonicalAuthorityValue, preparedActionDigest } from '../../security/authority/digest.js';
+import { businessActionClass } from '../../security/authority/risk.js';
+import { assertAuthorityPermit } from '../../security/authority/enforce.js';
+import type { AuthorityPermit, PreparedAuthorityScope } from '../../security/authority/types.js';
 
 import {
   chatCompletion,
@@ -88,6 +93,9 @@ export interface BusinessActionPlan {
     unknown;
 
   planDigest: string;
+
+  /** Server-prepared scope. Legacy plans remain readable but cannot dispatch. */
+  authority?: Omit<PreparedAuthorityScope, 'planDigest' | 'targetDigest' | 'operation' | 'provider' | 'risk'>;
 }
 
 export interface BusinessActionConnectionCandidate {
@@ -172,8 +180,8 @@ export interface BusinessActionAuthorization {
    * Used for the normal safety checkpoint on destructive, financial,
    * permission-changing, cancellation, deletion, refund, transfer, etc.
    *
-   * A user-selected full-access Plugin policy can waive that extra
-   * checkpoint, but never the explicitUserAuthorization requirement above.
+   * Retained for wire compatibility. This flag never mints a canonical permit,
+   * and a full-access Plugin preference cannot waive durable approval.
    */
   confirmedHighRisk?:
     true;
@@ -435,52 +443,17 @@ function boundedResult(
 function canonicalize(
   value: unknown,
 ): unknown {
-  if (
-    Array.isArray(value)
-  ) {
-    return value.map(
-      canonicalize,
-    );
-  }
-
-  if (
-    value &&
-    typeof value ===
-      'object'
-  ) {
-    return Object.fromEntries(
-      Object.entries(
-        value as Record<
-          string,
-          unknown
-        >,
-      )
-        .sort(
-          (
-            [a],
-            [b],
-          ) =>
-            a.localeCompare(
-              b,
-            ),
-        )
-        .map(
-          (
-            [
-              key,
-              item,
-            ],
-          ) => [
-            key,
-            canonicalize(
-              item,
-            ),
-          ],
-        ),
-    );
-  }
-
-  return value;
+  // Keep the existing v1 wire ordering so a stricter value boundary does not
+  // invalidate legitimate already-prepared plans. New authority contracts use
+  // the locale-independent serializer. This adapter only orders validated JSON.
+  const valid = canonicalAuthorityValue(value);
+  const legacyOrder = (item: unknown): unknown => {
+    if (Array.isArray(item)) return item.map(legacyOrder);
+    if (item && typeof item === 'object') return Object.fromEntries(Object.entries(item)
+      .sort(([a], [b]) => a.localeCompare(b)).map(([key, child]) => [key, legacyOrder(child)]));
+    return item;
+  };
+  return legacyOrder(valid);
 }
 
 function actionPlanDigest(
@@ -525,6 +498,7 @@ function actionPlanDigest(
       scopeRequirements:
         input.scopeRequirements ??
         null,
+      ...(input.authority ? { authority: input.authority } : {}),
     });
 
   return createHash(
@@ -558,12 +532,26 @@ export function verifyPlanDigest(
 
 export function snapshotBusinessActionPlan(plan: BusinessActionPlan): BusinessActionPlan {
   let snapshot: BusinessActionPlan;
-  try { snapshot = JSON.parse(JSON.stringify(plan)) as BusinessActionPlan; }
+  try {
+    if (!verifyPlanDigest(plan)) throw new Error('Changed plan');
+    snapshot = JSON.parse(JSON.stringify(plan)) as BusinessActionPlan;
+  }
   catch { throw new ComposioClientError('The prepared external action changed after planning.', { status: 409, code: 'BUSINESS_ACTION_PLAN_CHANGED' }); }
   if (!snapshot || typeof snapshot !== 'object' || Array.isArray(snapshot) || !verifyPlanDigest(snapshot)) {
     throw new ComposioClientError('The prepared external action changed after planning.', { status: 409, code: 'BUSINESS_ACTION_PLAN_CHANGED' });
   }
   return snapshot;
+}
+
+export function businessActionAuthorityScope(plan: BusinessActionPlan): PreparedAuthorityScope {
+  if (!verifyPlanDigest(plan) || !plan.authority) {
+    throw new ComposioClientError('Prepare this action again to bind its account and approval.', {
+      status: 409, code: 'BUSINESS_ACTION_AUTHORITY_SCOPE_REQUIRED',
+    });
+  }
+  return { ...plan.authority, provider: normalizeToolkit(plan.toolkit), operation: plan.toolSlug,
+    risk: plan.risk, planDigest: plan.planDigest,
+    targetDigest: preparedActionDigest({ sessionId: plan.sessionId, useCase: plan.useCase, toolSlug: plan.toolSlug, arguments: plan.arguments }) };
 }
 
 function buildCandidatePayload(
@@ -1289,11 +1277,15 @@ export async function prepareBusinessAction(
   const risk =
     details.risk;
 
-  const requiresConfirmation =
-    risk ===
-      'destructive' ||
-    risk ===
-      'unknown';
+  const requiresConfirmation = true;
+  const account = toolkitMetadata.find(item => normalizeToolkit(item.toolkit) === normalizeToolkit(selected.toolkit));
+  const accountId = account?.noAuth ? `no-auth:${normalizeToolkit(selected.toolkit)}` : account?.connectedAccountId;
+  if (!account?.connected || !accountId || selected.slug.startsWith('COMPOSIO_')) {
+    throw new ComposioClientError('An exact connected application account is required.', {
+      status: 409, code: 'BUSINESS_ACTION_ACCOUNT_REQUIRED',
+    });
+  }
+  const issuedAt = new Date().toISOString();
 
   const unsigned:
     Omit<
@@ -1319,6 +1311,11 @@ export async function prepareBusinessAction(
       risk,
 
       requiresConfirmation,
+
+      authority: { version: '1', userId: input.userId, tenantId: input.userId, connectedAccountId: accountId,
+        actionClass: businessActionClass(selected.slug), projectId: null, runId: null,
+        issuedAt, expiresAt: new Date(Date.parse(issuedAt) + 15 * 60_000).toISOString(), nonce: randomUUID(),
+        maxSpendMicroUsd: null, currency: null },
 
       summary:
         selection.summary,
@@ -1355,6 +1352,7 @@ export async function executePreparedBusinessAction(
 
     authorization:
       BusinessActionAuthorization;
+    authorityPermit?: AuthorityPermit;
   },
 ): Promise<BusinessActionExecutionOutcome> {
   if (
@@ -1373,7 +1371,13 @@ export async function executePreparedBusinessAction(
     );
   }
 
-  input = { userId: input.userId, authorization: { ...input.authorization }, plan: snapshotBusinessActionPlan(input.plan) };
+  input = { userId: input.userId, authorization: { ...input.authorization }, plan: snapshotBusinessActionPlan(input.plan), authorityPermit: input.authorityPermit };
+  if (input.authorityPermit) {
+    const admitted = businessActionAuthorityScope(input.plan);
+    assertAuthorityPermit(input.authorityPermit, { userId: input.userId, provider: admitted.provider,
+      connectedAccountId: admitted.connectedAccountId, operation: admitted.operation,
+      targetDigest: admitted.targetDigest, planDigest: admitted.planDigest });
+  }
 
   /*
    * Re-resolve current tool metadata before
@@ -1426,31 +1430,9 @@ export async function executePreparedBusinessAction(
       input.plan.toolkit,
     );
 
-  const highRiskNow =
-    permissionMode ===
-      'full_access'
-      ? false
-      : (
-          input.plan
-            .requiresConfirmation ||
-          details.risk ===
-            'destructive' ||
-          details.risk ===
-            'unknown' ||
-          (
-            permissionMode !==
-              'low_risk' &&
-            details.risk ===
-              'write'
-          )
-        );
-
-  if (
-    highRiskNow &&
-    input.authorization
-      .confirmedHighRisk !==
-      true
-  ) {
+  // Planner text, authorization booleans and plugin preferences cannot mint a
+  // durable permit. Every consequential write uses the existing confirmation UI.
+  if (!input.authorityPermit) {
     // A current policy or metadata change can require confirmation even when
     // preparation did not. Bind that requirement into the same immutable plan
     // before storing/displaying it, without granting execution authority.
@@ -1467,6 +1449,17 @@ export async function executePreparedBusinessAction(
           : `Your Plugin permission setting requires confirmation before Xroga executes this change: ${input.plan.summary}`,
     };
   }
+
+  if (permissionMode === 'read_only') {
+    throw new ComposioClientError('This connected application is read-only.', { status: 403, code: 'BUSINESS_ACTION_READ_ONLY' });
+  }
+  if (details.risk !== input.plan.risk) {
+    throw new ComposioClientError('The action risk changed. Prepare the action again.', { status: 409, code: 'BUSINESS_ACTION_RISK_CHANGED' });
+  }
+  const scope = businessActionAuthorityScope(input.plan);
+  const binding = { userId: input.userId, provider: scope.provider, connectedAccountId: scope.connectedAccountId,
+    operation: scope.operation, targetDigest: scope.targetDigest, planDigest: scope.planDigest };
+  assertAuthorityPermit(input.authorityPermit, binding);
 
   const execution =
     await executeComposioActionTool(
@@ -1487,6 +1480,8 @@ export async function executePreparedBusinessAction(
         authorization: {
           confirmed: true,
         },
+        authorityPermit: input.authorityPermit,
+        authorityBinding: binding,
       },
     );
 

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8ab6e1dd590ac985fdfba8249ac0051948241963",
+  "source_sha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -3433,6 +3433,10 @@
       "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
       "current_paths": [
         "backend/src/middleware/auth.ts",
+        "backend/src/security/authority/digest.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/authority/risk.ts",
+        "backend/src/security/authority/types.ts",
         "backend/src/security/boundedPublicGet.ts",
         "backend/src/security/ownedRunPersistence.ts",
         "backend/src/security/ownedTerminalPersistence.ts",
@@ -3453,6 +3457,7 @@
         "scripts/security/full-supabase-history.mjs",
         "scripts/security/historical-share-fixture.mjs",
         "scripts/security/r2-private-check.mjs",
+        "scripts/security/refresh-phase-three-authority-delta.mjs",
         "scripts/security/schema-catalog.mjs",
         "scripts/security/staging-preflight.mjs",
         "scripts/security/tenant-acceptance.mjs"

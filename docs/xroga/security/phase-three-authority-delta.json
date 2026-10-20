@@ -1,0 +1,96 @@
+{
+  "version": 1,
+  "scope": "SOURCE_POSITION_DELTA_NOT_SECURITY_CERTIFICATION",
+  "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+  "remappings": [
+    {
+      "previousCallerId": "74229d60e093f2e44542",
+      "currentCallerId": "ebede146c851a085d2b8"
+    },
+    {
+      "previousCallerId": "c37a93be0605e64b3156",
+      "currentCallerId": "dc9d01d4c27358caf5da"
+    },
+    {
+      "previousCallerId": "94fb30ec710f32d062c2",
+      "currentCallerId": "06e761f5c6b91187e0f1"
+    },
+    {
+      "previousCallerId": "36d0fbfc5ddf864ad6ea",
+      "currentCallerId": "b0f96a98ef22f4219868"
+    },
+    {
+      "previousCallerId": "bda77ff34ad9e973cbde",
+      "currentCallerId": "8f11aa76ec30ae75114b"
+    },
+    {
+      "previousCallerId": "a1e1f647efb6e7002993",
+      "currentCallerId": "092adf323ed9ea215868"
+    },
+    {
+      "previousCallerId": "7c2970e3ea0940d5d136",
+      "currentCallerId": "c11d29e029639fe48d96"
+    },
+    {
+      "previousCallerId": "986c86eebabfae033939",
+      "currentCallerId": "311957bf5928f85dd670"
+    },
+    {
+      "previousCallerId": "884cad1975974abc0599",
+      "currentCallerId": "fdca02ff88285b1eb979"
+    },
+    {
+      "previousCallerId": "1a3d2ad705ca358ebbe3",
+      "currentCallerId": "664690c809a2f073f29e"
+    },
+    {
+      "previousCallerId": "b6708d08741254f6da06",
+      "currentCallerId": "0722421da2174e4db49b"
+    },
+    {
+      "previousCallerId": "85d5a147aa59e4f62e68",
+      "currentCallerId": "8a33cc576605814a9b22"
+    },
+    {
+      "previousCallerId": "bbf934631616a292169c",
+      "currentCallerId": "731bb89e664ef34ec003"
+    }
+  ],
+  "newCalls": [
+    {
+      "id": "196f316ea6227ab121fb",
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "line": 513,
+      "enclosing": "cancelClaimedBusinessActionConfirmation",
+      "kind": "RPC_CANDIDATE",
+      "target": "cancel_business_action_confirmation",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515"
+    },
+    {
+      "id": "fb28901061947a3719a7",
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "line": 513,
+      "enclosing": "cancelClaimedBusinessActionConfirmation",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515"
+    },
+    {
+      "id": "d51fd401ac5484aff801",
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "line": 754,
+      "enclosing": "confirmBusinessAction",
+      "kind": "RPC_CANDIDATE",
+      "target": "authorize_business_action_dispatch",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515"
+    }
+  ],
+  "completion": "ACTUAL_DISPOSABLE_AND_SOURCE_BOUND_REGRESSION_PENDING",
+  "productionEffects": false
+}

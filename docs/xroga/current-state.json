@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "8ab6e1dd590ac985fdfba8249ac0051948241963",
-    "sourceTimestampUtc": "2026-10-18T21:09:49+05:00",
-    "auditStartedUtc": "2026-10-18T16:26:45.295Z",
+    "sha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+    "sourceTimestampUtc": "2026-10-20T17:35:54+05:00",
+    "auditStartedUtc": "2026-10-20T14:26:37.783Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -1645,7 +1645,7 @@
         "backend/src/ai/qa.ts:5",
         "backend/src/ai/universal/semanticRequestPlanner.ts:33",
         "backend/src/services/integrations/businessAccounting.failure.test.ts:5",
-        "backend/src/services/integrations/businessAction.ts:20",
+        "backend/src/services/integrations/businessAction.ts:25",
         "backend/src/services/integrations/businessRead.ts:16",
         "backend/src/synthesis/coherentImplementation.ts:11"
       ],
@@ -3200,7 +3200,7 @@
         "backend/src/ai/engineeringArtifact.test.ts:4",
         "backend/src/ai/pipeline.ts:7",
         "backend/src/ai/runStore.ts:14",
-        "backend/src/e2e/xrogaGoldenJourneys.test.ts:13",
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts:16",
         "backend/src/synthesis/browserVerificationAdapter.test.ts:7"
       ],
       "reachable": true,
@@ -4416,7 +4416,7 @@
         "backend/src/lib/adaptiveOrchestrator.ts:1",
         "backend/src/operations/benchmarkAdapter.ts:20",
         "backend/src/routes/guestChat.ts:10",
-        "backend/src/routes/phase1.ts:23",
+        "backend/src/routes/phase1.ts:24",
         "backend/src/synthesis/coherentImplementation.ts:8",
         "backend/src/synthesis/universalEntrypoint.ts:97"
       ],
@@ -4557,7 +4557,7 @@
         "backend/src/hardening/launchHardening.test.ts:19",
         "backend/src/index.ts:51",
         "backend/src/routes/guestChat.ts:5",
-        "backend/src/services/integrations/businessAction.ts:5",
+        "backend/src/services/integrations/businessAction.ts:10",
         "backend/src/services/integrations/businessRead.ts:1",
         "backend/src/synthesis/coherentImplementation.ts:1",
         "backend/src/synthesis/incrementalImplementation.ts:27"
@@ -5508,7 +5508,7 @@
         "backend/src/ai/repositoryHydrationAuthority.test.ts:3",
         "backend/src/ai/repositoryReadFailure.test.ts:3",
         "backend/src/ai/universal/resumeProjectContext.test.ts:54",
-        "backend/src/routes/phase1.ts:13",
+        "backend/src/routes/phase1.ts:14",
         "backend/src/routes/swarm.ts:6",
         "backend/src/security/workerProjectAdmission.test.ts:5"
       ],
@@ -5598,7 +5598,7 @@
         "backend/src/ai/universal/semanticRequestPlanner.ts:27",
         "backend/src/security/usageAccounting.local.integration.ts:6",
         "backend/src/services/integrations/businessAccounting.failure.test.ts:6",
-        "backend/src/services/integrations/businessAction.ts:15",
+        "backend/src/services/integrations/businessAction.ts:20",
         "backend/src/services/integrations/businessRead.ts:11"
       ],
       "reachable": true,
@@ -5948,12 +5948,12 @@
         "backend/src/ai/universal/semanticRequestPlanner.ts:12",
         "backend/src/routes/billing.ts:5",
         "backend/src/routes/dashboard.ts:4",
-        "backend/src/routes/phase1.ts:27",
+        "backend/src/routes/phase1.ts:28",
         "backend/src/security/budgetOwner.local.integration.ts:7",
-        "backend/src/security/confirmationMetadata.local.integration.ts:7",
+        "backend/src/security/confirmationMetadata.local.integration.ts:8",
         "backend/src/security/tenantIsolation.local.integration.ts:42",
         "backend/src/services/BillingService.ts:14",
-        "backend/src/services/integrations/businessAction.ts:11",
+        "backend/src/services/integrations/businessAction.ts:16",
         "backend/src/services/integrations/businessRead.ts:7"
       ],
       "reachable": true,
@@ -6519,7 +6519,7 @@
         "backend/src/ai/quota.test.ts:18",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:19",
         "backend/src/ai/universal/semanticRequestPlanner.ts:23",
-        "backend/src/routes/phase1.ts:17",
+        "backend/src/routes/phase1.ts:18",
         "backend/src/routes/phase1BusinessPreflight.ts:3",
         "backend/src/security/budgetOwner.local.integration.ts:6",
         "backend/src/security/quotaEvidence.local.integration.ts:6",
@@ -9972,8 +9972,8 @@
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:21",
         "backend/src/ai/universal/semanticRequestPlanner.ts:37",
         "backend/src/ai/universal/universalContracts.test.ts:4",
-        "backend/src/e2e/xrogaGoldenJourneys.test.ts:11",
-        "backend/src/routes/phase1.ts:37",
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts:14",
+        "backend/src/routes/phase1.ts:38",
         "backend/src/routes/phase1BusinessPreflight.ts:4",
         "backend/src/security/deliveryEvidenceRead.local.integration.ts:5",
         "backend/src/synthesis/canonicalFoundation.test.ts:4",
@@ -10277,7 +10277,7 @@
       ],
       "callers": [
         "backend/src/ai/universal/repositoryChatEvidence.test.ts:3",
-        "backend/src/routes/phase1.ts:51"
+        "backend/src/routes/phase1.ts:52"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -10327,8 +10327,8 @@
         "backend/src/ai/providerRuntime.ts:9",
         "backend/src/ai/universal/runtimeFailure.test.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.ts:54",
-        "backend/src/e2e/xrogaGoldenJourneys.test.ts:14",
-        "backend/src/routes/phase1.ts:46"
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts:17",
+        "backend/src/routes/phase1.ts:47"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -10418,7 +10418,7 @@
       ],
       "callers": [
         "backend/src/ai/universal/semanticHistory.test.ts:3",
-        "backend/src/routes/phase1.ts:55"
+        "backend/src/routes/phase1.ts:56"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -10570,9 +10570,9 @@
         "backend/src/ai/postCompletionAccounting.test.ts:5",
         "backend/src/ai/universal/capabilityReadiness.test.ts:5",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:4",
-        "backend/src/e2e/xrogaGoldenJourneys.test.ts:12",
-        "backend/src/routes/phase1.ts:31",
-        "backend/src/services/integrations/businessAction.ts:24",
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts:15",
+        "backend/src/routes/phase1.ts:32",
+        "backend/src/services/integrations/businessAction.ts:29",
         "backend/src/services/integrations/businessRead.ts:20"
       ],
       "reachable": true,
@@ -11947,7 +11947,7 @@
         "backend/src/security/serviceRoleGuard.ts:1",
         "backend/src/services/BillingService.ts:5",
         "backend/src/services/ensureUserRecords.ts:7",
-        "backend/src/services/integrations/businessActionConfirmations.ts:3",
+        "backend/src/services/integrations/businessActionConfirmations.ts:6",
         "backend/src/services/integrations/githubAuth.ts:1",
         "backend/src/services/integrations/githubDeploy.ts:1",
         "backend/src/services/integrations/githubTokenStore.ts:1",
@@ -12886,7 +12886,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/e2e/xrogaGoldenJourneys.test.ts:15",
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts:18",
         "backend/src/lib/buildStreamLifecycle.test.ts:4",
         "backend/src/routes/swarm.ts:9"
       ],
@@ -14489,7 +14489,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/e2e/xrogaGoldenJourneys.test.ts:16",
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts:19",
         "backend/src/routes/swarm.ts:7"
       ],
       "reachable": true,
@@ -15248,7 +15248,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/e2e/xrogaGoldenJourneys.test.ts:17",
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts:20",
         "backend/src/index.ts:7",
         "backend/src/lib/authRoundTrips.test.ts:106",
         "backend/src/middleware/phase1Auth.ts:6",
@@ -15668,7 +15668,7 @@
       "id": "surface:2bc5a5e3712ff02bb56b",
       "subsystem": "operations_approvals",
       "sourcePath": "backend/src/operations/operationsEngine.ts",
-      "sha256": "bdf333471823ae83b46be56be926008a9abb58b56aa784422b134d2b48e7d7a3",
+      "sha256": "c086fafdb62b3b77db32087f67978d4763b3ed05c7087a87a4fb043152150e17",
       "symbols": [
         "ACTION_DEFINITIONS",
         "BAD_STATUSES",
@@ -15699,10 +15699,13 @@
         "stale"
       ],
       "imports": [
+        "../security/authority/digest.js",
         "./types.js",
         "node:crypto"
       ],
-      "runtimeImports": [],
+      "runtimeImports": [
+        "backend/src/security/authority/digest.ts"
+      ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
@@ -15714,14 +15717,17 @@
         "backend/src/operations/operationsEngine.test.ts:3",
         "backend/src/operations/operationsService.ts:5",
         "backend/src/operations/verificationTarget.local.integration.ts:8",
-        "backend/src/routes/admin.ts:5"
+        "backend/src/routes/admin.ts:5",
+        "backend/src/security/authority/digest.test.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "node:crypto"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/operations/operationsEngine.ts#canonicalAuthorityValue"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [
         "backend/src/operations/operationsEngine.ts#actionPlanDigest",
@@ -15737,7 +15743,8 @@
         "backend/src/operations/benchmarkAdapter.test.ts",
         "backend/src/operations/internalEffect.local.integration.ts",
         "backend/src/operations/operationsEngine.test.ts",
-        "backend/src/operations/verificationTarget.local.integration.ts"
+        "backend/src/operations/verificationTarget.local.integration.ts",
+        "backend/src/security/authority/digest.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -19153,7 +19160,7 @@
       "id": "surface:ab58061e67cd2f877ad4",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "sha256": "4bfbc1d8eec9c4e146da3d76344e05a1c29e8950153b1cd8f2cd451e70d7989a",
+      "sha256": "f6f085d6c1e9719fed0a8f8de910b78ccd3ace7d193b1b02bcbfe69749eef32b",
       "symbols": [
         "ToolUiConnectionCandidate",
         "ToolUiDescriptor",
@@ -19218,6 +19225,7 @@
         "../ai/universal/semanticHistory.js",
         "../ai/universal/semanticRequestPlanner.js",
         "../middleware/auth.js",
+        "../security/tenantContext.js",
         "../services/integrations/businessAction.js",
         "../services/integrations/businessActionConfirmations.js",
         "../services/integrations/businessRead.js",
@@ -19236,6 +19244,7 @@
         "backend/src/ai/universal/runtimeFailure.ts",
         "backend/src/ai/universal/semanticHistory.ts",
         "backend/src/ai/universal/semanticRequestPlanner.ts",
+        "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/businessAction.ts",
         "backend/src/services/integrations/businessActionConfirmations.ts",
         "backend/src/services/integrations/businessRead.ts",
@@ -20965,6 +20974,241 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:3f6745de2d96939654d1",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/security/authority/digest.ts",
+      "sha256": "efc0f73d537710cea08c14ab5e5d232b611f6f951cc2f8b86a0f50d3a9322ee5",
+      "symbols": [
+        "AuthorityJson",
+        "active",
+        "canonicalAuthorityJson",
+        "canonicalAuthorityValue",
+        "descriptors",
+        "invalid",
+        "nodes",
+        "preparedActionDigest",
+        "property",
+        "prototype",
+        "serialized",
+        "visit"
+      ],
+      "imports": [
+        "node:crypto"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts:12",
+        "backend/src/operations/operationsEngine.ts:2",
+        "backend/src/security/authority/digest.test.ts:4",
+        "backend/src/security/authority/enforce.test.ts:4",
+        "backend/src/security/authority/enforce.ts:2",
+        "backend/src/services/integrations/businessAction.ts:5",
+        "backend/src/services/integrations/businessActionConfirmations.ts:5",
+        "backend/src/services/integrations/composioClient.ts:2"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [
+        "backend/src/security/authority/digest.ts#AuthorityJson",
+        "backend/src/security/authority/digest.ts#canonicalAuthorityJson",
+        "backend/src/security/authority/digest.ts#canonicalAuthorityValue"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "backend/src/security/authority/digest.ts#preparedActionDigest"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts",
+        "backend/src/security/authority/digest.test.ts",
+        "backend/src/security/authority/enforce.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:2ed9771bc9a7957f0562",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/security/authority/enforce.ts",
+      "sha256": "c76bdb01b72511a3677d0be426d081a7ece2c5b88045fdb17fdb83a81f2246f0",
+      "symbols": [
+        "AuthorityError",
+        "PermitState",
+        "assertAuthorityPermit",
+        "claim",
+        "consumeAuthorityPermit",
+        "context",
+        "denied",
+        "digest",
+        "executeAuthorizedAction",
+        "expires",
+        "fresh",
+        "issued",
+        "key",
+        "permit",
+        "permits",
+        "policy",
+        "receipt",
+        "scope",
+        "state",
+        "verifyClaim"
+      ],
+      "imports": [
+        "../tenantContext.js",
+        "./digest.js",
+        "./risk.js",
+        "./types.js"
+      ],
+      "runtimeImports": [
+        "backend/src/security/authority/digest.ts",
+        "backend/src/security/authority/risk.ts",
+        "backend/src/security/tenantContext.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts:11",
+        "backend/src/security/authority/enforce.test.ts:5",
+        "backend/src/services/integrations/businessAction.ts:7",
+        "backend/src/services/integrations/businessActionConfirmations.ts:4",
+        "backend/src/services/integrations/composioClient.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [
+        "backend/src/security/authority/enforce.ts#AuthorityDispatchBinding",
+        "backend/src/security/authority/enforce.ts#AuthorityError",
+        "backend/src/security/authority/enforce.ts#AuthorityPermit",
+        "backend/src/security/authority/enforce.ts#DurableAuthorityClaim",
+        "backend/src/security/authority/enforce.ts#PreparedAuthorityScope",
+        "backend/src/security/authority/enforce.ts#assertAuthorityPermit",
+        "backend/src/security/authority/enforce.ts#canonicalAuthorityJson",
+        "backend/src/security/authority/enforce.ts#consumeAuthorityPermit",
+        "backend/src/security/authority/enforce.ts#executeAuthorizedAction"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "backend/src/security/authority/enforce.ts#digest",
+        "backend/src/security/authority/enforce.ts#executeAuthorizedAction",
+        "backend/src/security/authority/enforce.ts#preparedActionDigest"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/security/authority/enforce.ts#receipt",
+        "backend/src/security/authority/enforce.ts#verifyClaim"
+      ],
+      "testCoverage": [
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts",
+        "backend/src/security/authority/enforce.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:4420417c91a5ad2fac21",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/security/authority/risk.ts",
+      "sha256": "586e4d5b920c5a5e29f59fdae7ac692d921adafc55f3fbd86eb9555e09128706",
+      "symbols": [
+        "ACTION_POLICIES",
+        "businessActionClass",
+        "name"
+      ],
+      "imports": [
+        "./types.js"
+      ],
+      "runtimeImports": [
+        "backend/src/security/authority/types.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/security/authority/enforce.test.ts:7",
+        "backend/src/security/authority/enforce.ts:3",
+        "backend/src/services/integrations/businessAction.ts:6"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/security/authority/enforce.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:04ec5143f1c2240bf59f",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/security/authority/types.ts",
+      "sha256": "d49729cfc2819065938a9c6df6a6dfa3c033c63bf4d9b5f5f1a7d1a39222318b",
+      "symbols": [
+        "ACTION_CLASSES",
+        "ActionClass",
+        "AuthorityDispatchBinding",
+        "AuthorityPermit",
+        "DurableAuthorityClaim",
+        "PreparedAuthorityScope"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/security/authority/enforce.test.ts:6",
+        "backend/src/security/authority/risk.ts:1"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [
+        "backend/src/security/authority/types.ts#AuthorityDispatchBinding",
+        "backend/src/security/authority/types.ts#AuthorityPermit",
+        "backend/src/security/authority/types.ts#DurableAuthorityClaim",
+        "backend/src/security/authority/types.ts#PreparedAuthorityScope"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/security/authority/enforce.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:a4155784ae7c0ed40bf5",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/boundedPublicGet.ts",
@@ -21406,6 +21650,7 @@
         "backend/src/ai/runStore.ts:11",
         "backend/src/ai/universal/resumeProjectContext.test.ts:6",
         "backend/src/ai/usageAccounting.test.ts:4",
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts:10",
         "backend/src/middleware/admin.test.ts:7",
         "backend/src/middleware/admin.ts:3",
         "backend/src/middleware/auth.ts:4",
@@ -21414,6 +21659,7 @@
         "backend/src/routes/github.ts:5",
         "backend/src/routes/messageShares.ts:5",
         "backend/src/routes/notifications.ts:3",
+        "backend/src/routes/phase1.ts:1",
         "backend/src/routes/profile.deletionIdentity.test.ts:7",
         "backend/src/routes/profile.ts:4",
         "backend/src/routes/projectRuntime.ts:8",
@@ -21430,9 +21676,13 @@
         "backend/src/routes/terminalSessions.failure.test.ts:6",
         "backend/src/routes/terminalSessions.ts:16",
         "backend/src/routes/vercel.ts:4",
+        "backend/src/security/authority/enforce.test.ts:3",
+        "backend/src/security/authority/enforce.ts:1",
         "backend/src/security/budgetOwner.local.integration.ts:8",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts:10",
         "backend/src/security/buildProjectReceipt.local.integration.ts:6",
+        "backend/src/security/businessAuthority.local.integration.ts:7",
+        "backend/src/security/confirmationMetadata.local.integration.ts:4",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:9",
         "backend/src/security/legacyBuildHistory.local.integration.ts:9",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:6",
@@ -21458,6 +21708,8 @@
         "backend/src/services/BillingService.budget.test.ts:5",
         "backend/src/services/ensureUserRecords.receipt.test.ts:5",
         "backend/src/services/ensureUserRecords.ts:4",
+        "backend/src/services/integrations/businessActionConfirmations.claim.test.ts:5",
+        "backend/src/services/integrations/businessActionConfirmations.ts:3",
         "backend/src/services/integrations/githubTokenStore.ts:4",
         "backend/src/services/integrations/githubTokenStore.writerContext.test.ts:4",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:8",
@@ -21523,6 +21775,7 @@
         "backend/src/ai/routingOutcomes.receipt.test.ts",
         "backend/src/ai/universal/resumeProjectContext.test.ts",
         "backend/src/ai/usageAccounting.test.ts",
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/middleware/admin.test.ts",
         "backend/src/routes/admin.test.ts",
         "backend/src/routes/github.oauth.test.ts",
@@ -21534,9 +21787,12 @@
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
         "backend/src/routes/supabaseOAuth.disconnect.test.ts",
         "backend/src/routes/terminalSessions.failure.test.ts",
+        "backend/src/security/authority/enforce.test.ts",
         "backend/src/security/budgetOwner.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
+        "backend/src/security/businessAuthority.local.integration.ts",
+        "backend/src/security/confirmationMetadata.local.integration.ts",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts",
         "backend/src/security/legacyBuildHistory.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
@@ -21558,6 +21814,7 @@
         "backend/src/security/workerProjectAdmission.test.ts",
         "backend/src/services/BillingService.budget.test.ts",
         "backend/src/services/ensureUserRecords.receipt.test.ts",
+        "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
         "backend/src/services/integrations/githubTokenStore.writerContext.test.ts",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -21913,7 +22170,7 @@
       "id": "surface:5a05332cd3011b3aa919",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "0c2480b8fae9641148fceddd40e111d2d62d579cadd3cb5697e2853fd8ef24a2",
+      "sha256": "340e2fdc37ccbfcbd800825356402d408a898a5d7da8bfa6d23695c297fbab08",
       "symbols": [
         "ActionToolChoice",
         "BusinessActionAuthorization",
@@ -21926,12 +22183,17 @@
         "MAX_SCHEMA_CHARS",
         "MAX_TOOL_CANDIDATES",
         "MAX_USE_CASE_LENGTH",
+        "account",
+        "accountId",
         "actionCandidates",
         "actionPlanDigest",
+        "admitted",
         "allowedSlugs",
         "args",
+        "binding",
         "boundedResult",
         "buildCandidatePayload",
+        "businessActionAuthorityScope",
         "candidate",
         "candidateToolkits",
         "candidates",
@@ -21952,8 +22214,9 @@
         "execution",
         "explicit",
         "haystack",
-        "highRiskNow",
         "isPlainRecord",
+        "issuedAt",
+        "legacyOrder",
         "messages",
         "modelId",
         "names",
@@ -21967,6 +22230,7 @@
         "risk",
         "routes",
         "schemaForModel",
+        "scope",
         "selectActionToolAndArguments",
         "selected",
         "selection",
@@ -21984,6 +22248,7 @@
         "useCase",
         "user",
         "userExplicitlyNamedToolkit",
+        "valid",
         "validateArguments",
         "verifyPlanDigest"
       ],
@@ -21993,6 +22258,10 @@
         "../../ai/postCompletionAccounting.js",
         "../../ai/providerBudget.js",
         "../../ai/universal/semanticRequestPlanner.js",
+        "../../security/authority/digest.js",
+        "../../security/authority/enforce.js",
+        "../../security/authority/risk.js",
+        "../../security/authority/types.js",
         "./composioClient.js",
         "./pluginPermissionPolicy.js",
         "node:crypto"
@@ -22003,6 +22272,9 @@
         "backend/src/ai/postCompletionAccounting.ts",
         "backend/src/ai/providerBudget.ts",
         "backend/src/ai/universal/semanticRequestPlanner.ts",
+        "backend/src/security/authority/digest.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/authority/risk.ts",
         "backend/src/services/integrations/composioClient.ts",
         "backend/src/services/integrations/pluginPermissionPolicy.ts"
       ],
@@ -22011,10 +22283,12 @@
       ],
       "callers": [
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:9",
-        "backend/src/routes/phase1.ts:63",
-        "backend/src/security/confirmationMetadata.local.integration.ts:6",
+        "backend/src/routes/phase1.ts:64",
+        "backend/src/security/authority/digest.test.ts:5",
+        "backend/src/security/businessAuthority.local.integration.ts:9",
+        "backend/src/security/confirmationMetadata.local.integration.ts:7",
         "backend/src/services/integrations/businessAction.digest.test.ts:4",
-        "backend/src/services/integrations/businessActionConfirmations.ts:12"
+        "backend/src/services/integrations/businessActionConfirmations.ts:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -22022,7 +22296,12 @@
         "node:crypto"
       ],
       "authBoundary": [
+        "backend/src/services/integrations/businessAction.ts#AuthorityPermit",
         "backend/src/services/integrations/businessAction.ts#BusinessActionAuthorization",
+        "backend/src/services/integrations/businessAction.ts#PreparedAuthorityScope",
+        "backend/src/services/integrations/businessAction.ts#assertAuthorityPermit",
+        "backend/src/services/integrations/businessAction.ts#businessActionAuthorityScope",
+        "backend/src/services/integrations/businessAction.ts#canonicalAuthorityValue",
         "backend/src/services/integrations/businessAction.ts#getUserPluginPermissionMode",
         "backend/src/services/integrations/businessAction.ts#permissionMode"
       ],
@@ -22033,6 +22312,7 @@
         "backend/src/services/integrations/businessAction.ts#confirmationPlan",
         "backend/src/services/integrations/businessAction.ts#getUserPluginPermissionMode",
         "backend/src/services/integrations/businessAction.ts#permissionMode",
+        "backend/src/services/integrations/businessAction.ts#preparedActionDigest",
         "backend/src/services/integrations/businessAction.ts#requiresConfirmation",
         "backend/src/services/integrations/businessAction.ts#verifyPlanDigest"
       ],
@@ -22044,6 +22324,8 @@
       ],
       "testCoverage": [
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
+        "backend/src/security/authority/digest.test.ts",
+        "backend/src/security/businessAuthority.local.integration.ts",
         "backend/src/security/confirmationMetadata.local.integration.ts",
         "backend/src/services/integrations/businessAction.digest.test.ts"
       ],
@@ -22058,7 +22340,7 @@
       "id": "surface:0315124fb31feefa3fcb",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sha256": "32229709ed4da07e64bd576390678e34900d0165e98ad458d55c19c12f6dba99",
+      "sha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
       "symbols": [
         "CONFIRMATION_TTL_MS",
         "ConfirmationRow",
@@ -22066,6 +22348,8 @@
         "SafeBusinessActionConfirmation",
         "UUID_PATTERN",
         "cancelBusinessActionConfirmation",
+        "cancelClaimedBusinessActionConfirmation",
+        "claim",
         "claimedRow",
         "clean",
         "cleanConfirmationId",
@@ -22084,12 +22368,17 @@
         "id",
         "isBusinessActionPlan",
         "isPlainRecord",
+        "plan",
         "risk",
         "row",
-        "safeConfirmation"
+        "safeConfirmation",
+        "scope"
       ],
       "imports": [
         "../../config/supabase.js",
+        "../../security/authority/digest.js",
+        "../../security/authority/enforce.js",
+        "../../security/tenantContext.js",
         "./businessAction.js",
         "./composioClient.js",
         "@supabase/supabase-js",
@@ -22097,6 +22386,9 @@
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
+        "backend/src/security/authority/digest.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/businessAction.ts",
         "backend/src/services/integrations/composioClient.ts"
       ],
@@ -22104,8 +22396,9 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/phase1.ts:74",
-        "backend/src/security/confirmationMetadata.local.integration.ts:5",
+        "backend/src/routes/phase1.ts:75",
+        "backend/src/security/businessAuthority.local.integration.ts:8",
+        "backend/src/security/confirmationMetadata.local.integration.ts:6",
         "backend/src/services/integrations/businessAction.digest.test.ts:5",
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts:4"
       ],
@@ -22117,12 +22410,15 @@
         "@supabase/supabase-js",
         "node:util"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/services/integrations/businessActionConfirmations.ts#businessActionAuthorityScope",
+        "backend/src/services/integrations/businessActionConfirmations.ts#executeAuthorizedAction"
+      ],
       "tenantBoundary": [
-        "backend/src/services/integrations/businessActionConfirmations.ts:231 (user_id)",
-        "backend/src/services/integrations/businessActionConfirmations.ts:390 (user_id)",
-        "backend/src/services/integrations/businessActionConfirmations.ts:470 (user_id)",
-        "backend/src/services/integrations/businessActionConfirmations.ts:581 (user_id)"
+        "backend/src/services/integrations/businessActionConfirmations.ts:235 (user_id)",
+        "backend/src/services/integrations/businessActionConfirmations.ts:398 (user_id)",
+        "backend/src/services/integrations/businessActionConfirmations.ts:479 (user_id)",
+        "backend/src/services/integrations/businessActionConfirmations.ts:577 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/integrations/businessActionConfirmations.ts#CONFIRMATION_TTL_MS",
@@ -22130,11 +22426,14 @@
         "backend/src/services/integrations/businessActionConfirmations.ts#ConfirmationStatus",
         "backend/src/services/integrations/businessActionConfirmations.ts#SafeBusinessActionConfirmation",
         "backend/src/services/integrations/businessActionConfirmations.ts#cancelBusinessActionConfirmation",
+        "backend/src/services/integrations/businessActionConfirmations.ts#cancelClaimedBusinessActionConfirmation",
         "backend/src/services/integrations/businessActionConfirmations.ts#cleanConfirmationId",
         "backend/src/services/integrations/businessActionConfirmations.ts#confirmBusinessAction",
         "backend/src/services/integrations/businessActionConfirmations.ts#createBusinessActionConfirmation",
+        "backend/src/services/integrations/businessActionConfirmations.ts#executeAuthorizedAction",
         "backend/src/services/integrations/businessActionConfirmations.ts#finishClaimedConfirmation",
         "backend/src/services/integrations/businessActionConfirmations.ts#getBusinessActionConfirmation",
+        "backend/src/services/integrations/businessActionConfirmations.ts#preparedActionDigest",
         "backend/src/services/integrations/businessActionConfirmations.ts#safeConfirmation",
         "backend/src/services/integrations/businessActionConfirmations.ts#verifyPlanDigest"
       ],
@@ -22143,6 +22442,7 @@
         "backend/src/services/integrations/businessActionConfirmations.ts#verifyPlanDigest"
       ],
       "testCoverage": [
+        "backend/src/security/businessAuthority.local.integration.ts",
         "backend/src/security/confirmationMetadata.local.integration.ts",
         "backend/src/services/integrations/businessAction.digest.test.ts",
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts"
@@ -22242,7 +22542,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/phase1.ts:59"
+        "backend/src/routes/phase1.ts:60"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -22269,7 +22569,7 @@
       "id": "surface:8c25c7e0b5b0dd66676d",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "787b311feb9cde06f97c1ee90093e51b0b734b1e3ea555d14033366a0f422d2e",
+      "sha256": "27ef6189380cf137725edf6d87f0196e36464a241d759ce85372a6669f4b2575",
       "symbols": [
         "COMPOSIO_API_BASE",
         "COMPOSIO_CACHE_TTL_MS",
@@ -22326,11 +22626,16 @@
         "XrogaCustomMcpAuthMode",
         "XrogaCustomMcpCreateInput",
         "XrogaCustomMcpSyncResult",
+        "account",
+        "accountId",
+        "accounts",
+        "actualBinding",
         "allowed",
         "allowedTool",
         "assertComposioSession",
         "assertReadOnlyComposioSession",
         "authScheme",
+        "binding",
         "body",
         "cacheKey",
         "cached",
@@ -22453,20 +22758,26 @@
         "xrogaCustomUserToken"
       ],
       "imports": [
+        "../../security/authority/digest.js",
+        "../../security/authority/enforce.js",
+        "../../security/authority/types.js",
         "node:crypto"
       ],
-      "runtimeImports": [],
+      "runtimeImports": [
+        "backend/src/security/authority/digest.ts",
+        "backend/src/security/authority/enforce.ts"
+      ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/capabilities/modules/businessAction.ts:6",
         "backend/src/capabilities/modules/businessRead.ts:6",
-        "backend/src/e2e/xrogaGoldenJourneys.test.ts:10",
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts:13",
         "backend/src/routes/integrations.ts:40",
-        "backend/src/routes/phase1.ts:68",
-        "backend/src/services/integrations/businessAction.ts:28",
-        "backend/src/services/integrations/businessActionConfirmations.ts:7",
+        "backend/src/routes/phase1.ts:69",
+        "backend/src/services/integrations/businessAction.ts:33",
+        "backend/src/services/integrations/businessActionConfirmations.ts:10",
         "backend/src/services/integrations/businessRead.ts:24",
         "frontend/src/lib/customMcp.test.ts:6",
         "frontend/src/lib/pluginInstalledPermissions.test.ts:6"
@@ -22478,11 +22789,18 @@
         "node:crypto"
       ],
       "authBoundary": [
+        "backend/src/services/integrations/composioClient.ts#AuthorityDispatchBinding",
+        "backend/src/services/integrations/composioClient.ts#AuthorityPermit",
         "backend/src/services/integrations/composioClient.ts#XrogaCustomMcpAuthMode",
-        "backend/src/services/integrations/composioClient.ts#authScheme"
+        "backend/src/services/integrations/composioClient.ts#assertAuthorityPermit",
+        "backend/src/services/integrations/composioClient.ts#authScheme",
+        "backend/src/services/integrations/composioClient.ts#canonicalAuthorityValue",
+        "backend/src/services/integrations/composioClient.ts#consumeAuthorityPermit"
       ],
       "tenantBoundary": [],
-      "approvalBoundary": [],
+      "approvalBoundary": [
+        "backend/src/services/integrations/composioClient.ts#preparedActionDigest"
+      ],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
@@ -23252,7 +23570,7 @@
         "backend/src/routes/github.ts:558",
         "backend/src/routes/github.ts:626",
         "backend/src/routes/integrations.ts:36",
-        "backend/src/routes/phase1.ts:41",
+        "backend/src/routes/phase1.ts:42",
         "backend/src/routes/supabaseOAuth.ts:39",
         "backend/src/routes/vercel.ts:22",
         "backend/src/security/githubConsumer.local.integration.ts:9",
@@ -23783,8 +24101,8 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:906",
-        "backend/src/services/integrations/businessAction.ts:39",
+        "backend/src/security/tenantIsolation.local.integration.ts:908",
+        "backend/src/services/integrations/businessAction.ts:44",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
       "reachable": true,
@@ -85555,7 +85873,8 @@
       "callers": [
         "scripts/ci/prepare-pr-integration.mjs:7",
         "scripts/ci/prepare-pr-integration.test.mjs:5",
-        "scripts/security/audit-tenant-policies.test.mjs:3"
+        "scripts/security/audit-tenant-policies.test.mjs:3",
+        "scripts/security/refresh-phase-three-authority-delta.mjs:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -86060,6 +86379,77 @@
       "testCoverage": [
         "scripts/security/staging-preflight.test.mjs"
       ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:052e49f08f69e1d17b86",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/refresh-phase-three-authority-delta.mjs",
+      "sha256": "6c1e7d01bdfea927a939ee18d9abca705d9c1af040fc36aba3d21d1cb5d240f3",
+      "symbols": [
+        "accepted",
+        "after",
+        "before",
+        "call",
+        "changed",
+        "current",
+        "decisions",
+        "decisionsPath",
+        "digestPath",
+        "hash",
+        "historical",
+        "index",
+        "newCalls",
+        "next",
+        "note",
+        "old",
+        "oldDecision",
+        "original",
+        "originalDecisions",
+        "outputs",
+        "path",
+        "paths",
+        "peers",
+        "pureCalls",
+        "read",
+        "registryPath",
+        "remappings",
+        "sourceHashes",
+        "text"
+      ],
+      "imports": [
+        "./audit-tenant-policies.mjs",
+        "node:assert/strict",
+        "node:child_process",
+        "node:crypto",
+        "node:fs"
+      ],
+      "runtimeImports": [
+        "scripts/security/audit-tenant-policies.mjs"
+      ],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:assert/strict",
+        "node:child_process",
+        "node:crypto",
+        "node:fs"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "scripts/security/refresh-phase-three-authority-delta.mjs#digestPath"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
       "state": "DEAD_OR_UNREACHABLE",
       "confidence": "LOW",
       "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
@@ -90859,9 +91249,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:e18e618b1bfb46d82f5d",
+      "id": "registration:e7c218a771966e6a7048",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 388,
+      "line": 389,
       "receiver": "router",
       "method": "post",
       "path": "/plan",
@@ -90871,9 +91261,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b004a55c0c87c4592dda",
+      "id": "registration:de4df39e2212570c7c64",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 618,
+      "line": 619,
       "receiver": "router",
       "method": "post",
       "path": "/chat",
@@ -90883,9 +91273,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:34b8e86d6fa707c55cdb",
+      "id": "registration:ed94b59516f5e67ca1cf",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1649,
+      "line": 1650,
       "receiver": "router",
       "method": "post",
       "path": "/business-apps/:toolkit/connect-link",
@@ -90895,9 +91285,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:66fc62756219ef4bf4df",
+      "id": "registration:67aa0d3cba8dc1ed19ad",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1779,
+      "line": 1780,
       "receiver": "router",
       "method": "get",
       "path": "/business-actions/confirmations/:id",
@@ -90907,9 +91297,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:0550ce337dc5b8b17e6e",
+      "id": "registration:ad440bf359f1bae217d3",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1845,
+      "line": 1846,
       "receiver": "router",
       "method": "post",
       "path": "/business-actions/confirmations/:id/confirm",
@@ -90919,9 +91309,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:5f4e19393cf690dc662e",
+      "id": "registration:87434c776f024ba2ee6d",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1922,
+      "line": 1923,
       "receiver": "router",
       "method": "post",
       "path": "/business-actions/confirmations/:id/cancel",
@@ -90931,9 +91321,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a4bba6047095ef8271dc",
+      "id": "registration:6611e5fa6bf3e289801a",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1992,
+      "line": 1993,
       "receiver": "router",
       "method": "get",
       "path": "/usage",
@@ -90943,9 +91333,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:3ce1d0e7496798893422",
+      "id": "registration:5a48abd8b30bd2fb98d0",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2063,
+      "line": 2064,
       "receiver": "router",
       "method": "get",
       "path": "/economics",
@@ -90955,9 +91345,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:2ec67277eeefc33d4581",
+      "id": "registration:898b1b9d0d84c9bb7d19",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2122,
+      "line": 2123,
       "receiver": "router",
       "method": "post",
       "path": "/emergency-tokens",
@@ -90967,9 +91357,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:caeb746faf553b20405b",
+      "id": "registration:6b3e7a1e87d27a711950",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2147,
+      "line": 2148,
       "receiver": "router",
       "method": "get",
       "path": "/health",
@@ -90979,9 +91369,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:6b1a3880852d6c2b1c53",
+      "id": "registration:966086b69e7db48ceb8b",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2169,
+      "line": 2170,
       "receiver": "router",
       "method": "get",
       "path": "/quota-check",
@@ -92258,10 +92648,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:683e25c48b803ff66e9f",
-      "registrationId": "registration:e18e618b1bfb46d82f5d",
+      "id": "route:821e03d293f47f978c9d",
+      "registrationId": "registration:e7c218a771966e6a7048",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 388,
+      "line": 389,
       "method": "POST",
       "path": "/api/phase1/plan",
       "mountChain": [
@@ -92275,10 +92665,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:606144ecf806c8714612",
-      "registrationId": "registration:b004a55c0c87c4592dda",
+      "id": "route:04d2c34565c6d0696259",
+      "registrationId": "registration:de4df39e2212570c7c64",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 618,
+      "line": 619,
       "method": "POST",
       "path": "/api/phase1/chat",
       "mountChain": [
@@ -92292,10 +92682,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:66468bece8e6ab21fa4d",
-      "registrationId": "registration:34b8e86d6fa707c55cdb",
+      "id": "route:f8a09152c034c2ab7f37",
+      "registrationId": "registration:ed94b59516f5e67ca1cf",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1649,
+      "line": 1650,
       "method": "POST",
       "path": "/api/phase1/business-apps/:toolkit/connect-link",
       "mountChain": [
@@ -92309,10 +92699,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:abfcd3ee3af7d1fdc1a9",
-      "registrationId": "registration:66fc62756219ef4bf4df",
+      "id": "route:dcb23b8b7a54aa8184b0",
+      "registrationId": "registration:67aa0d3cba8dc1ed19ad",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1779,
+      "line": 1780,
       "method": "GET",
       "path": "/api/phase1/business-actions/confirmations/:id",
       "mountChain": [
@@ -92326,10 +92716,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:5349513ea25114305607",
-      "registrationId": "registration:0550ce337dc5b8b17e6e",
+      "id": "route:1d2a26444d9114ba2d7e",
+      "registrationId": "registration:ad440bf359f1bae217d3",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1845,
+      "line": 1846,
       "method": "POST",
       "path": "/api/phase1/business-actions/confirmations/:id/confirm",
       "mountChain": [
@@ -92343,10 +92733,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:c46bf2eb2958b8286544",
-      "registrationId": "registration:5f4e19393cf690dc662e",
+      "id": "route:9e3f86eec6f0d355377a",
+      "registrationId": "registration:87434c776f024ba2ee6d",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1922,
+      "line": 1923,
       "method": "POST",
       "path": "/api/phase1/business-actions/confirmations/:id/cancel",
       "mountChain": [
@@ -92360,10 +92750,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:fc2a249833b12af7504e",
-      "registrationId": "registration:a4bba6047095ef8271dc",
+      "id": "route:9bda3c51b12c0808160d",
+      "registrationId": "registration:6611e5fa6bf3e289801a",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1992,
+      "line": 1993,
       "method": "GET",
       "path": "/api/phase1/usage",
       "mountChain": [
@@ -92377,10 +92767,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:ea93efd8386ec7d9dd99",
-      "registrationId": "registration:3ce1d0e7496798893422",
+      "id": "route:073d5e84697c37f7dc39",
+      "registrationId": "registration:5a48abd8b30bd2fb98d0",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2063,
+      "line": 2064,
       "method": "GET",
       "path": "/api/phase1/economics",
       "mountChain": [
@@ -92394,10 +92784,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:f17700158ca6b16f4b7a",
-      "registrationId": "registration:2ec67277eeefc33d4581",
+      "id": "route:14a36b9859a5ba3aa012",
+      "registrationId": "registration:898b1b9d0d84c9bb7d19",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2122,
+      "line": 2123,
       "method": "POST",
       "path": "/api/phase1/emergency-tokens",
       "mountChain": [
@@ -92411,10 +92801,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:f24d047ac532748a0f3e",
-      "registrationId": "registration:caeb746faf553b20405b",
+      "id": "route:9121f98953d497206dd2",
+      "registrationId": "registration:6b3e7a1e87d27a711950",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2147,
+      "line": 2148,
       "method": "GET",
       "path": "/api/phase1/health",
       "mountChain": [
@@ -92428,10 +92818,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:706bf08c5ac596267b3e",
-      "registrationId": "registration:6b1a3880852d6c2b1c53",
+      "id": "route:9c69f0d8c26fe52860ba",
+      "registrationId": "registration:966086b69e7db48ceb8b",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2169,
+      "line": 2170,
       "method": "GET",
       "path": "/api/phase1/quota-check",
       "mountChain": [
@@ -96768,6 +97158,13 @@
       "version": "20261020000200",
       "order": 129,
       "sha256": "35e5b6105d96f41af0530a903b2f41e6381a6fa542f0135375d58d281e6934e1"
+    },
+    {
+      "id": "migration:b8925f88ed3fe6a34414",
+      "sourcePath": "supabase/migrations/20261020000300_business_authority_dispatch.sql",
+      "version": "20261020000300",
+      "order": 130,
+      "sha256": "c0aa023e00874d3879a7e369d9b61b4f24406ef47a1939495437a97ceed218df"
     }
   ],
   "workflows": [
@@ -104252,7 +104649,7 @@
     {
       "id": "test-suite:c9e64862eb7c7cfedf8a",
       "sourcePath": "backend/src/e2e/xrogaGoldenJourneys.test.ts",
-      "declaredTests": 12,
+      "declaredTests": 14,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -105015,6 +105412,20 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:55c76482253f27e1e356",
+      "sourcePath": "backend/src/security/authority/digest.test.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:8666904258a97bbb061b",
+      "sourcePath": "backend/src/security/authority/enforce.test.ts",
+      "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:a81f16421b56a04b9ee6",
       "sourcePath": "backend/src/security/boundedPublicGet.test.ts",
       "declaredTests": 8,
@@ -105039,6 +105450,13 @@
       "id": "test-suite:5eda967fa924a1bcc3d2",
       "sourcePath": "backend/src/security/buildProjectReceipt.local.integration.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:ff60823f7f76c6f023f2",
+      "sourcePath": "backend/src/security/businessAuthority.local.integration.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -107918,6 +108336,13 @@
       "id": "test-suite:aaf0b06791fa8cdc2a69",
       "sourcePath": "scripts/xroga/phase-one.test.mjs",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:dcfe2520b7d3f88953d5",
+      "sourcePath": "scripts/xroga/phase-two-handoff.test.mjs",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

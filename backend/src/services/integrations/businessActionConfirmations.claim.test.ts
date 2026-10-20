@@ -2,9 +2,11 @@ import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { test } from 'node:test';
 import { confirmBusinessAction } from './businessActionConfirmations.js';
+import { createTenantContext } from '../../security/tenantContext.js';
 
 test('confirmation claims bind owner, reviewed digest and expiry and admit one concurrent claimant', async () => {
   const userId = '11111111-1111-4111-8111-111111111111';
+  const context = createTenantContext({ userId, via: 'remote_getuser' });
   const id = '22222222-2222-4222-8222-222222222222';
   const digest = 'a'.repeat(64);
   // Deliberately invalid canonical digest stops the admitted fixture before any provider request.
@@ -69,27 +71,27 @@ test('confirmation claims bind owner, reviewed digest and expiry and admit one c
     process.env.SUPABASE_URL = `http://127.0.0.1:${address.port}`;
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-loopback-only';
     mode = 'misleading-read';
-    await assert.rejects(confirmBusinessAction(userId, id), { code: 'BUSINESS_ACTION_CONFIRMATION_INVALID' });
+    await assert.rejects(confirmBusinessAction(context, id), { code: 'BUSINESS_ACTION_CONFIRMATION_INVALID' });
     assert.equal(claims, 0, 'Misleading display metadata must be refused before claiming');
     for (mode of ['changed', 'expired']) {
-      await assert.rejects(confirmBusinessAction(userId, id), { code: 'BUSINESS_ACTION_CONFIRMATION_ALREADY_USED' });
+      await assert.rejects(confirmBusinessAction(context, id), { code: 'BUSINESS_ACTION_CONFIRMATION_ALREADY_USED' });
     }
     mode = 'outage';
-    await assert.rejects(confirmBusinessAction(userId, id), { code: 'BUSINESS_ACTION_CONFIRMATION_STORE_UNAVAILABLE' });
+    await assert.rejects(confirmBusinessAction(context, id), { code: 'BUSINESS_ACTION_CONFIRMATION_STORE_UNAVAILABLE' });
     mode = 'bad-receipt';
-    await assert.rejects(confirmBusinessAction(userId, id), { code: 'BUSINESS_ACTION_CONFIRMATION_INVALID' });
+    await assert.rejects(confirmBusinessAction(context, id), { code: 'BUSINESS_ACTION_CONFIRMATION_INVALID' });
     mode = 'misleading-claim';
     admitted = false;
-    await assert.rejects(confirmBusinessAction(userId, id), { code: 'BUSINESS_ACTION_CONFIRMATION_INVALID' });
+    await assert.rejects(confirmBusinessAction(context, id), { code: 'BUSINESS_ACTION_CONFIRMATION_INVALID' });
     mode = 'concurrent';
     admitted = false;
-    const outcomes = await Promise.allSettled([confirmBusinessAction(userId, id), confirmBusinessAction(userId, id)]);
+    const outcomes = await Promise.allSettled([confirmBusinessAction(context, id), confirmBusinessAction(context, id)]);
     const codes = outcomes.map(outcome => outcome.status === 'rejected' ? outcome.reason.code : 'UNEXPECTED_SUCCESS').sort();
     assert.deepEqual(codes, ['BUSINESS_ACTION_CONFIRMATION_ALREADY_USED', 'BUSINESS_ACTION_PLAN_CHANGED']);
     assert.equal(claims, 7);
     for(mode of ['finish-outage','finish-substituted','finish-absent','finish-wrong-plan']){
       admitted=false;
-      await assert.rejects(confirmBusinessAction(userId,id),{code:'BUSINESS_ACTION_CONFIRMATION_FINALIZE_FAILED',status:503});
+      await assert.rejects(confirmBusinessAction(context,id),{code:'BUSINESS_ACTION_CONFIRMATION_FINALIZE_FAILED',status:503});
     }
     assert.equal(claims,11);assert.equal(finishes,5,'one failure recording attempt per admitted invalid-digest execution, no provider retry');
   } finally {

@@ -1,0 +1,169 @@
+{
+  "version": "1.0",
+  "missionId": "XB01-P3",
+  "baseSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+  "requirementIds": [
+    "XB01-C008",
+    "XB01-C009"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "high",
+  "scope": "Founder-authorized Phase3 only, original Command008 and009, all22 criteria unchanged. Preserve accepted Phase2 source and proof. No Phase4 implementation or production authorization.",
+  "changedFiles": [
+    "backend/src/e2e/xrogaGoldenJourneys.test.ts",
+    "backend/src/operations/operationsEngine.ts",
+    "backend/src/routes/phase1.ts",
+    "backend/src/security/authority/digest.test.ts",
+    "backend/src/security/authority/digest.ts",
+    "backend/src/security/authority/enforce.test.ts",
+    "backend/src/security/authority/enforce.ts",
+    "backend/src/security/authority/risk.ts",
+    "backend/src/security/authority/types.ts",
+    "backend/src/security/businessAuthority.local.integration.ts",
+    "backend/src/security/confirmationMetadata.local.integration.ts",
+    "backend/src/security/tenantIsolation.local.integration.ts",
+    "backend/src/services/integrations/businessAction.ts",
+    "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+    "backend/src/services/integrations/businessActionConfirmations.ts",
+    "backend/src/services/integrations/composioClient.ts",
+    "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
+    "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
+    "docs/xroga/batch-1/phases/PHASE-3-FROZEN-WORKLIST.json",
+    "docs/xroga/batch-1/phases/phase-3/CODEX_START_HERE.md",
+    "docs/xroga/batch-1/phases/phase-3/PHASE-3-ACCEPTANCE-GATES.md",
+    "docs/xroga/batch-1/phases/phase-3/PHASE-3-ACCEPTANCE-REPORT-TEMPLATE.md",
+    "docs/xroga/batch-1/phases/phase-3/PHASE-3-CODE-HOTSPOTS.md",
+    "docs/xroga/batch-1/phases/phase-3/PHASE-3-CRITERIA-MATRIX.csv",
+    "docs/xroga/batch-1/phases/phase-3/PHASE-3-ENGINEERING-PLAYBOOK.md",
+    "docs/xroga/batch-1/phases/phase-3/PHASE-3-EXECUTION-STATE.md",
+    "docs/xroga/batch-1/phases/phase-3/PHASE-3-EXECUTION-WORKLIST.json",
+    "docs/xroga/batch-1/phases/phase-3/PHASE-3-SETUP-AND-DEPENDENCIES.md",
+    "docs/xroga/batch-1/phases/phase-3/PHASE-3-TEST-MATRIX.csv",
+    "docs/xroga/batch-1/phases/phase-3/README_INSTALL.md",
+    "docs/xroga/batch-1/phases/phase-3/validate_phase3_preflight.py",
+    "docs/xroga/blockers.md",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/missions/batch-1-phase-3.json",
+    "docs/xroga/requirements-ledger.json",
+    "docs/xroga/requirements-ledger.md",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/research/source-reconciliation.md",
+    "docs/xroga/runtime-contract.md",
+    "docs/xroga/secret-inventory.md",
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/phase-three-authority-delta.json",
+    "docs/xroga/security/privileged-callers.json",
+    "docs/xroga/security/rls-audit.md",
+    "scripts/security/refresh-phase-three-authority-delta.mjs",
+    "scripts/xroga/phase-two-handoff.test.mjs",
+    "supabase/migrations/20261020000300_business_authority_dispatch.sql"
+  ],
+  "decisions": {
+    "keep": [
+      "Accepted Phase2 commit, all original criteria, original22 frozen handoff, existing auth, confirmations, Operations, budget, OAuth revision and PKCE architecture"
+    ],
+    "extend": [
+      "Strict canonical payloads and authority over existing durable claims, final exact-account provider dispatch admission, targeted concurrency proof"
+    ],
+    "replace": [
+      "Authorization booleans and full_access preference as permission to dispatch business writes"
+    ],
+    "deprecate": [
+      "Legacy unbound pending plans as executable authority, while preserving historical metadata and safe failure receipts"
+    ]
+  },
+  "schemaImpact": {
+    "changed": true,
+    "migrations": [
+      "supabase/migrations/20261020000300_business_authority_dispatch.sql"
+    ],
+    "rollout": "Disposable fresh and upgrade only until separately authorized. Expand existing confirmation table with nullable admission timestamp and service-only locked RPCs.",
+    "rollback": "Revert application changes to accepted source if required. Retain nullable additive column and historical rows. Never erase or reset started effects, approvals or credentials."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "Confirm execution requires the original issued TenantContext. Serialized or cloned actors cannot dispatch."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "Changed confirmation boundary retains owner-filtered reads and exact locked owner/claim. Current-source proof is separate from accepted Phase2 evidence."
+    },
+    "approval": {
+      "changed": true,
+      "description": "Existing durable confirmation becomes the canonical business compatibility adapter. Opaque one-use permits bind exact plan and account. No new approval database."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No live credential operation or custody migration yet. Command009 software and actual production KMS remain incomplete."
+    },
+    "egress": {
+      "changed": true,
+      "description": "Existing Composio action dispatch explicitly selects approved account. No new egress engine or Phase4 implementation. Tests intercept external effects."
+    },
+    "cost": {
+      "changed": true,
+      "description": "Unbound financial authority fails closed. Durable spend reservation and settlement integration remains mandatory, not certified by refusal alone."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No billing upgrade, charge, subscription or live purchase authorized or performed."
+    }
+  },
+  "tests": [
+    {
+      "command": "node --import tsx --test backend/src/security/authority/digest.test.ts backend/src/security/authority/enforce.test.ts",
+      "scope": "Exact canonical JSON, actor provenance, opaque permit, replay, mutation, expiry and revalidation unit tests",
+      "negative": true,
+      "reference": "backend/src/security/authority/enforce.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/e2e/xrogaGoldenJourneys.test.ts",
+      "scope": "Actual adapter calls intercepted, legitimate permit succeeds, boolean and fake permit deny, exact account dispatch and failures. Synthetic provider, not live evidence.",
+      "negative": true,
+      "reference": "backend/src/e2e/xrogaGoldenJourneys.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/security/tenantIsolation.local.integration.ts",
+      "scope": "Pending actual disposable SQL/Auth/HTTP verification including existing regressions and new business authority admission races",
+      "negative": true,
+      "reference": "backend/src/security/businessAuthority.local.integration.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Shared authority wraps existing durable confirmation and later Operations adapters. No second approval table, orchestration loop or replacement engine.",
+    "rfc": null
+  },
+  "rollout": "Draft PR only. No deployment, production migration, merge, DNS change or live external effect.",
+  "rollback": "Reviewable code revert to accepted a21a8202 without rewriting its commit. Leave additive schema compatible and preserve all claim/effect receipts, private data and historical evidence.",
+  "knownGaps": [
+    "Actual disposable and final-source branch/integrated proof pending",
+    "Operations canonical authority adapter and spend accounting not complete",
+    "CredentialVault caller migration, rotation, revocation, browser consent and acceptance not complete",
+    "Production KMS provider and custody unspecified"
+  ],
+  "placeholderClaimsRemaining": [
+    "All22 criteria require authenticated source-bound acceptance. No complete Command008,009 or Phase3 claim."
+  ],
+  "evidenceRefs": [
+    "docs/xroga/batch-1/phases/PHASE-3-FROZEN-WORKLIST.json",
+    "docs/xroga/batch-1/phases/phase-3/PHASE-3-EXECUTION-STATE.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Incomplete original Phase3 software and acceptance requirements",
+      "No production release authorization and no verified managed key custody"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

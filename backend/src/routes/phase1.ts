@@ -1,3 +1,4 @@
+import { requireTenantContext } from '../security/tenantContext.js';
 import {
   Buffer,
 } from 'node:buffer';
@@ -1874,7 +1875,7 @@ router.post(
     try {
       const result =
         await confirmBusinessAction(
-          userId,
+          requireTenantContext(req.tenantContext),
 
           String(
             req.params.id ??

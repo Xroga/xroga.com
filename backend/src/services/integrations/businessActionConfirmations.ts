@@ -1,5 +1,8 @@
 import { isDeepStrictEqual } from 'node:util';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { requireTenantContext, type TenantContext } from '../../security/tenantContext.js';
+import { executeAuthorizedAction } from '../../security/authority/enforce.js';
+import { preparedActionDigest } from '../../security/authority/digest.js';
 import {
   getSupabaseAdmin,
 } from '../../config/supabase.js';
@@ -13,6 +16,7 @@ import {
   executePreparedBusinessAction,
   verifyPlanDigest,
   snapshotBusinessActionPlan,
+  businessActionAuthorityScope,
   type BusinessActionPlan,
   type BusinessActionExecutionOutcome,
 } from './businessAction.js';
@@ -306,7 +310,11 @@ export async function createBusinessActionConfirmation(
   const db =
     getSupabaseAdmin();
 
-  const expiresAt =
+  if (plan.authority && (plan.authority.userId !== userId || plan.authority.tenantId !== userId
+    || !Number.isFinite(Date.parse(plan.authority.expiresAt)) || Date.parse(plan.authority.expiresAt) <= Date.now())) {
+    throw new ComposioClientError('The action approval scope is invalid or expired.', { status: 409, code: 'BUSINESS_ACTION_AUTHORITY_SCOPE_REQUIRED' });
+  }
+  const expiresAt = plan.authority?.expiresAt ??
     new Date(
       Date.now() +
         CONFIRMATION_TTL_MS,
@@ -454,11 +462,12 @@ export async function cancelBusinessActionConfirmation(
     );
 
   if (
-    current.status !==
-    'pending'
+    current.status !== 'pending' && current.status !== 'executing'
   ) {
     return current;
   }
+
+  if (current.status === 'executing') return cancelClaimedBusinessActionConfirmation(userId, id);
 
   const db =
     getSupabaseAdmin();
@@ -467,39 +476,14 @@ export async function cancelBusinessActionConfirmation(
     data,
     error,
   } =
-    await db
-      .from(
-        'business_action_confirmations',
-      )
-      .update(
-        {
-          status:
-            'cancelled',
-
-          completed_at:
-            new Date()
-              .toISOString(),
-        },
-      )
-      .eq(
-        'id',
-        id,
-      )
-      .eq(
-        'user_id',
-        userId,
-      )
-      .eq(
-        'status',
-        'pending',
-      )
-      .select(
-        'id,user_id,status,plan_digest,summary,toolkit,risk,created_at,expires_at,claimed_at,completed_at,failure_code',
-      )
-      .maybeSingle();
+    await db.from('business_action_confirmations')
+      .update({ status: 'cancelled', completed_at: new Date().toISOString() })
+      .eq('id', id).eq('user_id', userId).eq('status', 'pending')
+      .select('id,user_id,status,plan_digest,summary,toolkit,risk,created_at,expires_at,claimed_at,completed_at,failure_code')
+      .maybeSingle<ConfirmationRow>();
 
   if (
-    error
+    error || (data && (data.id !== id || data.user_id !== userId))
   ) {
     throw new ComposioClientError(
       'Xroga could not cancel the pending action.',
@@ -514,16 +498,27 @@ export async function cancelBusinessActionConfirmation(
   if (
     !data
   ) {
-    return getBusinessActionConfirmation(
-      userId,
-      id,
-    );
+    // A concurrent claim may have won the pending CAS. Revoke under the same
+    // lock used for dispatch, unless that external effect has already started.
+    return cancelClaimedBusinessActionConfirmation(userId, id);
   }
 
   return safeConfirmation(
     data as
       ConfirmationRow,
   );
+}
+
+async function cancelClaimedBusinessActionConfirmation(userId: string, id: string): Promise<SafeBusinessActionConfirmation> {
+  const { data, error } = await getSupabaseAdmin().rpc('cancel_business_action_confirmation', {
+    p_owner: userId, p_id: id,
+  }).maybeSingle<ConfirmationRow>();
+  if (error || !data || data.id !== id || data.user_id !== userId) {
+    throw new ComposioClientError('Xroga could not cancel the action.', {
+      status: 503, code: 'BUSINESS_ACTION_CONFIRMATION_STORE_UNAVAILABLE',
+    });
+  }
+  return safeConfirmation(data);
 }
 
 async function finishClaimedConfirmation(
@@ -552,7 +547,7 @@ async function finishClaimedConfirmation(
 }
 
 export async function confirmBusinessAction(
-  userId: string,
+  context: TenantContext,
   confirmationId: string,
 ): Promise<{
   confirmation:
@@ -566,6 +561,7 @@ export async function confirmBusinessAction(
       }
     >;
 }> {
+  const { userId } = requireTenantContext(context);
   const id =
     cleanConfirmationId(
       confirmationId,
@@ -746,13 +742,31 @@ export async function confirmBusinessAction(
   }
 
   try {
-    const execution =
-      await executePreparedBusinessAction(
+    // Validate before any provider metadata request, including malformed legacy
+    // records. The existing claim is the single durable confirmation authority.
+    const plan = snapshotBusinessActionPlan(claimedRow.plan);
+    const scope = businessActionAuthorityScope(plan);
+    if (Date.parse(scope.expiresAt) !== Date.parse(claimedRow.expires_at)) {
+      throw new ComposioClientError('The approval expiry changed.', { status: 409, code: 'BUSINESS_ACTION_AUTHORITY_SCOPE_REQUIRED' });
+    }
+    const claim = { id, userId, scopeDigest: preparedActionDigest(scope), expiresAt: scope.expiresAt, claimedAt: claimedRow.claimed_at! };
+    const execution = await executeAuthorizedAction({ context, scope, claim, revalidateBeforeEffect: async () => {
+      const { data, error } = await db.rpc('authorize_business_action_dispatch', { p_owner: userId, p_expected: claimedRow }).maybeSingle<ConfirmationRow & { effect_started_at: string }>();
+      if (error || !data || data.id !== id || data.user_id !== userId || data.status !== 'executing'
+        || !Number.isFinite(Date.parse(data.effect_started_at))
+        || !['plan','plan_digest','summary','toolkit','risk','created_at','expires_at','claimed_at']
+          .every(key => isDeepStrictEqual(data[key as keyof ConfirmationRow], claimedRow[key as keyof ConfirmationRow]))) {
+        throw new ComposioClientError('The action approval was revoked, expired or changed before dispatch.', {
+          status: 409, code: 'BUSINESS_ACTION_DISPATCH_DENIED',
+        });
+      }
+      return claim;
+    } }, async authorityPermit => executePreparedBusinessAction(
         {
           userId,
 
           plan:
-            claimedRow.plan,
+            plan,
 
           authorization: {
             explicitUserAuthorization:
@@ -761,8 +775,9 @@ export async function confirmBusinessAction(
             confirmedHighRisk:
               true,
           },
+          authorityPermit,
         },
-      );
+      ));
 
     if (
       execution.status !==

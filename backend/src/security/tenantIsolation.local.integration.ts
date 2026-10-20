@@ -65,6 +65,7 @@ import {registerSharedGrowthWriteTests} from '../growth/sharedWriteAdmission.loc
 import {registerOperationsReadMatrixTests} from '../operations/readMatrix.local.integration.js';
 import {registerCredentialReadMatrixTests} from './credentialReadMatrix.local.integration.js';
 import {registerConfirmationMetadataTests} from './confirmationMetadata.local.integration.js';
+import {registerBusinessAuthorityTests} from './businessAuthority.local.integration.js';
 import {registerPlatformHealthTests} from './platformHealth.local.integration.js';
 import {registerFrontendScopeTests} from './frontendScope.local.integration.js';
 import { registerActionCompletionTests } from '../operations/actionCompletion.local.integration.js';
@@ -151,6 +152,7 @@ registerSharedGrowthWriteTests(admin,()=>users);
 registerOperationsReadMatrixTests(admin,()=>users,request);
 registerCredentialReadMatrixTests(admin,request);
 registerConfirmationMetadataTests(admin,()=>users,request);
+registerBusinessAuthorityTests(admin,()=>users);
 registerPlatformHealthTests(admin,()=>users,request);
 registerFrontendScopeTests(admin);
 registerProfileDeletionTests(admin);

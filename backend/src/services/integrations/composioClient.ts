@@ -1,4 +1,7 @@
 import { createHash } from 'node:crypto';
+import { canonicalAuthorityValue, preparedActionDigest } from '../../security/authority/digest.js';
+import { assertAuthorityPermit, consumeAuthorityPermit } from '../../security/authority/enforce.js';
+import type { AuthorityDispatchBinding, AuthorityPermit } from '../../security/authority/types.js';
 
 const COMPOSIO_API_BASE = 'https://backend.composio.dev/api/v3.1';
 
@@ -2415,8 +2418,15 @@ async function executeDiscoveredComposioTool(
     toolSlug: string;
     arguments: Record<string, unknown>;
     mode: XrogaConnectMode;
+    authorityPermit?: AuthorityPermit;
+    authorityBinding?: AuthorityDispatchBinding;
   },
 ): Promise<ComposioExecuteResponse> {
+  // Snapshot before any metadata wait. The actual dispatch must match this
+  // exact payload, not a mutable object still held by its caller.
+  userId = String(userId);
+  input = { ...input, arguments: canonicalAuthorityValue(input.arguments) as Record<string, unknown>,
+    ...(input.authorityBinding ? { authorityBinding: { ...input.authorityBinding } } : {}) };
   const sessionId = cleanSessionId(input.sessionId);
 
   await assertComposioSession(userId, sessionId, input.mode);
@@ -2447,6 +2457,28 @@ async function executeDiscoveredComposioTool(
     );
   }
 
+  let account: string | undefined;
+  if (input.mode === 'action') {
+    const binding = input.authorityBinding;
+    if (!binding || !allowedTool || toolSlug.startsWith('COMPOSIO_')) {
+      throw new ComposioClientError('Exact application authority is required.', { status: 403, code: 'COMPOSIO_ACTION_CONFIRMATION_REQUIRED' });
+    }
+    const toolkit = allowedTool.toolkit.trim().toLowerCase();
+    const actualBinding: AuthorityDispatchBinding = { ...binding, userId, provider: toolkit, operation: toolSlug,
+      targetDigest: preparedActionDigest({ sessionId, useCase: input.useCase, toolSlug, arguments: input.arguments }) };
+    assertAuthorityPermit(input.authorityPermit, actualBinding);
+    const accounts = await listComposioToolkits(userId, { sessionId, mode: 'action', toolkits: [toolkit] });
+    const current = accounts.find(item => item.toolkit.trim().toLowerCase() === toolkit);
+    const accountId = current?.noAuth ? `no-auth:${toolkit}` : current?.connectedAccountId;
+    if (!current?.connected || !accountId || accountId !== binding.connectedAccountId) {
+      throw new ComposioClientError('The connected application account changed. Prepare the action again.', {
+        status: 409, code: 'COMPOSIO_ACTION_ACCOUNT_CHANGED',
+      });
+    }
+    account = current.noAuth ? undefined : accountId;
+    await consumeAuthorityPermit(input.authorityPermit, actualBinding);
+  }
+
   return composioRequest<ComposioExecuteResponse>(
     `/tool_router/session/${encodeURIComponent(sessionId)}/execute`,
     {
@@ -2454,6 +2486,9 @@ async function executeDiscoveredComposioTool(
       body: {
         tool_slug: toolSlug,
         arguments: input.arguments,
+        // Official session execute API selects the exact account using `account`.
+        // https://docs.composio.dev/reference/api-reference/tool-router/postToolRouterSessionBySessionIdExecute
+        ...(account ? { account } : {}),
         enable_auto_workbench_offload: false,
       },
       timeoutMs: EXECUTE_TIMEOUT_MS,
@@ -2499,9 +2534,11 @@ export async function executeComposioActionTool(
     authorization: {
       confirmed: true;
     };
+    authorityPermit?: AuthorityPermit;
+    authorityBinding?: AuthorityDispatchBinding;
   },
 ): Promise<ComposioExecuteResponse> {
-  if (input.authorization.confirmed !== true) {
+  if (input.authorization.confirmed !== true || !input.authorityBinding || !input.authorityPermit) {
     throw new ComposioClientError(
       'Xroga Connect action authorization is required.',
       {
@@ -2511,11 +2548,17 @@ export async function executeComposioActionTool(
     );
   }
 
+  assertAuthorityPermit(input.authorityPermit, { ...input.authorityBinding, userId,
+    operation: input.toolSlug, targetDigest: preparedActionDigest({ sessionId: input.sessionId,
+      useCase: input.useCase, toolSlug: input.toolSlug, arguments: input.arguments }) });
+
   return executeDiscoveredComposioTool(userId, {
     sessionId: input.sessionId,
     useCase: input.useCase,
     toolSlug: input.toolSlug,
     arguments: input.arguments,
     mode: 'action',
+    authorityPermit: input.authorityPermit,
+    authorityBinding: input.authorityBinding,
   });
 }

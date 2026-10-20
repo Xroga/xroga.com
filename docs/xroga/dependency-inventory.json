@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0",
+  "source_sha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -562,6 +562,7 @@
         "backend/src/security/budgetOwner.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
+        "backend/src/security/businessAuthority.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/chatBoundary.local.integration.ts",
@@ -715,6 +716,7 @@
         "backend/src/security/budgetOwner.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
+        "backend/src/security/businessAuthority.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/chatBoundary.local.integration.ts",
@@ -2088,6 +2090,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "backend/src/security/businessAuthority.local.integration.ts",
         "backend/src/security/connectedAccountRoutes.local.integration.ts",
         "backend/src/services/integrations/composioClient.ts"
       ],
@@ -2100,8 +2103,10 @@
       "secret_names": [
         "CI",
         "COMPOSIO_API_KEY",
+        "SUPABASE_ANON_KEY",
         "SUPABASE_URL",
-        "XB01_DISPOSABLE_SUPABASE"
+        "XB01_DISPOSABLE_SUPABASE",
+        "XB01_LOCAL_DATABASE_URL"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -2115,6 +2120,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "backend/src/security/businessAuthority.local.integration.ts",
         "backend/src/security/connectedAccountRoutes.local.integration.ts",
         "backend/src/services/integrations/composioClient.ts"
       ],
@@ -7247,6 +7253,7 @@
         "backend/src/security/budgetOwner.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
+        "backend/src/security/businessAuthority.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/chatBoundary.local.integration.ts",
@@ -7462,6 +7469,7 @@
     {
       "name": "COMPOSIO_API_KEY",
       "consuming_sources": [
+        "backend/src/security/businessAuthority.local.integration.ts",
         "backend/src/security/connectedAccountRoutes.local.integration.ts",
         "backend/src/services/integrations/composioClient.ts"
       ],
@@ -9945,6 +9953,7 @@
         "backend/src/security/budgetOwner.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
+        "backend/src/security/businessAuthority.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/credentialReadMatrix.local.integration.ts",
@@ -9994,6 +10003,7 @@
         "endpoint-api-github-com",
         "endpoint-api-vercel-com",
         "endpoint-api-whop-com",
+        "endpoint-backend-composio-dev",
         "endpoint-example-invalid",
         "endpoint-fixture-supabase-co",
         "endpoint-fixtureproject-supabase-co",
@@ -10294,6 +10304,7 @@
         "backend/src/security/budgetOwner.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
+        "backend/src/security/businessAuthority.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/chatBoundary.local.integration.ts",
@@ -11017,6 +11028,7 @@
         "backend/src/security/budgetOwner.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
+        "backend/src/security/businessAuthority.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/chatBoundary.local.integration.ts",
@@ -11124,6 +11136,7 @@
         "backend/src/security/budgetOwner.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
+        "backend/src/security/businessAuthority.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
@@ -11161,6 +11174,7 @@
       "dependency_ids": [
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
+        "endpoint-backend-composio-dev",
         "endpoint-example-invalid",
         "endpoint-fixture-invalid",
         "endpoint-public-example-invalid"
@@ -13098,7 +13112,7 @@
     },
     {
       "path": "backend/src/operations/operationsEngine.ts",
-      "sha256": "bdf333471823ae83b46be56be926008a9abb58b56aa784422b134d2b48e7d7a3"
+      "sha256": "c086fafdb62b3b77db32087f67978d4763b3ed05c7087a87a4fb043152150e17"
     },
     {
       "path": "backend/src/operations/operationsService.ts",
@@ -13290,7 +13304,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sha256": "4bfbc1d8eec9c4e146da3d76344e05a1c29e8950153b1cd8f2cd451e70d7989a"
+      "sha256": "f6f085d6c1e9719fed0a8f8de910b78ccd3ace7d193b1b02bcbfe69749eef32b"
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
@@ -13397,6 +13411,22 @@
       "sha256": "7d28e2af66dad5a4f0811df034c4df60dc28aa5b2ca6d11e818ee035d147a477"
     },
     {
+      "path": "backend/src/security/authority/digest.ts",
+      "sha256": "efc0f73d537710cea08c14ab5e5d232b611f6f951cc2f8b86a0f50d3a9322ee5"
+    },
+    {
+      "path": "backend/src/security/authority/enforce.ts",
+      "sha256": "c76bdb01b72511a3677d0be426d081a7ece2c5b88045fdb17fdb83a81f2246f0"
+    },
+    {
+      "path": "backend/src/security/authority/risk.ts",
+      "sha256": "586e4d5b920c5a5e29f59fdae7ac692d921adafc55f3fbd86eb9555e09128706"
+    },
+    {
+      "path": "backend/src/security/authority/types.ts",
+      "sha256": "d49729cfc2819065938a9c6df6a6dfa3c033c63bf4d9b5f5f1a7d1a39222318b"
+    },
+    {
       "path": "backend/src/security/boundedPublicGet.ts",
       "sha256": "9a20c8cc0e496f893a18d79dba79b4beac820b9001bc1b06d2fc2772c70eee44"
     },
@@ -13413,6 +13443,10 @@
       "sha256": "49b3f502cd14766c769edbdd4da0bdce4938b1efe9ed259250c05f28dc4a3b07"
     },
     {
+      "path": "backend/src/security/businessAuthority.local.integration.ts",
+      "sha256": "a1bc1affaa78adafcd13d65791e5c2f242dd2f79535e29ef4a40a3d285818552"
+    },
+    {
       "path": "backend/src/security/businessConfirmationClaim.local.integration.ts",
       "sha256": "77469adbac183a215e93adcb25c117a1abbd56f199f08dfd4df8a2a9b074ccff"
     },
@@ -13426,7 +13460,7 @@
     },
     {
       "path": "backend/src/security/confirmationMetadata.local.integration.ts",
-      "sha256": "dbae3271b1dbcad601e9ea13cdc0721accf94bc1f089a13b933ff4c49027e9b4"
+      "sha256": "ef3c329225da0a1de18d532b7566bb2eb56d263846eb9e2fbe8434377ea817e4"
     },
     {
       "path": "backend/src/security/connectedAccountRoutes.local.integration.ts",
@@ -13594,7 +13628,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "f2cf5c47630bb9b67920eb2417b85d5d6c9bbe573b77a8399b20b79eb0816d57"
+      "sha256": "8bab85df06fe891c84ebea8788d2b6e197833ed1dffde8890f934a63623a2ec7"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -13650,11 +13684,11 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "0c2480b8fae9641148fceddd40e111d2d62d579cadd3cb5697e2853fd8ef24a2"
+      "sha256": "340e2fdc37ccbfcbd800825356402d408a898a5d7da8bfa6d23695c297fbab08"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sha256": "32229709ed4da07e64bd576390678e34900d0165e98ad458d55c19c12f6dba99"
+      "sha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
@@ -13662,7 +13696,7 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "787b311feb9cde06f97c1ee90093e51b0b734b1e3ea555d14033366a0f422d2e"
+      "sha256": "27ef6189380cf137725edf6d87f0196e36464a241d759ce85372a6669f4b2575"
     },
     {
       "path": "backend/src/services/integrations/credentialEnvelope.ts",
@@ -19308,7 +19342,7 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/phase1.ts",
-      "line": 156,
+      "line": 157,
       "credentialsInUrl": false
     },
     {
@@ -19419,6 +19453,27 @@
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
+      "path": "backend/src/security/businessAuthority.local.integration.ts",
+      "line": 32,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/businessAuthority.local.integration.ts",
+      "line": 66,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "backend.composio.dev",
+      "protocol": "https:",
+      "path": "backend/src/security/businessAuthority.local.integration.ts",
+      "line": 67,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
       "path": "backend/src/security/businessConfirmationClaim.local.integration.ts",
       "line": 11,
       "credentialsInUrl": false
@@ -19441,14 +19496,14 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/confirmationMetadata.local.integration.ts",
-      "line": 13,
+      "line": 14,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/confirmationMetadata.local.integration.ts",
-      "line": 49,
+      "line": 51,
       "credentialsInUrl": false
     },
     {
@@ -19924,77 +19979,77 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 123,
+      "line": 124,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 123,
+      "line": 124,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 542,
+      "line": 544,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 592,
+      "line": 594,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 681,
+      "line": 683,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 850,
+      "line": 852,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 908,
+      "line": 910,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1595,
+      "line": 1597,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1613,
+      "line": 1615,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1621,
+      "line": 1623,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1625,
+      "line": 1627,
       "credentialsInUrl": false
     },
     {
@@ -20176,7 +20231,7 @@
       "hostname": "backend.composio.dev",
       "protocol": "https:",
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 3,
+      "line": 6,
       "credentialsInUrl": false
     },
     {
@@ -25496,21 +25551,21 @@
     },
     {
       "path": "backend/src/operations/operationsEngine.ts",
-      "line": 142,
+      "line": 135,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/operations/operationsEngine.ts",
-      "line": 143,
+      "line": 136,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/operations/operationsEngine.ts",
-      "line": 176,
+      "line": 169,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26293,6 +26348,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/security/authority/digest.ts",
+      "line": 8,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/security/buildProjectReceipt.local.integration.ts",
       "line": 91,
       "scope": "FUNCTION_LOCAL",
@@ -26371,14 +26433,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1094,
+      "line": 1096,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1431,
+      "line": 1433,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26406,21 +26468,21 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 634,
+      "line": 622,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1123,
+      "line": 1111,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1149,
+      "line": 1137,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26462,28 +26524,28 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 668,
+      "line": 671,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1252,
+      "line": 1255,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1281,
+      "line": 1284,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1888,
+      "line": 1891,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
