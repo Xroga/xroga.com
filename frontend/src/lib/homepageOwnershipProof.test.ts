@@ -22,7 +22,8 @@ test('homepage follows hero through S05 and immediately reaches the retained clo
   const positions = tokens.map((token) => PAGE.indexOf(token));
   assert.ok(positions.every((position) => position !== -1));
   assert.ok(positions.every((position, i) => i === 0 || position > positions[i - 1]));
-  assert.match(PAGE, /<S05Capabilities \/>\s*<section\s+className="xv-closing-frame"/);
+  // the closing card sits directly after S05, inside its graphite horizon environment
+  assert.match(PAGE, /<S05Capabilities \/>\s*(?:\{\/\*[^*]*\*\/\}\s*)?<div className="xv-horizon"[^>]*>\s*<Ambient kind="horizon" \/>\s*<section\s+ref=\{closingRef\}\s+className="xv-closing-frame"/);
 });
 
 test('the audience selector covers founders, developers, non-coders, and teams', () => {

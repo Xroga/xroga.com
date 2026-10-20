@@ -94,7 +94,7 @@
   width: 30px;
   height: 2px;
   border-radius: 2px;
-  background: #6f9bff;
+  background: linear-gradient(90deg, #d9dde4, rgba(217, 221, 228, 0.25));
 }
 .s5.s5 .s5-title {
   font-size: clamp(36px, 3.7vw, 58px);
@@ -105,11 +105,25 @@
   text-wrap: balance;
 }
 .s5-title .s5-lead {
-  color: #f5f7fb;
+  color: #f3f1ec;
 }
-/* the key phrase: one solid, quiet accent (no gradient) */
+/* "go further.": brushed silver set lighter than the line, so the phrase opens up instead of getting louder. The weight
+   contrast does the emphasis; the material is a cool satin silver (bright top edge, soft steel band, lifted baseline).
+   S05 stays the calm section, so the treatment is static. */
 .s5-title .s5-accent {
-  color: #9db9ff;
+  font-weight: 380;
+  letter-spacing: -0.03em;
+  background-image: linear-gradient(180deg, #f6f7f9 0%, #dde1e7 42%, #a9b0bb 64%, #ccd1d8 84%, #b3b9c3 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding: 0.1em 0.04em 0.14em;
+  margin: -0.1em -0.04em -0.14em;
+}
+@media (forced-colors: active) {
+  .s5-title .s5-accent {
+    -webkit-text-fill-color: currentColor;
+  }
 }
 .s5.s5 .s5-lede {
   max-width: 62rem;

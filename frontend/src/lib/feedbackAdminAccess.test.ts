@@ -18,7 +18,9 @@ test('scheduled feedback uses the requested neutral experience card', () => {
   assert.match(prompt, /What should we improve\?/);
   assert.match(prompt, /await addFeedback/);
   assert.match(promptStyles, /background: #f9fafb/);
-  assert.match(promptStyles, /font-family: ui-monospace/);
+  assert.equal((prompt.match(/<textarea/g) ?? []).length, 1);
+  assert.match(prompt, /if \(!interactedRef.current\) setOpen\(false\)/);
+  assert.match(prompt, /onFocusCapture=\{keepOpen\}/);
   assert.doesNotMatch(prompt, /bg-gradient-to-br|#006aff/);
 });
 

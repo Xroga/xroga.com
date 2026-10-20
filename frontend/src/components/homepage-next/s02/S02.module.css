@@ -1,5 +1,6 @@
-/* S02: Xroga in action (V9). The section continues S01's near-black (#050607) into a graphite room with one soft
-   cobalt key light behind the computer and a faint floor bounce under it. Heading and switch share S01's type. */
+/* S02: Xroga in action. The section continues S01's near-black (#050607) into a graphite room with one soft neutral
+   key light behind the computer and a faint floor bounce under it; the execution network (../ambient) runs in the
+   margins. Heading and switch share S01's type. */
 .section {
   --ink: #eef0f4;
   --sub: #a7afbd;
@@ -8,7 +9,8 @@
   --x-blue: #4589ff;
   position: relative;
   z-index: 1;
-  background: linear-gradient(180deg, #050607 0, #080a10 260px, #0b0e15 60%, #090b11 calc(100% - 160px), #050607 100%);
+  /* the homepage stylesheet clears section background images; the light lives in the ambient layer */
+  background-color: #050607;
   color: var(--ink);
   font-family: var(--font-inter), system-ui, sans-serif;
   overflow-x: clip;
@@ -24,14 +26,6 @@
   -webkit-backdrop-filter: none !important;
   isolation: auto !important;
   z-index: auto !important;
-}
-.ambient {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(46% 34% at 50% 58%, rgba(53, 92, 214, 0.16), transparent 70%),
-    radial-gradient(30% 18% at 50% 96%, rgba(98, 126, 210, 0.1), transparent 75%);
 }
 .inner {
   position: relative;
@@ -85,6 +79,36 @@
 }
 .section.section .title {
   color: #eeece7 !important;
+}
+/* "AI Employee": brushed platinum. A vertical material (bright top edge, a fine steel band low in the letters) one weight
+   heavier than the line, with optical room for the paint box. When the heading first enters view one narrow band of
+   light crosses it once; afterwards it rests as solid metal. */
+.titleEm {
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  background-image:
+    linear-gradient(100deg, rgba(255, 255, 255, 0) 42%, rgba(255, 255, 255, 0.95) 50%, rgba(255, 255, 255, 0) 58%),
+    linear-gradient(180deg, #fdfdfc 0%, #e6e9ed 34%, #a3abb8 60%, #d6dae0 78%, #aeb5c0 100%);
+  background-size: 300% 100%, 100% 100%;
+  background-position: 120% 0, 0 0;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding: 0.12em 0.04em 0.16em;
+  margin: -0.12em -0.04em -0.16em;
+}
+.section[data-title-seen] .titleEm {
+  animation: s02TitleLight 1500ms cubic-bezier(0.42, 0, 0.3, 1) 300ms both;
+}
+@keyframes s02TitleLight {
+  from { background-position: 120% 0, 0 0; }
+  to { background-position: -20% 0, 0 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .section[data-title-seen] .titleEm {
+    animation: none;
+  }
 }
 .lede {
   margin: 10px 0 0;

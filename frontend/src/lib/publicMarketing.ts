@@ -35,9 +35,12 @@ export function isPublicMarketingPath(pathname: string): boolean {
  * These pages already intentionally expose an atmospheric image canvas. Keeping this
  * allowlist explicit prevents article, documentation, pricing, table and legal routes
  * from acquiring decorative imagery merely because they use the public chrome.
+ *
+ * The homepage is not on the list: every section paints its own black/graphite
+ * environment (S00 hero through the graphite horizon above the footer), so the theme
+ * artwork is never requested there and cannot show through margins or the footer.
  */
 const IMAGE_BACKGROUND_PATHS = new Set([
-  '/',
   '/about',
   '/ai-app-builder',
   '/ai-coding-agent',

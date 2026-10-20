@@ -11,8 +11,9 @@
 .capabilities button[aria-pressed='true'] { border-color: var(--card-accent); background: color-mix(in srgb, var(--card-accent) 26%, #061019); }
 .capabilities button[aria-pressed='true'] svg { color: var(--card-accent); }
 .capabilities button:focus-visible, .dots button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
-.voicePrompt { position: relative; margin: 14px 22px 0; color: #c5d4de; font-size: 11px; line-height: 1.5; }
-.voicePrompt strong { color: #fff; font-weight: 500; }
+.voicePrompt { position: relative; flex-shrink: 0; margin: 18px 22px 0; color: #fff; font-size: 20px; line-height: 1.35; font-weight: 500; letter-spacing: -.035em; text-wrap: balance; }
+.voicePrompt span, .voicePrompt strong { display: block; }
+.voicePrompt strong { margin-top: 5px; color: #d2e5ef; font-size: 18px; font-weight: 500; letter-spacing: -.025em; }
 .copyArea { position: relative; margin-top: auto; padding: 20px 22px 17px; }
 .story[hidden] { display: none; }
 .story { animation: reveal .25s ease-out; }
@@ -26,6 +27,6 @@
 .dots button span { width: 100%; height: 2px; background: #f0f7ff35; border-radius: 4px; }
 .dots button[aria-current='true'] span { background: #e7f8ff; }
 @keyframes reveal { from { opacity: 0; } to { opacity: 1; } }
-@media (max-width: 700px) { .panel { height: 520px; min-height: 520px; } .story h2 { font-size: 29px; } }
+@media (max-width: 700px) { .panel { height: auto; min-height: 520px; } .story h2 { font-size: 29px; } }
 @media (max-width: 380px) { .header { margin-left: 17px; } .capabilities { margin: 0 17px; } .capabilities button { padding: 10px 8px; column-gap: 5px; } .capabilities span { font-size: 9px; } .voicePrompt { margin-left: 17px; margin-right: 17px; } .copyArea { padding-left: 17px; padding-right: 17px; } .story h2 { font-size: 27px; } }
 @media (prefers-reduced-motion: reduce) { .story { animation: none; } .capabilities button { transition: none; } }

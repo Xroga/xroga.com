@@ -318,6 +318,7 @@ export function AuthSocialButton({
   return (
     <button
       type="button"
+      data-auth-github
       className={cn(
         'flex',
 
