@@ -31,7 +31,7 @@
 .hero { text-align: center; margin: 0 auto 28px; }
 .superIntelligence { margin: 0; font: 500 clamp(30px,4cqw,43px)/1.13 Georgia,'Times New Roman',serif; letter-spacing: -.035em; color: var(--foreground); background: linear-gradient(180deg,var(--foreground) 15%,color-mix(in srgb,var(--foreground) 65%,var(--terminal-ui-surface)) 48%,var(--foreground) 62%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .taglineRow { position: relative; display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 12px; }
-.tagline { margin: 0; font-family: var(--font-geist-sans), 'Inter', Arial, sans-serif; font-size: clamp(17px,2cqw,23px); font-weight: 400; letter-spacing: -.035em; line-height: 1.45; color: var(--muted); text-wrap: balance; }
+.tagline { margin: 0; font-family: var(--font-geist-sans), 'Inter', Arial, sans-serif; font-size: clamp(15px,2cqw,20px); font-weight: 400; letter-spacing: -.04em; line-height: 1.45; color: var(--muted); white-space: nowrap; }
 .dynamicWord { display: inline; color: var(--foreground); animation: wordReveal .35s ease both; }
 .mobileBreak { display: none; }
 .rotationControl { display: grid; place-items: center; width: 24px; height: 24px; color: var(--muted); border-radius: 6px; }
@@ -58,7 +58,7 @@
 .dock :global(.xv-send__glow) { display: none; }
 .dock :global(.xv-send)>svg { color: var(--terminal-ui-surface) !important; stroke: var(--terminal-ui-surface) !important; }
 .dock.dock.dock :global(.xv-chatbar-row-modern) { gap: 4px; }
-.automatic { margin: 14px auto 20px; max-width: 440px; color: var(--muted); font: 11px/1.6 Arial,sans-serif; letter-spacing: .015em; text-align: center; text-wrap: balance; }
+.automatic { margin: 14px auto 20px; max-width: 570px; color: var(--muted); font: 12px/1.6 Arial,sans-serif; letter-spacing: .015em; text-align: center; text-wrap: balance; }
 .automatic strong { color: var(--foreground); font-weight: 500; }
 .cards { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)) minmax(180px,.8fr); gap: 12px; max-width: 900px; margin-inline: auto; }
 .cardShell,.carouselShell { min-width: 0; position: relative; }
@@ -120,12 +120,12 @@
   .visual { width: 70px; height: 70px; }
   .superIntelligence { font-size: 31px; }
   .tagline { font-size: 16px; }
-  .mobileBreak { display: block; }
+  .tagline { font-size: clamp(11px,3.4cqw,14px); letter-spacing: -.05em; }
   .dynamicWord { min-width: 9ch; }
   .dock.dock.dock :global(.xv-chatbar-primary-tools) { gap: 5px; }
   .tool { padding: 5px; width: 29px; }
   .tool span { display: none; }
-  .automatic { font-size: 10px; margin: 12px 0 15px; }
+  .automatic { font-size: 11px; margin: 12px 0 15px; }
 }
 @media (max-width: 639px) {
   .repoStatus { display: none; }
@@ -137,7 +137,7 @@
 }
 @container (max-width: 320px) {
   .superIntelligence { font-size: 27px; }
-  .tagline { font-size: 15px; }
+  .tagline { font-size: clamp(10px,3.4cqw,12px); }
   .hero { margin-bottom: 16px; }
   .automatic { margin: 10px 0 12px; }
   .card { padding: 10px; min-height: 106px; }
