@@ -581,11 +581,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .particles {
-    animation: none;
-  }
   .titleMain::after {
     display: none;
+  }
+  .particles {
+    animation: none;
   }
   .turnIn,
   .dots i {
