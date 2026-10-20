@@ -351,19 +351,33 @@ test('Launch never shows store approval as done, and Keep Work Running separates
   assert.match(body, /Waiting: approval/);
 });
 
-test('card backs are dark Obsidian Titanium, never white or pale', () => {
+test('card backs are matte white ceramic with clearly black engraving (experiment), fronts stay dark', () => {
   const css = read('./Card.module.css');
-  const start = css.search(/\.backInner \{\s*color/);
-  const block = css.slice(start, css.indexOf('}', start));
-  const hexes = [...block.matchAll(/#([0-9a-f]{6})/gi)].map((m) => m[1]);
-  assert.ok(hexes.length >= 3);
-  for (const h of hexes) {
+  const lum = (h: string) => {
     const [r, g, b] = [0, 2, 4].map((k) => parseInt(h.slice(k, k + 2), 16) / 255);
-    const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-    assert.ok(lum < 0.2, `#${h} is too light for the back`);
-  }
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  // the plate: its gradient stops sit within a few percent of #f2f2f0, never pale-grey and never pure glaring white
+  const start = css.search(/\.backInner \{\s*color/);
+  const plate = css.slice(start, css.indexOf('}', start));
+  const stops = [...plate.replace(/color: #[0-9a-f]{6};/i, '').matchAll(/#([0-9a-f]{6})/gi)].map((m) => m[1]);
+  assert.ok(stops.length >= 3 && stops.includes('f2f2f0'));
+  for (const h of stops) assert.ok(lum(h) > 0.8 && lum(h) < 0.97, `#${h} is outside the matte white range`);
+  // the engraving is graphite #252525 at 1px or more, so it stays black at 1x
+  const eng = css.slice(css.indexOf('.patternSvg path,'), css.indexOf('.medal {'));
+  assert.ok(eng.includes('#252525') && eng.includes('rgba(37, 37, 37'));
+  for (const m of eng.matchAll(/stroke-width: ([\d.]+);/g)) assert.ok(Number(m[1]) >= 1, `engraving stroke ${m[1]} is too fine`);
+  // overlapping white cards keep a dark keyline on every side
+  assert.match(plate, /inset 0 0 0 1px rgba\(37, 37, 37, 0\.46\)/);
+  // the medallion keeps its size and the unchanged Xroga mark (no desaturating filter)
   assert.match(css, /\.medal \{[\s\S]*?--m: calc\(var\(--cw, 290px\) \* 0\.23\)/, 'medallion about 23% of card width');
   assert.match(read('./CapabilityCard.tsx'), /\/brand\/xroga-orb-mark-v2\.webp/);
+  assert.doesNotMatch(css.slice(css.indexOf('.medalMark {'), css.indexOf('.medalGlint {')), /filter:/);
+  // the front face keeps its dark finish
+  const front = css.slice(css.search(/\.frontInner \{\s*display: flex/), css.indexOf('/* edge glint'));
+  assert.ok(front.includes('#1d2129') && front.includes('#121519'));
+  // and the engraving geometry is the unchanged SVG
+  assert.match(read('./CapabilityCard.tsx'), /<circle cx="50" cy="73" r="33\.5" data-fine \/>/);
 });
 
 test('offstage cards are inert and the chapter meter offers keyboard navigation between chapters', () => {
@@ -462,22 +476,26 @@ test('one S01 narrative: no separate six-item strip or footer disclaimer; its us
   assert.equal(CAPABILITIES.length, 8);
 });
 
-test('Galaxy field: budgeted, behind the cards, never takes the pointer, released on unmount', () => {
-  const g = read('./GalaxyField.tsx');
-  assert.match(g, /GALAXY_SCALE = 0\.5;/);
-  assert.match(g, /GALAXY_FRAME_MS = 1000 \/ 30;/);
-  assert.match(g, /new IntersectionObserver/);
-  assert.match(g, /document\.hidden/);
-  assert.match(g, /if \(reduced\) \{\s*draw\(4000\);/, 'reduced motion: one static frame');
-  assert.match(g, /GALAXY_PROBE_LIMIT_MS/);
-  assert.match(g, /loseContext\(\)/);
-  assert.doesNotMatch(g, /mousemove|addEventListener\('mouse/);
-  assert.match(g, /saturation: 0\.12,/);
-  const css = read('./S01.module.css');
-  assert.match(css, /\.galaxy \{[\s\S]*?pointer-events: none;[\s\S]*?mask-image/);
+test('S01 uses a section-scoped moving particle mask, never the old WebGL galaxy', () => {
   const deck = read('./S01CapabilityDeck.tsx');
-  assert.match(deck, /dynamic\(\(\) => import\('\.\/GalaxyField'\)[\s\S]*?ssr: false/);
+  const css = read('./S01.module.css');
+  assert.ok(!deck.includes('GalaxyField'));
+  assert.ok(!deck.includes('next/dynamic'));
+  assert.ok(!css.includes('.galaxy {'));
+  assert.ok(css.includes('.particles {'));
+  assert.ok(css.includes('--size: 20px;'), 'the reference 20px dot pitch');
+  assert.ok(css.includes("url('/s01/noise-mask.svg')"));
+  assert.ok(css.includes('mask-composite: intersect, intersect;'));
+  assert.ok(css.includes('background: radial-gradient(circle, #f5f7fb 2px, transparent 2.5px) 0 0 / var(--size) var(--size);'), 'safe static dot fallback');
+  assert.ok(css.includes('@supports (mask-composite: intersect) or (-webkit-mask-composite: source-in)'), 'intersection feature guard');
+  assert.ok(css.includes('radial-gradient(circle at 50% 50%, black 2px, transparent 2.5px)'), 'the reference dot mask, intersected with the noise');
+  assert.ok(css.includes('mask-position: 50% 50%, 256px 50%, center;'), 'noise starts a tile to the right of the dots');
+  assert.ok(css.includes('mask-position: 50% 50%, 0 50%, center;'), 'and drifts one tile left over the animation');
+  assert.ok(css.includes('pointer-events: none;'), 'decorative layer does not intercept cards');
+  assert.ok(css.includes('animation: s01Flicker 20s linear infinite;'));
+  assert.ok(css.includes('@media (prefers-reduced-motion: reduce)'));
+  assert.ok(css.includes('@media (max-width: 1024px), (pointer: coarse)'));
   const stage = deck.slice(deck.indexOf('function DeckStage('), deck.indexOf('function Gallery('));
-  assert.ok(stage.indexOf('<GalaxyField') < stage.indexOf('<ol className={s.deck}'), 'the field is behind the cards');
-  assert.doesNotMatch(deck.slice(deck.indexOf('function Gallery(')), /<GalaxyField/, 'no WebGL field on phones and tablets');
+  assert.ok(stage.indexOf('className={s.particles}') < stage.indexOf('<ol className={s.deck}'), 'particles are behind cards');
+  assert.equal(deck.split('className={s.particles}').length - 1, 4, 'stage, carousel, static and first paint all receive the pattern');
 });
