@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Compass,
+  Bell,
   LayoutDashboard,
   MessageSquarePlus,
   Link2,
@@ -69,7 +70,6 @@ import { useTerminalChat } from '@/context/TerminalChatContext';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
-import { ModalCloseButton } from '@/components/ui/ConfirmDeleteModal';
 import { AnimatedNavIcon, type NavIconMotion } from './AnimatedNavIcon';
 import { AnimatedIcon, type AnimatedIconComponent } from '@/components/icons/animated/AnimatedIcon';
 import { TerminalIcon } from '@/components/icons/animated/TerminalIcon';
@@ -88,6 +88,7 @@ import { ChartColumnIncreasingIcon } from '@/components/icons/animated/ChartColu
 import { HeartPulseIcon } from '@/components/icons/animated/HeartPulseIcon';
 import { SidebarNavScroller } from './SidebarNavScroller';
 import { ThemeToggle } from './ThemeToggle';
+import compactStyles from './SidebarCompact.module.css';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { suspendProjectWorkspacePersistence } from '@/lib/projectWorkspaceStorage';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
@@ -579,17 +580,17 @@ export function Sidebar({ displayName, email }: SidebarProps) {
           <button
             type="button"
             onClick={() => requestAuthGate('history')}
-            className="group flex w-full items-center gap-2.5 rounded-[12px] px-1 py-1 text-left transition hover:bg-[var(--foreground)]/[0.045] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006aff]/45"
+            className="group flex w-full items-center gap-2.5 rounded-[12px] px-1 py-1 text-left transition hover:bg-[var(--foreground)]/[0.045] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--foreground)]"
             aria-label="Open guest account options"
           >
-            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-[#006aff]/10 text-[#006aff] transition group-hover:bg-[#006aff]/15">
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-[var(--surface-inset)] text-[var(--foreground)] transition group-hover:bg-[var(--card-border)]">
               <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
             </span>
             <span className="min-w-0 flex-1">
               <span className="block text-[11px] font-semibold text-[var(--foreground)]">Guest preview</span>
               <span className="block truncate text-[9px] text-[var(--muted)]">Click to save this chat and unlock Xroga.</span>
             </span>
-            <span className="text-[14px] leading-none text-[#006aff] transition-transform group-hover:translate-x-0.5" aria-hidden="true">›</span>
+            <span className="text-[14px] leading-none text-[var(--foreground)] transition-transform group-hover:translate-x-0.5" aria-hidden="true">›</span>
           </button>
           <div className="mt-2 grid grid-cols-2 gap-1.5">
             <Link
@@ -603,7 +604,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             <Link
               href="/auth/signup?next=%2Fworkspace"
               onClick={() => rememberGuestAuthIntent('history')}
-              className="flex min-h-10 items-center justify-center gap-1.5 rounded-[11px] bg-[linear-gradient(135deg,#006aff,#68a7ff)] px-2 text-[11px] font-bold text-white shadow-[0_8px_20px_rgba(0,106,255,0.2)] transition hover:-translate-y-px"
+              className="flex min-h-10 items-center justify-center gap-1.5 rounded-[11px] bg-[var(--foreground)] px-2 text-[11px] font-bold text-[var(--background)] transition hover:-translate-y-px"
             >
               <UserPlus className="h-3.5 w-3.5" aria-hidden="true" />
               Sign up
@@ -695,55 +696,11 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             </span>
           </HoverTip>
           {navExpanded ? (
-            <div className="xv-sidebar-header-actions ml-auto flex shrink-0 items-center">
-              <HoverTip label="New terminal" description="Start a fresh workspace terminal.">
-                <button
-                  type="button"
-                  onClick={handleNewChat}
-                  className="xv-new-terminal-compact"
-                  aria-label="New Terminal"
-                >
-                  {/* A terminal window with a plus badge, rather than a chat bubble
-                      with one — what this opens is a terminal, and the rail beside it
-                      already says so with the same window. */}
-                  <AnimatedIcon icon={NewTerminalIcon} size={14} intro={false} />
-                  {/* The label carries a class of its own because the rules that hide
-                      it target a span, and `AnimatedIcon` wraps its glyph in one too. */}
-<span className="xv-new-terminal-compact__label">
-  New terminal
-</span>                </button>
-              </HoverTip>
-              {/* Decorative only. The three controls, their order and their handlers are
-                  untouched; these hairlines just divide them the way a segmented control
-                  divides its segments. */}
-              <span className="xv-toolbar-sep" aria-hidden="true" />
-              <HoverTip label="Search" description="Search projects, chats, and commands." side="bottom">
-                <button
-                  type="button"
-                  onClick={() => setSearchOpen(true)}
-                  className="xv-sidebar-head-icon"
-                  aria-label="Search"
-                >
-                  <AnimatedIcon icon={LocateFixedIcon} size={14} />
-                </button>
-              </HoverTip>
-              <span className="xv-toolbar-sep" aria-hidden="true" />
-              <HoverTip label="Theme" description="Choose the workspace theme." side="bottom">
-                <ThemeToggle />
-              </HoverTip>
-              {isMobile && mobileOpen && !isGuest && !incognito ? (
-                /* Keep the bell directly beside the drawer close control on phones. */
-                <HoverTip label="Notifications" side="bottom">
-                  <SidebarNotificationButton open={notificationsOpen} onToggle={() => setNotificationsOpen((value) => !value)} />
-                </HoverTip>
-              ) : null}
-              {isMobile && mobileOpen ? (
-                /* The same 28px borderless square as New, Search and Theme beside it.
-                   Its own default is a 36px outlined button, which is right in a
-                   modal and wrong in a toolbar of three smaller siblings — it sat a
-                   head taller than them with a box drawn round it. */
-                <ModalCloseButton onClick={closeMobile} className="xv-sidebar-head-icon" />
-              ) : null}
+            <div className="xv-sidebar-utilities" aria-label="Sidebar utilities">
+              {!incognito ? isGuest ? <button type="button" aria-label="Notifications" onClick={() => requestAuthGate('history')}><Bell size={14} /></button> : <SidebarNotificationButton open={notificationsOpen} onToggle={() => setNotificationsOpen(value => !value)} /> : null}
+              <button type="button" aria-label="Close sidebar" onPointerDown={isMobile ? undefined : startEdgeToggleDrag} onClick={() => { if (edgeToggleDraggedRef.current) { edgeToggleDraggedRef.current = false; return; } if (isMobile) closeMobile(); else toggleSidebar(); }}><PanelLeftClose size={14} /></button>
+              <button type="button" aria-label="Search" onClick={() => setSearchOpen(true)}><AnimatedIcon icon={LocateFixedIcon} size={14} /></button>
+              <ThemeToggle />
             </div>
           ) : (
             <div className="xv-sidebar-collapsed-actions" aria-label="Workspace shortcuts">
@@ -799,13 +756,17 @@ export function Sidebar({ displayName, email }: SidebarProps) {
 
       </div>
 
+      {navExpanded ? <div className="xv-sidebar-primary-row">
+        <button type="button" onClick={handleNewChat} aria-label="New workspace"><AnimatedIcon icon={NewTerminalIcon} size={13} intro={false} /><span>New workspace</span></button>
+        <Link href="/dashboard" onClick={event => handleNavEntryClick(event, '/dashboard')} aria-label="Dashboard"><AnimatedIcon icon={LayoutGridIcon} size={13} /><span>Dashboard</span></Link>
+      </div> : null}
       {navExpanded && notificationsOpen ? <SidebarNotificationCenter open onClose={() => setNotificationsOpen(false)} /> : navExpanded ? <SidebarNavScroller targetRef={navScrollRef} className="flex-1 min-h-0">
         <nav
           ref={navScrollRef}
           className="xv-sidebar-nav-scroll xv-sidebar-scroll-track h-full p-2 overflow-y-auto overflow-x-hidden min-h-0"
         >
           <div className="xv-sidebar-menu xv-sidebar-nav-v2">
-              {navItems.map((entry) =>
+              {navItems.filter(entry => isGroup(entry) || entry.href !== '/dashboard').map((entry) =>
                 isGroup(entry) && entry.id === 'more' ? (
                   <SidebarHoverMenu
                     key={entry.id}
@@ -921,7 +882,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
               onClick={closeMobile}
               aria-hidden
             />
-            <aside className="xv-sidebar-mobile-open xv-sidebar-floating--mobile fixed z-[100] flex flex-col w-[min(86vw,312px)] max-w-[312px] overflow-hidden">
+            <aside className={cn(compactStyles.compact, "xv-sidebar-mobile-open xv-sidebar-floating--mobile fixed z-[100] flex flex-col w-[min(86vw,312px)] max-w-[312px] overflow-hidden")}>
               <div className="flex flex-col flex-1 min-h-0 overflow-hidden">{sidebarInner}</div>
             </aside>
           </>,
@@ -929,7 +890,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
         )}
 
       <div
-        className={cn('xv-sidebar-root relative hidden lg:block shrink-0', !effectiveSidebarOpen && 'is-collapsed')}
+        className={cn(compactStyles.compact, 'xv-sidebar-root relative hidden lg:block shrink-0', !effectiveSidebarOpen && 'is-collapsed')}
         style={{ width: asideWidth }}
       >
         <aside
@@ -956,40 +917,6 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             <span aria-hidden="true" />
           </div>
         ) : null}
-        {effectiveSidebarOpen && !isGuest && !incognito && !terminalFullscreen ? (
-          <div className="xv-sidebar-notification-edge hidden lg:flex">
-            <HoverTip label="Notifications" side="bottom">
-              <SidebarNotificationButton open={notificationsOpen} onToggle={() => setNotificationsOpen((value) => !value)} compact />
-            </HoverTip>
-          </div>
-        ) : null}
-        {/*
-          Closing only. Reopening is the mark's job now: hovering it expands the rail,
-          which is why this no longer renders while collapsed. It briefly did — the
-          rail then showed this toggle beside its own PanelLeft button, two controls a
-          few pixels apart doing the same thing.
-
-          Fullscreen still hides it — there the rail is collapsed by the terminal
-          rather than by the user, and leaving the sidebar is what exits fullscreen.
-        */}
-        {effectiveSidebarOpen ? <button
-          type="button"
-          onPointerDown={startEdgeToggleDrag}
-          onClick={() => {
-            // Swallowed when the gesture turned into a resize, so widening the
-            // sidebar from its midpoint does not also collapse it on release.
-            if (edgeToggleDraggedRef.current) {
-              edgeToggleDraggedRef.current = false;
-              return;
-            }
-            toggleSidebar();
-            setMobileOpen(false);
-          }}
-          className={cn('xv-sidebar-edge-toggle hidden lg:flex', terminalFullscreen && '!hidden')}
-          aria-label="Close sidebar"
-        >
-          <PanelLeftClose className="w-3.5 h-3.5" />
-        </button> : null}
       </div>
 
       <AvatarPickerModal

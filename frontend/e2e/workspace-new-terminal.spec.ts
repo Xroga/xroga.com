@@ -90,7 +90,7 @@ test('cards preserve drafts and conversation removes all starter styling', async
   await expect(cards).toHaveCount(0);
   await expect(input).toHaveCount(1);
   await expect(page.getByTestId('persistent-terminal-dock')).not.toHaveClass(/WorkspaceNewTerminal_dock/);
-  await page.getByRole('button', { name: /New terminal/i }).first().click();
+  await page.getByRole('button', { name: /New workspace|New terminal/i }).first().click();
   // Guest New Terminal remains account-gated; the redesign cannot bypass it.
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(cards).toHaveCount(0);
@@ -153,7 +153,7 @@ test('solid model and plus menus are monochrome and mobile uses only a model sym
   await page.goto('/workspace');
   await expect(page.getByTestId('workspace-start-header')).toBeVisible();
   await expect(page.locator('.xv-workspace-shell')).toHaveCSS('background-color', 'rgb(0, 0, 0)');
-  const model = page.getByRole('button', { name: 'Black Hole V model', exact: true });
+  const model = page.getByRole('button', { name: 'Black Hole V∞ model', exact: true });
   await expect(model.locator('span')).toBeVisible();
   await expect(page.getByTestId('mobile-model-icon')).toBeHidden();
   await model.click();
@@ -173,7 +173,7 @@ test('solid model and plus menus are monochrome and mobile uses only a model sym
   await expect(page.locator('[data-terminal-composer]')).toHaveValue('Draft a document about: ');
 });
 
-test('mobile header joins the workspace and shortcuts reveal descriptions on tap', async ({ page }) => {
+test('mobile header joins the workspace and five cards reveal descriptions on tap', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/workspace');
   await expect(page.getByTestId('workspace-start-cards')).toBeVisible();
@@ -182,7 +182,7 @@ test('mobile header joins the workspace and shortcuts reveal descriptions on tap
   expect(Math.abs(toolbar!.y + toolbar!.height - shell!.y)).toBeLessThanOrEqual(1);
   expect(toolbar!.x).toBe(shell!.x);
   expect(toolbar!.width).toBe(shell!.width);
-  await expect(page.locator('[data-capability="create"] strong')).toBeHidden();
+  await expect(page.locator('[data-capability="create"] strong')).toBeVisible();
   await page.getByRole('button', { name: 'Create', exact: true }).click();
   await expect(page.getByRole('menu', { name: 'Create features' })).toContainText('Turn ideas into documents, slides, images and videos.');
 });
@@ -198,7 +198,7 @@ test('model app preference saves through the existing policy API and keeps failu
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, mode }) });
   });
   await page.goto('/workspace');
-  const model = page.getByRole('button', { name: 'Black Hole V model', exact: true });
+  const model = page.getByRole('button', { name: 'Black Hole V∞ model', exact: true });
   await model.click();
   const setting = page.getByLabel('Connected app permissions', { exact: true });
   await expect(setting).toBeEnabled();
@@ -213,4 +213,20 @@ test('model app preference saves through the existing policy API and keeps failu
   await expect(page.getByText('Could not save. Your previous setting is unchanged.')).toBeVisible();
   await expect(setting).toHaveValue('always_ask');
   await expect(page.getByTestId('black-hole-model-panel')).toContainText('Required');
+});
+
+test('compact sidebar keeps utilities and primary destinations in two aligned rows', async ({ page }) => {
+  await page.goto('/workspace');
+  const sidebar = page.locator('.xv-sidebar-root');
+  const utilities = sidebar.locator('.xv-sidebar-utilities button');
+  await expect(utilities).toHaveCount(4);
+  const boxes = await utilities.evaluateAll(nodes => nodes.map(node => { const r = node.getBoundingClientRect(); return { y: r.y, right: r.right }; }));
+  expect(new Set(boxes.map(box => box.y)).size).toBe(1);
+  const bounds = await sidebar.boundingBox();
+  expect(Math.max(...boxes.map(box => box.right))).toBeLessThanOrEqual(bounds!.x + bounds!.width);
+  await expect(sidebar.getByRole('link', { name: 'Dashboard', exact: true })).toHaveCount(1);
+  await expect(sidebar.getByRole('button', { name: 'New workspace', exact: true })).toBeVisible();
+  await sidebar.getByRole('button', { name: 'Close sidebar', exact: true }).click();
+  await expect(sidebar).toHaveClass(/is-collapsed/);
+  await expect(sidebar.getByRole('link', { name: 'Dashboard', exact: true })).toBeVisible();
 });

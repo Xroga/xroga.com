@@ -1,0 +1,19 @@
+.compact { container-type: inline-size; }
+.compact.compact :global(.xv-sidebar-brand)>div:first-child { flex-wrap: nowrap !important; gap: 4px !important; }
+.compact.compact:not(:global(.is-collapsed)) :global(.xv-sidebar-brand) { padding: 8px !important; }
+.compact.compact:not(:global(.is-collapsed)) :global(.xv-sidebar-brand) a>div { width: 86px !important; height: 34px !important; }
+.compact :global(.xv-sidebar-utilities) { display: flex; align-items: center; gap: 1px; margin-left: auto; flex-shrink: 0; filter: grayscale(1); }
+.compact.compact :global(.xv-sidebar-utilities) button { display: grid; place-items: center; width: 26px !important; height: 30px !important; min-width: 26px !important; padding: 0 !important; border: 0; border-radius: 6px; background: transparent; color: var(--foreground); }
+.compact :global(.xv-sidebar-utilities) button:hover { background: var(--surface-inset); }
+.compact :global(.xv-sidebar-primary-row) { display: grid; grid-template-columns: 1.15fr 1fr; gap: 5px; margin: 0 8px 3px; }
+.compact :global(.xv-sidebar-primary-row)>:is(button,a) { display: flex; align-items: center; justify-content: center; gap: 5px; min-width: 0; min-height: 32px; padding: 5px 4px; border: 1px solid var(--card-border); border-radius: 8px; color: var(--foreground); background: var(--surface-inset); font-size: 10px; white-space: nowrap; }
+.compact.compact :global(.xv-sidebar-menu.xv-sidebar-nav-v2) :is(a,button) { min-height: 30px; font-size: 11px; }
+.compact :global(.xv-sidebar-primary-row)>:focus-visible,.compact :global(.xv-sidebar-utilities) button:focus-visible { outline: 2px solid var(--foreground); outline-offset: 2px; }
+@container (max-width: 220px) {
+ .compact.compact:not(:global(.is-collapsed)) :global(.xv-sidebar-brand) a>div { width: 72px !important; }
+ .compact.compact :global(.xv-sidebar-utilities) button { width: 24px !important; min-width: 24px !important; }
+ .compact :global(.xv-sidebar-primary-row)>:is(button,a) { font-size: 9px; gap: 3px; }
+}
+@media (max-width: 1023px) {
+ .compact.compact :global(.xv-sidebar-menu.xv-sidebar-nav-v2) :is(a,button) { min-height: 36px; }
+}

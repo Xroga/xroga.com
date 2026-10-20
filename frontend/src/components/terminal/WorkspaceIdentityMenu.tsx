@@ -239,8 +239,8 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
         />
       </button>
 
-      <AnchoredPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={rootRef} placement="bottom-start" width={360} ariaLabel="Project actions"
-          className="absolute left-0 top-[calc(100%+.45rem)] z-[1000] w-[min(360px,calc(100vw-24px))] overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-1.5 text-[var(--foreground)] shadow-[0_20px_60px_rgba(0,0,0,.28)] backdrop-blur-xl"
+      <AnchoredPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={rootRef} placement="bottom-start" width={290} ariaLabel="Project actions"
+          className="absolute left-0 top-[calc(100%+.45rem)] z-[1000] w-[min(290px,calc(100vw-24px))] overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-1.5 text-[var(--foreground)] shadow-[0_20px_60px_rgba(0,0,0,.28)] backdrop-blur-xl"
         >
           <div className="px-2.5 pb-2 pt-2">
             <div className="flex items-start gap-2.5">

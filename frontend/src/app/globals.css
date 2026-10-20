@@ -14255,6 +14255,7 @@ body.theme-beige .xv-cba-kbd { color: var(--muted) !important; background: color
   }
   body:has(.xv-workspace-main) .xv-mobile-workspace-pill::before,
   body:has(.xv-workspace-main) .xv-mobile-workspace-pill::after { display: none; }
+  body:has(.xv-workspace-main) .xv-mobile-workspace-actions { filter: grayscale(1); --accent: var(--foreground); }
   body:not(.xv-terminal-fullscreen-active):not(.xv-workspace-expanded-active):not(.xv-page-fullscreen-active) .xv-workspace-main {
     padding-top: calc(max(8px,env(safe-area-inset-top)) + 44px) !important;
   }
@@ -14264,7 +14265,7 @@ body.theme-beige .xv-cba-kbd { color: var(--muted) !important; background: color
   body:not(.xv-terminal-fullscreen-active):not(.xv-workspace-expanded-active) .xv-workspace-shell {
     border-top: 0 !important; border-top-left-radius: 0 !important; border-top-right-radius: 0 !important;
   }
-  .xv-workspace-identity .xv-term-title--button h3,
+  .xv-workspace-identity .xv-term-title--button h3 { display: block; font-size: 11px; max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
   .xv-workspace-identity .xv-term-title--button .xv-term-path { display: none; }
 }
 

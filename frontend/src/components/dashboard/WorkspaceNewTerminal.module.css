@@ -32,7 +32,7 @@
 .superIntelligence { margin: 0; font: 500 clamp(30px,4cqw,43px)/1.13 Georgia,'Times New Roman',serif; letter-spacing: -.035em; color: var(--foreground); background: linear-gradient(180deg,var(--foreground) 15%,color-mix(in srgb,var(--foreground) 65%,var(--terminal-ui-surface)) 48%,var(--foreground) 62%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .taglineRow { position: relative; display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 12px; }
 .tagline { margin: 0; font-family: var(--font-geist-sans), 'Inter', Arial, sans-serif; font-size: clamp(17px,2cqw,23px); font-weight: 400; letter-spacing: -.035em; line-height: 1.45; color: var(--muted); text-wrap: balance; }
-.dynamicWord { display: inline-block; min-width: 10ch; text-align: left; color: var(--foreground); animation: wordReveal .35s ease both; }
+.dynamicWord { display: inline; color: var(--foreground); animation: wordReveal .35s ease both; }
 .mobileBreak { display: none; }
 .rotationControl { display: grid; place-items: center; width: 24px; height: 24px; color: var(--muted); border-radius: 6px; }
 .rotationControl svg { width: 11px; height: 11px; }
@@ -160,17 +160,10 @@
   .card { padding-block: 14px; }
   .carouselShell .card { padding-bottom: 40px; }
 }
-/* Mobile shortcuts stay icon-only; their click menus carry the full descriptions. */
+/* Five readable mobile cards. */
 @media (max-width: 639px) {
-  .cards { grid-template-columns: repeat(4,minmax(0,1fr)); gap: 8px; }
-  .card { min-height: 54px; padding: 12px; justify-content: center; }
-  .card .cardCopy { display: flex; align-items: center; justify-content: center; }
-  .card .cardWords,.card .visual { display: none; }
-  .card .cardIcon svg { width: 24px; height: 24px; }
-  .carouselShell { grid-column: 1/-1; }
-  .carouselShell .card { min-height: 72px; padding: 10px 12px 30px; }
-  .carouselShell .card .cardCopy { display: flex; padding: 0; }
-  .carouselShell .card .cardIcon { display: flex; }
-  .carouselDots { bottom: 3px; justify-content: center; }
-  .carouselDots button:last-child { margin-left: 4px; }
+ .cards { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+ .card { min-height: 106px; padding: 11px; }
+ .carouselShell .card { min-height: 104px; padding-bottom: 32px; }
+ .hero { margin-bottom: 12px; }
 }

@@ -13,9 +13,9 @@ export function BlackHoleVButton({ className, compact = false }: { className?: s
   const btnRef = useRef<HTMLButtonElement>(null);
   return (
     <div className={cn('relative shrink-0', className)}>
-      <ChatBarPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={btnRef} width={300}>
+      <ChatBarPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={btnRef} width={276}>
         <div className={styles.modelPanel} data-testid="black-hole-model-panel">
-          <div className={styles.modelHeading}><strong>Black Hole V</strong><span>ON</span></div>
+          <div className={styles.modelHeading}><strong>Black Hole V∞</strong><span>ON</span></div>
           <p>Our first and last model — every update ships in this one model. All Xroga AI capabilities, balanced for complex tasks.</p>
           <div className={styles.modelSafety}><ShieldCheck size={16} /><span>Safe tasks can continue automatically</span></div>
           <p>Production, destructive, paid, or irreversible actions remain blocked until the required approval is recorded.</p>
@@ -25,8 +25,8 @@ export function BlackHoleVButton({ className, compact = false }: { className?: s
       </ChatBarPortalPopover>
       <button ref={btnRef} type="button" onClick={() => setOpen(value => !value)}
         className={cn(styles.modelButton, compact && styles.compactModel)}
-        title="Black Hole V" aria-label="Black Hole V model" aria-haspopup="menu" aria-expanded={open}>
-        <span className={styles.modelText}>Black Hole V</span>
+        title="Black Hole V∞" aria-label="Black Hole V∞ model" aria-haspopup="menu" aria-expanded={open}>
+        <span className={styles.modelText}>Black Hole V∞</span>
         <svg className={styles.mobileModelIcon} viewBox="0 0 32 32" aria-hidden="true" data-testid="mobile-model-icon">
           <circle cx="16" cy="16" r="8" fill="none" stroke="currentColor" strokeWidth="1.5" />
           <ellipse cx="16" cy="16" rx="14" ry="4.5" transform="rotate(-24 16 16)" fill="none" stroke="currentColor" strokeWidth="1.5" />
