@@ -1,17 +1,17 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "b3900bab72f55347d57b6b497c2f5e3c3baf84c68742bd51ba2abc911e91ea27",
+  "reviewRegistrySha256": "70b9030f44a008b415686538222bdb95c04b5d834244c214b57f4192bee965a7",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 166,
-    "persistenceCandidates": 669,
+    "persistenceCandidates": 673,
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
-    "reviewedCandidates": 669,
+    "reviewedCandidates": 673,
     "unresolvedSafetyCandidates": 25,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 18
@@ -20,7 +20,7 @@
     "REVIEW_REQUIRED": 0,
     "SCOPED_BOUNDARY": 450,
     "NARROW_EXCEPTION": 40,
-    "NOT_PERSISTENCE": 154,
+    "NOT_PERSISTENCE": 158,
     "REVIEWED_GAP": 25
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 120,
-    "unresolvedCandidateBoundaries": 549,
+    "unresolvedCandidateBoundaries": 553,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3156,6 +3156,22 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "bff61b767ee1e128b87e"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "f4d0c2af0d78fba9284a"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "291af662ce05f5be45fd"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "658b27f714265c1c2858"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "a6063fe099976dc970f7"
       },
       {
@@ -5104,6 +5120,22 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "bff61b767ee1e128b87e"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "f4d0c2af0d78fba9284a"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "291af662ce05f5be45fd"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "658b27f714265c1c2858"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "a59eb5df1a268fbe2b96"
       },
       {
@@ -5653,11 +5685,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 669,
+    "currentCallers": 673,
     "structuredVerified": 120,
-    "structuredUnproven": 549,
+    "structuredUnproven": 553,
     "manualUnresolved": 25,
-    "manualUnsupported": 524,
+    "manualUnsupported": 528,
     "agreedVerified": 120,
     "proofAwaitingManualReconciliation": 0
   },
@@ -16294,6 +16326,90 @@
           {
             "path": "backend/src/security/oauthSession.local.integration.ts",
             "marker": "real two-client OAuth claims"
+          }
+        ]
+      }
+    },
+    {
+      "id": "bff61b767ee1e128b87e",
+      "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
+      "line": 10,
+      "enclosing": "base64",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "7b9124829a81b6638126b9492e79c9cb03691993eae41589ea5aef93376a92e6",
+      "semanticReview": {
+        "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
+        "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
+            "marker": "export class OciKmsCryptoProvider"
+          }
+        ]
+      }
+    },
+    {
+      "id": "f4d0c2af0d78fba9284a",
+      "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
+      "line": 37,
+      "enclosing": "wrapDataKey",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "7b9124829a81b6638126b9492e79c9cb03691993eae41589ea5aef93376a92e6",
+      "semanticReview": {
+        "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
+        "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
+            "marker": "export class OciKmsCryptoProvider"
+          }
+        ]
+      }
+    },
+    {
+      "id": "291af662ce05f5be45fd",
+      "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
+      "line": 45,
+      "enclosing": "wrapDataKey",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "7b9124829a81b6638126b9492e79c9cb03691993eae41589ea5aef93376a92e6",
+      "semanticReview": {
+        "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
+        "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
+            "marker": "export class OciKmsCryptoProvider"
+          }
+        ]
+      }
+    },
+    {
+      "id": "658b27f714265c1c2858",
+      "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
+      "line": 53,
+      "enclosing": "unwrapDataKey",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "7b9124829a81b6638126b9492e79c9cb03691993eae41589ea5aef93376a92e6",
+      "semanticReview": {
+        "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
+        "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
+            "marker": "export class OciKmsCryptoProvider"
           }
         ]
       }

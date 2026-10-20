@@ -26,6 +26,8 @@
     "jose": "^5.9.6",
     "libsodium-wrappers": "^0.7.15",
     "morgan": "1.12.1",
+    "oci-common": "2.144.0",
+    "oci-keymanagement": "2.144.0",
     "openai": "^4.104.0",
     "pdf-lib": "^1.17.1",
     "pdf-parse": "^1.1.1",

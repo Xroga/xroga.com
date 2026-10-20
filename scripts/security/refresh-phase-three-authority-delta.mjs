@@ -78,6 +78,7 @@ const pureModules = [
   ['backend/src/services/integrations/credentialVault.ts', 'export class CredentialVault'],
   ['backend/src/services/integrations/credentialVaultRuntime.ts', 'export function runtimeCredentialVault'],
   ['backend/src/services/integrations/googleCloudKmsCryptoProvider.ts', 'export class GoogleCloudKmsCryptoProvider'],
+  ['backend/src/services/integrations/ociKmsCryptoProvider.ts', 'export class OciKmsCryptoProvider'],
 ];
 for (const [path, marker] of pureModules) {
   const calls = discoverPersistenceCalls(path, read(path));

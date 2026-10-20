@@ -10,6 +10,10 @@
   "risk": "high",
   "scope": "Founder-authorized Phase3 only, original Command008 and009, all22 criteria unchanged. Preserve accepted Phase2 source and proof. No Phase4 implementation or production authorization.",
   "changedFiles": [
+    "backend/src/services/integrations/ociKmsCryptoProvider.ts",
+    "backend/src/services/integrations/ociKmsCryptoProvider.test.ts",
+    "scripts/security/verify-oci-kms.ts",
+    "docs/xroga/evidence/command-009/oci-kms-procedure.md",
     ".github/workflows/xroga-tenant-security.yml",
     "backend/package.json",
     "backend/package-lock.json",
@@ -192,11 +196,11 @@
     },
     "credentials": {
       "changed": true,
-      "description": "Enabled OAuth, provider-key, GitHub, Vercel, PKCE and project-runtime writers now use identity-bound v3 envelopes with revision checks. Browser XOR writes are retired and explicit consent is required for legacy import. A Google Cloud KMS adapter is selected and code-verified. Provisioning and live cutover remain unauthorized and incomplete."
+      "description": "Accepted d750836b writer/consumer software remains unchanged. The additive OCI adapter uses the existing CryptoProvider/v3 boundary, exact AAD and retained key versions. Isolated SOFTWARE-key verification is authorized, but production runtime authentication, scoped IAM and live cutover remain unverified and unauthorized. No live credential migration or permanent API-key download."
     },
     "egress": {
       "changed": true,
-      "description": "Existing Composio action dispatch explicitly selects approved account. No new egress engine or Phase4 implementation. Tests intercept external effects."
+      "description": "Existing dispatch and egress architecture are unchanged. The explicitly authorized isolated OCI probe sends only random test data keys and synthetic identity context to the exact OCI cryptographic endpoint. Production provider calls remain unchanged. No Phase4 implementation."
     },
     "cost": {
       "changed": true,
@@ -208,6 +212,12 @@
     }
   },
   "tests": [
+    {
+      "command": "node --import tsx --test backend/src/services/integrations/ociKmsCryptoProvider.test.ts",
+      "scope": "OCI SOFTWARE-key adapter, exact AAD and key version, malformed receipts, retained old versions, canonical vault identity and production Cloud Shell refusal. Real Cloud Shell probe is separately recorded and cannot certify production runtime IAM.",
+      "negative": true,
+      "reference": "backend/src/services/integrations/ociKmsCryptoProvider.test.ts"
+    },
     {
       "command": "node --import tsx --test backend/src/security/authority/digest.test.ts backend/src/security/authority/enforce.test.ts",
       "scope": "Exact canonical JSON, actor provenance, opaque permit, replay, mutation, expiry and revalidation unit tests",
@@ -238,13 +248,13 @@
     "reason": "Shared authority wraps existing durable confirmation and later Operations adapters. No second approval table, orchestration loop or replacement engine.",
     "rfc": null
   },
-  "rollout": "Draft PR only. No deployment, production migration, merge, DNS change or live external effect.",
-  "rollback": "Reviewable code revert to accepted a21a8202 without rewriting its commit. Leave additive schema compatible and preserve all claim/effect receipts, private data and historical evidence.",
+  "rollout": "Draft PR only. One standard OCI test vault and one SOFTWARE AES-256 key with retained test versions are authorized at zero cost. No deployment, production migration, merge, DNS change or live customer effect.",
+  "rollback": "Revert only the OCI addition to accepted d750836b without rewriting its commit or accepted Phase2 history. Preserve receipts and both test key versions. Do not destroy keys, migrate live credentials or change existing schema.",
   "knownGaps": [
-    "Actual disposable and final-source branch/integrated proof pending",
-    "Latest Operations and CredentialVault migrations require disposable fresh and upgrade database evidence",
-    "Final source branch and integrated CI are pending",
-    "Google Cloud KMS provisioning, IAM, billing authorization and real custody/cutover evidence remain blocked"
+    "Accepted d750836b CI and 22 software criteria are preserved, not relabeled as proof for the additive OCI source",
+    "Final changed-source verification for the OCI addition is pending",
+    "Least-privilege application principal and production runtime authentication/cutover remain unverified. Cloud Shell operator proof cannot close them",
+    "Google Cloud billing remains closed and untouched. No live credential migration or Phase4 authorization"
   ],
   "placeholderClaimsRemaining": [
     "All22 criteria require authenticated source-bound acceptance. No complete Command008,009 or Phase3 claim."
