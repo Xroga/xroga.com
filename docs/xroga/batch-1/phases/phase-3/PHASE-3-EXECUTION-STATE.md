@@ -20,12 +20,10 @@ This ledger references the unchanged canonical `../PHASE-3-FROZEN-WORKLIST.json`
 
 ## Current engineering, not acceptance
 
-- IN PROGRESS, C008 AC01,02,04,05,06,07,09,10: shared strict JSON digest, issued-actor executor, opaque single-use permit, exact-scope checks, deterministic 12-class policy floors and business/provider bridge.
-- IN PROGRESS: migration `20261020000300_business_authority_dispatch.sql` extends the existing confirmation table and RPCs. The initial admission version passed disposable Supabase at `f011d7e1`. Later receipt and absent-policy serialization additions require new-source database verification. Neither version claims an independently verified external postcondition.
-- READY, C008 AC03,08: Operations compatibility adapter and durable spend-bound verification. Merely refusing unbound financial requests does not satisfy the spend criterion.
-- IN PROGRESS, C009 AC04,05,06,10: canonical backend envelope and injected CryptoProvider, identity-bound random data keys, key rotation primitives and production refusal. Nine focused crypto tests pass. None of the old storage writers is cut over yet.
-- READY, C009 AC01-03,07-09,11-12: bounded credential inventory, actual writer/reader cutover, database rotation/revocation and migration, frontend consent and complete acceptance tests. Existing PKCE work is reusable evidence, not complete Command 009 acceptance.
-- BLOCKED external dependency: actual production KMS provider and custody are unspecified. No provider has been provisioned or billed. Do not call development keys production KMS, and do not claim this is the only remaining blocker.
+- SOFTWARE VERIFIED, C008 AC01-10: canonical authority, actor provenance, deterministic 12-class risk floors, durable confirmation, one-use dispatch, Operations budget admission, exact account selection, redacted receipts and positive, negative, concurrency and database tests are implemented. Final-source branch and integrated CI receipts are still required.
+- SOFTWARE VERIFIED, C009 AC01-12: enabled vault writers and private consumers use v3 envelopes, browser legacy import requires consent, migrations are owner and revision bound, and rotation, revocation, tamper, PKCE, recovery and concurrency tests are implemented. The bounded audit retains 117 candidates in 37 semantic groups and six canonical vault importers.
+- CODE READY: Google Cloud KMS is the selected managed adapter. Runtime selection uses the exact CryptoKey resource and Application Default Credentials. Focused tests cover exact key/AAD binding, malformed provider responses, substitution, data-key length and development-provider production refusal.
+- BLOCKED external dependency: no Google Cloud KMS key, billing authorization, least-privilege runtime identity or real isolated cutover receipt exists. No provider call, live credential migration or production change has occurred. This prevents `B1_P3_VERIFIED` even after software CI succeeds.
 
 ## Test observations
 
@@ -47,4 +45,4 @@ This ledger references the unchanged canonical `../PHASE-3-FROZEN-WORKLIST.json`
 - Latest focused business digest and adapter tests pass23/23, including rejection of incomplete provider outcomes, getter-free argument validation and read-only policy denial before confirmation creation. The new database test covers policy insertion as well as updates while dispatch waits. Its actual PostgreSQL concurrency result remains pending until the next source-bound CI run.
 - Public GitHub repository status was verified before CI use. The existing Vercel ignore script blocks this exact branch, and its test passed. No hosting settings changed.
 
-No complete Phase 3 acceptance is declared. Final-source CI, Operations integration, spend accounting and actual vault writer/reader cutover remain mandatory. No merge, deployment, production migration, live provider call, live credential operation or additional spending occurred.
+No complete Phase 3 acceptance is declared. Final-source CI and real managed-key custody/cutover evidence remain mandatory. No merge, deployment, production migration, live provider call, live credential operation or additional spending occurred.

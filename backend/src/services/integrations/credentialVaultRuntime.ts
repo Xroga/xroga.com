@@ -1,14 +1,15 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { CredentialVault } from './credentialVault.js';
 import { DevelopmentCryptoProvider, requireCryptoProvider, type CryptoProvider } from './cryptoProvider.js';
+import { GoogleCloudKmsCryptoProvider } from './googleCloudKmsCryptoProvider.js';
 import { createTenantContext } from '../../security/tenantContext.js';
 import type { VaultIdentity } from './credentialVault.js';
 
 let configured: CryptoProvider | undefined;
 let testProvider: DevelopmentCryptoProvider | undefined;
+let managedProvider: GoogleCloudKmsCryptoProvider | undefined;
 
-/** Startup injection point for the selected managed provider. Phase 3 deliberately does
- * not select a production KMS on the founder's behalf. */
+/** Startup injection point for tests or an alternative reviewed managed provider. */
 export function configureCredentialVaultProvider(provider: CryptoProvider): void {
   requireCryptoProvider(provider);
   configured = provider;
@@ -16,6 +17,10 @@ export function configureCredentialVaultProvider(provider: CryptoProvider): void
 
 export function runtimeCredentialVault(): CredentialVault {
   if (configured) return new CredentialVault(configured);
+  if (process.env.XROGA_GOOGLE_CLOUD_KMS_KEY_NAME) {
+    managedProvider ??= new GoogleCloudKmsCryptoProvider(process.env.XROGA_GOOGLE_CLOUD_KMS_KEY_NAME);
+    return new CredentialVault(managedProvider);
+  }
   if (process.env.NODE_ENV === 'test') {
     testProvider ??= new DevelopmentCryptoProvider('ephemeral-test', new Map([['ephemeral-test', randomBytes(32)]]));
     return new CredentialVault(testProvider);
@@ -29,6 +34,7 @@ export function runtimeCredentialVault(): CredentialVault {
 
 export function resetCredentialVaultRuntimeForTests(): void {
   configured = undefined;
+  managedProvider = undefined;
   testProvider?.destroy();
   testProvider = undefined;
 }

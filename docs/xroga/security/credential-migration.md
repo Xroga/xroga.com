@@ -9,7 +9,7 @@ OAuth and GitHub users reconnect through their existing authorization epochs. Re
 ## Safe operating sequence
 
 1. Run a redacted inventory. Do not print ciphertext or plaintext.
-2. Configure and verify the approved managed `CryptoProvider` in an isolated non-production environment.
+2. In a separately authorized, isolated non-production environment, grant the runtime identity only encrypt/decrypt use on the exact Google Cloud KMS CryptoKey and set `XROGA_GOOGLE_CLOUD_KMS_KEY_NAME`.
 3. Enable the temporary migration window only for the controlled migration process.
 4. Migrate one owner-bound record using the exact current revision.
 5. Open the resulting v3 record through its real backend consumer and verify masked status plus an exact persistence receipt.

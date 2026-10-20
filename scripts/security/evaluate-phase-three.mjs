@@ -54,7 +54,9 @@ export function evaluatePhaseThree({ evidence, observations, head, loadJson = js
   assert.match(observations.finalSourceCi?.url ?? '', /^https:\/\/github\.com\/Xroga\/xroga\.com\/actions\/runs\/\d+$/);
   assert.match(observations.integratedCi?.url ?? '', /^https:\/\/github\.com\/Xroga\/xroga\.com\/actions\/runs\/\d+$/);
   const kmsComplete = observations.productionKms?.status === 'VERIFIED_MANAGED_PROVIDER_AND_CUTOVER';
-  assert.equal(manifests[1].productionKms.status, kmsComplete ? 'VERIFIED_MANAGED_PROVIDER_AND_CUTOVER' : 'BLOCKED_UNSPECIFIED_NOT_VERIFIED');
+  assert.equal(manifests[1].productionKms.status, kmsComplete
+    ? 'VERIFIED_MANAGED_PROVIDER_AND_CUTOVER'
+    : 'CODE_READY_GOOGLE_CLOUD_KMS_NOT_PROVISIONED_OR_VERIFIED');
   return { result: kmsComplete ? 'B1_P3_VERIFIED' : 'CODE_READY_KMS_CUTOVER_BLOCKED', criteria: 22,
     command008: '10/10_SOFTWARE_VERIFIED', command009: '12/12_SOFTWARE_VERIFIED', productionKms: observations.productionKms?.status ?? 'MISSING' };
 }

@@ -9,7 +9,7 @@ const observations = {
   sourceSha: head,
   finalSourceCi: { status: 'PASS', sourceSha: head, url: 'https://github.com/Xroga/xroga.com/actions/runs/1' },
   integratedCi: { status: 'PASS', featureSha: head, url: 'https://github.com/Xroga/xroga.com/actions/runs/2' },
-  productionKms: { status: 'BLOCKED_UNSPECIFIED_NOT_VERIFIED' },
+  productionKms: { status: 'CODE_READY_GOOGLE_CLOUD_KMS_NOT_PROVISIONED_OR_VERIFIED' },
 };
 
 test('Phase3 evaluator accepts complete software proof while preserving the production KMS blocker', () => {

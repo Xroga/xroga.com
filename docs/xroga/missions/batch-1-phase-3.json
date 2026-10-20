@@ -11,6 +11,8 @@
   "scope": "Founder-authorized Phase3 only, original Command008 and009, all22 criteria unchanged. Preserve accepted Phase2 source and proof. No Phase4 implementation or production authorization.",
   "changedFiles": [
     ".github/workflows/xroga-tenant-security.yml",
+    "backend/package.json",
+    "backend/package-lock.json",
     "backend/src/e2e/xrogaGoldenJourneys.test.ts",
     "backend/src/operations/operationsEngine.ts",
     "backend/src/routes/phase1.ts",
@@ -33,6 +35,8 @@
     "backend/src/services/integrations/credentialVault.test.ts",
     "backend/src/services/integrations/credentialVault.ts",
     "backend/src/services/integrations/cryptoProvider.ts",
+    "backend/src/services/integrations/googleCloudKmsCryptoProvider.test.ts",
+    "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
     "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
     "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
     "docs/xroga/batch-1/phases/PHASE-3-FROZEN-WORKLIST.json",
@@ -130,6 +134,7 @@
     "docs/xroga/batch-1/phases/phase-4/PHASE-4-FROZEN-WORKLIST.json",
     "docs/xroga/batch-1/phases/phase-4/PHASE-4-HANDOFF.md",
     "scripts/xroga/validate-phase-four-handoff.mjs"
+    ,"package-lock.json"
   ],
   "decisions": {
     "keep": [
@@ -175,7 +180,7 @@
     },
     "credentials": {
       "changed": true,
-      "description": "Enabled OAuth, provider-key, GitHub, Vercel, PKCE and project-runtime writers now use identity-bound v3 envelopes with revision checks. Browser XOR writes are retired and explicit consent is required for legacy import. Production KMS selection and live cutover remain unauthorized and incomplete."
+      "description": "Enabled OAuth, provider-key, GitHub, Vercel, PKCE and project-runtime writers now use identity-bound v3 envelopes with revision checks. Browser XOR writes are retired and explicit consent is required for legacy import. A Google Cloud KMS adapter is selected and code-verified. Provisioning and live cutover remain unauthorized and incomplete."
     },
     "egress": {
       "changed": true,
@@ -204,6 +209,12 @@
       "reference": "backend/src/e2e/xrogaGoldenJourneys.test.ts"
     },
     {
+      "command": "node --import tsx --test backend/src/services/integrations/googleCloudKmsCryptoProvider.test.ts backend/src/services/integrations/credentialVault.test.ts",
+      "scope": "Managed KMS key and AAD binding, malformed response and substitution rejection, exact data-key length and production development-key refusal",
+      "negative": true,
+      "reference": "backend/src/services/integrations/googleCloudKmsCryptoProvider.test.ts"
+    },
+    {
       "command": "node --import tsx --test backend/src/security/tenantIsolation.local.integration.ts",
       "scope": "Pending actual disposable SQL/Auth/HTTP verification including existing regressions and new business authority admission races",
       "negative": true,
@@ -221,7 +232,7 @@
     "Actual disposable and final-source branch/integrated proof pending",
     "Latest Operations and CredentialVault migrations require disposable fresh and upgrade database evidence",
     "Final source branch and integrated CI are pending",
-    "Production KMS provider and custody unspecified"
+    "Google Cloud KMS provisioning, IAM, billing authorization and real custody/cutover evidence remain blocked"
   ],
   "placeholderClaimsRemaining": [
     "All22 criteria require authenticated source-bound acceptance. No complete Command008,009 or Phase3 claim."
