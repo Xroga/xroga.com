@@ -223,6 +223,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
       <button
         type="button"
         className="xv-term-title xv-term-title--button"
+        aria-label="Project actions"
         onClick={() => setOpen((value) => !value)}
         aria-haspopup="menu"
         aria-expanded={open}

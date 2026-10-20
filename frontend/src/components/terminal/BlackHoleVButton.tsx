@@ -5,6 +5,7 @@ import { ChevronDown, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ChatBarPortalPopover } from '@/components/ui/ChatBarPortalPopover';
 import styles from './WorkspaceControls.module.css';
+import { ModelAppPermissions } from './ModelAppPermissions';
 
 /** One model, with its existing approval boundary unchanged. */
 export function BlackHoleVButton({ className, compact = false }: { className?: string; compact?: boolean }) {
@@ -14,11 +15,12 @@ export function BlackHoleVButton({ className, compact = false }: { className?: s
     <div className={cn('relative shrink-0', className)}>
       <ChatBarPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={btnRef} width={300}>
         <div className={styles.modelPanel} data-testid="black-hole-model-panel">
-          <div className={styles.modelHeading}><strong>Black Hole V</strong><span>ACTIVE</span></div>
+          <div className={styles.modelHeading}><strong>Black Hole V</strong><span>ON</span></div>
           <p>Our first and last model — every update ships in this one model. All Xroga AI capabilities, balanced for complex tasks.</p>
           <div className={styles.modelSafety}><ShieldCheck size={16} /><span>Safe tasks can continue automatically</span></div>
           <p>Production, destructive, paid, or irreversible actions remain blocked until the required approval is recorded.</p>
           <div className={styles.modelFoot}><span>Sensitive-action approvals</span><strong>Required</strong></div>
+          {open ? <ModelAppPermissions /> : null}
         </div>
       </ChatBarPortalPopover>
       <button ref={btnRef} type="button" onClick={() => setOpen(value => !value)}

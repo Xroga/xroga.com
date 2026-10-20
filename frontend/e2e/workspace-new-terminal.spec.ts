@@ -76,11 +76,11 @@ test('cards preserve drafts and conversation removes all starter styling', async
   const cards = page.getByTestId('workspace-start-cards');
   const input = page.locator('[data-terminal-composer]');
   await expect(cards).toBeVisible();
-  await cards.getByRole('button', { name: /^Create / }).click();
+  await cards.getByRole('button', { name: 'Create', exact: true }).click();
   await page.getByRole('menuitem', { name: 'Documents', exact: true }).click();
   await expect(input).toHaveValue('Draft a document about: ');
   await input.fill('My exact written brief');
-  await cards.getByRole('button', { name: /^Find / }).click();
+  await cards.getByRole('button', { name: 'Find', exact: true }).click();
   await page.getByRole('menuitem', { name: 'Web research', exact: true }).click();
   await expect(input).toHaveValue('My exact written brief\n\nResearch this topic on the web and cite sources: ');
   await input.fill('Hello, local UI fixture test');
@@ -96,12 +96,14 @@ test('cards preserve drafts and conversation removes all starter styling', async
   await expect(cards).toHaveCount(0);
 });
 
-test('feature menus support hover, keyboard, every category and do not send', async ({ page }) => {
+test('feature menus open only on click, support keyboard and never send', async ({ page }) => {
   let requests = 0;
   page.on('request', request => { if (request.url().includes('/api/guest/chat')) requests++; });
   await page.goto('/workspace');
   const input = page.locator('[data-terminal-composer]');
   await page.locator('[data-capability="create"]').hover();
+  await expect(page.getByRole('menu', { name: 'Create features' })).toHaveCount(0);
+  await page.locator('[data-capability="create"]').click();
   await expect(page.getByRole('menu', { name: 'Create features' })).toBeVisible();
   await page.getByRole('menuitem', { name: 'Images', exact: true }).click();
   await expect(input).toHaveValue('Create an image of: ');
@@ -132,14 +134,14 @@ test('feature menus support hover, keyboard, every category and do not send', as
   expect(requests).toBe(0);
 });
 
-test('automation panels rotate every six seconds and dots pause on a selected panel', async ({ page }) => {
+test('automation panels rotate every four seconds and dots pause on a selected panel', async ({ page }) => {
   await page.clock.install();
   await page.goto('/workspace');
   await expect(page.locator('[data-capability="employees"]')).toBeVisible();
-  await page.clock.fastForward(6100);
+  await page.clock.fastForward(4100);
   await expect(page.locator('[data-capability="browser"]')).toBeVisible();
-  await expect(page.getByTestId('workspace-start-header')).toContainText('automation.');
-  await page.clock.fastForward(6100);
+  await expect(page.getByRole('button', { name: 'Pause workspace examples' })).toHaveCount(0);
+  await page.clock.fastForward(4100);
   await expect(page.locator('[data-capability="plugins"]')).toBeVisible();
   await page.getByRole('button', { name: 'Show AI Employees', exact: true }).click();
   await page.clock.fastForward(6500);
@@ -169,4 +171,46 @@ test('solid model and plus menus are monochrome and mobile uses only a model sym
   await page.locator('[data-capability="create"]').click();
   await page.getByRole('menuitem', { name: 'Documents', exact: true }).click();
   await expect(page.locator('[data-terminal-composer]')).toHaveValue('Draft a document about: ');
+});
+
+test('mobile header joins the workspace and shortcuts reveal descriptions on tap', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/workspace');
+  await expect(page.getByTestId('workspace-start-cards')).toBeVisible();
+  const toolbar = await page.locator('.xv-mobile-workspace-pill').boundingBox();
+  const shell = await page.locator('.xv-workspace-shell').boundingBox();
+  expect(Math.abs(toolbar!.y + toolbar!.height - shell!.y)).toBeLessThanOrEqual(1);
+  expect(toolbar!.x).toBe(shell!.x);
+  expect(toolbar!.width).toBe(shell!.width);
+  await expect(page.locator('[data-capability="create"] strong')).toBeHidden();
+  await page.getByRole('button', { name: 'Create', exact: true }).click();
+  await expect(page.getByRole('menu', { name: 'Create features' })).toContainText('Turn ideas into documents, slides, images and videos.');
+});
+
+test('model app preference saves through the existing policy API and keeps failures visible', async ({ page }) => {
+  let mode = 'low_risk';
+  let fail = false;
+  await page.route('**/api/integrations/xroga-connect/permission-policy', async route => {
+    if (route.request().method() === 'PATCH') {
+      if (fail) return route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ error: 'Fixture failure' }) });
+      mode = route.request().postDataJSON().mode;
+    }
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, mode }) });
+  });
+  await page.goto('/workspace');
+  const model = page.getByRole('button', { name: 'Black Hole V model', exact: true });
+  await model.click();
+  const setting = page.getByLabel('Connected app permissions', { exact: true });
+  await expect(setting).toBeEnabled();
+  await expect(setting).toHaveValue('low_risk');
+  await setting.selectOption('always_ask');
+  await expect(setting).toHaveValue('always_ask');
+  await page.keyboard.press('Escape');
+  await model.click();
+  await expect(setting).toHaveValue('always_ask');
+  fail = true;
+  await setting.selectOption('full_access');
+  await expect(page.getByText('Could not save. Your previous setting is unchanged.')).toBeVisible();
+  await expect(setting).toHaveValue('always_ask');
+  await expect(page.getByTestId('black-hole-model-panel')).toContainText('Required');
 });

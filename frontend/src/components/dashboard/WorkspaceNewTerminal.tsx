@@ -44,7 +44,7 @@ type Capability = typeof CAPABILITIES[number] | typeof AUTOMATIONS[number];
 const EXAMPLES = ['work', 'automation', 'code', 'building', 'testing', 'research', 'creation'];
 const STARTER_PROMPTS = [...CAPABILITIES, ...AUTOMATIONS].flatMap(card => card.features.map(feature => feature[1]));
 
-function useRotation(length: number, paused: boolean) {
+function useRotation(length: number, paused: boolean, interval = 6000) {
   const [index, setIndex] = useState(0);
   const reducedMotion = useThemeStore(s => s.reducedMotion);
   useEffect(() => {
@@ -52,9 +52,9 @@ function useRotation(length: number, paused: boolean) {
     if (paused || reducedMotion) return;
     const timer = window.setInterval(() => {
       if (!media.matches && document.visibilityState === 'visible') setIndex(value => (value + 1) % length);
-    }, 6000);
+    }, interval);
     return () => window.clearInterval(timer);
-  }, [length, paused, reducedMotion]);
+  }, [length, paused, reducedMotion, interval]);
   return [index, setIndex] as const;
 }
 
@@ -67,8 +67,7 @@ function CapabilityVisual({ id }: { id: Capability['id'] }) {
 }
 
 export function WorkspaceStartHeader() {
-  const [paused, setPaused] = useState(false);
-  const [index] = useRotation(EXAMPLES.length, paused);
+  const [index] = useRotation(EXAMPLES.length, false);
   return (
     <header className={styles.hero} data-testid="workspace-start-header">
       <h1 className={styles.superIntelligence}>Super Intelligence</h1>
@@ -76,7 +75,6 @@ export function WorkspaceStartHeader() {
         <p className={styles.tagline} aria-label="One AI workspace for every kind of work. Automation, code, building, testing, research and creation.">
           <span aria-hidden="true">One AI workspace for<br className={styles.mobileBreak} /> every kind of <span className={styles.dynamicWord} key={index}>{EXAMPLES[index]}.</span></span>
         </p>
-        <button className={styles.rotationControl} type="button" onClick={() => setPaused(value => !value)} aria-label={paused ? 'Resume workspace examples' : 'Pause workspace examples'}>{paused ? <Play /> : <Pause />}</button>
       </div>
     </header>
   );
@@ -87,16 +85,7 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
   const [open, setOpen] = useState(false);
   const anchorRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const pinned = useRef(false);
-  function cancelClose() { if (closeTimer.current) clearTimeout(closeTimer.current); }
-  function close() { cancelClose(); pinned.current = false; setOpen(false); onInteraction?.(false); }
-  function leave() {
-    if (pinned.current || menuRef.current?.contains(document.activeElement) || anchorRef.current === document.activeElement) return;
-    cancelClose();
-    closeTimer.current = setTimeout(close, 240);
-  }
-  useEffect(() => () => { if (closeTimer.current) clearTimeout(closeTimer.current); }, []);
+  function close() { setOpen(false); onInteraction?.(false); }
   function choose(text: string) {
     const composer = document.querySelector<HTMLTextAreaElement>('[data-terminal-composer]');
     const currentDraft = composer?.value ?? prompt;
@@ -109,12 +98,10 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
   const Icon = card.icon;
   return <>
     <button ref={anchorRef} type="button" className={styles.card} data-capability={card.id}
-      aria-haspopup="menu" aria-expanded={open}
+      aria-haspopup="menu" aria-expanded={open} aria-label={card.title} title={card.title}
       onFocus={() => onInteraction?.(true)}
       onBlur={() => { if (!open) onInteraction?.(false); }}
-      onPointerEnter={event => { if (event.pointerType === 'mouse') { cancelClose(); setOpen(true); onInteraction?.(true); } }}
-      onPointerLeave={leave}
-      onClick={() => { cancelClose(); pinned.current = true; setOpen(true); onInteraction?.(true); requestAnimationFrame(() => menuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus()); }}
+      onClick={() => { if (open) { close(); return; } setOpen(true); onInteraction?.(true); requestAnimationFrame(() => menuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus()); }}
     >
       <span className={styles.cardCopy}>
         <span className={styles.cardIcon}><Icon aria-hidden="true" /></span>
@@ -122,8 +109,8 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
       </span>
       <CapabilityVisual id={card.id} />
     </button>
-    <AnchoredPortalPopover open={open} onClose={close} anchorRef={anchorRef} placement="top-start" width={290} ariaLabel={`${card.title} features`} className={controls.featureMenu}>
-      <div ref={menuRef} onPointerEnter={cancelClose} onPointerLeave={leave}
+    <AnchoredPortalPopover open={open} onClose={close} anchorRef={anchorRef} placement="top-start" width={260} ariaLabel={`${card.title} features`} className={controls.featureMenu}>
+      <div ref={menuRef}
         onKeyDown={event => {
           if (event.key === 'Escape') { close(); anchorRef.current?.focus(); }
           if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
@@ -137,7 +124,7 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
         onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget as Node) && event.relatedTarget !== anchorRef.current) close(); }}
       >
         <div className={controls.featureHeading}><strong>{card.title}</strong><button type="button" onClick={() => { close(); anchorRef.current?.focus(); }} aria-label="Close features"><X size={14} /></button></div>
-        <p>Choose a starting point</p>
+        <p>{card.description}</p>
         {card.features.map(([label, text]) => <button type="button" role="menuitem" key={label} onClick={() => choose(text)}><span>{label}</span><ChevronRight size={14} aria-hidden="true" /></button>)}
       </div>
     </AnchoredPortalPopover>
@@ -147,7 +134,7 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
 function AutomationCard() {
   const [interacting, setInteracting] = useState(false);
   const [paused, setPaused] = useState(false);
-  const [index, setIndex] = useRotation(AUTOMATIONS.length, interacting || paused);
+  const [index, setIndex] = useRotation(AUTOMATIONS.length, interacting || paused, 4000);
   return <div className={styles.carouselShell} onFocusCapture={() => setPaused(true)}>
     <FeatureCard key={AUTOMATIONS[index].id} card={AUTOMATIONS[index]} onInteraction={setInteracting} />
     <div className={styles.carouselDots} aria-label="Automation categories">
@@ -160,7 +147,7 @@ function AutomationCard() {
 export function WorkspaceStartCards() {
   return (
     <section className={styles.starters} aria-label="Explore Xroga capabilities" data-testid="workspace-start-cards">
-      <p className={styles.automatic}>Automatic by default — just describe the outcome.</p>
+      <p className={styles.automatic}><strong>Automatic by default.</strong> All things in one workspace — just describe the idea.</p>
       <div className={styles.cards}>
         {CAPABILITIES.map(card => <div className={styles.cardShell} key={card.id}><FeatureCard card={card} /></div>)}
         <AutomationCard />
