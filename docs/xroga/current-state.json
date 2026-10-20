@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "72876719821f9efdc52fb28a03df465993bd2c70",
-    "sourceTimestampUtc": "2026-10-20T22:04:51+05:00",
-    "auditStartedUtc": "2026-10-20T17:12:14.574Z",
+    "sha": "8343ee9dcd858e27e43c29ca918187dee6983bd5",
+    "sourceTimestampUtc": "2026-10-20T22:22:04+05:00",
+    "auditStartedUtc": "2026-10-20T17:24:21.104Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -21748,7 +21748,7 @@
         "backend/src/services/integrations/businessActionConfirmations.ts:3",
         "backend/src/services/integrations/credentialVault.test.ts:4",
         "backend/src/services/integrations/credentialVault.ts:2",
-        "backend/src/services/integrations/credentialVaultRuntime.ts:4",
+        "backend/src/services/integrations/credentialVaultRuntime.ts:5",
         "backend/src/services/integrations/githubTokenStore.ts:4",
         "backend/src/services/integrations/githubTokenStore.writerContext.test.ts:4",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:8",
@@ -23101,11 +23101,12 @@
       "id": "surface:31655160f787e763cc14",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/credentialVaultRuntime.ts",
-      "sha256": "94a80361025877ad9e2d5641f0633764bf2921972134830a83267cc89c0c83e9",
+      "sha256": "2836dcc09e34ca1f740ef67d4af0b259efce549d12afb5da3f5088834d9f4131",
       "symbols": [
         "configureCredentialVaultProvider",
         "configured",
         "key",
+        "managedProvider",
         "openRuntimeCredential",
         "productionHost",
         "requireLegacyCredentialMigrationWindow",
@@ -23118,12 +23119,14 @@
         "../../security/tenantContext.js",
         "./credentialVault.js",
         "./cryptoProvider.js",
+        "./googleCloudKmsCryptoProvider.js",
         "node:crypto"
       ],
       "runtimeImports": [
         "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/credentialVault.ts",
-        "backend/src/services/integrations/cryptoProvider.ts"
+        "backend/src/services/integrations/cryptoProvider.ts",
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -24262,6 +24265,59 @@
         "backend/src/services/integrations/githubAtomicWrite.test.ts",
         "backend/src/services/integrations/githubTreeSnapshot.test.ts",
         "backend/src/synthesis/universalCommit.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:307d3a7c49ad52f2b8db",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
+      "sha256": "9f9a5daaae7246d4eca5e7a5a410b182f74fb401d71b93741cfba862c7975070",
+      "symbols": [
+        "ApplicationDefaultGoogleKmsTransport",
+        "GoogleCloudKmsCryptoProvider",
+        "GoogleCloudKmsTransport",
+        "client",
+        "decoded",
+        "invalid",
+        "keyNamePattern",
+        "plaintext",
+        "response",
+        "result",
+        "strictBase64"
+      ],
+      "imports": [
+        "./cryptoProvider.js",
+        "google-auth-library"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/services/integrations/credentialVaultRuntime.ts:4",
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.test.ts:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:www.googleapis.com",
+        "google-auth-library"
+      ],
+      "authBoundary": [
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts#GoogleAuth"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -86628,7 +86684,7 @@
       "id": "surface:b694553feb3a38bc1097",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/evaluate-phase-three.mjs",
-      "sha256": "e42bb111e1a9784ad878d33cdafab46218b8befdb4971a717e8567dac6e33e49",
+      "sha256": "c36a79a16980e2f893d13e64c2957f055409448b3c33531647f312ffdedfb651",
       "symbols": [
         "actual",
         "argument",
@@ -86908,7 +86964,7 @@
       "id": "surface:052e49f08f69e1d17b86",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/refresh-phase-three-authority-delta.mjs",
-      "sha256": "73476ea76f46f097a16268b25d4903c2428f72c3f180a4cdcef4620c2d6310d0",
+      "sha256": "840759e9f9d7abe84ed3591aff487b9b9e4468a2f0159875c09c1cc552320c4e",
       "symbols": [
         "accepted",
         "after",
@@ -106686,6 +106742,13 @@
       "id": "test-suite:3ab8f541d8c0cc332f62",
       "sourcePath": "backend/src/services/integrations/githubTreeSnapshot.test.ts",
       "declaredTests": 10,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:23fa95ee762dda3d6ae1",
+      "sourcePath": "backend/src/services/integrations/googleCloudKmsCryptoProvider.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

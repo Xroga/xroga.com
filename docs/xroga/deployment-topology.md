@@ -1,6 +1,6 @@
 # Deployment topology — read-only truth
 
-Source SHA: `72876719821f9efdc52fb28a03df465993bd2c70`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
+Source SHA: `8343ee9dcd858e27e43c29ca918187dee6983bd5`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -62,6 +62,7 @@ Source SHA: `72876719821f9efdc52fb28a03df465993bd2c70`; source/config hashes are
 | endpoint-cheatsheetseries-owasp-org | Source-defined endpoint cheatsheetseries.owasp.org | CONFIGURED_BUT_UNVERIFIED | cheatsheetseries.owasp.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-chrome-google-com | Source-defined endpoint chrome.google.com | CONFIGURED_BUT_UNVERIFIED | chrome.google.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-chromewebstore-googleapis-com | Source-defined endpoint chromewebstore.googleapis.com | CONFIGURED_BUT_UNVERIFIED | chromewebstore.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-cloudkms-googleapis-com | Source-defined endpoint cloudkms.googleapis.com | CONFIGURED_BUT_UNVERIFIED | cloudkms.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-design-intuit-com | Source-defined endpoint design.intuit.com | CONFIGURED_BUT_UNVERIFIED | design.intuit.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-dev-whop-com | Source-defined endpoint dev.whop.com | CONFIGURED_BUT_UNVERIFIED | dev.whop.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-developer-apple-com | Source-defined endpoint developer.apple.com | CONFIGURED_BUT_UNVERIFIED | developer.apple.com | NOT_INDEPENDENTLY_VERIFIED |

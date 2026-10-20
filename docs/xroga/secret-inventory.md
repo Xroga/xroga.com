@@ -1,6 +1,6 @@
 # Environment/secret NAME inventory
 
-Source SHA: `72876719821f9efdc52fb28a03df465993bd2c70`. Values are prohibited, including public credential values. 213 named readers/aliases/derived keys; 21 explicitly reviewed bindings.
+Source SHA: `8343ee9dcd858e27e43c29ca918187dee6983bd5`. Values are prohibited, including public credential values. 214 named readers/aliases/derived keys; 21 explicitly reviewed bindings.
 
 | Name | Class | Requiredness | Consuming source | Validation status |
 | --- | --- | --- | --- | --- |
@@ -189,6 +189,7 @@ Source SHA: `72876719821f9efdc52fb28a03df465993bd2c70`. Values are prohibited, i
 | XROGA_FORCE_RESEARCH_TASK_CLASSES | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/ai/routerConfig.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_GITHUB_BOT_EMAIL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/services/integrations/githubDeploy.ts, backend/src/synthesis/universalCommit.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_GITHUB_BOT_NAME | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/services/integrations/githubDeploy.ts, backend/src/synthesis/universalCommit.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| XROGA_GOOGLE_CLOUD_KMS_KEY_NAME | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/services/integrations/credentialVaultRuntime.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_ISOLATED_AUTH_BUILD | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend/src/lib/supabase/authBuildRealm.mjs | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_LEARNING_ENABLED | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/ai/learningPolicy.ts, backend/src/security/learningOwnerReads.local.integration.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_LEGACY_CREDENTIAL_MIGRATION | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/services/integrations/credentialVaultRuntime.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |

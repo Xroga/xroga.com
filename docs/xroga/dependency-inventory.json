@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "72876719821f9efdc52fb28a03df465993bd2c70",
+  "source_sha": "8343ee9dcd858e27e43c29ca918187dee6983bd5",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -2481,6 +2481,40 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/services/publish/chromeWebStore.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-cloudkms-googleapis-com",
+      "provider": "Source-defined endpoint cloudkms.googleapis.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
+      ],
+      "hostnames": [
+        "cloudkms.googleapis.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -5643,6 +5677,7 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "backend/src/lib/youtubeSearch.ts",
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
         "backend/src/services/publish/chromeWebStore.ts"
       ],
       "hostnames": [
@@ -5669,6 +5704,7 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/lib/youtubeSearch.ts",
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
         "backend/src/services/publish/chromeWebStore.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -6908,6 +6944,7 @@
         "XROGA_DEV_CREDENTIAL_KEK",
         "XROGA_DISABLED_PROVIDERS",
         "XROGA_FORCE_RESEARCH_TASK_CLASSES",
+        "XROGA_GOOGLE_CLOUD_KMS_KEY_NAME",
         "XROGA_LEGACY_CREDENTIAL_MIGRATION",
         "XROGA_MAX_REPAIR_ATTEMPTS",
         "XROGA_MODEL_FALLBACK_ORDER",
@@ -11374,6 +11411,25 @@
       ]
     },
     {
+      "name": "XROGA_GOOGLE_CLOUD_KMS_KEY_NAME",
+      "consuming_sources": [
+        "backend/src/services/integrations/credentialVaultRuntime.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_ISOLATED_AUTH_BUILD",
       "consuming_sources": [
         "frontend/src/lib/supabase/authBuildRealm.mjs"
@@ -13772,7 +13828,7 @@
     },
     {
       "path": "backend/src/services/integrations/credentialVaultRuntime.ts",
-      "sha256": "94a80361025877ad9e2d5641f0633764bf2921972134830a83267cc89c0c83e9"
+      "sha256": "2836dcc09e34ca1f740ef67d4af0b259efce549d12afb5da3f5088834d9f4131"
     },
     {
       "path": "backend/src/services/integrations/cryptoProvider.ts",
@@ -13821,6 +13877,10 @@
     {
       "path": "backend/src/services/integrations/githubTreeSnapshot.ts",
       "sha256": "ae08b9ce28911afd3440cd8c6c23c203b21afc0ece57c8ce7ad6c659275c3dba"
+    },
+    {
+      "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
+      "sha256": "9f9a5daaae7246d4eca5e7a5a410b182f74fb401d71b93741cfba862c7975070"
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
@@ -20363,6 +20423,27 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "www.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
+      "line": 20,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "cloudkms.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
+      "line": 24,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "cloudkms.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
+      "line": 32,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "api.supabase.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/supabaseAuth.ts",
@@ -26624,14 +26705,14 @@
     },
     {
       "path": "backend/src/services/integrations/credentialVaultRuntime.ts",
-      "line": 20,
+      "line": 25,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/credentialVaultRuntime.ts",
-      "line": 25,
+      "line": 30,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

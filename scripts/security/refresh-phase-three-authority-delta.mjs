@@ -75,12 +75,13 @@ const pureModules = [
   ['backend/src/security/authority/digest.ts', 'export function canonicalAuthorityValue'],
   ['backend/src/services/integrations/cryptoProvider.ts', 'export class DevelopmentCryptoProvider'],
   ['backend/src/services/integrations/credentialVault.ts', 'export class CredentialVault'],
+  ['backend/src/services/integrations/googleCloudKmsCryptoProvider.ts', 'export class GoogleCloudKmsCryptoProvider'],
 ];
 for (const [path, marker] of pureModules) {
   const calls = discoverPersistenceCalls(path, read(path));
   assert.ok(calls.length > 0 && calls.every(c => c.kind === 'TABLE_OR_BUCKET_CANDIDATE'));
   changed.push({ path, sourceSha256: hash(read(path)), callIds: calls.map(c => c.id), disposition: 'NOT_PERSISTENCE',
-    authority: 'Inspected each exact receiver in this module. Buffer.from and Array.from perform only local UTF8/base64 encoding, authenticated crypto buffer construction, JSON envelope encoding or dense local array construction. No receiver is a database client, bucket or provider transport.',
+    authority: 'Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.',
     reason: 'Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.',
     evidence: [{ path, marker }],
   });

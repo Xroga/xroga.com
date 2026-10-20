@@ -15363,7 +15363,7 @@
         "20a3c823cda2eea8179c"
       ],
       "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected each exact receiver in this module. Buffer.from and Array.from perform only local UTF8/base64 encoding, authenticated crypto buffer construction, JSON envelope encoding or dense local array construction. No receiver is a database client, bucket or provider transport.",
+      "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
       "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
       "evidence": [
         {
@@ -15384,7 +15384,7 @@
         "819568d821e493406c08"
       ],
       "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected each exact receiver in this module. Buffer.from and Array.from perform only local UTF8/base64 encoding, authenticated crypto buffer construction, JSON envelope encoding or dense local array construction. No receiver is a database client, bucket or provider transport.",
+      "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
       "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
       "evidence": [
         {
@@ -15402,12 +15402,31 @@
         "d078eb13de63ed8a13ec"
       ],
       "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected each exact receiver in this module. Buffer.from and Array.from perform only local UTF8/base64 encoding, authenticated crypto buffer construction, JSON envelope encoding or dense local array construction. No receiver is a database client, bucket or provider transport.",
+      "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
       "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
       "evidence": [
         {
           "path": "backend/src/services/integrations/credentialVault.ts",
           "marker": "export class CredentialVault"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
+      "sourceSha256": "9f9a5daaae7246d4eca5e7a5a410b182f74fb401d71b93741cfba862c7975070",
+      "callIds": [
+        "8eb4738a24cf9aa75051",
+        "91a6564e80b0e68d4568",
+        "06eaca75f76beddc6077",
+        "d409058bdea94f6230eb"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
+      "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
+          "marker": "export class GoogleCloudKmsCryptoProvider"
         }
       ]
     }
