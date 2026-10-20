@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8343ee9dcd858e27e43c29ca918187dee6983bd5",
+  "source_sha": "46113eda8697672ec0fcab3e5f2017e2be9d2ac3",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -13224,7 +13224,7 @@
     },
     {
       "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
-      "sha256": "b14e97ce14863e917485d836ef78b981f1ad85a2f81bd21f17642d5ca4f57d1e"
+      "sha256": "075dafe84a7954086ef376439d5733d0576282eecfa5429259c11f005d30caa6"
     },
     {
       "path": "backend/src/operations/operationsService.ts",
@@ -13584,7 +13584,7 @@
     },
     {
       "path": "backend/src/security/credentialReadMatrix.local.integration.ts",
-      "sha256": "f670715274906beb8c7de98e3af35290816784e3b6b25faf1758d7415fcb84c2"
+      "sha256": "0bba677541a95255672b810bda815bd95161235589d713dc770be9c4f0aea558"
     },
     {
       "path": "backend/src/security/deliveryEvidenceRead.local.integration.ts",
@@ -13600,7 +13600,7 @@
     },
     {
       "path": "backend/src/security/githubConsumer.local.integration.ts",
-      "sha256": "d271a2961c28c3d7ceca12ac43bbad7d6aa9200ea3bf63dd27b8788b9fdd67e8"
+      "sha256": "120d30a4ef087e72591ba21c2b6887e4c9ca506f586835f06b2ebe578ef06cb2"
     },
     {
       "path": "backend/src/security/growthReferral.local.integration.ts",
@@ -13616,7 +13616,7 @@
     },
     {
       "path": "backend/src/security/oauthSession.local.integration.ts",
-      "sha256": "199bd787a29b02c2f340254ea665b66ad9ddcff43e335edbbe3c03f898f25370"
+      "sha256": "6cdc350257a6ba9db35b22153b7d8d7fd5e1538f181d01f6a10e732188fe36e3"
     },
     {
       "path": "backend/src/security/oauthWrapperOwnership.local.integration.ts",
@@ -13756,7 +13756,7 @@
     },
     {
       "path": "backend/src/security/vercelRefreshAccount.local.integration.ts",
-      "sha256": "78f60289a49a6c1bc605036b34299531169c8866620e89678b8506f104f3b1ef"
+      "sha256": "1bc1f9daa6ddbc65a2c1bfed183090bfb0003d538926d80de861a8625710cfc0"
     },
     {
       "path": "backend/src/security/webAccounting.local.integration.ts",
@@ -13824,7 +13824,7 @@
     },
     {
       "path": "backend/src/services/integrations/credentialVault.ts",
-      "sha256": "6b08075a76fa934025384ddb42e670e15d0685f309655c8f32422baf01d35fc0"
+      "sha256": "f8483326c09ee45518f8486c0d73b7a4d37d59f33fd9ba6f80c5c2480654d062"
     },
     {
       "path": "backend/src/services/integrations/credentialVaultRuntime.ts",
@@ -14256,7 +14256,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb"
+      "sha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/types.ts",
@@ -19761,28 +19761,28 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/githubConsumer.local.integration.ts",
-      "line": 15,
+      "line": 16,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/githubConsumer.local.integration.ts",
-      "line": 28,
+      "line": 29,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/security/githubConsumer.local.integration.ts",
-      "line": 44,
+      "line": 53,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/githubConsumer.local.integration.ts",
-      "line": 65,
+      "line": 74,
       "credentialsInUrl": false
     },
     {
@@ -19824,21 +19824,21 @@
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/oauthSession.local.integration.ts",
-      "line": 18,
+      "line": 27,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/oauthSession.local.integration.ts",
-      "line": 25,
+      "line": 34,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/oauthSession.local.integration.ts",
-      "line": 66,
+      "line": 80,
       "credentialsInUrl": false
     },
     {
@@ -20230,14 +20230,14 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/vercelRefreshAccount.local.integration.ts",
-      "line": 12,
+      "line": 13,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/security/vercelRefreshAccount.local.integration.ts",
-      "line": 40,
+      "line": 48,
       "credentialsInUrl": false
     },
     {
@@ -26523,7 +26523,7 @@
     },
     {
       "path": "backend/src/security/githubConsumer.local.integration.ts",
-      "line": 38,
+      "line": 39,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26607,7 +26607,7 @@
     },
     {
       "path": "backend/src/security/vercelRefreshAccount.local.integration.ts",
-      "line": 36,
+      "line": 44,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -27601,21 +27601,21 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 289,
+      "line": 290,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 295,
+      "line": 296,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 305,
+      "line": 306,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

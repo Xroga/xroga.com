@@ -16,7 +16,7 @@
     {"id":"XB01-C009-AC11","originalText":"Credential audit reports remaining direct storage callers.","status":"SOFTWARE_VERIFIED","proof":{"path":"docs/xroga/security/credential-usage-audit.json","marker":"PRIVATE_CREDENTIAL_CONSUMER_CANDIDATE"}},
     {"id":"XB01-C009-AC12","originalText":"Remaining legacy callers are zero or explicitly blocked from production cutover.","status":"SOFTWARE_VERIFIED","proof":{"path":"docs/xroga/security/credential-migration.md","marker":"Enable the temporary migration window"}}
   ],
-  "credentialAudit":{"candidates":117,"groups":37,"staticBackendVaultImporters":6},
+  "credentialAudit":{"candidates":117,"groups":37,"staticBackendVaultImporters":7},
   "productionKms":{"status":"CODE_READY_GOOGLE_CLOUD_KMS_NOT_PROVISIONED_OR_VERIFIED","provider":"Google Cloud KMS","developmentFallbackAllowed":false},
   "liveCredentialMigration":false,
   "productionEffects":false
