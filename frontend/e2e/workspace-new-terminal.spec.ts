@@ -19,10 +19,15 @@ test.beforeEach(async ({ page, baseURL }) => {
   }));
 });
 
-test('HD starter fits desktop, tablet and phones without overflowing', async ({ page }) => {
+test('compact visual starter fits desktop, tablet and phones without overflowing', async ({ page }) => {
   await page.goto('/workspace');
   const header = page.getByTestId('workspace-start-header');
   await expect(header).toBeVisible();
+  await expect(header.getByRole('heading', { name: /Super Intelligence/ })).toBeVisible();
+  await expect(header).toContainText('One AI workspace for every kind of work.');
+  await expect(page.getByText('DESCRIBE IT.', { exact: false })).toHaveCount(0);
+  await expect(page.getByRole('complementary', { name: 'Xroga early access notice' })).toHaveCount(0);
+  await expect(page.getByTestId('workspace-start-cards').locator('img')).toHaveCount(0);
   for (const viewport of [{ width: 1366, height: 768 }, { width: 1280, height: 650 }, { width: 768, height: 1024 }, { width: 390, height: 844 }, { width: 320, height: 740 }]) {
     await page.setViewportSize(viewport);
     // Wait for the existing workspace's animated sidebar/pane measurement.

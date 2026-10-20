@@ -705,12 +705,15 @@ test('the bottom inspiration bar opens the real catalog automatically on workspa
 });
 
 
-test('new terminal renders transparent artwork and selectable HTML text with five HD cards', () => {
+test('new terminal renders a silver heading, transparent black hole and five vector-layout cards', () => {
   assert.match(START, /black-hole.webp/);
   assert.match(START, /Super Intelligence/);
-  assert.match(START, /One AI layer for every kind of work/);
-  assert.match(START, /DESCRIBE IT\./);
-  assert.match(START, /width=\{1536\} height=\{1024\}/);
+  assert.match(START, /One AI workspace for every kind of work\./);
+  assert.doesNotMatch(START, /DESCRIBE IT\.|SHIP IT\./);
+  assert.match(START, /<CapabilityVisual id=\{id\}/);
+  assert.doesNotMatch(START, /cardImage|1536/);
+  assert.doesNotMatch(DASHBOARD, /BetaExpectationBanner/);
+  assert.match(START_CSS, /background-clip: text/);
   assert.equal((START.match(/id: '/g) ?? []).length, 5);
   assert.match(START_CSS, /repeat\(5,minmax\(0,1fr\)\)/);
   assert.match(START_CSS, /@container \(max-width: 580px\)/);

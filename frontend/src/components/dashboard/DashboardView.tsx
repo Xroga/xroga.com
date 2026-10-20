@@ -21,7 +21,6 @@ import { ExpandIcon } from '@/components/icons/animated/ExpandIcon';
 import { MinimizeIcon } from '@/components/icons/animated/MinimizeIcon';
 import { markFreshTerminalIntent } from '@/lib/repoContext';
 import { BillingSuccessExperience } from '@/components/billing/BillingSuccessExperience';
-import { BetaExpectationBanner } from '@/components/layout/BetaExpectationBanner';
 import startStyles from './WorkspaceNewTerminal.module.css';
 import { RepoContextBar } from '@/components/terminal/RepoContextBar';
 
@@ -267,7 +266,6 @@ export function DashboardView() {
           )}
         </header>
 
-        <BetaExpectationBanner compact />
 
         <div
           ref={bodyRef}

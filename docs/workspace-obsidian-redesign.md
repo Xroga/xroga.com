@@ -1,5 +1,13 @@
 # New-terminal workspace, October 2026
 
+## Compact refinement
+
+The workspace early-access notice and Describe/Build/Ship headline are removed. A silver metallic HTML heading precedes the subtitle, “One AI workspace for every kind of work.” The existing transparent black-hole asset overlaps the composer's outer upper edge without blocking pointer input.
+
+The five cards now use CSS/SVG interface illustrations (stacked sheets, search globe, feature tiles and employee nodes), not raster image rectangles. Their grayscale surfaces blend into the black workspace. Desktop uses five short cards; tablet uses a compact three-column arrangement; phones use two columns with a slim employee row. Existing raster assets are retained for recoverability but no longer rendered in the cards.
+
+Verification: updated browser tests cover all five viewport sizes, no starter overflow, absent alert/headline/card images, draft preservation and conversation transition with a mocked local API. The underlying chat/backend/auth workflows remain unchanged.
+
 ## Scope
 
 The monochrome starter appears only for a hydrated, restored, idle, empty terminal with Project edits closed and incognito off. The canonical TerminalChatBar stays mounted; existing send, stop, voice, attachment, auth and integration handlers are reused. Once a message exists or loading begins, the starter-only CSS classes, header, cards and icon variants withdraw. No backend, auth policy or conversation persistence changes.

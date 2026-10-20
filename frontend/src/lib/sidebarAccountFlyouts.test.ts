@@ -86,7 +86,7 @@ test('the beta banner starts at the hero and becomes a compact hover notice afte
   assert.match(BETA_BANNER, /style=\{parked \? \{ display: 'none' \} : undefined\}/);
   assert.doesNotMatch(BETA_BANNER, /topExpired && !scrolled\)\) return null/);
   assert.match(APP_SHELL, /!isDashboard \? <BetaExpectationBanner compact \/>/);
-  assert.match(DASHBOARD_VIEW, /<\/header>[\s\S]*?<BetaExpectationBanner compact \/>/);
+  assert.doesNotMatch(DASHBOARD_VIEW, /BetaExpectationBanner/);
   assert.match(CSS, /\.xv-public-marketing-shell > \.xv-beta-banner--top\s*\{[\s\S]*position:\s*absolute !important/);
   assert.match(CSS, /\.xv-public-marketing-shell > \.xv-beta-banner--corner\s*\{[\s\S]*position:\s*fixed !important/);
   assert.match(CSS, /\.xv-beta-banner--corner:hover[\s\S]*width:\s*min\(390px/);
