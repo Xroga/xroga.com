@@ -35,7 +35,7 @@ begin
     select role into actor_role from public.operations_memberships
       where project_id=current_action.project_id and user_id=current_action.user_id and member_user_id=p_actor for share;
   end if;
-  if actor_role not in ('release_manager','admin') then raise exception 'operation is not permitted' using errcode='42501'; end if;
+  if actor_role is null or actor_role not in ('release_manager','admin') then raise exception 'operation is not permitted' using errcode='42501'; end if;
 
   select * into approval from public.operations_action_approvals
     where action_id=current_action.id and user_id=current_action.user_id and required_role='release_manager' for share;
@@ -51,7 +51,7 @@ begin
     select role into approver_role from public.operations_memberships
       where project_id=current_action.project_id and user_id=current_action.user_id and member_user_id=approval.approver_id for share;
   end if;
-  if approver_role not in ('release_manager','admin') then raise exception 'approver authority changed' using errcode='42501'; end if;
+  if approver_role is null or approver_role not in ('release_manager','admin') then raise exception 'approver authority changed' using errcode='42501'; end if;
 
   if jsonb_typeof(current_action.execution_plan->'maximumCostUsd')<>'number' then
     raise exception 'approved spend ceiling missing' using errcode='22023';
