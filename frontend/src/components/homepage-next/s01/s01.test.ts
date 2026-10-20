@@ -351,19 +351,33 @@ test('Launch never shows store approval as done, and Keep Work Running separates
   assert.match(body, /Waiting: approval/);
 });
 
-test('card backs are dark Obsidian Titanium, never white or pale', () => {
+test('card backs are matte white ceramic with clearly black engraving (experiment), fronts stay dark', () => {
   const css = read('./Card.module.css');
-  const start = css.search(/\.backInner \{\s*color/);
-  const block = css.slice(start, css.indexOf('}', start));
-  const hexes = [...block.matchAll(/#([0-9a-f]{6})/gi)].map((m) => m[1]);
-  assert.ok(hexes.length >= 3);
-  for (const h of hexes) {
+  const lum = (h: string) => {
     const [r, g, b] = [0, 2, 4].map((k) => parseInt(h.slice(k, k + 2), 16) / 255);
-    const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-    assert.ok(lum < 0.2, `#${h} is too light for the back`);
-  }
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  // the plate: its gradient stops sit within a few percent of #f2f2f0, never pale-grey and never pure glaring white
+  const start = css.search(/\.backInner \{\s*color/);
+  const plate = css.slice(start, css.indexOf('}', start));
+  const stops = [...plate.replace(/color: #[0-9a-f]{6};/i, '').matchAll(/#([0-9a-f]{6})/gi)].map((m) => m[1]);
+  assert.ok(stops.length >= 3 && stops.includes('f2f2f0'));
+  for (const h of stops) assert.ok(lum(h) > 0.8 && lum(h) < 0.97, `#${h} is outside the matte white range`);
+  // the engraving is graphite #252525 at 1px or more, so it stays black at 1x
+  const eng = css.slice(css.indexOf('.patternSvg path,'), css.indexOf('.medal {'));
+  assert.ok(eng.includes('#252525') && eng.includes('rgba(37, 37, 37'));
+  for (const m of eng.matchAll(/stroke-width: ([\d.]+);/g)) assert.ok(Number(m[1]) >= 1, `engraving stroke ${m[1]} is too fine`);
+  // overlapping white cards keep a dark keyline on every side
+  assert.match(plate, /inset 0 0 0 1px rgba\(37, 37, 37, 0\.46\)/);
+  // the medallion keeps its size and the unchanged Xroga mark (no desaturating filter)
   assert.match(css, /\.medal \{[\s\S]*?--m: calc\(var\(--cw, 290px\) \* 0\.23\)/, 'medallion about 23% of card width');
   assert.match(read('./CapabilityCard.tsx'), /\/brand\/xroga-orb-mark-v2\.webp/);
+  assert.doesNotMatch(css.slice(css.indexOf('.medalMark {'), css.indexOf('.medalGlint {')), /filter:/);
+  // the front face keeps its dark finish
+  const front = css.slice(css.search(/\.frontInner \{\s*display: flex/), css.indexOf('/* edge glint'));
+  assert.ok(front.includes('#1d2129') && front.includes('#121519'));
+  // and the engraving geometry is the unchanged SVG
+  assert.match(read('./CapabilityCard.tsx'), /<circle cx="50" cy="73" r="33\.5" data-fine \/>/);
 });
 
 test('offstage cards are inert and the chapter meter offers keyboard navigation between chapters', () => {

@@ -439,19 +439,27 @@
   animation-name: sweepUpB;
 }
 
-/* ---- back: Xroga Obsidian Titanium ----
-   Satin anodized dark metal. Layers, bottom to top: base plate with a restrained indigo undertone, low-frequency
-   directional machining, a key light from the upper left, the micro-engraved pattern and a machined medallion holding
-   the real Xroga mark. The specular band (.spec) rolls across the face as the card turns (--glint from the stage) and
-   peaks at grazing angles (--glintO). It stays dark in any screenshot: the brightest pixels are the thin edges. */
+/* ---- back: Xroga Ceramic White (experiment) ----
+   Matte white ceramic with black engraving, in the same light as the front: the key light is upper left. Layers, bottom to
+   top: the matte plate (#f2f2f0, never brighter than a whisper above it), faint directional machining, a soft key light and
+   a soft shade low right, then the engraving (graphite #252525 at three weights) and a machined medallion that keeps the
+   real Xroga mark on a dark well. The rim is a dark keyline on all four sides (so overlapping white cards still read as
+   separate objects) with a bright 2px bevel on the lit top-left edges and a soft shade on the lower-right. The specular
+   band (.spec) rolls across the face as the card turns (--glint from the stage) and stays gentle: matte, not glossy. */
 .backInner {
-  color: var(--ink);
+  color: #252525;
   background:
-    radial-gradient(120% 62% at 18% -6%, rgba(150, 168, 214, 0.13), transparent 62%),
-    radial-gradient(90% 50% at 85% 112%, rgba(143, 121, 194, 0.07), transparent 60%),
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.016) 0 1px, transparent 1px 2px, rgba(0, 0, 0, 0.05) 2px 3px),
-    linear-gradient(162deg, #252b3a 0%, #1d2231 34%, #171b27 62%, #10131c 100%);
-  box-shadow: inset 0 0 0 1px rgba(10, 13, 20, 0.9), inset 0 1px 0 rgba(160, 180, 225, 0.12);
+    radial-gradient(120% 70% at 18% -8%, rgba(255, 255, 255, 0.42), transparent 60%),
+    radial-gradient(90% 55% at 88% 112%, rgba(70, 66, 58, 0.1), transparent 62%),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.012) 0 1px, transparent 1px 3px),
+    linear-gradient(162deg, #f5f5f3 0%, #f2f2f0 40%, #ebebe8 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(37, 37, 37, 0.46),
+    inset 0 3px 0 0 rgba(255, 255, 255, 0.95),
+    inset 3px 0 0 0 rgba(255, 255, 255, 0.7),
+    inset 0 -3px 0 0 rgba(110, 108, 102, 0.2),
+    inset -3px 0 0 0 rgba(110, 108, 102, 0.14),
+    inset 0 0 20px rgba(40, 38, 32, 0.09);
 }
 .spec {
   position: absolute;
@@ -459,11 +467,11 @@
   pointer-events: none;
   background: linear-gradient(
     106deg,
-    transparent 40%,
-    rgba(123, 153, 217, 0.09) 46%,
-    rgba(198, 210, 236, 0.16) 49.5%,
-    rgba(143, 121, 194, 0.08) 53%,
-    transparent 60%
+    transparent 36%,
+    rgba(40, 40, 40, 0.035) 43%,
+    rgba(255, 255, 255, 0.5) 49.5%,
+    rgba(40, 40, 40, 0.03) 56%,
+    transparent 64%
   );
   background-size: 300% 100%;
   background-position: calc(var(--glint, 0.5) * 100%) 0;
@@ -480,30 +488,40 @@
   width: 100%;
   height: 100%;
 }
+/* the engraving: graphite #252525 at four weights. Strokes are 1px or more so they stay black (not antialiased grey) at 1x */
 .patternSvg path,
 .patternSvg circle {
   fill: none;
-  stroke: rgba(57, 65, 84, 0.85);
-  stroke-width: 0.5;
+  stroke: rgba(37, 37, 37, 0.85);
+  stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 .patternSvg [data-frame] {
-  stroke: rgba(123, 153, 217, 0.2);
-}
-.patternSvg [data-fine] {
-  stroke: rgba(57, 65, 84, 0.6);
-}
-.patternSvg [data-tick] {
-  stroke: rgba(110, 126, 160, 0.45);
-}
-.patternSvg [data-reg] {
-  stroke: rgba(123, 153, 217, 0.3);
-}
-.patternSvg [data-slat] {
-  stroke: rgba(57, 65, 84, 0.9);
+  stroke: #252525;
   stroke-width: 1.4;
 }
-/* machined medallion: about 23% of the card width, a turned bezel around a recessed well holding the Xroga mark */
+.patternSvg [data-fine] {
+  stroke: rgba(37, 37, 37, 0.72);
+  stroke-width: 1;
+}
+.patternSvg circle[data-fine] {
+  stroke: #252525;
+  stroke-width: 1.4;
+}
+.patternSvg [data-tick] {
+  stroke: rgba(37, 37, 37, 0.92);
+  stroke-width: 1.1;
+}
+.patternSvg [data-reg] {
+  stroke: #252525;
+  stroke-width: 1.6;
+}
+.patternSvg [data-slat] {
+  stroke: #252525;
+  stroke-width: 1.9;
+}
+/* machined medallion: about 23% of the card width, a turned titanium bezel with a black engraved ring around it and a dark
+   well that holds the unchanged Xroga mark */
 .medal {
   --m: calc(var(--cw, 290px) * 0.23);
   position: absolute;
@@ -513,11 +531,13 @@
   height: var(--m);
   margin: calc(var(--m) / -2) 0 0 calc(var(--m) / -2);
   border-radius: 50%;
-  background: conic-gradient(from 210deg, #4a5570, #1a1f2b 18%, #5b6684 34%, #141824 52%, #3c465c 70%, #10131b 86%, #4a5570);
+  background: conic-gradient(from 210deg, #9a9a97, #3a3a3a 18%, #b4b4b1 34%, #2d2d2d 52%, #8a8a87 70%, #2b2b2b 86%, #9a9a97);
   box-shadow:
-    0 0 0 1px rgba(10, 13, 20, 0.95),
-    0 6px 14px -6px rgba(0, 0, 0, 0.9),
-    0 -1px 0 rgba(180, 196, 232, 0.18);
+    0 0 0 1px rgba(37, 37, 37, 0.95),
+    0 0 0 5px #f1f1ef,
+    0 0 0 6px rgba(37, 37, 37, 0.85),
+    0 8px 14px -6px rgba(30, 28, 24, 0.5),
+    0 -1px 0 rgba(255, 255, 255, 0.9);
 }
 .medalWell {
   position: absolute;
@@ -525,15 +545,14 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: radial-gradient(circle at 40% 32%, #1b2130, #0a0d14 72%);
-  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.85), inset 0 -1px 0 rgba(160, 180, 225, 0.14);
+  background: radial-gradient(circle at 40% 32%, #2b2b2e, #0f0f11 72%);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.85), inset 0 -1px 0 rgba(255, 255, 255, 0.14);
   overflow: hidden;
 }
 .medalMark {
   width: 74%;
   height: 74%;
   object-fit: contain;
-  filter: saturate(0.9);
 }
 /* one optical response on the medallion: a narrow arc of light that turns with the card, never a glow ring */
 .medalGlint {
@@ -555,9 +574,9 @@
   font-family: var(--font-xv-mono), ui-monospace, monospace;
   font-size: 9.5px;
   letter-spacing: 0.42em;
-  color: rgba(123, 140, 176, 0.5);
+  color: rgba(37, 37, 37, 0.82);
 }
-/* ---- chassis edges: dark anodized rim, lit only near edge-on (the stage raises --glintO there) ---- */
+/* ---- chassis edges: light titanium rim, lit mostly near edge-on (the stage raises --glintO there) ---- */
 .edge {
   position: absolute;
   opacity: var(--o, 1);
@@ -566,8 +585,8 @@
   width: var(--t);
   margin-left: calc(var(--t) / -2);
   background:
-    linear-gradient(180deg, rgba(150, 170, 220, calc(var(--glintO, 0) * 0.45)), transparent 45%),
-    linear-gradient(180deg, #3d4558 0%, #222838 30%, #121620 70%, #2a3142 100%);
+    linear-gradient(180deg, rgba(255, 255, 255, calc(var(--glintO, 0) * 0.6)), transparent 45%),
+    linear-gradient(180deg, #dcdcd9 0%, #b6b6b3 30%, #8d8d8a 70%, #c2c2bf 100%);
 }
 .edgeL {
   left: 0;
