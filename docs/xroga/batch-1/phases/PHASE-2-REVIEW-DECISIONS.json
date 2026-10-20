@@ -655,6 +655,146 @@
       "target": "finalize_operations_automation_run",
       "reviewPacketId": "B1-P2-4bd11f790ddabef6",
       "reason": "Explicit source-ordered mapping after the reviewed shared internal effect transaction. The nine existing capability branches remain nine real RPC consumers. Unchanged service methods are byte-identical. Mapping preserves identity and does not certify changed source. The later finalization repair retains this same original identity, with only evaluateAutomationSignal and audit changed; every other method is byte-identical to1d16a2fe."
+    },
+    {
+      "previousCallerId": "59fc6590fac35ccb2965",
+      "currentCallerId": "ea087c9551ee69b9b0d3",
+      "path": "backend/src/services/memory/buildProjectStore.ts",
+      "enclosing": "lookupProjectIdByRepo",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "projects",
+      "reviewPacketId": "B1-P2-2864df68a8179211",
+      "reason": "Explicit semantic source mapping. Original project update/create and two required message writes consolidate inside one real canonical-save wrapper transaction. Every original frozen obligation remains mapped, while pure Buffer conversions stay separate false positives. Mapping and local review do not certify security."
+    },
+    {
+      "previousCallerId": "e85bf3fa018cd1e5f137",
+      "currentCallerId": "7392ec424976019ecaa1",
+      "path": "backend/src/services/memory/buildProjectStore.ts",
+      "enclosing": "lookupProjectIdByRepo",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "reviewPacketId": "B1-P2-2864df68a8179211",
+      "reason": "Explicit semantic source mapping. Original project update/create and two required message writes consolidate inside one real canonical-save wrapper transaction. Every original frozen obligation remains mapped, while pure Buffer conversions stay separate false positives. Mapping and local review do not certify security."
+    },
+    {
+      "previousCallerId": "9dcd762bbd944736b141",
+      "currentCallerId": "0906e7cc348611500a9a",
+      "path": "backend/src/services/memory/buildProjectStore.ts",
+      "enclosing": "ensureProjectIdByRepo",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "reviewPacketId": "B1-P2-2864df68a8179211",
+      "reason": "Explicit semantic source mapping. Original project update/create and two required message writes consolidate inside one real canonical-save wrapper transaction. Every original frozen obligation remains mapped, while pure Buffer conversions stay separate false positives. Mapping and local review do not certify security."
+    },
+    {
+      "previousCallerId": "a5afeb0fc9eb8097fe8b",
+      "currentCallerId": "237b112c6ed82b8b5494",
+      "path": "backend/src/services/memory/buildProjectStore.ts",
+      "enclosing": "ensureProjectIdByRepo",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "projects",
+      "reviewPacketId": "B1-P2-2864df68a8179211",
+      "reason": "Explicit semantic source mapping. Original project update/create and two required message writes consolidate inside one real canonical-save wrapper transaction. Every original frozen obligation remains mapped, while pure Buffer conversions stay separate false positives. Mapping and local review do not certify security."
+    },
+    {
+      "previousCallerId": "d9d4a29d564517515c7b",
+      "currentCallerId": "86ab46317dfaadcb7a8b",
+      "path": "backend/src/services/memory/buildProjectStore.ts",
+      "enclosing": "ensureProjectIdByRepo",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "projects",
+      "reviewPacketId": "B1-P2-2864df68a8179211",
+      "reason": "Explicit semantic source mapping. Original project update/create and two required message writes consolidate inside one real canonical-save wrapper transaction. Every original frozen obligation remains mapped, while pure Buffer conversions stay separate false positives. Mapping and local review do not certify security."
+    },
+    {
+      "previousCallerId": "28fc6f63cb6916deb4b0",
+      "currentCallerId": "3c877ece7514d0bb2943",
+      "path": "backend/src/services/memory/buildProjectStore.ts",
+      "enclosing": "upsertBuildProject",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "reviewPacketId": "B1-P2-2864df68a8179211",
+      "reason": "Explicit semantic source mapping. Original project update/create and two required message writes consolidate inside one real canonical-save wrapper transaction. Every original frozen obligation remains mapped, while pure Buffer conversions stay separate false positives. Mapping and local review do not certify security."
+    },
+    {
+      "previousCallerId": "3deb87c3dcfeb857648d",
+      "currentCallerId": "8e4069835c8064de08e4",
+      "path": "backend/src/services/memory/buildProjectStore.ts",
+      "enclosing": "upsertBuildProject",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "projects",
+      "reviewPacketId": "B1-P2-2864df68a8179211",
+      "reason": "Explicit semantic source mapping. Original project update/create and two required message writes consolidate inside one real canonical-save wrapper transaction. Every original frozen obligation remains mapped, while pure Buffer conversions stay separate false positives. Mapping and local review do not certify security."
+    },
+    {
+      "previousCallerId": "2634692c2734611690d4",
+      "currentCallerId": "66e3c91fc33e27084a31",
+      "path": "backend/src/services/memory/buildProjectStore.ts",
+      "enclosing": "upsertBuildProject",
+      "kind": "RPC_CANDIDATE",
+      "target": "save_owned_build_project_atomic",
+      "reviewPacketId": "B1-P2-2864df68a8179211",
+      "reason": "Explicit semantic source mapping. Original project update/create and two required message writes consolidate inside one real canonical-save wrapper transaction. Every original frozen obligation remains mapped, while pure Buffer conversions stay separate false positives. Mapping and local review do not certify security."
+    },
+    {
+      "previousCallerId": "1c2d9ab16cffe4e444c3",
+      "currentCallerId": "66e3c91fc33e27084a31",
+      "path": "backend/src/services/memory/buildProjectStore.ts",
+      "enclosing": "upsertBuildProject",
+      "kind": "RPC_CANDIDATE",
+      "target": "save_owned_build_project_atomic",
+      "reviewPacketId": "B1-P2-2864df68a8179211",
+      "reason": "Explicit semantic source mapping. Original project update/create and two required message writes consolidate inside one real canonical-save wrapper transaction. Every original frozen obligation remains mapped, while pure Buffer conversions stay separate false positives. Mapping and local review do not certify security."
+    },
+    {
+      "previousCallerId": "09c2c6ce5cdcb280c15a",
+      "currentCallerId": "66e3c91fc33e27084a31",
+      "path": "backend/src/services/memory/buildProjectStore.ts",
+      "enclosing": "upsertBuildProject",
+      "kind": "RPC_CANDIDATE",
+      "target": "save_owned_build_project_atomic",
+      "reviewPacketId": "B1-P2-2864df68a8179211",
+      "reason": "Explicit semantic source mapping. Original project update/create and two required message writes consolidate inside one real canonical-save wrapper transaction. Every original frozen obligation remains mapped, while pure Buffer conversions stay separate false positives. Mapping and local review do not certify security."
+    },
+    {
+      "previousCallerId": "c46c59f2f8955ace4f40",
+      "currentCallerId": "66e3c91fc33e27084a31",
+      "path": "backend/src/services/memory/buildProjectStore.ts",
+      "enclosing": "upsertBuildProject",
+      "kind": "RPC_CANDIDATE",
+      "target": "save_owned_build_project_atomic",
+      "reviewPacketId": "B1-P2-2864df68a8179211",
+      "reason": "Explicit semantic source mapping. Original project update/create and two required message writes consolidate inside one real canonical-save wrapper transaction. Every original frozen obligation remains mapped, while pure Buffer conversions stay separate false positives. Mapping and local review do not certify security."
+    },
+    {
+      "previousCallerId": "2be3e9c5ec180ef9feaa",
+      "currentCallerId": "a763d5560b8956ecb580",
+      "path": "backend/src/services/memory/buildProjectStore.ts",
+      "enclosing": "upsertBuildProject",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "projects",
+      "reviewPacketId": "B1-P2-2864df68a8179211",
+      "reason": "Explicit semantic source mapping. Original project update/create and two required message writes consolidate inside one real canonical-save wrapper transaction. Every original frozen obligation remains mapped, while pure Buffer conversions stay separate false positives. Mapping and local review do not certify security."
+    },
+    {
+      "previousCallerId": "82128ce3750aebf2c11c",
+      "currentCallerId": "25757992dc2e9cf1d564",
+      "path": "backend/src/services/storage/projectFiles.ts",
+      "enclosing": "storeProjectFile",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "project_files",
+      "reviewPacketId": "B1-P2-483eddfc89b603e8",
+      "reason": "Explicit semantic source mapping. Original project update/create and two required message writes consolidate inside one real canonical-save wrapper transaction. Every original frozen obligation remains mapped, while pure Buffer conversions stay separate false positives. Mapping and local review do not certify security."
+    },
+    {
+      "previousCallerId": "86bc34b55fee2854131b",
+      "currentCallerId": "40004623c4ecf74640f6",
+      "path": "backend/src/services/storage/projectFiles.ts",
+      "enclosing": "storeProjectFile",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "reviewPacketId": "B1-P2-483eddfc89b603e8",
+      "reason": "Explicit semantic source mapping. Original project update/create and two required message writes consolidate inside one real canonical-save wrapper transaction. Every original frozen obligation remains mapped, while pure Buffer conversions stay separate false positives. Mapping and local review do not certify security."
     }
   ],
   "decisions": [
@@ -2471,6 +2611,66 @@
         "Reconcile only original007 caller obligations. Preserve008 grants/budgets,009 custody and010 egress"
       ],
       "rollback": "Retain existing admission, restrictive grants and run/action idempotency. Withhold automation signal finalization before separately approved withdrawal. Never restore the demonstrated unguarded link/audit. No production migration authorized."
+    },
+    {
+      "packetId": "B1-P2-2864df68a8179211",
+      "sourceSha256": "df1dd631c4631480558890e38e888c5e36b4dabeae1d8bef46778b5d547dd895",
+      "executionStatus": "IN_PROGRESS",
+      "finding": "LEGACY_CALLABLE_ISSUED_OWNER_CURRENT_PROJECT_PARENT_AND_EXACT_RECEIPTS_REPAIRED_PROOF_PENDING",
+      "originalCriteria": [
+        2,
+        4,
+        10
+      ],
+      "actorTrace": "No active production caller was found or invented for these legacy exports. Every callable reader/ensurer/writer now requires an original issued TenantContext before SDK access, with explicit owner equality for captured build input. Reads and ignore-conflict identity writes check full owner/repository receipts. Required parent/message writes reuse save_owned_project_atomic inside one service-only wrapper that holds current owner/repository/expected project through all initial writes. Files retain the same issued context and completion checks the exact current owned project receipt.",
+      "invariant": "Only an original issued actor can select or persist the owned repository/project/files. Current parent ownership holds at the decisive write, required children roll back with their project, receipts bind exact persisted owner/resource/content, and uncertainty never reports completed persistence.",
+      "evidence": [
+        {
+          "path": "backend/src/services/memory/buildProjectStore.receipt.test.ts",
+          "type": "ORIGINAL_CONTEXT_FOREIGN_INPUT_AND_ATOMIC_RECEIPT_NEGATIVES",
+          "result": "PASS"
+        },
+        {
+          "path": "backend/src/security/buildProjectReceipt.local.integration.ts",
+          "type": "REAL_DATABASE_PARENT_WAIT_COLLISION_TWO_OWNER_AND_ROLLBACK_CASES_PREPARED",
+          "result": "NOT_EXECUTED"
+        }
+      ],
+      "remaining": [
+        "Execute and authenticate actual new-source disposable cases and full regression",
+        "Reconcile exact original007 callers only, preserving real R2, Phase3 authority/custody and Phase4 egress obligations"
+      ],
+      "rollback": "Retain issued-context contracts, current parent locks and restrictive grants. Withhold affected legacy persistence before separately approved withdrawal of the additive wrapper. Never restore optional false-success writes or unchecked storage-parent associations. No production rollout is authorized."
+    },
+    {
+      "packetId": "B1-P2-483eddfc89b603e8",
+      "sourceSha256": "839aa8c20f46c7c5c923f23287b376e41f082274df0fcfdb893a002b0d068a9e",
+      "executionStatus": "IN_PROGRESS",
+      "finding": "LEGACY_CALLABLE_ISSUED_OWNER_CURRENT_PROJECT_PARENT_AND_EXACT_RECEIPTS_REPAIRED_PROOF_PENDING",
+      "originalCriteria": [
+        2,
+        4,
+        10
+      ],
+      "actorTrace": "The only production-source receiver is the legacy build helper, for which no active production consumer exists. This callable file contract now requires the original issued context instead of minting one from an arbitrary owner string. Existing owned-project preflight precedes private upload. Metadata owner/key derives from that original subject, input Buffer is copied before waits, and the existing database guard locks/rechecks current project ownership through insertion. Exact file/project/name/path/type/URL/content/metadata receipt is required. No missing acknowledgement deletes an uncertain referenced object.",
+      "invariant": "Only an original issued actor can select or persist the owned repository/project/files. Current parent ownership holds at the decisive write, required children roll back with their project, receipts bind exact persisted owner/resource/content, and uncertainty never reports completed persistence.",
+      "evidence": [
+        {
+          "path": "backend/src/services/memory/buildProjectStore.receipt.test.ts",
+          "type": "ORIGINAL_CONTEXT_FOREIGN_INPUT_AND_ATOMIC_RECEIPT_NEGATIVES",
+          "result": "PASS"
+        },
+        {
+          "path": "backend/src/security/buildProjectReceipt.local.integration.ts",
+          "type": "REAL_DATABASE_PARENT_WAIT_COLLISION_TWO_OWNER_AND_ROLLBACK_CASES_PREPARED",
+          "result": "NOT_EXECUTED"
+        }
+      ],
+      "remaining": [
+        "Execute and authenticate actual new-source disposable cases and full regression",
+        "Reconcile exact original007 callers only, preserving real R2, Phase3 authority/custody and Phase4 egress obligations"
+      ],
+      "rollback": "Retain issued-context contracts, current parent locks and restrictive grants. Withhold affected legacy persistence before separately approved withdrawal of the additive wrapper. Never restore optional false-success writes or unchecked storage-parent associations. No production rollout is authorized."
     }
   ]
 }

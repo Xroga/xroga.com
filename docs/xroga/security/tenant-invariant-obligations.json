@@ -1242,23 +1242,20 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-2864df68a8179211",
+      "id": "OB-1ca5c9d4dcfc6da1",
       "callerIds": [
-        "59fc6590fac35ccb2965",
-        "e85bf3fa018cd1e5f137",
-        "9dcd762bbd944736b141",
-        "a5afeb0fc9eb8097fe8b",
-        "d9d4a29d564517515c7b",
-        "28fc6f63cb6916deb4b0",
-        "3deb87c3dcfeb857648d",
-        "2634692c2734611690d4",
-        "1c2d9ab16cffe4e444c3",
-        "09c2c6ce5cdcb280c15a",
-        "c46c59f2f8955ace4f40",
-        "2be3e9c5ec180ef9feaa"
+        "ea087c9551ee69b9b0d3",
+        "7392ec424976019ecaa1",
+        "0906e7cc348611500a9a",
+        "237b112c6ed82b8b5494",
+        "86ab46317dfaadcb7a8b",
+        "3c877ece7514d0bb2943",
+        "8e4069835c8064de08e4",
+        "66e3c91fc33e27084a31",
+        "a763d5560b8956ecb580"
       ],
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "sourceSha256": "a6104410b96bb8cc6848c1f6be166ebb9bb46c62d75662c3c4fe61f373a71cac",
+      "sourceSha256": "df1dd631c4631480558890e38e888c5e36b4dabeae1d8bef46778b5d547dd895",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -1267,13 +1264,25 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Unavailable lookup now stops ensure/upsert before mutation, ILIKE metacharacters are escaped, and a vanished owner-filtered update stops child persistence. Loopback negative and concurrent identity tests pass. Remaining gaps: userId provenance at the exported boundary, independent parent/write atomicity, optional message insert failures, repository identity consistency, partial multi-file recovery and real database concurrency acceptance. Sixth-source build persistence snapshots input before asynchronous lookup, generates exact new project ID and rejects substituted create/update/completion receipts. Deterministic ensure rejects mismatched insert/readback ID. Six focused tests pass and real owner/project/inline-file path prepared. Full lookup provenance, worker freshness, concurrent snapshot replacement and optional message durability remain open.",
-      "authorityTrace": "find/ensure/upsert accept a server userId string, query projects by user_id, and derive deterministic repository IDs. No active production importer of these exports was found in the current source search. This is not proof against future or dynamic callers. Writes use owner predicates or embed the supplied owner; child message inserts inherit the selected project.",
+      "reason": "Original007 actor/parent and persistence obligations repaired locally, with no invented public route or memory/storage engine. Canonical project save and existing file metadata trigger are reused. Four old project/message write identities map to one real transactional caller, not removed obligations. Pure conversions are unchanged. Local original-context/substituted-receipt tests and synthetic SQL parent/rollback checks are prepared or passing. Actual default database owner separation, same-repo concurrency, collision, project transfer while waiting, required child rollback/recovery and browser cases require new-source disposable execution. This remains REVIEWED_GAP. Full authority, credential custody, egress, provider delivery and actual R2 acceptance remain separate.",
+      "authorityTrace": "No active production caller was found or invented for these legacy exports. Every callable reader/ensurer/writer now requires an original issued TenantContext before SDK access, with explicit owner equality for captured build input. Reads and ignore-conflict identity writes check full owner/repository receipts. Required parent/message writes reuse save_owned_project_atomic inside one service-only wrapper that holds current owner/repository/expected project through all initial writes. Files retain the same issued context and completion checks the exact current owned project receipt.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/services/memory/buildProjectStore.failure.test.ts",
           "marker": "build persistence refuses unavailable identity reads and disappeared owner updates"
+        },
+        {
+          "path": "backend/src/security/buildProjectReceipt.local.integration.ts",
+          "marker": "real build and file writes reject project transfers at the decisive parent lock without crossing owner namespaces"
+        },
+        {
+          "path": "backend/src/services/memory/buildProjectStore.receipt.test.ts",
+          "marker": "dormant project exports require original issued owner context before any database access"
+        },
+        {
+          "path": "backend/src/services/storage/projectFiles.receipt.test.ts",
+          "marker": "project file requires exact durable receipt and snapshots Buffer before ownership awaits"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -1357,13 +1366,13 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-483eddfc89b603e8",
+      "id": "OB-dac017403f18a5d5",
       "callerIds": [
-        "82128ce3750aebf2c11c",
-        "86bc34b55fee2854131b"
+        "25757992dc2e9cf1d564",
+        "40004623c4ecf74640f6"
       ],
       "path": "backend/src/services/storage/projectFiles.ts",
-      "sourceSha256": "640effcfcfa42f90b0efc7a2acc301a23a9c4a7590ff3e697a6fe2dcdad43f8c",
+      "sourceSha256": "839aa8c20f46c7c5c923f23287b376e41f082274df0fcfdb893a002b0d068a9e",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -1372,8 +1381,8 @@
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "The real disposable test proves owner-only database file delivery and foreign project denial precedes upload in transport tests. Remaining gaps: caller identity provenance, transaction separation between parent lookup and privileged insert, post-upload orphan cleanup/retry, live R2 privacy and application-backed provider verification. The already classified Buffer.from expression is excluded from this record. Sixth-source file insert success requires exact generated ID. Buffer copied before ownership await, mocked storage tests confirm immutable upload bytes and cleanup on unverified receipt. Current production consumer uses strings. Real inline DB path prepared, actual R2 acceptance, ambiguous commit cleanup and ownership revocation across provider awaits remain unresolved. Seventh-source supersedes previous automatic cleanup behavior: uncertain insert acknowledgement now retains uploaded objects, because late or successful commit with lost response can already reference them. Mocked committed-row/lost-response and malformed receipt tests prove no destructive cleanup. Orphan reconciliation and live R2 acceptance remain open.",
-      "authorityTrace": "storeProjectFile creates an internal context from supplied userId, checks the owned project before R2 or database persistence, embeds owner-bound private storage metadata and returns an application-private URL. Retired unscoped helpers throw. Current source references are the build helper and security fixtures.",
+      "reason": "Original007 actor/parent and persistence obligations repaired locally, with no invented public route or memory/storage engine. Canonical project save and existing file metadata trigger are reused. Four old project/message write identities map to one real transactional caller, not removed obligations. Pure conversions are unchanged. Local original-context/substituted-receipt tests and synthetic SQL parent/rollback checks are prepared or passing. Actual default database owner separation, same-repo concurrency, collision, project transfer while waiting, required child rollback/recovery and browser cases require new-source disposable execution. This remains REVIEWED_GAP. Full authority, credential custody, egress, provider delivery and actual R2 acceptance remain separate.",
+      "authorityTrace": "The only production-source receiver is the legacy build helper, for which no active production consumer exists. This callable file contract now requires the original issued context instead of minting one from an arbitrary owner string. Existing owned-project preflight precedes private upload. Metadata owner/key derives from that original subject, input Buffer is copied before waits, and the existing database guard locks/rechecks current project ownership through insertion. Exact file/project/name/path/type/URL/content/metadata receipt is required. No missing acknowledgement deletes an uncertain referenced object.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -1383,6 +1392,18 @@
         {
           "path": "backend/src/services/storage/projectFiles.ts",
           "marker": "await requireOwnedProject(context,projectId)"
+        },
+        {
+          "path": "backend/src/security/buildProjectReceipt.local.integration.ts",
+          "marker": "real build and file writes reject project transfers at the decisive parent lock without crossing owner namespaces"
+        },
+        {
+          "path": "backend/src/services/memory/buildProjectStore.receipt.test.ts",
+          "marker": "dormant project exports require original issued owner context before any database access"
+        },
+        {
+          "path": "backend/src/services/storage/projectFiles.receipt.test.ts",
+          "marker": "project file requires exact durable receipt and snapshots Buffer before ownership awaits"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -3024,12 +3045,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-f9557824ee1fcf64",
+      "id": "OB-216a6eb5941086a8",
       "callerIds": [
-        "c2bb7df7e79e706650ec"
+        "0f8c898149d713d979fb"
       ],
       "path": "backend/src/services/storage/projectFiles.ts",
-      "sourceSha256": "640effcfcfa42f90b0efc7a2acc301a23a9c4a7590ff3e697a6fe2dcdad43f8c",
+      "sourceSha256": "839aa8c20f46c7c5c923f23287b376e41f082274df0fcfdb893a002b0d068a9e",
       "state": "NOT_PERSISTENCE",
       "legacyDispositionPreserved": "NOT_PERSISTENCE",
       "criterionIds": [
@@ -3050,7 +3071,7 @@
       "review": {
         "path": "backend/src/services/storage/projectFiles.ts",
         "marker": "  const id=randomUUID(),bytes=Buffer.isBuffer(content)?content:Buffer.from(content);\n  if(!filename.trim() || filename.length>200 || bytes.length>MAX_PRIVATE_FILE_BYTES || !['code','video','image','audio','pdf','other'].includes(fileType) || !storageMetadataSchema.safeParse({provider:'database',ownerId:userId,size:bytes.length,sha256:digestBytes(bytes),contentType}).success)throw new FileDeliveryError(400,'INVALID_FILE');\n  let metadata:PrivateStorageMetadata;",
-        "sha256": "640effcfcfa42f90b0efc7a2acc301a23a9c4a7590ff3e697a6fe2dcdad43f8c"
+        "sha256": "839aa8c20f46c7c5c923f23287b376e41f082274df0fcfdb893a002b0d068a9e"
       },
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
@@ -5819,7 +5840,7 @@
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
-      "authorityTrace": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.\nThe fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
+      "authorityTrace": "The constructor obtains the existing server SDK once and stores it in a private readonly field. It does not receive request ownership, expose the SDK, or claim RLS enforcement. Actual production consumers are the authenticated operations router and GrowthService current-permission resolver. Every actual data recipient at this exact module has its own source-bound scoped read/current-parent transactional proof. Current protected handlers retain req.userId. Provider adapters receive checked owner/project/action input, with their later consequential authority and egress obligations preserved. All62 non-factory recipients must already be independently verified before this one construction boundary is selected.\nThe fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -5836,7 +5857,7 @@
           "callIds": [
             "cd8790e39c3283f05482"
           ],
-          "disposition": "REVIEWED_GAP"
+          "disposition": "SCOPED_BOUNDARY"
         },
         {
           "callIds": [
@@ -5909,7 +5930,7 @@
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
-      "authorityTrace": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit. The existing automation link and non-action decision audit now invoke a fixed service-only finalization RPC. It reuses admitted-run current actor/project/member/rule locks, checks exact canonical run and action owner/project/requester/run-idempotency relationship, and commits the link with its audit. An evaluating replay reconciles the original action key, never a new consequential action.\nThe auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.\ncurrentTargetVersion is private to createAction after canonical access and executeAction after canonical access plus action owner equality. Its dynamic table and key/version fields come from a fixed server lookup map, never request SQL identifiers. Every selected target query applies the original action project and owner, using tenant_id only for growth campaigns. Releases additionally validate the exact returned id/user/project. No selected raw target row is returned. The post-empty-claim action read does not return a changed or foreign record: it returns only verified status with the same exact previously admitted owner/project/requester/type/target/version/key/digest/plan/max-attempt tuple. Otherwise execution fails with conflict before an adapter.\nThe sole external operations router is auth-mounted and passes req.userId. Growth and automation callers retain that same verified actor, not a persisted action requester supplied by the browser. access derives current project owner and canonical role. Creation environment/maintenance reads are exact project/owner and remain internal. Other selected action reads use requested ID internally, then compare persisted action owner against current project owner before any return or effect. Approvals are exact action/owner, canonical role and pending state. Confirm requires the original requester. Existing decisive service-only create/approve/confirm/claim transactions recheck their current locked parent/actor/plan and receipt before proceeding. No selected preflight row is exposed on forbidden ownership.\nexecuteInternal is a private callback registered only on this OperationsService internal adapter. Its sole invocation follows executeAction current project/actor authorization, canonical definition/target/plan checks and the separately proven admitted claim. The adapter input overwrites any execution-plan userId, actorId, projectId, targetId and version with the checked server action/owner. These selected two updates use exact target ID, project, owner, expected version/attempt and eligible state. No provider request is performed by these mutations. Completion retains the same exact admitted plan and owner receipt.",
+      "authorityTrace": "The authenticated operations router retains original req.userId. Existing current permission and persisted action checks admit a canonical running attempt. Only the fixed internal adapter receives that exact row and a fresh evidence ID. Each of nine real branch sites passes the fixed capability, original actor, expected action and canonical role policy into one service-only transaction. It locks current actor/project/member/approver/action and target, compares canonical intent/attempt/lease, resamples expiry after target waits and executes only its fixed owned target mutation. It invokes the existing completion RPC in the same transaction. Exact effect rows plus original actor/action/attempt/owner/project/target are retained in durable evidence. JS validates both target and complete action receipts. No database transaction wraps external HTTP.\nThe only production evaluateAutomationSignal consumer is the existing authenticated operations automation-signal route. It passes original req.userId and validated project/signal, never body ownership. access derives current project owner and manage_automation permission. The fixed rule read applies both this owner and project plus the validated trigger type. Every returned rule is snapshotted and its exact owner/project/trigger/id checked before use. Rule data never leaves the service response. The existing admitted-run RPC independently locks current actor/project/membership/rule and compares the complete rule before any durable admission. A stale internal lookup cannot mint a run or an action by itself.\nThe sole production signal route is authenticated and passes original req.userId. Existing access and snapshotted rule/read/admission bind exact owner/project/trigger/digest. The existing action creator uses only that actor and the admitted run ID as its idempotency key. Its full returned owner/project/requester/action-type/target/version/environment/key is checked before linking. Both actual finalization sites call one service-only fixed RPC. It reuses admitted-run actor/project/member/rule locks, validates the current canonical run and exact persisted action under lock, and commits link and required audit together. A non-action decision passes no action and must match its immutable persisted decision. Concurrent calls serialize on the existing rule/run. No action or external provider call executes in this transaction. Evaluating replay reuses the same creator/key, while completed link replay does not create another action.\nThe authenticated operations router retains original req.userId. Existing current permission and persisted action checks admit a canonical running attempt. Only the fixed internal adapter receives that exact row and a fresh evidence ID. Each of nine real branch sites passes the fixed capability, original actor, expected action and canonical role policy into one service-only transaction. It locks current actor/project/member/approver/action and target, compares canonical intent/attempt/lease, resamples expiry after target waits and executes only its fixed owned target mutation. It invokes the existing completion RPC in the same transaction. Exact effect rows plus original actor/action/attempt/owner/project/target are retained in durable evidence. JS validates both target and complete action receipts. No database transaction wraps external HTTP.\ncurrentTargetVersion is private to createAction after canonical access and executeAction after canonical access plus action owner equality. Its dynamic table and key/version fields come from a fixed server lookup map, never request SQL identifiers. Every selected target query applies the original action project and owner, using tenant_id only for growth campaigns. Releases additionally validate the exact returned id/user/project. No selected raw target row is returned. The post-empty-claim action read does not return a changed or foreign record: it returns only verified status with the same exact previously admitted owner/project/requester/type/target/version/key/digest/plan/max-attempt tuple. Otherwise execution fails with conflict before an adapter.\nThe sole external operations router is auth-mounted and passes req.userId. Growth and automation callers retain that same verified actor, not a persisted action requester supplied by the browser. access derives current project owner and canonical role. Creation environment/maintenance reads are exact project/owner and remain internal. Other selected action reads use requested ID internally, then compare persisted action owner against current project owner before any return or effect. Approvals are exact action/owner, canonical role and pending state. Confirm requires the original requester. Existing decisive service-only create/approve/confirm/claim transactions recheck their current locked parent/actor/plan and receipt before proceeding. No selected preflight row is exposed on forbidden ownership.\nexecuteInternal is a private callback registered only on this OperationsService internal adapter. Its sole invocation follows executeAction current project/actor authorization, canonical definition/target/plan checks and the separately proven admitted claim. The adapter input overwrites any execution-plan userId, actorId, projectId, targetId and version with the checked server action/owner. These selected two updates use exact target ID, project, owner, expected version/attempt and eligible state. No provider request is performed by these mutations. Completion retains the same exact admitted plan and owner receipt.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -5949,14 +5970,14 @@
             "1432ffb1661e42ad2afd",
             "c316ee518cf610c4056b"
           ],
-          "disposition": "REVIEWED_GAP"
+          "disposition": "SCOPED_BOUNDARY"
         },
         {
           "callIds": [
             "0541a105ff0d867f7ea6",
             "7b6b74d024cad1ca24e0"
           ],
-          "disposition": "REVIEWED_GAP"
+          "disposition": "SCOPED_BOUNDARY"
         },
         {
           "callIds": [
@@ -8468,12 +8489,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-fc74199a87ef6815",
+      "id": "OB-4690da7e58d1c412",
       "callerIds": [
-        "75c9b1e5a9405ec287bc"
+        "f569f4cbe3556c8b2c3c"
       ],
       "path": "backend/src/services/storage/projectFiles.ts",
-      "sourceSha256": "640effcfcfa42f90b0efc7a2acc301a23a9c4a7590ff3e697a6fe2dcdad43f8c",
+      "sourceSha256": "839aa8c20f46c7c5c923f23287b376e41f082274df0fcfdb893a002b0d068a9e",
       "state": "NOT_PERSISTENCE",
       "legacyDispositionPreserved": "NOT_PERSISTENCE",
       "criterionIds": [
@@ -8494,7 +8515,7 @@
       "review": {
         "path": "backend/src/services/storage/projectFiles.ts",
         "marker": "content=Buffer.isBuffer(content)?Buffer.from(content):content",
-        "sha256": "640effcfcfa42f90b0efc7a2acc301a23a9c4a7590ff3e697a6fe2dcdad43f8c"
+        "sha256": "839aa8c20f46c7c5c923f23287b376e41f082274df0fcfdb893a002b0d068a9e"
       },
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
@@ -8813,15 +8834,15 @@
       "path": "backend/src/operations/operationsService.ts",
       "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open.",
-      "authorityTrace": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.",
+      "reason": "Exact original007 operations scope verified at 30dfcf7ecd787f09d72ae89b23687331e8b8ae19, with authenticated disposable and four complete source-bound21-stage branch/integrated baselines. Current actor/project/member/approver/action and target authority, exact effect/completion receipts, late completion rollback, one-effect lost-response recovery and real observed waits are proven for the nine fixed internal consumers. The unchanged current-owner/project rule read precedes decisive admitted-run checks. The two fixed finalization callers additionally prove current run/rule/action relationships, atomic link/audit, concurrent and lost-reply recovery, and browser denial. The shared constructor closes only after all62 actual receiving sites independently verify, without claiming SDK RLS. No Phase3 grants/budgets/vault, Phase4 egress or live provider certification.",
+      "authorityTrace": "The authenticated operations router retains original req.userId. Existing current permission and persisted action checks admit a canonical running attempt. Only the fixed internal adapter receives that exact row and a fresh evidence ID. Each of nine real branch sites passes the fixed capability, original actor, expected action and canonical role policy into one service-only transaction. It locks current actor/project/member/approver/action and target, compares canonical intent/attempt/lease, resamples expiry after target waits and executes only its fixed owned target mutation. It invokes the existing completion RPC in the same transaction. Exact effect rows plus original actor/action/attempt/owner/project/target are retained in durable evidence. JS validates both target and complete action receipts. No database transaction wraps external HTTP.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -8963,15 +8984,15 @@
       "path": "backend/src/operations/operationsService.ts",
       "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Eight focused admission/intent tests pass. Empty or substituted link receipts and every unreturned action outcome, including4xx after possible queued-action persistence, preserve pending admission and return typed503 without falsely recording failure or retrying. Link remains separate from action creation and final audit. Crash reconciliation, post-admission current-rule/actor authority and parent lifecycle races remain unresolved. This write is reviewed but not security-certified. The two demonstrated parent/write and split-audit gaps are repaired locally. Substituted action/receipt denials, replay recovery and SQL rollback pass locally. New real owner/member/rule/run/action lock-wait, lost reply, audit rollback, concurrency and browser tests are prepared but NOT_EXECUTED. No promotion from these tests is authorized.",
-      "authorityTrace": "After exact service-only admission, the existing action creator receives the stable run UUID key. Linking updates only the admitted owner/rule/digest/run in evaluating state with no action, then verifies its returned identity and action/status. No replay executes another action. The existing automation link and non-action decision audit now invoke a fixed service-only finalization RPC. It reuses admitted-run current actor/project/member/rule locks, checks exact canonical run and action owner/project/requester/run-idempotency relationship, and commits the link with its audit. An evaluating replay reconciles the original action key, never a new consequential action.",
+      "reason": "Exact original007 operations scope verified at 30dfcf7ecd787f09d72ae89b23687331e8b8ae19, with authenticated disposable and four complete source-bound21-stage branch/integrated baselines. Current actor/project/member/approver/action and target authority, exact effect/completion receipts, late completion rollback, one-effect lost-response recovery and real observed waits are proven for the nine fixed internal consumers. The unchanged current-owner/project rule read precedes decisive admitted-run checks. The two fixed finalization callers additionally prove current run/rule/action relationships, atomic link/audit, concurrent and lost-reply recovery, and browser denial. The shared constructor closes only after all62 actual receiving sites independently verify, without claiming SDK RLS. No Phase3 grants/budgets/vault, Phase4 egress or live provider certification.",
+      "authorityTrace": "The sole production signal route is authenticated and passes original req.userId. Existing access and snapshotted rule/read/admission bind exact owner/project/trigger/digest. The existing action creator uses only that actor and the admitted run ID as its idempotency key. Its full returned owner/project/requester/action-type/target/version/environment/key is checked before linking. Both actual finalization sites call one service-only fixed RPC. It reuses admitted-run actor/project/member/rule locks, validates the current canonical run and exact persisted action under lock, and commits link and required audit together. A non-action decision passes no action and must match its immutable persisted decision. Concurrent calls serialize on the existing rule/run. No action or external provider call executes in this transaction. Evaluating replay reuses the same creator/key, while completed link replay does not create another action.",
       "proofIds": [],
       "existingEvidence": [
         {

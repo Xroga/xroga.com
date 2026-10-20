@@ -1,14 +1,15 @@
 import { randomUUID } from 'node:crypto';
+import { isDeepStrictEqual } from 'node:util';
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { uploadToR2,buildR2Key } from '../../lib/r2.js';
-import { createTenantContext } from '../../security/tenantContext.js';
+import { requireTenantContext,type TenantContext } from '../../security/tenantContext.js';
 import { requireOwnedProject } from '../../security/ownership.js';
 import { FileDeliveryError,digestBytes,privateFileUrl,storageMetadataSchema,MAX_PRIVATE_FILE_BYTES,type PrivateStorageMetadata } from './fileDeliveryPolicy.js';
 
 export interface StoredFile {id:string;fileName:string;fileUrl:string;fileType:'code'|'video'|'image'|'audio'|'pdf'|'other';projectId?:string}
-export async function storeProjectFile(userId:string,projectId:string,filename:string,content:Buffer|string,contentType:string,fileType:StoredFile['fileType']): Promise<StoredFile> {
+export async function storeProjectFile(context:TenantContext,projectId:string,filename:string,content:Buffer|string,contentType:string,fileType:StoredFile['fileType']): Promise<StoredFile> {
+  const {userId}=requireTenantContext(context);
   content=Buffer.isBuffer(content)?Buffer.from(content):content;
-  const context=createTenantContext({userId,via:'persisted_owner'});
   await requireOwnedProject(context,projectId);
   const id=randomUUID(),bytes=Buffer.isBuffer(content)?content:Buffer.from(content);
   if(!filename.trim() || filename.length>200 || bytes.length>MAX_PRIVATE_FILE_BYTES || !['code','video','image','audio','pdf','other'].includes(fileType) || !storageMetadataSchema.safeParse({provider:'database',ownerId:userId,size:bytes.length,sha256:digestBytes(bytes),contentType}).success)throw new FileDeliveryError(400,'INVALID_FILE');
@@ -23,9 +24,10 @@ export async function storeProjectFile(userId:string,projectId:string,filename:s
   }
   metadata=storageMetadataSchema.parse(metadata);
   const fileUrl=privateFileUrl(projectId,id);
+  const row={id,project_id:projectId,file_name:filename,file_path:metadata.key??filename,file_type:fileType,file_url:fileUrl,content:inline,storage_metadata:metadata};
   try {
-    const {data,error}=await getSupabaseAdmin().from('project_files').insert({id,project_id:projectId,file_name:filename,file_path:metadata.key??filename,file_type:fileType,file_url:fileUrl,content:inline,storage_metadata:metadata}).select('id').single();
-    if(error || !data || typeof data!=='object' || Array.isArray(data) || data.id!==id) throw new FileDeliveryError(503,'FILE_RECORD_WRITE_UNAVAILABLE');
+    const {data,error}=await getSupabaseAdmin().from('project_files').insert(row).select('id,project_id,file_name,file_path,file_type,file_url,content,storage_metadata').single();
+    if(error || !data || typeof data!=='object' || Array.isArray(data) || !isDeepStrictEqual(data,row)) throw new FileDeliveryError(503,'FILE_RECORD_WRITE_UNAVAILABLE');
   } catch {
     if(metadata.provider==='private_r2') {
       // A missing receipt can follow a committed insert. Deleting now could

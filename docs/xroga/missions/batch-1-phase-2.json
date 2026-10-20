@@ -9,6 +9,13 @@
   "risk": "high",
   "scope": "Founder-approved Phase2 only. All ten original007 criteria, finite73 packets, tenant/parent/account/worker lineage and genuine proof. No008/009/010 implementation or production authority.",
   "changedFiles": [
+    "supabase/migrations/20261020000200_build_project_parent_admission.sql",
+    "backend/src/security/buildProjectReceipt.local.integration.ts",
+    "backend/src/services/storage/projectFiles.receipt.test.ts",
+    "backend/src/services/memory/buildProjectStore.failure.test.ts",
+    "backend/src/services/memory/buildProjectStore.receipt.test.ts",
+    "backend/src/services/storage/projectFiles.ts",
+    "backend/src/services/memory/buildProjectStore.ts",
     "supabase/migrations/20261020000100_operations_automation_finalization.sql",
     "backend/src/operations/automationFinalization.local.integration.ts",
     "backend/src/operations/automationAdmission.test.ts",
@@ -155,6 +162,7 @@
   "schemaImpact": {
     "changed": true,
     "migrations": [
+      "supabase/migrations/20261020000200_build_project_parent_admission.sql",
       "supabase/migrations/20261020000100_operations_automation_finalization.sql",
       "supabase/migrations/20261019000900_operations_internal_effect_admission.sql",
       "supabase/migrations/20261019000800_universal_plan_spec_owner.sql",
@@ -169,7 +177,7 @@
       "supabase/migrations/20261019000300_worker_database_project_admission.sql"
     ],
     "rollout": "Disposable CI only. A composite web-accounting cycle/owner FK serializes current-parent writes, preserves null-cycle deletion and stops on existing invalid rows without rewriting them. No-argument current-subject setup projection retains restrictive public profile columns and policies. Shared growth admission retains existing locks. No new tables, data rewrite or production DDL. Preserve browser grants/RLS, worker guards and safe cancellation. Composite universal plan/spec owner/project FK likewise serializes current-parent writes, preserves optional spec deletion and refuses invalid history without rewrite. Disposable only.",
-    "rollback": "Withhold affected accounting/setup entry points before withdrawing their FK/projection. Do not re-enable cross-owner cycle attribution or grant private onboarding to public readers. Preserve restrictive grants, RLS and verified growth/worker fences. Any production rollout or privilege/constraint rollback requires separate approval. Preserve the universal parent FK. Any withdrawal requires first withholding its sensitive plan entry point and separate production approval. Retain the new internal admission helper and atomic completion coupling. Withhold affected internal capabilities before separately approved withdrawal. No table rewrite or production change is authorized. Retain the automation finalization RPC and its canonical admitted-run checks. Withhold affected signals before withdrawal. No live schema/data change is authorized."
+    "rollback": "Withhold affected accounting/setup entry points before withdrawing their FK/projection. Do not re-enable cross-owner cycle attribution or grant private onboarding to public readers. Preserve restrictive grants, RLS and verified growth/worker fences. Any production rollout or privilege/constraint rollback requires separate approval. Preserve the universal parent FK. Any withdrawal requires first withholding its sensitive plan entry point and separate production approval. Retain the new internal admission helper and atomic completion coupling. Withhold affected internal capabilities before separately approved withdrawal. No table rewrite or production change is authorized. Retain the automation finalization RPC and its canonical admitted-run checks. Withhold affected signals before withdrawal. No live schema/data change is authorized. Keep canonical project save, additive build wrapper, file parent locks and browser-owner guard. No live schema/data operation authorized."
   },
   "securityImpact": {
     "auth": {
@@ -202,6 +210,12 @@
     }
   },
   "tests": [
+    {
+      "command": "node --import tsx --test backend/src/services/memory/buildProjectStore.receipt.test.ts backend/src/services/memory/buildProjectStore.failure.test.ts backend/src/services/storage/projectFiles.receipt.test.ts",
+      "scope": "Original issued-context, exact project/message/file receipts, immutable inputs, ownership filters and uncertain private-object retention. New actual parent-race and transactional rollback cases require disposable CI.",
+      "negative": true,
+      "reference": "backend/src/security/buildProjectReceipt.local.integration.ts"
+    },
     {
       "command": "node --import tsx --test backend/src/operations/automationAdmission.test.ts",
       "scope": "Exact canonical action receipt, original run key, evaluating replay and fail-closed finalization. Actual new-source current-parent race and atomic link/audit witnesses remain mandatory.",

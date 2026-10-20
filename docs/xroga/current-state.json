@@ -11730,7 +11730,7 @@
       ],
       "callers": [
         "backend/src/services/integrations/githubDeploy.ts:64",
-        "backend/src/services/memory/buildProjectStore.ts:2"
+        "backend/src/services/memory/buildProjectStore.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -11933,9 +11933,9 @@
         "backend/src/services/integrations/vercelAuth.ts:8",
         "backend/src/services/memory/buildMemory.ts:5",
         "backend/src/services/memory/buildPersistence.ts:5",
-        "backend/src/services/memory/buildProjectStore.ts:3",
+        "backend/src/services/memory/buildProjectStore.ts:4",
         "backend/src/services/notificationService.ts:1",
-        "backend/src/services/storage/projectFiles.ts:2",
+        "backend/src/services/storage/projectFiles.ts:3",
         "backend/src/synthesis/delivery/projectDeliveryService.ts:1",
         "backend/src/synthesis/projectRuntime/projectHistory.ts:1",
         "backend/src/synthesis/projectRuntime/store.ts:6",
@@ -13948,7 +13948,7 @@
       "callers": [
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:6",
         "backend/src/services/storage/privateFileDelivery.ts:5",
-        "backend/src/services/storage/projectFiles.ts:3"
+        "backend/src/services/storage/projectFiles.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -21187,7 +21187,7 @@
         "backend/src/security/ownership.test.ts:5",
         "backend/src/security/tenantIsolation.integration.test.ts:16",
         "backend/src/security/tenantIsolation.local.integration.ts:20",
-        "backend/src/services/storage/projectFiles.ts:5"
+        "backend/src/services/storage/projectFiles.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -21394,6 +21394,7 @@
         "backend/src/routes/terminalSessions.failure.test.ts:6",
         "backend/src/routes/terminalSessions.ts:16",
         "backend/src/routes/vercel.ts:4",
+        "backend/src/security/buildProjectReceipt.local.integration.ts:6",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:9",
         "backend/src/security/legacyBuildHistory.local.integration.ts:9",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:6",
@@ -21439,6 +21440,9 @@
         "backend/src/services/memory/buildMemory.ts:6",
         "backend/src/services/memory/buildPersistence.authority.test.ts:4",
         "backend/src/services/memory/buildPersistence.ts:7",
+        "backend/src/services/memory/buildProjectStore.failure.test.ts:5",
+        "backend/src/services/memory/buildProjectStore.receipt.test.ts:4",
+        "backend/src/services/memory/buildProjectStore.ts:5",
         "backend/src/services/notificationService.receipt.test.ts:5",
         "backend/src/services/notificationService.ts:2",
         "backend/src/services/publish/chromeWebStore.ts:12",
@@ -21450,7 +21454,8 @@
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:3",
         "backend/src/services/storage/fileDeliveryPolicy.ts:5",
         "backend/src/services/storage/privateFileDelivery.ts:4",
-        "backend/src/services/storage/projectFiles.ts:4",
+        "backend/src/services/storage/projectFiles.receipt.test.ts:7",
+        "backend/src/services/storage/projectFiles.ts:5",
         "backend/src/synthesis/livePreview/store.ts:6",
         "backend/src/synthesis/projectRuntime/store.ts:9",
         "backend/src/synthesis/universalEntrypoint.ts:55",
@@ -21486,6 +21491,7 @@
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
         "backend/src/routes/supabaseOAuth.disconnect.test.ts",
         "backend/src/routes/terminalSessions.failure.test.ts",
+        "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts",
         "backend/src/security/legacyBuildHistory.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
@@ -21518,12 +21524,15 @@
         "backend/src/services/integrations/userProviderKeys.test.ts",
         "backend/src/services/integrations/vercelAuth.revocation.test.ts",
         "backend/src/services/memory/buildPersistence.authority.test.ts",
+        "backend/src/services/memory/buildProjectStore.failure.test.ts",
+        "backend/src/services/memory/buildProjectStore.receipt.test.ts",
         "backend/src/services/notificationService.receipt.test.ts",
         "backend/src/services/referralService.failure.test.ts",
         "backend/src/services/referralService.relations.test.ts",
         "backend/src/services/responseCache.receipt.test.ts",
         "backend/src/services/responseCache.test.ts",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts",
+        "backend/src/services/storage/projectFiles.receipt.test.ts",
         "backend/src/synthesis/universalPersistence.owner.test.ts",
         "backend/src/synthesis/universalPersistence.snapshot.test.ts"
       ],
@@ -24655,21 +24664,25 @@
       "id": "surface:a73b18b9359a70381566",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/services/memory/buildProjectStore.ts",
-      "sha256": "a6104410b96bb8cc6848c1f6be166ebb9bb46c62d75662c3c4fe61f373a71cac",
+      "sha256": "df1dd631c4631480558890e38e888c5e36b4dabeae1d8bef46778b5d547dd895",
       "symbols": [
         "CORE_FILES",
+        "UUID",
         "UpsertBuildProjectInput",
+        "build",
         "bytes",
         "completed",
         "ensureProjectIdByRepo",
         "existing",
+        "expectedMessages",
         "file",
         "findProjectIdByRepo",
         "hex",
         "id",
+        "initial",
         "lookupProjectIdByRepo",
         "maxFiles",
-        "newId",
+        "messages",
         "normalizeRepoIdentity",
         "normalized",
         "projectId",
@@ -24677,6 +24690,7 @@
         "repoLabel",
         "repoName",
         "row",
+        "saved",
         "supabase",
         "toStore",
         "upsertBuildProject"
@@ -24684,13 +24698,16 @@
       "imports": [
         "../../config/modelRegistry.js",
         "../../config/supabase.js",
+        "../../security/tenantContext.js",
         "../integrations/githubDeploy.js",
         "../storage/projectFiles.js",
-        "node:crypto"
+        "node:crypto",
+        "node:util"
       ],
       "runtimeImports": [
         "backend/src/config/modelRegistry.ts",
         "backend/src/config/supabase.ts",
+        "backend/src/security/tenantContext.ts",
         "backend/src/services/storage/projectFiles.ts"
       ],
       "entryPoints": [],
@@ -24702,22 +24719,21 @@
       ],
       "reachable": false,
       "persistenceDependencies": [
-        "project_messages",
         "projects"
       ],
       "externalProviderDependencies": [
-        "node:crypto"
+        "node:crypto",
+        "node:util"
       ],
       "authBoundary": [
         "backend/src/services/memory/buildProjectStore.ts#normalizeRepoIdentity",
         "backend/src/services/memory/buildProjectStore.ts#projectIdentityId"
       ],
       "tenantBoundary": [
-        "backend/src/services/memory/buildProjectStore.ts:48 (user_id)",
-        "backend/src/services/memory/buildProjectStore.ts:126 (user_id)",
-        "backend/src/services/memory/buildProjectStore.ts:175 (user_id)",
-        "backend/src/services/memory/buildProjectStore.ts:196 (user_id)",
-        "backend/src/services/memory/buildProjectStore.ts:273 (user_id)"
+        "backend/src/services/memory/buildProjectStore.ts:53 (user_id)",
+        "backend/src/services/memory/buildProjectStore.ts:133 (user_id)",
+        "backend/src/services/memory/buildProjectStore.ts:184 (user_id)",
+        "backend/src/services/memory/buildProjectStore.ts:249 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -26286,7 +26302,7 @@
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:4",
         "backend/src/services/storage/privateFileDelivery.ts:6",
         "backend/src/services/storage/projectFiles.receipt.test.ts:6",
-        "backend/src/services/storage/projectFiles.ts:6"
+        "backend/src/services/storage/projectFiles.ts:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -26431,17 +26447,17 @@
       "id": "surface:ea3880cd083e5e066e3d",
       "subsystem": "file_storage",
       "sourcePath": "backend/src/services/storage/projectFiles.ts",
-      "sha256": "640effcfcfa42f90b0efc7a2acc301a23a9c4a7590ff3e697a6fe2dcdad43f8c",
+      "sha256": "839aa8c20f46c7c5c923f23287b376e41f082274df0fcfdb893a002b0d068a9e",
       "symbols": [
         "StoredFile",
         "bytes",
-        "context",
         "fileUrl",
         "id",
         "inline",
         "metadata",
         "object",
         "readStoredFile",
+        "row",
         "storeProjectFile",
         "storeUserFile"
       ],
@@ -26451,7 +26467,8 @@
         "../../security/ownership.js",
         "../../security/tenantContext.js",
         "./fileDeliveryPolicy.js",
-        "node:crypto"
+        "node:crypto",
+        "node:util"
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
@@ -26462,9 +26479,10 @@
       ],
       "entryPoints": [],
       "callers": [
+        "backend/src/security/buildProjectReceipt.local.integration.ts:7",
         "backend/src/security/tenantIsolation.integration.test.ts:14",
         "backend/src/security/tenantIsolation.local.integration.ts:45",
-        "backend/src/services/memory/buildProjectStore.ts:8",
+        "backend/src/services/memory/buildProjectStore.ts:10",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:7",
         "backend/src/services/storage/projectFiles.receipt.test.ts:5"
       ],
@@ -26473,7 +26491,8 @@
         "project_files"
       ],
       "externalProviderDependencies": [
-        "node:crypto"
+        "node:crypto",
+        "node:util"
       ],
       "authBoundary": [],
       "tenantBoundary": [],
@@ -26483,6 +26502,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/tenantIsolation.integration.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts",
@@ -96595,6 +96615,13 @@
       "version": "20261020000100",
       "order": 128,
       "sha256": "7d8d44c8ccc3d47fb1fe944f7b149c5259ad33b4e1e764f9b7708f35619ecd4b"
+    },
+    {
+      "id": "migration:db02770ac33b28f43c5b",
+      "sourcePath": "supabase/migrations/20261020000200_build_project_parent_admission.sql",
+      "version": "20261020000200",
+      "order": 129,
+      "sha256": "35e5b6105d96f41af0530a903b2f41e6381a6fa542f0135375d58d281e6934e1"
     }
   ],
   "workflows": [
@@ -104844,7 +104871,7 @@
     {
       "id": "test-suite:5eda967fa924a1bcc3d2",
       "sourcePath": "backend/src/security/buildProjectReceipt.local.integration.ts",
-      "declaredTests": 1,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -105635,7 +105662,7 @@
     {
       "id": "test-suite:bddda805a1d7853562a6",
       "sourcePath": "backend/src/services/memory/buildProjectStore.receipt.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

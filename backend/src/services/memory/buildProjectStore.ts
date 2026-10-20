@@ -1,12 +1,15 @@
-import { createHash, randomUUID } from 'node:crypto';
+import { createHash } from 'node:crypto';
+import { isDeepStrictEqual } from 'node:util';
 import { HACKATHON_MAX_STORED_FILES } from '../../config/modelRegistry.js';
 import { getSupabaseAdmin } from '../../config/supabase.js';
+import { requireTenantContext,requireResourceOwner,type TenantContext } from '../../security/tenantContext.js';
 
 /**
  * Persist build output to projects + project_files so users and AI can access old code.
  */
 import { storeProjectFile } from '../storage/projectFiles.js';
 import type { ProjectFile } from '../integrations/githubDeploy.js';
+const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
  * Finds the project a build belongs to from the repository it targets.
@@ -31,29 +34,32 @@ import type { ProjectFile } from '../integrations/githubDeploy.js';
  * path, never break it.
  */
 export async function findProjectIdByRepo(
-  userId: string,
+  context: TenantContext,
   githubRepoName: string | null | undefined,
 ): Promise<string | null> {
+  const {userId}=requireTenantContext(context);
   const repoName = githubRepoName ? normalizeRepoIdentity(githubRepoName) : null;
   if (!repoName || !userId) return null;
   try {
-    return await lookupProjectIdByRepo(userId, repoName);
+    return await lookupProjectIdByRepo(context, repoName);
   } catch {
     return null;
   }
 }
 
 /** Mutation callers must distinguish an absent row from unavailable authority. */
-async function lookupProjectIdByRepo(userId: string, repoName: string): Promise<string | null> {
+async function lookupProjectIdByRepo(context: TenantContext, repoName: string): Promise<string | null> {
+    const {userId}=requireTenantContext(context);
     const { data, error } = await getSupabaseAdmin()
       .from('projects')
-      .select('id')
+      .select('id,user_id,github_repo_name')
       .eq('user_id', userId)
       .ilike('github_repo_name', repoName.replace(/[\\%_]/g, '\\$&'))
       .maybeSingle();
     if (error) throw new Error('Project identity lookup unavailable');
     if (!data) return null;
-    return typeof data.id === 'string' ? data.id : null;
+    return typeof data.id === 'string' && UUID.test(data.id) && data.user_id===userId
+      && typeof data.github_repo_name==='string' && normalizeRepoIdentity(data.github_repo_name)===repoName ? data.id : null;
 }
 
 function normalizeRepoIdentity(value: string): string | null {
@@ -88,14 +94,15 @@ export function projectIdentityId(userId: string, githubRepoName: string): strin
  * to select a framework, language, capability or deployment path.
  */
 export async function ensureProjectIdByRepo(
-  userId: string,
+  context: TenantContext,
   githubRepoName: string | null | undefined,
 ): Promise<string | null> {
+  const {userId}=requireTenantContext(context);
   const repoName = githubRepoName ? normalizeRepoIdentity(githubRepoName) : null;
   if (!repoName || !userId.trim()) return null;
 
   let existing: string | null;
-  try { existing = await lookupProjectIdByRepo(userId, repoName); }
+  try { existing = await lookupProjectIdByRepo(context, repoName); }
   catch { return null; }
   if (existing) return existing;
 
@@ -116,20 +123,20 @@ export async function ensureProjectIdByRepo(
         github_repo_name: repoName,
         updated_at: new Date().toISOString(),
       }, { onConflict: 'id', ignoreDuplicates: true })
-      .select('id')
+      .select('id,user_id,github_repo_name')
       .maybeSingle();
-    if (error || (data && data.id !== id)) return null;
-    if (data?.id === id) return id;
+    if (error || (data && (data.id !== id || data.user_id!==userId || data.github_repo_name!==repoName))) return null;
+    if (data?.id === id && data.user_id===userId && data.github_repo_name===repoName) return id;
 
     // `ignoreDuplicates` may return no row. Re-read the deterministic id so concurrent
     // first requests converge on the same project rather than falling back to legacy.
     const { data: persisted, error: readError } = await supabase
       .from('projects')
-      .select('id')
+      .select('id,user_id,github_repo_name')
       .eq('id', id)
       .eq('user_id', userId)
       .maybeSingle();
-    if (!readError && persisted?.id === id) return id;
+    if (!readError && persisted?.id === id && persisted.user_id===userId && persisted.github_repo_name===repoName) return id;
     console.warn('[buildProjectStore] project identity unavailable');
     return null;
   } catch {
@@ -162,10 +169,12 @@ const CORE_FILES = new Set([
 ]);
 
 /** Upsert a project row and store core build files for later restore. */
-export async function upsertBuildProject(input: UpsertBuildProjectInput): Promise<string | null> {
+export async function upsertBuildProject(context: TenantContext,input: UpsertBuildProjectInput): Promise<string | null> {
+  const {userId}=requireTenantContext(context);
+  requireResourceOwner(context,input.userId);
   // A delayed ownership lookup must not let a caller replace the admitted owner,
   // repository or file contents while this persistence operation is underway.
-  input = { ...input, projectFiles: input.projectFiles.map(file => ({ ...file })) };
+  input = structuredClone(input);
   const supabase = getSupabaseAdmin();
   const repoName = input.githubRepoName?.trim();
 
@@ -174,43 +183,35 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
   if (repoName) {
     const { data: existing, error: lookupError } = await supabase
       .from('projects')
-      .select('id')
+      .select('id,user_id,github_repo_name')
       .eq('user_id', input.userId)
       .eq('github_repo_name', repoName)
       .maybeSingle();
     if (lookupError) return null;
-    if (existing && (typeof existing.id !== 'string' || !existing.id)) return null;
+    if (existing && (typeof existing.id !== 'string' || !UUID.test(existing.id) || existing.user_id!==userId || existing.github_repo_name!==repoName)) return null;
     projectId = existing?.id ?? null;
   }
 
   const row = {
     name: input.name.slice(0, 200),
     type: input.type ?? 'website',
-    status: 'in_progress',
-    github_repo_url: input.githubRepoUrl ?? (repoName ? `https://github.com/${repoName}` : null),
-    github_repo_name: repoName ?? null,
-    updated_at: new Date().toISOString(),
+    ...(input.githubRepoUrl!==undefined||repoName?{github_repo_url:input.githubRepoUrl??`https://github.com/${repoName}`} : {}),
+    ...(repoName?{github_repo_name:repoName}:{}),
   };
-
-  if (projectId) {
-    const { data, error } = await supabase.from('projects').update(row).eq('id', projectId).eq('user_id', input.userId).select('id').maybeSingle();
-    if (error || data?.id !== projectId) {
-      console.warn('[buildProjectStore] project update unavailable');
-      return null;
-    }
-  } else {
-    const newId = randomUUID();
-    const { data, error } = await supabase
-      .from('projects')
-      .insert({ id: newId, user_id: input.userId, ...row })
-      .select('id')
-      .single();
-    if (error || data?.id !== newId) {
-      console.warn('[buildProjectStore] project insert unavailable');
-      return null;
-    }
-    projectId = data.id;
-  }
+  const build={user_prompt:input.userPrompt.slice(0,8000),...(input.summaryText?.trim()?{summary_text:input.summaryText.slice(0,12000)}:{}),
+    ...(input.runId!==undefined?{run_id:input.runId}:{}),...(input.deployUrl!==undefined?{deploy_url:input.deployUrl}:{}),github_branch:input.githubBranch??'main'};
+  const initial=await supabase.rpc('save_owned_build_project_atomic',{p_owner_id:userId,p_expected_id:projectId,p_project:row,p_build:build});
+  const saved=initial.data?.project,messages=initial.data?.messages;
+  const expectedMessages=[{role:'user',content:build.user_prompt,metadata:{...(input.runId!==undefined?{runId:input.runId}:{}),...(input.deployUrl!==undefined?{deployUrl:input.deployUrl}:{}),...(repoName?{githubRepoName:repoName}:{}),githubBranch:build.github_branch,source:'build'}},
+    ...(build.summary_text!==undefined?[{role:'assistant',content:build.summary_text,metadata:{...(input.deployUrl!==undefined?{deployUrl:input.deployUrl}:{}),...(repoName?{githubRepoName:repoName}:{}),source:'build_summary'}}]:[])];
+  if(initial.error || !initial.data || Array.isArray(initial.data) || typeof initial.data.created!=='boolean'
+    || !saved || Array.isArray(saved) || typeof saved.id!=='string' || !UUID.test(saved.id) || (projectId!==null&&saved.id!==projectId)
+    || saved.user_id!==userId || saved.status!=='in_progress' || saved.name!==row.name || saved.type!==row.type
+    || saved.github_repo_name!==(repoName||null) || saved.github_repo_url!==(row.github_repo_url??null)
+    || !Array.isArray(messages) || messages.length!==expectedMessages.length || new Set(messages.map((m:any)=>m?.id)).size!==messages.length
+    || messages.some((m:any,n:number)=>!m || typeof m.id!=='string' || !UUID.test(m.id) || m.project_id!==saved.id
+      || !isDeepStrictEqual({role:m.role,content:m.content,metadata:m.metadata},expectedMessages[n])))return null;
+  projectId=saved.id;
 
   const maxFiles =
     input.isHackathon || input.type === 'research' || input.projectFiles.length > 40
@@ -230,7 +231,7 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
   for (const file of toStore.slice(0, maxFiles)) {
     try {
       await storeProjectFile(
-        input.userId,
+        context,
         projectId!,
         file.path.replace(/\//g, '_'),
         file.content,
@@ -245,32 +246,7 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
     }
   }
 
-  try {
-    await supabase.from('project_messages').insert({
-      project_id: projectId,
-      role: 'user',
-      content: input.userPrompt.slice(0, 8000),
-      metadata: {
-        runId: input.runId,
-        deployUrl: input.deployUrl,
-        githubRepoName: repoName,
-        githubBranch: input.githubBranch ?? 'main',
-        source: 'build',
-      },
-    });
-    if (input.summaryText?.trim()) {
-      await supabase.from('project_messages').insert({
-        project_id: projectId,
-        role: 'assistant',
-        content: input.summaryText.slice(0, 12_000),
-        metadata: { deployUrl: input.deployUrl, githubRepoName: repoName, source: 'build_summary' },
-      });
-    }
-  } catch {
-    /* optional */
-  }
-
-  const completed=await supabase.from('projects').update({status:'completed'}).eq('id',projectId).eq('user_id',input.userId).select('id').maybeSingle();
-  if(completed.error || completed.data?.id!==projectId)return null;
+  const completed=await supabase.from('projects').update({status:'completed'}).eq('id',projectId).eq('user_id',userId).select('id,user_id,status').maybeSingle();
+  if(completed.error || completed.data?.id!==projectId || completed.data.user_id!==userId || completed.data.status!=='completed')return null;
   return projectId;
 }

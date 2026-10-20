@@ -527,7 +527,7 @@ test('actual API ignores client owner and rejects foreign project/file access an
 
 test('real durable database file delivery is owner-only, bounded, expiring and atomically revocable',async()=>{
   const [owner,other]=users;
-  const saved=await storeProjectFile(owner.id,owner.project,'private-fixture.txt','PRIVATE_FILE_FIXTURE_ONLY','text/plain','other');
+  const saved=await storeProjectFile(owner.context,owner.project,'private-fixture.txt','PRIVATE_FILE_FIXTURE_ONLY','text/plain','other');
   const path=`/api/projects/${owner.project}/files/${saved.id}`;
   assert.equal((await request(`${path}/download`)).status,401);
   for(const suffix of ['/download','/link','/links'])assert.equal((await request(`${path}${suffix}`,other.token,suffix==='/link'?'POST':suffix==='/links'?'DELETE':'GET',suffix==='/link'?{}:undefined)).status,404);
@@ -585,7 +585,7 @@ test('unconfigured binary storage issues no durable receipt and legacy public or
   const [owner]=users;
   assert.equal(process.env.CLOUDFLARE_R2_PRIVATE_BUCKET,undefined);
   const filename=`missing-private-store-${randomUUID()}.bin`;
-  await assert.rejects(storeProjectFile(owner.id,owner.project,filename,Buffer.from('FICTIONAL_BINARY'),'application/octet-stream','other'),{status:503});
+  await assert.rejects(storeProjectFile(owner.context,owner.project,filename,Buffer.from('FICTIONAL_BINARY'),'application/octet-stream','other'),{status:503});
   const rows=await admin.from('project_files').select('id').eq('project_id',owner.project).eq('file_name',filename);assert.equal(rows.error,null);assert.deepEqual(rows.data,[]);
   for(const file_url of ['https://public.example.invalid/private-object','data:text/plain,NOT_DURABLE']) {
     const id=await insert('project_files',{project_id:owner.project,file_name:'legacy-no-private-copy',file_url,content:null});

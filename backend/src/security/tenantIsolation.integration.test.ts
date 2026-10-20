@@ -145,7 +145,7 @@ test('terminal autosave cannot steal another user ID; own save remains metadata-
   assert.equal(own.status,200);const text=await own.text();assert.doesNotMatch(text,/messages|prompt|Own new message/);assert.match(text,/own-terminal-fixture/);
 });
 test('foreign project file write is blocked before any storage side effect', async () => {
-  await assert.rejects(storeProjectFile(OWNER,OTHER_PROJECT,'denied.txt','Never uploaded','text/plain','other'),(error:unknown)=>error instanceof TenantAccessError&&error.status===404);
+  await assert.rejects(storeProjectFile(createTenantContext({userId:OWNER,via:'local_jwt'}),OTHER_PROJECT,'denied.txt','Never uploaded','text/plain','other'),(error:unknown)=>error instanceof TenantAccessError&&error.status===404);
   assert.equal(calls.filter(call=>call.path.endsWith('/project_files')&&call.method==='POST').length,0);
 });
 test('provider/run/runtime-session/cost/chat and joined file owner predicates deny second-tenant references', async () => {

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "1d16a2fea8d0e0c173f599712ba12dcacf5dbd8d",
+  "source_sha": "30dfcf7ecd787f09d72ae89b23687331e8b8ae19",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -9919,6 +9919,7 @@
         "backend/src/operations/internalEffect.local.integration.ts",
         "backend/src/security/adminReads.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+        "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/credentialReadMatrix.local.integration.ts",
@@ -11094,6 +11095,7 @@
         "backend/src/operations/internalEffect.local.integration.ts",
         "backend/src/operations/verificationTarget.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+        "backend/src/security/buildProjectReceipt.local.integration.ts",
         "backend/src/security/businessConfirmationClaim.local.integration.ts",
         "backend/src/security/businessConfirmationFinish.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
@@ -13357,7 +13359,7 @@
     },
     {
       "path": "backend/src/security/buildProjectReceipt.local.integration.ts",
-      "sha256": "ab55a5f4f68528f3184c984693f454b4b131b26f28264899206025a290bf08a5"
+      "sha256": "49b3f502cd14766c769edbdd4da0bdce4938b1efe9ed259250c05f28dc4a3b07"
     },
     {
       "path": "backend/src/security/businessConfirmationClaim.local.integration.ts",
@@ -13541,7 +13543,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "980562f139c8bc62074d79586fd4e260b6a835ee31ac4c561a61072c0ed0b1e8"
+      "sha256": "4e85b75f2d97f720ca990d51320115c8951959d24454ffc15597b33e3bf6a557"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -13701,7 +13703,7 @@
     },
     {
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "sha256": "a6104410b96bb8cc6848c1f6be166ebb9bb46c62d75662c3c4fe61f373a71cac"
+      "sha256": "df1dd631c4631480558890e38e888c5e36b4dabeae1d8bef46778b5d547dd895"
     },
     {
       "path": "backend/src/services/notificationService.ts",
@@ -13805,7 +13807,7 @@
     },
     {
       "path": "backend/src/services/storage/projectFiles.ts",
-      "sha256": "640effcfcfa42f90b0efc7a2acc301a23a9c4a7590ff3e697a6fe2dcdad43f8c"
+      "sha256": "839aa8c20f46c7c5c923f23287b376e41f082274df0fcfdb893a002b0d068a9e"
     },
     {
       "path": "backend/src/services/systemErrorLog.ts",
@@ -19331,7 +19333,14 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/buildProjectReceipt.local.integration.ts",
-      "line": 9,
+      "line": 14,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/buildProjectReceipt.local.integration.ts",
+      "line": 18,
       "credentialsInUrl": false
     },
     {
@@ -20311,14 +20320,14 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "line": 115,
+      "line": 122,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "line": 190,
+      "line": 198,
       "credentialsInUrl": false
     },
     {
@@ -26204,6 +26213,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/security/buildProjectReceipt.local.integration.ts",
+      "line": 91,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/security/frontendScope.local.integration.ts",
       "line": 17,
       "scope": "FUNCTION_LOCAL",
@@ -26597,8 +26613,15 @@
     },
     {
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "line": 156,
+      "line": 163,
       "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/memory/buildProjectStore.ts",
+      "line": 211,
+      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
