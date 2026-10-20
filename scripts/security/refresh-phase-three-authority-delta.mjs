@@ -11,7 +11,8 @@ const paths = ['backend/src/routes/phase1.ts', 'backend/src/services/integration
   'backend/src/ai/providerBudget.ts', 'backend/src/operations/operationsService.ts',
   'backend/src/services/integrations/githubAuth.ts', 'backend/src/services/integrations/githubTokenStore.ts',
   'backend/src/services/integrations/oauthPkceStore.ts', 'backend/src/services/integrations/userProviderKeys.ts',
-  'backend/src/services/integrations/vercelAuth.ts', 'backend/src/synthesis/projectRuntime/secretManager.ts'];
+  'backend/src/services/integrations/vercelAuth.ts', 'backend/src/synthesis/projectRuntime/secretManager.ts',
+  'backend/src/synthesis/projectRuntime/store.ts'];
 const read = path => readFileSync(path, 'utf8').replace(/\r\n/g, '\n');
 const historical = path => execFileSync('git', ['show', `${accepted}:${path}`], { encoding: 'utf8', maxBuffer: 12 * 1024 * 1024 }).replace(/\r\n/g, '\n');
 const hash = value => createHash('sha256').update(value).digest('hex');

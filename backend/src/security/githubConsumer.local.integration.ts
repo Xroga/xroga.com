@@ -8,6 +8,7 @@ import {authMiddleware} from '../middleware/auth.js';
 import githubRouter from '../routes/github.js';
 import {getGithubDefaultRepo} from '../services/integrations/githubDeploy.js';
 import {resolveIdentity,resetIdentityResolution} from '../lib/resolveIdentity.js';
+import {sealRuntimeCredential} from '../services/integrations/credentialVaultRuntime.js';
 
 /** Actual Auth/router/database selection, with every provider request refused locally. */
 export function registerGithubConsumerTests(admin:SupabaseClient,getUsers:()=>readonly {id:string;token:string}[]):void{
@@ -37,7 +38,15 @@ export function registerGithubConsumerTests(admin:SupabaseClient,getUsers:()=>re
   const [owner,other]=actors;
   const tokens=new Map(actors.map(a=>[a.id,`SYNTHETIC_CONSUMER_${a.id}`]));
   let mode='normal',intercepted=false;
-  for(const actor of actors)assert.equal((await admin.from('github_integrations').upsert({user_id:actor.id,access_token:tokens.get(actor.id),repo_strategy:'manual',default_repo:`fixture/${actor.id}`},{onConflict:'user_id'})).error,null);
+  const restore=async(actor:{id:string})=>{
+   const revision=randomUUID();
+   const envelope=await sealRuntimeCredential(actor.id,{provider:'github',account:'github',credentialType:'oauth-token',
+    recordId:'github',revision,scope:'github-connection'},tokens.get(actor.id)!);
+   assert.equal((await admin.from('github_integrations').upsert({user_id:actor.id,access_token:envelope,repo_strategy:'manual',default_repo:`fixture/${actor.id}`},{onConflict:'user_id'})).error,null);
+   assert.equal((await admin.from('user_integrations').upsert({user_id:actor.id,provider:'github',access_token:envelope,
+    metadata:{vault_revision:revision,vault_format:'github-oauth-v1'}},{onConflict:'user_id,provider'})).error,null);
+  };
+  for(const actor of actors)await restore(actor);
   const foreignBefore=await admin.from('github_integrations').select('*').eq('user_id',other.id).single();assert.equal(foreignBefore.error,null);
   globalThis.fetch=async(input,init)=>{
    const url=new URL(String(input instanceof Request?input.url:input));
@@ -69,11 +78,11 @@ export function registerGithubConsumerTests(admin:SupabaseClient,getUsers:()=>re
    const response=await request(actor.token,actors.find(a=>a.id!==actor.id)!.id);assert.equal(response.status,200);assert.equal((await response.json() as {status:string}).status,'unavailable');assert.equal(sent.at(-1),`Bearer ${tokens.get(actor.id)}`);
   }
   for(mode of ['disconnect','replace','outage']){
-   assert.equal((await admin.from('github_integrations').update({access_token:tokens.get(owner.id)}).eq('user_id',owner.id)).error,null);
+   await restore(owner);
    const previousRequests:number=sent.length;intercepted=false;const response=await request(owner.token,other.id);assert.equal(response.status,200);assert.equal((await response.json() as {status:string}).status,'unavailable');assert.equal(intercepted,true);assert.equal(sent.length,previousRequests,'Unavailable current authority cannot reach the provider consumer');
    assert.deepEqual((await admin.from('github_integrations').select('*').eq('user_id',other.id).single()).data,foreignBefore.data);
   }
-  mode='normal';assert.equal((await admin.from('github_integrations').update({access_token:tokens.get(owner.id)}).eq('user_id',owner.id)).error,null);
+  mode='normal';await restore(owner);
   assert.equal(await getGithubDefaultRepo(owner.id),`fixture/${owner.id}`);const restored=await request(owner.token,other.id);assert.equal(restored.status,200);assert.equal(sent.at(-1),`Bearer ${tokens.get(owner.id)}`);
  });
 }

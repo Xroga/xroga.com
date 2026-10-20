@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "observedDate": "2026-10-20",
+  "method": "AUTHENTICATED_CONSOLE_READ_ONLY_AND_LOCAL_ADC_PROBE",
+  "account": {
+    "displayedType": "Free trial account",
+    "billingStatus": "CLOSED",
+    "activeBillingAccounts": 0,
+    "creditPage": "No credits to display",
+    "remainingTrialCredits": null,
+    "trialExpiration": null,
+    "displayedMonthCostUsd": 0,
+    "costReportingMayBeDelayed": true
+  },
+  "visibleProjects": [
+    "project-63257e08-677a-4123-baf",
+    "xroga-512008",
+    "project-aa455141-69e4-4506-8ca",
+    "project-c8325749-c3ea-47a6-bc5"
+  ],
+  "projectInventoryScope": "Visible expanded organization only. Other organization groups remain collapsed.",
+  "kmsConsoleResult": "No active billing accounts. You cannot enable billing for this project because all your billing accounts are closed.",
+  "kmsResourceInventory": "UNAVAILABLE_BEHIND_BILLING_GATE",
+  "localRuntimeAuthentication": "ADC_UNAVAILABLE",
+  "adapterCompatibility": "Exact CryptoKey resource and ADC supported. SOFTWARE symmetric encrypt/decrypt with AAD supported in code. Real provider verification blocked.",
+  "leastPrivilege": {
+    "scope": "ONE_ISOLATED_TEST_CRYPTOKEY",
+    "permissions": ["cloudkms.cryptoKeyVersions.useToEncrypt", "cloudkms.cryptoKeyVersions.useToDecrypt"],
+    "preferredAuthentication": "Workload Identity Federation or short-lived impersonation. No downloaded service-account keys."
+  },
+  "pricing": {
+    "source": "https://cloud.google.com/kms/pricing",
+    "softwareKeyVersionMonthlyUsd": 0.06,
+    "cryptographicOperationsPer10000Usd": 0.03,
+    "ordinarySoftwareKeysPermanentlyFree": false,
+    "eligibleActiveTrialConfirmed": false
+  },
+  "regionsSource": "https://cloud.google.com/kms/docs/locations",
+  "softwareRegions": "All Cloud KMS locations, including us-central1 and asia-south1. No region selected or resource created.",
+  "founderAction": "Personally restore an eligible non-billable Free Trial or select an account with active credits. Stop before paid activation, card authorization or payment and report displayed amount and terms.",
+  "paymentAuthorizationAmount": null,
+  "paymentAuthorizationTerms": "NOT_DISPLAYED_OR_ACCEPTED",
+  "providerCalls": 0,
+  "resourcesCreated": 0,
+  "trialCreditUsageFromThisSession": 0,
+  "outOfPocketSpend": 0,
+  "liveCredentialMigration": false,
+  "productionEffects": false,
+  "status": "KMS_TRIAL_AND_RUNTIME_AUTHENTICATION_BLOCKED"
+}

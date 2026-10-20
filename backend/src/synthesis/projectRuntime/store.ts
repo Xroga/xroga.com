@@ -8,6 +8,7 @@ import {
 } from '../../config/supabase.js';
 import { createTenantContext } from '../../security/tenantContext.js';
 import { TenantAccessError } from '../../security/tenantErrors.js';
+import { validateVaultCiphertext } from '../../services/integrations/credentialVault.js';
 import { persistOwnedRuntimeSession } from '../../security/ownedRunPersistence.js';
 import { captureAdmittedRunAttempt, requireAdmittedRunAttempt, type AdmittedRunAttempt } from '../../ai/runStore.js';
 
@@ -1122,7 +1123,7 @@ export class SupabaseProjectRuntimeStore
   }
 }
 
-/** Validate the existing v1 envelope without decrypting or asserting key custody. */
+/** Validate supported persisted envelopes before authenticated secret resolution. */
 export function restoreOwnerBoundEncryptedSecret(row: unknown, userId: string, projectId: string): EncryptedProjectSecretRecord {
   const fail = (): never => { throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE'); };
   if (!row || typeof row !== 'object' || Array.isArray(row)) return fail();
@@ -1130,9 +1131,14 @@ export function restoreOwnerBoundEncryptedSecret(row: unknown, userId: string, p
   if (!userId || !projectId || record.user_id !== userId || record.project_id !== projectId ||
     typeof record.name !== 'string' || !/^[A-Z_][A-Z0-9_]{1,63}$/.test(record.name) ||
     typeof record.scope !== 'string' || !['development','preview','verification','deployment','shared'].includes(record.scope) ||
-    record.key_version !== 1 || typeof record.encrypted_value !== 'string' || record.encrypted_value.length > 342000 ||
+    ![1,3].includes(record.key_version as number) || typeof record.encrypted_value !== 'string' || record.encrypted_value.length > 342000 ||
     typeof record.created_at !== 'string' || !Number.isFinite(Date.parse(record.created_at)) ||
     typeof record.updated_at !== 'string' || !Number.isFinite(Date.parse(record.updated_at))) return fail();
+  if (record.key_version === 3) {
+    try { validateVaultCiphertext(record.encrypted_value); } catch { return fail(); }
+    return {userId, projectId, name:record.name, scope:record.scope as ProjectSecretScope,
+      encryptedValue:record.encrypted_value, keyVersion:3, createdAt:record.created_at, updatedAt:record.updated_at};
+  }
   const parts = record.encrypted_value.split(':');
   if (parts.length !== 4 || parts[0] !== 'v1') return fail();
   const bytes = parts.slice(1).map(part => Buffer.from(part, 'base64'));

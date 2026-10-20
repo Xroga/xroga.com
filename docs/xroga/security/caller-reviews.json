@@ -5007,117 +5007,6 @@
       }
     },
     {
-      "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
-      "callIds": [
-        "8fc7cf5dd562db7dcd3a",
-        "ed5cdf592a4a0494dc20",
-        "530ec12058ab9d32794b",
-        "419bf279075e606b8b1f",
-        "8da826b4f1382152e9e9",
-        "6fb334291b6218b12f4c",
-        "f4643ffb0f1224d7da80",
-        "67ce8a604d6d6502cc94",
-        "87f57b0ac97d6b473fa3",
-        "99b6b7ce0de9df1778a6",
-        "8bea5ef54bd825f8e224"
-      ],
-      "disposition": "SCOPED_BOUNDARY",
-      "authority": "Generic revision producers are two issued-owner runtime handlers which first load exact owner/project snapshot and exact owner/project/session, plus private delivery lifecycle writes whose only production publish/deploy producers are authenticated delivery routes and whose service first loads that exact owner/project revision. History restore/fork also load exact owner/project/revision first, with no current production caller. The generic exported persistence wrapper has no production consumer. Active pipeline/preview workers instead use the separately proven admitted-attempt RPC. The snapshot fixes project/run/OutcomeContract before await and exact receipt binds owner/project/run/fingerprint/revision. Existing database trigger locks an attached current database project through the run where present. Logical project IDs remain owner-namespaced text and are not cast to projects UUIDs. No user body chooses durable owner or replaces run identity.\nThe sole production runtime manager factory is used by authenticated runtime routes or livePreview coordinator. Routes derive owner from original issued context, load owner-bound revision and bind requested project/session before provider access. Coordinator producers are the same pipeline, route and admitted-attempt agent bridge. Manager retains that owner, loads exact owner/session and derives event project/session from the retained row. The only selected current provider is the internal Fly adapter, which constructs owner/project/class/provider identity from supplied server input rather than provider JSON. Pipeline delivery events use its issued actor and admitted software project. The separate user-triggered delivery service gets server req.userId from its auth-mounted route and loads exact owner/project revision before session-less events. Dormant history helpers also load exact owner/project/revision first. Session persistence validates first-owner immutable identity and exact receipt. New SQL holds exact current session owner/project on event insertion.\nThe only production ProjectSecretManager constructor is ProjectRuntimeManager with retained server owner. Its factory receives the authenticated runtime route owner or admitted coordinator owner, whose exact producers are hash bound above. Enabled exec/start/log loads exact owner/session before deriving the logical project from that row. No requested provider/default account selects these secrets. Save/read/delete keys contain original owner plus logical project/name/scope. Save/delete helpers currently have no production mutation consumer outside that retained-owner secret manager. The new real test exercises those existing helpers directly with isolated Auth actors, not a fabricated public endpoint. Current browser roles cannot read/write/delete these rows. No fallback exists.",
-      "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Two generic revision insert/factory callers only. Existing actual same-owner save/read/history and foreign/malformed contract denial, authenticated same-owner cross-project runtime denial, and worker parent/generation races are reused. User lifecycle snapshots are distinct from worker generations. Same-owner snapshot ordering is not claimed as a tenant race or new last-writer-wins defect.\nThree fixed session/event calls only, proven by actual store owner/identity/first-insert races, authenticated project/session mismatch denial and new event-parent lock/deletion/rollback receipts. Eight original revision/secret calls remain open. Provider effects, complete secret custody and full runtime lifecycle are not certified.\nSix exact secret table/factory callers only. Actual two-owner shared-logical-key concurrent writes, scoped reads, malformed-envelope denial, browser denial, same-owner and repeated deletion with unchanged foreign bytes, actual owner/session manager consumer and checked mutation receipts. No invented projects-table membership on independent logical workspace namespaces. No009 custody/rotation/migration or008 action authority certificate. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
-      "evidence": [
-        {
-          "path": "backend/src/security/tenantIsolation.local.integration.ts",
-          "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
-        },
-        {
-          "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
-          "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
-        }
-      ],
-      "historicalReview": {
-        "path": "backend/src/synthesis/projectRuntime/store.ts",
-        "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
-        "callIds": [
-          "8fc7cf5dd562db7dcd3a",
-          "ed5cdf592a4a0494dc20",
-          "530ec12058ab9d32794b",
-          "419bf279075e606b8b1f",
-          "8da826b4f1382152e9e9",
-          "6fb334291b6218b12f4c",
-          "f4643ffb0f1224d7da80",
-          "67ce8a604d6d6502cc94",
-          "87f57b0ac97d6b473fa3",
-          "99b6b7ce0de9df1778a6",
-          "8bea5ef54bd825f8e224"
-        ],
-        "disposition": "REVIEWED_GAP",
-        "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
-        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed. Current-source addition: destroyed-state trigger blocks stale terminal resurrection, actual observed two-client test prepared; encrypted read validates returned owner/project and v1 shape before consumers. Known-secret diagnostic events redacted without altering functional restart input. Live provider identity, literal-secret process restart state, nonterminal concurrent updates, key custody and other writer provenance remain open. New tests await current-source CI. Sixth-source evidence: durable runtime session identity columns are immutable after insert, preserving first claimant against rebinding. Same-owner project routes and coordinator validate requested project before provider access. Focused HTTP rejects all four cross-project operations without provider calls or revision writes. Actual first-insert race and HTTP tests prepared. No live provider, nonterminal update ordering, literal-secret restart-state or complete lifecycle certification.",
-        "evidence": [
-          {
-            "path": "backend/src/security/tenantIsolation.local.integration.ts",
-            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
-          },
-          {
-            "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
-            "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
-          }
-        ]
-      },
-      "command007Proof": {
-        "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
-        "inputArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/input.json",
-        "inputSha256": "4e613fdd16d97c44fd1c61080204897a3193fbeaa42285d15022aa3e35ad73b0",
-        "observationsArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/observations.json",
-        "observationsSha256": "b60fe2a441d1f45052021957966d3ec28cdad3848fd3fc765f7cbd711ebb3bf0",
-        "resultArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
-        "resultSha256": "967f9ced90db90fde241e17dc60533a55d223779e270eb0b8747f4430d079818",
-        "obligationIds": [
-          "OB-9bfdff17118e0393",
-          "OB-9bfdff17118e0393:session-event",
-          "OB-9bfdff17118e0393:owner-secret"
-        ],
-        "passedTests": [
-          "real runtime event writes bind the current session owner and project through lock waits with exact receipts",
-          "real runtime store cannot rebind same-owner session project provider or class",
-          "real competing runtime first inserts retain winning immutable identity under observed lock",
-          "existing runtime session persistence cannot take over a foreign durable session",
-          "real runtime API refuses same-owner cross-project session references before provider access",
-          "real runtime secret mutations retain owner-inclusive keys and exact receipts through concurrent writes deletes and session consumers",
-          "real runtime encrypted read binds owners and rejects malformed envelopes before secret resolution",
-          "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "real worker revision requires canonical parent lineage and issued current generation",
-          "real worker revision waiting on parent lock cannot supersede resumed state"
-        ],
-        "scope": "EXACT_ORIGINAL_007_CALLER_SCOPE_ONLY_NOT_WHOLE_SERVICE_OR_LATER_PHASE_ACCEPTANCE"
-      },
-      "separateUncertifiedScope": {
-        "state": "PRESERVED_NOT_CERTIFIED",
-        "originalReviewReason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed. Current-source addition: destroyed-state trigger blocks stale terminal resurrection, actual observed two-client test prepared; encrypted read validates returned owner/project and v1 shape before consumers. Known-secret diagnostic events redacted without altering functional restart input. Live provider identity, literal-secret process restart state, nonterminal concurrent updates, key custody and other writer provenance remain open. New tests await current-source CI. Sixth-source evidence: durable runtime session identity columns are immutable after insert, preserving first claimant against rebinding. Same-owner project routes and coordinator validate requested project before provider access. Focused HTTP rejects all four cross-project operations without provider calls or revision writes. Actual first-insert race and HTTP tests prepared. No live provider, nonterminal update ordering, literal-secret restart-state or complete lifecycle certification.",
-        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
-        "note": "Existing frozen obligations remain authoritative and unchanged. This metadata does not reclassify an unresolved007 obligation, schedule new work or implement008/009/010.",
-        "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
-      },
-      "structuredOrigin": {
-        "id": "OB-9bfdff17118e0393",
-        "callIds": [
-          "8fc7cf5dd562db7dcd3a",
-          "ed5cdf592a4a0494dc20",
-          "530ec12058ab9d32794b",
-          "419bf279075e606b8b1f",
-          "8da826b4f1382152e9e9",
-          "6fb334291b6218b12f4c",
-          "f4643ffb0f1224d7da80",
-          "67ce8a604d6d6502cc94",
-          "87f57b0ac97d6b473fa3",
-          "99b6b7ce0de9df1778a6",
-          "8bea5ef54bd825f8e224"
-        ],
-        "disposition": "REVIEWED_GAP"
-      }
-    },
-    {
       "path": "backend/src/synthesis/projectRuntime/projectHistory.ts",
       "sourceSha256": "54471e2a22a019698a8f5607569a60b260d98466aaedf68515429162bf9f336b",
       "callIds": [
@@ -7199,38 +7088,6 @@
       ]
     },
     {
-      "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
-      "callIds": [
-        "4405d6096d2e71e981b2"
-      ],
-      "disposition": "SCOPED_BOUNDARY",
-      "authority": "Worker-only revision writer requires an original issued attempt matching immutable owner/run snapshot. Service-only RPC locks swarm parent, requires current running worker generation and existing same-owner canonical project lineage, then returns exact revision receipt. Authenticated nonworker restore/delivery retains separate existing paths.",
-      "reason": "VERIFIED unchanged exact writer at54abe997a2bbccd97796131b98519747c8c60c21, disposable38824268139:87 migrations,100 real security/concurrency tests,3 authenticated browser tests,zero failures/skips. Actual observed parent-lock stale-resume/cancellation, owner/lineage and role denial pass. Closure covers only this admitted-attempt database writer. Read freshness, other runtime writers and already-issued external effects remain independently open, no whole-worker certification.",
-      "evidence": [
-        {
-          "path": "backend/src/security/workerRevision.local.integration.ts",
-          "marker": "registerWorkerRevisionTests"
-        }
-      ]
-    },
-    {
-      "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
-      "callIds": [
-        "98d184ab88f7ab61318b"
-      ],
-      "disposition": "SCOPED_BOUNDARY",
-      "authority": "Worker-only revision writer requires an original issued attempt matching immutable owner/run snapshot. Service-only RPC locks swarm parent, requires current running worker generation and existing same-owner canonical project lineage, then returns exact revision receipt. Authenticated nonworker restore/delivery retains separate existing paths.",
-      "reason": "VERIFIED unchanged exact writer at54abe997a2bbccd97796131b98519747c8c60c21, disposable38824268139:87 migrations,100 real security/concurrency tests,3 authenticated browser tests,zero failures/skips. Actual observed parent-lock stale-resume/cancellation, owner/lineage and role denial pass. Closure covers only this admitted-attempt database writer. Read freshness, other runtime writers and already-issued external effects remain independently open, no whole-worker certification.",
-      "evidence": [
-        {
-          "path": "backend/src/security/workerRevision.local.integration.ts",
-          "marker": "registerWorkerRevisionTests"
-        }
-      ]
-    },
-    {
       "path": "backend/src/services/ensureUserRecords.ts",
       "sourceSha256": "b93530285b863676609458c1b2ee8d5478f8504b19fe89aa421bdabcd93c9852",
       "callIds": [
@@ -7353,70 +7210,6 @@
         ],
         "disposition": "REVIEWED_GAP"
       }
-    },
-    {
-      "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
-      "callIds": [
-        "60631ccec69849a4ead7"
-      ],
-      "disposition": "SCOPED_BOUNDARY",
-      "authority": "Fixed project revision read binds requested owner/project in SQL and verifies returned row owner/project/run against SoftwareProject and contract identities before returning a clone. No persistence or provider action occurs in this read.",
-      "reason": "Exact method unchanged from54abe997 and executed again in7d12bf42 disposable38827153400. Narrow identity boundary only; repository authorization, restore freshness, complete SoftwareProject schema and external effects remain separate.",
-      "evidence": [
-        {
-          "path": "backend/src/security/tenantIsolation.local.integration.ts",
-          "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
-        }
-      ]
-    },
-    {
-      "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
-      "callIds": [
-        "56973b18bffeba04db38"
-      ],
-      "disposition": "SCOPED_BOUNDARY",
-      "authority": "Fixed project revision read binds requested owner/project in SQL and verifies returned row owner/project/run against SoftwareProject and contract identities before returning a clone. No persistence or provider action occurs in this read.",
-      "reason": "Exact method unchanged from54abe997 and executed again in7d12bf42 disposable38827153400. Narrow identity boundary only; repository authorization, restore freshness, complete SoftwareProject schema and external effects remain separate.",
-      "evidence": [
-        {
-          "path": "backend/src/security/tenantIsolation.local.integration.ts",
-          "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
-        }
-      ]
-    },
-    {
-      "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
-      "callIds": [
-        "0aa7bcbcf75b4fc1eceb"
-      ],
-      "disposition": "SCOPED_BOUNDARY",
-      "authority": "Fixed runtime session read selects state and owner/session/project columns, filters exact requested owner/session, and binds returned row identity to JSON before returning a clone. It does not mutate or call a provider.",
-      "reason": "Exact method unchanged from54abe997 and executed again in7d12bf42 disposable38827153400. Narrow row/JSON identity closure only; machine/providerState validation, lifecycle and current-source terminal latch are independent.",
-      "evidence": [
-        {
-          "path": "backend/src/security/tenantIsolation.local.integration.ts",
-          "marker": "real runtime restore rejects owner session and project mismatches in persisted JSON"
-        }
-      ]
-    },
-    {
-      "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
-      "callIds": [
-        "b5d3e5c94e9160b42afb"
-      ],
-      "disposition": "SCOPED_BOUNDARY",
-      "authority": "Fixed runtime session read selects state and owner/session/project columns, filters exact requested owner/session, and binds returned row identity to JSON before returning a clone. It does not mutate or call a provider.",
-      "reason": "Exact method unchanged from54abe997 and executed again in7d12bf42 disposable38827153400. Narrow row/JSON identity closure only; machine/providerState validation, lifecycle and current-source terminal latch are independent.",
-      "evidence": [
-        {
-          "path": "backend/src/security/tenantIsolation.local.integration.ts",
-          "marker": "real runtime restore rejects owner session and project mismatches in persisted JSON"
-        }
-      ]
     },
     {
       "path": "backend/src/community/service.ts",
@@ -7780,22 +7573,6 @@
         ],
         "disposition": "REVIEWED_GAP"
       }
-    },
-    {
-      "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
-      "callIds": [
-        "149b3684632af4931199"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Exact receiver is Node Buffer.from, decoding canonical base64 segments of an encrypted envelope in memory. It performs no database or Storage action and does not decrypt or authenticate ciphertext.",
-      "reason": "Conservative from-method scanner false positive only. Surrounding encrypted secret read has separate owner/project, shape and key-custody review. No cryptographic or tenant certification follows from decoding.",
-      "evidence": [
-        {
-          "path": "backend/src/synthesis/projectRuntime/store.ts",
-          "marker": "function restoreOwnerBoundEncryptedSecret"
-        }
-      ]
     },
     {
       "path": "backend/src/growth/growthService.ts",
@@ -10101,6 +9878,134 @@
       }
     },
     {
+      "path": "backend/src/synthesis/projectRuntime/store.ts",
+      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "callIds": [
+        "a7a1747d2192d62b505b",
+        "4623023af1a7fe9573f6",
+        "dfd2b022b39413db1561",
+        "6da2a4d0d15144e0aad0",
+        "2a0d2f322b23c157502d",
+        "e49e4b26ba7d2860dc41",
+        "a2f0c39a047770542a8b",
+        "492e2a6c5aee7adbc460",
+        "7f42805766f9e4a7622d",
+        "32701c89f04a3536291d",
+        "18ace9b81c3f92c7fa17"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Generic revision producers are two issued-owner runtime handlers which first load exact owner/project snapshot and exact owner/project/session, plus private delivery lifecycle writes whose only production publish/deploy producers are authenticated delivery routes and whose service first loads that exact owner/project revision. History restore/fork also load exact owner/project/revision first, with no current production caller. The generic exported persistence wrapper has no production consumer. Active pipeline/preview workers instead use the separately proven admitted-attempt RPC. The snapshot fixes project/run/OutcomeContract before await and exact receipt binds owner/project/run/fingerprint/revision. Existing database trigger locks an attached current database project through the run where present. Logical project IDs remain owner-namespaced text and are not cast to projects UUIDs. No user body chooses durable owner or replaces run identity.\nThe sole production runtime manager factory is used by authenticated runtime routes or livePreview coordinator. Routes derive owner from original issued context, load owner-bound revision and bind requested project/session before provider access. Coordinator producers are the same pipeline, route and admitted-attempt agent bridge. Manager retains that owner, loads exact owner/session and derives event project/session from the retained row. The only selected current provider is the internal Fly adapter, which constructs owner/project/class/provider identity from supplied server input rather than provider JSON. Pipeline delivery events use its issued actor and admitted software project. The separate user-triggered delivery service gets server req.userId from its auth-mounted route and loads exact owner/project revision before session-less events. Dormant history helpers also load exact owner/project/revision first. Session persistence validates first-owner immutable identity and exact receipt. New SQL holds exact current session owner/project on event insertion.\nThe only production ProjectSecretManager constructor is ProjectRuntimeManager with retained server owner. Its factory receives the authenticated runtime route owner or admitted coordinator owner, whose exact producers are hash bound above. Enabled exec/start/log loads exact owner/session before deriving the logical project from that row. No requested provider/default account selects these secrets. Save/read/delete keys contain original owner plus logical project/name/scope. Save/delete helpers currently have no production mutation consumer outside that retained-owner secret manager. The new real test exercises those existing helpers directly with isolated Auth actors, not a fabricated public endpoint. Current browser roles cannot read/write/delete these rows. No fallback exists.",
+      "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Two generic revision insert/factory callers only. Existing actual same-owner save/read/history and foreign/malformed contract denial, authenticated same-owner cross-project runtime denial, and worker parent/generation races are reused. User lifecycle snapshots are distinct from worker generations. Same-owner snapshot ordering is not claimed as a tenant race or new last-writer-wins defect.\nThree fixed session/event calls only, proven by actual store owner/identity/first-insert races, authenticated project/session mismatch denial and new event-parent lock/deletion/rollback receipts. Eight original revision/secret calls remain open. Provider effects, complete secret custody and full runtime lifecycle are not certified.\nSix exact secret table/factory callers only. Actual two-owner shared-logical-key concurrent writes, scoped reads, malformed-envelope denial, browser denial, same-owner and repeated deletion with unchanged foreign bytes, actual owner/session manager consumer and checked mutation receipts. No invented projects-table membership on independent logical workspace namespaces. No009 custody/rotation/migration or008 action authority certificate. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+      "evidence": [
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+        },
+        {
+          "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+          "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
+        }
+      ],
+      "historicalReview": {
+        "path": "backend/src/synthesis/projectRuntime/store.ts",
+        "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
+        "callIds": [
+          "8fc7cf5dd562db7dcd3a",
+          "ed5cdf592a4a0494dc20",
+          "530ec12058ab9d32794b",
+          "419bf279075e606b8b1f",
+          "8da826b4f1382152e9e9",
+          "6fb334291b6218b12f4c",
+          "f4643ffb0f1224d7da80",
+          "67ce8a604d6d6502cc94",
+          "87f57b0ac97d6b473fa3",
+          "99b6b7ce0de9df1778a6",
+          "8bea5ef54bd825f8e224"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Read the complete canonical store: fixed tables, owner/project filtered reads, owner-inclusive secret conflict key, collision-safe session helper and identity-bound session restoration. Revision restoration now also binds row, snapshot and Outcome Contract identities; runtime routes derive user from requireTenantContext.",
+        "reason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed. Current-source addition: destroyed-state trigger blocks stale terminal resurrection, actual observed two-client test prepared; encrypted read validates returned owner/project and v1 shape before consumers. Known-secret diagnostic events redacted without altering functional restart input. Live provider identity, literal-secret process restart state, nonterminal concurrent updates, key custody and other writer provenance remain open. New tests await current-source CI. Sixth-source evidence: durable runtime session identity columns are immutable after insert, preserving first claimant against rebinding. Same-owner project routes and coordinator validate requested project before provider access. Focused HTTP rejects all four cross-project operations without provider calls or revision writes. Actual first-insert race and HTTP tests prepared. No live provider, nonterminal update ordering, literal-secret restart-state or complete lifecycle certification.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+          },
+          {
+            "path": "backend/src/synthesis/projectRuntime/store.owner.test.ts",
+            "marker": "revision restore rejects foreign owner, project, run and malformed snapshot/contract without replacing identifiers"
+          }
+        ]
+      },
+      "command007Proof": {
+        "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+        "inputArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/input.json",
+        "inputSha256": "4e613fdd16d97c44fd1c61080204897a3193fbeaa42285d15022aa3e35ad73b0",
+        "observationsArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/observations.json",
+        "observationsSha256": "b60fe2a441d1f45052021957966d3ec28cdad3848fd3fc765f7cbd711ebb3bf0",
+        "resultArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+        "resultSha256": "967f9ced90db90fde241e17dc60533a55d223779e270eb0b8747f4430d079818",
+        "obligationIds": [
+          "OB-9bfdff17118e0393",
+          "OB-9bfdff17118e0393:session-event",
+          "OB-9bfdff17118e0393:owner-secret"
+        ],
+        "passedTests": [
+          "real runtime event writes bind the current session owner and project through lock waits with exact receipts",
+          "real runtime store cannot rebind same-owner session project provider or class",
+          "real competing runtime first inserts retain winning immutable identity under observed lock",
+          "existing runtime session persistence cannot take over a foreign durable session",
+          "real runtime API refuses same-owner cross-project session references before provider access",
+          "real runtime secret mutations retain owner-inclusive keys and exact receipts through concurrent writes deletes and session consumers",
+          "real runtime encrypted read binds owners and rejects malformed envelopes before secret resolution",
+          "real revision restore rejects mismatched snapshot identities before restore or fork writes",
+          "real worker revision requires canonical parent lineage and issued current generation",
+          "real worker revision waiting on parent lock cannot supersede resumed state"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLER_SCOPE_ONLY_NOT_WHOLE_SERVICE_OR_LATER_PHASE_ACCEPTANCE"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "The missing revision JSON boundary was corrected and negative tests added, but this does not certify every writer caller. Logical project IDs are text, not automatic projects-table ownership; revision/event/secret writes accept server-supplied identities and need full caller provenance. Event-session association, secret lifecycle/KMS and provider-state schema remain unresolved. Real final-source tests are mandatory; no owner-filter-only certification. Follow-up snapshot persistence binds project/run/contract identity before await and validates exact durable owner/project/run/fingerprint receipt. Seventeen focused runtime tests pass; real save/read integration pending. Logical-project provenance and remaining event/session/secret lifecycle obligations are not closed. Current-source addition: destroyed-state trigger blocks stale terminal resurrection, actual observed two-client test prepared; encrypted read validates returned owner/project and v1 shape before consumers. Known-secret diagnostic events redacted without altering functional restart input. Live provider identity, literal-secret process restart state, nonterminal concurrent updates, key custody and other writer provenance remain open. New tests await current-source CI. Sixth-source evidence: durable runtime session identity columns are immutable after insert, preserving first claimant against rebinding. Same-owner project routes and coordinator validate requested project before provider access. Focused HTTP rejects all four cross-project operations without provider calls or revision writes. Actual first-insert race and HTTP tests prepared. No live provider, nonterminal update ordering, literal-secret restart-state or complete lifecycle certification.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Existing frozen obligations remain authoritative and unchanged. This metadata does not reclassify an unresolved007 obligation, schedule new work or implement008/009/010.",
+        "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
+      },
+      "structuredOrigin": {
+        "id": "OB-35caa8c8fd1544eb",
+        "callIds": [
+          "a7a1747d2192d62b505b",
+          "4623023af1a7fe9573f6",
+          "dfd2b022b39413db1561",
+          "6da2a4d0d15144e0aad0",
+          "2a0d2f322b23c157502d",
+          "e49e4b26ba7d2860dc41",
+          "a2f0c39a047770542a8b",
+          "492e2a6c5aee7adbc460",
+          "7f42805766f9e4a7622d",
+          "32701c89f04a3536291d",
+          "18ace9b81c3f92c7fa17"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "acceptedPhaseTwoReview": {
+        "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+        "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
+        "callIds": [
+          "8fc7cf5dd562db7dcd3a",
+          "ed5cdf592a4a0494dc20",
+          "530ec12058ab9d32794b",
+          "419bf279075e606b8b1f",
+          "8da826b4f1382152e9e9",
+          "6fb334291b6218b12f4c",
+          "f4643ffb0f1224d7da80",
+          "67ce8a604d6d6502cc94",
+          "87f57b0ac97d6b473fa3",
+          "99b6b7ce0de9df1778a6",
+          "8bea5ef54bd825f8e224"
+        ]
+      }
+    },
+    {
       "path": "backend/src/operations/operationsService.ts",
       "sourceSha256": "c7b9467f7de3e54a39679e18cf73f8b1d5d02483a9071cfb15498e3743b0b6dc",
       "callIds": [
@@ -11822,6 +11727,167 @@
         "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
         "callIds": [
           "8eadb3d8b716ca3f7120"
+        ]
+      }
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/store.ts",
+      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "callIds": [
+        "af204e0e037ebe211a63"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Worker-only revision writer requires an original issued attempt matching immutable owner/run snapshot. Service-only RPC locks swarm parent, requires current running worker generation and existing same-owner canonical project lineage, then returns exact revision receipt. Authenticated nonworker restore/delivery retains separate existing paths.",
+      "reason": "VERIFIED unchanged exact writer at54abe997a2bbccd97796131b98519747c8c60c21, disposable38824268139:87 migrations,100 real security/concurrency tests,3 authenticated browser tests,zero failures/skips. Actual observed parent-lock stale-resume/cancellation, owner/lineage and role denial pass. Closure covers only this admitted-attempt database writer. Read freshness, other runtime writers and already-issued external effects remain independently open, no whole-worker certification. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+      "evidence": [
+        {
+          "path": "backend/src/security/workerRevision.local.integration.ts",
+          "marker": "registerWorkerRevisionTests"
+        }
+      ],
+      "acceptedPhaseTwoReview": {
+        "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+        "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
+        "callIds": [
+          "4405d6096d2e71e981b2"
+        ]
+      }
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/store.ts",
+      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "callIds": [
+        "1bb48a0fd529036dbd67"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Worker-only revision writer requires an original issued attempt matching immutable owner/run snapshot. Service-only RPC locks swarm parent, requires current running worker generation and existing same-owner canonical project lineage, then returns exact revision receipt. Authenticated nonworker restore/delivery retains separate existing paths.",
+      "reason": "VERIFIED unchanged exact writer at54abe997a2bbccd97796131b98519747c8c60c21, disposable38824268139:87 migrations,100 real security/concurrency tests,3 authenticated browser tests,zero failures/skips. Actual observed parent-lock stale-resume/cancellation, owner/lineage and role denial pass. Closure covers only this admitted-attempt database writer. Read freshness, other runtime writers and already-issued external effects remain independently open, no whole-worker certification. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+      "evidence": [
+        {
+          "path": "backend/src/security/workerRevision.local.integration.ts",
+          "marker": "registerWorkerRevisionTests"
+        }
+      ],
+      "acceptedPhaseTwoReview": {
+        "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+        "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
+        "callIds": [
+          "98d184ab88f7ab61318b"
+        ]
+      }
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/store.ts",
+      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "callIds": [
+        "0053e3638ad34a6cbb95"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Fixed project revision read binds requested owner/project in SQL and verifies returned row owner/project/run against SoftwareProject and contract identities before returning a clone. No persistence or provider action occurs in this read.",
+      "reason": "Exact method unchanged from54abe997 and executed again in7d12bf42 disposable38827153400. Narrow identity boundary only; repository authorization, restore freshness, complete SoftwareProject schema and external effects remain separate. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+      "evidence": [
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+        }
+      ],
+      "acceptedPhaseTwoReview": {
+        "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+        "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
+        "callIds": [
+          "60631ccec69849a4ead7"
+        ]
+      }
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/store.ts",
+      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "callIds": [
+        "1d84483f4cae80e8b954"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Fixed project revision read binds requested owner/project in SQL and verifies returned row owner/project/run against SoftwareProject and contract identities before returning a clone. No persistence or provider action occurs in this read.",
+      "reason": "Exact method unchanged from54abe997 and executed again in7d12bf42 disposable38827153400. Narrow identity boundary only; repository authorization, restore freshness, complete SoftwareProject schema and external effects remain separate. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+      "evidence": [
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes"
+        }
+      ],
+      "acceptedPhaseTwoReview": {
+        "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+        "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
+        "callIds": [
+          "56973b18bffeba04db38"
+        ]
+      }
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/store.ts",
+      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "callIds": [
+        "1f977fbbb1102e6dac1d"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Fixed runtime session read selects state and owner/session/project columns, filters exact requested owner/session, and binds returned row identity to JSON before returning a clone. It does not mutate or call a provider.",
+      "reason": "Exact method unchanged from54abe997 and executed again in7d12bf42 disposable38827153400. Narrow row/JSON identity closure only; machine/providerState validation, lifecycle and current-source terminal latch are independent. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+      "evidence": [
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real runtime restore rejects owner session and project mismatches in persisted JSON"
+        }
+      ],
+      "acceptedPhaseTwoReview": {
+        "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+        "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
+        "callIds": [
+          "0aa7bcbcf75b4fc1eceb"
+        ]
+      }
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/store.ts",
+      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "callIds": [
+        "b404673ae5984ef51dee"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Fixed runtime session read selects state and owner/session/project columns, filters exact requested owner/session, and binds returned row identity to JSON before returning a clone. It does not mutate or call a provider.",
+      "reason": "Exact method unchanged from54abe997 and executed again in7d12bf42 disposable38827153400. Narrow row/JSON identity closure only; machine/providerState validation, lifecycle and current-source terminal latch are independent. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+      "evidence": [
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "real runtime restore rejects owner session and project mismatches in persisted JSON"
+        }
+      ],
+      "acceptedPhaseTwoReview": {
+        "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+        "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
+        "callIds": [
+          "b5d3e5c94e9160b42afb"
+        ]
+      }
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/store.ts",
+      "sourceSha256": "3b46dea8f9649026d6bb5c9ad4601fa9f583c9f5c1d0ecc7025cf1009bcf51c3",
+      "callIds": [
+        "0e4c41c7ca91a4914c3f"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Exact receiver is Node Buffer.from, decoding canonical base64 segments of an encrypted envelope in memory. It performs no database or Storage action and does not decrypt or authenticate ciphertext.",
+      "reason": "Conservative from-method scanner false positive only. Surrounding encrypted secret read has separate owner/project, shape and key-custody review. No cryptographic or tenant certification follows from decoding. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+      "evidence": [
+        {
+          "path": "backend/src/synthesis/projectRuntime/store.ts",
+          "marker": "function restoreOwnerBoundEncryptedSecret"
+        }
+      ],
+      "acceptedPhaseTwoReview": {
+        "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+        "sourceSha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
+        "callIds": [
+          "149b3684632af4931199"
         ]
       }
     },
@@ -15395,11 +15461,11 @@
     },
     {
       "path": "backend/src/services/integrations/credentialVault.ts",
-      "sourceSha256": "6b08075a76fa934025384ddb42e670e15d0685f309655c8f32422baf01d35fc0",
+      "sourceSha256": "f8483326c09ee45518f8486c0d73b7a4d37d59f33fd9ba6f80c5c2480654d062",
       "callIds": [
         "7860da82d57b690e93e2",
         "da2a433a95fc5813e844",
-        "d078eb13de63ed8a13ec"
+        "57fc6eb29fe848507a53"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",

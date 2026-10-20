@@ -27,6 +27,11 @@ This ledger references the unchanged canonical `../PHASE-3-FROZEN-WORKLIST.json`
 
 ## Test observations
 
+- Final verification correction after `68b68be2`: browser run `39465995054` passed 201 of 209 real database tests. Eight failures identified obsolete raw OAuth fixtures, a missing Operations owner billing cycle, a v1-only receipt decoder on the runtime v3 writer, and a stale BYOK envelope assertion. The decoder now accepts structurally valid v3 records while retaining owner, project, metadata and version rejection. OAuth fixtures now use actual vault envelopes and preserve the original one-use, revocation, race and exact foreign-row assertions. Final-source database verification remains pending.
+- Unit job `118778145066` failed on stale current-state source hash `SRC-3d3190a1571aa705`, before baseline execution. Its missing-summary artifact error was a consequence of that early exit. Regenerate inventory before requirement reconciliation and validate both before pushing the corrected source.
+- Focused vault, PKCE, GitHub revocation, Vercel refresh and runtime receipt tests pass 20/20. Provenance, immutable handoff, closure and evaluator fixtures pass 24/24. Backend typecheck passes. These local results do not substitute for the pending real database and integrated CI receipts.
+- Authenticated Google Cloud inspection found a closed Free Trial billing account, no active billing accounts and no displayed credits or expiry. KMS redirects to the billing gate. Local ADC probe returned `ADC_UNAVAILABLE`. Exact observations and pricing sources are retained in `docs/xroga/evidence/command-009/google-cloud-observation.json`. No resource or credential was created, and provider calls and trial-credit usage remain zero.
+
 - Node 22.21.1, focused digest + business legacy-digest + Operations regression: 36/36 passed before bridge wiring.
 - Focused digest, authority, business digest, existing confirmation claim and Operations regression after bridge wiring: 41/41 passed, zero failed or skipped.
 - These are unit/loopback tests. They do not certify real database concurrency, live provider completion, production custody, complete adapter coverage or Phase 3 acceptance.

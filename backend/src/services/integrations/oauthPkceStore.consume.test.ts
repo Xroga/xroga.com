@@ -6,6 +6,7 @@ import { createTenantContext, type TenantContext } from '../../security/tenantCo
 import { exchangeVercelOAuthCode, buildVercelAuthorizeUrl, clearVercelConnection } from './vercelAuth.js';
 import { exchangeSupabaseOAuthCode, buildSupabaseAuthorizeUrl, clearSupabaseOAuth } from './supabaseAuth.js';
 import { completeCwsOAuth, startCwsOAuth } from '../publish/chromeWebStore.js';
+import { sealRuntimeCredential } from './credentialVaultRuntime.js';
 const context=createTenantContext({userId:'11111111-1111-4111-8111-111111111111',via:'remote_getuser'});
 
 test('one-use OAuth admission fails closed on unavailable or malformed receipts and never uses Storage', async () => {
@@ -24,11 +25,16 @@ test('one-use OAuth admission fails closed on unavailable or malformed receipts 
   process.env.SUPABASE_URL=`http://127.0.0.1:${address.port}`;process.env.SUPABASE_SERVICE_ROLE_KEY='synthetic-only';
   try {
     const valid={state,verifier:'synthetic-verifier',redirect_uri:'https://example.invalid/callback',created_at:new Date().toISOString(),authorization_revision:'10000000-0000-4000-8000-000000000001'};
-    for(body of [null,[],{}, {...valid,state:'wrong'}, {...valid,verifier:''},{...valid,nonce:{}}])
+    const vault_revision='10000000-0000-4000-8000-000000000002';
+    const envelope=await sealRuntimeCredential(context.userId,{provider:'vercel_oauth_pkce',account:'vercel_oauth_pkce',
+      credentialType:'pkce-verifier',recordId:'vercel_oauth_pkce',revision:vault_revision,scope:'oauth-session'},valid.verifier);
+    const receipt={...valid,verifier:envelope,vault_revision,vault_format:'pkce-v1'};
+    for(body of [null,[],{},valid,{...receipt,state:'wrong'},{...receipt,verifier:''},{...receipt,nonce:{}},
+      {...receipt,vault_revision:'10000000-0000-4000-8000-000000000003'},{...receipt,verifier:envelope+'bad'}])
       assert.equal(await consumePkceSession(context,'vercel_oauth_pkce',state),null);
     status=400;body={message:'PRIVATE_CANARY'};
     assert.equal(await consumePkceSession(context,'vercel_oauth_pkce',state),null);
-    status=200;body=valid;assert.deepEqual(await consumePkceSession(context,'vercel_oauth_pkce',state),valid);
+    status=200;body=receipt;assert.deepEqual(await consumePkceSession(context,'vercel_oauth_pkce',state),valid);
     const count=paths.length;
     assert.equal(await consumePkceSession(context,'apikey_openai',state),null);
     assert.equal(await consumePkceSession(context,'vercel_oauth_pkce','short'),null);

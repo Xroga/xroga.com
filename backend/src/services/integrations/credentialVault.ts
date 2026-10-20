@@ -38,6 +38,9 @@ function parse(value: string): VaultCiphertext {
   } catch { return fail(); }
 }
 
+/** Structural check for persistence receipts. Authentication still requires open(). */
+export function validateVaultCiphertext(value: string): void { parse(value); }
+
 /** Canonical backend envelope boundary. Persist through existing conditional
  * credential revisions, never an unconditional upsert. This class cannot create
  * connection authority, bypass tombstones, or certify a production KMS. */

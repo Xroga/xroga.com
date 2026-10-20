@@ -4,6 +4,7 @@ import {test} from 'node:test';
 import {createClient,type SupabaseClient} from '@supabase/supabase-js';
 import {getVercelToken,refreshVercelOAuthToken} from '../services/integrations/vercelAuth.js';
 import {ensurePrivateOAuthBucket} from '../services/integrations/credentialStorageBucket.js';
+import {sealRuntimeCredential,openRuntimeCredential} from '../services/integrations/credentialVaultRuntime.js';
 
 /** Real canonical rows, leases, RPCs and Auth. Provider responses are synthetic
  * and never forwarded to Vercel. No token, account or deployment is live. */
@@ -32,7 +33,14 @@ export function registerVercelRefreshAccountTests(admin:SupabaseClient,request:(
     }
     const [owner,other]=actors;assert.equal(await ensurePrivateOAuthBucket(),true);
     const expired=new Date(Date.now()-120000).toISOString();
-    assert.equal((await admin.from('user_integrations').insert(actors.map(actor=>({user_id:actor.id,provider:'vercel',provider_user_id:actor.account,access_token:`SYNTHETIC_OLD_${actor.id}`,refresh_token:actor.refresh,credential_revision:actor.revision,metadata:{username:'fixture',auth_kind:'sign_in_with_vercel',expires_at:expired}})))).error,null);
+    const seed=await Promise.all(actors.map(async actor=>{
+      const revision=randomUUID();
+      const envelope=await sealRuntimeCredential(actor.id,{provider:'vercel',account:'vercel',credentialType:'oauth-token',recordId:'vercel',revision,scope:'oauth-connection'},
+        JSON.stringify({access_token:`SYNTHETIC_OLD_${actor.id}`,refresh_token:actor.refresh}));
+      return {user_id:actor.id,provider:'vercel',provider_user_id:actor.account,access_token:envelope,refresh_token:null,
+        credential_revision:actor.revision,metadata:{username:'fixture',auth_kind:'sign_in_with_vercel',expires_at:expired,vault_revision:revision,vault_format:'oauth-v1'}};
+    }));
+    assert.equal((await admin.from('user_integrations').insert(seed)).error,null);
     const mirrors=new Map(actors.map(actor=>[actor.id,JSON.stringify({access_token:`SYNTHETIC_STALE_MIRROR_${actor.id}`})]));
     for(const actor of actors)assert.equal((await admin.storage.from(bucket).upload(`${actor.id}/vercel.json`,mirrors.get(actor.id)!,{contentType:'application/json'})).error,null);
     globalThis.fetch=async(input,init)=>{
@@ -52,10 +60,14 @@ export function registerVercelRefreshAccountTests(admin:SupabaseClient,request:(
     const read=async(user:string)=>{const row=await admin.from('user_integrations').select('*').eq('user_id',user).eq('provider','vercel').single();assert.equal(row.error,null);return row.data;};
     for(const actor of actors){
       const row=await read(actor.id);assert.equal(row.user_id,actor.id);assert.equal(row.provider,'vercel');assert.equal(row.provider_user_id,actor.account);
-      assert.equal(row.access_token,`SYNTHETIC_CURRENT_${actor.id}`);assert.equal(row.refresh_token,`${actor.refresh}_ROTATED`);assert.notEqual(row.credential_revision,actor.revision);
+      assert.match(row.access_token,/^vault:v3:/);assert.equal(row.refresh_token,null);assert.notEqual(row.credential_revision,actor.revision);
+      const plain=JSON.parse(await openRuntimeCredential(actor.id,{provider:'vercel',account:'vercel',credentialType:'oauth-token',
+        recordId:'vercel',revision:row.metadata.vault_revision,scope:'oauth-connection'},row.access_token));
+      assert.equal(plain.access_token,`SYNTHETIC_CURRENT_${actor.id}`);assert.equal(plain.refresh_token,`${actor.refresh}_ROTATED`);
     }
     const foreignBefore=await read(other.id);
-    assert.equal((await admin.from('user_integrations').update({metadata:{username:'fixture',auth_kind:'sign_in_with_vercel',expires_at:expired}}).eq('user_id',owner.id).eq('provider','vercel')).error,null);
+    const currentOwner=await read(owner.id);
+    assert.equal((await admin.from('user_integrations').update({metadata:{...currentOwner.metadata,expires_at:expired}}).eq('user_id',owner.id).eq('provider','vercel')).error,null);
     enteredPromise=new Promise<void>(resolve=>{entered=resolve;});holdPromise=new Promise<void>(resolve=>{release=resolve;});hold=true;
     pending=getVercelToken(owner.id);await enteredPromise;
     const disconnected=await request('/api/vercel/disconnect',owner.token,'DELETE',{userId:other.id});assert.equal(disconnected.status,200);

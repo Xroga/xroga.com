@@ -57,7 +57,7 @@ export function registerCredentialReadMatrixTests(admin:SupabaseClient,request:A
   }
   const canonical=async(actor:string)=>{const r=await admin.from('user_integrations').select('*').eq('user_id',actor).eq('provider',providerRow).single();assert.equal(r.error,null);return r.data!;};
   const ownerRow=await canonical(owner.id),otherRow=await canonical(other.id);
-  assert.match(ownerRow.access_token,/^v1:/);assert.ok(!ownerRow.access_token.includes(secrets[0]));
+  assert.match(ownerRow.access_token,/^vault:v3:/);assert.ok(!ownerRow.access_token.includes(secrets[0]));
   const mirror=async(actor:string)=>{const path=objectPath(actor,providerRow);if(!paths.includes(path))paths.push(path);for(let i=0;i<100;i++){const r=await admin.storage.from(bucket).download(path);if(!r.error&&r.data)return await r.data.text();await delay(20);}assert.fail('actual asynchronous owner mirror must be durable');};
   const ownMirror=await mirror(owner.id),foreignMirror=await mirror(other.id);assert.equal(JSON.parse(ownMirror).access_token,ownerRow.access_token);assert.equal(JSON.parse(foreignMirror).access_token,otherRow.access_token);
   for(const[index,actor]of actors.entries()){

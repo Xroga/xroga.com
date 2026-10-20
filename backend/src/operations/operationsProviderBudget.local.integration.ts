@@ -48,6 +48,8 @@ export function registerOperationsProviderBudgetTests(
       p_estimated_input_tokens: 100, p_maximum_output_tokens: 100, p_reservation_micro_usd: amount,
     });
     const firstKey = randomUUID();
+    const cycle = await admin.rpc('ensure_xroga_free_cycle', { p_user_id: running.user_id });
+    assert.equal(cycle.error, null);
     const first = await admin.rpc('reserve_operations_provider_budget', args(firstKey, 200_000));
     assert.equal(first.error, null); assert.equal(first.data.authority_action_id, actionId);
     assert.equal(Number(first.data.authority_ceiling_micro_usd), 1_000_000);
