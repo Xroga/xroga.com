@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -40,6 +40,7 @@ export function WorkspaceConnectionsStrip({
   variant = 'default',
 }: WorkspaceConnectionsStripProps) {
   const router = useRouter();
+  const pluginsAnchorRef = useRef<HTMLButtonElement>(null);
 
   const chatbar =
     variant === 'chatbar';
@@ -190,6 +191,7 @@ export function WorkspaceConnectionsStrip({
         <button
           type="button"
           className="xv-workspace-connections__trigger"
+          ref={pluginsAnchorRef}
           onClick={() =>
             void connectGithub()
           }
@@ -365,6 +367,7 @@ export function WorkspaceConnectionsStrip({
 
       {interactive ? (
         <IntegrationsModal
+          anchorRef={pluginsAnchorRef}
           open={modalOpen}
           onClose={() =>
             setModalOpen(false)
