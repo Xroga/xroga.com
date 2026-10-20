@@ -28,12 +28,28 @@ export function buildPhaseTwo({reviewDecisions}={}){
   const byId=new Map(callers.map(c=>[c.id,c]));
   const approved=JSON.parse(execFileSync('git',['show','8a1a0bfa7878603dd488db98568577b2fb1896da:docs/xroga/security/privileged-callers.json'],{cwd:root,encoding:'utf8',maxBuffer:8*1024*1024}));
   const previous=new Map(approved.callers.map(c=>[c.id,c]));
+  const acceptedPhaseTwo=JSON.parse(execFileSync('git',['show','a21a82029276d38d53c9e17c580a15f57b653fe3:docs/xroga/security/privileged-callers.json'],{cwd:root,encoding:'utf8',maxBuffer:8*1024*1024}));
   const decisions=reviewDecisions??JSON.parse(read('docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json'));
+  const phase3Delta=JSON.parse(read('docs/xroga/security/phase-three-authority-delta.json'));
+  assert.equal(phase3Delta.acceptedPhaseTwoSource,'a21a82029276d38d53c9e17c580a15f57b653fe3');
+  const phase3Remappings=new Map((phase3Delta.remappings??[]).map(r=>[r.previousCallerId,r.currentCallerId]));
+  const phase3Retired=new Map((phase3Delta.retiredCalls??[]).map(r=>[r.id,r]));
+  assert.equal(phase3Remappings.size,(phase3Delta.remappings??[]).length,'Duplicate Phase3 caller remapping');
+  assert.equal(phase3Retired.size,(phase3Delta.retiredCalls??[]).length,'Duplicate Phase3 retired caller');
   assert.equal(decisions.scope,'SEMANTIC_PROGRESS_NOT_SECURITY_CERTIFICATION');
   assert.equal(new Set(decisions.decisions.map(d=>d.packetId)).size,decisions.decisions.length);
   const reviewed=new Map(decisions.decisions.map(d=>[d.packetId,d]));
   const remappings=new Map((decisions.callerRemappings??[]).map(r=>[r.previousCallerId,r]));
   assert.equal(remappings.size,(decisions.callerRemappings??[]).length,'Duplicate semantic remapping');
+  const retiredRemappings=new Map((decisions.phase3RetiredCallerRemappings??[]).map(r=>[r.previousCallerId,r]));
+  assert.equal(retiredRemappings.size,(decisions.phase3RetiredCallerRemappings??[]).length,'Duplicate retired semantic remapping');
+  for(const r of retiredRemappings.values()){
+    const before=previous.get(r.previousCallerId),decision=reviewed.get(r.reviewPacketId);
+    assert.ok(before&&decision&&before.path===r.path&&before.enclosing===r.enclosing&&r.acceptedPhaseTwoSource==='a21a82029276d38d53c9e17c580a15f57b653fe3'
+      &&r.reason.length>=80,'Unexplained retired Phase3 caller');
+    assert.ok(!callers.some(c=>c.path===r.path&&c.enclosing===r.enclosing&&c.kind===r.kind&&c.target===r.target),
+      `Retired Phase3 caller still exists:${r.previousCallerId}`);
+  }
   for(const r of remappings.values()){
     const before=previous.get(r.previousCallerId),decision=reviewed.get(r.reviewPacketId);
     assert.ok(before&&decision&&before.path===r.path&&before.enclosing===r.enclosing&&r.reason.length>=40,'Unexplained semantic remapping');
@@ -48,8 +64,27 @@ export function buildPhaseTwo({reviewDecisions}={}){
     const decision=reviewed.get(p.id)??null;
     if(decision?.sourceSha256)assert.equal(hash(read(p.baselinePath)),decision.sourceSha256,`Semantic review source drift:${p.id}`);
     const mapping=p.mapping.map(m=>({...m,currentCallerIds:[...new Set(m.currentCallerIds.flatMap(id=>{
+      if(retiredRemappings.has(id))return [];
+      if(phase3Retired.has(id)){
+        const retired=phase3Retired.get(id);
+        assert.ok(retired.reason.length>=80&&!callers.some(c=>c.id===id||
+          (c.path===retired.path&&c.enclosing===retired.enclosing&&c.kind===retired.kind&&c.target===retired.target)),
+          `Invalid retired Phase3 caller:${id}`);
+        return [];
+      }
+      if(phase3Remappings.has(id)){
+        const next=phase3Remappings.get(id);assert.ok(byId.has(next),`Missing remapped Phase3 caller:${next}`);return [next];
+      }
       if(byId.has(id))return [id];
       const old=previous.get(id);assert.ok(old,`Missing approved caller provenance:${id}`);
+      const oldPeers=approved.callers.filter(c=>c.path===old.path&&c.enclosing===old.enclosing&&c.kind===old.kind&&c.target===old.target).sort((a,b)=>a.line-b.line);
+      const acceptedPeers=acceptedPhaseTwo.callers.filter(c=>c.path===old.path&&c.enclosing===old.enclosing&&c.kind===old.kind&&c.target===old.target).sort((a,b)=>a.line-b.line);
+      const oldOrdinal=oldPeers.findIndex(c=>c.id===id);
+      const acceptedCaller=acceptedPeers[oldOrdinal];
+      if(acceptedCaller&&phase3Retired.has(acceptedCaller.id))return [];
+      if(acceptedCaller&&phase3Remappings.has(acceptedCaller.id)){
+        const next=phase3Remappings.get(acceptedCaller.id);assert.ok(byId.has(next),`Missing remapped accepted Phase2 caller:${next}`);return [next];
+      }
       const selector=remappings.get(id)??old;
       let next=callers.filter(c=>c.path===selector.path&&c.enclosing===selector.enclosing&&c.kind===selector.kind&&c.target===selector.target);
       if(selector.currentCallerId)next=next.filter(c=>c.id===selector.currentCallerId);

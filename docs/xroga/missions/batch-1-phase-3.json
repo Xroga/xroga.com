@@ -118,7 +118,18 @@
     "supabase/migrations/20261020000900_direct_oauth_vault_admission.sql",
     "supabase/migrations/20261020001000_provider_key_vault_migration.sql",
     "docs/xroga/security/credential-caller-dispositions.md",
-    "docs/xroga/security/credential-migration.md"
+    "docs/xroga/security/credential-migration.md",
+    "docs/xroga/evidence/command-008/manifest.json",
+    "docs/xroga/evidence/command-008/summary.md",
+    "docs/xroga/evidence/command-009/manifest.json",
+    "docs/xroga/evidence/command-009/summary.md",
+    "docs/xroga/evidence/phase-3-manifest.json",
+    "scripts/security/evaluate-phase-three.mjs",
+    "scripts/security/evaluate-phase-three.test.mjs",
+    "scripts/xroga/phase-two.mjs",
+    "docs/xroga/batch-1/phases/phase-4/PHASE-4-FROZEN-WORKLIST.json",
+    "docs/xroga/batch-1/phases/phase-4/PHASE-4-HANDOFF.md",
+    "scripts/xroga/validate-phase-four-handoff.mjs"
   ],
   "decisions": {
     "keep": [

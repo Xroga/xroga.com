@@ -2296,7 +2296,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real growth event replay cannot disclose a different project event",
-          "sourceSha256": "8bab85df06fe891c84ebea8788d2b6e197833ed1dffde8890f934a63623a2ec7",
+          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -3352,7 +3352,7 @@
       "id": "B1-P2-392b9b628a9b92be",
       "family": "billing-budget",
       "sourcePath": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
+      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
       "baselineCallerIds": [
         "00d351afbe045a136c66",
         "254a91383e3a8af0310b",
@@ -3372,133 +3372,133 @@
         "3fc72ec34d884b871909"
       ],
       "currentCallerIds": [
-        "046674e946dedc2dbd0a",
-        "f7d8e33dac1c0de787f8",
-        "2384f6f1c188f4f6ce83",
-        "03557d58e528c5852636",
-        "e2e547f8796cd0aad243",
-        "f602ab2d6bfebc170a02",
-        "8a48ae3957449eee9587",
-        "685bdab3b4b31bd28d43",
-        "9a847ab5769bb707c1f2",
-        "e489f9a48f400005cb2d",
-        "d9435c22813b64a1f1f5",
-        "1d3ef9e110d2f000f590",
-        "0b24ee0eecebdda0e6f3",
-        "ace18dec175b4875e7f7",
-        "c07b5b1f63ae0e361ae7",
-        "fba07b765dafacccf133"
+        "1169e490665cdec7b3a3",
+        "2fbd469f16851f3b71ab",
+        "6f058d1957df9ddef58e",
+        "263d64635be54643daaf",
+        "28c7a352253f65a4d63b",
+        "ec7738731d0c6be00798",
+        "0882d94061fd33117251",
+        "ba74f371a047c8305b9a",
+        "9e5ee446a0fb192d8f39",
+        "3a904e92ac521ad89ef0",
+        "495469d5a798cf52f829",
+        "4ac1c2be7bfccf034c8e",
+        "a50ebf735a3e2d6e8587",
+        "e5f59ad9b6097a1bb115",
+        "8b8545e8ee1fbbfb3fbf",
+        "60a088c3f2c03ec9402c"
       ],
       "mapping": [
         {
           "baselineCallerId": "00d351afbe045a136c66",
           "currentCallerIds": [
-            "046674e946dedc2dbd0a"
+            "1169e490665cdec7b3a3"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "254a91383e3a8af0310b",
           "currentCallerIds": [
-            "f7d8e33dac1c0de787f8"
+            "2fbd469f16851f3b71ab"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "590df28cdc2b297e03b6",
           "currentCallerIds": [
-            "2384f6f1c188f4f6ce83"
+            "6f058d1957df9ddef58e"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "39a1f4163240597da04d",
           "currentCallerIds": [
-            "03557d58e528c5852636"
+            "263d64635be54643daaf"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "613d8e71ddafb0d6bd0c",
           "currentCallerIds": [
-            "e2e547f8796cd0aad243"
+            "28c7a352253f65a4d63b"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "a80e4804742dfd6bcc0a",
           "currentCallerIds": [
-            "f602ab2d6bfebc170a02"
+            "ec7738731d0c6be00798"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "6285818c6e8220770b29",
           "currentCallerIds": [
-            "8a48ae3957449eee9587"
+            "0882d94061fd33117251"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "090fe734dc5d1d3dc6e3",
           "currentCallerIds": [
-            "685bdab3b4b31bd28d43"
+            "ba74f371a047c8305b9a"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "3f66673813dee0d85b85",
           "currentCallerIds": [
-            "9a847ab5769bb707c1f2"
+            "9e5ee446a0fb192d8f39"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "746985044f7d3ee62aff",
           "currentCallerIds": [
-            "e489f9a48f400005cb2d"
+            "3a904e92ac521ad89ef0"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e030677c7ecb6b0dd90e",
           "currentCallerIds": [
-            "d9435c22813b64a1f1f5"
+            "495469d5a798cf52f829"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e35278adbe80b78c8d41",
           "currentCallerIds": [
-            "1d3ef9e110d2f000f590"
+            "4ac1c2be7bfccf034c8e"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "b5a82155e981259a207e",
           "currentCallerIds": [
-            "0b24ee0eecebdda0e6f3"
+            "a50ebf735a3e2d6e8587"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "564673e6f6b21c690fce",
           "currentCallerIds": [
-            "ace18dec175b4875e7f7"
+            "e5f59ad9b6097a1bb115"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "5ed8ef26b72e26561f26",
           "currentCallerIds": [
-            "c07b5b1f63ae0e361ae7"
+            "8b8545e8ee1fbbfb3fbf"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "3fc72ec34d884b871909",
           "currentCallerIds": [
-            "fba07b765dafacccf133"
+            "60a088c3f2c03ec9402c"
           ],
           "change": "RETAINED"
         }
@@ -3508,7 +3508,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-392b9b628a9b92be",
-        "sourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
+        "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
         "executionStatus": "IN_PROGRESS",
         "finding": "DORMANT_ISSUED_OWNER_AND_EXACT_BUDGET_RECEIPTS_REPAIRED_PROOF_PENDING",
         "actualVerification": {
@@ -3560,24 +3560,24 @@
         "current007Evidence": {
           "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
           "verifiedCurrentCallerIds": [
-            "2384f6f1c188f4f6ce83",
-            "03557d58e528c5852636",
-            "e2e547f8796cd0aad243",
-            "f602ab2d6bfebc170a02",
-            "8a48ae3957449eee9587",
-            "685bdab3b4b31bd28d43",
-            "9a847ab5769bb707c1f2",
-            "e489f9a48f400005cb2d",
-            "0b24ee0eecebdda0e6f3",
-            "ace18dec175b4875e7f7"
+            "6f058d1957df9ddef58e",
+            "263d64635be54643daaf",
+            "28c7a352253f65a4d63b",
+            "ec7738731d0c6be00798",
+            "0882d94061fd33117251",
+            "ba74f371a047c8305b9a",
+            "9e5ee446a0fb192d8f39",
+            "3a904e92ac521ad89ef0",
+            "a50ebf735a3e2d6e8587",
+            "e5f59ad9b6097a1bb115"
           ],
           "remainingCurrentCallerIds": [
-            "046674e946dedc2dbd0a",
-            "f7d8e33dac1c0de787f8",
-            "d9435c22813b64a1f1f5",
-            "1d3ef9e110d2f000f590",
-            "c07b5b1f63ae0e361ae7",
-            "fba07b765dafacccf133"
+            "1169e490665cdec7b3a3",
+            "2fbd469f16851f3b71ab",
+            "495469d5a798cf52f829",
+            "4ac1c2be7bfccf034c8e",
+            "8b8545e8ee1fbbfb3fbf",
+            "60a088c3f2c03ec9402c"
           ],
           "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
           "scope": "BYTE_IDENTICAL_EXISTING_FUNCTIONS_MAPPED_NOT_NEW_SOURCE_ACCEPTANCE",
@@ -3650,6 +3650,12 @@
             "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
             "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
           }
+        },
+        "phase3SourceDelta": {
+          "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+          "historicalSourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
+          "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+          "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
         }
       },
       "actor": {
@@ -3809,7 +3815,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real durable database file delivery is owner-only",
-          "sourceSha256": "8bab85df06fe891c84ebea8788d2b6e197833ed1dffde8890f934a63623a2ec7",
+          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4010,7 +4016,7 @@
       "id": "B1-P2-9557fb9d0f7a38f5",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
+      "sourceSha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
       "baselineCallerIds": [
         "c47cd353f14ba5046be8",
         "2d2eae5cbd895d303fc1",
@@ -4027,109 +4033,91 @@
         "6a995df3c50a346f6d81"
       ],
       "currentCallerIds": [
-        "c47cd353f14ba5046be8",
-        "2d2eae5cbd895d303fc1",
-        "2ae451e4fa2142cb3d3b",
-        "533babcf253a3df300ac",
-        "50cfec47a00c8f934d4c",
-        "9536d36325c5502652c0",
-        "ff1b1bd1a685d5e751ee",
-        "bc094f879c6c567e670b",
-        "5c8cf02d349ac91cfb0e",
-        "0a6d81aa80ada5c7b14d",
-        "832762c1055a84889f0d",
-        "ae203bf10a8747bfd6de",
-        "52bb46e68e4a103d4782"
+        "6cd8c24a9e60be01c103",
+        "1f7990192c0a2ca3a76f",
+        "090a1378d41f5f16f7f8",
+        "12db6c0413e72e7d991c",
+        "23a6e19d497634606d2c",
+        "6d5ec008c1680918c559",
+        "89afd904cb0f3d4bf6ac"
       ],
       "mapping": [
         {
           "baselineCallerId": "c47cd353f14ba5046be8",
-          "currentCallerIds": [
-            "c47cd353f14ba5046be8"
-          ],
+          "currentCallerIds": [],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "2d2eae5cbd895d303fc1",
-          "currentCallerIds": [
-            "2d2eae5cbd895d303fc1"
-          ],
+          "currentCallerIds": [],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "2ae451e4fa2142cb3d3b",
           "currentCallerIds": [
-            "2ae451e4fa2142cb3d3b"
+            "6cd8c24a9e60be01c103"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "533babcf253a3df300ac",
           "currentCallerIds": [
-            "533babcf253a3df300ac"
+            "1f7990192c0a2ca3a76f"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "50cfec47a00c8f934d4c",
           "currentCallerIds": [
-            "50cfec47a00c8f934d4c"
+            "090a1378d41f5f16f7f8"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "9536d36325c5502652c0",
           "currentCallerIds": [
-            "9536d36325c5502652c0"
+            "12db6c0413e72e7d991c"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "ff1b1bd1a685d5e751ee",
           "currentCallerIds": [
-            "ff1b1bd1a685d5e751ee"
+            "23a6e19d497634606d2c"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "47c7ebecb62681738d31",
-          "currentCallerIds": [
-            "bc094f879c6c567e670b"
-          ],
+          "currentCallerIds": [],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "1e8333f9bd44c6fd05c9",
-          "currentCallerIds": [
-            "5c8cf02d349ac91cfb0e"
-          ],
+          "currentCallerIds": [],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "305fd58c0a7af15af239",
-          "currentCallerIds": [
-            "0a6d81aa80ada5c7b14d"
-          ],
+          "currentCallerIds": [],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "307321f23e7727be36c8",
-          "currentCallerIds": [
-            "832762c1055a84889f0d"
-          ],
+          "currentCallerIds": [],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "bf911ba6ff5494563807",
           "currentCallerIds": [
-            "ae203bf10a8747bfd6de"
+            "6d5ec008c1680918c559"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "6a995df3c50a346f6d81",
           "currentCallerIds": [
-            "52bb46e68e4a103d4782"
+            "89afd904cb0f3d4bf6ac"
           ],
           "change": "RETAINED"
         }
@@ -4139,7 +4127,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-9557fb9d0f7a38f5",
-        "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
+        "sourceSha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
         "executionStatus": "IN_PROGRESS",
         "finding": "NATIVE_REFRESH_DROPPED_KNOWN_PROVIDER_ACCOUNT_FIXED_PENDING_ACTUAL_DATABASE_PROOF",
         "originalCriteria": [
@@ -4172,15 +4160,15 @@
         "current007Evidence": {
           "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
           "verifiedCurrentCallerIds": [
-            "2ae451e4fa2142cb3d3b",
-            "533babcf253a3df300ac",
-            "50cfec47a00c8f934d4c",
-            "9536d36325c5502652c0",
-            "ff1b1bd1a685d5e751ee",
+            "6cd8c24a9e60be01c103",
+            "1f7990192c0a2ca3a76f",
+            "090a1378d41f5f16f7f8",
+            "12db6c0413e72e7d991c",
+            "23a6e19d497634606d2c",
             "bc094f879c6c567e670b",
             "5c8cf02d349ac91cfb0e",
-            "ae203bf10a8747bfd6de",
-            "52bb46e68e4a103d4782"
+            "6d5ec008c1680918c559",
+            "89afd904cb0f3d4bf6ac"
           ],
           "remainingCurrentCallerIds": [
             "c47cd353f14ba5046be8",
@@ -4191,6 +4179,12 @@
           "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
           "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
           "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "phase3SourceDelta": {
+          "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+          "historicalSourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
+          "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+          "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
         }
       },
       "actor": {
@@ -4219,7 +4213,7 @@
         {
           "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
           "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed",
-          "sourceSha256": "d21eee6bff4911021c05fe175645830d737390651754f288543170b23fa46cb2",
+          "sourceSha256": "cf99e05b69f3f0d6a0e01fc908ef64a9daec91a9a0853b79642158aa5a0378b9",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4252,7 +4246,7 @@
       "id": "B1-P2-d4787ea87132a6ed",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/githubAuth.ts",
-      "sourceSha256": "f0f2ffcc7beecd156976cda49c910e8c336912d4150a5fb899a2e1db4b4fee84",
+      "sourceSha256": "0d5941e1c14044be6b4bd69f6d15ee5815cb3e1cbd22842f33c08962bfb33d29",
       "baselineCallerIds": [
         "d5146ca43cf901817c09",
         "8bbc1aefc2e270847934",
@@ -4265,77 +4259,77 @@
         "2c1e9775b28e4419ca8c"
       ],
       "currentCallerIds": [
-        "d5146ca43cf901817c09",
-        "8bbc1aefc2e270847934",
-        "ff751d80f168344fe806",
-        "7f998fefa7c4a4af4629",
-        "4e72ed7e46664a864fcd",
-        "d8c7d0bde0dddf656d0c",
-        "8a200819c73b59f40fe6",
-        "9cfcc5a519e6e0cda19a",
-        "2c1e9775b28e4419ca8c"
+        "41ad1c8958ec765129f6",
+        "9a10ce83e0cf8e6cb603",
+        "b773575fb8907d472328",
+        "172a80ad86167a95659e",
+        "a856de9382efd69a1c5a",
+        "7bb4efe63cf777f33b7d",
+        "da6e22f8e6322292eefc",
+        "eae30167536fc558ce02",
+        "758a0cb15455f7b37584"
       ],
       "mapping": [
         {
           "baselineCallerId": "d5146ca43cf901817c09",
           "currentCallerIds": [
-            "d5146ca43cf901817c09"
+            "41ad1c8958ec765129f6"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "8bbc1aefc2e270847934",
           "currentCallerIds": [
-            "8bbc1aefc2e270847934"
+            "9a10ce83e0cf8e6cb603"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "ff751d80f168344fe806",
           "currentCallerIds": [
-            "ff751d80f168344fe806"
+            "b773575fb8907d472328"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "7f998fefa7c4a4af4629",
           "currentCallerIds": [
-            "7f998fefa7c4a4af4629"
+            "172a80ad86167a95659e"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "4e72ed7e46664a864fcd",
           "currentCallerIds": [
-            "4e72ed7e46664a864fcd"
+            "a856de9382efd69a1c5a"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "d8c7d0bde0dddf656d0c",
           "currentCallerIds": [
-            "d8c7d0bde0dddf656d0c"
+            "7bb4efe63cf777f33b7d"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "8a200819c73b59f40fe6",
           "currentCallerIds": [
-            "8a200819c73b59f40fe6"
+            "da6e22f8e6322292eefc"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "9cfcc5a519e6e0cda19a",
           "currentCallerIds": [
-            "9cfcc5a519e6e0cda19a"
+            "eae30167536fc558ce02"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "2c1e9775b28e4419ca8c",
           "currentCallerIds": [
-            "2c1e9775b28e4419ca8c"
+            "758a0cb15455f7b37584"
           ],
           "change": "RETAINED"
         }
@@ -4367,7 +4361,7 @@
         {
           "path": "backend/src/services/integrations/githubAuth.revocation.test.ts",
           "marker": "GitHub authority outages and durable revocation prevent stale mirror resurrection",
-          "sourceSha256": "a75583ad4479b2f160d97bac395f0f60cc49edf10d8d97314bd0e28632d14412",
+          "sourceSha256": "055c323a2af82232334d3c278c8ba4869e050d43974c9eab97b989af0dd527cf",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4813,7 +4807,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes",
-          "sourceSha256": "8bab85df06fe891c84ebea8788d2b6e197833ed1dffde8890f934a63623a2ec7",
+          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5055,7 +5049,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "8bab85df06fe891c84ebea8788d2b6e197833ed1dffde8890f934a63623a2ec7",
+          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -5168,14 +5162,14 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "8bab85df06fe891c84ebea8788d2b6e197833ed1dffde8890f934a63623a2ec7",
+          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
         {
           "path": "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
           "marker": "forking canonical project state changes project identity and detaches repository/runtime state",
-          "sourceSha256": "c87ed4d5dc825920d52667714dab14375508baa02ca27982197288518c82af48",
+          "sourceSha256": "48efff750a375aaaeb81bb90d5376a160b539a6748ac377119da62ec2a13be06",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5485,7 +5479,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real failed-build notification cannot disclose raw backend diagnostic text",
-          "sourceSha256": "8bab85df06fe891c84ebea8788d2b6e197833ed1dffde8890f934a63623a2ec7",
+          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5677,7 +5671,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real profile column grants reject self-promotion",
-          "sourceSha256": "8bab85df06fe891c84ebea8788d2b6e197833ed1dffde8890f934a63623a2ec7",
+          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5697,7 +5691,7 @@
       "id": "B1-P2-037c6eb9107f3736",
       "family": "approvals-external-actions",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
+      "sourceSha256": "c7b9467f7de3e54a39679e18cf73f8b1d5d02483a9071cfb15498e3743b0b6dc",
       "baselineCallerIds": [
         "cd8790e39c3283f05482",
         "e99258e8fe888ab954f2",
@@ -5731,245 +5725,245 @@
         "6cc4c8844f6d1a5e575c"
       ],
       "currentCallerIds": [
-        "cd8790e39c3283f05482",
-        "e99258e8fe888ab954f2",
-        "2c208df1de69d1f07815",
-        "7b8df2255ca0983e614a",
-        "09bb9c60fbd0fd04be96",
-        "5787838213972784b847",
-        "5c17851ca38b07bb7ffb",
-        "2888bfffa0c836cfe4d0",
-        "6c91bf08973230eae654",
-        "209cb80277f955a0b2ef",
-        "049ee8c1e87f4ac7f5d8",
-        "6f59ac6dda85bb3fbb9c",
-        "b44752820b98684f3403",
-        "cad9b3cf4560fbd519a6",
-        "80f60224ace1fcf16149",
-        "67c858caffe8cc6b8a2d",
-        "15864a27c46a501fafd1",
-        "230afc26fd02a5f73e5c",
-        "1482b8a9c1d9ae835bdb",
-        "267d14135fb3bd1d98a1",
-        "42fc90e399eed5c0de97",
-        "044cf8649bf888fbbc93",
-        "b499a6018afaf6b8b490",
-        "2623d45568826e06288e",
-        "af2e0acf3186708a5107",
-        "e9b9cdd86cd68f7e67a2",
-        "d4c63bed6343238269db",
-        "45a30098dbb7ff275b41",
-        "2191a3a351b0999fd707",
-        "5412270a1f23caa82419"
+        "7a9e5d79bbfd57405e36",
+        "de3480ffbba4f9fbcd58",
+        "c1343e8f4698edbb3b96",
+        "7f157bef6290158479f8",
+        "78efc53fc23790bc1535",
+        "bbbe7f2155aaf4b25312",
+        "7436d66a39f9c451c923",
+        "28643ba9e4cdb68728c1",
+        "45f1159fe1dd3d23a827",
+        "59a8aefb93375383904e",
+        "406272621392ee52f4d4",
+        "802e0edc5797b7cd7984",
+        "85e772ccae86a6f082df",
+        "62f37331b53797a3f32a",
+        "18665b10e596e24407aa",
+        "3462c13d043bf9251050",
+        "ba3b472c4a71cdff7e05",
+        "c7809ed98b77f723132f",
+        "a6018e5f4efa81a4cb82",
+        "af5cd270d6b9f51529ee",
+        "152f35103432948fed4f",
+        "935d852135d231c593f5",
+        "f5bfc6e77b89d12c684c",
+        "ddacac1b1a8e2626940d",
+        "c07f770a3dc21c9c9c69",
+        "4e9be61dea30fa56beda",
+        "699307fbf252e22adcea",
+        "d83a3b327bed33484040",
+        "0d95312c5a8983a24e4d",
+        "3d37b6e83c9a6741f44c"
       ],
       "mapping": [
         {
           "baselineCallerId": "cd8790e39c3283f05482",
           "currentCallerIds": [
-            "cd8790e39c3283f05482"
+            "7a9e5d79bbfd57405e36"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e99258e8fe888ab954f2",
           "currentCallerIds": [
-            "e99258e8fe888ab954f2"
+            "de3480ffbba4f9fbcd58"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "2c208df1de69d1f07815",
           "currentCallerIds": [
-            "2c208df1de69d1f07815"
+            "c1343e8f4698edbb3b96"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "7b8df2255ca0983e614a",
           "currentCallerIds": [
-            "7b8df2255ca0983e614a"
+            "7f157bef6290158479f8"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "09bb9c60fbd0fd04be96",
           "currentCallerIds": [
-            "09bb9c60fbd0fd04be96"
+            "78efc53fc23790bc1535"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "5787838213972784b847",
           "currentCallerIds": [
-            "5787838213972784b847"
+            "bbbe7f2155aaf4b25312"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "5c17851ca38b07bb7ffb",
           "currentCallerIds": [
-            "5c17851ca38b07bb7ffb"
+            "7436d66a39f9c451c923"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "2888bfffa0c836cfe4d0",
           "currentCallerIds": [
-            "2888bfffa0c836cfe4d0"
+            "28643ba9e4cdb68728c1"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "6c91bf08973230eae654",
           "currentCallerIds": [
-            "6c91bf08973230eae654"
+            "45f1159fe1dd3d23a827"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "209cb80277f955a0b2ef",
           "currentCallerIds": [
-            "209cb80277f955a0b2ef"
+            "59a8aefb93375383904e"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "049ee8c1e87f4ac7f5d8",
           "currentCallerIds": [
-            "049ee8c1e87f4ac7f5d8"
+            "406272621392ee52f4d4"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "6f59ac6dda85bb3fbb9c",
           "currentCallerIds": [
-            "6f59ac6dda85bb3fbb9c"
+            "802e0edc5797b7cd7984"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "b44752820b98684f3403",
           "currentCallerIds": [
-            "b44752820b98684f3403"
+            "85e772ccae86a6f082df"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "cad9b3cf4560fbd519a6",
           "currentCallerIds": [
-            "cad9b3cf4560fbd519a6"
+            "62f37331b53797a3f32a"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "80f60224ace1fcf16149",
           "currentCallerIds": [
-            "80f60224ace1fcf16149"
+            "18665b10e596e24407aa"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "67c858caffe8cc6b8a2d",
           "currentCallerIds": [
-            "67c858caffe8cc6b8a2d"
+            "3462c13d043bf9251050"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "15864a27c46a501fafd1",
           "currentCallerIds": [
-            "15864a27c46a501fafd1"
+            "ba3b472c4a71cdff7e05"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "230afc26fd02a5f73e5c",
           "currentCallerIds": [
-            "230afc26fd02a5f73e5c"
+            "c7809ed98b77f723132f"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "1482b8a9c1d9ae835bdb",
           "currentCallerIds": [
-            "1482b8a9c1d9ae835bdb"
+            "a6018e5f4efa81a4cb82"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "267d14135fb3bd1d98a1",
           "currentCallerIds": [
-            "267d14135fb3bd1d98a1"
+            "af5cd270d6b9f51529ee"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "42fc90e399eed5c0de97",
           "currentCallerIds": [
-            "42fc90e399eed5c0de97"
+            "152f35103432948fed4f"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "044cf8649bf888fbbc93",
           "currentCallerIds": [
-            "044cf8649bf888fbbc93"
+            "935d852135d231c593f5"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "b499a6018afaf6b8b490",
           "currentCallerIds": [
-            "b499a6018afaf6b8b490"
+            "f5bfc6e77b89d12c684c"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "2623d45568826e06288e",
           "currentCallerIds": [
-            "2623d45568826e06288e"
+            "ddacac1b1a8e2626940d"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "af2e0acf3186708a5107",
           "currentCallerIds": [
-            "af2e0acf3186708a5107"
+            "c07f770a3dc21c9c9c69"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "24a309847f8eca992cc6",
           "currentCallerIds": [
-            "e9b9cdd86cd68f7e67a2"
+            "4e9be61dea30fa56beda"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "7508855b6526c9b0573b",
           "currentCallerIds": [
-            "d4c63bed6343238269db"
+            "699307fbf252e22adcea"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "4ba0ca7ad1c556cea41b",
           "currentCallerIds": [
-            "45a30098dbb7ff275b41"
+            "d83a3b327bed33484040"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "09ef892d8c2ce312509d",
           "currentCallerIds": [
-            "2191a3a351b0999fd707"
+            "0d95312c5a8983a24e4d"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "6cc4c8844f6d1a5e575c",
           "currentCallerIds": [
-            "5412270a1f23caa82419"
+            "3d37b6e83c9a6741f44c"
           ],
           "change": "RETAINED"
         }
@@ -5979,7 +5973,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-037c6eb9107f3736",
-        "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
+        "sourceSha256": "c7b9467f7de3e54a39679e18cf73f8b1d5d02483a9071cfb15498e3743b0b6dc",
         "executionStatus": "IN_PROGRESS",
         "finding": "SHARED_READ_OWNERSHIP_MATRIX_PREPARED_NO_PRODUCTION_DEFECT_DEMONSTRATED",
         "originalCriteria": [
@@ -6016,30 +6010,30 @@
         "current007Evidence": {
           "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
           "verifiedCurrentCallerIds": [
-            "e99258e8fe888ab954f2",
-            "2c208df1de69d1f07815",
-            "7b8df2255ca0983e614a",
-            "09bb9c60fbd0fd04be96",
-            "5787838213972784b847",
-            "5c17851ca38b07bb7ffb",
-            "2888bfffa0c836cfe4d0",
-            "6c91bf08973230eae654",
-            "209cb80277f955a0b2ef",
-            "049ee8c1e87f4ac7f5d8",
-            "6f59ac6dda85bb3fbb9c",
-            "b44752820b98684f3403",
-            "cad9b3cf4560fbd519a6",
-            "80f60224ace1fcf16149",
-            "67c858caffe8cc6b8a2d",
-            "15864a27c46a501fafd1",
-            "230afc26fd02a5f73e5c",
-            "1482b8a9c1d9ae835bdb",
-            "267d14135fb3bd1d98a1",
-            "42fc90e399eed5c0de97",
-            "044cf8649bf888fbbc93",
-            "b499a6018afaf6b8b490",
-            "2623d45568826e06288e",
-            "af2e0acf3186708a5107",
+            "de3480ffbba4f9fbcd58",
+            "c1343e8f4698edbb3b96",
+            "7f157bef6290158479f8",
+            "78efc53fc23790bc1535",
+            "bbbe7f2155aaf4b25312",
+            "7436d66a39f9c451c923",
+            "28643ba9e4cdb68728c1",
+            "45f1159fe1dd3d23a827",
+            "59a8aefb93375383904e",
+            "406272621392ee52f4d4",
+            "802e0edc5797b7cd7984",
+            "85e772ccae86a6f082df",
+            "62f37331b53797a3f32a",
+            "18665b10e596e24407aa",
+            "3462c13d043bf9251050",
+            "ba3b472c4a71cdff7e05",
+            "c7809ed98b77f723132f",
+            "a6018e5f4efa81a4cb82",
+            "af5cd270d6b9f51529ee",
+            "152f35103432948fed4f",
+            "935d852135d231c593f5",
+            "f5bfc6e77b89d12c684c",
+            "ddacac1b1a8e2626940d",
+            "c07f770a3dc21c9c9c69",
             "24a309847f8eca992cc6",
             "7508855b6526c9b0573b",
             "4ba0ca7ad1c556cea41b",
@@ -6047,11 +6041,17 @@
             "6cc4c8844f6d1a5e575c"
           ],
           "remainingCurrentCallerIds": [
-            "cd8790e39c3283f05482"
+            "7a9e5d79bbfd57405e36"
           ],
           "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
           "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
           "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "phase3SourceDelta": {
+          "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+          "historicalSourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
+          "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+          "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
         }
       },
       "actor": {
@@ -6098,14 +6098,14 @@
         {
           "path": "backend/src/operations/operationsService.ts",
           "marker": "const belongs = (item: DbRow)",
-          "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
+          "sourceSha256": "c7b9467f7de3e54a39679e18cf73f8b1d5d02483a9071cfb15498e3743b0b6dc",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "Legitimate membership must remain visible",
-          "sourceSha256": "8bab85df06fe891c84ebea8788d2b6e197833ed1dffde8890f934a63623a2ec7",
+          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6139,7 +6139,7 @@
       "id": "B1-P2-4bd11f790ddabef6",
       "family": "approvals-external-actions",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
+      "sourceSha256": "c7b9467f7de3e54a39679e18cf73f8b1d5d02483a9071cfb15498e3743b0b6dc",
       "baselineCallerIds": [
         "58357b840ab8890eba45",
         "9ea21ff62008b510bd7f",
@@ -6162,157 +6162,157 @@
         "5168c80257e8d4f829be"
       ],
       "currentCallerIds": [
-        "58357b840ab8890eba45",
-        "9ea21ff62008b510bd7f",
-        "b88fc4f8215d76b34ea8",
-        "82752ae689b24bd04b63",
-        "fd2a647124264e9a2f63",
-        "9fc45d30478dc34f0ea6",
-        "9cd0878995ac81bc7fa1",
-        "0790e2862f113cd5cb2a",
-        "1087d778492ba0d90fe8",
-        "db901ea4f35f29872b83",
-        "62993f74348668414e94",
-        "0541a105ff0d867f7ea6",
-        "ed9a76f66fdce2fa62cb",
-        "251a62ca944e59b4d35c",
-        "d6f7994c8a29114879a2",
-        "8d4b368daaafa2527fdb",
-        "7b6b74d024cad1ca24e0",
-        "1432ffb1661e42ad2afd",
-        "c316ee518cf610c4056b"
+        "c6050d4250817509deaa",
+        "a80afd6985fc9bbbcd7e",
+        "4e3ec0bc5729a7fb01d4",
+        "ee61098b360e9f41c52b",
+        "33042df3ec8f74b6f868",
+        "b39940f71a054d8960ae",
+        "35cb220ec92000ca6560",
+        "0bf3a6e55a3c5a08197f",
+        "1d88d171af77534a178a",
+        "e172a2270d2c62448db0",
+        "508a2161e8178e476541",
+        "c4552cc974811c97ac12",
+        "cbdf571cbd814bbb0de4",
+        "4c9c398e76b50048de46",
+        "0ff33a1a723a799a873c",
+        "f6fc2afb658b10f92331",
+        "cd6ca2f582b59a0402d0",
+        "f4efe9d19d422cec228d",
+        "4e8ee277965ff5db268d"
       ],
       "mapping": [
         {
           "baselineCallerId": "58357b840ab8890eba45",
           "currentCallerIds": [
-            "58357b840ab8890eba45"
+            "c6050d4250817509deaa"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "9ea21ff62008b510bd7f",
           "currentCallerIds": [
-            "9ea21ff62008b510bd7f"
+            "a80afd6985fc9bbbcd7e"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "b88fc4f8215d76b34ea8",
           "currentCallerIds": [
-            "b88fc4f8215d76b34ea8"
+            "4e3ec0bc5729a7fb01d4"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "82752ae689b24bd04b63",
           "currentCallerIds": [
-            "82752ae689b24bd04b63"
+            "ee61098b360e9f41c52b"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "fd2a647124264e9a2f63",
           "currentCallerIds": [
-            "fd2a647124264e9a2f63"
+            "33042df3ec8f74b6f868"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "9fc45d30478dc34f0ea6",
           "currentCallerIds": [
-            "9fc45d30478dc34f0ea6"
+            "b39940f71a054d8960ae"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "9cd0878995ac81bc7fa1",
           "currentCallerIds": [
-            "9cd0878995ac81bc7fa1"
+            "35cb220ec92000ca6560"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "0790e2862f113cd5cb2a",
           "currentCallerIds": [
-            "0790e2862f113cd5cb2a"
+            "0bf3a6e55a3c5a08197f"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "1087d778492ba0d90fe8",
           "currentCallerIds": [
-            "1087d778492ba0d90fe8"
+            "1d88d171af77534a178a"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "2911d37adf1475f417aa",
           "currentCallerIds": [
-            "db901ea4f35f29872b83"
+            "e172a2270d2c62448db0"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "31c477708b626e5ae6b1",
           "currentCallerIds": [
-            "62993f74348668414e94"
+            "508a2161e8178e476541"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "8cdd04617aa0332099d0",
           "currentCallerIds": [
-            "0541a105ff0d867f7ea6"
+            "c4552cc974811c97ac12"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "7bf8a723f11bf121e654",
           "currentCallerIds": [
-            "ed9a76f66fdce2fa62cb"
+            "cbdf571cbd814bbb0de4"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "a5e91bac1a6cb8ed6bd0",
           "currentCallerIds": [
-            "251a62ca944e59b4d35c"
+            "4c9c398e76b50048de46"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "777506055ab8972780cc",
           "currentCallerIds": [
-            "d6f7994c8a29114879a2"
+            "0ff33a1a723a799a873c"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "9e56a2c47c6fae03a7d4",
           "currentCallerIds": [
-            "8d4b368daaafa2527fdb"
+            "f6fc2afb658b10f92331"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "06e83cfecb1ce0da5c95",
           "currentCallerIds": [
-            "7b6b74d024cad1ca24e0"
+            "cd6ca2f582b59a0402d0"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "101c25c8bf0d04a3d6ee",
           "currentCallerIds": [
-            "1432ffb1661e42ad2afd"
+            "f4efe9d19d422cec228d"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "5168c80257e8d4f829be",
           "currentCallerIds": [
-            "c316ee518cf610c4056b"
+            "4e8ee277965ff5db268d"
           ],
           "change": "RETAINED"
         }
@@ -6322,7 +6322,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-4bd11f790ddabef6",
-        "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
+        "sourceSha256": "c7b9467f7de3e54a39679e18cf73f8b1d5d02483a9071cfb15498e3743b0b6dc",
         "executionStatus": "IN_PROGRESS",
         "finding": "POST_CLAIM_INTERNAL_EFFECT_CURRENT_AUTHORITY_AND_ATOMIC_COMPLETION_REPAIRED_PROOF_PENDING",
         "originalCriteria": [
@@ -6349,7 +6349,13 @@
           "Reconcile only proven Command007 callers, retaining automation linking, shared factory and all genuinely open obligations",
           "Preserve Phase3 grants/budgets/vault and Phase4 egress independently"
         ],
-        "rollback": "Do not withdraw current authority or atomic receipts from enabled internal effects. The additive helper and whitelisted RPC can remain installed. Withhold affected internal actions before separately approved withdrawal, preserve original claim/completion and all restrictive grants. No production rollout authorized."
+        "rollback": "Do not withdraw current authority or atomic receipts from enabled internal effects. The additive helper and whitelisted RPC can remain installed. Withhold affected internal actions before separately approved withdrawal, preserve original claim/completion and all restrictive grants. No production rollout authorized.",
+        "phase3SourceDelta": {
+          "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+          "historicalSourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
+          "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+          "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
+        }
       },
       "actor": {
         "existingTrace": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
@@ -6388,7 +6394,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant",
-          "sourceSha256": "8bab85df06fe891c84ebea8788d2b6e197833ed1dffde8890f934a63623a2ec7",
+          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6480,7 +6486,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "generated external-project memory SQL denies browser roles",
-          "sourceSha256": "8bab85df06fe891c84ebea8788d2b6e197833ed1dffde8890f934a63623a2ec7",
+          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6955,7 +6961,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real Whop fulfillment rolls back foreign membership collisions",
-          "sourceSha256": "8bab85df06fe891c84ebea8788d2b6e197833ed1dffde8890f934a63623a2ec7",
+          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -7169,7 +7175,7 @@
       "id": "B1-P2-d068943836963a9c",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
+      "sourceSha256": "9d16f7bbc4d5239e19d440b13afa828b91ff9a4df8fb662ec22d919a24420039",
       "baselineCallerIds": [
         "b8d0ad5c152e8ec1c565",
         "5d90ff0ff5c303419423",
@@ -7189,133 +7195,133 @@
         "3028f7fe3ff9804dd3e6"
       ],
       "currentCallerIds": [
-        "b8d0ad5c152e8ec1c565",
-        "5d90ff0ff5c303419423",
-        "71763251ce3650f64a42",
-        "efdb39bc229d1fb04151",
-        "e7db064acbe958d8fd76",
-        "0a50f29a357989f22449",
-        "b2603393f6e57aa8c372",
-        "b94338b6bb001b7e55ce",
-        "4ed0f34665473f6b62ce",
-        "288a27a7d2a5f5cd103e",
-        "180631f7a6bd706af8d0",
-        "14438be451fcb7f3bbe1",
-        "c14b0badea7dd2cc312f",
-        "4325b87a6699a71f0325",
-        "7595558fe3d8cbd76faa",
-        "3028f7fe3ff9804dd3e6"
+        "86ef2fd4e7978d4403fe",
+        "0fef437b70958624f811",
+        "35748705d2c5685f956f",
+        "af9fa89437812bdd73ca",
+        "d1428a2ff470c82a5576",
+        "c4d272d36fd17081c885",
+        "44d085a0e5407f7503b8",
+        "eef73c4316c6fbd4b6b8",
+        "a51e78385237ffa31bbf",
+        "4040b83a9304ebbe0fce",
+        "288caf92ba11e16d8eed",
+        "4b224789557c61aa08aa",
+        "e048987bc4abfb1f8db9",
+        "39c5335d86a238a91087",
+        "51dc8f6c0359fb76bd82",
+        "9b5cfd8f675b5450106c"
       ],
       "mapping": [
         {
           "baselineCallerId": "b8d0ad5c152e8ec1c565",
           "currentCallerIds": [
-            "b8d0ad5c152e8ec1c565"
+            "86ef2fd4e7978d4403fe"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "5d90ff0ff5c303419423",
           "currentCallerIds": [
-            "5d90ff0ff5c303419423"
+            "0fef437b70958624f811"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "71763251ce3650f64a42",
           "currentCallerIds": [
-            "71763251ce3650f64a42"
+            "35748705d2c5685f956f"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "efdb39bc229d1fb04151",
           "currentCallerIds": [
-            "efdb39bc229d1fb04151"
+            "af9fa89437812bdd73ca"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e7db064acbe958d8fd76",
           "currentCallerIds": [
-            "e7db064acbe958d8fd76"
+            "d1428a2ff470c82a5576"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "0a50f29a357989f22449",
           "currentCallerIds": [
-            "0a50f29a357989f22449"
+            "c4d272d36fd17081c885"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "b2603393f6e57aa8c372",
           "currentCallerIds": [
-            "b2603393f6e57aa8c372"
+            "44d085a0e5407f7503b8"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "b94338b6bb001b7e55ce",
           "currentCallerIds": [
-            "b94338b6bb001b7e55ce"
+            "eef73c4316c6fbd4b6b8"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "4ed0f34665473f6b62ce",
           "currentCallerIds": [
-            "4ed0f34665473f6b62ce"
+            "a51e78385237ffa31bbf"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "288a27a7d2a5f5cd103e",
           "currentCallerIds": [
-            "288a27a7d2a5f5cd103e"
+            "4040b83a9304ebbe0fce"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "180631f7a6bd706af8d0",
           "currentCallerIds": [
-            "180631f7a6bd706af8d0"
+            "288caf92ba11e16d8eed"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "14438be451fcb7f3bbe1",
           "currentCallerIds": [
-            "14438be451fcb7f3bbe1"
+            "4b224789557c61aa08aa"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "c14b0badea7dd2cc312f",
           "currentCallerIds": [
-            "c14b0badea7dd2cc312f"
+            "e048987bc4abfb1f8db9"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "4325b87a6699a71f0325",
           "currentCallerIds": [
-            "4325b87a6699a71f0325"
+            "39c5335d86a238a91087"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "7595558fe3d8cbd76faa",
           "currentCallerIds": [
-            "7595558fe3d8cbd76faa"
+            "51dc8f6c0359fb76bd82"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "3028f7fe3ff9804dd3e6",
           "currentCallerIds": [
-            "3028f7fe3ff9804dd3e6"
+            "9b5cfd8f675b5450106c"
           ],
           "change": "RETAINED"
         }
@@ -7325,7 +7331,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-d068943836963a9c",
-        "sourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
+        "sourceSha256": "9d16f7bbc4d5239e19d440b13afa828b91ff9a4df8fb662ec22d919a24420039",
         "executionStatus": "IN_PROGRESS",
         "finding": "ALL_SIXTEEN_ISSUED_OWNER_PKCE_TOKEN_AND_STORAGE_CALLS_PROVEN_AT_7BE44030",
         "actorTrace": "index.ts authenticates GitHub, Supabase, Vercel and publishing mounts. Start/callback/disconnect producers require the original issued TenantContext and pass it unchanged to the four fixed provider PKCE wrappers. Store/consume/clear derive only its verified owner. SQL binds exact owner/provider/authorization revision, current one-use state and database expiry. Raw token/policy and shared storage primitives are separate callers and remain unresolved.",
@@ -7396,22 +7402,22 @@
         "current007Evidence": {
           "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
           "verifiedCurrentCallerIds": [
-            "b8d0ad5c152e8ec1c565",
-            "5d90ff0ff5c303419423",
-            "71763251ce3650f64a42",
-            "efdb39bc229d1fb04151",
-            "e7db064acbe958d8fd76",
-            "0a50f29a357989f22449",
-            "b2603393f6e57aa8c372",
-            "b94338b6bb001b7e55ce",
-            "4ed0f34665473f6b62ce",
-            "288a27a7d2a5f5cd103e",
-            "180631f7a6bd706af8d0",
-            "14438be451fcb7f3bbe1",
-            "c14b0badea7dd2cc312f",
-            "4325b87a6699a71f0325",
-            "7595558fe3d8cbd76faa",
-            "3028f7fe3ff9804dd3e6"
+            "86ef2fd4e7978d4403fe",
+            "0fef437b70958624f811",
+            "35748705d2c5685f956f",
+            "af9fa89437812bdd73ca",
+            "d1428a2ff470c82a5576",
+            "c4d272d36fd17081c885",
+            "44d085a0e5407f7503b8",
+            "eef73c4316c6fbd4b6b8",
+            "a51e78385237ffa31bbf",
+            "4040b83a9304ebbe0fce",
+            "288caf92ba11e16d8eed",
+            "4b224789557c61aa08aa",
+            "e048987bc4abfb1f8db9",
+            "39c5335d86a238a91087",
+            "51dc8f6c0359fb76bd82",
+            "9b5cfd8f675b5450106c"
           ],
           "remainingCurrentCallerIds": [],
           "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
@@ -7425,6 +7431,12 @@
             "Bind exact changed-source receipts before whole007 acceptance",
             "Do not implement008/009 or claim complete provider-account selection from the six PKCE calls"
           ]
+        },
+        "phase3SourceDelta": {
+          "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+          "historicalSourceSha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
+          "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+          "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
         }
       },
       "actor": {
@@ -7511,7 +7523,7 @@
       "id": "B1-P2-680a665952e714b9",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/githubTokenStore.ts",
-      "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
+      "sourceSha256": "f06715ebdce2f87406ba021e872f191d93460bc9e07f4e3b961c14a291bed719",
       "baselineCallerIds": [
         "3606e6e2a2c84f5d37fd",
         "8ea0355a7a40e6d35fef",
@@ -7522,61 +7534,61 @@
         "08adc22ee116d34993ce"
       ],
       "currentCallerIds": [
-        "541c1bc5f61f88e7c873",
-        "254a09774311f04897b1",
-        "1ac34398173cf0fedf3a",
-        "9b97e6de9a2c6c753011",
-        "d12c617bb45c7981e210",
-        "9e95745053a0044758eb",
-        "474d98f6d07da849e67a"
+        "1972d4de6dab6705344f",
+        "b0997709c401929677ac",
+        "cf05312d059ea6781bbc",
+        "03d2f8a7af9fb1e255b8",
+        "2492de8077e3a3a33b32",
+        "33a181513385ddf5c39a",
+        "c98adc818bef4518e641"
       ],
       "mapping": [
         {
           "baselineCallerId": "3606e6e2a2c84f5d37fd",
           "currentCallerIds": [
-            "541c1bc5f61f88e7c873"
+            "1972d4de6dab6705344f"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "8ea0355a7a40e6d35fef",
           "currentCallerIds": [
-            "254a09774311f04897b1"
+            "b0997709c401929677ac"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "0be2ba1bb19f870be5da",
           "currentCallerIds": [
-            "1ac34398173cf0fedf3a"
+            "cf05312d059ea6781bbc"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "55573ca462209ab422c3",
           "currentCallerIds": [
-            "9b97e6de9a2c6c753011"
+            "03d2f8a7af9fb1e255b8"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "36464f94938ad7240220",
           "currentCallerIds": [
-            "d12c617bb45c7981e210"
+            "2492de8077e3a3a33b32"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "8a8f49466dccccc652af",
           "currentCallerIds": [
-            "9e95745053a0044758eb"
+            "33a181513385ddf5c39a"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "08adc22ee116d34993ce",
           "currentCallerIds": [
-            "474d98f6d07da849e67a"
+            "c98adc818bef4518e641"
           ],
           "change": "RETAINED"
         }
@@ -7586,7 +7598,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-680a665952e714b9",
-        "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
+        "sourceSha256": "f06715ebdce2f87406ba021e872f191d93460bc9e07f4e3b961c14a291bed719",
         "executionStatus": "IN_PROGRESS",
         "finding": "LEGACY_MIRROR_WRITER_MISSING_ISSUED_CONTEXT_FIXED_VERIFIED_AT_7BE44030",
         "actorTrace": "No production caller of this legacy writer exists. Absence of callers is not certification. The export now requires original server-issued TenantContext before bucket inspection or upload and derives its object owner from that context. Fixed bucket and owner/github.json path remain. Payload is serialized before the first await. Seven existing canonical read/delete boundaries remain byte-identical and their previous evidence is retained.",
@@ -7612,13 +7624,13 @@
         "current007Evidence": {
           "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
           "verifiedCurrentCallerIds": [
-            "541c1bc5f61f88e7c873",
-            "254a09774311f04897b1",
-            "1ac34398173cf0fedf3a",
-            "9b97e6de9a2c6c753011",
-            "d12c617bb45c7981e210",
-            "9e95745053a0044758eb",
-            "474d98f6d07da849e67a"
+            "1972d4de6dab6705344f",
+            "b0997709c401929677ac",
+            "cf05312d059ea6781bbc",
+            "03d2f8a7af9fb1e255b8",
+            "2492de8077e3a3a33b32",
+            "33a181513385ddf5c39a",
+            "c98adc818bef4518e641"
           ],
           "remainingCurrentCallerIds": [],
           "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
@@ -7631,6 +7643,12 @@
             "Execute final-source disposable Storage and branch/integrated regression before certifying the three writer sites",
             "Preserve independent Phase3 custody and live provider lifecycle obligations"
           ]
+        },
+        "phase3SourceDelta": {
+          "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+          "historicalSourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
+          "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+          "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
         }
       },
       "actor": {
@@ -7653,7 +7671,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "8bab85df06fe891c84ebea8788d2b6e197833ed1dffde8890f934a63623a2ec7",
+          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -7760,7 +7778,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "8bab85df06fe891c84ebea8788d2b6e197833ed1dffde8890f934a63623a2ec7",
+          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -7931,36 +7949,36 @@
       "id": "B1-P2-08a1009a4a9b93a5",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/githubTokenStore.ts",
-      "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
+      "sourceSha256": "f06715ebdce2f87406ba021e872f191d93460bc9e07f4e3b961c14a291bed719",
       "baselineCallerIds": [
         "5af0dfecb133879330e2",
         "2aa98c887631896938dc",
         "e8a7ea96116a374773c0"
       ],
       "currentCallerIds": [
-        "d87e4598104184aa00dd",
-        "2d83b6fa32b99099b19e",
-        "da8ff71a038a365d4e60"
+        "e3f33f1fd8952449d417",
+        "8044413b8891bfc09677",
+        "847bd2b7cd21a03aafd5"
       ],
       "mapping": [
         {
           "baselineCallerId": "5af0dfecb133879330e2",
           "currentCallerIds": [
-            "d87e4598104184aa00dd"
+            "e3f33f1fd8952449d417"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "2aa98c887631896938dc",
           "currentCallerIds": [
-            "2d83b6fa32b99099b19e"
+            "8044413b8891bfc09677"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e8a7ea96116a374773c0",
           "currentCallerIds": [
-            "da8ff71a038a365d4e60"
+            "847bd2b7cd21a03aafd5"
           ],
           "change": "RETAINED"
         }
@@ -7970,7 +7988,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-08a1009a4a9b93a5",
-        "sourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
+        "sourceSha256": "f06715ebdce2f87406ba021e872f191d93460bc9e07f4e3b961c14a291bed719",
         "executionStatus": "IN_PROGRESS",
         "finding": "DEMONSTRATED_ORPHAN_MIRROR_GRANT_FIXED_VERIFIED_AT_7BE44030",
         "actorTrace": "GitHub mirror path is owner-derived, but both canonical rows could be absent while the helper treated a private object as authority. A delayed legacy object after canonical deletion could restore credential access. Missing/error/revoked authority now denies. A matching active github_integrations or legacy user_integrations grant remains supported and is rechecked after download.",
@@ -7996,9 +8014,9 @@
         "current007Evidence": {
           "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
           "verifiedCurrentCallerIds": [
-            "d87e4598104184aa00dd",
-            "2d83b6fa32b99099b19e",
-            "da8ff71a038a365d4e60"
+            "e3f33f1fd8952449d417",
+            "8044413b8891bfc09677",
+            "847bd2b7cd21a03aafd5"
           ],
           "remainingCurrentCallerIds": [],
           "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
@@ -8012,6 +8030,12 @@
             "Storage-only orphaned connections require explicit reconnect through existing flows, no silent credential migration",
             "Whole consumer provenance, connected-account authority and Phase3 custody remain separate"
           ]
+        },
+        "phase3SourceDelta": {
+          "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+          "historicalSourceSha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
+          "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+          "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
         }
       },
       "actor": {
@@ -8031,7 +8055,7 @@
         {
           "path": "backend/src/services/integrations/credentialMirrorRace.test.ts",
           "marker": "revocation",
-          "sourceSha256": "895c021bc86551869d072e35f14dcfa8edf2bba3e5a891fc62fee995f5c90b2f",
+          "sourceSha256": "5796cca7f3ee391ec345cd4094b45ed7b8532f05f040ee121e6c7f1fd4a4af1c",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -8361,7 +8385,7 @@
       "id": "B1-P2-8c13793907db3388",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
+      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
       "baselineCallerIds": [
         "c3f2ca136ccab92884f3",
         "8466decbcb9ca41d5da8",
@@ -8383,149 +8407,149 @@
         "219ebcffd2df24f5d96c"
       ],
       "currentCallerIds": [
-        "3696472e5c2e79ec3877",
-        "793cd087bfe58a1323e9",
-        "b2c86b6db6573be9213f",
-        "e5b57581e4457cd58ff2",
-        "f77c97eed440f2d836c0",
-        "f651340939c0fe9a8786",
-        "ee377e28847a820d3e60",
-        "912679b2d70aeb54860e",
-        "8e483e5db88e334d4fd9",
-        "2714bcb8dd844631154a",
-        "b11077c6032271361558",
-        "208413eede9db532d440",
-        "4bbd68abc608cd40cf5e",
-        "b13ab17aa7429003241b",
-        "281beef588e15d39be66",
-        "251a8f22c720652f36a5",
-        "0671bfb9368569581fba",
-        "7dd7b79ecd7c4840a960"
+        "a6063fe099976dc970f7",
+        "67a6738bb98de6ea35e6",
+        "fa8edcff0bd9d41187f5",
+        "1e079f47b68cfa4b0ee1",
+        "7ce8a829e7682246c531",
+        "877306d453c374d2e0b5",
+        "60641ebebf916f3f47ab",
+        "2604632d4df816296c98",
+        "90411ad954f04510350e",
+        "4d24d57fe7012dc5dd75",
+        "c14b11328e9369fa6e7f",
+        "8716b1816d340d8ef220",
+        "1ba202fc5a6dd57faf27",
+        "22b15fbd9a04f1c32cb6",
+        "c10dcb70902c0260de04",
+        "d402557729d7b229c33f",
+        "14b09354c0efcdc2fdbf",
+        "88d220a299b3576a5c37"
       ],
       "mapping": [
         {
           "baselineCallerId": "c3f2ca136ccab92884f3",
           "currentCallerIds": [
-            "3696472e5c2e79ec3877"
+            "a6063fe099976dc970f7"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "8466decbcb9ca41d5da8",
           "currentCallerIds": [
-            "793cd087bfe58a1323e9"
+            "67a6738bb98de6ea35e6"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "945c1743c499e90155c7",
           "currentCallerIds": [
-            "b2c86b6db6573be9213f"
+            "fa8edcff0bd9d41187f5"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "30c947b4c1a108a17b92",
           "currentCallerIds": [
-            "e5b57581e4457cd58ff2"
+            "1e079f47b68cfa4b0ee1"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "9dee422de25d294a7357",
           "currentCallerIds": [
-            "f77c97eed440f2d836c0"
+            "7ce8a829e7682246c531"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "c5490d9431dfdae9ca6a",
           "currentCallerIds": [
-            "f651340939c0fe9a8786"
+            "877306d453c374d2e0b5"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "aad6224f275c7da17b55",
           "currentCallerIds": [
-            "ee377e28847a820d3e60"
+            "60641ebebf916f3f47ab"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "c8806caee1b6dcf5dffe",
           "currentCallerIds": [
-            "912679b2d70aeb54860e"
+            "2604632d4df816296c98"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "8a0eb63ebffa141243f3",
           "currentCallerIds": [
-            "8e483e5db88e334d4fd9"
+            "90411ad954f04510350e"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e6d9a5693ccddad6699b",
           "currentCallerIds": [
-            "2714bcb8dd844631154a"
+            "4d24d57fe7012dc5dd75"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "6de4d56764f41d3a11bc",
           "currentCallerIds": [
-            "b11077c6032271361558"
+            "c14b11328e9369fa6e7f"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "57c1b65d21f7ad3e10e9",
           "currentCallerIds": [
-            "208413eede9db532d440"
+            "8716b1816d340d8ef220"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "dceb9a28d0e6cf3e0163",
           "currentCallerIds": [
-            "4bbd68abc608cd40cf5e"
+            "1ba202fc5a6dd57faf27"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "66faab8392a58be8ebaa",
           "currentCallerIds": [
-            "b13ab17aa7429003241b"
+            "22b15fbd9a04f1c32cb6"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "4fd45320f2922de4093b",
           "currentCallerIds": [
-            "281beef588e15d39be66"
+            "c10dcb70902c0260de04"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e24569ab9a41af1806a7",
           "currentCallerIds": [
-            "251a8f22c720652f36a5"
+            "d402557729d7b229c33f"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "daa98fe8de4afd945ac5",
           "currentCallerIds": [
-            "0671bfb9368569581fba"
+            "14b09354c0efcdc2fdbf"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "219ebcffd2df24f5d96c",
           "currentCallerIds": [
-            "7dd7b79ecd7c4840a960"
+            "88d220a299b3576a5c37"
           ],
           "change": "RETAINED"
         }
@@ -8535,7 +8559,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-8c13793907db3388",
-        "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
+        "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
         "executionStatus": "IN_PROGRESS",
         "finding": "DEMONSTRATED_PROVISIONING_BUNDLE_ORPHAN_AUTHORITY_FIXED_PENDING_REAL_PRIVATE_OBJECT_PROOF",
         "actualVerification": {
@@ -8570,30 +8594,36 @@
         "current007Evidence": {
           "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
           "verifiedCurrentCallerIds": [
-            "3696472e5c2e79ec3877",
-            "793cd087bfe58a1323e9",
-            "b2c86b6db6573be9213f",
-            "e5b57581e4457cd58ff2",
-            "f77c97eed440f2d836c0",
-            "f651340939c0fe9a8786",
-            "912679b2d70aeb54860e",
-            "8e483e5db88e334d4fd9",
-            "2714bcb8dd844631154a",
-            "b11077c6032271361558",
-            "208413eede9db532d440",
-            "4bbd68abc608cd40cf5e",
-            "b13ab17aa7429003241b",
-            "281beef588e15d39be66",
-            "251a8f22c720652f36a5",
-            "0671bfb9368569581fba",
-            "7dd7b79ecd7c4840a960"
+            "a6063fe099976dc970f7",
+            "67a6738bb98de6ea35e6",
+            "fa8edcff0bd9d41187f5",
+            "1e079f47b68cfa4b0ee1",
+            "7ce8a829e7682246c531",
+            "877306d453c374d2e0b5",
+            "2604632d4df816296c98",
+            "90411ad954f04510350e",
+            "4d24d57fe7012dc5dd75",
+            "c14b11328e9369fa6e7f",
+            "8716b1816d340d8ef220",
+            "1ba202fc5a6dd57faf27",
+            "22b15fbd9a04f1c32cb6",
+            "c10dcb70902c0260de04",
+            "d402557729d7b229c33f",
+            "14b09354c0efcdc2fdbf",
+            "88d220a299b3576a5c37"
           ],
           "remainingCurrentCallerIds": [
-            "ee377e28847a820d3e60"
+            "60641ebebf916f3f47ab"
           ],
           "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
           "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",
           "changedSourceRegression": "REQUIRED_BEFORE_NEW_SOURCE_ACCEPTANCE"
+        },
+        "phase3SourceDelta": {
+          "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+          "historicalSourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
+          "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+          "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
         }
       },
       "actor": {
@@ -8627,7 +8657,7 @@
         {
           "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
           "marker": "rejects a concurrent revoke",
-          "sourceSha256": "8b91d7e45a8f68204fbccba81f178817fb4692c1e6403f448d39a573169e083f",
+          "sourceSha256": "f67d8f344ab8b5039d8121d1d98bf39a4fae7e05c55f5c3e918c21574c07a927",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -8681,18 +8711,18 @@
       "id": "B1-P2-d3895e94f03fa522",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
+      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
       "baselineCallerIds": [
         "00329f071464b8e43b18"
       ],
       "currentCallerIds": [
-        "2ce84a51bf89c83602d6"
+        "2d2e0b1518dc39fd144c"
       ],
       "mapping": [
         {
           "baselineCallerId": "00329f071464b8e43b18",
           "currentCallerIds": [
-            "2ce84a51bf89c83602d6"
+            "2d2e0b1518dc39fd144c"
           ],
           "change": "RETAINED"
         }
@@ -8702,7 +8732,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-d3895e94f03fa522",
-        "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
+        "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
         "executionStatus": "IN_PROGRESS",
         "finding": "DEMONSTRATED_ABSENT_BYOK_AUTHORITY_MIRROR_RESURRECTION_FIXED_VERIFIED_AT_7BE44030",
         "actorTrace": "Owner/provider-scoped database lookup must contain an active canonical credential. The legacy private download previously returned its encrypted payload when the post-download authority query found no row. It now denies that absence, while active canonical legacy envelopes and valid database-backed connections retain existing behavior.",
@@ -8728,7 +8758,7 @@
         "current007Evidence": {
           "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
           "verifiedCurrentCallerIds": [
-            "2ce84a51bf89c83602d6"
+            "2d2e0b1518dc39fd144c"
           ],
           "remainingCurrentCallerIds": [],
           "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
@@ -8742,6 +8772,12 @@
             "Caller identity and custody for all other provider consumers remain independent",
             "No customer data or credential row was migrated or deleted"
           ]
+        },
+        "phase3SourceDelta": {
+          "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+          "historicalSourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
+          "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+          "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
         }
       },
       "actor": {
@@ -8759,7 +8795,7 @@
         {
           "path": "backend/src/services/integrations/userProviderKeys.revision.test.ts",
           "marker": "rejects a concurrent revoke",
-          "sourceSha256": "8b91d7e45a8f68204fbccba81f178817fb4692c1e6403f448d39a573169e083f",
+          "sourceSha256": "f67d8f344ab8b5039d8121d1d98bf39a4fae7e05c55f5c3e918c21574c07a927",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -8813,18 +8849,18 @@
       "id": "B1-P2-bee64099846891d0",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
+      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
       "baselineCallerIds": [
         "3fd4baa9d381d8e8ebdb"
       ],
       "currentCallerIds": [
-        "77b006f82faf88017a2c"
+        "ee7bb2f7b51795d5885a"
       ],
       "mapping": [
         {
           "baselineCallerId": "3fd4baa9d381d8e8ebdb",
           "currentCallerIds": [
-            "77b006f82faf88017a2c"
+            "ee7bb2f7b51795d5885a"
           ],
           "change": "RETAINED"
         }
@@ -8895,27 +8931,27 @@
       "id": "B1-P2-ee04e35f1fc33a98",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
+      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
       "baselineCallerIds": [
         "bffd24f4371afe0068ce",
         "c0a660520b23bcf21065"
       ],
       "currentCallerIds": [
-        "9f316f0cfad5794c27c5",
-        "965d682f9f5d530bb929"
+        "c06d3f691fef0e9a9320",
+        "d235d34aeef6e920a127"
       ],
       "mapping": [
         {
           "baselineCallerId": "bffd24f4371afe0068ce",
           "currentCallerIds": [
-            "9f316f0cfad5794c27c5"
+            "c06d3f691fef0e9a9320"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "c0a660520b23bcf21065",
           "currentCallerIds": [
-            "965d682f9f5d530bb929"
+            "d235d34aeef6e920a127"
           ],
           "change": "RETAINED"
         }
@@ -8987,18 +9023,18 @@
       "id": "B1-P2-0814a4d254cfad84",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
+      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
       "baselineCallerIds": [
         "616340b0d7522ddd6992"
       ],
       "currentCallerIds": [
-        "c0ae76586326abbbba08"
+        "8d454ae0583ff0b8a697"
       ],
       "mapping": [
         {
           "baselineCallerId": "616340b0d7522ddd6992",
           "currentCallerIds": [
-            "c0ae76586326abbbba08"
+            "8d454ae0583ff0b8a697"
           ],
           "change": "RETAINED"
         }
@@ -9069,18 +9105,18 @@
       "id": "B1-P2-4f31a2595f724ac7",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
+      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
       "baselineCallerIds": [
         "20831c35d677b0bb0980"
       ],
       "currentCallerIds": [
-        "27483f27b03af7e1669b"
+        "e4b3729dbce70a455196"
       ],
       "mapping": [
         {
           "baselineCallerId": "20831c35d677b0bb0980",
           "currentCallerIds": [
-            "27483f27b03af7e1669b"
+            "e4b3729dbce70a455196"
           ],
           "change": "RETAINED"
         }
@@ -9151,18 +9187,18 @@
       "id": "B1-P2-2114492823658128",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
+      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
       "baselineCallerIds": [
         "f18023f7a692ccdd61fe"
       ],
       "currentCallerIds": [
-        "78fbb99c106916e565c3"
+        "e17cae98899a7ed70612"
       ],
       "mapping": [
         {
           "baselineCallerId": "f18023f7a692ccdd61fe",
           "currentCallerIds": [
-            "78fbb99c106916e565c3"
+            "e17cae98899a7ed70612"
           ],
           "change": "RETAINED"
         }
@@ -9601,18 +9637,18 @@
       "id": "B1-P2-79b4c59a6db06651",
       "family": "approvals-external-actions",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
+      "sourceSha256": "c7b9467f7de3e54a39679e18cf73f8b1d5d02483a9071cfb15498e3743b0b6dc",
       "baselineCallerIds": [
         "f175f84e5afd902c17c0"
       ],
       "currentCallerIds": [
-        "f175f84e5afd902c17c0"
+        "6086aea564a93d1f047f"
       ],
       "mapping": [
         {
           "baselineCallerId": "f175f84e5afd902c17c0",
           "currentCallerIds": [
-            "f175f84e5afd902c17c0"
+            "6086aea564a93d1f047f"
           ],
           "change": "RETAINED"
         }
@@ -9677,18 +9713,18 @@
       "id": "B1-P2-6504b624f22f69fa",
       "family": "approvals-external-actions",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
+      "sourceSha256": "c7b9467f7de3e54a39679e18cf73f8b1d5d02483a9071cfb15498e3743b0b6dc",
       "baselineCallerIds": [
         "ca3d605bac7cc0acb742"
       ],
       "currentCallerIds": [
-        "889de9bf998a6a1b47f0"
+        "fb18934384701022a76d"
       ],
       "mapping": [
         {
           "baselineCallerId": "ca3d605bac7cc0acb742",
           "currentCallerIds": [
-            "889de9bf998a6a1b47f0"
+            "fb18934384701022a76d"
           ],
           "change": "RETAINED"
         }
@@ -9698,7 +9734,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-6504b624f22f69fa",
-        "sourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
+        "sourceSha256": "c7b9467f7de3e54a39679e18cf73f8b1d5d02483a9071cfb15498e3743b0b6dc",
         "executionStatus": "IN_PROGRESS",
         "finding": "AUTOMATION_CANONICAL_ACTION_LINK_AND_REQUIRED_AUDIT_CURRENT_PARENT_ATOMICITY_REPAIRED_PROOF_PENDING",
         "originalCriteria": [
@@ -9724,7 +9760,13 @@
           "Run and authenticate exact new-source disposable witnesses and full regression",
           "Reconcile only original007 caller obligations. Preserve008 grants/budgets,009 custody and010 egress"
         ],
-        "rollback": "Retain existing admission, restrictive grants and run/action idempotency. Withhold automation signal finalization before separately approved withdrawal. Never restore the demonstrated unguarded link/audit. No production migration authorized."
+        "rollback": "Retain existing admission, restrictive grants and run/action idempotency. Withhold automation signal finalization before separately approved withdrawal. Never restore the demonstrated unguarded link/audit. No production migration authorized.",
+        "phase3SourceDelta": {
+          "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+          "historicalSourceSha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
+          "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+          "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
+        }
       },
       "actor": {
         "existingTrace": "After exact service-only admission, the existing action creator receives the stable run UUID key. Linking updates only the admitted owner/rule/digest/run in evaluating state with no action, then verifies its returned identity and action/status. No replay executes another action.",

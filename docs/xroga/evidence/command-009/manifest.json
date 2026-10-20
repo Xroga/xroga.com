@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "command": "009",
+  "scope": "SOFTWARE_EVIDENCE_WITH_MANDATORY_PRODUCTION_KMS_BLOCKER",
+  "criteria": [
+    {"id":"XB01-C009-AC01","originalText":"All newly stored OAuth/provider secrets use CredentialVault.","status":"SOFTWARE_VERIFIED","proof":{"path":"docs/xroga/security/credential-caller-dispositions.md","marker":"Current v3 writer and private consumer"}},
+    {"id":"XB01-C009-AC02","originalText":"No frontend endpoint returns raw secrets.","status":"SOFTWARE_VERIFIED","proof":{"path":"frontend/src/lib/credentialVault.test.ts","marker":"browser vault has no new secret writer or general reveal API"}},
+    {"id":"XB01-C009-AC03","originalText":"No LLM/task prompt receives raw provider credential.","status":"SOFTWARE_VERIFIED","proof":{"path":"backend/src/e2e/xrogaGoldenJourneys.test.ts","marker":"strips provider credentials before a prompt or client can consume the result"}},
+    {"id":"XB01-C009-AC04","originalText":"Wrong-tenant retrieval test passes.","status":"SOFTWARE_VERIFIED","proof":{"path":"backend/src/services/integrations/credentialVault.test.ts","marker":"binds every identity field"}},
+    {"id":"XB01-C009-AC05","originalText":"Ciphertext tamper test passes.","status":"SOFTWARE_VERIFIED","proof":{"path":"backend/src/services/integrations/credentialVault.test.ts","marker":"vault rejects ciphertext, tag, wrapped-key and key identity substitution"}},
+    {"id":"XB01-C009-AC06","originalText":"Rotation test passes.","status":"SOFTWARE_VERIFIED","proof":{"path":"backend/src/services/integrations/credentialVault.test.ts","marker":"vault rotation uses a new revision and key"}},
+    {"id":"XB01-C009-AC07","originalText":"Revocation test passes.","status":"SOFTWARE_VERIFIED","proof":{"path":"backend/src/services/integrations/credentialMirrorRace.test.ts","marker":"legacy downloads recheck authoritative revocation, rotation and outages"}},
+    {"id":"XB01-C009-AC08","originalText":"PKCE has TTL + one-time semantics.","status":"SOFTWARE_VERIFIED","proof":{"path":"backend/src/services/integrations/oauthPkceStore.consume.test.ts","marker":"one-use OAuth admission fails closed"}},
+    {"id":"XB01-C009-AC09","originalText":"Legacy migration is idempotent.","status":"SOFTWARE_VERIFIED","proof":{"path":"backend/src/services/integrations/userProviderKeys.migration.test.ts","marker":"legacy provider-key migration is owner-bound, CAS protected and idempotent"}},
+    {"id":"XB01-C009-AC10","originalText":"Production cannot use development crypto provider.","status":"SOFTWARE_VERIFIED","proof":{"path":"backend/src/services/integrations/credentialVault.test.ts","marker":"development crypto refuses production, unknown runtime and production-host flags"}},
+    {"id":"XB01-C009-AC11","originalText":"Credential audit reports remaining direct storage callers.","status":"SOFTWARE_VERIFIED","proof":{"path":"docs/xroga/security/credential-usage-audit.json","marker":"PRIVATE_CREDENTIAL_CONSUMER_CANDIDATE"}},
+    {"id":"XB01-C009-AC12","originalText":"Remaining legacy callers are zero or explicitly blocked from production cutover.","status":"SOFTWARE_VERIFIED","proof":{"path":"docs/xroga/security/credential-migration.md","marker":"Enable the temporary migration window"}}
+  ],
+  "credentialAudit":{"candidates":117,"groups":37,"staticBackendVaultImporters":6},
+  "productionKms":{"status":"BLOCKED_UNSPECIFIED_NOT_VERIFIED","developmentFallbackAllowed":false},
+  "liveCredentialMigration":false,
+  "productionEffects":false
+}

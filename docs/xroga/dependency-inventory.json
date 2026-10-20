@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "dc913cefaa3f69823273c0b169daef1238331742",
+  "source_sha": "9869d6e7bc5f40be7660562c2005d2bf9266412a",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -13824,7 +13824,7 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sha256": "d366f9f303e12808115e74f15b5f444cee5ef562dbf83d098583ed08df0be445"
+      "sha256": "9d16f7bbc4d5239e19d440b13afa828b91ff9a4df8fb662ec22d919a24420039"
     },
     {
       "path": "backend/src/services/integrations/pluginPermissionPolicy.ts",
@@ -13848,7 +13848,7 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sha256": "048f87c5c9a3be99376d3ddb9ca7cdfdab30cf31d25dc9e4637d1f5bfe83ad9e"
+      "sha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da"
     },
     {
       "path": "backend/src/services/memory/buildMemory.ts",
@@ -20429,98 +20429,98 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 71,
+      "line": 68,
       "credentialsInUrl": false
     },
     {
       "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 72,
+      "line": 69,
       "credentialsInUrl": false
     },
     {
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 73,
+      "line": 70,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 74,
+      "line": 71,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 111,
+      "line": 108,
       "credentialsInUrl": false
     },
     {
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 142,
+      "line": 139,
       "credentialsInUrl": false
     },
     {
       "hostname": "vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 220,
+      "line": 217,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 255,
+      "line": 252,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 514,
+      "line": 519,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 551,
+      "line": 556,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 552,
+      "line": 557,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 607,
+      "line": 612,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 626,
+      "line": 631,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 734,
+      "line": 739,
       "credentialsInUrl": false
     },
     {
@@ -26834,14 +26834,14 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 154,
+      "line": 151,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 168,
+      "line": 165,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
