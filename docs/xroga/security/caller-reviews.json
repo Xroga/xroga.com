@@ -9764,7 +9764,7 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
+      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
       "callIds": [
         "f5a449e18aa070e708bf"
       ],
@@ -9787,7 +9787,7 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
+      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
       "callIds": [
         "2f4adaffabba4e9c17b8"
       ],
@@ -9810,7 +9810,7 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
+      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
       "callIds": [
         "4e906804cf01a3be86b8"
       ],
@@ -9833,7 +9833,7 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
+      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
       "callIds": [
         "3c6dd575e54ba2b2717c"
       ],
@@ -13002,15 +13002,15 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
+      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
       "callIds": [
         "6cd8c24a9e60be01c103",
         "1f7990192c0a2ca3a76f",
         "090a1378d41f5f16f7f8",
         "12db6c0413e72e7d991c",
         "23a6e19d497634606d2c",
-        "6d5ec008c1680918c559",
-        "89afd904cb0f3d4bf6ac"
+        "d84c16808fc87aa62772",
+        "ad15f1539585635cb726"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing authenticated Vercel, integration and Supabase OAuth handlers use req.userId and the admitted pipeline uses opts.userId. Publishing status and GitHub deployment helpers propagate that same actor. Delivery reads the authenticated owned revision before using its userId, not model/body identity. getVercelToken/getVercelUsername/isVercelConnected/live verification and project selection share loadVercelConnection exact owner/provider predicates. Reads never revive an absent or revoked canonical connection from mirrors. Single-flight is keyed by owner. Refresh leases update only that owner/provider/observed refresh token; cleanup restores only its exact marker. Native refresh observes the canonical revision and known account before provider response and the atomic save CAS retains both. Only clearVercelConnection invokes private mirror deletion using the original authenticated context owner. Actual distinct-account rows, concurrent same-owner and foreign-owner refresh, foreign input denial before transport, held response against authenticated disconnect, unchanged tombstone/foreign row and exact foreign mirror bytes exercise these seven persistence boundaries.\nThe sole production clearVercelConnection caller is authenticated Vercel disconnect with the original req.tenantContext. requireTenantContext and getTenantSupabaseAdmin both validate that original issued context before the fixed owner/vercel upsert. The owner-inclusive conflict key cannot revoke another account. Empty token, fresh revision and revoked tombstone are persisted before clearing the same context PKCE session and owner-namespace mirror. Actual authenticated disconnect, other-owner retention and stale refresh persistence denial exercise this function. No body field can choose its actor or provider.",
@@ -13075,15 +13075,15 @@
         "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
       },
       "structuredOrigin": {
-        "id": "OB-afb8d329d3b52785",
+        "id": "OB-46771da49c04869b",
         "callIds": [
           "6cd8c24a9e60be01c103",
           "1f7990192c0a2ca3a76f",
           "090a1378d41f5f16f7f8",
           "12db6c0413e72e7d991c",
           "23a6e19d497634606d2c",
-          "6d5ec008c1680918c559",
-          "89afd904cb0f3d4bf6ac"
+          "d84c16808fc87aa62772",
+          "ad15f1539585635cb726"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -15359,7 +15359,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
-      "sourceSha256": "668cec449c67ee92dab92c08bd96e5587665c04824235be4ecc1756cb0e08c10",
+      "sourceSha256": "8754a9c139247caff08038eed891e96343796b9019ddb379e7e4596c02dd3fa2",
       "callIds": [
         "8831772e1415698008d8"
       ],
@@ -15380,7 +15380,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
-      "sourceSha256": "668cec449c67ee92dab92c08bd96e5587665c04824235be4ecc1756cb0e08c10",
+      "sourceSha256": "8754a9c139247caff08038eed891e96343796b9019ddb379e7e4596c02dd3fa2",
       "callIds": [
         "a7071c4b1aea42021299"
       ],
@@ -15401,7 +15401,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
-      "sourceSha256": "668cec449c67ee92dab92c08bd96e5587665c04824235be4ecc1756cb0e08c10",
+      "sourceSha256": "8754a9c139247caff08038eed891e96343796b9019ddb379e7e4596c02dd3fa2",
       "callIds": [
         "4309e81e72c6705aade9"
       ],
@@ -15474,6 +15474,22 @@
         {
           "path": "backend/src/services/integrations/credentialVault.ts",
           "marker": "export class CredentialVault"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/credentialVaultRuntime.ts",
+      "sourceSha256": "3d846cec4c28052cb36f273516ed9173ca9796ead6c2c313b36a4b47ec05271f",
+      "callIds": [
+        "cd1446484dac3edddad2"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
+      "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/credentialVaultRuntime.ts",
+          "marker": "export function runtimeCredentialVault"
         }
       ]
     },

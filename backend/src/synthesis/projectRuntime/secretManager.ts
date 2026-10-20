@@ -143,7 +143,7 @@ function runtimeSecretBinding(
     account: projectId,
     credentialType: 'runtime-secret',
     recordId: runtimeSecretRecordId(projectId, name, scope),
-    revision,
+    revision: new Date(revision).toISOString(),
     scope: `${scope}:${name}`,
   } as const;
 }

@@ -1,10 +1,26 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {restoreOwnerBoundEncryptedSecret,SupabaseProjectRuntimeStore} from './store.js';
+import {restoreOwnerBoundEncryptedSecret,SupabaseProjectRuntimeStore,InMemoryProjectRuntimeStore} from './store.js';
+import {ProjectSecretManager} from './secretManager.js';
 import {CredentialVault} from '../../services/integrations/credentialVault.js';
 import {DevelopmentCryptoProvider} from '../../services/integrations/cryptoProvider.js';
 import {createTenantContext} from '../../security/tenantContext.js';
 import {randomBytes} from 'node:crypto';
+
+test('runtime vault identity survives PostgreSQL timestamp formatting without accepting a changed timestamp',async()=>{
+  const previous=process.env.NODE_ENV;process.env.NODE_ENV='test';
+  try{
+    const store=new InMemoryProjectRuntimeStore();
+    const original=store.saveEncryptedSecret.bind(store);
+    store.saveEncryptedSecret=async record=>original({...record,updatedAt:record.updatedAt.replace('Z','+00:00')});
+    const owner='11111111-1111-4111-8111-111111111111',manager=new ProjectSecretManager(owner,store);
+    await manager.put({projectId:'project',name:'API_TOKEN',scope:'preview',value:'synthetic-runtime'});
+    assert.deepEqual(await manager.resolveEnvironment('project',['preview']),{API_TOKEN:'synthetic-runtime'});
+    const [record]=await store.loadEncryptedSecrets(owner,'project');
+    await original({...record,updatedAt:new Date(Date.parse(record.updatedAt)+1).toISOString()});
+    await assert.rejects(manager.resolveEnvironment('project',['preview']),/could not authenticate/);
+  }finally{if(previous===undefined)delete process.env.NODE_ENV;else process.env.NODE_ENV=previous;}
+});
 
 test('runtime v3 persistence receipts accept canonical vault records and reject version and ownership substitution',async()=>{
   const previous=process.env.NODE_ENV;process.env.NODE_ENV='test';

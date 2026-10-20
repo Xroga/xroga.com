@@ -1,17 +1,17 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "88207c4305f9a22af4ca08516ace5fdff2168344ad273b43c26f1471f16fc37b",
+  "reviewRegistrySha256": "433bce535ed4b936a9400dc8021be860a5dfa43ea6a90ba5d5d4f9249abcaf56",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 166,
-    "persistenceCandidates": 668,
+    "persistenceCandidates": 669,
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
-    "reviewedCandidates": 668,
+    "reviewedCandidates": 669,
     "unresolvedSafetyCandidates": 25,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 18
@@ -20,7 +20,7 @@
     "REVIEW_REQUIRED": 0,
     "SCOPED_BOUNDARY": 450,
     "NARROW_EXCEPTION": 40,
-    "NOT_PERSISTENCE": 153,
+    "NOT_PERSISTENCE": 154,
     "REVIEWED_GAP": 25
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 120,
-    "unresolvedCandidateBoundaries": 548,
+    "unresolvedCandidateBoundaries": 549,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -2936,6 +2936,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "cd1446484dac3edddad2"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "b7eec6bff4d584c2f8e3"
       },
       {
@@ -3356,11 +3360,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6d5ec008c1680918c559"
+        "id": "d84c16808fc87aa62772"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "89afd904cb0f3d4bf6ac"
+        "id": "ad15f1539585635cb726"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4908,6 +4912,10 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "cd1446484dac3edddad2"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "b7eec6bff4d584c2f8e3"
       },
       {
@@ -5280,11 +5288,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "6d5ec008c1680918c559"
+        "id": "d84c16808fc87aa62772"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "89afd904cb0f3d4bf6ac"
+        "id": "ad15f1539585635cb726"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -5645,11 +5653,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 668,
+    "currentCallers": 669,
     "structuredVerified": 120,
-    "structuredUnproven": 548,
+    "structuredUnproven": 549,
     "manualUnresolved": 25,
-    "manualUnsupported": 523,
+    "manualUnsupported": 524,
     "agreedVerified": 120,
     "proofAwaitingManualReconciliation": 0
   },
@@ -14922,6 +14930,27 @@
       }
     },
     {
+      "id": "cd1446484dac3edddad2",
+      "path": "backend/src/services/integrations/credentialVaultRuntime.ts",
+      "line": 27,
+      "enclosing": "runtimeCredentialVault",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "3d846cec4c28052cb36f273516ed9173ca9796ead6c2c313b36a4b47ec05271f",
+      "semanticReview": {
+        "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
+        "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/credentialVaultRuntime.ts",
+            "marker": "export function runtimeCredentialVault"
+          }
+        ]
+      }
+    },
+    {
       "id": "b7eec6bff4d584c2f8e3",
       "path": "backend/src/services/integrations/cryptoProvider.ts",
       "line": 29,
@@ -17364,7 +17393,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
+      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in encodeVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -17385,7 +17414,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
+      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in parseVercelRefreshLease. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -17406,7 +17435,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
+      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
       "semanticReview": {
         "authority": "Existing authenticated Vercel, integration and Supabase OAuth handlers use req.userId and the admitted pipeline uses opts.userId. Publishing status and GitHub deployment helpers propagate that same actor. Delivery reads the authenticated owned revision before using its userId, not model/body identity. getVercelToken/getVercelUsername/isVercelConnected/live verification and project selection share loadVercelConnection exact owner/provider predicates. Reads never revive an absent or revoked canonical connection from mirrors. Single-flight is keyed by owner. Refresh leases update only that owner/provider/observed refresh token; cleanup restores only its exact marker. Native refresh observes the canonical revision and known account before provider response and the atomic save CAS retains both. Only clearVercelConnection invokes private mirror deletion using the original authenticated context owner. Actual distinct-account rows, concurrent same-owner and foreign-owner refresh, foreign input denial before transport, held response against authenticated disconnect, unchanged tombstone/foreign row and exact foreign mirror bytes exercise these seven persistence boundaries.\nThe sole production clearVercelConnection caller is authenticated Vercel disconnect with the original req.tenantContext. requireTenantContext and getTenantSupabaseAdmin both validate that original issued context before the fixed owner/vercel upsert. The owner-inclusive conflict key cannot revoke another account. Empty token, fresh revision and revoked tombstone are persisted before clearing the same context PKCE session and owner-namespace mirror. Actual authenticated disconnect, other-owner retention and stale refresh persistence denial exercise this function. No body field can choose its actor or provider.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Read/factory, lease update/cleanup/factory and private mirror deletion/factory only. Four original connection-save/storage boundaries remain unproven. Synthetic provider transport is not live provider account validation, external revocation, deployment authority,009 encryption or010 egress proof.\nTwo canonical revocation DB/factory callers only. Actual own disconnect and foreign-owner retention plus late refresh/mirror denial. Remaining token loaders, remote account consumers, refresh/storage calls, complete provider revocation and009 lifecycle are independent and stay open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -17427,7 +17456,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
+      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
       "semanticReview": {
         "authority": "Existing authenticated Vercel, integration and Supabase OAuth handlers use req.userId and the admitted pipeline uses opts.userId. Publishing status and GitHub deployment helpers propagate that same actor. Delivery reads the authenticated owned revision before using its userId, not model/body identity. getVercelToken/getVercelUsername/isVercelConnected/live verification and project selection share loadVercelConnection exact owner/provider predicates. Reads never revive an absent or revoked canonical connection from mirrors. Single-flight is keyed by owner. Refresh leases update only that owner/provider/observed refresh token; cleanup restores only its exact marker. Native refresh observes the canonical revision and known account before provider response and the atomic save CAS retains both. Only clearVercelConnection invokes private mirror deletion using the original authenticated context owner. Actual distinct-account rows, concurrent same-owner and foreign-owner refresh, foreign input denial before transport, held response against authenticated disconnect, unchanged tombstone/foreign row and exact foreign mirror bytes exercise these seven persistence boundaries.\nThe sole production clearVercelConnection caller is authenticated Vercel disconnect with the original req.tenantContext. requireTenantContext and getTenantSupabaseAdmin both validate that original issued context before the fixed owner/vercel upsert. The owner-inclusive conflict key cannot revoke another account. Empty token, fresh revision and revoked tombstone are persisted before clearing the same context PKCE session and owner-namespace mirror. Actual authenticated disconnect, other-owner retention and stale refresh persistence denial exercise this function. No body field can choose its actor or provider.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Read/factory, lease update/cleanup/factory and private mirror deletion/factory only. Four original connection-save/storage boundaries remain unproven. Synthetic provider transport is not live provider account validation, external revocation, deployment authority,009 encryption or010 egress proof.\nTwo canonical revocation DB/factory callers only. Actual own disconnect and foreign-owner retention plus late refresh/mirror denial. Remaining token loaders, remote account consumers, refresh/storage calls, complete provider revocation and009 lifecycle are independent and stay open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -17448,7 +17477,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
+      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in buildVercelAuthorizeUrl. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -17469,7 +17498,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
+      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in parseVercelOAuthState. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -17490,7 +17519,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
+      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
       "semanticReview": {
         "authority": "Existing authenticated Vercel, integration and Supabase OAuth handlers use req.userId and the admitted pipeline uses opts.userId. Publishing status and GitHub deployment helpers propagate that same actor. Delivery reads the authenticated owned revision before using its userId, not model/body identity. getVercelToken/getVercelUsername/isVercelConnected/live verification and project selection share loadVercelConnection exact owner/provider predicates. Reads never revive an absent or revoked canonical connection from mirrors. Single-flight is keyed by owner. Refresh leases update only that owner/provider/observed refresh token; cleanup restores only its exact marker. Native refresh observes the canonical revision and known account before provider response and the atomic save CAS retains both. Only clearVercelConnection invokes private mirror deletion using the original authenticated context owner. Actual distinct-account rows, concurrent same-owner and foreign-owner refresh, foreign input denial before transport, held response against authenticated disconnect, unchanged tombstone/foreign row and exact foreign mirror bytes exercise these seven persistence boundaries.\nThe sole production clearVercelConnection caller is authenticated Vercel disconnect with the original req.tenantContext. requireTenantContext and getTenantSupabaseAdmin both validate that original issued context before the fixed owner/vercel upsert. The owner-inclusive conflict key cannot revoke another account. Empty token, fresh revision and revoked tombstone are persisted before clearing the same context PKCE session and owner-namespace mirror. Actual authenticated disconnect, other-owner retention and stale refresh persistence denial exercise this function. No body field can choose its actor or provider.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Read/factory, lease update/cleanup/factory and private mirror deletion/factory only. Four original connection-save/storage boundaries remain unproven. Synthetic provider transport is not live provider account validation, external revocation, deployment authority,009 encryption or010 egress proof.\nTwo canonical revocation DB/factory callers only. Actual own disconnect and foreign-owner retention plus late refresh/mirror denial. Remaining token loaders, remote account consumers, refresh/storage calls, complete provider revocation and009 lifecycle are independent and stay open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -17511,7 +17540,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
+      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
       "semanticReview": {
         "authority": "Existing authenticated Vercel, integration and Supabase OAuth handlers use req.userId and the admitted pipeline uses opts.userId. Publishing status and GitHub deployment helpers propagate that same actor. Delivery reads the authenticated owned revision before using its userId, not model/body identity. getVercelToken/getVercelUsername/isVercelConnected/live verification and project selection share loadVercelConnection exact owner/provider predicates. Reads never revive an absent or revoked canonical connection from mirrors. Single-flight is keyed by owner. Refresh leases update only that owner/provider/observed refresh token; cleanup restores only its exact marker. Native refresh observes the canonical revision and known account before provider response and the atomic save CAS retains both. Only clearVercelConnection invokes private mirror deletion using the original authenticated context owner. Actual distinct-account rows, concurrent same-owner and foreign-owner refresh, foreign input denial before transport, held response against authenticated disconnect, unchanged tombstone/foreign row and exact foreign mirror bytes exercise these seven persistence boundaries.\nThe sole production clearVercelConnection caller is authenticated Vercel disconnect with the original req.tenantContext. requireTenantContext and getTenantSupabaseAdmin both validate that original issued context before the fixed owner/vercel upsert. The owner-inclusive conflict key cannot revoke another account. Empty token, fresh revision and revoked tombstone are persisted before clearing the same context PKCE session and owner-namespace mirror. Actual authenticated disconnect, other-owner retention and stale refresh persistence denial exercise this function. No body field can choose its actor or provider.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Read/factory, lease update/cleanup/factory and private mirror deletion/factory only. Four original connection-save/storage boundaries remain unproven. Synthetic provider transport is not live provider account validation, external revocation, deployment authority,009 encryption or010 egress proof.\nTwo canonical revocation DB/factory callers only. Actual own disconnect and foreign-owner retention plus late refresh/mirror denial. Remaining token loaders, remote account consumers, refresh/storage calls, complete provider revocation and009 lifecycle are independent and stay open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -17532,7 +17561,7 @@
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
+      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
       "semanticReview": {
         "authority": "Existing authenticated Vercel, integration and Supabase OAuth handlers use req.userId and the admitted pipeline uses opts.userId. Publishing status and GitHub deployment helpers propagate that same actor. Delivery reads the authenticated owned revision before using its userId, not model/body identity. getVercelToken/getVercelUsername/isVercelConnected/live verification and project selection share loadVercelConnection exact owner/provider predicates. Reads never revive an absent or revoked canonical connection from mirrors. Single-flight is keyed by owner. Refresh leases update only that owner/provider/observed refresh token; cleanup restores only its exact marker. Native refresh observes the canonical revision and known account before provider response and the atomic save CAS retains both. Only clearVercelConnection invokes private mirror deletion using the original authenticated context owner. Actual distinct-account rows, concurrent same-owner and foreign-owner refresh, foreign input denial before transport, held response against authenticated disconnect, unchanged tombstone/foreign row and exact foreign mirror bytes exercise these seven persistence boundaries.\nThe sole production clearVercelConnection caller is authenticated Vercel disconnect with the original req.tenantContext. requireTenantContext and getTenantSupabaseAdmin both validate that original issued context before the fixed owner/vercel upsert. The owner-inclusive conflict key cannot revoke another account. Empty token, fresh revision and revoked tombstone are persisted before clearing the same context PKCE session and owner-namespace mirror. Actual authenticated disconnect, other-owner retention and stale refresh persistence denial exercise this function. No body field can choose its actor or provider.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Read/factory, lease update/cleanup/factory and private mirror deletion/factory only. Four original connection-save/storage boundaries remain unproven. Synthetic provider transport is not live provider account validation, external revocation, deployment authority,009 encryption or010 egress proof.\nTwo canonical revocation DB/factory callers only. Actual own disconnect and foreign-owner retention plus late refresh/mirror denial. Remaining token loaders, remote account consumers, refresh/storage calls, complete provider revocation and009 lifecycle are independent and stay open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -17545,15 +17574,15 @@
       }
     },
     {
-      "id": "6d5ec008c1680918c559",
+      "id": "d84c16808fc87aa62772",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 719,
+      "line": 717,
       "enclosing": "clearVercelConnection",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
+      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
       "semanticReview": {
         "authority": "Existing authenticated Vercel, integration and Supabase OAuth handlers use req.userId and the admitted pipeline uses opts.userId. Publishing status and GitHub deployment helpers propagate that same actor. Delivery reads the authenticated owned revision before using its userId, not model/body identity. getVercelToken/getVercelUsername/isVercelConnected/live verification and project selection share loadVercelConnection exact owner/provider predicates. Reads never revive an absent or revoked canonical connection from mirrors. Single-flight is keyed by owner. Refresh leases update only that owner/provider/observed refresh token; cleanup restores only its exact marker. Native refresh observes the canonical revision and known account before provider response and the atomic save CAS retains both. Only clearVercelConnection invokes private mirror deletion using the original authenticated context owner. Actual distinct-account rows, concurrent same-owner and foreign-owner refresh, foreign input denial before transport, held response against authenticated disconnect, unchanged tombstone/foreign row and exact foreign mirror bytes exercise these seven persistence boundaries.\nThe sole production clearVercelConnection caller is authenticated Vercel disconnect with the original req.tenantContext. requireTenantContext and getTenantSupabaseAdmin both validate that original issued context before the fixed owner/vercel upsert. The owner-inclusive conflict key cannot revoke another account. Empty token, fresh revision and revoked tombstone are persisted before clearing the same context PKCE session and owner-namespace mirror. Actual authenticated disconnect, other-owner retention and stale refresh persistence denial exercise this function. No body field can choose its actor or provider.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Read/factory, lease update/cleanup/factory and private mirror deletion/factory only. Four original connection-save/storage boundaries remain unproven. Synthetic provider transport is not live provider account validation, external revocation, deployment authority,009 encryption or010 egress proof.\nTwo canonical revocation DB/factory callers only. Actual own disconnect and foreign-owner retention plus late refresh/mirror denial. Remaining token loaders, remote account consumers, refresh/storage calls, complete provider revocation and009 lifecycle are independent and stay open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -17566,15 +17595,15 @@
       }
     },
     {
-      "id": "89afd904cb0f3d4bf6ac",
+      "id": "ad15f1539585635cb726",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 720,
+      "line": 718,
       "enclosing": "clearVercelConnection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
+      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
       "semanticReview": {
         "authority": "Existing authenticated Vercel, integration and Supabase OAuth handlers use req.userId and the admitted pipeline uses opts.userId. Publishing status and GitHub deployment helpers propagate that same actor. Delivery reads the authenticated owned revision before using its userId, not model/body identity. getVercelToken/getVercelUsername/isVercelConnected/live verification and project selection share loadVercelConnection exact owner/provider predicates. Reads never revive an absent or revoked canonical connection from mirrors. Single-flight is keyed by owner. Refresh leases update only that owner/provider/observed refresh token; cleanup restores only its exact marker. Native refresh observes the canonical revision and known account before provider response and the atomic save CAS retains both. Only clearVercelConnection invokes private mirror deletion using the original authenticated context owner. Actual distinct-account rows, concurrent same-owner and foreign-owner refresh, foreign input denial before transport, held response against authenticated disconnect, unchanged tombstone/foreign row and exact foreign mirror bytes exercise these seven persistence boundaries.\nThe sole production clearVercelConnection caller is authenticated Vercel disconnect with the original req.tenantContext. requireTenantContext and getTenantSupabaseAdmin both validate that original issued context before the fixed owner/vercel upsert. The owner-inclusive conflict key cannot revoke another account. Empty token, fresh revision and revoked tombstone are persisted before clearing the same context PKCE session and owner-namespace mirror. Actual authenticated disconnect, other-owner retention and stale refresh persistence denial exercise this function. No body field can choose its actor or provider.",
         "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Read/factory, lease update/cleanup/factory and private mirror deletion/factory only. Four original connection-save/storage boundaries remain unproven. Synthetic provider transport is not live provider account validation, external revocation, deployment authority,009 encryption or010 egress proof.\nTwo canonical revocation DB/factory callers only. Actual own disconnect and foreign-owner retention plus late refresh/mirror denial. Remaining token loaders, remote account consumers, refresh/storage calls, complete provider revocation and009 lifecycle are independent and stay open. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -19556,7 +19585,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "668cec449c67ee92dab92c08bd96e5587665c04824235be4ecc1756cb0e08c10",
+      "sourceSha256": "8754a9c139247caff08038eed891e96343796b9019ddb379e7e4596c02dd3fa2",
       "semanticReview": {
         "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",
         "reason": "Current-source Phase3 tests and source-bound CI are required for this added expression. Recording it prevents a stale or unexplained service-role boundary while keeping all original acceptance scopes unchanged.",
@@ -19577,7 +19606,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "668cec449c67ee92dab92c08bd96e5587665c04824235be4ecc1756cb0e08c10",
+      "sourceSha256": "8754a9c139247caff08038eed891e96343796b9019ddb379e7e4596c02dd3fa2",
       "semanticReview": {
         "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",
         "reason": "Current-source Phase3 tests and source-bound CI are required for this added expression. Recording it prevents a stale or unexplained service-role boundary while keeping all original acceptance scopes unchanged.",
@@ -19598,7 +19627,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "668cec449c67ee92dab92c08bd96e5587665c04824235be4ecc1756cb0e08c10",
+      "sourceSha256": "8754a9c139247caff08038eed891e96343796b9019ddb379e7e4596c02dd3fa2",
       "semanticReview": {
         "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",
         "reason": "Current-source Phase3 tests and source-bound CI are required for this added expression. Recording it prevents a stale or unexplained service-role boundary while keeping all original acceptance scopes unchanged.",

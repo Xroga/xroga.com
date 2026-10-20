@@ -68,7 +68,7 @@ export function registerOperationsProviderBudgetTests(
     assert.equal(committed.error, null);
     assert.equal(committed.data.reduce((sum, row) => sum + Number(row.reserved_micro_usd), 0), 700_000);
 
-    assert.equal((await admin.from('profiles').update({ role: 'user' }).eq('id', requester.id)).error, null);
+    assert.equal((await admin.from('profiles').update({ role: 'member' }).eq('id', requester.id)).error, null);
     assert.equal((await admin.rpc('reserve_operations_provider_budget', args(randomUUID(), 1_000))).error?.code, '42501');
     assert.equal((await admin.from('profiles').update({ role: 'admin' }).eq('id', requester.id)).error, null);
     assert.equal((await admin.from('operations_action_approvals').update({ expires_at: new Date(Date.now() - 1000).toISOString() })

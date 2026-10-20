@@ -76,6 +76,7 @@ const pureModules = [
   ['backend/src/security/authority/digest.ts', 'export function canonicalAuthorityValue'],
   ['backend/src/services/integrations/cryptoProvider.ts', 'export class DevelopmentCryptoProvider'],
   ['backend/src/services/integrations/credentialVault.ts', 'export class CredentialVault'],
+  ['backend/src/services/integrations/credentialVaultRuntime.ts', 'export function runtimeCredentialVault'],
   ['backend/src/services/integrations/googleCloudKmsCryptoProvider.ts', 'export class GoogleCloudKmsCryptoProvider'],
 ];
 for (const [path, marker] of pureModules) {

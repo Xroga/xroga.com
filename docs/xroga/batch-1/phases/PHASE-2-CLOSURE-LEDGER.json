@@ -4016,7 +4016,7 @@
       "id": "B1-P2-9557fb9d0f7a38f5",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/vercelAuth.ts",
-      "sourceSha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
+      "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
       "baselineCallerIds": [
         "c47cd353f14ba5046be8",
         "2d2eae5cbd895d303fc1",
@@ -4038,8 +4038,8 @@
         "090a1378d41f5f16f7f8",
         "12db6c0413e72e7d991c",
         "23a6e19d497634606d2c",
-        "6d5ec008c1680918c559",
-        "89afd904cb0f3d4bf6ac"
+        "d84c16808fc87aa62772",
+        "ad15f1539585635cb726"
       ],
       "mapping": [
         {
@@ -4110,14 +4110,14 @@
         {
           "baselineCallerId": "bf911ba6ff5494563807",
           "currentCallerIds": [
-            "6d5ec008c1680918c559"
+            "d84c16808fc87aa62772"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "6a995df3c50a346f6d81",
           "currentCallerIds": [
-            "89afd904cb0f3d4bf6ac"
+            "ad15f1539585635cb726"
           ],
           "change": "RETAINED"
         }
@@ -4127,7 +4127,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-9557fb9d0f7a38f5",
-        "sourceSha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
+        "sourceSha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
         "executionStatus": "IN_PROGRESS",
         "finding": "NATIVE_REFRESH_DROPPED_KNOWN_PROVIDER_ACCOUNT_FIXED_PENDING_ACTUAL_DATABASE_PROOF",
         "originalCriteria": [

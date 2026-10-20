@@ -501,13 +501,11 @@ export async function refreshVercelOAuthToken(
   if (!vercelOAuthConfigured()) {
     throw new Error('Vercel OAuth not configured');
   }
-  const observed = admittedRevision ? {
-    credential_revision: admittedRevision,
-    refresh_token: expectedRefreshToken,
-    provider_user_id: undefined,
-  }
-    : await loadVercelConnection(userId);
-  if (!observed?.credential_revision || observed.refresh_token !== expectedRefreshToken) {
+  const observed = await loadVercelConnection(userId);
+  if (!observed?.credential_revision || observed.refresh_token !== refreshToken
+    || (admittedRevision !== undefined
+      ? observed.credential_revision !== admittedRevision || observed.refresh_lease_marker !== expectedRefreshToken
+      : observed.refresh_token !== expectedRefreshToken)) {
     throw new Error('Vercel connection changed before refresh. Reconnect to continue.');
   }
   const body = new URLSearchParams({

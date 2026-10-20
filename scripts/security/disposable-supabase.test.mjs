@@ -46,6 +46,7 @@ test('generated per-run Auth signing key admits sign and verify operations',()=>
 
 test('disposable file delivery keys cannot be inherited from another environment',()=>{
   assert.throws(()=>assertDisposableConfiguration({...safe,FILE_DELIVERY_SIGNING_KEY:'forbidden-inherited-key'}));
+  assert.throws(()=>assertDisposableConfiguration({...safe,XROGA_TEST_CREDENTIAL_KEK:'forbidden-inherited-key'}));
 });
 
 test('API role tokens verify against the same configured ES256 key, not a legacy secret',()=>{

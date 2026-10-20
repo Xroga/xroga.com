@@ -22,7 +22,16 @@ export function runtimeCredentialVault(): CredentialVault {
     return new CredentialVault(managedProvider);
   }
   if (process.env.NODE_ENV === 'test') {
-    testProvider ??= new DevelopmentCryptoProvider('ephemeral-test', new Map([['ephemeral-test', randomBytes(32)]]));
+    if (!testProvider) {
+      const configuredKey = process.env.XROGA_TEST_CREDENTIAL_KEK;
+      const key = configuredKey ? Buffer.from(configuredKey, 'base64url') : randomBytes(32);
+      try {
+        if (key.length !== 32 || (configuredKey && key.toString('base64url') !== configuredKey)) {
+          throw new Error('Invalid ephemeral test credential key.');
+        }
+        testProvider = new DevelopmentCryptoProvider('ephemeral-test', new Map([['ephemeral-test', key]]));
+      } finally { key.fill(0); }
+    }
     return new CredentialVault(testProvider);
   }
   if (process.env.NODE_ENV === 'development' && process.env.XROGA_DEV_CREDENTIAL_KEK) {
