@@ -70,7 +70,7 @@ export function WorkspaceStartHeader() {
     <header className={styles.hero} data-testid="workspace-start-header">
       <h1 className={styles.superIntelligence}>Super Intelligence</h1>
       <div className={styles.taglineRow}>
-        <p className={styles.tagline}>One AI workspace for every kind of work.</p>
+        <p className={styles.tagline} aria-label="One AI workspace for every kind of work.">One AI workspace for every kind of work.</p>
       </div>
     </header>
   );

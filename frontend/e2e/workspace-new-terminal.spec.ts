@@ -90,7 +90,7 @@ test('cards preserve drafts and conversation removes all starter styling', async
   await expect(cards).toHaveCount(0);
   await expect(input).toHaveCount(1);
   await expect(page.getByTestId('persistent-terminal-dock')).not.toHaveClass(/WorkspaceNewTerminal_dock/);
-  await page.getByRole('button', { name: /New workspace|New terminal/i }).first().click();
+  await page.getByRole('button', { name: /New Work|New terminal/i }).first().click();
   // Guest New Terminal remains account-gated; the redesign cannot bypass it.
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(cards).toHaveCount(0);
@@ -153,7 +153,7 @@ test('solid model and plus menus are monochrome and mobile uses only a model sym
   await page.goto('/workspace');
   await expect(page.getByTestId('workspace-start-header')).toBeVisible();
   await expect(page.locator('.xv-workspace-shell')).toHaveCSS('background-color', 'rgb(0, 0, 0)');
-  const model = page.getByRole('button', { name: 'Black Hole V∞ model', exact: true });
+  const model = page.getByRole('button', { name: 'Automatic model and tool routing', exact: true });
   await expect(model.locator('span')).toBeVisible();
   await expect(page.getByTestId('mobile-model-icon')).toBeHidden();
   await model.click();
@@ -198,7 +198,7 @@ test('model app preference saves through the existing policy API and keeps failu
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, mode }) });
   });
   await page.goto('/workspace');
-  const model = page.getByRole('button', { name: 'Black Hole V∞ model', exact: true });
+  const model = page.getByRole('button', { name: 'Automatic model and tool routing', exact: true });
   await model.click();
   const setting = page.getByLabel('Connected app permissions', { exact: true });
   await expect(setting).toBeEnabled();
@@ -225,7 +225,7 @@ test('compact sidebar keeps utilities and primary destinations in two aligned ro
   const bounds = await sidebar.boundingBox();
   expect(Math.max(...boxes.map(box => box.right))).toBeLessThanOrEqual(bounds!.x + bounds!.width);
   await expect(sidebar.getByRole('link', { name: 'Dashboard', exact: true })).toHaveCount(1);
-  await expect(sidebar.getByRole('button', { name: 'New workspace', exact: true })).toBeVisible();
+  await expect(sidebar.getByRole('button', { name: 'New Work', exact: true })).toBeVisible();
   await sidebar.getByRole('button', { name: 'Close sidebar', exact: true }).click();
   await expect(sidebar).toHaveClass(/is-collapsed/);
   await expect(sidebar.getByRole('link', { name: 'Dashboard', exact: true })).toBeVisible();
@@ -249,9 +249,10 @@ test('plus menu follows the empty or working composer and model stays uncovered'
   let composer = await page.locator('.xv-chatbar-solid').boundingBox();
   let menu = await page.getByRole('dialog', { name: 'Composer actions' }).boundingBox();
   expect(menu!.y).toBeGreaterThan(composer!.y + composer!.height);
-  expect(Math.abs(menu!.width - composer!.width)).toBeLessThan(2);
+  const frame = await page.locator('.xv-kimi-composer-frame').boundingBox();
+  expect(Math.abs(menu!.width - frame!.width)).toBeLessThan(2);
   await page.keyboard.press('Escape');
-  const model = page.getByRole('button', { name: 'Black Hole V∞ model', exact: true });
+  const model = page.getByRole('button', { name: 'Automatic model and tool routing', exact: true });
   await model.click();
   const panel = await page.getByTestId('black-hole-model-panel').boundingBox();
   const trigger = await model.boundingBox();
@@ -265,4 +266,37 @@ test('plus menu follows the empty or working composer and model stays uncovered'
   composer = await page.locator('.xv-chatbar-solid').boundingBox();
   menu = await page.getByRole('dialog', { name: 'Composer actions' }).boundingBox();
   expect(menu!.y + menu!.height).toBeLessThan(composer!.y);
+});
+
+test('mobile tagline stays on one line and tool picks are editable, removable and not auto-sent', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  let sends = 0;
+  page.on('request', request => { if (request.url().includes('/api/guest/chat')) sends++; });
+  await page.goto('/workspace');
+  const tagline = page.getByTestId('workspace-start-header').locator('p');
+  await expect(tagline).toHaveText('One AI workspace for every kind of work.');
+  expect(await tagline.evaluate(el => getComputedStyle(el).whiteSpace)).toBe('nowrap');
+  await page.getByRole('button', { name: 'More composer actions' }).click();
+  const menu = page.getByRole('dialog', { name: 'Composer actions' });
+  await expect(menu.getByRole('button', { name: /Library/ })).toBeVisible();
+  await menu.getByRole('button', { name: /Library/ }).click();
+  await menu.getByRole('button', { name: /Summarize files/ }).click();
+  await expect(page.locator('[data-terminal-composer]')).toHaveValue('Summarize these files and list the important findings: ');
+  await expect(page.getByLabel('Selected composer tools')).toContainText('Library');
+  await page.getByRole('button', { name: 'Remove Library selection' }).click();
+  await expect(page.getByLabel('Selected composer tools')).toHaveCount(0);
+  await expect(page.locator('[data-terminal-composer]')).toHaveValue('');
+  expect(sends).toBe(0);
+});
+
+test('search dialog escapes workspace stacking context and has an opaque foreground', async ({ page }) => {
+  await page.goto('/workspace');
+  const search = page.getByRole('button', { name: 'Search', exact: true }).first();
+  await search.click();
+  const dialog = page.getByRole('dialog', { name: 'Search projects and chats' });
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toHaveCSS('background-color', 'rgb(25, 25, 25)');
+  expect(await dialog.evaluate(el => el.parentElement === document.body)).toBe(true);
+  await page.keyboard.press('Escape');
+  await expect(dialog).toHaveCount(0);
 });
