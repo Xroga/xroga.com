@@ -1,0 +1,1194 @@
+/* S05 · the capability universe. Global but scoped under .s5 so the section component and the design studio render
+   from one stylesheet. Rich ink base with two quiet lights (one behind the heading, one under the rails); compact
+   rounded tiles whose art carries the colour: thirteen compositions in one vocabulary (graphite panels, one paper
+   tone, thick round strokes, an accent pair per tile at full colour even at rest). [data-on] (hover, keyboard focus,
+   tap) lifts the surface, saturates the accents and plays each tile's own choreography. */
+.s5 {
+  --pearl: #f4f6fa;
+  --silver: #b4bdca;
+  --steel: #8792a3;
+  --hair: rgba(236, 240, 246, 0.08);
+  --hair-2: rgba(236, 240, 246, 0.14);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  /* settles without overshoot: product UI, not a toy */
+  --spring: cubic-bezier(0.2, 0.8, 0.25, 1);
+  --emerald: #26d98f;
+  --gold: #ffc247;
+  --coral: #ff6b57;
+  --lav: #b39dff;
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  overflow-x: clip;
+  scroll-margin-top: 88px;
+  padding: clamp(52px, 4vw, 72px) 0 clamp(64px, 5vw, 92px);
+  color: var(--pearl);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+/* the homepage stylesheet clears section backgrounds; re-assert ours with higher specificity (as S03 and S04 do) */
+.s5.s5.s5 {
+  background-color: #05070b !important;
+  background-image:
+    linear-gradient(180deg, #050607 0, rgba(5, 6, 7, 0) 160px),
+    radial-gradient(60% 22% at 30% 0%, rgba(90, 130, 230, 0.07), rgba(90, 130, 230, 0) 80%),
+    linear-gradient(180deg, #05070b 0%, #070a10 55%, #05070b 100%) !important;
+}
+/* static micro grain, so the ink reads as a material rather than a flat fill */
+.s5::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.s5.s5 :is(h2, h3, h4, p, span, b, li) {
+  text-shadow: none !important;
+}
+.s5.s5 :is(h2, h3, h4, p) {
+  z-index: auto !important;
+  margin: 0;
+}
+.s5.s5 :is(button, a) {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  isolation: auto !important;
+}
+.s5.s5 :is(button, a):hover {
+  transform: none !important;
+  filter: none !important;
+}
+.s5.s5 :is(ul, ol) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.s5 :focus-visible {
+  outline: 2px solid #a9c8ff;
+  outline-offset: 3px;
+}
+.s5-inner {
+  width: min(1312px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+/* ------------------------------------------------------------------ head */
+.s5-head {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+}
+.s5.s5 .s5-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12.5px;
+  font-weight: 650;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #93a0b4;
+}
+.s5-eyebrow::before {
+  content: '';
+  width: 30px;
+  height: 2px;
+  border-radius: 2px;
+  background: #6f9bff;
+}
+.s5.s5 .s5-title {
+  font-size: clamp(36px, 3.7vw, 58px);
+  font-weight: 620;
+  line-height: 1.06;
+  letter-spacing: -0.042em;
+  color: var(--pearl) !important;
+  text-wrap: balance;
+}
+.s5-title .s5-lead {
+  color: #f5f7fb;
+}
+/* the key phrase: one solid, quiet accent (no gradient) */
+.s5-title .s5-accent {
+  color: #9db9ff;
+}
+.s5.s5 .s5-lede {
+  max-width: 62rem;
+  font-size: clamp(17px, 0.88rem + 0.4vw, 20px);
+  font-weight: 500;
+  line-height: 1.5;
+  color: #aeb8c6;
+}
+
+/* ------------------------------------------------------------------ rails */
+.s5-rails {
+  display: grid;
+  gap: 16px;
+  margin-top: clamp(18px, 1.6vw, 26px);
+}
+.s5-rail {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.s5-railHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.s5.s5 .s5-railLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #a3aec0;
+}
+.s5-railLabel span {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: #66728a;
+}
+.s5-arrows {
+  display: flex;
+  gap: 8px;
+}
+.s5.s5 .s5-arrow {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(236, 240, 246, 0.05);
+  box-shadow: inset 0 0 0 1px var(--hair-2);
+  color: var(--pearl);
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    opacity 160ms ease;
+}
+.s5.s5 .s5-arrow:hover:not(:disabled) {
+  background: rgba(236, 240, 246, 0.12);
+}
+.s5.s5 .s5-arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.s5-arrow svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* the rail runs out to the right edge of the screen, so the next tile shows the row continues without a fade */
+.s5-track {
+  --tile-w: 300px;
+  --tile-h: 252px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: var(--tile-w);
+  gap: 14px;
+  margin-right: calc((100% - 100vw) / 2);
+  padding: 2px calc((100vw - 100%) / 2) 6px 2px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 2px;
+  scrollbar-width: none;
+  cursor: grab;
+}
+.s5.s5 .s5-track {
+  margin: -2px calc((100% - 100vw) / 2) 0 -2px;
+}
+.s5-track::-webkit-scrollbar {
+  display: none;
+}
+.s5-track[data-drag] {
+  scroll-snap-type: none;
+  cursor: grabbing;
+  user-select: none;
+}
+
+/* ------------------------------------------------------------------ tiles */
+.s5-tile {
+  --c3: var(--coral);
+  --c1r: color-mix(in oklab, var(--c1) 86%, #0b0f16);
+  --c2r: color-mix(in oklab, var(--c2) 86%, #0b0f16);
+  --c1d: color-mix(in oklab, var(--c1) 46%, #0b0f16);
+  --c2d: color-mix(in oklab, var(--c2) 46%, #0b0f16);
+  --notch: #0b0e14;
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+  height: var(--tile-h);
+  padding: 24px 24px 0;
+  overflow: hidden;
+  border-radius: 14px;
+  scroll-snap-align: start;
+  background: #0b0e14;
+  box-shadow: inset 0 0 0 1px rgba(236, 240, 246, 0.08);
+  transition:
+    background 180ms ease,
+    box-shadow 180ms ease;
+  cursor: default;
+}
+.s5-tile[data-on] {
+  --notch: #161a21;
+  background: #161a21;
+  box-shadow: inset 0 0 0 1px rgba(236, 240, 246, 0.14);
+}
+.s5.s5 .s5-tileTitle {
+  position: relative;
+  z-index: 1;
+  font-size: 20px;
+  font-weight: 640;
+  line-height: 1.2;
+  letter-spacing: -0.022em;
+  color: #ffffff;
+}
+.s5.s5 .s5-tileLine {
+  position: relative;
+  z-index: 1;
+  max-width: 27ch;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--silver);
+}
+.s5-art {
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* the art runs off the tile's lower edge, which also keeps it clear of two-line copy */
+  bottom: -8px;
+  z-index: 0;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  pointer-events: none;
+}
+.s5-art * {
+  transform-box: fill-box;
+}
+
+/* tile colour pairs: blue (electric, cobalt), cyan, violet and lavender, emerald, gold, coral */
+.s5-tile[data-id='travel'] { --c1: #31d0ff; --c2: #ffc247; }
+.s5-tile[data-id='mail'] { --c1: #b39dff; --c2: #7a4dff; }
+.s5-tile[data-id='crm'] { --c1: #26d98f; --c2: #31d0ff; }
+.s5-tile[data-id='payments'] { --c1: #ffc247; --c2: #ff6b57; }
+.s5-tile[data-id='templates'] { --c1: #8a5bff; --c2: #c4b4ff; }
+.s5-tile[data-id='triggers'] { --c1: #ff6b57; --c2: #4b7dff; }
+.s5-tile[data-id='coding'] { --c1: #4b8dff; --c2: #26d98f; }
+.s5-tile[data-id='apis'] { --c1: #31d0ff; --c2: #3561f0; }
+.s5-tile[data-id='web3'] { --c1: #7a4dff; --c2: #b39dff; }
+.s5-tile[data-id='hackathons'] { --c1: #ffc247; --c2: #ff6b57; }
+.s5-tile[data-id='desktop'] { --c1: #3561f0; --c2: #b39dff; }
+.s5-tile[data-id='infra'] { --c1: #31d0ff; --c2: #4b7dff; }
+.s5-tile[data-id='ops'] { --c1: #26d98f; --c2: #ff6b57; }
+
+/* ------------------------------------------------------------------ art vocabulary */
+.s5-p1 { fill: #19202a; }
+.s5-p2 { fill: #252d39; }
+.s5-p3 { fill: #36404f; }
+.s5-paper { fill: #eef2f8; }
+.s5-ink { fill: #283141; }
+.s5-inkL { fill: #b6bfcd; }
+.s5-inkL2 { fill: #d6dce5; }
+.s5-em { fill: var(--emerald); }
+.s5-gold { fill: #ffd36b; }
+.s5-goldL { fill: var(--gold); }
+.s5-goldD { fill: #d6961c; }
+.s5-c1 { fill: var(--c1r); transition: fill 220ms ease; }
+.s5-c2 { fill: var(--c2r); transition: fill 220ms ease; }
+.s5-c3 { fill: var(--c3); }
+.s5-c1d { fill: color-mix(in oklab, var(--c1) 64%, #0b0f16); }
+[data-on] .s5-c1 { fill: var(--c1); }
+[data-on] .s5-c2 { fill: var(--c2); }
+.s5-ink-s,
+.s5-barcode {
+  fill: none;
+  stroke: #283141;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.s5-contour {
+  fill: none;
+  stroke: #232b37;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.s5-glyph {
+  fill: none;
+  stroke: rgba(10, 12, 22, 0.5);
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.s5-p3 + .s5-glyph {
+  stroke: #9aa4b4;
+}
+.s5-paper.s5-glyph {
+  fill: none;
+}
+/* leaving a tile: every piece returns together, quickly and without overshoot (the staggered delays and springs
+   belong to the entrance only) */
+.s5-tile:not([data-on]) .s5-art * {
+  transition-delay: 0ms !important;
+  transition-duration: 280ms !important;
+  transition-timing-function: cubic-bezier(0.33, 0, 0.2, 1) !important;
+}
+/* a stroke that draws itself (paths carry pathLength="1") */
+.s5-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 640ms var(--ease) var(--d, 0ms);
+}
+[data-on] .s5-draw {
+  stroke-dashoffset: 0;
+}
+
+/* ---- 01 Travel & Bookings ---- */
+.s5-flightRest {
+  fill: none;
+  stroke: var(--c1d);
+  stroke-width: 3;
+  stroke-dasharray: 2 9;
+  stroke-linecap: round;
+}
+.s5-flight {
+  fill: none;
+  stroke: var(--c1);
+  stroke-width: 3;
+  stroke-linecap: round;
+  transition-duration: 950ms;
+  transition-timing-function: cubic-bezier(0.45, 0, 0.25, 1);
+}
+.s5-origin {
+  fill: none;
+  stroke: var(--c1r);
+  stroke-width: 3.5;
+}
+.s5-code {
+  fill: #232a35;
+}
+.s5-destRing {
+  fill: none;
+  stroke: var(--c2d);
+  stroke-width: 3;
+  transform-origin: center;
+  transition:
+    stroke 220ms ease 880ms,
+    transform 320ms var(--ease) 880ms;
+}
+[data-on] .s5-destRing {
+  stroke: var(--c2);
+  transform: scale(1.15);
+}
+/* the airliner rides the route (offset-path) and turns with it; at rest it waits at the origin */
+.s5-planeG {
+  transform-box: view-box;
+  /* waits just clear of the origin; lands just short of the destination ring */
+  offset-distance: 17%;
+  offset-rotate: auto;
+  scale: 1.2;
+}
+.s5-plane {
+  fill: #f2f5fa;
+}
+[data-on] .s5-planeG {
+  animation: s5Fly 950ms cubic-bezier(0.45, 0, 0.25, 1) forwards;
+}
+@keyframes s5Fly {
+  from { offset-distance: 17%; }
+  to { offset-distance: 73%; }
+}
+/* back at the origin after leaving, it fades in rather than flying backwards */
+.s5-tile:not([data-on]) .s5-planeG {
+  animation: s5Return 320ms ease both;
+}
+@keyframes s5Return {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ---- 02 Email & Calendars ---- */
+.s5-calPin { fill: #c9d1dd; }
+.s5-cell { fill: #222a35; }
+.s5-envFold {
+  fill: none;
+  stroke: rgba(10, 12, 22, 0.28);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+.s5-flap {
+  fill: color-mix(in oklab, var(--c1) 72%, #ffffff);
+  stroke: color-mix(in oklab, var(--c1) 60%, #0b0f16);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  transform-origin: 50% 0;
+  transition: transform 300ms var(--ease);
+}
+[data-on] .s5-flap {
+  transform: scaleY(-0.55);
+}
+/* the message leaves the open envelope and lands in its slot as an event */
+.s5-evChip {
+  fill: var(--c2);
+  opacity: 0;
+  transform: none;
+  transition:
+    transform 520ms cubic-bezier(0.45, 0, 0.25, 1) 220ms,
+    opacity 160ms ease 220ms;
+}
+[data-on] .s5-evChip {
+  opacity: 1;
+  transform: translate(156px, 4px) scale(0.86, 1.66);
+}
+.s5-slotHl {
+  fill: var(--c2);
+  opacity: 0;
+  transition: opacity 200ms ease 720ms;
+}
+[data-on] .s5-slotHl {
+  opacity: 1;
+}
+[data-on] .s5-evChip {
+  transition:
+    transform 520ms cubic-bezier(0.45, 0, 0.25, 1) 220ms,
+    opacity 160ms ease 220ms;
+  animation: s5ChipOut 160ms ease 760ms forwards;
+}
+@keyframes s5ChipOut {
+  to { opacity: 0; }
+}
+
+/* ---- 03 CRM & Support ---- */
+.s5-link-rest {
+  fill: none;
+  stroke: #262d38;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.s5-link {
+  fill: none;
+  stroke: var(--c1);
+  stroke-width: 4;
+  stroke-linecap: round;
+  --d: 120ms;
+}
+.s5-deal {
+  transition: transform 640ms var(--spring) 260ms;
+}
+[data-on] .s5-deal {
+  transform: translate(50px, 38px);
+}
+.s5-contact {
+  transition: transform 420ms var(--spring);
+}
+[data-on] .s5-contact {
+  transform: translateY(-5px);
+}
+.s5-tag {
+  fill: color-mix(in oklab, var(--c1) 34%, #eef2f8);
+}
+.s5-status {
+  fill: #c3cad6;
+  transform-origin: center;
+  transition:
+    fill 200ms ease 760ms,
+    transform 300ms var(--spring) 760ms;
+}
+[data-on] .s5-status {
+  fill: var(--c1);
+  transform: scale(1.25);
+}
+
+/* ---- 04 Payments & Accounting ---- */
+.s5-card {
+  transform-origin: center;
+  transform: translateY(4px) rotate(-6deg);
+  transition: transform 480ms var(--ease);
+}
+[data-on] .s5-card {
+  transform: translateX(-4px);
+}
+.s5-chip { fill: #b8862a; }
+.s5-wave { fill: none; stroke: rgba(10, 12, 22, 0.32); stroke-width: 3.2; stroke-linecap: round; }
+.s5-cardline { fill: rgba(10, 12, 22, 0.28); }
+.s5-rule { fill: #d6dce5; }
+.s5-lrow {
+  transform: translateX(var(--dx));
+  transition: transform 500ms var(--spring) calc(140ms + var(--i) * 70ms);
+}
+[data-on] .s5-lrow {
+  transform: none;
+}
+.s5-total {
+  transform-origin: 100% 50%;
+  transform: scaleX(0.55);
+  transition:
+    transform 420ms var(--ease) 460ms,
+    fill 220ms ease;
+}
+[data-on] .s5-total {
+  transform: none;
+}
+.s5-paid {
+  fill: #dfe5ee;
+  transform-origin: center;
+  transition:
+    fill 200ms ease 700ms,
+    transform 320ms var(--spring) 700ms;
+}
+[data-on] .s5-paid {
+  fill: var(--c1);
+  transform: scale(1.12);
+}
+.s5-tick {
+  fill: none;
+  stroke: #283141;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  --d: 780ms;
+}
+
+/* ---- 05 Workflow Templates ---- */
+.s5-frame {
+  fill: none;
+  stroke: var(--c2d);
+  stroke-width: 2.5;
+  stroke-dasharray: 6 7;
+  transition: stroke 240ms ease 560ms;
+}
+[data-on] .s5-frame {
+  stroke: var(--c2);
+}
+.s5-slot {
+  fill: none;
+  stroke: #303846;
+  stroke-width: 2;
+  stroke-dasharray: 4 5;
+}
+.s5-mod {
+  opacity: var(--o);
+  transform: translate(var(--tx), var(--ty));
+  transition:
+    transform 420ms var(--ease) calc(var(--i) * 140ms),
+    opacity 300ms ease calc(var(--i) * 140ms);
+}
+[data-on] .s5-mod {
+  opacity: 1;
+  transform: none;
+}
+.s5-preset {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 220ms ease,
+    transform 320ms var(--spring);
+}
+[data-on] .s5-preset {
+  opacity: 1;
+  transform: none;
+  transition-delay: 720ms;
+}
+
+/* ---- 06 Workflows & Triggers ---- */
+.s5-sched {
+  fill: none;
+  stroke: var(--c1d);
+  stroke-width: 3;
+  stroke-dasharray: 3 9;
+  stroke-linecap: round;
+  transform-origin: center;
+}
+[data-on] .s5-sched {
+  stroke: var(--c1r);
+  animation: s5Spin 7s linear infinite;
+}
+@keyframes s5Spin {
+  to { transform: rotate(360deg); }
+}
+.s5-wire {
+  fill: none;
+  stroke: #303946;
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+.s5-wire-off {
+  stroke-dasharray: 2 9;
+}
+.s5-branch {
+  fill: none;
+  stroke: var(--c2);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+.s5-branch2 {
+  --d: 380ms;
+}
+.s5-trig {
+  transform-origin: center;
+}
+
+.s5-cond {
+  fill: #252d39;
+  stroke: var(--c2d);
+  stroke-width: 3;
+  transform-origin: center;
+  transform: rotate(45deg);
+  transition:
+    transform 420ms var(--spring) 260ms,
+    fill 220ms ease 260ms,
+    stroke 220ms ease 260ms;
+}
+[data-on] .s5-cond {
+  transform: rotate(135deg);
+  fill: var(--c2);
+  stroke: var(--c2);
+}
+.s5-outA {
+  transform-origin: center;
+  transition:
+    transform 340ms var(--spring) 640ms,
+    fill 220ms ease 640ms;
+}
+[data-on] .s5-outA {
+  transform: scale(1.06);
+}
+.s5-dim {
+  opacity: 0.6;
+}
+.s5-sig {
+  fill: #ffffff;
+  opacity: 0;
+  transform-box: view-box;
+}
+[data-on] .s5-sig {
+  animation: s5Sig 1800ms cubic-bezier(0.45, 0, 0.3, 1) 200ms infinite;
+}
+@keyframes s5Sig {
+  0% { opacity: 0; transform: translate(86px, 96px); }
+  6% { opacity: 1; }
+  30% { transform: translate(132px, 96px); }
+  40% { transform: translate(150px, 96px); }
+  50% { transform: translate(168px, 96px); }
+  62% { transform: translate(194px, 76px); }
+  72% { transform: translate(218px, 54px); }
+  80% { opacity: 1; transform: translate(240px, 52px); }
+  86%, 100% { opacity: 0; transform: translate(244px, 52px); }
+}
+
+/* ---- 07 Coding & Repositories ---- */
+.s5-dotR { fill: var(--coral); }
+.s5-dotY { fill: var(--gold); }
+.s5-dotG { fill: var(--emerald); }
+.s5-tab { fill: #19202a; }
+.s5-tree { fill: #141a22; }
+.s5-treeTxt { fill: #3c4657; }
+.s5-treeSel { fill: color-mix(in oklab, var(--c1) 22%, #19202a); }
+.s5-lnum { fill: #343d4c; }
+.s5-kw { fill: var(--c1r); transition: fill 220ms ease; }
+.s5-fn { fill: var(--lav); }
+.s5-str { fill: var(--gold); }
+.s5-txt { fill: #6a7488; }
+[data-on] .s5-kw { fill: var(--c1); }
+.s5-hl {
+  fill: color-mix(in oklab, var(--c1) 22%, transparent);
+  opacity: 0;
+  transition:
+    opacity 180ms ease,
+    transform 360ms var(--ease) 260ms;
+}
+[data-on] .s5-hl {
+  opacity: 1;
+  transform: translateY(14px);
+}
+.s5-delBg { fill: rgba(255, 107, 87, 0.18); }
+.s5-delTxt { fill: var(--coral); }
+.s5-del {
+  transition:
+    opacity 260ms ease 520ms,
+    transform 360ms var(--ease) 520ms;
+}
+[data-on] .s5-del {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+.s5-addBg { fill: rgba(38, 217, 143, 0.18); }
+.s5-add {
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  opacity: 0;
+  transition:
+    transform 420ms var(--ease) 640ms,
+    opacity 160ms ease 640ms;
+}
+[data-on] .s5-add {
+  transform: none;
+  opacity: 1;
+}
+.s5-git {
+  fill: none;
+  stroke: #303946;
+  stroke-width: 3;
+}
+.s5-commit {
+  fill: #3a4352;
+  transition: fill 220ms ease 300ms;
+}
+[data-on] .s5-commit {
+  fill: var(--c1);
+}
+.s5-gitB {
+  fill: none;
+  stroke: var(--c2);
+  stroke-width: 3;
+  stroke-linecap: round;
+  --d: 760ms;
+}
+.s5-newCommit {
+  fill: var(--c2);
+  transform-origin: center;
+  transform: scale(0);
+  transition: transform 320ms var(--spring) 1100ms;
+}
+[data-on] .s5-newCommit {
+  transform: none;
+}
+.s5-checkBg {
+  fill: #36404f;
+  transform-origin: center;
+  transition:
+    fill 200ms ease 1200ms,
+    transform 300ms var(--spring) 1200ms;
+}
+[data-on] .s5-checkBg {
+  fill: var(--c2);
+  transform: scale(1.15);
+}
+.s5-checkTick {
+  fill: none;
+  stroke: #0e1a14;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  --d: 1280ms;
+}
+
+/* ---- 08 Custom APIs & MCPs ---- */
+.s5-plug {
+  transform: translateX(-6px);
+  transition: transform 560ms var(--spring) 120ms;
+}
+.s5-socket {
+  transform: translateX(6px);
+  transition: transform 560ms var(--spring) 120ms;
+}
+[data-on] .s5-plug {
+  transform: translateX(26px);
+}
+[data-on] .s5-socket {
+  transform: translateX(-22px);
+}
+.s5-brace {
+  fill: none;
+  stroke: #eef2f8;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.s5-led {
+  fill: #3a4352;
+  transition: fill 200ms ease 680ms;
+}
+[data-on] .s5-led {
+  fill: var(--emerald);
+}
+.s5-key {
+  transition: transform 520ms var(--spring);
+}
+[data-on] .s5-key {
+  transform: translateY(14px);
+}
+.s5-flowRest {
+  fill: none;
+  stroke: #262d38;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.s5-flow {
+  fill: none;
+  stroke: var(--c1);
+  stroke-width: 4;
+  stroke-dasharray: 10 14;
+  stroke-linecap: round;
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+[data-on] .s5-flow {
+  opacity: 1;
+  transition-delay: 560ms;
+  animation: s5Flow 900ms linear infinite;
+}
+@keyframes s5Flow {
+  to { stroke-dashoffset: -48; }
+}
+.s5-packet {
+  fill: var(--c1);
+  opacity: 0;
+  transform-box: view-box;
+}
+[data-on] .s5-packet {
+  animation: s5Packet 1600ms linear calc(600ms + var(--i) * 530ms) infinite;
+}
+@keyframes s5Packet {
+  0% { opacity: 0; transform: translate(64px, 128px); }
+  8% { opacity: 1; transform: translate(70px, 140px); }
+  30% { transform: translate(110px, 148px); }
+  50% { transform: translate(150px, 149px); }
+  70% { transform: translate(190px, 148px); }
+  92% { opacity: 1; transform: translate(230px, 140px); }
+  100% { opacity: 0; transform: translate(236px, 128px); }
+}
+
+/* ---- 09 Web3 & Blockchain ---- */
+.s5-chainRest {
+  fill: none;
+  stroke: #262d38;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.s5-chain {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 4;
+  stroke-linecap: round;
+  --d: 280ms;
+}
+.s5-slotIso {
+  fill: none;
+  stroke: var(--c2d);
+  stroke-width: 2.5;
+  stroke-dasharray: 4 5;
+}
+[data-on] .s5-blk {
+  animation: s5Bob 620ms var(--ease) calc(var(--i) * 90ms);
+}
+@keyframes s5Bob {
+  0%, 100% { transform: none; }
+  40% { transform: translateY(-6px); }
+}
+.s5-drop {
+  opacity: 0;
+  transform: translateY(-46px);
+  transition:
+    opacity 180ms ease,
+    transform 460ms var(--spring);
+}
+[data-on] .s5-drop {
+  opacity: 1;
+  transform: none;
+  transition-delay: 640ms;
+}
+.s5-spark {
+  fill: var(--gold);
+  opacity: 0;
+  transform-origin: center;
+}
+[data-on] .s5-spark {
+  animation: s5Spark 520ms ease-out 1000ms forwards;
+}
+@keyframes s5Spark {
+  0% { opacity: 0.9; transform: scale(1); }
+  100% { opacity: 0; transform: scale(5); }
+}
+
+/* ---- 10 Hackathons & Projects ---- */
+.s5-box {
+  fill: none;
+  stroke: #b6bfcd;
+  stroke-width: 2.5;
+  transition:
+    fill 200ms ease calc(var(--i) * 280ms),
+    stroke 200ms ease calc(var(--i) * 280ms);
+}
+[data-on] .s5-box {
+  fill: var(--c1);
+  stroke: var(--c1);
+}
+.s5-boxTick {
+  fill: none;
+  stroke: #283141;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  --d: calc(var(--i) * 280ms + 90ms);
+}
+.s5-hkRail {
+  fill: none;
+  stroke: #252d39;
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+.s5-prog {
+  fill: none;
+  stroke: var(--c1);
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1100ms cubic-bezier(0.5, 0, 0.3, 1);
+}
+[data-on] .s5-prog {
+  stroke-dashoffset: 0;
+}
+.s5-ms {
+  fill: #36404f;
+  stroke: #0e131b;
+  stroke-width: 4;
+  transform-origin: center;
+  transition:
+    fill 200ms ease calc(var(--i) * 380ms + 80ms),
+    transform 300ms var(--spring) calc(var(--i) * 380ms + 80ms);
+}
+[data-on] .s5-ms {
+  fill: var(--c1);
+  transform: scale(1.12);
+}
+.s5-flag {
+  transform-origin: 0 50%;
+  transform: translateY(46px) scaleX(0.5);
+  transition: transform 420ms var(--spring);
+}
+[data-on] .s5-flag {
+  transform: none;
+  transition-delay: 1100ms;
+}
+
+/* ---- 11 Desktop Applications ---- */
+.s5-wdot { fill: rgba(255, 255, 255, 0.55); }
+.s5-dock { fill: #232b37; }
+.s5-w1,
+.s5-w2,
+.s5-w3 {
+  transition:
+    transform 620ms var(--spring),
+    opacity 300ms ease;
+}
+.s5-w2 { transition-delay: 50ms; }
+.s5-w3 { transition-delay: 100ms; }
+[data-on] .s5-w1 {
+  transform: translate(-16px, 0);
+  opacity: 0;
+}
+[data-on] .s5-w2 {
+  transform: translate(-68px, -22px);
+}
+[data-on] .s5-w3 {
+  transform: translate(26px, -44px);
+}
+
+
+/* ---- 12 Domains & Infrastructure ---- */
+.s5-lockBg {
+  fill: #dfe5ee;
+  transition: fill 220ms ease 860ms;
+}
+[data-on] .s5-lockBg {
+  fill: var(--emerald);
+}
+.s5-shackle {
+  fill: none;
+  stroke: #283141;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  transform: translateY(-2.5px);
+  transition: transform 260ms var(--spring) 860ms;
+}
+[data-on] .s5-shackle {
+  transform: none;
+}
+.s5-lockBody { fill: #283141; }
+.s5-https {
+  fill: #a6b0bf;
+  transition: fill 220ms ease 860ms;
+}
+[data-on] .s5-https {
+  fill: var(--emerald);
+}
+.s5-routeRest {
+  fill: none;
+  stroke: #262d38;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.s5-net {
+  fill: none;
+  stroke: var(--c1);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+.s5-meridian {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.55);
+  stroke-width: 2.2;
+}
+.s5-ledS {
+  fill: #3a4352;
+  transition: fill 200ms ease calc(320ms + var(--i) * 110ms);
+}
+[data-on] .s5-ledS {
+  fill: var(--emerald);
+}
+.s5-dbTop { fill: color-mix(in oklab, var(--c1) 64%, #ffffff); }
+.s5-dbLine { fill: none; stroke: rgba(10, 12, 22, 0.28); stroke-width: 2.5; }
+.s5-pulse {
+  fill: #ffffff;
+  opacity: 0;
+  transform-box: view-box;
+}
+[data-on] .s5-pulse {
+  animation: s5Pulse 900ms cubic-bezier(0.45, 0, 0.3, 1) forwards;
+}
+@keyframes s5Pulse {
+  0% { opacity: 0; transform: translate(74px, 112px); }
+  8% { opacity: 1; }
+  34% { opacity: 1; transform: translate(108px, 112px); }
+  40%, 56% { opacity: 0; transform: translate(144px, 112px); }
+  62% { opacity: 1; transform: translate(180px, 112px); }
+  92% { opacity: 1; transform: translate(214px, 112px); }
+  100% { opacity: 0; transform: translate(218px, 112px); }
+}
+
+/* ---- 13 Live Operations ---- */
+.s5-svc {
+  fill: var(--c1r);
+  transition: fill 200ms ease calc(700ms + var(--i) * 150ms);
+}
+.s5-svc[style*='--i:0'] {
+  fill: var(--c2);
+}
+[data-on] .s5-svc {
+  fill: var(--c1);
+}
+.s5-gauge {
+  fill: none;
+  stroke: #252d39;
+  stroke-width: 9;
+}
+.s5-gaugeArc {
+  fill: none;
+  stroke: var(--c1r);
+  stroke-width: 9;
+  stroke-linecap: round;
+  stroke-dasharray: 0.58 1;
+  transform-origin: center;
+  transform: rotate(-90deg);
+  transition:
+    stroke-dasharray 900ms var(--ease) 300ms,
+    stroke 220ms ease;
+}
+[data-on] .s5-gaugeArc {
+  stroke: var(--c1);
+  stroke-dasharray: 0.9 1;
+}
+.s5-gridL {
+  fill: none;
+  stroke: #212834;
+  stroke-width: 1.5;
+}
+.s5-spike {
+  fill: none;
+  stroke: var(--c2);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: opacity 320ms ease 520ms;
+}
+[data-on] .s5-spike {
+  opacity: 0;
+}
+.s5-calm {
+  fill: none;
+  stroke: var(--c1);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  --d: 420ms;
+}
+.s5-tele {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 0.06 0.94;
+  opacity: 0;
+}
+[data-on] .s5-tele {
+  opacity: 1;
+  animation: s5Tele 1700ms linear 900ms infinite;
+}
+@keyframes s5Tele {
+  from { stroke-dashoffset: 0.06; }
+  to { stroke-dashoffset: -0.94; }
+}
+
+/* ------------------------------------------------------------------ note */
+.s5.s5 .s5-note {
+  margin-top: 22px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #737f92;
+}
+
+/* ------------------------------------------------------------------ smaller screens */
+@media (max-width: 1280px) {
+  .s5-track {
+    --tile-w: 288px;
+    --tile-h: 248px;
+  }
+}
+@media (max-width: 760px) {
+  .s5-inner {
+    width: calc(100% - 32px);
+  }
+  .s5 {
+    padding-top: 64px;
+  }
+  .s5.s5 .s5-title {
+    font-size: clamp(34px, 10.4vw, 44px);
+  }
+  .s5-track {
+    --tile-w: min(300px, 82vw);
+    --tile-h: 262px;
+  }
+  .s5-arrows {
+    display: none;
+  }
+}
+@media (hover: none) {
+  .s5-track {
+    cursor: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .s5 *,
+  .s5 *::before {
+    transition: none !important;
+    animation: none !important;
+  }
+  [data-on] :is(.s5-prog, .s5-calm, .s5-draw) {
+    stroke-dashoffset: 0;
+  }
+}

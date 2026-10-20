@@ -1,0 +1,648 @@
+/* Fernway · a fictional Android trail-map app in Material 3 (light, tonal greens), natural size 300 × 640.
+   Android cues by design, not decoration: punch-hole camera, filter chips, tonal buttons, a linear progress
+   indicator, a snackbar and the navigation bar with its active pill and gesture handle. */
+.icon {
+  display: block;
+  flex: none;
+}
+.app {
+  --surface: #f6faf2;
+  --container: #e8f0e2;
+  --container-hi: #dfe9d8;
+  --on: #181d17;
+  --on-var: #414941;
+  --outline: #72796f;
+  --primary: #1f6e3d;
+  --on-primary: #ffffff;
+  --primary-c: #b2f1be;
+  --on-primary-c: #00210c;
+  position: relative;
+  display: grid;
+  grid-template-rows: 36px minmax(0, 1fr) 72px;
+  width: 300px;
+  height: 640px;
+  overflow: hidden;
+  background: var(--surface);
+  color: var(--on);
+  font-family: var(--font-inter), 'Roboto', system-ui, sans-serif;
+  text-align: left;
+  -webkit-font-smoothing: antialiased;
+}
+.app :is(b, small, span, em, i, dt, dd) {
+  font-style: normal;
+}
+.status {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  font-size: 13px;
+  font-weight: 560;
+}
+.punch {
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 50%;
+  background: #0b0d0b;
+}
+.sys {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  padding: 6px 14px 0;
+}
+.search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 46px;
+  padding: 0 8px 0 16px;
+  border-radius: 999px;
+  background: var(--container-hi);
+  color: var(--on-var);
+  font-size: 14px;
+}
+.search span {
+  flex: 1;
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #6f5b9b;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+.chips {
+  display: flex;
+  gap: 6px;
+}
+.chips span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 30px;
+  padding: 0 11px;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px #c1c9be;
+  font-size: 12px;
+  font-weight: 560;
+  color: var(--on-var);
+  white-space: nowrap;
+}
+.chips span[data-on] {
+  background: #cfe9d1;
+  box-shadow: none;
+  color: var(--on-primary-c);
+}
+.mapCard {
+  position: relative;
+  height: 196px;
+  border-radius: 24px;
+  overflow: hidden;
+}
+.map {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.mapTag {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(246, 250, 242, 0.92);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--on-var);
+}
+.offlineBadge {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 650;
+  animation: fwPop 420ms cubic-bezier(0.2, 0.9, 0.3, 1.2) 900ms both;
+}
+.trail {
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px 12px;
+  border-radius: 20px;
+  background: var(--container);
+}
+.trailHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.trailHead span {
+  display: grid;
+}
+.trailHead b {
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+.trailHead small {
+  font-size: 12px;
+  color: var(--on-var);
+}
+.rating {
+  font-size: 12.5px;
+  font-weight: 650;
+  color: #8a5a00;
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 0;
+}
+.stats div {
+  display: grid;
+}
+.stats dt {
+  font-size: 10.5px;
+  color: var(--on-var);
+}
+.stats dd {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+.elev {
+  display: block;
+  width: 100%;
+  height: 34px;
+}
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 8px;
+}
+.start {
+  display: grid;
+  place-items: center;
+  height: 40px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.saveWrap {
+  position: relative;
+  display: block;
+  border-radius: 999px;
+}
+.save {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 40px;
+  overflow: hidden;
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: inset 0 0 0 1px var(--outline) !important;
+  color: var(--primary) !important;
+  font: 600 13.5px/1 var(--font-inter), 'Roboto', system-ui, sans-serif !important;
+  cursor: pointer;
+  transition:
+    background-color 300ms ease 1200ms,
+    color 300ms ease 1200ms,
+    box-shadow 300ms ease 1200ms;
+}
+button.save::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+}
+.save[data-on] {
+  background: var(--primary-c) !important;
+  box-shadow: none !important;
+  color: var(--on-primary-c) !important;
+}
+/* the download: a linear progress indicator fills the button, then the label settles */
+.saveBar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(31, 110, 61, 0.16);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+.save[data-on] .saveBar {
+  animation: fwFill 1100ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.saveText {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.save[data-on] .saveText {
+  animation: fwText 1400ms ease both;
+}
+.snack {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 46px;
+  padding: 0 16px;
+  border-radius: 6px;
+  background: #2d322c;
+  color: #eef2ea;
+  font-size: 13px;
+  box-shadow: 0 6px 18px -6px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transform: translateY(12px);
+}
+.snack b {
+  font-weight: 650;
+  color: #96d8a6;
+}
+:global([data-scene='play']) .snack[data-on] {
+  animation: fwSnack 2600ms cubic-bezier(0.2, 0.8, 0.2, 1) 1250ms both;
+}
+.nav {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: start;
+  padding-top: 10px;
+  background: #ecf3e6;
+}
+.nav span {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--on-var);
+}
+.nav i {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 28px;
+  border-radius: 999px;
+}
+.nav span[data-on] i {
+  background: #cfe9d1;
+  color: var(--on-primary-c);
+}
+.nav span[data-on] {
+  color: var(--on);
+}
+.handle {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  width: 92px;
+  height: 4px;
+  margin-left: -46px;
+  border-radius: 2px;
+  background: #1c201b;
+  opacity: 0.85;
+}
+
+/* detail and saved screens */
+.detailWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  overflow: hidden;
+  padding-top: 6px;
+}
+.detailHero {
+  position: relative;
+  height: 176px;
+  margin: 0 14px;
+  border-radius: 24px;
+  overflow: hidden;
+}
+.back {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(246, 250, 242, 0.92);
+  font-size: 15px;
+}
+.body[data-detail] {
+  padding-top: 0;
+  gap: 6px;
+}
+.detailTitle,
+.screenTitle {
+  font-size: 22px;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+.detailSub {
+  font-size: 12.5px;
+  color: var(--on-var);
+}
+.elevCard {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: 20px;
+  background: var(--container);
+}
+.elevCard > span {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.elevCard small {
+  font-size: 11.5px;
+  color: var(--on-var);
+}
+.elevCard b {
+  font-size: 14px;
+  font-weight: 650;
+}
+.elevCard .elev {
+  height: 70px;
+}
+.highlights {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.highlights li {
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px #dde5d8;
+  font-size: 13px;
+  font-weight: 560;
+}
+.saved {
+  display: grid;
+  gap: 8px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.saved li {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px 8px 8px;
+  border-radius: 18px;
+  background: var(--container);
+}
+.saved li[data-first] {
+  background: #cfe9d1;
+}
+.savedThumb {
+  display: block;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.saved li > span:nth-child(2) {
+  display: grid;
+}
+.saved b {
+  font-size: 14px;
+  font-weight: 650;
+}
+.saved small {
+  font-size: 11.5px;
+  color: var(--on-var);
+}
+.saved i {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-size: 12px;
+}
+.tip {
+  display: grid;
+  gap: 2px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px #dde5d8;
+}
+.tip b {
+  font-size: 13.5px;
+}
+.tip small {
+  font-size: 12px;
+  color: var(--on-var);
+}
+
+/* ---------------------------------------------------------------- the feature graphic (natural 1024 × 500) */
+.feature {
+  position: relative;
+  width: 1024px;
+  height: 500px;
+  overflow: hidden;
+  background: #0f3a22;
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+.fWorld {
+  position: absolute;
+  inset: 0;
+  transform: scale(1.18);
+  /* rasterised before it is shown, so the first visible frame is only compositing */
+  opacity: 0.001;
+  will-change: transform, opacity;
+  transition:
+    transform 1100ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 600ms ease;
+}
+.fWorld .map {
+  width: 1024px;
+  height: 500px;
+}
+.feature:not([data-step='0']) .fWorld {
+  transform: none;
+  opacity: 1;
+}
+/* the art-directed grade: the light map becomes a deep forest backdrop with a lit route */
+.fGrade {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 80% at 76% 40%, rgba(178, 241, 190, 0.18), transparent 60%),
+    linear-gradient(90deg, rgba(8, 40, 22, 0.94) 0%, rgba(8, 40, 22, 0.82) 38%, rgba(8, 40, 22, 0.3) 70%, rgba(8, 40, 22, 0.15) 100%);
+  opacity: 0.001;
+  will-change: opacity;
+  transition: opacity 800ms ease;
+}
+.feature:is([data-step='2'], [data-step='3'], [data-step='4']) .fGrade {
+  opacity: 1;
+}
+.fPhone {
+  position: absolute;
+  right: 120px;
+  top: 64px;
+  width: 300px;
+  height: 640px;
+  border-radius: 40px;
+  padding: 10px;
+  background: #121512;
+  box-shadow:
+    0 0 0 2px #2b302a,
+    0 50px 80px -30px rgba(0, 0, 0, 0.7);
+  transform: translateY(420px) rotate(8deg);
+  transform-origin: 50% 0;
+  opacity: 0.001;
+  will-change: transform, opacity;
+  transition:
+    transform 1000ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 400ms ease;
+}
+.feature:is([data-step='2'], [data-step='3'], [data-step='4']) .fPhone {
+  transform: rotate(-6deg);
+  opacity: 1;
+}
+.fPhoneScreen {
+  width: 280px;
+  height: 620px;
+  border-radius: 31px;
+  overflow: hidden;
+}
+.fPhoneScreen .app {
+  width: 280px;
+}
+.fTitle {
+  position: absolute;
+  left: 72px;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  color: #fff;
+  transform: translateY(-40%);
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 900ms cubic-bezier(0.65, 0, 0.25, 1);
+}
+.feature:is([data-step='3'], [data-step='4']) .fTitle {
+  clip-path: inset(0 -20px 0 0);
+}
+.fTitle :global(svg) {
+  border-radius: 20px;
+  box-shadow: 0 16px 30px -12px rgba(0, 0, 0, 0.6);
+}
+.fTitle > span {
+  display: grid;
+  gap: 6px;
+}
+.fTitle b {
+  font-size: 76px;
+  font-weight: 750;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+.fTitle small {
+  font-size: 28px;
+  font-weight: 520;
+  color: #c8f5cf;
+}
+
+@keyframes fwFill {
+  from {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  85% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+@keyframes fwText {
+  0%,
+  80% {
+    opacity: 0.35;
+  }
+}
+@keyframes fwPop {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+}
+@keyframes fwSnack {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  14%,
+  82% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+/* inert copies and reduced motion show the settled frame */
+:global([data-still]) .app *,
+:global([data-still]) .feature * {
+  animation: none !important;
+  transition: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .app *,
+  .feature * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

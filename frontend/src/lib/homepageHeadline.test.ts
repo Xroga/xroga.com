@@ -23,3 +23,18 @@ test('homepage metadata carries the primary and secondary search intent', () => 
   assert.match(ROUTE, /keywords: \['AI app builder', 'AI coding agent'/);
   assert.match(ROUTE, /path: '\/'/);
 });
+
+test('homepage concludes after S05 with community and signup CTA, not older marketing sections', () => {
+  assert.match(PAGE, /<S05Capabilities \/>\s*<section\s+className="xv-closing-frame"/);
+  assert.match(PAGE, /Build with <em>other builders\.<\/em>/);
+  assert.match(PAGE, /Build what&apos;s<br \/><em>yours\.<\/em>/);
+  assert.match(PAGE, /<FeedbackModal open=\{feedbackOpen\}/);
+  for (const removed of [
+    'HomepagePowerStories', 'HomepageWorkspaceTour', 'HomepageAllInOne',
+    'XrogaIntelligenceSection', 'HomepageStackStudio', 'HomepageShowcase',
+    'HomepageShipStack', 'HomepageEnterpriseProof', 'HomepagePricingPreview',
+    'HomepageOwnershipProof', 'HomepageFaqSection',
+  ]) {
+    assert.ok(!PAGE.includes(removed), `unexpected post-S05 mount: ${removed}`);
+  }
+});

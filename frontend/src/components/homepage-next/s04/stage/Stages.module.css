@@ -1,0 +1,1898 @@
+/* The three stage compositions. Section tokens (--pearl, --silver, --blue, --jade, --amber, …) come from S04.module.css.
+   App Store: three vertical objects. Google Play: two bands (gameplay → key art, then the listing).
+   Chrome Web Store: the browser dominant, the submission package beside it. */
+.objLabel {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--steel);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ================================================================== the Xroga card */
+.xcard {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-height: 196px;
+  padding: 16px 18px 16px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(30, 40, 58, 0.92), rgba(17, 23, 35, 0.92));
+  box-shadow:
+    inset 0 1px 0 rgba(236, 233, 226, 0.08),
+    inset 0 0 0 1px var(--hair-2),
+    0 24px 44px -30px rgba(0, 0, 0, 0.9);
+}
+.xKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9fb6d9;
+}
+.xKicker i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--steel);
+}
+.xcard[data-state='testing'] .xKicker i,
+.xcard[data-state='finding'] .xKicker i {
+  background: var(--blue);
+  box-shadow: 0 0 0 3px rgba(77, 134, 255, 0.22);
+}
+.xcard[data-state='owner'] {
+  box-shadow:
+    inset 0 1px 0 rgba(236, 233, 226, 0.08),
+    inset 0 0 0 1px rgba(210, 162, 101, 0.45),
+    0 24px 44px -30px rgba(0, 0, 0, 0.9);
+}
+.xcard[data-state='owner'] .xKicker {
+  color: var(--amber);
+}
+.xcard[data-state='owner'] .xKicker i {
+  background: var(--amber);
+}
+.xTitle {
+  font-size: 18px;
+  font-weight: 640;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--pearl);
+}
+.xDetail {
+  font-size: 14px;
+  line-height: 1.45;
+  color: #c3ccd7;
+}
+.xProgress {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--steel);
+}
+.xProgress::before {
+  content: '';
+  width: 14px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+}
+.xProgress[data-on] {
+  color: #b8cdf5;
+}
+.xSteps {
+  display: grid;
+  gap: 5px;
+  margin: 2px 0 6px;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+.xSteps li {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: baseline;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #d6dde6;
+  counter-increment: step;
+}
+.xSteps li::before {
+  content: counter(step);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--amber);
+  font-variant-numeric: tabular-nums;
+}
+.xCta {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 11px;
+  background: linear-gradient(180deg, #5a8fff, #3a72f2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 10px 24px -12px rgba(58, 114, 242, 0.9);
+  color: #fff !important;
+  font-size: 14px;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+/* ================================================================== App Store */
+/* the two iPhones lead: each phone column is the phone's own width (--phone-w, sized from the screen in StageIOS),
+   Xroga's work takes what remains between them */
+.ios {
+  display: grid;
+  grid-template-columns: minmax(0, var(--phone-w, 280px)) minmax(0, 1fr) minmax(0, var(--phone-w, 280px));
+  align-items: start;
+  column-gap: 36px;
+}
+.iosLive,
+.iosStore {
+  display: grid;
+  justify-items: center;
+  min-width: 0;
+}
+.iosStudio {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-width: 0;
+}
+.shotHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 4px;
+}
+.shotHead b {
+  font-size: 15px;
+  font-weight: 640;
+  color: var(--pearl);
+}
+.shotHead span {
+  font-size: 12.5px;
+  color: var(--steel);
+  font-variant-numeric: tabular-nums;
+}
+.shots {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.shot {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  justify-items: center;
+  margin: 0;
+  height: 258px;
+  padding: 14px 12px 0;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 20px 34px -24px rgba(0, 0, 0, 0.9);
+}
+/* the cards compact in the same frame the handoff replaces the Xroga card; easing their height left the studio taller
+   than its settled size for a moment, past the fold on short screens */
+.ios[data-ready] .shot {
+  height: 212px;
+}
+.ios[data-ready] .shot figcaption {
+  min-height: 34px;
+  margin-bottom: 6px;
+  font-size: 13.5px;
+}
+.shot[data-tone='teal'] {
+  background: linear-gradient(170deg, #1b4a44 0%, #0d201f 100%);
+}
+.shot[data-tone='indigo'] {
+  background: linear-gradient(170deg, #233a63 0%, #0f1a2e 100%);
+}
+.shot[data-tone='plum'] {
+  background: linear-gradient(170deg, #4a2a4c 0%, #1d1222 100%);
+}
+.shot figcaption {
+  min-height: 40px;
+  margin-bottom: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  text-align: center;
+  color: #fff;
+  text-wrap: balance;
+}
+.shot[data-state='empty'] figcaption {
+  opacity: 0.4;
+}
+.shotDevice {
+  position: relative;
+  display: block;
+  width: min(100%, 112px);
+  aspect-ratio: 280 / 600;
+  border-radius: 20px 20px 0 0;
+  overflow: hidden;
+  /* the screen's size never depends on the card's height: when the cards compact at the handoff, the rendered screen
+     is neither laid out nor repainted again, only clipped (measured: paint + raster) */
+  contain: layout paint;
+  will-change: transform;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow:
+    0 0 0 4px #0a0d12,
+    0 0 0 5px rgba(255, 255, 255, 0.16);
+}
+.shot[data-state='empty'] .shotDevice {
+  background: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0 6px, transparent 6px 12px);
+  box-shadow:
+    0 0 0 4px rgba(10, 13, 18, 0.6),
+    0 0 0 5px rgba(169, 200, 255, 0.3);
+}
+.shotSrc {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(6, 10, 16, 0.78);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  font-size: 11px;
+  font-weight: 600;
+  color: #dbe6f3;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.shot[data-state='done'] .shotSrc {
+  opacity: 1;
+}
+
+/* the App Store page as it reads on iPhone (light, assembled around the screenshots) */
+.asp {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  width: 280px;
+  height: 600px;
+  padding: 0 16px;
+  overflow: hidden;
+  background: #fff;
+  color: #000;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  text-align: left;
+}
+.asp :is(b, small, span, em, i, dt, dd) {
+  font-style: normal;
+}
+/* the same iPhone status bar as the app (Arcset.tsx), across the full display width */
+.aspStatus {
+  height: 44px;
+  margin: 0 -16px;
+  color: #000;
+}
+.aspHome {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  width: 94px;
+  height: 4px;
+  margin-left: -47px;
+  border-radius: 2px;
+  background: #000;
+}
+.aspBack {
+  margin-top: -6px;
+  font-size: 15px;
+  color: #0a7cff;
+}
+.aspHead {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+.aspIcon {
+  display: block;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+.aspIcon svg {
+  display: block;
+}
+.aspTitle {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.aspTitle b {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.aspTitle small {
+  display: -webkit-box;
+  font-size: 12.5px;
+  line-height: 1.25;
+  color: #6b6b70;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.aspGet {
+  justify-self: start;
+  margin-top: 4px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: #eef0f3;
+  color: #0a7cff;
+  font-size: 13px;
+  font-weight: 700;
+}
+.aspSkel {
+  display: block;
+}
+.aspSkel small {
+  display: inline-block;
+  transition:
+    color 360ms ease,
+    background-color 360ms ease;
+}
+.aspSkel:not([data-on]) small {
+  color: transparent;
+  background: #ececf0;
+  border-radius: 5px;
+}
+/* the App Store's information strip: label, value, caption; it scrolls sideways, so the last fact runs off the edge */
+.aspFacts {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 84px;
+  padding: 7px 0;
+  overflow: hidden;
+  border-top: 1px solid #e5e5ea;
+  border-bottom: 1px solid #e5e5ea;
+}
+/* (the section resets list margins with higher specificity) */
+.asp .aspFacts {
+  margin: 0 -16px 0 0;
+}
+.aspFacts div {
+  display: grid;
+  grid-template-rows: auto 22px auto;
+  align-items: center;
+  justify-items: center;
+  gap: 1px;
+  border-left: 1px solid #e5e5ea;
+}
+.aspFacts div:first-child {
+  border-left: 0;
+}
+.aspFacts dt {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8e8e93;
+}
+.aspFacts dd {
+  display: contents;
+}
+.aspFacts dd b {
+  font-size: 16px;
+  font-weight: 700;
+  color: #6c6c70;
+}
+.aspFacts dd svg {
+  display: block;
+  color: #6c6c70;
+}
+.aspFacts dd small {
+  max-width: 80px;
+  overflow: hidden;
+  font-size: 10px;
+  color: #8e8e93;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* screenshots read as on the product page: about two and a half across, the third peeking at the edge */
+.aspShots {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 100px;
+  gap: 8px;
+  margin-right: -16px;
+  overflow: hidden;
+}
+.aspShot {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 6px;
+  height: 166px;
+  padding: 9px 6px 0;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #ececf0;
+  transition:
+    opacity 360ms ease calc(var(--i) * 90ms),
+    transform 460ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i) * 90ms);
+}
+.aspShot b {
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  color: #fff;
+  opacity: 0;
+}
+.aspShotScreen {
+  display: block;
+  width: 70px;
+  border-radius: 9px 9px 0 0;
+  overflow: hidden;
+  opacity: 0;
+  box-shadow: 0 0 0 2px #0a0d12;
+}
+.aspShot[data-on] b,
+.aspShot[data-on] .aspShotScreen {
+  opacity: 1;
+}
+.aspShot[data-on][data-tone='teal'] {
+  background: linear-gradient(170deg, #1b4a44 0%, #0d201f 100%);
+}
+.aspShot[data-on][data-tone='indigo'] {
+  background: linear-gradient(170deg, #233a63 0%, #0f1a2e 100%);
+}
+.aspShot[data-on][data-tone='plum'] {
+  background: linear-gradient(170deg, #4a2a4c 0%, #1d1222 100%);
+}
+.aspNew,
+.aspPrivacy {
+  display: grid;
+  gap: 3px;
+}
+.aspNew b,
+.aspPrivacy b {
+  font-size: 16px;
+  font-weight: 700;
+}
+.aspNew em {
+  font-size: 12px;
+  font-style: normal;
+  color: #8e8e93;
+}
+.aspNew small {
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: #3c3c43;
+}
+.aspPrivacy small {
+  font-size: 12.5px;
+  color: #8e8e93;
+}
+.aspPrivacy[data-ready] small {
+  color: #a35d07;
+}
+
+.xcard[data-journey] {
+  min-height: 0;
+}
+.journey {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: j;
+}
+.journey li {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  padding-top: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--steel);
+  counter-increment: j;
+}
+.journey li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(236, 240, 246, 0.1);
+  transition: background-color 400ms ease;
+}
+.journey li[data-state='done'] {
+  color: var(--silver);
+}
+.journey li[data-state='done']::before {
+  background: rgba(120, 214, 184, 0.7);
+}
+.journey li[data-state='now'] {
+  color: #dbe6ff;
+}
+.journey li[data-state='now']::before {
+  background: var(--blue);
+}
+
+/* ================================================================== the work panel (inside the Xroga card) */
+.xcard[data-state='working'] .xKicker i {
+  background: var(--blue);
+  box-shadow: 0 0 0 3px rgba(77, 134, 255, 0.22);
+}
+.tasks {
+  display: grid;
+  gap: 2px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.tasks li {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  margin: 0 -8px;
+  border-radius: 9px;
+  font-size: 14.5px;
+  line-height: 1.35;
+  color: var(--steel);
+  transition:
+    color 360ms ease,
+    background-color 360ms ease;
+}
+.tasks li i {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px #4f5a6b;
+  transition:
+    background-color 360ms ease,
+    box-shadow 360ms ease;
+}
+.tasks li[data-state='working'] {
+  color: #e3ebff;
+  background: rgba(77, 134, 255, 0.1);
+}
+.tasks li[data-state='working'] i {
+  box-shadow: inset 0 0 0 1.5px var(--blue);
+}
+/* one quiet sweep while a task is under way (finite: it runs for the task's own duration) */
+.tasks li[data-state='working'] i::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--blue);
+  animation: stPulse 1200ms ease-in-out 2 both;
+}
+.tasks li[data-state='done'] {
+  color: var(--pearl);
+}
+.tasks li[data-state='done'] i {
+  box-shadow: none;
+  background: rgba(120, 214, 184, 0.2);
+}
+.tasks li[data-state='done'] i::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 3.6px;
+  width: 6px;
+  height: 3.5px;
+  border-left: 1.6px solid var(--jade);
+  border-bottom: 1.6px solid var(--jade);
+  transform: rotate(-45deg);
+  animation: none;
+  background: none;
+  inset: auto;
+  border-radius: 0;
+}
+.spec {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--steel);
+  font-variant-numeric: tabular-nums;
+}
+/* on a wide stage the work panel reads across: what Xroga is doing on the left, its live tasks on the right */
+.anCard,
+.chCard {
+  container-type: inline-size;
+  min-width: 0;
+}
+@container (min-width: 600px) {
+  .xcard[data-state='working'] {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    grid-template-areas:
+      'kicker tasks'
+      'title tasks'
+      'spec tasks';
+    grid-template-rows: auto auto 1fr;
+    column-gap: 24px;
+    min-height: 0;
+    padding: 14px 18px;
+  }
+  .xcard[data-state='working'] > .xTitle {
+    font-size: 17px;
+  }
+  .xcard[data-state='working'] .tasks li {
+    font-size: 14px;
+  }
+  .xcard[data-state='working'] > .xKicker {
+    grid-area: kicker;
+  }
+  .xcard[data-state='working'] > .xTitle {
+    grid-area: title;
+  }
+  .xcard[data-state='working'] > .tasks {
+    grid-area: tasks;
+    margin: 0;
+    align-self: center;
+  }
+  .xcard[data-state='working'] > .spec {
+    grid-area: spec;
+    align-self: end;
+  }
+}
+
+/* ================================================================== the release handoff */
+.handoffWrap {
+  container-type: inline-size;
+  min-width: 0;
+}
+.handoff {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas:
+    'top top'
+    'prepared yours'
+    'foot foot';
+  gap: 10px 22px;
+  padding: 14px 20px;
+  border-radius: 18px;
+  background:
+    radial-gradient(70% 120% at 100% 0%, rgba(77, 134, 255, 0.12), transparent 60%),
+    radial-gradient(60% 100% at 0% 100%, rgba(214, 168, 104, 0.08), transparent 60%),
+    linear-gradient(180deg, rgba(28, 37, 54, 0.97), rgba(16, 22, 34, 0.97));
+  box-shadow:
+    inset 0 1px 0 rgba(236, 233, 226, 0.09),
+    inset 0 0 0 1px rgba(150, 175, 220, 0.18),
+    0 30px 60px -34px rgba(0, 0, 0, 0.95);
+  animation: stRise 640ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.hoTop {
+  grid-area: top;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+}
+.hoIcon {
+  display: block;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px var(--hair-2),
+    0 10px 20px -12px rgba(0, 0, 0, 0.8);
+}
+.hoIcon :global(svg) {
+  display: block;
+}
+.hoTitle {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.hoTitle small {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--jade);
+}
+.hoTitle b {
+  font-size: 20px;
+  font-weight: 640;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--pearl);
+  text-wrap: balance;
+}
+.hoLabel {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 620;
+  color: var(--silver);
+}
+.hoPrepared {
+  grid-area: prepared;
+  min-width: 0;
+}
+.hoYours {
+  grid-area: yours;
+  min-width: 0;
+}
+.hoChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hoChips li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 10px 5px 8px;
+  border-radius: 999px;
+  background: rgba(120, 214, 184, 0.09);
+  box-shadow: inset 0 0 0 1px rgba(120, 214, 184, 0.24);
+  font-size: 13px;
+  font-weight: 560;
+  color: #d4f3e8;
+  white-space: nowrap;
+  animation: stRise 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.hoChips li:nth-child(2) {
+  animation-delay: 70ms;
+}
+.hoChips li:nth-child(3) {
+  animation-delay: 140ms;
+}
+.hoChips li:nth-child(4) {
+  animation-delay: 210ms;
+}
+.hoChips li:nth-child(5) {
+  animation-delay: 280ms;
+}
+.hoChips li::before {
+  content: '';
+  width: 7px;
+  height: 4px;
+  margin-top: -2px;
+  border-left: 1.6px solid var(--jade);
+  border-bottom: 1.6px solid var(--jade);
+  transform: rotate(-45deg);
+}
+.hoSteps {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: s;
+}
+.hoSteps li {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.35;
+  color: #ecdcc2;
+  counter-increment: s;
+}
+.hoSteps li::before {
+  content: counter(s);
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(214, 168, 104, 0.16);
+  color: var(--amber);
+  font-size: 11.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  transform: translateY(4px);
+}
+.hoFoot {
+  grid-area: foot;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--hair);
+}
+.hoDest {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.hoDest i {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  background: rgba(236, 240, 246, 0.06);
+  box-shadow: inset 0 0 0 1px var(--hair-2);
+  color: var(--ice);
+}
+.hoDest > span {
+  display: grid;
+  gap: 1px;
+  font-size: 14px;
+  color: var(--silver);
+}
+.hoDest b {
+  font-weight: 640;
+  color: var(--pearl);
+}
+.hoDest small {
+  font-size: 12.5px;
+  color: var(--steel);
+}
+.hoCta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 22px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #5f93ff, #3a72f2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 14px 28px -14px rgba(58, 114, 242, 0.95);
+  color: #fff !important;
+  font-size: 15px;
+  font-weight: 650;
+  text-align: center;
+  text-decoration: none;
+  transition: box-shadow 200ms ease;
+}
+.hoCta:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    0 16px 32px -12px rgba(58, 114, 242, 1);
+}
+.hoCta span {
+  transition: transform 200ms ease;
+}
+.hoCta:hover span {
+  transform: translateX(3px);
+}
+/* narrow handoffs (phones): one column, in reading order */
+@container (max-width: 459px) {
+  .handoff {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'top' 'prepared' 'yours' 'foot';
+  }
+}
+@container (min-width: 470px) and (max-width: 759px) {
+  .hoFoot {
+    flex-wrap: nowrap;
+  }
+  .hoDest {
+    flex: 1 1 auto;
+  }
+  .hoCta {
+    flex: none;
+    padding: 0 18px;
+  }
+}
+/* wide stages: identity and action share the top row; the two groups and the destination share the second */
+@container (min-width: 760px) {
+  .handoff {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr) auto;
+    grid-template-areas:
+      'top top foot'
+      'prepared yours foot';
+    align-items: start;
+  }
+  .hoFoot {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    align-self: stretch;
+    padding: 0 0 0 22px;
+    border-top: 0;
+    border-left: 1px solid var(--hair);
+  }
+  .hoDest > span {
+    max-width: 250px;
+  }
+  .hoCta {
+    white-space: nowrap;
+  }
+}
+
+/* ================================================================== shared: evolving panels */
+.anPanel,
+.chPanel {
+  grid-area: 1 / 1;
+  /* a panel that is leaving or waiting floats over the stage, so only the visible panel sets its height */
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  display: grid;
+  align-content: start;
+  min-width: 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px) scale(0.985);
+  transition:
+    opacity 420ms ease,
+    transform 620ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 620ms;
+}
+.anPanel[data-on],
+.chPanel[data-on] {
+  position: relative;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity 520ms ease 140ms,
+    transform 720ms cubic-bezier(0.22, 1, 0.36, 1) 100ms,
+    visibility 0s;
+}
+.assetFrame {
+  position: relative;
+  display: block;
+  border-radius: 10px;
+  overflow: hidden;
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0 6px, transparent 6px 12px),
+    #121827;
+  box-shadow: inset 0 0 0 1px rgba(169, 200, 255, 0.3);
+}
+.assetFrame[data-state='done'],
+.assetFrame[data-state='rendering'] {
+  box-shadow: 0 0 0 1px var(--hair-2);
+}
+.tileArt {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  align-items: end;
+  width: 100%;
+  height: 100%;
+  padding-left: 10px;
+  background:
+    radial-gradient(100% 90% at 100% 100%, rgba(244, 184, 96, 0.35), transparent 60%),
+    linear-gradient(140deg, #1f4d8a 0%, #12305c 100%);
+  color: #fff;
+}
+.tileText {
+  display: grid;
+  align-self: center;
+  gap: 3px;
+  min-width: 0;
+  padding-right: 10px;
+}
+.tileText b {
+  font-size: 12px;
+  font-weight: 750;
+}
+.tileText small {
+  font-size: 9.5px;
+  line-height: 1.25;
+  color: #cddcf2;
+}
+.tilePanel {
+  display: block;
+  height: 88%;
+  border-radius: 5px 0 0 0;
+  overflow: hidden;
+  box-shadow: -6px 0 14px -8px rgba(0, 0, 0, 0.6);
+}
+
+/* ================================================================== Google Play */
+/* the phone column is at least the original 300 px and grows to the phone (--phone-w, StageAndroid), so the listing
+   keeps its width where the phone is smaller */
+.android {
+  display: grid;
+  grid-template-columns: minmax(0, max(300px, var(--phone-w, 300px))) minmax(0, 1fr);
+  align-items: start;
+  column-gap: 36px;
+}
+.anPhone {
+  display: grid;
+  justify-items: center;
+  min-width: 0;
+  transition:
+    transform 720ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 520ms ease;
+  transform-origin: 50% 0;
+}
+.android[data-layout='c'] .anPhone {
+  transform: scale(0.94);
+  opacity: 0.88;
+}
+.anRight {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-width: 0;
+}
+.anMain,
+.chMain {
+  position: relative;
+  display: grid;
+  min-width: 0;
+}
+/* the release workbench */
+.bench {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(8, 12, 20, 0.45);
+  box-shadow: inset 0 0 0 1px var(--hair);
+}
+.prep {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.prep li {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+  padding: 8px 6px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  line-height: 1.35;
+  color: var(--steel);
+  transition:
+    color 300ms ease,
+    background-color 300ms ease;
+}
+.prep li i {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  margin-top: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px #4f5a6b;
+}
+.prep li[data-state='working'] {
+  color: #dbe6ff;
+  background: rgba(77, 134, 255, 0.1);
+}
+.prep li[data-state='working'] i {
+  box-shadow: inset 0 0 0 1.5px var(--blue);
+  background: radial-gradient(circle, var(--blue) 0 3px, transparent 3.5px);
+}
+.prep li[data-state='done'] {
+  color: var(--pearl);
+}
+.prep li[data-state='done'] i {
+  box-shadow: none;
+  background: rgba(120, 214, 184, 0.18);
+}
+.prep li[data-state='done'] i::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 3.6px;
+  width: 6px;
+  height: 3.5px;
+  border-left: 1.6px solid var(--jade);
+  border-bottom: 1.6px solid var(--jade);
+  transform: rotate(-45deg);
+}
+.prep li[data-state='owner'] {
+  color: #e3c18f;
+}
+.prep li[data-state='owner'] i {
+  box-shadow: none;
+  background: radial-gradient(circle, var(--amber) 0 4px, rgba(214, 168, 104, 0.22) 4.5px);
+}
+.artboard {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+}
+.artboard {
+  grid-template-columns: minmax(0, 500px) auto;
+  align-items: start;
+  column-gap: 18px;
+}
+.fg {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+.fg > span {
+  border-radius: 12px;
+  box-shadow:
+    0 0 0 1px var(--hair-2),
+    0 24px 40px -26px rgba(0, 0, 0, 0.9);
+}
+.fg figcaption,
+.fgShots small {
+  font-size: 12.5px;
+  color: var(--steel);
+}
+.fg figcaption b {
+  color: var(--pearl);
+  font-weight: 620;
+}
+.fgShots {
+  display: grid;
+  grid-template-columns: repeat(3, 76px);
+  align-content: start;
+  gap: 8px 8px;
+}
+.fgShots small {
+  grid-column: 1 / -1;
+  max-width: 202px;
+}
+.fgShot {
+  display: block;
+  border-radius: 10px;
+  overflow: hidden;
+  aspect-ratio: 300 / 640;
+  background: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0 6px, transparent 6px 12px);
+  box-shadow:
+    0 0 0 3px #0c0f0c,
+    0 0 0 4px rgba(255, 255, 255, 0.14);
+}
+
+/* the Google Play listing preview (light) */
+.play {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 14px 16px;
+  padding: 14px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #fbfcfb 0%, #f1f4f0 100%);
+  color: #1b1d1b;
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 0 0 1px rgba(160, 178, 168, 0.4),
+    0 36px 60px -34px rgba(0, 0, 0, 0.95);
+}
+.playLeft,
+.playRight {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-width: 0;
+}
+.playHero {
+  display: block;
+  aspect-ratio: 1024 / 500;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #e4e9e3;
+}
+.playHero > em,
+.playShot > em,
+.cwsShot > em,
+.cwsTileWrap > em {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  font-size: 12.5px;
+  font-style: normal;
+  font-weight: 600;
+  color: #8d968c;
+}
+.playHead {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+.playHead :global(svg) {
+  border-radius: 14px;
+  box-shadow: 0 6px 14px -8px rgba(0, 0, 0, 0.5);
+}
+.playHead > span {
+  display: grid;
+}
+.playHead b {
+  font-size: 21px;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+.playHead small {
+  font-size: 13px;
+  font-weight: 600;
+  color: #146c43;
+}
+.playMeta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+}
+.playMeta div {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  border-left: 1px solid #dfe4de;
+  text-align: center;
+}
+.playMeta div:first-child {
+  border-left: 0;
+}
+.playMeta dt {
+  font-size: 13px;
+  font-weight: 650;
+}
+.playMeta dd {
+  margin: 0;
+  font-size: 11px;
+  color: #5f665e;
+}
+.playInstall {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #e0e7df;
+  color: #3f4a3e;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 650;
+  white-space: nowrap;
+}
+.playShots {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 270px;
+  gap: 10px;
+}
+.playShot {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+.playShot > span:first-child {
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+.playShot small {
+  font-size: 11px;
+  line-height: 1.25;
+  color: #4b524a;
+}
+.play[data-ghost] .playShot {
+  aspect-ratio: 300 / 640;
+  border-radius: 12px;
+  background: #e4e9e3;
+}
+.playAbout,
+.playSafety {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 10px;
+}
+.playAbout b,
+.playSafety b {
+  font-size: 14px;
+  font-weight: 650;
+}
+.playAbout span,
+.playSafety span {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #3c433b;
+}
+.playAbout span {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.playSafety span {
+  color: #8a5208;
+}
+.play[data-ghost] :is(.playAbout span, .playSafety span) {
+  border-radius: 5px;
+  background: #e4e9e3;
+}
+.play[data-ghost] {
+  opacity: 0.86;
+}
+.play[data-ghost] :is(.playMeta, .playInstall) {
+  opacity: 0.45;
+}
+
+/* ================================================================== Chrome Web Store */
+.chrome {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  align-items: start;
+  column-gap: 32px;
+  /* the columns re-balance in one step, under the panels' own cross-fade and rise: animating the track widths made every
+     scaled copy of the product re-measure, re-render and re-raster on each frame (measured: GPU raster ~1 s at compose) */
+}
+.chrome[data-layout='b'] {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+}
+.chrome[data-layout='c'] {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+/* short screens, at the handoff: the phone steps back to the listing's height (--back, StageAndroid) and gives the
+   height it no longer uses to the handoff, which rises in once the phone has settled */
+.anDev {
+  /* full column width: the device measures this box to size itself */
+  justify-self: stretch;
+  width: 100%;
+  min-width: 0;
+  transform-origin: 50% 0;
+  transition: transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.android[data-wide] .anPhone {
+  transform: none;
+}
+.android[data-wide] .anDev {
+  transform: scale(var(--back, 1));
+  margin-bottom: calc((var(--back, 1) - 1) * var(--phone-h, 0px));
+}
+.android[data-wide] .anHandoff .handoff {
+  animation-delay: 380ms;
+}
+.anHandoff {
+  grid-column: 1 / -1;
+  min-width: 0;
+  margin-top: 14px;
+}
+.chHandoff {
+  grid-column: 1 / -1;
+  margin-top: 0;
+}
+.chrome[data-layout='c'] .accessRows,
+.chrome[data-layout='c'] .tech {
+  display: none;
+}
+.chrome[data-layout='c'] .access {
+  padding: 12px 16px;
+}
+.chLeft,
+.chRight {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-width: 0;
+}
+.chLeft .objLabel {
+  margin-bottom: -4px;
+}
+.access {
+  display: grid;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: rgba(8, 12, 20, 0.45);
+  box-shadow: inset 0 0 0 1px var(--hair-2);
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 420ms ease,
+    transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.access[data-on] {
+  opacity: 1;
+  transform: none;
+}
+.chrome[data-layout='a'] .access {
+  display: none;
+}
+.accessHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.accessHead b {
+  font-size: 15px;
+  font-weight: 640;
+  color: var(--pearl);
+}
+.accessHead em {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(214, 168, 104, 0.14);
+  color: var(--amber);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 650;
+}
+.access[data-narrowed] .accessHead em {
+  background: rgba(120, 214, 184, 0.14);
+  color: var(--jade);
+}
+.accessRows {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.accessRows li {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.35;
+  transition:
+    opacity 400ms ease,
+    background-color 400ms ease,
+    color 400ms ease;
+}
+.accessRows li i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.accessRows li[data-k='before'] {
+  background: rgba(214, 168, 104, 0.1);
+  color: #f0d3a8;
+}
+.accessRows li[data-k='before'] i {
+  background: var(--amber);
+}
+.accessRows li[data-k='after'] {
+  opacity: 0.35;
+  color: var(--silver);
+}
+.accessRows li[data-k='after'] i {
+  box-shadow: inset 0 0 0 1.5px var(--steel);
+}
+.access[data-narrowed] li[data-k='before'] {
+  background: transparent;
+  color: var(--steel);
+  text-decoration: line-through;
+  text-decoration-color: rgba(125, 136, 152, 0.7);
+}
+.access[data-narrowed] li[data-k='before'] i {
+  background: var(--steel);
+}
+.access[data-narrowed] li[data-k='after'] {
+  opacity: 1;
+  background: rgba(120, 214, 184, 0.1);
+  color: #c8f0e2;
+}
+.access[data-narrowed] li[data-k='after'] i {
+  box-shadow: none;
+  background: var(--jade);
+}
+.tech {
+  font-size: 12.5px;
+  color: var(--steel);
+}
+.tech summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 600;
+  color: #9fb6d9;
+}
+.tech summary::-webkit-details-marker {
+  display: none;
+}
+.tech summary::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 200ms ease;
+}
+.tech[open] summary::before {
+  transform: rotate(45deg);
+}
+.tech code {
+  display: block;
+  margin-top: 4px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #0b1018;
+  font: 12px/1.5 ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, monospace;
+  color: #c3cfdf;
+  overflow-wrap: anywhere;
+}
+.tech code s {
+  color: #e19a91;
+}
+.tech small {
+  display: block;
+  margin-top: 6px;
+}
+.chAssets {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  align-items: end;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(8, 12, 20, 0.45);
+  box-shadow: inset 0 0 0 1px var(--hair);
+}
+.chAssets figure {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  min-width: 0;
+}
+.chAssets figcaption {
+  font-size: 12.5px;
+  color: var(--steel);
+}
+.chShot .assetFrame {
+  aspect-ratio: 1280 / 800;
+}
+.chTile + .chNote,
+.chNote {
+  align-self: center;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--silver);
+}
+.chTile .assetFrame {
+  aspect-ratio: 440 / 280;
+}
+
+/* the Chrome Web Store listing preview (light) */
+.cws {
+  display: grid;
+  gap: 9px;
+  padding: 0 0 12px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fff;
+  color: #1f1f1f;
+  box-shadow:
+    0 0 0 1px rgba(160, 172, 190, 0.4),
+    0 36px 60px -34px rgba(0, 0, 0, 0.95);
+}
+.cwsBar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 5px 16px;
+  border-bottom: 1px solid #e6e9ef;
+}
+.cwsBar b {
+  font-size: 14px;
+  font-weight: 600;
+  color: #444746;
+}
+.cwsBar span {
+  flex: 1;
+  max-width: 260px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #f0f3f8;
+  font-size: 12.5px;
+  color: #5f6368;
+}
+.cwsHead {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  padding: 0 18px;
+}
+.cwsHead :global(svg) {
+  border-radius: 12px;
+}
+.cwsName {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+.cwsName b {
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.cwsName small {
+  font-size: 12px;
+  color: #5f6368;
+}
+.cwsName em {
+  font-size: 12px;
+  font-style: normal;
+  color: #5f6368;
+}
+.cwsAdd {
+  margin-left: auto;
+  padding: 5px 12px;
+  font-style: normal;
+  border-radius: 999px;
+  background: #e8edf5;
+  color: #3c4a60;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.cwsMedia {
+  display: grid;
+  grid-template-columns: minmax(0, 1.38fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 14px;
+  padding: 0 18px;
+}
+.cwsSide {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+}
+.cwsShot,
+.cwsTileWrap {
+  display: block;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #eef1f6;
+  box-shadow: 0 0 0 1px #e1e5ec;
+}
+.cwsShot {
+  aspect-ratio: 1280 / 800;
+}
+.cwsTileWrap {
+  aspect-ratio: 440 / 280;
+}
+.cwsInfo {
+  display: grid;
+  gap: 8px;
+}
+.cwsMain {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+}
+.cwsInfo div {
+  display: grid;
+  gap: 3px;
+}
+.cwsInfo b {
+  font-size: 14px;
+  font-weight: 600;
+}
+.cwsInfo span {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #444746;
+}
+.cwsInfo span[data-owner] {
+  color: #8a5208;
+}
+.cws[data-ghost] {
+  opacity: 0.86;
+}
+.cws[data-ghost] .cwsInfo span {
+  border-radius: 5px;
+  background: #eef1f6;
+}
+.cws[data-ghost] :is(.cwsName small, .cwsName em, .cwsAdd) {
+  opacity: 0.45;
+}
+
+@keyframes stPulse {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.6);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes stRise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* ================================================================== laptop and tablet */
+@media (max-width: 1240px) {
+  .ios {
+    column-gap: 26px;
+  }
+  .shot {
+    height: 268px;
+  }
+  .android {
+    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+    column-gap: 26px;
+  }
+  .bench {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .play {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+/* tablet: the two iPhones side by side at full size (the app, then its App Store page), Xroga's work under them */
+@media (max-width: 1080px) {
+  .ios {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      'live store'
+      'studio studio';
+    row-gap: 28px;
+  }
+  .iosLive {
+    grid-area: live;
+  }
+  .iosStudio {
+    grid-area: studio;
+  }
+  .iosStore {
+    grid-area: store;
+  }
+  .chrome,
+  .chrome[data-layout='c'] {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 22px;
+  }
+}
+
+/* ================================================================== phones: one vertical story */
+@media (max-width: 760px) {
+  .ios,
+  .android {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: none;
+    row-gap: 18px;
+  }
+  .iosLive,
+  .iosStudio,
+  .iosStore {
+    grid-area: auto;
+  }
+  .android[data-layout='c'] .anPhone {
+    transform: none;
+    opacity: 1;
+  }
+  .shots {
+    gap: 8px;
+  }
+  .shot {
+    height: 220px;
+    padding: 10px 6px 0;
+    border-radius: 14px;
+  }
+  .shot figcaption {
+    min-height: 34px;
+    font-size: 12px;
+  }
+  .shotDevice {
+    width: min(100%, 92px);
+    border-radius: 14px 14px 0 0;
+  }
+  .shotSrc {
+    display: none;
+  }
+  .xTitle {
+    font-size: 17px;
+  }
+  .xcard {
+    min-height: 0;
+  }
+  .handoff {
+    padding: 16px;
+    gap: 14px;
+  }
+  .hoTitle b {
+    font-size: 19px;
+  }
+  .hoCta {
+    flex: 1 1 100%;
+  }
+  .fgShots {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .fgShots small {
+    grid-column: 1 / -1;
+  }
+  .chAssets,
+  .cwsMedia {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .artboard {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .fgShots {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .fgShots small {
+    max-width: none;
+  }
+  .cwsHead {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .cwsBar {
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+  .cwsBar span {
+    display: none;
+  }
+  .cwsBar b {
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aspShot,
+  .shotSrc,
+  .handoff,
+  .anPanel,
+  .chPanel,
+  .anPhone,
+  .anDev,
+  .chrome,
+  .access,
+  .accessRows li,
+  .prep li {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ================================================================== short desktop screens (laptops around 800 px tall) */
+@media (min-width: 1025px) and (max-height: 860px) {
+  .ios[data-ready] .shot {
+    height: 196px;
+  }
+  .handoff {
+    padding: 10px 18px;
+  }
+  .hoChips li {
+    padding: 4px 10px 4px 8px;
+  }
+  .play {
+    padding: 12px;
+  }
+  .cws {
+    gap: 7px;
+  }
+}

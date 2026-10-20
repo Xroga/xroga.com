@@ -318,6 +318,7 @@ export function AuthSocialButton({
   return (
     <button
       type="button"
+      data-auth-github
       className={cn(
         'flex',
 
@@ -455,6 +456,7 @@ export function AuthSwitchText({
 
       <Link
         href={href}
+        data-auth-switch
         className="
           font-semibold
 

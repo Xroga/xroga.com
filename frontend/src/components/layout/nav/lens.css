@@ -1,0 +1,471 @@
+/* Navigation "Context Lens" (PublicMarketingHeader + nav/lens.ts): the shell material, the reactive perimeter, the
+   layered lens, the orb glass, the satin sapphire CTA and the menu morph. Scoped under .xn[data-concept='lens'], which
+   the header sets on its root; the layers marked xs-* are created by lens.ts. */
+.xs-surface,
+.xs-lens,
+.xs-meniscus,
+.xs-card,
+.xs-orb-light,
+.xs-orb-sweep {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------ the shell: near-black graphite, navy undertone */
+.xn[data-concept='lens'] .xn-bar {
+  border-radius: 20px;
+  /* base plate, a faint sapphire reflection from above, and the inner tonal layer */
+  background:
+    radial-gradient(70% 160% at 50% -60%, rgba(57, 123, 250, 0.07), transparent 60%),
+    linear-gradient(180deg, rgba(18, 27, 42, 0.9) 0%, rgba(13, 18, 29, 0.96) 52%, rgba(8, 11, 18, 0.98) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(214, 228, 255, 0.1),
+    inset 0 0 0 1px rgba(170, 195, 235, 0.085),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.55),
+    inset 0 -14px 24px -18px rgba(57, 123, 250, 0.12),
+    0 1px 0 rgba(0, 0, 0, 0.5),
+    0 24px 50px -26px rgba(0, 0, 0, 0.95);
+}
+@media (min-width: 1081px) {
+  .xn[data-concept='lens'] .xn-bar {
+    height: 60px;
+    padding: 0 10px 0 22px;
+  }
+}
+/* light layers inside the bar (clipped to its shape) */
+.xs-surface {
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+}
+.xs-glow {
+  position: absolute;
+  left: -180px;
+  top: -40px;
+  width: 360px;
+  height: 140px;
+  opacity: 0;
+  background:
+    radial-gradient(50% 50% at 50% 30%, rgba(120, 165, 255, 0.1), transparent 70%),
+    radial-gradient(30% 22% at 50% 0%, rgba(200, 220, 255, 0.11), transparent 80%);
+  transition: opacity 280ms ease;
+  will-change: transform;
+}
+.xs-glow[data-on] {
+  opacity: 1;
+  transition: opacity 120ms ease;
+}
+/* the inner side of the reactive edge: a little light falls onto the surface next to the lit stretch */
+.xs-edge-in {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: radial-gradient(80px circle at var(--ex, -100px) var(--ey, -100px), rgba(104, 218, 242, 0.16), rgba(57, 123, 250, 0.07) 45%, transparent 75%);
+}
+/* the reactive perimeter: a ring the width of the structural edge, lit only near the pointer */
+.xs-edge {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  opacity: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(34px circle at var(--ox, -100px) var(--oy, -100px), #f4f9ff, rgba(220, 238, 255, 0.6) 40%, transparent 72%),
+    radial-gradient(130px circle at var(--ex, -100px) var(--ey, -100px), rgba(104, 218, 242, 0.95), rgba(57, 123, 250, 0.6) 38%, transparent 76%);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  z-index: 2;
+}
+.xn[data-concept='lens'] .xn-lockup,
+.xn[data-concept='lens'] .xn-nav,
+.xn[data-concept='lens'] .xn-actions {
+  position: relative;
+  z-index: 1;
+}
+
+/* ------------------------------------------------------------------ typography */
+.xn[data-concept='lens'] .xn-item {
+  z-index: 1;
+  height: 36px;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.008em;
+  color: #b3bac6;
+  transition:
+    color 180ms ease,
+    opacity 220ms ease,
+    text-shadow 220ms ease;
+}
+.xn[data-concept='lens'] .xn-nav[data-focus] .xn-item:not([data-hot], [data-open]) {
+  color: #7f8896;
+}
+.xn[data-concept='lens'] .xn-item:is([data-hot], [data-open]) {
+  color: #f7f6f2;
+  text-shadow: 0 0 14px rgba(120, 170, 255, 0.35);
+}
+.xn[data-concept='lens'] .xn-item svg {
+  width: 12px;
+  height: 12px;
+  opacity: 0.45;
+  transition:
+    transform 300ms var(--xn-ease),
+    opacity 180ms ease,
+    translate 240ms var(--xn-ease);
+}
+.xn[data-concept='lens'] .xn-item[data-hot] svg {
+  opacity: 0.9;
+  translate: 0 1px;
+}
+
+/* ------------------------------------------------------------------ the lens */
+.xs-lens {
+  left: 0;
+  top: 50%;
+  height: 36px;
+  border-radius: 18px;
+  overflow: hidden;
+  opacity: 0;
+  transform-origin: 50% 50%;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04),
+    0 8px 18px -10px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(0, 0, 0, 0.35);
+  transition: opacity 240ms ease;
+  will-change: transform, width;
+  contain: layout paint style;
+}
+.xs-lens[data-on] {
+  opacity: 1;
+  transition: opacity 110ms ease;
+}
+/* glass body: a slightly recessed, darker optic with a lit upper half */
+.xs-glass {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.075) 0%, rgba(255, 255, 255, 0.02) 46%, rgba(0, 0, 0, 0.16) 100%),
+    #0b0f15;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+    inset 0 -10px 16px -12px rgba(40, 104, 255, 0.4);
+}
+/* deep caustic: sapphire into cyan, slow against the pointer */
+.xs-caustic {
+  position: absolute;
+  left: -60px;
+  bottom: -30px;
+  width: 120px;
+  height: 52px;
+  border-radius: 50%;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(70, 150, 255, 0.55), rgba(40, 104, 255, 0.2) 45%, rgba(40, 200, 232, 0) 72%);
+  filter: saturate(1.1);
+  will-change: transform;
+}
+/* top sheen: fast against the pointer, so the optic shows depth */
+.xs-sheen {
+  position: absolute;
+  left: -34px;
+  top: -6px;
+  width: 68px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(235, 243, 255, 0.34), transparent 75%);
+  will-change: transform;
+}
+/* the light filament under the label: exactly at the pointer */
+.xs-filament {
+  position: absolute;
+  left: -16px;
+  bottom: 4px;
+  width: 32px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(160, 205, 255, 0.95), transparent);
+  will-change: transform;
+}
+/* specular rim: its bright arc faces the pointer, or the direction of travel */
+.xs-rim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--a, 0deg),
+    rgba(170, 210, 255, 0.95),
+    rgba(150, 196, 255, 0.22) 18%,
+    rgba(255, 255, 255, 0.07) 50%,
+    rgba(150, 196, 255, 0.22) 82%,
+    rgba(170, 210, 255, 0.95)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+}
+
+/* ------------------------------------------------------------------ the logo: glass that reflects toward the pointer */
+.xn[data-concept='lens'] .xn-lockup {
+  gap: 12px;
+}
+.xn[data-concept='lens'] .xn-lockup > span {
+  height: 32px;
+  background-size: auto 32px;
+}
+.xn[data-concept='lens'] .xn-lockup .xn-lockup-orb {
+  position: relative;
+  width: 33.6px;
+}
+.xn[data-concept='lens'] .xn-lockup .xn-lockup-word {
+  width: 51.7px;
+  background-position: -33.6px 0;
+}
+.xs-orb-light,
+.xs-orb-sweep {
+  clip-path: circle(44% at 48% 53%);
+}
+.xs-orb-light {
+  inset: 0;
+  border-radius: 50%;
+  opacity: 0;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 28%), rgba(255, 255, 255, 0.85), rgba(170, 215, 255, 0.3) 24%, transparent 46%);
+  mix-blend-mode: screen;
+  transition: opacity 280ms ease;
+}
+.xs-orb-sweep {
+  inset: 0;
+  background: linear-gradient(115deg, transparent 38%, rgba(225, 242, 255, 0.6) 50%, transparent 62%) no-repeat;
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  mix-blend-mode: screen;
+}
+.xs-orb-sweep {
+  animation: xsRest 11s cubic-bezier(0.4, 0, 0.2, 1) 2.5s infinite;
+}
+.xn[data-hidden] .xs-orb-sweep {
+  animation-play-state: paused;
+}
+.xn-lockup[data-sweep] .xs-orb-sweep {
+  animation: xsSweep 900ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+/* at rest: one slow pass across the glass every 11 s, otherwise still */
+@keyframes xsRest {
+  0% {
+    background-position: 100% 0;
+    opacity: 0;
+  }
+  2% {
+    opacity: 0.55;
+  }
+  12% {
+    background-position: 0% 0;
+    opacity: 0.55;
+  }
+  14%,
+  100% {
+    background-position: 0% 0;
+    opacity: 0;
+  }
+}
+@keyframes xsSweep {
+  to {
+    background-position: 0% 0;
+  }
+}
+
+/* ------------------------------------------------------------------ the CTA: sapphire glass with a light and rim that follow the pointer */
+.xn[data-concept='lens'] .xn-cta {
+  position: relative;
+  height: 40px;
+  padding: 0 18px 0 16px;
+  border-radius: 14px;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: -0.004em;
+  background:
+    radial-gradient(70px circle at var(--mx, 50%) var(--my, -10px), rgba(190, 222, 255, 0.4), transparent 70%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0) 52%),
+    linear-gradient(180deg, #397bfa 0%, #2a63e8 55%, #2253d2 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    inset 0 0 0 1px rgba(190, 215, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 20, 80, 0.45),
+    0 1px 0 rgba(0, 0, 0, 0.45),
+    0 10px 24px -12px rgba(57, 123, 250, 0.8);
+  transition:
+    transform 140ms var(--xn-ease),
+    box-shadow 220ms ease;
+}
+.xn[data-concept='lens'] .xn-cta::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  opacity: 0.55;
+  background: conic-gradient(from var(--a, 0deg), rgba(220, 235, 255, 0.95), rgba(170, 205, 255, 0.25) 20%, rgba(255, 255, 255, 0.08) 50%, rgba(170, 205, 255, 0.25) 80%, rgba(220, 235, 255, 0.95));
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  transition: opacity 200ms ease;
+  pointer-events: none;
+}
+.xn[data-concept='lens'] .xn-cta:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 20, 80, 0.4),
+    0 1px 0 rgba(0, 0, 0, 0.45),
+    0 14px 30px -12px rgba(40, 104, 255, 0.95);
+}
+.xn[data-concept='lens'] .xn-cta:hover::after {
+  opacity: 1;
+}
+.xn[data-concept='lens'] .xn-cta:active {
+  transform: translateY(1px) scale(0.975);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 10, 50, 0.5),
+    0 4px 12px -8px rgba(40, 104, 255, 0.8);
+}
+.xn[data-concept='lens'] .xn-cta-icon {
+  color: #fff;
+  transition: transform 260ms var(--xn-ease);
+}
+.xn[data-concept='lens'] .xn-cta:hover .xn-cta-icon {
+  transform: translateY(-1px) rotate(-8deg);
+}
+
+/* ------------------------------------------------------------------ the menu: morphs out of the lens; content in three beats */
+.xn[data-concept='lens'] .xn-panel {
+  transform: none;
+  transition:
+    opacity 120ms ease 80ms,
+    visibility 0s linear 230ms;
+}
+.xn[data-concept='lens'] .xn-panel[data-open] {
+  transition:
+    opacity 60ms ease,
+    visibility 0s;
+}
+.xn[data-concept='lens'] .xn-panel-surface {
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 30%),
+    linear-gradient(100deg, #12171f 0%, #0e1218 50%, #0b0e13 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(236, 233, 226, 0.08),
+    inset 0 0 0 1px rgba(236, 233, 226, 0.07),
+    0 44px 90px -40px rgba(0, 0, 0, 0.95);
+}
+.xs-meniscus {
+  z-index: 3;
+  top: 10px;
+  left: -110px;
+  width: 220px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(160, 205, 255, 0.95), transparent);
+  opacity: 0;
+  transition: opacity 160ms ease;
+  will-change: transform;
+}
+.xn-panel[data-open] .xs-meniscus {
+  opacity: 1;
+  transition: opacity 200ms ease 160ms;
+}
+.xs-meniscus::after {
+  content: '';
+  position: absolute;
+  left: 40px;
+  right: 40px;
+  top: 0;
+  height: 34px;
+  background: radial-gradient(50% 100% at 50% 0%, rgba(64, 140, 255, 0.16), transparent 70%);
+}
+.xn[data-concept='lens'] .xn-menu {
+  position: relative;
+  z-index: 1;
+  animation: none;
+}
+.xn[data-concept='lens'] .xn-intro,
+.xn[data-concept='lens'] .xn-links {
+  animation: xsUp 320ms var(--xn-ease) both;
+}
+.xn[data-concept='lens'] .xn-intro {
+  animation-delay: 70ms;
+}
+.xn[data-concept='lens'] .xn-links {
+  animation-delay: 120ms;
+}
+.xn[data-concept='lens'] .xn-group {
+  animation: none;
+}
+.xn[data-concept='lens'] .xn-preview {
+  animation: xsResolve 420ms var(--xn-ease) 150ms both;
+}
+@keyframes xsUp {
+  from {
+    opacity: 0;
+    transform: translate(var(--dx, 0px), 8px);
+  }
+}
+@keyframes xsResolve {
+  from {
+    opacity: 0;
+    transform: translate(var(--dx, 0px), 6px) scale(0.985);
+  }
+}
+/* menu links share one glass focus card that glides between them */
+.xs-card {
+  left: 0;
+  top: 0;
+  z-index: 0;
+  border-radius: 12px;
+  opacity: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.018));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 0 0 1px rgba(150, 196, 255, 0.16);
+  transition: opacity 180ms ease;
+  will-change: transform, width, height;
+}
+.xs-card[data-on] {
+  opacity: 1;
+  transition: opacity 100ms ease;
+}
+.xn[data-concept='lens'] .xn-link:hover,
+.xn[data-concept='lens'] .xn-link:focus-visible {
+  background: transparent;
+}
+.xn[data-concept='lens'] .xn-link:is(:hover, :focus-visible) .xn-icon {
+  color: #f7f6f2;
+  box-shadow:
+    inset 0 1px 0 rgba(236, 233, 226, 0.1),
+    inset 0 0 0 1px rgba(111, 157, 255, 0.5),
+    0 0 14px -6px rgba(64, 140, 255, 0.7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xs-lens,
+  .xs-card,
+  .xs-glow,
+  .xn[data-concept='lens'] .xn-item,
+  .xn[data-concept='lens'] .xn-cta {
+    transition: none !important;
+  }
+  .xs-orb-sweep {
+    display: none;
+  }
+}

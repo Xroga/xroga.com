@@ -7,17 +7,13 @@ const PAGE = read('../components/homepage/HomepageClient.tsx');
 const COMPONENT = read('../components/homepage/HomepageStackStudio.tsx');
 const CSS = read('../styles/homepage-coding.css');
 
-test('the compact stack studio follows intelligence without disturbing the approved story order', () => {
-  const intelligence = PAGE.indexOf('<XrogaIntelligenceSection />');
-  const stack = PAGE.indexOf('<HomepageStackStudio />');
-  const showcase = PAGE.indexOf('<HomepageShowcase />');
-  assert.ok(intelligence !== -1 && intelligence < stack && stack < showcase);
-  assert.match(PAGE.slice(intelligence - 160, stack + 160), /xv-system-combined/);
+test('legacy stack studio remains available but is absent from the short homepage', () => {
+  assert.doesNotMatch(PAGE, /<HomepageStackStudio|<XrogaIntelligenceSection|<HomepageShowcase/);
   assert.match(COMPONENT, /grid-template-columns|xv-stack-studio__grid/);
 });
 
-test('intelligence and the brief-to-build studio share one animated system surface', () => {
-  assert.match(PAGE, /<div className="xv-system-combined"[\s\S]*<XrogaIntelligenceSection \/>[\s\S]*<HomepageStackStudio \/>[\s\S]*<\/div>/);
+test('legacy combined system styling is retained without mounting a duplicate post-S05 section', () => {
+  assert.doesNotMatch(PAGE, /xv-system-combined/);
   assert.match(CSS, /\.xv-home-coding \.xv-system-combined\s*\{/);
   assert.match(CSS, /\.xv-home-coding \.xv-system-combined::before/);
   assert.match(CSS, /@keyframes xv-system-halo/);

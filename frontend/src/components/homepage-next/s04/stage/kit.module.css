@@ -1,0 +1,377 @@
+/* Stage kit: device materials, Xroga's inspection layer, and the render pass. */
+.host {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+}
+.device {
+  position: relative;
+  flex: none;
+}
+/* a modern Pro-class iPhone, front view, one generation throughout (Dynamic Island, uniform slim border): every
+   measure is in the app's natural px times the device scale --s, so the border, band, corners and buttons keep the
+   phone's proportions at any size. Display corners 40, black border 6.2, brushed titanium band 2.6; no brand marks. */
+.device[data-kind='phone'] {
+  isolation: isolate;
+  border-radius: calc(40px * var(--s, 1));
+  box-shadow:
+    0 60px 80px -40px rgba(0, 0, 0, 0.95),
+    0 30px 50px -36px rgba(40, 80, 160, 0.35);
+}
+.device[data-kind='phone']::before {
+  content: '';
+  position: absolute;
+  inset: calc(-8.8px * var(--s, 1));
+  z-index: -1;
+  border: calc(2.6px * var(--s, 1)) solid transparent;
+  border-radius: calc(48.8px * var(--s, 1));
+  background:
+    linear-gradient(#040507, #040507) padding-box,
+    linear-gradient(152deg, #aab2be 0%, #5d6572 12%, #2c313a 34%, #1d2128 56%, #383f4a 80%, #949dab 100%) border-box;
+  box-shadow:
+    inset 0 0 0 calc(0.7px * var(--s, 1)) rgba(255, 255, 255, 0.07),
+    0 0 0 0.5px rgba(0, 0, 0, 0.7);
+}
+/* side controls: action button and volume on the left, the side button on the right */
+.device[data-kind='phone']::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(-10.4px * var(--s, 1));
+  right: calc(-10.4px * var(--s, 1));
+  z-index: -2;
+  --btn: linear-gradient(90deg, #39404b, #6b7380 50%, #39404b);
+  background:
+    var(--btn) left 0 top 17% / calc(2.4px * var(--s, 1)) 5.2% no-repeat,
+    var(--btn) left 0 top 26% / calc(2.4px * var(--s, 1)) 9% no-repeat,
+    var(--btn) left 0 top 37% / calc(2.4px * var(--s, 1)) 9% no-repeat,
+    var(--btn) right 0 top 29% / calc(2.4px * var(--s, 1)) 14% no-repeat;
+}
+/* a Pixel-class Android phone, front view: an even slim black border round a punch-hole display, flat satin-aluminium
+   sides catching the light at the edges, power and volume keys on the right. Measures in the app's natural px times
+   the device scale --s: display corners 28, border 6.6, band 2.4; no brand marks. */
+.device[data-kind='android'] {
+  isolation: isolate;
+  border-radius: calc(28px * var(--s, 1));
+  box-shadow:
+    0 60px 80px -40px rgba(0, 0, 0, 0.95),
+    0 30px 50px -36px rgba(60, 160, 100, 0.3);
+}
+.device[data-kind='android']::before {
+  content: '';
+  position: absolute;
+  inset: calc(-9px * var(--s, 1));
+  z-index: -1;
+  border: calc(2.4px * var(--s, 1)) solid transparent;
+  border-radius: calc(37px * var(--s, 1));
+  background:
+    linear-gradient(#050605, #050605) padding-box,
+    linear-gradient(90deg, #565d59 0%, #9aa29d 5%, #3f4441 13%, #2a2e2c 50%, #3f4441 87%, #9aa29d 95%, #565d59 100%) border-box;
+  box-shadow:
+    inset 0 0 0 calc(0.7px * var(--s, 1)) rgba(255, 255, 255, 0.06),
+    0 0 0 0.5px rgba(0, 0, 0, 0.7);
+}
+.device[data-kind='android']::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: calc(-10.6px * var(--s, 1));
+  z-index: -2;
+  --key: linear-gradient(90deg, #3d433f, #77807b 50%, #3d433f);
+  background:
+    var(--key) right 0 top 22% / calc(2.4px * var(--s, 1)) 7% no-repeat,
+    var(--key) right 0 top 34% / calc(2.4px * var(--s, 1)) 13% no-repeat;
+}
+.device[data-kind='landscape'] {
+  border-radius: 34px;
+  box-shadow:
+    0 0 0 9px #10141b,
+    0 0 0 10px #3a4250,
+    0 0 0 11px #0b0e13,
+    0 1px 0 11px rgba(255, 255, 255, 0.07),
+    0 60px 90px -44px rgba(0, 0, 0, 0.95),
+    0 30px 60px -40px rgba(160, 80, 140, 0.35);
+}
+.device[data-kind='browser'] {
+  border-radius: 12px;
+  box-shadow:
+    0 0 0 1px rgba(236, 233, 226, 0.22),
+    0 50px 90px -46px rgba(0, 0, 0, 0.95),
+    0 24px 50px -36px rgba(40, 80, 160, 0.35);
+}
+.screen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+.screen[data-kind='phone'] {
+  border-radius: calc(40px * var(--s, 1));
+}
+.screen[data-kind='android'] {
+  border-radius: calc(28px * var(--s, 1));
+}
+.screen[data-kind='landscape'] {
+  border-radius: 26px;
+}
+.screen[data-kind='browser'] {
+  border-radius: 12px;
+}
+.scaled {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+}
+.still {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  flex: none;
+}
+.stillInner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+}
+.fill {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------------ inspection */
+.inspector {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+.tap {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  margin: -24px 0 0 -24px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.55) 0 6px, rgba(255, 255, 255, 0) 7px);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.9);
+  animation: kitTap 620ms cubic-bezier(0.22, 1, 0.36, 1) 80ms both;
+}
+.cause {
+  position: absolute;
+  box-shadow:
+    0 0 0 1.5px #a9c8ff,
+    0 0 16px -2px rgba(77, 134, 255, 0.6);
+  animation: kitIn 260ms ease both;
+}
+.reticle {
+  position: absolute;
+  border-radius: 12px;
+  box-shadow:
+    0 0 0 1px rgba(169, 200, 255, 0.6),
+    0 0 0 3000px rgba(3, 6, 12, 0.42);
+  animation: kitMask 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: box-shadow 500ms ease;
+}
+.reticle[data-quiet] {
+  box-shadow:
+    0 0 0 1px rgba(169, 200, 255, 0.45),
+    0 0 0 3000px rgba(3, 6, 12, 0.22);
+}
+.corners {
+  position: absolute;
+  inset: -3px;
+  --c: #a9c8ff;
+  background:
+    linear-gradient(var(--c), var(--c)) 0 0 / 14px 2px,
+    linear-gradient(var(--c), var(--c)) 0 0 / 2px 14px,
+    linear-gradient(var(--c), var(--c)) 100% 0 / 14px 2px,
+    linear-gradient(var(--c), var(--c)) 100% 0 / 2px 14px,
+    linear-gradient(var(--c), var(--c)) 0 100% / 14px 2px,
+    linear-gradient(var(--c), var(--c)) 0 100% / 2px 14px,
+    linear-gradient(var(--c), var(--c)) 100% 100% / 14px 2px,
+    linear-gradient(var(--c), var(--c)) 100% 100% / 2px 14px;
+  background-repeat: no-repeat;
+}
+.scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 40%;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(169, 200, 255, 0) 0%, rgba(169, 200, 255, 0.16) 86%, rgba(222, 236, 255, 0.85) 100%);
+  animation: kitScan 1000ms cubic-bezier(0.65, 0, 0.25, 1) 240ms both;
+}
+
+/* ------------------------------------------------------------------ the render pass */
+.scanBox {
+  position: absolute;
+  z-index: 6;
+  overflow: hidden;
+  pointer-events: none;
+}
+.scanBox i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(120, 170, 255, 0) 0%, rgba(120, 170, 255, 0.12) 92%, rgba(210, 228, 255, 0.95) 99%, rgba(210, 228, 255, 0) 100%);
+  transform: translateY(-100%);
+  animation: kitPass 760ms cubic-bezier(0.55, 0, 0.35, 1) both;
+}
+.render {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.render[data-state='empty'] > :first-child {
+  visibility: hidden;
+}
+/* the reveal is a compositor-only wipe: the clip slides down while the asset counter-slides, so the asset stays put and
+   appears top to bottom without being repainted on each frame (measured: clip-path and top repainted every frame) */
+.render[data-state='rendering'] {
+  overflow: hidden;
+}
+.wipe,
+.wipeIn {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.wipe {
+  overflow: hidden;
+}
+.render[data-state='rendering'] > .wipe {
+  animation: kitWipe 760ms cubic-bezier(0.55, 0, 0.35, 1) var(--delay) both;
+}
+.render[data-state='rendering'] > .wipe > .wipeIn {
+  animation: kitWipeIn 760ms cubic-bezier(0.55, 0, 0.35, 1) var(--delay) both;
+}
+.renderEdge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+  animation: kitEdge 760ms cubic-bezier(0.55, 0, 0.35, 1) var(--delay) both;
+}
+.renderEdge::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: rgba(210, 228, 255, 0.95);
+  box-shadow: 0 0 12px 2px rgba(120, 170, 255, 0.6);
+}
+
+@keyframes kitTap {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+@keyframes kitIn {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes kitMask {
+  from {
+    box-shadow:
+      0 0 0 1px rgba(169, 200, 255, 0),
+      0 0 0 3000px rgba(3, 6, 12, 0);
+  }
+}
+@keyframes kitScan {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  to {
+    transform: translateY(160%);
+    opacity: 0;
+  }
+}
+@keyframes kitPass {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes kitWipe {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes kitWipeIn {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes kitEdge {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  96% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tap,
+  .cause,
+  .reticle,
+  .scan,
+  .scanBox i,
+  .render > :first-child,
+  .wipeIn,
+  .renderEdge {
+    animation: none !important;
+    transition: none !important;
+  }
+  .scanBox,
+  .renderEdge,
+  .tap,
+  .scan {
+    display: none;
+  }
+}
