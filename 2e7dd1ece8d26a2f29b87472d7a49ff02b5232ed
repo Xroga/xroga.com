@@ -1,0 +1,260 @@
+{
+  "sourceSha": "2e7dd1ece8d26a2f29b87472d7a49ff02b5232ed",
+  "status": "REAL_ISOLATED_OCI_CRYPTO_VERIFIED_RUNTIME_CUSTODY_BLOCKED",
+  "consoleEvidence": {
+    "observedDate": "2026-10-21",
+    "timezone": "Asia/Karachi",
+    "method": "AUTHENTICATED_OCI_CONSOLE_AND_CLOUD_SHELL_UI",
+    "acceptedSoftwareSource": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+    "additiveOciSource": "2e7dd1ece8d26a2f29b87472d7a49ff02b5232ed",
+    "account": "FREE_TIER_IN_FREE_TRIAL",
+    "region": "me-dubai-1",
+    "initialInventory": {
+      "childCompartments": 0,
+      "vaultsInRootCompartment": 0,
+      "dynamicGroups": 0,
+      "groupNames": [
+        "All Domain Users",
+        "Administrators"
+      ],
+      "policies": [
+        "Tenant Admin Policy: ALLOW GROUP Administrators to manage all-resources IN TENANCY"
+      ],
+      "suitableScopedApplicationPrincipalFound": false
+    },
+    "resourcesCreated": {
+      "standardVaults": 1,
+      "virtualPrivateVaults": 0,
+      "masterKeys": 1,
+      "protection": "SOFTWARE",
+      "algorithm": "AES",
+      "keyBytes": 32,
+      "retainedVersions": 2,
+      "newIamGrants": 0,
+      "newComputeResources": 0,
+      "subscriptionsOrBillingUpgrades": 0
+    },
+    "bundleSha256": "62172dffaa1d8774f1fb754a3febb13017c1c2f370e2e502d0f339d3bcb680a9",
+    "prepareCanonicalSha256": "f7e12f33ab22c9091093a5af1efd1d4146724d8fa3d18c99b8d3a37e37da4d53",
+    "rotationCanonicalSha256": "7e43719a31420289aefdca5d02062893176bf0cfdc513e25bc8921e68a7bc733",
+    "remoteReceiptArchiveSha256": "e54719f153d2279a0c3f9a5fbe6fa563ea81df73b1b15840f9094fa9f7afdc4a",
+    "receiptPreservation": "Downloaded-file event was unavailable although the console reported transfer complete. Exact JSON was read from the authenticated terminal, parsed and independently matched to remote jq -cS SHA256 values. No receipt result was inferred from the transfer toast.",
+    "node": "22.21.1",
+    "sdk": {
+      "oci-common": "2.144.0",
+      "oci-keymanagement": "2.144.0",
+      "license": "UPL-1.0 OR Apache-2.0"
+    },
+    "isolatedProviderCryptography": "VERIFIED",
+    "receiptedCryptoRequests": 19,
+    "earlierProbeFailure": "Unsigned test request omitted required x-content-sha256, producing HTTP 400 rather than an authentication result. Corrected only request headers, preserved 401/403 assertion, and reran the bounded probe. Both successful receipts are retained.",
+    "scopedApplicationIamVerified": false,
+    "validWrongPrincipalIamTestVerified": false,
+    "productionRuntimeAuthenticationVerified": false,
+    "productionCutoverVerified": false,
+    "softwareKeyBackupSupportedByOciVaultBackup": false,
+    "recoveryVerified": "Retained original key version decrypts preserved synthetic ciphertext in a new process after rotation. This is not key backup or disaster-recovery proof.",
+    "keysDestroyedOrExported": false,
+    "liveCredentialsMigrated": false,
+    "googleCloudBillingTouched": false,
+    "productionChanges": false,
+    "phase4Started": false,
+    "expectedAdditionalCostUsd": 0,
+    "costBasis": "Oracle documentation confirms SOFTWARE-protected master keys are Always Free and Vault cryptographic API requests are not billed. Standard vault only. Cloud Shell within its free monthly limits. No billable resource or upgrade was selected. Cost reports were not treated as immediate metering proof.",
+    "status": "ISOLATED_OCI_KMS_VERIFIED_RUNTIME_CUSTODY_CUTOVER_BLOCKED"
+  },
+  "prepare": {
+    "authMode": "CLOUD_SHELL_DELEGATED_OPERATOR_NOT_APPLICATION_RUNTIME",
+    "cases": [
+      "REAL_WRAP_UNWRAP_EXACT_VERSION",
+      "REAL_WRONG_AAD_DENIED",
+      "REAL_UNAVAILABLE_KEY_DENIED",
+      "REAL_UNAUTHENTICATED_REQUEST_DENIED_NOT_SCOPED_IAM_PROOF",
+      "REAL_CANONICAL_VAULT_ROUNDTRIP",
+      "REAL_VAULT_IDENTITY_NEGATIVES",
+      "SYNTHETIC_CIPHERTEXT_PRESERVED_FOR_PROCESS_RESTART"
+    ],
+    "endpoint": "https://gvvnprwtaaawu-crypto.kms.me-dubai-1.oci.oraclecloud.com",
+    "keyBackupVerified": false,
+    "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+    "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kem4nll4oniaa.abshqljrvs33cqnfcln6g3wru6ttmdvqpcelza5maumjqaori5iqjgukfmvq",
+    "liveCredentialsMigrated": false,
+    "node": "v22.21.1",
+    "originalSoftwareSource": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+    "phase": "prepare",
+    "productionRuntimeAuthenticationVerified": false,
+    "recoveryScope": "Retained SOFTWARE key versions plus synthetic ciphertext, not provider key backup",
+    "requests": [
+      {
+        "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+        "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kem4nll4oniaa.abshqljrvs33cqnfcln6g3wru6ttmdvqpcelza5maumjqaori5iqjgukfmvq",
+        "operation": "encrypt",
+        "requestId": "16F20EC0CCC2-11F1-8ACD-63F0DEE74",
+        "result": "SUCCESS"
+      },
+      {
+        "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+        "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kem4nll4oniaa.abshqljrvs33cqnfcln6g3wru6ttmdvqpcelza5maumjqaori5iqjgukfmvq",
+        "operation": "decrypt",
+        "requestId": "17489330CCC2-11F1-8ACD-63F0DEE74",
+        "result": "SUCCESS"
+      },
+      {
+        "code": "InvalidParameter",
+        "operation": "decrypt",
+        "requestId": "174D7530CCC2-11F1-8ACD-63F0DEE74",
+        "result": "DENIED",
+        "status": 400
+      },
+      {
+        "code": "NotAuthorizedOrNotFound",
+        "operation": "encrypt",
+        "requestId": "17516CD0CCC2-11F1-8ACD-63F0DEE74",
+        "result": "DENIED",
+        "status": 404
+      },
+      {
+        "operation": "unauthenticated-encrypt",
+        "requestId": "2d70c7d49cf4f40dcd8f91ee7cd06aa5",
+        "result": "DENIED",
+        "status": 401
+      },
+      {
+        "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+        "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kem4nll4oniaa.abshqljrvs33cqnfcln6g3wru6ttmdvqpcelza5maumjqaori5iqjgukfmvq",
+        "operation": "encrypt",
+        "requestId": "1753DDD0CCC2-11F1-8ACD-63F0DEE74",
+        "result": "SUCCESS"
+      },
+      {
+        "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+        "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kem4nll4oniaa.abshqljrvs33cqnfcln6g3wru6ttmdvqpcelza5maumjqaori5iqjgukfmvq",
+        "operation": "decrypt",
+        "requestId": "175675E0CCC2-11F1-8ACD-63F0DEE74",
+        "result": "SUCCESS"
+      },
+      {
+        "code": "InvalidParameter",
+        "operation": "decrypt",
+        "requestId": "175871B0CCC2-11F1-8ACD-63F0DEE74",
+        "result": "DENIED",
+        "status": 400
+      },
+      {
+        "code": "InvalidParameter",
+        "operation": "decrypt",
+        "requestId": "175A1F60CCC2-11F1-8ACD-63F0DEE74",
+        "result": "DENIED",
+        "status": 400
+      },
+      {
+        "code": "InvalidParameter",
+        "operation": "decrypt",
+        "requestId": "175BF420CCC2-11F1-8ACD-63F0DEE74",
+        "result": "DENIED",
+        "status": 400
+      },
+      {
+        "code": "InvalidParameter",
+        "operation": "decrypt",
+        "requestId": "175DA1D0CCC2-11F1-8ACD-63F0DEE74",
+        "result": "DENIED",
+        "status": 400
+      },
+      {
+        "code": "InvalidParameter",
+        "operation": "decrypt",
+        "requestId": "175F2870CCC2-11F1-8ACD-63F0DEE74",
+        "result": "DENIED",
+        "status": 400
+      },
+      {
+        "code": "InvalidParameter",
+        "operation": "decrypt",
+        "requestId": "1760AF10CCC2-11F1-8ACD-63F0DEE74",
+        "result": "DENIED",
+        "status": 400
+      }
+    ],
+    "result": "PASS_ISOLATED_PROVIDER_CRYPTO_NOT_PRODUCTION_CUTOVER",
+    "scopedApplicationIamVerified": false,
+    "syntheticStateSha256": "8c505a066051d77642ca40ea0be67229cb6dc148973a65204003687651ba31ef",
+    "timestamp": "2026-10-20T20:09:01.324Z",
+    "version": 1
+  },
+  "rotation": {
+    "authMode": "CLOUD_SHELL_DELEGATED_OPERATOR_NOT_APPLICATION_RUNTIME",
+    "cases": [
+      "REAL_OLD_VERSION_RECOVERY_AFTER_PROCESS_RESTART_AND_ROTATION",
+      "REAL_NEW_VERSION_ROTATION_AND_OLD_READER_COMPATIBILITY"
+    ],
+    "endpoint": "https://gvvnprwtaaawu-crypto.kms.me-dubai-1.oci.oraclecloud.com",
+    "keyBackupVerified": false,
+    "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+    "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna",
+    "liveCredentialsMigrated": false,
+    "node": "v22.21.1",
+    "originalSoftwareSource": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+    "phase": "rotation",
+    "productionRuntimeAuthenticationVerified": false,
+    "recoveryScope": "Retained SOFTWARE key versions plus synthetic ciphertext, not provider key backup",
+    "requests": [
+      {
+        "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+        "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kem4nll4oniaa.abshqljrvs33cqnfcln6g3wru6ttmdvqpcelza5maumjqaori5iqjgukfmvq",
+        "operation": "decrypt",
+        "requestId": "638B47B0CCC2-11F1-BE7E-0BED56F5C",
+        "result": "SUCCESS"
+      },
+      {
+        "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+        "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kem4nll4oniaa.abshqljrvs33cqnfcln6g3wru6ttmdvqpcelza5maumjqaori5iqjgukfmvq",
+        "operation": "decrypt",
+        "requestId": "63FA0F10CCC2-11F1-BE7E-0BED56F5C",
+        "result": "SUCCESS"
+      },
+      {
+        "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+        "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna",
+        "operation": "encrypt",
+        "requestId": "63FDB890CCC2-11F1-BE7E-0BED56F5C",
+        "result": "SUCCESS"
+      },
+      {
+        "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+        "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna",
+        "operation": "decrypt",
+        "requestId": "64016210CCC2-11F1-BE7E-0BED56F5C",
+        "result": "SUCCESS"
+      },
+      {
+        "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+        "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kem4nll4oniaa.abshqljrvs33cqnfcln6g3wru6ttmdvqpcelza5maumjqaori5iqjgukfmvq",
+        "operation": "decrypt",
+        "requestId": "640384F0CCC2-11F1-BE7E-0BED56F5C",
+        "result": "SUCCESS"
+      },
+      {
+        "code": "InvalidParameter",
+        "operation": "decrypt",
+        "requestId": "64050B90CCC2-11F1-BE7E-0BED56F5C",
+        "result": "DENIED",
+        "status": 400
+      }
+    ],
+    "result": "PASS_ISOLATED_PROVIDER_CRYPTO_NOT_PRODUCTION_CUTOVER",
+    "scopedApplicationIamVerified": false,
+    "syntheticStateSha256": "8c505a066051d77642ca40ea0be67229cb6dc148973a65204003687651ba31ef",
+    "timestamp": "2026-10-20T20:11:09.911Z",
+    "version": 1
+  },
+  "currentCandidate": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+  "ci": "Changed-source integrated provenance repair pushed. Final CI pending. No complete acceptance claim.",
+  "remaining": [
+    "approved exact-key application principal and trust",
+    "valid wrong-principal IAM denial",
+    "application runtime authentication renewal and recovery",
+    "isolated runtime custody/cutover"
+  ],
+  "resume": "After final candidate CI completes, run artifacts/oci-kms-verification/finalize.mjs with the pinned Node 22 runtime. It authenticates all 11 workflows and unchanged strict gate, then appends a new source note."
+}
