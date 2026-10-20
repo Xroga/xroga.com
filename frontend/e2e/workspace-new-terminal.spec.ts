@@ -296,7 +296,7 @@ test('search dialog escapes workspace stacking context and has an opaque foregro
   const dialog = page.getByRole('dialog', { name: 'Search projects and chats' });
   await expect(dialog).toBeVisible();
   await expect(dialog).toHaveCSS('background-color', 'rgb(25, 25, 25)');
-  expect(await dialog.evaluate(el => el.parentElement === document.body)).toBe(true);
+  expect(await dialog.evaluate(el => el.parentElement?.parentElement === document.body)).toBe(true);
   await page.keyboard.press('Escape');
   await expect(dialog).toHaveCount(0);
 });
