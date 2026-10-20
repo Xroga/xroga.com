@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "c47bb635a943d476562d694c1d7303e4d55f846d",
-    "sourceTimestampUtc": "2026-10-20T23:57:30+05:00",
-    "auditStartedUtc": "2026-10-20T18:58:18.560Z",
+    "sha": "e63be92e3275489aac5a1e30d955aae1b27049a0",
+    "sourceTimestampUtc": "2026-10-21T00:12:32+05:00",
+    "auditStartedUtc": "2026-10-20T19:12:45.666Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -86503,8 +86503,7 @@
       "callers": [
         "scripts/security/audit-tenant-policies.mjs:8",
         "scripts/security/audit-tenant-policies.test.mjs:6",
-        "scripts/security/caller-reviews.closure.test.mjs:4",
-        "scripts/xroga/phase-one.mjs:9"
+        "scripts/security/caller-reviews.closure.test.mjs:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -88166,7 +88165,7 @@
       "id": "surface:4aa5a1c1163a2875d77b",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/phase-one.mjs",
-      "sha256": "8b95c8d7c799a078cb2f0072cfba9ea4ff63646afa73a9beab585a3228c48cb7",
+      "sha256": "b37c393ddada485b77ed19c8f903d79fb573b7134fe9007c2a872d0178e919b8",
       "symbols": [
         "approvedFrozen",
         "basePath",
@@ -88177,13 +88176,13 @@
         "commands",
         "criterionScoreboard",
         "fixtures",
+        "frozenObligations",
         "git",
         "groups",
         "hash",
         "historical",
         "json",
         "main",
-        "obligations",
         "old",
         "oldReviews",
         "outputs",
@@ -88192,13 +88191,11 @@
         "phase2",
         "read",
         "recorded",
-        "reviews",
         "root",
         "text",
         "verified"
       ],
       "imports": [
-        "../security/caller-reviews.mjs",
         "../security/tenant-acceptance.mjs",
         "./reconcile-requirements.mjs",
         "./verify-phase-one.mjs",
@@ -88210,7 +88207,6 @@
         "node:url"
       ],
       "runtimeImports": [
-        "scripts/security/caller-reviews.mjs",
         "scripts/security/tenant-acceptance.mjs",
         "scripts/xroga/reconcile-requirements.mjs",
         "scripts/xroga/verify-phase-one.mjs"
@@ -89269,7 +89265,7 @@
         "scripts/ci/prepare-pr-integration.mjs"
       ],
       "callers": [
-        "scripts/xroga/phase-one.mjs:10",
+        "scripts/xroga/phase-one.mjs:9",
         "scripts/xroga/verify-phase-one.test.mjs:3"
       ],
       "reachable": true,
@@ -109106,7 +109102,7 @@
     {
       "id": "test-suite:aaf0b06791fa8cdc2a69",
       "sourcePath": "scripts/xroga/phase-one.test.mjs",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },

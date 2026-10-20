@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "c47bb635a943d476562d694c1d7303e4d55f846d",
+  "source_sha": "e63be92e3275489aac5a1e30d955aae1b27049a0",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -2919,9 +2919,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "53c2af535e0f31529a9aa88e185280b5c8ca642eefa72c5e9224e0b9533a4ed7",
-      "byte_size": 4000178,
-      "modified_timestamp": "2026-10-20T18:58:24.370Z",
+      "sha256": "57fa638cf4fbeacdb51a5aa4a3bce8bde95f69dc0582162c89645496856d9d9c",
+      "byte_size": 4000034,
+      "modified_timestamp": "2026-10-20T19:12:45.935Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -21145,9 +21145,9 @@
       "source_id": "SRC-4aa5a1c1163a2875",
       "filename": "phase-one.mjs",
       "path_or_url": "scripts/xroga/phase-one.mjs",
-      "sha256": "8b95c8d7c799a078cb2f0072cfba9ea4ff63646afa73a9beab585a3228c48cb7",
-      "byte_size": 7564,
-      "modified_timestamp": "2026-10-19T14:26:48.009Z",
+      "sha256": "b37c393ddada485b77ed19c8f903d79fb573b7134fe9007c2a872d0178e919b8",
+      "byte_size": 6599,
+      "modified_timestamp": "2026-10-20T19:11:53.614Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",
