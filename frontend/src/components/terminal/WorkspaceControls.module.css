@@ -58,3 +58,31 @@
   .mobileModelIcon { display: block; width: 24px; height: 24px; flex-shrink: 0; }
   .modelButton .chevron { display: none; }
 }
+
+/* Full-width, consistently positioned work picker and legible company marks. */
+.actions.actions :global(.xv-cba-work-preview) {
+  grid-column: 1 / -1; display: grid; gap: 4px; min-height: 58px;
+  align-content: center; padding: 10px 12px; margin-bottom: 3px;
+  border: 1px solid var(--mono-border); border-radius: 10px; background: var(--mono-raised);
+}
+.actions.actions :global(.xv-cba-work-preview strong) { font: 600 13px/1.35 Arial,sans-serif; color: var(--mono-ink); }
+.actions.actions :global(.xv-cba-work-preview span) { font: 11px/1.4 Arial,sans-serif; color: var(--mono-muted); }
+.actions.actions :global(.xv-cba-item__text) { flex-direction: column; align-items: flex-start; gap: 2px; flex: 1; }
+.actions.actions :global(.xv-cba-item__text b) { font-weight: 650; }
+.actions.actions :global(.xv-cba-item__text i) { color: var(--mono-muted); }
+.actions.actions :global(.xv-cba-item) { min-height: 49px; width: 100%; }
+.actions.actions :global(.xv-cba-item:focus-visible) { outline: 2px solid var(--mono-ink); outline-offset: -2px; }
+.actions.actions :global(.xv-cba-integrations-logo) {
+  position: static; display: flex; flex: none; width: auto; height: auto;
+  grid-template-columns: none; align-items: center; gap: 3px;
+}
+.actions.actions :global(.xv-cba-integrations-logo > *) {
+  width: 18px !important; height: 18px !important; margin: 0 !important;
+  border-radius: 4px; background: #fff; padding: 2px;
+}
+@media (max-width: 500px) {
+  .actions.actions :global(.xv-cba-integrations-logo > *) { width: 15px !important; height: 15px !important; }
+  .actions.actions :global(.xv-cba-item) { min-height: 44px; padding: 7px 9px; }
+  .actions.actions :global(.xv-cba-item__text b) { font-size: 12px; }
+  .actions.actions :global(.xv-cba-item__text i) { font-size: 10px; }
+}
