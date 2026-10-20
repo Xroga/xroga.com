@@ -268,10 +268,10 @@ function DeckStage({ layout: base, onExplore, detail }: StageProps) {
   return (
     <div ref={trackRef} className={s.track} style={{ height: `${(1 + TRACK_VH) * 100}vh` }} data-chapter={chapter}>
       <div className={s.stage} style={stageVars}>
+        <div className={s.dotField} aria-hidden />
         <header ref={headRef} className={s.head}>
           <Heading inStage />
         </header>
-        <div className={s.dotField} aria-hidden />
         <div ref={lightRef} className={s.lights} aria-hidden>
           <i data-pool="cool" />
           <i data-pool="warm" />
