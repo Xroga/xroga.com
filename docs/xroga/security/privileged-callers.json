@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "69d8aa41a2fe941e8d4245dd45917cc703ff8217636ae9d3c9202274e7be4f43",
+  "reviewRegistrySha256": "45b4a2fcd08c5e1108135cc94105df8019eed00e7021320a84400291a319eb07",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {

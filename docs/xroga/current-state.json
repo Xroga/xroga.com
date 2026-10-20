@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "9869d6e7bc5f40be7660562c2005d2bf9266412a",
-    "sourceTimestampUtc": "2026-10-20T21:42:44+05:00",
-    "auditStartedUtc": "2026-10-20T17:01:36.568Z",
+    "sha": "72876719821f9efdc52fb28a03df465993bd2c70",
+    "sourceTimestampUtc": "2026-10-20T22:04:51+05:00",
+    "auditStartedUtc": "2026-10-20T17:12:14.574Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -86625,6 +86625,70 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:b694553feb3a38bc1097",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/evaluate-phase-three.mjs",
+      "sha256": "e42bb111e1a9784ad878d33cdafab46218b8befdb4971a717e8567dac6e33e49",
+      "symbols": [
+        "actual",
+        "argument",
+        "criteria",
+        "evaluatePhaseThree",
+        "evidencePath",
+        "expected",
+        "frozen",
+        "head",
+        "index",
+        "item",
+        "json",
+        "kmsComplete",
+        "main",
+        "manifests",
+        "observationsPath",
+        "read",
+        "result",
+        "root",
+        "value"
+      ],
+      "imports": [
+        "node:assert/strict",
+        "node:child_process",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "scripts/security/evaluate-phase-three.test.mjs:4"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:assert/strict",
+        "node:child_process",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/security/evaluate-phase-three.mjs#evidencePath"
+      ],
+      "testCoverage": [
+        "scripts/security/evaluate-phase-three.test.mjs"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:b5fb9b6d0970672ddebe",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/full-supabase-history.mjs",
@@ -86844,7 +86908,7 @@
       "id": "surface:052e49f08f69e1d17b86",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/refresh-phase-three-authority-delta.mjs",
-      "sha256": "5a854aaa31cc90e6a4099eac6d475d46f368ba971c94c3c7f576e7009a037cbb",
+      "sha256": "73476ea76f46f097a16268b25d4903c2428f72c3f180a4cdcef4620c2d6310d0",
       "symbols": [
         "accepted",
         "after",
@@ -86881,6 +86945,7 @@
         "retiredCalls",
         "retiredPhaseOneMappings",
         "sourceHashes",
+        "structuredCallIds",
         "text"
       ],
       "imports": [
@@ -88927,6 +88992,43 @@
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:ed5bd366832d5c8e178e",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/xroga/validate-phase-four-handoff.mjs",
+      "sha256": "0fb2f4cc04b6f431a7f7d2ab79ef71d72c3b371d7e4f78d94d7bf35fa3e6644d",
+      "symbols": [
+        "handoff",
+        "original",
+        "read",
+        "scoreboard"
+      ],
+      "imports": [
+        "node:assert/strict",
+        "node:fs"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:assert/strict",
+        "node:fs"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -108840,6 +108942,13 @@
       "id": "test-suite:7ad4485dc12ff4206f8f",
       "sourcePath": "scripts/security/disposable-supabase.test.mjs",
       "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:56884ae799098ba6d5fc",
+      "sourcePath": "scripts/security/evaluate-phase-three.test.mjs",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "9869d6e7bc5f40be7660562c2005d2bf9266412a",
+  "source_sha": "72876719821f9efdc52fb28a03df465993bd2c70",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -470,8 +470,10 @@
       ],
       "feature_category": "batch-command-008",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
-      "current_paths": [],
+      "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "current_paths": [
+        "docs/xroga/evidence/command-008/manifest.json"
+      ],
       "implementation_owner_command": "008",
       "priority": "P1",
       "dependencies": [
@@ -505,7 +507,7 @@
         "Original mission acceptance (not current proof): Sensitive send/delete/publish/spend require correct approval; stale/replayed digest and broadened permissions rejected."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted; original missions 01–10 are explicit semantic aliases of the stricter Batch One specifications; neither source overrides unpassed gates",
       "confidence": "MEDIUM",
       "unresolved_questions": [],
@@ -532,8 +534,10 @@
       ],
       "feature_category": "batch-command-009",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
-      "current_paths": [],
+      "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "current_paths": [
+        "docs/xroga/evidence/command-009/manifest.json"
+      ],
       "implementation_owner_command": "009",
       "priority": "P1",
       "dependencies": [
@@ -569,7 +573,7 @@
         "Original mission acceptance (not current proof): Unit and integration tests for expired, swapped, revoked credentials and callback tampering; telemetry redacted."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted; original missions 01–10 are explicit semantic aliases of the stricter Batch One specifications; neither source overrides unpassed gates",
       "confidence": "MEDIUM",
       "unresolved_questions": [],
@@ -3456,6 +3460,7 @@
         "scripts/security/collect-local-security-logs.mjs",
         "scripts/security/dependency-advisories.mjs",
         "scripts/security/disposable-supabase.mjs",
+        "scripts/security/evaluate-phase-three.mjs",
         "scripts/security/full-supabase-history.mjs",
         "scripts/security/historical-share-fixture.mjs",
         "scripts/security/r2-private-check.mjs",

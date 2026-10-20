@@ -1,6 +1,6 @@
 # Canonical Xroga requirements ledger
 
-Application source SHA: `9869d6e7bc5f40be7660562c2005d2bf9266412a`. Original row coverage is **119/119 features and 72/72 missions**; this is requirements mapping, NOT implemented-product or fully verified Batch One status. All original features remain UNVERIFIED/NOT_RUN. Full original-transcript semantic review remains pending. Private originals are not committed; pinned hashes and derived planning records are retained.
+Application source SHA: `72876719821f9efdc52fb28a03df465993bd2c70`. Original row coverage is **119/119 features and 72/72 missions**; this is requirements mapping, NOT implemented-product or fully verified Batch One status. All original features remain UNVERIFIED/NOT_RUN. Full original-transcript semantic review remains pending. Private originals are not committed; pinned hashes and derived planning records are retained.
 
 445 requirements; 527 source rows mapped; 43 mandatory capability families; 23 independently registered external candidates; zero newly adopted runtime dependencies. Original research lists additional candidates without granting adoption rights.
 
@@ -13,8 +13,8 @@ Application source SHA: `9869d6e7bc5f40be7660562c2005d2bf9266412a`. Original row
 | XB01-C005 | END-TO-END GOLDEN USER JOURNEY AND ACCEPTANCE HARNESS | IMPLEMENTED_BUT_UNVERIFIED | 005 | EXTEND |
 | XB01-C006 | XROGA ENGINEERING OPERATING CONTRACT AND DEFINITION OF DONE | IMPLEMENTED_BUT_UNVERIFIED | 006 | EXTEND |
 | XB01-C007 | TENANT ISOLATION, SERVER-SIDE OWNERSHIP AND RBAC BASELINE | IMPLEMENTED_BUT_UNVERIFIED | 007 | EXTEND |
-| XB01-C008 | CANONICAL OUTCOME-SCOPED AUTHORITY, APPROVAL AND PREPARED-ACTION CONTRACT | PROPOSED_ONLY | 008 | NEW |
-| XB01-C009 | CREDENTIAL VAULT, ENVELOPE ENCRYPTION, ROTATION AND CONNECTED-ACCOUNT IDENTITY | PROPOSED_ONLY | 009 | NEW |
+| XB01-C008 | CANONICAL OUTCOME-SCOPED AUTHORITY, APPROVAL AND PREPARED-ACTION CONTRACT | IMPLEMENTED_BUT_UNVERIFIED | 008 | EXTEND |
+| XB01-C009 | CREDENTIAL VAULT, ENVELOPE ENCRYPTION, ROTATION AND CONNECTED-ACCOUNT IDENTITY | IMPLEMENTED_BUT_UNVERIFIED | 009 | EXTEND |
 | XB01-C010 | TOOL TRUST, DATA EGRESS, SSRF AND UNTRUSTED-INPUT SECURITY GATEWAY | PROPOSED_ONLY | 010 | NEW |
 | XR-FAMILY-repository-truth | repository truth | IMPLEMENTED_BUT_UNVERIFIED | 001 | EXTEND |
 | XR-FAMILY-research-traceability | research traceability | IMPLEMENTED_BUT_UNVERIFIED | 002 | EXTEND |

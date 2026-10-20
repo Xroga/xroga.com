@@ -31,15 +31,20 @@ for (const path of paths) {
   newCalls.push(...after.filter(c => ![...remappings.values()].includes(c.id)));
 }
 const note = 'Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.';
-const changed = original.reviews.filter(r => paths.includes(r.path)).map(record => ({ ...record,
-  sourceSha256: sourceHashes.get(record.path), callIds: record.callIds.flatMap(id => remappings.has(id) ? [remappings.get(id)] : []),
-  reason: `${record.reason} ${note}`,
-  ...(record.path.endsWith('/credentialEnvelope.ts') ? { evidence: [
-    { path: record.path, marker: 'export function sealCredentialEnvelope' },
-    { path: record.path, marker: 'export function openCredentialEnvelope' },
-  ] } : {}),
-  acceptedPhaseTwoReview: { sourceSha: accepted, sourceSha256: record.sourceSha256, callIds: record.callIds },
-})).filter(record => record.callIds.length > 0);
+const changed = original.reviews.filter(r => paths.includes(r.path)).map(record => {
+  const structuredCallIds = record.structuredOrigin?.callIds.flatMap(id => remappings.has(id) ? [remappings.get(id)] : []);
+  return { ...record,
+    sourceSha256: sourceHashes.get(record.path), callIds: record.callIds.flatMap(id => remappings.has(id) ? [remappings.get(id)] : []),
+    reason: `${record.reason} ${note}`,
+    ...(record.path.endsWith('/credentialEnvelope.ts') ? { evidence: [
+      { path: record.path, marker: 'export function sealCredentialEnvelope' },
+      { path: record.path, marker: 'export function openCredentialEnvelope' },
+    ] } : {}),
+    acceptedPhaseTwoReview: { sourceSha: accepted, sourceSha256: record.sourceSha256, callIds: record.callIds },
+    ...(record.structuredOrigin ? { structuredOrigin: { ...record.structuredOrigin, callIds: structuredCallIds,
+      id: `OB-${hash(`${record.path}:${[...structuredCallIds].sort().join(',')}`).slice(0, 16)}` } } : {}),
+  };
+}).filter(record => record.callIds.length > 0);
 for (const call of newCalls) {
   if (call.path === paths[1]) {
     assert.ok(['authorize_business_action_dispatch', 'cancel_business_action_confirmation', 'getSupabaseAdmin'].includes(call.target));

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "9869d6e7bc5f40be7660562c2005d2bf9266412a",
+  "source_sha": "72876719821f9efdc52fb28a03df465993bd2c70",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -2919,9 +2919,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "49fca5820b326c93c04cf659feb9e262594b4c17e31c6334d1a0d6e59d05d99b",
-      "byte_size": 3991421,
-      "modified_timestamp": "2026-10-20T17:01:40.088Z",
+      "sha256": "3648f73c6f233043d99f5e1336db6498db61ab208632e29f8abbccfaac37352b",
+      "byte_size": 3995071,
+      "modified_timestamp": "2026-10-20T17:12:14.804Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -20856,6 +20856,19 @@
       "notes": "Git-canonical LF source bytes and AST/import metadata, not manual behavioral verification"
     },
     {
+      "source_id": "SRC-b694553feb3a38bc",
+      "filename": "evaluate-phase-three.mjs",
+      "path_or_url": "scripts/security/evaluate-phase-three.mjs",
+      "sha256": "e42bb111e1a9784ad878d33cdafab46218b8befdb4971a717e8567dac6e33e49",
+      "byte_size": 4737,
+      "modified_timestamp": "2026-10-20T17:03:50.280Z",
+      "parse_status": "AST_METADATA",
+      "category": "SOURCE_CODE",
+      "authority": "CURRENT_CODE",
+      "analyzed": true,
+      "notes": "Git-canonical LF source bytes and AST/import metadata, not manual behavioral verification"
+    },
+    {
       "source_id": "SRC-b5fb9b6d0970672d",
       "filename": "full-supabase-history.mjs",
       "path_or_url": "scripts/security/full-supabase-history.mjs",
@@ -20898,9 +20911,9 @@
       "source_id": "SRC-052e49f08f69e1d1",
       "filename": "refresh-phase-three-authority-delta.mjs",
       "path_or_url": "scripts/security/refresh-phase-three-authority-delta.mjs",
-      "sha256": "5a854aaa31cc90e6a4099eac6d475d46f368ba971c94c3c7f576e7009a037cbb",
-      "byte_size": 12275,
-      "modified_timestamp": "2026-10-20T16:50:09.416Z",
+      "sha256": "73476ea76f46f097a16268b25d4903c2428f72c3f180a4cdcef4620c2d6310d0",
+      "byte_size": 12647,
+      "modified_timestamp": "2026-10-20T17:11:49.336Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",
@@ -21265,6 +21278,19 @@
       "sha256": "889f8fa7ac6f6509a39c521befbcbf3aab8b90332f0d51ccf78b61c8a031a27e",
       "byte_size": 940,
       "modified_timestamp": "2026-10-13T13:38:06.606Z",
+      "parse_status": "AST_METADATA",
+      "category": "SOURCE_CODE",
+      "authority": "CURRENT_CODE",
+      "analyzed": true,
+      "notes": "Git-canonical LF source bytes and AST/import metadata, not manual behavioral verification"
+    },
+    {
+      "source_id": "SRC-ed5bd366832d5c8e",
+      "filename": "validate-phase-four-handoff.mjs",
+      "path_or_url": "scripts/xroga/validate-phase-four-handoff.mjs",
+      "sha256": "0fb2f4cc04b6f431a7f7d2ab79ef71d72c3b371d7e4f78d94d7bf35fa3e6644d",
+      "byte_size": 1269,
+      "modified_timestamp": "2026-10-20T16:43:47.380Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",
