@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowUpRight, Bug, Check, Command, ListChecks, Paperclip, ScrollText, Sparkles, TerminalSquare, X } from 'lucide-react';
+import { ArrowUpRight, Bug, Check, Command, ListChecks, Paperclip, Plus, ScrollText, Sparkles, TerminalSquare, X } from 'lucide-react';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { CirclePlayIcon } from '@/components/icons/animated/CirclePlayIcon';
 import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
@@ -32,6 +32,7 @@ export function ChatBarActionsMenu({
   recentTerminal,
   disabled,
   className,
+  plusIcon = false,
 }: {
   /** Fills the composer with a scaffold for the user to edit. Never auto-sends. */
   onInsert: (text: string, options?: { highlight: 'command' | 'plan' | 'debug'; selectionLength: number }) => void;
@@ -52,6 +53,7 @@ export function ChatBarActionsMenu({
   };
   disabled?: boolean;
   className?: string;
+  plusIcon?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [panel, setPanel] = useState<'menu' | 'commands' | 'skills' | 'rules'>('menu');
@@ -157,7 +159,7 @@ export function ChatBarActionsMenu({
             marked the open state came from the plus reading as a close cross when
             rotated; this glyph is not a cross, so the open state is carried by
             `data-open` in the stylesheet instead. */}
-        <AnimatedIcon icon={CirclePlayIcon} size={16} />
+        {plusIcon ? <Plus size={18} aria-hidden="true" /> : <AnimatedIcon icon={CirclePlayIcon} size={16} />}
         {activeCount > 0 && <span className="xv-cba-dot" aria-hidden="true" />}
       </button>
 

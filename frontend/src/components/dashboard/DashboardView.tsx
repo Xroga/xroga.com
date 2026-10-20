@@ -22,6 +22,8 @@ import { MinimizeIcon } from '@/components/icons/animated/MinimizeIcon';
 import { markFreshTerminalIntent } from '@/lib/repoContext';
 import { BillingSuccessExperience } from '@/components/billing/BillingSuccessExperience';
 import { BetaExpectationBanner } from '@/components/layout/BetaExpectationBanner';
+import startStyles from './WorkspaceNewTerminal.module.css';
+import { RepoContextBar } from '@/components/terminal/RepoContextBar';
 
 
 /**
@@ -41,7 +43,7 @@ import { BetaExpectationBanner } from '@/components/layout/BetaExpectationBanner
  */
 export function DashboardView() {
   const hydrated = useHydrated();
-  const { messages, startNewChat } = useTerminalChat();
+  const { messages, startNewChat, loading, sessionRestoring } = useTerminalChat();
   const fullscreen = useThemeStore((s) => s.terminalFullscreen);
   const setTerminalFullscreen = useThemeStore((s) => s.setTerminalFullscreen);
   const workspaceOpenRaw = useProjectWorkspaceStore((s) => s.workspaceOpen);
@@ -200,6 +202,7 @@ export function DashboardView() {
    * something to scroll.
    */
   const hasConversation = messages.length > 0;
+  const showNewTerminal = hydrated && !hasConversation && !loading && !sessionRestoring && !workspaceOpen && !incognito;
 
   const terminalPane = (
     <div
@@ -218,7 +221,8 @@ export function DashboardView() {
         className={cn(
           'xv-workspace-shell',
           incognito ? 'terminal-skin-dark xv-workspace-shell--incognito' : `terminal-skin-${skin}`,
-          !incognito && (skin === 'dark' || skin === 'amoled') && 'scanlines'
+          !incognito && (skin === 'dark' || skin === 'amoled') && 'scanlines',
+          showNewTerminal && startStyles.window
         )}
         data-conversation={hasConversation ? 'true' : 'false'}
         data-testid="workspace-window"
@@ -236,6 +240,8 @@ export function DashboardView() {
               <i />
             </span>
           </div>
+
+          {showNewTerminal ? <div className={startStyles.repoStatus}><RepoContextBar compact /></div> : null}
 
           {incognito ? (
             <span className="xv-term-badge">Private · not saved</span>
