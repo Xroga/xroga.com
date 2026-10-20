@@ -130,21 +130,46 @@
   0% { background-position: 125% 0; }
   12%, 100% { background-position: -25% 0; }
 }
-/* the star field sits behind everything on the stage, kept out of the heading area and faded at the edges */
-.galaxy {
+/*
+ * S01 quiet particle matrix. Adapted from the founder's 20px white-dot/noise-mask reference, NOT the former
+ * starfield. All assets are inline and scoped to S01: no hotlinked CodePen PNG/font, WebGL, canvas, or pointer work.
+ * Two layers: a barely visible stationary alignment grid plus a noise-masked layer that shifts its mask in 20s.
+ * The parent vignette limits the effect to the cards' stage; it never competes with the heading or card content.
+ */
+.particleField {
   position: absolute;
   inset: 0;
+  overflow: hidden;
   pointer-events: none;
-  opacity: 0.55;
-  -webkit-mask-image: radial-gradient(80% 70% at 50% 62%, #000 30%, transparent 85%);
-  mask-image: radial-gradient(80% 70% at 50% 62%, #000 30%, transparent 85%);
-  transition: opacity 600ms ease;
+  opacity: 0.8;
+  -webkit-mask-image: radial-gradient(ellipse 74% 57% at 50% 64%, #000 12%, rgba(0, 0, 0, 0.78) 42%, transparent 92%);
+  mask-image: radial-gradient(ellipse 74% 57% at 50% 64%, #000 12%, rgba(0, 0, 0, 0.78) 42%, transparent 92%);
 }
-.galaxy[data-state='off'] {
-  opacity: 0;
+.particleField::before,
+.particleField::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(244, 247, 253, 0.67) 1.05px, transparent 1.65px) 0 0 / 20px 20px repeat;
 }
-.galaxy canvas {
-  display: block;
+.particleField::before {
+  opacity: 0.14;
+}
+.particleField::after {
+  opacity: 0.57;
+  /*
+   * SVG fractal noise in the mask alpha. Its 256px tile replaces the third-party noise-mask.png.
+   * White dots remain stationary; only the visible noise window travels, as in the reference.
+   */
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.017' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 1.8 0 0 0 -.67'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.017' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 1.8 0 0 0 -.67'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)'/%3E%3C/svg%3E");
+  -webkit-mask-size: 256px 256px;
+  mask-size: 256px 256px;
+  animation: s01NoiseDrift 20s linear infinite;
+}
+@keyframes s01NoiseDrift {
+  from { -webkit-mask-position: 0 0; mask-position: 0 0; }
+  to { -webkit-mask-position: 256px 0; mask-position: 256px 0; }
 }
 .statement {
   margin: 16px 0 0;
@@ -163,6 +188,22 @@
   text-wrap: balance;
 }
 
+/* Non-deck modes also receive the same quiet 20px white-dot material, not an unrelated plain backdrop. */
+.section[data-mode='carousel']::before,
+.section[data-mode='static']::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.17;
+  background: radial-gradient(circle, rgba(244, 247, 253, 0.65) 1px, transparent 1.6px) 0 0 / 20px 20px repeat;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 78%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 78%, transparent 100%);
+}
+@media (max-width: 1024px), (prefers-reduced-motion: reduce) {
+  .particleField::after { animation: none; }
+}
+
 /* -------------------------------------------------------------------------------------------- deck (desktop) */
 .track {
   position: relative;
@@ -173,18 +214,16 @@
   height: 100vh;
   overflow: hidden;
 }
-/* gallery room: two soft graphite volumes give the field depth; neither sits behind the heading */
+/* One calm, machined graphite volume replaces the two theatrical "galaxy" pools. */
 .stage::before {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(52% 44% at 20% 66%, rgba(25, 28, 39, 0.95), transparent 72%),
-    radial-gradient(46% 40% at 82% 60%, rgba(34, 33, 43, 0.8), transparent 72%),
-    /* a soft floor bounce under the row, so the cards stand on something */
-    radial-gradient(46% 16% at 50% calc(var(--rowY) + var(--chh) * 0.56), rgba(150, 160, 190, 0.07), transparent 78%),
-    radial-gradient(72% 30% at 50% calc(var(--rowY) + var(--chh) * 0.64), rgba(20, 23, 33, 0.95), transparent 80%);
+    radial-gradient(62% 48% at 50% 67%, rgba(30, 36, 49, 0.54), transparent 78%),
+    /* retain only a restrained contact-plane reflection to ground the cards */
+    radial-gradient(46% 16% at 50% calc(var(--rowY) + var(--chh) * 0.56), rgba(150, 160, 190, 0.045), transparent 78%);
 }
 /* light pools behind the cards only. The container is moved and scaled per frame (transform only) to sit on the
    visible cards: centred on the stack, wider on the fan, and shifted with chapter B. */
