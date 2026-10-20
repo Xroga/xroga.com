@@ -56,10 +56,12 @@ const words = (s: string) => s.trim().split(/\s+/).filter(Boolean).length;
 const run = (s: State, ...as: Action[]) => as.reduce(reducer, s);
 
 /* ------------------------------------------------------------------------------------------------ placement */
-test('S03 sits directly after S02 and before the existing power stories, which stay intact', () => {
+test('S03 stays after S02 and before the current next homepage section', () => {
   const s02 = PAGE.indexOf('<S02Work');
   const s03 = PAGE.indexOf('<S03Growth');
-  const next = PAGE.indexOf('<HomepagePowerStories');
+  // Main replaces the legacy stories with the dedicated S04 publishing section.
+  // Keep the same placement invariant for both the feature and integrated source.
+  const next = PAGE.includes('<S04Publish') ? PAGE.indexOf('<S04Publish') : PAGE.indexOf('<HomepagePowerStories');
   assert.ok(s02 > 0 && s03 > s02 && next > s03);
 });
 

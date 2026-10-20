@@ -78,7 +78,7 @@ export function registerActionIntentTests(admin: SupabaseClient, getUsers: () =>
       let blocked=false;
       for(let i=0;i<150;i++){
         await db.query('select pg_stat_clear_snapshot()');
-        const rows=await db.query("select pid from pg_stat_activity where pid<>pg_backend_pid() and wait_event_type='Lock' and query like '%set_operations_automation_stop%'");
+        const rows=await db.query("select pid from pg_stat_activity where pid<>pg_backend_pid() and pg_backend_pid()=any(pg_blocking_pids(pid)) and wait_event_type='Lock' and query like '%mutate_operations_internal_target%'");
         if(rows.rowCount){blocked=true;break;}await delay(20);
       }
       assert.equal(blocked,true,'actual internal conditional write reached the target row lock');

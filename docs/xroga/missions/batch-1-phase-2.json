@@ -9,6 +9,8 @@
   "risk": "high",
   "scope": "Founder-approved Phase2 only. All ten original007 criteria, finite73 packets, tenant/parent/account/worker lineage and genuine proof. No008/009/010 implementation or production authority.",
   "changedFiles": [
+    "backend/src/operations/actionIntent.local.integration.ts",
+    "frontend/src/components/homepage-next/s03/s03.test.ts",
     "supabase/migrations/20261019000900_operations_internal_effect_admission.sql",
     "backend/src/operations/operationsService.owner.test.ts",
     "backend/src/operations/internalControlReceipt.test.ts",
