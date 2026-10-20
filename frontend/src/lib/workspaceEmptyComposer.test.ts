@@ -705,8 +705,8 @@ test('the bottom inspiration bar opens the real catalog automatically on workspa
 });
 
 
-test('new terminal renders a silver heading, transparent black hole and five vector-layout cards', () => {
-  assert.match(START, /black-hole.webp/);
+test('new terminal renders theme-aware readable cards without black-hole artwork', () => {
+  assert.doesNotMatch(START + START_CSS, /black-hole.webp|next\/image/);
   assert.match(START, /Super Intelligence/);
   assert.match(START, /One AI workspace for every kind of work\./);
   assert.doesNotMatch(START, /DESCRIBE IT\.|SHIP IT\./);
@@ -715,7 +715,9 @@ test('new terminal renders a silver heading, transparent black hole and five vec
   assert.doesNotMatch(DASHBOARD, /BetaExpectationBanner/);
   assert.match(START_CSS, /background-clip: text/);
   assert.equal((START.match(/id: '/g) ?? []).length, 5);
-  assert.match(START_CSS, /repeat\(5,minmax\(0,1fr\)\)/);
+  assert.match(START_CSS, /background: var\(--terminal-ui-surface\) !important/);
+  assert.match(START_CSS, /color: var\(--foreground\)/);
+  assert.match(START_CSS, /font: 12px\/1\.5/);
   assert.match(START_CSS, /@container \(max-width: 580px\)/);
   assert.match(START_CSS, /repeat\(2,minmax\(0,1fr\)\)/);
   assert.match(DOCK, /<WorkspaceStartCards \/>/);

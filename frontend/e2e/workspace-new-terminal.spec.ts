@@ -38,8 +38,36 @@ test('compact visual starter fits desktop, tablet and phones without overflowing
     expect(sizes.scrollHeight, JSON.stringify(viewport)).toBeLessThanOrEqual(sizes.height + 1);
     await expect(page.getByTestId('workspace-start-cards').getByRole('button')).toHaveCount(5);
     await expect(page.locator('[data-terminal-composer]')).toHaveCount(1);
-    await expect.poll(() => header.locator('img').evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
+    await expect(header.locator('img')).toHaveCount(0);
+    const descriptions = await page.locator('[data-capability] strong + span').evaluateAll(elements => elements.map(el => parseFloat(getComputedStyle(el).fontSize)));
+    expect(descriptions.every(size => size >= 12)).toBe(true);
   }
+});
+
+test('theme picker updates the workspace, cards and composer and survives reload', async ({ page }) => {
+  await page.goto('/workspace');
+  await expect(page.getByTestId('workspace-start-cards')).toBeVisible();
+  const palettes: string[][] = [];
+  for (const theme of ['White', 'Beige', 'Gray', 'Black']) {
+    await page.getByRole('button', { name: 'Change theme', exact: true }).first().click();
+    await page.getByRole('menuitemradio', { name: new RegExp(`^${theme}`) }).click();
+    await expect(page.locator('body')).toHaveClass(new RegExp(`theme-${theme.toLowerCase()}`));
+    await page.waitForTimeout(300);
+    const colors = await page.evaluate(() => ['.xv-workspace-shell', '[data-capability="create"]', '.xv-chatbar-solid'].map(selector => getComputedStyle(document.querySelector(selector)!).backgroundColor));
+    palettes.push(colors);
+    if (theme === 'White' || theme === 'Beige') {
+      for (const color of colors) {
+        const values = color.match(/[\d.]+/g)!.map(Number);
+        // color-mix serializes as color(srgb ...) in Chromium.
+        const red = color.startsWith('color(') ? values[0] * 255 : values[0];
+        expect(red).toBeGreaterThan(200);
+      }
+    }
+  }
+  for (let surface = 0; surface < 3; surface++) expect(new Set(palettes.map(colors => colors[surface])).size).toBe(4);
+  await page.reload();
+  await expect(page.getByTestId('workspace-start-cards')).toBeVisible();
+  await expect(page.locator('.xv-workspace-shell')).toHaveCSS('background-color', palettes[3][0]);
 });
 
 test('cards preserve drafts and conversation removes all starter styling', async ({ page }) => {

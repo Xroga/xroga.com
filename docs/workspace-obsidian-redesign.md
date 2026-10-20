@@ -1,6 +1,14 @@
 # New-terminal workspace, October 2026
 
-## Compact refinement
+## Theme-aware charcoal refinement
+
+The black-hole artwork is no longer rendered in the starter or composer. The five capabilities use spacious, readable cards with small colored icons and quiet CSS/SVG geometry, inspired by the supplied reference. Desktop has four wide cards and one taller AI Employees card; smaller panes use two columns and a full-width employee card. Descriptions stay at 12px or above, with no truncation or miniature text inside decorations.
+
+The theme regression came from hard-coded colors in the starter CSS module, not the theme picker/store. Starter shell, composer, controls, heading and cards now use the selected terminal skin's tokens. Black receives a scoped charcoal lift; White, Beige, Gray and explicitly chosen skins retain their own palettes. Conversation styling and all chat handlers remain unchanged.
+
+Checks for this revision: 62 targeted regression tests; browser coverage for five screen sizes, all four theme selections and reload persistence, immediate draft preservation, and a mocked guest conversation transition. This does not assert real AI/backend execution.
+
+## Previous compact refinement (superseded)
 
 The workspace early-access notice and Describe/Build/Ship headline are removed. A silver metallic HTML heading precedes the subtitle, “One AI workspace for every kind of work.” The existing transparent black-hole asset overlaps the composer's outer upper edge without blocking pointer input.
 
