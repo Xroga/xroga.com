@@ -41,7 +41,6 @@ const AUTOMATIONS = [
   ] },
 ] as const;
 type Capability = typeof CAPABILITIES[number] | typeof AUTOMATIONS[number];
-const EXAMPLES = ['work', 'automation', 'code', 'building', 'testing', 'research', 'creation'];
 const STARTER_PROMPTS = [...CAPABILITIES, ...AUTOMATIONS].flatMap(card => card.features.map(feature => feature[1]));
 
 function useRotation(length: number, paused: boolean, interval = 6000) {
@@ -67,14 +66,11 @@ function CapabilityVisual({ id }: { id: Capability['id'] }) {
 }
 
 export function WorkspaceStartHeader() {
-  const [index] = useRotation(EXAMPLES.length, false);
   return (
     <header className={styles.hero} data-testid="workspace-start-header">
       <h1 className={styles.superIntelligence}>Super Intelligence</h1>
       <div className={styles.taglineRow}>
-        <p className={styles.tagline} aria-label="One AI workspace for every kind of work. Automation, code, building, testing, research and creation.">
-          <span aria-hidden="true">One AI workspace for<br className={styles.mobileBreak} /> every kind of <span className={styles.dynamicWord} key={index}>{EXAMPLES[index]}.</span></span>
-        </p>
+        <p className={styles.tagline} aria-label="One AI workspace for every kind of work.">One AI workspace for every kind of work.</p>
       </div>
     </header>
   );
@@ -147,7 +143,7 @@ function AutomationCard() {
 export function WorkspaceStartCards() {
   return (
     <section className={styles.starters} aria-label="Explore Xroga capabilities" data-testid="workspace-start-cards">
-      <p className={styles.automatic}><strong>Automatic by default.</strong> All things in one workspace — just describe the idea.</p>
+      <p className={styles.automatic}><strong>Automatic by default.</strong> No models or tools to choose. Type or speak what you need, and Xroga routes the work.</p>
       <div className={styles.cards}>
         {CAPABILITIES.map(card => <div className={styles.cardShell} key={card.id}><FeatureCard card={card} /></div>)}
         <AutomationCard />

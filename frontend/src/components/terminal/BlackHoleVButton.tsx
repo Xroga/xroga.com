@@ -15,15 +15,15 @@ export function BlackHoleVButton({ className, compact = false }: { className?: s
     <div className={cn('relative shrink-0', className)}>
       <ChatBarPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={btnRef} width={250}>
         <div className={styles.modelPanel} data-testid="black-hole-model-panel">
-          <div className={styles.modelHeading}><strong>Black Hole V∞</strong><span>ON</span></div>
-          <p>One model. All Xroga capabilities.</p>
+          <div className={styles.modelHeading}><strong>Auto</strong><span>ON</span></div>
+          <p>No manual model selection needed. Xroga automatically routes your request through available capabilities.</p>
           <div className={styles.modelSafety}><ShieldCheck size={14} /><span>Sensitive actions require approval.</span></div>
           {open ? <ModelAppPermissions /> : null}
         </div>
       </ChatBarPortalPopover>
       <button ref={btnRef} type="button" onClick={() => setOpen(value => !value)}
         className={cn(styles.modelButton, compact && styles.compactModel)}
-        title="Black Hole V∞" aria-label="Black Hole V∞ model" aria-haspopup="menu" aria-expanded={open}>
+        title="Auto · Xroga task routing" aria-label="Automatic model and tool routing" aria-haspopup="menu" aria-expanded={open}>
         <span className={styles.modelText}>Black Hole V∞</span>
         <svg className={styles.mobileModelIcon} viewBox="0 0 32 32" aria-hidden="true" data-testid="mobile-model-icon">
           <circle cx="16" cy="16" r="8" fill="none" stroke="currentColor" strokeWidth="1.5" />

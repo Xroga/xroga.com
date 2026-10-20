@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { ChatBarActionsMenu } from './ChatBarActionsMenu';
-import { buildComposerPreamble, useComposerToolsStore } from '@/store/useComposerToolsStore';
+import { buildComposerPreamble, COMPOSER_SKILLS, useComposerToolsStore } from '@/store/useComposerToolsStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
 import { uploadChatImage, type ChatAttachment } from '@/lib/api';
@@ -79,6 +79,8 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
    * re-render on every letter (that caused double characters / rewritten input).
    */
   const [draft, setDraft] = useState(prompt);
+  const [selectedTool, setSelectedTool] = useState<{ label: string; scaffold: string } | null>(null);
+  const enabledSkills = useComposerToolsStore((state) => state.enabledSkills);
   const draftRef = useRef(draft);
   draftRef.current = draft;
   const composingRef = useRef(false);
@@ -318,6 +320,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
         : undefined);
 
     setDraft('');
+    setSelectedTool(null);
     draftRef.current = '';
     lastExternalPrompt.current = '';
     setPrompt('');
@@ -535,6 +538,30 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
             {artifactSelections.map((selection) => <span key={selection.blockId} className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--border)] px-2.5 py-1 text-[11px]">{selection.label}<button type="button" onClick={() => removeArtifactSelection(selection.blockId)} aria-label={`Remove ${selection.label}`}><X className="h-3 w-3" /></button></span>)}
           </div> : null}
 
+          {!incognito && hydrated && (selectedTool || enabledSkills.length > 0) ? (
+            <div className="flex max-w-full flex-wrap gap-1.5 px-3 pt-2" aria-label="Selected composer tools">
+              {selectedTool ? <span className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-[var(--terminal-ui-border)] bg-[var(--terminal-ui-inset)] px-2.5 py-1 text-xs font-semibold text-[var(--foreground)]">
+                {selectedTool.label}
+                <button type="button" aria-label={'Remove ' + selectedTool.label + ' selection'} onClick={() => {
+                  const next = draftRef.current.startsWith(selectedTool.scaffold)
+                    ? draftRef.current.slice(selectedTool.scaffold.length).trimStart()
+                    : draftRef.current;
+                  setDraft(next);
+                  draftRef.current = next;
+                  setSelectedTool(null);
+                  textareaRef.current?.focus();
+                }}><X className="h-3 w-3" aria-hidden="true" /></button>
+              </span> : null}
+              {enabledSkills.map(id => {
+                const skill = COMPOSER_SKILLS.find(item => item.id === id);
+                return skill ? <span key={id} className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--terminal-ui-border)] bg-[var(--terminal-ui-inset)] px-2.5 py-1 text-xs font-semibold text-[var(--foreground)]">
+                  {skill.label}
+                  <button type="button" aria-label={'Disable ' + skill.label} onClick={() => useComposerToolsStore.getState().toggleSkill(id)}><X className="h-3 w-3" aria-hidden="true" /></button>
+                </span> : null;
+              })}
+            </div>
+          ) : null}
+
           {/* The toolbar row above the input is gone.
               It carried Black Hole, Integrations, GitHub and Vercel as chips and
               scrolled horizontally on a phone, which is what made the composer feel
@@ -583,13 +610,14 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
                       // these are scaffolds the user finishes, and sending a
                       // half-written prompt would burn a real run.
                       const next = draftRef.current.trim() ? `${text}${draftRef.current}` : text;
+                      setSelectedTool(options?.label ? { label: options.label, scaffold: text } : null);
                       setDraft(next);
                       draftRef.current = next;
                       window.setTimeout(() => {
                         const textarea = textareaRef.current;
                         if (!textarea) return;
                         textarea.focus();
-                        if (options) {
+                        if (options?.highlight && options.selectionLength) {
                           textarea.dataset.insertHighlight = options.highlight;
                           textarea.setSelectionRange(0, options.selectionLength);
                         }
@@ -647,6 +675,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
                 onChange={(e) => {
                   const next = e.target.value;
                   delete e.currentTarget.dataset.insertHighlight;
+                  if (selectedTool && !next.startsWith(selectedTool.scaffold)) setSelectedTool(null);
                   setDraft(next);
                   draftRef.current = next;
                   triggerComposerSignal(900);
