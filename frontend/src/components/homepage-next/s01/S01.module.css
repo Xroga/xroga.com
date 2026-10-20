@@ -9,9 +9,9 @@
   --hair: rgba(236, 233, 226, 0.1);
   position: relative;
   z-index: 1;
-  /* continues the hero's near-black (#050506) into the section base without a seam */
-  /* a neutral coal field (#0d1017) rising out of the hero's near-black over ~480px, so there is no seam */
-  background: linear-gradient(180deg, #050608 0, #0a0c12 220px, #10131b 500px, #10131b calc(100% - 340px), #050607 100%);
+  /* continues the hero's near-black into the section base without a seam, and stays a clean neutral black rather than
+     a tinted one, so the white dots and the cards are the only things with character */
+  background: linear-gradient(180deg, #050506 0, #08080a 220px, #0b0b0d 500px, #0b0b0d calc(100% - 340px), #050506 100%);
   color: var(--ink);
   font-family: var(--font-inter), system-ui, sans-serif;
   overflow-x: clip;
@@ -208,11 +208,11 @@
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(52% 44% at 20% 66%, rgba(25, 28, 39, 0.95), transparent 72%),
-    radial-gradient(46% 40% at 82% 60%, rgba(34, 33, 43, 0.8), transparent 72%),
+    radial-gradient(52% 44% at 20% 66%, rgba(22, 22, 25, 0.95), transparent 72%),
+    radial-gradient(46% 40% at 82% 60%, rgba(24, 24, 27, 0.8), transparent 72%),
     /* a soft floor bounce under the row, so the cards stand on something */
-    radial-gradient(46% 16% at 50% calc(var(--rowY) + var(--chh) * 0.56), rgba(150, 160, 190, 0.07), transparent 78%),
-    radial-gradient(72% 30% at 50% calc(var(--rowY) + var(--chh) * 0.64), rgba(20, 23, 33, 0.95), transparent 80%);
+    radial-gradient(46% 16% at 50% calc(var(--rowY) + var(--chh) * 0.56), rgba(200, 204, 214, 0.06), transparent 78%),
+    radial-gradient(72% 30% at 50% calc(var(--rowY) + var(--chh) * 0.64), rgba(16, 16, 18, 0.95), transparent 80%);
 }
 /* light pools behind the cards only. The container is moved and scaled per frame (transform only) to sit on the
    visible cards: centred on the stack, wider on the fan, and shifted with chapter B. */
@@ -229,13 +229,13 @@
   position: absolute;
   border-radius: 50%;
 }
-/* a muted blue-violet reflection, as if picked up from the medallions */
+/* a muted cool-white reflection, as if picked up from the medallions */
 .lights i[data-pool='cool'] {
   left: -560px;
   top: -300px;
   width: 1000px;
   height: 560px;
-  background: radial-gradient(closest-side, rgba(119, 137, 238, 0.11), rgba(119, 137, 238, 0.04) 55%, transparent);
+  background: radial-gradient(closest-side, rgba(206, 212, 228, 0.07), rgba(206, 212, 228, 0.025) 55%, transparent);
 }
 /* a neutral warm titanium bounce, lower and offset right */
 .lights i[data-pool='warm'] {
