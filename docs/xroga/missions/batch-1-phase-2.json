@@ -9,6 +9,9 @@
   "risk": "high",
   "scope": "Founder-approved Phase2 only. All ten original007 criteria, finite73 packets, tenant/parent/account/worker lineage and genuine proof. No008/009/010 implementation or production authority.",
   "changedFiles": [
+    "frontend/src/lib/untrustedProxyConfig.test.ts",
+    "frontend/src/lib/untrustedProxyResponsePolicy.mjs",
+    "frontend/next.config.mjs",
     "frontend/src/lib/untrustedProxyRoutes.test.ts",
     ".github/workflows/command3-auth-browser.yml",
     "frontend/e2e/proxy-origin-local.spec.ts",
@@ -227,7 +230,7 @@
   },
   "tests": [
     {
-      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/lib/untrustedProxyResponse.test.ts frontend/src/lib/untrustedProxyRoutes.test.ts backend/src/security/serviceRoleGuard.test.ts",
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/lib/untrustedProxyResponse.test.ts frontend/src/lib/untrustedProxyRoutes.test.ts frontend/src/lib/untrustedProxyConfig.test.ts backend/src/security/serviceRoleGuard.test.ts",
       "scope": "Response sandbox, opaque application origin, active image isolation, escaping and uncallable review-only global key. Actual browser/Auth proof remains mandatory.",
       "negative": true,
       "reference": "frontend/e2e/proxy-origin-local.spec.ts"

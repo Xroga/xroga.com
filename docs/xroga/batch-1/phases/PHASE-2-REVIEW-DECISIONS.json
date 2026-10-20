@@ -3172,7 +3172,7 @@
   ],
   "endpointIsolationReview": {
     "originalCriterion": "XB01-C007-AC04",
-    "status": "DEMONSTRATED_ORIGIN_DEFECT_REPAIRED_LOCAL_REAL_AUTH_PROOF_PENDING",
+    "status": "DEMONSTRATED_NEXT_HEADER_PRECEDENCE_REPAIRED_REAL_AUTH_PROOF_PENDING",
     "finding": "Browser-view returned arbitrary upstream HTML with scripts in the application origin, including a same-origin-capable iframe. Image-fetch accepted active non-image MIME without isolation. A real local Chrome probe reproduced cookie/storage/parent/credentialed-read access before the policy and denied all four after the response sandbox.",
     "scope": "Response-origin isolation only. Original Command010 destination/DNS/redirect/size/network enforcement remains mandatory and unimplemented here.",
     "sourcePaths": [
@@ -3195,12 +3195,56 @@
         "path": "frontend/e2e/proxy-origin-local.spec.ts",
         "type": "ACTUAL_DISPOSABLE_AUTH_FILES_CANARIES_RASTER_SVG_AND_ERROR_CASE_PREPARED",
         "result": "NOT_EXECUTED"
+      },
+      {
+        "path": "frontend/src/lib/untrustedProxyConfig.test.ts",
+        "type": "EXACT_TWO_HOSTING_POLICIES_NO_OVERLAP_DUPLICATE_OR_APPLICATION_RELAXATION",
+        "result": "PASS"
+      },
+      {
+        "path": "artifacts/fbf4-disposable-failed/failure-diagnostic.json",
+        "type": "ACTUAL_FAILED_NEW_ORIGIN_CASE_AND_MISSING_DEPENDENT_RECEIPT",
+        "result": "FAILED_NOT_ACCEPTANCE"
       }
     ],
     "remaining": [
-      "New-source actual browser and receipt TAP case",
-      "Complete source-bound branch/integrated regression",
-      "Original evaluator and manual agreement"
-    ]
+      "Actual changed-source four-browser/204-case receipt and complete regression",
+      "Do not count the failed fbf400 source or local probes as acceptance"
+    ],
+    "historicalBeforeHostingHeaderRepair": {
+      "originalCriterion": "XB01-C007-AC04",
+      "status": "DEMONSTRATED_ORIGIN_DEFECT_REPAIRED_LOCAL_REAL_AUTH_PROOF_PENDING",
+      "finding": "Browser-view returned arbitrary upstream HTML with scripts in the application origin, including a same-origin-capable iframe. Image-fetch accepted active non-image MIME without isolation. A real local Chrome probe reproduced cookie/storage/parent/credentialed-read access before the policy and denied all four after the response sandbox.",
+      "scope": "Response-origin isolation only. Original Command010 destination/DNS/redirect/size/network enforcement remains mandatory and unimplemented here.",
+      "sourcePaths": [
+        "frontend/src/app/api/browser-view/route.ts",
+        "frontend/src/app/api/image-fetch/route.ts",
+        "frontend/src/lib/untrustedProxyResponse.ts"
+      ],
+      "evidence": [
+        {
+          "path": "frontend/src/lib/untrustedProxyResponse.test.ts",
+          "type": "OPAQUE_ORIGIN_SCRIPT_POLICY_AND_ERROR_ESCAPING",
+          "result": "PASS"
+        },
+        {
+          "path": "artifacts/proxy-origin-local/browser-probe.json",
+          "type": "LOCAL_SYNTHETIC_BROWSER_RUNTIME_OLD_AND_FIXED_HEADER_POLICY",
+          "result": "PASS_NOT_REAL_AUTH_OR_PROVIDER_ACCEPTANCE"
+        },
+        {
+          "path": "frontend/e2e/proxy-origin-local.spec.ts",
+          "type": "ACTUAL_DISPOSABLE_AUTH_FILES_CANARIES_RASTER_SVG_AND_ERROR_CASE_PREPARED",
+          "result": "NOT_EXECUTED"
+        }
+      ],
+      "remaining": [
+        "New-source actual browser and receipt TAP case",
+        "Complete source-bound branch/integrated regression",
+        "Original evaluator and manual agreement"
+      ]
+    },
+    "hostingHeaderTrace": "The failed actual request received the normal configured CSP. The old catch-all matches both proxy paths. Installed Next15.5.27 send-response copies a route header only when the outbound response does not already have that name, so a route-only sandbox cannot replace configured CSP. Exact proxy-specific rules now exclude those two paths from the catch-all, share the same immutable policy as the handlers and retain every other security header/auth/hosting rule. The fixture additionally requires unredirected proxy response and the real upstream marker.",
+    "activeSvgPositiveControl": "A separate empty-cookie browser page proves the raw synthetic SVG executes its script. The same SVG through the actual image route must not execute. Real Auth CI is still pending."
   }
 }

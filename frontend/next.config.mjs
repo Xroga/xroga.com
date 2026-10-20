@@ -1,6 +1,7 @@
 import { nextRedirects } from './redirects.mjs';
 import { readFileSync } from 'node:fs';
 import { resolveAuthBuildConfiguration } from './src/lib/supabase/authBuildRealm.mjs';
+import {browserProxyHeaders,imageProxyHeaders} from './src/lib/untrustedProxyResponsePolicy.mjs';
 const stagingManifest=process.env.XROGA_STAGING_AUTH_BUILD==='1'?JSON.parse(readFileSync(process.env.XROGA_STAGING_MANIFEST_PATH??'', 'utf8')):undefined;
 const authBuildConfiguration = resolveAuthBuildConfiguration(process.env,stagingManifest);
 
@@ -64,6 +65,14 @@ const securityHeaders = [
   { key: 'Content-Security-Policy', value: csp("'none'") },
 ];
 
+// Next's configured headers can replace route headers. Keep each proxy's
+// sandbox effective without changing the policy of any application document.
+/** @param {Readonly<Record<string,string>>} policy */
+const proxySecurityHeaders = (policy) => [
+  ...baseSecurityHeaders.filter(header=>!Object.keys(policy).some(key=>key.toLowerCase()===header.key.toLowerCase())),
+  ...Object.entries(policy).map(([key,value])=>({key,value})),
+];
+
 const freshMarketingHeaders = [
   ...securityHeaders,
   { key: 'Cache-Control', value: 'no-store, max-age=0' },
@@ -91,7 +100,7 @@ const PREVIEW_SOURCE = '/showcase/:slug/preview';
 const CRYPTO_SHOWCASE_SOURCE = '/showcase/black-hole-vinfinity-crypto';
 const CLARITY_DEMO_SOURCE = '/demos/xroga-clarity-workflow.html';
 const BROWSER_EMPLOYEES_DEMO_SOURCE = '/demos/xroga-browser-employees-exact.html';
-const NON_PREVIEW_SOURCE = '/((?!(?:$|about$|showcase/[^/]+/preview$|showcase/black-hole-vinfinity-crypto$|demos/xroga-clarity-workflow[.]html$|demos/xroga-browser-employees-exact[.]html$)).*)';
+const NON_PREVIEW_SOURCE = '/((?!(?:$|about$|api/(?:browser-view|image-fetch)/?$|showcase/[^/]+/preview$|showcase/black-hole-vinfinity-crypto$|demos/xroga-clarity-workflow[.]html$|demos/xroga-browser-employees-exact[.]html$)).*)';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -119,6 +128,8 @@ const nextConfig = {
     return [
       { source: '/', headers: freshMarketingHeaders },
       { source: '/about', headers: freshMarketingHeaders },
+      { source: '/api/browser-view', headers: proxySecurityHeaders(browserProxyHeaders) },
+      { source: '/api/image-fetch', headers: proxySecurityHeaders(imageProxyHeaders) },
       { source: PREVIEW_SOURCE, headers: framableSecurityHeaders },
       { source: CRYPTO_SHOWCASE_SOURCE, headers: framableSecurityHeaders },
       { source: CLARITY_DEMO_SOURCE, headers: framableSecurityHeaders },

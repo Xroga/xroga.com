@@ -47,6 +47,7 @@ test('real proxy responses isolate untrusted scripts from authenticated cookies 
       setAll:async cookies=>{await context.addCookies(cookies.map(({name,value,options})=>({name,value,domain:'127.0.0.1',path:options.path??'/',secure:false,httpOnly:options.httpOnly??false,sameSite:'Lax' as const,...(options.maxAge===0?{expires:1}:{})})));},
     }});
     expect((await session.auth.signInWithPassword({email,password})).error).toBeNull();
+    const verifiedSession=await context.request.get('/api/session',{maxRedirects:0});expect(verifiedSession.status()).toBe(200);expect(await verifiedSession.json()).toEqual({authenticated:true});
     const own=await context.request.get(privatePath);expect(own.status()).toBe(200);expect(await own.text()).toBe('OWN_PRIVATE_PROXY_CANARY');
     const foreign=await context.request.get(foreignPath);expect(foreign.status()).toBe(404);expect(await foreign.text()).not.toContain('FOREIGN_PRIVATE_PROXY_CANARY');
     await new Promise<void>(resolve=>fixture.listen(0,'127.0.0.1',resolve));const address=fixture.address();expect(address&&typeof address!=='string').toBeTruthy();
@@ -54,7 +55,7 @@ test('real proxy responses isolate untrusted scripts from authenticated cookies 
     const page=await context.newPage();await page.goto('/api/session',{waitUntil:'load'});
     await page.evaluate(({key,canary})=>{localStorage.setItem(key,canary);document.cookie=`xroga_origin_canary=${canary}; Path=/; SameSite=Lax`;},{key,canary});
     const proxyPath=`/api/browser-view?target=${encodeURIComponent(upstream+'/html')}`;
-    const response=await context.request.get(proxyPath);expect(response.status()).toBe(200);expect(response.headers()['content-security-policy']).toContain('sandbox allow-scripts');
+    const response=await context.request.get(proxyPath,{maxRedirects:0});expect(response.status()).toBe(200);expect(new URL(response.url()).pathname).toBe('/api/browser-view');expect(await response.text()).toContain('UNTRUSTED_FIXTURE');expect(response.headers()['content-security-policy']).toContain('sandbox allow-scripts');
     await page.evaluate(({url,nonce})=>{
       const iframe=document.createElement('iframe');iframe.id='untrusted-proxy';iframe.sandbox.add('allow-scripts','allow-same-origin','allow-forms','allow-popups');
       window.addEventListener('message',event=>{if(event.source===iframe.contentWindow&&event.data?.nonce===nonce)(window as unknown as {proxyProbe:unknown}).proxyProbe={...event.data,messageOrigin:event.origin};});
@@ -65,10 +66,12 @@ test('real proxy responses isolate untrusted scripts from authenticated cookies 
     expect(await page.evaluate(({key})=>localStorage.getItem(key),{key})).toBe(canary);
     const image=await context.request.get(`/api/image-fetch?url=${encodeURIComponent(upstream+'/png')}`);expect(image.status()).toBe(200);expect(await image.body()).toEqual(png);expect(image.headers()['x-content-type-options']).toBe('nosniff');
     const rejected=await context.request.get(`/api/image-fetch?url=${encodeURIComponent(upstream+'/html')}`);expect(rejected.status()).toBe(415);expect(await rejected.text()).not.toContain('UNTRUSTED_FIXTURE');
+    const svgControl=await browser.newPage();
+    try{await svgControl.goto(upstream+'/svg',{waitUntil:'load'});expect(await svgControl.locator('svg').getAttribute('data-script-ran')).toBe('yes');}finally{await svgControl.close();}
     const svgPage=await context.newPage();const svg=await svgPage.goto(`/api/image-fetch?url=${encodeURIComponent(upstream+'/svg')}`,{waitUntil:'load'});expect(svg?.status()).toBe(200);expect(svg?.headers()['content-security-policy']).toContain('sandbox;');
     await expect(svgPage.locator('svg text')).toHaveText('SAFE_SVG_MARKER');expect(await svgPage.locator('svg').getAttribute('data-script-ran')).toBeNull();
     const reflected=await context.request.get(`/api/browser-view?target=${encodeURIComponent('unsupported:<script>ORIGIN_REFLECTION_CANARY</script>')}`);expect(reflected.headers()['content-security-policy']).toContain('sandbox');expect(await reflected.text()).not.toContain('<script>ORIGIN_REFLECTION_CANARY</script>');
-    await mkdir('test-results',{recursive:true});await writeFile('test-results/proxy-origin-evidence.json',JSON.stringify({sourceSha:process.env.XB01_TEST_SOURCE_SHA??process.env.EXPECTED_RELEASE_SHA,disposableOnly:true,authenticatedOwnFile:true,foreignFileDenied:true,untrustedScriptExecutesInOpaqueOrigin:true,appCookieStorageParentAndPrivateFileDenied:true,rasterBytesRetained:true,htmlImageRefused:true,svgScriptDenied:true,escapedErrorReflection:true,externalProviderCalled:false,command010EgressVerified:false},null,2));
+    await mkdir('test-results',{recursive:true});await writeFile('test-results/proxy-origin-evidence.json',JSON.stringify({sourceSha:process.env.XB01_TEST_SOURCE_SHA??process.env.EXPECTED_RELEASE_SHA,disposableOnly:true,authenticatedOwnFile:true,foreignFileDenied:true,untrustedScriptExecutesInOpaqueOrigin:true,appCookieStorageParentAndPrivateFileDenied:true,rasterBytesRetained:true,htmlImageRefused:true,rawSvgControlExecutes:true,svgScriptDenied:true,escapedErrorReflection:true,externalProviderCalled:false,command010EgressVerified:false},null,2));
   }finally{
     await context.close();await new Promise<void>((resolve,reject)=>fixture.close(error=>error&&(error as NodeJS.ErrnoException).code!=='ERR_SERVER_NOT_RUNNING'?reject(error):resolve()));
     for(const id of ids)expect((await admin.auth.admin.deleteUser(id)).error).toBeNull();

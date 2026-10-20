@@ -33569,7 +33569,7 @@
       "id": "surface:00069db1d185a39243c5",
       "subsystem": "frontend",
       "sourcePath": "frontend/next.config.mjs",
-      "sha256": "fca497eb9dd32cdddfccd83faf3b1b3d61c33f71a87bf45835a9223953417833",
+      "sha256": "f1ec95a33726511f8f8c0a3155746f34a6682d77ccd3d01d0934be802e2ea811",
       "symbols": [
         "BROWSER_EMPLOYEES_DEMO_SOURCE",
         "CLARITY_DEMO_SOURCE",
@@ -33585,6 +33585,7 @@
         "freshMarketingHeaders",
         "isSafe",
         "nextConfig",
+        "proxySecurityHeaders",
         "scriptSources",
         "securityHeaders",
         "stagingManifest",
@@ -33593,14 +33594,18 @@
       "imports": [
         "./redirects.mjs",
         "./src/lib/supabase/authBuildRealm.mjs",
+        "./src/lib/untrustedProxyResponsePolicy.mjs",
         "node:fs"
       ],
       "runtimeImports": [
         "frontend/redirects.mjs",
-        "frontend/src/lib/supabase/authBuildRealm.mjs"
+        "frontend/src/lib/supabase/authBuildRealm.mjs",
+        "frontend/src/lib/untrustedProxyResponsePolicy.mjs"
       ],
       "entryPoints": [],
-      "callers": [],
+      "callers": [
+        "frontend/src/lib/untrustedProxyConfig.test.ts:6"
+      ],
       "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
@@ -33626,7 +33631,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "frontend/src/lib/untrustedProxyConfig.test.ts"
+      ],
       "state": "DEAD_OR_UNREACHABLE",
       "confidence": "LOW",
       "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
@@ -80961,15 +80968,17 @@
       "id": "surface:1400afdfcd6b8caf480b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/untrustedProxyResponse.ts",
-      "sha256": "39bc9116e6b62297403e5032f3afd245696a1a872972264264f3ceb9356ce0a6",
+      "sha256": "b739f451181afcb74c2e02910545a8933076533772e9147c914852c74dbb2a4a",
       "symbols": [
-        "browserProxyHeaders",
         "entities",
-        "escapeProxyHtml",
-        "imageProxyHeaders"
+        "escapeProxyHtml"
       ],
-      "imports": [],
-      "runtimeImports": [],
+      "imports": [
+        "./untrustedProxyResponsePolicy.mjs"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/untrustedProxyResponsePolicy.mjs"
+      ],
       "entryPoints": [
         "frontend/src/app/api/browser-view/route.ts",
         "frontend/src/app/api/image-fetch/route.ts"
@@ -80989,6 +80998,44 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "frontend/src/lib/untrustedProxyResponse.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:0dd4094ebddb85dad02a",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/untrustedProxyResponsePolicy.mjs",
+      "sha256": "2f9681a30651e242fc237632eccab0a9252bc1074b429e53204ebb50cce06cc9",
+      "symbols": [
+        "browserProxyHeaders",
+        "imageProxyHeaders"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/api/browser-view/route.ts",
+        "frontend/src/app/api/image-fetch/route.ts"
+      ],
+      "callers": [
+        "frontend/next.config.mjs:4",
+        "frontend/src/lib/untrustedProxyConfig.test.ts:3",
+        "frontend/src/lib/untrustedProxyResponse.ts:2"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/untrustedProxyConfig.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -107513,6 +107560,13 @@
     {
       "id": "test-suite:fc612744a4b30eeead28",
       "sourcePath": "frontend/src/lib/universalOutput.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:742c9ab8307e1cf2f2a4",
+      "sourcePath": "frontend/src/lib/untrustedProxyConfig.test.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []

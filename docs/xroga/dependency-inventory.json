@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "ef2bec1d29885440941858a09e14c26707bb89c1",
+  "source_sha": "fbf400f35581f7ab672d5dea19be462e05d4d003",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -13450,7 +13450,7 @@
     },
     {
       "path": "backend/src/security/frontendScope.local.integration.ts",
-      "sha256": "c22cec41b514d28098fa4af3b446a28c2a97c7209a4106e0fad520f3a9d65828"
+      "sha256": "055ff88a3d5511dfe91689828495eb7a943f7d0b30db4fde0bae0238fd2c7b86"
     },
     {
       "path": "backend/src/security/githubConsumer.local.integration.ts",
@@ -17538,7 +17538,11 @@
     },
     {
       "path": "frontend/src/lib/untrustedProxyResponse.ts",
-      "sha256": "39bc9116e6b62297403e5032f3afd245696a1a872972264264f3ceb9356ce0a6"
+      "sha256": "b739f451181afcb74c2e02910545a8933076533772e9147c914852c74dbb2a4a"
+    },
+    {
+      "path": "frontend/src/lib/untrustedProxyResponsePolicy.mjs",
+      "sha256": "2f9681a30651e242fc237632eccab0a9252bc1074b429e53204ebb50cce06cc9"
     },
     {
       "path": "frontend/src/lib/uploadCoalescing.ts",
