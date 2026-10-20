@@ -11,7 +11,7 @@ test('CWS exact target receipts gate publish and status without leaking provider
  let mode='ok',publishes=0,external=0;
  t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
   const url=new URL(String(input));
-  if(url.origin==='http://127.0.0.1:49205')return Response.json({access_token:`enc:${Buffer.from(`fixture:${JSON.stringify(creds)}`).toString('base64')}`,metadata:{}});
+  if(url.origin==='http://127.0.0.1:49205')return Response.json({user_id:'owner',provider:'apikey_cws_oauth',credential_revision:null,access_token:`enc:${Buffer.from(`fixture:${JSON.stringify(creds)}`).toString('base64')}`,metadata:{}});
   external++;assert.equal(init?.redirect,'error');
   if(url.origin==='https://oauth2.googleapis.com')return Response.json(mode==='oauth'?{error:'SECRET'}:{access_token:'token'});
   assert.equal(url.origin,'https://chromewebstore.googleapis.com');

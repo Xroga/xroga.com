@@ -10,7 +10,8 @@ test('runtime diagnostic events redact known and generic secrets without changin
   const prior=process.env.USER_SECRETS_ENCRYPTION_KEY;process.env.USER_SECRETS_ENCRYPTION_KEY='synthetic-local-key';
   try{
     const now=new Date().toISOString(),known='KNOWN_PRIVATE_COMMAND_CANARY',generic='GENERIC_PRIVATE_COMMAND_CANARY';
-    const session:ProjectRuntimeSession={schemaVersion:'1.0.0',sessionId:'session',userId:'owner',projectId:'project',providerId:'fly-project-runtime',runtimeClass:'interactive',status:'running',image:null,workspaceRevision:1,knownFiles:[],processes:[],ports:[],providerState:{machineId:'synthetic'},createdAt:now,updatedAt:now,expiresAt:null};
+    const owner='11111111-1111-4111-8111-111111111111';
+    const session:ProjectRuntimeSession={schemaVersion:'1.0.0',sessionId:'session',userId:owner,projectId:'project',providerId:'fly-project-runtime',runtimeClass:'interactive',status:'running',image:null,workspaceRevision:1,knownFiles:[],processes:[],ports:[],providerState:{machineId:'synthetic'},createdAt:now,updatedAt:now,expiresAt:null};
     const store=new InMemoryProjectRuntimeStore();await store.saveSession(session);const events=t.mock.method(store,'appendEvent');
     const provider=new FlyProjectRuntimeProvider({app:'synthetic',token:'synthetic',fetchImpl:async()=>{throw new Error('Unexpected network');}});
     const executions:unknown[]=[];
@@ -18,14 +19,14 @@ test('runtime diagnostic events redact known and generic secrets without changin
     const starts:unknown[]=[];
     t.mock.method(provider,'startProcess',async(_session:ProjectRuntimeSession,input:ProviderRuntimeProcessStartInput)=>{starts.push(structuredClone(input));return{pid:123,logPath:'/synthetic.log'};});
     t.mock.method(provider,'stopProcess',async()=>{});
-    const manager=new ProjectRuntimeManager('owner',store,[provider]);
+    const manager=new ProjectRuntimeManager(owner,store,[provider]);
     await manager.secretManager().put({projectId:'project',name:'API_TOKEN',scope:'preview',value:known});
     const input={command:`command-${known} token=${generic}`,args:[known,`password=${generic}`,'safe'],cwd:`/work/${known}`,secretScopes:['preview'] as const};
     await manager.exec('session',input);const process=await manager.startProcess('session',input);
     await new ProjectProcessManager(manager).restart('session',process);
     assert.equal(executions.length,1);assert.equal(starts.length,2);
     for(const actual of [...executions,...starts] as typeof input[]){assert.equal(actual.command,input.command);assert.deepEqual(actual.args,input.args);assert.equal(actual.cwd,input.cwd);}
-    assert.equal((await store.loadSession('owner','session'))?.processes[0].command,input.command);
+    assert.equal((await store.loadSession(owner,'session'))?.processes[0].command,input.command);
     const persisted=await Promise.all(events.mock.calls.map(call=>call.result));
     assert.equal(persisted.filter(event=>event?.eventType==='runtime.command').length,1);
     assert.equal(persisted.filter(event=>event?.eventType==='runtime.process_started').length,2);

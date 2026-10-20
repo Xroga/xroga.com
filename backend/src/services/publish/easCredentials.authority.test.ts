@@ -13,7 +13,7 @@ test('EAS credentials preserve explicit project/package and reject ambiguous or 
     if(url.origin==='https://eas-fixture.invalid'){
       const provider=url.searchParams.get('provider')?.slice(3);
       const value=provider==='apikey_expo'?'EXPO_PRIVATE_CANARY':provider==='apikey_google_play'?JSON.stringify({private_key:'GOOGLE_PRIVATE_CANARY'}):provider==='apikey_apple_asc_api'?JSON.stringify({keyId:'key-original',issuerId:'issuer',keyP8:'BEGIN PRIVATE KEY PRIVATE_CANARY'}):'stored-default-project';
-      return Response.json({access_token:`enc:${Buffer.from(`fixture:${value}`).toString('base64')}`,metadata:{}});
+      return Response.json({user_id:'11111111-1111-4111-8111-111111111111',provider,credential_revision:null,access_token:`enc:${Buffer.from(`fixture:${value}`).toString('base64')}`,metadata:{}});
     }
     assert.equal(url.href,'https://api.expo.dev/graphql');
     const body=JSON.parse(String(init?.body));

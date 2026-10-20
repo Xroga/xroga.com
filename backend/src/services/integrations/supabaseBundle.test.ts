@@ -34,7 +34,8 @@ test('bundle reads preserve consistent legacy JWTs and deny opaque, mixed and ch
     const reply = (value: unknown, status = 200) => Response.json(value, {status});
     if (url.pathname === '/rest/v1/user_integrations') {
       assert.equal(url.searchParams.get('user_id'),`eq.${owner}`);
-      return reply([...rows.values()]);
+      const selection = url.searchParams.get('provider');
+      return reply(selection?.startsWith('eq.') ? rows.get(selection.slice(3)) ?? null : [...rows.values()]);
     }
     if (url.pathname.includes('/storage/')) {
       if(storageOutage)return reply({message:'synthetic unavailable'},503);

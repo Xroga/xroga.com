@@ -12,8 +12,9 @@ test('EAS polling pins project and admits only exact recent nonbaseline build ev
   t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
     const url=new URL(String(input));
     if(url.origin==='https://build-fixture.invalid'){
-      let value='expo-token';if(url.searchParams.get('provider')==='eq.apikey_expo_project_id'){projectReads++;value=projectReads===1?'project-a':'project-b';}
-      return Response.json({access_token:`enc:${Buffer.from(`fixture:${value}`).toString('base64')}`,metadata:{}});
+      const provider=url.searchParams.get('provider')?.slice(3);
+      let value='expo-token';if(provider==='apikey_expo_project_id'){projectReads++;value=projectReads<=2?'project-a':'project-b';}
+      return Response.json({user_id:'owner',provider,credential_revision:null,access_token:`enc:${Buffer.from(`fixture:${value}`).toString('base64')}`,metadata:{}});
     }
     assert.equal(url.origin,'https://api.expo.dev');
     let row:Record<string,unknown>=build();
@@ -37,7 +38,7 @@ test('EAS polling pins project and admits only exact recent nonbaseline build ev
   assert.equal(projectReads,0);assert.ok(graphql>0);
   mode='pin';buildReads=0;
   const pinned=await waitForEasBuildArtifact({userId:'owner',platform:'android',ignoreBuildIds:[],startedAfterMs:Date.now()-1000,intervalMs:1,timeoutMs:200});
-  assert.equal(pinned.ok,true);assert.equal(projectReads,1);assert.ok(buildReads>=2);
+  assert.equal(pinned.ok,true);assert.equal(projectReads,2,'One canonical read plus its post-open authority check');assert.ok(buildReads>=2);
   for(mode of ['foreign','foreign-parent','old','bad-date','platform','unsafe-url','ok']){
     const result=await waitForEasBuildArtifact({userId:'owner',projectId:'project-a',platform:'android',ignoreBuildIds:mode==='ok'?['new-build']:[],startedAfterMs:Date.now()-1000,intervalMs:1,timeoutMs:15});
     assert.equal(result.ok,false,mode);

@@ -76,6 +76,10 @@ test('manual Supabase connection binds all writes before yielding and reports on
         ...rows.get(name), credential_revision: inventoryFailure === 'revision' ? randomUUID() : revision,
       })));
       }
+      if (provider?.startsWith('eq.')) {
+        const name = provider.slice(3), row = rows.get(name);
+        return reply(row ? { user_id: context.userId, ...row, credential_revision: revisions.get(name) } : null);
+      }
       return reply(provider?.startsWith('like.') ? [...rows.values()] : []);
     }
     if (url.pathname === '/storage/v1/bucket') return reply([{ id: 'xroga-github-tokens', public: false }]);

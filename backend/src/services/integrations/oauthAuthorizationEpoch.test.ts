@@ -6,6 +6,7 @@ import { exchangeVercelOAuthCode, saveVercelConnection } from './vercelAuth.js';
 import { loadProviderToken, storePkceSession, storeProviderToken } from './oauthPkceStore.js';
 import { completeCwsOAuth } from '../publish/chromeWebStore.js';
 import { createTenantContext } from '../../security/tenantContext.js';
+import { sealRuntimeCredential, openRuntimeCredential } from './credentialVaultRuntime.js';
 const context=createTenantContext({userId:'11111111-1111-4111-8111-111111111111',via:'remote_getuser'});
 
 test('OAuth entry points carry consumed revisions across provider I/O and never upsert on a lost epoch',async()=>{
@@ -15,15 +16,15 @@ test('OAuth entry points carry consumed revisions across provider I/O and never 
   const original=globalThis.fetch,state=randomUUID(),revision=randomUUID();
   const requests:Array<{path:string;body:Record<string,unknown>}>=[];
   let allowSave=false,failConsume=false,providerCalls=0;
+  let session: Record<string, unknown>;
   globalThis.fetch=async(input,init)=>{
     const url=new URL(String(input instanceof Request?input.url:input));
     if(url.origin===process.env.SUPABASE_URL){
       const body=JSON.parse(String(init?.body??'{}'));requests.push({path:url.pathname,body});
-      if(url.pathname.endsWith('/begin_oauth_session'))return Response.json(true);
+      if(url.pathname.endsWith('/begin_oauth_session')){session=body.p_session;return Response.json(true);}
       if(url.pathname.endsWith('/consume_oauth_session'))return failConsume
         ?Response.json({message:'PRIVATE_DATABASE_CANARY'},{status:503})
-        :Response.json({verifier:'synthetic-verifier',state,redirect_uri:'https://xroga.com/dashboard/integrations/vercel/callback',
-          created_at:new Date().toISOString(),authorization_revision:revision});
+        :Response.json({...session,state,authorization_revision:revision});
       if(url.pathname.endsWith('/save_oauth_connection'))return Response.json(allowSave);
       throw new Error(`Unexpected authority operation: ${url.pathname}`);
     }
@@ -37,15 +38,16 @@ test('OAuth entry points carry consumed revisions across provider I/O and never 
     const opts={tenantContext:context,state,code:'synthetic-code',redirectUri:'https://example.invalid/callback'};
     await assert.rejects(exchangeSupabaseOAuthCode(opts),/connection changed/);
     assert.equal(requests.at(-1)?.body.p_revision,revision);
+    await storePkceSession(context,'vercel_oauth_pkce',{verifier:'synthetic',state,redirect_uri:opts.redirectUri,created_at:new Date().toISOString()});
     const exchanged=await exchangeVercelOAuthCode(opts);
     assert.ok(requests.filter(request=>request.path.endsWith('/consume_oauth_session')).every(request=>request.body.p_owner_id===context.userId));
-    await assert.rejects(saveVercelConnection('owner',exchanged.access_token,{authKind:'sign_in_with_vercel'},undefined,exchanged.authorizationRevision),/connection changed/);
+    await assert.rejects(saveVercelConnection(context.userId,exchanged.access_token,{authKind:'sign_in_with_vercel'},undefined,exchanged.authorizationRevision),/connection changed/);
     assert.equal(requests.at(-1)?.body.p_revision,revision);
     const count=requests.length;
     await assert.rejects(storeProviderToken('owner','supabase_oauth',{access_token:'unadmitted'}),/revision required/);
     await assert.rejects(saveVercelConnection('owner','unadmitted',{authKind:'sign_in_with_vercel'}),/revision required/);
     assert.equal(requests.length,count);
-    allowSave=true;await exchangeSupabaseOAuthCode(opts);
+    allowSave=true;await storePkceSession(context,'supabase_oauth_pkce',{verifier:'synthetic',state,redirect_uri:opts.redirectUri,created_at:new Date().toISOString()});await exchangeSupabaseOAuthCode(opts);
     assert.equal(requests.at(-1)?.path,'/rest/v1/rpc/save_oauth_connection');
     failConsume=true;const calls=providerCalls;
     await assert.rejects(exchangeSupabaseOAuthCode(opts),/Invalid or expired/);assert.equal(providerCalls,calls);
@@ -57,19 +59,22 @@ test('CWS carries the consumed epoch through encrypted BYOK admission and denies
   const keys=['SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','USER_SECRETS_ENCRYPTION_KEY'];
   const previous=keys.map(key=>process.env[key]);keys.forEach(key=>process.env[key]='synthetic-only');
   process.env.SUPABASE_URL='http://127.0.0.1:49191';
-  const original=globalThis.fetch,revision=randomUUID(),state=randomUUID();
+  const original=globalThis.fetch,revision=randomUUID(),state=randomUUID(),vaultRevision=randomUUID();
+  const verifier=await sealRuntimeCredential(context.userId,{provider:'cws_oauth_pkce',account:'cws_oauth_pkce',credentialType:'pkce-verifier',recordId:'cws_oauth_pkce',revision:vaultRevision,scope:'oauth-session'},'SYNTHETIC_CLIENT_SECRET');
   let mismatch=true,allowSave=false,providerCalls=0;
   globalThis.fetch=async(input,init)=>{
     const url=new URL(String(input instanceof Request?input.url:input));
     if(url.hostname==='oauth2.googleapis.com'){providerCalls++;return Response.json({refresh_token:'SYNTHETIC_GOOGLE_REFRESH'});}
     assert.equal(url.origin,process.env.SUPABASE_URL);
-    if(url.pathname.endsWith('/consume_oauth_session'))return Response.json({verifier:'SYNTHETIC_CLIENT_SECRET',state,
+    if(url.pathname.endsWith('/consume_oauth_session'))return Response.json({verifier,state,vault_revision:vaultRevision,vault_format:'pkce-v1',
       redirect_uri:'https://xroga.com/dashboard/publish/cws/callback',created_at:new Date().toISOString(),authorization_revision:revision,
       nonce:JSON.stringify({clientId:'SYNTHETIC_CLIENT',extensionId:'synthetic-extension',publisherId:'synthetic-publisher'})});
     if(url.pathname.endsWith('/prepare_provider_key_write'))return Response.json(mismatch?randomUUID():revision);
     if(url.pathname.endsWith('/save_cws_oauth_key_if_current')){
       const body=JSON.parse(String(init?.body));assert.equal(body.p_revision,revision);assert.equal(body.p_provider,'apikey_cws_oauth');
-      assert.ok(body.p_access_token.startsWith('v1:'));assert.ok(!body.p_access_token.includes('SYNTHETIC_GOOGLE_REFRESH'));
+      assert.ok(body.p_access_token.startsWith('vault:v3:'));assert.ok(!body.p_access_token.includes('SYNTHETIC_GOOGLE_REFRESH'));
+      const plain=await openRuntimeCredential(context.userId,{provider:'cws_oauth',account:'apikey_cws_oauth',credentialType:body.p_metadata.type,recordId:'apikey_cws_oauth',revision:body.p_metadata.vault_revision,scope:'user-provider-key'},body.p_access_token);
+      assert.match(plain,/SYNTHETIC_GOOGLE_REFRESH/);
       return Response.json(allowSave);
     }
     // Existing encrypted BYOK mirror is best effort after the conditional save.
@@ -99,10 +104,10 @@ test('Supabase refresh captures revision before exchange and absent authority ca
     throw new Error('No legacy Storage access authorized');
   };
   try {
-    await assert.rejects(refreshSupabaseOAuthToken('owner','REUSED'),/connection changed/);
+    await assert.rejects(refreshSupabaseOAuthToken(context.userId,'REUSED'),/connection changed/);
     assert.equal(providerCalls,1);absent=true;
-    assert.equal(await loadProviderToken('owner','supabase_oauth'),null);
-    await assert.rejects(refreshSupabaseOAuthToken('owner','REUSED'),/changed before refresh/);
+    assert.equal(await loadProviderToken(context.userId,'supabase_oauth'),null);
+    await assert.rejects(refreshSupabaseOAuthToken(context.userId,'REUSED'),/changed before refresh/);
     assert.equal(providerCalls,1);assert.ok(calls.every(path=>!path.includes('/storage/')));
   } finally {globalThis.fetch=original;keys.forEach((key,index)=>{if(previous[index]===undefined)delete process.env[key];else process.env[key]=previous[index];});}
 });

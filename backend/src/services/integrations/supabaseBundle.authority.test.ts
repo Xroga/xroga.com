@@ -14,7 +14,7 @@ test('provisioning bundle reads never restore missing canonical credentials from
   const mirrors=new Map(rows);let storageReads=0,writes=0;
   globalThis.fetch=async(input)=>{
     const url=new URL(String(input instanceof Request?input.url:input));assert.equal(url.origin,'https://bundle-authority.invalid');
-    if(url.pathname==='/rest/v1/user_integrations'){assert.equal(url.searchParams.get('user_id'),`eq.${owner}`);return Response.json([...rows.values()]);}
+    if(url.pathname==='/rest/v1/user_integrations'){assert.equal(url.searchParams.get('user_id'),`eq.${owner}`);const selection=url.searchParams.get('provider');return Response.json(selection?.startsWith('eq.')?rows.get(selection.slice(3))??null:[...rows.values()]);}
     if(url.pathname.includes('/storage/')){
       storageReads++;const provider=url.pathname.split('/').at(-1)!.replace(/^vault-/,'').replace(/\.json$/,'');
       return mirrors.has(provider)?Response.json(mirrors.get(provider)):Response.json({code:'NoSuchKey',message:'Synthetic missing object'}, {status:400});

@@ -16,10 +16,10 @@ test('EAS publish HTTP route preserves explicit project and blocks submit after 
   t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
     const url=new URL(String(input));
     if(url.origin==='https://route-eas-fixture.invalid'){
-      if(url.pathname.endsWith('/github_integrations'))return Response.json({access_token:'github-fixture'});
+      if(url.pathname.endsWith('/github_integrations') || url.searchParams.get('provider') === 'eq.github')return Response.json({access_token:'github-fixture'});
       const provider=url.searchParams.get('provider')?.slice(3)??'';providers.push(provider);
       const value=provider==='apikey_expo'?'expo-fixture':provider==='apikey_google_play'?JSON.stringify({private_key:'private'}):JSON.stringify({keyId:'key',issuerId:'issuer',keyP8:'BEGIN PRIVATE KEY private'});
-      return Response.json({access_token:`enc:${Buffer.from(`fixture:${value}`).toString('base64')}`,metadata:{}});
+      return Response.json({user_id:'11111111-1111-4111-8111-111111111111',provider,credential_revision:null,access_token:`enc:${Buffer.from(`fixture:${value}`).toString('base64')}`,metadata:{}});
     }
     assert.equal(url.origin,'https://api.expo.dev');const body=JSON.parse(String(init?.body));
     if(url.pathname==='/graphql'){queries++;assert.equal(body.variables.appId,'explicit-project');return Response.json({data:{app:{byId:{id:'wrong-project',ownerAccount:{id:'account'}}}}});}

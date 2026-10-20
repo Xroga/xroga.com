@@ -11,13 +11,15 @@ test('deployment metadata cannot revive revoked or replaced credentials or ignor
   const server = createServer((req, res) => {
     const url = new URL(req.url!, 'http://localhost');
     assert.equal(req.method, 'GET');
-    assert.equal(url.pathname, '/rest/v1/github_integrations');
+    assert.ok(['/rest/v1/github_integrations', '/rest/v1/user_integrations'].includes(url.pathname));
     assert.equal(url.searchParams.get('user_id'), 'eq.11111111-1111-4111-8111-111111111111');
     const metadata = url.searchParams.get('select') === 'repo_strategy,default_repo';
     const error = metadata && mode === 'outage';
     res.writeHead(error ? 400 : 200, { 'Content-Type': 'application/json' });
     if (error) { res.end(JSON.stringify({ code: 'XX000', message: 'private error' })); return; }
     if (metadata) { res.end(JSON.stringify([{ repo_strategy: 'manual', default_repo: 'owner/repo', access_token: 'UNTRUSTED_METADATA_TOKEN' }])); return; }
+    if (url.pathname === '/rest/v1/github_integrations') { res.end(JSON.stringify([{ access_token: 'synthetic-current' }])); return; }
+    assert.equal(url.searchParams.get('provider'), 'eq.github');
     reads++;
     const token = reads === 1 || mode === 'active' ? 'synthetic-current' : mode === 'revoked' ? '' : 'synthetic-reconnected';
     res.end(JSON.stringify([{ access_token: token }]));

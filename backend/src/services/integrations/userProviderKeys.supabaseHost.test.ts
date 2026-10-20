@@ -25,9 +25,11 @@ test('Supabase vault saves and final deployment maps reject non-project origins 
     assert.equal(url.origin, 'https://vault-fixture.invalid');
     assert.equal(url.pathname, '/rest/v1/user_integrations');
     assert.equal(url.searchParams.get('user_id'), `eq.${owner}`);
-    return new Response(JSON.stringify(rows), { headers: { 'Content-Type': 'application/json' } });
+    const selection = url.searchParams.get('provider');
+    const selected = selection?.startsWith('eq.') ? rows.find((r: any) => r.provider === selection.slice(3)) ?? null : rows;
+    return new Response(JSON.stringify(selected), { headers: { 'Content-Type': 'application/json' } });
   };
-  const row = (provider: string, env: string, value: string) => ({ provider, access_token: `enc:${Buffer.from(`fixture:${value}`).toString('base64')}`, metadata: { env_var: env } });
+  const row = (provider: string, env: string, value: string) => ({ user_id: owner, provider, credential_revision: '11111111-1111-4111-8111-111111111112', access_token: `enc:${Buffer.from(`fixture:${value}`).toString('base64')}`, metadata: { env_var: env } });
   try {
     for (const url of invalid) {
       assert.equal(projectRefFromUrl(url), null);

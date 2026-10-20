@@ -30,9 +30,9 @@ test('Electron secret writes seal to the exact repository and redact transport f
   t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
     const url=new URL(String(input));calls.push(url.href);
     if(url.origin==='https://electron-fixture.invalid'){
-      if(url.pathname.endsWith('/github_integrations'))return Response.json({access_token:'GITHUB_PRIVATE_CANARY'});
+      if(url.pathname.endsWith('/github_integrations') || url.searchParams.get('provider') === 'eq.github')return Response.json({access_token:'GITHUB_PRIVATE_CANARY'});
       const provider=url.searchParams.get('provider');
-      return Response.json({access_token:provider==='eq.apikey_electron_csc_link'?`enc:${Buffer.from('fixture:CSC_PRIVATE_CANARY').toString('base64')}`:'',metadata:{}});
+      return Response.json({user_id:'11111111-1111-4111-8111-111111111111',provider:provider?.slice(3),credential_revision:null,access_token:provider==='eq.apikey_electron_csc_link'?`enc:${Buffer.from('fixture:CSC_PRIVATE_CANARY').toString('base64')}`:'',metadata:{}});
     }
     assert.equal(url.origin,'https://api.github.com');
     assert.equal(new Headers(init?.headers).get('Authorization'),'Bearer GITHUB_PRIVATE_CANARY');
