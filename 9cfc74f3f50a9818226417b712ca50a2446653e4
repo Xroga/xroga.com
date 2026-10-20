@@ -1,0 +1,76 @@
+# Xroga Phase 3 bounded follow-up, 2026-10-21
+
+Status: B1_P3_BLOCKED. No Phase 3 completion, merge, production migration, runtime IAM grant, key mutation or Phase 4 implementation is claimed.
+
+## Preserved sources
+
+- Accepted software: d750836bfa44bd6fa668f827a4529ed49dec5269.
+- OCI implementation and unchanged strict gate: 9d6234afdd0a20e99f584acf7f93e346c5c49164.
+- Main independently checked: 65030f2edff1bf085d52263cc7e1ccdcefc3f1d0.
+- Historical acceptance notes were not overwritten. The original 22 criteria, 12 action classes and 20 interface bindings were not changed.
+
+## Separate reviewable changes
+
+UI draft PR https://github.com/Xroga/xroga.com/pull/825, head e1d1483464e88bab0a663a7fa9c2e80e6e0c390a. No production UI changes. The obsolete global Plus prohibition now tests the default animated ring and explicit starter Plus separately. The removed fullscreen inspiration-strip contract now checks the actual shared empty-state header/cards, hydration/loading, privacy, fullscreen and one canonical composer. Three browser regressions cover icon transition, fullscreen draft preservation and private empty state.
+
+Feedback draft PR https://github.com/Xroga/xroga.com/pull/824, head 9cfc74f3f50a9818226417b712ca50a2446653e4. The previous email-only global read rule failed the documented founder invariant. The route now reuses canonical founder authorization. A narrowly scoped SQL correction independently requires current confirmed hello@xroga.com, current server-owned owner role and signed AAL2, with a restrictive read guard. Inserts and existing rows are preserved. No production migration was applied. Founder readiness and recovery must be reviewed before any rollout, without auto-promotion or MFA bypass.
+
+The three current-main candidates are reconciled in this bounded scope: Arcset is decorative JSX, not persistence. Browser feedback insertion is covered by real RLS tests. Global feedback reading required the route/SQL correction above. Historical Phase 2 caller records were not reopened or rewritten.
+
+## Verified tests and source boundaries
+
+- UI owning source-contract tests: 61/61 on PR source, then 61/61 on main 65030f2e with the identical three-file test patch.
+- Local browser suite on the original PR base: 9/9.
+- Current-main browser suite: ten cases passed in the first run. One case timed out during cold Next compilation before assertions. Only that case was retried after compilation and passed. All eleven distinct cases are covered across the preserved run and targeted retry. Local guest fixtures and aborted external Supabase requests are not live authentication or AI evidence.
+- Feedback focused founder/route tests: 8/8.
+- Real disposable Supabase Auth, MFA, PostgREST and PostgreSQL 17: 10/10, across fresh and upgrade application. Includes anonymous/authenticated insert receipts, forged identity rejection, atomic mixed-batch rollback, foreign and AAL1 reads, forbidden mutation, real MFA founder reads, current role/email/confirmation revocation, restrictive-policy composition and tampered JWT denial. Upgrade preserves a seeded row. Stack teardown passed. This target-scoped fixture does not certify complete migration-history or production-schema parity.
+- Feedback CI run https://github.com/Xroga/xroga.com/actions/runs/39502624238 has authenticated source e4ae5e7cc4bb2709fbe0c32d452546b899eedfcf, parents 73b1555a0be8064160d603371db90b3dfeac3f92 and 9cfc74f3f50a9818226417b712ca50a2446653e4.
+- The original migration SHA256 is 9ddb71e1f0ad5ec8b0f62163b82aa7bf430355584b4b23f009b39d0c9d8169f2. The correction SHA256 is 634276d81fd1b5b3ac8a0854897dd16710fcb3e0dbee3835c61d0d61ef2356e9.
+
+UI GitHub integration source 09ee1797971cce01d966ac35bc3cd44c471be326 has parents 73b1555a0be8064160d603371db90b3dfeac3f92 and e1d1483464e88bab0a663a7fa9c2e80e6e0c390a. Those hosted receipts predate main 65030f2e. They are not relabeled as current-main integration proof.
+
+Local merge-tree compatibility is clean for current main plus UI (tree c7e16e0da6ce0ca744526650a4608c4a381b21b7), and separately current main plus feedback (tree 637246c7629501dd33a85e9e22b923fa1fe47d2a). No branch was merged. The UI patch was tested on actual main 65030f2e in a detached worktree. The feedback's full current-main integration and the combined PR803 source have not been certified by these local tree checks.
+
+## Actual CI limits, not waived
+
+Both PRs passed production frontend builds and static contracts. Feedback also passed its migration dry-run and real isolated authorization workflow. Unit CI failed on three existing backend growth cases: intelligence/report opportunity data, CLI validation/report dry runs, and every-command JSON/verbose dry runs. The legacy authenticated browser workflow failed its missing NEXT_PUBLIC_SUPABASE_URL configuration preflight. These failures were not changed or hidden.
+
+A separate broad frontend diagnostic initially used the wrong tsx alias configuration. All eight affected files passed with the correct frontend tsconfig, 27/27. A distinct existing S03 test still expects HomepagePowerStories after S03 although the owning current-main homepage removed that section. It remains an out-of-scope demonstrated test-contract failure. No full frontend-suite PASS is claimed.
+
+UI build: https://github.com/Xroga/xroga.com/actions/runs/39503145423
+
+UI unit failure: https://github.com/Xroga/xroga.com/actions/runs/39503145409
+
+UI legacy browser configuration failure: https://github.com/Xroga/xroga.com/actions/runs/39503145362
+
+Feedback build: https://github.com/Xroga/xroga.com/actions/runs/39502624409
+
+Feedback unit failure: https://github.com/Xroga/xroga.com/actions/runs/39502624189
+
+Feedback legacy browser configuration failure: https://github.com/Xroga/xroga.com/actions/runs/39502624442
+
+No duplicate workflows were dispatched. No manual deployment was performed. Existing repository-managed PR preview checks are recorded separately from production acceptance.
+
+## Runtime custody and recovery
+
+Read-only OCI inspection after founder sign-in confirmed the existing Free Default domain, one administrator user, no existing non-admin runtime identity, existing Dubai SOFTWARE key and both retained versions. No policy, user, trust, OAuth client, service credential or key was created or changed. Google billing remains untouched.
+
+KMS-RUNTIME-PROPOSAL.md is the one concrete zero-additional-cloud-cost proposal. It uses the actual backend vault boundary in an isolated local process and native short-lived non-admin OCI sessions. Two proposed ordinary test identities and one exact-key crypto-only group/grant require explicit owner approval first. No new identity OCIDs are fabricated. Existing resource identifiers, quota observations, native authentication limits, permissions, tests and primary references are included.
+
+Accepted Cloud Shell cryptographic receipts remain valid within their scope. Neither they nor the proposed local probe prove unattended deployed Fly runtime custody or renewal. SOFTWARE-key backup is unsupported. Keeping two versions permits retained-version reads, not master-key deletion recovery or regional disaster recovery.
+
+## Finite remaining acceptance work
+
+1. Review the two draft PRs separately. Integrate only through an authorized review workflow, then authenticate exact final source and current-parent CI. No merge is authorized in this session.
+2. Resolve the three existing growth-test failures, the separate S03 contract discrepancy, and legacy browser environment configuration in their owning scopes before asserting complete current-source integration. No broad audit restart is needed.
+3. Owner decision on KMS-RUNTIME-PROPOSAL.md is required before any identity or permission setup. Then execute only the bounded non-admin runtime/provider cases. Production runtime startup, renewal, custody and recovery remain mandatory evidence, not implied by a finite local probe.
+4. Review legitimate-founder prerequisites and rollback/recovery before any future feedback rollout. No rollout is authorized here.
+5. When authentic source-bound evidence is complete, run the unchanged gate from the final accepted source, using actual repository-local artifacts:
+
+```text
+node scripts/security/evaluate-phase-three.mjs --evidence artifacts/<final-source-evidence>.json --observations artifacts/<independently-authenticated-final-source-observations>.json --require-complete
+```
+
+The placeholders must resolve to actual authenticated evidence. Do not fabricate PASS observations, reuse stale integration receipts or alter the evaluator to bypass KMS custody. It has not been rerun merely to reproduce already-known unmet prerequisites.
+
+Work stops for review and the required owner authorization. No unattended runtime setup is active.
