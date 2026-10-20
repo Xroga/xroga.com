@@ -18,6 +18,17 @@ const correction=readFileSync('supabase/migrations/20261021100000_feedback_found
 const receipts=[];
 const ok=result=>{assert.equal(result.error,null);return result.data;};
 const count=async id=>(await db.query('select count(*)::int n from public.product_feedback where id=$1',[id])).rows[0].n;
+async function waitForFeedbackSchema(){
+  // PostgREST applies NOTIFY asynchronously. Wait only for the specific schema
+  // cache miss, never retry an authorization or persistence failure as success.
+  for(let attempt=0;attempt<40;attempt++){
+    const result=await admin.from('product_feedback').select('id').limit(0);
+    if(!result.error)return;
+    assert.equal(result.error.code,'PGRST205');
+    await new Promise(resolve=>setTimeout(resolve,250));
+  }
+  throw new Error('Disposable feedback schema cache did not become ready');
+}
 async function identity(email,role){
   const password=`SyntheticOnly-${randomUUID()}-aA1!`;
   const user=ok(await admin.auth.admin.createUser({email,password,email_confirm:true})).user;
@@ -44,6 +55,7 @@ const staleFounder=createClient(url,apiKey,options);ok(await staleFounder.auth.s
 try {
 for(const phase of ['upgrade','fresh']){
   await db.query('drop table if exists public.product_feedback');await db.query(original);
+  await waitForFeedbackSchema();
   const seed=randomUUID();ok(await owner.client.from('product_feedback').insert({id:seed,rating:5,experience:'Synthetic pre-upgrade receipt'}));
   if(phase==='upgrade')assert.equal(ok(await staleFounder.from('product_feedback').select('id')).length,1,'Reproduce old email-only policy');
   await db.query(correction);assert.equal(await count(seed),1,'Migration preserves existing submissions');
