@@ -1,0 +1,1547 @@
+{
+  "status": "B1_P3_BLOCKED",
+  "sourceSha": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+  "report": "# Phase 3 isolated OCI verification and exact remaining blockers\n\nStatus: B1_P3_BLOCKED. No complete acceptance claim.\n\nFinal source: 9d6234afdd0a20e99f584acf7f93e346c5c49164. Accepted software d750836bfa44bd6fa668f827a4529ed49dec5269 and its authenticated evidence are preserved. All 22 original criteria, 12 action classes, 20 bindings and the evaluator remain unchanged.\n\n## Verified\n\n- One Always Free standard OCI Vault and one SOFTWARE AES-256 key in me-dubai-1. Two retained enabled versions. No paid private vault, compute resource, billing upgrade, permanent API key, new IAM grant, live credential migration or production change.\n- Additive OCI CryptoProvider uses the existing canonical CredentialVault, exact identity/AAD binding, bounded provider requests and explicit short-lived authentication. Twelve focused provider/vault tests passed and backend typecheck passed.\n- Nine isolated provider cases and nineteen retained OCI request IDs cover real wrap/unwrap, wrong AAD, unavailable key, unsigned rejection, canonical vault identity negatives, version rotation and retained-version recovery after process restart. Signed operator access is not application IAM proof.\n- Ten of eleven final-source workflows passed. Both 21-stage branch baselines passed twice: backend 3128/3128, frontend 1051/1051. Actual disposable database authorization/concurrency 209/209, authenticated browser and fresh/upgrade migrations passed.\n- The exact integrated parent identities and artifacts were authenticated. Its provenance preflight passed after the bounded native Array.from false-positive projection repair. No security review was waived.\n- Provider receipts are durably attached to OCI implementation source 2e7dd1ec via Git notes, leaving the original d750836b note unchanged. This final bundle preserves current-source results separately.\n\n## Remaining integrated CI requirement\n\nRun 39493219759, integrated source c5ffc1c30866dc2af36fb371c80a83111806d887, actual main parent b628bc379d01d87339c28ee038ed8468bf040103, failed exactly two frontend assertions:\n\n- not ok 175 - the composer takes the ring, the bars and the wheel\n- not ok 990 - an empty fullscreen terminal shows rotating build-command inspiration\n\nThe animated-icons test globally forbids a static Plus, while current main intentionally includes its optional plusIcon branch. The fullscreen test expects the old rotating-command inspiration markup, while current main replaced it with WorkspaceStartHeader/WorkspaceStartCards. Both failing tests and both components are byte-identical between actual main and the integrated source, independently verified by git diff. They were not introduced by OCI code. The integrated inventory also retains three unreviewed current-main caller candidates and does not certify them.\n\nNo unrelated product behavior, assertion or accepted security history was changed merely to make this KMS-only mission green. Next executable integration task: reconcile these two current-main UI contracts with their owning product change, preserving intended behavior and exact tests. If that change is approved and available, run only the necessary changed-source integration verification and authenticate its receipts. Do not rerun unchanged source.\n\n## Remaining runtime custody requirement\n\nOnly the existing tenancy administrator policy and Cloud Shell delegated operator identity were available. No suitable scoped application principal was found. Before adding IAM trust, the owner must approve the exact non-production application identity and issuer/subject/audience. Grant only KEY_ENCRYPT and KEY_DECRYPT on this one key. Do not grant key-management/export or tenancy-wide runtime permissions. Oracle federation and Fly Machine OIDC are possible documented mechanisms, not verified compatibility or configured trust.\n\nThen verify the actual application's short-lived runtime auth, positive access, valid wrong-principal IAM denial, renewal/recovery and isolated synthetic custody/cutover. Cloud Shell success and unsigned HTTP401 denial do not replace those tests. No administrator token may be installed into the backend. Any new IAM trust/grant requires the applicable action-time owner confirmation. No paid resource is needed by the completed crypto probe. Cost of an unconfigured future identity path must be confirmed before creating it.\n\nBoth SOFTWARE key versions remain enabled. OCI Vault backup does not support SOFTWARE keys. Process-restart recovery is not key backup or disaster-recovery proof. Keep the original key and last decrypt-capable principal. Do not disable, delete or export keys.\n\n## Strict gate\n\nThe unchanged --evidence/--observations/--require-complete gate was run against honest current-source observations. It exits 1 with Integrated CI is incomplete, before the separate mandatory runtime-custody check. It cannot truthfully report CODE_READY_KMS_CUTOVER_BLOCKED as the only current dependency while integrated CI is red.\n\nProcedure and full command: docs/xroga/evidence/command-009/oci-kms-procedure.md. No new spending, production deployment, merge, Google billing change, live migration or Phase 4.\n",
+  "oci": {
+    "consoleEvidence": {
+      "observedDate": "2026-10-21",
+      "timezone": "Asia/Karachi",
+      "method": "AUTHENTICATED_OCI_CONSOLE_AND_CLOUD_SHELL_UI",
+      "acceptedSoftwareSource": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+      "additiveOciSource": "2e7dd1ece8d26a2f29b87472d7a49ff02b5232ed",
+      "account": "FREE_TIER_IN_FREE_TRIAL",
+      "region": "me-dubai-1",
+      "initialInventory": {
+        "childCompartments": 0,
+        "vaultsInRootCompartment": 0,
+        "dynamicGroups": 0,
+        "groupNames": [
+          "All Domain Users",
+          "Administrators"
+        ],
+        "policies": [
+          "Tenant Admin Policy: ALLOW GROUP Administrators to manage all-resources IN TENANCY"
+        ],
+        "suitableScopedApplicationPrincipalFound": false
+      },
+      "resourcesCreated": {
+        "standardVaults": 1,
+        "virtualPrivateVaults": 0,
+        "masterKeys": 1,
+        "protection": "SOFTWARE",
+        "algorithm": "AES",
+        "keyBytes": 32,
+        "retainedVersions": 2,
+        "newIamGrants": 0,
+        "newComputeResources": 0,
+        "subscriptionsOrBillingUpgrades": 0
+      },
+      "bundleSha256": "62172dffaa1d8774f1fb754a3febb13017c1c2f370e2e502d0f339d3bcb680a9",
+      "prepareCanonicalSha256": "f7e12f33ab22c9091093a5af1efd1d4146724d8fa3d18c99b8d3a37e37da4d53",
+      "rotationCanonicalSha256": "7e43719a31420289aefdca5d02062893176bf0cfdc513e25bc8921e68a7bc733",
+      "remoteReceiptArchiveSha256": "e54719f153d2279a0c3f9a5fbe6fa563ea81df73b1b15840f9094fa9f7afdc4a",
+      "receiptPreservation": "Downloaded-file event was unavailable although the console reported transfer complete. Exact JSON was read from the authenticated terminal, parsed and independently matched to remote jq -cS SHA256 values. No receipt result was inferred from the transfer toast.",
+      "node": "22.21.1",
+      "sdk": {
+        "oci-common": "2.144.0",
+        "oci-keymanagement": "2.144.0",
+        "license": "UPL-1.0 OR Apache-2.0"
+      },
+      "isolatedProviderCryptography": "VERIFIED",
+      "receiptedCryptoRequests": 19,
+      "earlierProbeFailure": "Unsigned test request omitted required x-content-sha256, producing HTTP 400 rather than an authentication result. Corrected only request headers, preserved 401/403 assertion, and reran the bounded probe. Both successful receipts are retained.",
+      "scopedApplicationIamVerified": false,
+      "validWrongPrincipalIamTestVerified": false,
+      "productionRuntimeAuthenticationVerified": false,
+      "productionCutoverVerified": false,
+      "softwareKeyBackupSupportedByOciVaultBackup": false,
+      "recoveryVerified": "Retained original key version decrypts preserved synthetic ciphertext in a new process after rotation. This is not key backup or disaster-recovery proof.",
+      "keysDestroyedOrExported": false,
+      "liveCredentialsMigrated": false,
+      "googleCloudBillingTouched": false,
+      "productionChanges": false,
+      "phase4Started": false,
+      "expectedAdditionalCostUsd": 0,
+      "costBasis": "Oracle documentation confirms SOFTWARE-protected master keys are Always Free and Vault cryptographic API requests are not billed. Standard vault only. Cloud Shell within its free monthly limits. No billable resource or upgrade was selected. Cost reports were not treated as immediate metering proof.",
+      "status": "ISOLATED_OCI_KMS_VERIFIED_RUNTIME_CUSTODY_CUTOVER_BLOCKED"
+    },
+    "prepare": {
+      "authMode": "CLOUD_SHELL_DELEGATED_OPERATOR_NOT_APPLICATION_RUNTIME",
+      "cases": [
+        "REAL_WRAP_UNWRAP_EXACT_VERSION",
+        "REAL_WRONG_AAD_DENIED",
+        "REAL_UNAVAILABLE_KEY_DENIED",
+        "REAL_UNAUTHENTICATED_REQUEST_DENIED_NOT_SCOPED_IAM_PROOF",
+        "REAL_CANONICAL_VAULT_ROUNDTRIP",
+        "REAL_VAULT_IDENTITY_NEGATIVES",
+        "SYNTHETIC_CIPHERTEXT_PRESERVED_FOR_PROCESS_RESTART"
+      ],
+      "endpoint": "https://gvvnprwtaaawu-crypto.kms.me-dubai-1.oci.oraclecloud.com",
+      "keyBackupVerified": false,
+      "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+      "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kem4nll4oniaa.abshqljrvs33cqnfcln6g3wru6ttmdvqpcelza5maumjqaori5iqjgukfmvq",
+      "liveCredentialsMigrated": false,
+      "node": "v22.21.1",
+      "originalSoftwareSource": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+      "phase": "prepare",
+      "productionRuntimeAuthenticationVerified": false,
+      "recoveryScope": "Retained SOFTWARE key versions plus synthetic ciphertext, not provider key backup",
+      "requests": [
+        {
+          "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+          "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kem4nll4oniaa.abshqljrvs33cqnfcln6g3wru6ttmdvqpcelza5maumjqaori5iqjgukfmvq",
+          "operation": "encrypt",
+          "requestId": "16F20EC0CCC2-11F1-8ACD-63F0DEE74",
+          "result": "SUCCESS"
+        },
+        {
+          "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+          "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kem4nll4oniaa.abshqljrvs33cqnfcln6g3wru6ttmdvqpcelza5maumjqaori5iqjgukfmvq",
+          "operation": "decrypt",
+          "requestId": "17489330CCC2-11F1-8ACD-63F0DEE74",
+          "result": "SUCCESS"
+        },
+        {
+          "code": "InvalidParameter",
+          "operation": "decrypt",
+          "requestId": "174D7530CCC2-11F1-8ACD-63F0DEE74",
+          "result": "DENIED",
+          "status": 400
+        },
+        {
+          "code": "NotAuthorizedOrNotFound",
+          "operation": "encrypt",
+          "requestId": "17516CD0CCC2-11F1-8ACD-63F0DEE74",
+          "result": "DENIED",
+          "status": 404
+        },
+        {
+          "operation": "unauthenticated-encrypt",
+          "requestId": "2d70c7d49cf4f40dcd8f91ee7cd06aa5",
+          "result": "DENIED",
+          "status": 401
+        },
+        {
+          "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+          "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kem4nll4oniaa.abshqljrvs33cqnfcln6g3wru6ttmdvqpcelza5maumjqaori5iqjgukfmvq",
+          "operation": "encrypt",
+          "requestId": "1753DDD0CCC2-11F1-8ACD-63F0DEE74",
+          "result": "SUCCESS"
+        },
+        {
+          "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+          "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kem4nll4oniaa.abshqljrvs33cqnfcln6g3wru6ttmdvqpcelza5maumjqaori5iqjgukfmvq",
+          "operation": "decrypt",
+          "requestId": "175675E0CCC2-11F1-8ACD-63F0DEE74",
+          "result": "SUCCESS"
+        },
+        {
+          "code": "InvalidParameter",
+          "operation": "decrypt",
+          "requestId": "175871B0CCC2-11F1-8ACD-63F0DEE74",
+          "result": "DENIED",
+          "status": 400
+        },
+        {
+          "code": "InvalidParameter",
+          "operation": "decrypt",
+          "requestId": "175A1F60CCC2-11F1-8ACD-63F0DEE74",
+          "result": "DENIED",
+          "status": 400
+        },
+        {
+          "code": "InvalidParameter",
+          "operation": "decrypt",
+          "requestId": "175BF420CCC2-11F1-8ACD-63F0DEE74",
+          "result": "DENIED",
+          "status": 400
+        },
+        {
+          "code": "InvalidParameter",
+          "operation": "decrypt",
+          "requestId": "175DA1D0CCC2-11F1-8ACD-63F0DEE74",
+          "result": "DENIED",
+          "status": 400
+        },
+        {
+          "code": "InvalidParameter",
+          "operation": "decrypt",
+          "requestId": "175F2870CCC2-11F1-8ACD-63F0DEE74",
+          "result": "DENIED",
+          "status": 400
+        },
+        {
+          "code": "InvalidParameter",
+          "operation": "decrypt",
+          "requestId": "1760AF10CCC2-11F1-8ACD-63F0DEE74",
+          "result": "DENIED",
+          "status": 400
+        }
+      ],
+      "result": "PASS_ISOLATED_PROVIDER_CRYPTO_NOT_PRODUCTION_CUTOVER",
+      "scopedApplicationIamVerified": false,
+      "syntheticStateSha256": "8c505a066051d77642ca40ea0be67229cb6dc148973a65204003687651ba31ef",
+      "timestamp": "2026-10-20T20:09:01.324Z",
+      "version": 1
+    },
+    "rotation": {
+      "authMode": "CLOUD_SHELL_DELEGATED_OPERATOR_NOT_APPLICATION_RUNTIME",
+      "cases": [
+        "REAL_OLD_VERSION_RECOVERY_AFTER_PROCESS_RESTART_AND_ROTATION",
+        "REAL_NEW_VERSION_ROTATION_AND_OLD_READER_COMPATIBILITY"
+      ],
+      "endpoint": "https://gvvnprwtaaawu-crypto.kms.me-dubai-1.oci.oraclecloud.com",
+      "keyBackupVerified": false,
+      "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+      "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna",
+      "liveCredentialsMigrated": false,
+      "node": "v22.21.1",
+      "originalSoftwareSource": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+      "phase": "rotation",
+      "productionRuntimeAuthenticationVerified": false,
+      "recoveryScope": "Retained SOFTWARE key versions plus synthetic ciphertext, not provider key backup",
+      "requests": [
+        {
+          "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+          "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kem4nll4oniaa.abshqljrvs33cqnfcln6g3wru6ttmdvqpcelza5maumjqaori5iqjgukfmvq",
+          "operation": "decrypt",
+          "requestId": "638B47B0CCC2-11F1-BE7E-0BED56F5C",
+          "result": "SUCCESS"
+        },
+        {
+          "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+          "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kem4nll4oniaa.abshqljrvs33cqnfcln6g3wru6ttmdvqpcelza5maumjqaori5iqjgukfmvq",
+          "operation": "decrypt",
+          "requestId": "63FA0F10CCC2-11F1-BE7E-0BED56F5C",
+          "result": "SUCCESS"
+        },
+        {
+          "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+          "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna",
+          "operation": "encrypt",
+          "requestId": "63FDB890CCC2-11F1-BE7E-0BED56F5C",
+          "result": "SUCCESS"
+        },
+        {
+          "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+          "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna",
+          "operation": "decrypt",
+          "requestId": "64016210CCC2-11F1-BE7E-0BED56F5C",
+          "result": "SUCCESS"
+        },
+        {
+          "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+          "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kem4nll4oniaa.abshqljrvs33cqnfcln6g3wru6ttmdvqpcelza5maumjqaori5iqjgukfmvq",
+          "operation": "decrypt",
+          "requestId": "640384F0CCC2-11F1-BE7E-0BED56F5C",
+          "result": "SUCCESS"
+        },
+        {
+          "code": "InvalidParameter",
+          "operation": "decrypt",
+          "requestId": "64050B90CCC2-11F1-BE7E-0BED56F5C",
+          "result": "DENIED",
+          "status": 400
+        }
+      ],
+      "result": "PASS_ISOLATED_PROVIDER_CRYPTO_NOT_PRODUCTION_CUTOVER",
+      "scopedApplicationIamVerified": false,
+      "syntheticStateSha256": "8c505a066051d77642ca40ea0be67229cb6dc148973a65204003687651ba31ef",
+      "timestamp": "2026-10-20T20:11:09.911Z",
+      "version": 1
+    }
+  },
+  "observations": {
+    "sourceSha": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+    "finalSourceCi": {
+      "status": "PASS",
+      "sourceSha": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39493219759",
+      "jobId": 118871495433
+    },
+    "integratedCi": {
+      "status": "FAIL",
+      "featureSha": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+      "integratedSha": "c5ffc1c30866dc2af36fb371c80a83111806d887",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39493219759",
+      "jobId": 118871495883
+    },
+    "disposableCi": {
+      "status": "PASS",
+      "sourceSha": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39493219943",
+      "tests": 209,
+      "passed": 209,
+      "failed": 0
+    },
+    "productionKms": {
+      "status": "CODE_READY_GOOGLE_CLOUD_KMS_NOT_PROVISIONED_OR_VERIFIED",
+      "legacyPendingEnum": true,
+      "provider": "OCI Vault",
+      "isolatedProviderCrypto": "VERIFIED",
+      "scopedApplicationIamVerified": false,
+      "runtimeAuthenticationVerified": false,
+      "productionCutoverVerified": false,
+      "googleBilling": "CLOSED_UNTOUCHED"
+    }
+  },
+  "gate": {
+    "exitCode": 1,
+    "reason": "Integrated CI is incomplete",
+    "stderrSha256": "a26c14bb6f8609d348e36b7835f316fc1497273a79b88290061089ac18c4f7c0"
+  },
+  "workflows": [
+    {
+      "id": 39493219992,
+      "name": "Xroga tenant security fixtures",
+      "sourceSha": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39493219992"
+    },
+    {
+      "id": 39493219647,
+      "name": "Frontend production build check",
+      "sourceSha": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39493219647"
+    },
+    {
+      "id": 39493220032,
+      "name": "Xroga golden acceptance harness",
+      "sourceSha": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39493220032"
+    },
+    {
+      "id": 39493219965,
+      "name": "Supabase migration gate",
+      "sourceSha": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39493219965"
+    },
+    {
+      "id": 39493219648,
+      "name": "Xroga mission operating policy",
+      "sourceSha": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39493219648"
+    },
+    {
+      "id": 39493219948,
+      "name": "Command 4 authority distribution",
+      "sourceSha": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39493219948"
+    },
+    {
+      "id": 39493219660,
+      "name": "Agent V2 dependency lock",
+      "sourceSha": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39493219660"
+    },
+    {
+      "id": 39493219732,
+      "name": "API Docker build check",
+      "sourceSha": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39493219732"
+    },
+    {
+      "id": 39493219700,
+      "name": "Growth technical publishing",
+      "sourceSha": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39493219700"
+    },
+    {
+      "id": 39493219943,
+      "name": "Isolated Supabase authenticated browser verification",
+      "sourceSha": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39493219943"
+    },
+    {
+      "id": 39493219759,
+      "name": "Unit tests",
+      "sourceSha": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39493219759"
+    }
+  ],
+  "jobs": [
+    {
+      "id": 118871495433,
+      "name": "unit",
+      "status": "completed",
+      "conclusion": "success",
+      "logSha256": "a7563018c5a538f9c40ca48bb797f7b277ef62dbe1f80bab1f22503153d32969",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v5",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v6",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify frozen Phase 2 register before expensive regression",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install pinned browser for existing local browser integration tests",
+          "conclusion": "success"
+        },
+        {
+          "name": "Canonical build, test and security baseline",
+          "conclusion": "success"
+        },
+        {
+          "name": "Preserve redacted build and test summaries",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v6",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v5",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 118871495883,
+      "name": "integrated-candidate",
+      "status": "completed",
+      "conclusion": "failure",
+      "logSha256": "9dbed1f42327fddce250c02d5488736ce1d7062b0c1e0c1ce5c04844892b83ae",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v5",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v6",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify and record the actual virtual merge inventory",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify integrated Phase 2 register before expensive regression",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install the same pinned browser for integrated regression",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete integrated baseline twice without source mutation",
+          "conclusion": "failure"
+        },
+        {
+          "name": "Preserve separately labelled candidate evidence (never committed automatically)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v6",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Post Run actions/checkout@v5",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 118871496569,
+      "name": "authenticated-browser",
+      "status": "completed",
+      "conclusion": "success",
+      "logSha256": "f53969b70802133cd7162b4ffb6d1752b7620803f2f4be83920bf885aac071c5",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install isolated workspace dependencies",
+          "conclusion": "success"
+        },
+        {
+          "name": "Test disposable environment admission",
+          "conclusion": "success"
+        },
+        {
+          "name": "Start disposable Supabase with per-run keys",
+          "conclusion": "success"
+        },
+        {
+          "name": "Full migration history and sanitized upgrade compatibility",
+          "conclusion": "success"
+        },
+        {
+          "name": "Compile the browser specs",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run build --prefix backend --workspaces=false",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run build --prefix frontend --workspaces=false",
+          "conclusion": "success"
+        },
+        {
+          "name": "Restore Playwright browsers",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npx playwright install --with-deps chromium",
+          "conclusion": "success"
+        },
+        {
+          "name": "Save Playwright browsers",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Start isolated application",
+          "conclusion": "success"
+        },
+        {
+          "name": "Authenticated browser and tenant isolation",
+          "conclusion": "success"
+        },
+        {
+          "name": "Real tenant authorization and concurrency integration",
+          "conclusion": "success"
+        },
+        {
+          "name": "Collect bounded redacted local application logs",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload redacted verification evidence",
+          "conclusion": "success"
+        },
+        {
+          "name": "Cleanup processes",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "baselines": {
+    "branch": {
+      "result": "PASS_REPEATED_CLEAN_BASELINE",
+      "sourceSha": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+      "stagesPerRun": 21,
+      "installedDependencySha256": "7b37dd99cbad59822d33fc68d806e9c6921dfcbbcc34b3009d3e526600a61cfc",
+      "sourceTreeMutated": false
+    },
+    "branchStages": [
+      {
+        "name": "lockfile-integrity",
+        "exitCode": 0,
+        "durationMs": 64
+      },
+      {
+        "name": "focused-and-skipped-tests",
+        "exitCode": 0,
+        "durationMs": 1136
+      },
+      {
+        "name": "backend-typecheck",
+        "exitCode": 0,
+        "durationMs": 18769
+      },
+      {
+        "name": "backend-build",
+        "exitCode": 0,
+        "durationMs": 22532
+      },
+      {
+        "name": "backend-unit-tests",
+        "exitCode": 0,
+        "durationMs": 169330,
+        "tests": 3128,
+        "pass": 3128,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "name": "frontend-route-type-generation",
+        "exitCode": 0,
+        "durationMs": 648
+      },
+      {
+        "name": "frontend-typecheck",
+        "exitCode": 0,
+        "durationMs": 28145
+      },
+      {
+        "name": "frontend-lint",
+        "exitCode": 0,
+        "durationMs": 13846
+      },
+      {
+        "name": "frontend-build",
+        "exitCode": 0,
+        "durationMs": 110888
+      },
+      {
+        "name": "frontend-unit-tests",
+        "exitCode": 0,
+        "durationMs": 34610,
+        "tests": 1051,
+        "pass": 1051,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "name": "migration-syntax-and-order",
+        "exitCode": 0,
+        "durationMs": 264
+      },
+      {
+        "name": "inventory-drift",
+        "exitCode": 0,
+        "durationMs": 7117
+      },
+      {
+        "name": "requirements-integrity",
+        "exitCode": 0,
+        "durationMs": 588
+      },
+      {
+        "name": "runtime-config-integrity",
+        "exitCode": 0,
+        "durationMs": 4620
+      },
+      {
+        "name": "golden-contract-integrity",
+        "exitCode": 0,
+        "durationMs": 127
+      },
+      {
+        "name": "mission-operating-policy",
+        "exitCode": 0,
+        "durationMs": 138
+      },
+      {
+        "name": "tenant-audit-integrity",
+        "exitCode": 0,
+        "durationMs": 1984
+      },
+      {
+        "name": "baseline-negative-fixtures",
+        "exitCode": 0,
+        "durationMs": 1371,
+        "tests": 39,
+        "pass": 39,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "name": "inventory-and-ledger-fixtures",
+        "exitCode": 0,
+        "durationMs": 17675,
+        "tests": 131,
+        "pass": 131,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "name": "agent-dependency-resolution",
+        "exitCode": 0,
+        "durationMs": 270
+      },
+      {
+        "name": "git-diff-whitespace",
+        "exitCode": 0,
+        "durationMs": 8
+      }
+    ],
+    "integrated": {
+      "status": "FAIL",
+      "provenance": {
+        "sourceSha": "c5ffc1c30866dc2af36fb371c80a83111806d887",
+        "baseSha": "b628bc379d01d87339c28ee038ed8468bf040103",
+        "reportedBaseSnapshot": "6aa3963b972fbb22f45398d0e9b7cf17c74bef1e",
+        "featureSha": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+        "scope": "VIRTUAL_MERGE_CANDIDATE_NOT_COMMITTED_TRUTH_OR_RELEASE_APPROVAL",
+        "changedDerivedFiles": [
+          "docs/xroga/blockers.md",
+          "docs/xroga/current-state.json",
+          "docs/xroga/current-state.md",
+          "docs/xroga/dependency-inventory.json",
+          "docs/xroga/deployment-topology.md",
+          "docs/xroga/deployment-topology.mmd",
+          "docs/xroga/requirements-ledger.json",
+          "docs/xroga/requirements-ledger.md",
+          "docs/xroga/research/source-manifest.json",
+          "docs/xroga/research/source-reconciliation.md",
+          "docs/xroga/runtime-contract.md",
+          "docs/xroga/secret-inventory.md",
+          "docs/xroga/security/caller-reviews.json",
+          "docs/xroga/security/privileged-callers.json",
+          "docs/xroga/security/rls-audit.md"
+        ],
+        "retiredNonPersistenceReviews": [
+          {
+            "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
+            "callIds": [
+              "2d98522349041018aafe"
+            ],
+            "originalSourceSha256": "e975c68b0642525b5a900f2bb062be17b0d33e346222596a6d05f6ce1cfaa1df",
+            "integratedSourceSha256": "88eb738d8ed6b02124ce502f7a318db500619fd0fd7a15c80bba4a515ac2c525",
+            "reason": "Previously reviewed NOT_PERSISTENCE expressions are absent. The integrated file has zero scanner candidates. No security boundary is certified or waived."
+          },
+          {
+            "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
+            "callIds": [
+              "0481d4c53113a3184a8b"
+            ],
+            "originalSourceSha256": "e975c68b0642525b5a900f2bb062be17b0d33e346222596a6d05f6ce1cfaa1df",
+            "integratedSourceSha256": "88eb738d8ed6b02124ce502f7a318db500619fd0fd7a15c80bba4a515ac2c525",
+            "reason": "Previously reviewed NOT_PERSISTENCE expressions are absent. The integrated file has zero scanner candidates. No security boundary is certified or waived."
+          }
+        ],
+        "reboundArrayConversionReviews": [
+          {
+            "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
+            "originalCallIds": [
+              "ec56e3c528ebf6bc672d"
+            ],
+            "integratedCallIds": [
+              "e671877a0d0d16d0f539"
+            ],
+            "originalSourceSha256": "c58fb061c167cabb652546b7bfacaf496fc3c81f9aca6b27a957217ef7e0ceee",
+            "integratedSourceSha256": "c85a65eaa612beeb3cadc3a66def8c1d81654e63034ccb96a56883c21d2fbca8",
+            "unchangedFunctionSha256": [
+              "6df28e910a6d08211d32ec66c6a8d06a83a769241f71e368daed4714fa47f5c7"
+            ],
+            "scope": "ONLY_BYTE_IDENTICAL_NATIVE_ARRAY_CONVERSION_NOT_SECURITY_CERTIFICATION"
+          },
+          {
+            "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
+            "originalCallIds": [
+              "6520ef22b7832bcb902c"
+            ],
+            "integratedCallIds": [
+              "8f3c7995974f0b7357a6"
+            ],
+            "originalSourceSha256": "fe997b93bc62ba921569d3e31394aa2417ce679b50e22f3503a52351a1b3bc29",
+            "integratedSourceSha256": "88ab1ba8380f32fb30f98e8bd345501ad9d190f1522e6072afd244c1151893a8",
+            "unchangedFunctionSha256": [
+              "bcaf1eb379e7bdaaaf780bef2cd4b979f53defaf835730db0744a1e011bde5de"
+            ],
+            "scope": "ONLY_BYTE_IDENTICAL_NATIVE_ARRAY_CONVERSION_NOT_SECURITY_CERTIFICATION"
+          }
+        ],
+        "productionEffects": false,
+        "releaseGate": "BLOCKED"
+      },
+      "manifest": {
+        "sourceSha": "c5ffc1c30866dc2af36fb371c80a83111806d887",
+        "toolchain": {
+          "node": "22.21.1",
+          "npm": "10.9.4"
+        },
+        "installedDependencies": {
+          "result": "PASS_INSTALLED_LOCK_INDEX_AND_DIRECT_RANGES",
+          "packages": 1172,
+          "sha256": "7b37dd99cbad59822d33fc68d806e9c6921dfcbbcc34b3009d3e526600a61cfc",
+          "direct": [
+            {
+              "workspace": "root",
+              "name": "xroga",
+              "version": "0.1.0"
+            },
+            {
+              "workspace": "root",
+              "name": "@axe-core/playwright",
+              "version": "4.13.0"
+            },
+            {
+              "workspace": "root",
+              "name": "@playwright/test",
+              "version": "1.62.0"
+            },
+            {
+              "workspace": "root",
+              "name": "concurrently",
+              "version": "10.0.6"
+            },
+            {
+              "workspace": "root",
+              "name": "libpg-query",
+              "version": "18.1.5"
+            },
+            {
+              "workspace": "root",
+              "name": "pg",
+              "version": "8.22.0"
+            },
+            {
+              "workspace": "root",
+              "name": "zod",
+              "version": "4.6.5"
+            },
+            {
+              "workspace": "backend",
+              "name": "@aws-sdk/client-s3",
+              "version": "3.1075.0"
+            },
+            {
+              "workspace": "backend",
+              "name": "@cline/sdk",
+              "version": "0.0.82"
+            },
+            {
+              "workspace": "backend",
+              "name": "@supabase/supabase-js",
+              "version": "2.110.7"
+            },
+            {
+              "workspace": "backend",
+              "name": "bullmq",
+              "version": "5.79.1"
+            },
+            {
+              "workspace": "backend",
+              "name": "cors",
+              "version": "2.8.6"
+            },
+            {
+              "workspace": "backend",
+              "name": "dotenv",
+              "version": "16.6.1"
+            },
+            {
+              "workspace": "backend",
+              "name": "express",
+              "version": "4.22.3"
+            },
+            {
+              "workspace": "backend",
+              "name": "google-auth-library",
+              "version": "10.9.1"
+            },
+            {
+              "workspace": "backend",
+              "name": "helmet",
+              "version": "8.2.0"
+            },
+            {
+              "workspace": "backend",
+              "name": "ioredis",
+              "version": "5.11.1"
+            },
+            {
+              "workspace": "backend",
+              "name": "jose",
+              "version": "5.10.0"
+            },
+            {
+              "workspace": "backend",
+              "name": "libsodium-wrappers",
+              "version": "0.7.15"
+            },
+            {
+              "workspace": "backend",
+              "name": "morgan",
+              "version": "1.12.1"
+            },
+            {
+              "workspace": "backend",
+              "name": "oci-common",
+              "version": "2.144.0"
+            },
+            {
+              "workspace": "backend",
+              "name": "oci-keymanagement",
+              "version": "2.144.0"
+            },
+            {
+              "workspace": "backend",
+              "name": "openai",
+              "version": "4.104.0"
+            },
+            {
+              "workspace": "backend",
+              "name": "pdf-lib",
+              "version": "1.17.1"
+            },
+            {
+              "workspace": "backend",
+              "name": "pdf-parse",
+              "version": "1.1.1"
+            },
+            {
+              "workspace": "backend",
+              "name": "pg",
+              "version": "8.22.0"
+            },
+            {
+              "workspace": "backend",
+              "name": "winston",
+              "version": "3.19.0"
+            },
+            {
+              "workspace": "backend",
+              "name": "ws",
+              "version": "8.21.0"
+            },
+            {
+              "workspace": "backend",
+              "name": "xroga",
+              "version": "0.1.0"
+            },
+            {
+              "workspace": "backend",
+              "name": "zod",
+              "version": "3.25.76"
+            },
+            {
+              "workspace": "backend",
+              "name": "@types/cors",
+              "version": "2.8.19"
+            },
+            {
+              "workspace": "backend",
+              "name": "@types/express",
+              "version": "5.0.6"
+            },
+            {
+              "workspace": "backend",
+              "name": "@types/libsodium-wrappers",
+              "version": "0.7.14"
+            },
+            {
+              "workspace": "backend",
+              "name": "@types/morgan",
+              "version": "1.9.10"
+            },
+            {
+              "workspace": "backend",
+              "name": "@types/node",
+              "version": "22.20.1"
+            },
+            {
+              "workspace": "backend",
+              "name": "@types/pdf-parse",
+              "version": "1.1.5"
+            },
+            {
+              "workspace": "backend",
+              "name": "@types/pg",
+              "version": "8.20.0"
+            },
+            {
+              "workspace": "backend",
+              "name": "@types/ws",
+              "version": "8.18.1"
+            },
+            {
+              "workspace": "backend",
+              "name": "nodemon",
+              "version": "3.1.14"
+            },
+            {
+              "workspace": "backend",
+              "name": "tsx",
+              "version": "4.23.1"
+            },
+            {
+              "workspace": "backend",
+              "name": "typescript",
+              "version": "5.9.3"
+            },
+            {
+              "workspace": "frontend",
+              "name": "@supabase/ssr",
+              "version": "0.12.0"
+            },
+            {
+              "workspace": "frontend",
+              "name": "@supabase/supabase-js",
+              "version": "2.108.2"
+            },
+            {
+              "workspace": "frontend",
+              "name": "@tanstack/react-table",
+              "version": "8.21.3"
+            },
+            {
+              "workspace": "frontend",
+              "name": "@tanstack/react-virtual",
+              "version": "3.14.13"
+            },
+            {
+              "workspace": "frontend",
+              "name": "clsx",
+              "version": "2.1.1"
+            },
+            {
+              "workspace": "frontend",
+              "name": "cobe",
+              "version": "0.6.5"
+            },
+            {
+              "workspace": "frontend",
+              "name": "date-fns",
+              "version": "4.4.0"
+            },
+            {
+              "workspace": "frontend",
+              "name": "docx",
+              "version": "9.9.0"
+            },
+            {
+              "workspace": "frontend",
+              "name": "exceljs",
+              "version": "4.4.0"
+            },
+            {
+              "workspace": "frontend",
+              "name": "katex",
+              "version": "0.17.0"
+            },
+            {
+              "workspace": "frontend",
+              "name": "lucide-react",
+              "version": "1.21.0"
+            },
+            {
+              "workspace": "frontend",
+              "name": "motion",
+              "version": "12.42.2"
+            },
+            {
+              "workspace": "frontend",
+              "name": "next",
+              "version": "15.5.27"
+            },
+            {
+              "workspace": "frontend",
+              "name": "ogl",
+              "version": "1.0.11"
+            },
+            {
+              "workspace": "frontend",
+              "name": "pdf-lib",
+              "version": "1.17.1"
+            },
+            {
+              "workspace": "frontend",
+              "name": "pptxgenjs",
+              "version": "4.0.1"
+            },
+            {
+              "workspace": "frontend",
+              "name": "react",
+              "version": "18.3.1"
+            },
+            {
+              "workspace": "frontend",
+              "name": "react-dom",
+              "version": "18.3.1"
+            },
+            {
+              "workspace": "frontend",
+              "name": "react-hot-toast",
+              "version": "2.6.0"
+            },
+            {
+              "workspace": "frontend",
+              "name": "react-markdown",
+              "version": "10.1.0"
+            },
+            {
+              "workspace": "frontend",
+              "name": "recharts",
+              "version": "3.10.1"
+            },
+            {
+              "workspace": "frontend",
+              "name": "remark-gfm",
+              "version": "4.0.1"
+            },
+            {
+              "workspace": "frontend",
+              "name": "sharp",
+              "version": "0.35.5"
+            },
+            {
+              "workspace": "frontend",
+              "name": "simple-icons",
+              "version": "16.28.0"
+            },
+            {
+              "workspace": "frontend",
+              "name": "tailwind-merge",
+              "version": "3.6.0"
+            },
+            {
+              "workspace": "frontend",
+              "name": "xroga",
+              "version": "0.1.0"
+            },
+            {
+              "workspace": "frontend",
+              "name": "zod",
+              "version": "4.6.5"
+            },
+            {
+              "workspace": "frontend",
+              "name": "zustand",
+              "version": "5.0.14"
+            },
+            {
+              "workspace": "frontend",
+              "name": "@types/katex",
+              "version": "0.16.8"
+            },
+            {
+              "workspace": "frontend",
+              "name": "@types/node",
+              "version": "20.19.43"
+            },
+            {
+              "workspace": "frontend",
+              "name": "@types/react",
+              "version": "18.3.31"
+            },
+            {
+              "workspace": "frontend",
+              "name": "@types/react-dom",
+              "version": "18.3.7"
+            },
+            {
+              "workspace": "frontend",
+              "name": "eslint",
+              "version": "8.57.1"
+            },
+            {
+              "workspace": "frontend",
+              "name": "eslint-config-next",
+              "version": "15.5.27"
+            },
+            {
+              "workspace": "frontend",
+              "name": "jszip",
+              "version": "3.10.2"
+            },
+            {
+              "workspace": "frontend",
+              "name": "postcss",
+              "version": "8.5.24"
+            },
+            {
+              "workspace": "frontend",
+              "name": "tailwindcss",
+              "version": "3.4.19"
+            },
+            {
+              "workspace": "frontend",
+              "name": "typescript",
+              "version": "5.9.3"
+            }
+          ]
+        },
+        "result": "FAIL",
+        "exitCode": 1,
+        "lockfiles": [
+          {
+            "path": "package-lock.json",
+            "sha256": "97559b5d79b0ca503dddedd26a86954af18c69ef89edb2f6804ffaa62c2ee4ea"
+          },
+          {
+            "path": "backend/package-lock.json",
+            "sha256": "94a8e142d0ae3bf5e109f2bfe2827fd7df3ce7dfa2b035b13ca5242f59ffa17e"
+          },
+          {
+            "path": "frontend/package-lock.json",
+            "sha256": "a40d55c1b6cdbab6cbee333734d57e275ef2e5d98a3de476d35aeef8a8274d44"
+          }
+        ],
+        "results": [
+          {
+            "name": "lockfile-integrity",
+            "exitCode": 0,
+            "durationMs": 62
+          },
+          {
+            "name": "focused-and-skipped-tests",
+            "exitCode": 0,
+            "durationMs": 1161
+          },
+          {
+            "name": "backend-typecheck",
+            "exitCode": 0,
+            "durationMs": 18816
+          },
+          {
+            "name": "backend-build",
+            "exitCode": 0,
+            "durationMs": 22490
+          },
+          {
+            "name": "backend-unit-tests",
+            "exitCode": 0,
+            "durationMs": 168446,
+            "tests": 3128,
+            "pass": 3128,
+            "fail": 0,
+            "skipped": 0
+          },
+          {
+            "name": "frontend-route-type-generation",
+            "exitCode": 0,
+            "durationMs": 660
+          },
+          {
+            "name": "frontend-typecheck",
+            "exitCode": 0,
+            "durationMs": 29678
+          },
+          {
+            "name": "frontend-lint",
+            "exitCode": 0,
+            "durationMs": 14541
+          },
+          {
+            "name": "frontend-build",
+            "exitCode": 0,
+            "durationMs": 115550
+          },
+          {
+            "name": "frontend-unit-tests",
+            "exitCode": 1,
+            "durationMs": 36100,
+            "tests": 1113,
+            "pass": 1111,
+            "fail": 2,
+            "skipped": 0
+          }
+        ],
+        "sourceTreeMutated": false,
+        "migrationEvidence": "Parser/identifier gate only; fresh/upgrade DB and staging checks remain mandatory before security rollout"
+      },
+      "failures": [
+        "not ok 175 - the composer takes the ring, the bars and the wheel",
+        "not ok 990 - an empty fullscreen terminal shows rotating build-command inspiration"
+      ],
+      "frontendLogSha256": "d88c1d515327af313043cd2492927eef3cdf8144df7c4a1fe5de9ed0d16a5bbc",
+      "unchangedFromActualMain": [
+        "frontend/src/components/icons/animated/animatedIcons.test.ts",
+        "frontend/src/lib/workspaceFullscreen.test.ts",
+        "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
+        "frontend/src/components/terminal/TerminalDock.tsx"
+      ]
+    }
+  },
+  "criteria": [
+    {
+      "id": "XB01-C008-AC01",
+      "originalText": "One canonical authority API exists.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/security/authority/enforce.test.ts",
+        "marker": "canonical executor dispatches only an exact issued actor and durable adapter claim, once"
+      },
+      "proofSha256": "68dd57fcb8b6ce03f51658b6b0219aab54d5876740c7731d8e32e92f4d68c2b4",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C008-AC02",
+      "originalText": "businessAction consequential writes use it.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/security/businessAuthority.local.integration.ts",
+        "marker": "real canonical business confirmation claims once and persists exact dispatch and terminal receipts with a synthetic provider"
+      },
+      "proofSha256": "9b3195e648555bc2b3815d4b835202d649ed95d93a81c87ebfc1950fda57dff1",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C008-AC03",
+      "originalText": "operationsEngine high-risk operations use it or a documented compatibility adapter.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
+        "marker": "real Operations reservations bind current two-person authority and serialize the approved spend ceiling"
+      },
+      "proofSha256": "10f38124af684baaf96c9bfda962b89735980a02d4672062c0eaaf881b5cb67f",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C008-AC04",
+      "originalText": "Grant binds tenant, user, action, target and digest.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/security/authority/digest.test.ts",
+        "marker": "canonical authority digest binds exact nested payload without redaction or locale-dependent ordering"
+      },
+      "proofSha256": "3ce58d8533712ecac0b57180bcd9ce67ab8ab02b786ad565c04349bc4dbee3b3",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C008-AC05",
+      "originalText": "Replay tests pass.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/security/authority/enforce.test.ts",
+        "marker": "canonical executor dispatches only an exact issued actor and durable adapter claim, once"
+      },
+      "proofSha256": "68dd57fcb8b6ce03f51658b6b0219aab54d5876740c7731d8e32e92f4d68c2b4",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C008-AC06",
+      "originalText": "Mutation-after-confirmation tests pass.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/security/authority/enforce.test.ts",
+        "marker": "boolean, cloned, serialized, wrong-account and mutated-scope authorities never dispatch"
+      },
+      "proofSha256": "68dd57fcb8b6ce03f51658b6b0219aab54d5876740c7731d8e32e92f4d68c2b4",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C008-AC07",
+      "originalText": "Expiry/revocation tests pass.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/security/businessAuthority.local.integration.ts",
+        "marker": "real business dispatch rechecks expiry, cancellation and plan after lock waits and rolls admission back"
+      },
+      "proofSha256": "9b3195e648555bc2b3815d4b835202d649ed95d93a81c87ebfc1950fda57dff1",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C008-AC08",
+      "originalText": "Spend-bound tests pass.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
+        "marker": "serialize the approved spend ceiling"
+      },
+      "proofSha256": "10f38124af684baaf96c9bfda962b89735980a02d4672062c0eaaf881b5cb67f",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C008-AC09",
+      "originalText": "LLM text alone cannot create authority.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/security/authority/enforce.test.ts",
+        "marker": "boolean, cloned, serialized, wrong-account and mutated-scope authorities never dispatch"
+      },
+      "proofSha256": "68dd57fcb8b6ce03f51658b6b0219aab54d5876740c7731d8e32e92f4d68c2b4",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C008-AC10",
+      "originalText": "Every canonical consequential action class has a policy entry.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/security/authority/enforce.test.ts",
+        "marker": "all twelve server policies exist"
+      },
+      "proofSha256": "68dd57fcb8b6ce03f51658b6b0219aab54d5876740c7731d8e32e92f4d68c2b4",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C009-AC01",
+      "originalText": "All newly stored OAuth/provider secrets use CredentialVault.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "docs/xroga/security/credential-caller-dispositions.md",
+        "marker": "Current v3 writer and private consumer"
+      },
+      "proofSha256": "eabaa6464373344da245905cd9efb8f07391ea5b62494b7fe0deabceb5849c79",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C009-AC02",
+      "originalText": "No frontend endpoint returns raw secrets.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "frontend/src/lib/credentialVault.test.ts",
+        "marker": "browser vault has no new secret writer or general reveal API"
+      },
+      "proofSha256": "a6bc1b01c9f14c1c900c295d88cc2772d50fb01041a67196bdd79c72922f2fcc",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C009-AC03",
+      "originalText": "No LLM/task prompt receives raw provider credential.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/e2e/xrogaGoldenJourneys.test.ts",
+        "marker": "strips provider credentials before a prompt or client can consume the result"
+      },
+      "proofSha256": "a3fd30ec2d29bb1adb37cc8026f7527ff46a4e5b98200b9ad31f418cd0dcaa04",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C009-AC04",
+      "originalText": "Wrong-tenant retrieval test passes.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/services/integrations/credentialVault.test.ts",
+        "marker": "binds every identity field"
+      },
+      "proofSha256": "c5f8a071561672f080a2c4b241c0fcc0e69eb23cc75c81a78292b489bfe94191",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C009-AC05",
+      "originalText": "Ciphertext tamper test passes.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/services/integrations/credentialVault.test.ts",
+        "marker": "vault rejects ciphertext, tag, wrapped-key and key identity substitution"
+      },
+      "proofSha256": "c5f8a071561672f080a2c4b241c0fcc0e69eb23cc75c81a78292b489bfe94191",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C009-AC06",
+      "originalText": "Rotation test passes.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/services/integrations/credentialVault.test.ts",
+        "marker": "vault rotation uses a new revision and key"
+      },
+      "proofSha256": "c5f8a071561672f080a2c4b241c0fcc0e69eb23cc75c81a78292b489bfe94191",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C009-AC07",
+      "originalText": "Revocation test passes.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/services/integrations/credentialMirrorRace.test.ts",
+        "marker": "legacy downloads recheck authoritative revocation, rotation and outages"
+      },
+      "proofSha256": "5796cca7f3ee391ec345cd4094b45ed7b8532f05f040ee121e6c7f1fd4a4af1c",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C009-AC08",
+      "originalText": "PKCE has TTL + one-time semantics.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+        "marker": "one-use OAuth admission fails closed"
+      },
+      "proofSha256": "23eddde7cfbc09d6f7a65227512ab8e95f92b358f1c517a55040756a393b1376",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C009-AC09",
+      "originalText": "Legacy migration is idempotent.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/services/integrations/userProviderKeys.migration.test.ts",
+        "marker": "legacy provider-key migration is owner-bound, CAS protected and idempotent"
+      },
+      "proofSha256": "208d37e18411a6f3c4f7c4fa96c34bcbb7445d8d51bf8adb193cde1667faaee1",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C009-AC10",
+      "originalText": "Production cannot use development crypto provider.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.test.ts",
+        "marker": "managed KMS adapter binds the exact key and AAD"
+      },
+      "proofSha256": "675404fbd537d172bb2c6981e0f2576f052f2382d123ea6ab186242b19ee67de",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C009-AC11",
+      "originalText": "Credential audit reports remaining direct storage callers.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "docs/xroga/security/credential-usage-audit.json",
+        "marker": "PRIVATE_CREDENTIAL_CONSUMER_CANDIDATE"
+      },
+      "proofSha256": "41dc2e0ba1eb17405ab7ee1111bb5ee01145833fbaa9323b4085ee6beaeddc01",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    },
+    {
+      "id": "XB01-C009-AC12",
+      "originalText": "Remaining legacy callers are zero or explicitly blocked from production cutover.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "docs/xroga/security/credential-migration.md",
+        "marker": "Enable the temporary migration window"
+      },
+      "proofSha256": "7e0281be034fb1101daf5bb220eddda4c816024a0c140ab8248ea2756ad2e53b",
+      "currentIntegratedAcceptance": "BLOCKED_NOT_CERTIFIED"
+    }
+  ]
+}
