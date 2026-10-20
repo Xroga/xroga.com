@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "e63be92e3275489aac5a1e30d955aae1b27049a0",
-    "sourceTimestampUtc": "2026-10-21T00:12:32+05:00",
-    "auditStartedUtc": "2026-10-20T19:12:45.666Z",
+    "sha": "a9201f86172e0d1bb19b3d11c5810ff4a2b78d20",
+    "sourceTimestampUtc": "2026-10-21T01:11:42+05:00",
+    "auditStartedUtc": "2026-10-20T20:12:09.010Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -21755,6 +21755,7 @@
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:5",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:8",
         "backend/src/services/integrations/oauthPkceStore.ts:8",
+        "backend/src/services/integrations/ociKmsCryptoProvider.test.ts:6",
         "backend/src/services/integrations/pluginPermissionPolicy.ts:5",
         "backend/src/services/integrations/supabaseAuth.ts:8",
         "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts:5",
@@ -21793,7 +21794,8 @@
         "backend/src/synthesis/universalEntrypoint.ts:55",
         "backend/src/synthesis/universalPersistence.owner.test.ts:7",
         "backend/src/synthesis/universalPersistence.snapshot.test.ts:6",
-        "backend/src/synthesis/universalPersistence.ts:23"
+        "backend/src/synthesis/universalPersistence.ts:23",
+        "scripts/security/verify-oci-kms.ts:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -21861,6 +21863,7 @@
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
+        "backend/src/services/integrations/ociKmsCryptoProvider.test.ts",
         "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts",
         "backend/src/services/integrations/userProviderKeys.connect.test.ts",
         "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts",
@@ -23075,8 +23078,10 @@
       "callers": [
         "backend/src/services/integrations/credentialVault.test.ts:5",
         "backend/src/services/integrations/credentialVaultRuntime.ts:2",
+        "backend/src/services/integrations/ociKmsCryptoProvider.test.ts:5",
         "backend/src/synthesis/projectRuntime/secretRead.test.ts:5",
-        "backend/src/synthesis/projectRuntime/store.ts:11"
+        "backend/src/synthesis/projectRuntime/store.ts:11",
+        "scripts/security/verify-oci-kms.ts:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -23094,6 +23099,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/services/integrations/credentialVault.test.ts",
+        "backend/src/services/integrations/ociKmsCryptoProvider.test.ts",
         "backend/src/synthesis/projectRuntime/secretRead.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -24457,6 +24463,72 @@
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Raw OAuth/PKCE values persist in database and storage mirror; vault/TTL/one-use audit required.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:db1194736a6b6085d970",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
+      "sha256": "7b9124829a81b6638126b9492e79c9cb03691993eae41589ea5aef93376a92e6",
+      "symbols": [
+        "OciKmsAuthMode",
+        "OciKmsCryptoProvider",
+        "OciKmsRequest",
+        "OciKmsTransport",
+        "associatedData",
+        "authenticationDetailsProvider",
+        "base64",
+        "bytes",
+        "client",
+        "cloudShellAuth",
+        "common",
+        "createOciKmsCryptoProvider",
+        "encoded",
+        "fail",
+        "file",
+        "kms",
+        "ocid",
+        "plain",
+        "record",
+        "region",
+        "result"
+      ],
+      "imports": [
+        "./cryptoProvider.js",
+        "node:crypto",
+        "oci-common",
+        "oci-keymanagement"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/services/integrations/ociKmsCryptoProvider.test.ts:4",
+        "scripts/security/verify-oci-kms.ts:6"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto",
+        "oci-common",
+        "oci-keymanagement"
+      ],
+      "authBoundary": [
+        "backend/src/services/integrations/ociKmsCryptoProvider.ts#OciKmsAuthMode",
+        "backend/src/services/integrations/ociKmsCryptoProvider.ts#authenticationDetailsProvider",
+        "backend/src/services/integrations/ociKmsCryptoProvider.ts#cloudShellAuth"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/services/integrations/ociKmsCryptoProvider.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -86995,7 +87067,7 @@
       "id": "surface:052e49f08f69e1d17b86",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/refresh-phase-three-authority-delta.mjs",
-      "sha256": "ef103f7ad6687567a665ac4b99ce0f92e8e4e695ef8fc652b358e9c911cf751d",
+      "sha256": "23e203554861278397764344fe915b3b527ce21bb05fe85c037f6e8e635a23a7",
       "symbols": [
         "accepted",
         "after",
@@ -87249,6 +87321,91 @@
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:36380a6231ac607850bc",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/verify-oci-kms.ts",
+      "sha256": "43233db07bdbd2fc834d110401218586c82c994f0b93644739134108277e44e1",
+      "symbols": [
+        "aad",
+        "absent",
+        "actor",
+        "arg",
+        "before",
+        "binding",
+        "cases",
+        "ciphertext",
+        "dataKey",
+        "decodeVersion",
+        "endpoint",
+        "error",
+        "execute",
+        "expected",
+        "field",
+        "hash",
+        "index",
+        "keyId",
+        "managed",
+        "next",
+        "observed",
+        "owner",
+        "phase",
+        "provider",
+        "receipt",
+        "record",
+        "requests",
+        "response",
+        "result",
+        "rotated",
+        "state",
+        "statePath",
+        "transport",
+        "unsignedBody",
+        "value",
+        "vault",
+        "version",
+        "wrapped"
+      ],
+      "imports": [
+        "../../backend/src/security/tenantContext.js",
+        "../../backend/src/services/integrations/credentialVault.js",
+        "../../backend/src/services/integrations/ociKmsCryptoProvider.js",
+        "node:assert/strict",
+        "node:crypto",
+        "node:fs/promises"
+      ],
+      "runtimeImports": [
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/credentialVault.ts",
+        "backend/src/services/integrations/ociKmsCryptoProvider.ts"
+      ],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [
+        "synthetic-tenant/exact-account/revision1",
+        "wrong-account"
+      ],
+      "externalProviderDependencies": [
+        "node:assert/strict",
+        "node:crypto",
+        "node:fs/promises"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/security/verify-oci-kms.ts#receipt"
+      ],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -106826,6 +106983,13 @@
       "id": "test-suite:5824274651b34ff56041",
       "sourcePath": "backend/src/services/integrations/oauthPkceStore.vaultLeaseRead.test.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:0493fcc06ed56795db53",
+      "sourcePath": "backend/src/services/integrations/ociKmsCryptoProvider.test.ts",
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },

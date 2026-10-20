@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e63be92e3275489aac5a1e30d955aae1b27049a0",
+  "source_sha": "a9201f86172e0d1bb19b3d11c5810ff4a2b78d20",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -3467,7 +3467,8 @@
         "scripts/security/refresh-phase-three-authority-delta.mjs",
         "scripts/security/schema-catalog.mjs",
         "scripts/security/staging-preflight.mjs",
-        "scripts/security/tenant-acceptance.mjs"
+        "scripts/security/tenant-acceptance.mjs",
+        "scripts/security/verify-oci-kms.ts"
       ],
       "implementation_owner_command": "010",
       "priority": "P0",

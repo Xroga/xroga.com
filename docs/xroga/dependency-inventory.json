@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e63be92e3275489aac5a1e30d955aae1b27049a0",
+  "source_sha": "a9201f86172e0d1bb19b3d11c5810ff4a2b78d20",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -7984,6 +7984,7 @@
         "backend/src/scripts/verifyFlySandboxBrowser.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/services/integrations/cryptoProvider.ts",
+        "backend/src/services/integrations/ociKmsCryptoProvider.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.ts"
       ],
       "environments": [
@@ -9390,6 +9391,7 @@
         "backend/src/routes/github.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/services/integrations/cryptoProvider.ts",
+        "backend/src/services/integrations/ociKmsCryptoProvider.ts",
         "backend/src/services/integrations/userProviderKeys.ts",
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/services/publish/chromeWebStore.ts",
@@ -10687,6 +10689,7 @@
       "consuming_sources": [
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/services/integrations/cryptoProvider.ts",
+        "backend/src/services/integrations/ociKmsCryptoProvider.ts",
         "frontend/src/app/api/release/route.ts",
         "frontend/src/app/robots.ts",
         "frontend/src/lib/seo.ts",
@@ -13905,6 +13908,10 @@
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
       "sha256": "d0d00b074aee1a1c610abbe6dd2424f8b9f581c3c73f7780619317d69ce7fc96"
+    },
+    {
+      "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
+      "sha256": "7b9124829a81b6638126b9492e79c9cb03691993eae41589ea5aef93376a92e6"
     },
     {
       "path": "backend/src/services/integrations/pluginPermissionPolicy.ts",
