@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "scope": "HANDOFF_PRESERVATION_ONLY_NOT_PHASE3_IMPLEMENTATION",
+  "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+  "archiveBranch": "codex/xroga-phase-3-handoff-a21a8202",
+  "originalCriteriaUnchanged": 22,
+  "originalActionClassesUnchanged": 12,
+  "interfaceBindingsUnchangedAndMatchAcceptedSource": 20,
+  "originalFilesPreservedByteForByte": true,
+  "acceptanceManifestHashVerified": true,
+  "phase3Started": false,
+  "additionalSpend": 0,
+  "files": [
+    {
+      "path": "docs/xroga/batch-1/phases/PHASE-3-FROZEN-WORKLIST.json",
+      "bytes": 32370,
+      "sha256": "c3fa3eee15b57524b85c72dcf059d60567d4af182442c914e2f08394e4397eba",
+      "byteForByteOriginal": true
+    },
+    {
+      "path": "scripts/xroga/phase-two-handoff.test.mjs",
+      "bytes": 4498,
+      "sha256": "5c909e5c9bdb62eacd7eb1a46f1a944a4bb784561ae0a09589130f177a8bc521",
+      "byteForByteOriginal": true
+    },
+    {
+      "path": "docs/xroga/batch-1/phases/PHASE-3-HANDOFF-2026-10-20.md",
+      "bytes": 7054,
+      "sha256": "2961fa8049a4212db55ac50a1a870ca1b950edc71def316221eb8fc3bb4ee7a3",
+      "byteForByteOriginal": true
+    },
+    {
+      "path": "artifacts/phase-2-proof/a21a82029276d38d53c9e17c580a15f57b653fe3/command-007-final-manifest.json",
+      "bytes": 17617,
+      "sha256": "394b76da1fa2a57ce2adebcb83bb38e095065b45b2e99aeb649300c144831fcb",
+      "byteForByteOriginal": true
+    }
+  ]
+}

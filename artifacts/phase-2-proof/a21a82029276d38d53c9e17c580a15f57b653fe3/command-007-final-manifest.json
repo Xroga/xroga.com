@@ -1,0 +1,511 @@
+{
+  "version": 1,
+  "command": "007",
+  "phase": 2,
+  "status": "B1_P2_VERIFIED",
+  "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
+  "acceptedSourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+  "integratedSourceSha": "b23754250aea1577c95e19d2d342cc07d8cb732e",
+  "authoritativeExternalReceiptFor": "docs/xroga/evidence/command-007/manifest.json",
+  "historicalTrackedManifestPreserved": true,
+  "noAcceptedSourceMutation": true,
+  "originalCriteria": [
+    {
+      "id": "XB01-C007-AC01",
+      "text": "Every tenant-bearing table is in rls-audit.md.",
+      "status": "PASS",
+      "reasons": []
+    },
+    {
+      "id": "XB01-C007-AC02",
+      "text": "Every privileged caller is scoped or explicitly exempt.",
+      "status": "PASS",
+      "reasons": []
+    },
+    {
+      "id": "XB01-C007-AC03",
+      "text": "Cross-tenant negative tests cover all high-risk resource classes.",
+      "status": "PASS",
+      "reasons": []
+    },
+    {
+      "id": "XB01-C007-AC04",
+      "text": "No protected endpoint trusts client-supplied ownership without verification.",
+      "status": "PASS",
+      "reasons": []
+    },
+    {
+      "id": "XB01-C007-AC05",
+      "text": "Background run ownership survives queue/job boundaries.",
+      "status": "PASS",
+      "reasons": []
+    },
+    {
+      "id": "XB01-C007-AC06",
+      "text": "Provider connection selection is owner scoped.",
+      "status": "PASS",
+      "reasons": []
+    },
+    {
+      "id": "XB01-C007-AC07",
+      "text": "CI executes tenant isolation tests.",
+      "status": "PASS",
+      "reasons": []
+    },
+    {
+      "id": "XB01-C007-AC08",
+      "text": "Migration passes fresh DB and upgrade-path tests.",
+      "status": "PASS",
+      "reasons": []
+    },
+    {
+      "id": "XB01-C007-AC09",
+      "text": "No existing legitimate same-tenant journey is broken.",
+      "status": "PASS",
+      "reasons": []
+    },
+    {
+      "id": "XB01-C007-AC10",
+      "text": "Security review contains zero unexplained service-role bypasses.",
+      "status": "PASS",
+      "reasons": []
+    }
+  ],
+  "callerCounts": {
+    "currentCallers": 636,
+    "structuredVerified": 636,
+    "structuredUnproven": 0,
+    "manualUnresolved": 0,
+    "manualUnsupported": 0,
+    "agreedVerified": 636,
+    "proofAwaitingManualReconciliation": 0,
+    "privilegedFactorySites": 161
+  },
+  "manualDispositions": {
+    "REVIEW_REQUIRED": 0,
+    "SCOPED_BOUNDARY": 456,
+    "NARROW_EXCEPTION": 40,
+    "NOT_PERSISTENCE": 140,
+    "REVIEWED_GAP": 0
+  },
+  "narrowPolicies": {
+    "registered": 18,
+    "independentlyProven": 18,
+    "allSuppliedExceptionsMatchActualPolicy": true
+  },
+  "inventory": {
+    "historicalObserved": 118,
+    "historicalRlsEnabled": 118,
+    "disposableObserved": 118,
+    "disposableRlsEnabled": 118,
+    "auditedObservedTableUnion": 120,
+    "allObservedNames": [
+      "public.action_transactions",
+      "public.activity_logs",
+      "public.ai_usage_ledger",
+      "public.analytics_events",
+      "public.api_priority_config",
+      "public.architecture_plans",
+      "public.audio_tracks",
+      "public.build_outcomes",
+      "public.business_action_confirmations",
+      "public.characters",
+      "public.chat_metadata",
+      "public.chats",
+      "public.community_admin_notes",
+      "public.community_comments",
+      "public.community_pool",
+      "public.community_pool_requests",
+      "public.community_posts",
+      "public.community_votes",
+      "public.deployment_status",
+      "public.execution_runs",
+      "public.github_integrations",
+      "public.growth_activation_definitions",
+      "public.growth_attribution_touches",
+      "public.growth_campaigns",
+      "public.growth_experiment_assignments",
+      "public.growth_experiment_outcomes",
+      "public.growth_experiments",
+      "public.growth_identity_links",
+      "public.growth_lifecycle_state",
+      "public.growth_messages",
+      "public.growth_recommendations",
+      "public.growth_referral_attribution",
+      "public.growth_segments",
+      "public.growth_share_links",
+      "public.growth_suppressions",
+      "public.images",
+      "public.influencer_commissions",
+      "public.influencer_profiles",
+      "public.marketplace_listings",
+      "public.marketplace_purchases",
+      "public.message_shares",
+      "public.messages",
+      "public.model_benchmark_runs",
+      "public.model_capability_profiles",
+      "public.model_provider_health",
+      "public.model_routing_outcomes",
+      "public.notifications",
+      "public.operations_action_approvals",
+      "public.operations_action_runs",
+      "public.operations_actions",
+      "public.operations_alerts",
+      "public.operations_automation_rules",
+      "public.operations_automation_runs",
+      "public.operations_config_checks",
+      "public.operations_environments",
+      "public.operations_maintenance_windows",
+      "public.operations_memberships",
+      "public.operations_resources",
+      "public.operations_slo_snapshots",
+      "public.orchestrator_config",
+      "public.plan_mutations",
+      "public.production_audit_log",
+      "public.production_evidence",
+      "public.production_incidents",
+      "public.production_releases",
+      "public.profiles",
+      "public.project_change_checkpoints",
+      "public.project_files",
+      "public.project_memory",
+      "public.project_messages",
+      "public.project_preview_grants",
+      "public.project_runtime_events",
+      "public.project_runtime_revisions",
+      "public.project_runtime_secrets",
+      "public.project_runtime_sessions",
+      "public.project_specs",
+      "public.projects",
+      "public.referral_rewards",
+      "public.referrals",
+      "public.repository_index_files",
+      "public.repository_indexes",
+      "public.research_evidence",
+      "public.research_runs",
+      "public.response_cache",
+      "public.scripts",
+      "public.series_projects",
+      "public.session_memory",
+      "public.software_agent_checkpoints",
+      "public.swarm_job_queue",
+      "public.swarm_run_traces",
+      "public.swarm_runs",
+      "public.system_errors",
+      "public.terminal_sessions",
+      "public.token_distribution_log",
+      "public.universal_runs",
+      "public.user_actions",
+      "public.user_integrations",
+      "public.user_referral_profiles",
+      "public.user_task_completions",
+      "public.user_token_usage",
+      "public.user_xrg_balance",
+      "public.video_generation_jobs",
+      "public.video_jobs",
+      "public.webhook_deliveries",
+      "public.websites",
+      "public.whop_memberships",
+      "public.whop_payment_fulfillments",
+      "public.xroga_billing_cycles",
+      "public.xroga_provider_reservations",
+      "public.xroga_web_usage",
+      "storage.buckets",
+      "storage.buckets_analytics",
+      "storage.buckets_vectors",
+      "storage.iceberg_namespaces",
+      "storage.iceberg_tables",
+      "storage.migrations",
+      "storage.objects",
+      "storage.s3_multipart_uploads",
+      "storage.s3_multipart_uploads_parts",
+      "storage.vector_indexes"
+    ],
+    "tenantBearingCoverage": "All tenant-bearing tables in the observed sets are included. Total observed counts also contain global/inherited/server-only tables and are not falsely labeled a semantic tenant-only count.",
+    "additionalDisposable": [
+      "storage.iceberg_namespaces",
+      "storage.iceberg_tables"
+    ],
+    "notInstalledFromHistoricalObservation": [
+      "public.images",
+      "public.websites"
+    ],
+    "productionParity": "UNVERIFIED",
+    "orphanRemediationCount": null,
+    "orphanStatus": "UNKNOWN_NO_LIVE_ROW_AUDIT_OR_DESTRUCTIVE_REMEDIATION"
+  },
+  "migrations": {
+    "count": 129,
+    "gitTree": "20d6d34ec85b47dd0f77c2a1033c395012060dd7",
+    "fresh": "PASS",
+    "upgrade": "PASS",
+    "historyReceipt": {
+      "path": "artifacts/a21a-disposable/command3-auth-browser-evidence/artifacts/batch-01-local-security/migration-history.json",
+      "sha256": "319a1326a9fb9d4e8d714e0c5756669f6f20a9bb4e0a6733b4192dc745cca231"
+    }
+  },
+  "disposable": {
+    "runId": "39423519847",
+    "jobId": "118630167765",
+    "securityTests": 204,
+    "browserCases": 4,
+    "fail": 0,
+    "skipped": 0,
+    "catalog": {
+      "path": "artifacts/a21a-disposable/command3-auth-browser-evidence/artifacts/batch-01-local-security/schema-catalog.json",
+      "sha256": "bb293d5d230486c96513d07a8b413223da291cf21bdd09ef9635e331f7a13cfb"
+    }
+  },
+  "baselines": {
+    "runId": "39423519983",
+    "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+    "integratedSha": "b23754250aea1577c95e19d2d342cc07d8cb732e",
+    "actualRuns": 4,
+    "stagesPerRun": 21,
+    "sourceTreeMutated": false,
+    "manifests": [
+      {
+        "path": "artifacts/a21a-baseline/batch-01-baseline-b23754250aea1577c95e19d2d342cc07d8cb732e\\run-a-manifest.json",
+        "sha256": "42995e8ef549e75c6f4dc87198b742a3a16a80c04715db32510500d0ccdc56b4"
+      },
+      {
+        "path": "artifacts/a21a-baseline/batch-01-baseline-b23754250aea1577c95e19d2d342cc07d8cb732e\\run-b-manifest.json",
+        "sha256": "d1582f264341dacc323531d17da3db8740378c28e4b35c2c4ad54926cdef85a3"
+      },
+      {
+        "path": "artifacts/a21a-baseline/batch-01-integrated-candidate-b23754250aea1577c95e19d2d342cc07d8cb732e\\batch-01-baseline\\run-a-manifest.json",
+        "sha256": "ce622f20e988db6ee45d0631f6ad7a82bcb4898c2bcc4e6f222c6799e11455e7"
+      },
+      {
+        "path": "artifacts/a21a-baseline/batch-01-integrated-candidate-b23754250aea1577c95e19d2d342cc07d8cb732e\\batch-01-baseline\\run-b-manifest.json",
+        "sha256": "af7b25593b81dc2739ebb798a4fc678ca10a17515b062b4ee7086f3e7454c0c0"
+      }
+    ]
+  },
+  "endpointReview": {
+    "expressRegistrations": 222,
+    "expressModules": 29,
+    "nextHandlers": 14,
+    "signedHttpAndWebSocket": true,
+    "highRiskClasses": [
+      "projects",
+      "chats",
+      "files",
+      "connections",
+      "runs",
+      "browser",
+      "costs",
+      "approvals"
+    ]
+  },
+  "sourceBindings": [
+    {
+      "path": "docs/xroga/research/inputs/batch-one-report.txt",
+      "sha256": "74aed881483f1a55c62363e55bd56c3b8eee18d3d2762ee13511b4430253bcc3"
+    },
+    {
+      "path": "docs/xroga/security/tenant-model.md",
+      "sha256": "1ad926512ec565e8d06aa5c2d05ae6cf50320bfcae5a547896d4da237e7dcca7"
+    },
+    {
+      "path": "docs/xroga/security/rls-audit.md",
+      "sha256": "b0e055bb27661ebf238d5b31dfd2432c24f1b3ad91ece9fd9670808b0b0384af"
+    },
+    {
+      "path": "docs/xroga/security/caller-reviews.json",
+      "sha256": "67fab10810aa85d5c3a2d9f9f9e61dfdb37a9953b6fa206627156dd0aef60c59"
+    },
+    {
+      "path": "docs/xroga/security/privileged-callers.json",
+      "sha256": "d2a5b731e1706bf98e9daac635b6cd80ef27460f57ef03c2b42fc93efc7ad1ed"
+    },
+    {
+      "path": "docs/xroga/batch-1/phases/PHASE-2-ACCESS-MATRIX.md",
+      "sha256": "25b51e4ac5072127818517f2a78068177b3deef4c69a95ff8569e7e3fbbb3aee"
+    },
+    {
+      "path": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+      "sha256": "20f91f3a4b4d17a04ef01e8ba9da4e2362f38fe657fd24e547c890cf546693c7"
+    },
+    {
+      "path": "docs/xroga/batch-1/phases/PHASE-1-VERIFIED-EVIDENCE.json",
+      "sha256": "c7982995bb70a7511fbfcf870e587d0d2032f21fe1b01b8b2c4ad563734ac3bb"
+    },
+    {
+      "path": "scripts/security/tenant-acceptance.mjs",
+      "sha256": "f2287cd03670c00fd7b0a1c648d40ea8239148b05a570993ce4f8d434da78a25"
+    },
+    {
+      "path": "scripts/security/audit-tenant-policies.mjs",
+      "sha256": "a5641b69528d3e8fc65768d8abd4fd4a2c62643cc2d500e0c4cf72ef4a581c37"
+    },
+    {
+      "path": "scripts/security/caller-reviews.mjs",
+      "sha256": "2c9f776299c1fb3cdd9dcefffc0e6c0cbd30ec4ce6feee29e6e5bff5414ca8e4"
+    }
+  ],
+  "proofBindings": [
+    {
+      "path": "artifacts/phase-2-proof/a21a82029276d38d53c9e17c580a15f57b653fe3/input.json",
+      "sha256": "72b9b343737b586dde83ad2ce3276b1b33a0cb52b18cc5ce93a6d7635bc6c388"
+    },
+    {
+      "path": "artifacts/phase-2-proof/a21a82029276d38d53c9e17c580a15f57b653fe3/observations.json",
+      "sha256": "719367aa196032ce5cf1dd12be6bb49f7a3c42af86b570df2c08fccb14abc327"
+    },
+    {
+      "path": "artifacts/phase-2-proof/a21a82029276d38d53c9e17c580a15f57b653fe3/result.json",
+      "sha256": "f3c237f98177b70865b9c701dddcb0a13619c13192b828bf2aeb066b44f708ea"
+    },
+    {
+      "path": "artifacts/phase-2-proof/a21a82029276d38d53c9e17c580a15f57b653fe3/disposable.log",
+      "sha256": "6900a77ac5052b8a31cd42b069a28ee6bed80bd9e4a73426bd3d62ab55ee1efa"
+    },
+    {
+      "path": "artifacts/phase-2-proof/a21a82029276d38d53c9e17c580a15f57b653fe3/strict-original-command007.stdout.json",
+      "sha256": "4f9fdef6cb55efac2c5860c44ba9216e11557e67e656c8fac454f9fbbb24169d"
+    }
+  ],
+  "originalStrictGate": {
+    "executable": "node",
+    "args": [
+      "scripts/security/audit-tenant-policies.mjs",
+      "--evidence",
+      "artifacts/phase-2-proof/a21a82029276d38d53c9e17c580a15f57b653fe3/input.json",
+      "--observations",
+      "artifacts/phase-2-proof/a21a82029276d38d53c9e17c580a15f57b653fe3/observations.json",
+      "--require-complete"
+    ],
+    "exitCode": 0,
+    "result": {
+      "result": "PASS_AUDIT_INTEGRITY_NOT_TENANT_SECURITY_ACCEPTANCE",
+      "counts": {
+        "observedTables": 118,
+        "rlsEnabled": 118,
+        "privilegedFactorySites": 161,
+        "persistenceCandidates": 636,
+        "ownerPredicateCandidates": 142,
+        "reviewRequired": 0,
+        "reviewedCandidates": 636,
+        "unresolvedSafetyCandidates": 0,
+        "certifiedScopedPrivilegedCallers": 161,
+        "registeredNarrowGlobalExceptions": 18
+      },
+      "releaseGate": "PASS"
+    }
+  },
+  "workflows": [
+    {
+      "conclusion": "success",
+      "databaseId": 39423519852,
+      "headSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+      "name": "Xroga tenant security fixtures",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39423519852"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 39423520056,
+      "headSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+      "name": "Supabase migration gate",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39423520056"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 39423519962,
+      "headSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+      "name": "Command 4 authority distribution",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39423519962"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 39423519839,
+      "headSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+      "name": "API Docker build check",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39423519839"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 39423519909,
+      "headSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+      "name": "Agent V2 dependency lock",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39423519909"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 39423519966,
+      "headSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+      "name": "Xroga mission operating policy",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39423519966"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 39423519903,
+      "headSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+      "name": "Growth technical publishing",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39423519903"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 39423519841,
+      "headSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+      "name": "Frontend production build check",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39423519841"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 39423520173,
+      "headSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+      "name": "Xroga golden acceptance harness",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39423520173"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 39423519847,
+      "headSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+      "name": "Isolated Supabase authenticated browser verification",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39423519847"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 39423519983,
+      "headSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+      "name": "Unit tests",
+      "status": "completed",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39423519983"
+    }
+  ],
+  "pr": {
+    "base": "main",
+    "branch": "codex/xroga-batch-01",
+    "draft": true,
+    "head": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+    "state": "open"
+  },
+  "separateMandatoryItems": [
+    "Original008 canonical authority and009 vault remain separately admitted Phase3 work",
+    "Original010 egress remains Phase4",
+    "Actual R2 provider acceptance",
+    "Production schema parity and production key custody",
+    "Commercial hosting eligibility",
+    "Existing dependency advisories remain unwaived"
+  ],
+  "restrictions": {
+    "additionalSpend": 0,
+    "phase3Started": false,
+    "productionMerge": false,
+    "deployment": false,
+    "dnsChange": false,
+    "liveCredentialOrCustomerDataChange": false,
+    "paidProviderCall": false
+  }
+}
