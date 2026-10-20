@@ -37,6 +37,11 @@ test('business snapshots reject coerced parameters before serializing while Oper
   plan.planDigest = createHash('sha256').update(JSON.stringify(legacyOrder(unsigned))).digest('hex');
   assert.equal(verifyPlanDigest(plan), true);
   assert.deepEqual(snapshotBusinessActionPlan(plan), plan);
+  let calls = 0;
+  const accessor = Object.defineProperty({}, 'amount', { enumerable: true, get() { calls++; return null; } });
+  assert.equal(verifyPlanDigest({ ...plan, arguments: accessor }), false);
+  assert.throws(() => snapshotBusinessActionPlan({ ...plan, arguments: accessor }), { code: 'BUSINESS_ACTION_PLAN_CHANGED' });
+  assert.equal(calls, 0);
   for (const value of [NaN, Infinity, new Date(), undefined]) {
     const changed = { ...plan, arguments: { amount: value } };
     assert.equal(verifyPlanDigest(changed), false);

@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
-    "sourceTimestampUtc": "2026-10-20T17:35:54+05:00",
-    "auditStartedUtc": "2026-10-20T14:26:37.783Z",
+    "sha": "f011d7e1a8e29970e883b921e2a36fa672a8107a",
+    "sourceTimestampUtc": "2026-10-20T19:27:29+05:00",
+    "auditStartedUtc": "2026-10-20T15:55:25.965Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -11947,7 +11947,7 @@
         "backend/src/security/serviceRoleGuard.ts:1",
         "backend/src/services/BillingService.ts:5",
         "backend/src/services/ensureUserRecords.ts:7",
-        "backend/src/services/integrations/businessActionConfirmations.ts:6",
+        "backend/src/services/integrations/businessActionConfirmations.ts:7",
         "backend/src/services/integrations/githubAuth.ts:1",
         "backend/src/services/integrations/githubDeploy.ts:1",
         "backend/src/services/integrations/githubTokenStore.ts:1",
@@ -15668,7 +15668,7 @@
       "id": "surface:2bc5a5e3712ff02bb56b",
       "subsystem": "operations_approvals",
       "sourcePath": "backend/src/operations/operationsEngine.ts",
-      "sha256": "c086fafdb62b3b77db32087f67978d4763b3ed05c7087a87a4fb043152150e17",
+      "sha256": "874eccd05ce00b093c38f1c5b84c434430eb6ed1cdaefac945ea70e330c471c4",
       "symbols": [
         "ACTION_DEFINITIONS",
         "BAD_STATUSES",
@@ -15718,7 +15718,9 @@
         "backend/src/operations/operationsService.ts:5",
         "backend/src/operations/verificationTarget.local.integration.ts:8",
         "backend/src/routes/admin.ts:5",
-        "backend/src/security/authority/digest.test.ts:6"
+        "backend/src/security/authority/digest.test.ts:6",
+        "backend/src/services/integrations/businessActionConfirmations.ts:6",
+        "backend/src/services/integrations/composioClient.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -19160,7 +19162,7 @@
       "id": "surface:ab58061e67cd2f877ad4",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "sha256": "f6f085d6c1e9719fed0a8f8de910b78ccd3ace7d193b1b02bcbfe69749eef32b",
+      "sha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
       "symbols": [
         "ToolUiConnectionCandidate",
         "ToolUiDescriptor",
@@ -21007,7 +21009,8 @@
         "backend/src/security/authority/enforce.ts:2",
         "backend/src/services/integrations/businessAction.ts:5",
         "backend/src/services/integrations/businessActionConfirmations.ts:5",
-        "backend/src/services/integrations/composioClient.ts:2"
+        "backend/src/services/integrations/composioClient.ts:5",
+        "backend/src/services/integrations/credentialVault.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -21083,7 +21086,7 @@
         "backend/src/security/authority/enforce.test.ts:5",
         "backend/src/services/integrations/businessAction.ts:7",
         "backend/src/services/integrations/businessActionConfirmations.ts:4",
-        "backend/src/services/integrations/composioClient.ts:3"
+        "backend/src/services/integrations/composioClient.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -21710,6 +21713,8 @@
         "backend/src/services/ensureUserRecords.ts:4",
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts:5",
         "backend/src/services/integrations/businessActionConfirmations.ts:3",
+        "backend/src/services/integrations/credentialVault.test.ts:4",
+        "backend/src/services/integrations/credentialVault.ts:2",
         "backend/src/services/integrations/githubTokenStore.ts:4",
         "backend/src/services/integrations/githubTokenStore.writerContext.test.ts:4",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:8",
@@ -21815,6 +21820,7 @@
         "backend/src/services/BillingService.budget.test.ts",
         "backend/src/services/ensureUserRecords.receipt.test.ts",
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+        "backend/src/services/integrations/credentialVault.test.ts",
         "backend/src/services/integrations/githubTokenStore.writerContext.test.ts",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
@@ -22170,7 +22176,7 @@
       "id": "surface:5a05332cd3011b3aa919",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "340e2fdc37ccbfcbd800825356402d408a898a5d7da8bfa6d23695c297fbab08",
+      "sha256": "ffd706b8deeab7d04891ad77c1e5890ff816829f1c0ee73f31ff206c7aaf325b",
       "symbols": [
         "ActionToolChoice",
         "BusinessActionAuthorization",
@@ -22227,6 +22233,7 @@
         "prepareBusinessAction",
         "raw",
         "requiresConfirmation",
+        "resultDigest",
         "risk",
         "routes",
         "schemaForModel",
@@ -22288,7 +22295,7 @@
         "backend/src/security/businessAuthority.local.integration.ts:9",
         "backend/src/security/confirmationMetadata.local.integration.ts:7",
         "backend/src/services/integrations/businessAction.digest.test.ts:4",
-        "backend/src/services/integrations/businessActionConfirmations.ts:15"
+        "backend/src/services/integrations/businessActionConfirmations.ts:16"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -22314,6 +22321,7 @@
         "backend/src/services/integrations/businessAction.ts#permissionMode",
         "backend/src/services/integrations/businessAction.ts#preparedActionDigest",
         "backend/src/services/integrations/businessAction.ts#requiresConfirmation",
+        "backend/src/services/integrations/businessAction.ts#resultDigest",
         "backend/src/services/integrations/businessAction.ts#verifyPlanDigest"
       ],
       "costBoundary": [
@@ -22340,7 +22348,7 @@
       "id": "surface:0315124fb31feefa3fcb",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "symbols": [
         "CONFIRMATION_TTL_MS",
         "ConfirmationRow",
@@ -22369,13 +22377,16 @@
         "isBusinessActionPlan",
         "isPlainRecord",
         "plan",
+        "receipt",
         "risk",
         "row",
         "safeConfirmation",
-        "scope"
+        "scope",
+        "scopedPlan"
       ],
       "imports": [
         "../../config/supabase.js",
+        "../../operations/operationsEngine.js",
         "../../security/authority/digest.js",
         "../../security/authority/enforce.js",
         "../../security/tenantContext.js",
@@ -22386,6 +22397,7 @@
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
+        "backend/src/operations/operationsEngine.ts",
         "backend/src/security/authority/digest.ts",
         "backend/src/security/authority/enforce.ts",
         "backend/src/security/tenantContext.ts",
@@ -22415,10 +22427,10 @@
         "backend/src/services/integrations/businessActionConfirmations.ts#executeAuthorizedAction"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/businessActionConfirmations.ts:235 (user_id)",
-        "backend/src/services/integrations/businessActionConfirmations.ts:398 (user_id)",
-        "backend/src/services/integrations/businessActionConfirmations.ts:479 (user_id)",
-        "backend/src/services/integrations/businessActionConfirmations.ts:577 (user_id)"
+        "backend/src/services/integrations/businessActionConfirmations.ts:255 (user_id)",
+        "backend/src/services/integrations/businessActionConfirmations.ts:415 (user_id)",
+        "backend/src/services/integrations/businessActionConfirmations.ts:496 (user_id)",
+        "backend/src/services/integrations/businessActionConfirmations.ts:602 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/integrations/businessActionConfirmations.ts#CONFIRMATION_TTL_MS",
@@ -22439,6 +22451,7 @@
       ],
       "costBoundary": [],
       "evidenceBoundary": [
+        "backend/src/services/integrations/businessActionConfirmations.ts#receipt",
         "backend/src/services/integrations/businessActionConfirmations.ts#verifyPlanDigest"
       ],
       "testCoverage": [
@@ -22569,7 +22582,7 @@
       "id": "surface:8c25c7e0b5b0dd66676d",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "27ef6189380cf137725edf6d87f0196e36464a241d759ce85372a6669f4b2575",
+      "sha256": "927ae82aefde6fc54744c0c076b94cf2e2a5a2f661bd36308ae704ddabd1bb56",
       "symbols": [
         "COMPOSIO_API_BASE",
         "COMPOSIO_CACHE_TTL_MS",
@@ -22641,8 +22654,6 @@
         "cached",
         "cachedComposioValue",
         "callbackUrl",
-        "canUserAccessComposioToolSlug",
-        "canUserAccessComposioToolkit",
         "canonicalXrogaCatalogGroup",
         "catalogCache",
         "categories",
@@ -22753,19 +22764,21 @@
         "validateSafeRuntimeConfig",
         "value",
         "xrogaCatalogGroupFor",
-        "xrogaCustomToolkitPrefix",
-        "xrogaCustomToolkitRegistrationSlug",
-        "xrogaCustomUserToken"
+        "xrogaCustomToolkitRegistrationSlug"
       ],
       "imports": [
+        "../../operations/operationsEngine.js",
         "../../security/authority/digest.js",
         "../../security/authority/enforce.js",
         "../../security/authority/types.js",
+        "./composioNamespace.js",
         "node:crypto"
       ],
       "runtimeImports": [
+        "backend/src/operations/operationsEngine.ts",
         "backend/src/security/authority/digest.ts",
-        "backend/src/security/authority/enforce.ts"
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/services/integrations/composioNamespace.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -22777,10 +22790,8 @@
         "backend/src/routes/integrations.ts:40",
         "backend/src/routes/phase1.ts:69",
         "backend/src/services/integrations/businessAction.ts:33",
-        "backend/src/services/integrations/businessActionConfirmations.ts:10",
-        "backend/src/services/integrations/businessRead.ts:24",
-        "frontend/src/lib/customMcp.test.ts:6",
-        "frontend/src/lib/pluginInstalledPermissions.test.ts:6"
+        "backend/src/services/integrations/businessActionConfirmations.ts:11",
+        "backend/src/services/integrations/businessRead.ts:24"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -22804,7 +22815,51 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/e2e/xrogaGoldenJourneys.test.ts",
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:04731b74940223cacebb",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/composioNamespace.ts",
+      "sha256": "00cf7ae9d090526049bf09cf6727f538e702b2f5e8b9124ee98a88d1a5a31de1",
+      "symbols": [
+        "canUserAccessComposioToolSlug",
+        "canUserAccessComposioToolkit",
+        "clean",
+        "xrogaCustomToolkitPrefix",
+        "xrogaCustomUserToken"
+      ],
+      "imports": [
+        "node:crypto"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/services/integrations/composioClient.ts:1",
+        "backend/src/services/integrations/composioClient.ts:4",
+        "frontend/src/lib/customMcp.test.ts:6",
+        "frontend/src/lib/pluginInstalledPermissions.test.ts:6"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
         "frontend/src/lib/customMcp.test.ts",
         "frontend/src/lib/pluginInstalledPermissions.test.ts"
       ],
@@ -22819,7 +22874,7 @@
       "id": "surface:e6eb1b0c8a7abee79716",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/credentialEnvelope.ts",
-      "sha256": "76f0508b50bd9ba4548c90fbb7ed5214421639bef2895f6107cafb4fa72ff770",
+      "sha256": "df3f11e4de24d0d787671e59fae7bb1e5f27180d5d6fdba1107944d3735a6fca",
       "symbols": [
         "CredentialEnvelopeContext",
         "MAX_BYTES",
@@ -22852,7 +22907,8 @@
       "runtimeImports": [],
       "entryPoints": [],
       "callers": [
-        "backend/src/services/integrations/credentialEnvelope.test.ts:3"
+        "backend/src/services/integrations/credentialEnvelope.test.ts:3",
+        "backend/src/services/integrations/credentialVault.ts:4"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -22930,6 +22986,125 @@
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:605e32ac2c5bc7e5f281",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/credentialVault.ts",
+      "sha256": "6b08075a76fa934025384ddb42e670e15d0685f309655c8f32422baf01d35fc0",
+      "symbols": [
+        "CredentialVault",
+        "VaultCiphertext",
+        "VaultIdentity",
+        "actor",
+        "associated",
+        "bytes",
+        "ciphertext",
+        "copy",
+        "encoded",
+        "fail",
+        "field",
+        "identity",
+        "key",
+        "newScope",
+        "oldScope",
+        "parse",
+        "plain",
+        "record",
+        "result",
+        "scope",
+        "wrapped"
+      ],
+      "imports": [
+        "../../security/authority/digest.js",
+        "../../security/tenantContext.js",
+        "./credentialEnvelope.js",
+        "./cryptoProvider.js",
+        "node:crypto"
+      ],
+      "runtimeImports": [
+        "backend/src/security/authority/digest.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/credentialEnvelope.ts",
+        "backend/src/services/integrations/cryptoProvider.ts"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/services/integrations/credentialVault.test.ts:5"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [
+        "backend/src/services/integrations/credentialVault.ts#VaultIdentity",
+        "backend/src/services/integrations/credentialVault.ts#canonicalAuthorityJson",
+        "backend/src/services/integrations/credentialVault.ts#identity"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/services/integrations/credentialVault.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:97846676774c53b1b3c2",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/cryptoProvider.ts",
+      "sha256": "a4fb326b9cf7382a89649bf05552b4222ed5924397cf1b14a268999ffa721fb9",
+      "symbols": [
+        "CryptoProvider",
+        "DevelopmentCryptoProvider",
+        "WrappedDataKey",
+        "bytes",
+        "cipher",
+        "ciphertext",
+        "decipher",
+        "decode",
+        "invalid",
+        "iv",
+        "key",
+        "keyBytes",
+        "plain",
+        "requireCryptoProvider"
+      ],
+      "imports": [
+        "node:crypto"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/services/integrations/credentialVault.test.ts:6",
+        "backend/src/services/integrations/credentialVault.ts:5"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/services/integrations/credentialVault.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -34090,7 +34265,7 @@
       "id": "surface:0f84037d5cb2f55a93d1",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/(shell)/dashboard/actions/confirm/[id]/page.tsx",
-      "sha256": "5dcb295c943ed9e77166a5eef1d67a8e3879a7764b70984177889ae5c32009ff",
+      "sha256": "332493252cd03e355b5465a7344b7116272656c2ad12adfd114d06c556d5da80",
       "symbols": [
         "BusinessActionConfirmationPage",
         "ConfirmationStatus",
@@ -54925,7 +55100,7 @@
       "id": "surface:8cd95fb7b73c05af3831",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "frontend/src/components/integrations/PluginPermissionControl.tsx",
-      "sha256": "00e88b8ebbf363bd0e48083e961f577ca599677f165110695b5241f1a6b5dd1b",
+      "sha256": "faad35d80066e1001a40e8b7494d8858badbf043dc0a8c3158813a805166e2d1",
       "symbols": [
         "PERMISSION_OPTIONS",
         "PluginPermissionControl",
@@ -73280,7 +73455,7 @@
       "id": "surface:015cc267f70323e72e46",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "dd9715b63eeca3a39f7b82cb45d6520ed8aedecadc5b7d069f2ba73fc5fba8ac",
+      "sha256": "1ee3a576071bee8f2409a79f441e68c11e0aae9fa4e936cc224e92cd14434990",
       "symbols": [
         "AppMark",
         "BusinessActionConfirmationInline",
@@ -84725,7 +84900,7 @@
       "id": "surface:276c4109416eb12460ad",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/prepare-pr-integration.mjs",
-      "sha256": "4df7e9d2b795902042fd5458eb20dcbf4cffc04a9abaa3d4c2f4047a6d620d00",
+      "sha256": "9fb49130b389fdd44b1fae66db5562c28a8155fd56187852f1ff62d49de9d6ad",
       "symbols": [
         "admission",
         "args",
@@ -85771,6 +85946,140 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:8f32e903a0ee0252e77d",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/attest-business-authority-receipt.mjs",
+      "sha256": "2e71e50d885a69f7e18125029375ebfe71290fe790113c497259c7cae777a3ee",
+      "symbols": [
+        "directory",
+        "gh",
+        "job",
+        "jobId",
+        "log",
+        "name",
+        "receipt",
+        "run",
+        "runId",
+        "source",
+        "tests"
+      ],
+      "imports": [
+        "node:assert/strict",
+        "node:child_process",
+        "node:crypto",
+        "node:fs"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:assert/strict",
+        "node:child_process",
+        "node:crypto",
+        "node:fs"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/security/attest-business-authority-receipt.mjs#receipt"
+      ],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:ad28b85bc62102769aeb",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/audit-credential-usage.mjs",
+      "sha256": "ee85e8ee3f9abc224ca2198352541410291ca168821fea95eb3eda543cf21047",
+      "symbols": [
+        "arg",
+        "buildCredentialAudit",
+        "collect",
+        "content",
+        "current",
+        "declarations",
+        "depth",
+        "discoverCredentialUsage",
+        "fields",
+        "found",
+        "groups",
+        "hash",
+        "literal",
+        "method",
+        "normalize",
+        "owner",
+        "parent",
+        "parsed",
+        "path",
+        "paths",
+        "rawField",
+        "readFunctions",
+        "receiverTarget",
+        "record",
+        "report",
+        "root",
+        "rows",
+        "secretRpc",
+        "secretTables",
+        "source",
+        "target",
+        "ts",
+        "values",
+        "vaultImports",
+        "visit"
+      ],
+      "imports": [
+        "node:assert/strict",
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:module",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "scripts/security/audit-credential-usage.mjs"
+      ],
+      "callers": [
+        "scripts/security/audit-credential-usage.test.mjs:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:assert/strict",
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:module",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/security/audit-credential-usage.test.mjs"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:df5a69bd66236469cf20",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/audit-tenant-policies.mjs",
@@ -86390,17 +86699,17 @@
       "id": "surface:052e49f08f69e1d17b86",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/refresh-phase-three-authority-delta.mjs",
-      "sha256": "6c1e7d01bdfea927a939ee18d9abca705d9c1af040fc36aba3d21d1cb5d240f3",
+      "sha256": "f0ca68edd63e0906db68ca18d087a128516334d86626116f3da6fd107d92845d",
       "symbols": [
         "accepted",
         "after",
         "before",
         "call",
+        "calls",
         "changed",
         "current",
         "decisions",
         "decisionsPath",
-        "digestPath",
         "hash",
         "historical",
         "index",
@@ -86415,7 +86724,7 @@
         "path",
         "paths",
         "peers",
-        "pureCalls",
+        "pureModules",
         "read",
         "registryPath",
         "remappings",
@@ -86444,9 +86753,7 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [],
-      "approvalBoundary": [
-        "scripts/security/refresh-phase-three-authority-delta.mjs#digestPath"
-      ],
+      "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
@@ -91297,7 +91604,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:ad440bf359f1bae217d3",
+      "id": "registration:e9ef063ab2bf986ced9e",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 1846,
       "receiver": "router",
@@ -91309,7 +91616,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:87434c776f024ba2ee6d",
+      "id": "registration:d9ceb2e5741cc0a61c3b",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 1923,
       "receiver": "router",
@@ -91321,7 +91628,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:6611e5fa6bf3e289801a",
+      "id": "registration:aa8c0e6ba9a88aa8a6a0",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 1993,
       "receiver": "router",
@@ -91333,7 +91640,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:5a48abd8b30bd2fb98d0",
+      "id": "registration:357479068b2dd83274e6",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 2064,
       "receiver": "router",
@@ -91345,7 +91652,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:898b1b9d0d84c9bb7d19",
+      "id": "registration:d97f2d18408d8ce5d047",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 2123,
       "receiver": "router",
@@ -91357,7 +91664,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:6b3e7a1e87d27a711950",
+      "id": "registration:dd1c468010f2d9aa0750",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 2148,
       "receiver": "router",
@@ -91369,7 +91676,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:966086b69e7db48ceb8b",
+      "id": "registration:007f1915afc7ed516773",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 2170,
       "receiver": "router",
@@ -92716,8 +93023,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:1d2a26444d9114ba2d7e",
-      "registrationId": "registration:ad440bf359f1bae217d3",
+      "id": "route:671e6b35fd34913fc013",
+      "registrationId": "registration:e9ef063ab2bf986ced9e",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 1846,
       "method": "POST",
@@ -92733,8 +93040,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:9e3f86eec6f0d355377a",
-      "registrationId": "registration:87434c776f024ba2ee6d",
+      "id": "route:59c1cba07f23a1f8a7bb",
+      "registrationId": "registration:d9ceb2e5741cc0a61c3b",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 1923,
       "method": "POST",
@@ -92750,8 +93057,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:9bda3c51b12c0808160d",
-      "registrationId": "registration:6611e5fa6bf3e289801a",
+      "id": "route:187f4b7bd792afb8c1cd",
+      "registrationId": "registration:aa8c0e6ba9a88aa8a6a0",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 1993,
       "method": "GET",
@@ -92767,8 +93074,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:073d5e84697c37f7dc39",
-      "registrationId": "registration:5a48abd8b30bd2fb98d0",
+      "id": "route:f7ec93466f98a4c037f6",
+      "registrationId": "registration:357479068b2dd83274e6",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 2064,
       "method": "GET",
@@ -92784,8 +93091,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:14a36b9859a5ba3aa012",
-      "registrationId": "registration:898b1b9d0d84c9bb7d19",
+      "id": "route:b47ee95087445898aeed",
+      "registrationId": "registration:d97f2d18408d8ce5d047",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 2123,
       "method": "POST",
@@ -92801,8 +93108,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:9121f98953d497206dd2",
-      "registrationId": "registration:6b3e7a1e87d27a711950",
+      "id": "route:618716d4c2337ebe72db",
+      "registrationId": "registration:dd1c468010f2d9aa0750",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 2148,
       "method": "GET",
@@ -92818,8 +93125,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:9c69f0d8c26fe52860ba",
-      "registrationId": "registration:966086b69e7db48ceb8b",
+      "id": "route:0b8ac7769c9d0fa6d2ac",
+      "registrationId": "registration:007f1915afc7ed516773",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 2170,
       "method": "GET",
@@ -97164,7 +97471,7 @@
       "sourcePath": "supabase/migrations/20261020000300_business_authority_dispatch.sql",
       "version": "20261020000300",
       "order": 130,
-      "sha256": "c0aa023e00874d3879a7e369d9b61b4f24406ef47a1939495437a97ceed218df"
+      "sha256": "de8ae5a8b3a0425a6b03573e01565e2f557824aac72097c4062c2a05ec0d2bc5"
     }
   ],
   "workflows": [
@@ -97315,9 +97622,11 @@
     {
       "id": "workflow:78c19ecd7c4e5844f961",
       "sourcePath": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "957cdf0f75f7dc516b3d9fcab1c0df908d27a41622fc2df1eb3dc5e07301255d",
+      "sha256": "48b77618e63bb78afbc744d3a467d0dcf02758f13f0aec8e3628a6e322539ce1",
       "sourceEntrypoints": [
         "scripts/ci/prepare-pr-integration.mjs",
+        "scripts/security/audit-credential-usage.mjs",
+        "scripts/security/audit-credential-usage.test.mjs",
         "scripts/security/audit-tenant-policies.mjs",
         "scripts/security/audit-tenant-policies.test.mjs",
         "scripts/security/tenant-rls.database.test.mjs"
@@ -103308,16 +103617,16 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:3675a64daf0596c15298",
+      "id": "frontend-call:e9a3efa53307be55708f",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 940,
+      "line": 954,
       "callee": "api.phase1.plan",
       "reachable": true
     },
     {
-      "id": "frontend-call:0c4700e30c7f6cbe01fa",
+      "id": "frontend-call:f5961afa7a8d81feebce",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 976,
+      "line": 990,
       "callee": "api.phase1.chat",
       "reachable": true
     },
@@ -104649,7 +104958,7 @@
     {
       "id": "test-suite:c9e64862eb7c7cfedf8a",
       "sourcePath": "backend/src/e2e/xrogaGoldenJourneys.test.ts",
-      "declaredTests": 14,
+      "declaredTests": 16,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -105965,6 +106274,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:a342e35601775d045167",
+      "sourcePath": "backend/src/services/integrations/credentialVault.test.ts",
+      "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:9356a87156eb208917af",
       "sourcePath": "backend/src/services/integrations/githubAnalysis.test.ts",
       "declaredTests": 3,
@@ -106905,7 +107221,7 @@
     {
       "id": "test-suite:1898ec35e5057ca75221",
       "sourcePath": "frontend/e2e/batch01-founder-local.spec.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -108251,6 +108567,13 @@
     {
       "id": "test-suite:af710f605437afee6847",
       "sourcePath": "scripts/lib/database-url.test.mjs",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:5ab7f69119cda9cac386",
+      "sourcePath": "scripts/security/audit-credential-usage.test.mjs",
       "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []

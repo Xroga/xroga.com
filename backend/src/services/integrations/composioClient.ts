@@ -1,4 +1,7 @@
+import { xrogaCustomUserToken, xrogaCustomToolkitPrefix, canUserAccessComposioToolkit, canUserAccessComposioToolSlug } from './composioNamespace.js';
 import { createHash } from 'node:crypto';
+import { redactOperationsValue } from '../../operations/operationsEngine.js';
+export { xrogaCustomToolkitPrefix, canUserAccessComposioToolkit, canUserAccessComposioToolSlug } from './composioNamespace.js';
 import { canonicalAuthorityValue, preparedActionDigest } from '../../security/authority/digest.js';
 import { assertAuthorityPermit, consumeAuthorityPermit } from '../../security/authority/enforce.js';
 import type { AuthorityDispatchBinding, AuthorityPermit } from '../../security/authority/types.js';
@@ -281,9 +284,12 @@ interface ComposioToolDetailsResponse {
 }
 
 export interface ComposioExecuteResponse {
+  result_type?: string;
   data?: unknown;
   error?: string;
   log_id?: string;
+  /** Internal hash of the complete provider data, computed before redaction. */
+  resultDigest?: string;
 }
 
 export interface XrogaConnectTool {
@@ -726,13 +732,6 @@ export interface XrogaCustomMcpSyncResult {
   syncedCount?: number;
 }
 
-function xrogaCustomUserToken(userId: string): string {
-  return createHash('sha256')
-    .update(userId.trim())
-    .digest('hex')
-    .slice(0, 12);
-}
-
 function cleanCustomMcpSlug(value: string): string {
   const clean = value
     .trim()
@@ -777,52 +776,11 @@ function validateCustomMcpUrl(value: string, field: string): string {
   return url.toString();
 }
 
-export function xrogaCustomToolkitPrefix(userId: string): string {
-  return `custom_xroga_${xrogaCustomUserToken(userId)}_`;
-}
-
 function xrogaCustomToolkitRegistrationSlug(
   userId: string,
   name: string,
 ): string {
   return `XROGA_${xrogaCustomUserToken(userId).toUpperCase()}_${cleanCustomMcpSlug(name)}`;
-}
-
-export function canUserAccessComposioToolkit(
-  userId: string,
-  toolkitSlug: string,
-): boolean {
-  const clean = toolkitSlug.trim().toLowerCase();
-
-  // Keep the upstream platform itself out of Xroga's user-facing app directory.
-  // Xroga still uses the provider internally for runtime/catalog services.
-  if (
-    clean === 'composio' ||
-    clean.startsWith('composio_') ||
-    clean === 'code_interpreter' ||
-    clean === 'codeinterpreter'
-  ) {
-    return false;
-  }
-
-  if (!clean.startsWith('custom_')) {
-    return true;
-  }
-
-  return clean.startsWith(xrogaCustomToolkitPrefix(userId));
-}
-
-export function canUserAccessComposioToolSlug(
-  userId: string,
-  toolSlug: string,
-): boolean {
-  const clean = toolSlug.trim().toLowerCase();
-
-  if (!clean.startsWith('custom_')) {
-    return true;
-  }
-
-  return clean.startsWith(xrogaCustomToolkitPrefix(userId));
 }
 
 export function filterComposioCatalogForUser(
@@ -2479,7 +2437,7 @@ async function executeDiscoveredComposioTool(
     await consumeAuthorityPermit(input.authorityPermit, actualBinding);
   }
 
-  return composioRequest<ComposioExecuteResponse>(
+  const response = await composioRequest<ComposioExecuteResponse>(
     `/tool_router/session/${encodeURIComponent(sessionId)}/execute`,
     {
       method: 'POST',
@@ -2494,6 +2452,26 @@ async function executeDiscoveredComposioTool(
       timeoutMs: EXECUTE_TIMEOUT_MS,
     },
   );
+  // v3.1 can report input_required or failed with HTTP 200. Neither is a
+  // completed effect. Never answer a provider approval request automatically.
+  // Legacy inline responses with explicit data remain wire-compatible.
+  if (!response || typeof response !== 'object' || Array.isArray(response)
+    || (Object.hasOwn(response, 'result_type') && response.result_type !== 'completed')
+    || (!response.error && !Object.hasOwn(response, 'data'))) {
+    throw new ComposioClientError('The provider did not report a completed action. Review its state before preparing another attempt.', {
+      status: 409, code: 'COMPOSIO_EXECUTION_NOT_COMPLETED',
+    });
+  }
+  // Both read and write result paths can feed a user response or model prompt.
+  // Whitelist the DTO and redact credential-bearing fields before either path.
+  // The full response digest remains private receipt evidence, not raw content.
+  return {
+    data: redactOperationsValue(response.data ?? {}, 'tool_output'),
+    resultDigest: createHash('sha256').update(JSON.stringify(response.data ?? {})).digest('hex'),
+    ...(response.error ? { error: typeof response.error === 'string' ? String(redactOperationsValue(response.error, 'tool_output')) : 'Provider returned an error' } : {}),
+    ...(typeof response.log_id === 'string' && /^[A-Za-z0-9_-]{1,160}$/.test(response.log_id)
+      && redactOperationsValue(response.log_id, 'tool_output') === response.log_id ? { log_id: response.log_id } : {}),
+  };
 }
 
 export async function executeComposioReadTool(

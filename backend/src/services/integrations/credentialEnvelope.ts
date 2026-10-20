@@ -1,12 +1,14 @@
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
 import type { ProjectSecretScope } from '../../synthesis/projectRuntime/types.js';
 
-// Command 009 preparation only. Intentionally unwired from production services.
-// Activation needs Command 007 acceptance, explicit key custody and conditional
-// migration writes. This codec neither reads environment keys nor migrates rows.
+// Shared authenticated codec. Legacy v2 domains remain wire-compatible. The
+// canonical vault container adds record/account/type/revision AAD. Actual writer
+// cutover still requires explicit key custody and conditional persistence.
+// This codec never reads ambient keys or migrates existing records.
 export type CredentialEnvelopeContext =
   | { domain: 'provider'; owner: string; provider: string }
-  | { domain: 'runtime'; owner: string; project: string; name: string; scope: ProjectSecretScope };
+  | { domain: 'runtime'; owner: string; project: string; name: string; scope: ProjectSecretScope }
+  | { domain: 'vault'; tenant: string; owner: string; provider: string; account: string; credentialType: string; recordId: string; revision: string; scope: string };
 
 const MAX_BYTES = 64_000;
 const MAX_ENVELOPE = 86_000;
@@ -38,6 +40,10 @@ function aad(context: CredentialEnvelopeContext, id: string): Buffer {
     if (Object.keys(context).sort().join(',') !== 'domain,name,owner,project,scope') return fail();
     if (!/^[A-Z_][A-Z0-9_]{1,63}$/.test(field(context.name)) || !['development', 'preview', 'verification', 'deployment', 'shared'].includes(context.scope)) return fail();
     values = ['xroga-credential', 'v2', id, context.domain, field(context.owner), field(context.project), context.name, context.scope];
+  } else if (context.domain === 'vault') {
+    if (Object.keys(context).sort().join(',') !== 'account,credentialType,domain,owner,provider,recordId,revision,scope,tenant') return fail();
+    values = ['xroga-credential', 'v3', id, context.domain, field(context.tenant), field(context.owner),
+      field(context.provider), field(context.account), field(context.credentialType), field(context.recordId), field(context.revision), field(context.scope)];
   } else return fail();
   // An ordered JSON tuple is unambiguous even when identifiers contain colons.
   return Buffer.from(JSON.stringify(values), 'utf8');
@@ -57,25 +63,30 @@ export function sealCredentialEnvelope(plain: string, key: Uint8Array, id: strin
   const material = keyBytes(key);
   const associated = aad(context, keyId(id));
   const iv = randomBytes(12);
-  const cipher = createCipheriv('aes-256-gcm', material, iv, { authTagLength: 16 });
-  cipher.setAAD(associated);
-  const ciphertext = Buffer.concat([cipher.update(plain, 'utf8'), cipher.final()]);
-  return ['v2', id, iv.toString('base64url'), cipher.getAuthTag().toString('base64url'), ciphertext.toString('base64url')].join(':');
+  try {
+    const cipher = createCipheriv('aes-256-gcm', material, iv, { authTagLength: 16 });
+    cipher.setAAD(associated);
+    const ciphertext = Buffer.concat([cipher.update(plain, 'utf8'), cipher.final()]);
+    return ['v2', id, iv.toString('base64url'), cipher.getAuthTag().toString('base64url'), ciphertext.toString('base64url')].join(':');
+  } finally { material.fill(0); }
 }
 
 export function openCredentialEnvelope(envelope: string, key: Uint8Array, expectedKeyId: string, context: CredentialEnvelopeContext): string {
+  let material: Buffer | undefined, plain: Buffer | undefined;
   try {
     if (typeof envelope !== 'string' || envelope.length > MAX_ENVELOPE) return fail();
     const parts = envelope.split(':');
     if (parts.length !== 5 || parts[0] !== 'v2' || parts[1] !== keyId(expectedKeyId)) return fail();
     const iv = decode(parts[2]!, 12), tag = decode(parts[3]!, 16), ciphertext = decode(parts[4]!);
     if (ciphertext.length > MAX_BYTES) return fail();
-    const decipher = createDecipheriv('aes-256-gcm', keyBytes(key), iv, { authTagLength: 16 });
+    material = keyBytes(key);
+    const decipher = createDecipheriv('aes-256-gcm', material, iv, { authTagLength: 16 });
     decipher.setAAD(aad(context, expectedKeyId));
     decipher.setAuthTag(tag);
-    const plain = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
+    plain = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
     const text = plain.toString('utf8');
     if (!Buffer.from(text).equals(plain)) return fail();
     return text;
   } catch { return fail(); }
+  finally { material?.fill(0); plain?.fill(0); }
 }

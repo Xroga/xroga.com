@@ -1,7 +1,7 @@
 import { test, expect, type BrowserContext } from '@playwright/test';
 import { createClient } from '@supabase/supabase-js';
 import { createServerClient } from '@supabase/ssr';
-import { createHmac, randomUUID } from 'node:crypto';
+import { createHash, createHmac, randomUUID } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 
 const url=process.env.SUPABASE_URL!;
@@ -41,6 +41,46 @@ async function denied(context:BrowserContext,label:string) {
     }
   }
 }
+
+test('real action approval UI shows exact owner account and redacted parameters, cancels safely and blocks legacy plans',async({browser})=>{
+  test.setTimeout(90000);
+  const email=`action-approval-${randomUUID()}@example.invalid`,owner=await identity(email,'member');
+  const context=await browser.newContext({baseURL:'http://127.0.0.1:3000'});
+  try {
+    expect((await session(context).auth.signInWithPassword({email,password})).error).toBeNull();
+    const issuedAt=new Date().toISOString(),expiresAt=new Date(Date.now()+10*60000).toISOString();
+    const canonical=(value:unknown):unknown=>Array.isArray(value)?value.map(canonical):value&&typeof value==='object'
+      ?Object.fromEntries(Object.entries(value).sort(([a],[b])=>a.localeCompare(b)).map(([key,child])=>[key,canonical(child)])):value;
+    const seed=async(scoped:boolean)=>{
+      const id=randomUUID(),unsigned={version:'1.0',sessionId:`trs_${randomUUID()}`,useCase:'Approve an isolated synthetic action',
+        toolkit:'slack',toolSlug:'SLACK_DELETE_MESSAGE',arguments:{channel:'visible-fixture-channel',message:'visible-fixture-message',api_key:'SYNTHETIC_UI_SECRET_CANARY'},
+        summary:'Delete the isolated synthetic message',risk:'destructive',requiresConfirmation:true,requiredScopes:[],scopeRequirements:null,
+        ...(scoped?{authority:{version:'1',userId:owner,tenantId:owner,connectedAccountId:'visible-fixture-account',actionClass:'DELETE',projectId:null,runId:null,
+          issuedAt,expiresAt,nonce:randomUUID(),maxSpendMicroUsd:null,currency:null}}:{})};
+      const digest=createHash('sha256').update(JSON.stringify(canonical(unsigned))).digest('hex');
+      expect((await admin.from('business_action_confirmations').insert({id,user_id:owner,status:'pending',plan:{...unsigned,planDigest:digest},
+        plan_digest:digest,summary:unsigned.summary,toolkit:unsigned.toolkit,risk:unsigned.risk,expires_at:expiresAt})).error).toBeNull();
+      return{id,digest};
+    };
+    const scoped=await seed(true),page=await context.newPage();
+    await page.goto(`/dashboard/actions/confirm/${scoped.id}`);
+    const approval=page.getByRole('region',{name:'Exact action approval'});
+    await expect(approval).toBeVisible({timeout:30000});
+    await expect(approval).toContainText('visible-fixture-account');await expect(approval).toContainText('visible-fixture-channel');
+    await expect(approval).toContainText(scoped.digest);await expect(approval).toContainText('[REDACTED]');
+    await expect(page.locator('body')).not.toContainText('SYNTHETIC_UI_SECRET_CANARY');
+    await expect(page.getByRole('button',{name:'Confirm action',exact:true})).toBeEnabled();
+    // Do not click confirm or contact any external provider. Cancellation is a
+    // real owner-scoped write against this disposable fixture only.
+    await page.getByRole('button',{name:'Cancel',exact:true}).click();
+    await expect(page.getByText('cancelled',{exact:true})).toBeVisible();
+    const persisted=await admin.from('business_action_confirmations').select('status,effect_started_at,effect_receipt').eq('id',scoped.id).single();
+    expect(persisted.error).toBeNull();expect(persisted.data).toEqual({status:'cancelled',effect_started_at:null,effect_receipt:null});
+    const legacy=await seed(false);await page.goto(`/dashboard/actions/confirm/${legacy.id}`);
+    await expect(page.getByRole('alert')).toContainText('needs to be prepared again');
+    await expect(page.getByRole('button',{name:'Confirm action',exact:true})).toBeDisabled();
+  } finally {await context.close();}
+});
 test('real founder email, server role and TOTP AAL2 gate HTML/RSC without a client bypass',async({browser})=>{
   test.setTimeout(180000);
   const context=await browser.newContext({baseURL:'http://127.0.0.1:3000'});

@@ -69,5 +69,11 @@ test('all twelve server policies exist, read is lighter, and financial authority
   for (const actionClass of ['TRANSFER_OR_FINANCIAL', 'PURCHASE_OR_SPEND'] as const) {
     const f = fixture(); f.scope.actionClass = actionClass; f.claim.scopeDigest = preparedActionDigest(f.scope);
     await assert.rejects(executeAuthorizedAction(f, async () => assert.fail('No effect allowed without spend authority')), { code: 'AUTHORITY_SPEND_BINDING_REQUIRED' });
+    f.scope.maxSpendMicroUsd = '1000000'; f.scope.currency = 'USD'; f.claim.scopeDigest = preparedActionDigest(f.scope);
+    await executeAuthorizedAction(f, async permit => consumeAuthorityPermit(permit, f.binding));
+    for (const amount of ['0', '-1', '1.5', '01', '1e6', '99999999999999999']) {
+      f.scope.maxSpendMicroUsd = amount; f.claim.scopeDigest = preparedActionDigest(f.scope);
+      await assert.rejects(executeAuthorizedAction(f, async () => assert.fail('Invalid monetary binding')), { code: 'AUTHORITY_SPEND_BINDING_REQUIRED' });
+    }
   }
 });

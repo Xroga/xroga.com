@@ -6,7 +6,8 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { discoverPersistenceCalls } from './audit-tenant-policies.mjs';
 const accepted = 'a21a82029276d38d53c9e17c580a15f57b653fe3';
-const paths = ['backend/src/routes/phase1.ts', 'backend/src/services/integrations/businessActionConfirmations.ts'];
+const paths = ['backend/src/routes/phase1.ts', 'backend/src/services/integrations/businessActionConfirmations.ts',
+  'backend/src/services/integrations/credentialEnvelope.ts', 'frontend/src/lib/formatAiMarkdown.tsx'];
 const read = path => readFileSync(path, 'utf8').replace(/\r\n/g, '\n');
 const historical = path => execFileSync('git', ['show', `${accepted}:${path}`], { encoding: 'utf8', maxBuffer: 12 * 1024 * 1024 }).replace(/\r\n/g, '\n');
 const hash = value => createHash('sha256').update(value).digest('hex');
@@ -28,6 +29,10 @@ const note = 'Phase3 extends the existing confirmation boundary with issued-acto
 const changed = original.reviews.filter(r => paths.includes(r.path)).map(record => ({ ...record,
   sourceSha256: sourceHashes.get(record.path), callIds: record.callIds.map(id => { assert.ok(remappings.has(id)); return remappings.get(id); }),
   reason: `${record.reason} ${note}`,
+  ...(record.path.endsWith('/credentialEnvelope.ts') ? { evidence: [
+    { path: record.path, marker: 'export function sealCredentialEnvelope' },
+    { path: record.path, marker: 'export function openCredentialEnvelope' },
+  ] } : {}),
   acceptedPhaseTwoReview: { sourceSha: accepted, sourceSha256: record.sourceSha256, callIds: record.callIds },
 }));
 for (const call of newCalls) {
@@ -40,15 +45,21 @@ for (const call of newCalls) {
     phase3Requirements: ['XB01-C008-AC02', 'XB01-C008-AC07'],
   });
 }
-const digestPath = 'backend/src/security/authority/digest.ts';
-const pureCalls = discoverPersistenceCalls(digestPath, read(digestPath));
-assert.equal(pureCalls.length, 3);
-changed.push({ path: digestPath, sourceSha256: hash(read(digestPath)), callIds: pureCalls.map(c => c.id), disposition: 'NOT_PERSISTENCE',
-  authority: 'Inspected the exact receivers in canonicalAuthorityValue. Two Buffer.from calls round-trip UTF8 strings and property names, and one Array.from creates a dense local JSON array. None receives an admin client, resource row or storage bucket.',
-  reason: 'Only these three built-in in-memory conversions are excluded from persistence. This does not certify a provider effect, a database write, a tenant-bound caller elsewhere or any Command008 authority criterion.',
-  evidence: [{ path: digestPath, marker: 'export function canonicalAuthorityValue' }],
-});
-current.reviews = [...current.reviews.filter(r => ![...paths, digestPath].includes(r.path)), ...changed];
+const pureModules = [
+  ['backend/src/security/authority/digest.ts', 'export function canonicalAuthorityValue'],
+  ['backend/src/services/integrations/cryptoProvider.ts', 'export class DevelopmentCryptoProvider'],
+  ['backend/src/services/integrations/credentialVault.ts', 'export class CredentialVault'],
+];
+for (const [path, marker] of pureModules) {
+  const calls = discoverPersistenceCalls(path, read(path));
+  assert.ok(calls.length > 0 && calls.every(c => c.kind === 'TABLE_OR_BUCKET_CANDIDATE'));
+  changed.push({ path, sourceSha256: hash(read(path)), callIds: calls.map(c => c.id), disposition: 'NOT_PERSISTENCE',
+    authority: 'Inspected each exact receiver in this module. Buffer.from and Array.from perform only local UTF8/base64 encoding, authenticated crypto buffer construction, JSON envelope encoding or dense local array construction. No receiver is a database client, bucket or provider transport.',
+    reason: 'Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.',
+    evidence: [{ path, marker }],
+  });
+}
+current.reviews = [...current.reviews.filter(r => ![...paths, ...pureModules.map(([p]) => p)].includes(r.path)), ...changed];
 const decisionsPath = 'docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json';
 const decisions = JSON.parse(read(decisionsPath));
 const originalDecisions = JSON.parse(historical(decisionsPath));

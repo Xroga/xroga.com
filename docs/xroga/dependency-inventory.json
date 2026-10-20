@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+  "source_sha": "f011d7e1a8e29970e883b921e2a36fa672a8107a",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -7939,6 +7939,7 @@
       "consuming_sources": [
         "backend/src/sandbox/flyMachineSandbox.ts",
         "backend/src/scripts/verifyFlySandboxBrowser.ts",
+        "backend/src/services/integrations/cryptoProvider.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.ts"
       ],
       "environments": [
@@ -9343,6 +9344,7 @@
         "backend/src/ai/runStore.ts",
         "backend/src/index.ts",
         "backend/src/routes/github.ts",
+        "backend/src/services/integrations/cryptoProvider.ts",
         "backend/src/services/integrations/userProviderKeys.ts",
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/services/publish/chromeWebStore.ts",
@@ -10636,6 +10638,7 @@
     {
       "name": "VERCEL_ENV",
       "consuming_sources": [
+        "backend/src/services/integrations/cryptoProvider.ts",
         "frontend/src/app/api/release/route.ts",
         "frontend/src/app/robots.ts",
         "frontend/src/lib/seo.ts",
@@ -12068,7 +12071,7 @@
     },
     {
       "path": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "957cdf0f75f7dc516b3d9fcab1c0df908d27a41622fc2df1eb3dc5e07301255d"
+      "sha256": "48b77618e63bb78afbc744d3a467d0dcf02758f13f0aec8e3628a6e322539ce1"
     },
     {
       "path": "Dockerfile.api",
@@ -13112,7 +13115,7 @@
     },
     {
       "path": "backend/src/operations/operationsEngine.ts",
-      "sha256": "c086fafdb62b3b77db32087f67978d4763b3ed05c7087a87a4fb043152150e17"
+      "sha256": "874eccd05ce00b093c38f1c5b84c434430eb6ed1cdaefac945ea70e330c471c4"
     },
     {
       "path": "backend/src/operations/operationsService.ts",
@@ -13304,7 +13307,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sha256": "f6f085d6c1e9719fed0a8f8de910b78ccd3ace7d193b1b02bcbfe69749eef32b"
+      "sha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b"
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
@@ -13444,7 +13447,7 @@
     },
     {
       "path": "backend/src/security/businessAuthority.local.integration.ts",
-      "sha256": "a1bc1affaa78adafcd13d65791e5c2f242dd2f79535e29ef4a40a3d285818552"
+      "sha256": "9b3195e648555bc2b3815d4b835202d649ed95d93a81c87ebfc1950fda57dff1"
     },
     {
       "path": "backend/src/security/businessConfirmationClaim.local.integration.ts",
@@ -13684,11 +13687,11 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "340e2fdc37ccbfcbd800825356402d408a898a5d7da8bfa6d23695c297fbab08"
+      "sha256": "ffd706b8deeab7d04891ad77c1e5890ff816829f1c0ee73f31ff206c7aaf325b"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515"
+      "sha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
@@ -13696,15 +13699,27 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "27ef6189380cf137725edf6d87f0196e36464a241d759ce85372a6669f4b2575"
+      "sha256": "927ae82aefde6fc54744c0c076b94cf2e2a5a2f661bd36308ae704ddabd1bb56"
+    },
+    {
+      "path": "backend/src/services/integrations/composioNamespace.ts",
+      "sha256": "00cf7ae9d090526049bf09cf6727f538e702b2f5e8b9124ee98a88d1a5a31de1"
     },
     {
       "path": "backend/src/services/integrations/credentialEnvelope.ts",
-      "sha256": "76f0508b50bd9ba4548c90fbb7ed5214421639bef2895f6107cafb4fa72ff770"
+      "sha256": "df3f11e4de24d0d787671e59fae7bb1e5f27180d5d6fdba1107944d3735a6fca"
     },
     {
       "path": "backend/src/services/integrations/credentialStorageBucket.ts",
       "sha256": "691ccba36714dcb82060acdb4dc296e7e0a63b12540e6f1fe98e770a30a1c381"
+    },
+    {
+      "path": "backend/src/services/integrations/credentialVault.ts",
+      "sha256": "6b08075a76fa934025384ddb42e670e15d0685f309655c8f32422baf01d35fc0"
+    },
+    {
+      "path": "backend/src/services/integrations/cryptoProvider.ts",
+      "sha256": "a4fb326b9cf7382a89649bf05552b4222ed5924397cf1b14a268999ffa721fb9"
     },
     {
       "path": "backend/src/services/integrations/githubAtomicTransport.ts",
@@ -14272,7 +14287,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/actions/confirm/[id]/page.tsx",
-      "sha256": "5dcb295c943ed9e77166a5eef1d67a8e3879a7764b70984177889ae5c32009ff"
+      "sha256": "332493252cd03e355b5465a7344b7116272656c2ad12adfd114d06c556d5da80"
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/analytics/page.tsx",
@@ -15864,7 +15879,7 @@
     },
     {
       "path": "frontend/src/components/integrations/PluginPermissionControl.tsx",
-      "sha256": "00e88b8ebbf363bd0e48083e961f577ca599677f165110695b5241f1a6b5dd1b"
+      "sha256": "faad35d80066e1001a40e8b7494d8858badbf043dc0a8c3158813a805166e2d1"
     },
     {
       "path": "frontend/src/components/integrations/SupabaseConnectPanel.tsx",
@@ -17036,7 +17051,7 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "dd9715b63eeca3a39f7b82cb45d6520ed8aedecadc5b7d069f2ba73fc5fba8ac"
+      "sha256": "1ee3a576071bee8f2409a79f441e68c11e0aae9fa4e936cc224e92cd14434990"
     },
     {
       "path": "frontend/src/lib/gameBuilderContent.ts",
@@ -19461,14 +19476,14 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/businessAuthority.local.integration.ts",
-      "line": 66,
+      "line": 69,
       "credentialsInUrl": false
     },
     {
       "hostname": "backend.composio.dev",
       "protocol": "https:",
       "path": "backend/src/security/businessAuthority.local.integration.ts",
-      "line": 67,
+      "line": 70,
       "credentialsInUrl": false
     },
     {
@@ -20231,7 +20246,7 @@
       "hostname": "backend.composio.dev",
       "protocol": "https:",
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 6,
+      "line": 9,
       "credentialsInUrl": false
     },
     {
@@ -25551,21 +25566,21 @@
     },
     {
       "path": "backend/src/operations/operationsEngine.ts",
-      "line": 135,
+      "line": 137,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/operations/operationsEngine.ts",
-      "line": 136,
+      "line": 138,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/operations/operationsEngine.ts",
-      "line": 169,
+      "line": 171,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26468,21 +26483,21 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 622,
+      "line": 619,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1111,
+      "line": 1108,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1137,
+      "line": 1134,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26524,29 +26539,36 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 671,
+      "line": 677,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1255,
+      "line": 1213,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1284,
+      "line": 1242,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1891,
+      "line": 1849,
       "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/cryptoProvider.ts",
+      "line": 42,
+      "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },

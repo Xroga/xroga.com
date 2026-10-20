@@ -122,7 +122,9 @@ test('current plugin policy promotes routine writes to digest-bound pending conf
   const { planDigest: _digest, ...base } = fixture();
   const unsigned = { ...base, toolSlug: 'SLACK_SEND_MESSAGE', useCase: 'Send selected fixture message', summary: 'Send fixture message', risk: 'write' as const, requiresConfirmation: false, requiredScopes: ['fixture.write'] };
   const plan = { ...unsigned, planDigest: createHash('sha256').update(JSON.stringify(canonical(unsigned))).digest('hex') };
-  for (mode of ['always_ask', 'read_only', 'outage']) {
+  mode = 'read_only';
+  await assert.rejects(executePreparedBusinessAction({ userId: owner, plan, authorization: { explicitUserAuthorization: true, confirmedHighRisk: true } }), { code: 'BUSINESS_ACTION_READ_ONLY' });
+  for (mode of ['always_ask', 'full_access', 'outage']) {
     const result = await executePreparedBusinessAction({ userId: owner, plan, authorization: { explicitUserAuthorization: true } });
     assert.equal(result.status, 'confirmation_required');
     if (result.status !== 'confirmation_required') throw new Error('Expected pending confirmation');
@@ -132,10 +134,10 @@ test('current plugin policy promotes routine writes to digest-bound pending conf
     assert.equal(verifyPlanDigest(result.plan), true);
     assert.equal((await createBusinessActionConfirmation(owner, result.plan)).status, 'pending');
     // Reusing the promoted plan without an affirmative confirmation still prompts.
-    const replay = await executePreparedBusinessAction({ userId: owner, plan: result.plan, authorization: { explicitUserAuthorization: true } });
+    const replay = await executePreparedBusinessAction({ userId: owner, plan: result.plan, authorization: { explicitUserAuthorization: true, ...(mode === 'full_access' ? { confirmedHighRisk: true as const } : {}) } });
     assert.equal(replay.status, 'confirmation_required');
     await assert.rejects(executePreparedBusinessAction({ userId: owner, plan: { ...result.plan, requiresConfirmation: false }, authorization: { explicitUserAuthorization: true } }), { code: 'BUSINESS_ACTION_PLAN_CHANGED' });
   }
   assert.equal(inserted, 3);
-  assert.equal(metadataCalls, 6);
+  assert.equal(metadataCalls, 7);
 });

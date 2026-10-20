@@ -53,6 +53,7 @@ const outputs=[
   'docs/xroga/security/caller-reviews.json',
   'docs/xroga/security/tenant-invariant-obligations.json',
   'docs/xroga/security/privileged-callers.json','docs/xroga/security/rls-audit.md',
+  'docs/xroga/security/credential-usage-audit.json',
   'docs/xroga/current-state.json','docs/xroga/current-state-schema.json','docs/xroga/current-state.md','docs/xroga/blockers.md',
   'docs/xroga/dependency-inventory.json','docs/xroga/dependency-inventory.schema.json',
   'docs/xroga/deployment-topology.md','docs/xroga/deployment-topology.mmd','docs/xroga/runtime-contract.md','docs/xroga/secret-inventory.md',
@@ -88,6 +89,7 @@ export function main() {
   // still fail; all original baseline stages run after this bounded projection.
   for(const args of [
     ['scripts/security/audit-tenant-policies.mjs','--write'],
+    ['scripts/security/audit-credential-usage.mjs','--write'],
     ['scripts/xroga/runtime-inventory.mjs'],['scripts/xroga/inventory.mjs','--refresh'],
     ['scripts/xroga/reconcile-requirements.mjs'],
   ])execFileSync(process.execPath,args,{cwd:root,stdio:'inherit'});

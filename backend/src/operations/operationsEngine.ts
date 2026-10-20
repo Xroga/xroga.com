@@ -39,15 +39,17 @@ const SENSITIVE = [
   /(?:password|token|secret|api[-_]?key|authorization|cookie)\s*[:=]\s*[^\s,;"']+/gi,
 ];
 
-export function redactOperationsValue(value: unknown): unknown {
+export function redactOperationsValue(value: unknown, profile: 'audit' | 'tool_output' = 'audit'): unknown {
   if (typeof value === 'string') return SENSITIVE.reduce((text, pattern) => text.replace(pattern, '[REDACTED]'), value);
-  if (Array.isArray(value)) return value.map(redactOperationsValue);
+  if (Array.isArray(value)) return value.map(item => redactOperationsValue(item, profile));
   if (value && typeof value === 'object') {
     return Object.fromEntries(Object.entries(value).map(([key, item]) => [
       key,
-      /password|token|secret|key|authorization|cookie|connection|string|url/i.test(key) && typeof item === 'string'
+      (profile === 'tool_output'
+        ? /password|token|secret|api[-_]?key|private[-_]?key|authorization|cookie|credential|connection[-_]?string|^key$/i.test(key)
+        : /password|token|secret|key|authorization|cookie|connection|string|url/i.test(key) && typeof item === 'string')
         ? '[REDACTED]'
-        : redactOperationsValue(item),
+        : redactOperationsValue(item, profile),
     ]));
   }
   return value;

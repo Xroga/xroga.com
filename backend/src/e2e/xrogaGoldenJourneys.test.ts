@@ -23,10 +23,10 @@ const OWNER = '11111111-1111-4111-8111-111111111111';
 const OUTSIDER = '22222222-2222-4222-8222-222222222222';
 const SESSION = 'trs_golden_fixture';
 const TOOL = 'SLACK_DELETE_MESSAGE';
-type Mode = 'success' | 'failure' | 'timeout' | 'empty';
+type Mode = 'success' | 'failure' | 'timeout' | 'empty' | 'input_required' | 'incomplete' | 'malformed';
 
 /** Intercepts actual adapter calls, not a replacement runtime. Never forwards a request. */
-function providerStub(t: TestContext, mode: Mode = 'success', connected = false) {
+function providerStub(t: TestContext, mode: Mode = 'success', connected = false, slug = TOOL) {
   const previous = new Map(['COMPOSIO_API_KEY','SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','SUPABASE_JWT_SECRET'].map(key=>[key,process.env[key]]));
   process.env.COMPOSIO_API_KEY = 'golden-test-canary-not-a-real-key';
   delete process.env.SUPABASE_SERVICE_ROLE_KEY; delete process.env.SUPABASE_URL; delete process.env.SUPABASE_JWT_SECRET;
@@ -38,12 +38,16 @@ function providerStub(t: TestContext, mode: Mode = 'success', connected = false)
     const path=url.pathname; paths.push(path);
     const response=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json'}});
     if(path.endsWith('/execute')) {
-      assert.equal(JSON.parse(String(init?.body)).account,'fixture-account-A','Actual adapter must explicitly select the approved account');
+      if(slug===TOOL)assert.equal(JSON.parse(String(init?.body)).account,'fixture-account-A','Actual adapter must explicitly select the approved account');
       if(mode==='timeout')throw new DOMException('Fixture timeout','AbortError');
-      return response(mode==='failure'?{error:'SIMULATED_PROVIDER_FAILURE',data:null}:{data:{fixture:true,reference:'fixture-deletion-1'},error:null});
+      if(mode==='input_required')return response({result_type:'input_required',request_state:'SYNTHETIC_PROVIDER_STATE',input_requests:[],data:{}});
+      if(mode==='incomplete')return response({result_type:'failed',error:null,data:{}});
+      if(mode==='malformed')return response({unexpected:true});
+      return response(mode==='failure'?{error:'SIMULATED_PROVIDER_FAILURE',data:null}:{data:{fixture:true,reference:'fixture-deletion-1',
+        access_token:'SYNTHETIC_PROVIDER_RESULT_CREDENTIAL',credentials:{secret:'SYNTHETIC_NESTED_CREDENTIAL'},url:'https://example.invalid/fixture-result'},error:null});
     }
-    if(path.includes('/tools/'))return response({slug:TOOL,toolkit:{slug:'slack'},tags:['destructiveHint'],input_parameters:{type:'object'},scopes:['fixture.message.delete']});
-    if(path.endsWith('/search'))return response({tool_schemas:mode==='empty'?{}:{fixture:{tool_slug:TOOL,toolkit:'slack',description:'Fixture deletion only',input_schema:{type:'object'}}}});
+    if(path.includes('/tools/'))return response({slug,toolkit:{slug:'slack'},tags:[slug===TOOL?'destructiveHint':'readOnlyHint'],input_parameters:{type:'object'},scopes:['fixture.message.delete']});
+    if(path.endsWith('/search'))return response({tool_schemas:mode==='empty'?{}:{fixture:{tool_slug:slug,toolkit:'slack',description:'Synthetic fixture only',input_schema:{type:'object'}}}});
     if(path.endsWith('/toolkits'))return response({items:[{slug:'slack',name:'Slack',connected_account:connected?{id:'fixture-account-A',status:'ACTIVE'}:null}]});
     if(path.endsWith('/session')||path.endsWith(`/${SESSION}`))return response({session_id:SESSION,config:{user_id:`xroga:${OWNER}`,workbench:{enable:false,enable_proxy_execution:false},execute:{enable_multi_execute:false},tags:['readOnlyHint']}});
     assert.fail('Unexpected adapter path: no call is forwarded');
@@ -105,6 +109,11 @@ test('GJ exact prepared destructive action requires confirmation before the actu
   assert.equal(booleanOnly.status,'confirmation_required');
   const accepted=await executeFixture(plan);
   assert.equal(accepted.status,'success'); if(accepted.status==='success')assert.match(accepted.resultText,/fixture-deletion-1/);
+  if(accepted.status==='success'){
+    assert.doesNotMatch(accepted.resultText,/SYNTHETIC_PROVIDER_RESULT_CREDENTIAL|SYNTHETIC_NESTED_CREDENTIAL/);
+    assert.match(accepted.resultText,/https:\/\/example.invalid\/fixture-result/);
+    assert.notEqual(accepted.resultDigest,createHash('sha256').update(JSON.stringify(JSON.parse(accepted.resultText))).digest('hex'),'Receipt binds the full original response, not just its redacted projection');
+  }
   assert.equal(paths.filter(path=>path.endsWith('/execute')).length,1);
   // This does not certify durable confirmation consumption/replay: that needs an isolated DB.
 });
@@ -119,6 +128,15 @@ test('GJ changed or disconnected account blocks the real action adapter before d
   const paths=providerStub(t,'success',false);
   await assert.rejects(executeFixture(),code('COMPOSIO_ACTION_ACCOUNT_CHANGED'));
   assert.equal(paths.filter(path=>path.endsWith('/execute')).length,0);
+});
+
+test('GJ legitimate read uses no write confirmation and strips provider credentials before a prompt or client can consume the result',async t=>{
+  const slug='SLACK_GET_MESSAGE',paths=providerStub(t,'success',true,slug);
+  const result=await executeComposioReadTool(OWNER,{sessionId:SESSION,useCase:'Read the isolated fixture message',toolSlug:slug,arguments:{message_id:'fixture-message'}});
+  assert.equal(result.error,undefined);assert.match(JSON.stringify(result.data),/fixture-deletion-1/);
+  assert.doesNotMatch(JSON.stringify(result),/SYNTHETIC_PROVIDER_RESULT_CREDENTIAL|SYNTHETIC_NESTED_CREDENTIAL/);
+  assert.match(JSON.stringify(result.data),/https:\/\/example.invalid\/fixture-result/);
+  assert.match(result.resultDigest!,/^[a-f0-9]{64}$/);assert.equal(paths.filter(path=>path.endsWith('/execute')).length,1);
 });
 
 test('GJ a forged permit fails before provider metadata or execution',async t=>{
@@ -139,6 +157,14 @@ test('GJ provider timeout is classified; uncertain writes are not blindly replay
   const paths=providerStub(t,'timeout',true); await assert.rejects(executeFixture(),code('COMPOSIO_TIMEOUT'));
   assert.equal(paths.filter(path=>path.endsWith('/execute')).length,1);
 });
+
+for(const mode of ['input_required','incomplete','malformed'] as const){
+  test(`GJ ${mode} provider response cannot be recorded as completion or automatically resubmitted`,async t=>{
+    const paths=providerStub(t,mode,true);
+    await assert.rejects(executeFixture(),code('COMPOSIO_EXECUTION_NOT_COMPLETED'));
+    assert.equal(paths.filter(path=>path.endsWith('/execute')).length,1);
+  });
+}
 test('GJ false-success and runtime diagnostic leakage are refused by existing output helpers',()=>{
   assert.equal(artifactStatusFor('completed',false,2),'blocked');
   assert.equal(artifactStatusFor('failed',false,0),'failed');

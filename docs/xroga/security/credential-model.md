@@ -1,0 +1,21 @@
+# Canonical vault envelope, caller cutover pending
+
+`services/integrations/credentialVault.ts` extends the existing authenticated credential codec. It is real cryptographic implementation, not yet the storage boundary used by all production callers. No complete Command 009 criterion or live managed KMS claim is made here.
+
+Each record uses a random 256-bit data key. The injected CryptoProvider wraps that key. Authenticated associated data binds exact tenant, owner, provider, connected account or logical credential slot, credential type, record ID, revision and use scope. The vault container is version 3. Existing v2 provider/runtime envelopes remain readable by their unchanged domain contract and cannot be substituted for the vault domain.
+
+The vault requires an original issued TenantContext. It clones the identity before waiting for the key provider. It authenticates ciphertext, key version and wrapped-key context before returning a server-private value. Rotation re-encrypts to a new revision while preserving all other identity fields. Database revision CAS, revocation and conditional migration remain the existing stores' responsibility and are not fabricated by the codec.
+
+DevelopmentCryptoProvider accepts an explicitly supplied 32-byte key ring. It never reads a service-role key, JWT secret, password or fixed default key. It rejects production, unknown runtime mode and production-host flags, both at construction and use. Key buffers under JavaScript control are cleared. JavaScript strings and native crypto internals cannot be promised secure memory erasure.
+
+Nine focused tests cover old envelope compatibility, all identity substitutions, ciphertext/tag/wrapped-key tampering, version rejection, rotation, async mutation, key-buffer clearing, error sanitization and development-provider refusal. These tests do not prove database cutover or production custody.
+
+Production managed key provider is UNSPECIFIED. There is an interface, no selected provider implementation, no provisioned resource, no real wrapping/unwrapping receipt and no verified production identity. Do not replace this blocker with the development implementation or automatically enable billing.
+
+Known enabled old writers still require migration: API/provider key saves and Supabase bundles, GitHub OAuth rows and legacy mirrors, Vercel OAuth/personal token refresh paths, Supabase OAuth access/refresh, CWS tokens and runtime project secrets. Their existing ownership, revision, tombstone and one-use PKCE protections must be preserved. The original broad caller inventory and actual consumers still need their bounded Phase 3 reconciliation. This list identifies known paths and is not a falsely complete zero-legacy audit.
+
+`credential-usage-audit.json` now provides a source-bound AST snapshot with119 candidates grouped into38 source files. It includes21 possible persistence writes and94 private consumer calls, plus4 lifecycle RPC calls. Metadata-only preferences and empty revocation markers are deliberately retained for exact semantic reconciliation rather than mislabeled as vulnerabilities. It reports zero static backend importers of the new canonical vault. Naming an envelope file does not count as activating it.
+
+The shared Composio result boundary previously exposed credential-bearing fields to downstream result consumers. A synthetic canary test reproduced that behavior. The boundary now redacts both read and write results before prompts or clients can consume them, while retaining ordinary result URLs and a private digest of complete pre-redaction data. This is a demonstrated scoped fix, not proof that every other prompt or endpoint is clean.
+
+An existing-platform option was researched in the official [Supabase Vault documentation](https://supabase.com/docs/guides/database/vault). It describes managed per-project root encryption and a decrypted-secret interface. No production root key was requested or exported. Its suitability, root-key version/rotation behavior, permissions and actual zero-cost availability are not verified for Xroga. It has not been selected or implemented as an approved production adapter. The original contract requires an actual approved selection before that adapter is claimed complete.

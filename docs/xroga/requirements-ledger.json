@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+  "source_sha": "f011d7e1a8e29970e883b921e2a36fa672a8107a",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -3449,6 +3449,8 @@
         "frontend/src/app/cybersecurity/CybersecurityLanding.tsx",
         "frontend/src/app/cybersecurity/page.tsx",
         "frontend/src/app/security/page.tsx",
+        "scripts/security/attest-business-authority-receipt.mjs",
+        "scripts/security/audit-credential-usage.mjs",
         "scripts/security/audit-tenant-policies.mjs",
         "scripts/security/caller-reviews.mjs",
         "scripts/security/collect-local-security-logs.mjs",

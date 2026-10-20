@@ -1892,7 +1892,7 @@ router.post(
             result.confirmation,
 
           response:
-            `Done — ${result.confirmation.summary}`,
+            `The provider reported completion: ${result.confirmation.summary}. Receipt ${result.confirmation.id}.`,
 
           toolkit:
             result.execution

@@ -1,17 +1,17 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "a8c2ad1755725500ad4ced74eb3c2926fdc1b9337057a895382180aa07a29734",
+  "reviewRegistrySha256": "18d785877b2966443f8f385c44cae9e7843ce8078ebcd31a8db0339587ffbcc9",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 162,
-    "persistenceCandidates": 642,
+    "persistenceCandidates": 651,
     "ownerPredicateCandidates": 142,
     "reviewRequired": 0,
-    "reviewedCandidates": 642,
+    "reviewedCandidates": 651,
     "unresolvedSafetyCandidates": 3,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 18
@@ -20,7 +20,7 @@
     "REVIEW_REQUIRED": 0,
     "SCOPED_BOUNDARY": 456,
     "NARROW_EXCEPTION": 40,
-    "NOT_PERSISTENCE": 143,
+    "NOT_PERSISTENCE": 152,
     "REVIEWED_GAP": 3
   },
   "acceptance": {
@@ -28,8 +28,8 @@
     "result": "BLOCKED",
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
-    "verifiedCandidateBoundaries": 139,
-    "unresolvedCandidateBoundaries": 503,
+    "verifiedCandidateBoundaries": 133,
+    "unresolvedCandidateBoundaries": 518,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -165,6 +165,50 @@
       {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-95daee9f388f2274"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-d0b4623166d38a36"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-d0b4623166d38a36"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-d0b4623166d38a36"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-d0b4623166d38a36"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-d0b4623166d38a36"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-d0b4623166d38a36"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-d0b4623166d38a36"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-d0b4623166d38a36"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-d0b4623166d38a36"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-d0b4623166d38a36"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-d0b4623166d38a36"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -441,6 +485,18 @@
       {
         "code": "STALE_NON_PERSISTENCE_REVIEW",
         "id": "OB-89f15381179382bc"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-fc10f05d3f3b6a53"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-fc10f05d3f3b6a53"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-fc10f05d3f3b6a53"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -904,75 +960,135 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "dc9d01d4c27358caf5da"
+        "id": "d9d2547770aa24b0841c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "06e761f5c6b91187e0f1"
+        "id": "d58b6fdbfd8c7bd723ea"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "b0f96a98ef22f4219868"
+        "id": "0b783f584a470b13209e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8f11aa76ec30ae75114b"
+        "id": "dd1e78725f475509a9cd"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "092adf323ed9ea215868"
+        "id": "7f2df45a035153bcbf55"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c11d29e029639fe48d96"
+        "id": "408a89ba73f0f4572071"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "311957bf5928f85dd670"
+        "id": "456ab4492b8fe9318933"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "fdca02ff88285b1eb979"
+        "id": "138a7b9c83878cb3dc82"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "196f316ea6227ab121fb"
+        "id": "9ad5f0d15e0e54d3d953"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "fb28901061947a3719a7"
+        "id": "b3a2b5af5ead58408dba"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "664690c809a2f073f29e"
+        "id": "2de50011885a1231ce06"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "0722421da2174e4db49b"
+        "id": "9393c7ce95c3aee1b590"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8a33cc576605814a9b22"
+        "id": "3e7f7e1fcb903f426f23"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "731bb89e664ef34ec003"
+        "id": "1638b66c83949be618af"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d51fd401ac5484aff801"
+        "id": "a48d99cb6019142baf77"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "2697b20e243c70e7d302"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "36e68319daa5aa4c7597"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "1f2c229d57afaf5c5df9"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "82a2d0b9bd4b43a35c6d"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "46dc8bafa13b56836727"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "7860da82d57b690e93e2"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "da2a433a95fc5813e844"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "d078eb13de63ed8a13ec"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "b7eec6bff4d584c2f8e3"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "0fe1ab99663e5a45119b"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "b2e594f8a8ab03974c20"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "b01cc8fee9cd5c21c7d5"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "e71496fca6acb89845e0"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "819568d821e493406c08"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "bdf5ffe6c8a34bf8d3af"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "196f316ea6227ab121fb"
+        "id": "9ad5f0d15e0e54d3d953"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "fb28901061947a3719a7"
+        "id": "b3a2b5af5ead58408dba"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "d51fd401ac5484aff801"
+        "id": "a48d99cb6019142baf77"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -2248,55 +2364,111 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "dc9d01d4c27358caf5da"
+        "id": "d9d2547770aa24b0841c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "06e761f5c6b91187e0f1"
+        "id": "d58b6fdbfd8c7bd723ea"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "b0f96a98ef22f4219868"
+        "id": "0b783f584a470b13209e"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "8f11aa76ec30ae75114b"
+        "id": "dd1e78725f475509a9cd"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "092adf323ed9ea215868"
+        "id": "7f2df45a035153bcbf55"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "c11d29e029639fe48d96"
+        "id": "408a89ba73f0f4572071"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "311957bf5928f85dd670"
+        "id": "456ab4492b8fe9318933"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "fdca02ff88285b1eb979"
+        "id": "138a7b9c83878cb3dc82"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "664690c809a2f073f29e"
+        "id": "2de50011885a1231ce06"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "0722421da2174e4db49b"
+        "id": "9393c7ce95c3aee1b590"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "8a33cc576605814a9b22"
+        "id": "3e7f7e1fcb903f426f23"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "731bb89e664ef34ec003"
+        "id": "1638b66c83949be618af"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "2697b20e243c70e7d302"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "36e68319daa5aa4c7597"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "1f2c229d57afaf5c5df9"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "82a2d0b9bd4b43a35c6d"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "46dc8bafa13b56836727"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "111e6abf2b97a49b75f3"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "7860da82d57b690e93e2"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "da2a433a95fc5813e844"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "d078eb13de63ed8a13ec"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "b7eec6bff4d584c2f8e3"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "0fe1ab99663e5a45119b"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "b2e594f8a8ab03974c20"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "b01cc8fee9cd5c21c7d5"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "e71496fca6acb89845e0"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "819568d821e493406c08"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -2968,6 +3140,10 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "bdf5ffe6c8a34bf8d3af"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "664f0e94c6fd847fb7d1"
       },
       {
@@ -2977,12 +3153,12 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 642,
-    "structuredVerified": 139,
-    "structuredUnproven": 503,
+    "currentCallers": 651,
+    "structuredVerified": 133,
+    "structuredUnproven": 518,
     "manualUnresolved": 3,
-    "manualUnsupported": 500,
-    "agreedVerified": 139,
+    "manualUnsupported": 515,
+    "agreedVerified": 133,
     "proofAwaitingManualReconciliation": 0
   },
   "callers": [
@@ -9777,7 +9953,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "f6f085d6c1e9719fed0a8f8de910b78ccd3ace7d193b1b02bcbfe69749eef32b",
+      "sourceSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -10541,8 +10717,8 @@
       "review": "NOT_PERSISTENCE",
       "sourceSha256": "efc0f73d537710cea08c14ab5e5d232b611f6f951cc2f8b86a0f50d3a9322ee5",
       "semanticReview": {
-        "authority": "Inspected the exact receivers in canonicalAuthorityValue. Two Buffer.from calls round-trip UTF8 strings and property names, and one Array.from creates a dense local JSON array. None receives an admin client, resource row or storage bucket.",
-        "reason": "Only these three built-in in-memory conversions are excluded from persistence. This does not certify a provider effect, a database write, a tenant-bound caller elsewhere or any Command008 authority criterion.",
+        "authority": "Inspected each exact receiver in this module. Buffer.from and Array.from perform only local UTF8/base64 encoding, authenticated crypto buffer construction, JSON envelope encoding or dense local array construction. No receiver is a database client, bucket or provider transport.",
+        "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
         "evidence": [
           {
             "path": "backend/src/security/authority/digest.ts",
@@ -10562,8 +10738,8 @@
       "review": "NOT_PERSISTENCE",
       "sourceSha256": "efc0f73d537710cea08c14ab5e5d232b611f6f951cc2f8b86a0f50d3a9322ee5",
       "semanticReview": {
-        "authority": "Inspected the exact receivers in canonicalAuthorityValue. Two Buffer.from calls round-trip UTF8 strings and property names, and one Array.from creates a dense local JSON array. None receives an admin client, resource row or storage bucket.",
-        "reason": "Only these three built-in in-memory conversions are excluded from persistence. This does not certify a provider effect, a database write, a tenant-bound caller elsewhere or any Command008 authority criterion.",
+        "authority": "Inspected each exact receiver in this module. Buffer.from and Array.from perform only local UTF8/base64 encoding, authenticated crypto buffer construction, JSON envelope encoding or dense local array construction. No receiver is a database client, bucket or provider transport.",
+        "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
         "evidence": [
           {
             "path": "backend/src/security/authority/digest.ts",
@@ -10583,8 +10759,8 @@
       "review": "NOT_PERSISTENCE",
       "sourceSha256": "efc0f73d537710cea08c14ab5e5d232b611f6f951cc2f8b86a0f50d3a9322ee5",
       "semanticReview": {
-        "authority": "Inspected the exact receivers in canonicalAuthorityValue. Two Buffer.from calls round-trip UTF8 strings and property names, and one Array.from creates a dense local JSON array. None receives an admin client, resource row or storage bucket.",
-        "reason": "Only these three built-in in-memory conversions are excluded from persistence. This does not certify a provider effect, a database write, a tenant-bound caller elsewhere or any Command008 authority criterion.",
+        "authority": "Inspected each exact receiver in this module. Buffer.from and Array.from perform only local UTF8/base64 encoding, authenticated crypto buffer construction, JSON envelope encoding or dense local array construction. No receiver is a database client, bucket or provider transport.",
+        "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
         "evidence": [
           {
             "path": "backend/src/security/authority/digest.ts",
@@ -11634,15 +11810,15 @@
       }
     },
     {
-      "id": "dc9d01d4c27358caf5da",
+      "id": "d9d2547770aa24b0841c",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 229,
+      "line": 249,
       "enclosing": "expireIfNeeded",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "semanticReview": {
         "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -11655,15 +11831,15 @@
       }
     },
     {
-      "id": "06e761f5c6b91187e0f1",
+      "id": "d58b6fdbfd8c7bd723ea",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 235,
+      "line": 255,
       "enclosing": "expireIfNeeded",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "semanticReview": {
         "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -11676,15 +11852,15 @@
       }
     },
     {
-      "id": "b0f96a98ef22f4219868",
+      "id": "0b783f584a470b13209e",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 311,
+      "line": 331,
       "enclosing": "createBusinessActionConfirmation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "semanticReview": {
         "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -11697,15 +11873,15 @@
       }
     },
     {
-      "id": "8f11aa76ec30ae75114b",
+      "id": "dd1e78725f475509a9cd",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 327,
+      "line": 347,
       "enclosing": "createBusinessActionConfirmation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "semanticReview": {
         "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -11718,15 +11894,15 @@
       }
     },
     {
-      "id": "092adf323ed9ea215868",
+      "id": "7f2df45a035153bcbf55",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 392,
+      "line": 409,
       "enclosing": "getBusinessActionConfirmation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "semanticReview": {
         "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -11739,15 +11915,15 @@
       }
     },
     {
-      "id": "c11d29e029639fe48d96",
+      "id": "408a89ba73f0f4572071",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 398,
+      "line": 415,
       "enclosing": "getBusinessActionConfirmation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "semanticReview": {
         "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -11760,15 +11936,15 @@
       }
     },
     {
-      "id": "311957bf5928f85dd670",
+      "id": "456ab4492b8fe9318933",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 473,
+      "line": 490,
       "enclosing": "cancelBusinessActionConfirmation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "semanticReview": {
         "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -11781,15 +11957,15 @@
       }
     },
     {
-      "id": "fdca02ff88285b1eb979",
+      "id": "138a7b9c83878cb3dc82",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 479,
+      "line": 496,
       "enclosing": "cancelBusinessActionConfirmation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "semanticReview": {
         "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -11802,15 +11978,15 @@
       }
     },
     {
-      "id": "196f316ea6227ab121fb",
+      "id": "9ad5f0d15e0e54d3d953",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 513,
+      "line": 530,
       "enclosing": "cancelClaimedBusinessActionConfirmation",
       "kind": "RPC_CANDIDATE",
       "target": "cancel_business_action_confirmation",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "semanticReview": {
         "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
         "reason": "New Phase3 dispatch and in-flight revocation obligations are retained as explicit missing proof, not invented vulnerabilities or current-source security certificates. Unit and synthetic SQL checks cannot replace real disposable concurrency and authenticated CI.",
@@ -11823,15 +11999,15 @@
       }
     },
     {
-      "id": "fb28901061947a3719a7",
+      "id": "b3a2b5af5ead58408dba",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 513,
+      "line": 530,
       "enclosing": "cancelClaimedBusinessActionConfirmation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "semanticReview": {
         "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
         "reason": "New Phase3 dispatch and in-flight revocation obligations are retained as explicit missing proof, not invented vulnerabilities or current-source security certificates. Unit and synthetic SQL checks cannot replace real disposable concurrency and authenticated CI.",
@@ -11844,15 +12020,15 @@
       }
     },
     {
-      "id": "664690c809a2f073f29e",
+      "id": "2de50011885a1231ce06",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 535,
+      "line": 556,
       "enclosing": "finishClaimedConfirmation",
       "kind": "RPC_CANDIDATE",
       "target": "finish_business_action_confirmation",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "semanticReview": {
         "authority": "Only the existing confirmed-action executor passes its original admin client, verified server owner and exact claimed row. Service-only terminal transaction locks owner/ID and compares full plan, display metadata, original expiry/creation and claimed_at before consumed/failed status, with immutable exact replay. No provider execution, lease extension or confirmation reuse.",
         "reason": "Fixed terminal-claim persistence boundary VERIFIED ataa1aad5c07c44cb907ff4432e1579ff79d08bd3d, disposable39119207485: actual held plan/claim changes reject before writes, opposite terminal outcomes admit one immutable winner, same-outcome replay retains its timestamp, expired original claims can record completion, rollback and browser-role denial pass. Runtime helper, SQL and fixture are unchanged. Loopback path rejects substituted/missing/outage terminal receipts without provider work and16 local SQL assertions/replay pass. Only terminal persistence is closed. Provider session authority, expiry before external execution and external-success crash reconciliation remain unresolved. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -11869,15 +12045,15 @@
       }
     },
     {
-      "id": "0722421da2174e4db49b",
+      "id": "9393c7ce95c3aee1b590",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 571,
+      "line": 596,
       "enclosing": "confirmBusinessAction",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "semanticReview": {
         "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -11890,15 +12066,15 @@
       }
     },
     {
-      "id": "8a33cc576605814a9b22",
+      "id": "3e7f7e1fcb903f426f23",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 577,
+      "line": 602,
       "enclosing": "confirmBusinessAction",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "semanticReview": {
         "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
         "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Ten exact original007 factory/metadata/claim-read sites. Actual canonical fixture creation and persisted owner/plan, safe own HTTP metadata, foreign/unsigned denial, concurrent cancellation/replay, own expiry, exact foreign retention and one safe failure from two concurrent malformed-digest confirmations close missing positive proof. Existing observed row-lock expiry/plan changes, browser denial, one-winner claim/finish and rollback are reused. This does not certify the external action adapter, connected-account consumer or complete008 authority from a failed execution fixture. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -11911,15 +12087,15 @@
       }
     },
     {
-      "id": "731bb89e664ef34ec003",
+      "id": "1638b66c83949be618af",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 678,
+      "line": 703,
       "enclosing": "confirmBusinessAction",
       "kind": "RPC_CANDIDATE",
       "target": "claim_business_action_confirmation",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "semanticReview": {
         "authority": "Authenticated phase1 confirmation route passes requireUserId and explicit confirmation UUID. The service reads owner-filtered plan and validates displayed metadata. Service-only claim locks the same owner/ID and compares full plan, digest, expiry, display metadata and pending state, then checks clock_timestamp after lock acquisition before marking executing.",
         "reason": "Fixed pending-confirmation claim boundary VERIFIED at e47030615e13f75045e4434cddcb1294f05095f3, disposable39114496584 and again2e752b76 run39117021162: actual two-client winner, expiry while blocked, same-digest full-plan mutation, foreign actor and browser-role denial pass. Claim invocation, SQL and real integration fixture are unchanged. New terminal persistence has a separate unresolved review. Loopback intent/outage tests and15 local SQL assertions/replay also pass. Only this owner/plan-bound claim is closed. Session-to-owner provider binding, displayed-intent acknowledgement and external-success crash recovery remain unresolved. No provider execution or whole business-action certification. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -11936,15 +12112,15 @@
       }
     },
     {
-      "id": "d51fd401ac5484aff801",
+      "id": "a48d99cb6019142baf77",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 754,
+      "line": 779,
       "enclosing": "confirmBusinessAction",
       "kind": "RPC_CANDIDATE",
       "target": "authorize_business_action_dispatch",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "semanticReview": {
         "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
         "reason": "New Phase3 dispatch and in-flight revocation obligations are retained as explicit missing proof, not invented vulnerabilities or current-source security certificates. Unit and synthetic SQL checks cannot replace real disposable concurrency and authenticated CI.",
@@ -11957,126 +12133,126 @@
       }
     },
     {
-      "id": "840920438b3c862c0e91",
+      "id": "2697b20e243c70e7d302",
       "path": "backend/src/services/integrations/credentialEnvelope.ts",
-      "line": 17,
+      "line": 19,
       "enclosing": "keyBytes",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "76f0508b50bd9ba4548c90fbb7ed5214421639bef2895f6107cafb4fa72ff770",
+      "sourceSha256": "df3f11e4de24d0d787671e59fae7bb1e5f27180d5d6fdba1107944d3735a6fca",
       "semanticReview": {
         "authority": "All five inspected receivers are Node Buffer.from binary conversion calls in the inactive synthetic-only credential codec, not Supabase, Storage or another persistence interface.",
-        "reason": "This excludes only five AST receiver false positives. Four synthetic codec tests cover context binding, key material, tampering and strict parsing. No production service imports this module. Vault integration, migration CAS, legacy cutover, KMS custody and full credential security remain unverified and gated.",
+        "reason": "This excludes only five AST receiver false positives. Four synthetic codec tests cover context binding, key material, tampering and strict parsing. No production service imports this module. Vault integration, migration CAS, legacy cutover, KMS custody and full credential security remain unverified and gated. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/credentialEnvelope.ts",
-            "marker": "Command 009 preparation only"
+            "marker": "export function sealCredentialEnvelope"
           },
           {
-            "path": "backend/src/services/integrations/credentialEnvelope.test.ts",
-            "marker": "v2 authenticates exact owner"
+            "path": "backend/src/services/integrations/credentialEnvelope.ts",
+            "marker": "export function openCredentialEnvelope"
           }
         ]
       }
     },
     {
-      "id": "f197672e0af42c7398f3",
+      "id": "36e68319daa5aa4c7597",
       "path": "backend/src/services/integrations/credentialEnvelope.ts",
-      "line": 43,
+      "line": 49,
       "enclosing": "aad",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "76f0508b50bd9ba4548c90fbb7ed5214421639bef2895f6107cafb4fa72ff770",
+      "sourceSha256": "df3f11e4de24d0d787671e59fae7bb1e5f27180d5d6fdba1107944d3735a6fca",
       "semanticReview": {
         "authority": "All five inspected receivers are Node Buffer.from binary conversion calls in the inactive synthetic-only credential codec, not Supabase, Storage or another persistence interface.",
-        "reason": "This excludes only five AST receiver false positives. Four synthetic codec tests cover context binding, key material, tampering and strict parsing. No production service imports this module. Vault integration, migration CAS, legacy cutover, KMS custody and full credential security remain unverified and gated.",
+        "reason": "This excludes only five AST receiver false positives. Four synthetic codec tests cover context binding, key material, tampering and strict parsing. No production service imports this module. Vault integration, migration CAS, legacy cutover, KMS custody and full credential security remain unverified and gated. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/credentialEnvelope.ts",
-            "marker": "Command 009 preparation only"
+            "marker": "export function sealCredentialEnvelope"
           },
           {
-            "path": "backend/src/services/integrations/credentialEnvelope.test.ts",
-            "marker": "v2 authenticates exact owner"
+            "path": "backend/src/services/integrations/credentialEnvelope.ts",
+            "marker": "export function openCredentialEnvelope"
           }
         ]
       }
     },
     {
-      "id": "04afb9d897d4070340c6",
+      "id": "1f2c229d57afaf5c5df9",
       "path": "backend/src/services/integrations/credentialEnvelope.ts",
-      "line": 48,
+      "line": 54,
       "enclosing": "decode",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "76f0508b50bd9ba4548c90fbb7ed5214421639bef2895f6107cafb4fa72ff770",
+      "sourceSha256": "df3f11e4de24d0d787671e59fae7bb1e5f27180d5d6fdba1107944d3735a6fca",
       "semanticReview": {
         "authority": "All five inspected receivers are Node Buffer.from binary conversion calls in the inactive synthetic-only credential codec, not Supabase, Storage or another persistence interface.",
-        "reason": "This excludes only five AST receiver false positives. Four synthetic codec tests cover context binding, key material, tampering and strict parsing. No production service imports this module. Vault integration, migration CAS, legacy cutover, KMS custody and full credential security remain unverified and gated.",
+        "reason": "This excludes only five AST receiver false positives. Four synthetic codec tests cover context binding, key material, tampering and strict parsing. No production service imports this module. Vault integration, migration CAS, legacy cutover, KMS custody and full credential security remain unverified and gated. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/credentialEnvelope.ts",
-            "marker": "Command 009 preparation only"
+            "marker": "export function sealCredentialEnvelope"
           },
           {
-            "path": "backend/src/services/integrations/credentialEnvelope.test.ts",
-            "marker": "v2 authenticates exact owner"
+            "path": "backend/src/services/integrations/credentialEnvelope.ts",
+            "marker": "export function openCredentialEnvelope"
           }
         ]
       }
     },
     {
-      "id": "8ff7dfb0a06ace7ee7e5",
+      "id": "82a2d0b9bd4b43a35c6d",
       "path": "backend/src/services/integrations/credentialEnvelope.ts",
-      "line": 56,
+      "line": 62,
       "enclosing": "sealCredentialEnvelope",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "76f0508b50bd9ba4548c90fbb7ed5214421639bef2895f6107cafb4fa72ff770",
+      "sourceSha256": "df3f11e4de24d0d787671e59fae7bb1e5f27180d5d6fdba1107944d3735a6fca",
       "semanticReview": {
         "authority": "All five inspected receivers are Node Buffer.from binary conversion calls in the inactive synthetic-only credential codec, not Supabase, Storage or another persistence interface.",
-        "reason": "This excludes only five AST receiver false positives. Four synthetic codec tests cover context binding, key material, tampering and strict parsing. No production service imports this module. Vault integration, migration CAS, legacy cutover, KMS custody and full credential security remain unverified and gated.",
+        "reason": "This excludes only five AST receiver false positives. Four synthetic codec tests cover context binding, key material, tampering and strict parsing. No production service imports this module. Vault integration, migration CAS, legacy cutover, KMS custody and full credential security remain unverified and gated. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/credentialEnvelope.ts",
-            "marker": "Command 009 preparation only"
+            "marker": "export function sealCredentialEnvelope"
           },
           {
-            "path": "backend/src/services/integrations/credentialEnvelope.test.ts",
-            "marker": "v2 authenticates exact owner"
+            "path": "backend/src/services/integrations/credentialEnvelope.ts",
+            "marker": "export function openCredentialEnvelope"
           }
         ]
       }
     },
     {
-      "id": "06f3e17ef612ff0deb74",
+      "id": "46dc8bafa13b56836727",
       "path": "backend/src/services/integrations/credentialEnvelope.ts",
-      "line": 78,
+      "line": 88,
       "enclosing": "openCredentialEnvelope",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "76f0508b50bd9ba4548c90fbb7ed5214421639bef2895f6107cafb4fa72ff770",
+      "sourceSha256": "df3f11e4de24d0d787671e59fae7bb1e5f27180d5d6fdba1107944d3735a6fca",
       "semanticReview": {
         "authority": "All five inspected receivers are Node Buffer.from binary conversion calls in the inactive synthetic-only credential codec, not Supabase, Storage or another persistence interface.",
-        "reason": "This excludes only five AST receiver false positives. Four synthetic codec tests cover context binding, key material, tampering and strict parsing. No production service imports this module. Vault integration, migration CAS, legacy cutover, KMS custody and full credential security remain unverified and gated.",
+        "reason": "This excludes only five AST receiver false positives. Four synthetic codec tests cover context binding, key material, tampering and strict parsing. No production service imports this module. Vault integration, migration CAS, legacy cutover, KMS custody and full credential security remain unverified and gated. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
         "evidence": [
           {
             "path": "backend/src/services/integrations/credentialEnvelope.ts",
-            "marker": "Command 009 preparation only"
+            "marker": "export function sealCredentialEnvelope"
           },
           {
-            "path": "backend/src/services/integrations/credentialEnvelope.test.ts",
-            "marker": "v2 authenticates exact owner"
+            "path": "backend/src/services/integrations/credentialEnvelope.ts",
+            "marker": "export function openCredentialEnvelope"
           }
         ]
       }
@@ -12102,6 +12278,195 @@
           {
             "path": "backend/src/security/tenantIsolation.local.integration.ts",
             "marker": "real credential writer refuses a public bucket"
+          }
+        ]
+      }
+    },
+    {
+      "id": "7860da82d57b690e93e2",
+      "path": "backend/src/services/integrations/credentialVault.ts",
+      "line": 23,
+      "enclosing": "associated",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "6b08075a76fa934025384ddb42e670e15d0685f309655c8f32422baf01d35fc0",
+      "semanticReview": {
+        "authority": "Inspected each exact receiver in this module. Buffer.from and Array.from perform only local UTF8/base64 encoding, authenticated crypto buffer construction, JSON envelope encoding or dense local array construction. No receiver is a database client, bucket or provider transport.",
+        "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/credentialVault.ts",
+            "marker": "export class CredentialVault"
+          }
+        ]
+      }
+    },
+    {
+      "id": "da2a433a95fc5813e844",
+      "path": "backend/src/services/integrations/credentialVault.ts",
+      "line": 30,
+      "enclosing": "parse",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "6b08075a76fa934025384ddb42e670e15d0685f309655c8f32422baf01d35fc0",
+      "semanticReview": {
+        "authority": "Inspected each exact receiver in this module. Buffer.from and Array.from perform only local UTF8/base64 encoding, authenticated crypto buffer construction, JSON envelope encoding or dense local array construction. No receiver is a database client, bucket or provider transport.",
+        "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/credentialVault.ts",
+            "marker": "export class CredentialVault"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d078eb13de63ed8a13ec",
+      "path": "backend/src/services/integrations/credentialVault.ts",
+      "line": 53,
+      "enclosing": "seal",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "6b08075a76fa934025384ddb42e670e15d0685f309655c8f32422baf01d35fc0",
+      "semanticReview": {
+        "authority": "Inspected each exact receiver in this module. Buffer.from and Array.from perform only local UTF8/base64 encoding, authenticated crypto buffer construction, JSON envelope encoding or dense local array construction. No receiver is a database client, bucket or provider transport.",
+        "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/credentialVault.ts",
+            "marker": "export class CredentialVault"
+          }
+        ]
+      }
+    },
+    {
+      "id": "b7eec6bff4d584c2f8e3",
+      "path": "backend/src/services/integrations/cryptoProvider.ts",
+      "line": 29,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "a4fb326b9cf7382a89649bf05552b4222ed5924397cf1b14a268999ffa721fb9",
+      "semanticReview": {
+        "authority": "Inspected each exact receiver in this module. Buffer.from and Array.from perform only local UTF8/base64 encoding, authenticated crypto buffer construction, JSON envelope encoding or dense local array construction. No receiver is a database client, bucket or provider transport.",
+        "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/cryptoProvider.ts",
+            "marker": "export class DevelopmentCryptoProvider"
+          }
+        ]
+      }
+    },
+    {
+      "id": "0fe1ab99663e5a45119b",
+      "path": "backend/src/services/integrations/cryptoProvider.ts",
+      "line": 33,
+      "enclosing": "decode",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "a4fb326b9cf7382a89649bf05552b4222ed5924397cf1b14a268999ffa721fb9",
+      "semanticReview": {
+        "authority": "Inspected each exact receiver in this module. Buffer.from and Array.from perform only local UTF8/base64 encoding, authenticated crypto buffer construction, JSON envelope encoding or dense local array construction. No receiver is a database client, bucket or provider transport.",
+        "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/cryptoProvider.ts",
+            "marker": "export class DevelopmentCryptoProvider"
+          }
+        ]
+      }
+    },
+    {
+      "id": "b2e594f8a8ab03974c20",
+      "path": "backend/src/services/integrations/cryptoProvider.ts",
+      "line": 57,
+      "enclosing": "wrapDataKey",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "a4fb326b9cf7382a89649bf05552b4222ed5924397cf1b14a268999ffa721fb9",
+      "semanticReview": {
+        "authority": "Inspected each exact receiver in this module. Buffer.from and Array.from perform only local UTF8/base64 encoding, authenticated crypto buffer construction, JSON envelope encoding or dense local array construction. No receiver is a database client, bucket or provider transport.",
+        "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/cryptoProvider.ts",
+            "marker": "export class DevelopmentCryptoProvider"
+          }
+        ]
+      }
+    },
+    {
+      "id": "b01cc8fee9cd5c21c7d5",
+      "path": "backend/src/services/integrations/cryptoProvider.ts",
+      "line": 57,
+      "enclosing": "wrapDataKey",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "a4fb326b9cf7382a89649bf05552b4222ed5924397cf1b14a268999ffa721fb9",
+      "semanticReview": {
+        "authority": "Inspected each exact receiver in this module. Buffer.from and Array.from perform only local UTF8/base64 encoding, authenticated crypto buffer construction, JSON envelope encoding or dense local array construction. No receiver is a database client, bucket or provider transport.",
+        "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/cryptoProvider.ts",
+            "marker": "export class DevelopmentCryptoProvider"
+          }
+        ]
+      }
+    },
+    {
+      "id": "e71496fca6acb89845e0",
+      "path": "backend/src/services/integrations/cryptoProvider.ts",
+      "line": 69,
+      "enclosing": "unwrapDataKey",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "a4fb326b9cf7382a89649bf05552b4222ed5924397cf1b14a268999ffa721fb9",
+      "semanticReview": {
+        "authority": "Inspected each exact receiver in this module. Buffer.from and Array.from perform only local UTF8/base64 encoding, authenticated crypto buffer construction, JSON envelope encoding or dense local array construction. No receiver is a database client, bucket or provider transport.",
+        "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/cryptoProvider.ts",
+            "marker": "export class DevelopmentCryptoProvider"
+          }
+        ]
+      }
+    },
+    {
+      "id": "819568d821e493406c08",
+      "path": "backend/src/services/integrations/cryptoProvider.ts",
+      "line": 69,
+      "enclosing": "unwrapDataKey",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "a4fb326b9cf7382a89649bf05552b4222ed5924397cf1b14a268999ffa721fb9",
+      "semanticReview": {
+        "authority": "Inspected each exact receiver in this module. Buffer.from and Array.from perform only local UTF8/base64 encoding, authenticated crypto buffer construction, JSON envelope encoding or dense local array construction. No receiver is a database client, bucket or provider transport.",
+        "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/cryptoProvider.ts",
+            "marker": "export class DevelopmentCryptoProvider"
           }
         ]
       }
@@ -18214,18 +18579,18 @@
       }
     },
     {
-      "id": "c7d109715d2f37cc95b2",
+      "id": "bdf5ffe6c8a34bf8d3af",
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "line": 613,
+      "line": 627,
       "enclosing": "decodeBase64UrlUtf8",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "dd9715b63eeca3a39f7b82cb45d6520ed8aedecadc5b7d069f2ba73fc5fba8ac",
+      "sourceSha256": "1ee3a576071bee8f2409a79f441e68c11e0aae9fa4e936cc224e92cd14434990",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
-        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
+        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
         "evidence": [
           {
             "path": "frontend/src/lib/formatAiMarkdown.tsx",

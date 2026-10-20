@@ -10,6 +10,7 @@
   "risk": "high",
   "scope": "Founder-authorized Phase3 only, original Command008 and009, all22 criteria unchanged. Preserve accepted Phase2 source and proof. No Phase4 implementation or production authorization.",
   "changedFiles": [
+    ".github/workflows/xroga-tenant-security.yml",
     "backend/src/e2e/xrogaGoldenJourneys.test.ts",
     "backend/src/operations/operationsEngine.ts",
     "backend/src/routes/phase1.ts",
@@ -22,10 +23,16 @@
     "backend/src/security/businessAuthority.local.integration.ts",
     "backend/src/security/confirmationMetadata.local.integration.ts",
     "backend/src/security/tenantIsolation.local.integration.ts",
+    "backend/src/services/integrations/businessAction.digest.test.ts",
     "backend/src/services/integrations/businessAction.ts",
     "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
     "backend/src/services/integrations/businessActionConfirmations.ts",
     "backend/src/services/integrations/composioClient.ts",
+    "backend/src/services/integrations/composioNamespace.ts",
+    "backend/src/services/integrations/credentialEnvelope.ts",
+    "backend/src/services/integrations/credentialVault.test.ts",
+    "backend/src/services/integrations/credentialVault.ts",
+    "backend/src/services/integrations/cryptoProvider.ts",
     "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
     "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
     "docs/xroga/batch-1/phases/PHASE-3-FROZEN-WORKLIST.json",
@@ -46,6 +53,7 @@
     "docs/xroga/current-state.md",
     "docs/xroga/dependency-inventory.json",
     "docs/xroga/deployment-topology.md",
+    "docs/xroga/evidence/command-008/business-authority-receipt.json",
     "docs/xroga/missions/batch-1-phase-3.json",
     "docs/xroga/requirements-ledger.json",
     "docs/xroga/requirements-ledger.md",
@@ -53,10 +61,24 @@
     "docs/xroga/research/source-reconciliation.md",
     "docs/xroga/runtime-contract.md",
     "docs/xroga/secret-inventory.md",
+    "docs/xroga/security/action-risk-matrix.md",
+    "docs/xroga/security/authority-model.md",
     "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/credential-model.md",
+    "docs/xroga/security/credential-usage-audit.json",
     "docs/xroga/security/phase-three-authority-delta.json",
     "docs/xroga/security/privileged-callers.json",
     "docs/xroga/security/rls-audit.md",
+    "frontend/e2e/batch01-founder-local.spec.ts",
+    "frontend/src/app/(shell)/dashboard/actions/confirm/[id]/page.tsx",
+    "frontend/src/components/integrations/PluginPermissionControl.tsx",
+    "frontend/src/lib/customMcp.test.ts",
+    "frontend/src/lib/formatAiMarkdown.tsx",
+    "frontend/src/lib/pluginInstalledPermissions.test.ts",
+    "scripts/ci/prepare-pr-integration.mjs",
+    "scripts/security/attest-business-authority-receipt.mjs",
+    "scripts/security/audit-credential-usage.mjs",
+    "scripts/security/audit-credential-usage.test.mjs",
     "scripts/security/refresh-phase-three-authority-delta.mjs",
     "scripts/xroga/phase-two-handoff.test.mjs",
     "supabase/migrations/20261020000300_business_authority_dispatch.sql"
@@ -97,8 +119,8 @@
       "description": "Existing durable confirmation becomes the canonical business compatibility adapter. Opaque one-use permits bind exact plan and account. No new approval database."
     },
     "credentials": {
-      "changed": false,
-      "description": "No live credential operation or custody migration yet. Command009 software and actual production KMS remain incomplete."
+      "changed": true,
+      "description": "Canonical identity-bound envelope and explicitly injected CryptoProvider implemented and unit tested. Old writers are not cut over. No live credential operation. Command009 software and actual production KMS remain incomplete."
     },
     "egress": {
       "changed": true,
@@ -151,7 +173,8 @@
   ],
   "evidenceRefs": [
     "docs/xroga/batch-1/phases/PHASE-3-FROZEN-WORKLIST.json",
-    "docs/xroga/batch-1/phases/phase-3/PHASE-3-EXECUTION-STATE.md"
+    "docs/xroga/batch-1/phases/phase-3/PHASE-3-EXECUTION-STATE.md",
+    "docs/xroga/evidence/command-008/business-authority-receipt.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,

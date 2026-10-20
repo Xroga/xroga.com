@@ -155,6 +155,7 @@ export type BusinessActionExecutionOutcome =
       toolSlug: string;
 
       resultText: string;
+      resultDigest: string;
     }
   | {
       status:
@@ -348,18 +349,14 @@ function validateArguments(
     return false;
   }
 
-  if (
-    containsUnsafeKeys(
-      value,
-    )
-  ) {
-    return false;
-  }
-
   try {
+    // Reject accessors/coercions before the legacy depth/size checks inspect
+    // values. Object.entries and JSON.stringify must never execute a getter.
+    const valid = canonicalAuthorityValue(value);
+    if (containsUnsafeKeys(valid)) return false;
     return (
       JSON.stringify(
-        value,
+        valid,
       ).length <=
       MAX_ARGUMENT_CHARS
     );
@@ -1430,6 +1427,10 @@ export async function executePreparedBusinessAction(
       input.plan.toolkit,
     );
 
+  if (permissionMode === 'read_only') {
+    throw new ComposioClientError('This connected application is read-only.', { status: 403, code: 'BUSINESS_ACTION_READ_ONLY' });
+  }
+
   // Planner text, authorization booleans and plugin preferences cannot mint a
   // durable permit. Every consequential write uses the existing confirmation UI.
   if (!input.authorityPermit) {
@@ -1450,9 +1451,6 @@ export async function executePreparedBusinessAction(
     };
   }
 
-  if (permissionMode === 'read_only') {
-    throw new ComposioClientError('This connected application is read-only.', { status: 403, code: 'BUSINESS_ACTION_READ_ONLY' });
-  }
   if (details.risk !== input.plan.risk) {
     throw new ComposioClientError('The action risk changed. Prepare the action again.', { status: 409, code: 'BUSINESS_ACTION_RISK_CHANGED' });
   }
@@ -1485,9 +1483,8 @@ export async function executePreparedBusinessAction(
       },
     );
 
-  if (
-    execution.error
-  ) {
+  const resultDigest = execution.resultDigest;
+  if (execution.error || typeof resultDigest !== 'string' || !/^[a-f0-9]{64}$/.test(resultDigest)) {
     throw new ComposioClientError(
       'The connected application could not complete the requested action.',
       {
@@ -1502,6 +1499,8 @@ export async function executePreparedBusinessAction(
   return {
     status:
       'success',
+
+    resultDigest,
 
     toolkit:
       input.plan.toolkit,

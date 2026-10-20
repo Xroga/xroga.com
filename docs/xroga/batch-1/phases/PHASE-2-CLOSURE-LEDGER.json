@@ -2473,7 +2473,7 @@
       "id": "B1-P2-84b9011a0d2b4754",
       "family": "approvals-external-actions",
       "sourcePath": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "baselineCallerIds": [
         "c37a93be0605e64b3156",
         "94fb30ec710f32d062c2",
@@ -2487,85 +2487,85 @@
         "85d5a147aa59e4f62e68"
       ],
       "currentCallerIds": [
-        "dc9d01d4c27358caf5da",
-        "06e761f5c6b91187e0f1",
-        "b0f96a98ef22f4219868",
-        "8f11aa76ec30ae75114b",
-        "092adf323ed9ea215868",
-        "c11d29e029639fe48d96",
-        "311957bf5928f85dd670",
-        "fdca02ff88285b1eb979",
-        "0722421da2174e4db49b",
-        "8a33cc576605814a9b22"
+        "d9d2547770aa24b0841c",
+        "d58b6fdbfd8c7bd723ea",
+        "0b783f584a470b13209e",
+        "dd1e78725f475509a9cd",
+        "7f2df45a035153bcbf55",
+        "408a89ba73f0f4572071",
+        "456ab4492b8fe9318933",
+        "138a7b9c83878cb3dc82",
+        "9393c7ce95c3aee1b590",
+        "3e7f7e1fcb903f426f23"
       ],
       "mapping": [
         {
           "baselineCallerId": "c37a93be0605e64b3156",
           "currentCallerIds": [
-            "dc9d01d4c27358caf5da"
+            "d9d2547770aa24b0841c"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "94fb30ec710f32d062c2",
           "currentCallerIds": [
-            "06e761f5c6b91187e0f1"
+            "d58b6fdbfd8c7bd723ea"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "36d0fbfc5ddf864ad6ea",
           "currentCallerIds": [
-            "b0f96a98ef22f4219868"
+            "0b783f584a470b13209e"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "bda77ff34ad9e973cbde",
           "currentCallerIds": [
-            "8f11aa76ec30ae75114b"
+            "dd1e78725f475509a9cd"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "a1e1f647efb6e7002993",
           "currentCallerIds": [
-            "092adf323ed9ea215868"
+            "7f2df45a035153bcbf55"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "7c2970e3ea0940d5d136",
           "currentCallerIds": [
-            "c11d29e029639fe48d96"
+            "408a89ba73f0f4572071"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "986c86eebabfae033939",
           "currentCallerIds": [
-            "311957bf5928f85dd670"
+            "456ab4492b8fe9318933"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "884cad1975974abc0599",
           "currentCallerIds": [
-            "fdca02ff88285b1eb979"
+            "138a7b9c83878cb3dc82"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "b6708d08741254f6da06",
           "currentCallerIds": [
-            "0722421da2174e4db49b"
+            "9393c7ce95c3aee1b590"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "85d5a147aa59e4f62e68",
           "currentCallerIds": [
-            "8a33cc576605814a9b22"
+            "3e7f7e1fcb903f426f23"
           ],
           "change": "RETAINED"
         }
@@ -2575,7 +2575,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-84b9011a0d2b4754",
-        "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+        "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
         "executionStatus": "IN_PROGRESS",
         "finding": "UNCHANGED_CONFIRMATION_METADATA_BOUNDARY_TARGETED_POSITIVE_PROOF_PREPARED",
         "actorTrace": "The auth-mounted phase1 router obtains actor only from requireUserId(req). Create is reached only after the existing prepared execution returns confirmation_required. Read, cancel and confirm ignore request-body owner and apply exact server actor plus confirmation ID. Private expiry updates reuse only owner-bound rows. Claim binds full plan, digest, expiry and current pending status. The original finish routine binds immutable claimed identity and plan. No production code changed.",
@@ -2596,16 +2596,16 @@
           "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
           "verifiedCurrentCallerIds": [],
           "remainingCurrentCallerIds": [
-            "dc9d01d4c27358caf5da",
-            "06e761f5c6b91187e0f1",
-            "b0f96a98ef22f4219868",
-            "8f11aa76ec30ae75114b",
-            "092adf323ed9ea215868",
-            "c11d29e029639fe48d96",
-            "311957bf5928f85dd670",
-            "fdca02ff88285b1eb979",
-            "0722421da2174e4db49b",
-            "8a33cc576605814a9b22"
+            "d9d2547770aa24b0841c",
+            "d58b6fdbfd8c7bd723ea",
+            "0b783f584a470b13209e",
+            "dd1e78725f475509a9cd",
+            "7f2df45a035153bcbf55",
+            "408a89ba73f0f4572071",
+            "456ab4492b8fe9318933",
+            "138a7b9c83878cb3dc82",
+            "9393c7ce95c3aee1b590",
+            "3e7f7e1fcb903f426f23"
           ],
           "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
           "scope": "EXACT_CALLER_PROOF_NOT_WHOLE_PACKET_OR_LATER_PHASE_ACCEPTANCE",

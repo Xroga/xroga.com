@@ -119,30 +119,6 @@
       }
     },
     {
-      "path": "backend/src/services/integrations/credentialEnvelope.ts",
-      "sourceSha256": "76f0508b50bd9ba4548c90fbb7ed5214421639bef2895f6107cafb4fa72ff770",
-      "callIds": [
-        "840920438b3c862c0e91",
-        "f197672e0af42c7398f3",
-        "04afb9d897d4070340c6",
-        "8ff7dfb0a06ace7ee7e5",
-        "06f3e17ef612ff0deb74"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "All five inspected receivers are Node Buffer.from binary conversion calls in the inactive synthetic-only credential codec, not Supabase, Storage or another persistence interface.",
-      "reason": "This excludes only five AST receiver false positives. Four synthetic codec tests cover context binding, key material, tampering and strict parsing. No production service imports this module. Vault integration, migration CAS, legacy cutover, KMS custody and full credential security remain unverified and gated.",
-      "evidence": [
-        {
-          "path": "backend/src/services/integrations/credentialEnvelope.ts",
-          "marker": "Command 009 preparation only"
-        },
-        {
-          "path": "backend/src/services/integrations/credentialEnvelope.test.ts",
-          "marker": "v2 authenticates exact owner"
-        }
-      ]
-    },
-    {
       "path": "backend/src/security/boundedPublicGet.ts",
       "sourceSha256": "9a20c8cc0e496f893a18d79dba79b4beac820b9001bc1b06d2fc2772c70eee44",
       "callIds": [
@@ -5248,22 +5224,6 @@
         {
           "path": "frontend/src/lib/emailValidation.ts",
           "marker": "return Array.from(TEMP_EMAIL_DOMAINS).some((d) => domain.endsWith(`.${d}`));"
-        }
-      ]
-    },
-    {
-      "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sourceSha256": "dd9715b63eeca3a39f7b82cb45d6520ed8aedecadc5b7d069f2ba73fc5fba8ac",
-      "callIds": [
-        "c7d109715d2f37cc95b2"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
-      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
-      "evidence": [
-        {
-          "path": "frontend/src/lib/formatAiMarkdown.tsx",
-          "marker": "Uint8Array.from("
         }
       ]
     },
@@ -14351,19 +14311,54 @@
       }
     },
     {
-      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "path": "backend/src/services/integrations/credentialEnvelope.ts",
+      "sourceSha256": "df3f11e4de24d0d787671e59fae7bb1e5f27180d5d6fdba1107944d3735a6fca",
       "callIds": [
-        "dc9d01d4c27358caf5da",
-        "06e761f5c6b91187e0f1",
-        "b0f96a98ef22f4219868",
-        "8f11aa76ec30ae75114b",
-        "092adf323ed9ea215868",
-        "c11d29e029639fe48d96",
-        "311957bf5928f85dd670",
-        "fdca02ff88285b1eb979",
-        "0722421da2174e4db49b",
-        "8a33cc576605814a9b22"
+        "2697b20e243c70e7d302",
+        "36e68319daa5aa4c7597",
+        "1f2c229d57afaf5c5df9",
+        "82a2d0b9bd4b43a35c6d",
+        "46dc8bafa13b56836727"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "All five inspected receivers are Node Buffer.from binary conversion calls in the inactive synthetic-only credential codec, not Supabase, Storage or another persistence interface.",
+      "reason": "This excludes only five AST receiver false positives. Four synthetic codec tests cover context binding, key material, tampering and strict parsing. No production service imports this module. Vault integration, migration CAS, legacy cutover, KMS custody and full credential security remain unverified and gated. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/credentialEnvelope.ts",
+          "marker": "export function sealCredentialEnvelope"
+        },
+        {
+          "path": "backend/src/services/integrations/credentialEnvelope.ts",
+          "marker": "export function openCredentialEnvelope"
+        }
+      ],
+      "acceptedPhaseTwoReview": {
+        "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+        "sourceSha256": "76f0508b50bd9ba4548c90fbb7ed5214421639bef2895f6107cafb4fa72ff770",
+        "callIds": [
+          "840920438b3c862c0e91",
+          "f197672e0af42c7398f3",
+          "04afb9d897d4070340c6",
+          "8ff7dfb0a06ace7ee7e5",
+          "06f3e17ef612ff0deb74"
+        ]
+      }
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
+      "callIds": [
+        "d9d2547770aa24b0841c",
+        "d58b6fdbfd8c7bd723ea",
+        "0b783f584a470b13209e",
+        "dd1e78725f475509a9cd",
+        "7f2df45a035153bcbf55",
+        "408a89ba73f0f4572071",
+        "456ab4492b8fe9318933",
+        "138a7b9c83878cb3dc82",
+        "9393c7ce95c3aee1b590",
+        "3e7f7e1fcb903f426f23"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
@@ -14443,7 +14438,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sourceSha256": "f6f085d6c1e9719fed0a8f8de910b78ccd3ace7d193b1b02bcbfe69749eef32b",
+      "sourceSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
       "callIds": [
         "ebede146c851a085d2b8"
       ],
@@ -14465,10 +14460,33 @@
       }
     },
     {
-      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "path": "frontend/src/lib/formatAiMarkdown.tsx",
+      "sourceSha256": "1ee3a576071bee8f2409a79f441e68c11e0aae9fa4e936cc224e92cd14434990",
       "callIds": [
-        "731bb89e664ef34ec003"
+        "bdf5ffe6c8a34bf8d3af"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
+      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/formatAiMarkdown.tsx",
+          "marker": "Uint8Array.from("
+        }
+      ],
+      "acceptedPhaseTwoReview": {
+        "sourceSha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+        "sourceSha256": "dd9715b63eeca3a39f7b82cb45d6520ed8aedecadc5b7d069f2ba73fc5fba8ac",
+        "callIds": [
+          "c7d109715d2f37cc95b2"
+        ]
+      }
+    },
+    {
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
+      "callIds": [
+        "1638b66c83949be618af"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Authenticated phase1 confirmation route passes requireUserId and explicit confirmation UUID. The service reads owner-filtered plan and validates displayed metadata. Service-only claim locks the same owner/ID and compares full plan, digest, expiry, display metadata and pending state, then checks clock_timestamp after lock acquisition before marking executing.",
@@ -14493,9 +14511,9 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "callIds": [
-        "664690c809a2f073f29e"
+        "2de50011885a1231ce06"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Only the existing confirmed-action executor passes its original admin client, verified server owner and exact claimed row. Service-only terminal transaction locks owner/ID and compares full plan, display metadata, original expiry/creation and claimed_at before consumed/failed status, with immutable exact replay. No provider execution, lease extension or confirmation reuse.",
@@ -14520,9 +14538,9 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "callIds": [
-        "196f316ea6227ab121fb"
+        "9ad5f0d15e0e54d3d953"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
@@ -14540,9 +14558,9 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "callIds": [
-        "fb28901061947a3719a7"
+        "b3a2b5af5ead58408dba"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
@@ -14560,9 +14578,9 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b",
       "callIds": [
-        "d51fd401ac5484aff801"
+        "a48d99cb6019142baf77"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
@@ -14587,12 +14605,51 @@
         "20a3c823cda2eea8179c"
       ],
       "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected the exact receivers in canonicalAuthorityValue. Two Buffer.from calls round-trip UTF8 strings and property names, and one Array.from creates a dense local JSON array. None receives an admin client, resource row or storage bucket.",
-      "reason": "Only these three built-in in-memory conversions are excluded from persistence. This does not certify a provider effect, a database write, a tenant-bound caller elsewhere or any Command008 authority criterion.",
+      "authority": "Inspected each exact receiver in this module. Buffer.from and Array.from perform only local UTF8/base64 encoding, authenticated crypto buffer construction, JSON envelope encoding or dense local array construction. No receiver is a database client, bucket or provider transport.",
+      "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
       "evidence": [
         {
           "path": "backend/src/security/authority/digest.ts",
           "marker": "export function canonicalAuthorityValue"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/cryptoProvider.ts",
+      "sourceSha256": "a4fb326b9cf7382a89649bf05552b4222ed5924397cf1b14a268999ffa721fb9",
+      "callIds": [
+        "b7eec6bff4d584c2f8e3",
+        "0fe1ab99663e5a45119b",
+        "b2e594f8a8ab03974c20",
+        "b01cc8fee9cd5c21c7d5",
+        "e71496fca6acb89845e0",
+        "819568d821e493406c08"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected each exact receiver in this module. Buffer.from and Array.from perform only local UTF8/base64 encoding, authenticated crypto buffer construction, JSON envelope encoding or dense local array construction. No receiver is a database client, bucket or provider transport.",
+      "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/cryptoProvider.ts",
+          "marker": "export class DevelopmentCryptoProvider"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/credentialVault.ts",
+      "sourceSha256": "6b08075a76fa934025384ddb42e670e15d0685f309655c8f32422baf01d35fc0",
+      "callIds": [
+        "7860da82d57b690e93e2",
+        "da2a433a95fc5813e844",
+        "d078eb13de63ed8a13ec"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Inspected each exact receiver in this module. Buffer.from and Array.from perform only local UTF8/base64 encoding, authenticated crypto buffer construction, JSON envelope encoding or dense local array construction. No receiver is a database client, bucket or provider transport.",
+      "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/credentialVault.ts",
+          "marker": "export class CredentialVault"
         }
       ]
     }

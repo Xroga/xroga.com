@@ -9,86 +9,110 @@
     },
     {
       "previousCallerId": "c37a93be0605e64b3156",
-      "currentCallerId": "dc9d01d4c27358caf5da"
+      "currentCallerId": "d9d2547770aa24b0841c"
     },
     {
       "previousCallerId": "94fb30ec710f32d062c2",
-      "currentCallerId": "06e761f5c6b91187e0f1"
+      "currentCallerId": "d58b6fdbfd8c7bd723ea"
     },
     {
       "previousCallerId": "36d0fbfc5ddf864ad6ea",
-      "currentCallerId": "b0f96a98ef22f4219868"
+      "currentCallerId": "0b783f584a470b13209e"
     },
     {
       "previousCallerId": "bda77ff34ad9e973cbde",
-      "currentCallerId": "8f11aa76ec30ae75114b"
+      "currentCallerId": "dd1e78725f475509a9cd"
     },
     {
       "previousCallerId": "a1e1f647efb6e7002993",
-      "currentCallerId": "092adf323ed9ea215868"
+      "currentCallerId": "7f2df45a035153bcbf55"
     },
     {
       "previousCallerId": "7c2970e3ea0940d5d136",
-      "currentCallerId": "c11d29e029639fe48d96"
+      "currentCallerId": "408a89ba73f0f4572071"
     },
     {
       "previousCallerId": "986c86eebabfae033939",
-      "currentCallerId": "311957bf5928f85dd670"
+      "currentCallerId": "456ab4492b8fe9318933"
     },
     {
       "previousCallerId": "884cad1975974abc0599",
-      "currentCallerId": "fdca02ff88285b1eb979"
+      "currentCallerId": "138a7b9c83878cb3dc82"
     },
     {
       "previousCallerId": "1a3d2ad705ca358ebbe3",
-      "currentCallerId": "664690c809a2f073f29e"
+      "currentCallerId": "2de50011885a1231ce06"
     },
     {
       "previousCallerId": "b6708d08741254f6da06",
-      "currentCallerId": "0722421da2174e4db49b"
+      "currentCallerId": "9393c7ce95c3aee1b590"
     },
     {
       "previousCallerId": "85d5a147aa59e4f62e68",
-      "currentCallerId": "8a33cc576605814a9b22"
+      "currentCallerId": "3e7f7e1fcb903f426f23"
     },
     {
       "previousCallerId": "bbf934631616a292169c",
-      "currentCallerId": "731bb89e664ef34ec003"
+      "currentCallerId": "1638b66c83949be618af"
+    },
+    {
+      "previousCallerId": "840920438b3c862c0e91",
+      "currentCallerId": "2697b20e243c70e7d302"
+    },
+    {
+      "previousCallerId": "f197672e0af42c7398f3",
+      "currentCallerId": "36e68319daa5aa4c7597"
+    },
+    {
+      "previousCallerId": "04afb9d897d4070340c6",
+      "currentCallerId": "1f2c229d57afaf5c5df9"
+    },
+    {
+      "previousCallerId": "8ff7dfb0a06ace7ee7e5",
+      "currentCallerId": "82a2d0b9bd4b43a35c6d"
+    },
+    {
+      "previousCallerId": "06f3e17ef612ff0deb74",
+      "currentCallerId": "46dc8bafa13b56836727"
+    },
+    {
+      "previousCallerId": "c7d109715d2f37cc95b2",
+      "currentCallerId": "bdf5ffe6c8a34bf8d3af"
     }
   ],
   "newCalls": [
     {
-      "id": "196f316ea6227ab121fb",
+      "id": "9ad5f0d15e0e54d3d953",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 513,
+      "line": 530,
       "enclosing": "cancelClaimedBusinessActionConfirmation",
       "kind": "RPC_CANDIDATE",
       "target": "cancel_business_action_confirmation",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515"
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b"
     },
     {
-      "id": "fb28901061947a3719a7",
+      "id": "b3a2b5af5ead58408dba",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 513,
+      "line": 530,
       "enclosing": "cancelClaimedBusinessActionConfirmation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515"
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b"
     },
     {
-      "id": "d51fd401ac5484aff801",
+      "id": "a48d99cb6019142baf77",
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "line": 754,
+      "line": 779,
       "enclosing": "confirmBusinessAction",
       "kind": "RPC_CANDIDATE",
       "target": "authorize_business_action_dispatch",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a0b1bf5cf1e286ef5763828cd0dce4324e4f956100168e4a809b2f35ec508515"
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b"
     }
   ],
   "completion": "ACTUAL_DISPOSABLE_AND_SOURCE_BOUND_REGRESSION_PENDING",
