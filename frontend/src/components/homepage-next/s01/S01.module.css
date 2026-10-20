@@ -130,51 +130,48 @@
   0% { background-position: 125% 0; }
   12%, 100% { background-position: -25% 0; }
 }
-/* S01 only: founder-provided 20px white dot mask, composed with a self-hosted, irregular
-   noise texture. Unlike the retired Galaxy/WebGL field, no twinkling stars, bloom or GPU shader.
-   This is background material, not a layer over the card artwork or text. */
+/* S01 background: the founder's reference effect, adapted to the section. A 20px grid of fixed white dots (a CSS radial
+   gradient) is intersected with a self-hosted 256px noise texture whose alpha decides which dots are visible; the noise
+   drifts across the dots over 20 s, so the pattern slowly changes while every dot stays on its grid position. A soft
+   elliptical vignette (the optional third layer) keeps the edges of the section pure black. No twinkling, no particles
+   moving, no colour. It sits behind the deck, the heading and every control, and takes no pointer events. */
 .particles {
-  --particle-pitch: 20px;
+  --size: 20px;
   position: absolute;
   inset: 0;
   pointer-events: none;
-  /* Safe static dot fallback if multi-mask intersection is unavailable. */
-  background: radial-gradient(circle, #ecf1fa 1.7px, transparent 2.5px) 0 0 /
-    var(--particle-pitch) var(--particle-pitch);
-  opacity: 0.17;
-  -webkit-mask-image: radial-gradient(78% 70% at 50% 63%, #000 8%, rgba(0, 0, 0, 0.82) 60%, transparent 100%);
-  mask-image: radial-gradient(78% 70% at 50% 63%, #000 8%, rgba(0, 0, 0, 0.82) 60%, transparent 100%);
+  /* safe fallback when mask intersection is unavailable: a static, quiet dot grid */
+  background: radial-gradient(circle, #f5f7fb 2px, transparent 2.5px) 0 0 / var(--size) var(--size);
+  opacity: 0.2;
+  -webkit-mask-image: radial-gradient(80% 75% at 50% 60%, black 20%, transparent 100%);
+  mask-image: radial-gradient(80% 75% at 50% 60%, black 20%, transparent 100%);
 }
-
-/* Use the founder's intersected 20px white-dot/256px noise mask only when mask composition is supported.
-   Without it, the static fallback above never turns into an opaque light rectangle over the deck. */
 @supports (mask-composite: intersect) or (-webkit-mask-composite: source-in) {
   .particles {
-    background: #ecf1fa;
-    opacity: 0.21;
+    background: #f5f7fb;
     -webkit-mask-image:
-      radial-gradient(circle at 50% 50%, #000 1.7px, transparent 2.5px),
+      radial-gradient(circle at 50% 50%, black 2px, transparent 2.5px),
       url('/s01/noise-mask.svg'),
-      radial-gradient(78% 70% at 50% 63%, #000 8%, rgba(0, 0, 0, 0.82) 60%, transparent 100%);
+      radial-gradient(80% 75% at 50% 60%, black 20%, transparent 100%);
     mask-image:
-      radial-gradient(circle at 50% 50%, #000 1.7px, transparent 2.5px),
+      radial-gradient(circle at 50% 50%, black 2px, transparent 2.5px),
       url('/s01/noise-mask.svg'),
-      radial-gradient(78% 70% at 50% 63%, #000 8%, rgba(0, 0, 0, 0.82) 60%, transparent 100%);
-    -webkit-mask-size: var(--particle-pitch) var(--particle-pitch), 256px 256px, 100% 100%;
-    mask-size: var(--particle-pitch) var(--particle-pitch), 256px 256px, 100% 100%;
+      radial-gradient(80% 75% at 50% 60%, black 20%, transparent 100%);
+    -webkit-mask-size: var(--size) var(--size), 256px 256px, 100% 100%;
+    mask-size: var(--size) var(--size), 256px 256px, 100% 100%;
     -webkit-mask-repeat: repeat, repeat, no-repeat;
     mask-repeat: repeat, repeat, no-repeat;
-    -webkit-mask-position: 0 0, 0 50%, center;
-    mask-position: 0 0, 0 50%, center;
+    -webkit-mask-position: 50% 50%, 256px 50%, center;
+    mask-position: 50% 50%, 256px 50%, center;
     -webkit-mask-composite: source-in, source-in;
     mask-composite: intersect, intersect;
-    animation: s01NoisePass 20s linear infinite;
+    animation: s01Flicker 20s linear infinite;
   }
 }
-@keyframes s01NoisePass {
+@keyframes s01Flicker {
   to {
-    -webkit-mask-position: 0 0, 256px 50%, center;
-    mask-position: 0 0, 256px 50%, center;
+    -webkit-mask-position: 50% 50%, 0 50%, center;
+    mask-position: 50% 50%, 0 50%, center;
   }
 }
 .statement {
@@ -596,7 +593,7 @@
 /* On constrained/touch screens the pattern is quieter and stays still to keep carousel swiping cheap. */
 @media (max-width: 1024px), (pointer: coarse) {
   .particles {
-    opacity: 0.13;
     animation: none;
+    opacity: 0.12;
   }
 }
