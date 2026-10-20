@@ -22,13 +22,15 @@ The existing terminal RPC retains its immutable owner/claim/plan comparisons and
 
 Revocation and dispatch linearize on the same confirmation row lock. Once dispatch admission has committed, cancellation cannot undo an external effect. A lost dispatch acknowledgement may conservatively leave an uncertain outcome even if the application never sent the provider request. This is deliberately not an exactly-once distributed transaction.
 
-## Operations reuse and remaining scope
+## Operations compatibility adapter and spend boundary
 
 Operations already has current-role/project/parent admission, confirmation digests, independent approver roles, database-time approval expiry, attempt leases and atomic internal completion. Its existing tables and RPCs must be the compatibility adapter. Do not replace them with a second approval engine.
 
-Original C008-AC03 remains incomplete until that adapter's canonical scope and policy mapping are reconciled at every enabled registry capability. Delegated project actors must retain their identity separately from the project owner. The current personal TenantContext must not be repurposed to silently impersonate that owner.
+The enabled model benchmark capability now uses the existing Operations action as its canonical grant. Its effective model list, cases, token caps and approved USD ceiling are canonicalized before the action digest is persisted. The adapter accepts only the exact claimed `AdmittedOperationsAction` object. Existing project role, independent approval, lease, target version and action-plan checks remain authoritative.
 
-Original C008-AC08 remains incomplete. Binding a positive monetary ceiling, or refusing a financial action without one, is not durable reservation and settlement. Reuse `providerBudget.ts`, quota, post-completion accounting and actual benchmark spend caps. Complete their relationship to the user-approved ceiling, currency, action and idempotency key before claiming this criterion.
+Each actual benchmark model completion now reserves through the existing provider budget ledger before provider dispatch. The service-only database function rechecks the exact running action, requester identity, current requester role, second-person approval, approval expiry, lease and canonical plan ceiling under locks. It sums non-released reservations for that action and refuses a concurrent reserve above the ceiling. The adapter settles or releases through the existing accounting functions. One sequence counter spans the whole benchmark, so reservation identities cannot collide across cases.
+
+The 12-class policy table is the server floor. Unsupported financial transfer, payment and other live classes remain deterministic `DISABLED_FAIL_CLOSED` paths. A disabled class is not represented as a simulated successful effect.
 
 The documented Composio v3.1 response also includes provider input-required/failed states and an optional instant-charge observation. HTTP 200 alone is not completion. Non-completed responses are now refused without automatically submitting provider approval answers. Platform/tool execution fees still need explicit pre-effect funding and grant-ceiling reconciliation under C008-AC08. No live fee-bearing request was made, and no zero-fee production assumption is certified.
 
@@ -36,4 +38,4 @@ The documented Composio v3.1 response also includes provider input-required/fail
 
 `business-authority-receipt.json` in Command 008 evidence authenticates four actual disposable tests and all 208 security tests at `f011d7e1a8e29970e883b921e2a36fa672a8107a`. External provider execution was intercepted, not live. Subsequent receipt/approval projection changes require their own changed-source verification. The accepted Phase 2 commit remains `a21a82029276d38d53c9e17c580a15f57b653fe3`.
 
-The first integrated baseline passed 3,104 backend tests, then failed one frontend assertion expecting the removed full-access bypass. The standalone frontend build also found a transitive backend dependency in a contract test import. Both precise fixes have focused local proof. These failures are not represented as a complete green baseline.
+The local authority and Operations set passes 139 tests after the compatibility and spend changes. Real disposable database coverage includes concurrent ceiling reservations, current-role and approval changes, browser denial, exact replay and persistence receipts. That new database test and all final-source CI still require an authenticated remote receipt before Command 008 acceptance can be frozen.

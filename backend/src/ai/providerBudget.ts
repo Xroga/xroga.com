@@ -27,6 +27,8 @@ export interface ProviderReservation {
   priceVersion: string;
 }
 
+type AdmittedOperationsAction = Record<string, unknown>;
+
 export interface EntitlementStatus {
   state: 'free_active' | 'promotional_active' | 'promotional_expired' | 'paid_active' | 'past_due' | 'paused' | 'cancelled' | 'billing_unavailable';
   pacing: 'balanced_month' | 'full_access' | null;
@@ -396,6 +398,81 @@ export async function reserveProviderBudget(input: {
   memoryReservations.set(id, { userId: input.userId, idempotencyKey, amount, status: 'reserved',
     modelId: input.modelId, purpose, estimatedInputTokens: input.estimatedInputTokens, maximumOutputTokens: input.maximumOutputTokens });
   return { id, reservedMicroUsd: amount, priceVersion: PROVIDER_PRICE_VERSION };
+}
+
+/**
+ * Reserves an individual provider call against both the owner's normal entitlement and the
+ * immutable ceiling of an already-admitted Operations action. The database rechecks the
+ * current actor, project membership, approval, lease and action snapshot under one lock.
+ */
+export async function reserveOperationsProviderBudget(input: {
+  ownerId: string;
+  actorId: string;
+  admittedAction: AdmittedOperationsAction;
+  modelId: ModelId;
+  estimatedInputTokens: number;
+  maximumOutputTokens: number;
+  idempotencyKey: string;
+}): Promise<ProviderReservation> {
+  const amount = estimateProviderReservationMicroUsd(input);
+  if (!hasDurableStore()) throw new Error('Durable Operations provider accounting is unavailable');
+  const request = () => getSupabaseAdmin().rpc('reserve_operations_provider_budget', {
+    p_actor: input.actorId,
+    p_expected: input.admittedAction,
+    p_idempotency_key: input.idempotencyKey,
+    p_internal_route: input.modelId,
+    p_price_version: PROVIDER_PRICE_VERSION,
+    p_estimated_input_tokens: Math.max(0, Math.round(input.estimatedInputTokens)),
+    p_maximum_output_tokens: Math.max(0, Math.round(input.maximumOutputTokens)),
+    p_reservation_micro_usd: amount,
+  });
+  let result = await request();
+  if (result.error && /active_billing_cycle_required/i.test(result.error.message)) {
+    await getSupabaseAdmin().rpc('ensure_xroga_free_cycle', { p_user_id: input.ownerId });
+    result = await request();
+  }
+  if (result.error) throw capacityUnavailableError(true, null);
+  const row = result.data as Record<string, unknown> | null;
+  if (!row || Array.isArray(row) || typeof row.id !== 'string'
+    || !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(row.id)
+    || row.user_id !== input.ownerId || row.idempotency_key !== input.idempotencyKey
+    || row.internal_route !== input.modelId || row.purpose !== 'completion' || row.status !== 'reserved'
+    || row.authority_action_id !== input.admittedAction.id
+    || !exactAccountingCount(row.estimated_input_tokens, input.estimatedInputTokens)
+    || !exactAccountingCount(row.maximum_output_tokens, input.maximumOutputTokens)
+    || !exactAccountingCount(row.reserved_micro_usd, amount)
+    || row.price_version !== PROVIDER_PRICE_VERSION) {
+    throw new Error('Operations provider reservation evidence is invalid');
+  }
+  return { id: row.id, reservedMicroUsd: Number(row.reserved_micro_usd), priceVersion: row.price_version as string };
+}
+
+export async function withOperationsProviderReservation<T extends ProviderUsageResult>(input: {
+  ownerId: string;
+  actorId: string;
+  admittedAction: AdmittedOperationsAction;
+  modelId: ModelId;
+  estimatedInputTokens: number;
+  maximumOutputTokens: number;
+  idempotencyKey: string;
+  execute: () => Promise<T>;
+}): Promise<T> {
+  const reservation = await reserveOperationsProviderBudget(input);
+  let providerCompleted = false;
+  try {
+    const result = await input.execute();
+    providerCompleted = true;
+    await settleProviderBudget({ userId: input.ownerId, modelId: input.modelId, reservation, result });
+    return result;
+  } catch (error) {
+    await finishFailedProviderReservation({
+      userId: input.ownerId,
+      reservation,
+      error: providerCompleted ? new Error('Provider accounting outcome requires reconciliation') : error,
+    }).catch(() => undefined);
+    if (providerCompleted) throw new PostCompletionAccountingError();
+    throw error;
+  }
 }
 
 export async function settleProviderBudget(input: {

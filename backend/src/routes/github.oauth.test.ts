@@ -29,7 +29,8 @@ test('GitHub routes persist and consume owner-bound state, reject replay and ref
         return Response.json({...stored,authorization_revision:revision});
       }
       if(url.pathname.endsWith('/save_github_oauth_connection')){
-        assert.equal(body.p_revision,revision);assert.equal(body.p_provider_user_id,'42');assert.equal(body.p_access_token,'SYNTHETIC_TOKEN');return Response.json(!lost);
+        assert.equal(body.p_revision,revision);assert.equal(body.p_provider_user_id,'42');assert.match(body.p_access_token,/^vault:v3:/);
+        assert.match(body.p_vault_revision,/^[0-9a-f-]{36}$/i);assert.ok(!body.p_access_token.includes('SYNTHETIC_TOKEN'));return Response.json(!lost);
       }
       throw new Error('Unexpected persistence operation');
     }

@@ -68,7 +68,7 @@ export function discoverCredentialUsage(path, input) {
   });
   const visit = node => {
     if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)
-      && /credentialVault(?:\.js)?$/.test(node.moduleSpecifier.text) && path.startsWith('backend/')) vaultImports.push(path);
+      && /credentialVault(?:Runtime)?(?:\.js)?$/.test(node.moduleSpecifier.text) && path.startsWith('backend/')) vaultImports.push(path);
     if (ts.isCallExpression(node)) {
       const method = ts.isPropertyAccessExpression(node.expression) ? node.expression.name.text : ts.isIdentifier(node.expression) ? node.expression.text : null;
       if (['insert', 'upsert', 'update'].includes(method)) {

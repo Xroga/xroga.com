@@ -77,7 +77,7 @@ test('real action approval UI shows exact owner account and redacted parameters,
     const persisted=await admin.from('business_action_confirmations').select('status,effect_started_at,effect_receipt').eq('id',scoped.id).single();
     expect(persisted.error).toBeNull();expect(persisted.data).toEqual({status:'cancelled',effect_started_at:null,effect_receipt:null});
     const legacy=await seed(false);await page.goto(`/dashboard/actions/confirm/${legacy.id}`);
-    await expect(page.getByRole('alert')).toContainText('needs to be prepared again');
+    await expect(page.locator('p[role="alert"]')).toContainText('needs to be prepared again');
     await expect(page.getByRole('button',{name:'Confirm action',exact:true})).toBeDisabled();
   } finally {await context.close();}
 });

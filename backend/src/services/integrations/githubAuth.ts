@@ -1,37 +1,54 @@
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import {
-  getGitHubTokenFromStorage,
   deleteGitHubTokenFromStorage,
 } from './githubTokenStore.js';
+import { randomUUID } from 'node:crypto';
+import { openRuntimeCredential, requireLegacyCredentialMigrationWindow, sealRuntimeCredential } from './credentialVaultRuntime.js';
 
 export type GitHubRepoStrategy = 'auto' | 'monorepo' | 'manual';
 
 /** Existing authoritative rows, including empty-token revocations, precede legacy copies. */
 export async function getGitHubToken(userId: string): Promise<string | null> {
   const supabase = getSupabaseAdmin();
-
-  const { data: primary, error: primaryErr } = await supabase
-    .from('github_integrations')
-    .select('access_token')
-    .eq('user_id', userId)
-    .maybeSingle();
-
-  if (primaryErr) return null;
-  if (primary) return typeof primary.access_token === 'string' ? primary.access_token.trim() || null : null;
-
-  const { data: legacy, error: legacyErr } = await supabase
+  const [{ data: primary, error: primaryErr }, { data: authority, error: authorityErr }] = await Promise.all([
+    supabase.from('github_integrations').select('user_id,access_token').eq('user_id', userId).maybeSingle(),
+    supabase
     .from('user_integrations')
-    .select('access_token, metadata')
+    .select('user_id,provider,access_token,metadata,credential_revision')
     .eq('user_id', userId)
     .eq('provider', 'github')
-    .maybeSingle();
+    .maybeSingle(),
+  ]);
+  if (primaryErr || authorityErr) return null;
+  if (authority?.metadata?.revoked === true || !authority?.access_token) return null;
+  if (authority.access_token.startsWith('vault:v3:')) {
+    const revision = authority.metadata?.vault_revision;
+    if (primary?.user_id !== userId || primary.access_token !== authority.access_token
+      || authority.user_id !== userId || authority.provider !== 'github'
+      || authority.metadata?.vault_format !== 'github-oauth-v1' || typeof revision !== 'string') return null;
+    let token: string;
+    try {
+      token = await openRuntimeCredential(userId, { provider: 'github', account: 'github',
+        credentialType: 'oauth-token', recordId: 'github', revision, scope: 'github-connection' }, authority.access_token);
+    } catch { return null; }
+    const [currentPrimary, currentAuthority] = await Promise.all([
+      supabase.from('github_integrations').select('user_id,access_token').eq('user_id', userId).maybeSingle(),
+      supabase.from('user_integrations').select('user_id,provider,access_token,metadata,credential_revision')
+        .eq('user_id', userId).eq('provider', 'github').maybeSingle(),
+    ]);
+    if (currentPrimary.error || currentAuthority.error || currentPrimary.data?.access_token !== authority.access_token
+      || currentAuthority.data?.access_token !== authority.access_token
+      || currentAuthority.data?.credential_revision !== authority.credential_revision
+      || currentAuthority.data?.metadata?.vault_revision !== revision
+      || currentAuthority.data?.metadata?.revoked === true) return null;
+    return token.trim() || null;
+  }
+  // Bounded legacy read until the explicit migration has rewritten this row.
+  requireLegacyCredentialMigrationWindow();
+  if (primary?.access_token && primary.access_token !== authority.access_token) return null;
+  if (typeof authority.access_token === 'string') return authority.access_token.trim() || null;
 
-  if (legacyErr) return null;
-  if (legacy) return legacy.metadata?.revoked === true ? null :
-    typeof legacy.access_token === 'string' ? legacy.access_token.trim() || null : null;
-
-  const stored = await getGitHubTokenFromStorage(userId);
-  return stored?.access_token?.trim() ?? null;
+  return null;
 }
 
 export async function getGitHubStorageMeta(userId: string): Promise<{
@@ -40,8 +57,9 @@ export async function getGitHubStorageMeta(userId: string): Promise<{
   default_repo?: string | null;
 } | null> {
   if (!(await getGitHubToken(userId))) return null;
-  const stored = await getGitHubTokenFromStorage(userId);
-  if (!stored) return null;
+  const { data: stored, error } = await getSupabaseAdmin().from('github_integrations')
+    .select('user_id,username,repo_strategy,default_repo').eq('user_id', userId).maybeSingle();
+  if (error || stored?.user_id !== userId) return null;
   return {
     username: stored.username,
     repo_strategy: stored.repo_strategy,
@@ -77,8 +95,11 @@ export async function saveGitHubConnection(
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(opts.authorizationRevision)) {
     throw new Error('GitHub authorization revision required. Authorize again.');
   }
+  const vaultRevision = randomUUID();
+  const envelope = await sealRuntimeCredential(userId, { provider: 'github', account: 'github',
+    credentialType: 'oauth-token', recordId: 'github', revision: vaultRevision, scope: 'github-connection' }, token);
   const { data, error } = await getSupabaseAdmin().rpc('save_github_oauth_connection', {
-    p_owner_id:userId,p_revision:opts.authorizationRevision,p_access_token:token,
+    p_owner_id:userId,p_revision:opts.authorizationRevision,p_access_token:envelope,p_vault_revision:vaultRevision,
     p_provider_user_id:opts.providerUserId,p_username:opts.username,
     p_repo_strategy:opts.repoStrategy??'auto',p_default_repo:opts.defaultRepo??null,
   });

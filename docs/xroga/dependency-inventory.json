@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "f011d7e1a8e29970e883b921e2a36fa672a8107a",
+  "source_sha": "dc913cefaa3f69823273c0b169daef1238331742",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -6808,6 +6808,7 @@
         "backend/src/lib/promptResponseCache.ts",
         "backend/src/lib/resilience/circuitBreaker.ts",
         "backend/src/organicIntelligence/intelligence.ts",
+        "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/synthesis/livePreview/signing.ts"
       ],
       "hostnames": [],
@@ -6904,8 +6905,10 @@
         "VERCEL_TOKEN",
         "XROGA_ALLOWED_MODELS",
         "XROGA_CIRCUIT_FAILURE_THRESHOLD",
+        "XROGA_DEV_CREDENTIAL_KEK",
         "XROGA_DISABLED_PROVIDERS",
         "XROGA_FORCE_RESEARCH_TASK_CLASSES",
+        "XROGA_LEGACY_CREDENTIAL_MIGRATION",
         "XROGA_MAX_REPAIR_ATTEMPTS",
         "XROGA_MODEL_FALLBACK_ORDER",
         "XROGA_PER_TASK_TOKEN_CAP",
@@ -6947,6 +6950,7 @@
         "backend/src/lib/promptResponseCache.ts",
         "backend/src/lib/resilience/circuitBreaker.ts",
         "backend/src/organicIntelligence/intelligence.ts",
+        "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/synthesis/livePreview/signing.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -7247,6 +7251,7 @@
         "backend/src/operations/automationCreation.local.integration.ts",
         "backend/src/operations/automationFinalization.local.integration.ts",
         "backend/src/operations/internalEffect.local.integration.ts",
+        "backend/src/operations/operationsProviderBudget.local.integration.ts",
         "backend/src/operations/readMatrix.local.integration.ts",
         "backend/src/operations/verificationTarget.local.integration.ts",
         "backend/src/security/adminReads.local.integration.ts",
@@ -7939,6 +7944,7 @@
       "consuming_sources": [
         "backend/src/sandbox/flyMachineSandbox.ts",
         "backend/src/scripts/verifyFlySandboxBrowser.ts",
+        "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/services/integrations/cryptoProvider.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.ts"
       ],
@@ -9344,6 +9350,7 @@
         "backend/src/ai/runStore.ts",
         "backend/src/index.ts",
         "backend/src/routes/github.ts",
+        "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/services/integrations/cryptoProvider.ts",
         "backend/src/services/integrations/userProviderKeys.ts",
         "backend/src/services/integrations/vercelAuth.ts",
@@ -9951,6 +9958,7 @@
         "backend/src/operations/automationCreation.local.integration.ts",
         "backend/src/operations/automationFinalization.local.integration.ts",
         "backend/src/operations/internalEffect.local.integration.ts",
+        "backend/src/operations/operationsProviderBudget.local.integration.ts",
         "backend/src/security/adminReads.local.integration.ts",
         "backend/src/security/budgetOwner.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
@@ -10300,6 +10308,7 @@
         "backend/src/operations/automationCreation.local.integration.ts",
         "backend/src/operations/automationFinalization.local.integration.ts",
         "backend/src/operations/internalEffect.local.integration.ts",
+        "backend/src/operations/operationsProviderBudget.local.integration.ts",
         "backend/src/operations/readMatrix.local.integration.ts",
         "backend/src/operations/verificationTarget.local.integration.ts",
         "backend/src/security/adminReads.local.integration.ts",
@@ -10638,6 +10647,7 @@
     {
       "name": "VERCEL_ENV",
       "consuming_sources": [
+        "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/services/integrations/cryptoProvider.ts",
         "frontend/src/app/api/release/route.ts",
         "frontend/src/app/robots.ts",
@@ -11025,6 +11035,7 @@
         "backend/src/operations/automationCreation.local.integration.ts",
         "backend/src/operations/automationFinalization.local.integration.ts",
         "backend/src/operations/internalEffect.local.integration.ts",
+        "backend/src/operations/operationsProviderBudget.local.integration.ts",
         "backend/src/operations/readMatrix.local.integration.ts",
         "backend/src/operations/verificationTarget.local.integration.ts",
         "backend/src/security/adminReads.local.integration.ts",
@@ -11262,6 +11273,25 @@
       ]
     },
     {
+      "name": "XROGA_DEV_CREDENTIAL_KEK",
+      "consuming_sources": [
+        "backend/src/services/integrations/credentialVaultRuntime.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_DISABLED_PROVIDERS",
       "consuming_sources": [
         "backend/src/ai/routerConfig.ts"
@@ -11380,6 +11410,25 @@
       ],
       "dependency_ids": [
         "endpoint-127-0-0-1"
+      ]
+    },
+    {
+      "name": "XROGA_LEGACY_CREDENTIAL_MIGRATION",
+      "consuming_sources": [
+        "backend/src/services/integrations/credentialVaultRuntime.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
       ]
     },
     {
@@ -12087,7 +12136,7 @@
     },
     {
       "path": "backend/src/ai/benchmarkExecutor.ts",
-      "sha256": "680d1bf94c208d01955dd17eb2b1ca539a97df6c8f710472278c21b750542984"
+      "sha256": "7156eb0852c998f62b800c4d22430d31c6956107d32e74487e708bee943aae8d"
     },
     {
       "path": "backend/src/ai/benchmarkLedger.ts",
@@ -12347,7 +12396,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c"
+      "sha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876"
     },
     {
       "path": "backend/src/ai/providerCostTiers.ts",
@@ -13103,7 +13152,7 @@
     },
     {
       "path": "backend/src/operations/benchmarkAdapter.ts",
-      "sha256": "a6280fde96f08e74caee526e87317d23fad4f013cc5b21323f11ba59fe304ade"
+      "sha256": "17c0cdeef10806c1f57a9fc70ad48f1e6130ed66a1a2c8fd27d5b79162aa31bc"
     },
     {
       "path": "backend/src/operations/completionGate.ts",
@@ -13118,8 +13167,12 @@
       "sha256": "874eccd05ce00b093c38f1c5b84c434430eb6ed1cdaefac945ea70e330c471c4"
     },
     {
+      "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
+      "sha256": "b14e97ce14863e917485d836ef78b981f1ad85a2f81bd21f17642d5ca4f57d1e"
+    },
+    {
       "path": "backend/src/operations/operationsService.ts",
-      "sha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59"
+      "sha256": "c7b9467f7de3e54a39679e18cf73f8b1d5d02483a9071cfb15498e3743b0b6dc"
     },
     {
       "path": "backend/src/operations/permissions.ts",
@@ -13595,7 +13648,7 @@
     },
     {
       "path": "backend/src/security/runtimeSecretRead.local.integration.ts",
-      "sha256": "57f01e3bb0f582fa4352ba6e3437af32dc5eb9d89a648feb25b66fa5588a3344"
+      "sha256": "72484c112cdf2a1c12143fb46e788a2174325dda8d4450a75304a7386e37e58c"
     },
     {
       "path": "backend/src/security/runtimeTerminal.local.integration.ts",
@@ -13631,7 +13684,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "8bab85df06fe891c84ebea8788d2b6e197833ed1dffde8890f934a63623a2ec7"
+      "sha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -13718,6 +13771,10 @@
       "sha256": "6b08075a76fa934025384ddb42e670e15d0685f309655c8f32422baf01d35fc0"
     },
     {
+      "path": "backend/src/services/integrations/credentialVaultRuntime.ts",
+      "sha256": "94a80361025877ad9e2d5641f0633764bf2921972134830a83267cc89c0c83e9"
+    },
+    {
       "path": "backend/src/services/integrations/cryptoProvider.ts",
       "sha256": "a4fb326b9cf7382a89649bf05552b4222ed5924397cf1b14a268999ffa721fb9"
     },
@@ -13731,7 +13788,7 @@
     },
     {
       "path": "backend/src/services/integrations/githubAuth.ts",
-      "sha256": "f0f2ffcc7beecd156976cda49c910e8c336912d4150a5fb899a2e1db4b4fee84"
+      "sha256": "0d5941e1c14044be6b4bd69f6d15ee5815cb3e1cbd22842f33c08962bfb33d29"
     },
     {
       "path": "backend/src/services/integrations/githubBranchAuthorization.ts",
@@ -13759,7 +13816,7 @@
     },
     {
       "path": "backend/src/services/integrations/githubTokenStore.ts",
-      "sha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23"
+      "sha256": "f06715ebdce2f87406ba021e872f191d93460bc9e07f4e3b961c14a291bed719"
     },
     {
       "path": "backend/src/services/integrations/githubTreeSnapshot.ts",
@@ -13767,7 +13824,7 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36"
+      "sha256": "d366f9f303e12808115e74f15b5f444cee5ef562dbf83d098583ed08df0be445"
     },
     {
       "path": "backend/src/services/integrations/pluginPermissionPolicy.ts",
@@ -13787,11 +13844,11 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f"
+      "sha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875"
+      "sha256": "048f87c5c9a3be99376d3ddb9ca7cdfdab30cf31d25dc9e4637d1f5bfe83ad9e"
     },
     {
       "path": "backend/src/services/memory/buildMemory.ts",
@@ -14135,7 +14192,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
-      "sha256": "c87a85c867c50912011975a9feb919194a37aada4dada38f59c3cbf1eb769898"
+      "sha256": "668cec449c67ee92dab92c08bd96e5587665c04824235be4ecc1756cb0e08c10"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
@@ -15831,11 +15888,11 @@
     },
     {
       "path": "frontend/src/components/integrations/ConnectedServicesSection.tsx",
-      "sha256": "53a88f0c436e4a5935799aadffbb0821ca61299dddbdcf067852fce6de3bed7d"
+      "sha256": "30ccd35b0baf5ccb4f9a3376806416381c14edf4798772a58294efa72bebaaba"
     },
     {
       "path": "frontend/src/components/integrations/CustomCredentialsSection.tsx",
-      "sha256": "eac234380298acbae68cfea4c91cf07e56c6997dc5021c67495a3dc0bdc5049b"
+      "sha256": "2ecb161b833daf6dea0a61885e7450538096e84b9e8338b734c5cdb85aa3915d"
     },
     {
       "path": "frontend/src/components/integrations/CustomMcpManager.tsx",
@@ -16995,7 +17052,7 @@
     },
     {
       "path": "frontend/src/lib/credentialVault.ts",
-      "sha256": "cd422f53df4285b165a9e5b6593777d9d4fc6a09af7b54b89b9a8482d59f100b"
+      "sha256": "e66c6d686f240913dbad1c95faffe26f54914ab58a5d49fb9f1aaaf8b83c636a"
     },
     {
       "path": "frontend/src/lib/cryptoBuilderContent.ts",
@@ -18561,7 +18618,7 @@
     },
     {
       "path": "backend/src/operations/benchmarkAdapter.ts",
-      "line": 103,
+      "line": 111,
       "expression": "definition.secretKey",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -19994,77 +20051,77 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 124,
+      "line": 125,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 124,
+      "line": 125,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 544,
+      "line": 546,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 594,
+      "line": 596,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 683,
+      "line": 685,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 852,
+      "line": 854,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 910,
+      "line": 912,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1597,
+      "line": 1599,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1615,
+      "line": 1617,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1623,
+      "line": 1625,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1627,
+      "line": 1629,
       "credentialsInUrl": false
     },
     {
@@ -20372,98 +20429,98 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 70,
+      "line": 71,
       "credentialsInUrl": false
     },
     {
       "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 71,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "localhost",
-      "protocol": "http:",
-      "path": "backend/src/services/integrations/vercelAuth.ts",
       "line": 72,
       "credentialsInUrl": false
     },
     {
-      "hostname": "127.0.0.1",
+      "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
       "line": 73,
       "credentialsInUrl": false
     },
     {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 74,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 145,
+      "line": 111,
       "credentialsInUrl": false
     },
     {
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 176,
+      "line": 142,
       "credentialsInUrl": false
     },
     {
       "hostname": "vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 254,
+      "line": 220,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 289,
+      "line": 255,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 541,
+      "line": 514,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 578,
+      "line": 551,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 579,
+      "line": 552,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 634,
+      "line": 607,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 653,
+      "line": 626,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 779,
+      "line": 734,
       "credentialsInUrl": false
     },
     {
@@ -24719,14 +24776,14 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 54,
+      "line": 56,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 55,
+      "line": 57,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -25552,7 +25609,7 @@
     },
     {
       "path": "backend/src/operations/benchmarkAdapter.ts",
-      "line": 188,
+      "line": 216,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -25594,7 +25651,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "line": 478,
+      "line": 481,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26448,14 +26505,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1096,
+      "line": 1098,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1433,
+      "line": 1435,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26561,6 +26618,20 @@
     {
       "path": "backend/src/services/integrations/composioClient.ts",
       "line": 1849,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/credentialVaultRuntime.ts",
+      "line": 20,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/credentialVaultRuntime.ts",
+      "line": 25,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26672,105 +26743,105 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 12,
+      "line": 13,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "line": 36,
+      "line": 37,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 187,
+      "line": 192,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 202,
+      "line": 207,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 204,
+      "line": 209,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 494,
+      "line": 604,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 541,
+      "line": 651,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 542,
+      "line": 652,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 765,
+      "line": 885,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 915,
+      "line": 1035,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 982,
+      "line": 1102,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 988,
+      "line": 1108,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 30,
+      "line": 31,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 188,
+      "line": 154,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 202,
+      "line": 168,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -27442,7 +27513,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
-      "line": 413,
+      "line": 401,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

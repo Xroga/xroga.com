@@ -7,6 +7,7 @@ import { getSupabaseAdmin } from '../../config/supabase.js';
 import { randomUUID } from 'node:crypto';
 import { requireTenantContext, type TenantContext } from '../../security/tenantContext.js';
 import { getTenantSupabaseAdmin } from '../../security/serviceRoleGuard.js';
+import { openRuntimeCredential, requireLegacyCredentialMigrationWindow, sealRuntimeCredential } from './credentialVaultRuntime.js';
 
 const BUCKET = 'xroga-github-tokens';
 const sessionProviders = new Set(['supabase_oauth_pkce', 'vercel_oauth_pkce', 'cws_oauth_pkce', 'github_oauth_pkce']);
@@ -46,13 +47,38 @@ export async function saveOAuthConnection(userId: string, provider: string, toke
   revision: string | undefined, expectedRefreshToken?: string, providerUserId?: string): Promise<void> {
   assertStorageIdentity(userId, provider);
   if (!epochProviders.has(provider) || !validRevision(revision)) throw new Error('OAuth authorization revision required. Reconnect to continue.');
+  const vaultRevision = randomUUID();
+  const metadata = { ...(token.metadata ?? {}), vault_revision: vaultRevision, vault_format: 'oauth-v1' };
+  const envelope = await sealRuntimeCredential(userId, {
+    provider, account: provider, credentialType: 'oauth-token', recordId: provider,
+    revision: vaultRevision, scope: 'oauth-connection',
+  }, JSON.stringify({ access_token: token.access_token, refresh_token: token.refresh_token ?? null }));
   const { data, error } = await getSupabaseAdmin().rpc('save_oauth_connection', {
     p_owner_id: userId, p_provider: provider, p_revision: revision,
-    p_access_token: token.access_token, p_refresh_token: token.refresh_token ?? null,
-    p_metadata: token.metadata ?? {}, p_provider_user_id: providerUserId ?? null,
+    p_access_token: envelope, p_refresh_token: null,
+    p_metadata: metadata, p_provider_user_id: providerUserId ?? null,
     p_expected_refresh_token: expectedRefreshToken ?? null,
   });
   if (error || data !== true) throw new Error('OAuth connection changed during authorization or refresh. Reconnect to continue.');
+}
+
+/** Personal-token path with its own preflight epoch. It cannot reuse the OAuth
+ * callback receipt, but it keeps the same vault format and revoke-wins CAS. */
+export async function saveDirectOAuthConnection(userId: string, provider: 'vercel', token: StoredProviderToken,
+  providerUserId?: string): Promise<void> {
+  assertStorageIdentity(userId, provider);
+  const prepared = await getSupabaseAdmin().rpc('prepare_direct_oauth_write', { p_owner_id: userId, p_provider: provider });
+  if (prepared.error || !validRevision(prepared.data)) throw new Error('OAuth connection could not be admitted. Retry shortly.');
+  const vaultRevision = randomUUID();
+  const metadata = { ...(token.metadata ?? {}), vault_revision: vaultRevision, vault_format: 'oauth-v1' };
+  const envelope = await sealRuntimeCredential(userId, { provider, account: provider, credentialType: 'oauth-token',
+    recordId: provider, revision: vaultRevision, scope: 'oauth-connection' },
+  JSON.stringify({ access_token: token.access_token, refresh_token: token.refresh_token ?? null }));
+  const saved = await getSupabaseAdmin().rpc('save_direct_oauth_connection', {
+    p_owner_id: userId, p_provider: provider, p_revision: prepared.data,
+    p_access_token: envelope, p_metadata: metadata, p_provider_user_id: providerUserId ?? null,
+  });
+  if (saved.error || saved.data !== true) throw new Error('OAuth connection changed while saving. Reconnect to continue.');
 }
 
 function pkcePath(userId: string, provider: string): string {
@@ -83,8 +109,14 @@ export async function storePkceSession(
   assertStorageIdentity(userId, provider);
   if (!sessionProviders.has(provider)) throw new Error('Unsupported OAuth session provider.');
   const supabase = getTenantSupabaseAdmin(context);
+  const vaultRevision = randomUUID();
+  const verifier = await sealRuntimeCredential(userId, {
+    provider, account: provider, credentialType: 'pkce-verifier', recordId: provider,
+    revision: vaultRevision, scope: 'oauth-session',
+  }, session.verifier);
   const { data, error } = await supabase.rpc('begin_oauth_session', {
-    p_owner_id: userId, p_provider: provider, p_session: session,
+    p_owner_id: userId, p_provider: provider,
+    p_session: { ...session, verifier, vault_revision: vaultRevision, vault_format: 'pkce-v1' },
   });
   if (error || data !== true) throw new Error('OAuth session could not be saved. Retry shortly.');
   // All production sessions are database-only. A mirror is never admission.
@@ -115,8 +147,16 @@ export async function consumePkceSession(context: TenantContext, provider: strin
     || typeof data.redirect_uri !== 'string' || !data.redirect_uri
     || typeof data.created_at !== 'string'
     || !validRevision(data.authorization_revision)
+    || !validRevision(data.vault_revision) || data.vault_format !== 'pkce-v1'
     || (data.nonce != null && typeof data.nonce !== 'string')) return null;
-  return { verifier: data.verifier, state: data.state, redirect_uri: data.redirect_uri,
+  let verifier: string;
+  try {
+    verifier = await openRuntimeCredential(userId, {
+      provider, account: provider, credentialType: 'pkce-verifier', recordId: provider,
+      revision: data.vault_revision, scope: 'oauth-session',
+    }, data.verifier);
+  } catch { return null; }
+  return { verifier, state: data.state, redirect_uri: data.redirect_uri,
     created_at: data.created_at, ...(data.nonce == null ? {} : { nonce: data.nonce }),
     authorization_revision: data.authorization_revision };
 }
@@ -173,7 +213,7 @@ export async function loadProviderToken(
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from('user_integrations')
-    .select('access_token, refresh_token, metadata, credential_revision')
+    .select('user_id, provider, access_token, refresh_token, metadata, credential_revision, provider_user_id')
     .eq('user_id', userId)
     .eq('provider', provider)
     .maybeSingle();
@@ -184,10 +224,42 @@ export async function loadProviderToken(
     return null;
   }
   if (data?.access_token?.trim()) {
+    if (data.access_token.startsWith('vault:v3:')) {
+      const vaultRevision = data.metadata?.vault_revision;
+      const refreshLease = provider === 'vercel' && typeof data.refresh_token === 'string'
+        && data.refresh_token.startsWith('xroga-refresh-lease:') ? data.refresh_token : null;
+      if (data.user_id !== userId || data.provider !== provider || typeof vaultRevision !== 'string'
+        || data.metadata?.vault_format !== 'oauth-v1' || (data.refresh_token !== null && !refreshLease)) return null;
+      let opened: { access_token?: unknown; refresh_token?: unknown };
+      try {
+        opened = JSON.parse(await openRuntimeCredential(userId, {
+          provider, account: provider, credentialType: 'oauth-token', recordId: provider,
+          revision: vaultRevision, scope: 'oauth-connection',
+        }, data.access_token));
+      } catch { return null; }
+      if (!opened || typeof opened !== 'object' || Array.isArray(opened)) return null;
+      const current = await supabase.from('user_integrations')
+        .select('user_id,provider,access_token,refresh_token,metadata,credential_revision,provider_user_id')
+        .eq('user_id', userId).eq('provider', provider).maybeSingle();
+      if (current.error || !current.data || current.data.user_id !== userId || current.data.provider !== provider
+        || current.data.access_token !== data.access_token || current.data.refresh_token !== data.refresh_token
+        || current.data.credential_revision !== data.credential_revision
+        || current.data.metadata?.revoked === true || current.data.metadata?.vault_revision !== vaultRevision
+        || typeof opened.access_token !== 'string' || !opened.access_token
+        || (opened.refresh_token !== null && typeof opened.refresh_token !== 'string')) return null;
+      return { access_token: opened.access_token,
+        refresh_token: opened.refresh_token as string | null,
+        metadata: { ...(data.metadata as Record<string, unknown>),
+          ...(typeof data.provider_user_id === 'string' ? { provider_user_id: data.provider_user_id } : {}),
+          ...(refreshLease ? { refresh_lease_marker: refreshLease } : {}) },
+        credential_revision: data.credential_revision };
+    }
+    requireLegacyCredentialMigrationWindow();
     return {
       access_token: data.access_token.trim(),
       refresh_token: data.refresh_token,
-      metadata: (data.metadata as Record<string, unknown>) ?? {},
+      metadata: { ...((data.metadata as Record<string, unknown>) ?? {}),
+        ...(typeof data.provider_user_id === 'string' ? { provider_user_id: data.provider_user_id } : {}) },
       credential_revision: data.credential_revision,
     };
   }

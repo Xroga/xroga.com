@@ -8,7 +8,7 @@ import {
 } from './operationsEngine.js';
 import { hasOperationsPermission, permissionsForRole, roleForProjectAccess, ownerBoundMembershipProjectIds } from './permissions.js';
 import { createInternalAdapter, httpVerificationAdapter, ProviderAdapterRegistry } from './providerAdapters.js';
-import { benchmarkStore, createBenchmarkAdapter } from './benchmarkAdapter.js';
+import { benchmarkStore, canonicalBenchmarkParameters, createBenchmarkAdapter } from './benchmarkAdapter.js';
 import type {
   OperationalResource, OperationsPermission, OperationsRole, PortfolioProduct,
   ProviderResult, RiskLevel, SafeActionRequest,
@@ -203,6 +203,9 @@ export class OperationsService {
     request = snapshotIntent(request);
     const definition = ACTION_DEFINITIONS[request.actionType];
     if (!definition || !definition.supportedTargetTypes.includes(request.targetType)) throw new OperationsServiceError('precondition_failed', 'Unsupported action or target', 400);
+    if (request.actionType === 'run_model_benchmark') {
+      request.parameters = canonicalBenchmarkParameters(request.parameters ?? {});
+    }
     const access = await this.access(userId, request.projectId, definition.permission);
     if (request.environmentId) {
       const environment = await queryOrThrow<DbRow | null>(this.db.from('operations_environments').select('id').eq('id', request.environmentId).eq('project_id', request.projectId).eq('user_id', access.ownerId).maybeSingle(), 'Environment unavailable', null);
@@ -412,7 +415,7 @@ export class OperationsService {
       result = { status: 'unsupported', safeSummary: 'No working provider adapter supports this action' };
     } else {
       let input = { ...(action.execution_plan ?? {}), userId: access.ownerId, actorId: userId, projectId: action.project_id, environmentId: action.environment_id, targetType: action.target_type, targetId: action.target_id, targetVersion: action.target_version, actionId,
-        ...(adapter.id === 'internal_database' ? { admittedAction: running, evidenceId } : {}) };
+        ...(['internal_database','model_benchmark'].includes(adapter.id) ? { admittedAction: running, evidenceId } : {}) };
       if (adapter.id === 'http_verification') {
         const resource = await queryOrThrow<DbRow | null>(this.db.from('operations_resources').select('*').eq('id', action.target_id).eq('project_id', action.project_id).eq('user_id', access.ownerId).maybeSingle(), 'Verification target unavailable', null);
         if (!resource) result = { status: 'blocked', safeSummary: 'Verification target was not found', errorCategory: 'not_found' };

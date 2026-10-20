@@ -41,7 +41,8 @@ test('GitHub authority outages and durable revocation prevent stale mirror resur
     await assert.rejects(clearGitHubConnection(user), { message: 'GitHub revocation could not be recorded. Retry shortly.' });
     await assert.rejects(saveGitHubConnection(user, 'synthetic-new-token', { providerUserId: '123', username: 'fixture', authorizationRevision:'10000000-0000-4000-8000-000000000001' }),
       { message: 'GitHub connection could not be saved. Retry shortly.' });
-    assert.ok(calls.every(call => call.path.startsWith('/rest/v1/github_integrations') || call.path.startsWith('/rest/v1/rpc/')));
+    assert.ok(calls.every(call => call.path.startsWith('/rest/v1/github_integrations')
+      || call.path.startsWith('/rest/v1/user_integrations') || call.path.startsWith('/rest/v1/rpc/')));
     for (mode of ['legacy-outage', 'revoked', 'legacy-revoked']) {
       calls.length = 0;
       assert.equal(await getGitHubToken(user), null);

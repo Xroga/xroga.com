@@ -140,8 +140,9 @@ test('shared OAuth requires authority, persists revocation and rejects path trav
     await clearProviderToken('owner', 'supabase_oauth');
     await clearPkceSession(context, 'supabase_oauth_pkce');
     const expired = { access_token: 'EXPIRED', refresh_token: 'ORIGINAL_REFRESH', metadata: { expires_at: '2000-01-01T00:00:00Z' } };
-    const seedSupabase=(token:Record<string,unknown>)=>rows.set('owner/supabase_oauth',{
-      user_id:'owner',provider:'supabase_oauth',...token,credential_revision:randomUUID()});
+    const oauthOwner=context.userId;
+    const seedSupabase=(token:Record<string,unknown>)=>rows.set(`${oauthOwner}/supabase_oauth`,{
+      user_id:oauthOwner,provider:'supabase_oauth',...token,credential_revision:randomUUID()});
     seedSupabase(expired);
     let tokenRequests = 0;
     let revokeDuringRefresh = false;
@@ -150,29 +151,29 @@ test('shared OAuth requires authority, persists revocation and rejects path trav
       const target = String(input instanceof Request ? input.url : input);
       if (target === 'https://api.supabase.com/v1/oauth/token') {
         tokenRequests++;
-        if (revokeDuringRefresh) await clearProviderToken('owner', 'supabase_oauth');
+        if (revokeDuringRefresh) await clearProviderToken(oauthOwner, 'supabase_oauth');
         return Response.json(providerFailure ? { error_description: 'SYNTHETIC_PRIVATE_ERROR' } : { access_token: 'REFRESHED', refresh_token: 'ROTATED_REFRESH', expires_in: 3600 }, { status: providerFailure ? 400 : 200 });
       }
       assert.ok(target.startsWith(process.env.SUPABASE_URL!), 'test network must remain loopback-only');
       return originalFetch(input, init);
     };
-    assert.equal(await getSupabaseOAuthAccessToken('owner'), 'REFRESHED');
-    assert.equal((await loadProviderToken('owner', 'supabase_oauth'))?.refresh_token, 'ROTATED_REFRESH');
+    assert.equal(await getSupabaseOAuthAccessToken(oauthOwner), 'REFRESHED');
+    assert.equal((await loadProviderToken(oauthOwner, 'supabase_oauth'))?.refresh_token, 'ROTATED_REFRESH');
     seedSupabase(expired);
     revokeDuringRefresh = true;
-    assert.equal(await getSupabaseOAuthAccessToken('owner'), null);
-    assert.equal(await loadProviderToken('owner', 'supabase_oauth'), null);
+    assert.equal(await getSupabaseOAuthAccessToken(oauthOwner), null);
+    assert.equal(await loadProviderToken(oauthOwner, 'supabase_oauth'), null);
     assert.equal((await loadProviderToken('other', 'supabase_oauth'))?.access_token, 'other-token');
     revokeDuringRefresh = false;
     providerFailure = true;
     seedSupabase(expired);
-    assert.equal(await getSupabaseOAuthAccessToken('owner'), null, 'a failed refresh cannot return the expired credential');
+    assert.equal(await getSupabaseOAuthAccessToken(oauthOwner), null, 'a failed refresh cannot return the expired credential');
     seedSupabase({ ...expired, refresh_token: null });
-    assert.equal(await getSupabaseOAuthAccessToken('owner'), null);
+    assert.equal(await getSupabaseOAuthAccessToken(oauthOwner), null);
     seedSupabase({ ...expired, refresh_token: null, metadata: { expires_at: '1970-01-01T00:00:00Z' } });
-    assert.equal(await getSupabaseOAuthAccessToken('owner'), null);
+    assert.equal(await getSupabaseOAuthAccessToken(oauthOwner), null);
     seedSupabase({ ...expired, metadata: { expires_at: 'malformed' } });
-    assert.equal(await getSupabaseOAuthAccessToken('owner'), null);
+    assert.equal(await getSupabaseOAuthAccessToken(oauthOwner), null);
     assert.equal(tokenRequests, 3);
   } finally {
     globalThis.fetch = originalFetch;

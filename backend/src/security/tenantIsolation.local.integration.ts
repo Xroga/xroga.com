@@ -73,6 +73,7 @@ import { registerActionApprovalTests } from '../operations/actionApproval.local.
 import { registerActionClaimClockTests } from '../operations/actionClaimClock.local.integration.js';
 import { registerActionConfirmationTests } from '../operations/actionConfirmation.local.integration.js';
 import { registerActionAdmissionTests } from '../operations/actionAdmission.local.integration.js';
+import { registerOperationsProviderBudgetTests } from '../operations/operationsProviderBudget.local.integration.js';
 import { registerActionCreationTests } from '../operations/actionCreation.local.integration.js';
 import { registerAutomationAdmissionTests } from '../operations/automationAdmission.local.integration.js';
 import { registerAutomationCreationTests } from '../operations/automationCreation.local.integration.js';
@@ -134,6 +135,7 @@ registerActionApprovalTests(admin, () => users);
 registerActionClaimClockTests(admin, () => users);
 registerActionConfirmationTests(admin, () => users);
 registerActionAdmissionTests(admin, () => users);
+registerOperationsProviderBudgetTests(admin, () => users);
 registerActionCreationTests(admin, () => users);
 registerAutomationAdmissionTests(admin, () => users);
 registerAutomationCreationTests(admin, () => users);

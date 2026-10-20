@@ -2,6 +2,7 @@ import { getSupabaseAdmin } from '../../config/supabase.js';
 import type { GitHubRepoStrategy } from './githubAuth.js';
 import { ensurePrivateOAuthBucket } from './credentialStorageBucket.js';
 import { requireTenantContext, type TenantContext } from '../../security/tenantContext.js';
+import { requireLegacyCredentialMigrationWindow } from './credentialVaultRuntime.js';
 
 const BUCKET = 'xroga-github-tokens';
 
@@ -33,6 +34,7 @@ export async function saveGitHubTokenToStorage(
   data: StoredGitHubAuth
 ): Promise<boolean> {
   try {
+    requireLegacyCredentialMigrationWindow();
     const { userId } = requireTenantContext(context);
     const body = JSON.stringify(data);
     const ready = await ensurePrivateOAuthBucket();
@@ -82,6 +84,7 @@ async function currentGitHubAuthority(userId: string): Promise<string | null> {
 
 export async function getGitHubTokenFromStorage(userId: string): Promise<StoredGitHubAuth | null> {
   try {
+    requireLegacyCredentialMigrationWindow();
     if (await currentGitHubAuthority(userId) === null) return null;
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase.storage.from(BUCKET).download(storagePath(userId));

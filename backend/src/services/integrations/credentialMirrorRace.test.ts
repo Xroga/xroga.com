@@ -6,6 +6,7 @@ import { getGitHubTokenFromStorage } from './githubTokenStore.js';
 
 test('legacy downloads recheck authoritative revocation, rotation and outages before returning credentials', async () => {
   const user = '11111111-1111-4111-8111-111111111111';
+  const credentialRevision = '33333333-3333-4333-8333-333333333333';
   const encrypted = (value: string) => `enc:${Buffer.from(`fixture:${value}`).toString('base64')}`;
   let provider = 'apikey_openai';
   let scenario = 'legacy';
@@ -43,7 +44,8 @@ test('legacy downloads recheck authoritative revocation, rotation and outages be
     }
     if (applyAuthority && scenario.endsWith('rotated')) {
       res.end(JSON.stringify([{ access_token:github?'SYNTHETIC_NEW_GITHUB':encrypted('SYNTHETIC_NEW_BYOK'),
-        provider,metadata:{ provider:provider.replace('apikey_',''),env_var:'CURRENT_KEY' } }]));return;
+        user_id:user,provider,credential_revision:credentialRevision,
+        metadata:{ provider:provider.replace('apikey_',''),env_var:'CURRENT_KEY' } }]));return;
     }
     if (applyAuthority && scenario.endsWith('same')) {
       res.end(JSON.stringify([{access_token:'SYNTHETIC_OLD_GITHUB'}]));return;

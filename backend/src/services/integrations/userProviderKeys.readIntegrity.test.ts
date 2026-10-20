@@ -20,7 +20,9 @@ test('credential reads reject malformed envelopes and deploy classification foll
   const iv=Buffer.alloc(12,7),cipher=createCipheriv('aes-256-gcm',scryptSync(key,'xroga-provider-keys-v2',32),iv);
   const data=Buffer.concat([cipher.update(secret),cipher.final()]);
   const valid=`v1:${iv.toString('base64')}:${cipher.getAuthTag().toString('base64')}:${data.toString('base64')}`;
-  const row=(access_token:unknown,provider='apikey_openai',metadata:unknown={})=>({provider,access_token,metadata});
+  const row=(access_token:unknown,provider='apikey_openai',metadata:unknown={})=>({
+    user_id:owner,provider,access_token,metadata,credential_revision:'22222222-2222-4222-8222-222222222222',
+  });
   try {
     for(const envelope of [valid,legacy,legacy.slice(4)]) {
       rows=[row(envelope)];assert.equal(await getUserProviderKey(owner,'openai'),secret);

@@ -29,3 +29,8 @@ test('unrelated metadata/read statements are not invented credential writes and 
     db.from('user_integrations').select('metadata');res.json({hasSecret:true});res.json({access_token:token});}`);
   assert.equal(report.rows.length, 1); assert.equal(report.rows[0].kind, 'POTENTIAL_PUBLIC_SECRET_PROJECTION');
 });
+test('configured runtime vault imports remain visible as canonical boundary users', () => {
+  const report = discover('backend/src/services/integrations/example.ts',
+    `import { sealRuntimeCredential } from './credentialVaultRuntime.js';\nexport async function save(){return sealRuntimeCredential(owner,binding,secret);}`);
+  assert.deepEqual(report.vaultImports, ['backend/src/services/integrations/example.ts']);
+});

@@ -19,10 +19,10 @@ export function registerRuntimeSecretReadTests(admin:SupabaseClient,getUsers:()=
     assert.deepEqual(await otherSecrets.resolveEnvironment(project,['preview']),{API_TOKEN:'other-synthetic'});
     assert.deepEqual(await store.loadEncryptedSecrets(owner.id,`${project}-missing`),[]);
     const saved=await admin.from('project_runtime_secrets').select('*').eq('user_id',owner.id).eq('project_id',project).single();assert.equal(saved.error,null);
-    for(const mutation of [{encrypted_value:'v1:bad:bad:bad'},{key_version:2}]){
+    for(const mutation of [{encrypted_value:'vault:v3:bad'},{key_version:2}]){
       assert.equal((await admin.from('project_runtime_secrets').update(mutation).eq('user_id',owner.id).eq('project_id',project)).error,null);
       await assert.rejects(secrets.resolveEnvironment(project,['preview']),{code:'RESOURCE_ACCESS_UNAVAILABLE'});
-      assert.equal((await admin.from('project_runtime_secrets').update({encrypted_value:saved.data.encrypted_value,key_version:1}).eq('user_id',owner.id).eq('project_id',project)).error,null);
+      assert.equal((await admin.from('project_runtime_secrets').update({encrypted_value:saved.data.encrypted_value,key_version:3}).eq('user_id',owner.id).eq('project_id',project)).error,null);
     }
     assert.deepEqual(await secrets.resolveEnvironment(project,['preview']),{API_TOKEN:'owner-synthetic'});
   });
@@ -43,7 +43,7 @@ export function registerRuntimeSecretReadTests(admin:SupabaseClient,getUsers:()=
     ]);
     const read=async()=>{const result=await admin.from('project_runtime_secrets').select('*').eq('project_id',project).order('user_id');assert.equal(result.error,null);return result.data!;};
     const rows=await read();assert.equal(rows.length,2);assert.deepEqual(new Set(rows.map(row=>row.user_id)),new Set([owner.id,other.id]));
-    assert.ok(rows.every(row=>row.project_id===project&&row.name==='API_TOKEN'&&row.scope==='preview'&&row.key_version===1));
+    assert.ok(rows.every(row=>row.project_id===project&&row.name==='API_TOKEN'&&row.scope==='preview'&&row.key_version===3&&String(row.encrypted_value).startsWith('vault:v3:')));
     assert.ok(!JSON.stringify(rows).includes('owner-synthetic'));assert.ok(!JSON.stringify(rows).includes('other-synthetic'));
     const now=new Date().toISOString();
     const session:ProjectRuntimeSession={schemaVersion:'1.0.0',sessionId,userId:owner.id,projectId:project,providerId:'fly-project-runtime',runtimeClass:'interactive',status:'running',image:null,workspaceRevision:1,knownFiles:[],processes:[],ports:[],providerState:{machineId:'synthetic'},createdAt:now,updatedAt:now,expiresAt:null};

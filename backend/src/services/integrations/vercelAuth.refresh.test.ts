@@ -35,19 +35,20 @@ describe('Vercel distributed refresh lease', () => {
 
   it('rejects malformed lease markers without exposing their contents', () => {
     assert.equal(parseVercelRefreshLease('xroga-refresh-lease:not-base64-json'), null);
+    const legacy = Buffer.from(JSON.stringify({ claimId: 'old', expiresAt: Date.now() + 10_000,
+      refreshToken: 'SYNTHETIC_SECRET_CANARY' })).toString('base64url');
+    assert.equal(parseVercelRefreshLease(`xroga-refresh-lease:${legacy}`), null);
   });
 
   it('parses a complete lease marker used for cross-machine exclusion', () => {
     const payload = Buffer.from(JSON.stringify({
       claimId: 'claim-1',
       expiresAt: 1_800_000_000_000,
-      refreshToken: 'rotating-token',
     })).toString('base64url');
 
     assert.deepEqual(parseVercelRefreshLease(`xroga-refresh-lease:${payload}`), {
       claimId: 'claim-1',
       expiresAt: 1_800_000_000_000,
-      refreshToken: 'rotating-token',
     });
   });
 });

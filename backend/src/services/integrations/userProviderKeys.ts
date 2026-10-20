@@ -5,13 +5,15 @@
  * require an active canonical row. Absence or an outage never grants access.
  */
 
-import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto';
+import { createDecipheriv, randomUUID, scryptSync } from 'crypto';
+import { isDeepStrictEqual } from 'node:util';
 import { getSupabaseAdmin } from '../../config/supabase.js';
-import { requireTenantContext, type TenantContext } from '../../security/tenantContext.js';
+import { createTenantContext, requireTenantContext, type TenantContext } from '../../security/tenantContext.js';
 import { getTenantSupabaseAdmin } from '../../security/serviceRoleGuard.js';
 import { isMissingTableError } from './githubTokenStore.js';
 import { ensurePrivateOAuthBucket } from './credentialStorageBucket.js';
 import { projectRefFromUrl } from './supabaseProjectUrl.js';
+import { requireLegacyCredentialMigrationWindow, runtimeCredentialVault } from './credentialVaultRuntime.js';
 
 const PROVIDER_PREFIX = 'apikey_';
 const KEY_BUCKET = 'xroga-github-tokens';
@@ -48,7 +50,7 @@ async function saveKeyToStorage(
 async function loadKeyFromStorage(
   userId: string,
   providerRow: string,
-): Promise<{ access_token: string; metadata: Record<string, unknown> } | null> {
+): Promise<{ access_token: string; metadata: Record<string, unknown>; user_id: string; provider: string; credential_revision: string | null } | null> {
   try {
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase.storage
@@ -63,11 +65,14 @@ async function loadKeyFromStorage(
     // A revocation or rotation may commit while the legacy download is pending.
     // Re-read authority after the bytes arrive, not only before the fallback.
     const { data: current, error: authorityError } = await supabase.from('user_integrations')
-      .select('access_token, metadata').eq('user_id', userId).eq('provider', providerRow).maybeSingle();
+      .select('user_id,provider,access_token,metadata,credential_revision').eq('user_id', userId).eq('provider', providerRow).maybeSingle();
     if (authorityError) return null;
     if (current) {
       if (current.metadata?.revoked === true || typeof current.access_token !== 'string' || !current.access_token) return null;
-      return { access_token: current.access_token, metadata: current.metadata ?? {} };
+      return { access_token: current.access_token, metadata: current.metadata ?? {},
+        user_id: current.user_id, provider: current.provider, credential_revision: current.credential_revision } as {
+          access_token: string; metadata: Record<string, unknown>; user_id: string; provider: string; credential_revision: string | null;
+        };
     }
     return null;
   } catch {
@@ -241,15 +246,8 @@ function encryptionKey(): Buffer {
   return scryptSync(secret.slice(0, 64), 'xroga-provider-keys-v2', 32);
 }
 
-function encryptApiKey(plain: string): string {
-  const iv = randomBytes(12);
-  const cipher = createCipheriv('aes-256-gcm', encryptionKey(), iv);
-  const enc = Buffer.concat([cipher.update(plain, 'utf8'), cipher.final()]);
-  const tag = cipher.getAuthTag();
-  return `v1:${iv.toString('base64')}:${tag.toString('base64')}:${enc.toString('base64')}`;
-}
-
 function decryptApiKey(stored: string): string | null {
+  requireLegacyCredentialMigrationWindow();
   if (typeof stored !== 'string' || !stored.length || stored.length > 70000) return null;
   const decode = (value: string): Buffer | null => {
     if (!value || !/^[A-Za-z0-9+/]+={0,2}$/.test(value)) return null;
@@ -280,6 +278,52 @@ function decryptApiKey(stored: string): string | null {
   } catch {
     return null;
   }
+}
+
+function vaultBinding(userId: string, providerRow: string, metadata: Record<string, unknown>) {
+  const revision = metadata.vault_revision;
+  const credentialType = metadata.type;
+  if (typeof revision !== 'string' || !/^[0-9a-f-]{36}$/i.test(revision)
+    || typeof credentialType !== 'string' || !credentialType) return null;
+  return {
+    tenant: userId, owner: userId, provider: providerRow.replace(PROVIDER_PREFIX, ''), account: providerRow,
+    credentialType, recordId: providerRow, revision, scope: 'user-provider-key',
+  } as const;
+}
+
+async function sealVaultApiKey(userId: string, providerRow: string, metadata: Record<string, unknown>, plain: string): Promise<string> {
+  const binding = vaultBinding(userId, providerRow, metadata);
+  if (!binding) throw new Error('Credential vault binding is invalid.');
+  return runtimeCredentialVault().seal(createTenantContext({ userId, via: 'persisted_owner' }), binding, plain);
+}
+
+async function decryptCredentialValue(userId: string, providerRow: string, stored: string, metadata: Record<string, unknown>): Promise<string | null> {
+  if (typeof stored !== 'string') return null;
+  if (!stored.startsWith('vault:v3:')) return decryptApiKey(stored);
+  const binding = vaultBinding(userId, providerRow, metadata);
+  if (!binding) return null;
+  try {
+    return await runtimeCredentialVault().open(createTenantContext({ userId, via: 'persisted_owner' }), binding, stored);
+  } catch { return null; }
+}
+
+async function openCanonicalProviderRow(userId: string, row: {
+  user_id?: unknown; provider: string; access_token?: string | null;
+  metadata?: Record<string, unknown> | null; credential_revision?: string | null;
+}): Promise<string | null> {
+  if (row.user_id !== undefined && row.user_id !== userId) return null;
+  if (row.metadata?.revoked === true || !row.access_token) return null;
+  const token = row.access_token, metadata = row.metadata ?? {}, revision = row.credential_revision ?? null;
+  const plain = await decryptCredentialValue(userId, row.provider, token, metadata);
+  if (!plain) return null;
+  const current = await getSupabaseAdmin().from('user_integrations')
+    .select('user_id,provider,access_token,metadata,credential_revision')
+    .eq('user_id', userId).eq('provider', row.provider).maybeSingle();
+  if (current.error || !current.data || current.data.user_id !== userId || current.data.provider !== row.provider
+    || current.data.access_token !== token || current.data.credential_revision !== revision
+    || current.data.metadata?.revoked === true
+    || !isDeepStrictEqual(current.data.metadata ?? {}, metadata)) return null;
+  return plain;
 }
 
 function maskKey(key: string): string {
@@ -417,8 +461,9 @@ export async function saveUserProviderKey(
     sync_target: syncTarget,
     connected_at: now,
     masked: maskKey(trimmed),
+    vault_revision: randomUUID(),
   };
-  const encrypted = encryptApiKey(trimmed);
+  const encrypted = await sealVaultApiKey(userId, providerRow, metadata, trimmed);
 
 
   const saveArgs = {
@@ -436,6 +481,71 @@ export async function saveUserProviderKey(
   }).catch(() => undefined);
 
   return { provider: p, connected: true, masked: maskKey(trimmed), envVar, connectedAt: now };
+}
+
+export type LegacyProviderMigrationResult = 'MIGRATED' | 'ALREADY_CURRENT' | 'ABSENT_OR_REVOKED';
+
+/** Explicit, owner-issued migration for one legacy BYOK row. It is idempotent:
+ * a current v3 row is unchanged, and the database CAS prevents a late migration
+ * from reviving a revoked or concurrently rotated credential. */
+export async function migrateLegacyProviderKey(
+  context: TenantContext,
+  provider: string,
+): Promise<LegacyProviderMigrationResult> {
+  const { userId } = requireTenantContext(context);
+  const selected = credentialProviderSelection(provider);
+  if (selected === 'custom') throw new Error('Select the exact named custom credential for migration.');
+  const providerRow = `${PROVIDER_PREFIX}${selected}`;
+  const supabase = getTenantSupabaseAdmin(context);
+  const read = await supabase.from('user_integrations')
+    .select('user_id,provider,access_token,metadata,credential_revision')
+    .eq('user_id', userId).eq('provider', providerRow).maybeSingle();
+  if (read.error) throw new Error('Credential migration inventory is unavailable.');
+  const row = read.data;
+  if (!row || row.metadata?.revoked === true || !row.access_token) return 'ABSENT_OR_REVOKED';
+  if (row.user_id !== userId || row.provider !== providerRow
+    || typeof row.credential_revision !== 'string') throw new Error('Credential migration identity is invalid.');
+  if (row.access_token.startsWith('vault:v3:')) return 'ALREADY_CURRENT';
+  requireLegacyCredentialMigrationWindow();
+  const plain = decryptApiKey(row.access_token);
+  if (!plain) throw new Error('Legacy credential could not be authenticated.');
+  const previous = row.metadata && !Array.isArray(row.metadata) ? row.metadata as Record<string, unknown> : {};
+  const vaultRevision = randomUUID();
+  const envVar = typeof previous.env_var === 'string'
+    ? envVarForProvider(selected, previous.env_var)
+    : envVarForProvider(selected);
+  const metadata = {
+    type: PUBLISH_ONLY_PROVIDERS.has(selected)
+      ? 'user_publish_credential'
+      : SUPABASE_SERVER_ONLY_PROVIDERS.has(selected) ? 'supabase_provision' : 'user_api_key',
+    provider: selected.startsWith('custom_') ? 'custom' : selected,
+    env_var: envVar,
+    sync_target: PUBLISH_ONLY_PROVIDERS.has(selected)
+      ? 'eas' : SUPABASE_SERVER_ONLY_PROVIDERS.has(selected) ? 'xroga_server' : 'vercel',
+    connected_at: typeof previous.connected_at === 'string' && Number.isFinite(Date.parse(previous.connected_at))
+      ? previous.connected_at : new Date().toISOString(),
+    masked: maskKey(plain),
+    vault_revision: vaultRevision,
+  };
+  const encrypted = await sealVaultApiKey(userId, providerRow, metadata, plain);
+  const saved = await supabase.rpc('migrate_provider_key_to_vault', {
+    p_owner_id: userId,
+    p_provider: providerRow,
+    p_expected_revision: row.credential_revision,
+    p_expected_legacy_token: row.access_token,
+    p_vault_token: encrypted,
+    p_metadata: metadata,
+  });
+  if (saved.error) throw new Error('Credential migration could not be recorded.');
+  if (saved.data !== true) {
+    const current = await supabase.from('user_integrations').select('access_token,metadata')
+      .eq('user_id', userId).eq('provider', providerRow).maybeSingle();
+    if (!current.error && current.data?.access_token?.startsWith('vault:v3:')
+      && current.data.metadata?.revoked !== true) return 'ALREADY_CURRENT';
+    throw new Error('Credential changed during migration. Retry the inventory before continuing.');
+  }
+  void saveKeyToStorage(userId, providerRow, { access_token: encrypted, metadata }).catch(() => undefined);
+  return 'MIGRATED';
 }
 
 export async function listUserProviderKeys(userId: string): Promise<UserProviderKeyStatus[]> {
@@ -659,12 +769,12 @@ export async function getUserProviderKey(userId: string, provider: string): Prom
   if (p === 'custom') {
     const { data, error } = await supabase
       .from('user_integrations')
-      .select('access_token, provider, metadata')
+      .select('user_id, access_token, provider, metadata, credential_revision')
       .eq('user_id', userId)
       .like('provider', `${PROVIDER_PREFIX}custom%`);
     if (!error) {
       const row = (data ?? []).find((item) => item.metadata?.revoked !== true && item.access_token);
-      if (row) return decryptApiKey(row.access_token);
+      if (row) return openCanonicalProviderRow(userId, row);
       if (data?.length) return null;
     }
     if (error) return null;
@@ -672,7 +782,9 @@ export async function getUserProviderKey(userId: string, provider: string): Prom
     const custom = storedList.find((r) => String(r.provider).includes('custom'));
     if (custom) {
       const loaded = await loadKeyFromStorage(userId, custom.provider);
-      if (loaded?.access_token) return decryptApiKey(loaded.access_token);
+      if (loaded?.access_token) return openCanonicalProviderRow(userId, loaded as typeof loaded & {
+        user_id: string; provider: string; credential_revision: string | null;
+      });
     }
     return null;
   }
@@ -680,13 +792,13 @@ export async function getUserProviderKey(userId: string, provider: string): Prom
   const providerRow = `${PROVIDER_PREFIX}${p}`;
   const { data, error } = await supabase
     .from('user_integrations')
-    .select('access_token, metadata')
+    .select('user_id, provider, access_token, metadata, credential_revision')
     .eq('user_id', userId)
     .eq('provider', providerRow)
     .maybeSingle();
 
   if (!error && data) {
-    return data.metadata?.revoked === true || !data.access_token ? null : decryptApiKey(data.access_token);
+    return openCanonicalProviderRow(userId, data);
   }
 
   if (error) {
@@ -695,7 +807,9 @@ export async function getUserProviderKey(userId: string, provider: string): Prom
 
   const stored = await loadKeyFromStorage(userId, providerRow);
   if (!stored?.access_token) return null;
-  return decryptApiKey(stored.access_token);
+  return openCanonicalProviderRow(userId, stored as typeof stored & {
+    user_id: string; provider: string; credential_revision: string | null;
+  });
 }
 
 /** Decrypt vault → env map for Vercel sync only (never log values). */
@@ -703,14 +817,16 @@ export async function resolveProviderEnvForDeploy(userId: string): Promise<Recor
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from('user_integrations')
-    .select('provider, access_token, metadata')
+    .select('user_id, provider, access_token, metadata, credential_revision')
     .eq('user_id', userId)
     .like('provider', `${PROVIDER_PREFIX}%`);
 
   type Row = {
+    user_id?: string;
     provider: string;
     access_token?: string | null;
     metadata?: Record<string, unknown> | null;
+    credential_revision?: string | null;
   };
   let rows: Row[] = (!error && data?.length ? data : []) as Row[];
 
@@ -722,9 +838,11 @@ export async function resolveProviderEnvForDeploy(userId: string): Promise<Recor
       const loaded = await loadKeyFromStorage(userId, s.provider);
       if (!loaded?.access_token) continue;
       rows.push({
+        user_id: loaded.user_id,
         provider: s.provider,
         access_token: loaded.access_token,
         metadata: loaded.metadata,
+        credential_revision: loaded.credential_revision,
       });
     }
   }
@@ -753,7 +871,9 @@ export async function resolveProviderEnvForDeploy(userId: string): Promise<Recor
     const varName = meta.env_var ?? envVarForProvider(provider);
     if (typeof varName !== 'string' || !/^[A-Z_][A-Z0-9_]{1,63}$/.test(varName)) throw new Error('Credential metadata is invalid. Reconnect before syncing.');
     assertPrivateCredentialEnv(provider, varName);
-    const plain = row.access_token ? decryptApiKey(row.access_token) : null;
+    const plain = row.access_token
+      ? await openCanonicalProviderRow(userId, row)
+      : null;
     if (plain && varName) out[varName] = plain;
   }
   // Validate the final map too, including historical values and custom env
@@ -765,10 +885,10 @@ export async function resolveProviderEnvForDeploy(userId: string): Promise<Recor
     const projectRows = new Map<BundleProvider, BundleRow>();
     for (const provider of SUPABASE_BUNDLE_PROVIDERS) {
       const row = rows.find(item => item.provider === `apikey_${provider}`);
-      projectRows.set(provider, { provider: `apikey_${provider}`, access_token: row?.access_token ?? '', metadata: row?.metadata ?? { revoked: true }, credential_revision: null });
+      projectRows.set(provider, { provider: `apikey_${provider}`, access_token: row?.access_token ?? '', metadata: row?.metadata ?? { revoked: true }, credential_revision: row?.credential_revision ?? null });
     }
-    const values = bundleValues(projectRows);
-    if (!boundBundle(projectRows) || out.NEXT_PUBLIC_SUPABASE_URL !== values.projectUrl
+    const values = await bundleValues(userId, projectRows);
+    if (!(await boundBundle(userId, projectRows)) || out.NEXT_PUBLIC_SUPABASE_URL !== values.projectUrl
       || out.NEXT_PUBLIC_SUPABASE_ANON_KEY !== values.anonKey
       || (out.SUPABASE_SERVICE_ROLE_KEY ?? null) !== values.serviceRoleKey) {
       throw new Error('Supabase credentials are not associated with one project. Reconnect before syncing credentials.');
@@ -1041,16 +1161,22 @@ function legacyJwtMatches(key: string, ref: string, role: string): boolean {
   } catch { return false; }
 }
 
-function bundleValues(rows: Map<BundleProvider, BundleRow>) {
-  const value = (provider: BundleProvider) => {
+async function bundleValues(userId: string, rows: Map<BundleProvider, BundleRow>) {
+  const value = async (provider: BundleProvider) => {
     const row = rows.get(provider);
-    return row?.metadata.revoked === true || !row?.access_token ? null : decryptApiKey(row.access_token);
+    if (row?.metadata.revoked === true || !row?.access_token) return null;
+    return row.credential_revision
+      ? openCanonicalProviderRow(userId, { ...row, user_id: userId })
+      : decryptCredentialValue(userId, row.provider, row.access_token, row.metadata);
   };
-  return { projectUrl: value('supabase_url'), anonKey: value('supabase_anon'), serviceRoleKey: value('supabase'), dbPassword: value('supabase_db_password') };
+  const [projectUrl, anonKey, serviceRoleKey, dbPassword] = await Promise.all([
+    value('supabase_url'), value('supabase_anon'), value('supabase'), value('supabase_db_password'),
+  ]);
+  return { projectUrl, anonKey, serviceRoleKey, dbPassword };
 }
 
-function boundBundle(rows: Map<BundleProvider, BundleRow>, requireCanonicalRevision = false): boolean {
-  const values = bundleValues(rows), ref = projectRefFromUrl(values.projectUrl ?? '');
+async function boundBundle(userId: string, rows: Map<BundleProvider, BundleRow>, requireCanonicalRevision = false): Promise<boolean> {
+  const values = await bundleValues(userId, rows), ref = projectRefFromUrl(values.projectUrl ?? '');
   if (!ref || !values.anonKey) return false;
   const active = [...rows.values()].filter(row => row.access_token && row.metadata.revoked !== true);
   // A storage-only key has no canonical revision. Even an explicit reconnect
@@ -1065,8 +1191,8 @@ function boundBundle(rows: Map<BundleProvider, BundleRow>, requireCanonicalRevis
 /** One authority snapshot. Legacy JWT consistency is not provider verification. */
 export async function readUserSupabaseBundle(userId: string) {
   const rows = await snapshotSupabaseRows(userId);
-  if (!boundBundle(rows)) return null;
-  return bundleValues(rows);
+  if (!(await boundBundle(userId, rows))) return null;
+  return bundleValues(userId, rows);
 }
 
 export async function saveSupabaseBundle(admission: SupabaseBundleAdmission, input: ConnectUserSupabaseInput): Promise<UserProviderKeyStatus[]> {
@@ -1074,7 +1200,7 @@ export async function saveSupabaseBundle(admission: SupabaseBundleAdmission, inp
   if (!rows) throw bundleConflict();
   const ref = projectRefFromUrl(input.projectUrl);
   if (!ref) throw new Error('Invalid Supabase project URL.');
-  const previous = bundleValues(rows);
+  const previous = await bundleValues(admission.userId, rows);
   const values = { projectUrl: input.projectUrl.trim(), anonKey: input.anonKey.trim(), serviceRoleKey: input.serviceRoleKey?.trim(), dbPassword: input.dbPassword?.trim() };
   for (const [key, role] of [[values.anonKey, 'anon'], [values.serviceRoleKey, 'service_role']] as const) {
     if (!key || key.split('.').length !== 3) continue;
@@ -1089,7 +1215,7 @@ export async function saveSupabaseBundle(admission: SupabaseBundleAdmission, inp
   // Omitted active credentials may only survive an already-consistent same-project bundle.
   for (const key of ['serviceRoleKey', 'dbPassword'] as const) {
     if (!values[key] && previous[key]) {
-      if (!boundBundle(rows, true) || projectRefFromUrl(previous.projectUrl ?? '') !== ref) {
+      if (!(await boundBundle(admission.userId, rows, true)) || projectRefFromUrl(previous.projectUrl ?? '') !== ref) {
         throw new Error('Disconnect the existing Supabase project before reconnecting with omitted service credentials or database password.');
       }
       values[key] = previous[key];
@@ -1098,15 +1224,17 @@ export async function saveSupabaseBundle(admission: SupabaseBundleAdmission, inp
   const keys: Record<BundleProvider, string | undefined> = { supabase_url: values.projectUrl, supabase_anon: values.anonKey, supabase: values.serviceRoleKey, supabase_db_password: values.dbPassword };
   const now = new Date().toISOString();
   const statuses: UserProviderKeyStatus[] = [];
-  const payload = SUPABASE_BUNDLE_PROVIDERS.map(provider => {
+  const payload = await Promise.all(SUPABASE_BUNDLE_PROVIDERS.map(async provider => {
     const value = keys[provider], envVar = envVarForProvider(provider);
     if (value) statuses.push({ provider, connected: true, masked: maskKey(value), envVar, connectedAt: now });
+    const metadata = value ? {
+      type: SUPABASE_SERVER_ONLY_PROVIDERS.has(provider) ? 'supabase_provision' : 'user_api_key', provider, env_var: envVar,
+      sync_target: SUPABASE_SERVER_ONLY_PROVIDERS.has(provider) ? 'xroga_server' : 'vercel', connected_at: now, masked: maskKey(value),
+      vault_revision: randomUUID(),
+    } : { revoked: true };
     return { provider: `apikey_${provider}`, revision: rows.get(provider)!.credential_revision,
-      access_token: value ? encryptApiKey(value) : '', metadata: value ? {
-        type: SUPABASE_SERVER_ONLY_PROVIDERS.has(provider) ? 'supabase_provision' : 'user_api_key', provider, env_var: envVar,
-        sync_target: SUPABASE_SERVER_ONLY_PROVIDERS.has(provider) ? 'xroga_server' : 'vercel', connected_at: now, masked: maskKey(value),
-      } : { revoked: true } };
-  });
+      access_token: value ? await sealVaultApiKey(admission.userId, `apikey_${provider}`, metadata, value) : '', metadata };
+  }));
   const saved = await getSupabaseAdmin().rpc('save_supabase_bundle_if_current', { p_owner_id: admission.userId, p_project_ref: ref, p_rows: payload });
   if (saved.error) throw new Error('Supabase bundle could not be saved. Retry shortly.');
   if (saved.data !== true) throw bundleConflict();

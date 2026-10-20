@@ -6,6 +6,7 @@ import express from 'express';
 import router from './supabaseOAuth.js';
 import type { AuthRequest } from '../middleware/auth.js';
 import { createTenantContext } from '../security/tenantContext.js';
+import { sealRuntimeCredential } from '../services/integrations/credentialVaultRuntime.js';
 
 const owner='11111111-1111-4111-8111-111111111111';
 async function listen(server:Server) {
@@ -21,7 +22,11 @@ test('Supabase callback cannot resurrect derived keys after disconnect during pr
   const attempted:string[]=[];
   let createdProjects=0;
   let prepares=0,disconnect=true,projectCount=1,oauthToken='',selectRace=false;
+  let oauthMetadata:Record<string,unknown>={},oauthRevision=randomUUID();
   const state=Buffer.from(JSON.stringify({userId:owner})).toString('base64url');
+  const pkceVaultRevision=randomUUID();
+  const pkceEnvelope=await sealRuntimeCredential(owner,{provider:'supabase_oauth_pkce',account:'supabase_oauth_pkce',
+    credentialType:'pkce-verifier',recordId:'supabase_oauth_pkce',revision:pkceVaultRevision,scope:'oauth-session'},'synthetic-verifier');
   const database=createServer((req,res)=>{
     let raw='';req.on('data',chunk=>{raw+=chunk;});req.on('end',()=>{
       const url=new URL(req.url!,'http://fixture'),body=raw?JSON.parse(raw):{};
@@ -33,10 +38,10 @@ test('Supabase callback cannot resurrect derived keys after disconnect during pr
         reply(revisions.get(body.p_provider));
       } else if(url.pathname.endsWith('/consume_oauth_session')) {
         assert.equal(prepares,1,'Independent PAT admission precedes exchange, bundle snapshot does not mutate');
-        reply({state,verifier:'synthetic-verifier',redirect_uri:'http://localhost:3000/dashboard/integrations/supabase/callback',
-          created_at:new Date().toISOString(),authorization_revision:randomUUID()});
+        reply({state,verifier:pkceEnvelope,redirect_uri:'http://localhost:3000/dashboard/integrations/supabase/callback',
+          created_at:new Date().toISOString(),authorization_revision:randomUUID(),vault_revision:pkceVaultRevision,vault_format:'pkce-v1'});
       } else if(url.pathname.endsWith('/save_oauth_connection')) {
-        oauthToken=body.p_access_token;reply(true);
+        oauthToken=body.p_access_token;oauthMetadata=body.p_metadata;oauthRevision=randomUUID();reply(true);
       } else if(url.pathname.endsWith('/save_provider_key_if_current')) {
         assert.equal(body.p_owner_id,owner);
         attempted.push(body.p_provider);
@@ -51,7 +56,7 @@ test('Supabase callback cannot resurrect derived keys after disconnect during pr
         revisions.set(body.p_provider,randomUUID());reply(true);
       } else if(url.pathname==='/rest/v1/user_integrations') {
         if(req.method==='POST'){oauthToken='';reply([]);}
-        else if(url.searchParams.get('provider')==='eq.supabase_oauth')reply(oauthToken?[{access_token:oauthToken,metadata:{}}]:[]);
+        else if(url.searchParams.get('provider')==='eq.supabase_oauth')reply(oauthToken?[{user_id:owner,provider:'supabase_oauth',access_token:oauthToken,refresh_token:null,metadata:oauthMetadata,credential_revision:oauthRevision}]:[]);
         else if(url.searchParams.get('provider')?.startsWith('in.'))reply([...revisions].filter(([p])=>['apikey_supabase_url','apikey_supabase_anon','apikey_supabase','apikey_supabase_db_password'].includes(p)).map(([p,r])=>({user_id:owner,provider:p,access_token:'',metadata:{revoked:true},credential_revision:r})));
         else reply([]);
       } else if(url.pathname==='/storage/v1/bucket')reply([{id:'xroga-github-tokens',public:false}]);
@@ -118,7 +123,7 @@ test('Supabase callback cannot resurrect derived keys after disconnect during pr
     revisions.clear();saved.length=0;prepares=0;selectRace=true;
     const selected=await originalFetch(`${origin}/select-project`,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({projectRef:'fixtureproject0'})});
-    assert.equal(selected.status,400);assert.equal(selectRace,false);
+    assert.ok([400,403].includes(selected.status));assert.equal(selectRace,false);
     assert.deepEqual(saved,[]);assert.equal(prepares,1);assert.equal(oauthToken,'');
     revisions.clear();saved.length=0;attempted.length=0;prepares=0;oauthToken='SYNTHETIC_CURRENT_TOKEN';
     const created=await originalFetch(`${origin}/create-project`,{method:'POST',headers:{'Content-Type':'application/json'},

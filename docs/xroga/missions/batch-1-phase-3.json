@@ -81,7 +81,44 @@
     "scripts/security/audit-credential-usage.test.mjs",
     "scripts/security/refresh-phase-three-authority-delta.mjs",
     "scripts/xroga/phase-two-handoff.test.mjs",
-    "supabase/migrations/20261020000300_business_authority_dispatch.sql"
+    "supabase/migrations/20261020000300_business_authority_dispatch.sql",
+    "backend/src/ai/benchmarkExecutor.ts",
+    "backend/src/ai/providerBudget.ts",
+    "backend/src/operations/benchmarkAdapter.test.ts",
+    "backend/src/operations/benchmarkAdapter.ts",
+    "backend/src/operations/operationsProviderBudget.local.integration.ts",
+    "backend/src/operations/operationsService.ts",
+    "backend/src/routes/github.oauth.test.ts",
+    "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
+    "backend/src/security/runtimeSecretRead.local.integration.ts",
+    "backend/src/services/integrations/credentialMirrorRace.test.ts",
+    "backend/src/services/integrations/credentialVaultRuntime.ts",
+    "backend/src/services/integrations/githubAuth.revocation.test.ts",
+    "backend/src/services/integrations/githubAuth.ts",
+    "backend/src/services/integrations/githubTokenStore.ts",
+    "backend/src/services/integrations/oauthPkceStore.ts",
+    "backend/src/services/integrations/userProviderKeys.migration.test.ts",
+    "backend/src/services/integrations/userProviderKeys.readIntegrity.test.ts",
+    "backend/src/services/integrations/userProviderKeys.revision.test.ts",
+    "backend/src/services/integrations/userProviderKeys.ts",
+    "backend/src/services/integrations/vercelAuth.ts",
+    "backend/src/services/integrations/vercelAuth.refresh.test.ts",
+    "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
+    "backend/src/synthesis/projectRuntime/secretManager.ts",
+    "frontend/src/components/integrations/ConnectedServicesSection.tsx",
+    "frontend/src/components/integrations/CustomCredentialsSection.tsx",
+    "frontend/src/lib/credentialVault.test.ts",
+    "frontend/src/lib/credentialVault.ts",
+    "frontend/src/lib/pluginMarketplacePolish.test.ts",
+    "supabase/migrations/20261020000400_operations_provider_budget_authority.sql",
+    "supabase/migrations/20261020000500_provider_key_vault_envelopes.sql",
+    "supabase/migrations/20261020000600_oauth_vault_envelopes.sql",
+    "supabase/migrations/20261020000700_github_vault_envelope.sql",
+    "supabase/migrations/20261020000800_pkce_vault_envelope.sql",
+    "supabase/migrations/20261020000900_direct_oauth_vault_admission.sql",
+    "supabase/migrations/20261020001000_provider_key_vault_migration.sql",
+    "docs/xroga/security/credential-caller-dispositions.md",
+    "docs/xroga/security/credential-migration.md"
   ],
   "decisions": {
     "keep": [
@@ -100,7 +137,14 @@
   "schemaImpact": {
     "changed": true,
     "migrations": [
-      "supabase/migrations/20261020000300_business_authority_dispatch.sql"
+      "supabase/migrations/20261020000300_business_authority_dispatch.sql",
+      "supabase/migrations/20261020000400_operations_provider_budget_authority.sql",
+      "supabase/migrations/20261020000500_provider_key_vault_envelopes.sql",
+      "supabase/migrations/20261020000600_oauth_vault_envelopes.sql",
+      "supabase/migrations/20261020000700_github_vault_envelope.sql",
+      "supabase/migrations/20261020000800_pkce_vault_envelope.sql",
+      "supabase/migrations/20261020000900_direct_oauth_vault_admission.sql",
+      "supabase/migrations/20261020001000_provider_key_vault_migration.sql"
     ],
     "rollout": "Disposable fresh and upgrade only until separately authorized. Expand existing confirmation table with nullable admission timestamp and service-only locked RPCs.",
     "rollback": "Revert application changes to accepted source if required. Retain nullable additive column and historical rows. Never erase or reset started effects, approvals or credentials."
@@ -120,7 +164,7 @@
     },
     "credentials": {
       "changed": true,
-      "description": "Canonical identity-bound envelope and explicitly injected CryptoProvider implemented and unit tested. Old writers are not cut over. No live credential operation. Command009 software and actual production KMS remain incomplete."
+      "description": "Enabled OAuth, provider-key, GitHub, Vercel, PKCE and project-runtime writers now use identity-bound v3 envelopes with revision checks. Browser XOR writes are retired and explicit consent is required for legacy import. Production KMS selection and live cutover remain unauthorized and incomplete."
     },
     "egress": {
       "changed": true,
@@ -128,7 +172,7 @@
     },
     "cost": {
       "changed": true,
-      "description": "Unbound financial authority fails closed. Durable spend reservation and settlement integration remains mandatory, not certified by refusal alone."
+      "description": "Operations benchmark effects reserve through the existing provider budget ledger against the exact claimed action, current approval, lease and approved USD ceiling before each actual provider call. Real disposable concurrency proof remains required."
     },
     "billing": {
       "changed": false,
@@ -164,8 +208,8 @@
   "rollback": "Reviewable code revert to accepted a21a8202 without rewriting its commit. Leave additive schema compatible and preserve all claim/effect receipts, private data and historical evidence.",
   "knownGaps": [
     "Actual disposable and final-source branch/integrated proof pending",
-    "Operations canonical authority adapter and spend accounting not complete",
-    "CredentialVault caller migration, rotation, revocation, browser consent and acceptance not complete",
+    "Latest Operations and CredentialVault migrations require disposable fresh and upgrade database evidence",
+    "Final source branch and integrated CI are pending",
     "Production KMS provider and custody unspecified"
   ],
   "placeholderClaimsRemaining": [

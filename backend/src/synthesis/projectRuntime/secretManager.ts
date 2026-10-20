@@ -1,9 +1,14 @@
 import {
-  createCipheriv,
   createDecipheriv,
-  randomBytes,
+  createHash,
   scryptSync,
 } from 'node:crypto';
+
+import {
+  openRuntimeCredential,
+  requireLegacyCredentialMigrationWindow,
+  sealRuntimeCredential,
+} from '../../services/integrations/credentialVaultRuntime.js';
 
 import type {
   EncryptedProjectSecretRecord,
@@ -58,63 +63,14 @@ function encryptionKey(
   );
 }
 
-function encrypt(
+function decryptLegacy(
   value:
     string,
 
   source:
     NodeJS.ProcessEnv,
 ): string {
-  const iv =
-    randomBytes(
-      12,
-    );
-
-  const cipher =
-    createCipheriv(
-      'aes-256-gcm',
-      encryptionKey(
-        source,
-      ),
-      iv,
-    );
-
-  const encrypted =
-    Buffer.concat([
-      cipher.update(
-        value,
-        'utf8',
-      ),
-
-      cipher.final(),
-    ]);
-
-  const tag =
-    cipher.getAuthTag();
-
-  return [
-    'v1',
-    iv.toString(
-      'base64',
-    ),
-    tag.toString(
-      'base64',
-    ),
-    encrypted.toString(
-      'base64',
-    ),
-  ].join(
-    ':',
-  );
-}
-
-function decrypt(
-  value:
-    string,
-
-  source:
-    NodeJS.ProcessEnv,
-): string {
+  requireLegacyCredentialMigrationWindow();
   const parts =
     value.split(
       ':',
@@ -164,6 +120,32 @@ function decrypt(
   ]).toString(
     'utf8',
   );
+}
+
+function runtimeSecretRecordId(
+  projectId: string,
+  name: string,
+  scope: ProjectSecretScope,
+): string {
+  return createHash('sha256')
+    .update(JSON.stringify(['project-runtime-secret', projectId, name, scope]))
+    .digest('hex');
+}
+
+function runtimeSecretBinding(
+  projectId: string,
+  name: string,
+  scope: ProjectSecretScope,
+  revision: string,
+) {
+  return {
+    provider: 'project-runtime',
+    account: projectId,
+    credentialType: 'runtime-secret',
+    recordId: runtimeSecretRecordId(projectId, name, scope),
+    revision,
+    scope: `${scope}:${name}`,
+  } as const;
 }
 
 function validName(
@@ -306,13 +288,19 @@ export class ProjectSecretManager {
         input.scope,
 
       encryptedValue:
-        encrypt(
+        await sealRuntimeCredential(
+          this.userId,
+          runtimeSecretBinding(
+            input.projectId,
+            name,
+            input.scope,
+            now,
+          ),
           input.value,
-          this.keySource,
         ),
 
       keyVersion:
-        1,
+        3,
 
       createdAt:
         previous
@@ -473,13 +461,31 @@ export class ProjectSecretManager {
         continue;
       }
 
-      env[
-        record.name
-      ] =
-        decrypt(
-          record.encryptedValue,
-          this.keySource,
-        );
+      const value = record.keyVersion === 3 && record.encryptedValue.startsWith('vault:v3:')
+        ? await openRuntimeCredential(
+            this.userId,
+            runtimeSecretBinding(
+              record.projectId,
+              record.name,
+              record.scope,
+              record.updatedAt,
+            ),
+            record.encryptedValue,
+          )
+        : record.keyVersion === 1 && record.encryptedValue.startsWith('v1:')
+          ? decryptLegacy(record.encryptedValue, this.keySource)
+          : (() => { throw new Error('Unsupported project secret format.'); })();
+
+      // Key-provider calls may wait. Re-read canonical authority so a rotation or
+      // revocation completed during that wait cannot release stale plaintext.
+      const current = (await this.store.loadEncryptedSecrets(this.userId, projectId))
+        .find(candidate => candidate.name === record.name && candidate.scope === record.scope);
+      if (!current || current.encryptedValue !== record.encryptedValue
+        || current.keyVersion !== record.keyVersion || current.updatedAt !== record.updatedAt) {
+        throw new Error('Project secret changed while it was being opened.');
+      }
+
+      env[record.name] = value;
     }
 
     return env;

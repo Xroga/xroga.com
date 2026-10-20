@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "f011d7e1a8e29970e883b921e2a36fa672a8107a",
-    "sourceTimestampUtc": "2026-10-20T19:27:29+05:00",
-    "auditStartedUtc": "2026-10-20T15:55:25.965Z",
+    "sha": "dc913cefaa3f69823273c0b169daef1238331742",
+    "sourceTimestampUtc": "2026-10-20T21:02:18+05:00",
+    "auditStartedUtc": "2026-10-20T16:37:41.492Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -394,13 +394,15 @@
       "id": "surface:1d2bdb4693e79373c9fd",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/benchmarkExecutor.ts",
-      "sha256": "680d1bf94c208d01955dd17eb2b1ca539a97df6c8f710472278c21b750542984",
+      "sha256": "7156eb0852c998f62b800c4d22430d31c6956107d32e74487e708bee943aae8d",
       "symbols": [
+        "BenchmarkCompletionAuthority",
         "BenchmarkExecutorDeps",
         "benchmarkBrief",
         "brief",
         "complete",
         "createBenchmarkCaseExecutor",
+        "execute",
         "files",
         "generated",
         "inputTokens",
@@ -412,6 +414,7 @@
         "reply",
         "report",
         "security",
+        "sequence",
         "singleModelImplementation",
         "startedAt",
         "unvalidatedOutcome"
@@ -441,7 +444,9 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/ai/benchmarkExecutor.ts#BenchmarkCompletionAuthority"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -605,7 +610,7 @@
         "backend/src/ai/benchmarkExecutor.test.ts:9",
         "backend/src/ai/benchmarkRunner.test.ts:3",
         "backend/src/ai/measuredEvidence.ts:34",
-        "backend/src/operations/benchmarkAdapter.test.ts:11",
+        "backend/src/operations/benchmarkAdapter.test.ts:12",
         "backend/src/operations/benchmarkAdapter.ts:22",
         "backend/src/security/platformBenchmark.local.integration.ts:5"
       ],
@@ -4556,6 +4561,7 @@
         "backend/src/ai/universal/semanticRequestPlanner.ts:1",
         "backend/src/hardening/launchHardening.test.ts:19",
         "backend/src/index.ts:51",
+        "backend/src/operations/benchmarkAdapter.ts:35",
         "backend/src/routes/guestChat.ts:5",
         "backend/src/services/integrations/businessAction.ts:10",
         "backend/src/services/integrations/businessRead.ts:1",
@@ -5840,8 +5846,9 @@
       "id": "surface:faad5cf834fc5eb65afc",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/providerBudget.ts",
-      "sha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
+      "sha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
       "symbols": [
+        "AdmittedOperationsAction",
         "BudgetPurpose",
         "EntitlementStatus",
         "FREE_PROVIDER_ENTITLEMENT_MICRO_USD",
@@ -5897,8 +5904,10 @@
         "price",
         "providerCompleted",
         "purpose",
+        "request",
         "requireUsageCounts",
         "reservation",
+        "reserveOperationsProviderBudget",
         "reserveProviderBudget",
         "resetProviderBudgetMemoryForTests",
         "result",
@@ -5912,6 +5921,7 @@
         "tolerance",
         "unlocked",
         "unlockedEntitlementMicroUsd",
+        "withOperationsProviderReservation",
         "withProviderReservation"
       ],
       "imports": [
@@ -5946,6 +5956,8 @@
         "backend/src/ai/repoSummarize.ts:18",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:14",
         "backend/src/ai/universal/semanticRequestPlanner.ts:12",
+        "backend/src/operations/benchmarkAdapter.ts:36",
+        "backend/src/operations/operationsProviderBudget.local.integration.ts:6",
         "backend/src/routes/billing.ts:5",
         "backend/src/routes/dashboard.ts:4",
         "backend/src/routes/phase1.ts:28",
@@ -5965,7 +5977,7 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/ai/providerBudget.ts:200 (user_id)"
+        "backend/src/ai/providerBudget.ts:202 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [
@@ -5979,9 +5991,11 @@
         "backend/src/ai/providerBudget.ts#memoryReservations",
         "backend/src/ai/providerBudget.ts#outputCost",
         "backend/src/ai/providerBudget.ts#reservation",
+        "backend/src/ai/providerBudget.ts#reserveOperationsProviderBudget",
         "backend/src/ai/providerBudget.ts#reserveProviderBudget",
         "backend/src/ai/providerBudget.ts#resetProviderBudgetMemoryForTests",
         "backend/src/ai/providerBudget.ts#settleProviderBudget",
+        "backend/src/ai/providerBudget.ts#withOperationsProviderReservation",
         "backend/src/ai/providerBudget.ts#withProviderReservation"
       ],
       "evidenceBoundary": [],
@@ -5990,6 +6004,7 @@
         "backend/src/ai/providerBudget.evidence.test.ts",
         "backend/src/ai/providerBudget.settlement.test.ts",
         "backend/src/ai/providerBudget.test.ts",
+        "backend/src/operations/operationsProviderBudget.local.integration.ts",
         "backend/src/security/budgetOwner.local.integration.ts",
         "backend/src/security/confirmationMetadata.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts"
@@ -11952,7 +11967,7 @@
         "backend/src/services/integrations/githubDeploy.ts:1",
         "backend/src/services/integrations/githubTokenStore.ts:1",
         "backend/src/services/integrations/oauthPkceStore.ts:6",
-        "backend/src/services/integrations/userProviderKeys.ts:9",
+        "backend/src/services/integrations/userProviderKeys.ts:10",
         "backend/src/services/integrations/vercelAuth.ts:8",
         "backend/src/services/memory/buildMemory.ts:5",
         "backend/src/services/memory/buildPersistence.ts:5",
@@ -15538,19 +15553,25 @@
       "id": "surface:e55ac06b9b28fe5506d2",
       "subsystem": "operations_approvals",
       "sourcePath": "backend/src/operations/benchmarkAdapter.ts",
-      "sha256": "a6280fde96f08e74caee526e87317d23fad4f013cc5b21323f11ba59fe304ade",
+      "sha256": "17c0cdeef10806c1f57a9fc70ad48f1e6130ed66a1a2c8fd27d5b79162aa31bc",
       "symbols": [
         "BENCHMARK_ACTION_CEILINGS",
         "BenchmarkAdapterDeps",
+        "action",
+        "actionId",
+        "actorId",
         "benchmarkStore",
+        "canonicalBenchmarkParameters",
         "caps",
         "capsFromParameters",
         "createBenchmarkAdapter",
         "definition",
         "entries",
         "executor",
+        "hex",
         "measurableModels",
         "models",
+        "ownerId",
         "parameters",
         "persisted",
         "planned",
@@ -15559,6 +15580,7 @@
         "requestedCases",
         "requestedCost",
         "requestedTimeout",
+        "reservationKey",
         "selection",
         "selectionFromParameters",
         "store",
@@ -15568,14 +15590,19 @@
         "../ai/benchmarkExecutor.js",
         "../ai/benchmarkRunner.js",
         "../ai/models.js",
+        "../ai/openaiCompat.js",
+        "../ai/providerBudget.js",
         "../config/envSecrets.js",
         "../synthesis/productionAdapters.js",
-        "./types.js"
+        "./types.js",
+        "node:crypto"
       ],
       "runtimeImports": [
         "backend/src/ai/benchmarkExecutor.ts",
         "backend/src/ai/benchmarkRunner.ts",
         "backend/src/ai/models.ts",
+        "backend/src/ai/openaiCompat.ts",
+        "backend/src/ai/providerBudget.ts",
         "backend/src/config/envSecrets.ts",
         "backend/src/synthesis/productionAdapters.ts"
       ],
@@ -15589,12 +15616,16 @@
       ],
       "reachable": true,
       "persistenceDependencies": [],
-      "externalProviderDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [
-        "backend/src/operations/benchmarkAdapter.ts#requestedCost"
+        "backend/src/operations/benchmarkAdapter.ts#requestedCost",
+        "backend/src/operations/benchmarkAdapter.ts#reservationKey",
+        "backend/src/operations/benchmarkAdapter.ts#withOperationsProviderReservation"
       ],
       "evidenceBoundary": [],
       "testCoverage": [
@@ -15712,7 +15743,7 @@
       "callers": [
         "backend/src/ai/runStore.ts:15",
         "backend/src/hardening/launchHardening.test.ts:44",
-        "backend/src/operations/benchmarkAdapter.test.ts:9",
+        "backend/src/operations/benchmarkAdapter.test.ts:10",
         "backend/src/operations/internalEffect.local.integration.ts:8",
         "backend/src/operations/operationsEngine.test.ts:3",
         "backend/src/operations/operationsService.ts:5",
@@ -15759,7 +15790,7 @@
       "id": "surface:76cea854f8de0332417a",
       "subsystem": "operations_approvals",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
+      "sha256": "c7b9467f7de3e54a39679e18cf73f8b1d5d02483a9071cfb15498e3743b0b6dc",
       "symbols": [
         "DbRow",
         "OperationsService",
@@ -15891,6 +15922,7 @@
         "backend/src/operations/automationFinalization.local.integration.ts:7",
         "backend/src/operations/internalControlReceipt.test.ts:4",
         "backend/src/operations/internalEffect.local.integration.ts:7",
+        "backend/src/operations/operationsProviderBudget.local.integration.ts:5",
         "backend/src/operations/operationsService.owner.test.ts:4",
         "backend/src/operations/verificationTarget.local.integration.ts:7",
         "backend/src/operations/verificationTarget.test.ts:4",
@@ -15947,18 +15979,18 @@
         "backend/src/operations/operationsService.ts:183 (user_id)",
         "backend/src/operations/operationsService.ts:192 (user_id)",
         "backend/src/operations/operationsService.ts:199 (user_id)",
-        "backend/src/operations/operationsService.ts:208 (user_id)",
         "backend/src/operations/operationsService.ts:211 (user_id)",
-        "backend/src/operations/operationsService.ts:269 (user_id)",
-        "backend/src/operations/operationsService.ts:328 (user_id)",
-        "backend/src/operations/operationsService.ts:375 (user_id)",
-        "backend/src/operations/operationsService.ts:417 (user_id)",
-        "backend/src/operations/operationsService.ts:558 (user_id)",
-        "backend/src/operations/operationsService.ts:563 (user_id)",
-        "backend/src/operations/operationsService.ts:568 (user_id)",
-        "backend/src/operations/operationsService.ts:574 (user_id)",
-        "backend/src/operations/operationsService.ts:575 (user_id)",
-        "backend/src/operations/operationsService.ts:613 (user_id)"
+        "backend/src/operations/operationsService.ts:214 (user_id)",
+        "backend/src/operations/operationsService.ts:272 (user_id)",
+        "backend/src/operations/operationsService.ts:331 (user_id)",
+        "backend/src/operations/operationsService.ts:378 (user_id)",
+        "backend/src/operations/operationsService.ts:420 (user_id)",
+        "backend/src/operations/operationsService.ts:561 (user_id)",
+        "backend/src/operations/operationsService.ts:566 (user_id)",
+        "backend/src/operations/operationsService.ts:571 (user_id)",
+        "backend/src/operations/operationsService.ts:577 (user_id)",
+        "backend/src/operations/operationsService.ts:578 (user_id)",
+        "backend/src/operations/operationsService.ts:616 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/operations/operationsService.ts#OperationsPermission",
@@ -15998,6 +16030,7 @@
         "backend/src/operations/automationFinalization.local.integration.ts",
         "backend/src/operations/internalControlReceipt.test.ts",
         "backend/src/operations/internalEffect.local.integration.ts",
+        "backend/src/operations/operationsProviderBudget.local.integration.ts",
         "backend/src/operations/operationsService.owner.test.ts",
         "backend/src/operations/verificationTarget.local.integration.ts",
         "backend/src/operations/verificationTarget.test.ts"
@@ -16035,7 +16068,7 @@
       ],
       "callers": [
         "backend/src/growth/growthService.ts:6",
-        "backend/src/operations/benchmarkAdapter.test.ts:10",
+        "backend/src/operations/benchmarkAdapter.test.ts:11",
         "backend/src/operations/operationsEngine.test.ts:8",
         "backend/src/operations/operationsService.ts:9",
         "backend/src/operations/permissions.test.ts:3"
@@ -21578,7 +21611,7 @@
         "backend/src/security/tenantContext.test.ts:4",
         "backend/src/services/integrations/credentialStorageBucket.ts:2",
         "backend/src/services/integrations/oauthPkceStore.ts:9",
-        "backend/src/services/integrations/userProviderKeys.ts:11",
+        "backend/src/services/integrations/userProviderKeys.ts:12",
         "backend/src/services/integrations/vercelAuth.ts:9",
         "backend/src/services/referralService.ts:2",
         "backend/src/services/responseCache.ts:2",
@@ -21715,6 +21748,7 @@
         "backend/src/services/integrations/businessActionConfirmations.ts:3",
         "backend/src/services/integrations/credentialVault.test.ts:4",
         "backend/src/services/integrations/credentialVault.ts:2",
+        "backend/src/services/integrations/credentialVaultRuntime.ts:4",
         "backend/src/services/integrations/githubTokenStore.ts:4",
         "backend/src/services/integrations/githubTokenStore.writerContext.test.ts:4",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:8",
@@ -21727,10 +21761,11 @@
         "backend/src/services/integrations/supabaseProvision.ts:10",
         "backend/src/services/integrations/userProviderKeys.connect.test.ts:4",
         "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts:4",
+        "backend/src/services/integrations/userProviderKeys.migration.test.ts:5",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:8",
         "backend/src/services/integrations/userProviderKeys.revocation.test.ts:5",
         "backend/src/services/integrations/userProviderKeys.test.ts:3",
-        "backend/src/services/integrations/userProviderKeys.ts:10",
+        "backend/src/services/integrations/userProviderKeys.ts:11",
         "backend/src/services/integrations/vercelAuth.revocation.test.ts:5",
         "backend/src/services/integrations/vercelAuth.ts:7",
         "backend/src/services/memory/buildMemory.ts:6",
@@ -21828,6 +21863,7 @@
         "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts",
         "backend/src/services/integrations/userProviderKeys.connect.test.ts",
         "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts",
+        "backend/src/services/integrations/userProviderKeys.migration.test.ts",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts",
         "backend/src/services/integrations/userProviderKeys.revocation.test.ts",
         "backend/src/services/integrations/userProviderKeys.test.ts",
@@ -22905,12 +22941,14 @@
         "node:crypto"
       ],
       "runtimeImports": [],
-      "entryPoints": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
       "callers": [
         "backend/src/services/integrations/credentialEnvelope.test.ts:3",
         "backend/src/services/integrations/credentialVault.ts:4"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "node:crypto"
@@ -22923,11 +22961,11 @@
       "testCoverage": [
         "backend/src/services/integrations/credentialEnvelope.test.ts"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -22958,8 +22996,7 @@
         "backend/src/security/vercelRefreshAccount.local.integration.ts:6",
         "backend/src/services/integrations/githubTokenStore.ts:3",
         "backend/src/services/integrations/oauthPkceStore.test.ts:4",
-        "backend/src/services/integrations/userProviderKeys.ts:13",
-        "backend/src/services/integrations/vercelAuth.ts:10"
+        "backend/src/services/integrations/userProviderKeys.ts:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -23029,11 +23066,14 @@
         "backend/src/services/integrations/credentialEnvelope.ts",
         "backend/src/services/integrations/cryptoProvider.ts"
       ],
-      "entryPoints": [],
-      "callers": [
-        "backend/src/services/integrations/credentialVault.test.ts:5"
+      "entryPoints": [
+        "backend/src/index.ts"
       ],
-      "reachable": false,
+      "callers": [
+        "backend/src/services/integrations/credentialVault.test.ts:5",
+        "backend/src/services/integrations/credentialVaultRuntime.ts:2"
+      ],
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "node:crypto"
@@ -23050,11 +23090,74 @@
       "testCoverage": [
         "backend/src/services/integrations/credentialVault.test.ts"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:31655160f787e763cc14",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/credentialVaultRuntime.ts",
+      "sha256": "94a80361025877ad9e2d5641f0633764bf2921972134830a83267cc89c0c83e9",
+      "symbols": [
+        "configureCredentialVaultProvider",
+        "configured",
+        "key",
+        "openRuntimeCredential",
+        "productionHost",
+        "requireLegacyCredentialMigrationWindow",
+        "resetCredentialVaultRuntimeForTests",
+        "runtimeCredentialVault",
+        "sealRuntimeCredential",
+        "testProvider"
+      ],
+      "imports": [
+        "../../security/tenantContext.js",
+        "./credentialVault.js",
+        "./cryptoProvider.js",
+        "node:crypto"
+      ],
+      "runtimeImports": [
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/credentialVault.ts",
+        "backend/src/services/integrations/cryptoProvider.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/routes/supabaseOAuth.callbackRace.test.ts:9",
+        "backend/src/services/integrations/githubAuth.ts:6",
+        "backend/src/services/integrations/githubTokenStore.ts:5",
+        "backend/src/services/integrations/oauthPkceStore.ts:10",
+        "backend/src/services/integrations/userProviderKeys.migration.test.ts:76",
+        "backend/src/services/integrations/userProviderKeys.ts:16",
+        "backend/src/synthesis/projectRuntime/secretManager.ts:7"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [
+        "backend/src/services/integrations/credentialVaultRuntime.ts#VaultIdentity"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
+        "backend/src/services/integrations/userProviderKeys.migration.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -23082,12 +23185,15 @@
         "node:crypto"
       ],
       "runtimeImports": [],
-      "entryPoints": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
       "callers": [
         "backend/src/services/integrations/credentialVault.test.ts:6",
-        "backend/src/services/integrations/credentialVault.ts:5"
+        "backend/src/services/integrations/credentialVault.ts:5",
+        "backend/src/services/integrations/credentialVaultRuntime.ts:3"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "node:crypto"
@@ -23100,11 +23206,11 @@
       "testCoverage": [
         "backend/src/services/integrations/credentialVault.test.ts"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -23271,28 +23377,33 @@
       "id": "surface:62368ba355b56a1c4f93",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/githubAuth.ts",
-      "sha256": "f0f2ffcc7beecd156976cda49c910e8c336912d4150a5fb899a2e1db4b4fee84",
+      "sha256": "0d5941e1c14044be6b4bd69f6d15ee5815cb3e1cbd22842f33c08962bfb33d29",
       "symbols": [
         "GitHubRepoStrategy",
         "attempt",
         "clearGitHubConnection",
+        "envelope",
         "getGitHubStorageMeta",
         "getGitHubToken",
         "isGitHubConnected",
         "removed",
+        "revision",
         "saveGitHubConnection",
         "saveGitHubSettings",
         "setGithubDefaultRepo",
-        "stored",
         "supabase",
-        "token"
+        "token",
+        "vaultRevision"
       ],
       "imports": [
         "../../config/supabase.js",
-        "./githubTokenStore.js"
+        "./credentialVaultRuntime.js",
+        "./githubTokenStore.js",
+        "node:crypto"
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
+        "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/services/integrations/githubTokenStore.ts"
       ],
       "entryPoints": [
@@ -23318,12 +23429,17 @@
         "github_integrations",
         "user_integrations"
       ],
-      "externalProviderDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/services/integrations/githubAuth.ts:13 (user_id)",
-        "backend/src/services/integrations/githubAuth.ts:22 (user_id)",
-        "backend/src/services/integrations/githubAuth.ts:108 (user_id)"
+        "backend/src/services/integrations/githubAuth.ts:14 (user_id)",
+        "backend/src/services/integrations/githubAuth.ts:15 (user_id)",
+        "backend/src/services/integrations/githubAuth.ts:35 (user_id)",
+        "backend/src/services/integrations/githubAuth.ts:36 (user_id)",
+        "backend/src/services/integrations/githubAuth.ts:60 (user_id)",
+        "backend/src/services/integrations/githubAuth.ts:129 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -24022,7 +24138,7 @@
       "id": "surface:f780b953b9a0b38aa89b",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/githubTokenStore.ts",
-      "sha256": "a48a428628be7b95fa65df951f4db8dd0defff409dd42d46adf1b76c8cbdcd23",
+      "sha256": "f06715ebdce2f87406ba021e872f191d93460bc9e07f4e3b961c14a291bed719",
       "symbols": [
         "BUCKET",
         "StoredGitHubAuth",
@@ -24047,12 +24163,14 @@
         "../../config/supabase.js",
         "../../security/tenantContext.js",
         "./credentialStorageBucket.js",
+        "./credentialVaultRuntime.js",
         "./githubAuth.js"
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
         "backend/src/security/tenantContext.ts",
-        "backend/src/services/integrations/credentialStorageBucket.ts"
+        "backend/src/services/integrations/credentialStorageBucket.ts",
+        "backend/src/services/integrations/credentialVaultRuntime.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -24063,7 +24181,7 @@
         "backend/src/services/integrations/credentialMirrorRace.test.ts:5",
         "backend/src/services/integrations/githubAuth.ts:2",
         "backend/src/services/integrations/githubTokenStore.writerContext.test.ts:3",
-        "backend/src/services/integrations/userProviderKeys.ts:12"
+        "backend/src/services/integrations/userProviderKeys.ts:13"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -24078,8 +24196,8 @@
         "backend/src/services/integrations/githubTokenStore.ts#ensurePrivateOAuthBucket"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/githubTokenStore.ts:72 (user_id)",
-        "backend/src/services/integrations/githubTokenStore.ts:75 (user_id)"
+        "backend/src/services/integrations/githubTokenStore.ts:74 (user_id)",
+        "backend/src/services/integrations/githubTokenStore.ts:77 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -24156,7 +24274,7 @@
       "id": "surface:949ba325e98bab6b63c3",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
+      "sha256": "d366f9f303e12808115e74f15b5f444cee5ef562dbf83d098583ed08df0be445",
       "symbols": [
         "BUCKET",
         "PkceSession",
@@ -24165,32 +24283,44 @@
         "clearPkceSession",
         "clearProviderToken",
         "consumePkceSession",
+        "current",
+        "envelope",
         "epochProviders",
         "isPolicyProvider",
         "loadProviderToken",
+        "metadata",
+        "opened",
         "pkcePath",
+        "prepared",
+        "refreshLease",
         "removePath",
         "requireTokenProvider",
         "row",
+        "saveDirectOAuthConnection",
         "saveOAuthConnection",
+        "saved",
         "sessionProviders",
         "storePkceSession",
         "storeProviderToken",
         "supabase",
         "tokenPath",
         "toolkit",
-        "validRevision"
+        "validRevision",
+        "vaultRevision",
+        "verifier"
       ],
       "imports": [
         "../../config/supabase.js",
         "../../security/serviceRoleGuard.js",
         "../../security/tenantContext.js",
+        "./credentialVaultRuntime.js",
         "node:crypto"
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
         "backend/src/security/serviceRoleGuard.ts",
-        "backend/src/security/tenantContext.ts"
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/credentialVaultRuntime.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -24206,7 +24336,7 @@
         "backend/src/services/integrations/oauthPkceStore.test.ts:7",
         "backend/src/services/integrations/pluginPermissionPolicy.ts:1",
         "backend/src/services/integrations/supabaseAuth.ts:9",
-        "backend/src/services/integrations/vercelAuth.ts:11",
+        "backend/src/services/integrations/vercelAuth.ts:10",
         "backend/src/services/publish/chromeWebStore.ts:19"
       ],
       "reachable": true,
@@ -24218,14 +24348,18 @@
       ],
       "authBoundary": [
         "backend/src/services/integrations/oauthPkceStore.ts#assertStorageIdentity",
+        "backend/src/services/integrations/oauthPkceStore.ts#saveDirectOAuthConnection",
         "backend/src/services/integrations/oauthPkceStore.ts#saveOAuthConnection"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/oauthPkceStore.ts:174 (user_id)"
+        "backend/src/services/integrations/oauthPkceStore.ts:214 (user_id)",
+        "backend/src/services/integrations/oauthPkceStore.ts:241 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/services/integrations/oauthPkceStore.ts#verifier"
+      ],
       "testCoverage": [
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
@@ -24276,7 +24410,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:908",
+        "backend/src/security/tenantIsolation.local.integration.ts:910",
         "backend/src/services/integrations/businessAction.ts:44",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -24380,7 +24514,7 @@
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:7",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:7",
         "backend/src/services/integrations/supabaseProvision.ts:540",
-        "backend/src/services/integrations/userProviderKeys.ts:928"
+        "backend/src/services/integrations/userProviderKeys.ts:1048"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -24448,7 +24582,7 @@
         "backend/src/services/integrations/supabaseProvision.ts:21",
         "backend/src/services/integrations/supabaseProvision.ts:22",
         "backend/src/services/integrations/userProviderKeys.supabaseHost.test.ts:4",
-        "backend/src/services/integrations/userProviderKeys.ts:14"
+        "backend/src/services/integrations/userProviderKeys.ts:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -24567,8 +24701,8 @@
         "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts:4",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:6",
-        "backend/src/services/integrations/userProviderKeys.ts:1159",
-        "backend/src/services/integrations/userProviderKeys.ts:1168"
+        "backend/src/services/integrations/userProviderKeys.ts:1287",
+        "backend/src/services/integrations/userProviderKeys.ts:1296"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -24605,7 +24739,7 @@
       "id": "surface:584468c24245c4925465",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
+      "sha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
       "symbols": [
         "ALLOWED_PROVIDERS",
         "ALLOWED_SET",
@@ -24616,6 +24750,7 @@
         "ENV_VAR_BY_PROVIDER",
         "KEY_BUCKET",
         "KeyRow",
+        "LegacyProviderMigrationResult",
         "PROVIDER_PREFIX",
         "PUBLISH_ONLY_PROVIDERS",
         "ProviderKeyWriteAdmission",
@@ -24632,6 +24767,7 @@
         "anon",
         "assertPrivateCredentialEnv",
         "associated",
+        "binding",
         "boundBundle",
         "buckets",
         "buildProviderEnvFiles",
@@ -24641,11 +24777,12 @@
         "bundleValues",
         "byProvider",
         "bytes",
-        "cipher",
         "claim",
         "connectUserSupabase",
         "connected",
         "credentialProviderSelection",
+        "credentialType",
+        "current",
         "custom",
         "data",
         "db",
@@ -24654,10 +24791,9 @@
         "decipher",
         "decode",
         "decryptApiKey",
+        "decryptCredentialValue",
         "deleteUserProviderKey",
         "downloaded",
-        "enc",
-        "encryptApiKey",
         "encrypted",
         "encryptionKey",
         "envVar",
@@ -24696,12 +24832,14 @@
         "maskKey",
         "meta",
         "metadata",
+        "migrateLegacyProviderKey",
         "minLen",
         "name",
         "normalizeProvider",
         "now",
         "oauthConnected",
         "offset",
+        "openCanonicalProviderRow",
         "out",
         "p",
         "page",
@@ -24726,11 +24864,13 @@
         "publicSupabase",
         "query",
         "raw",
+        "read",
         "readUserSupabaseBundle",
         "ready",
         "ref",
         "resolveProviderEnvForDeploy",
         "result",
+        "revision",
         "revokeProviderRow",
         "row",
         "rows",
@@ -24741,9 +24881,11 @@
         "saveSupabaseBundle",
         "saveUserProviderKey",
         "saved",
+        "sealVaultApiKey",
         "second",
         "secret",
         "seenNames",
+        "selected",
         "service",
         "snapshotSupabaseRows",
         "status",
@@ -24754,30 +24896,36 @@
         "syncTarget",
         "tag",
         "text",
+        "token",
         "trimmed",
         "url",
         "utf8",
         "validate",
         "value",
         "values",
-        "varName"
+        "varName",
+        "vaultBinding",
+        "vaultRevision"
       ],
       "imports": [
         "../../config/supabase.js",
         "../../security/serviceRoleGuard.js",
         "../../security/tenantContext.js",
         "./credentialStorageBucket.js",
+        "./credentialVaultRuntime.js",
         "./githubTokenStore.js",
         "./supabaseAuth.js",
         "./supabaseProjectUrl.js",
         "./supabaseProvision.js",
-        "crypto"
+        "crypto",
+        "node:util"
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
         "backend/src/security/serviceRoleGuard.ts",
         "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/credentialStorageBucket.ts",
+        "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/services/integrations/githubTokenStore.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/supabaseProjectUrl.ts",
@@ -24807,6 +24955,7 @@
         "backend/src/services/integrations/supabaseProvision.ts:11",
         "backend/src/services/integrations/userProviderKeys.connect.test.ts:5",
         "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts:3",
+        "backend/src/services/integrations/userProviderKeys.migration.test.ts:6",
         "backend/src/services/integrations/userProviderKeys.publicEnv.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.readIntegrity.test.ts:4",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:5",
@@ -24824,20 +24973,24 @@
         "user_integrations"
       ],
       "externalProviderDependencies": [
-        "crypto"
+        "crypto",
+        "node:util"
       ],
       "authBoundary": [
         "backend/src/services/integrations/userProviderKeys.ts#ensurePrivateOAuthBucket",
         "backend/src/services/integrations/userProviderKeys.ts#oauthConnected"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/userProviderKeys.ts:65 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:443 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:498 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:660 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:681 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:704 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:974 (user_id)"
+        "backend/src/services/integrations/userProviderKeys.ts:67 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:319 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:500 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:541 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:553 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:608 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:770 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:793 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:818 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:1094 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -24855,6 +25008,7 @@
         "backend/src/services/integrations/supabaseBundle.test.ts",
         "backend/src/services/integrations/userProviderKeys.connect.test.ts",
         "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts",
+        "backend/src/services/integrations/userProviderKeys.migration.test.ts",
         "backend/src/services/integrations/userProviderKeys.publicEnv.test.ts",
         "backend/src/services/integrations/userProviderKeys.readIntegrity.test.ts",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts",
@@ -24873,7 +25027,7 @@
       "id": "surface:083de6ff7f0ffdcc0165",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/vercelAuth.ts",
-      "sha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
+      "sha256": "048f87c5c9a3be99376d3ddb9ca7cdfdab30cf31d25dc9e4637d1f5bfe83ad9e",
       "symbols": [
         "ALLOWED_CALLBACK_ORIGINS",
         "CALLBACK_PATH",
@@ -24881,7 +25035,6 @@
         "REFRESH_LEASE_MS",
         "REFRESH_LEASE_PREFIX",
         "REFRESH_WAIT_MS",
-        "StoredVercelAuth",
         "TOKEN_BUCKET",
         "TOKEN_REFRESH_SKEW_MS",
         "VERCEL_OIDC_SCOPES",
@@ -24905,7 +25058,6 @@
         "decoded",
         "deleteVercelTokenFromStorage",
         "encodeVercelRefreshLease",
-        "ensureTokenBucket",
         "err",
         "exchangeVercelOAuthCode",
         "existing",
@@ -24955,10 +25107,8 @@
         "resolveVercelProjectForEnvSync",
         "row",
         "saveVercelConnection",
-        "saveVercelTokenToStorage",
         "scope",
         "state",
-        "storagePayload",
         "supabase",
         "token",
         "tokenData",
@@ -24980,7 +25130,6 @@
         "../../config/supabase.js",
         "../../security/serviceRoleGuard.js",
         "../../security/tenantContext.js",
-        "./credentialStorageBucket.js",
         "./oauthPkceStore.js",
         "crypto"
       ],
@@ -24988,7 +25137,6 @@
         "backend/src/config/supabase.ts",
         "backend/src/security/serviceRoleGuard.ts",
         "backend/src/security/tenantContext.ts",
-        "backend/src/services/integrations/credentialStorageBucket.ts",
         "backend/src/services/integrations/oauthPkceStore.ts"
       ],
       "entryPoints": [
@@ -25027,11 +25175,9 @@
         "declared-host:xroga.com"
       ],
       "authBoundary": [
-        "backend/src/services/integrations/vercelAuth.ts#StoredVercelAuth",
         "backend/src/services/integrations/vercelAuth.ts#VercelAuthKind",
         "backend/src/services/integrations/vercelAuth.ts#authKind",
         "backend/src/services/integrations/vercelAuth.ts#buildVercelAuthorizeUrl",
-        "backend/src/services/integrations/vercelAuth.ts#ensurePrivateOAuthBucket",
         "backend/src/services/integrations/vercelAuth.ts#exchangeVercelOAuthCode",
         "backend/src/services/integrations/vercelAuth.ts#getVercelOAuthCallbackUrl",
         "backend/src/services/integrations/vercelAuth.ts#identityOk",
@@ -25039,15 +25185,15 @@
         "backend/src/services/integrations/vercelAuth.ts#refreshVercelOAuthToken",
         "backend/src/services/integrations/vercelAuth.ts#refreshVercelOAuthTokenSingleFlight",
         "backend/src/services/integrations/vercelAuth.ts#refreshVercelOAuthTokenWithLease",
+        "backend/src/services/integrations/vercelAuth.ts#saveDirectOAuthConnection",
         "backend/src/services/integrations/vercelAuth.ts#saveOAuthConnection",
         "backend/src/services/integrations/vercelAuth.ts#vercelOAuthConfigured",
         "backend/src/services/integrations/vercelAuth.ts#vercelOAuthScope",
         "backend/src/services/integrations/vercelAuth.ts#verifyVercelTokenLive"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/vercelAuth.ts:448 (user_id)",
-        "backend/src/services/integrations/vercelAuth.ts:472 (user_id)",
-        "backend/src/services/integrations/vercelAuth.ts:492 (user_id)"
+        "backend/src/services/integrations/vercelAuth.ts:420 (user_id)",
+        "backend/src/services/integrations/vercelAuth.ts:444 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/integrations/vercelAuth.ts#buildVercelAuthorizeUrl"
@@ -30576,7 +30722,7 @@
       ],
       "callers": [
         "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts:32",
-        "backend/src/operations/benchmarkAdapter.ts:35",
+        "backend/src/operations/benchmarkAdapter.ts:38",
         "backend/src/synthesis/productionAdapters.test.ts:15",
         "backend/src/synthesis/step5VerificationAuthority.test.ts:24",
         "backend/src/synthesis/universalEntrypoint.ts:35"
@@ -31151,19 +31297,16 @@
       "id": "surface:debf0540d36a304710b3",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/secretManager.ts",
-      "sha256": "c87a85c867c50912011975a9feb919194a37aada4dada38f59c3cbf1eb769898",
+      "sha256": "668cec449c67ee92dab92c08bd96e5587665c04824235be4ecc1756cb0e08c10",
       "symbols": [
         "ProjectSecretManager",
         "allowed",
-        "cipher",
+        "current",
         "decipher",
-        "decrypt",
-        "encrypt",
-        "encrypted",
+        "decryptLegacy",
         "encryptionKey",
         "env",
         "existing",
-        "iv",
         "leftShared",
         "name",
         "now",
@@ -31175,16 +31318,21 @@
         "redactRuntimeSecrets",
         "redacted",
         "rightShared",
+        "runtimeSecretBinding",
+        "runtimeSecretRecordId",
         "secret",
-        "tag",
-        "validName"
+        "validName",
+        "value"
       ],
       "imports": [
+        "../../services/integrations/credentialVaultRuntime.js",
         "./store.js",
         "./types.js",
         "node:crypto"
       ],
-      "runtimeImports": [],
+      "runtimeImports": [
+        "backend/src/services/integrations/credentialVaultRuntime.ts"
+      ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
@@ -54229,12 +54377,12 @@
       "id": "surface:60f2ec6c2083267a194d",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "frontend/src/components/integrations/ConnectedServicesSection.tsx",
-      "sha256": "53a88f0c436e4a5935799aadffbb0821ca61299dddbdcf067852fce6de3bed7d",
+      "sha256": "30ccd35b0baf5ccb4f9a3376806416381c14edf4798772a58294efa72bebaaba",
       "symbols": [
         "CONNECTABLE",
         "ConnectedServicesSection",
         "explainCredentialSetup",
-        "vaultReady"
+        "legacyVaultPresent"
       ],
       "imports": [
         "@/components/integrations/FreeApiOptionsPanel",
@@ -54275,31 +54423,31 @@
       "id": "surface:0caadf23dd01b0be1baf",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "frontend/src/components/integrations/CustomCredentialsSection.tsx",
-      "sha256": "eac234380298acbae68cfea4c91cf07e56c6997dc5021c67495a3dc0bdc5049b",
+      "sha256": "2ecb161b833daf6dea0a61885e7450538096e84b9e8338b734c5cdb85aa3915d",
       "symbols": [
         "CustomCredentialsSection",
-        "TYPE_OPTIONS",
-        "deleteModal",
-        "e",
-        "handleDelete",
-        "handleSave",
-        "n",
+        "alreadyCredential",
+        "candidate",
+        "envName",
+        "error",
+        "importLegacy",
+        "named",
+        "normalized",
         "plain",
         "refresh",
-        "showPlain",
-        "tryReveal"
+        "response",
+        "saveNew"
       ],
       "imports": [
+        "@/lib/api",
         "@/lib/credentialVault",
-        "@/lib/utils",
         "lucide-react",
         "react",
-        "react-dom",
         "react-hot-toast"
       ],
       "runtimeImports": [
-        "frontend/src/lib/credentialVault.ts",
-        "frontend/src/lib/utils.ts"
+        "frontend/src/lib/api.ts",
+        "frontend/src/lib/credentialVault.ts"
       ],
       "entryPoints": [],
       "callers": [],
@@ -54308,7 +54456,6 @@
       "externalProviderDependencies": [
         "lucide-react",
         "react",
-        "react-dom",
         "react-hot-toast"
       ],
       "authBoundary": [],
@@ -71136,6 +71283,7 @@
         "frontend/src/components/dashboard/WorkspaceShowcaseStarts.tsx:24",
         "frontend/src/components/integrations/AiIntegrationsPanel.tsx:5",
         "frontend/src/components/integrations/ConnectShipWizard.tsx:7",
+        "frontend/src/components/integrations/CustomCredentialsSection.tsx:11",
         "frontend/src/components/integrations/GitHubConnect.tsx:9",
         "frontend/src/components/integrations/PluginDetail.tsx:23",
         "frontend/src/components/integrations/PluginMarketplace.tsx:33",
@@ -72715,35 +72863,31 @@
       "id": "surface:7181d51b56d62f195edb",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/credentialVault.ts",
-      "sha256": "cd422f53df4285b165a9e5b6593777d9d4fc6a09af7b54b89b9a8482d59f100b",
+      "sha256": "e66c6d686f240913dbad1c95faffe26f54914ab58a5d49fb9f1aaaf8b83c636a",
       "symbols": [
         "CredentialType",
+        "LEGACY_VAULT_HASH_KEY",
+        "LEGACY_VAULT_SECRETS_KEY",
         "StoredCredential",
-        "VAULT_HASH_KEY",
-        "VAULT_SECRETS_KEY",
-        "addCredential",
-        "cred",
-        "dec",
-        "deleteCredential",
-        "enc",
+        "credential",
+        "hasLegacyBrowserVault",
         "hasVault",
-        "hashPassword",
+        "legacyPasswordHash",
         "loadCredentials",
-        "maskSecret",
-        "next",
+        "loadLegacyCredentials",
+        "parsed",
         "payload",
         "raw",
-        "revealCredential",
-        "saveCredentials",
-        "setVaultPassword",
-        "verifyVaultPassword"
+        "readLegacyCredentialForImport",
+        "remaining",
+        "removeLegacyCredentialAfterImport"
       ],
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [],
       "callers": [
         "frontend/src/components/integrations/ConnectedServicesSection.tsx:6",
-        "frontend/src/components/integrations/CustomCredentialsSection.tsx:6"
+        "frontend/src/components/integrations/CustomCredentialsSection.tsx:5"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -72752,10 +72896,10 @@
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
-      "evidenceBoundary": [
-        "frontend/src/lib/credentialVault.ts#verifyVaultPassword"
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/credentialVault.test.ts"
       ],
-      "testCoverage": [],
       "state": "DEAD_OR_UNREACHABLE",
       "confidence": "LOW",
       "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
@@ -81847,7 +81991,6 @@
         "frontend/src/components/icons/animated/lucide-animated/layers.tsx:10",
         "frontend/src/components/icons/animated/lucide-animated/workflow.tsx:10",
         "frontend/src/components/incognito/IncognitoProfileBox.tsx:4",
-        "frontend/src/components/integrations/CustomCredentialsSection.tsx:15",
         "frontend/src/components/integrations/IntegrationLogo.tsx:5",
         "frontend/src/components/layout/AnimatedNavIcon.tsx:6",
         "frontend/src/components/layout/AppShell.tsx:14",
@@ -85999,7 +86142,7 @@
       "id": "surface:ad28b85bc62102769aeb",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/audit-credential-usage.mjs",
-      "sha256": "ee85e8ee3f9abc224ca2198352541410291ca168821fea95eb3eda543cf21047",
+      "sha256": "ff7445c5b17e19f4cc281828dc3925cc0c11c0af5a278b10b7f00e2835147a1b",
       "symbols": [
         "arg",
         "buildCredentialAudit",
@@ -97472,6 +97615,55 @@
       "version": "20261020000300",
       "order": 130,
       "sha256": "de8ae5a8b3a0425a6b03573e01565e2f557824aac72097c4062c2a05ec0d2bc5"
+    },
+    {
+      "id": "migration:e34623b5289aacb85f1b",
+      "sourcePath": "supabase/migrations/20261020000400_operations_provider_budget_authority.sql",
+      "version": "20261020000400",
+      "order": 131,
+      "sha256": "7245896af7b240b5ee7626b064432fe798720cfe9dfd2f4eab8ce57c5a38e41b"
+    },
+    {
+      "id": "migration:cf0426931a762268dd7b",
+      "sourcePath": "supabase/migrations/20261020000500_provider_key_vault_envelopes.sql",
+      "version": "20261020000500",
+      "order": 132,
+      "sha256": "8f4b733977cb284109f01ea69e6b7a56a06fbd175651b1c3827e397fb032451d"
+    },
+    {
+      "id": "migration:cc9608c8f2f1a4b326af",
+      "sourcePath": "supabase/migrations/20261020000600_oauth_vault_envelopes.sql",
+      "version": "20261020000600",
+      "order": 133,
+      "sha256": "8749315e9a72de9f03811ad142462c9e5955a5cea381e5d1c1736d65460ea2e8"
+    },
+    {
+      "id": "migration:2e6162f8198273f33a2f",
+      "sourcePath": "supabase/migrations/20261020000700_github_vault_envelope.sql",
+      "version": "20261020000700",
+      "order": 134,
+      "sha256": "f6307d13e9dc552403bdce68ab8bb3b831df32a5f85e4bea0b6130eb12281549"
+    },
+    {
+      "id": "migration:75370d3f0a2614416b3d",
+      "sourcePath": "supabase/migrations/20261020000800_pkce_vault_envelope.sql",
+      "version": "20261020000800",
+      "order": 135,
+      "sha256": "26ceebf1caac617f68ccf994b48f09d9d704d9d8e29d0be0dfc4cb20d279ad29"
+    },
+    {
+      "id": "migration:9eeee82eb07af86ca81c",
+      "sourcePath": "supabase/migrations/20261020000900_direct_oauth_vault_admission.sql",
+      "version": "20261020000900",
+      "order": 136,
+      "sha256": "3947ae7b121039c25ebbc67ac429aa3438f5f2081b79a456a396c717a0f84d47"
+    },
+    {
+      "id": "migration:9045867f559bd49b152b",
+      "sourcePath": "supabase/migrations/20261020001000_provider_key_vault_migration.sql",
+      "version": "20261020001000",
+      "order": 137,
+      "sha256": "a36d43ca28c51012fdbc31a0854023ba07b20ba6c58cd05460f7c0afd7125807"
     }
   ],
   "workflows": [
@@ -98906,9 +99098,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:f4ccf484af3ac70ecce0",
+      "id": "finding:2e0611cb3803b01d5952",
       "sourcePath": "frontend/src/components/integrations/CustomCredentialsSection.tsx",
-      "line": 109,
+      "line": 106,
       "kind": "PLACEHOLDER",
       "reachable": false,
       "state": "PARTIAL",
@@ -98916,9 +99108,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:bfb2b213f4774e02ba22",
+      "id": "finding:471200566ae58f5aaf8a",
       "sourcePath": "frontend/src/components/integrations/CustomCredentialsSection.tsx",
-      "line": 162,
+      "line": 107,
       "kind": "PLACEHOLDER",
       "reachable": false,
       "state": "PARTIAL",
@@ -98926,39 +99118,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:7f1af9afbd36a4f043ba",
+      "id": "finding:d64f8aff994267fc8211",
       "sourcePath": "frontend/src/components/integrations/CustomCredentialsSection.tsx",
-      "line": 168,
-      "kind": "PLACEHOLDER",
-      "reachable": false,
-      "state": "PARTIAL",
-      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
-      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
-    },
-    {
-      "id": "finding:5efe818d95b472fbd953",
-      "sourcePath": "frontend/src/components/integrations/CustomCredentialsSection.tsx",
-      "line": 176,
-      "kind": "PLACEHOLDER",
-      "reachable": false,
-      "state": "PARTIAL",
-      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
-      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
-    },
-    {
-      "id": "finding:7dc325510244942fcd12",
-      "sourcePath": "frontend/src/components/integrations/CustomCredentialsSection.tsx",
-      "line": 184,
-      "kind": "PLACEHOLDER",
-      "reachable": false,
-      "state": "PARTIAL",
-      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
-      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
-    },
-    {
-      "id": "finding:3e3cb3172400d3a098c4",
-      "sourcePath": "frontend/src/components/integrations/CustomCredentialsSection.tsx",
-      "line": 216,
+      "line": 139,
       "kind": "PLACEHOLDER",
       "reachable": false,
       "state": "PARTIAL",
@@ -102102,6 +102264,34 @@
       "sourcePath": "frontend/src/components/integrations/ConnectShipWizard.tsx",
       "line": 332,
       "callee": "api.supabase.disconnect",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:7656b78f5bed810d1e54",
+      "sourcePath": "frontend/src/components/integrations/CustomCredentialsSection.tsx",
+      "line": 37,
+      "callee": "api.integrations.providerKeys",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:c5172075fd69aed3d6ec",
+      "sourcePath": "frontend/src/components/integrations/CustomCredentialsSection.tsx",
+      "line": 53,
+      "callee": "api.integrations.saveProviderKey",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:3f035c019106150500a1",
+      "sourcePath": "frontend/src/components/integrations/CustomCredentialsSection.tsx",
+      "line": 77,
+      "callee": "api.integrations.saveProviderKey",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:3c78ac8fb370a415724b",
+      "sourcePath": "frontend/src/components/integrations/CustomCredentialsSection.tsx",
+      "line": 79,
+      "callee": "api.integrations.saveProviderKey",
       "reachable": false
     },
     {
@@ -105399,7 +105589,7 @@
     {
       "id": "test-suite:a1f52e019528fb4283b2",
       "sourcePath": "backend/src/operations/benchmarkAdapter.test.ts",
-      "declaredTests": 18,
+      "declaredTests": 20,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -105428,6 +105618,13 @@
       "id": "test-suite:99454241b55a3c00e12a",
       "sourcePath": "backend/src/operations/operationsEngine.test.ts",
       "declaredTests": 28,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:e6eab23b27045b63bd34",
+      "sourcePath": "backend/src/operations/operationsProviderBudget.local.integration.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -106452,6 +106649,13 @@
       "id": "test-suite:9c747864066fcc50030b",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.customRevocation.test.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:28139a72731fa6a784c2",
+      "sourcePath": "backend/src/services/integrations/userProviderKeys.migration.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -107599,6 +107803,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:397ac46db83146d551a2",
+      "sourcePath": "frontend/src/lib/credentialVault.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:1e607c208885bcce2d1f",
       "sourcePath": "frontend/src/lib/cryptoPageAccess.test.ts",
       "declaredTests": 5,
@@ -108574,7 +108785,7 @@
     {
       "id": "test-suite:5ab7f69119cda9cac386",
       "sourcePath": "scripts/security/audit-credential-usage.test.mjs",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

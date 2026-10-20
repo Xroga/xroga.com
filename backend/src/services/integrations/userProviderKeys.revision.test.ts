@@ -42,8 +42,8 @@ test('BYOK save carries its admitted revision, rejects a concurrent revoke and p
           }))));return;
         }
         const row=provider==='eq.apikey_expo'
-          ?{access_token:'enc:'+Buffer.from('fixture:SYNTHETIC_EXPO_TOKEN').toString('base64'),metadata:{}}
-          :{access_token:'',metadata:{revoked:true}};
+          ?{user_id:'11111111-1111-4111-8111-111111111111',provider:'apikey_expo',access_token:'enc:'+Buffer.from('fixture:SYNTHETIC_EXPO_TOKEN').toString('base64'),metadata:{},credential_revision:revision}
+          :{user_id:'11111111-1111-4111-8111-111111111111',provider:provider?.replace('eq.','')??'apikey_unknown',access_token:'',metadata:{revoked:true},credential_revision:revision};
         res.end(JSON.stringify([row]));
       } else if(path.startsWith('/storage/')) res.end('{}');
       else {res.statusCode=500;res.end(JSON.stringify({message:'unexpected fixture request'}));}
@@ -70,7 +70,8 @@ test('BYOK save carries its admitted revision, rejects a concurrent revoke and p
     assert.ok(!calls.some(call=>call.path.includes('/rest/v1/user_integrations')),'No fallback upsert');
     const saveCall=calls.find(call=>call.path.endsWith('/save_provider_key_if_current'))!;
     assert.equal(saveCall.body.p_owner_id,user);assert.equal(saveCall.body.p_provider,'apikey_openai');
-    assert.match(String(saveCall.body.p_access_token),/^v1:/);assert.ok(!String(saveCall.body.p_access_token).includes('SYNTHETIC_NEW_KEY'));
+    assert.match(String(saveCall.body.p_access_token),/^vault:v3:/);assert.ok(!String(saveCall.body.p_access_token).includes('SYNTHETIC_NEW_KEY'));
+    assert.match(String((saveCall.body.p_metadata as Record<string,unknown>).vault_revision),/^[0-9a-f-]{36}$/i);
     mode='reconnect';
     const freshRevision=revision;
     assert.equal((await saveUserProviderKey(user,'openai','SYNTHETIC_FRESH_KEY')).connected,true);
