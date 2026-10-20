@@ -2,6 +2,27 @@
   "version": "1.0",
   "status": "IN_PROGRESS",
   "acceptanceStatus": "BLOCKED",
+  "phaseTwoFinalReconciliation": {
+    "codeSource": "0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0",
+    "disposableRun": "39420406858",
+    "aggregateRun": "39420406896",
+    "integratedSource": "b27345af2bcbd1bf6d04449c8fc43c790985d3d3",
+    "verifiedCodeBoundaries": 636,
+    "structuredUnprovenAtCodeSource": 0,
+    "manualPromotionsAgainstActualProof": 7,
+    "remainingManualTenantGaps": 0,
+    "originalPacketsPreserved": 73,
+    "originalHistoricalIdentitiesPreserved": 371,
+    "status": "FINAL_METADATA_SOURCE_ACCEPTANCE_REQUIRED_NOT_INHERITED",
+    "nextExecutableTask": "Authenticate final metadata HEAD CI, four complete baseline manifests and actual disposable receipt. Run immutable collector in complete mode and unchanged original Command007 --require-complete. Prepare Phase3 handoff only after actual acceptance, then stop for founder review.",
+    "historicalNotes": "Chronological pending/remaining notes below describe their stated historical revisions. This object supersedes their Command007 counts, not unverified original008/009/010 or provider/production obligations.",
+    "externalItemsRemainUnwaived": [
+      "Actual R2 provider acceptance",
+      "Production-schema parity and key custody",
+      "Commercial hosting eligibility",
+      "Dependency advisories and original008/009/010 acceptance"
+    ]
+  },
   "oauthEpoch": {
     "status": "IN PROGRESS",
     "lifecycle": "INTEGRATION VERIFIED",
@@ -398,7 +419,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:7 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:0 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -433,7 +454,7 @@
     "ownerPredicateCandidates": 142,
     "reviewRequired": 0,
     "reviewedCandidates": 636,
-    "unresolvedSafetyCandidates": 7,
+    "unresolvedSafetyCandidates": 0,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 18
   },
@@ -550,13 +571,9 @@
       "existingImplementation": "Existing owner checks, project/file stores and runtime",
       "missingBehavior": "Inherited parent identity, durable receipt, revision and runtime ownership gaps",
       "acceptanceTest": "Wrong parent, orphan, stale revision, failed persistence and cross-tenant download",
-      "pendingCandidates": 1,
+      "pendingCandidates": 0,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
-      "callersByPath": {
-        "backend/src/synthesis/universalEntrypoint.ts": [
-          "10b5e279dd241e2f40ec"
-        ]
-      }
+      "callersByPath": {}
     },
     {
       "rootCause": "growth-community",
@@ -574,20 +591,9 @@
       "existingImplementation": "Existing services and source-bound register",
       "missingBehavior": "Inspect the exact remaining reason for each listed caller, grouping shared helpers",
       "acceptanceTest": "Per-caller negative verification proportional to risk",
-      "pendingCandidates": 6,
+      "pendingCandidates": 0,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
-      "callersByPath": {
-        "backend/src/ai/routingOutcomes.ts": [
-          "64b99cfd7d4a42c04576",
-          "fc68c1025702714090d7",
-          "0200f68b9f576c910b0e",
-          "2bad87b739ae47c2e1c1"
-        ],
-        "backend/src/security/serviceRoleGuard.ts": [
-          "d84df34ff692e4fb31c1",
-          "5c97508c3ec30ba78c4e"
-        ]
-      }
+      "callersByPath": {}
     }
   ],
   "latestFailedDisposable": {

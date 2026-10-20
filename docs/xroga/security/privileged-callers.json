@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "fcab07aad6897d3fda9001159a224ac0b21807c31ac28758ee4924a8e0d84519",
+  "reviewRegistrySha256": "67fab10810aa85d5c3a2d9f9f9e61dfdb37a9953b6fa206627156dd0aef60c59",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -12,16 +12,16 @@
     "ownerPredicateCandidates": 142,
     "reviewRequired": 0,
     "reviewedCandidates": 636,
-    "unresolvedSafetyCandidates": 7,
+    "unresolvedSafetyCandidates": 0,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 18
   },
   "outcomes": {
     "REVIEW_REQUIRED": 0,
-    "SCOPED_BOUNDARY": 452,
-    "NARROW_EXCEPTION": 37,
+    "SCOPED_BOUNDARY": 456,
+    "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 140,
-    "REVIEWED_GAP": 7
+    "REVIEWED_GAP": 0
   },
   "acceptance": {
     "version": 1,
@@ -48,7 +48,6 @@
           "CRITERION_NOT_PASSED",
           "MISSING_CRITERION_PROOF",
           "UNRESOLVED_PRIVILEGED_BOUNDARY",
-          "UNRESOLVED_MANUAL_TENANT_REVIEW",
           "UNSUPPORTED_MANUAL_DISPOSITION"
         ]
       },
@@ -144,7 +143,6 @@
           "CRITERION_NOT_PASSED",
           "MISSING_CRITERION_PROOF",
           "UNRESOLVED_PRIVILEGED_BOUNDARY",
-          "UNRESOLVED_MANUAL_TENANT_REVIEW",
           "UNSUPPORTED_MANUAL_DISPOSITION"
         ]
       }
@@ -779,34 +777,6 @@
         "id": "OB-519cc338e9eb8915"
       },
       {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "64b99cfd7d4a42c04576"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "fc68c1025702714090d7"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "0200f68b9f576c910b0e"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "2bad87b739ae47c2e1c1"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "d84df34ff692e4fb31c1"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "5c97508c3ec30ba78c4e"
-      },
-      {
-        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "10b5e279dd241e2f40ec"
-      },
-      {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "9506c72ea0f341c2a492"
       },
@@ -1005,6 +975,22 @@
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "fb624c5ca127ce5d4da8"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "64b99cfd7d4a42c04576"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "fc68c1025702714090d7"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "0200f68b9f576c910b0e"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "2bad87b739ae47c2e1c1"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -1948,6 +1934,14 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "d84df34ff692e4fb31c1"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "5c97508c3ec30ba78c4e"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "fae128d168b634c4b083"
       },
       {
@@ -2704,6 +2698,10 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "10b5e279dd241e2f40ec"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "7b91dfaf8225d8e56493"
       },
       {
@@ -2768,8 +2766,8 @@
     "currentCallers": 636,
     "structuredVerified": 140,
     "structuredUnproven": 496,
-    "manualUnresolved": 7,
-    "manualUnsupported": 489,
+    "manualUnresolved": 0,
+    "manualUnsupported": 496,
     "agreedVerified": 140,
     "proofAwaitingManualReconciliation": 0
   },
@@ -4181,11 +4179,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "model_routing_outcomes",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "NARROW_EXCEPTION",
       "sourceSha256": "52c9d3ebf8b96fe36765c597b5cfac7a8321dd926aab63296ce92f2aca37646e",
       "semanticReview": {
-        "authority": "The sole production writer is the issued-owner pipeline, which now passes its original context. Original owner equality is checked before access, input is captured, exact receipt is required, and failed optional telemetry remains uncached without exposing raw error text. Restart loader is server-internal, bounded500 and fixed-column, with an explicit narrow exception. Its sole production caller discards returned rows. Terminal learning independently filters owner AND run, and global quality exposes numeric aggregation only.",
-        "reason": "Original007 bounded source repair, not security acceptance. Seven focused routing/ownership/exception cases and backend typechecking pass. Registered actual Auth/database telemetry, restart/owner learning, browser denial, concurrent owner writes, immutable input, SQL failure and recovery proof is prepared. Existing original context and default receiver negative tests are retained. Every affected caller remains REVIEWED_GAP until authenticated final-source proof and complete branch/integrated regressions. No replacement storage engine, public telemetry route, paid provider, Phase3 authority or Phase4 egress is introduced.",
+        "authority": "The sole production loadRoutingOutcomes caller is admitted pipeline startup and discards returned DTOs. The fixed select loads at most500 fixed fields into a private process cache for restart recovery. Its only raw cache consumer is buildOutcomeFromTerminalRun, which filters original owner AND run before selecting12 telemetry entries. HistoricalModelQuality returns a scalar aggregate from fixed checks and no tenant/run identity. No route, browser response or external action receives the bootstrap payload. The owner/run fields cannot be dropped because they are required to reject foreign learning rows. These two read/factory sites are explicitly global private bootstrap, not tenant-scoped reads.",
+        "reason": "Exact original007 scope verified at 0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0. Authenticated disposable source, all ten structured criteria and all636 receiving/caller boundaries pass with four full21-stage branch/integrated baselines. Routing uses original issued context and exact persistence receipt; private global history is a fixed500-row17th named exception with owner/run terminal filtering. Three constructor proofs require every other633 boundary independently verified and do not claim SDK RLS. Endpoint proof reconciles222 registrations/29 unchanged modules with actual API/database high-risk matrices. Manual kind matches the actual structured scope: NARROW_EXCEPTION. No new provider, Phase3 grant/custody or Phase4 egress acceptance is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/routingOutcomes.ts",
@@ -4210,11 +4208,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "NARROW_EXCEPTION",
       "sourceSha256": "52c9d3ebf8b96fe36765c597b5cfac7a8321dd926aab63296ce92f2aca37646e",
       "semanticReview": {
-        "authority": "The sole production writer is the issued-owner pipeline, which now passes its original context. Original owner equality is checked before access, input is captured, exact receipt is required, and failed optional telemetry remains uncached without exposing raw error text. Restart loader is server-internal, bounded500 and fixed-column, with an explicit narrow exception. Its sole production caller discards returned rows. Terminal learning independently filters owner AND run, and global quality exposes numeric aggregation only.",
-        "reason": "Original007 bounded source repair, not security acceptance. Seven focused routing/ownership/exception cases and backend typechecking pass. Registered actual Auth/database telemetry, restart/owner learning, browser denial, concurrent owner writes, immutable input, SQL failure and recovery proof is prepared. Existing original context and default receiver negative tests are retained. Every affected caller remains REVIEWED_GAP until authenticated final-source proof and complete branch/integrated regressions. No replacement storage engine, public telemetry route, paid provider, Phase3 authority or Phase4 egress is introduced.",
+        "authority": "The sole production loadRoutingOutcomes caller is admitted pipeline startup and discards returned DTOs. The fixed select loads at most500 fixed fields into a private process cache for restart recovery. Its only raw cache consumer is buildOutcomeFromTerminalRun, which filters original owner AND run before selecting12 telemetry entries. HistoricalModelQuality returns a scalar aggregate from fixed checks and no tenant/run identity. No route, browser response or external action receives the bootstrap payload. The owner/run fields cannot be dropped because they are required to reject foreign learning rows. These two read/factory sites are explicitly global private bootstrap, not tenant-scoped reads.",
+        "reason": "Exact original007 scope verified at 0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0. Authenticated disposable source, all ten structured criteria and all636 receiving/caller boundaries pass with four full21-stage branch/integrated baselines. Routing uses original issued context and exact persistence receipt; private global history is a fixed500-row17th named exception with owner/run terminal filtering. Three constructor proofs require every other633 boundary independently verified and do not claim SDK RLS. Endpoint proof reconciles222 registrations/29 unchanged modules with actual API/database high-risk matrices. Manual kind matches the actual structured scope: NARROW_EXCEPTION. No new provider, Phase3 grant/custody or Phase4 egress acceptance is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/routingOutcomes.ts",
@@ -4239,11 +4237,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "52c9d3ebf8b96fe36765c597b5cfac7a8321dd926aab63296ce92f2aca37646e",
       "semanticReview": {
-        "authority": "The sole production writer is the issued-owner pipeline, which now passes its original context. Original owner equality is checked before access, input is captured, exact receipt is required, and failed optional telemetry remains uncached without exposing raw error text. Restart loader is server-internal, bounded500 and fixed-column, with an explicit narrow exception. Its sole production caller discards returned rows. Terminal learning independently filters owner AND run, and global quality exposes numeric aggregation only.",
-        "reason": "Original007 bounded source repair, not security acceptance. Seven focused routing/ownership/exception cases and backend typechecking pass. Registered actual Auth/database telemetry, restart/owner learning, browser denial, concurrent owner writes, immutable input, SQL failure and recovery proof is prepared. Existing original context and default receiver negative tests are retained. Every affected caller remains REVIEWED_GAP until authenticated final-source proof and complete branch/integrated regressions. No replacement storage engine, public telemetry route, paid provider, Phase3 authority or Phase4 egress is introduced.",
+        "authority": "Only runBuildPipeline calls the production writer, passing its original WeakSet-issued tenantContext. Pipeline authentication, canonical project/run admission and every other byte remain unchanged. recordRoutingOutcome requires that context and matching declared subject before SDK construction, clones its fixed DTO before waits, derives user_id from that retained subject, and inserts only the fixed telemetry fields. Exact acknowledgement for every written field is required before durable telemetry enters the private cache. Run ID is a logical correlation string in the original schema, not a new grant or project FK. Terminal learning always selects BOTH owner and run. Optional failed telemetry cannot grant authority or report durable success, and raw errors are never logged.",
+        "reason": "Exact original007 scope verified at 0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0. Authenticated disposable source, all ten structured criteria and all636 receiving/caller boundaries pass with four full21-stage branch/integrated baselines. Routing uses original issued context and exact persistence receipt; private global history is a fixed500-row17th named exception with owner/run terminal filtering. Three constructor proofs require every other633 boundary independently verified and do not claim SDK RLS. Endpoint proof reconciles222 registrations/29 unchanged modules with actual API/database high-risk matrices. Manual kind matches the actual structured scope: SCOPED_BOUNDARY. No new provider, Phase3 grant/custody or Phase4 egress acceptance is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/routingOutcomes.ts",
@@ -4268,11 +4266,11 @@
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "model_routing_outcomes",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "52c9d3ebf8b96fe36765c597b5cfac7a8321dd926aab63296ce92f2aca37646e",
       "semanticReview": {
-        "authority": "The sole production writer is the issued-owner pipeline, which now passes its original context. Original owner equality is checked before access, input is captured, exact receipt is required, and failed optional telemetry remains uncached without exposing raw error text. Restart loader is server-internal, bounded500 and fixed-column, with an explicit narrow exception. Its sole production caller discards returned rows. Terminal learning independently filters owner AND run, and global quality exposes numeric aggregation only.",
-        "reason": "Original007 bounded source repair, not security acceptance. Seven focused routing/ownership/exception cases and backend typechecking pass. Registered actual Auth/database telemetry, restart/owner learning, browser denial, concurrent owner writes, immutable input, SQL failure and recovery proof is prepared. Existing original context and default receiver negative tests are retained. Every affected caller remains REVIEWED_GAP until authenticated final-source proof and complete branch/integrated regressions. No replacement storage engine, public telemetry route, paid provider, Phase3 authority or Phase4 egress is introduced.",
+        "authority": "Only runBuildPipeline calls the production writer, passing its original WeakSet-issued tenantContext. Pipeline authentication, canonical project/run admission and every other byte remain unchanged. recordRoutingOutcome requires that context and matching declared subject before SDK construction, clones its fixed DTO before waits, derives user_id from that retained subject, and inserts only the fixed telemetry fields. Exact acknowledgement for every written field is required before durable telemetry enters the private cache. Run ID is a logical correlation string in the original schema, not a new grant or project FK. Terminal learning always selects BOTH owner and run. Optional failed telemetry cannot grant authority or report durable success, and raw errors are never logged.",
+        "reason": "Exact original007 scope verified at 0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0. Authenticated disposable source, all ten structured criteria and all636 receiving/caller boundaries pass with four full21-stage branch/integrated baselines. Routing uses original issued context and exact persistence receipt; private global history is a fixed500-row17th named exception with owner/run terminal filtering. Three constructor proofs require every other633 boundary independently verified and do not claim SDK RLS. Endpoint proof reconciles222 registrations/29 unchanged modules with actual API/database high-risk matrices. Manual kind matches the actual structured scope: SCOPED_BOUNDARY. No new provider, Phase3 grant/custody or Phase4 egress acceptance is inferred.",
         "evidence": [
           {
             "path": "backend/src/ai/routingOutcomes.ts",
@@ -10610,11 +10608,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
       "semanticReview": {
-        "authority": "Tenant construction still requires original issued context. Named global construction still accepts only the same17 actual data-operation keys. A separate explicit review-only constructor exception now documents its real receiving-path proof obligations, while its key is excluded from the accepted type and rejected at runtime before SDK construction. It grants no query or additional runtime capability. All actual receivers require independent proof, and neither SDK handle is an RLS sandbox.",
-        "reason": "Constructor classification remains REVIEWED_GAP. Original strict audit accepts only exceptions in the real central registry, so the legitimate internal constructor review must be represented there rather than injected only into external proof. The review-only key is explicitly uncallable and tested as a denied name. Existing seventeen named data operations and all other constructor/receiver semantics remain unchanged. New-source real evidence and final source acceptance are mandatory.",
+        "authority": "The internal tenant constructor requires the original WeakSet-issued context before returning the SDK. Primitive/cloned contexts fail, including direct real-fixture calls. Existing actual receiving routes/services bind exact owner/resource/parent predicates and validate their receipts independently. All other633 receiving inventory sites already verify, so their guards are not inferred from construction. Actual owned profile use and separate own/foreign high-risk route matrices exercise legitimate receivers. The SDK remains privileged and no RLS sandbox or permission for an arbitrary future query is claimed.",
+        "reason": "Exact original007 scope verified at 0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0. Authenticated disposable source, all ten structured criteria and all636 receiving/caller boundaries pass with four full21-stage branch/integrated baselines. Routing uses original issued context and exact persistence receipt; private global history is a fixed500-row17th named exception with owner/run terminal filtering. Three constructor proofs require every other633 boundary independently verified and do not claim SDK RLS. Endpoint proof reconciles222 registrations/29 unchanged modules with actual API/database high-risk matrices. Manual kind matches the actual structured scope: SCOPED_BOUNDARY. No new provider, Phase3 grant/custody or Phase4 egress acceptance is inferred.",
         "evidence": [
           {
             "path": "backend/src/security/serviceRoleGuard.test.ts",
@@ -10647,11 +10645,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "NARROW_EXCEPTION",
       "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
       "semanticReview": {
-        "authority": "Tenant construction still requires original issued context. Named global construction still accepts only the same17 actual data-operation keys. A separate explicit review-only constructor exception now documents its real receiving-path proof obligations, while its key is excluded from the accepted type and rejected at runtime before SDK construction. It grants no query or additional runtime capability. All actual receivers require independent proof, and neither SDK handle is an RLS sandbox.",
-        "reason": "Constructor classification remains REVIEWED_GAP. Original strict audit accepts only exceptions in the real central registry, so the legitimate internal constructor review must be represented there rather than injected only into external proof. The review-only key is explicitly uncallable and tested as a denied name. Existing seventeen named data operations and all other constructor/receiver semantics remain unchanged. New-source real evidence and final source acceptance are mandatory.",
+        "authority": "This internal constructor requires an exact own key of the immutable17-entry global operation registry and has no public administrative endpoint. Every named recipient independently proves its fixed operation, limited data projection, current staff/signature/capability authority where needed and actual positive/negative behavior. All other633 receiving inventory sites are already verified before this constructor is considered. Actual unknown, prototype and missing names fail before SDK construction, valid private routing/readiness uses execute, and revoked readiness SELECT denies without leaking identities. Returned SDK is privileged, not an enforced query sandbox. This exemption covers only named actual internal recipients, never arbitrary future queries or a user-selectable admin handle.",
+        "reason": "Exact original007 scope verified at 0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0. Authenticated disposable source, all ten structured criteria and all636 receiving/caller boundaries pass with four full21-stage branch/integrated baselines. Routing uses original issued context and exact persistence receipt; private global history is a fixed500-row17th named exception with owner/run terminal filtering. Three constructor proofs require every other633 boundary independently verified and do not claim SDK RLS. Endpoint proof reconciles222 registrations/29 unchanged modules with actual API/database high-risk matrices. Manual kind matches the actual structured scope: NARROW_EXCEPTION. No new provider, Phase3 grant/custody or Phase4 egress acceptance is inferred.",
         "evidence": [
           {
             "path": "backend/src/security/serviceRoleGuard.test.ts",
@@ -16509,11 +16507,11 @@
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "REVIEWED_GAP",
+      "review": "SCOPED_BOUNDARY",
       "sourceSha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4",
       "semanticReview": {
-        "authority": "tryUniversalBuild constructs the existing SupabaseUniversalStore with issued persisted-owner context from input.userId and passes owner/run to executeUniversalRun.",
-        "reason": "Construction scope does not prove input project/run ownership. Route-to-pipeline provenance, parent-resource admission, supplied custom stores and action/egress coverage remain open.",
+        "authority": "Only the admitted runBuildPipeline invokes this production default. Its original issued context and owner are checked before opts are copied, and the actual universal call allocates a fresh owner/run/project literal. The unchanged entrypoint passes its only private SDK result directly into universalStore with an internal issued context for that server-admitted subject. Privileged stores are per invocation, never the global memory singleton. All seven actual direct receiving store operations and their owned-write subchain independently verify. Real default factory use constructs different owner instances, rejects primitive/cloned issuance and preserves all existing owned/foreign project/run/spec/index and contention assertions. No injected arbitrary client, model output or public body grants this default subject.",
+        "reason": "Exact original007 scope verified at 0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0. Authenticated disposable source, all ten structured criteria and all636 receiving/caller boundaries pass with four full21-stage branch/integrated baselines. Routing uses original issued context and exact persistence receipt; private global history is a fixed500-row17th named exception with owner/run terminal filtering. Three constructor proofs require every other633 boundary independently verified and do not claim SDK RLS. Endpoint proof reconciles222 registrations/29 unchanged modules with actual API/database high-risk matrices. Manual kind matches the actual structured scope: SCOPED_BOUNDARY. No new provider, Phase3 grant/custody or Phase4 egress acceptance is inferred.",
         "evidence": [
           {
             "path": "backend/src/synthesis/universalEntrypoint.ts",

@@ -1,5 +1,9 @@
 # Current implementation status — scoped evidence, not marketing claims
 
+## Phase2 final-source acceptance pending
+
+This paragraph supersedes the historical Phase2 counts and pending repairs below. Exact code source `0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0` passes all eleven workflows,204 actual database security tests, four authenticated browser cases,129 fresh/upgrade migration histories and four full21-stage branch/integrated baselines. Immutable collection verifies636/636 current boundaries and161 privileged factories. All ten original007 criteria pass structured proof, with the independent manual gate retaining seven routing/construction entries until their exact proof-based reconciliation. All73 frozen packets/371 historical identities remain preserved. The final metadata source must independently pass CI and the unchanged original complete gate. See `batch-1/phases/PHASE-2-ACCEPTANCE.md` and its external final-source receipt. This is not production acceptance, full Batch1 completion or Phase3 admission. Original008/009/010, actual R2, production parity/custody and commercial launch requirements remain separate.
+
 ## Founder-approved Phase2 in progress
 
 Phase2 is admitted at verified Phase1 source `8a1a0bfa7878603dd488db98568577b2fb1896da`. Its finite73-packet/371-historical-identity register is `batch-1/phases/PHASE-2-CLOSURE-LEDGER.json`. All ten original007 criteria remain mandatory and currently blocked. Two reproduced defects are being fixed: foreign-owner model evidence associated by run ID alone, and foreign database-project build admission before durable worker preparation. Focused tests and new real disposable tests are distinct evidence channels. No whole-caller certification is inferred from a fix or a review. Commands008/009 and010 remain unstarted. Original Phase1 acceptance evidence and frozen worklist remain unchanged.

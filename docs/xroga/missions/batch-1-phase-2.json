@@ -5,7 +5,7 @@
   "requirementIds": [
     "XB01-C007"
   ],
-  "state": "IN_PROGRESS",
+  "state": "CODE_COMPLETE",
   "risk": "high",
   "scope": "Founder-approved Phase2 only. All ten original007 criteria, finite73 packets, tenant/parent/account/worker lineage and genuine proof. No008/009/010 implementation or production authority.",
   "changedFiles": [
@@ -205,7 +205,7 @@
     },
     "tenant": {
       "changed": true,
-      "description": "Exact owner/run evidence binding and independently verified parent admission. Strict ten-criterion gate remains blocked until real proof."
+      "description": "Original007 code source0aa0c700 passes all ten structured criteria with636 independently proven boundaries. Seven manual entries reconcile only against that proof. Final metadata HEAD still requires its own authenticated CI and original complete gate."
     },
     "approval": {
       "changed": false,
@@ -310,8 +310,8 @@
   "rollout": "Draft PR803 only, no merge or deploy. Full source-bound acceptance required before Phase2 verification.",
   "rollback": "Withhold the five affected growth endpoints before withdrawing current-authority admission. Never re-enable demonstrated unguarded writes as a rollback. The shared routine is additive and can remain installed. No table/data rewrite or backfill. Preserve Phase1, prior receipts, customer state and existing worker fences.",
   "knownGaps": [
-    "All ten007 criteria await complete real acceptance",
-    "Unchanged proof reconciliation and remaining frozen packets",
+    "Final metadata HEAD requires its own eleven successful workflows, source-bound collection and original007 complete gate. Earlier code receipts cannot certify a later SHA.",
+    "Original73 frozen packets and371 historical identities are preserved. Semantic review activity is not security certification.",
     "ActualR2 and production parity are separately unverified",
     "Authority/custody/egress implementation stays Phases3/4"
   ],
