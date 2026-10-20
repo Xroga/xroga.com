@@ -472,6 +472,10 @@ test('S01 uses a section-scoped moving particle mask, never the old WebGL galaxy
   assert.ok(css.includes('--particle-pitch: 20px;'));
   assert.ok(css.includes("url('/s01/noise-mask.svg')"));
   assert.ok(css.includes('mask-composite: intersect, intersect;'));
+  assert.ok(css.includes('background: radial-gradient(circle, #ecf1fa 1.7px, transparent 2.5px)'), 'safe static dot fallback');
+  assert.ok(css.includes('@supports (mask-composite: intersect) or (-webkit-mask-composite: source-in)'), 'intersection feature guard');
+  assert.ok(css.includes("radial-gradient(circle at 50% 50%, #000 1.7px, transparent 2.5px)"), 'refined intersected dot mask');
+  assert.ok(css.includes('pointer-events: none;'), 'decorative layer does not intercept cards');
   assert.ok(css.includes('animation: s01NoisePass 20s linear infinite;'));
   assert.ok(css.includes('@media (prefers-reduced-motion: reduce)'));
   assert.ok(css.includes('@media (max-width: 1024px), (pointer: coarse)'));
