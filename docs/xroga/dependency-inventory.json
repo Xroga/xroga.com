@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "46113eda8697672ec0fcab3e5f2017e2be9d2ac3",
+  "source_sha": "f37c0b6a324467d93de37535d37e02b60e97c82c",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -6957,6 +6957,7 @@
         "XROGA_ROUTING_MODE",
         "XROGA_SOFTWARE_AGENT_V2",
         "XROGA_SOFTWARE_AGENT_V2_SHADOW",
+        "XROGA_TEST_CREDENTIAL_KEK",
         "ZHIPU_API_KEY"
       ],
       "inbound_callers": [
@@ -11937,6 +11938,25 @@
       ]
     },
     {
+      "name": "XROGA_TEST_CREDENTIAL_KEK",
+      "consuming_sources": [
+        "backend/src/services/integrations/credentialVaultRuntime.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "YOUTUBE_API_KEY",
       "consuming_sources": [
         "backend/src/config/envSecrets.ts",
@@ -13224,7 +13244,7 @@
     },
     {
       "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
-      "sha256": "075dafe84a7954086ef376439d5733d0576282eecfa5429259c11f005d30caa6"
+      "sha256": "707408930599d6f84ab3a416990055506e0956f562f2b2645859ce3645ef0a0f"
     },
     {
       "path": "backend/src/operations/operationsService.ts",
@@ -13828,7 +13848,7 @@
     },
     {
       "path": "backend/src/services/integrations/credentialVaultRuntime.ts",
-      "sha256": "2836dcc09e34ca1f740ef67d4af0b259efce549d12afb5da3f5088834d9f4131"
+      "sha256": "3d846cec4c28052cb36f273516ed9173ca9796ead6c2c313b36a4b47ec05271f"
     },
     {
       "path": "backend/src/services/integrations/cryptoProvider.ts",
@@ -13908,7 +13928,7 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da"
+      "sha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475"
     },
     {
       "path": "backend/src/services/memory/buildMemory.ts",
@@ -14252,7 +14272,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
-      "sha256": "668cec449c67ee92dab92c08bd96e5587665c04824235be4ecc1756cb0e08c10"
+      "sha256": "8754a9c139247caff08038eed891e96343796b9019ddb379e7e4596c02dd3fa2"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
@@ -20566,42 +20586,42 @@
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 519,
+      "line": 517,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 556,
+      "line": 554,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 557,
+      "line": 555,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 612,
+      "line": 610,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 631,
+      "line": 629,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 739,
+      "line": 737,
       "credentialsInUrl": false
     },
     {
@@ -26705,14 +26725,14 @@
     },
     {
       "path": "backend/src/services/integrations/credentialVaultRuntime.ts",
-      "line": 25,
+      "line": 32,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/credentialVaultRuntime.ts",
-      "line": 30,
+      "line": 39,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -1,6 +1,6 @@
 # Environment/secret NAME inventory
 
-Source SHA: `46113eda8697672ec0fcab3e5f2017e2be9d2ac3`. Values are prohibited, including public credential values. 214 named readers/aliases/derived keys; 21 explicitly reviewed bindings.
+Source SHA: `f37c0b6a324467d93de37535d37e02b60e97c82c`. Values are prohibited, including public credential values. 215 named readers/aliases/derived keys; 21 explicitly reviewed bindings.
 
 | Name | Class | Requiredness | Consuming source | Validation status |
 | --- | --- | --- | --- | --- |
@@ -216,6 +216,7 @@ Source SHA: `46113eda8697672ec0fcab3e5f2017e2be9d2ac3`. Values are prohibited, i
 | XROGA_SOFTWARE_AGENT_V2 | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/ai/softwareAgent/softwareAgentFeatureFlags.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_SOFTWARE_AGENT_V2_SHADOW | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/ai/softwareAgent/softwareAgentFeatureFlags.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_STAGING_AUTH_BUILD | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend/src/lib/supabase/authBuildRealm.mjs | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| XROGA_TEST_CREDENTIAL_KEK | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/services/integrations/credentialVaultRuntime.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | YOUTUBE_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/config/envSecrets.ts, backend/src/lib/platformReady.ts, backend/src/lib/youtubeSearch.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | ZHIPU_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/config/envSecrets.ts, backend/src/lib/platformReady.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 

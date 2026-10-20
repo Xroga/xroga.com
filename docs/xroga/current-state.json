@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "46113eda8697672ec0fcab3e5f2017e2be9d2ac3",
-    "sourceTimestampUtc": "2026-10-20T22:48:56+05:00",
-    "auditStartedUtc": "2026-10-20T17:50:45.630Z",
+    "sha": "f37c0b6a324467d93de37535d37e02b60e97c82c",
+    "sourceTimestampUtc": "2026-10-20T23:05:39+05:00",
+    "auditStartedUtc": "2026-10-20T18:06:13.656Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -21788,7 +21788,7 @@
         "backend/src/services/storage/projectFiles.receipt.test.ts:7",
         "backend/src/services/storage/projectFiles.ts:5",
         "backend/src/synthesis/livePreview/store.ts:6",
-        "backend/src/synthesis/projectRuntime/secretRead.test.ts:6",
+        "backend/src/synthesis/projectRuntime/secretRead.test.ts:7",
         "backend/src/synthesis/projectRuntime/store.ts:9",
         "backend/src/synthesis/universalEntrypoint.ts:55",
         "backend/src/synthesis/universalPersistence.owner.test.ts:7",
@@ -23075,7 +23075,7 @@
       "callers": [
         "backend/src/services/integrations/credentialVault.test.ts:5",
         "backend/src/services/integrations/credentialVaultRuntime.ts:2",
-        "backend/src/synthesis/projectRuntime/secretRead.test.ts:4",
+        "backend/src/synthesis/projectRuntime/secretRead.test.ts:5",
         "backend/src/synthesis/projectRuntime/store.ts:11"
       ],
       "reachable": true,
@@ -23107,10 +23107,11 @@
       "id": "surface:31655160f787e763cc14",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/credentialVaultRuntime.ts",
-      "sha256": "2836dcc09e34ca1f740ef67d4af0b259efce549d12afb5da3f5088834d9f4131",
+      "sha256": "3d846cec4c28052cb36f273516ed9173ca9796ead6c2c313b36a4b47ec05271f",
       "symbols": [
         "configureCredentialVaultProvider",
         "configured",
+        "configuredKey",
         "key",
         "managedProvider",
         "openRuntimeCredential",
@@ -23142,12 +23143,14 @@
         "backend/src/security/githubConsumer.local.integration.ts:11",
         "backend/src/security/oauthSession.local.integration.ts:5",
         "backend/src/security/vercelRefreshAccount.local.integration.ts:7",
+        "backend/src/services/integrations/credentialVaultRuntime.test.ts:6",
         "backend/src/services/integrations/githubAuth.ts:6",
         "backend/src/services/integrations/githubTokenStore.ts:5",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:9",
         "backend/src/services/integrations/oauthPkceStore.ts:10",
         "backend/src/services/integrations/userProviderKeys.migration.test.ts:76",
         "backend/src/services/integrations/userProviderKeys.ts:16",
+        "backend/src/services/integrations/vercelAccountReceipt.test.ts:5",
         "backend/src/synthesis/projectRuntime/secretManager.ts:7"
       ],
       "reachable": true,
@@ -23167,8 +23170,10 @@
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
         "backend/src/security/vercelRefreshAccount.local.integration.ts",
+        "backend/src/services/integrations/credentialVaultRuntime.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
-        "backend/src/services/integrations/userProviderKeys.migration.test.ts"
+        "backend/src/services/integrations/userProviderKeys.migration.test.ts",
+        "backend/src/services/integrations/vercelAccountReceipt.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -23209,7 +23214,7 @@
         "backend/src/services/integrations/credentialVault.test.ts:6",
         "backend/src/services/integrations/credentialVault.ts:5",
         "backend/src/services/integrations/credentialVaultRuntime.ts:3",
-        "backend/src/synthesis/projectRuntime/secretRead.test.ts:5"
+        "backend/src/synthesis/projectRuntime/secretRead.test.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -25099,7 +25104,7 @@
       "id": "surface:083de6ff7f0ffdcc0165",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/vercelAuth.ts",
-      "sha256": "47ae8b8c4def6f168e8f9fabafb3b1044d265dc52adc3eec0a7183a6187f43da",
+      "sha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
       "symbols": [
         "ALLOWED_CALLBACK_ORIGINS",
         "CALLBACK_PATH",
@@ -31371,7 +31376,7 @@
       "id": "surface:debf0540d36a304710b3",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/secretManager.ts",
-      "sha256": "668cec449c67ee92dab92c08bd96e5587665c04824235be4ecc1756cb0e08c10",
+      "sha256": "8754a9c139247caff08038eed891e96343796b9019ddb379e7e4596c02dd3fa2",
       "symbols": [
         "ProjectSecretManager",
         "allowed",
@@ -31414,7 +31419,8 @@
         "backend/src/security/runtimeSecretRead.local.integration.ts:6",
         "backend/src/synthesis/projectRuntime/index.ts:7",
         "backend/src/synthesis/projectRuntime/manager.ts:18",
-        "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:52"
+        "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:52",
+        "backend/src/synthesis/projectRuntime/secretRead.test.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -31428,7 +31434,8 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/security/runtimeSecretRead.local.integration.ts",
-        "backend/src/synthesis/projectRuntime/projectRuntime.test.ts"
+        "backend/src/synthesis/projectRuntime/projectRuntime.test.ts",
+        "backend/src/synthesis/projectRuntime/secretRead.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -86617,7 +86624,7 @@
       "id": "surface:6d41f9a6f61b7c1b2c87",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/disposable-supabase.mjs",
-      "sha256": "be78ddf04b097513f4e4acd7e58486391d35ce538c8534d82242b20e122d4e6f",
+      "sha256": "85c5bc5d516b6f34db0a1c17919f4c1905e97dbf8c8b8836bf7a1f6d082bba63",
       "symbols": [
         "anonKey",
         "apiPublishable",
@@ -86982,7 +86989,7 @@
       "id": "surface:052e49f08f69e1d17b86",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/refresh-phase-three-authority-delta.mjs",
-      "sha256": "6356f89f6c1feda2a73e612eaa9fe84ea23c0ae6652afa243a55ae014364b9e0",
+      "sha256": "ef103f7ad6687567a665ac4b99ce0f92e8e4e695ef8fc652b358e9c911cf751d",
       "symbols": [
         "accepted",
         "after",
@@ -106673,6 +106680,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:38951200d6006bf879b9",
+      "sourcePath": "backend/src/services/integrations/credentialVaultRuntime.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:9356a87156eb208917af",
       "sourcePath": "backend/src/services/integrations/githubAnalysis.test.ts",
       "declaredTests": 3,
@@ -107382,7 +107396,7 @@
     {
       "id": "test-suite:517fbfce976a85e56f66",
       "sourcePath": "backend/src/synthesis/projectRuntime/secretRead.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
