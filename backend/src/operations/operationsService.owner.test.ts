@@ -75,15 +75,14 @@ test('misbound operations actions cannot be confirmed approved or returned as ve
 
 test('injected-client retry mutations bind owner project and optimistic target version',async()=>{
   for(const capability of ['retry_job','retry_webhook']){
-    const filters:Array<[string,unknown]>=[];
-    const db={from(){const query={update(){return query;},eq(key:string,value:unknown){filters.push([key,value]);return query;},lt(){return query;},async select(){return {data:[],error:null};}};return query;}};
+    const action={action_type:capability,user_id:'owner',project_id:'allowed-project',target_id:'foreign-project-target',target_version:2,status:'running',lease_owner:'api:actor',lease_expires_at:new Date(Date.now()+60_000).toISOString()};
+    let calls=0;
+    const db={async rpc(name:string,args:Record<string,unknown>){calls++;assert.equal(name,'mutate_operations_internal_target');assert.equal(args.p_capability,capability);assert.equal(args.p_actor,'actor');assert.deepEqual(args.p_expected,action);assert.deepEqual(args.p_allowed_roles,['operator','release_manager','recovery_manager','admin']);assert.equal(args.p_confirmation_required,true);assert.equal(args.p_approval_role,null);return {data:{rows:[],completion:null},error:null};},from(){assert.fail('An internal effect must never fall back to a preflight-only raw update');}};
     const service=new OperationsService(db as unknown as SupabaseClient);
     // Isolated unit inspection of the existing private adapter boundary; no production bypass.
     const adapter=service as unknown as {executeInternal(capability:string,input:Record<string,unknown>):Promise<{status:string}>};
-    const result=await adapter.executeInternal(capability,{userId:'owner',projectId:'allowed-project',targetId:'foreign-project-target',targetVersion:2});
+    const result=await adapter.executeInternal(capability,{userId:'owner',actorId:'actor',projectId:'allowed-project',targetId:'foreign-project-target',targetVersion:2,admittedAction:action});
     assert.equal(result.status,'blocked');
-    assert.ok(filters.some(([key,value])=>key==='project_id'&&value==='allowed-project'));
-    assert.ok(filters.some(([key,value])=>key==='user_id'&&value==='owner'));
-    assert.ok(filters.some(([key,value])=>key==='attempt_count'&&value===2));
+    assert.equal(calls,1);
   }
 });

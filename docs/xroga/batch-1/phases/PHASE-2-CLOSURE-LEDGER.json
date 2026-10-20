@@ -2238,7 +2238,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real growth event replay cannot disclose a different project event",
-          "sourceSha256": "053270ca0b3375d73ef9540d7c4ebdff32a73f62bc9145033c0697b9fbf4f162",
+          "sourceSha256": "4db8faa47fce5305278f14b9e63dd76a5290a3486a6db7284a5eeb04fffa306c",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -3583,7 +3583,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real durable database file delivery is owner-only",
-          "sourceSha256": "053270ca0b3375d73ef9540d7c4ebdff32a73f62bc9145033c0697b9fbf4f162",
+          "sourceSha256": "4db8faa47fce5305278f14b9e63dd76a5290a3486a6db7284a5eeb04fffa306c",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4587,7 +4587,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes",
-          "sourceSha256": "053270ca0b3375d73ef9540d7c4ebdff32a73f62bc9145033c0697b9fbf4f162",
+          "sourceSha256": "4db8faa47fce5305278f14b9e63dd76a5290a3486a6db7284a5eeb04fffa306c",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4829,7 +4829,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "053270ca0b3375d73ef9540d7c4ebdff32a73f62bc9145033c0697b9fbf4f162",
+          "sourceSha256": "4db8faa47fce5305278f14b9e63dd76a5290a3486a6db7284a5eeb04fffa306c",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4942,7 +4942,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "053270ca0b3375d73ef9540d7c4ebdff32a73f62bc9145033c0697b9fbf4f162",
+          "sourceSha256": "4db8faa47fce5305278f14b9e63dd76a5290a3486a6db7284a5eeb04fffa306c",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -5259,7 +5259,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real failed-build notification cannot disclose raw backend diagnostic text",
-          "sourceSha256": "053270ca0b3375d73ef9540d7c4ebdff32a73f62bc9145033c0697b9fbf4f162",
+          "sourceSha256": "4db8faa47fce5305278f14b9e63dd76a5290a3486a6db7284a5eeb04fffa306c",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5451,7 +5451,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real profile column grants reject self-promotion",
-          "sourceSha256": "053270ca0b3375d73ef9540d7c4ebdff32a73f62bc9145033c0697b9fbf4f162",
+          "sourceSha256": "4db8faa47fce5305278f14b9e63dd76a5290a3486a6db7284a5eeb04fffa306c",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5471,7 +5471,7 @@
       "id": "B1-P2-037c6eb9107f3736",
       "family": "approvals-external-actions",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "baselineCallerIds": [
         "cd8790e39c3283f05482",
         "e99258e8fe888ab954f2",
@@ -5530,11 +5530,11 @@
         "b499a6018afaf6b8b490",
         "2623d45568826e06288e",
         "af2e0acf3186708a5107",
-        "24a309847f8eca992cc6",
-        "7508855b6526c9b0573b",
-        "4ba0ca7ad1c556cea41b",
-        "09ef892d8c2ce312509d",
-        "6cc4c8844f6d1a5e575c"
+        "e9b9cdd86cd68f7e67a2",
+        "d4c63bed6343238269db",
+        "45a30098dbb7ff275b41",
+        "2191a3a351b0999fd707",
+        "5412270a1f23caa82419"
       ],
       "mapping": [
         {
@@ -5715,35 +5715,35 @@
         {
           "baselineCallerId": "24a309847f8eca992cc6",
           "currentCallerIds": [
-            "24a309847f8eca992cc6"
+            "e9b9cdd86cd68f7e67a2"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "7508855b6526c9b0573b",
           "currentCallerIds": [
-            "7508855b6526c9b0573b"
+            "d4c63bed6343238269db"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "4ba0ca7ad1c556cea41b",
           "currentCallerIds": [
-            "4ba0ca7ad1c556cea41b"
+            "45a30098dbb7ff275b41"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "09ef892d8c2ce312509d",
           "currentCallerIds": [
-            "09ef892d8c2ce312509d"
+            "2191a3a351b0999fd707"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "6cc4c8844f6d1a5e575c",
           "currentCallerIds": [
-            "6cc4c8844f6d1a5e575c"
+            "5412270a1f23caa82419"
           ],
           "change": "RETAINED"
         }
@@ -5753,7 +5753,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-037c6eb9107f3736",
-        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
         "executionStatus": "IN_PROGRESS",
         "finding": "SHARED_READ_OWNERSHIP_MATRIX_PREPARED_NO_PRODUCTION_DEFECT_DEMONSTRATED",
         "originalCriteria": [
@@ -5872,14 +5872,14 @@
         {
           "path": "backend/src/operations/operationsService.ts",
           "marker": "const belongs = (item: DbRow)",
-          "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+          "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "Legitimate membership must remain visible",
-          "sourceSha256": "053270ca0b3375d73ef9540d7c4ebdff32a73f62bc9145033c0697b9fbf4f162",
+          "sourceSha256": "4db8faa47fce5305278f14b9e63dd76a5290a3486a6db7284a5eeb04fffa306c",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5913,7 +5913,7 @@
       "id": "B1-P2-4bd11f790ddabef6",
       "family": "approvals-external-actions",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "baselineCallerIds": [
         "58357b840ab8890eba45",
         "9ea21ff62008b510bd7f",
@@ -5945,16 +5945,16 @@
         "9cd0878995ac81bc7fa1",
         "0790e2862f113cd5cb2a",
         "1087d778492ba0d90fe8",
-        "2911d37adf1475f417aa",
-        "31c477708b626e5ae6b1",
-        "8cdd04617aa0332099d0",
-        "7bf8a723f11bf121e654",
-        "a5e91bac1a6cb8ed6bd0",
-        "777506055ab8972780cc",
-        "9e56a2c47c6fae03a7d4",
-        "06e83cfecb1ce0da5c95",
-        "101c25c8bf0d04a3d6ee",
-        "5168c80257e8d4f829be"
+        "db901ea4f35f29872b83",
+        "62993f74348668414e94",
+        "0541a105ff0d867f7ea6",
+        "ed9a76f66fdce2fa62cb",
+        "251a62ca944e59b4d35c",
+        "d6f7994c8a29114879a2",
+        "8d4b368daaafa2527fdb",
+        "7b6b74d024cad1ca24e0",
+        "1432ffb1661e42ad2afd",
+        "7201394971e7edb953ff"
       ],
       "mapping": [
         {
@@ -6023,78 +6023,108 @@
         {
           "baselineCallerId": "2911d37adf1475f417aa",
           "currentCallerIds": [
-            "2911d37adf1475f417aa"
+            "db901ea4f35f29872b83"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "31c477708b626e5ae6b1",
           "currentCallerIds": [
-            "31c477708b626e5ae6b1"
+            "62993f74348668414e94"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "8cdd04617aa0332099d0",
           "currentCallerIds": [
-            "8cdd04617aa0332099d0"
+            "0541a105ff0d867f7ea6"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "7bf8a723f11bf121e654",
           "currentCallerIds": [
-            "7bf8a723f11bf121e654"
+            "ed9a76f66fdce2fa62cb"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "a5e91bac1a6cb8ed6bd0",
           "currentCallerIds": [
-            "a5e91bac1a6cb8ed6bd0"
+            "251a62ca944e59b4d35c"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "777506055ab8972780cc",
           "currentCallerIds": [
-            "777506055ab8972780cc"
+            "d6f7994c8a29114879a2"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "9e56a2c47c6fae03a7d4",
           "currentCallerIds": [
-            "9e56a2c47c6fae03a7d4"
+            "8d4b368daaafa2527fdb"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "06e83cfecb1ce0da5c95",
           "currentCallerIds": [
-            "06e83cfecb1ce0da5c95"
+            "7b6b74d024cad1ca24e0"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "101c25c8bf0d04a3d6ee",
           "currentCallerIds": [
-            "101c25c8bf0d04a3d6ee"
+            "1432ffb1661e42ad2afd"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "5168c80257e8d4f829be",
           "currentCallerIds": [
-            "5168c80257e8d4f829be"
+            "7201394971e7edb953ff"
           ],
           "change": "RETAINED"
         }
       ],
       "state": "EVIDENCE_GAP",
-      "executionStatus": "READY",
+      "executionStatus": "IN_PROGRESS",
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
-      "semanticProgress": null,
+      "semanticProgress": {
+        "packetId": "B1-P2-4bd11f790ddabef6",
+        "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+        "executionStatus": "IN_PROGRESS",
+        "finding": "POST_CLAIM_INTERNAL_EFFECT_CURRENT_AUTHORITY_AND_ATOMIC_COMPLETION_REPAIRED_PROOF_PENDING",
+        "originalCriteria": [
+          2,
+          4,
+          10
+        ],
+        "actorTrace": "Authenticated route actor, current Operations permissions, canonical persisted action and original admitted attempt enter a fixed capability RPC. Existing claim policy is lifted verbatim into one reusable locking helper. The mutation rechecks all current authority under locks and calls existing complete_operations_action atomically with its effect. External adapter architecture is unchanged.",
+        "invariant": "No later privileged internal effect may rely on revoked preflight authority. No successful target effect may exist without its exact durable action/attempt/evidence/audit receipt. Lost replies reconcile canonical verified completion without repeating a mutation.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/internalControlReceipt.test.ts",
+            "type": "FOCUSED_SUBSTITUTED_TARGET_AND_COMPLETION_RECEIPT_DENIAL",
+            "result": "PASS"
+          },
+          {
+            "path": "backend/src/operations/internalEffect.local.integration.ts",
+            "type": "REAL_HTTP_AUTH_PG_CAPABILITIES_CURRENT_AUTHORITY_LOCK_RACES_ATOMIC_ROLLBACK_AND_LOST_REPLY",
+            "result": "NOT_EXECUTED"
+          }
+        ],
+        "remaining": [
+          "Execute and authenticate new-source real disposable tests and final regression",
+          "Reconcile only proven Command007 callers, retaining automation linking, shared factory and all genuinely open obligations",
+          "Preserve Phase3 grants/budgets/vault and Phase4 egress independently"
+        ],
+        "rollback": "Do not withdraw current authority or atomic receipts from enabled internal effects. The additive helper and whitelisted RPC can remain installed. Withhold affected internal actions before separately approved withdrawal, preserve original claim/completion and all restrictive grants. No production rollout authorized."
+      },
       "actor": {
         "existingTrace": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
         "currentSemanticVerification": "PENDING"
@@ -6125,14 +6155,14 @@
         {
           "path": "backend/src/operations/operationsService.owner.test.ts",
           "marker": "misbound operations actions cannot be confirmed approved or returned as verified",
-          "sourceSha256": "c7fe7f945f746c54b2572f8ba8684cc65b2e95277b57db11819d290eee3f582d",
+          "sourceSha256": "e12b5bcbaf23148572ceb15b30ff66b7b142aabbb9249294acb0873b456d853c",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant",
-          "sourceSha256": "053270ca0b3375d73ef9540d7c4ebdff32a73f62bc9145033c0697b9fbf4f162",
+          "sourceSha256": "4db8faa47fce5305278f14b9e63dd76a5290a3486a6db7284a5eeb04fffa306c",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6224,7 +6254,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "generated external-project memory SQL denies browser roles",
-          "sourceSha256": "053270ca0b3375d73ef9540d7c4ebdff32a73f62bc9145033c0697b9fbf4f162",
+          "sourceSha256": "4db8faa47fce5305278f14b9e63dd76a5290a3486a6db7284a5eeb04fffa306c",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6699,7 +6729,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real Whop fulfillment rolls back foreign membership collisions",
-          "sourceSha256": "053270ca0b3375d73ef9540d7c4ebdff32a73f62bc9145033c0697b9fbf4f162",
+          "sourceSha256": "4db8faa47fce5305278f14b9e63dd76a5290a3486a6db7284a5eeb04fffa306c",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -7397,7 +7427,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "053270ca0b3375d73ef9540d7c4ebdff32a73f62bc9145033c0697b9fbf4f162",
+          "sourceSha256": "4db8faa47fce5305278f14b9e63dd76a5290a3486a6db7284a5eeb04fffa306c",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -7504,7 +7534,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "053270ca0b3375d73ef9540d7c4ebdff32a73f62bc9145033c0697b9fbf4f162",
+          "sourceSha256": "4db8faa47fce5305278f14b9e63dd76a5290a3486a6db7284a5eeb04fffa306c",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -9286,7 +9316,7 @@
       "id": "B1-P2-79b4c59a6db06651",
       "family": "approvals-external-actions",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "baselineCallerIds": [
         "f175f84e5afd902c17c0"
       ],
@@ -9328,7 +9358,7 @@
         {
           "path": "backend/src/operations/operationsService.owner.test.ts",
           "marker": "release target lookup validates the returned owner project and resource identity",
-          "sourceSha256": "c7fe7f945f746c54b2572f8ba8684cc65b2e95277b57db11819d290eee3f582d",
+          "sourceSha256": "e12b5bcbaf23148572ceb15b30ff66b7b142aabbb9249294acb0873b456d853c",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -9362,18 +9392,18 @@
       "id": "B1-P2-6504b624f22f69fa",
       "family": "approvals-external-actions",
       "sourcePath": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "baselineCallerIds": [
         "ca3d605bac7cc0acb742"
       ],
       "currentCallerIds": [
-        "ca3d605bac7cc0acb742"
+        "847701cbbdfc7ce070ec"
       ],
       "mapping": [
         {
           "baselineCallerId": "ca3d605bac7cc0acb742",
           "currentCallerIds": [
-            "ca3d605bac7cc0acb742"
+            "847701cbbdfc7ce070ec"
           ],
           "change": "RETAINED"
         }

@@ -398,7 +398,7 @@
     "skipped": 0,
     "failure": "BYOK generated fixture rows leaked into metadata test expecting one key. Exact per-test cleanup added; original assertion unchanged. Final-source rerun required."
   },
-  "strictAcceptance": "FAIL:39 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
+  "strictAcceptance": "FAIL:38 unresolved caller candidates and remaining integration gates. Criteria unchanged.",
   "scopedClosure": {
     "count": 2,
     "scope": "Fixed worker transition RPC and exact-row BYOK revoke RPC only",
@@ -430,10 +430,10 @@
     "rlsEnabled": 118,
     "privilegedFactorySites": 161,
     "persistenceCandidates": 639,
-    "ownerPredicateCandidates": 150,
+    "ownerPredicateCandidates": 144,
     "reviewRequired": 0,
     "reviewedCandidates": 639,
-    "unresolvedSafetyCandidates": 39,
+    "unresolvedSafetyCandidates": 38,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 16
   },
@@ -530,20 +530,23 @@
       "existingImplementation": "Existing prepared plan, confirmation, operations services and scheduler",
       "missingBehavior": "Account/target/digest/spend/receipt integration and complete caller provenance",
       "acceptanceTest": "Changed plan/target, expired/revoked approval, duplicate claims, unauthorized spend",
-      "pendingCandidates": 10,
+      "pendingCandidates": 13,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
         "backend/src/operations/operationsService.ts": [
           "cd8790e39c3283f05482",
-          "2911d37adf1475f417aa",
-          "31c477708b626e5ae6b1",
-          "7bf8a723f11bf121e654",
-          "a5e91bac1a6cb8ed6bd0",
-          "777506055ab8972780cc",
-          "9e56a2c47c6fae03a7d4",
-          "101c25c8bf0d04a3d6ee",
-          "ca3d605bac7cc0acb742",
-          "5168c80257e8d4f829be"
+          "db901ea4f35f29872b83",
+          "62993f74348668414e94",
+          "0541a105ff0d867f7ea6",
+          "ed9a76f66fdce2fa62cb",
+          "3511bf786d2e1a877754",
+          "251a62ca944e59b4d35c",
+          "d6f7994c8a29114879a2",
+          "8d4b368daaafa2527fdb",
+          "7b6b74d024cad1ca24e0",
+          "1432ffb1661e42ad2afd",
+          "847701cbbdfc7ce070ec",
+          "7201394971e7edb953ff"
         ]
       }
     },
@@ -568,17 +571,9 @@
       "existingImplementation": "Existing owner checks, project/file stores and runtime",
       "missingBehavior": "Inherited parent identity, durable receipt, revision and runtime ownership gaps",
       "acceptanceTest": "Wrong parent, orphan, stale revision, failed persistence and cross-tenant download",
-      "pendingCandidates": 19,
+      "pendingCandidates": 15,
       "sourceBoundReasons": "docs/xroga/security/privileged-callers.json",
       "callersByPath": {
-        "backend/src/services/memory/buildMemory.ts": [
-          "57fd0513dbbc76c05dc9",
-          "bf1b3affa3cada5dbe44"
-        ],
-        "backend/src/services/memory/buildPersistence.ts": [
-          "99c17dc2a48bd6be6ae7",
-          "63ba5e2982b2b02ee020"
-        ],
         "backend/src/services/memory/buildProjectStore.ts": [
           "59fc6590fac35ccb2965",
           "e85bf3fa018cd1e5f137",

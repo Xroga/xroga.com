@@ -648,15 +648,15 @@
       "path": "backend/src/services/memory/buildMemory.ts",
       "sourceSha256": "7fd673b160e0a23436c4ea27ca612d9d37a9a859ef15cd2d97d8ca98996411ab",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Dormancy alone is not a security certificate. These guarded callable contracts and real default-query/insert witnesses are prepared, with no invented public route or pipeline consumer. Existing003/worker project ownership trigger is reused, not replaced. Actual two-owner history, foreign and duplicate writes, concurrent replay, parent transfer during held lock, rollback, browser foreign insert denial and exact persisted receipts require new-source disposable CI. Original later-phase obligations and earlier concerns are retained in historicalLegacyHistoryReview. This remains REVIEWED_GAP.",
-      "authorityTrace": "No production consumer is found. The original callable reader now requires the original WeakSet-issued TenantContext before creating its SDK client, derives its only userId from that immutable context and queries only that owner. JSON clones and primitive owner strings cannot choose a history tenant. Formatting helpers remain unchanged.",
+      "reason": "Exact original007 legacy history owner boundary verified at ce60607896c71e8b04461148806c516d4e052103, actual disposable39297758851/job118214616006,194 security cases with zero failures/skips,126 migration histories and all four21-stage repeated baselines in39297758639. Original-issued owner, full captured receipt, actual project wait/transfer rejection, duplicate/concurrent collision, rollback/recovery and browser foreign denial are proven. No active production caller is invented and no new worker/action engine is certified. Historical concerns and future capability scope remain preserved.",
+      "authorityTrace": "These dormant legacy exports have no active production consumer, and no public route or new pipeline is invented. Each callable contract requires the original WeakSet-issued frozen TenantContext before database access. The read derives its only owner from that context and returns only owner-filtered history. The write snapshots input, requires that exact issued owner, performs INSERT only, and the already-verified swarm_runs trigger holds current projects ownership through the decisive insert. Global run-ID collision never updates an existing row. Its acknowledgement must match exact original owner/project/run/prompt/status/output; unavailable or substituted acknowledgement raises a fixed503 and cannot return a false run ID.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -683,15 +683,15 @@
       "path": "backend/src/services/memory/buildPersistence.ts",
       "sourceSha256": "30682b395cdde685fe1e1181d24ec6add7f097571edaecc338c1dfff5170ff41",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "REVIEWED_GAP",
+      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Dormancy alone is not a security certificate. These guarded callable contracts and real default-query/insert witnesses are prepared, with no invented public route or pipeline consumer. Existing003/worker project ownership trigger is reused, not replaced. Actual two-owner history, foreign and duplicate writes, concurrent replay, parent transfer during held lock, rollback, browser foreign insert denial and exact persisted receipts require new-source disposable CI. Original later-phase obligations and earlier concerns are retained in historicalLegacyHistoryReview. This remains REVIEWED_GAP.",
-      "authorityTrace": "No production consumer is found. The original callable writer now requires an original issued TenantContext, captures nested input before I/O, rejects mismatched owner and inserts only that issued owner. Insert-only global run ID collisions cannot overwrite existing runs. The existing swarm_runs trigger holds current project ownership through insertion, and acknowledgement must match exact owner/project/run/prompt/status/output. Failure throws a fixed503 rather than returning an unpersisted ID.",
+      "reason": "Exact original007 legacy history owner boundary verified at ce60607896c71e8b04461148806c516d4e052103, actual disposable39297758851/job118214616006,194 security cases with zero failures/skips,126 migration histories and all four21-stage repeated baselines in39297758639. Original-issued owner, full captured receipt, actual project wait/transfer rejection, duplicate/concurrent collision, rollback/recovery and browser foreign denial are proven. No active production caller is invented and no new worker/action engine is certified. Historical concerns and future capability scope remain preserved.",
+      "authorityTrace": "These dormant legacy exports have no active production consumer, and no public route or new pipeline is invented. Each callable contract requires the original WeakSet-issued frozen TenantContext before database access. The read derives its only owner from that context and returns only owner-filtered history. The write snapshots input, requires that exact issued owner, performs INSERT only, and the already-verified swarm_runs trigger holds current projects ownership through the decisive insert. Global run-ID collision never updates an existing row. Its acknowledgement must match exact original owner/project/run/prompt/status/output; unavailable or substituted acknowledgement raises a fixed503 and cannot return a false run ID.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -5750,7 +5750,7 @@
         "7215f4419b9fff60e893"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -5775,7 +5775,7 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-037c6eb9107f3736",
+      "id": "OB-0085f64595abbc9d",
       "callerIds": [
         "cd8790e39c3283f05482",
         "e99258e8fe888ab954f2",
@@ -5802,14 +5802,14 @@
         "b499a6018afaf6b8b490",
         "2623d45568826e06288e",
         "af2e0acf3186708a5107",
-        "24a309847f8eca992cc6",
-        "7508855b6526c9b0573b",
-        "4ba0ca7ad1c556cea41b",
-        "09ef892d8c2ce312509d",
-        "6cc4c8844f6d1a5e575c"
+        "e9b9cdd86cd68f7e67a2",
+        "d4c63bed6343238269db",
+        "45a30098dbb7ff275b41",
+        "2191a3a351b0999fd707",
+        "5412270a1f23caa82419"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -5864,11 +5864,11 @@
             "b499a6018afaf6b8b490",
             "2623d45568826e06288e",
             "af2e0acf3186708a5107",
-            "24a309847f8eca992cc6",
-            "7508855b6526c9b0573b",
-            "4ba0ca7ad1c556cea41b",
-            "09ef892d8c2ce312509d",
-            "6cc4c8844f6d1a5e575c"
+            "e9b9cdd86cd68f7e67a2",
+            "d4c63bed6343238269db",
+            "45a30098dbb7ff275b41",
+            "2191a3a351b0999fd707",
+            "5412270a1f23caa82419"
           ],
           "disposition": "SCOPED_BOUNDARY"
         }
@@ -5876,7 +5876,7 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-4bd11f790ddabef6",
+      "id": "OB-1478ebcda982a717",
       "callerIds": [
         "58357b840ab8890eba45",
         "9ea21ff62008b510bd7f",
@@ -5887,19 +5887,19 @@
         "9cd0878995ac81bc7fa1",
         "0790e2862f113cd5cb2a",
         "1087d778492ba0d90fe8",
-        "2911d37adf1475f417aa",
-        "31c477708b626e5ae6b1",
-        "8cdd04617aa0332099d0",
-        "7bf8a723f11bf121e654",
-        "a5e91bac1a6cb8ed6bd0",
-        "777506055ab8972780cc",
-        "9e56a2c47c6fae03a7d4",
-        "06e83cfecb1ce0da5c95",
-        "101c25c8bf0d04a3d6ee",
-        "5168c80257e8d4f829be"
+        "db901ea4f35f29872b83",
+        "62993f74348668414e94",
+        "0541a105ff0d867f7ea6",
+        "ed9a76f66fdce2fa62cb",
+        "251a62ca944e59b4d35c",
+        "d6f7994c8a29114879a2",
+        "8d4b368daaafa2527fdb",
+        "7b6b74d024cad1ca24e0",
+        "1432ffb1661e42ad2afd",
+        "7201394971e7edb953ff"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -5909,7 +5909,7 @@
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "reason": "Current manual subsets preserve their original structured caller container. Manual outcomes do not issue a source-bound security certificate. Every original007 obligation still requires authenticated structured positive and negative proof.",
-      "authorityTrace": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.\nThe sole external operations router is auth-mounted and passes req.userId. Growth and automation callers retain that same verified actor, not a persisted action requester supplied by the browser. access derives current project owner and canonical role. Creation environment/maintenance reads are exact project/owner and remain internal. Other selected action reads use requested ID internally, then compare persisted action owner against current project owner before any return or effect. Approvals are exact action/owner, canonical role and pending state. Confirm requires the original requester. Existing decisive service-only create/approve/confirm/claim transactions recheck their current locked parent/actor/plan and receipt before proceeding. No selected preflight row is exposed on forbidden ownership.\nexecuteInternal is a private callback registered only on this OperationsService internal adapter. Its sole invocation follows executeAction current project/actor authorization, canonical definition/target/plan checks and the separately proven admitted claim. The adapter input overwrites any execution-plan userId, actorId, projectId, targetId and version with the checked server action/owner. These selected two updates use exact target ID, project, owner, expected version/attempt and eligible state. No provider request is performed by these mutations. Completion retains the same exact admitted plan and owner receipt.\ncurrentTargetVersion is private to createAction after canonical access and executeAction after canonical access plus action owner equality. Its dynamic table and key/version fields come from a fixed server lookup map, never request SQL identifiers. Every selected target query applies the original action project and owner, using tenant_id only for growth campaigns. Releases additionally validate the exact returned id/user/project. No selected raw target row is returned. The post-empty-claim action read does not return a changed or foreign record: it returns only verified status with the same exact previously admitted owner/project/requester/type/target/version/key/digest/plan/max-attempt tuple. Otherwise execution fails with conflict before an adapter.",
+      "authorityTrace": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.\ncurrentTargetVersion is private to createAction after canonical access and executeAction after canonical access plus action owner equality. Its dynamic table and key/version fields come from a fixed server lookup map, never request SQL identifiers. Every selected target query applies the original action project and owner, using tenant_id only for growth campaigns. Releases additionally validate the exact returned id/user/project. No selected raw target row is returned. The post-empty-claim action read does not return a changed or foreign record: it returns only verified status with the same exact previously admitted owner/project/requester/type/target/version/key/digest/plan/max-attempt tuple. Otherwise execution fails with conflict before an adapter.\nThe sole external operations router is auth-mounted and passes req.userId. Growth and automation callers retain that same verified actor, not a persisted action requester supplied by the browser. access derives current project owner and canonical role. Creation environment/maintenance reads are exact project/owner and remain internal. Other selected action reads use requested ID internally, then compare persisted action owner against current project owner before any return or effect. Approvals are exact action/owner, canonical role and pending state. Confirm requires the original requester. Existing decisive service-only create/approve/confirm/claim transactions recheck their current locked parent/actor/plan and receipt before proceeding. No selected preflight row is exposed on forbidden ownership.\nexecuteInternal is a private callback registered only on this OperationsService internal adapter. Its sole invocation follows executeAction current project/actor authorization, canonical definition/target/plan checks and the separately proven admitted claim. The adapter input overwrites any execution-plan userId, actorId, projectId, targetId and version with the checked server action/owner. These selected two updates use exact target ID, project, owner, expected version/attempt and eligible state. No provider request is performed by these mutations. Completion retains the same exact admitted plan and owner receipt.",
       "proofIds": [],
       "existingEvidence": [
         {
@@ -5919,21 +5919,43 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+        },
+        {
+          "path": "backend/src/operations/internalEffect.local.integration.ts",
+          "marker": "real internal target and completion commit together and lost replies reconcile one durable effect"
+        },
+        {
+          "path": "backend/src/operations/internalControlReceipt.test.ts",
+          "marker": "single-rule controls reject empty, substituted and duplicate mutation receipts"
         }
       ],
       "manualPartitions": [
         {
           "callIds": [
-            "2911d37adf1475f417aa",
-            "31c477708b626e5ae6b1",
-            "7bf8a723f11bf121e654",
-            "a5e91bac1a6cb8ed6bd0",
-            "777506055ab8972780cc",
-            "9e56a2c47c6fae03a7d4",
-            "101c25c8bf0d04a3d6ee",
-            "5168c80257e8d4f829be"
+            "db901ea4f35f29872b83",
+            "62993f74348668414e94",
+            "ed9a76f66fdce2fa62cb",
+            "251a62ca944e59b4d35c",
+            "d6f7994c8a29114879a2",
+            "8d4b368daaafa2527fdb",
+            "1432ffb1661e42ad2afd",
+            "7201394971e7edb953ff"
           ],
           "disposition": "REVIEWED_GAP"
+        },
+        {
+          "callIds": [
+            "0541a105ff0d867f7ea6",
+            "7b6b74d024cad1ca24e0"
+          ],
+          "disposition": "REVIEWED_GAP"
+        },
+        {
+          "callIds": [
+            "9fc45d30478dc34f0ea6",
+            "1087d778492ba0d90fe8"
+          ],
+          "disposition": "SCOPED_BOUNDARY"
         },
         {
           "callIds": [
@@ -5943,16 +5965,7 @@
             "82752ae689b24bd04b63",
             "fd2a647124264e9a2f63",
             "9cd0878995ac81bc7fa1",
-            "0790e2862f113cd5cb2a",
-            "8cdd04617aa0332099d0",
-            "06e83cfecb1ce0da5c95"
-          ],
-          "disposition": "SCOPED_BOUNDARY"
-        },
-        {
-          "callIds": [
-            "9fc45d30478dc34f0ea6",
-            "1087d778492ba0d90fe8"
+            "0790e2862f113cd5cb2a"
           ],
           "disposition": "SCOPED_BOUNDARY"
         }
@@ -8613,12 +8626,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-4fd883166737e44f",
+      "id": "OB-625920fc1789975a",
       "callerIds": [
-        "539d0ab8217671b70450"
+        "823e5f2a3bdf5991cb4d"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8648,7 +8661,7 @@
         "f175f84e5afd902c17c0"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8708,7 +8721,7 @@
         "ed0903282a7144871281"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8738,7 +8751,7 @@
         "00aea7c9a2f2d60601a1"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8764,7 +8777,7 @@
         "e1b151df5a5cc43046f5"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8785,27 +8798,35 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-33ce64061ec1ab9c",
+      "id": "OB-6227b7428de26db5",
       "callerIds": [
-        "632b728acac1574f31ed"
+        "3511bf786d2e1a877754"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "state": "EVIDENCE_GAP",
-      "legacyDispositionPreserved": "SCOPED_BOUNDARY",
+      "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
         "XB01-C007-AC02",
         "XB01-C007-AC10"
       ],
       "actorOrigin": "UNPROVEN_IN_STRUCTURED_RECEIPT",
       "ownerBinding": "UNPROVEN_IN_STRUCTURED_RECEIPT",
-      "reason": "Fixed owner/project/version mutation boundary VERIFIED at4e7c5fe1fcaaf806cba6939018a51186facc6866, disposable39117989323: actual two held writers increment all current versions, adjacent retained versions preserve uniqueness, late failure rolls back every affected row, foreign project canary is unchanged and browser roles are denied. The conditional single-rule changed-version path also records blocked through the real adapter/completion chain. SQL and fixture are unchanged. Eight focused tests and18 local SQL assertions/replay pass. Current actor/approval lifetime during mutation, concurrent creation of new rules and full action recovery remain unresolved. No whole caller certification.",
-      "authorityTrace": "Existing admitted internal adapter supplies server-owned owner/project/target and stop/resume flag. Service-only RPC locks current owned project and only matching owner/project rules, preserving single-rule version comparison and incrementing each current rule version in one transaction. Descending retained versions avoid transient unique-key collisions.",
+      "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open.",
+      "authorityTrace": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.",
       "proofIds": [],
       "existingEvidence": [
         {
           "path": "backend/src/operations/actionIntent.local.integration.ts",
           "marker": "real project-wide automation control increments each version"
+        },
+        {
+          "path": "backend/src/operations/internalEffect.local.integration.ts",
+          "marker": "real internal target and completion commit together and lost replies reconcile one durable effect"
+        },
+        {
+          "path": "backend/src/operations/internalControlReceipt.test.ts",
+          "marker": "single-rule controls reject empty, substituted and duplicate mutation receipts"
         }
       ],
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
@@ -8872,7 +8893,7 @@
         "6abbcd4bdc2a8835113a"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8897,12 +8918,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-79b21bcd41c535a8",
+      "id": "OB-e371bcd9eb9243bf",
       "callerIds": [
-        "7d1ab277d5e269727ea1"
+        "67ddc3c9a3c2badcee94"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8927,12 +8948,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-6504b624f22f69fa",
+      "id": "OB-828f5683d5fdf967",
       "callerIds": [
-        "ca3d605bac7cc0acb742"
+        "847701cbbdfc7ce070ec"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "REVIEWED_GAP",
       "criterionIds": [
@@ -8957,12 +8978,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-26358b4e90126bda",
+      "id": "OB-17b7ff2cfb3e6461",
       "callerIds": [
-        "8fde4920c7d2097b67bc"
+        "d8571ea361a453805958"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [
@@ -8987,12 +9008,12 @@
       "note": "Existing semantic reviews are preserved. Missing machine-linked proof is an evidence obligation, not a new defect or instruction to rewrite verified code."
     },
     {
-      "id": "OB-e0ddb89e0e695151",
+      "id": "OB-b4ad6b4325082a05",
       "callerIds": [
-        "5b51043946a26a6a0adf"
+        "8d4bf26a3a0a5c932b8a"
       ],
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "state": "EVIDENCE_GAP",
       "legacyDispositionPreserved": "SCOPED_BOUNDARY",
       "criterionIds": [

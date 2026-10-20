@@ -955,9 +955,9 @@
         "57fd0513dbbc76c05dc9",
         "bf1b3affa3cada5dbe44"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "No production consumer is found. The original callable reader now requires the original WeakSet-issued TenantContext before creating its SDK client, derives its only userId from that immutable context and queries only that owner. JSON clones and primitive owner strings cannot choose a history tenant. Formatting helpers remain unchanged.",
-      "reason": "Dormancy alone is not a security certificate. These guarded callable contracts and real default-query/insert witnesses are prepared, with no invented public route or pipeline consumer. Existing003/worker project ownership trigger is reused, not replaced. Actual two-owner history, foreign and duplicate writes, concurrent replay, parent transfer during held lock, rollback, browser foreign insert denial and exact persisted receipts require new-source disposable CI. Original later-phase obligations and earlier concerns are retained in historicalLegacyHistoryReview. This remains REVIEWED_GAP.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "These dormant legacy exports have no active production consumer, and no public route or new pipeline is invented. Each callable contract requires the original WeakSet-issued frozen TenantContext before database access. The read derives its only owner from that context and returns only owner-filtered history. The write snapshots input, requires that exact issued owner, performs INSERT only, and the already-verified swarm_runs trigger holds current projects ownership through the decisive insert. Global run-ID collision never updates an existing row. Its acknowledgement must match exact original owner/project/run/prompt/status/output; unavailable or substituted acknowledgement raises a fixed503 and cannot return a false run ID.",
+      "reason": "Exact original007 legacy history owner boundary verified at ce60607896c71e8b04461148806c516d4e052103, actual disposable39297758851/job118214616006,194 security cases with zero failures/skips,126 migration histories and all four21-stage repeated baselines in39297758639. Original-issued owner, full captured receipt, actual project wait/transfer rejection, duplicate/concurrent collision, rollback/recovery and browser foreign denial are proven. No active production caller is invented and no new worker/action engine is certified. Historical concerns and future capability scope remain preserved.",
       "evidence": [
         {
           "path": "backend/src/services/memory/buildMemory.ts",
@@ -988,6 +988,61 @@
             "marker": "export async function getPreviousBuilds"
           }
         ]
+      },
+      "historicalBeforeVerifiedHistoryProof": {
+        "path": "backend/src/services/memory/buildMemory.ts",
+        "sourceSha256": "7fd673b160e0a23436c4ea27ca612d9d37a9a859ef15cd2d97d8ca98996411ab",
+        "callIds": [
+          "57fd0513dbbc76c05dc9",
+          "bf1b3affa3cada5dbe44"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "No production consumer is found. The original callable reader now requires the original WeakSet-issued TenantContext before creating its SDK client, derives its only userId from that immutable context and queries only that owner. JSON clones and primitive owner strings cannot choose a history tenant. Formatting helpers remain unchanged.",
+        "reason": "Dormancy alone is not a security certificate. These guarded callable contracts and real default-query/insert witnesses are prepared, with no invented public route or pipeline consumer. Existing003/worker project ownership trigger is reused, not replaced. Actual two-owner history, foreign and duplicate writes, concurrent replay, parent transfer during held lock, rollback, browser foreign insert denial and exact persisted receipts require new-source disposable CI. Original later-phase obligations and earlier concerns are retained in historicalLegacyHistoryReview. This remains REVIEWED_GAP.",
+        "evidence": [
+          {
+            "path": "backend/src/services/memory/buildMemory.ts",
+            "marker": "export async function getPreviousBuilds"
+          },
+          {
+            "path": "backend/src/services/memory/buildPersistence.authority.test.ts",
+            "marker": "dormant legacy build writer rejects non-issued and foreign authority before database access"
+          },
+          {
+            "path": "backend/src/security/legacyBuildHistory.local.integration.ts",
+            "marker": "real legacy build history requires issued owners and exact insert receipts without overwriting foreign runs"
+          }
+        ],
+        "historicalLegacyHistoryReview": {
+          "path": "backend/src/services/memory/buildMemory.ts",
+          "sourceSha256": "141dc91fa4cf33fd8cb2ce36a72bb184d34b44d1d5412b49a196c7aa46759fb8",
+          "callIds": [
+            "661ce57ea5e40d34292d",
+            "76af868afcec7d3a5059"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "getPreviousBuilds reads prompt/output only from supplied userId's completed swarm_runs and produces a bounded history summary. No active production importer was found in the inspected source search.",
+          "reason": "Query owner filtering is present. Exported identity provenance, output/prompt redaction, project-level context and claims that returned memory implies durable file persistence require separate proof.",
+          "evidence": [
+            {
+              "path": "backend/src/services/memory/buildMemory.ts",
+              "marker": "export async function getPreviousBuilds"
+            }
+          ]
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "ce60607896c71e8b04461148806c516d4e052103",
+        "inputArtifact": "artifacts/phase-2-proof/ce60607896c71e8b04461148806c516d4e052103/input.json",
+        "inputSha256": "901f49610e0f2196b1f26d57c18539becc87d3b8766e229d714a6ac2b8e53892",
+        "observationsArtifact": "artifacts/phase-2-proof/ce60607896c71e8b04461148806c516d4e052103/observations.json",
+        "observationsSha256": "ca51715f416202e7c1efacd9d58fd0d232245688aab3b24bb6b1a10b3a80e8c2",
+        "resultArtifact": "artifacts/phase-2-proof/ce60607896c71e8b04461148806c516d4e052103/result.json",
+        "resultSha256": "51da41a8bface7660c8965b17b12c8ff1f04658ba0cc3351bd8fca64e2fb3da3",
+        "obligationIds": [
+          "OB-a7d39e29205a5cc0:observed-legacy-history-original-owner"
+        ],
+        "scope": "EXACT_ORIGINAL007_LEGACY_HISTORY_ONLY_NOT_PHASE_ACCEPTANCE"
       }
     },
     {
@@ -997,9 +1052,9 @@
         "99c17dc2a48bd6be6ae7",
         "63ba5e2982b2b02ee020"
       ],
-      "disposition": "REVIEWED_GAP",
-      "authority": "No production consumer is found. The original callable writer now requires an original issued TenantContext, captures nested input before I/O, rejects mismatched owner and inserts only that issued owner. Insert-only global run ID collisions cannot overwrite existing runs. The existing swarm_runs trigger holds current project ownership through insertion, and acknowledgement must match exact owner/project/run/prompt/status/output. Failure throws a fixed503 rather than returning an unpersisted ID.",
-      "reason": "Dormancy alone is not a security certificate. These guarded callable contracts and real default-query/insert witnesses are prepared, with no invented public route or pipeline consumer. Existing003/worker project ownership trigger is reused, not replaced. Actual two-owner history, foreign and duplicate writes, concurrent replay, parent transfer during held lock, rollback, browser foreign insert denial and exact persisted receipts require new-source disposable CI. Original later-phase obligations and earlier concerns are retained in historicalLegacyHistoryReview. This remains REVIEWED_GAP.",
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "These dormant legacy exports have no active production consumer, and no public route or new pipeline is invented. Each callable contract requires the original WeakSet-issued frozen TenantContext before database access. The read derives its only owner from that context and returns only owner-filtered history. The write snapshots input, requires that exact issued owner, performs INSERT only, and the already-verified swarm_runs trigger holds current projects ownership through the decisive insert. Global run-ID collision never updates an existing row. Its acknowledgement must match exact original owner/project/run/prompt/status/output; unavailable or substituted acknowledgement raises a fixed503 and cannot return a false run ID.",
+      "reason": "Exact original007 legacy history owner boundary verified at ce60607896c71e8b04461148806c516d4e052103, actual disposable39297758851/job118214616006,194 security cases with zero failures/skips,126 migration histories and all four21-stage repeated baselines in39297758639. Original-issued owner, full captured receipt, actual project wait/transfer rejection, duplicate/concurrent collision, rollback/recovery and browser foreign denial are proven. No active production caller is invented and no new worker/action engine is certified. Historical concerns and future capability scope remain preserved.",
       "evidence": [
         {
           "path": "backend/src/services/memory/buildPersistence.ts",
@@ -1030,6 +1085,61 @@
             "marker": "export async function persistBuildRun"
           }
         ]
+      },
+      "historicalBeforeVerifiedHistoryProof": {
+        "path": "backend/src/services/memory/buildPersistence.ts",
+        "sourceSha256": "30682b395cdde685fe1e1181d24ec6add7f097571edaecc338c1dfff5170ff41",
+        "callIds": [
+          "99c17dc2a48bd6be6ae7",
+          "63ba5e2982b2b02ee020"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "No production consumer is found. The original callable writer now requires an original issued TenantContext, captures nested input before I/O, rejects mismatched owner and inserts only that issued owner. Insert-only global run ID collisions cannot overwrite existing runs. The existing swarm_runs trigger holds current project ownership through insertion, and acknowledgement must match exact owner/project/run/prompt/status/output. Failure throws a fixed503 rather than returning an unpersisted ID.",
+        "reason": "Dormancy alone is not a security certificate. These guarded callable contracts and real default-query/insert witnesses are prepared, with no invented public route or pipeline consumer. Existing003/worker project ownership trigger is reused, not replaced. Actual two-owner history, foreign and duplicate writes, concurrent replay, parent transfer during held lock, rollback, browser foreign insert denial and exact persisted receipts require new-source disposable CI. Original later-phase obligations and earlier concerns are retained in historicalLegacyHistoryReview. This remains REVIEWED_GAP.",
+        "evidence": [
+          {
+            "path": "backend/src/services/memory/buildPersistence.ts",
+            "marker": "export async function persistBuildRun"
+          },
+          {
+            "path": "backend/src/services/memory/buildPersistence.authority.test.ts",
+            "marker": "dormant legacy build writer rejects non-issued and foreign authority before database access"
+          },
+          {
+            "path": "backend/src/security/legacyBuildHistory.local.integration.ts",
+            "marker": "real legacy build history requires issued owners and exact insert receipts without overwriting foreign runs"
+          }
+        ],
+        "historicalLegacyHistoryReview": {
+          "path": "backend/src/services/memory/buildPersistence.ts",
+          "sourceSha256": "4a1e79b7861d6bcbba48176e4fc0d00922a3a67a6d2064782a8927e803e114b2",
+          "callIds": [
+            "4fd6df1420b596f63cae",
+            "13083e0ecb46eb0d8700"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "persistBuildRun inserts a generated or supplied run ID with supplied userId/projectId. Insert-only identity cannot overwrite a collision. Source search found no active importer in current production code.",
+          "reason": "Parent project ownership and exported actor provenance are unchecked. Failed writes still return the chosen run ID and raw diagnostics are logged. No durable-save or authorization certification.",
+          "evidence": [
+            {
+              "path": "backend/src/services/memory/buildPersistence.ts",
+              "marker": "export async function persistBuildRun"
+            }
+          ]
+        }
+      },
+      "command007Proof": {
+        "sourceSha": "ce60607896c71e8b04461148806c516d4e052103",
+        "inputArtifact": "artifacts/phase-2-proof/ce60607896c71e8b04461148806c516d4e052103/input.json",
+        "inputSha256": "901f49610e0f2196b1f26d57c18539becc87d3b8766e229d714a6ac2b8e53892",
+        "observationsArtifact": "artifacts/phase-2-proof/ce60607896c71e8b04461148806c516d4e052103/observations.json",
+        "observationsSha256": "ca51715f416202e7c1efacd9d58fd0d232245688aab3b24bb6b1a10b3a80e8c2",
+        "resultArtifact": "artifacts/phase-2-proof/ce60607896c71e8b04461148806c516d4e052103/result.json",
+        "resultSha256": "51da41a8bface7660c8965b17b12c8ff1f04658ba0cc3351bd8fca64e2fb3da3",
+        "obligationIds": [
+          "OB-6f17077f973e9856:observed-legacy-history-original-owner"
+        ],
+        "scope": "EXACT_ORIGINAL007_LEGACY_HISTORY_ONLY_NOT_PHASE_ACCEPTANCE"
       }
     },
     {
@@ -5381,7 +5491,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "callIds": [
         "dd0917f84f2764fd0472",
         "c841bcae277927c0b193",
@@ -5399,11 +5509,33 @@
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "browser cannot mint operations membership"
         }
-      ]
+      ],
+      "historicalInternalEffectReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
+          "dd0917f84f2764fd0472",
+          "c841bcae277927c0b193",
+          "7215f4419b9fff60e893"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Inspected authenticated route mounting, project access resolution and the persisted profiles role. Project identity is fetched by exact ID; a non-owner/non-admin must have membership matching both the current parent owner and authenticated member. Injected clients do not supply request actor identity.",
+        "reason": "This certifies only these three lookup boundaries, not the entire service or concurrent revocation. Existing platform admin access remains deliberately broader than founder access. The real API membership/revocation and forged-parent tests exercise this distinction.",
+        "evidence": [
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "real operations membership allows its reviewed relation then denies immediately after revocation"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "browser cannot mint operations membership"
+          }
+        ]
+      }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "callIds": [
         "cd8790e39c3283f05482"
       ],
@@ -5421,7 +5553,7 @@
         }
       ],
       "structuredOrigin": {
-        "id": "OB-037c6eb9107f3736",
+        "id": "OB-0085f64595abbc9d",
         "callIds": [
           "cd8790e39c3283f05482",
           "e99258e8fe888ab954f2",
@@ -5448,31 +5580,87 @@
           "b499a6018afaf6b8b490",
           "2623d45568826e06288e",
           "af2e0acf3186708a5107",
-          "24a309847f8eca992cc6",
-          "7508855b6526c9b0573b",
-          "4ba0ca7ad1c556cea41b",
-          "09ef892d8c2ce312509d",
-          "6cc4c8844f6d1a5e575c"
+          "e9b9cdd86cd68f7e67a2",
+          "d4c63bed6343238269db",
+          "45a30098dbb7ff275b41",
+          "2191a3a351b0999fd707",
+          "5412270a1f23caa82419"
         ],
         "disposition": "REVIEWED_GAP"
+      },
+      "historicalInternalEffectReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
+          "cd8790e39c3283f05482"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+        "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ],
+        "structuredOrigin": {
+          "id": "OB-037c6eb9107f3736",
+          "callIds": [
+            "cd8790e39c3283f05482",
+            "e99258e8fe888ab954f2",
+            "2c208df1de69d1f07815",
+            "7b8df2255ca0983e614a",
+            "09bb9c60fbd0fd04be96",
+            "5787838213972784b847",
+            "5c17851ca38b07bb7ffb",
+            "2888bfffa0c836cfe4d0",
+            "6c91bf08973230eae654",
+            "209cb80277f955a0b2ef",
+            "049ee8c1e87f4ac7f5d8",
+            "6f59ac6dda85bb3fbb9c",
+            "b44752820b98684f3403",
+            "cad9b3cf4560fbd519a6",
+            "80f60224ace1fcf16149",
+            "67c858caffe8cc6b8a2d",
+            "15864a27c46a501fafd1",
+            "230afc26fd02a5f73e5c",
+            "1482b8a9c1d9ae835bdb",
+            "267d14135fb3bd1d98a1",
+            "42fc90e399eed5c0de97",
+            "044cf8649bf888fbbc93",
+            "b499a6018afaf6b8b490",
+            "2623d45568826e06288e",
+            "af2e0acf3186708a5107",
+            "24a309847f8eca992cc6",
+            "7508855b6526c9b0573b",
+            "4ba0ca7ad1c556cea41b",
+            "09ef892d8c2ce312509d",
+            "6cc4c8844f6d1a5e575c"
+          ],
+          "disposition": "REVIEWED_GAP"
+        }
       }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "callIds": [
-        "2911d37adf1475f417aa",
-        "31c477708b626e5ae6b1",
-        "7bf8a723f11bf121e654",
-        "a5e91bac1a6cb8ed6bd0",
-        "777506055ab8972780cc",
-        "9e56a2c47c6fae03a7d4",
-        "101c25c8bf0d04a3d6ee",
-        "5168c80257e8d4f829be"
+        "db901ea4f35f29872b83",
+        "62993f74348668414e94",
+        "ed9a76f66fdce2fa62cb",
+        "251a62ca944e59b4d35c",
+        "d6f7994c8a29114879a2",
+        "8d4b368daaafa2527fdb",
+        "1432ffb1661e42ad2afd",
+        "7201394971e7edb953ff"
       ],
       "disposition": "REVIEWED_GAP",
-      "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
-      "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
+      "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.",
+      "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open.",
       "evidence": [
         {
           "path": "backend/src/operations/operationsService.owner.test.ts",
@@ -5481,10 +5669,18 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+        },
+        {
+          "path": "backend/src/operations/internalEffect.local.integration.ts",
+          "marker": "real internal target and completion commit together and lost replies reconcile one durable effect"
+        },
+        {
+          "path": "backend/src/operations/internalControlReceipt.test.ts",
+          "marker": "single-rule controls reject empty, substituted and duplicate mutation receipts"
         }
       ],
       "structuredOrigin": {
-        "id": "OB-4bd11f790ddabef6",
+        "id": "OB-1478ebcda982a717",
         "callIds": [
           "58357b840ab8890eba45",
           "9ea21ff62008b510bd7f",
@@ -5495,18 +5691,70 @@
           "9cd0878995ac81bc7fa1",
           "0790e2862f113cd5cb2a",
           "1087d778492ba0d90fe8",
+          "db901ea4f35f29872b83",
+          "62993f74348668414e94",
+          "0541a105ff0d867f7ea6",
+          "ed9a76f66fdce2fa62cb",
+          "251a62ca944e59b4d35c",
+          "d6f7994c8a29114879a2",
+          "8d4b368daaafa2527fdb",
+          "7b6b74d024cad1ca24e0",
+          "1432ffb1661e42ad2afd",
+          "7201394971e7edb953ff"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "historicalInternalEffectReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
           "2911d37adf1475f417aa",
           "31c477708b626e5ae6b1",
-          "8cdd04617aa0332099d0",
           "7bf8a723f11bf121e654",
           "a5e91bac1a6cb8ed6bd0",
           "777506055ab8972780cc",
           "9e56a2c47c6fae03a7d4",
-          "06e83cfecb1ce0da5c95",
           "101c25c8bf0d04a3d6ee",
           "5168c80257e8d4f829be"
         ],
-        "disposition": "REVIEWED_GAP"
+        "disposition": "REVIEWED_GAP",
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ],
+        "structuredOrigin": {
+          "id": "OB-4bd11f790ddabef6",
+          "callIds": [
+            "58357b840ab8890eba45",
+            "9ea21ff62008b510bd7f",
+            "b88fc4f8215d76b34ea8",
+            "82752ae689b24bd04b63",
+            "fd2a647124264e9a2f63",
+            "9fc45d30478dc34f0ea6",
+            "9cd0878995ac81bc7fa1",
+            "0790e2862f113cd5cb2a",
+            "1087d778492ba0d90fe8",
+            "2911d37adf1475f417aa",
+            "31c477708b626e5ae6b1",
+            "8cdd04617aa0332099d0",
+            "7bf8a723f11bf121e654",
+            "a5e91bac1a6cb8ed6bd0",
+            "777506055ab8972780cc",
+            "9e56a2c47c6fae03a7d4",
+            "06e83cfecb1ce0da5c95",
+            "101c25c8bf0d04a3d6ee",
+            "5168c80257e8d4f829be"
+          ],
+          "disposition": "REVIEWED_GAP"
+        }
       }
     },
     {
@@ -8385,9 +8633,9 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "callIds": [
-        "539d0ab8217671b70450"
+        "823e5f2a3bdf5991cb4d"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing authenticated action executor passes the exact admitted claimed row and server actor. Service-only completion RPC locks current project owner and action, verifies immutable plan/owner/attempt/lease against database time, then commits evidence, run, action and immutable audit together. No provider action or authority admission is performed inside this persistence boundary.",
@@ -8401,11 +8649,31 @@
           "path": "backend/src/operations/actionClaim.test.ts",
           "marker": "one atomic completion, no fallback persistence or provider retry"
         }
-      ]
+      ],
+      "historicalInternalEffectReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
+          "539d0ab8217671b70450"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Existing authenticated action executor passes the exact admitted claimed row and server actor. Service-only completion RPC locks current project owner and action, verifies immutable plan/owner/attempt/lease against database time, then commits evidence, run, action and immutable audit together. No provider action or authority admission is performed inside this persistence boundary.",
+        "reason": "Fixed completion-persistence boundary VERIFIED at e47030615e13f75045e4434cddcb1294f05095f3, disposable39114496584: actual four-write rollback, browser-role denial, held-row changed attempt and competing completions pass. SQL and integration fixture are unchanged from that source.34 local SQL assertions and focused exact receipt/uncertain completion negatives also pass. Only atomic persistence of an already-admitted attempt is closed. External-effect reconciliation, mutable target admission, actor/approval lifetime and full executor certification remain separate unresolved requirements. No Command008 acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/actionCompletion.local.integration.ts",
+            "marker": "registerActionCompletionTests"
+          },
+          {
+            "path": "backend/src/operations/actionClaim.test.ts",
+            "marker": "one atomic completion, no fallback persistence or provider retry"
+          }
+        ]
+      }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "callIds": [
         "f175f84e5afd902c17c0"
       ],
@@ -8465,6 +8733,70 @@
         "originalReviewReason": "Focused absent and substituted resource/owner/project receipt negatives pass. Actual owned versus foreign release/deployment draft test prepared with no provider execution. Existing constant release version is preserved, mutable release state/approval freshness and actual provider promotion remain unresolved. No complete release caller certification.",
         "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
         "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      },
+      "historicalInternalEffectReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
+          "f175f84e5afd902c17c0"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "currentTargetVersion is private to createAction after canonical access and executeAction after canonical access plus action owner equality. Its dynamic table and key/version fields come from a fixed server lookup map, never request SQL identifiers. Every selected target query applies the original action project and owner, using tenant_id only for growth campaigns. Releases additionally validate the exact returned id/user/project. No selected raw target row is returned. The post-empty-claim action read does not return a changed or foreign record: it returns only verified status with the same exact previously admitted owner/project/requester/type/target/version/key/digest/plan/max-attempt tuple. Otherwise execution fails with conflict before an adapter.",
+        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original private target/replay read sites only, no source changes. Existing actual release/deployment fixtures preserve a legitimate release-manager membership, reject foreign targets and admit the exact owned drafts without adapter runs. Actual owned automation target executes once, verified replay returns the same receipt and foreign replay denies. Existing misbound persisted action denial preserves private receipts and authority. Dynamic lookup SQL is fixed and owner/project-filtered at the same caller. This does not certify remaining internal mutation adapters or create a post-admission authority policy. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/actionIntent.local.integration.ts",
+            "marker": "real release and deployment actions require the owned project target before creating drafts"
+          },
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "release target lookup validates the returned owner project and resource identity"
+          }
+        ],
+        "historicalReview": {
+          "path": "backend/src/operations/operationsService.ts",
+          "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+          "callIds": [
+            "f175f84e5afd902c17c0"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "Existing action creation and execution use currentTargetVersion after authenticated project access. Release lookup now requires exact resource ID, current owner and project, and validates all three returned fields before action creation. Previously the release branch returned version1 without any resource lookup.",
+          "reason": "Focused absent and substituted resource/owner/project receipt negatives pass. Actual owned versus foreign release/deployment draft test prepared with no provider execution. Existing constant release version is preserved, mutable release state/approval freshness and actual provider promotion remain unresolved. No complete release caller certification.",
+          "evidence": [
+            {
+              "path": "backend/src/operations/actionIntent.local.integration.ts",
+              "marker": "real release and deployment actions require the owned project target before creating drafts"
+            },
+            {
+              "path": "backend/src/operations/operationsService.owner.test.ts",
+              "marker": "release target lookup validates the returned owner project and resource identity"
+            }
+          ]
+        },
+        "command007Proof": {
+          "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+          "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+          "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+          "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+          "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+          "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+          "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+          "obligationIds": [
+            "OB-79b4c59a6db06651:observed-canonical-target-and-replay-read"
+          ],
+          "passedTests": [
+            "real release and deployment actions require the owned project target before creating drafts",
+            "real action claim executes only the owned disposable automation rule once",
+            "misbound persisted operations actions cannot leak a receipt or grant confirmation or approval"
+          ],
+          "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+        },
+        "separateUncertifiedScope": {
+          "state": "PRESERVED_NOT_CERTIFIED",
+          "originalReviewReason": "Focused absent and substituted resource/owner/project receipt negatives pass. Actual owned versus foreign release/deployment draft test prepared with no provider execution. Existing constant release version is preserved, mutable release state/approval freshness and actual provider promotion remain unresolved. No complete release caller certification.",
+          "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+          "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+        }
       }
     },
     {
@@ -8489,7 +8821,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "callIds": [
         "ed0903282a7144871281"
       ],
@@ -8505,11 +8837,31 @@
           "path": "backend/src/operations/actionApproval.test.ts",
           "marker": "approval delegates one role-bound transaction and rejects changed or uncertain receipts"
         }
-      ]
+      ],
+      "historicalInternalEffectReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
+          "ed0903282a7144871281"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Authenticated operations route supplies actor/action/validated decision and reason. Existing service derives required role from ACTION_DEFINITIONS, never from request body. Service-only transaction locks current actor profile/project/membership, exact action intent and pending approval, checks requester separation, role, confirmation, version/digest and DB expiry, then atomically writes approval/action/audit.",
+        "reason": "Fixed approval-decision transaction VERIFIED at2e752b76f2d1932ea8e3e3543644b137efac79fa, disposable39117021162: actual held membership revocation, competing decisions, all three write rollbacks, browser-role denial and rejection without execution pass. SQL and fixture are unchanged from that source. Focused receipt/error tests and24 local SQL assertions/replay also pass. Only this atomic current-role approval boundary is closed. Creation atomicity, mutable target and full execution/provider lifecycle remain unresolved. No whole caller or Command008 certification.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/actionApproval.local.integration.ts",
+            "marker": "registerActionApprovalTests"
+          },
+          {
+            "path": "backend/src/operations/actionApproval.test.ts",
+            "marker": "approval delegates one role-bound transaction and rejects changed or uncertain receipts"
+          }
+        ]
+      }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "callIds": [
         "00aea7c9a2f2d60601a1"
       ],
@@ -8521,11 +8873,27 @@
           "path": "backend/src/operations/actionConfirmation.local.integration.ts",
           "marker": "registerActionConfirmationTests"
         }
-      ]
+      ],
+      "historicalInternalEffectReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
+          "00aea7c9a2f2d60601a1"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Authenticated requester and canonical action definitions supply role permissions. Service-only confirmation RPC locks current actor/project/membership and exact confirmation-required action intent before atomically recording confirmation, optional approval request and immutable audit. Server derives allowed roles from existing permission map, never request input.",
+        "reason": "Fixed confirmation transaction VERIFIED at2e752b76f2d1932ea8e3e3543644b137efac79fa, disposable39117021162: actual held-plan mutation, competing confirmations, all three write rollbacks and browser-role denial pass. SQL and fixture are unchanged from that source. Focused exact receipt/input tests and29 local SQL assertions/replay also pass. Only atomic requester/intent confirmation and optional approval creation is closed. Creation atomicity, mutable target admission and provider recovery remain unresolved. No whole caller certification.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/actionConfirmation.local.integration.ts",
+            "marker": "registerActionConfirmationTests"
+          }
+        ]
+      }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "callIds": [
         "e1b151df5a5cc43046f5"
       ],
@@ -8537,23 +8905,63 @@
           "path": "backend/src/operations/actionAdmission.local.integration.ts",
           "marker": "registerActionAdmissionTests"
         }
-      ]
+      ],
+      "historicalInternalEffectReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
+          "e1b151df5a5cc43046f5"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Authenticated actor and canonical action definitions supply execution permission roles, confirmation requirement and approval role. Service-only admission locks current actor/project/member, exact action intent/state/attempt, current approved receipt and current approver role before reusing the original lease/retry function.",
+        "reason": "Fixed current-authority claim admission VERIFIED at2e752b76f2d1932ea8e3e3543644b137efac79fa, disposable39117021162: actual held actor and approver revocation, intervening plan mutation, approval expiry while blocked, competing claim exclusion and browser-role denial pass before adapter effects. SQL and fixture are unchanged from that source. Focused exact receipt/error tests and29 local SQL assertions/replay also pass. Only transactional admission before the existing lease function is closed. Mutable target admission, legacy raw service-role RPC access and post-claim effects/recovery remain unresolved. No whole caller certification.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/actionAdmission.local.integration.ts",
+            "marker": "registerActionAdmissionTests"
+          }
+        ]
+      }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "callIds": [
-        "632b728acac1574f31ed"
+        "3511bf786d2e1a877754"
       ],
-      "disposition": "SCOPED_BOUNDARY",
-      "authority": "Existing admitted internal adapter supplies server-owned owner/project/target and stop/resume flag. Service-only RPC locks current owned project and only matching owner/project rules, preserving single-rule version comparison and incrementing each current rule version in one transaction. Descending retained versions avoid transient unique-key collisions.",
-      "reason": "Fixed owner/project/version mutation boundary VERIFIED at4e7c5fe1fcaaf806cba6939018a51186facc6866, disposable39117989323: actual two held writers increment all current versions, adjacent retained versions preserve uniqueness, late failure rolls back every affected row, foreign project canary is unchanged and browser roles are denied. The conditional single-rule changed-version path also records blocked through the real adapter/completion chain. SQL and fixture are unchanged. Eight focused tests and18 local SQL assertions/replay pass. Current actor/approval lifetime during mutation, concurrent creation of new rules and full action recovery remain unresolved. No whole caller certification.",
+      "disposition": "REVIEWED_GAP",
+      "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.",
+      "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open.",
       "evidence": [
         {
           "path": "backend/src/operations/actionIntent.local.integration.ts",
           "marker": "real project-wide automation control increments each version"
+        },
+        {
+          "path": "backend/src/operations/internalEffect.local.integration.ts",
+          "marker": "real internal target and completion commit together and lost replies reconcile one durable effect"
+        },
+        {
+          "path": "backend/src/operations/internalControlReceipt.test.ts",
+          "marker": "single-rule controls reject empty, substituted and duplicate mutation receipts"
         }
-      ]
+      ],
+      "historicalInternalEffectReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
+          "632b728acac1574f31ed"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Existing admitted internal adapter supplies server-owned owner/project/target and stop/resume flag. Service-only RPC locks current owned project and only matching owner/project rules, preserving single-rule version comparison and incrementing each current rule version in one transaction. Descending retained versions avoid transient unique-key collisions.",
+        "reason": "Fixed owner/project/version mutation boundary VERIFIED at4e7c5fe1fcaaf806cba6939018a51186facc6866, disposable39117989323: actual two held writers increment all current versions, adjacent retained versions preserve uniqueness, late failure rolls back every affected row, foreign project canary is unchanged and browser roles are denied. The conditional single-rule changed-version path also records blocked through the real adapter/completion chain. SQL and fixture are unchanged. Eight focused tests and18 local SQL assertions/replay pass. Current actor/approval lifetime during mutation, concurrent creation of new rules and full action recovery remain unresolved. No whole caller certification.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/actionIntent.local.integration.ts",
+            "marker": "real project-wide automation control increments each version"
+          }
+        ]
+      }
     },
     {
       "path": "backend/src/growth/growthService.ts",
@@ -8593,7 +9001,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "callIds": [
         "6abbcd4bdc2a8835113a"
       ],
@@ -8609,13 +9017,33 @@
           "path": "backend/src/operations/actionIntent.local.integration.ts",
           "marker": "real concurrent action creation preserves one actor plan"
         }
-      ]
+      ],
+      "historicalInternalEffectReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
+          "6abbcd4bdc2a8835113a"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Authenticated actor and canonical action definitions supply immutable intent, allowed roles and confirmation/approval policy. Service-only create transaction locks current actor/project/member/environment and existing maintenance rows, uses database admission time, and atomically persists action, optional approval and redacted immutable audit. Exact same-intent replay is explicitly reported and cannot confirm or execute.",
+        "reason": "Creation persistence boundary VERIFIED at eb73e9e7ffe5181d7417beb6a8145e2ad39831fa, disposable39120329897:106 fresh/upgrade migrations,140 security tests and3 browser tests pass with zero failures/skips. Actual held membership/environment changes, maintenance start while waiting, all three write rollbacks, concurrent immutable replay and browser-role denial pass. Invocation, SQL and fixture are unchanged. Only atomic creation persistence is closed. Mutable target admission, concurrent new maintenance windows, external effects and full operations lifecycle remain unresolved. No whole caller certification.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/actionCreation.local.integration.ts",
+            "marker": "registerActionCreationTests"
+          },
+          {
+            "path": "backend/src/operations/actionIntent.local.integration.ts",
+            "marker": "real concurrent action creation preserves one actor plan"
+          }
+        ]
+      }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "callIds": [
-        "7d1ab277d5e269727ea1"
+        "67ddc3c9a3c2badcee94"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing authenticated signal endpoint supplies server actor and admitted owner/project. Service-only transaction locks current profile/project/member and exact current rule, verifies dedup owner/evidence, computes canonical condition/stop/maintenance/risk decisions and serializes database-time rate admission. Run and immutable admission audit commit together; caller validates exact receipt against existing decision engine before creating any action with the stable run UUID as key.",
@@ -8629,13 +9057,33 @@
           "path": "backend/src/operations/automationAdmission.test.ts",
           "marker": "uncertain action creation or linking preserves admission"
         }
-      ]
+      ],
+      "historicalInternalEffectReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
+          "7d1ab277d5e269727ea1"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Existing authenticated signal endpoint supplies server actor and admitted owner/project. Service-only transaction locks current profile/project/member and exact current rule, verifies dedup owner/evidence, computes canonical condition/stop/maintenance/risk decisions and serializes database-time rate admission. Run and immutable admission audit commit together; caller validates exact receipt against existing decision engine before creating any action with the stable run UUID as key.",
+        "reason": "Fixed run-admission persistence boundary VERIFIED at25295230cc26995d56e6717b9afc7c431795212a, disposable39121745945:107 fresh/upgrade migrations,141 security tests and3 browser tests pass with zero failures/skips. Actual observed two-client different-trigger quota and duplicate-trigger replay, held rule/member mutations, both write rollbacks and browser denial pass without external execution. Invocation, SQL and fixture are unchanged. Only reservation/dedup/rate/admission audit are closed. Later rule-stop/authority changes, action/link recovery and complete automated lifecycle remain unresolved. No whole caller certification.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/automationAdmission.local.integration.ts",
+            "marker": "registerAutomationAdmissionTests"
+          },
+          {
+            "path": "backend/src/operations/automationAdmission.test.ts",
+            "marker": "uncertain action creation or linking preserves admission"
+          }
+        ]
+      }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "callIds": [
-        "ca3d605bac7cc0acb742"
+        "847701cbbdfc7ce070ec"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "After exact service-only admission, the existing action creator receives the stable run UUID key. Linking updates only the admitted owner/rule/digest/run in evaluating state with no action, then verifies its returned identity and action/status. No replay executes another action.",
@@ -8649,13 +9097,33 @@
           "path": "backend/src/operations/automationAdmission.test.ts",
           "marker": "a 4xx after action persistence"
         }
-      ]
+      ],
+      "historicalInternalEffectReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
+          "ca3d605bac7cc0acb742"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "After exact service-only admission, the existing action creator receives the stable run UUID key. Linking updates only the admitted owner/rule/digest/run in evaluating state with no action, then verifies its returned identity and action/status. No replay executes another action.",
+        "reason": "Eight focused admission/intent tests pass. Empty or substituted link receipts and every unreturned action outcome, including4xx after possible queued-action persistence, preserve pending admission and return typed503 without falsely recording failure or retrying. Link remains separate from action creation and final audit. Crash reconciliation, post-admission current-rule/actor authority and parent lifecycle races remain unresolved. This write is reviewed but not security-certified.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/automationAdmission.test.ts",
+            "marker": "uncertain action creation or linking preserves admission"
+          },
+          {
+            "path": "backend/src/operations/automationAdmission.test.ts",
+            "marker": "a 4xx after action persistence"
+          }
+        ]
+      }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "callIds": [
-        "8fde4920c7d2097b67bc"
+        "d8571ea361a453805958"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Authenticated existing rule endpoint supplies server actor and project. Canonical action definitions still derive approval policy and validate high-risk compatibility. Service-only creation locks current actor/project/member, verifies owner/project and bounded rule shape, then commits the rule and mandatory immutable audit together. Caller checks every submitted field in exactly one returned row. No action executes during creation.",
@@ -8669,13 +9137,33 @@
           "path": "backend/src/operations/automationCreation.test.ts",
           "marker": "automation creation rejects substituted missing and duplicate receipts"
         }
-      ]
+      ],
+      "historicalInternalEffectReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
+          "8fde4920c7d2097b67bc"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Authenticated existing rule endpoint supplies server actor and project. Canonical action definitions still derive approval policy and validate high-risk compatibility. Service-only creation locks current actor/project/member, verifies owner/project and bounded rule shape, then commits the rule and mandatory immutable audit together. Caller checks every submitted field in exactly one returned row. No action executes during creation.",
+        "reason": "Fixed creation persistence boundary VERIFIED atd60292bbd91b552ba2bef33ceb48368e4b1c15c5, disposable39123094921:108 fresh/upgrade migrations,143 security tests and3 browser tests pass with zero failures/skips. Actual held current-member revocation and owner mutation reject both writes, concurrent same-key creators yield one rule/audit and one conflict, both write failures roll back, exact redacted audit and browser denial pass. Invocation, SQL and fixture unchanged. Only creation persistence closes. Later rule mutation, stop/create concurrency and full automation lifecycle remain unresolved. No whole caller certification.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/automationCreation.local.integration.ts",
+            "marker": "registerAutomationCreationTests"
+          },
+          {
+            "path": "backend/src/operations/automationCreation.test.ts",
+            "marker": "automation creation rejects substituted missing and duplicate receipts"
+          }
+        ]
+      }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "callIds": [
-        "5b51043946a26a6a0adf"
+        "8d4bf26a3a0a5c932b8a"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Only an exact verified running action claim reaches this owner/project/target-filtered resource read. After any claim wait, the fetched row must match target ID, server owner/project and exact finite integer planned version before the existing HTTP adapter can execute. Missing, misbound or stale rows complete as blocked through the existing atomic evidence/run/action/audit transaction.",
@@ -8689,7 +9177,27 @@
           "path": "backend/src/operations/verificationTarget.local.integration.ts",
           "marker": "registerVerificationTargetTests"
         }
-      ]
+      ],
+      "historicalInternalEffectReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
+          "5b51043946a26a6a0adf"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "Only an exact verified running action claim reaches this owner/project/target-filtered resource read. After any claim wait, the fetched row must match target ID, server owner/project and exact finite integer planned version before the existing HTTP adapter can execute. Missing, misbound or stale rows complete as blocked through the existing atomic evidence/run/action/audit transaction.",
+        "reason": "Exact post-claim read boundary VERIFIED atd60292bbd91b552ba2bef33ceb48368e4b1c15c5, disposable39123094921. Actual claim waits followed by resource version or tenant/project mutation produce durable blocked run/evidence without reaching the adapter. Two focused tests reject substituted parent/ID and changed/malformed versions, and preserve valid unchanged-target compatibility via a synthetic adapter. Invocation and fixture unchanged. Only owner/project/target/version read binding closes. Post-read target/provider lifetime, URL writers without generation increments, DNS/redirect/address egress and full Command010 acceptance remain unresolved. No live provider calls or whole caller certification.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/verificationTarget.test.ts",
+            "marker": "HTTP verification rechecks the admitted target receipt"
+          },
+          {
+            "path": "backend/src/operations/verificationTarget.local.integration.ts",
+            "marker": "registerVerificationTargetTests"
+          }
+        ]
+      }
     },
     {
       "path": "backend/src/synthesis/livePreview/store.ts",
@@ -9165,7 +9673,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "callIds": [
         "e99258e8fe888ab954f2",
         "2c208df1de69d1f07815",
@@ -9191,11 +9699,11 @@
         "b499a6018afaf6b8b490",
         "2623d45568826e06288e",
         "af2e0acf3186708a5107",
-        "24a309847f8eca992cc6",
-        "7508855b6526c9b0573b",
-        "4ba0ca7ad1c556cea41b",
-        "09ef892d8c2ce312509d",
-        "6cc4c8844f6d1a5e575c"
+        "e9b9cdd86cd68f7e67a2",
+        "d4c63bed6343238269db",
+        "45a30098dbb7ff275b41",
+        "2191a3a351b0999fd707",
+        "5412270a1f23caa82419"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
@@ -9284,9 +9792,45 @@
         "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
       },
       "structuredOrigin": {
-        "id": "OB-037c6eb9107f3736",
+        "id": "OB-0085f64595abbc9d",
         "callIds": [
           "cd8790e39c3283f05482",
+          "e99258e8fe888ab954f2",
+          "2c208df1de69d1f07815",
+          "7b8df2255ca0983e614a",
+          "09bb9c60fbd0fd04be96",
+          "5787838213972784b847",
+          "5c17851ca38b07bb7ffb",
+          "2888bfffa0c836cfe4d0",
+          "6c91bf08973230eae654",
+          "209cb80277f955a0b2ef",
+          "049ee8c1e87f4ac7f5d8",
+          "6f59ac6dda85bb3fbb9c",
+          "b44752820b98684f3403",
+          "cad9b3cf4560fbd519a6",
+          "80f60224ace1fcf16149",
+          "67c858caffe8cc6b8a2d",
+          "15864a27c46a501fafd1",
+          "230afc26fd02a5f73e5c",
+          "1482b8a9c1d9ae835bdb",
+          "267d14135fb3bd1d98a1",
+          "42fc90e399eed5c0de97",
+          "044cf8649bf888fbbc93",
+          "b499a6018afaf6b8b490",
+          "2623d45568826e06288e",
+          "af2e0acf3186708a5107",
+          "e9b9cdd86cd68f7e67a2",
+          "d4c63bed6343238269db",
+          "45a30098dbb7ff275b41",
+          "2191a3a351b0999fd707",
+          "5412270a1f23caa82419"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "historicalInternalEffectReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
           "e99258e8fe888ab954f2",
           "2c208df1de69d1f07815",
           "7b8df2255ca0983e614a",
@@ -9317,26 +9861,140 @@
           "09ef892d8c2ce312509d",
           "6cc4c8844f6d1a5e575c"
         ],
-        "disposition": "REVIEWED_GAP"
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "The fixed auth-mounted operations handlers use req.userId and validated project input. access binds canonical current owner/role before any product read. Every selected project child read carries exact owner plus project, and approval/automation history additionally binds the joined action/rule parent. Portfolio first restricts the project set to the actor owner or owner-bound membership, then maps each child to its exact authoritative project/owner pair rather than independent IN lists. Only fixed projected data or counts are returned. No selected path performs a provider call or durable mutation.",
+        "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Twenty-nine exact operations reads only. The actual matrix seeds nonempty owner, foreign owner and same-owner-other-project records in every selected child class, checks exact IDs on product/resource/configuration/SLO/actions/audit/evidence/automation HTTP results, verifies exact portfolio environment/release/commit and incident/alert/approval counts, preserves legitimate viewer reads and denies every private read with the same JWT after membership revocation. Forged actor query and unsigned requests cannot select another owner. Exact full persisted rows remain unchanged. Existing misbound portfolio canary proof is reused. No linearizable read-revocation guarantee, constructor, mutation adapter or Phase3/4 certificate is inferred. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.ts",
+            "marker": "const belongs = (item: DbRow)"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "Legitimate membership must remain visible"
+          }
+        ],
+        "historicalReview": {
+          "path": "backend/src/operations/operationsService.ts",
+          "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+          "callIds": [
+            "cd8790e39c3283f05482",
+            "e99258e8fe888ab954f2",
+            "2c208df1de69d1f07815",
+            "7b8df2255ca0983e614a",
+            "09bb9c60fbd0fd04be96",
+            "5787838213972784b847",
+            "5c17851ca38b07bb7ffb",
+            "2888bfffa0c836cfe4d0",
+            "6c91bf08973230eae654",
+            "209cb80277f955a0b2ef",
+            "049ee8c1e87f4ac7f5d8",
+            "6f59ac6dda85bb3fbb9c",
+            "b44752820b98684f3403",
+            "cad9b3cf4560fbd519a6",
+            "80f60224ace1fcf16149",
+            "67c858caffe8cc6b8a2d",
+            "15864a27c46a501fafd1",
+            "230afc26fd02a5f73e5c",
+            "1482b8a9c1d9ae835bdb",
+            "267d14135fb3bd1d98a1",
+            "42fc90e399eed5c0de97",
+            "044cf8649bf888fbbc93",
+            "b499a6018afaf6b8b490",
+            "2623d45568826e06288e",
+            "af2e0acf3186708a5107",
+            "24a309847f8eca992cc6",
+            "7508855b6526c9b0573b",
+            "4ba0ca7ad1c556cea41b",
+            "09ef892d8c2ce312509d",
+            "6cc4c8844f6d1a5e575c"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "Read the full injected-client service, authenticated route consumer and permission map. Portfolio bounds previously formed an owner/project cross product; each returned record now matches the authoritative pair. Product approval and automation joins also constrain parent owner. Other reads resolve access before owner/project queries.",
+          "reason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+          "evidence": [
+            {
+              "path": "backend/src/operations/operationsService.ts",
+              "marker": "const belongs = (item: DbRow)"
+            },
+            {
+              "path": "backend/src/security/tenantIsolation.local.integration.ts",
+              "marker": "Legitimate membership must remain visible"
+            }
+          ]
+        },
+        "command007Proof": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "inputArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/input.json",
+          "inputSha256": "4e613fdd16d97c44fd1c61080204897a3193fbeaa42285d15022aa3e35ad73b0",
+          "observationsArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/observations.json",
+          "observationsSha256": "b60fe2a441d1f45052021957966d3ec28cdad3848fd3fc765f7cbd711ebb3bf0",
+          "resultArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "resultSha256": "967f9ced90db90fde241e17dc60533a55d223779e270eb0b8747f4430d079818",
+          "obligationIds": [
+            "OB-037c6eb9107f3736:observed-complete-read-matrix"
+          ],
+          "passedTests": [
+            "real operations and growth read matrix returns exact owned children and denies foreign projects forged identity and revoked membership",
+            "portfolio does not disclose a misbound foreign resource while keeping legitimate owner evidence"
+          ],
+          "scope": "EXACT_ORIGINAL_007_CALLER_SCOPE_ONLY_NOT_WHOLE_SERVICE_OR_LATER_PHASE_ACCEPTANCE"
+        },
+        "separateUncertifiedScope": {
+          "state": "PRESERVED_NOT_CERTIFIED",
+          "originalReviewReason": "Confirmed paired-ownership leak is fixed with a real API negative fixture where both tenants are legitimately visible. Full sensitive metadata redaction, revocation races and every resource relationship still need independent review; unrestricted SDK injection is not a constrained security client. No full service certification is claimed.",
+          "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+          "note": "Existing frozen obligations remain authoritative and unchanged. This metadata does not reclassify an unresolved007 obligation, schedule new work or implement008/009/010.",
+          "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
+        },
+        "structuredOrigin": {
+          "id": "OB-037c6eb9107f3736",
+          "callIds": [
+            "cd8790e39c3283f05482",
+            "e99258e8fe888ab954f2",
+            "2c208df1de69d1f07815",
+            "7b8df2255ca0983e614a",
+            "09bb9c60fbd0fd04be96",
+            "5787838213972784b847",
+            "5c17851ca38b07bb7ffb",
+            "2888bfffa0c836cfe4d0",
+            "6c91bf08973230eae654",
+            "209cb80277f955a0b2ef",
+            "049ee8c1e87f4ac7f5d8",
+            "6f59ac6dda85bb3fbb9c",
+            "b44752820b98684f3403",
+            "cad9b3cf4560fbd519a6",
+            "80f60224ace1fcf16149",
+            "67c858caffe8cc6b8a2d",
+            "15864a27c46a501fafd1",
+            "230afc26fd02a5f73e5c",
+            "1482b8a9c1d9ae835bdb",
+            "267d14135fb3bd1d98a1",
+            "42fc90e399eed5c0de97",
+            "044cf8649bf888fbbc93",
+            "b499a6018afaf6b8b490",
+            "2623d45568826e06288e",
+            "af2e0acf3186708a5107",
+            "24a309847f8eca992cc6",
+            "7508855b6526c9b0573b",
+            "4ba0ca7ad1c556cea41b",
+            "09ef892d8c2ce312509d",
+            "6cc4c8844f6d1a5e575c"
+          ],
+          "disposition": "REVIEWED_GAP"
+        }
       }
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "callIds": [
-        "58357b840ab8890eba45",
-        "9ea21ff62008b510bd7f",
-        "b88fc4f8215d76b34ea8",
-        "82752ae689b24bd04b63",
-        "fd2a647124264e9a2f63",
-        "9cd0878995ac81bc7fa1",
-        "0790e2862f113cd5cb2a",
-        "8cdd04617aa0332099d0",
-        "06e83cfecb1ce0da5c95"
+        "0541a105ff0d867f7ea6",
+        "7b6b74d024cad1ca24e0"
       ],
-      "disposition": "SCOPED_BOUNDARY",
-      "authority": "The sole external operations router is auth-mounted and passes req.userId. Growth and automation callers retain that same verified actor, not a persisted action requester supplied by the browser. access derives current project owner and canonical role. Creation environment/maintenance reads are exact project/owner and remain internal. Other selected action reads use requested ID internally, then compare persisted action owner against current project owner before any return or effect. Approvals are exact action/owner, canonical role and pending state. Confirm requires the original requester. Existing decisive service-only create/approve/confirm/claim transactions recheck their current locked parent/actor/plan and receipt before proceeding. No selected preflight row is exposed on forbidden ownership.\nexecuteInternal is a private callback registered only on this OperationsService internal adapter. Its sole invocation follows executeAction current project/actor authorization, canonical definition/target/plan checks and the separately proven admitted claim. The adapter input overwrites any execution-plan userId, actorId, projectId, targetId and version with the checked server action/owner. These selected two updates use exact target ID, project, owner, expected version/attempt and eligible state. No provider request is performed by these mutations. Completion retains the same exact admitted plan and owner receipt.",
-      "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Seven exact preliminary persistence reads across four existing methods, not their entire shared service. Actual real service cases reach current-role, environment, maintenance and plan lock boundaries and demonstrate allowed completion plus denial/rollback. The misbound action API case separately denies execute/confirm/approve without exposing its canary or changing the row. The post-empty-claim fallback, adapter effects, dynamic target selector, generic audit, complete product/portfolio reads and shared constructor remain open. Existing separately accepted transactional RPC proof is retained.\nOnly the existing job-retry and growth-campaign-approval table calls. Real HTTP owner job retry changes exactly the owned queued/attempt state while a project-limited member cannot target another project and leaves both denied records unchanged. Real campaign seed uses the actual approved action and executeAction, persists its owned pending-to-running version, then delivery verifies that canonical action. The separate misbound-action API case denies before either private effect and leaves exact rows unchanged. No certificate is inferred for incident/webhook/maintenance/automation adapters, post-claim revocation semantics,008 authority or external effects. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
+      "disposition": "REVIEWED_GAP",
+      "authority": "The auth-mounted existing executor retains the original actor and exact admitted running action. Each of the nine fixed internal capability branches now invokes the same service-only current-authority transaction, which locks canonical project/member/approver/action and target, rechecks intent/attempt/lease/expiry after waits, mutates only its whitelisted target and invokes the existing completion transaction before commit.",
+      "reason": "The prior post-claim preflight-to-write interval is demonstrated by the preserved actual-service synthetic transport reproduction. Current mutation and original completion/evidence/run/audit are atomic, avoiding repeated effects after a lost response. No external provider execution moves into a database transaction. Existing roles, approvals, leases, digests, target versions, retry limits and later008/009/010 obligations remain. Changed sites, including three formerly scoped calls, require actual new-source disposable tests before promotion. Unaffected original obligations remain open.",
       "evidence": [
         {
           "path": "backend/src/operations/operationsService.owner.test.ts",
@@ -9345,6 +10003,14 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+        },
+        {
+          "path": "backend/src/operations/internalEffect.local.integration.ts",
+          "marker": "real internal target and completion commit together and lost replies reconcile one durable effect"
+        },
+        {
+          "path": "backend/src/operations/internalControlReceipt.test.ts",
+          "marker": "single-rule controls reject empty, substituted and duplicate mutation receipts"
         }
       ],
       "historicalReview": {
@@ -9385,33 +10051,6 @@
           }
         ]
       },
-      "command007Proof": {
-        "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
-        "inputArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/input.json",
-        "inputSha256": "4e613fdd16d97c44fd1c61080204897a3193fbeaa42285d15022aa3e35ad73b0",
-        "observationsArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/observations.json",
-        "observationsSha256": "b60fe2a441d1f45052021957966d3ec28cdad3848fd3fc765f7cbd711ebb3bf0",
-        "resultArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
-        "resultSha256": "967f9ced90db90fde241e17dc60533a55d223779e270eb0b8747f4430d079818",
-        "obligationIds": [
-          "OB-4bd11f790ddabef6:observed-createAction-internal-reads",
-          "OB-4bd11f790ddabef6:observed-approveAction-internal-reads",
-          "OB-4bd11f790ddabef6:observed-confirmAction-internal-reads",
-          "OB-4bd11f790ddabef6:observed-executeAction-internal-reads",
-          "OB-4bd11f790ddabef6:observed-owned-internal-mutation-8cdd04617aa0332099d0",
-          "OB-4bd11f790ddabef6:observed-owned-internal-mutation-06e83cfecb1ce0da5c95"
-        ],
-        "passedTests": [
-          "real creation rechecks role environment and maintenance and rolls back action approval and audit together",
-          "real approval rechecks locked membership and atomically commits one decision with audit",
-          "misbound persisted operations actions cannot leak a receipt or grant confirmation or approval",
-          "real confirmation binds a locked plan and commits approval plus audit atomically once",
-          "real execution claim rejects locked actor and approver revocation, plan change and expiring approval before adapters",
-          "project-limited operators cannot retry another project job or webhook owned by the same tenant",
-          "real atomic in-app delivery binds canonical approval, rolls back, serializes and replays without duplicate notifications"
-        ],
-        "scope": "EXACT_ORIGINAL_007_CALLER_SCOPE_ONLY_NOT_WHOLE_SERVICE_OR_LATER_PHASE_ACCEPTANCE"
-      },
       "separateUncertifiedScope": {
         "state": "PRESERVED_NOT_CERTIFIED",
         "originalReviewReason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
@@ -9420,7 +10059,7 @@
         "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
       },
       "structuredOrigin": {
-        "id": "OB-4bd11f790ddabef6",
+        "id": "OB-1478ebcda982a717",
         "callIds": [
           "58357b840ab8890eba45",
           "9ea21ff62008b510bd7f",
@@ -9431,18 +10070,143 @@
           "9cd0878995ac81bc7fa1",
           "0790e2862f113cd5cb2a",
           "1087d778492ba0d90fe8",
-          "2911d37adf1475f417aa",
-          "31c477708b626e5ae6b1",
-          "8cdd04617aa0332099d0",
-          "7bf8a723f11bf121e654",
-          "a5e91bac1a6cb8ed6bd0",
-          "777506055ab8972780cc",
-          "9e56a2c47c6fae03a7d4",
-          "06e83cfecb1ce0da5c95",
-          "101c25c8bf0d04a3d6ee",
-          "5168c80257e8d4f829be"
+          "db901ea4f35f29872b83",
+          "62993f74348668414e94",
+          "0541a105ff0d867f7ea6",
+          "ed9a76f66fdce2fa62cb",
+          "251a62ca944e59b4d35c",
+          "d6f7994c8a29114879a2",
+          "8d4b368daaafa2527fdb",
+          "7b6b74d024cad1ca24e0",
+          "1432ffb1661e42ad2afd",
+          "7201394971e7edb953ff"
         ],
         "disposition": "REVIEWED_GAP"
+      },
+      "historicalInternalEffectReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
+          "58357b840ab8890eba45",
+          "9ea21ff62008b510bd7f",
+          "b88fc4f8215d76b34ea8",
+          "82752ae689b24bd04b63",
+          "fd2a647124264e9a2f63",
+          "9cd0878995ac81bc7fa1",
+          "0790e2862f113cd5cb2a",
+          "8cdd04617aa0332099d0",
+          "06e83cfecb1ce0da5c95"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "The sole external operations router is auth-mounted and passes req.userId. Growth and automation callers retain that same verified actor, not a persisted action requester supplied by the browser. access derives current project owner and canonical role. Creation environment/maintenance reads are exact project/owner and remain internal. Other selected action reads use requested ID internally, then compare persisted action owner against current project owner before any return or effect. Approvals are exact action/owner, canonical role and pending state. Confirm requires the original requester. Existing decisive service-only create/approve/confirm/claim transactions recheck their current locked parent/actor/plan and receipt before proceeding. No selected preflight row is exposed on forbidden ownership.\nexecuteInternal is a private callback registered only on this OperationsService internal adapter. Its sole invocation follows executeAction current project/actor authorization, canonical definition/target/plan checks and the separately proven admitted claim. The adapter input overwrites any execution-plan userId, actorId, projectId, targetId and version with the checked server action/owner. These selected two updates use exact target ID, project, owner, expected version/attempt and eligible state. No provider request is performed by these mutations. Completion retains the same exact admitted plan and owner receipt.",
+        "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Seven exact preliminary persistence reads across four existing methods, not their entire shared service. Actual real service cases reach current-role, environment, maintenance and plan lock boundaries and demonstrate allowed completion plus denial/rollback. The misbound action API case separately denies execute/confirm/approve without exposing its canary or changing the row. The post-empty-claim fallback, adapter effects, dynamic target selector, generic audit, complete product/portfolio reads and shared constructor remain open. Existing separately accepted transactional RPC proof is retained.\nOnly the existing job-retry and growth-campaign-approval table calls. Real HTTP owner job retry changes exactly the owned queued/attempt state while a project-limited member cannot target another project and leaves both denied records unchanged. Real campaign seed uses the actual approved action and executeAction, persists its owned pending-to-running version, then delivery verifies that canonical action. The separate misbound-action API case denies before either private effect and leaves exact rows unchanged. No certificate is inferred for incident/webhook/maintenance/automation adapters, post-claim revocation semantics,008 authority or external effects. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ],
+        "historicalReview": {
+          "path": "backend/src/operations/operationsService.ts",
+          "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+          "callIds": [
+            "58357b840ab8890eba45",
+            "9ea21ff62008b510bd7f",
+            "b88fc4f8215d76b34ea8",
+            "82752ae689b24bd04b63",
+            "fd2a647124264e9a2f63",
+            "9fc45d30478dc34f0ea6",
+            "9cd0878995ac81bc7fa1",
+            "0790e2862f113cd5cb2a",
+            "1087d778492ba0d90fe8",
+            "2911d37adf1475f417aa",
+            "31c477708b626e5ae6b1",
+            "8cdd04617aa0332099d0",
+            "7bf8a723f11bf121e654",
+            "a5e91bac1a6cb8ed6bd0",
+            "777506055ab8972780cc",
+            "9e56a2c47c6fae03a7d4",
+            "06e83cfecb1ce0da5c95",
+            "101c25c8bf0d04a3d6ee",
+            "5168c80257e8d4f829be"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+          "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
+          "evidence": [
+            {
+              "path": "backend/src/operations/operationsService.owner.test.ts",
+              "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+            },
+            {
+              "path": "backend/src/security/tenantIsolation.local.integration.ts",
+              "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+            }
+          ]
+        },
+        "command007Proof": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "inputArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/input.json",
+          "inputSha256": "4e613fdd16d97c44fd1c61080204897a3193fbeaa42285d15022aa3e35ad73b0",
+          "observationsArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/observations.json",
+          "observationsSha256": "b60fe2a441d1f45052021957966d3ec28cdad3848fd3fc765f7cbd711ebb3bf0",
+          "resultArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "resultSha256": "967f9ced90db90fde241e17dc60533a55d223779e270eb0b8747f4430d079818",
+          "obligationIds": [
+            "OB-4bd11f790ddabef6:observed-createAction-internal-reads",
+            "OB-4bd11f790ddabef6:observed-approveAction-internal-reads",
+            "OB-4bd11f790ddabef6:observed-confirmAction-internal-reads",
+            "OB-4bd11f790ddabef6:observed-executeAction-internal-reads",
+            "OB-4bd11f790ddabef6:observed-owned-internal-mutation-8cdd04617aa0332099d0",
+            "OB-4bd11f790ddabef6:observed-owned-internal-mutation-06e83cfecb1ce0da5c95"
+          ],
+          "passedTests": [
+            "real creation rechecks role environment and maintenance and rolls back action approval and audit together",
+            "real approval rechecks locked membership and atomically commits one decision with audit",
+            "misbound persisted operations actions cannot leak a receipt or grant confirmation or approval",
+            "real confirmation binds a locked plan and commits approval plus audit atomically once",
+            "real execution claim rejects locked actor and approver revocation, plan change and expiring approval before adapters",
+            "project-limited operators cannot retry another project job or webhook owned by the same tenant",
+            "real atomic in-app delivery binds canonical approval, rolls back, serializes and replays without duplicate notifications"
+          ],
+          "scope": "EXACT_ORIGINAL_007_CALLER_SCOPE_ONLY_NOT_WHOLE_SERVICE_OR_LATER_PHASE_ACCEPTANCE"
+        },
+        "separateUncertifiedScope": {
+          "state": "PRESERVED_NOT_CERTIFIED",
+          "originalReviewReason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
+          "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+          "note": "Existing frozen obligations remain authoritative and unchanged. This metadata does not reclassify an unresolved007 obligation, schedule new work or implement008/009/010.",
+          "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
+        },
+        "structuredOrigin": {
+          "id": "OB-4bd11f790ddabef6",
+          "callIds": [
+            "58357b840ab8890eba45",
+            "9ea21ff62008b510bd7f",
+            "b88fc4f8215d76b34ea8",
+            "82752ae689b24bd04b63",
+            "fd2a647124264e9a2f63",
+            "9fc45d30478dc34f0ea6",
+            "9cd0878995ac81bc7fa1",
+            "0790e2862f113cd5cb2a",
+            "1087d778492ba0d90fe8",
+            "2911d37adf1475f417aa",
+            "31c477708b626e5ae6b1",
+            "8cdd04617aa0332099d0",
+            "7bf8a723f11bf121e654",
+            "a5e91bac1a6cb8ed6bd0",
+            "777506055ab8972780cc",
+            "9e56a2c47c6fae03a7d4",
+            "06e83cfecb1ce0da5c95",
+            "101c25c8bf0d04a3d6ee",
+            "5168c80257e8d4f829be"
+          ],
+          "disposition": "REVIEWED_GAP"
+        }
       }
     },
     {
@@ -10039,7 +10803,7 @@
     },
     {
       "path": "backend/src/operations/operationsService.ts",
-      "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
       "callIds": [
         "9fc45d30478dc34f0ea6",
         "1087d778492ba0d90fe8"
@@ -10058,7 +10822,7 @@
         }
       ],
       "structuredOrigin": {
-        "id": "OB-4bd11f790ddabef6",
+        "id": "OB-1478ebcda982a717",
         "callIds": [
           "58357b840ab8890eba45",
           "9ea21ff62008b510bd7f",
@@ -10069,16 +10833,16 @@
           "9cd0878995ac81bc7fa1",
           "0790e2862f113cd5cb2a",
           "1087d778492ba0d90fe8",
-          "2911d37adf1475f417aa",
-          "31c477708b626e5ae6b1",
-          "8cdd04617aa0332099d0",
-          "7bf8a723f11bf121e654",
-          "a5e91bac1a6cb8ed6bd0",
-          "777506055ab8972780cc",
-          "9e56a2c47c6fae03a7d4",
-          "06e83cfecb1ce0da5c95",
-          "101c25c8bf0d04a3d6ee",
-          "5168c80257e8d4f829be"
+          "db901ea4f35f29872b83",
+          "62993f74348668414e94",
+          "0541a105ff0d867f7ea6",
+          "ed9a76f66fdce2fa62cb",
+          "251a62ca944e59b4d35c",
+          "d6f7994c8a29114879a2",
+          "8d4b368daaafa2527fdb",
+          "7b6b74d024cad1ca24e0",
+          "1432ffb1661e42ad2afd",
+          "7201394971e7edb953ff"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -10159,6 +10923,130 @@
         "originalReviewReason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
         "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
         "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      },
+      "historicalInternalEffectReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
+          "9fc45d30478dc34f0ea6",
+          "1087d778492ba0d90fe8"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "currentTargetVersion is private to createAction after canonical access and executeAction after canonical access plus action owner equality. Its dynamic table and key/version fields come from a fixed server lookup map, never request SQL identifiers. Every selected target query applies the original action project and owner, using tenant_id only for growth campaigns. Releases additionally validate the exact returned id/user/project. No selected raw target row is returned. The post-empty-claim action read does not return a changed or foreign record: it returns only verified status with the same exact previously admitted owner/project/requester/type/target/version/key/digest/plan/max-attempt tuple. Otherwise execution fails with conflict before an adapter.",
+        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original private target/replay read sites only, no source changes. Existing actual release/deployment fixtures preserve a legitimate release-manager membership, reject foreign targets and admit the exact owned drafts without adapter runs. Actual owned automation target executes once, verified replay returns the same receipt and foreign replay denies. Existing misbound persisted action denial preserves private receipts and authority. Dynamic lookup SQL is fixed and owner/project-filtered at the same caller. This does not certify remaining internal mutation adapters or create a post-admission authority policy. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ],
+        "structuredOrigin": {
+          "id": "OB-4bd11f790ddabef6",
+          "callIds": [
+            "58357b840ab8890eba45",
+            "9ea21ff62008b510bd7f",
+            "b88fc4f8215d76b34ea8",
+            "82752ae689b24bd04b63",
+            "fd2a647124264e9a2f63",
+            "9fc45d30478dc34f0ea6",
+            "9cd0878995ac81bc7fa1",
+            "0790e2862f113cd5cb2a",
+            "1087d778492ba0d90fe8",
+            "2911d37adf1475f417aa",
+            "31c477708b626e5ae6b1",
+            "8cdd04617aa0332099d0",
+            "7bf8a723f11bf121e654",
+            "a5e91bac1a6cb8ed6bd0",
+            "777506055ab8972780cc",
+            "9e56a2c47c6fae03a7d4",
+            "06e83cfecb1ce0da5c95",
+            "101c25c8bf0d04a3d6ee",
+            "5168c80257e8d4f829be"
+          ],
+          "disposition": "REVIEWED_GAP"
+        },
+        "historicalReview": {
+          "path": "backend/src/operations/operationsService.ts",
+          "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+          "callIds": [
+            "9fc45d30478dc34f0ea6",
+            "1087d778492ba0d90fe8",
+            "2911d37adf1475f417aa",
+            "31c477708b626e5ae6b1",
+            "7bf8a723f11bf121e654",
+            "a5e91bac1a6cb8ed6bd0",
+            "777506055ab8972780cc",
+            "9e56a2c47c6fae03a7d4",
+            "101c25c8bf0d04a3d6ee",
+            "5168c80257e8d4f829be"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+          "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
+          "evidence": [
+            {
+              "path": "backend/src/operations/operationsService.owner.test.ts",
+              "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+            },
+            {
+              "path": "backend/src/security/tenantIsolation.local.integration.ts",
+              "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+            }
+          ],
+          "structuredOrigin": {
+            "id": "OB-4bd11f790ddabef6",
+            "callIds": [
+              "58357b840ab8890eba45",
+              "9ea21ff62008b510bd7f",
+              "b88fc4f8215d76b34ea8",
+              "82752ae689b24bd04b63",
+              "fd2a647124264e9a2f63",
+              "9fc45d30478dc34f0ea6",
+              "9cd0878995ac81bc7fa1",
+              "0790e2862f113cd5cb2a",
+              "1087d778492ba0d90fe8",
+              "2911d37adf1475f417aa",
+              "31c477708b626e5ae6b1",
+              "8cdd04617aa0332099d0",
+              "7bf8a723f11bf121e654",
+              "a5e91bac1a6cb8ed6bd0",
+              "777506055ab8972780cc",
+              "9e56a2c47c6fae03a7d4",
+              "06e83cfecb1ce0da5c95",
+              "101c25c8bf0d04a3d6ee",
+              "5168c80257e8d4f829be"
+            ],
+            "disposition": "REVIEWED_GAP"
+          }
+        },
+        "command007Proof": {
+          "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+          "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+          "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+          "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+          "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+          "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+          "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+          "obligationIds": [
+            "OB-4bd11f790ddabef6:observed-canonical-target-and-replay-read"
+          ],
+          "passedTests": [
+            "real release and deployment actions require the owned project target before creating drafts",
+            "real action claim executes only the owned disposable automation rule once",
+            "misbound persisted operations actions cannot leak a receipt or grant confirmation or approval"
+          ],
+          "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+        },
+        "separateUncertifiedScope": {
+          "state": "PRESERVED_NOT_CERTIFIED",
+          "originalReviewReason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
+          "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+          "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+        }
       }
     },
     {
@@ -10478,6 +11366,254 @@
           "originalReviewReason": "Four focused preview/runtime tests pass, including held session lookup with input mutation, substituted creation/read receipts, malformed timestamps/kind/port, expired/revoked latest rows and sanitized write outage. Existing real disposable foreign-owner/project/revocation checks pass at25295230; new actual persisted held-input and latest/revoked read assertions await exact-source CI. Parent-session versus grant-write race, complete coordinator/run provenance, signing-key custody and live proxy/socket revocation remain unresolved. Named global lookup alone grants no authorization. No whole-preview certification.",
           "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
           "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
+        }
+      }
+    },
+    {
+      "path": "backend/src/operations/operationsService.ts",
+      "sourceSha256": "139027277e779b7fdb5e1188189b0d86bb5f0bb1fe1d81be0a18500644e1e1bb",
+      "callIds": [
+        "58357b840ab8890eba45",
+        "9ea21ff62008b510bd7f",
+        "b88fc4f8215d76b34ea8",
+        "82752ae689b24bd04b63",
+        "fd2a647124264e9a2f63",
+        "9cd0878995ac81bc7fa1",
+        "0790e2862f113cd5cb2a"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The sole external operations router is auth-mounted and passes req.userId. Growth and automation callers retain that same verified actor, not a persisted action requester supplied by the browser. access derives current project owner and canonical role. Creation environment/maintenance reads are exact project/owner and remain internal. Other selected action reads use requested ID internally, then compare persisted action owner against current project owner before any return or effect. Approvals are exact action/owner, canonical role and pending state. Confirm requires the original requester. Existing decisive service-only create/approve/confirm/claim transactions recheck their current locked parent/actor/plan and receipt before proceeding. No selected preflight row is exposed on forbidden ownership.\nexecuteInternal is a private callback registered only on this OperationsService internal adapter. Its sole invocation follows executeAction current project/actor authorization, canonical definition/target/plan checks and the separately proven admitted claim. The adapter input overwrites any execution-plan userId, actorId, projectId, targetId and version with the checked server action/owner. These selected two updates use exact target ID, project, owner, expected version/attempt and eligible state. No provider request is performed by these mutations. Completion retains the same exact admitted plan and owner receipt.",
+      "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Seven exact preliminary persistence reads across four existing methods, not their entire shared service. Actual real service cases reach current-role, environment, maintenance and plan lock boundaries and demonstrate allowed completion plus denial/rollback. The misbound action API case separately denies execute/confirm/approve without exposing its canary or changing the row. The post-empty-claim fallback, adapter effects, dynamic target selector, generic audit, complete product/portfolio reads and shared constructor remain open. Existing separately accepted transactional RPC proof is retained.\nOnly the existing job-retry and growth-campaign-approval table calls. Real HTTP owner job retry changes exactly the owned queued/attempt state while a project-limited member cannot target another project and leaves both denied records unchanged. Real campaign seed uses the actual approved action and executeAction, persists its owned pending-to-running version, then delivery verifies that canonical action. The separate misbound-action API case denies before either private effect and leaves exact rows unchanged. No certificate is inferred for incident/webhook/maintenance/automation adapters, post-claim revocation semantics,008 authority or external effects. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
+      "evidence": [
+        {
+          "path": "backend/src/operations/operationsService.owner.test.ts",
+          "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+        },
+        {
+          "path": "backend/src/security/tenantIsolation.local.integration.ts",
+          "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+        }
+      ],
+      "historicalReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
+          "58357b840ab8890eba45",
+          "9ea21ff62008b510bd7f",
+          "b88fc4f8215d76b34ea8",
+          "82752ae689b24bd04b63",
+          "fd2a647124264e9a2f63",
+          "9fc45d30478dc34f0ea6",
+          "9cd0878995ac81bc7fa1",
+          "0790e2862f113cd5cb2a",
+          "1087d778492ba0d90fe8",
+          "2911d37adf1475f417aa",
+          "31c477708b626e5ae6b1",
+          "8cdd04617aa0332099d0",
+          "7bf8a723f11bf121e654",
+          "a5e91bac1a6cb8ed6bd0",
+          "777506055ab8972780cc",
+          "9e56a2c47c6fae03a7d4",
+          "06e83cfecb1ce0da5c95",
+          "101c25c8bf0d04a3d6ee",
+          "5168c80257e8d4f829be"
+        ],
+        "disposition": "REVIEWED_GAP",
+        "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+        "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ]
+      },
+      "command007Proof": {
+        "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+        "inputArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/input.json",
+        "inputSha256": "4e613fdd16d97c44fd1c61080204897a3193fbeaa42285d15022aa3e35ad73b0",
+        "observationsArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/observations.json",
+        "observationsSha256": "b60fe2a441d1f45052021957966d3ec28cdad3848fd3fc765f7cbd711ebb3bf0",
+        "resultArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+        "resultSha256": "967f9ced90db90fde241e17dc60533a55d223779e270eb0b8747f4430d079818",
+        "obligationIds": [
+          "OB-4bd11f790ddabef6:observed-createAction-internal-reads",
+          "OB-4bd11f790ddabef6:observed-approveAction-internal-reads",
+          "OB-4bd11f790ddabef6:observed-confirmAction-internal-reads",
+          "OB-4bd11f790ddabef6:observed-executeAction-internal-reads",
+          "OB-4bd11f790ddabef6:observed-owned-internal-mutation-8cdd04617aa0332099d0",
+          "OB-4bd11f790ddabef6:observed-owned-internal-mutation-06e83cfecb1ce0da5c95"
+        ],
+        "passedTests": [
+          "real creation rechecks role environment and maintenance and rolls back action approval and audit together",
+          "real approval rechecks locked membership and atomically commits one decision with audit",
+          "misbound persisted operations actions cannot leak a receipt or grant confirmation or approval",
+          "real confirmation binds a locked plan and commits approval plus audit atomically once",
+          "real execution claim rejects locked actor and approver revocation, plan change and expiring approval before adapters",
+          "project-limited operators cannot retry another project job or webhook owned by the same tenant",
+          "real atomic in-app delivery binds canonical approval, rolls back, serializes and replays without duplicate notifications"
+        ],
+        "scope": "EXACT_ORIGINAL_007_CALLER_SCOPE_ONLY_NOT_WHOLE_SERVICE_OR_LATER_PHASE_ACCEPTANCE"
+      },
+      "separateUncertifiedScope": {
+        "state": "PRESERVED_NOT_CERTIFIED",
+        "originalReviewReason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
+        "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+        "note": "Existing frozen obligations remain authoritative and unchanged. This metadata does not reclassify an unresolved007 obligation, schedule new work or implement008/009/010.",
+        "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
+      },
+      "structuredOrigin": {
+        "id": "OB-1478ebcda982a717",
+        "callIds": [
+          "58357b840ab8890eba45",
+          "9ea21ff62008b510bd7f",
+          "b88fc4f8215d76b34ea8",
+          "82752ae689b24bd04b63",
+          "fd2a647124264e9a2f63",
+          "9fc45d30478dc34f0ea6",
+          "9cd0878995ac81bc7fa1",
+          "0790e2862f113cd5cb2a",
+          "1087d778492ba0d90fe8",
+          "db901ea4f35f29872b83",
+          "62993f74348668414e94",
+          "0541a105ff0d867f7ea6",
+          "ed9a76f66fdce2fa62cb",
+          "251a62ca944e59b4d35c",
+          "d6f7994c8a29114879a2",
+          "8d4b368daaafa2527fdb",
+          "7b6b74d024cad1ca24e0",
+          "1432ffb1661e42ad2afd",
+          "7201394971e7edb953ff"
+        ],
+        "disposition": "REVIEWED_GAP"
+      },
+      "historicalInternalEffectReview": {
+        "path": "backend/src/operations/operationsService.ts",
+        "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+        "callIds": [
+          "58357b840ab8890eba45",
+          "9ea21ff62008b510bd7f",
+          "b88fc4f8215d76b34ea8",
+          "82752ae689b24bd04b63",
+          "fd2a647124264e9a2f63",
+          "9cd0878995ac81bc7fa1",
+          "0790e2862f113cd5cb2a",
+          "8cdd04617aa0332099d0",
+          "06e83cfecb1ce0da5c95"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "The sole external operations router is auth-mounted and passes req.userId. Growth and automation callers retain that same verified actor, not a persisted action requester supplied by the browser. access derives current project owner and canonical role. Creation environment/maintenance reads are exact project/owner and remain internal. Other selected action reads use requested ID internally, then compare persisted action owner against current project owner before any return or effect. Approvals are exact action/owner, canonical role and pending state. Confirm requires the original requester. Existing decisive service-only create/approve/confirm/claim transactions recheck their current locked parent/actor/plan and receipt before proceeding. No selected preflight row is exposed on forbidden ownership.\nexecuteInternal is a private callback registered only on this OperationsService internal adapter. Its sole invocation follows executeAction current project/actor authorization, canonical definition/target/plan checks and the separately proven admitted claim. The adapter input overwrites any execution-plan userId, actorId, projectId, targetId and version with the checked server action/owner. These selected two updates use exact target ID, project, owner, expected version/attempt and eligible state. No provider request is performed by these mutations. Completion retains the same exact admitted plan and owner receipt.",
+        "reason": "Original Command007 scope for exactly these source-bound caller IDs is verified at 7be4403096a3c782520a52464f544e36212c587e, disposable39263765525 and aggregate39263765626. Seven exact preliminary persistence reads across four existing methods, not their entire shared service. Actual real service cases reach current-role, environment, maintenance and plan lock boundaries and demonstrate allowed completion plus denial/rollback. The misbound action API case separately denies execute/confirm/approve without exposing its canary or changing the row. The post-empty-claim fallback, adapter effects, dynamic target selector, generic audit, complete product/portfolio reads and shared constructor remain open. Existing separately accepted transactional RPC proof is retained.\nOnly the existing job-retry and growth-campaign-approval table calls. Real HTTP owner job retry changes exactly the owned queued/attempt state while a project-limited member cannot target another project and leaves both denied records unchanged. Real campaign seed uses the actual approved action and executeAction, persists its owned pending-to-running version, then delivery verifies that canonical action. The separate misbound-action API case denies before either private effect and leaves exact rows unchanged. No certificate is inferred for incident/webhook/maintenance/automation adapters, post-claim revocation semantics,008 authority or external effects. The complete earlier review is retained as historicalReview. Its independent authority, credential custody, provider/production acceptance, egress and other unverified lifecycle/reliability concerns are not certified by this tenant-boundary disposition. Other callers in the same file retain their own unresolved entries.",
+        "evidence": [
+          {
+            "path": "backend/src/operations/operationsService.owner.test.ts",
+            "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+          },
+          {
+            "path": "backend/src/security/tenantIsolation.local.integration.ts",
+            "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+          }
+        ],
+        "historicalReview": {
+          "path": "backend/src/operations/operationsService.ts",
+          "sourceSha256": "533285a527b13bbb2abcadf1d6c4a7bd7e7d5067dab9f447ad436c3048162d91",
+          "callIds": [
+            "58357b840ab8890eba45",
+            "9ea21ff62008b510bd7f",
+            "b88fc4f8215d76b34ea8",
+            "82752ae689b24bd04b63",
+            "fd2a647124264e9a2f63",
+            "9fc45d30478dc34f0ea6",
+            "9cd0878995ac81bc7fa1",
+            "0790e2862f113cd5cb2a",
+            "1087d778492ba0d90fe8",
+            "2911d37adf1475f417aa",
+            "31c477708b626e5ae6b1",
+            "8cdd04617aa0332099d0",
+            "7bf8a723f11bf121e654",
+            "a5e91bac1a6cb8ed6bd0",
+            "777506055ab8972780cc",
+            "9e56a2c47c6fae03a7d4",
+            "06e83cfecb1ce0da5c95",
+            "101c25c8bf0d04a3d6ee",
+            "5168c80257e8d4f829be"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "Reviewed creation, confirmation, approval, target lookup, claim, execution, internal retry adapters, automation signal handling and audit writes. Target/environment and persisted action owner mismatches now deny before action creation or receipt access. Job/webhook retries bind project, owner and expected attempt count; idempotency conflict reads bind project.",
+          "reason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
+          "evidence": [
+            {
+              "path": "backend/src/operations/operationsService.owner.test.ts",
+              "marker": "misbound operations actions cannot be confirmed approved or returned as verified"
+            },
+            {
+              "path": "backend/src/security/tenantIsolation.local.integration.ts",
+              "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant"
+            }
+          ]
+        },
+        "command007Proof": {
+          "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
+          "inputArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/input.json",
+          "inputSha256": "4e613fdd16d97c44fd1c61080204897a3193fbeaa42285d15022aa3e35ad73b0",
+          "observationsArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/observations.json",
+          "observationsSha256": "b60fe2a441d1f45052021957966d3ec28cdad3848fd3fc765f7cbd711ebb3bf0",
+          "resultArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
+          "resultSha256": "967f9ced90db90fde241e17dc60533a55d223779e270eb0b8747f4430d079818",
+          "obligationIds": [
+            "OB-4bd11f790ddabef6:observed-createAction-internal-reads",
+            "OB-4bd11f790ddabef6:observed-approveAction-internal-reads",
+            "OB-4bd11f790ddabef6:observed-confirmAction-internal-reads",
+            "OB-4bd11f790ddabef6:observed-executeAction-internal-reads",
+            "OB-4bd11f790ddabef6:observed-owned-internal-mutation-8cdd04617aa0332099d0",
+            "OB-4bd11f790ddabef6:observed-owned-internal-mutation-06e83cfecb1ce0da5c95"
+          ],
+          "passedTests": [
+            "real creation rechecks role environment and maintenance and rolls back action approval and audit together",
+            "real approval rechecks locked membership and atomically commits one decision with audit",
+            "misbound persisted operations actions cannot leak a receipt or grant confirmation or approval",
+            "real confirmation binds a locked plan and commits approval plus audit atomically once",
+            "real execution claim rejects locked actor and approver revocation, plan change and expiring approval before adapters",
+            "project-limited operators cannot retry another project job or webhook owned by the same tenant",
+            "real atomic in-app delivery binds canonical approval, rolls back, serializes and replays without duplicate notifications"
+          ],
+          "scope": "EXACT_ORIGINAL_007_CALLER_SCOPE_ONLY_NOT_WHOLE_SERVICE_OR_LATER_PHASE_ACCEPTANCE"
+        },
+        "separateUncertifiedScope": {
+          "state": "PRESERVED_NOT_CERTIFIED",
+          "originalReviewReason": "Current action creation snapshots nested intent before authority awaits, verifies exact actor/owner/project/target/plan receipt and rereads an existing action only after23505. A replay must match immutable intent and never confirms/approves/executes it. Rule and signal inputs are also snapshotted. Claim receipt must be exactly one matching actor/owner/project/target/plan/current attempt and unexpired lease before adapter execution; empty-claim verified fallback also binds intent. Focused substituted-receipt negatives pass. Real concurrent insert, unconfirmed replay and owned disposable internal execution tests await139bf16d CI. Completion writes are now consolidated under a separately reviewed RPC with local rollback evidence and real tests pending. Approval revocation freshness, original claim admission, atomic creation/audit/approval recovery, account-bound external capabilities and unsupported target types remain unresolved. Project-wide automation scope is unchanged. No Command008 or whole-service certification.",
+          "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+          "note": "Existing frozen obligations remain authoritative and unchanged. This metadata does not reclassify an unresolved007 obligation, schedule new work or implement008/009/010.",
+          "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
+        },
+        "structuredOrigin": {
+          "id": "OB-4bd11f790ddabef6",
+          "callIds": [
+            "58357b840ab8890eba45",
+            "9ea21ff62008b510bd7f",
+            "b88fc4f8215d76b34ea8",
+            "82752ae689b24bd04b63",
+            "fd2a647124264e9a2f63",
+            "9fc45d30478dc34f0ea6",
+            "9cd0878995ac81bc7fa1",
+            "0790e2862f113cd5cb2a",
+            "1087d778492ba0d90fe8",
+            "2911d37adf1475f417aa",
+            "31c477708b626e5ae6b1",
+            "8cdd04617aa0332099d0",
+            "7bf8a723f11bf121e654",
+            "a5e91bac1a6cb8ed6bd0",
+            "777506055ab8972780cc",
+            "9e56a2c47c6fae03a7d4",
+            "06e83cfecb1ce0da5c95",
+            "101c25c8bf0d04a3d6ee",
+            "5168c80257e8d4f829be"
+          ],
+          "disposition": "REVIEWED_GAP"
         }
       }
     }

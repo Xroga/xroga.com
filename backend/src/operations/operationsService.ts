@@ -406,11 +406,13 @@ export class OperationsService {
       : action.action_type === 'run_model_benchmark'
         ? this.registry.get('model_benchmark')
         : this.registry.get('internal_database');
+    const evidenceId = `ev_${randomUUID()}`;
     let result: ProviderResult;
     if (!adapter || !adapter.supportedCapabilities.includes(definition.providerCapability)) {
       result = { status: 'unsupported', safeSummary: 'No working provider adapter supports this action' };
     } else {
-      let input = { ...(action.execution_plan ?? {}), userId: access.ownerId, actorId: userId, projectId: action.project_id, environmentId: action.environment_id, targetType: action.target_type, targetId: action.target_id, targetVersion: action.target_version, actionId };
+      let input = { ...(action.execution_plan ?? {}), userId: access.ownerId, actorId: userId, projectId: action.project_id, environmentId: action.environment_id, targetType: action.target_type, targetId: action.target_id, targetVersion: action.target_version, actionId,
+        ...(adapter.id === 'internal_database' ? { admittedAction: running, evidenceId } : {}) };
       if (adapter.id === 'http_verification') {
         const resource = await queryOrThrow<DbRow | null>(this.db.from('operations_resources').select('*').eq('id', action.target_id).eq('project_id', action.project_id).eq('user_id', access.ownerId).maybeSingle(), 'Verification target unavailable', null);
         if (!resource) result = { status: 'blocked', safeSummary: 'Verification target was not found', errorCategory: 'not_found' };
@@ -424,13 +426,16 @@ export class OperationsService {
         }
       } else {
         try { result = await adapter.execute(definition.providerCapability, input); }
-        catch { result = { status: 'failed', safeSummary: 'Operational mutation failed safely', errorCategory: 'action_failed' }; }
+        catch { result = { status: 'failed', safeSummary: adapter.id === 'internal_database'
+          ? 'Internal mutation could not be verified; target effects may already exist'
+          : 'Operational mutation failed safely', errorCategory: 'action_failed' }; }
       }
     }
-    const evidenceId = `ev_${randomUUID()}`;
     const finalStatus = providerResultToStatus(result);
     const safeResult = redactOperationsValue({ ...result, safeSummary: String(result.safeSummary).slice(0, 500) });
-    const updated = await queryOrThrow<DbRow[]>(this.db.rpc('complete_operations_action', {
+    const internalCompletion = adapter?.id === 'internal_database'
+      ? (result as ProviderResult & {internalCompletion?: DbRow}).internalCompletion : undefined;
+    const updated = internalCompletion ? [internalCompletion] : await queryOrThrow<DbRow[]>(this.db.rpc('complete_operations_action', {
       p_actor: userId, p_expected: running, p_evidence_id: evidenceId,
       p_provider: adapter?.id ?? 'unsupported', p_result: safeResult,
     }), 'Action completion could not be verified; provider effects may already exist');
@@ -442,41 +447,86 @@ export class OperationsService {
     return updated[0];
   }
 
-  private async executeInternal(capability: string, input: Record<string, unknown>): Promise<ProviderResult> {
+  private async executeInternal(capability: string, input: Record<string, unknown>): Promise<ProviderResult & {internalCompletion?: DbRow}> {
+    input = snapshotIntent(input);
     const userId = String(input.userId); const projectId = String(input.projectId); const targetId = String(input.targetId);
-    const now = new Date().toISOString();
+    const definition = ACTION_DEFINITIONS[capability];
+    if (!definition) return { status: 'unsupported', safeSummary: `${capability} is not implemented` };
+    const action = input.admittedAction as DbRow | undefined;
+    if (!action || action.action_type !== capability || action.user_id !== userId || action.project_id !== projectId
+      || action.target_id !== targetId || action.target_version !== input.targetVersion || action.status !== 'running'
+      || action.lease_owner !== `api:${input.actorId}` || typeof action.lease_expires_at !== 'string'
+      || !Number.isFinite(Date.parse(action.lease_expires_at)) || Date.parse(action.lease_expires_at) <= Date.now()) {
+      throw new OperationsServiceError('precondition_failed', 'Original admitted internal action is required', 409);
+    }
+    const roles: OperationsRole[] = ['viewer','operator','release_manager','recovery_manager','admin'];
+    const admission = { p_capability: capability, p_actor: String(input.actorId), p_expected: action, p_evidence_id: input.evidenceId,
+      p_allowed_roles: roles.filter(role => hasOperationsPermission(role, definition.permission)),
+      p_approval_role: definition.approvalRole ?? null, p_confirmation_required: definition.confirmationRequired };
+    let internalCompletion: DbRow | undefined;
+    const finish = (result: ProviderResult) => ({...result, ...(internalCompletion ? {internalCompletion} : {})});
+    const checked = async (query: PromiseLike<{data: unknown; error: any}>, collection = false): Promise<DbRow[]> => {
+      const receipt = await queryOrThrow<DbRow>(query as PromiseLike<{data: DbRow | null; error: any}>, 'Internal mutation receipt unavailable');
+      const rows = receipt?.rows;
+      if (!Array.isArray(rows) || (!collection && rows.length > 1)
+        || rows.some(row => !row || typeof row !== 'object' || Array.isArray(row)
+          || row.user_id !== userId || row.project_id !== projectId
+          || typeof row[capability === 'retry_webhook' ? 'delivery_id' : 'id'] !== 'string'
+          || !row[capability === 'retry_webhook' ? 'delivery_id' : 'id']
+          || (!collection && capability !== 'schedule_maintenance' && row[capability === 'retry_webhook' ? 'delivery_id' : 'id'] !== targetId)
+          || (capability === 'schedule_maintenance' && row.environment_id !== targetId))
+        || new Set(rows.map(row => row[capability === 'retry_webhook' ? 'delivery_id' : 'id'])).size !== rows.length) {
+        throw new OperationsServiceError('unknown', 'Internal mutation receipt is invalid', 503);
+      }
+      if (rows.length || collection) {
+        const completed = receipt.completion;
+        if (!completed || completed.id !== action.id || completed.user_id !== userId || completed.project_id !== projectId
+          || completed.target_id !== targetId || completed.action_type !== capability || completed.status !== 'verified'
+          || completed.attempt_count !== action.attempt_count || completed.evidence_reference !== input.evidenceId
+          || completed.lease_owner !== null || completed.lease_expires_at !== null) {
+          throw new OperationsServiceError('unknown', 'Internal completion receipt is invalid', 503);
+        }
+        internalCompletion = completed;
+      } else if (receipt.completion !== null) throw new OperationsServiceError('unknown', 'Unexpected internal completion receipt', 503);
+      return rows;
+    };
     if (capability === 'acknowledge_incident') {
-      const rows = await queryOrThrow<DbRow[]>(this.db.from('production_incidents').update({ status: 'investigating', version: Number(input.targetVersion) + 1, updated_at: now }).eq('id', targetId).eq('project_id', projectId).eq('user_id', userId).in('status', ['detected','open']).eq('version', Number(input.targetVersion)).select('id,status'), 'Incident acknowledgement failed');
-      return rows.length ? { status: 'verified', safeSummary: 'Incident acknowledgement persisted and verified' } : { status: 'blocked', safeSummary: 'Incident state no longer permits acknowledgement', errorCategory: 'invalid_state' };
+      const rows = await checked(this.db.rpc('mutate_operations_internal_target', admission));
+      if (rows.length && rows[0].status !== 'investigating') throw new OperationsServiceError('unknown', 'Incident acknowledgement receipt is invalid', 503);
+      return finish(rows.length ? { status: 'verified', safeSummary: 'Incident acknowledgement persisted and verified' } : { status: 'blocked', safeSummary: 'Incident state no longer permits acknowledgement', errorCategory: 'invalid_state' });
     }
     if (capability === 'resolve_incident') {
       const evidence = typeof input.recoveryEvidenceReference === 'string' ? input.recoveryEvidenceReference : null;
       if (!evidence) return { status: 'blocked', safeSummary: 'Recovery evidence is required before incident resolution', errorCategory: 'verification_required' };
-      const rows = await queryOrThrow<DbRow[]>(this.db.from('production_incidents').update({ status: 'resolved', recovery_evidence_reference: evidence, resolved_at: now, version: Number(input.targetVersion) + 1, updated_at: now }).eq('id', targetId).eq('project_id', projectId).eq('user_id', userId).in('status', ['investigating','identified','mitigating','monitoring','acknowledged']).eq('version', Number(input.targetVersion)).select('id,status'), 'Incident resolution failed');
-      return rows.length ? { status: 'verified', safeSummary: 'Incident resolution persisted with recovery evidence' } : { status: 'blocked', safeSummary: 'Incident state does not permit resolution', errorCategory: 'invalid_state' };
+      const rows = await checked(this.db.rpc('mutate_operations_internal_target', admission));
+      if (rows.length && rows[0].status !== 'resolved') throw new OperationsServiceError('unknown', 'Incident resolution receipt is invalid', 503);
+      return finish(rows.length ? { status: 'verified', safeSummary: 'Incident resolution persisted with recovery evidence' } : { status: 'blocked', safeSummary: 'Incident state does not permit resolution', errorCategory: 'invalid_state' });
     }
     if (capability === 'retry_job') {
-      const rows = await queryOrThrow<DbRow[]>(this.db.from('swarm_job_queue').update({ status: 'queued', attempt_count: Number(input.targetVersion) + 1, updated_at: now, safe_error: null }).eq('id', targetId).eq('project_id', projectId).eq('user_id', userId).eq('status', 'failed').eq('attempt_count', Number(input.targetVersion)).lt('attempt_count', 3).select('id,status,attempt_count'), 'Job retry failed');
-      return rows.length ? { status: 'verified', safeSummary: 'Job retry was queued exactly once' } : { status: 'blocked', safeSummary: 'Job is not retryable or retry limit was reached', errorCategory: 'invalid_state' };
+      const rows = await checked(this.db.rpc('mutate_operations_internal_target', admission));
+      if (rows.length && (rows[0].status !== 'queued' || rows[0].attempt_count !== Number(input.targetVersion) + 1)) throw new OperationsServiceError('unknown', 'Job retry receipt is invalid', 503);
+      return finish(rows.length ? { status: 'verified', safeSummary: 'Job retry was queued exactly once' } : { status: 'blocked', safeSummary: 'Job is not retryable or retry limit was reached', errorCategory: 'invalid_state' });
     }
     if (capability === 'retry_webhook') {
-      const rows = await queryOrThrow<DbRow[]>(this.db.from('webhook_deliveries').update({ status: 'processing', attempt_count: Number(input.targetVersion) + 1, updated_at: now, safe_error: null }).eq('delivery_id', targetId).eq('project_id', projectId).eq('user_id', userId).eq('status', 'failed').eq('attempt_count', Number(input.targetVersion)).select('delivery_id,status,attempt_count'), 'Webhook retry failed');
-      return rows.length ? { status: 'verified', safeSummary: 'Webhook reprocessing was queued without duplicating receipt evidence' } : { status: 'blocked', safeSummary: 'Webhook is not eligible for retry', errorCategory: 'invalid_state' };
+      const rows = await checked(this.db.rpc('mutate_operations_internal_target', admission));
+      if (rows.length && (rows[0].status !== 'processing' || rows[0].attempt_count !== Number(input.targetVersion) + 1)) throw new OperationsServiceError('unknown', 'Webhook retry receipt is invalid', 503);
+      return finish(rows.length ? { status: 'verified', safeSummary: 'Webhook reprocessing was queued without duplicating receipt evidence' } : { status: 'blocked', safeSummary: 'Webhook is not eligible for retry', errorCategory: 'invalid_state' });
     }
     if (capability === 'emergency_stop' || capability === 'resume_automation') {
       const stopped = capability === 'emergency_stop';
-      const rows = await queryOrThrow<DbRow[]>(this.db.rpc('set_operations_automation_stop', {
-        p_owner: userId, p_project: projectId, p_target: targetId, p_version: Number(input.targetVersion), p_stopped: stopped,
-      }), 'Automation control failed');
+      const rows = await checked(this.db.rpc('mutate_operations_internal_target', admission), targetId === projectId);
+      if (rows.some(row => row.emergency_stopped !== stopped || !Number.isSafeInteger(row.version)
+        || row.version < 1 || (targetId !== projectId && row.version !== Number(input.targetVersion) + 1))) throw new OperationsServiceError('unknown', 'Automation control receipt is invalid', 503);
       if (targetId !== projectId && (rows.length !== 1 || rows[0]?.id !== targetId)) {
         return { status: 'blocked', safeSummary: 'Automation rule changed before this action executed', errorCategory: 'invalid_state' };
       }
-      return { status: 'verified', safeSummary: `${stopped ? 'Emergency stop enabled' : 'Automation resumed'} for ${rows.length} rule(s)` };
+      return finish({ status: 'verified', safeSummary: `${stopped ? 'Emergency stop enabled' : 'Automation resumed'} for ${rows.length} rule(s)` });
     }
     if (capability === 'enable_automation' || capability === 'disable_automation') {
       const enabled = capability === 'enable_automation';
-      const rows = await queryOrThrow<DbRow[]>(this.db.from('operations_automation_rules').update({ enabled, version: Number(input.targetVersion) + 1, updated_at: now }).eq('id', targetId).eq('user_id', userId).eq('project_id', projectId).eq('version', Number(input.targetVersion)).select('id,enabled'), 'Automation rule update failed');
-      return rows.length ? { status: 'verified', safeSummary: `Automation rule ${enabled ? 'enabled' : 'disabled'} and verified` } : { status: 'blocked', safeSummary: 'Automation rule changed before this action executed', errorCategory: 'invalid_state' };
+      const rows = await checked(this.db.rpc('mutate_operations_internal_target', admission));
+      if (rows.some(row => row.enabled !== enabled)) throw new OperationsServiceError('unknown', 'Automation rule receipt is invalid', 503);
+      return finish(rows.length ? { status: 'verified', safeSummary: `Automation rule ${enabled ? 'enabled' : 'disabled'} and verified` } : { status: 'blocked', safeSummary: 'Automation rule changed before this action executed', errorCategory: 'invalid_state' });
     }
     if (capability === 'schedule_maintenance') {
       const startsAt = new Date(String(input.startsAt)); const endsAt = new Date(String(input.endsAt));
@@ -485,16 +535,19 @@ export class OperationsService {
       }
       const reason = typeof input.reason === 'string' ? input.reason.trim().slice(0, 500) : '';
       if (reason.length < 3) return { status: 'blocked', safeSummary: 'Maintenance reason is required', errorCategory: 'invalid_request' };
-      const rows = await queryOrThrow<DbRow[]>(this.db.from('operations_maintenance_windows').insert({ user_id: userId, project_id: projectId, environment_id: targetId, starts_at: startsAt.toISOString(), ends_at: endsAt.toISOString(), reason, owner_id: String(input.actorId), allowed_actions: Array.isArray(input.allowedActions) ? input.allowedActions : [], blocked_actions: Array.isArray(input.blockedActions) ? input.blockedActions : [] }).select('id,status,version'), 'Maintenance scheduling failed');
-      return rows.length ? { status: 'verified', safeSummary: 'Maintenance window persisted and verified', observedState: { maintenanceId: rows[0].id } } : { status: 'failed', safeSummary: 'Maintenance window was not persisted', errorCategory: 'storage_failure' };
+      const rows = await checked(this.db.rpc('mutate_operations_internal_target', admission));
+      if (rows.some(row => row.status !== 'scheduled' || row.version !== 1)) throw new OperationsServiceError('unknown', 'Maintenance scheduling receipt is invalid', 503);
+      return finish(rows.length ? { status: 'verified', safeSummary: 'Maintenance window persisted and verified', observedState: { maintenanceId: rows[0].id } } : { status: 'failed', safeSummary: 'Maintenance window was not persisted', errorCategory: 'storage_failure' });
     }
     if (capability === 'cancel_maintenance') {
-      const rows = await queryOrThrow<DbRow[]>(this.db.from('operations_maintenance_windows').update({ status: 'cancelled', version: Number(input.targetVersion) + 1, updated_at: now }).eq('id', targetId).eq('project_id', projectId).eq('user_id', userId).eq('version', Number(input.targetVersion)).in('status', ['scheduled','active']).select('id,status'), 'Maintenance cancellation failed');
-      return rows.length ? { status: 'verified', safeSummary: 'Maintenance cancellation persisted and verified' } : { status: 'blocked', safeSummary: 'Maintenance window changed or is no longer cancellable', errorCategory: 'invalid_state' };
+      const rows = await checked(this.db.rpc('mutate_operations_internal_target', admission));
+      if (rows.some(row => row.status !== 'cancelled')) throw new OperationsServiceError('unknown', 'Maintenance cancellation receipt is invalid', 503);
+      return finish(rows.length ? { status: 'verified', safeSummary: 'Maintenance cancellation persisted and verified' } : { status: 'blocked', safeSummary: 'Maintenance window changed or is no longer cancellable', errorCategory: 'invalid_state' });
     }
     if (capability === 'execute_growth_campaign') {
-      const rows = await queryOrThrow<DbRow[]>(this.db.from('growth_campaigns').update({ status: 'running', version: Number(input.targetVersion) + 1, updated_at: now }).eq('id', targetId).eq('project_id', projectId).eq('tenant_id', userId).eq('version', Number(input.targetVersion)).eq('status', 'approval_required').select('id,status,version'), 'Growth campaign approval failed');
-      return rows.length ? { status: 'verified', safeSummary: 'Growth campaign approval persisted; recipient processing may begin' } : { status: 'blocked', safeSummary: 'Campaign changed or is not awaiting approval', errorCategory: 'invalid_state' };
+      const rows = await checked(this.db.rpc('mutate_operations_internal_target', admission));
+      if (rows.some(row => row.status !== 'running' || row.version !== Number(input.targetVersion) + 1)) throw new OperationsServiceError('unknown', 'Growth campaign receipt is invalid', 503);
+      return finish(rows.length ? { status: 'verified', safeSummary: 'Growth campaign approval persisted; recipient processing may begin' } : { status: 'blocked', safeSummary: 'Campaign changed or is not awaiting approval', errorCategory: 'invalid_state' });
     }
     if (capability === 'prepare_repair') return { status: 'verified', safeSummary: 'Repair request prepared; branch creation, merge, and production promotion remain separate authorised actions', observedState: { command1Boundary: 'approval_required_before_production' } };
     return { status: 'unsupported', safeSummary: `${capability} is not implemented` };
