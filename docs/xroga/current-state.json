@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "fdd3c4b5d6ed81305c4e3625884c44e14eb88e6c",
-    "sourceTimestampUtc": "2026-10-20T23:08:19+05:00",
-    "auditStartedUtc": "2026-10-20T18:08:37.109Z",
+    "sha": "415daf50bfb3d90fd39e9e1d7ddab69d6b105823",
+    "sourceTimestampUtc": "2026-10-20T23:24:36+05:00",
+    "auditStartedUtc": "2026-10-20T18:24:47.590Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -23148,6 +23148,7 @@
         "backend/src/services/integrations/githubTokenStore.ts:5",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:9",
         "backend/src/services/integrations/oauthPkceStore.ts:10",
+        "backend/src/services/integrations/oauthPkceStore.vaultLeaseRead.test.ts:5",
         "backend/src/services/integrations/userProviderKeys.migration.test.ts:76",
         "backend/src/services/integrations/userProviderKeys.ts:16",
         "backend/src/services/integrations/vercelAccountReceipt.test.ts:5",
@@ -23172,6 +23173,7 @@
         "backend/src/security/vercelRefreshAccount.local.integration.ts",
         "backend/src/services/integrations/credentialVaultRuntime.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+        "backend/src/services/integrations/oauthPkceStore.vaultLeaseRead.test.ts",
         "backend/src/services/integrations/userProviderKeys.migration.test.ts",
         "backend/src/services/integrations/vercelAccountReceipt.test.ts"
       ],
@@ -24351,7 +24353,7 @@
       "id": "surface:949ba325e98bab6b63c3",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sha256": "9d16f7bbc4d5239e19d440b13afa828b91ff9a4df8fb662ec22d919a24420039",
+      "sha256": "d0d00b074aee1a1c610abbe6dd2424f8b9f581c3c73f7780619317d69ce7fc96",
       "symbols": [
         "BUCKET",
         "PkceSession",
@@ -24361,6 +24363,7 @@
         "clearProviderToken",
         "consumePkceSession",
         "current",
+        "currentRefreshLease",
         "envelope",
         "epochProviders",
         "isPolicyProvider",
@@ -24411,6 +24414,7 @@
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:5",
         "backend/src/services/integrations/oauthPkceStore.test.ts:6",
         "backend/src/services/integrations/oauthPkceStore.test.ts:7",
+        "backend/src/services/integrations/oauthPkceStore.vaultLeaseRead.test.ts:4",
         "backend/src/services/integrations/pluginPermissionPolicy.ts:1",
         "backend/src/services/integrations/supabaseAuth.ts:9",
         "backend/src/services/integrations/vercelAuth.ts:10",
@@ -24443,7 +24447,8 @@
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts",
-        "backend/src/services/integrations/oauthPkceStore.test.ts"
+        "backend/src/services/integrations/oauthPkceStore.test.ts",
+        "backend/src/services/integrations/oauthPkceStore.vaultLeaseRead.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -25104,7 +25109,7 @@
       "id": "surface:083de6ff7f0ffdcc0165",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/vercelAuth.ts",
-      "sha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475",
+      "sha256": "8f0245fc5462026b8133fdf8256172c5a83e10560a2c4a506f179ff669f810dd",
       "symbols": [
         "ALLOWED_CALLBACK_ORIGINS",
         "CALLBACK_PATH",
@@ -25271,8 +25276,8 @@
         "backend/src/services/integrations/vercelAuth.ts#verifyVercelTokenLive"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/vercelAuth.ts:420 (user_id)",
-        "backend/src/services/integrations/vercelAuth.ts:446 (user_id)"
+        "backend/src/services/integrations/vercelAuth.ts:423 (user_id)",
+        "backend/src/services/integrations/vercelAuth.ts:449 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/integrations/vercelAuth.ts#buildVercelAuthorizeUrl"
@@ -106816,6 +106821,13 @@
       "id": "test-suite:4e143d1613918feb9727",
       "sourcePath": "backend/src/services/integrations/oauthPkceStore.test.ts",
       "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:5824274651b34ff56041",
+      "sourcePath": "backend/src/services/integrations/oauthPkceStore.vaultLeaseRead.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

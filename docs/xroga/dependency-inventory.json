@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "f37c0b6a324467d93de37535d37e02b60e97c82c",
+  "source_sha": "415daf50bfb3d90fd39e9e1d7ddab69d6b105823",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -13244,7 +13244,7 @@
     },
     {
       "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
-      "sha256": "707408930599d6f84ab3a416990055506e0956f562f2b2645859ce3645ef0a0f"
+      "sha256": "10f38124af684baaf96c9bfda962b89735980a02d4672062c0eaaf881b5cb67f"
     },
     {
       "path": "backend/src/operations/operationsService.ts",
@@ -13904,7 +13904,7 @@
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
-      "sha256": "9d16f7bbc4d5239e19d440b13afa828b91ff9a4df8fb662ec22d919a24420039"
+      "sha256": "d0d00b074aee1a1c610abbe6dd2424f8b9f581c3c73f7780619317d69ce7fc96"
     },
     {
       "path": "backend/src/services/integrations/pluginPermissionPolicy.ts",
@@ -13928,7 +13928,7 @@
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "sha256": "07521d803dc183865f3e009138507d533eebbe9c930201f8bb40f4a65d0e3475"
+      "sha256": "8f0245fc5462026b8133fdf8256172c5a83e10560a2c4a506f179ff669f810dd"
     },
     {
       "path": "backend/src/services/memory/buildMemory.ts",
@@ -20586,42 +20586,42 @@
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 517,
+      "line": 520,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 554,
+      "line": 557,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 555,
+      "line": 558,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 610,
+      "line": 613,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 629,
+      "line": 632,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 737,
+      "line": 740,
       "credentialsInUrl": false
     },
     {
