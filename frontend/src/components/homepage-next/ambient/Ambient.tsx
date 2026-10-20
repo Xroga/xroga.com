@@ -13,10 +13,15 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import a from './Ambient.module.css';
+import { S02Scene } from './S02Scene';
 
 export type AmbientKind = 's02' | 's03' | 's04' | 'horizon';
 
 export function Ambient({ kind }: { kind: AmbientKind }) {
+  return kind === 's02' ? <S02Scene /> : <AmbientLayer kind={kind} />;
+}
+
+function AmbientLayer({ kind }: { kind: AmbientKind }) {
   const ref = useRef<HTMLDivElement>(null);
   const [awake, setAwake] = useState(false);
   useEffect(() => {
