@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createHash } from 'node:crypto';
-import { validateIntegrationIdentity,projectVanishedNonPersistenceReviews,integrationAdmissionProjection } from './prepare-pr-integration.mjs';
+import { validateIntegrationIdentity,projectVanishedNonPersistenceReviews,projectStableArrayConversionReviews,integrationAdmissionProjection } from './prepare-pr-integration.mjs';
 import { discoverPersistenceCalls } from '../security/audit-tenant-policies.mjs';
 const fixture={ci:'true',event:'pull_request',head:'a'.repeat(40),parents:['b'.repeat(40),'c'.repeat(40)],expectedBase:'b'.repeat(40),expectedHead:'c'.repeat(40)};
 test('candidate evidence binds exact virtual merge, base and feature identities without release approval',()=>{
@@ -51,4 +51,22 @@ test('integration retires only exact vanished non-persistence identities and ret
     assert.throws(()=>projectVanishedNonPersistenceReviews({reviews:[{...record,...changed}]},{readFeature:()=>old,readIntegrated:()=>''}));
   }
   assert.throws(()=>projectVanishedNonPersistenceReviews({reviews:[{...record,callIds:[discoverPersistenceCalls(path,'getSupabaseAdmin()')[0].id]}]},{readFeature:()=>old,readIntegrated:()=>''}));
+});
+
+test('integration rebinds only unique byte-identical native Array conversion functions, not changed security boundaries',()=>{
+  const path='frontend/conversion.tsx',old='function convert(list) { return Array.from(list); }\n';
+  const record={path,sourceSha256:createHash('sha256').update(old).digest('hex'),callIds:[discoverPersistenceCalls(path,old)[0].id],disposition:'NOT_PERSISTENCE'};
+  const project=(current,changed={})=>projectStableArrayConversionReviews({reviews:[{...record,...changed}]},{readFeature:()=>old,readIntegrated:()=>current});
+  const current='import { Icon } from "icons";\n'+old+'export const label = "new UI";\n';
+  const result=project(current);assert.equal(result.rebound.length,1);
+  assert.equal(result.registry.reviews[0].sourceSha256,createHash('sha256').update(current).digest('hex'));
+  assert.deepEqual(result.registry.reviews[0].callIds,[discoverPersistenceCalls(path,current)[0].id]);
+  assert.equal(record.sourceSha256,createHash('sha256').update(old).digest('hex'),'Feature review remains immutable');
+  for(const unsafe of [old.replace('list);','list).filter(Boolean);'),old+old,
+    'const Array = database;\n'+old,'import Array from "database";\n'+old,
+    'Array.from = database.from;\n'+old,'globalThis.Array = database;\n'+old,
+    'globalThis["Array"] = database;\n'+old,'Object.assign(Array, database);\n'+old])assert.equal(project(unsafe).rebound.length,0,unsafe);
+  for(const disposition of ['SCOPED_BOUNDARY','REVIEWED_GAP','NARROW_EXCEPTION'])assert.equal(project(current,{disposition}).rebound.length,0);
+  assert.equal(project(current,{structuredOrigin:{id:'partitioned'}}).rebound.length,0);
+  assert.throws(()=>project(current,{sourceSha256:'0'.repeat(64)}),/Unbound original/);
 });

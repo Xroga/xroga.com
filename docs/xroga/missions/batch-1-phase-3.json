@@ -13,6 +13,7 @@
     "backend/src/services/integrations/ociKmsCryptoProvider.ts",
     "backend/src/services/integrations/ociKmsCryptoProvider.test.ts",
     "scripts/security/verify-oci-kms.ts",
+    "scripts/ci/prepare-pr-integration.test.mjs",
     "docs/xroga/evidence/command-009/oci-kms-procedure.md",
     ".github/workflows/xroga-tenant-security.yml",
     "backend/package.json",
