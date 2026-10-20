@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "f37c0b6a324467d93de37535d37e02b60e97c82c",
-    "sourceTimestampUtc": "2026-10-20T23:05:39+05:00",
-    "auditStartedUtc": "2026-10-20T18:06:13.656Z",
+    "sha": "fdd3c4b5d6ed81305c4e3625884c44e14eb88e6c",
+    "sourceTimestampUtc": "2026-10-20T23:08:19+05:00",
+    "auditStartedUtc": "2026-10-20T18:08:37.109Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -97823,7 +97823,7 @@
       "sourcePath": "supabase/migrations/20261020000400_operations_provider_budget_authority.sql",
       "version": "20261020000400",
       "order": 131,
-      "sha256": "7245896af7b240b5ee7626b064432fe798720cfe9dfd2f4eab8ce57c5a38e41b"
+      "sha256": "d36522c3980609634c7d5f29f1404d07fd6733cbdeffe31e101ad407f8564726"
     },
     {
       "id": "migration:cf0426931a762268dd7b",
