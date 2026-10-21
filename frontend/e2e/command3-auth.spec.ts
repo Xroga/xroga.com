@@ -884,7 +884,9 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // A freshly deployed API can need more than Playwright's 5-second assertion
   // default to warm its authenticated portfolio query. Wait for the durable product
   // result; the assertion still fails if the API never returns it.
-  await expect(page.getByText(`command3-demo-owner-${run}`)).toBeVisible({ timeout: 20_000 });
+  // The same project also appears in the persistent sidebar. Require the
+  // Operations product heading so navigation alone cannot satisfy this check.
+  await expect(page.getByRole('heading', { level: 2, name: `command3-demo-owner-${run}`, exact: true })).toBeVisible({ timeout: 20_000 });
   expect(browserBearer).toMatch(/^Bearer /);
   const allowed = await fetch(`${backendUrl}/api/operations/products/${ownerProjectId}`, { headers: { Authorization: browserBearer } });
   const denied = await fetch(`${backendUrl}/api/operations/products/${outsiderProjectId}`, { headers: { Authorization: browserBearer } });

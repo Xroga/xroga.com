@@ -10,6 +10,7 @@
   "risk": "high",
   "scope": "Founder-authorized Phase3 only, original Command008 and009, all22 criteria unchanged. Preserve accepted Phase2 source and proof. No Phase4 implementation or production authorization.",
   "changedFiles": [
+    "frontend/e2e/command3-auth.spec.ts",
     "docs/xroga/security/current-migration-additions.json",
     "scripts/security/full-supabase-history.mjs",
     "scripts/security/schema-catalog.mjs",
