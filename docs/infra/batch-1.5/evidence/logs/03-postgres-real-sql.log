@@ -1,142 +1,181 @@
-# cmd: npx tsx --test src/storage/postgresRepository.integration.test.ts src/storage/migration/postgresMigration.integration.test.ts
+# cmd: npx tsx --test src/storage/migration/postgresMigration.integration.test.ts src/storage/postgresRepository.integration.test.ts src/storage/schemaUpgrade.integration.test.ts
 TAP version 13
 # Subtest: migration engine against real PostgreSQL ledger + metadata
     # Subtest: project_files inline content (data URL + text) migrates, links on READ_NEW, unlinks on rollback; sources untouched
     ok 1 - project_files inline content (data URL + text) migrates, links on READ_NEW, unlinks on rollback; sources untouched
       ---
-      duration_ms: 103.336593
+      duration_ms: 118.524133
       type: 'test'
       ...
     # Subtest: two workers on real SKIP LOCKED claims copy every item once; replaying changes nothing
     ok 2 - two workers on real SKIP LOCKED claims copy every item once; replaying changes nothing
       ---
-      duration_ms: 276.267116
+      duration_ms: 395.402126
       type: 'test'
       ...
     # Subtest: SupabaseStorageSource: owner from a UUID folder, unknown owner BLOCKED, secret bucket refused
     ok 3 - SupabaseStorageSource: owner from a UUID folder, unknown owner BLOCKED, secret bucket refused
       ---
-      duration_ms: 0.715342
+      duration_ms: 1.362361
       type: 'test'
       ...
     1..3
 ok 1 - migration engine against real PostgreSQL ledger + metadata
   ---
-  duration_ms: 632.176439
+  duration_ms: 1016.793699
   type: 'suite'
   ...
 # Subtest: Xroga Drive against real PostgreSQL (migration + RLS + atomic quota)
     # Subtest: full lifecycle through real SQL: reach READY with verified hash, usage exact
     ok 1 - full lifecycle through real SQL: reach READY with verified hash, usage exact
       ---
-      duration_ms: 39.806793
+      duration_ms: 43.88019
       type: 'test'
       ...
     # Subtest: the database itself refuses PENDING->READY, READY without a verified hash, and identity edits
     ok 2 - the database itself refuses PENDING->READY, READY without a verified hash, and identity edits
       ---
-      duration_ms: 32.688921
+      duration_ms: 37.313225
       type: 'test'
       ...
     # Subtest: DELETED is terminal in the database
     ok 3 - DELETED is terminal in the database
       ---
-      duration_ms: 23.635954
+      duration_ms: 34.62699
       type: 'test'
       ...
     # Subtest: 50 truly concurrent reservations against a 1000-byte quota admit exactly 10
     ok 4 - 50 truly concurrent reservations against a 1000-byte quota admit exactly 10
       ---
-      duration_ms: 162.192128
+      duration_ms: 192.924122
       type: 'test'
       ...
     # Subtest: concurrent completions of the same object commit the bytes exactly once
     ok 5 - concurrent completions of the same object commit the bytes exactly once
       ---
-      duration_ms: 58.979997
+      duration_ms: 65.539512
       type: 'test'
       ...
     # Subtest: commit/release/free are idempotent and never go negative
     ok 6 - commit/release/free are idempotent and never go negative
       ---
-      duration_ms: 16.792577
+      duration_ms: 36.992678
       type: 'test'
       ...
     # Subtest: reconcile_usage repairs drift injected with a superuser UPDATE
     ok 7 - reconcile_usage repairs drift injected with a superuser UPDATE
       ---
-      duration_ms: 17.48311
+      duration_ms: 34.239464
       type: 'test'
       ...
     # Subtest: RLS and grants
         # Subtest: an owner sees only their own READY objects
         ok 1 - an owner sees only their own READY objects
           ---
-          duration_ms: 3.312747
+          duration_ms: 3.524729
           type: 'test'
           ...
         # Subtest: authenticated cannot read bucket/object_key/upload id columns
         ok 2 - authenticated cannot read bucket/object_key/upload id columns
           ---
-          duration_ms: 5.004392
+          duration_ms: 6.189628
           type: 'test'
           ...
         # Subtest: authenticated cannot insert, update, delete, or call quota/migration functions
         ok 3 - authenticated cannot insert, update, delete, or call quota/migration functions
           ---
-          duration_ms: 13.197632
+          duration_ms: 8.775539
           type: 'test'
           ...
         # Subtest: anon sees and does nothing
         ok 4 - anon sees and does nothing
           ---
-          duration_ms: 1.951858
+          duration_ms: 1.9278
           type: 'test'
           ...
         # Subtest: forged JWT subject cannot widen what is visible
         ok 5 - forged JWT subject cannot widen what is visible
           ---
-          duration_ms: 1.072679
+          duration_ms: 1.113471
           type: 'test'
           ...
         1..5
     ok 8 - RLS and grants
       ---
-      duration_ms: 39.73542
+      duration_ms: 45.279433
       type: 'suite'
       ...
     # Subtest: migration ledger
         # Subtest: one destination per source: duplicate source rows are refused at the database
         ok 1 - one destination per source: duplicate source rows are refused at the database
           ---
-          duration_ms: 2.546164
+          duration_ms: 3.624044
           type: 'test'
           ...
         # Subtest: concurrent workers claim disjoint items (SKIP LOCKED) and leases block re-claims until expiry
         ok 2 - concurrent workers claim disjoint items (SKIP LOCKED) and leases block re-claims until expiry
           ---
-          duration_ms: 27.554111
+          duration_ms: 54.597869
           type: 'test'
           ...
         1..2
     ok 9 - migration ledger
       ---
-      duration_ms: 30.297051
+      duration_ms: 58.44058
       type: 'suite'
       ...
     1..9
 ok 2 - Xroga Drive against real PostgreSQL (migration + RLS + atomic quota)
   ---
-  duration_ms: 661.969687
+  duration_ms: 1031.081161
   type: 'suite'
   ...
-1..2
-# tests 17
-# suites 4
-# pass 17
+# Subtest: migration upgrade, idempotency, hardening and rollback on real PostgreSQL
+    # Subtest: upgrade of a populated schema keeps every existing row byte-identical; the new column is null
+    ok 1 - upgrade of a populated schema keeps every existing row byte-identical; the new column is null
+      ---
+      duration_ms: 170.70818
+      type: 'test'
+      ...
+    # Subtest: is idempotent: applying the migration a second and third time changes nothing and raises nothing
+    ok 2 - is idempotent: applying the migration a second and third time changes nothing and raises nothing
+      ---
+      duration_ms: 156.00856
+      type: 'test'
+      ...
+    # Subtest: privileged-function and table hardening is in place: pinned search_path, RLS forced, no PUBLIC execute
+    ok 3 - privileged-function and table hardening is in place: pinned search_path, RLS forced, no PUBLIC execute
+      ---
+      duration_ms: 199.714225
+      type: 'test'
+      ...
+    # Subtest: wrong-tenant use of the quota functions is refused by the database itself
+    ok 4 - wrong-tenant use of the quota functions is refused by the database itself
+      ---
+      duration_ms: 165.610772
+      type: 'test'
+      ...
+    # Subtest: the documented rollback restores the original shape and leaves existing rows untouched
+    ok 5 - the documented rollback restores the original shape and leaves existing rows untouched
+      ---
+      duration_ms: 311.970191
+      type: 'test'
+      ...
+    1..5
+ok 3 - migration upgrade, idempotency, hardening and rollback on real PostgreSQL
+  ---
+  duration_ms: 1326.968741
+  type: 'suite'
+  ...
+1..3
+# tests 22
+# suites 5
+# pass 22
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 1060.261573
+# duration_ms 1739.365045
+
+
 # exit: 0

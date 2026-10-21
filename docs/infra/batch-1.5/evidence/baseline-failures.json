@@ -1,0 +1,11 @@
+{
+  "note": "Tests that fail identically on pristine origin/main 80d1f417 on the same toolchain (STALE_FACT: product facts carry a verification date that the sandbox clock has passed). Classified BASELINE_FAILURE, not Phase 1 regressions. Any other failure is a regression.",
+  "main_sha": "80d1f417338b4c5b95a07fc956604a1652cef7c7",
+  "file": "backend/src/organicIntelligence/organicIntelligence.test.ts",
+  "signature": "validate reports valid:false with STALE_FACT issues (e.g. 'Verification overdue by 0 days')",
+  "tests": [
+    "intelligence and report expose product opportunities and missing data honestly",
+    "CLI validation and report commands execute as non-destructive dry runs",
+    "every CLI command performs a real dry-run and supports JSON and verbose output"
+  ]
+}

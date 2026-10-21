@@ -1,0 +1,68 @@
+# Batch 1.5 Phase 1 verification. SAFE BY CONSTRUCTION:
+#   - runs only on pushes to the Claude-owned branch, or when dispatched by hand; it is NOT triggered by pull_request or by main
+#   - uses no repository/environment secrets and no GitHub Environment (nothing can reach Supabase, Fly, Cloudflare or production)
+#   - read-only token; the database is a disposable service container; the object store is a throw-away S3 emulator
+#   - no deploy, no migration of any real database, no paid resource
+# It does NOT replace the repository's own required checks (unit-tests, api-build-check, supabase-migrate dry run on PRs).
+name: storage-phase1
+
+on:
+  push:
+    branches: ['claude/xroga-batch-1-5']
+    paths:
+      - 'backend/src/storage/**'
+      - 'backend/src/routes/drive*'
+      - 'backend/src/services/storage/**'
+      - 'supabase/migrations/20261022000000_storage_drive_foundation.sql'
+      - 'scripts/storage/**'
+      - 'docs/infra/batch-1.5/evidence/**'
+      - '.github/workflows/storage-phase1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: storage-phase1-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: ci-disposable
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      STORAGE_TEST_DATABASE_URL: postgresql://postgres:ci-disposable@127.0.0.1:5432/postgres
+      STORAGE_TEST_S3_ENDPOINT: http://127.0.0.1:4569
+      REQUIRE_PHASE1_FIXTURES: '1'
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Start synthetic S3 emulator (not Cloudflare R2)
+        run: |
+          mkdir -p /tmp/s3emu && cd /tmp/s3emu && npm init -y >/dev/null && npm i s3rver@3.7.1 --no-audit --no-fund
+          (node "$GITHUB_WORKSPACE/docs/infra/batch-1.5/evidence/start-s3-emulator.cjs" > /tmp/s3emu/log.txt 2>&1 &)
+          for i in $(seq 1 20); do curl -fsS http://127.0.0.1:4569/ >/dev/null && break; sleep 1; done
+      - name: Phase 1 verification (fails on any missing fixture or any non-baseline failure)
+        run: node docs/infra/batch-1.5/evidence/run-phase1-tests.mjs
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: storage-phase1-results
+          path: docs/infra/batch-1.5/evidence/logs/

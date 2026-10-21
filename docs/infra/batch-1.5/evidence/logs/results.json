@@ -1,0 +1,98 @@
+{
+  "sourceSha": "d512c56523f6a61c4cc48695bab4c807946ef8ad",
+  "dirtyTrackedFiles": 2,
+  "requireFixtures": true,
+  "fixtures": {
+    "postgres": "READY",
+    "s3Emulator": "READY",
+    "r2Provider": "NOT_AUTHORISED"
+  },
+  "results": [
+    {
+      "id": "01-typecheck",
+      "required": true,
+      "command": "npx tsc --noEmit -p .",
+      "fixture": null,
+      "fixtureState": null,
+      "exit": 0,
+      "tests": 0,
+      "pass": 0,
+      "fail": 0,
+      "skipped": 0,
+      "suiteSkips": 0,
+      "status": "PASS"
+    },
+    {
+      "id": "02-unit-and-adapters",
+      "required": true,
+      "command": "npx tsx --test src/routes/drive.test.ts src/routes/driveRegistration.test.ts src/services/storage/projectFiles.canonical.test.ts src/storage/artifactSink.test.ts src/storage/config.matrix.test.ts src/storage/migration/approvals.test.ts src/storage/migration/cli.test.ts src/storage/migration/engine.t",
+      "fixture": null,
+      "fixtureState": null,
+      "exit": 0,
+      "tests": 135,
+      "pass": 135,
+      "fail": 0,
+      "skipped": 0,
+      "suiteSkips": 0,
+      "status": "PASS"
+    },
+    {
+      "id": "03-postgres-real-sql",
+      "required": true,
+      "command": "npx tsx --test src/storage/migration/postgresMigration.integration.test.ts src/storage/postgresRepository.integration.test.ts src/storage/schemaUpgrade.integration.test.ts",
+      "fixture": "postgres",
+      "fixtureState": "READY",
+      "exit": 0,
+      "tests": 22,
+      "pass": 22,
+      "fail": 0,
+      "skipped": 0,
+      "suiteSkips": 0,
+      "status": "PASS"
+    },
+    {
+      "id": "04-s3-wire-emulator-SYNTHETIC",
+      "required": true,
+      "command": "npx tsx --test src/storage/r2ObjectStore.wire.integration.test.ts",
+      "fixture": "s3Emulator",
+      "fixtureState": "READY",
+      "exit": 0,
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "skipped": 0,
+      "suiteSkips": 0,
+      "status": "PASS"
+    },
+    {
+      "id": "05-r2-provider-REAL",
+      "required": false,
+      "command": "npx tsx --test src/storage/r2.provider.integration.test.ts",
+      "fixture": "r2Provider",
+      "fixtureState": "NOT_AUTHORISED",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "06-full-backend-suite",
+      "required": true,
+      "command": "npm test",
+      "fixture": null,
+      "fixtureState": null,
+      "exit": 1,
+      "tests": 2881,
+      "pass": 2878,
+      "fail": 3,
+      "skipped": 0,
+      "suiteSkips": 1,
+      "baselineFailures": [
+        "intelligence and report expose product opportunities and missing data honestly",
+        "CLI validation and report commands execute as non-destructive dry runs",
+        "every CLI command performs a real dry-run and supports JSON and verbose output"
+      ],
+      "regressions": [],
+      "status": "PASS_WITH_BASELINE_FAILURES"
+    }
+  ],
+  "overall": "PASS",
+  "note": "SYNTHETIC steps are not provider evidence. NOT_RUN/NOT_AUTHORISED means no real-R2 claim can be made from this run."
+}

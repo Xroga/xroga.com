@@ -35,9 +35,16 @@ fails=$(echo "$res" | sed -E 's/.*# fail ([0-9]+).*/\1/'); verdict=$([ "${fails:
 echo "$verdict | service: skip BOTH size verifications | $res" | tee -a "$LOG"
 mut "memory repo: commit replay double counts" src/storage/repository.ts "if (r.state === 'COMMITTED') return 'ALREADY_COMMITTED';" "if (r.state === 'COMMITTED') { this.#u(r.tenantId).committedBytes += actual; return 'ALREADY_COMMITTED'; }" src/storage/storageService.test.ts
 mut "migration: skip source-vs-destination hash comparison" src/storage/migration/engine.ts "if (object.sha256Verified !== sourceSha || object.sizeBytes !== opened.size) {" "if (false) {" src/storage/migration/engine.test.ts
+mut "approvals: signature not verified" src/storage/migration/approvals.ts "if (!verify(null, payload, createPublicKey(publicKeyPem), Buffer.from(s, 'base64url'))) return" "if (false) return" src/storage/migration/approvals.test.ts
+mut "approvals: plan digest not compared" src/storage/migration/approvals.ts "if (claims.planDigest !== e.planDigest) return" "if (false) return" src/storage/migration/approvals.test.ts
+mut "approvals: environment not compared" src/storage/migration/approvals.ts "if (claims.environment !== e.environment) return" "if (false) return" src/storage/migration/approvals.test.ts
+mut "config: invalid STORAGE_WRITE_MODE silently accepted" src/storage/runtime.ts "else problems.push(\`STORAGE_WRITE_MODE=" "else void (\`STORAGE_WRITE_MODE=" src/storage/config.matrix.test.ts
+mut "provider errors: ECONNREFUSED not transient" src/storage/r2ObjectStore.ts "'ECONNREFUSED', 'ENOTFOUND'" "'ENOTFOUND'" src/storage/r2ObjectStore.test.ts
 if [ -n "${STORAGE_TEST_DATABASE_URL:-}" ]; then
 mut "SQL: drop READY-is-verified CHECK" $M "check (state <> 'READY' or (size_bytes is not null and sha256_verified is not null and verified_at is not null))" "check (true)" src/storage/postgresRepository.integration.test.ts
 mut "SQL: remove tenant row lock in storage_reserve" $M "select * into u from public.storage_usage where tenant_id = p_tenant for update;" "select * into u from public.storage_usage where tenant_id = p_tenant;" src/storage/postgresRepository.integration.test.ts
+mut "SQL: FORCE RLS removed from storage_objects" $M "alter table public.storage_objects          force row level security;" "-- removed" src/storage/schemaUpgrade.integration.test.ts
+mut "SQL: search_path pin removed from storage_reserve" $M ") returns text language plpgsql set search_path = public, pg_temp as \$\$" ") returns text language plpgsql as \$\$" src/storage/schemaUpgrade.integration.test.ts
 mut "SQL: authenticated can read object_key" $M "grant select (id, tenant_id," "grant select (object_key, id, tenant_id," src/storage/postgresRepository.integration.test.ts
 fi
 git -C .. diff --quiet -- backend supabase && echo "restored: working tree clean for mutated files" | tee -a "$LOG"
