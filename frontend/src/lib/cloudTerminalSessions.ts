@@ -14,6 +14,8 @@ import {
   uploadDelayMs,
 } from '@/lib/uploadCoalescing';
 import type { ChatMessage } from '@/context/TerminalChatContext';
+import { createClient } from '@/lib/supabase/client';
+import { safeConversationTitle } from '@/lib/sidebarOrganization';
 
 const CLOUD_EVENT = 'xroga-cloud-terminals-changed';
 const ordinalCache = new Map<string, number>();
@@ -97,7 +99,7 @@ export function allocateTerminalNumber(sessionId: string, repo: string): number 
 async function pushTerminalSessionToCloudNow(
   entry: TerminalHistoryEntry
 ): Promise<CloudTerminalSessionSummary | null> {
-  if (!entry.id || !entry.githubRepoName?.includes('/') || !entry.messages?.length) return null;
+  if (!entry.id || !entry.messages?.length) return null;
 
   const inFlight = inFlightUploads.get(entry.id);
   if (inFlight) {
@@ -109,7 +111,7 @@ async function pushTerminalSessionToCloudNow(
   }
 
   const body = {
-    githubRepoName: entry.githubRepoName,
+    githubRepoName: entry.githubRepoName?.includes('/') ? entry.githubRepoName : '',
     githubBranch: entry.githubBranch || 'main',
     title: entry.title,
     prompt: entry.prompt,
@@ -128,8 +130,49 @@ async function pushTerminalSessionToCloudNow(
 
   const upload = (async () => {
     try {
-      const { session } = await api.terminalSessions.upsert(entry.id, body);
-      rememberTerminalNumber(session.id, session.terminalNumber, session.githubRepoName);
+      let session: CloudTerminalSessionSummary;
+      if (entry.githubRepoName?.includes('/')) {
+        ({ session } = await api.terminalSessions.upsert(entry.id, body));
+        if (session.githubRepoName?.includes('/')) rememberTerminalNumber(session.id, session.terminalNumber, session.githubRepoName);
+      } else {
+        // General chats are saved directly to the existing Supabase history with RLS.
+        // The API's legacy write contract requires a GitHub repo and is not suitable.
+        const client = createClient();
+        const { data:auth, error:authError } = await client.auth.getUser();
+        if (authError || !auth.user?.id) throw new Error('Sign in to save conversations');
+        const { data:existing } = await client.from('terminal_sessions')
+          .select('created_at,terminal_number').eq('id',entry.id).eq('user_id',auth.user.id).maybeSingle();
+        const maxGeneralOrdinal=async()=>{
+          const {data,error}=await client.from('terminal_sessions').select('terminal_number')
+            .eq('user_id',auth.user.id).eq('github_repo_name','')
+            .order('terminal_number',{ascending:false}).limit(1).maybeSingle();
+          if(error)throw error;
+          return Number(data?.terminal_number||0)+1;
+        };
+        let ordinal=existing?.terminal_number||await maxGeneralOrdinal();
+        const saveGeneral=async(number:number)=>client.from('terminal_sessions')
+          .upsert({
+            id:entry.id,user_id:auth.user.id,github_repo_name:'',github_branch:'main',terminal_number:number,
+            title:safeConversationTitle(entry.title,entry.prompt),prompt:entry.prompt,preview:entry.preview,
+            messages:body.messages,kind:entry.kind,status:entry.status || 'active',
+            message_count:body.messages.length,created_at:existing?.created_at || entry.createdAt,
+            updated_at:new Date().toISOString(),
+          },{onConflict:'id'})
+          .select('id,github_repo_name,github_branch,terminal_number,title,preview,kind,status,message_count,created_at,updated_at')
+          .single();
+        let {data,error}=await saveGeneral(ordinal);
+        for(let attempt=0;error&&attempt<3&&
+          (error.code==='23505'||/terminal_number|uq_terminal_sessions/i.test(error.message||''));attempt++){
+          ordinal=Math.max(ordinal+1,await maxGeneralOrdinal());
+          ({data,error}=await saveGeneral(ordinal));
+        }
+        if(error || !data) throw error || new Error('General conversation was not saved');
+        session={
+          id:data.id,githubRepoName:'',githubBranch:'main',terminalNumber:1,
+          title:data.title,preview:data.preview,kind:data.kind,status:data.status,
+          messageCount:data.message_count,createdAt:data.created_at,updatedAt:data.updated_at,
+        };
+      }
       rememberUpload(session.id, fingerprint, Date.now());
       // Only announce a change that a listener could act on. Announcing every
       // save turned each upload into a sidebar refresh, and each refresh into
@@ -152,7 +195,7 @@ async function pushTerminalSessionToCloudNow(
 export function pushTerminalSessionToCloud(
   entry: TerminalHistoryEntry
 ): Promise<CloudTerminalSessionSummary | null> {
-  if (!entry.id || !entry.githubRepoName?.includes('/') || !entry.messages?.length) {
+  if (!entry.id || !entry.messages?.length) {
     return Promise.resolve(null);
   }
   const existing = pendingUploads.get(entry.id);
@@ -186,7 +229,7 @@ export async function listCloudTerminalSessions(
   try {
     const { sessions } = await api.terminalSessions.list(repo, opts);
     for (const s of sessions) {
-      rememberTerminalNumber(s.id, s.terminalNumber, s.githubRepoName);
+      if (s.githubRepoName?.includes('/')) rememberTerminalNumber(s.id, s.terminalNumber, s.githubRepoName);
     }
     return sessions;
   } catch {
@@ -210,7 +253,7 @@ export function cloudToHistoryEntry(session: CloudTerminalSession): TerminalHist
   const messages = (Array.isArray(session.messages) ? session.messages : []) as ChatMessage[];
   return {
     id: session.id,
-    title: cloudTerminalLabel(session.terminalNumber),
+    title: safeConversationTitle(session.title, session.prompt),
     preview: session.preview || session.prompt.slice(0, 200),
     prompt: session.prompt,
     messages,
@@ -218,7 +261,7 @@ export function cloudToHistoryEntry(session: CloudTerminalSession): TerminalHist
     status: (session.status as TerminalHistoryEntry['status']) || 'complete',
     githubRepoName: session.githubRepoName,
     githubBranch: session.githubBranch || 'main',
-    githubRepoUrl: `https://github.com/${session.githubRepoName}`,
+    githubRepoUrl: session.githubRepoName?.includes('/') ? `https://github.com/${session.githubRepoName}` : undefined,
     messageCount: session.messageCount || messages.length,
     createdAt: session.createdAt,
     updatedAt: session.updatedAt,
@@ -245,7 +288,7 @@ export async function migrateLocalSessionsToCloud(
 
   const have = new Set(already.map((s) => s.id));
   const candidates = local.filter(
-    (e) => e.githubRepoName?.includes('/') && e.messages?.length && !have.has(e.id)
+    (e) => e.messages?.length && !have.has(e.id)
   );
   if (!candidates.length) return false;
 
