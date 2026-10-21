@@ -1,4 +1,18 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
+
+async function chooseStarter(page: Page, feature: string) {
+  const input = page.locator('[data-terminal-composer]');
+  const previous = await input.inputValue();
+  await page.getByRole('menuitem', { name: feature, exact: true }).hover();
+  const detail = page.getByRole('region', { name: `${feature} action`, exact: true });
+  await expect(detail).toBeVisible();
+  await detail.getByRole('button', { name: 'Use this in chat' }).click();
+  await expect.poll(() => input.inputValue()).toContain('My goal:');
+  const next = await input.inputValue();
+  expect(next.startsWith(`${previous ? `${previous.trimEnd()}\n\n` : ''}I want Xroga to help with ${feature.toLowerCase()}`)).toBe(true);
+  expect(next).toContain('Ask for approval before publishing, spending money, or taking consequential external actions.');
+  expect(next).toContain('Do not claim successful execution without evidence.');
+}
 
 // Local UI fixtures only: no authentication bypass or real model requests.
 test.use({ bypassCSP: true });
@@ -53,6 +67,22 @@ test('fullscreen preserves the current starter, draft and one composer on entry 
   await header.getByRole('button', { name: 'Exit fullscreen', exact: true }).click();
   await expect(page.locator('body')).not.toHaveClass(/xv-terminal-fullscreen-active/);
   await expect(composer).toHaveValue('Draft retained through fullscreen');
+});
+
+test('the title-bar toggle hides the single composer and restores its draft without a floating duplicate', async ({ page }) => {
+  await page.goto('/workspace');
+  const composer = page.locator('[data-terminal-composer]');
+  const header = page.getByTestId('terminal-identity-header');
+  await composer.fill('Retained local hide/restore draft');
+  await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
+  await expect(composer).toHaveCount(0);
+  await expect(page.getByTestId('persistent-terminal-dock').getByRole('button', { name: 'Show the chatbar' })).toHaveCount(0);
+  const restore = header.getByRole('button', { name: 'Show the chatbar', exact: true });
+  await expect(restore).toHaveAttribute('aria-pressed', 'true');
+  await restore.click();
+  await expect(composer).toHaveCount(1);
+  await expect(composer).toHaveValue('Retained local hide/restore draft');
+  await expect(header.getByRole('button', { name: 'Hide the chatbar', exact: true })).toHaveAttribute('aria-pressed', 'false');
 });
 
 test('private empty workspace never exposes starter cards or starter plus', async ({ page }) => {
@@ -144,12 +174,12 @@ test('cards preserve drafts and conversation removes all starter styling', async
   const input = page.locator('[data-terminal-composer]');
   await expect(cards).toBeVisible();
   await cards.getByRole('button', { name: 'Create', exact: true }).click();
-  await page.getByRole('menuitem', { name: 'Documents', exact: true }).click();
-  await expect(input).toHaveValue('Draft a document about: ');
+  await chooseStarter(page, 'Documents');
+  await expect(input).toHaveValue(/My goal: Draft a document about:/);
   await input.fill('My exact written brief');
   await cards.getByRole('button', { name: 'Find', exact: true }).click();
-  await page.getByRole('menuitem', { name: 'Web research', exact: true }).click();
-  await expect(input).toHaveValue('My exact written brief\n\nResearch this topic on the web and cite sources: ');
+  await chooseStarter(page, 'Web research');
+  await expect(input).toHaveValue(/^My exact written brief\n\nI want Xroga[\s\S]*My goal: Research this topic on the web and cite sources:/);
   await input.fill('Hello, local UI fixture test');
   await page.getByRole('button', { name: 'Send prompt', exact: true }).click();
   await expect(page.getByText('Local UI fixture reply verified.', { exact: false }).first()).toBeVisible();
@@ -172,12 +202,16 @@ test('feature menus open only on click, support keyboard and never send', async 
   await expect(page.getByRole('menu', { name: 'Create features' })).toHaveCount(0);
   await page.locator('[data-capability="create"]').click();
   await expect(page.getByRole('menu', { name: 'Create features' })).toBeVisible();
-  await page.getByRole('menuitem', { name: 'Images', exact: true }).click();
-  await expect(input).toHaveValue('Create an image of: ');
+  await chooseStarter(page, 'Images');
+  await expect(input).toHaveValue(/My goal: Create an image of:/);
   await page.locator('[data-capability="build"]').click();
-  await expect(page.getByRole('menuitem', { name: 'Websites', exact: true })).toBeFocused();
-  await page.keyboard.press('ArrowDown');
-  await expect(page.getByRole('menuitem', { name: 'Apps', exact: true })).toBeFocused();
+  // PR833 makes focus reveal the category detail. Both the detail action and
+  // Back remain keyboard reachable, with Escape dismissing the whole portal.
+  await page.getByRole('menuitem', { name: 'Apps', exact: true }).focus();
+  await expect(page.getByRole('region', { name: 'Apps action', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Back to categories', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('group', { name: 'Build categories', exact: true })).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('menu', { name: 'Build features' })).toHaveCount(0);
   for (const [id, feature, expected] of [
@@ -185,8 +219,8 @@ test('feature menus open only on click, support keyboard and never send', async 
     ['ship', 'Test a project', 'Test this project'],
   ]) {
     await page.locator(`[data-capability="${id}"]`).click();
-    await page.getByRole('menuitem', { name: feature, exact: true }).click();
-    await expect(input).toHaveValue(new RegExp(`^${expected}`));
+    await chooseStarter(page, feature);
+    await expect(input).toHaveValue(new RegExp(`My goal: ${expected}`));
   }
   for (const [title, id, feature, expected] of [
     ['AI Employees', 'employees', 'Research assistant', 'Help me delegate'],
@@ -195,8 +229,8 @@ test('feature menus open only on click, support keyboard and never send', async 
   ]) {
     await page.getByRole('button', { name: `Show ${title}`, exact: true }).click();
     await page.locator(`[data-capability="${id}"]`).click();
-    await page.getByRole('menuitem', { name: feature, exact: true }).click();
-    await expect(input).toHaveValue(new RegExp(`^${expected}`));
+    await chooseStarter(page, feature);
+    await expect(input).toHaveValue(new RegExp(`My goal: ${expected}`));
   }
   expect(requests).toBe(0);
 });
@@ -236,8 +270,8 @@ test('solid model and plus menus are monochrome and mobile uses only a model sym
   await expect(model.locator('span')).toBeHidden();
   await expect(page.getByTestId('mobile-model-icon')).toBeVisible();
   await page.locator('[data-capability="create"]').click();
-  await page.getByRole('menuitem', { name: 'Documents', exact: true }).click();
-  await expect(page.locator('[data-terminal-composer]')).toHaveValue('Draft a document about: ');
+  await chooseStarter(page, 'Documents');
+  await expect(page.locator('[data-terminal-composer]')).toHaveValue(/My goal: Draft a document about:/);
 });
 
 test('mobile header joins the workspace and five cards reveal descriptions on tap', async ({ page }) => {
