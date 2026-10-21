@@ -157,7 +157,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
                   children
                 )}
               </main>
-              <TerminalDock />
+              {isDashboard ? <TerminalDock /> : null}
             </div>
             <MobileNav />
           </div>

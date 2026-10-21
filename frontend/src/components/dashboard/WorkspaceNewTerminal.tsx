@@ -95,7 +95,7 @@ function AutomaticIntro() {
     return () => window.clearTimeout(delay);
   }, [reducedMotion]);
   return <div className={styles.automatic} aria-label="Automatic by default. No models or tools to choose. Type or speak what you need, and Xroga routes the work.">
-    <strong>Automatic by default.</strong>
+    <span className={styles.automaticFirst} data-visible={!showDetail} aria-hidden={showDetail}><strong>Automatic by default.</strong></span>
     <span className={styles.automaticDetail} data-visible={showDetail} aria-hidden={!showDetail}>
       No models or tools to choose. Type or speak what you need, and Xroga routes the work.
     </span>

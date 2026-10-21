@@ -41,6 +41,7 @@ import { WorkflowIcon as LucideWorkflowIcon } from '@/components/icons/animated/
 import { ClockIcon as LucideClockIcon } from '@/components/icons/animated/lucide-animated/clock';
 import { BotIcon as LucideBotIcon } from '@/components/icons/animated/lucide-animated/bot';
 import { BlocksIcon as LucideBlocksIcon } from '@/components/icons/animated/lucide-animated/blocks';
+import { LocateIcon } from '@/components/ui/locate-icon';
 import { HistoryIcon as LucideHistoryIcon } from '@/components/icons/animated/lucide-animated/history';
 import { FoldersIcon as LucideFoldersIcon } from '@/components/icons/animated/lucide-animated/folders';
 import { FolderOpenIcon as LucideFolderOpenIcon } from '@/components/icons/animated/lucide-animated/folder-open';
@@ -722,7 +723,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
               </HoverTip>
               <HoverTip label="Search" description="Search projects, chats, and commands." side="bottom">
                 <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
-                  <AnimatedIcon icon={LocateFixedIcon} />
+                  <LocateIcon size={16} duration={1} />
                 </button>
               </HoverTip>
                 <Link
@@ -731,7 +732,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                   onClick={(event) => handleNavEntryClick(event, '/dashboard')}
                   className={cn(isActive('/dashboard') && 'is-active')}
                 >
-                  <AnimatedIcon icon={LayoutGridIcon} />
+                  <LucideBlocksIcon size={16} />
                 </Link>
                 <Link
                   href="/dashboard/projects"
@@ -761,7 +762,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
 
       {navExpanded ? <div className="xv-sidebar-primary-row">
         <button type="button" onClick={handleNewChat} aria-label="New Work" className="xv-new-work-button"><AnimatedIcon icon={NewTerminalIcon} size={15} /><span>New Work</span></button>
-        <Link href="/dashboard" onClick={event => handleNavEntryClick(event, '/dashboard')} aria-label="Overview"><PanelsTopLeft size={15} aria-hidden="true" /><span>Overview</span></Link>
+        <Link href="/dashboard" onClick={event => handleNavEntryClick(event, '/dashboard')} aria-label="Overview"><LucideBlocksIcon size={15} aria-hidden="true" /><span>Overview</span></Link>
       </div> : null}
       {navExpanded && notificationsOpen ? <SidebarNotificationCenter open onClose={() => setNotificationsOpen(false)} /> : navExpanded ? <SidebarNavScroller targetRef={navScrollRef} className="flex-1 min-h-0">
         <nav
