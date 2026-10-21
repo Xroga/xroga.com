@@ -1,0 +1,62 @@
+name: Conversation dash guest browser verification
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'frontend/src/components/terminal/ChatTurnRail.tsx'
+      - 'frontend/src/components/terminal/SwarmMessageLog.tsx'
+      - 'frontend/e2e/chat-turn-rail.spec.ts'
+      - '.github/workflows/chat-turn-rail-browser.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      # A deliberately fake, unsigned fixture JWT with role=anon. Never accepts live auth.
+      # Xroga validates the role when rendering its guest workspace, even for local mocks.
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsYWNlaG9sZGVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDAwMDAwMDAsImV4cCI6NDEwMjQ0NDgwMH0.fixture-test-signature
+      PLAYWRIGHT_BASE_URL: http://127.0.0.1:3000
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install and build local frontend
+        run: |
+          npm ci
+          npm run build --workspace=frontend
+      - name: Restore Chromium cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: rail-chromium-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Start locally built Xroga
+        run: |
+          npm run start --workspace=frontend -- --hostname 127.0.0.1 --port 3000 > /tmp/rail-frontend.log 2>&1 &
+          for attempt in $(seq 1 45); do
+            curl --silent --fail http://127.0.0.1:3000/workspace >/dev/null && exit 0
+            sleep 2
+          done
+          tail -100 /tmp/rail-frontend.log
+          exit 1
+      - name: Verify real rendered dash interaction with local guest fixtures
+        working-directory: frontend
+        run: node ../node_modules/@playwright/test/cli.js test e2e/chat-turn-rail.spec.ts
+      - name: Capture screenshots and trace on failure
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: conversation-dash-visual-evidence
+          path: |
+            frontend/test-results/rail-*.png
+            frontend/test-results/**/test-failed-*.png
+            frontend/test-results/**/trace.zip
+          if-no-files-found: warn
+          retention-days: 14
