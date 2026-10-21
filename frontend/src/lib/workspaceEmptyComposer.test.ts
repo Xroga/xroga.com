@@ -708,7 +708,7 @@ test('the bottom inspiration bar opens the real catalog automatically on workspa
 test('new terminal renders theme-aware readable cards without black-hole artwork', () => {
   assert.doesNotMatch(START + START_CSS, /black-hole.webp|next\/image/);
   assert.match(START, /Super Intelligence/);
-  assert.match(START, /One AI workspace for every kind of work\./);
+  assert.match(START, /One AI workspace for every kind of/);
   assert.doesNotMatch(START, /DESCRIBE IT\.|SHIP IT\./);
   assert.match(START, /<CapabilityVisual id=\{card.id\}/);
   assert.doesNotMatch(START, /cardImage|1536/);

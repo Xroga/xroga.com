@@ -99,7 +99,7 @@ export function IntegrationsModal({
         for (const toolkit of result.toolkits ?? []) {
           const id = canonicalPluginId(`${toolkit.name ?? ''} ${toolkit.toolkit}`);
           if (!id || ['github', 'vercel', 'supabase'].includes(id)) continue;
-          available.set(id, { id, name: toolkit.name || toolkit.toolkit, connected: Boolean(toolkit.connected || toolkit.noAuth) });
+          available.set(id, { id, name: toolkit.name || toolkit.toolkit, connected: Boolean(toolkit.connected) });
         }
         setApps(Array.from(available.values()));
       })
