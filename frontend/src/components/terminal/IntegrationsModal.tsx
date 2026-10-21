@@ -23,10 +23,12 @@ export function IntegrationsModal({
   open,
   onClose,
   anchorRef,
+  onSelect,
 }: {
   open: boolean;
   onClose: () => void;
   anchorRef: RefObject<HTMLElement | null>;
+  onSelect?: (plugin: { id: string; name: string }) => void;
 }) {
   const [native, setNative] = useState<ModalPlugin[]>([]);
   const [apps, setApps] = useState<ModalPlugin[]>([]);
@@ -154,37 +156,23 @@ export function IntegrationsModal({
         <div className="xv-plugins-popover__body">
           <div className="xv-plugins-popover__primary">
             <p className="xv-plugins-popover__eyebrow">Plugins</p>
-            {plugins.map((plugin) => (
-              <Link
-                key={plugin.id}
-                href={`/dashboard/integrations/${plugin.id}`}
-                onClick={onClose}
-                className="xv-plugins-popover__item"
-              >
-                <span className="xv-plugins-popover__logo">
-                  <IntegrationLogo id={plugin.id} name={plugin.name} size={16} />
-                </span>
+            {plugins.map((plugin) => {
+              const entry = <>
+                <span className="xv-plugins-popover__logo"><IntegrationLogo id={plugin.id} name={plugin.name} size={17} /></span>
                 <span className="xv-plugins-popover__name">
                   <strong>{plugin.name}</strong>
-                  <small>
-                    {plugin.checking ? (
-                      <>
-                        <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
-                        Checking
-                      </>
-                    ) : plugin.connected ? (
-                      <>
-                        <Check className="h-3 w-3" aria-hidden="true" />
-                        Connected
-                      </>
-                    ) : (
-                      'Available'
-                    )}
-                  </small>
+                  <small>{plugin.checking ? <><Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />Checking</>
+                    : plugin.connected ? <><Check className="h-3 w-3" aria-hidden="true" />Connected · select</>
+                    : 'Connect to use'}</small>
                 </span>
-                <Plus aria-hidden="true" className="xv-plugins-popover__plus" />
-              </Link>
-            ))}
+                {plugin.connected && onSelect ? <Check className="xv-plugins-popover__plus" aria-hidden="true" /> : <Plus className="xv-plugins-popover__plus" aria-hidden="true" />}
+              </>;
+              return plugin.connected && onSelect
+                ? <button type="button" key={plugin.id} onClick={() => { onSelect(plugin); onClose(); }}
+                    className="xv-plugins-popover__item" aria-label={'Select ' + plugin.name + ' plugin'}>{entry}</button>
+                : <Link key={plugin.id} href={`/dashboard/integrations/${plugin.id}`} onClick={onClose}
+                    className="xv-plugins-popover__item">{entry}</Link>;
+            })}
 
             {loadingApps && !apps.length ? (
               <div className="xv-plugins-popover__loading">
@@ -198,7 +186,7 @@ export function IntegrationsModal({
           </div>
 
           <aside className="xv-plugins-popover__aside">
-            <button type="button" className={compactStyles.connect} onClick={() => setConnecting(value => !value)} onPointerEnter={event => { if (event.pointerType === 'mouse') setConnecting(true); }} aria-expanded={connecting}>Connect plugins <Plus size={14} /></button>
+            <button type="button" className={compactStyles.connect} onClick={() => setConnecting(value => !value)} aria-expanded={connecting}>Connect plugins <Plus size={14} /></button>
             {connecting ? <div className={compactStyles.connectList}>{[...native, ...apps].filter(plugin => !plugin.connected).map(plugin => <Link key={plugin.id} href={`/dashboard/integrations/${plugin.id}`} onClick={onClose}><IntegrationLogo id={plugin.id} name={plugin.name} size={16} />{plugin.name}<Plus size={12} /></Link>)}</div> : null}
             <Link
               href="/dashboard/integrations"
