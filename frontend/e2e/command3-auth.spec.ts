@@ -272,6 +272,9 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await terminalDock.locator('.xv-cba-trigger').first().click();
   const plusMenu = page.locator('.xv-cba-menu');
   await expect(plusMenu).toBeVisible();
+  // Measure the settled 150 ms entry animation, not an intermediate transform.
+  // Keep the existing gap and viewport bounds unchanged.
+  await expect.poll(() => plusMenu.evaluate(el => el.getAnimations().every(animation => animation.playState === 'finished' || animation.playState === 'idle'))).toBe(true);
   const menuBox = (await plusMenu.boundingBox())!;
   const composerBox = (await composerSurface.boundingBox())!;
   const composerGap = menuBox.y >= composerBox.y + composerBox.height
