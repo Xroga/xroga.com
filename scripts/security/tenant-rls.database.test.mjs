@@ -179,3 +179,28 @@ test('real two-client parent update makes a waiting sidebar child fail its exact
     await parent.end();await child.end();
   }
 });
+
+test('real sidebar chat and title-backup policies isolate owners and forbid browser backup mutations',async()=>{
+  await client.query("INSERT INTO xroga_sidebar_chats(user_id,id,title) VALUES($1,'synthetic-own-chat','Owned'),($2,'synthetic-foreign-chat','Foreign')",[OWNER,OTHER]);
+  await client.query("INSERT INTO xroga_sidebar_legacy_title_backup(session_id,user_id,original_title) VALUES('synthetic-own-backup',$1,'Owned title'),('synthetic-foreign-backup',$2,'Foreign title')",[OWNER,OTHER]);
+  assert.deepEqual((await asUser(OWNER,()=>client.query('SELECT id FROM xroga_sidebar_chats'))).rows,[{id:'synthetic-own-chat'}]);
+  assert.equal((await asUser(OWNER,()=>client.query("INSERT INTO xroga_sidebar_chats(user_id,id,title) VALUES($1,'synthetic-positive','Positive') RETURNING id",[OWNER]))).rowCount,1);
+  assert.equal((await asUser(OWNER,()=>client.query("UPDATE xroga_sidebar_chats SET title='Changed' WHERE user_id=$1 RETURNING id",[OWNER]))).rowCount,1);
+  for(const [user,role]of [[OWNER,'authenticated'],['','anon']]){
+    await assert.rejects(asUser(user,()=>client.query("INSERT INTO xroga_sidebar_chats(user_id,id) VALUES($1,'synthetic-forged')",[OTHER]),role),error=>error.code==='42501');
+  }
+  assert.equal((await asUser(OWNER,()=>client.query("UPDATE xroga_sidebar_chats SET title='Forbidden' WHERE user_id=$1 RETURNING id",[OTHER]))).rowCount,0);
+  assert.equal((await asUser(OWNER,()=>client.query('DELETE FROM xroga_sidebar_chats WHERE user_id=$1 RETURNING id',[OTHER]))).rowCount,0);
+  assert.equal((await asUser('',()=>client.query('SELECT id FROM xroga_sidebar_chats'),'anon')).rowCount,0);
+  assert.deepEqual((await asUser(OWNER,()=>client.query('SELECT session_id FROM xroga_sidebar_legacy_title_backup'))).rows,[{session_id:'synthetic-own-backup'}]);
+  const before=(await client.query('SELECT * FROM xroga_sidebar_legacy_title_backup ORDER BY session_id')).rows;
+  await assert.rejects(asUser(OWNER,()=>client.query("INSERT INTO xroga_sidebar_legacy_title_backup(session_id,user_id,original_title) VALUES('synthetic-forged-backup',$1,'Denied')",[OWNER])),error=>error.code==='42501');
+  // RLS must forbid writes even when a deployment has inherited DML grants.
+  // Denial can be a privilege error or zero affected rows, never changed data.
+  for(const sql of ["UPDATE xroga_sidebar_legacy_title_backup SET original_title='Denied' RETURNING session_id",'DELETE FROM xroga_sidebar_legacy_title_backup RETURNING session_id']){
+    try{assert.equal((await asUser(OWNER,()=>client.query(sql))).rowCount,0);}catch(error){assert.equal(error.code,'42501');}
+  }
+  assert.deepEqual((await client.query('SELECT * FROM xroga_sidebar_legacy_title_backup ORDER BY session_id')).rows,before);
+  assert.equal((await asUser('',()=>client.query("INSERT INTO xroga_sidebar_legacy_title_backup(session_id,user_id,original_title) VALUES('synthetic-service-backup',$1,'Service fixture') RETURNING session_id",[OWNER]),'service_role')).rowCount,1);
+  assert.deepEqual((await client.query('SELECT * FROM xroga_sidebar_legacy_title_backup ORDER BY session_id')).rows,before,'Service positive control rolls back exactly');
+});

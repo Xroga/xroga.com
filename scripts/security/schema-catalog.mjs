@@ -4,8 +4,14 @@ import {createHash} from 'node:crypto';
 export function validateCurrentMigrationAdditions(additions,files,readMigration){
   assert.equal(additions.scope,'REVIEWED_CURRENT_MIGRATION_ADDITIONS_NOT_PRODUCTION_SCHEMA_OBSERVATION');
   assert.equal(additions.historicalCatalogUnchanged,true);
-  assert.deepEqual(additions.tables.map(t=>`${t.schema}.${t.table_name}`),['public.product_feedback']);
+  const sidebar='20261021233500_sidebar_organization.sql',parents='20261022003000_sidebar_exact_parent_guards.sql';
+  const reviewed={product_feedback:['20261018211950_product_feedback_admin.sql','20261021100000_feedback_founder_authorization.sql'],
+    xroga_sidebar_chats:[sidebar,sidebar],xroga_sidebar_items:[sidebar,parents],
+    xroga_sidebar_legacy_title_backup:[sidebar,sidebar],xroga_sidebar_sections:[sidebar,parents]};
+  assert.deepEqual(additions.tables.map(t=>`${t.schema}.${t.table_name}`),Object.keys(reviewed).map(name=>'public.'+name));
   for(const entry of additions.tables){
+    assert.deepEqual([entry.migration,entry.authorizationMigration],reviewed[entry.table_name],'Only the explicitly reviewed creation and ownership migrations apply');
+    assert.equal(entry.productionChanges,false);
     for(const [file,digest] of [[entry.migration,entry.migrationSha256],[entry.authorizationMigration,entry.authorizationSha256]]){
       assert.ok(files.includes(file),'Current addition must name an installed original migration');
       assert.equal(createHash('sha256').update(readMigration(file).replace(/\r\n/g,'\n')).digest('hex'),digest,'Reviewed migration boundary drift');

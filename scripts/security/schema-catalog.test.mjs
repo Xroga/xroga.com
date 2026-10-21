@@ -3,11 +3,11 @@ import {test} from 'node:test';
 import {readFileSync} from 'node:fs';
 import {assertDisposableSource,collectSchemaCatalog,validateCurrentMigrationAdditions} from './schema-catalog.mjs';
 
-test('current feedback schema addition is exact migration-bound evidence, never a broad missing-table waiver',()=>{
+test('current feedback and sidebar additions are exact migration-bound evidence, never a broad missing-table waiver',()=>{
   const additions=JSON.parse(readFileSync(new URL('../../docs/xroga/security/current-migration-additions.json',import.meta.url),'utf8'));
   const files=additions.tables.flatMap(t=>[t.migration,t.authorizationMigration]);
   const read=file=>readFileSync(new URL(`../../supabase/migrations/${file}`,import.meta.url),'utf8');
-  assert.equal(validateCurrentMigrationAdditions(additions,files,read).length,1);
+  assert.equal(validateCurrentMigrationAdditions(additions,files,read).length,5);
   assert.throws(()=>validateCurrentMigrationAdditions(additions,[],read));
   assert.throws(()=>validateCurrentMigrationAdditions(additions,files,file=>read(file)+'\n-- source drift'));
   const extra=structuredClone(additions);extra.tables.push({...extra.tables[0],table_name:'unreviewed'});
@@ -15,6 +15,14 @@ test('current feedback schema addition is exact migration-bound evidence, never 
   const renamed=structuredClone(additions);renamed.tables[0].table_name='foreign';
   assert.throws(()=>validateCurrentMigrationAdditions(renamed,files,read));
   assert.throws(()=>validateCurrentMigrationAdditions({...additions,historicalCatalogUnchanged:false},files,read));
+  for(let index=0;index<additions.tables.length;index++){
+    const missing=structuredClone(additions);missing.tables.splice(index,1);
+    assert.throws(()=>validateCurrentMigrationAdditions(missing,files,read));
+    const wrong=structuredClone(additions);wrong.tables[index].authorizationMigration=files.find(file=>file!==wrong.tables[index].authorizationMigration);
+    assert.throws(()=>validateCurrentMigrationAdditions(wrong,files,read));
+    const live=structuredClone(additions);live.tables[index].productionChanges=true;
+    assert.throws(()=>validateCurrentMigrationAdditions(live,files,read));
+  }
 });
 
 test('disposable source attestation rejects missing or substituted merge/head identities',()=>{

@@ -10,6 +10,10 @@
   "risk": "high",
   "scope": "Founder-authorized Phase3 only, original Command008 and009, all22 criteria unchanged. Preserve accepted Phase2 source and proof. No Phase4 implementation or production authorization.",
   "changedFiles": [
+    "docs/xroga/security/current-migration-additions.json",
+    "scripts/security/full-supabase-history.mjs",
+    "scripts/security/schema-catalog.mjs",
+    "scripts/security/schema-catalog.test.mjs",
     "supabase/migrations/20261022003000_sidebar_exact_parent_guards.sql",
     "scripts/security/tenant-rls.database.test.mjs",
     "docs/xroga/security/current-main-sidebar-integration.md",
