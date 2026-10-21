@@ -530,6 +530,11 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(rail, 'hovering the mark must not reopen the sidebar').toHaveClass(/is-collapsed/);
   await sidebarMark.click();
   await expect(rail).not.toHaveClass(/is-collapsed/);
+  // The outer rail changes immediately, but its inner panel transitions for
+  // 200 ms. Wait for the actual control's owner before capturing coordinates.
+  const configuredSidebarWidth = Number(await page.getByRole('separator', { name: 'Resize sidebar' }).getAttribute('aria-valuenow'));
+  await expect(rail.locator('.xv-sidebar-floating')).toHaveCSS('width', `${configuredSidebarWidth}px`);
+  await edgeToggle.hover();
   const reopened = (await rail.boundingBox())!;
   expect(reopened.width, 'clicking the mark did not reopen the sidebar').toBeGreaterThan(72);
 
