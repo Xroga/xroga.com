@@ -612,7 +612,7 @@ test('the New Terminal label is hidden by name, not by element', () => {
   // Both desktop and mobile still need an accessible name and a visible glyph.
   const buttons = [...SIDEBAR.matchAll(/<button\b[^>]*aria-label="New Work"[^>]*>([\s\S]*?)<\/button>/g)];
   assert.equal(buttons.length, 2, 'expanded and collapsed New Work controls must remain present');
-  assert.match(SIDEBAR, /aria-label="New terminal"[\s\S]*?<AnimatedIcon icon=\{NewTerminalIcon\}/, 'the mobile creation control must retain its accessible name and icon');
+  assert.match(SIDEBAR, /aria-label="New Terminal"[\s\S]*?<AnimatedIcon icon=\{NewTerminalIcon\}/, 'the mobile creation control must retain its accessible name and icon');
   for (const [, content] of buttons) {
     assert.match(content, /<AnimatedIcon icon=\{NewTerminalIcon\}/);
     assert.doesNotMatch(content, /xv-new-terminal-compact__label/, 'the retired hidden label must not wrap the icon');
