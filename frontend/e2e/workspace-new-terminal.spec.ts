@@ -135,6 +135,10 @@ test('visual starter stays within the pane and every control remains reachable a
   await expect(page.getByText('DESCRIBE IT.', { exact: false })).toHaveCount(0);
   await expect(page.getByRole('complementary', { name: 'Xroga early access notice' })).toHaveCount(0);
   await expect(page.getByTestId('workspace-start-cards').locator('img')).toHaveCount(0);
+  // Measure a stable panel through its public pause control. Rotation itself
+  // is covered independently below, including its four-second interval.
+  await page.getByRole('button', { name: 'Show AI Employees', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Resume automation rotation' })).toBeVisible();
   for (const viewport of [{ width: 1366, height: 768 }, { width: 1280, height: 650 }, { width: 768, height: 1024 }, { width: 390, height: 844 }, { width: 320, height: 740 }]) {
     await page.setViewportSize(viewport);
     // Wait for the existing workspace's animated sidebar/pane measurement.
@@ -434,11 +438,23 @@ test('search dialog escapes workspace stacking context and has an opaque foregro
 });
 
 test('automatic intro reveals its second line after delay without a model picker', async ({ page }) => {
+  await page.clock.install();
+  await page.clock.pauseAt(new Date(Date.now() + 1000));
   await page.goto('/workspace');
-  const detail = page.locator('[data-visible]').filter({ hasText: 'No models or tools to choose.' });
+  const first = page.locator('[data-visible]').filter({ hasText: 'No models or tools to choose.' });
+  const detail = page.locator('[data-visible]').filter({ hasText: 'Type or speak your goal. Xroga chooses the right tools and handles the work.' });
+  await expect(first).toHaveAttribute('data-visible', 'true');
+  await expect(first).toHaveAttribute('aria-hidden', 'false');
   await expect(detail).toHaveAttribute('data-visible', 'false');
-  await page.waitForTimeout(2400);
+  await expect(detail).toHaveAttribute('aria-hidden', 'true');
+  await page.clock.fastForward(2100);
+  await expect(detail).toHaveAttribute('data-visible', 'false');
+  await page.clock.fastForward(200);
+  await expect(first).toHaveAttribute('data-visible', 'false');
+  await expect(first).toHaveAttribute('aria-hidden', 'true');
   await expect(detail).toHaveAttribute('data-visible', 'true');
+  await expect(detail).toHaveAttribute('aria-hidden', 'false');
+  await expect(page.getByRole('button', { name: 'Choose model', exact: true })).toHaveCount(0);
   await expect(page.getByTestId('workspace-start-header').locator('p')).toContainText('One AI workspace for every kind of ');
 });
 
