@@ -329,12 +329,12 @@ test('a conversation exposes one context-aware navigator that follows scroll pos
 
   assert.match(
     DOCK,
-    /showJumpToLatest\s*\? scrollToLatest\('smooth'\)\s*:\s*scrollToFirst\('smooth'\)/,
+    /setNavigationPressed\(true\);\s*if \(showJumpToLatest\) scrollToLatest\('smooth'\);\s*else scrollToFirst\('smooth'\);/,
   );
 
   assert.match(
     DOCK,
-    /<ArrowUp className="xv-conversation-navigator__arrow"/,
+    /<SquareChevronUpIcon size=\{19\} direction=\{showJumpToLatest \? 'down' : 'up'\}/,
   );
 
   assert.match(
