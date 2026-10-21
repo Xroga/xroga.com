@@ -9,8 +9,10 @@ const CSS = read('../app/globals.css');
 
 test('streaming does not rebuild every historical turn observer for every text batch', () => {
   assert.match(LOG, /const chatTurnIdsKey = chatTurnIds\.join\('\|'\)/);
-  assert.match(LOG, /const stableTurnIds = chatTurnIdsKey \? chatTurnIdsKey\.split\('\|'\) : \[\]/);
-  assert.match(LOG, /\}, \[chatTurnIdsKey\]\);/);
+  assert.match(LOG, /const ids = chatTurnIdsKey \? chatTurnIdsKey\.split\('\|'\) : \[\]/);
+  assert.match(LOG, /\}, \[chatTurnIdsKey, sessionId\]\);/);
+  assert.match(LOG, /requestAnimationFrame\(sync\)/);
+  assert.match(LOG, /while \(lo <= hi\)/);
   assert.doesNotMatch(LOG, /\}, \[chatTurns\]\);/);
 });
 
