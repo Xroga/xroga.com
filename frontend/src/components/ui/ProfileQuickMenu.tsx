@@ -188,8 +188,9 @@ export function ProfileQuickMenu({ onLogout, anchorRef, children, triggerClassNa
       </button>
 
       {open && typeof document !== 'undefined' ? createPortal(
-        <div ref={menuRef} id="xv-profile-quick-menu" className="xv-pqm-shell fixed z-[330]" style={{ top: pos.top, left: pos.left, maxWidth: 'calc(100vw - 24px)', maxHeight: 'calc(100dvh - 24px)', overflowY: 'auto', overscrollBehavior: 'contain' }} onMouseLeave={scheduleSubmenuClose}>
-          <div className="xv-pqm-card" onMouseEnter={cancelSubmenuClose}>
+        <div ref={menuRef} id="xv-profile-quick-menu" className="xv-pqm-shell fixed z-[330]" style={{ top: pos.top, left: pos.left, maxWidth: 'calc(100vw - 24px)', maxHeight: 'calc(100dvh - 24px)', overflow: 'visible' }} onMouseLeave={scheduleSubmenuClose}>
+          <div className="xv-pqm-card" onMouseEnter={cancelSubmenuClose}
+            style={{ maxHeight: 'calc(100dvh - 24px)', overflowY: 'auto', overscrollBehavior: 'contain' }}>
             <div className="xv-pqm-identity">
               <span className="xv-pqm-avatar" aria-hidden="true">{accountName.charAt(0).toUpperCase()}</span>
               <span className="min-w-0"><strong>{accountName}</strong>{email ? <button type="button" className="xv-pqm-copy-email"

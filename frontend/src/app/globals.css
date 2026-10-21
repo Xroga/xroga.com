@@ -14659,3 +14659,10 @@ body.theme-beige .xv-sidebar-hover-menu, body.theme-beige .xv-plugins-popover, b
 .xv-sidebar-hover-menu,.xv-sidebar-hover-menu__card,.xv-plugins-popover {
  isolation:isolate; max-width:calc(100vw - 24px)!important; max-height:calc(100dvh - 24px)!important;
 }
+
+/* Hover reveals that the account email can be copied, click performs the clipboard write. */
+.xv-pqm-copy-email { width:100%; min-width:0; border:1px solid transparent; padding:3px 5px; margin-left:-5px; }
+.xv-pqm-copy-email:hover,.xv-pqm-copy-email:focus-visible { background:color-mix(in srgb,var(--foreground) 7%,transparent); border-color:var(--card-border); }
+.xv-pqm-copy-email:focus-visible { outline:2px solid var(--foreground); outline-offset:1px; }
+.xv-pqm-submenu { max-width:min(254px,calc(100vw - 24px)); max-height:calc(100dvh - 24px); overflow-y:auto; overscroll-behavior:contain; }
+@media(max-width:699px){.xv-pqm-submenu { left:auto!important;right:8px!important;top:64px!important;width:min(228px,calc(100vw - 48px)); }}
