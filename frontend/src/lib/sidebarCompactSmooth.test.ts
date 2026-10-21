@@ -45,3 +45,9 @@ test('row actions remain keyboard-reachable and titles respect reduced motion',(
 test('title hover rendering is isolated from unrelated sidebar parent renders',()=>{
   assert.match(title,/memo\(function SidebarMovingTitle/);
 });
+
+test('conversation rows use tightly spaced labels with safe mobile touch height',()=>{
+ assert.match(sidebar,/text-left py-1 px-1\.5 rounded-md/);
+ assert.match(css,/pointer:coarse/);
+ assert.match(css,/min-height:32px/);
+});

@@ -932,7 +932,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         if(src&&dst&&accountId)void swapSidebarPins(accountId,src,dst)
           .then(refreshSidebarData).catch(e=>toast.error((e as Error).message));
       }}>
-      <button type="button" onClick={open} className="min-w-0 flex-1 flex items-center text-[10px] font-normal leading-[1.35] text-left py-1.5 px-1.5 rounded-md focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
+      <button type="button" onClick={open} className="min-w-0 flex-1 flex items-center text-[10px] font-normal leading-[1.35] text-left py-1 px-1.5 rounded-md focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
         aria-label={label}>
         <SidebarMovingTitle text={label}/>
       </button>
@@ -1056,7 +1056,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   }
 
   if (!expanded) return null;
-  const sectionTitle = 'px-2 pb-1 text-[9px] font-bold uppercase tracking-[0.1em] text-[var(--muted)]';
+  const sectionTitle = 'px-2 pb-0.5 text-[9px] font-bold uppercase tracking-[0.1em] text-[var(--muted)]';
   const secondary = 'text-[10px] text-[var(--muted)] hover:text-[var(--foreground)] transition-colors focus-visible:outline-2 focus-visible:outline-[var(--accent)]';
   const getProjectChats = (p:(typeof organizedProjects)[number]) =>
     recentConversations.filter(session => {
@@ -1066,7 +1066,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     });
   const openedMenu=menu?menuActions:[];
   return <div className="mt-2 mb-1 px-1.5" data-sidebar-work-organizer>
-    <section aria-label="Projects" className="space-y-1">
+    <section aria-label="Projects" className="space-y-0.5">
       <div className="flex items-center justify-between gap-2">
         <h2 className={sectionTitle}>Projects</h2>
         <div className="flex items-center gap-2">
