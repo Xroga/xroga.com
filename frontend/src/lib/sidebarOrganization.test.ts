@@ -55,5 +55,12 @@ test('legacy backfill SQL is unbroken, reversible, and modifies titles only',()=
  assert.match(migration,/original_title/);
  assert.match(migration,/set title=left\(regexp_replace\(btrim\(prompt\)/);
  assert.doesNotMatch(migration,/terminal\s*\n-- Manually/);
- assert.match(migration,/terminal\$'\)\s*\n on conflict \(session_id\) do nothing;/);
+ assert.match(migration,/where title ~\* '[^'\n]+'\s+on conflict \(session_id\) do nothing;/);
+});
+
+test('unscoped browser cache cannot appear as another account history or migrate without verified IDs',()=>{
+ assert.match(sidebar,/verifiedIdsForHistory/);
+ assert.match(sidebar,/verifiedIds\.has\(e\.id\)/);
+ assert.match(sidebar,/verifiedIds\.has\(e\.id\)\)/);
+ assert.doesNotMatch(sidebar,/Opened terminal — start chatting or building/);
 });

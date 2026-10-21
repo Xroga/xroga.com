@@ -230,6 +230,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     // Never leave another signed-in user's projects or pin labels in memory
     // while a new account's requests are still pending.
     setAccountProjects([]);setItemMeta([]);setSections([]);setSidebarChats([]);
+    setEntries([]);setAllHistory([]);setCloudSessions([]);
+    setOpenFolders({});setActiveSessionId(null);
     setPinnedProjectRecords([]);setPinnedSessionRecords([]);setPinnedIds([]);
     setShownProjects(5);setShownPins(10);setProjectsHasMore(false);
   },[accountId]);
@@ -317,12 +319,18 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         flushCloud: true,
       });
     }
-    setAllHistory(loadTerminalHistory().filter((e) => e.id && e.messageCount > 0));
+    const verifiedIdsForHistory=new Set([...cloudSessions.map(c=>c.id),...sidebarChats.map(c=>c.id),...pinnedSessionRecords.map(c=>c.id)]);
+    setAllHistory(loadTerminalHistory().filter((e)=>e.id&&e.messageCount>0&&verifiedIdsForHistory.has(e.id)));
     const synced = syncRepoTerminalSessions();
+    // The legacy local history store has no owner ID. It must not be trusted
+    // as a history source after account switches; only authenticated cloud IDs
+    // are eligible to appear in the account sidebar.
+    const verifiedIds=new Set([...cloudSessions.map(c=>c.id),...sidebarChats.map(c=>c.id),...pinnedSessionRecords.map(c=>c.id)]);
     let nextEntries =
-      synced.length
+      (synced.length
         ? synced
-        : loadTerminalHistory().filter((e) => e.messageCount > 0 && e.githubRepoName?.includes('/'));
+        : loadTerminalHistory().filter((e) => e.messageCount > 0 && e.githubRepoName?.includes('/')))
+      .filter(e=>verifiedIds.has(e.id));
 
     // Live chat appears under its sticky repo (or selected if still unbound).
     // Never rewrite an existing #N onto a newly selected repo.
@@ -408,8 +416,11 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       const list = await listCloudTerminalSessions(undefined,{limit:100,offset:0});
       setMoreCloudSessions(list.length>=100);
       setCloudSessions(list);
+      // Never automatically import unscoped local cache entries into whichever
+      // account happens to sign in: legacy localStorage has no owner provenance.
+      const verifiedIds=new Set(list.map(s=>s.id));
       const local = loadTerminalHistory().filter(
-        (e) => e.messageCount > 0 && e.githubRepoName?.includes('/') && e.messages?.length
+        (e) => e.messageCount > 0 && e.githubRepoName?.includes('/') && e.messages?.length && verifiedIds.has(e.id)
       );
       if (!local.length) return;
       // `migrateLocalSessionsToCloud` runs at most once per page load and reports
@@ -523,6 +534,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
 
     for (const e of entries) {
       if (!e.githubRepoName?.includes('/') || e.messageCount <= 0) continue;
+      if(!cloudSessions.some(c=>c.id===e.id))continue;
       const n =
         cachedTerminalNumber(e.id) ??
         allocateTerminalNumber(e.id, e.githubRepoName);
@@ -688,11 +700,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         return;
       }
 
-      // A session stub may exist while its history body is unavailable —
-      // still open the workspace with this repo selected so chat/builds work.
-      setActiveSessionId(session.id);
-      router.push('/workspace');
-      toast('Opened terminal — start chatting or building in this repo');
+      // Never claim to restore a missing transcript by navigating to an empty chat.
+      toast.error('Saved messages are unavailable for this conversation');
     } finally {
       setBusyId(null);
     }
@@ -742,8 +751,9 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   /** A single deduplicated history across local caches and account cloud sessions. */
   const savedConversations = useMemo((): RepoSession[] => {
     const map = new Map<string, RepoSession>();
+    const verifiedIds=new Set([...cloudSessions.map(c=>c.id),...sidebarChats.map(c=>c.id),...pinnedSessionRecords.map(c=>c.id)]);
     for (const e of [...allHistory, ...entries]) {
-      if (!e.id || e.messageCount <= 0) continue;
+      if (!e.id || e.messageCount <= 0 || !verifiedIds.has(e.id)) continue;
       const repo = e.githubRepoName?.includes('/') ? e.githubRepoName : undefined;
       map.set(e.id, {
         id: e.id, title: meaningfulSidebarTitle(e.title,e.prompt), preview: e.prompt || e.preview, updatedAt: e.updatedAt,
