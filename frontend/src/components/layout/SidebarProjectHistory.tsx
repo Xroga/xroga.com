@@ -714,195 +714,325 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     }
     return Array.from(map.values()).sort((a, b) => (Date.parse(b.updatedAt) || 0) - (Date.parse(a.updatedAt) || 0));
   }, [allHistory, entries, cloudSessions]);
-  const pinnedConversations = useMemo(() => savedConversations.filter(s => pinnedIds.includes(s.id)), [savedConversations, pinnedIds]);
-  const recentConversations = useMemo(() => savedConversations.filter(s => !pinnedIds.includes(s.id)), [savedConversations, pinnedIds]);
 
-  function conversationTitle(session: RepoSession) {
-    const title = session.title?.trim() || '';
-    const contextual = (session.entry?.prompt || session.preview || '').trim();
-    return ((/^#\d+\s+terminal$/i.test(title) && contextual ? contextual : title || contextual || 'Untitled conversation')).slice(0, 180);
+  const userId=!isGuest?workspaceIdentity.userId:undefined;
+  const metaById=useMemo(()=>new Map(metadata.map(m=>[`${m.item_type}:${m.item_id}`,m])),[metadata]);
+  const metaFor=(kind:SidebarItemType,id:string)=>metaById.get(`${kind}:${id}`);
+  const loadOrg=useCallback(async()=>{
+    if(!userId){setMetadata([]);setProjectRows([]);setSections([]);setMetaLoaded(false);return;}
+    setProjectsLoading(true);
+    try{
+      const [meta,projectPage,sectionList]=await Promise.all([
+        loadSidebarMetadata(userId),listSidebarProjects(userId,0,5),listSidebarSections(userId)
+      ]);
+      setMetadata(meta);setProjectRows(projectPage.items);setProjectsMore(projectPage.hasMore);
+      setSections(sectionList);setProjectCount(5);setMetaLoaded(true);
+      const pins=meta.filter(m=>m.pinned_at&&m.pin_order!==null);
+      const projectsToFind=pins.filter(m=>m.item_type==='project'&&!m.item_id.startsWith('repo:')).map(m=>m.item_id);
+      const chatsToFind=pins.filter(m=>m.item_type==='conversation').map(m=>m.item_id);
+      const nameMap:Record<string,string>={};
+      const client=createClient();
+      for(let at=0;at<projectsToFind.length;at+=100){
+        const {data}=await client.from('projects').select('id,name').eq('user_id',userId)
+          .in('id',projectsToFind.slice(at,at+100));
+        for(const p of data||[])nameMap[`project:${p.id}`]=p.name;
+      }
+      for(let at=0;at<chatsToFind.length;at+=100){
+        const {data}=await client.from('terminal_sessions').select('id,title,prompt').eq('user_id',userId)
+          .in('id',chatsToFind.slice(at,at+100));
+        for(const c of data||[])nameMap[`conversation:${c.id}`]=safeConversationTitle(c.title,c.prompt);
+      }
+      setPinNames(nameMap);
+    }catch(err){setMetaLoaded(false);toast.error('Could not load saved sidebar organization');console.warn('[sidebar]',err);}
+    finally{setProjectsLoading(false);}
+  },[userId]);
+  useEffect(()=>{void loadOrg();},[loadOrg]);
+  useEffect(()=>{
+    if(!userId)return;
+    const refresh=()=>{if(document.visibilityState==='visible')void loadOrg();};
+    document.addEventListener('visibilitychange',refresh);
+    return()=>document.removeEventListener('visibilitychange',refresh);
+  },[userId,loadOrg]);
+
+  function conversationTitle(session:RepoSession){
+    const m=metaFor('conversation',session.id);
+    return m?.title_override||safeConversationTitle(session.title,session.entry?.prompt,session.preview);
   }
-  function renderConversationRow(session: RepoSession, pinned: boolean) {
-    return (
-      <div key={session.id} className="group flex min-w-0 items-center gap-1 rounded-lg hover:bg-[var(--foreground)]/[0.05]">
-        <button type="button" className="min-w-0 flex-1 truncate rounded-md px-2 py-1.5 text-left text-[10.5px] text-[var(--foreground)]/85 hover:text-[var(--foreground)]"
-          onClick={() => void openSession(session)} disabled={busyId === session.id} title={conversationTitle(session)}>
-          <span className="block truncate">{conversationTitle(session)}</span>
-        </button>
-        {pinStorageKey ? (
-          <button type="button" onClick={() => togglePin(session.id)}
-            aria-label={pinned ? 'Unpin conversation' : 'Pin conversation'} aria-pressed={pinned}
-            title={pinned ? 'Unpin conversation' : 'Pin conversation'}
-            className="shrink-0 rounded-md p-1.5 text-[var(--muted)] opacity-70 transition-opacity hover:text-[var(--foreground)] focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-[var(--accent)] sm:opacity-0 sm:group-hover:opacity-100">
-            {pinned ? <PinOff size={12} aria-hidden="true" /> : <Pin size={12} aria-hidden="true" />}
-          </button>
-        ) : null}
-      </div>
-    );
+  const pinned=useMemo(()=>metadata.filter(m=>m.pinned_at!==null&&m.pin_order!==null&&!m.archived_at)
+    .sort((a,b)=>(a.pin_order??0)-(b.pin_order??0)),[metadata]);
+  const projectDirectory=useMemo(()=>{
+    const concrete=projectRows.map(p=>({id:p.id,label:metaById.get(`project:${p.id}`)?.title_override||p.name,
+      repo:p.github_repo_name||undefined,project:p,folder:null as RepoFolder|null,updatedAt:p.updated_at}));
+    const repositoryFolders=folders.filter(f=>!projectRows.some(p=>p.github_repo_name===f.repo))
+      .map(f=>({id:`repo:${f.key}`,label:metaById.get(`project:repo:${f.key}`)?.title_override||f.label,
+        repo:f.repo,project:null as Project|null,folder:f,updatedAt:f.sessions[0]?.updatedAt||''}));
+    return [...concrete,...repositoryFolders].filter(p=>!metaById.get(`project:${p.id}`)?.archived_at);
+  },[projectRows,folders,metaById]);
+  const projectById=new Map(projectDirectory.map(p=>[p.id,p]));
+  const pinnedItems=pinned.map(m=>{
+    const id=m.item_id;
+    const project=projectById.get(id);
+    const chat=savedConversations.find(s=>s.id===id);
+    const label=m.title_override||(m.item_type==='project'?
+      project?.label||pinNames[`project:${id}`]:
+      chat?conversationTitle(chat):pinNames[`conversation:${id}`]);
+    return label?{m,label,chat,project}:null;
+  }).filter((v):v is NonNullable<typeof v>=>Boolean(v));
+
+  function updateLocalMeta(row:SidebarItemMeta){
+    setMetadata(prev=>[...prev.filter(m=>!(m.item_type===row.item_type&&m.item_id===row.item_id)),row]);
   }
+  async function patchMeta(kind:SidebarItemType,id:string,patch:Parameters<typeof saveSidebarMetadata>[4]){
+    if(!userId)throw new Error('Sign in to manage work');
+    const old=metaFor(kind,id);
+    const optimistic:SidebarItemMeta={
+      user_id:userId,item_type:kind,item_id:id,title_override:null,project_id:null,section_id:null,
+      pinned_at:null,pin_order:null,archived_at:null,updated_at:new Date().toISOString(),...old,...patch
+    };
+    updateLocalMeta(optimistic);
+    try{const saved=await saveSidebarMetadata(userId,kind,id,old,patch);updateLocalMeta(saved);return saved;}
+    catch(error){setMetadata(prev=>old?[...prev.filter(m=>!(m.item_type===kind&&m.item_id===id)),old]:
+      prev.filter(m=>!(m.item_type===kind&&m.item_id===id)));throw error;}
+  }
+  async function togglePersistentPin(kind:SidebarItemType,id:string){
+    const old=metaFor(kind,id);const isPinned=old?.pinned_at!==null&&old?.pinned_at!==undefined;
+    const order=(pinned.reduce((n,m)=>Math.max(n,m.pin_order||0),0))+1;
+    await patchMeta(kind,id,isPinned?{pinned_at:null,pin_order:null}:
+      {pinned_at:new Date().toISOString(),pin_order:order});
+  }
+  async function reorderPinned(t:SidebarMenuTarget,dir:-1|1){
+    const ix=pinned.findIndex(m=>m.item_type===t.kind&&m.item_id===t.id);
+    const other=pinned[ix+dir];const current=pinned[ix];
+    if(ix<0||!other||!current)return;
+    const oldOrder=current.pin_order!;
+    await patchMeta(t.kind,t.id,{pin_order:other.pin_order!});
+    try{await patchMeta(other.item_type,other.item_id,{pin_order:oldOrder});}
+    catch(e){await patchMeta(t.kind,t.id,{pin_order:oldOrder});throw e;}
+  }
+  async function addMoreProjects(){
+    if(projectsLoading)return;
+    if(projectsMore && userId){
+      setProjectsLoading(true);
+      try{const page=await listSidebarProjects(userId,projectRows.length,5);
+        setProjectRows(old=>[...old.filter(p=>!page.items.some(n=>n.id===p.id)),...page.items]);
+        setProjectsMore(page.hasMore);
+      }catch{toast.error('Projects could not load. Try again.');return;}
+      finally{setProjectsLoading(false);}
+    }
+    setProjectCount(n=>n+5);
+  }
+  async function loadMoreConversations(){
+    if(loadingMoreRecent||!recentsMore)return;
+    setLoadingMoreRecent(true);
+    try{
+      const incoming=await listCloudTerminalSessions(undefined,{limit:50,offset:cloudSessions.length});
+      setCloudSessions(current=>{
+        const map=new Map(current.map(c=>[c.id,c]));
+        for(const c of incoming)map.set(c.id,c);
+        return [...map.values()];
+      });
+      setRecentsMore(incoming.length===50);
+      setMoreRecent(n=>n+50);
+    }catch{toast.error('Recent conversations could not load');}
+    finally{setLoadingMoreRecent(false);}
+  }
+  const directLink=(kind:SidebarItemType,id:string)=>kind==='conversation'?
+    `${window.location.origin}/workspace?openSession=${encodeURIComponent(id)}`:
+    id.startsWith('repo:')?`${window.location.origin}/workspace?openRepo=${encodeURIComponent(id.slice(5))}`:
+    `${window.location.origin}/dashboard/projects/${encodeURIComponent(id)}`;
+  const openMenu=(event:React.MouseEvent<HTMLElement>,target:SidebarMenuTarget,rightClick=false)=>{
+    if(rightClick)event.preventDefault();
+    menuTriggerRef.current=event.currentTarget;
+    const rect=event.currentTarget.getBoundingClientRect();
+    setMenuPoint({x:rightClick?event.clientX:rect.right+8,y:rightClick?event.clientY:rect.top});
+    setMenuTarget(target);
+  };
+  const closeMenu=()=>{setMenuTarget(null);setMenuPoint(null);};
+  const saveRename=async(t:SidebarMenuTarget,name:string)=>{
+    const trimmed=name.trim();if(!trimmed||trimmed.length>120)throw new Error('Use 1–120 characters');
+    if(t.kind==='project'&&!t.id.startsWith('repo:')&&userId){
+      const {error}=await createClient().from('projects').update({name:trimmed}).eq('id',t.id).eq('user_id',userId);
+      if(error)throw error;
+      setProjectRows(rows=>rows.map(p=>p.id===t.id?{...p,name:trimmed}:p));
+    }
+    await patchMeta(t.kind,t.id,{title_override:trimmed});
+  };
+  const move=async(t:SidebarMenuTarget,projectId:string|null,sectionId:string|null=null)=>{
+    if(t.kind!=='conversation')throw new Error('Only conversations can be moved');
+    await patchMeta('conversation',t.id,{project_id:projectId,section_id:sectionId});
+  };
+  const createProject=async(name:string)=>{const p=await api.projects.create({name:name.trim(),type:'research'});
+    setProjectRows(rows=>[p,...rows]);return p;};
+  const createSection=async(projectId:string,name:string)=>{
+    if(!userId)throw new Error('Sign in first');
+    const section=await createSidebarSection(userId,projectId,name);
+    setSections(items=>[...items,section]);return section;
+  };
+  const archive=async(t:SidebarMenuTarget)=>{await patchMeta(t.kind,t.id,{archived_at:new Date().toISOString()});};
+  const remove=async(t:SidebarMenuTarget)=>{
+    const message=t.kind==='project'?'Delete this Xroga project? The connected GitHub repository is NOT deleted.':
+      'Permanently delete this conversation and its saved messages?';
+    if(!window.confirm(message))return;
+    if(t.kind==='project'){
+      if(t.id.startsWith('repo:'))throw new Error('Repository-linked folders cannot be deleted here');
+      await api.projects.delete(t.id);setProjectRows(rows=>rows.filter(p=>p.id!==t.id));
+    }else{
+      const targetSession=savedConversations.find(s=>s.id===t.id);
+      if(targetSession?.cloudSynced||!targetSession?.entry)await api.terminalSessions.delete(t.id);
+      removeTerminalHistoryEntry(t.id);
+      setEntries(rows=>rows.filter(e=>e.id!==t.id));
+      setAllHistory(rows=>rows.filter(e=>e.id!==t.id));
+      setCloudSessions(rows=>rows.filter(e=>e.id!==t.id));
+    }
+    if(userId)await removeSidebarMetadata(userId,t.kind,t.id);
+    setMetadata(rows=>rows.filter(m=>!(m.item_type===t.kind&&m.item_id===t.id)));
+  };
+  async function copyLink(t:SidebarMenuTarget){
+    await navigator.clipboard.writeText(directLink(t.kind,t.id));toast.success('Private link copied');
+  }
+  const onShare=(t:SidebarMenuTarget)=>{
+    closeMenu();
+    toast('Use Copy private link for account-only access. Public sharing of complete work is not enabled.');
+  };
 
-  if (!expanded) return null;
+  useEffect(()=>{
+    if(!userId||typeof window==='undefined'||!window.location.pathname.startsWith('/workspace'))return;
+    const params=new URLSearchParams(window.location.search);
+    const openId=params.get('openSession');const openRepo=params.get('openRepo');
+    if(openId&&handledLinkRef.current!==openId){
+      handledLinkRef.current=openId;
+      void loadTerminalFromAnywhere(openId).then(async entry=>{
+        if(entry?.messages.length)await applyRestore(entry,entry.githubBranch||'main');
+        else toast.error('Conversation not found or access denied');
+        window.history.replaceState(null,'','/workspace');
+      }).catch(()=>toast.error('Could not restore the shared conversation'));
+    }else if(openRepo&&handledLinkRef.current!==openRepo){
+      handledLinkRef.current=openRepo;
+      const folder=folders.find(f=>f.key===openRepo);
+      if(folder)void openRepoFolder(folder);
+    }
+  // The deep-link is resolved by ID from the authorized backend, not from the visible page cache.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[userId]);
 
-  return (
-    <div className="mt-2 mb-1 px-1.5">
-      <div className="relative flex items-center justify-between gap-1 px-1.5 mb-1.5">
-        <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
-          Repositories
-        </span>
-        <div className="relative">
-          <button
-            ref={filterAnchorRef}
-            type="button"
-            title="Filter repositories"
-            aria-label="Filter repositories"
-            aria-haspopup="menu"
-            aria-expanded={filterOpen}
-            onClick={() => setFilterOpen((value) => !value)}
-            className={cn('xv-repo-filter-trigger', repoFilter !== 'latest' && 'is-active')}
-          >
-            {/* The funnel settles as if something just passed through it. */}
-            <AnimatedIcon icon={FilterIcon} size={12} />
-          </button>
-          <RepositoryFilterPopover
-            open={filterOpen}
-            anchorRef={filterAnchorRef}
-            value={repoFilter}
-            onClose={closeFilter}
-            onChange={changeFilter}
-          />
-        </div>
-      </div>
+  const visibleCount=Math.max(5,projectCount);
+  const heading=(text:string,extra?:React.ReactNode)=><div className="xv-so-heading"><span>{text}</span>{extra}</div>;
+  const row=(kind:SidebarItemType,id:string,label:string,open:()=>void,depth=0,active=false)=>{
+    const pinnedNow=Boolean(metaFor(kind,id)?.pinned_at);
+    const target:SidebarMenuTarget={kind,id,label,pinned:pinnedNow,projectId:metaFor(kind,id)?.project_id};
+    return <div key={`${kind}:${id}`} className={cn('xv-so-row group',active&&'is-active')}
+      style={depth?{paddingLeft:depth*10}:undefined}
+      onContextMenu={event=>openMenu(event,target,true)}>
+      <button type="button" className="xv-so-open" onClick={open} aria-label={label}
+        disabled={busyId===id}>
+        {kind==='project'?<Folder size={14} aria-hidden="true" />:<MessageSquare size={13} aria-hidden="true" />}
+        <SidebarRevealTitle text={label}/>
+      </button>
+      {metaLoaded?<button className="xv-so-quick" type="button"
+        aria-label={pinnedNow?'Unpin':'Pin'} aria-pressed={pinnedNow}
+        onClick={()=>void togglePersistentPin(kind,id).catch(()=>toast.error('Could not save pin'))}>
+        {pinnedNow?<PinOff size={13}/>:<Pin size={13}/>}
+      </button>:null}
+      <button className="xv-so-quick" type="button" aria-label={`More options for ${label}`}
+        onClick={event=>openMenu(event,target)}><Ellipsis size={15}/></button>
+    </div>;
+  };
 
-      {folders.length === 0 ? (
-        isGuest ? (
-          <button
-            type="button"
-            onClick={() => requestAuthGate('history')}
-            className="w-full rounded-lg px-2 py-2 text-left text-[10px] leading-relaxed text-[var(--muted)] transition hover:bg-[var(--foreground)]/5 hover:text-[var(--foreground)]"
-          >
-            This guest chat is temporary. Create a free account to save terminals and repository history →
-          </button>
-        ) : (
-          <p className="px-2 py-2 text-[10px] text-[var(--muted)] leading-relaxed">
-            Click New Terminal, select a GitHub repo, then chat — #1 terminal appears here and is saved to your account.
-          </p>
-        )
-      ) : (
-        <div className="xv-repos-scroll space-y-0.5 pr-1">
-          {folders.map((folder) => {
-            const isOpen = openFolders[folder.key] !== false;
-            // A repository under the filter is a fork point, not a folder: the glyph
-            // assembles from the child commit up to its two parents. The open state
-            // keeps a folder, because that one is saying "expanded", not "repository".
-            const FolderIcon = isOpen ? FolderOpen : null;
-            const isActiveRepo = selectedContextKey === folder.key;
-            return (
-              <div key={folder.key} className="space-y-0.5">
-                <div className="flex items-center gap-0.5">
-                  <button
-                    type="button"
-                    aria-label={isOpen ? 'Collapse' : 'Expand'}
-                    onClick={() =>
-                      setOpenFolders((prev) => ({ ...prev, [folder.key]: !isOpen }))
-                    }
-                    className="p-1 rounded-md text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5"
-                  >
-                    {isOpen ? (
-                      <ChevronDown className="h-3 w-3 shrink-0 opacity-70" />
-                    ) : (
-                      <ChevronRight className="h-3 w-3 shrink-0 opacity-70" />
-                    )}
-                  </button>
-                  <button
-                    type="button"
-                    disabled={busyId === folder.key}
-                    title="Open latest terminal for this repo"
-                    onClick={() => void openRepoFolder(folder)}
-                    className={cn(
-                      'flex-1 min-w-0 flex items-center gap-1 px-1 py-1 rounded-md text-[10px] hover:bg-[var(--foreground)]/5',
-                      isActiveRepo
-                        ? 'text-[var(--foreground)] font-semibold'
-                        : 'text-[var(--muted)] hover:text-[var(--foreground)]'
-                    )}
-                  >
-                    {FolderIcon ? (
-                      <FolderIcon className="h-3 w-3 shrink-0" />
-                    ) : (
-                      <AnimatedIcon icon={GitForkIcon} size={12} intro={false} className="shrink-0" />
-                    )}
-                    <span className="truncate font-medium" title={`${folder.repo} · ${folder.branch}`}>
-                      {folder.label}
-                    </span>
-                    <span className="max-w-16 truncate font-mono text-[8px] opacity-60">{folder.branch}</span>
-                    <span className="text-[9px] text-[var(--muted)] tabular-nums ml-auto">
-                      {folder.sessions.length}
-                    </span>
-                  </button>
-                </div>
-                {isOpen ? (
-                  folder.sessions.length === 0 ? (
-                    <p className="pl-6 pr-2 py-1.5 text-[10px] text-[var(--muted)] leading-snug">
-                      {isActiveRepo && messages.length > 0
-                        ? 'Saving #1 terminal to your account…'
-                        : (
-                          <>
-                            Chat below to create{' '}
-                            <span className="font-semibold text-[var(--foreground)]/80">#1 terminal</span>
-                          </>
-                        )}
-                    </p>
-                  ) : (
-                    folder.sessions.map((session) => {
-                      const isActiveSession = session.id === activeSessionId;
-                      return (
-                        <button
-                          key={session.id}
-                          type="button"
-                          disabled={busyId === session.id}
-                          onClick={() => void openSession(session)}
-                          className={cn(
-                            'w-full flex items-center gap-1.5 rounded-md pl-6 pr-2 py-1.5 transition-colors',
-                            'hover:bg-[var(--foreground)]/8',
-                            (isActiveRepo || isActiveSession) && 'bg-[var(--foreground)]/[0.04]',
-                            isActiveSession && 'ring-1 ring-[var(--accent)]/25'
-                          )}
-                        >
-                          <p className="flex-1 min-w-0 text-left text-[11px] font-semibold text-[var(--foreground)]/90 truncate leading-snug">
-                            {session.title}
-                          </p>
-                          <GitBranch className="h-2.5 w-2.5 text-violet-400 shrink-0" />
-                          {session.cloudSynced ? (
-                            <Cloud className="h-2.5 w-2.5 text-[var(--muted)] shrink-0 opacity-70" />
-                          ) : null}
-                          <span className="text-[9px] text-[var(--muted)] shrink-0 tabular-nums min-w-[1.5rem] text-right">
-                            {formatCompactAgo(session.updatedAt)}
-                          </span>
-                        </button>
-                      );
-                    })
-                  )
-                ) : null}
+  const projectChats=(id:string,repo?:string)=>{
+    return savedConversations.filter(session=>{
+      const m=metaFor('conversation',session.id);
+      if(m?.archived_at)return false;
+      if(m?.project_id)return m.project_id===id;
+      return Boolean(repo&&session.githubRepoName===repo);
+    });
+  };
+  const archivedItems=metadata.filter(m=>m.archived_at);
+  if(!expanded)return null;
+  return <div className="xv-so mt-2 mb-1 px-1.5">
+    {heading('Projects',<button type="button" aria-label="All projects" onClick={()=>router.push('/dashboard/projects')}>
+      <Plus size={14}/></button>)}
+    {isGuest?<button className="xv-so-more" onClick={()=>requestAuthGate('history')}>Sign in to save projects and history</button>:
+      <>
+        {projectDirectory.slice(0,visibleCount).map(project=>{
+          const sessions=projectChats(project.id,project.repo);
+          const open=expandedProjects[project.id]===true;
+          return <div key={project.id}>
+            <div className="flex items-center gap-0.5">
+              <button type="button" aria-label={open?'Collapse project':'Expand project'}
+                className="p-1 rounded-md text-[var(--muted)]"
+                onClick={()=>setExpandedProjects(prev=>({...prev,[project.id]:!open}))}>
+                {open?<ChevronDown size={13}/>:<ChevronRight size={13}/>}
+              </button>
+              <div className="min-w-0 flex-1">
+                {row('project',project.id,project.label,()=>{
+                  if(project.project)router.push(`/dashboard/projects/${project.id}`);
+                  else if(project.folder)void openRepoFolder(project.folder);
+                },0,Boolean(project.folder&&selectedContextKey===project.folder.key))}
               </div>
-            );
-          })}
-        </div>
-      )}
-      {!isGuest ? (
-        <>
-          <section className="mt-3" aria-label="Pinned conversations">
-            <h2 className="px-1.5 pb-1 text-[9px] font-bold uppercase tracking-[0.1em] text-[var(--muted)]">Pinned</h2>
-            {pinnedConversations.length
-              ? pinnedConversations.map(s => renderConversationRow(s, true))
-              : <p className="px-2 py-1 text-[10px] text-[var(--muted)]">Pin chats from Recents for quick access.</p>}
-          </section>
-          <section className="mt-3" aria-label="Recent conversations">
-            <h2 className="px-1.5 pb-1 text-[9px] font-bold uppercase tracking-[0.1em] text-[var(--muted)]">Recents</h2>
-            {recentConversations.length
-              ? recentConversations.map(s => renderConversationRow(s, false))
-              : <p className="px-2 py-1 text-[10px] text-[var(--muted)]">Your conversations will appear here.</p>}
-          </section>
-        </>
-      ) : null}
-    </div>
-  );
+            </div>
+            {open?<div className="xv-so-nest">
+              {sections.filter(section=>section.project_id===project.id).map(section=>
+                <div key={section.id}>
+                  <div className="px-1 py-1 text-[10px] text-[var(--muted)]">{section.name}</div>
+                  {sessions.filter(chat=>metaFor('conversation',chat.id)?.section_id===section.id)
+                    .slice(0,fullProjects[project.id]?undefined:3)
+                    .map(chat=>row('conversation',chat.id,conversationTitle(chat),()=>void openSession(chat),1,chat.id===activeSessionId))}
+                </div>)}
+              {sessions.filter(chat=>!metaFor('conversation',chat.id)?.section_id)
+                .slice(0,fullProjects[project.id]?undefined:3)
+                .map(chat=>row('conversation',chat.id,conversationTitle(chat),()=>void openSession(chat),1,chat.id===activeSessionId))}
+              {sessions.length>3?<button type="button" className="xv-so-more"
+                onClick={()=>setFullProjects(prev=>({...prev,[project.id]:!prev[project.id]}))}>
+                {fullProjects[project.id]?'Show less':'View all chats'}</button>:null}
+              {!sessions.length?<span className="block p-2 text-[10px] text-[var(--muted)]">No saved conversations</span>:null}
+            </div>:null}
+          </div>;
+        })}
+        {!projectsLoading&&!projectDirectory.length?<p className="px-2 py-2 text-[10px] text-[var(--muted)]">No projects yet</p>:null}
+        {(projectsMore||projectDirectory.length>visibleCount)?
+          <button className="xv-so-more" onClick={()=>void addMoreProjects()} disabled={projectsLoading}>
+            {projectsLoading?'Loading projects…':'View more projects'}</button>:null}
+        {projectCount>5?<button className="xv-so-more" onClick={()=>setProjectCount(5)}>Show less</button>:null}
+        <button className="xv-so-more" onClick={()=>router.push('/dashboard/projects')}>All projects</button>
+
+        {pinnedItems.length>0?<>
+          {heading('Pinned')}
+          {pinnedItems.slice(0,morePins).map(({m,label,chat,project})=>row(m.item_type,m.item_id,label,()=>{
+            if(m.item_type==='conversation'){
+              void openSession(chat||{id:m.item_id,title:label,preview:label,updatedAt:m.updated_at,
+                cloudSynced:true,kind:'cloud',terminalNumber:0});
+            }else if(project?.project)router.push(`/dashboard/projects/${m.item_id}`);
+            else if(project?.folder)void openRepoFolder(project.folder);
+            else router.push(`/dashboard/projects/${m.item_id}`);
+          }))}
+          {pinnedItems.length>morePins?<button className="xv-so-more" onClick={()=>setMorePins(n=>n+10)}>View more pins</button>:null}
+          {morePins>10?<button className="xv-so-more" onClick={()=>setMorePins(10)}>Show less</button>:null}
+        </>:null}
+
+        {heading('Recents',archivedItems.length?<button type="button" aria-label={showArchived?'Back to recents':'Archived items'}
+          onClick={()=>setShowArchived(v=>!v)}><ArchiveRestore size={14}/></button>:null)}
+        {showArchived?archivedItems.map(m=>row(m.item_type,m.item_id,m.title_override||
+            (m.item_type==='conversation'?
+              pinNames[`conversation:${m.item_id}`]||'Archived conversation':
+              pinNames[`project:${m.item_id}`]||'Archived project'),()=>{
+                if(m.item_type==='conversation')void openSession({id:m.item_id,title:'',preview:'',updatedAt:m.updated_at,
+                    cloudSynced:true,kind:'cloud',terminalNumber:0});
+                else router.push(`/dashboard/projects/${m.item_id}`);
+              })):
+          savedConversations.filter(chat=>!metaFor('conversation',chat.id)?.archived_at)
+            .slice(0,moreRecent).map(chat=>row('conversation',chat.id,conversationTitle(chat),
+              ()=>void openSession(chat),0,chat.id===activeSessionId))}
+        {!showArchived&&recentsMore&&savedConversations.length>=moreRecent?
+          <button className="xv-so-more" disabled={loadingMoreRecent} onClick={()=>void loadMoreConversations()}>
+            {loadingMoreRecent?'Loading…':'View more recent work'}</button>:null}
+        {!showArchived&&!savedConversations.length?<p className="p-2 text-[10px] text-[var(--muted)]">Your saved conversations appear here</p>:null}
+      </>}
+
+    <SidebarOrganizerMenu target={menuTarget} point={menuPoint} trigger={menuTriggerRef}
+      close={closeMenu} projects={projectRows} sections={sections}
+      pin={t=>togglePersistentPin(t.kind,t.id)} rename={saveRename} move={move}
+      createProject={createProject} createSection={createSection} archive={archive} remove={remove}
+      copy={copyLink} openTab={t=>window.open(directLink(t.kind,t.id),'_blank','noopener,noreferrer')}
+      share={onShare} reorder={reorderPinned}/>
+  </div>;
 }
