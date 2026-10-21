@@ -163,7 +163,7 @@ test('solid model and plus menus are monochrome and mobile uses only a model sym
   await expect(panel).toHaveCSS('background-color', 'rgb(22, 22, 22)');
   await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'More composer actions' }).click();
-  await expect(page.getByRole('dialog', { name: 'Composer actions' })).toHaveCSS('filter', 'grayscale(1)');
+  await expect(page.getByRole('dialog', { name: 'Composer actions' })).toHaveCSS('filter', 'none');
   await page.keyboard.press('Escape');
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(model.locator('span')).toBeHidden();
@@ -224,11 +224,11 @@ test('compact sidebar keeps utilities and primary destinations in two aligned ro
   expect(new Set(boxes.map(box => box.y)).size).toBe(1);
   const bounds = await sidebar.boundingBox();
   expect(Math.max(...boxes.map(box => box.right))).toBeLessThanOrEqual(bounds!.x + bounds!.width);
-  await expect(sidebar.getByRole('link', { name: 'Dashboard', exact: true })).toHaveCount(1);
+  await expect(sidebar.getByRole('link', { name: 'Overview', exact: true })).toHaveCount(1);
   await expect(sidebar.getByRole('button', { name: 'New Work', exact: true })).toBeVisible();
   await sidebar.getByRole('button', { name: 'Close sidebar', exact: true }).click();
   await expect(sidebar).toHaveClass(/is-collapsed/);
-  await expect(sidebar.getByRole('link', { name: 'Dashboard', exact: true })).toBeVisible();
+  await expect(sidebar.getByRole('link', { name: 'Overview', exact: true })).toBeVisible();
   await sidebar.locator('img').first().hover();
   await page.waitForTimeout(500);
   await expect(sidebar).toHaveClass(/is-collapsed/);
@@ -274,7 +274,7 @@ test('mobile tagline stays on one line and tool picks are editable, removable an
   page.on('request', request => { if (request.url().includes('/api/guest/chat')) sends++; });
   await page.goto('/workspace');
   const tagline = page.getByTestId('workspace-start-header').locator('p');
-  await expect(tagline).toHaveText('One AI workspace for every kind of work.');
+  await expect(tagline).toContainText('One AI workspace for every kind of ');
   expect(await tagline.evaluate(el => getComputedStyle(el).whiteSpace)).toBe('nowrap');
   await page.getByRole('button', { name: 'More composer actions' }).click();
   const menu = page.getByRole('dialog', { name: 'Composer actions' });
@@ -282,8 +282,8 @@ test('mobile tagline stays on one line and tool picks are editable, removable an
   await menu.getByRole('button', { name: /Library/ }).click();
   await menu.getByRole('button', { name: /Summarize files/ }).click();
   await expect(page.locator('[data-terminal-composer]')).toHaveValue('Summarize these files and list the important findings: ');
-  await expect(page.getByLabel('Selected composer tools')).toContainText('Library');
-  await page.getByRole('button', { name: 'Remove Library selection' }).click();
+  await expect(page.getByLabel('Selected composer tools')).toContainText('Summarize files');
+  await page.getByRole('button', { name: 'Remove Summarize files selection' }).click();
   await expect(page.getByLabel('Selected composer tools')).toHaveCount(0);
   await expect(page.locator('[data-terminal-composer]')).toHaveValue('');
   expect(sends).toBe(0);
@@ -299,4 +299,31 @@ test('search dialog escapes workspace stacking context and has an opaque foregro
   expect(await dialog.evaluate(el => el.parentElement?.parentElement === document.body)).toBe(true);
   await page.keyboard.press('Escape');
   await expect(dialog).toHaveCount(0);
+});
+
+test('automatic intro reveals its second line after delay without a model picker', async ({ page }) => {
+  await page.goto('/workspace');
+  const detail = page.locator('[data-visible]').filter({ hasText: 'No models or tools to choose.' });
+  await expect(detail).toHaveAttribute('data-visible', 'false');
+  await page.waitForTimeout(2400);
+  await expect(detail).toHaveAttribute('data-visible', 'true');
+  await expect(page.getByTestId('workspace-start-header').locator('p')).toContainText('One AI workspace for every kind of ');
+});
+
+test('contextual tools have colored hover states, and selected chips show details and removal', async ({ page }) => {
+  await page.goto('/workspace');
+  await page.getByRole('button', { name: 'More composer actions' }).click();
+  const menu = page.getByRole('dialog', { name: 'Composer actions' });
+  await expect(menu).not.toContainText('Choose a tool, or describe your task');
+  await expect(menu.locator('.xv-cba-integrations-logo')).toHaveCount(0);
+  const plan = menu.getByRole('button', { name: /Plan before build/ });
+  await plan.hover();
+  await expect(plan).toHaveAttribute('data-tone', 'orange');
+  await plan.click();
+  const chip = page.getByRole('button', { name: 'About Plan before build' });
+  await expect(chip).toBeVisible();
+  await chip.hover();
+  await expect(page.getByRole('menu', { name: 'Plan before build details' })).toBeVisible();
+  await page.getByRole('button', { name: 'Remove Plan before build selection' }).click();
+  await expect(chip).toHaveCount(0);
 });

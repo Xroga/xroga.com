@@ -7,7 +7,7 @@
   width: auto !important; height: auto !important; max-height: none !important;
   padding: 18px 24px !important;
   display: flex; align-items: safe center; justify-content: center;
-  overflow-y: auto !important; overflow-x: hidden; scrollbar-width: thin;
+  overflow-y: auto !important; overflow-x: hidden; scrollbar-width: none;
   color: var(--foreground);
   --composer-surface: var(--terminal-ui-raised);
   container-type: inline-size;
@@ -21,6 +21,8 @@
   --terminal-ui-border: #ffffff14;
   --muted: #b0b0b0;
 }
+/* The idle workspace still scrolls, but never displays a browser-native white track. */
+.dock.dock.dock::-webkit-scrollbar { display: none; width: 0; }
 .dock.dock.dock :global(.xv-terminal-dock-inner) { width: 100% !important; max-width: 1040px !important; padding: 0 !important; margin: auto !important; max-height: none !important; }
 .window.window { background: var(--terminal-ui-surface) !important; color: var(--foreground); }
 .window.window::after { display: none !important; }
@@ -32,12 +34,12 @@
 .superIntelligence { margin: 0; font: 500 clamp(30px,4cqw,43px)/1.13 Georgia,'Times New Roman',serif; letter-spacing: -.035em; color: var(--foreground); background: linear-gradient(180deg,var(--foreground) 15%,color-mix(in srgb,var(--foreground) 65%,var(--terminal-ui-surface)) 48%,var(--foreground) 62%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .taglineRow { position: relative; display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 12px; }
 .tagline { margin: 0; font-family: var(--font-geist-sans), 'Inter', Arial, sans-serif; font-size: clamp(15px,2cqw,20px); font-weight: 400; letter-spacing: -.04em; line-height: 1.45; color: var(--muted); white-space: nowrap; }
-.dynamicWord { display: inline; color: var(--foreground); animation: wordReveal .35s ease both; }
+ .dynamicWord { display: inline-block; color: var(--foreground); animation: wordReveal 500ms cubic-bezier(.19,1,.22,1) both; }
+@keyframes wordReveal { from { opacity: 0; filter: blur(8px); transform: translateY(4px); } to { opacity: 1; filter: blur(0); transform: translateY(0); } }
 .mobileBreak { display: none; }
 .rotationControl { display: grid; place-items: center; width: 24px; height: 24px; color: var(--muted); border-radius: 6px; }
 .rotationControl svg { width: 11px; height: 11px; }
 .rotationControl:hover { background: var(--terminal-ui-inset); }
-@keyframes wordReveal { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 .dock.dock.dock :global(.xv-kimi-composer-frame) { max-width: 740px; margin-inline: auto; padding: 4px; border: 1px solid var(--terminal-ui-border); border-radius: 20px; background: var(--terminal-ui-inset); box-shadow: 0 6px 24px #0000000c; }
 .dock.dock.dock :global(.xv-chatbar-solid) { min-height: 0 !important; margin: 0 !important; border-radius: 16px !important; border: 1px solid var(--terminal-ui-border) !important; background: var(--terminal-ui-raised) !important; box-shadow: none !important; color: var(--foreground); }
 .dock.dock.dock :global(.xv-chatbar-solid)::before,.dock.dock.dock :global(.xv-chatbar-solid)::after { display: none !important; }
@@ -58,8 +60,11 @@
 .dock :global(.xv-send__glow) { display: none; }
 .dock :global(.xv-send)>svg { color: var(--terminal-ui-surface) !important; stroke: var(--terminal-ui-surface) !important; }
 .dock.dock.dock :global(.xv-chatbar-row-modern) { gap: 4px; }
-.automatic { margin: 14px auto 20px; max-width: 570px; color: var(--muted); font: 12px/1.6 Arial,sans-serif; letter-spacing: .015em; text-align: center; text-wrap: balance; }
-.automatic strong { color: var(--foreground); font-weight: 500; }
+ .automatic { display: grid; gap: 3px; margin: 14px auto 20px; max-width: 570px; color: var(--muted); font: 12px/1.5 Arial,sans-serif; letter-spacing: .015em; text-align: center; text-wrap: balance; min-height: 47px; }
+.automatic strong { color: var(--foreground); font-weight: 600; }
+.automaticDetail { display: block; opacity: 0; visibility: hidden; }
+.automaticDetail[data-visible='true'] { visibility: visible; animation: automaticReveal .5s ease-out both; }
+@keyframes automaticReveal { from { opacity: 0; filter: blur(7px); transform: translateY(5px); } to { opacity: 1; filter: blur(0); transform: translateY(0); } }
 .cards { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)) minmax(180px,.8fr); gap: 12px; max-width: 900px; margin-inline: auto; }
 .cardShell,.carouselShell { min-width: 0; position: relative; }
 .card { width: 100%; height: 100%; position: relative; display: flex; align-items: center; min-height: 118px; padding: 18px; text-align: left; background: color-mix(in srgb,var(--terminal-ui-raised) 75%,var(--terminal-ui-inset)); border: 1px solid var(--terminal-ui-border); border-radius: 14px; overflow: hidden; color: var(--foreground); min-width: 0; cursor: pointer; transition: background-color .18s,border-color .18s; }
@@ -120,7 +125,7 @@
   .visual { width: 70px; height: 70px; }
   .superIntelligence { font-size: 31px; }
   .tagline { font-size: 16px; }
-  .tagline { font-size: clamp(11px,3.4cqw,14px); letter-spacing: -.05em; }
+  .tagline { font-size: clamp(10px,2.95cqw,13px); letter-spacing: -.045em; }
   .dynamicWord { min-width: 9ch; }
   .dock.dock.dock :global(.xv-chatbar-primary-tools) { gap: 5px; }
   .tool { padding: 5px; width: 29px; }
@@ -137,7 +142,7 @@
 }
 @container (max-width: 320px) {
   .superIntelligence { font-size: 27px; }
-  .tagline { font-size: clamp(10px,3.4cqw,12px); }
+  .tagline { font-size: clamp(9px,2.8cqw,11px); }
   .hero { margin-bottom: 16px; }
   .automatic { margin: 10px 0 12px; }
   .card { padding: 10px; min-height: 106px; }
@@ -151,7 +156,7 @@
   .tool { width: 25px; padding: 3px; }
   .dock.dock.dock :global(.xv-chatbar-primary-tools) { gap: 3px; }
 }
-@media (prefers-reduced-motion: reduce) { .card,.tool,.visual { transition: none; } .dynamicWord { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .card,.tool,.visual { transition: none; } .dynamicWord,.automaticDetail[data-visible='true'] { animation: none; filter: none; opacity: 1; transform: none; } }
 .window :global(.xv-workspace-header),.dock :global(.xv-chatbar-tools) { --accent: var(--foreground); filter: grayscale(1); }
 .dock :global(.xv-companion-blackhole) svg[data-testid='mobile-model-icon'] { width: 22px; height: 22px; color: var(--foreground) !important; }
 @media (max-height: 700px) and (min-width: 640px) {

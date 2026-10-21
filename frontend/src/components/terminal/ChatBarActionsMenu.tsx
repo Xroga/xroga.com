@@ -2,10 +2,9 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowUpRight, Bot, Bug, Check, ChevronRight, Command, FolderOpen, Globe2, Library, ListChecks, Paperclip, Plus, ScrollText, Sparkles, TerminalSquare, Workflow, X } from 'lucide-react';
+import { ArrowUpRight, Bot, Bug, Check, ChevronRight, Command, FolderOpen, Globe2, Library, ListChecks, Paperclip, Plus, Puzzle, ScrollText, Sparkles, TerminalSquare, Workflow, X } from 'lucide-react';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { CirclePlayIcon } from '@/components/icons/animated/CirclePlayIcon';
-import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
 import {
   COMPOSER_COMMANDS,
   COMPOSER_SKILLS,
@@ -53,6 +52,15 @@ const WORK_OPTIONS = [
   ] },
 ] as const;
 
+export type ComposerInsertOptions = {
+  highlight?: 'command' | 'plan' | 'debug';
+  selectionLength?: number;
+  label?: string;
+  category?: string;
+  description?: string;
+  tone?: 'blue' | 'orange' | 'red' | 'green' | 'purple' | 'gray';
+};
+
 export function ChatBarActionsMenu({
   onInsert,
   onAddFiles,
@@ -64,7 +72,7 @@ export function ChatBarActionsMenu({
   plusIcon = false,
 }: {
   /** Fills the composer with a scaffold for the user to edit. Never auto-sends. */
-  onInsert: (text: string, options?: { highlight?: 'command' | 'plan' | 'debug'; selectionLength?: number; label?: string }) => void;
+  onInsert: (text: string, options?: ComposerInsertOptions) => void;
   onAddFiles?: () => void;
   /**
    * Opens the integrations surface. This used to be a pill sitting beside the `+`,
@@ -87,9 +95,7 @@ export function ChatBarActionsMenu({
   const [open, setOpen] = useState(false);
   const [panel, setPanel] = useState<'menu' | 'commands' | 'skills' | 'rules' | 'work'>('menu');
   const [workId, setWorkId] = useState<string>('library');
-  const [previewWork, setPreviewWork] = useState<string | null>(null);
   const activeWork = WORK_OPTIONS.find(item => item.id === workId) ?? WORK_OPTIONS[0];
-  const hoveredWork = WORK_OPTIONS.find(item => item.id === previewWork);
   const rootRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
@@ -167,10 +173,10 @@ export function ChatBarActionsMenu({
   // Always reopen on the menu — landing back inside the rules editor after a close
   // is disorienting when the trigger looks like a single generic button.
   useEffect(() => {
-    if (!open) { setPanel('menu'); setPreviewWork(null); }
+    if (!open) setPanel('menu');
   }, [open]);
 
-  function insert(text: string, options?: { highlight?: 'command' | 'plan' | 'debug'; selectionLength?: number; label?: string }) {
+  function insert(text: string, options?: ComposerInsertOptions) {
     onInsert(text, options);
     setOpen(false);
   }
@@ -203,10 +209,6 @@ export function ChatBarActionsMenu({
         <div ref={menuRef} className={cn('xv-cba-menu', controls.actions)} role="dialog" aria-label="Composer actions" style={{ ...menuStyle, '--xv-actions-width': `${menuStyle.width}px` } as React.CSSProperties}>
           {panel === 'menu' && (
             <div className="xv-cba-grid">
-              <div className="xv-cba-work-preview xv-cba-item--wide" aria-live="polite">
-                <strong>{hoveredWork ? hoveredWork.label : previewWork === 'plugins' ? 'Plugins' : 'Choose a tool, or describe your task'}</strong>
-                <span>{hoveredWork ? hoveredWork.description : previewWork === 'plugins' ? 'Connect and manage apps; permissions are always checked.' : 'Examples fill the composer without sending anything.'}</span>
-              </div>
               {recentTerminal && (
                 <button
                   type="button"
@@ -226,50 +228,43 @@ export function ChatBarActionsMenu({
                 </button>
               )}
 
-              <button type="button" className="xv-cba-item" disabled={!onAddFiles} onClick={() => { onAddFiles?.(); setOpen(false); }}>
+              <button type="button" className="xv-cba-item" data-tone="gray" disabled={!onAddFiles} onClick={() => { onAddFiles?.(); setOpen(false); }}>
                 <Paperclip className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Add files or photos</b><i>Upload from computer</i></span>
                 <kbd className="xv-cba-kbd">Ctrl+U</kbd>
               </button>
-              <button type="button" className="xv-cba-item xv-cba-item--integrations" onPointerEnter={event => { if (event.pointerType === 'mouse') setPreviewWork('plugins'); }} onFocus={() => setPreviewWork('plugins')} disabled={!onOpenIntegrations} onClick={() => { onOpenIntegrations?.(); setOpen(false); }}>
-                <span className="xv-cba-integrations-logo" aria-hidden="true">
-                  <IntegrationLogo id="github" name="GitHub" size={18} />
-                  <IntegrationLogo id="vercel" name="Vercel" size={18} />
-                  <IntegrationLogo id="supabase" name="Supabase" size={18} />
-                  <IntegrationLogo id="slack" name="Slack" size={18} />
-                  <IntegrationLogo id="google-drive" name="Google Drive" size={18} />
-                </span>
+              <button type="button" className="xv-cba-item xv-cba-item--integrations" data-tone="purple" disabled={!onOpenIntegrations} onClick={() => { onOpenIntegrations?.(); setOpen(false); }}>
+                <Puzzle className="h-4 w-4 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Plugins</b><i>Connect and manage supported apps</i></span>
                 {connectorsNeedingAttention > 0 && <i className="xv-cba-flag" aria-hidden="true" />}
               </button>
               {WORK_OPTIONS.map(item => {
                 const Icon = item.icon;
                 return <button key={item.id} type="button" className="xv-cba-item xv-cba-work"
-                  onPointerEnter={event => { if (event.pointerType === 'mouse') setPreviewWork(item.id); }}
-                  onFocus={() => setPreviewWork(item.id)}
+                  data-tone={item.id === 'library' || item.id === 'browser' ? 'blue' : item.id === 'projects' || item.id === 'apps' ? 'green' : 'purple'}
                   onClick={() => { setWorkId(item.id); setPanel('work'); }}>
                   <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
                   <span className="xv-cba-item__text"><b>{item.label}</b><i>{item.description}</i></span>
                   <ChevronRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 </button>;
               })}
-              <button type="button" className="xv-cba-item xv-cba-item--command" onClick={() => setPanel('commands')}>
+              <button type="button" className="xv-cba-item xv-cba-item--command" data-tone="blue" onClick={() => setPanel('commands')}>
                 <Command className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Slash commands</b><i>Build, plan, debug, audit, test, or deploy</i></span>
               </button>
-              <button type="button" className="xv-cba-item xv-cba-item--plan" onClick={() => insert('Plan this build first. Show the approach, affected files, checks, and blockers before changing anything: ', { highlight: 'plan', selectionLength: 'Plan this build first.'.length })}>
+              <button type="button" className="xv-cba-item xv-cba-item--plan" data-tone="orange" onClick={() => insert('Plan this build first. Show the approach, affected files, checks, and blockers before changing anything: ', { highlight: 'plan', selectionLength: 'Plan this build first.'.length, label: 'Plan before build', category: 'Planning', description: 'Draft a plan before changing any files. Execution still requires you to send.', tone: 'orange' })}>
                 <ListChecks className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Plan before build</b><i>Get the approach first, change nothing yet</i></span>
               </button>
-              <button type="button" className="xv-cba-item xv-cba-item--debug" onClick={() => insert('Debug this error, identify the root cause, and fix it: ', { highlight: 'debug', selectionLength: 'Debug this error'.length })}>
+              <button type="button" className="xv-cba-item xv-cba-item--debug" data-tone="red" onClick={() => insert('Debug this error, identify the root cause, and fix it: ', { highlight: 'debug', selectionLength: 'Debug this error'.length, label: 'Debug an error', category: 'Debugging', description: 'Inspect the error, identify the cause, and verify the repair.', tone: 'red' })}>
                 <Bug className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Debug an error</b><i>Paste the error, get the root cause</i></span>
               </button>
-              <button type="button" className="xv-cba-item" onClick={() => setPanel('skills')}>
+              <button type="button" className="xv-cba-item" data-tone="purple" onClick={() => setPanel('skills')}>
                 <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Skills</b><i>{enabledSkills.length ? `${enabledSkills.length} active` : 'Reusable instruction packs'}</i></span>
               </button>
-              <button type="button" className="xv-cba-item" onClick={() => setPanel('rules')}>
+              <button type="button" className="xv-cba-item" data-tone="gray" onClick={() => setPanel('rules')}>
                 <ScrollText className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Rules</b><i>{rules.trim() ? 'Applied to every prompt' : 'Standing instructions you write'}</i></span>
               </button>
@@ -287,7 +282,8 @@ export function ChatBarActionsMenu({
               <div className="xv-cba-command-list" role="group" aria-label={activeWork.label + ' examples'}>
                 {activeWork.examples.map(([label, prompt]) => (
                   <button key={label} type="button" className="xv-cba-item xv-cba-work-example"
-                    onClick={() => insert(prompt, { label: activeWork.label })}>
+                    data-tone={activeWork.id === 'library' || activeWork.id === 'browser' ? 'blue' : activeWork.id === 'projects' || activeWork.id === 'apps' ? 'green' : 'purple'}
+                    onClick={() => insert(prompt, { label, category: activeWork.label, description: activeWork.description, tone: activeWork.id === 'library' || activeWork.id === 'browser' ? 'blue' : activeWork.id === 'projects' || activeWork.id === 'apps' ? 'green' : 'purple' })}>
                     <span className="xv-cba-item__text"><b>{label}</b><i>{prompt}</i></span>
                     <ChevronRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                   </button>
@@ -314,7 +310,8 @@ export function ChatBarActionsMenu({
                     type="button"
                     role="menuitem"
                     className="xv-cba-item xv-cba-command"
-                    onClick={() => insert(command.prompt, { highlight: 'command', selectionLength: command.command.length })}
+                    data-tone="blue"
+                    onClick={() => insert(command.prompt, { highlight: 'command', selectionLength: command.command.length, label: command.command, category: 'Slash command', description: command.description, tone: 'blue' })}
                   >
                     <code>{command.command}</code>
                     <span className="xv-cba-item__text">
@@ -351,7 +348,7 @@ export function ChatBarActionsMenu({
                     role="switch"
                     aria-checked={on}
                     onClick={() => toggleSkill(skill.id)}
-                    className={cn('xv-cba-item', on && 'is-active')}
+                    className={cn('xv-cba-item', on && 'is-active')} data-tone="purple"
                   >
                     <span className={cn('xv-cba-check', on && 'is-on')} aria-hidden="true">
                       {on && <Check className="h-2.5 w-2.5" />}

@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { ChatBarActionsMenu } from './ChatBarActionsMenu';
+import { ComposerToolChip } from './ComposerToolChip';
+import type { ComposerInsertOptions } from './ChatBarActionsMenu';
 import { buildComposerPreamble, COMPOSER_SKILLS, useComposerToolsStore } from '@/store/useComposerToolsStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
@@ -79,7 +81,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
    * re-render on every letter (that caused double characters / rewritten input).
    */
   const [draft, setDraft] = useState(prompt);
-  const [selectedTool, setSelectedTool] = useState<{ label: string; scaffold: string } | null>(null);
+  const [selectedTool, setSelectedTool] = useState<({ scaffold: string } & ComposerInsertOptions) | null>(null);
   const enabledSkills = useComposerToolsStore((state) => state.enabledSkills);
   const draftRef = useRef(draft);
   draftRef.current = draft;
@@ -483,7 +485,17 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
 
   return (
     <>
-      <IntegrationsModal open={integrationsOpen} onClose={() => setIntegrationsOpen(false)} anchorRef={pluginsButtonRef} />
+      <IntegrationsModal open={integrationsOpen} onClose={() => setIntegrationsOpen(false)} anchorRef={pluginsButtonRef}
+        onSelect={(plugin) => {
+          const scaffold = 'Use the connected ' + plugin.name + ' plugin for this task: ';
+          const next = draftRef.current.trim() ? scaffold + draftRef.current : scaffold;
+          setSelectedTool({ label: plugin.name, category: 'Connected plugin', description: 'Connected app selected. Actual execution still follows your tool permissions.', tone: 'purple', scaffold });
+          setDraft(next);
+          draftRef.current = next;
+          setIntegrationsOpen(false);
+          window.setTimeout(() => textareaRef.current?.focus(), 20);
+        }}
+      />
       <GithubRepoModal
         open={githubOpen}
         onClose={() => setGithubOpen(false)}
@@ -540,9 +552,12 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
 
           {!incognito && hydrated && (selectedTool || enabledSkills.length > 0) ? (
             <div className="flex max-w-full flex-wrap gap-1.5 px-3 pt-2" aria-label="Selected composer tools">
-              {selectedTool ? <span className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-[var(--terminal-ui-border)] bg-[var(--terminal-ui-inset)] px-2.5 py-1 text-xs font-semibold text-[var(--foreground)]">
-                {selectedTool.label}
-                <button type="button" aria-label={'Remove ' + selectedTool.label + ' selection'} onClick={() => {
+              {selectedTool?.label ? <ComposerToolChip
+                label={selectedTool.label}
+                category={selectedTool.category ?? 'Selected action'}
+                description={selectedTool.description ?? 'An editable instruction attached to this draft.'}
+                tone={selectedTool.tone ?? 'blue'}
+                onRemove={() => {
                   const next = draftRef.current.startsWith(selectedTool.scaffold)
                     ? draftRef.current.slice(selectedTool.scaffold.length).trimStart()
                     : draftRef.current;
@@ -550,14 +565,13 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
                   draftRef.current = next;
                   setSelectedTool(null);
                   textareaRef.current?.focus();
-                }}><X className="h-3 w-3" aria-hidden="true" /></button>
-              </span> : null}
+                }}
+              /> : null}
               {enabledSkills.map(id => {
                 const skill = COMPOSER_SKILLS.find(item => item.id === id);
-                return skill ? <span key={id} className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--terminal-ui-border)] bg-[var(--terminal-ui-inset)] px-2.5 py-1 text-xs font-semibold text-[var(--foreground)]">
-                  {skill.label}
-                  <button type="button" aria-label={'Disable ' + skill.label} onClick={() => useComposerToolsStore.getState().toggleSkill(id)}><X className="h-3 w-3" aria-hidden="true" /></button>
-                </span> : null;
+                return skill ? <ComposerToolChip key={id} label={skill.label} category="Active skill"
+                  description={skill.description} tone={id === 'plan-first' ? 'orange' : id === 'tests-first' ? 'green' : id === 'no-secrets' ? 'red' : 'purple'}
+                  onRemove={() => useComposerToolsStore.getState().toggleSkill(id)} /> : null;
               })}
             </div>
           ) : null}
@@ -610,7 +624,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
                       // these are scaffolds the user finishes, and sending a
                       // half-written prompt would burn a real run.
                       const next = draftRef.current.trim() ? `${text}${draftRef.current}` : text;
-                      setSelectedTool(options?.label ? { label: options.label, scaffold: text } : null);
+                      setSelectedTool(options?.label ? { ...options, scaffold: text } : null);
                       setDraft(next);
                       draftRef.current = next;
                       window.setTimeout(() => {
@@ -630,11 +644,11 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
                         if (isGuest) { requestAuthGate('integration'); return; }
                         setGithubOpen(true);
                       }}><Folder aria-hidden="true" /><span>Projects</span></button>
-                      <button ref={pluginsButtonRef} type="button" className={startStyles.tool} aria-label="Plugins" onPointerEnter={event => { if (event.pointerType === 'mouse' && !isGuest) setIntegrationsOpen(true); }} onClick={() => {
+                      <button ref={pluginsButtonRef} type="button" className={startStyles.tool} aria-label="Plugins" onClick={() => {
                         if (isGuest) { requestAuthGate('integration'); return; }
                         setIntegrationsOpen(true);
                       }}><Puzzle aria-hidden="true" /><span>Plugins</span></button>
-                    </> : <button ref={pluginsButtonRef} type="button" className={startStyles.tool} aria-label="Plugins" onPointerEnter={event => { if (event.pointerType === 'mouse' && !isGuest) setIntegrationsOpen(true); }} onClick={() => { if (isGuest) { requestAuthGate('integration'); return; } setIntegrationsOpen(true); }}><Puzzle aria-hidden="true" /><span>Plugins</span></button>}
+                    </> : <button ref={pluginsButtonRef} type="button" className={startStyles.tool} aria-label="Plugins" onClick={() => { if (isGuest) { requestAuthGate('integration'); return; } setIntegrationsOpen(true); }}><Puzzle aria-hidden="true" /><span>Plugins</span></button>}
                   </div>
                 ) : null
               }

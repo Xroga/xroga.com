@@ -16,3 +16,10 @@
 .connectList { max-height: 140px; overflow: auto; }
 .connectList a { display: flex; align-items: center; gap: 8px; padding: 8px; font-size: 12px; }
 .connectList a>svg:last-child { margin-left: auto; }
+
+/* Compact anchored picker; only clicks expand or select. */
+.menu :global(.xv-plugins-popover) { max-height: min(338px,calc(100dvh - 32px)); }
+.menu :global(.xv-plugins-popover__primary) { max-height: 192px; }
+.menu :global(.xv-plugins-popover__item) { width: 100%; text-align: left; background: transparent; }
+.menu :global(.xv-plugins-popover__item):is(:hover,:focus-visible) { background: color-mix(in srgb, var(--foreground) 7%, transparent); outline: 1px solid var(--card-border); }
+.menu :global(.xv-plugins-popover__name) strong { font-weight: 600; }
