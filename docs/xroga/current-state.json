@@ -89414,9 +89414,10 @@
       "id": "surface:b5fb9b6d0970672ddebe",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/full-supabase-history.mjs",
-      "sha256": "9f377b02d7da5b0cbf64562fb9da112dd6078fcb7a9fa3076162328aa7aa3e20",
+      "sha256": "e5c4528c5d494e4f00395991bb7a840ec66ff48a3b3b8c04a003677a8fdb9332",
       "symbols": [
         "actual",
+        "additions",
         "afterPolicies",
         "apply",
         "auditBefore",
@@ -89707,15 +89708,18 @@
       "id": "surface:a741178549139c6d7626",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/schema-catalog.mjs",
-      "sha256": "b4a2ce910d848276f73e969b71c75bff6346e25189a15da5d9d046f325cb9979",
+      "sha256": "e672ceed096dd6c8b9cad9a815c4471846c1238ffbda76dfd7bdc521aec4293f",
       "symbols": [
         "assertDisposableSource",
         "collectSchemaCatalog",
+        "entry",
         "field",
-        "r"
+        "r",
+        "validateCurrentMigrationAdditions"
       ],
       "imports": [
-        "node:assert/strict"
+        "node:assert/strict",
+        "node:crypto"
       ],
       "runtimeImports": [],
       "entryPoints": [
@@ -89728,7 +89732,8 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
-        "node:assert/strict"
+        "node:assert/strict",
+        "node:crypto"
       ],
       "authBoundary": [],
       "tenantBoundary": [],
@@ -111878,7 +111883,7 @@
     {
       "id": "test-suite:7880f7d68bf575b7b99a",
       "sourcePath": "scripts/security/schema-catalog.test.mjs",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
