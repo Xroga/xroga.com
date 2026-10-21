@@ -10,6 +10,9 @@
   "risk": "high",
   "scope": "Founder-authorized Phase3 only, original Command008 and009, all22 criteria unchanged. Preserve accepted Phase2 source and proof. No Phase4 implementation or production authorization.",
   "changedFiles": [
+    "supabase/migrations/20261022003000_sidebar_exact_parent_guards.sql",
+    "scripts/security/tenant-rls.database.test.mjs",
+    "docs/xroga/security/current-main-sidebar-integration.md",
     "backend/src/growth/growthSchema.test.ts",
     "backend/src/services/integrations/ociWorkloadFederation.ts",
     "backend/src/services/integrations/ociWorkloadFederation.test.ts",
@@ -181,6 +184,7 @@
   "schemaImpact": {
     "changed": true,
     "migrations": [
+      "supabase/migrations/20261022003000_sidebar_exact_parent_guards.sql",
       "supabase/migrations/20261020000300_business_authority_dispatch.sql",
       "supabase/migrations/20261020000400_operations_provider_budget_authority.sql",
       "supabase/migrations/20261020000500_provider_key_vault_envelopes.sql",

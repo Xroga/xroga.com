@@ -70,3 +70,25 @@ test('integration rebinds only unique byte-identical native Array conversion fun
   assert.equal(project(current,{structuredOrigin:{id:'partitioned'}}).rebound.length,0);
   assert.throws(()=>project(current,{sourceSha256:'0'.repeat(64)}),/Unbound original/);
 });
+
+test('a changed rendering closure requires exact source and function review and cannot hide added DML',()=>{
+  const path='frontend/reviewed-conversion.tsx',old='function convert(list) { return Array.from(list); }\n';
+  const current='function convert(list) { const label="reviewed"; return Array.from(list); }\ndb.from("new_private_table");\n';
+  const hash=value=>createHash('sha256').update(value).digest('hex');
+  const record={path,sourceSha256:hash(old),callIds:[discoverPersistenceCalls(path,old)[0].id],disposition:'NOT_PERSISTENCE'};
+  const review={path,featureSourceSha256:hash(old),integratedSourceSha256:hash(current),reviewedMainSource:'a'.repeat(40),
+    functions:[{expression:'Array.from(list)',featureFunctionSha256:hash(old.trim()),integratedFunctionSha256:hash(current.split('\n')[0])}]};
+  const project=(text,reviewedFunctionChanges=[review],change={})=>projectStableArrayConversionReviews({reviews:[{...record,...change}]},{readFeature:()=>old,readIntegrated:()=>text,reviewedFunctionChanges});
+  const approved=project(current);assert.equal(approved.rebound.length,1);
+  assert.equal(approved.rebound[0].unchangedFunctionSha256.length,0);
+  assert.equal(approved.rebound[0].reviewedChangedFunctions.length,1);
+  const database=discoverPersistenceCalls(path,current).find(call=>call.target==='new_private_table');
+  assert.ok(database&&!approved.registry.reviews[0].callIds.includes(database.id),'New persistence remains a separate obligation');
+  assert.equal(project(current,[]).rebound.length,0);
+  for(const changed of [{integratedSourceSha256:'0'.repeat(64)},{featureSourceSha256:'0'.repeat(64)},
+    {functions:[{...review.functions[0],integratedFunctionSha256:'0'.repeat(64)}]}])assert.equal(project(current,[{...review,...changed}]).rebound.length,0);
+  assert.equal(project(current+'// unreviewed change\n').rebound.length,0);
+  for(const disposition of ['SCOPED_BOUNDARY','NARROW_EXCEPTION','REVIEWED_GAP'])assert.equal(project(current,[review],{disposition}).rebound.length,0);
+  const shadowed='const Array=db;\n'+current;
+  assert.equal(project(shadowed,[{...review,integratedSourceSha256:hash(shadowed)}]).rebound.length,0);
+});

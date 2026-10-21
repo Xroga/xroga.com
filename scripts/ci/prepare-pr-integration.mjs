@@ -43,12 +43,27 @@ export function projectVanishedNonPersistenceReviews(registry,{readFeature,readI
   return {registry:{...registry,reviews},retired};
 }
 
+// Current-main #836 changed both rendering closures. These exact source/function
+// pairs were traced to local native Maps. Only the two Array.from expressions
+// are re-reviewed as non-persistence. New browser DML/RPC callers remain separate
+// unreviewed obligations and receive no inherited Phase2 certification.
+export const reviewedIntegrationArrayFunctions=[{
+  path:'frontend/src/components/layout/SidebarProjectHistory.tsx',
+  reviewedMainSource:'20ba42d658140994dbcd4ef58b07782cbe413b72',
+  featureSourceSha256:'630ba11b6c231c10e4e7aa507a0cec0a235fb1f27fa47d762cc61168e2d8f7f2',
+  integratedSourceSha256:'bb2f850e69f6a691f2fb860aa89ac8dd46c7f93cfb16150a45833c2c88b3acb4',
+  functions:[
+    {expression:'Array.from(map.entries())',featureFunctionSha256:'a399d8feced2e64045f9c7d086c8878bc76c6b17874e3376545001eb973673da',integratedFunctionSha256:'568050b634fae4a9eb81ffa6e802f1f7aaa0e6defbea7d80c8d9bc7c2bee489f'},
+    {expression:'Array.from(map.values())',featureFunctionSha256:'6be87375c23e02972092cc94ef24f9088b264acd195ac71f418ae894be8d1be7',integratedFunctionSha256:'08d4a416b11e23728a49e4a98aace266d039d70a72a02971bb764a73ad5c28f0'},
+  ],
+}];
+
 /** Preserve only a reviewed native Array.from conversion whose entire nearest
  * function is byte-identical and unique in the integrated source. This does
  * not transfer a persistence/authority review or certify surrounding new UI.
  * Shadowing, reassignment, changed functions and ambiguous matches stay stale.
  */
-export function projectStableArrayConversionReviews(registry,{readFeature,readIntegrated}) {
+export function projectStableArrayConversionReviews(registry,{readFeature,readIntegrated,reviewedFunctionChanges=reviewedIntegrationArrayFunctions}) {
   const hash=value=>createHash('sha256').update(value).digest('hex');
   const inspect=(path,text)=>{
     const file=ts.createSourceFile(path,text,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX),calls=[];
@@ -78,22 +93,29 @@ export function projectStableArrayConversionReviews(registry,{readFeature,readIn
     if(typeof original!=='string'||hash(original.replace(/\r\n/g,'\n'))!==record.sourceSha256)throw new Error('Unbound original conversion review');
     const before=inspect(record.path,original),after=inspect(record.path,current);
     if(before.unsafe||after.unsafe)return record;
-    const oldCandidates=discoverPersistenceCalls(record.path,original),newCandidates=discoverPersistenceCalls(record.path,current),ids=[],functions=[];
+    const explicit=reviewedFunctionChanges.find(review=>review.path===record.path
+      &&review.featureSourceSha256===record.sourceSha256&&review.integratedSourceSha256===hash(current.replace(/\r\n/g,'\n')));
+    const oldCandidates=discoverPersistenceCalls(record.path,original),newCandidates=discoverPersistenceCalls(record.path,current),ids=[],functions=[],changedFunctions=[];
     for(const id of record.callIds){
       const candidate=oldCandidates.find(call=>call.id===id&&call.kind==='TABLE_OR_BUCKET_CANDIDATE');
       const old=before.calls.filter(call=>call.line===candidate?.line);
       if(old.length!==1)return record;
-      const matching=after.calls.filter(call=>call.expression===old[0].expression&&call.fn===old[0].fn);
+      const matching=after.calls.filter(call=>call.expression===old[0].expression&&(call.fn===old[0].fn
+        ||explicit?.functions.some(review=>review.expression===call.expression
+          &&review.featureFunctionSha256===hash(old[0].fn)&&review.integratedFunctionSha256===hash(call.fn))));
       if(matching.length!==1)return record;
       const target=newCandidates.filter(call=>call.line===matching[0].line&&call.kind==='TABLE_OR_BUCKET_CANDIDATE');
       if(target.length!==1)return record;
-      ids.push(target[0].id);functions.push(hash(old[0].fn));
+      ids.push(target[0].id);
+      if(matching[0].fn===old[0].fn)functions.push(hash(old[0].fn));
+      else changedFunctions.push({expression:old[0].expression,featureFunctionSha256:hash(old[0].fn),integratedFunctionSha256:hash(matching[0].fn),reviewedMainSource:explicit.reviewedMainSource});
     }
     if(!ids.length||new Set(ids).size!==ids.length)return record;
     const sourceSha256=hash(current.replace(/\r\n/g,'\n'));
     rebound.push({path:record.path,originalCallIds:record.callIds,integratedCallIds:ids,
       originalSourceSha256:record.sourceSha256,integratedSourceSha256:sourceSha256,unchangedFunctionSha256:functions,
-      scope:'ONLY_BYTE_IDENTICAL_NATIVE_ARRAY_CONVERSION_NOT_SECURITY_CERTIFICATION'});
+      reviewedChangedFunctions:changedFunctions,
+      scope:changedFunctions.length?'EXPLICIT_SOURCE_BOUND_NATIVE_ARRAY_CONVERSION_NOT_SECURITY_CERTIFICATION':'ONLY_BYTE_IDENTICAL_NATIVE_ARRAY_CONVERSION_NOT_SECURITY_CERTIFICATION'});
     return {...record,sourceSha256,callIds:ids};
   });
   return {registry:{...registry,reviews},rebound};

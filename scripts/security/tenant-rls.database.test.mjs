@@ -1,7 +1,9 @@
 /** Real disposable PostgreSQL policy tests. Not certification of the full Supabase migration history. */
 import assert from 'node:assert/strict';
 import { before, after, test } from 'node:test';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import pg from 'pg';
 import { root } from '../ci/toolchain.mjs';
@@ -91,5 +93,89 @@ test('actual browser grant migration removes RLS-bypassing table rights while pr
   await client.query('CREATE TABLE public.future_grant_fixture(id uuid)');
   for(const role of ['anon','authenticated'])for(const privilege of ['TRUNCATE','REFERENCES','TRIGGER']){
     assert.equal((await client.query('select has_table_privilege($1,$2,$3) allowed',[role,'public.future_grant_fixture',privilege])).rows[0].allowed,false);
+  }
+});
+
+const SIDEBAR_PROJECT='55555555-5555-4555-8555-555555555555';
+const SIDEBAR_SECTION='66666666-6666-4666-8666-666666666666';
+const SIDEBAR_FOREIGN_SECTION='77777777-7777-4777-8777-777777777777';
+const sidebarFix=readFileSync(join(root,'supabase/migrations/20261022003000_sidebar_exact_parent_guards.sql'),'utf8');
+test('real PostgreSQL reproduces and repairs current-main sidebar parent mismatch without rewriting legacy rows',async()=>{
+  const path='supabase/migrations/20261021233500_sidebar_organization.sql';
+  // Use the actual current-main migration, or its exact immutable Git object in
+  // a feature-only checkout. No reconstructed SQL or claimed Supabase Auth proof.
+  const original=existsSync(join(root,path))?readFileSync(join(root,path),'utf8').replace(/\r\n/g,'\n')
+    :execFileSync('git',['show',`20ba42d658140994dbcd4ef58b07782cbe413b72:${path}`],{cwd:root,encoding:'utf8'});
+  assert.equal(createHash('sha256').update(original).digest('hex'),'a60e170e2087eaa3b5357b91efa78dac397307aee8eedec50fa3c4f03c7555f4');
+  await client.query('INSERT INTO auth.users(id) VALUES($1),($2) ON CONFLICT DO NOTHING',[OWNER,OTHER]);
+  await client.query('INSERT INTO projects(id,user_id) VALUES($1,$2)',[SIDEBAR_PROJECT,OWNER]);
+  await client.query("ALTER TABLE terminal_sessions ADD COLUMN title text DEFAULT '', ADD COLUMN prompt text DEFAULT ''");
+  await client.query(original);
+  await client.query('INSERT INTO xroga_sidebar_sections(id,user_id,project_id,title) VALUES($1,$2,$3,$4),($5,$6,$7,$8)',
+    [SIDEBAR_SECTION,OWNER,A,'owned synthetic section',SIDEBAR_FOREIGN_SECTION,OTHER,B,'foreign synthetic section']);
+  const insert=(user,project,section,id='synthetic-parent-control')=>client.query(
+    'INSERT INTO xroga_sidebar_items(user_id,item_type,item_id,project_id,section_id) VALUES($1,$2,$3,$4,$5) RETURNING item_id',
+    [user,'conversation',id,project,section]);
+  assert.equal((await asUser(OWNER,()=>insert(OWNER,SIDEBAR_PROJECT,SIDEBAR_SECTION))).rowCount,1,
+    'Original SQL admits a section from a different same-owner project');
+  await assert.rejects(asUser(OWNER,()=>insert(OWNER,B,SIDEBAR_SECTION)),error=>error.code==='42501',
+    'Independent project RLS already denies foreign owners, no bypass claim');
+  await insert(OWNER,SIDEBAR_PROJECT,SIDEBAR_SECTION,'synthetic-legacy-mismatch');
+  await client.query(sidebarFix);await client.query(sidebarFix);
+  assert.equal((await client.query("SELECT count(*)::int n FROM xroga_sidebar_items WHERE item_id='synthetic-legacy-mismatch'")).rows[0].n,1,
+    'NOT VALID adds write guards without deleting or silently changing legacy rows');
+  assert.equal((await asUser(OWNER,()=>insert(OWNER,A,SIDEBAR_SECTION))).rowCount,1);
+  for(const [user,project,section]of [[OWNER,SIDEBAR_PROJECT,SIDEBAR_SECTION],[OWNER,A,SIDEBAR_FOREIGN_SECTION],
+    [OWNER,B,SIDEBAR_FOREIGN_SECTION],[OTHER,B,SIDEBAR_FOREIGN_SECTION],[OWNER,null,SIDEBAR_SECTION]]) {
+    await assert.rejects(asUser(OWNER,()=>insert(user,project,section)),error=>error.code==='42501');
+  }
+  await assert.rejects(asUser('',()=>insert(OWNER,A,SIDEBAR_SECTION),'anon'),error=>error.code==='42501');
+  await insert(OWNER,A,SIDEBAR_SECTION,'synthetic-retained-child');
+  await insert(OTHER,B,SIDEBAR_FOREIGN_SECTION,'synthetic-foreign-child');
+  const before=await client.query('SELECT * FROM xroga_sidebar_items ORDER BY user_id,item_id');
+  assert.equal((await asUser(OWNER,()=>client.query('SELECT * FROM xroga_sidebar_items WHERE user_id=$1',[OTHER]))).rowCount,0);
+  assert.equal((await asUser(OWNER,()=>client.query('DELETE FROM xroga_sidebar_items WHERE user_id=$1',[OTHER]))).rowCount,0);
+  await assert.rejects(asUser(OWNER,()=>client.query('UPDATE xroga_sidebar_sections SET project_id=$1 WHERE id=$2',[SIDEBAR_PROJECT,SIDEBAR_SECTION])),
+    error=>error.code==='23503'&&error.constraint==='xroga_sidebar_item_exact_section_parent');
+  await asUser(OWNER,async()=>{
+    await client.query('DELETE FROM xroga_sidebar_sections WHERE id=$1',[SIDEBAR_SECTION]);
+    const result=await client.query("SELECT user_id,project_id,section_id FROM xroga_sidebar_items WHERE item_id='synthetic-retained-child'");
+    assert.deepEqual(result.rows,[{user_id:OWNER,project_id:A,section_id:null}]);
+  });
+  assert.deepEqual((await client.query('SELECT * FROM xroga_sidebar_items ORDER BY user_id,item_id')).rows,before.rows,
+    'Negative and deletion-control transactions roll back exactly');
+});
+
+test('real two-client parent update makes a waiting sidebar child fail its exact composite reference',async()=>{
+  const section='88888888-8888-4888-8888-888888888888';
+  await client.query('INSERT INTO xroga_sidebar_sections(id,user_id,project_id,title) VALUES($1,$2,$3,$4)',[section,OWNER,A,'concurrency fixture']);
+  const parent=new pg.Client({connectionString:url,connectionTimeoutMillis:5000}),child=new pg.Client({connectionString:url,connectionTimeoutMillis:5000});
+  await parent.connect();await child.connect();
+  try {
+    for(const connection of [parent,child]){
+      await connection.query('BEGIN');await connection.query('SET LOCAL ROLE authenticated');
+      await connection.query("SELECT set_config('request.jwt.claim.sub',$1,true)",[OWNER]);
+      await connection.query("SET LOCAL statement_timeout='5000ms'");
+    }
+    const pid=(await child.query('SELECT pg_backend_pid() pid')).rows[0].pid;
+    await parent.query('UPDATE xroga_sidebar_sections SET project_id=$1 WHERE id=$2',[SIDEBAR_PROJECT,section]);
+    let settled=false;
+    const pending=child.query("INSERT INTO xroga_sidebar_items(user_id,item_type,item_id,project_id,section_id) VALUES($1,'conversation','synthetic-lock-race',$2,$3)",[OWNER,A,section])
+      .then(result=>({result}),error=>({error})).finally(()=>{settled=true;});
+    let locked=false;
+    for(let attempt=0;attempt<50;attempt++){
+      const observed=await client.query('SELECT wait_event_type FROM pg_stat_activity WHERE pid=$1',[pid]);
+      if(observed.rows[0]?.wait_event_type==='Lock'){locked=true;break;}
+      if(settled)break;
+      await new Promise(resolve=>setTimeout(resolve,20));
+    }
+    assert.equal(locked,true,'Child genuinely waits on the parent reference, no timing-only concurrency claim');
+    await parent.query('COMMIT');const outcome=await pending;
+    assert.equal(outcome.error?.code,'23503');assert.equal(outcome.error?.constraint,'xroga_sidebar_item_exact_section_parent');
+    await child.query('ROLLBACK');
+    assert.equal((await client.query("SELECT count(*)::int n FROM xroga_sidebar_items WHERE item_id='synthetic-lock-race'")).rows[0].n,0);
+  } finally {
+    await parent.query('ROLLBACK').catch(()=>{});await child.query('ROLLBACK').catch(()=>{});
+    await parent.end();await child.end();
   }
 });
