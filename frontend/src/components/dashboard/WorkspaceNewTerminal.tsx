@@ -42,6 +42,10 @@ const AUTOMATIONS = [
 ] as const;
 type Capability = typeof CAPABILITIES[number] | typeof AUTOMATIONS[number];
 const STARTER_PROMPTS = [...CAPABILITIES, ...AUTOMATIONS].flatMap(card => card.features.map(feature => feature[1]));
+const ROTATING_WORDS = [
+  'work', 'automation', 'code', 'apps', 'websites', 'tools',
+  'extensions', 'software', 'research', 'browser automation', 'app automation',
+] as const;
 
 function useRotation(length: number, paused: boolean, interval = 6000) {
   const [index, setIndex] = useState(0);
@@ -66,14 +70,36 @@ function CapabilityVisual({ id }: { id: Capability['id'] }) {
 }
 
 export function WorkspaceStartHeader() {
+  const [index] = useRotation(ROTATING_WORDS.length, false, 3400);
   return (
     <header className={styles.hero} data-testid="workspace-start-header">
       <h1 className={styles.superIntelligence}>Super Intelligence</h1>
       <div className={styles.taglineRow}>
-        <p className={styles.tagline} aria-label="One AI workspace for every kind of work.">One AI workspace for every kind of work.</p>
+        <p className={styles.tagline} aria-label="One AI workspace for every kind of work, from code and websites to research and automation.">
+          One AI workspace for every kind of <span className={styles.dynamicWord} key={ROTATING_WORDS[index]} aria-hidden="true">{ROTATING_WORDS[index]}.</span>
+        </p>
       </div>
     </header>
   );
+}
+
+function AutomaticIntro() {
+  const [showDetail, setShowDetail] = useState(false);
+  const reducedMotion = useThemeStore(state => state.reducedMotion);
+  useEffect(() => {
+    if (reducedMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setShowDetail(true);
+      return;
+    }
+    const delay = window.setTimeout(() => setShowDetail(true), 2200);
+    return () => window.clearTimeout(delay);
+  }, [reducedMotion]);
+  return <div className={styles.automatic} aria-label="Automatic by default. No models or tools to choose. Type or speak what you need, and Xroga routes the work.">
+    <strong>Automatic by default.</strong>
+    <span className={styles.automaticDetail} data-visible={showDetail} aria-hidden={!showDetail}>
+      No models or tools to choose. Type or speak what you need, and Xroga routes the work.
+    </span>
+  </div>;
 }
 
 function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?: (active: boolean) => void }) {
@@ -143,7 +169,7 @@ function AutomationCard() {
 export function WorkspaceStartCards() {
   return (
     <section className={styles.starters} aria-label="Explore Xroga capabilities" data-testid="workspace-start-cards">
-      <p className={styles.automatic}><strong>Automatic by default.</strong> No models or tools to choose. Type or speak what you need, and Xroga routes the work.</p>
+      <AutomaticIntro />
       <div className={styles.cards}>
         {CAPABILITIES.map(card => <div className={styles.cardShell} key={card.id}><FeatureCard card={card} /></div>)}
         <AutomationCard />
