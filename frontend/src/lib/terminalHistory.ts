@@ -13,7 +13,6 @@ import {
 import { safeConversationTitle } from '@/lib/sidebarOrganization';
 import {
   allocateTerminalNumber,
-  cloudTerminalLabel,
   pushTerminalSessionToCloud,
 } from '@/lib/cloudTerminalSessions';
 
@@ -283,6 +282,5 @@ export function attachCloudProjectId(sessionId: string, cloudProjectId: string) 
 }
 
 export function isTerminalHistoryEntry(entry: TerminalHistoryEntry): boolean {
-  if (isAutomationPrompt(entry.prompt)) return false;
-  return true;
+  return Boolean(entry.id && entry.messageCount > 0);
 }
