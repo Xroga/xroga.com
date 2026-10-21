@@ -226,7 +226,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
    */
   const accountId = !isGuest ? workspaceIdentity.userId ?? '' : '';
   const lastSidebarFetchRef = useRef(0);
-  const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const refreshTimerRef = useRef<number | null>(null);
   const activeAccountRef=useRef(accountId);
   activeAccountRef.current=accountId;
   useEffect(()=>{
