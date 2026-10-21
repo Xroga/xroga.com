@@ -16,8 +16,10 @@ test('each dash maps to real user or assistant message ids, with no phantom fill
     { id: 'sys', role: 'system', content: 'tool invoked' },
     { id: 'u2', role: 'user', content: 'Explain the voice limit' },
     { id: 'a2', role: 'assistant', content: 'Voice typing still works, but usage is finished.' },
+    { id: 'a3', role: 'assistant', content: '', featureOutput: { type: 'image', title: 'Final product render' } },
   ]);
-  assert.deepEqual(turns.map(turn => turn.id), ['u1','a1','u2','a2']);
+  assert.deepEqual(turns.map(turn => turn.id), ['u1','a1','u2','a2','a3']);
+  assert.equal(turns[4].label, 'Final product render');
   assert.equal(turns[0].label, 'Fix the checkout');
   assert.equal(turns[0].summary, 'Done and live.');
   assert.equal(turns[0].detail, 'Tests passed');
@@ -59,6 +61,8 @@ test('bookmark storage is specific to account and session, and preview buttons p
   assert.match(RAIL, /onClick=\{\(\) => onJump\(turn\.id\)\}/);
   assert.match(RAIL, /document\.body/);
   assert.match(RAIL, /hidden lg:block/);
+  assert.match(RAIL, /visibleChatTurns\(turns, savedIds\)/);
+  assert.doesNotMatch(RAIL, /visibleChatTurns\(turns, savedIds, activeId\)/);
 });
 
 test('reading position uses rendered real message anchors and an efficient binary search', () => {

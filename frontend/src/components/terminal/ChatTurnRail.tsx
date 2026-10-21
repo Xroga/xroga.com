@@ -86,12 +86,21 @@ function clip(value: string, max: number): string {
 }
 
 /** Only genuine user/assistant text; temporary stream/tool events never create markers. */
-export function buildChatTurns(messages: Array<{ id: string; role: string; content: string }>): ChatTurn[] {
+export function buildChatTurns(messages: Array<{ id: string; role: string; content: string; featureOutput?: unknown }>): ChatTurn[] {
   const turns: ChatTurn[] = [];
   let previousPrompt: ChatTurn | null = null;
   for (const message of messages) {
     if (message.role !== 'user' && message.role !== 'assistant') continue;
     const lines = cleanLines(message.content ?? '');
+    if (!lines.length && message.role === 'assistant' && message.featureOutput && typeof message.featureOutput === 'object') {
+      // Generated outputs are real assistant-message anchors, even without markdown.
+      const output = message.featureOutput as Record<string, unknown>;
+      const actualTitle = [output.title, output.name, output.filename, output.description]
+        .find(value => typeof value === 'string' && value.trim()) as string | undefined;
+      const actualType = typeof output.type === 'string' ? output.type.replace(/[_-]/g, ' ') : '';
+      if (actualTitle) lines.push(actualTitle.trim());
+      else if (actualType) lines.push('Generated ' + actualType);
+    }
     if (!lines.length) continue;
     const turn: ChatTurn = {
       id: message.id,
@@ -162,7 +171,14 @@ export function ChatTurnRail({ turns, activeId, onJump, conversationKey, classNa
 
   const savedIds = bookmarks.key === conversationKey ? bookmarks.ids : [];
   const savedSet = useMemo(() => new Set(savedIds), [savedIds]);
-  const visibleTurns = useMemo(() => visibleChatTurns(turns, savedIds, activeId), [turns, savedIds, activeId]);
+  // Keep the rail stationary while reading: active changes never reshuffle samples.
+  const visibleTurns = useMemo(() => visibleChatTurns(turns, savedIds), [turns, savedIds]);
+  const turnIndices = useMemo(() => new Map(turns.map((turn, index) => [turn.id, index])), [turns]);
+  const activeIndex = turnIndices.get(activeId ?? '') ?? -1;
+  const visibleActiveId = activeIndex < 0 ? null : visibleTurns.reduce<{ id: string; distance: number } | null>((best, turn) => {
+    const distance = Math.abs((turnIndices.get(turn.id) ?? 0) - activeIndex);
+    return !best || distance < best.distance ? { id: turn.id, distance } : best;
+  }, null)?.id ?? null;
   const hoveredIndex = visibleTurns.findIndex(turn => turn.id === hoveredId);
   const hoveredTurn = hoveredIndex >= 0 ? visibleTurns[hoveredIndex] : null;
 
@@ -185,7 +201,7 @@ export function ChatTurnRail({ turns, activeId, onJump, conversationKey, classNa
       onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setHoveredId(null); }}
     >
       {visibleTurns.map((turn, index) => {
-        const current = turn.id === activeId;
+        const current = turn.id === visibleActiveId;
         const saved = savedSet.has(turn.id);
         const near = hoveredIndex < 0 ? null : Math.abs(index - hoveredIndex);
         const width = hoveredIndex >= 0
