@@ -22,7 +22,6 @@ import { useDemoClock } from './useDemoClock';
 import { busy, delayOf, gateOf, initialWorkforce, workforceReducer } from './workforce';
 import { Companion } from './Companion';
 import { MissionGlyph } from './Glyphs';
-import { Ambient } from '../ambient/Ambient';
 import { useSeen } from '../ambient/useSeen';
 import s from './S02.module.css';
 
@@ -128,7 +127,6 @@ export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
       data-reduced={reduced || undefined}
       data-title-seen={titleSeen || undefined}
     >
-      <Ambient kind="s02" />
       <div className={s.inner}>
         <header className={s.head}>
           <div className={s.copy}>

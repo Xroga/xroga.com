@@ -26,7 +26,7 @@ test('homepage metadata carries the primary and secondary search intent', () => 
 
 test('homepage concludes after S05 with community and signup CTA, not older marketing sections', () => {
   // the closing card sits directly after S05, inside its graphite horizon environment
-  assert.match(PAGE, /<S05Capabilities \/>\s*(?:\{\/\*[^*]*\*\/\}\s*)?<div className="xv-horizon"[^>]*>\s*<Ambient kind="horizon" \/>\s*<section\s+ref=\{closingRef\}\s+className="xv-closing-frame"/);
+  assert.match(PAGE, /<S05Capabilities \/>\s*(?:<\/div>\s*)?(?:\{\/\*[^*]*\*\/\}\s*)?<div className="xv-horizon"[^>]*>\s*<Ambient kind="horizon" \/>\s*<section\s+ref=\{closingRef\}\s+className="xv-closing-frame"/);
   assert.match(PAGE, /Build with <em>other builders\.<\/em>/);
   assert.match(PAGE, /Build what&apos;s<br \/><em>yours\.<\/em>/);
   assert.match(PAGE, /<FeedbackModal open=\{feedbackOpen\}/);

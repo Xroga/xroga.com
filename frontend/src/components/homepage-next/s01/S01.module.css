@@ -9,9 +9,8 @@
   --hair: rgba(236, 233, 226, 0.1);
   position: relative;
   z-index: 1;
-  /* continues the hero's near-black into the section base without a seam, and stays a clean neutral black rather than
-     a tinted one, so the white dots and the cards are the only things with character */
-  background: linear-gradient(180deg, #050506 0, #08080a 220px, #0b0b0d 500px, #0b0b0d calc(100% - 340px), #050506 100%);
+  /* transparent: S01–S05 share one dot-grid background (../backdrop/SharedDotBackdrop) */
+  background: transparent;
   color: var(--ink);
   font-family: var(--font-inter), system-ui, sans-serif;
   overflow-x: clip;
@@ -130,44 +129,7 @@
   0% { background-position: 125% 0; }
   12%, 100% { background-position: -25% 0; }
 }
-/* S01 background: the founder's reference effect, adapted to the section. A 20px grid of fixed white dots (a CSS radial
-   gradient) is intersected with a self-hosted 256px noise texture whose alpha decides which dots are visible; the noise
-   drifts across the dots over 20 s, so the pattern slowly changes while every dot stays on its grid position. A soft
-   elliptical vignette (the optional third layer) keeps the edges of the section pure black. No twinkling, no particles
-   moving, no colour. It sits behind the deck, the heading and every control, and takes no pointer events. */
-.particles {
-  --size: 20px;
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  /* safe fallback when mask intersection is unavailable: a static, quiet dot grid */
-  background: radial-gradient(circle, #f5f7fb 2px, transparent 2.5px) 0 0 / var(--size) var(--size);
-  opacity: 0.2;
-  -webkit-mask-image: radial-gradient(80% 75% at 50% 60%, black 20%, transparent 100%);
-  mask-image: radial-gradient(80% 75% at 50% 60%, black 20%, transparent 100%);
-}
-@supports (mask-composite: intersect) or (-webkit-mask-composite: source-in) {
-  .particles {
-    background: #f5f7fb;
-    -webkit-mask-image:
-      radial-gradient(circle at 50% 50%, black 2px, transparent 2.5px),
-      url('/s01/noise-mask.svg'),
-      radial-gradient(80% 75% at 50% 60%, black 20%, transparent 100%);
-    mask-image:
-      radial-gradient(circle at 50% 50%, black 2px, transparent 2.5px),
-      url('/s01/noise-mask.svg'),
-      radial-gradient(80% 75% at 50% 60%, black 20%, transparent 100%);
-    -webkit-mask-size: var(--size) var(--size), 256px 256px, 100% 100%;
-    mask-size: var(--size) var(--size), 256px 256px, 100% 100%;
-    -webkit-mask-repeat: repeat, repeat, no-repeat;
-    mask-repeat: repeat, repeat, no-repeat;
-    -webkit-mask-position: 50% 50%, 256px 50%, center;
-    mask-position: 50% 50%, 256px 50%, center;
-    -webkit-mask-composite: source-in, source-in;
-    mask-composite: intersect, intersect;
-    animation: s01Flicker 20s linear infinite;
-  }
-}
+
 @keyframes s01Flicker {
   to {
     -webkit-mask-position: 50% 50%, 0 50%, center;
@@ -201,22 +163,20 @@
   height: 100vh;
   overflow: hidden;
 }
-/* gallery room: two soft graphite volumes give the field depth; neither sits behind the heading */
+/* the row stands on a soft floor; the room itself is the shared dot grid (../backdrop) */
 .stage::before {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(52% 44% at 20% 66%, rgba(22, 22, 25, 0.95), transparent 72%),
-    radial-gradient(46% 40% at 82% 60%, rgba(24, 24, 27, 0.8), transparent 72%),
     /* a soft floor bounce under the row, so the cards stand on something */
-    radial-gradient(46% 16% at 50% calc(var(--rowY) + var(--chh) * 0.56), rgba(200, 204, 214, 0.06), transparent 78%),
-    radial-gradient(72% 30% at 50% calc(var(--rowY) + var(--chh) * 0.64), rgba(16, 16, 18, 0.95), transparent 80%);
+    radial-gradient(46% 16% at 50% calc(var(--rowY) + var(--chh) * 0.56), rgba(200, 204, 214, 0.06), transparent 78%);
 }
-/* light pools behind the cards only. The container is moved and scaled per frame (transform only) to sit on the
-   visible cards: centred on the stack, wider on the fan, and shifted with chapter B. */
+/* light pools behind the cards (the container is moved per frame by the deck). Retired: S01–S05 share one neutral dot
+   grid, so the tinted pools are not painted; the element stays so the deck's choreography code is untouched. */
 .lights {
+  display: none;
   position: absolute;
   left: 50%;
   top: var(--rowY);
@@ -581,19 +541,9 @@
   .titleMain::after {
     display: none;
   }
-  .particles {
-    animation: none;
-  }
   .turnIn,
   .dots i {
     transition: none;
   }
 }
 
-/* On constrained/touch screens the pattern is quieter and stays still to keep carousel swiping cheap. */
-@media (max-width: 1024px), (pointer: coarse) {
-  .particles {
-    animation: none;
-    opacity: 0.12;
-  }
-}

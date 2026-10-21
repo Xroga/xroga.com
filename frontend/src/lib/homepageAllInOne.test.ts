@@ -10,7 +10,7 @@ const CSS = read('../styles/homepage-coding.css');
 test('legacy all-in-one workflow is not mounted after the approved S05 finale', () => {
   assert.doesNotMatch(PAGE, /<HomepageWorkspaceTour|<HomepageAllInOne|<XrogaIntelligenceSection/);
   // the closing card sits directly after S05, inside its graphite horizon environment
-  assert.match(PAGE, /<S05Capabilities \/>\s*(?:\{\/\*[^*]*\*\/\}\s*)?<div className="xv-horizon"[^>]*>\s*<Ambient kind="horizon" \/>\s*<section\s+ref=\{closingRef\}\s+className="xv-closing-frame"/);
+  assert.match(PAGE, /<S05Capabilities \/>\s*(?:<\/div>\s*)?(?:\{\/\*[^*]*\*\/\}\s*)?<div className="xv-horizon"[^>]*>\s*<Ambient kind="horizon" \/>\s*<section\s+ref=\{closingRef\}\s+className="xv-closing-frame"/);
 });
 
 test('the workflow uses varied product scenarios instead of a real-estate special case', () => {

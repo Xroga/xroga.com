@@ -80,8 +80,9 @@ test('restraint: near-black ground, pearl headline, flat tiles, no overshoot, a 
   for (const [r, g, b] of stops) assert.ok(Math.max(r, g, b) - Math.min(r, g, b) <= 20, `neutral stop ${r},${g},${b}`);
   assert.doesNotMatch(css, /\.s5-tile::before/);
   assert.match(css, /\.s5-tile \{[^}]*background: #0b0e14;/);
-  // the background is near-black with at most one faint light
-  assert.equal((css.match(/\.s5\.s5\.s5 \{[\s\S]*?\n\}/)?.[0].match(/radial-gradient/g) ?? []).length, 1);
+  // no background of its own: S05 sits on the shared S01–S05 dot grid (no glow, no grain)
+  assert.match(css, /\.s5\.s5\.s5 \{\s*background-color: transparent !important;\s*background-image: none !important;\s*\}/);
+  assert.doesNotMatch(css, /\.s5::before/);
   // Travel: an airliner silhouette rides the flight path and turns with it
   assert.match(ART.travel, /class="s5-planeG" style="offset-path: path\('M48 112C100 34 196 22 254 50'\)"/);
   assert.match(css, /offset-rotate: auto;/);
