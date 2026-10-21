@@ -45,7 +45,29 @@ grant select,insert,update,delete on public.sidebar_items,public.sidebar_section
 -- Retain the existing (user, repository, ordinal) unique index.
 -- General chats receive a unique ordinal within the empty-repository namespace;
 -- no destructive index change or repository simulation is required.
--- Fix only system-generated ordinal names, using the user's saved text, never fabricated output.
+-- Preserve an audit/rollback copy of every auto-numbered title before updating.
+-- RLS with NO user-facing policies: the backup is administrative only.
+create table if not exists public.sidebar_title_backups_20261021(
+  id text primary key,
+  old_title text not null,
+  old_updated_at timestamptz not null,
+  backed_up_at timestamptz not null default now()
+);
+alter table public.sidebar_title_backups_20261021 enable row level security;
+revoke all on public.sidebar_title_backups_20261021 from public,anon,authenticated;
+insert into public.sidebar_title_backups_20261021(id,old_title,old_updated_at)
+select id,title,updated_at from public.terminal_sessions
+where title ~* '^(#[0-9]+ terminal|Terminal #[0-9]+|Terminal)
+set title = left(
+  coalesce(nullif(trim(regexp_replace(prompt,'[[:space:]]+',' ','g')),''),
+    (select nullif(trim(regexp_replace(m->>'content','[[:space:]]+',' ','g')),'')
+     from jsonb_array_elements(case when jsonb_typeof(messages)='array' then messages else '[]'::jsonb end) m
+     where m->>'role'='user' limit 1), 'Untitled conversation'), 120)
+where title ~* '^(#[0-9]+ terminal|Terminal #[0-9]+|Terminal)$';
+notify pgrst, 'reload schema';
+
+on conflict (id) do nothing;
+-- Only system-generated ordinal names change. IDs, timestamps, messages and ownership remain untouched.
 update public.terminal_sessions
 set title = left(
   coalesce(nullif(trim(regexp_replace(prompt,'[[:space:]]+',' ','g')),''),
