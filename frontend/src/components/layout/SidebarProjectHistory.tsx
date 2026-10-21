@@ -3,7 +3,19 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import { Cloud, FolderOpen, GitBranch, ChevronDown, ChevronRight, Pin, PinOff } from 'lucide-react';
+import { Cloud, FolderOpen, GitBranch, ChevronDown, ChevronRight, Pin, PinOff, MoreHorizontal, Plus, ArrowUp, ArrowDown } from 'lucide-react';
+import { SidebarActionMenu, type SidebarActionId, type SidebarMenuAction } from './SidebarActionMenu';
+import { SidebarMovingTitle } from './SidebarMovingTitle';
+import './SidebarOrganize.css';
+import {
+ meaningfulSidebarTitle,visiblePage,sortPinned,loadSidebarMeta,loadSidebarSections,
+ loadSidebarProjects,loadSidebarChats,loadSidebarChatById,changeSidebarMeta,
+ createSidebarSection,deleteSidebarChat,type SidebarMeta,type SidebarSection,
+ type SidebarProject,type SidebarChat,type SidebarKind
+} from '@/lib/sidebarOrganization';
+import { api } from '@/lib/api';
+import { createClient } from '@/lib/supabase/client';
+import { removeTerminalHistoryEntry } from '@/lib/terminalHistory';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { FilterIcon } from '@/components/icons/animated/FilterIcon';
 import { GitForkIcon } from '@/components/icons/animated/GitForkIcon';
@@ -168,6 +180,20 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const { restoreTerminalSession, startNewChat, messages, sessionId, prompt } = useTerminalChat();
   const [entries, setEntries] = useState<TerminalHistoryEntry[]>([]);
   const [allHistory, setAllHistory] = useState<TerminalHistoryEntry[]>([]);
+  const [itemMeta,setItemMeta] = useState<SidebarMeta[]>([]);
+  const [sections,setSections] = useState<SidebarSection[]>([]);
+  const [accountProjects,setAccountProjects] = useState<SidebarProject[]>([]);
+  const [sidebarChats,setSidebarChats] = useState<SidebarChat[]>([]);
+  const [shownProjects,setShownProjects] = useState(5);
+  const [shownPins,setShownPins] = useState(10);
+  const [archivedOpen,setArchivedOpen] = useState(false);
+  const [projectsHasMore,setProjectsHasMore] = useState(false);
+  const [menu,setMenu] = useState<{kind:SidebarKind;id:string;x:number;y:number}|null>(null);
+  const [editor,setEditor] = useState<{mode:'rename'|'new-project'|'new-section'|'move-project'|'move-section'|'delete';kind:SidebarKind;id:string;title:string;projectId?:string}|null>(null);
+  const [editorText,setEditorText] = useState('');
+  const [allProjectOptions,setAllProjectOptions] = useState<SidebarProject[]>([]);
+  const [saving,setSaving] = useState(false);
+  const [sidebarError,setSidebarError] = useState('');
   const [pinnedIds, setPinnedIds] = useState<string[]>([]);
   const [cloudSessions, setCloudSessions] = useState<CloudTerminalSessionSummary[]>([]);
   const [selectedContextKey, setSelectedContextKey] = useState<string | null>(null);
@@ -190,32 +216,53 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
    *
    * Refs give the same values without making the callback unstable.
    */
-  // Local account-scoped pins; cross-device pin sync is not yet supported.
-  const pinStorageKey = !isGuest && workspaceIdentity.userId
-    ? 'xroga_sidebar_pins_v1:' + workspaceIdentity.userId : null;
-
-  useEffect(() => {
-    if (!pinStorageKey) { setPinnedIds([]); return; }
-    function read() {
-      try {
-        const parsed = JSON.parse(localStorage.getItem(pinStorageKey!) || '[]');
-        setPinnedIds(Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === 'string').slice(0, 200) : []);
-      } catch { setPinnedIds([]); }
-    }
-    read();
-    window.addEventListener('storage', read);
-    return () => window.removeEventListener('storage', read);
-  }, [pinStorageKey]);
-
-  function togglePin(id: string) {
-    if (!pinStorageKey) return;
-    setPinnedIds(prev => {
-      const next = prev.includes(id) ? prev.filter(value => value !== id) : [id, ...prev].slice(0, 200);
-      try { localStorage.setItem(pinStorageKey, JSON.stringify(next)); } catch { /* storage unavailable */ }
-      return next;
+  const accountId = !isGuest ? workspaceIdentity.userId ?? '' : '';
+  const refreshSidebarData = useCallback(async()=>{
+    if(!accountId){setItemMeta([]);setSections([]);setAccountProjects([]);setSidebarChats([]);setPinnedIds([]);return;}
+    try{
+      const [metadata,sectionList,firstProjects,chats]=await Promise.all([
+        loadSidebarMeta(accountId),loadSidebarSections(accountId),loadSidebarProjects(accountId,0,6),loadSidebarChats(accountId,0,200)
+      ]);
+      setItemMeta(metadata);setSections(sectionList);
+      setAccountProjects(firstProjects.slice(0,5));setProjectsHasMore(firstProjects.length>5);
+      setSidebarChats(chats);setPinnedIds(sortPinned(metadata.filter(item=>item.pin_order!==null&&!item.archived_at)).map(item=>item.item_id));
+      setSidebarError('');
+    }catch(error){setSidebarError((error as Error).message||'Could not load your saved work');}
+  },[accountId]);
+  useEffect(()=>{
+    void refreshSidebarData();
+    const listener=()=>void refreshSidebarData();
+    window.addEventListener('xroga-sidebar-chats-changed',listener);
+    window.addEventListener('focus',listener);
+    return()=>{window.removeEventListener('xroga-sidebar-chats-changed',listener);window.removeEventListener('focus',listener);};
+  },[refreshSidebarData]);
+  const metaOf=(kind:SidebarKind,id:string)=>itemMeta.find(x=>x.item_type===kind&&x.item_id===id);
+  async function updateItem(kind:SidebarKind,id:string,changes:Partial<SidebarMeta>){
+    if(!accountId){requestAuthGate('history');return;}
+    const previous=itemMeta;
+    const current=metaOf(kind,id);
+    setItemMeta(prev=>{
+      const rest=prev.filter(item=>!(item.item_type===kind&&item.item_id===id));
+      return [...rest,{user_id:accountId,item_type:kind,item_id:id,title_override:null,pin_order:null,archived_at:null,project_id:null,section_id:null,
+        ...current,...changes}];
     });
+    try{await changeSidebarMeta(accountId,kind,id,changes);await refreshSidebarData();}
+    catch(error){setItemMeta(previous);toast.error((error as Error).message||'Could not save changes');}
   }
-
+  function togglePin(id:string,kind:SidebarKind='conversation'){
+    const existing=metaOf(kind,id);
+    const highest=Math.max(0,...itemMeta.map(item=>item.pin_order??0));
+    void updateItem(kind,id,{pin_order:existing?.pin_order!=null?null:highest+1000});
+  }
+  async function moreProjects(){
+    if(!accountId)return;
+    try{
+      const offset=accountProjects.length;
+      const next=await loadSidebarProjects(accountId,offset,6);
+      setAccountProjects(prev=>[...prev,...next.slice(0,5)]);
+      setShownProjects(prev=>prev+5);setProjectsHasMore(next.length>5);
+    }catch(e){toast.error((e as Error).message);}
+  }
   const messagesRef = useRef(messages);
   const sessionIdRef = useRef(sessionId);
   const promptRef = useRef(prompt);
@@ -263,7 +310,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         const n = allocateTerminalNumber(sessionId, bindRepo);
         const live: TerminalHistoryEntry = {
           id: sessionId,
-          title: cloudTerminalLabel(n),
+          title: meaningfulSidebarTitle(hist?.title,hist?.prompt||prompt),
           preview: prompt.slice(0, 200),
           prompt,
           messages,
@@ -292,7 +339,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
                   status: 'active',
                   // Keep sticky repo + #N title from history
                   githubRepoName: e.githubRepoName || live.githubRepoName,
-                  title: e.title.startsWith('#') ? e.title : live.title,
+                  title: meaningfulSidebarTitle(e.title,live.prompt),
                 }
               : e
           );
@@ -423,7 +470,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
           ...session,
           cloudSynced: prev.cloudSynced || session.cloudSynced,
           terminalNumber: number,
-          title: cloudTerminalLabel(number),
+          title: meaningfulSidebarTitle(session.title,session.preview),
         };
         map.set(key, { ...bucket, sessions: list });
         return;
@@ -436,7 +483,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       if (!s.githubRepoName?.includes('/') || s.messageCount <= 0) continue;
       push(s.githubRepoName, s.githubBranch || 'main', '/', {
         id: s.id,
-        title: cloudTerminalLabel(s.terminalNumber),
+        title: meaningfulSidebarTitle(s.title,s.preview),
         updatedAt: s.updatedAt,
         status: (s.status as TerminalHistoryStatus) || 'complete',
         githubRepoName: s.githubRepoName,
@@ -455,7 +502,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         allocateTerminalNumber(e.id, e.githubRepoName);
       push(e.githubRepoName, e.githubBranch || 'main', e.projectRoot || '/', {
         id: e.id,
-        title: cloudTerminalLabel(n),
+        title: meaningfulSidebarTitle(e.title,e.prompt),
         updatedAt: e.updatedAt,
         status: e.status,
         githubRepoName: e.githubRepoName,
@@ -529,7 +576,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       const next = { ...prev };
       for (const f of folders) {
         if (next[f.key] === undefined) {
-          next[f.key] = true;
+          next[f.key] = f.key === selectedContextKey;
           changed = true;
         }
       }
@@ -562,13 +609,13 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       prompt: entry.prompt,
       messages: entry.messages,
       selectedId: entry.id,
-      selectedLabel: n ? cloudTerminalLabel(n) : entry.title,
+      selectedLabel: meaningfulSidebarTitle(entry.title,entry.prompt),
       source: 'projects',
       jumpMessageId: entry.messages[entry.messages.length - 1]?.id,
       githubRepoName: entry.githubRepoName,
     });
     router.push('/workspace');
-    toast.success(n ? `Opened ${cloudTerminalLabel(n)}` : 'Restored your previous terminal');
+    toast.success('Conversation restored');
   }
 
   async function openSession(session: RepoSession) {
@@ -579,7 +626,11 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       const repo = session.githubRepoName;
       if (!repo?.includes('/')) {
         if (session.entry?.messages?.length) await applyRestore(session.entry, 'main');
-        else { router.push('/workspace'); toast('The saved conversation is unavailable on this device'); }
+        else if(accountId){
+          const restored=await loadSidebarChatById(accountId,session.id);
+          if(restored?.messages?.length) await applyRestore(restored,'main');
+          else toast.error('This conversation cannot be restored; no saved messages were found');
+        }else toast.error('Sign in to recover saved conversations');
         return;
       }
 
