@@ -88,3 +88,10 @@ end;
 $$;
 revoke all on function public.xroga_swap_sidebar_pins(text,text,text,text) from public,anon;
 grant execute on function public.xroga_swap_sidebar_pins(text,text,text,text) to authenticated;
+
+-- Truthful legacy-title backfill uses the saved user prompt, never assistant preview.
+-- Manually edited titles are untouched; original IDs and activity timestamps remain intact.
+update public.terminal_sessions set title=left(regexp_replace(btrim(prompt),'[[:space:]]+',' ','g'),90)
+ where title ~* '^#?[0-9]+[[:space:]]+terminal$' and length(btrim(prompt))>0;
+update public.terminal_sessions set title='Untitled conversation'
+ where title ~* '^#?[0-9]+[[:space:]]+terminal$' and length(btrim(prompt))=0;

@@ -498,7 +498,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       if (!s.githubRepoName?.includes('/') || s.messageCount <= 0) continue;
       push(s.githubRepoName, s.githubBranch || 'main', '/', {
         id: s.id,
-        title: meaningfulSidebarTitle(s.title,s.preview),
+        title: meaningfulSidebarTitle(s.title,null),
         updatedAt: s.updatedAt,
         status: (s.status as TerminalHistoryStatus) || 'complete',
         githubRepoName: s.githubRepoName,
@@ -749,7 +749,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
           terminalNumber: c.terminalNumber || previous.terminalNumber,
           updatedAt: Date.parse(c.updatedAt) > Date.parse(previous.updatedAt) ? c.updatedAt : previous.updatedAt });
       } else {
-        map.set(c.id, { id: c.id, title: meaningfulSidebarTitle(c.title,c.preview), preview: c.preview, updatedAt: c.updatedAt,
+        map.set(c.id, { id: c.id, title: meaningfulSidebarTitle(c.title,null), preview: c.preview, updatedAt: c.updatedAt,
           githubRepoName: c.githubRepoName, githubBranch: c.githubBranch || 'main',
           projectRoot: '/', cloudSynced: true, kind: 'cloud', terminalNumber: c.terminalNumber,
           status: c.status as TerminalHistoryStatus });
@@ -983,7 +983,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         if(editor.kind==='project')await api.projects.delete(editor.id);
         else{
           const conv=savedConversations.find(s=>s.id===editor.id);
-          if(conv?.githubRepoName?.includes('/')&&conv.cloudSynced)await api.terminalSessions.delete(editor.id);
+          if(conv?.githubRepoName?.includes('/'))await api.terminalSessions.delete(editor.id);
           if(!conv?.githubRepoName)await deleteSidebarChat(accountId,editor.id);
           removeTerminalHistoryEntry(editor.id);
         }
