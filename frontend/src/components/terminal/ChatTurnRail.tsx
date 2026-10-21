@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
-import { Bookmark } from 'lucide-react';
+import { Bookmark, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface ChatTurn {
@@ -13,7 +13,12 @@ export interface ChatTurn {
   detail?: string;
 }
 
-export const MAX_VISIBLE_CHAT_TURNS = 50;
+export const MAX_VISIBLE_CHAT_TURNS = 45;
+export function chatRailCapacity(viewportWidth: number, viewportHeight: number): number {
+  const target = viewportWidth < 640 ? 15 : viewportWidth < 1024 ? 25 : MAX_VISIBLE_CHAT_TURNS;
+  const available = Math.max(6, Math.floor((viewportHeight - 84) / 11));
+  return Math.min(target, available);
+}
 const STORAGE_PREFIX = 'xroga:conversation-bookmarks:v1:';
 
 export function bookmarkStorageKey(conversationKey: string): string {
@@ -21,42 +26,13 @@ export function bookmarkStorageKey(conversationKey: string): string {
 }
 
 /** Preserve real first/last, active and bookmarked anchors while sampling long histories. */
-export function visibleChatTurns(turns: ChatTurn[], bookmarkedIds: readonly string[] = [], activeId: string | null = null): ChatTurn[] {
-  if (turns.length <= MAX_VISIBLE_CHAT_TURNS) return turns;
-  const saved = new Set(bookmarkedIds);
-  const priority = new Set<number>([0, turns.length - 1]);
-  for (let index = 0; index < turns.length; index++) {
-    if (saved.has(turns[index].id) || turns[index].id === activeId) priority.add(index);
-  }
-  // Large histories are compressed, but keep every bookmark where viewport density permits.
-  const limit = Math.min(100, Math.max(MAX_VISIBLE_CHAT_TURNS, priority.size));
-  const chosen = [...priority].sort((a, b) => a - b);
-  if (chosen.length > limit) {
-    const retained = [0, turns.length - 1];
-    for (const index of chosen.slice(1, -1).reverse().slice(0, limit - 2)) retained.push(index);
-    priority.clear();
-    retained.forEach(index => priority.add(index));
-  }
-  const available = limit - priority.size;
-  if (available > 0) {
-    // Evenly distribute the other real anchors; no synthetic or unresolvable markers.
-    for (let n = 0; n < available; n++) {
-      const target = Math.round(((n + 1) * (turns.length - 1)) / (available + 1));
-      if (!priority.has(target)) priority.add(target);
-    }
-    while (priority.size < limit) {
-      const indices = [...priority].sort((a, b) => a - b);
-      let gap = 0;
-      let nextIndex = -1;
-      for (let n = 1; n < indices.length; n++) {
-        const distance = indices[n] - indices[n - 1];
-        if (distance > gap) { gap = distance; nextIndex = Math.floor((indices[n] + indices[n - 1]) / 2); }
-      }
-      if (gap <= 1 || nextIndex < 0) break;
-      priority.add(nextIndex);
-    }
-  }
-  return [...priority].sort((a, b) => a - b).map(index => turns[index]);
+export function visibleChatTurns(turns: ChatTurn[], _bookmarkedIds: readonly string[] = [], _activeId: string | null = null,
+  capacity = MAX_VISIBLE_CHAT_TURNS, start = Math.max(0, turns.length - capacity)): ChatTurn[] {
+  // Only real messages, in a stable bounded window. The arrows reach older/newer
+  // messages without creating hundreds of overlapping or synthetic dash markers.
+  const size = Math.max(1, capacity);
+  const from = Math.max(0, Math.min(start, Math.max(0, turns.length - size)));
+  return turns.slice(from, from + size);
 }
 
 export function turnMarkerTop(index: number, count: number, railHeight: number): number {
@@ -110,12 +86,16 @@ export function buildChatTurns(messages: Array<{ id: string; role: string; conte
     };
     if (message.role === 'user') {
       previousPrompt = turn;
-    } else if (previousPrompt && !previousPrompt.summary) {
-      // A user prompt's preview may show the genuine reply excerpt, as in the references.
-      previousPrompt.summary = clip(lines[0], 170);
-      previousPrompt.detail = lines[1] ? clip(lines[1], 140) : undefined;
+      turns.push(turn);
+    } else if (previousPrompt) {
+      // One user request and its answer share one dash and one stable target ID.
+      // Real assistant output enriches the user's preview, never a second marker.
+      if (!previousPrompt.summary) previousPrompt.summary = clip(lines[0], 170);
+      if (!previousPrompt.detail && lines[1]) previousPrompt.detail = clip(lines[1], 140);
+    } else {
+      // Restored conversations may legitimately begin with an assistant message.
+      turns.push(turn);
     }
-    turns.push(turn);
   }
   return turns;
 }
@@ -134,9 +114,10 @@ interface ChatTurnRailProps {
  */
 export function ChatTurnRail({ turns, activeId, onJump, conversationKey, className }: ChatTurnRailProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [layout, setLayout] = useState({ left: 8, height: 800, navigable: false });
+  const [layout, setLayout] = useState({ left: 8, height: 800, navigable: false, width: 1366 });
   const [mounted, setMounted] = useState(false);
   const [bookmarks, setBookmarks] = useState<{ key: string; ids: string[] }>({ key: '', ids: [] });
+  const [pageStart, setPageStart] = useState(0);
 
   useEffect(() => {
     setMounted(true);
@@ -147,8 +128,8 @@ export function ChatTurnRail({ turns, activeId, onJump, conversationKey, classNa
       const bounds = root.getBoundingClientRect();
       const scrollable = root.scrollHeight > root.clientHeight + 40;
       setLayout(previous => {
-        const next = { left: Math.max(8, Math.round(bounds.left + 8)), height: Math.max(120, window.innerHeight - 16), navigable: scrollable };
-        return previous.left === next.left && previous.height === next.height && previous.navigable === next.navigable ? previous : next;
+        const next = { left: Math.max(4, Math.round(bounds.left + (window.innerWidth < 640 ? 3 : 8))), height: Math.max(120, window.innerHeight - 16), navigable: scrollable, width: window.innerWidth };
+        return previous.left === next.left && previous.height === next.height && previous.navigable === next.navigable && previous.width === next.width ? previous : next;
       });
     };
     place();
@@ -167,20 +148,47 @@ export function ChatTurnRail({ turns, activeId, onJump, conversationKey, classNa
     } catch { /* Storage may be disabled; bookmarking still works for this session. */ }
     setBookmarks({ key: conversationKey, ids });
     setHoveredId(null);
+    setPageStart(0);
   }, [conversationKey]);
 
   const savedIds = bookmarks.key === conversationKey ? bookmarks.ids : [];
   const savedSet = useMemo(() => new Set(savedIds), [savedIds]);
-  // Keep the rail stationary while reading: active changes never reshuffle samples.
-  const visibleTurns = useMemo(() => visibleChatTurns(turns, savedIds), [turns, savedIds]);
+  const capacity = chatRailCapacity(layout.width, layout.height);
+  const maxStart = Math.max(0, turns.length - capacity);
+  // A new or restored conversation opens at its actual latest messages.
+  const effectiveStart = Math.min(pageStart, maxStart);
+  const visibleTurns = useMemo(
+    () => visibleChatTurns(turns, savedIds, activeId, capacity, effectiveStart),
+    [turns, savedIds, activeId, capacity, effectiveStart],
+  );
   const turnIndices = useMemo(() => new Map(turns.map((turn, index) => [turn.id, index])), [turns]);
   const activeIndex = turnIndices.get(activeId ?? '') ?? -1;
-  const visibleActiveId = activeIndex < 0 ? null : visibleTurns.reduce<{ id: string; distance: number } | null>((best, turn) => {
-    const distance = Math.abs((turnIndices.get(turn.id) ?? 0) - activeIndex);
-    return !best || distance < best.distance ? { id: turn.id, distance } : best;
-  }, null)?.id ?? null;
+  const visibleActiveId = activeIndex >= effectiveStart && activeIndex < effectiveStart + visibleTurns.length
+    ? activeId : null;
   const hoveredIndex = visibleTurns.findIndex(turn => turn.id === hoveredId);
   const hoveredTurn = hoveredIndex >= 0 ? visibleTurns[hoveredIndex] : null;
+  const hasOlder = effectiveStart > 0;
+  const hasNewer = effectiveStart + capacity < turns.length;
+
+  useEffect(() => {
+    // Only change pages when the active message actually exits the visible window.
+    // This keeps markers fixed while reading within a page.
+    if (activeIndex < 0 || turns.length <= capacity) return;
+    setPageStart(previous => {
+      const start = Math.min(previous, maxStart);
+      if (activeIndex < start) return Math.max(0, activeIndex - Math.floor(capacity / 3));
+      if (activeIndex >= start + capacity) return Math.min(maxStart, activeIndex - capacity + Math.floor(capacity / 3));
+      return previous;
+    });
+  }, [activeIndex, capacity, maxStart, turns.length]);
+
+  useEffect(() => {
+    // The first render after loading a long conversation should start at the
+    // latest genuine content, not the earliest messages or stale previous session.
+    if (turns.length > capacity && pageStart === 0 && activeIndex < 0) {
+      setPageStart(maxStart);
+    }
+  }, [turns.length, capacity, maxStart, activeIndex, pageStart]);
 
   function toggleBookmark(id: string) {
     const current = bookmarks.key === conversationKey ? bookmarks.ids : [];
@@ -189,17 +197,21 @@ export function ChatTurnRail({ turns, activeId, onJump, conversationKey, classNa
     try { localStorage.setItem(bookmarkStorageKey(conversationKey), JSON.stringify(next)); } catch { /* Non-persistent storage fallback. */ }
   }
 
-  if (!mounted || turns.length < 2 || !layout.navigable || visibleTurns.length < 2) return null;
+  if (!mounted || turns.length < 2 || !layout.navigable || visibleTurns.length < 2 || (layout.width < 360)) return null;
 
   const markerTop = hoveredIndex >= 0 ? turnMarkerTop(hoveredIndex, visibleTurns.length, layout.height) : 0;
   return createPortal(
     <nav
-      className={cn('xv-chat-turn-rail xv-chat-turn-rail--dock hidden lg:block', className)}
+      className={cn('xv-chat-turn-rail xv-chat-turn-rail--dock', className)}
       style={{ left: layout.left }}
       aria-label="Conversation turn navigation"
       onMouseLeave={() => setHoveredId(null)}
       onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setHoveredId(null); }}
     >
+      {hasOlder ? <button type="button" className="xv-chat-rail-page xv-chat-rail-page--older"
+        aria-label="Older messages" onClick={() => { setHoveredId(null); setPageStart(Math.max(0, effectiveStart - capacity)); }}>
+        <ChevronUp size={13} aria-hidden="true" />
+      </button> : null}
       {visibleTurns.map((turn, index) => {
         const current = turn.id === visibleActiveId;
         const saved = savedSet.has(turn.id);
@@ -219,10 +231,14 @@ export function ChatTurnRail({ turns, activeId, onJump, conversationKey, classNa
           onMouseEnter={() => setHoveredId(turn.id)}
           onFocus={() => setHoveredId(turn.id)}
           onClick={() => onJump(turn.id)}
-          aria-label={`Jump to ${saved ? 'bookmarked ' : ''}${turn.role ?? 'message'}: ${clip(turn.label, 78)}`}
+          aria-label={`${saved ? 'Bookmarked ' : ''}message: ${clip(turn.label, 78)}`}
           aria-current={current ? 'location' : undefined}
         ><span aria-hidden="true" /></button>;
       })}
+      {hasNewer ? <button type="button" className="xv-chat-rail-page xv-chat-rail-page--newer"
+        aria-label="Newer messages" onClick={() => { setHoveredId(null); setPageStart(Math.min(maxStart, effectiveStart + capacity)); }}>
+        <ChevronDown size={13} aria-hidden="true" />
+      </button> : null}
       {hoveredTurn ? <div
         className="xv-chat-turn-preview"
         style={{ '--xv-preview-position': Math.max(75, Math.min(layout.height - 75, markerTop)) + 'px' } as CSSProperties}

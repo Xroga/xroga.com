@@ -18,12 +18,12 @@ test('each dash maps to real user or assistant message ids, with no phantom fill
     { id: 'a2', role: 'assistant', content: 'Voice typing still works, but usage is finished.' },
     { id: 'a3', role: 'assistant', content: '', featureOutput: { type: 'image', title: 'Final product render' } },
   ]);
-  assert.deepEqual(turns.map(turn => turn.id), ['u1','a1','u2','a2','a3']);
-  assert.equal(turns[4].label, 'Final product render');
+  assert.deepEqual(turns.map(turn => turn.id), ['u1','u2']);
+  assert.equal(turns[1].label, 'Explain the voice limit');
   assert.equal(turns[0].label, 'Fix the checkout');
   assert.equal(turns[0].summary, 'Done and live.');
   assert.equal(turns[0].detail, 'Tests passed');
-  assert.equal(turns[1].label, 'Done and live.');
+  assert.equal(turns[1].summary, 'Voice typing still works, but usage is finished.');
   assert.ok(!JSON.stringify(turns).includes('secretCode'));
   assert.ok(!JSON.stringify(turns).includes('tool invoked'));
   assert.deepEqual(buildChatTurns([{ id: 'x', role: 'assistant', content: '   ' }]), []);
@@ -45,8 +45,9 @@ test('long histories sample real targets across time without hiding ordinary boo
   const all = Array.from({ length: 225 }, (_, n) => ({ id: 'message-'+n, label: 'Message '+n, summary: '' }));
   const selected = visibleChatTurns(all, ['message-3','message-45','message-119','message-200'], 'message-79');
   assert.equal(selected.length, MAX_VISIBLE_CHAT_TURNS);
-  for (const id of ['message-0','message-3','message-45','message-79','message-119','message-200','message-224'])
-    assert.ok(selected.some(item => item.id === id), 'Missing anchor ' + id);
+  assert.equal(selected[0].id, 'message-180');
+  assert.equal(selected.at(-1)?.id, 'message-224');
+  assert.equal(visibleChatTurns(all, [], null, 15, 0).length, 15);
   assert.deepEqual(visibleChatTurns(all.slice(0, 2)).map(item => item.id), ['message-0','message-1']);
 });
 
@@ -60,9 +61,11 @@ test('bookmark storage is specific to account and session, and preview buttons p
   assert.match(RAIL, /xv-chat-turn-tick--bookmarked/);
   assert.match(RAIL, /onClick=\{\(\) => onJump\(turn\.id\)\}/);
   assert.match(RAIL, /document\.body/);
-  assert.match(RAIL, /hidden lg:block/);
-  assert.match(RAIL, /visibleChatTurns\(turns, savedIds\)/);
-  assert.doesNotMatch(RAIL, /visibleChatTurns\(turns, savedIds, activeId\)/);
+  assert.match(RAIL, /chatRailCapacity/);
+  assert.match(RAIL, /Older messages/);
+  assert.match(RAIL, /Newer messages/);
+  assert.match(RAIL, /visibleChatTurns\(turns, savedIds, activeId, capacity, effectiveStart\)/);
+  assert.doesNotMatch(RAIL, /Jump to \$\{/);
 });
 
 test('reading position uses rendered real message anchors and an efficient binary search', () => {
