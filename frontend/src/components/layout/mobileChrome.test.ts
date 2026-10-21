@@ -373,13 +373,16 @@ test('the GitHub mark is a disc that inverts with the theme', () => {
   assert.match(GH_GLYPH, /React\.MouseEvent<HTMLDivElement>/, 'the shared icon type was widened');
 });
 
-test('the repository rows under the filter are fork points', () => {
-  // Named carefully: this is the row icon beneath the Repositories/filter header, not
-  // the Repositories destination in the nav.
-  assert.match(HISTORY, /icon=\{GitForkIcon\}/, 'the repository rows lost the fork');
-  assert.ok(!/FolderGit2/.test(HISTORY), 'the folder glyph is back on the rows');
-  // The open state stays a folder, because that one says "expanded", not "repository".
-  assert.match(HISTORY, /const FolderIcon = isOpen \? FolderOpen : null;/);
+test('project rows preserve expansion, labels and navigation in the current organizer', () => {
+  // PR836 owns the replacement of repository/filter rows with account projects.
+  const organizer = HISTORY.slice(HISTORY.indexOf('  return <div className="mt-2 mb-1 px-1.5" data-sidebar-work-organizer>'));
+  assert.match(organizer, /aria-label=\{expandedProject\?'Collapse '\+p\.label:'Expand '\+p\.label\}/);
+  assert.match(organizer, /onClick=\{\(\)=>setOpenFolders\(prev=>\(\{\.\.\.prev,\[p\.id\]:!expandedProject\}\)\)\}/);
+  assert.match(organizer, /expandedProject\?<ChevronDown size=\{13\}\/>:<ChevronRight size=\{13\}\/>/);
+  assert.match(organizer, /renderRow\('project',p\.id,projectTitle\(p\.id,p\.label\),\(\)=>openProject\(p\.id\),false,<FolderOpen\b/);
+  assert.match(organizer, /expandedProject \? <div[^>]*aria-label=\{p\.label\+' conversations'\}/);
+  assert.match(HISTORY, /router\.push\(`\/dashboard\/projects\/\$\{encodeURIComponent\(p\.actual\.id\)\}`\)/);
+  assert.doesNotMatch(organizer, /<RepositoryFilterPopover\b|icon=\{GitForkIcon\}|<FolderGit2\b/);
 });
 
 test('fullscreen on a phone is a rounded box that fills the screen', () => {
