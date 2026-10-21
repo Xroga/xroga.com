@@ -100,6 +100,26 @@ test('existing conversation tools fit on a small phone without an external Plugi
   expect(b!.x).toBeGreaterThanOrEqual(0);
   expect(b!.x+b!.width).toBeLessThanOrEqual(390);
   await expect(page.locator('.xv-chatbar-context-strip')).toHaveCount(0);
-  await expect(frame.locator('.xv-chatbar-solid').getByRole('button', { name: 'Plugins' })).toBeVisible();
+  const surface = frame.locator('.xv-chatbar-solid');
+  const plugins = surface.getByRole('button', { name: 'Plugins' });
+  const voice = surface.getByRole('button', { name: 'Start voice typing' });
+  const send = surface.getByRole('button', { name: 'Send prompt', exact: true });
+  await expect(plugins).toBeVisible();
+  await expect(voice).toBeVisible();
+  await expect(send).toBeVisible();
+  const pluginBox = await plugins.boundingBox();
+  const voiceBox = await voice.boundingBox();
+  const sendBox = await send.boundingBox();
+  expect(pluginBox && voiceBox && sendBox).toBeTruthy();
+  expect(pluginBox!.x + pluginBox!.width).toBeLessThanOrEqual(voiceBox!.x - 1);
+  expect(voiceBox!.x + voiceBox!.width).toBeLessThanOrEqual(sendBox!.x - 1);
+  expect(sendBox!.x + sendBox!.width).toBeLessThanOrEqual(390);
   await page.screenshot({ path: 'test-results/composer-existing-mobile.png' });
+});
+
+test('desktop active and new composers share a maximum 740px frame width', async ({ page }) => {
+  await page.goto('/workspace');
+  const frame = page.locator('.xv-terminal-dock [data-composer-frame="single"]');
+  await expect(frame).toBeVisible();
+  expect((await frame.boundingBox())!.width).toBeLessThanOrEqual(741);
 });

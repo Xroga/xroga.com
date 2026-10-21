@@ -14666,3 +14666,26 @@ body.theme-beige .xv-sidebar-hover-menu, body.theme-beige .xv-plugins-popover, b
 .xv-pqm-copy-email:focus-visible { outline:2px solid var(--foreground); outline-offset:1px; }
 .xv-pqm-submenu { max-width:min(254px,calc(100vw - 24px)); max-height:calc(100dvh - 24px); overflow-y:auto; overscroll-behavior:contain; }
 @media(max-width:699px){.xv-pqm-submenu { left:auto!important;right:8px!important;top:64px!important;width:min(228px,calc(100vw - 48px)); }}
+
+/* Matching New Work composer width and preventing overlapping control targets on narrow chats. */
+.xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] {
+  width:100%!important; max-width:740px!important; margin-inline:auto!important;
+}
+@media(max-width:639px){
+  .xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-primary-tools > button {
+    width:32px!important; min-width:32px!important; height:32px!important;
+    padding:5px!important; display:inline-flex!important; align-items:center!important; justify-content:center!important;
+  }
+  .xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-primary-tools > button > span {
+    display:none!important;
+  }
+  .xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-primary-tools > button > svg {
+    display:block!important; width:16px!important; height:16px!important;
+  }
+  .xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-primary-tools {
+    gap:4px!important; flex-wrap:nowrap!important; min-width:0;
+  }
+  .xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-tools {
+    gap:4px!important; min-width:0;
+  }
+}
