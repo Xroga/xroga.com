@@ -10,6 +10,7 @@ import {
   registerRepoSession,
   type RepoActivityKind,
 } from '@/lib/repoSessionsIndex';
+import { safeConversationTitle } from '@/lib/sidebarOrganization';
 import {
   allocateTerminalNumber,
   cloudTerminalLabel,
@@ -17,7 +18,6 @@ import {
 } from '@/lib/cloudTerminalSessions';
 
 const KEY = 'xroga_terminal_history';
-const BROWSER_KEYWORDS = /scrape|browser|automate|crawl|linkedin jobs|apply to|web search/i;
 
 export type TerminalHistoryKind = 'chat' | 'code' | 'business' | 'mixed' | 'image' | 'research';
 export type TerminalHistoryStatus = 'active' | 'stopped' | 'complete';
@@ -44,10 +44,6 @@ export interface TerminalHistoryEntry {
   messageCount: number;
   createdAt: string;
   updatedAt: string;
-}
-
-function isAutomationPrompt(prompt: string): boolean {
-  return BROWSER_KEYWORDS.test(prompt);
 }
 
 function detectKind(messages: ChatMessage[], prompt: string): TerminalHistoryKind {
@@ -175,10 +171,6 @@ export function saveTerminalHistorySession(opts: {
 
   const firstUser = opts.messages.find((m) => m.role === 'user');
   const titlePrompt = firstUser?.content?.trim() || opts.prompt.trim() || 'Terminal session';
-  // Keep automation out of the Repositories tree; everything else (chat/image/research/code)
-  // saves under the selected GitHub repo workspace on Xroga.
-  if (isAutomationPrompt(titlePrompt)) return null;
-
   const preview =
     opts.messages
       .filter((m) => m.role === 'assistant')
@@ -222,7 +214,7 @@ export function saveTerminalHistorySession(opts: {
 
   const entry: TerminalHistoryEntry = {
     id: opts.sessionId,
-    title: terminalNumber ? cloudTerminalLabel(terminalNumber) : titlePrompt.slice(0, 56),
+    title: safeConversationTitle(existing?.title, titlePrompt),
     preview,
     prompt: opts.prompt || titlePrompt,
     messages: opts.messages,
@@ -254,8 +246,9 @@ export function saveTerminalHistorySession(opts: {
       status: entry.status,
       activityKind: toActivityKind(kind),
     });
-    void pushTerminalSessionToCloud(entry);
   }
+  // Persist normal chats as well as repo-linked work; use the same stable session id.
+  void pushTerminalSessionToCloud(entry);
 
   if (contextKey === useProjectWorkspaceStore.getState().activeProjectContextKey) {
     useProjectWorkspaceStore.getState().setActiveTaskSession(entry.id, contextKey);
@@ -267,7 +260,7 @@ export function saveTerminalHistorySession(opts: {
 /** Force-upload an already-saved session so prior #N is durable before clearing. */
 export async function flushTerminalHistorySessionToCloud(sessionId: string): Promise<void> {
   const entry = loadTerminalHistory().find((e) => e.id === sessionId);
-  if (!entry?.githubRepoName?.includes('/') || !entry.messages?.length) return;
+  if (!entry?.messages?.length) return;
   const { flushTerminalSessionToCloud } = await import('@/lib/cloudTerminalSessions');
   await flushTerminalSessionToCloud(entry);
 }
