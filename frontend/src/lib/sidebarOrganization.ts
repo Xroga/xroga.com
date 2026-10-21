@@ -13,7 +13,7 @@ export type SidebarSection = { id:string; project_id:string; title:string; sort_
 export type SidebarProject = { id:string; name:string; github_repo_name:string|null; updated_at:string|null };
 export type SidebarChat = { id:string; title:string; prompt:string; preview:string; message_count:number; kind:string; status:string; created_at:string; updated_at:string };
 
-const clean = (value: string) => value.replace(/\\\S+/g,'').replace(/[#*_\n\r\t]/g,' ').replace(/\s+/g,' ').trim();
+const clean = (value: string) => value.replace(/[#*_\n\r\t]/g,' ').replace(/\s+/g,' ').trim();
 export function meaningfulSidebarTitle(title: string | null | undefined, fallback: string | null | undefined): string {
   const existing=clean(title||'');
   if(existing && !/^(?:#?\d+\s+terminal|terminal\s*#?\d+|terminal session)$/i.test(existing)) return existing.slice(0,120);
@@ -64,8 +64,19 @@ export async function changeSidebarMeta(userId:string,itemType:SidebarKind,itemI
    const {data,error}=await owned(userId).from('projects').select('id').eq('user_id',userId).eq('id',itemId).maybeSingle();
    if(error||!data) throw new Error('Project not available to this account');
  }
- const {error}=await owned(userId).from('xroga_sidebar_items').upsert({
-  user_id:userId,item_type:itemType,item_id:itemId,...changes,updated_at:new Date().toISOString()
+ const client=owned(userId);
+ const {data:existing,error:readError}=await client.from('xroga_sidebar_items')
+  .select('title_override,pin_order,archived_at,project_id,section_id')
+  .eq('user_id',userId).eq('item_type',itemType).eq('item_id',itemId).maybeSingle();
+ if(readError) throw readError;
+ const {error}=await client.from('xroga_sidebar_items').upsert({
+  user_id:userId,item_type:itemType,item_id:itemId,
+  title_override:changes.title_override!==undefined?changes.title_override:existing?.title_override??null,
+  pin_order:changes.pin_order!==undefined?changes.pin_order:existing?.pin_order??null,
+  archived_at:changes.archived_at!==undefined?changes.archived_at:existing?.archived_at??null,
+  project_id:changes.project_id!==undefined?changes.project_id:existing?.project_id??null,
+  section_id:changes.section_id!==undefined?changes.section_id:existing?.section_id??null,
+  updated_at:new Date().toISOString()
  },{onConflict:'user_id,item_type,item_id'});
  if(error) throw error;
 }
@@ -84,4 +95,20 @@ export async function removeSidebarSection(userId:string,id:string):Promise<void
 export async function deleteSidebarChat(userId:string,id:string):Promise<void>{
  const {error}=await owned(userId).from('xroga_sidebar_chats').delete().eq('user_id',userId).eq('id',id);
  if(error) throw error;
+}
+
+/** Coalesce non-repository chat saves; never block message rendering on cloud I/O. */
+const pendingChats=new Map<string,ReturnType<typeof setTimeout>>();
+export function scheduleSidebarChatSave(entry:TerminalHistoryEntry):void{
+ if(typeof window==='undefined'||entry.githubRepoName?.includes('/')||!entry.messages?.length) return;
+ const prev=pendingChats.get(entry.id);
+ if(prev) clearTimeout(prev);
+ pendingChats.set(entry.id,setTimeout(()=>{
+  pendingChats.delete(entry.id);
+  void createClient().auth.getUser().then(async ({data,error})=>{
+    if(error||!data.user) return;
+    try{ await saveSidebarChat(data.user.id,entry); window.dispatchEvent(new Event('xroga-sidebar-chats-changed')); }
+    catch(e){ console.warn('[sidebar] chat sync unavailable:',e); }
+  });
+ },1500));
 }
