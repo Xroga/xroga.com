@@ -1,6 +1,6 @@
 # Deployment topology — read-only truth
 
-Source SHA: `14bda8d9a87b5ccd6efc22e0f3ffd1fbbead006d`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
+Source SHA: `ed524497a04fe3242f1fdeb958bed899de573600`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -133,6 +133,7 @@ Source SHA: `14bda8d9a87b5ccd6efc22e0f3ffd1fbbead006d`; source/config hashes are
 | endpoint-studio-youtube-com | Source-defined endpoint studio.youtube.com | CONFIGURED_BUT_UNVERIFIED | studio.youtube.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-supabase-com | Source-defined endpoint supabase.com | CONFIGURED_BUT_UNVERIFIED | supabase.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-support-bolt-new | Source-defined endpoint support.bolt.new | CONFIGURED_BUT_UNVERIFIED | support.bolt.new | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-token-actions-githubusercontent-com | Source-defined endpoint token.actions.githubusercontent.com | CONFIGURED_BUT_UNVERIFIED | token.actions.githubusercontent.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-twitter-com | Source-defined endpoint twitter.com | CONFIGURED_BUT_UNVERIFIED | twitter.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-upload-wikimedia-org | Source-defined endpoint upload.wikimedia.org | CONFIGURED_BUT_UNVERIFIED | upload.wikimedia.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-v0-dev | Source-defined endpoint v0.dev | CONFIGURED_BUT_UNVERIFIED | v0.dev | NOT_INDEPENDENTLY_VERIFIED |

@@ -1,17 +1,17 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "703892ede4ead262d5452ef657b21717c623d993e0dc30bab243d8bbcfbe57b0",
+  "reviewRegistrySha256": "53f7d263af6d12145c3cde8d90a2a8dfea24b203084ff6ba2e01cb3d4bdf97f3",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 166,
-    "persistenceCandidates": 678,
+    "persistenceCandidates": 680,
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
-    "reviewedCandidates": 678,
+    "reviewedCandidates": 680,
     "unresolvedSafetyCandidates": 25,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 18
@@ -20,7 +20,7 @@
     "REVIEW_REQUIRED": 0,
     "SCOPED_BOUNDARY": 453,
     "NARROW_EXCEPTION": 40,
-    "NOT_PERSISTENCE": 160,
+    "NOT_PERSISTENCE": 162,
     "REVIEWED_GAP": 25
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 116,
-    "unresolvedCandidateBoundaries": 562,
+    "unresolvedCandidateBoundaries": 564,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3204,23 +3204,31 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "bff61b767ee1e128b87e"
+        "id": "2536d04a15d3a5485f02"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "f4d0c2af0d78fba9284a"
+        "id": "f192cb888d97c4e94f8d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "291af662ce05f5be45fd"
+        "id": "524cf7b659b3ddc9e653"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "658b27f714265c1c2858"
+        "id": "e6d744a3f703e11fb4d2"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "567626db68706994f055"
+        "id": "6d1834aa55943b101afd"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "d100118cef42638a9330"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "45049a393a26b35890dd"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5200,23 +5208,31 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "bff61b767ee1e128b87e"
+        "id": "2536d04a15d3a5485f02"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "f4d0c2af0d78fba9284a"
+        "id": "f192cb888d97c4e94f8d"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "291af662ce05f5be45fd"
+        "id": "524cf7b659b3ddc9e653"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "658b27f714265c1c2858"
+        "id": "e6d744a3f703e11fb4d2"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "567626db68706994f055"
+        "id": "6d1834aa55943b101afd"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "d100118cef42638a9330"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "45049a393a26b35890dd"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -5801,11 +5817,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 678,
+    "currentCallers": 680,
     "structuredVerified": 116,
-    "structuredUnproven": 562,
+    "structuredUnproven": 564,
     "manualUnresolved": 25,
-    "manualUnsupported": 537,
+    "manualUnsupported": 539,
     "agreedVerified": 116,
     "proofAwaitingManualReconciliation": 0
   },
@@ -16447,15 +16463,15 @@
       }
     },
     {
-      "id": "bff61b767ee1e128b87e",
+      "id": "2536d04a15d3a5485f02",
       "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
-      "line": 10,
+      "line": 11,
       "enclosing": "base64",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "1dab15a26ba08c148e4e96f58294229238e276a24bcdb46ca20e1f7b0b9725e4",
+      "sourceSha256": "372c7f8bd36ec6350c233c8476f240e2ad36f6e95ea2c9517867b7bd98b5c7b3",
       "semanticReview": {
         "authority": "Inspected each exact receiver in this module. These five classified Buffer.from calls perform local base64 decoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or local SDK session-claims decoding for workload identity admission. No classified receiver is a database client, bucket or provider transport. Claims admission does not verify the JWT signature or grant IAM; the actual OCI request must do so. The OCI transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
         "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
@@ -16468,15 +16484,15 @@
       }
     },
     {
-      "id": "f4d0c2af0d78fba9284a",
+      "id": "f192cb888d97c4e94f8d",
       "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
-      "line": 37,
+      "line": 38,
       "enclosing": "wrapDataKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "1dab15a26ba08c148e4e96f58294229238e276a24bcdb46ca20e1f7b0b9725e4",
+      "sourceSha256": "372c7f8bd36ec6350c233c8476f240e2ad36f6e95ea2c9517867b7bd98b5c7b3",
       "semanticReview": {
         "authority": "Inspected each exact receiver in this module. These five classified Buffer.from calls perform local base64 decoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or local SDK session-claims decoding for workload identity admission. No classified receiver is a database client, bucket or provider transport. Claims admission does not verify the JWT signature or grant IAM; the actual OCI request must do so. The OCI transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
         "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
@@ -16489,15 +16505,15 @@
       }
     },
     {
-      "id": "291af662ce05f5be45fd",
+      "id": "524cf7b659b3ddc9e653",
       "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
-      "line": 45,
+      "line": 46,
       "enclosing": "wrapDataKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "1dab15a26ba08c148e4e96f58294229238e276a24bcdb46ca20e1f7b0b9725e4",
+      "sourceSha256": "372c7f8bd36ec6350c233c8476f240e2ad36f6e95ea2c9517867b7bd98b5c7b3",
       "semanticReview": {
         "authority": "Inspected each exact receiver in this module. These five classified Buffer.from calls perform local base64 decoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or local SDK session-claims decoding for workload identity admission. No classified receiver is a database client, bucket or provider transport. Claims admission does not verify the JWT signature or grant IAM; the actual OCI request must do so. The OCI transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
         "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
@@ -16510,15 +16526,15 @@
       }
     },
     {
-      "id": "658b27f714265c1c2858",
+      "id": "e6d744a3f703e11fb4d2",
       "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
-      "line": 53,
+      "line": 54,
       "enclosing": "unwrapDataKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "1dab15a26ba08c148e4e96f58294229238e276a24bcdb46ca20e1f7b0b9725e4",
+      "sourceSha256": "372c7f8bd36ec6350c233c8476f240e2ad36f6e95ea2c9517867b7bd98b5c7b3",
       "semanticReview": {
         "authority": "Inspected each exact receiver in this module. These five classified Buffer.from calls perform local base64 decoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or local SDK session-claims decoding for workload identity admission. No classified receiver is a database client, bucket or provider transport. Claims admission does not verify the JWT signature or grant IAM; the actual OCI request must do so. The OCI transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
         "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
@@ -16531,15 +16547,15 @@
       }
     },
     {
-      "id": "567626db68706994f055",
+      "id": "6d1834aa55943b101afd",
       "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
-      "line": 74,
+      "line": 75,
       "enclosing": "requireOciWorkloadIdentity",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "1dab15a26ba08c148e4e96f58294229238e276a24bcdb46ca20e1f7b0b9725e4",
+      "sourceSha256": "372c7f8bd36ec6350c233c8476f240e2ad36f6e95ea2c9517867b7bd98b5c7b3",
       "semanticReview": {
         "authority": "Inspected each exact receiver in this module. These five classified Buffer.from calls perform local base64 decoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or local SDK session-claims decoding for workload identity admission. No classified receiver is a database client, bucket or provider transport. Claims admission does not verify the JWT signature or grant IAM; the actual OCI request must do so. The OCI transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
         "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
@@ -16547,6 +16563,48 @@
           {
             "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
             "marker": "export class OciKmsCryptoProvider"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d100118cef42638a9330",
+      "path": "backend/src/services/integrations/ociWorkloadFederation.ts",
+      "line": 17,
+      "enclosing": "claims",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "51bd6e8589860a48c37b8c4b65e014782d62ff31fe2f95ce3ad4906b2a8f4436",
+      "semanticReview": {
+        "authority": "Both classified receivers are Buffer.from. One decodes the bounded JWT payload for local claim admission. The other encodes the exchange client's Basic header for the exact configured Oracle domain. Neither receiver is a database or storage client. The HTTPS exchange itself remains an explicit Command009 authentication and secret-custody boundary, without inherited provider certification.",
+        "reason": "These two local byte conversions do not persist tenant data or grant authority. Actual source-claim trust, non-user principal mapping, provider authorization and renewal still require real provider-backed proof. Protocol fixtures alone do not close custody acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/ociWorkloadFederation.ts",
+            "marker": "export function createOciWorkloadFederation"
+          }
+        ]
+      }
+    },
+    {
+      "id": "45049a393a26b35890dd",
+      "path": "backend/src/services/integrations/ociWorkloadFederation.ts",
+      "line": 81,
+      "enclosing": "createOciWorkloadFederation",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "51bd6e8589860a48c37b8c4b65e014782d62ff31fe2f95ce3ad4906b2a8f4436",
+      "semanticReview": {
+        "authority": "Both classified receivers are Buffer.from. One decodes the bounded JWT payload for local claim admission. The other encodes the exchange client's Basic header for the exact configured Oracle domain. Neither receiver is a database or storage client. The HTTPS exchange itself remains an explicit Command009 authentication and secret-custody boundary, without inherited provider certification.",
+        "reason": "These two local byte conversions do not persist tenant data or grant authority. Actual source-claim trust, non-user principal mapping, provider authorization and renewal still require real provider-backed proof. Protocol fixtures alone do not close custody acceptance.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/ociWorkloadFederation.ts",
+            "marker": "export function createOciWorkloadFederation"
           }
         ]
       }

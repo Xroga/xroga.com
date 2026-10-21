@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "14bda8d9a87b5ccd6efc22e0f3ffd1fbbead006d",
+  "source_sha": "ed524497a04fe3242f1fdeb958bed899de573600",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -5115,6 +5115,40 @@
         "frontend/src/lib/seoExpansionContent.ts",
         "frontend/src/lib/seoGrowthContent.ts",
         "frontend/src/lib/seoPhase2Content.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-token-actions-githubusercontent-com",
+      "provider": "Source-defined endpoint token.actions.githubusercontent.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/services/integrations/ociWorkloadFederation.ts"
+      ],
+      "hostnames": [
+        "token.actions.githubusercontent.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/services/integrations/ociWorkloadFederation.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -12242,7 +12276,7 @@
     },
     {
       "path": ".github/workflows/backend-health-verification.yml",
-      "sha256": "aff410e4746cbd1f8d842a1f72b47d1fa8c434f923e7d1e26d1c4959cb2bfca5"
+      "sha256": "6b192da03d3ad1d56d56f378e759cf38d3561ef34a7915972612f3a2fd85f270"
     },
     {
       "path": ".github/workflows/chat-turn-rail-browser.yml",
@@ -12250,7 +12284,7 @@
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "1d69df118205b990307d45a179e03432c2b48425142f2b495f326ec6146715c3"
+      "sha256": "95be961d64b564ea27bba4b60742e74ad35fb0158ef24afbb9dcbf39231aa502"
     },
     {
       "path": ".github/workflows/command4-authority.yml",
@@ -13962,7 +13996,7 @@
     },
     {
       "path": "backend/src/services/integrations/credentialVaultStartup.ts",
-      "sha256": "61dbe360b7b20dba31d7af36cfafaa91028dc5c5161423572e56770b14be5631"
+      "sha256": "255488d13be2163c09dfae9ac2f4857383ae8740adabb36d70f063c12b4b149f"
     },
     {
       "path": "backend/src/services/integrations/cryptoProvider.ts",
@@ -14022,7 +14056,11 @@
     },
     {
       "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
-      "sha256": "1dab15a26ba08c148e4e96f58294229238e276a24bcdb46ca20e1f7b0b9725e4"
+      "sha256": "372c7f8bd36ec6350c233c8476f240e2ad36f6e95ea2c9517867b7bd98b5c7b3"
+    },
+    {
+      "path": "backend/src/services/integrations/ociWorkloadFederation.ts",
+      "sha256": "51bd6e8589860a48c37b8c4b65e014782d62ff31fe2f95ce3ad4906b2a8f4436"
     },
     {
       "path": "backend/src/services/integrations/pluginPermissionPolicy.ts",
@@ -20743,6 +20781,13 @@
       "protocol": "https:",
       "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
       "line": 32,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "token.actions.githubusercontent.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/ociWorkloadFederation.ts",
+      "line": 77,
       "credentialsInUrl": false
     },
     {

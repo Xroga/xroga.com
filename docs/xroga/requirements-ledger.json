@@ -3469,7 +3469,9 @@
         "scripts/security/schema-catalog.mjs",
         "scripts/security/staging-preflight.mjs",
         "scripts/security/tenant-acceptance.mjs",
-        "scripts/security/verify-oci-kms.ts"
+        "scripts/security/verify-oci-federation.ts",
+        "scripts/security/verify-oci-kms.ts",
+        "scripts/security/verify-oci-wrong-workflow.ts"
       ],
       "implementation_owner_command": "010",
       "priority": "P0",

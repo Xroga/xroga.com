@@ -2,6 +2,12 @@ name: Isolated Supabase authenticated browser verification
 
 on:
   workflow_dispatch:
+    inputs:
+      oci_custody:
+        description: 'Approved isolated OCI proof, skips normal browser suite'
+        type: choice
+        options: ['off', bootstrap, custody]
+        default: 'off'
   pull_request:
     branches: [main]
 
@@ -9,8 +15,82 @@ permissions:
   contents: read
 
 jobs:
+  oci-managed-custody:
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'Xroga/xroga.com' && github.ref == 'refs/heads/codex/xroga-batch-01' && (inputs.oci_custody == 'bootstrap' || inputs.oci_custody == 'custody')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment: xroga-phase3-oci-custody
+    concurrency:
+      group: xroga-phase3-oci-custody
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      XB01_DISPOSABLE_SUPABASE: '1'
+      XROGA_RELEASE_SHA: ${{ github.sha }}
+      XROGA_CREDENTIAL_KMS_PROVIDER: oci
+      XROGA_OCI_KMS_AUTH_MODE: workload_federation
+      XROGA_OCI_FEDERATION_SOURCE: github_actions
+      XROGA_OCI_FEDERATION_CLIENT_ID: ${{ vars.XROGA_OCI_FEDERATION_CLIENT_ID }}
+      XROGA_OCI_FEDERATION_DOMAIN: ${{ vars.XROGA_OCI_FEDERATION_DOMAIN }}
+      XROGA_OCI_FEDERATION_DOMAIN_ID: ${{ vars.XROGA_OCI_FEDERATION_DOMAIN_ID }}
+      XROGA_OCI_EXCHANGE_CLIENT_SECRET: ${{ secrets.XROGA_OCI_EXCHANGE_CLIENT_SECRET }}
+      XROGA_OCI_KMS_PRINCIPAL_ID: ${{ inputs.oci_custody == 'custody' && vars.XROGA_OCI_KMS_PRINCIPAL_ID || '' }}
+      XROGA_OCI_KMS_KEY_ID: ${{ vars.XROGA_OCI_KMS_KEY_ID }}
+      XROGA_OCI_KMS_KEY_VERSION: ${{ vars.XROGA_OCI_KMS_KEY_VERSION }}
+      XROGA_OCI_KMS_ENDPOINT: ${{ vars.XROGA_OCI_KMS_ENDPOINT }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: '.node-version'
+      - name: Frozen backend dependencies only
+        run: |
+          npm ci --workspaces=false
+          npm ci --prefix backend --workspaces=false
+      - name: Discover issued non-user principal without key permission
+        if: inputs.oci_custody == 'bootstrap'
+        run: node --import tsx scripts/security/verify-oci-federation.ts bootstrap
+      - name: Start existing disposable Supabase
+        if: inputs.oci_custody == 'custody'
+        run: node scripts/security/disposable-supabase.mjs
+      - name: Real PostgreSQL fresh and upgrade history
+        if: inputs.oci_custody == 'custody'
+        run: node scripts/security/full-supabase-history.mjs
+      - name: Production-mode canonical backend writer and reader
+        if: inputs.oci_custody == 'custody'
+        env:
+          NODE_ENV: production
+        run: node --import tsx scripts/security/verify-oci-federation.ts write
+      - name: Separate process persisted-ciphertext recovery
+        if: inputs.oci_custody == 'custody'
+        env:
+          NODE_ENV: production
+        run: node --import tsx scripts/security/verify-oci-federation.ts read
+      - name: Redacted bounded custody receipts only
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: oci-federation-${{ inputs.oci_custody }}-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/oci-federation-bootstrap.json
+            ${{ runner.temp }}/oci-federation-write.json
+            ${{ runner.temp }}/oci-federation-read.json
+          retention-days: 1
+          if-no-files-found: error
+      - name: Dispose local database
+        if: always() && inputs.oci_custody == 'custody'
+        run: |
+          if [ -n "${XB01_SUPABASE_WORKDIR:-}" ]; then
+            npx --yes --package=supabase@2.120.0 --package=@supabase/cli-linux-x64@2.120.0 supabase --workdir "$XB01_SUPABASE_WORKDIR" stop --no-backup > /dev/null 2>&1
+            node scripts/security/disposable-supabase.mjs --verify-teardown
+          fi
   authenticated-browser:
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    if: (github.event_name == 'workflow_dispatch' && inputs.oci_custody != 'bootstrap' && inputs.oci_custody != 'custody') || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     # Headroom for a cold browser cache. The tests themselves finish in well under a minute, and
     # a warm run takes about three; the variable cost is entirely the first download, which the

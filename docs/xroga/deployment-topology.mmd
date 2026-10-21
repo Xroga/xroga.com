@@ -129,6 +129,7 @@ flowchart LR
   endpoint_studio_youtube_com["Source-defined endpoint studio.youtube.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_supabase_com["Source-defined endpoint supabase.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_support_bolt_new["Source-defined endpoint support.bolt.new — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_token_actions_githubusercontent_com["Source-defined endpoint token.actions.githubusercontent.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_twitter_com["Source-defined endpoint twitter.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_upload_wikimedia_org["Source-defined endpoint upload.wikimedia.org — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_v0_dev["Source-defined endpoint v0.dev — CONFIGURED_BUT_UNVERIFIED"]
@@ -300,6 +301,7 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_studio_youtube_com
   frontend -. "source host/reference; unverified" .-> endpoint_supabase_com
   frontend -. "source host/reference; unverified" .-> endpoint_support_bolt_new
+  api -. "source host/reference; unverified" .-> endpoint_token_actions_githubusercontent_com
   frontend -. "source host/reference; unverified" .-> endpoint_twitter_com
   frontend -. "source host/reference; unverified" .-> endpoint_upload_wikimedia_org
   frontend -. "source host/reference; unverified" .-> endpoint_v0_dev

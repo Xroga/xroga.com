@@ -18,7 +18,7 @@ OCI configuration requires all of:
 - `XROGA_OCI_KMS_KEY_ID`, the exact approved key OCID.
 - `XROGA_OCI_KMS_ENDPOINT`, the regional OCI crypto endpoint.
 - `XROGA_OCI_KMS_KEY_VERSION`, the selected encryption version, same region.
-- `XROGA_OCI_KMS_AUTH_MODE`, `instance_principal` or `resource_principal` only.
+- `XROGA_OCI_KMS_AUTH_MODE`, `instance_principal`, `resource_principal` or `workload_federation`.
 - `XROGA_OCI_KMS_PRINCIPAL_ID`, the exact approved non-user workload OCID.
 
 The existing Google path requires `XROGA_GOOGLE_CLOUD_KMS_KEY_NAME`, validated by
@@ -113,3 +113,35 @@ The unchanged strict evaluator and original 22 criteria remain authoritative.
 `VERIFIED_MANAGED_PROVIDER_AND_CUTOVER` cannot be set from this code/test patch.
 Actual identity/custody and applicable cutover proof remain BLOCKED, with production
 migration and deployment still requiring separate authorization. No Phase 4 admission.
+
+## Approved isolated workload-federation proof
+
+The additive bridge supports the specifically approved GitHub Actions identity,
+not an inferred Fly OIDC integration. It validates the exact repository ID, branch,
+workflow reference, environment subject, audience and reviewed source SHA. Oracle
+must independently verify the signed JWT and issue the pinned non-user RPST.
+An ephemeral proof-of-possession key stays in process memory. Renewal is single-flight
+and starts sixty seconds before expiry. Failed renewal clears the cached session,
+and there is no personal-session or development-provider fallback.
+
+The confidential exchange client has no administrator roles. Its bootstrap secret
+is still a long-lived credential, held only in the dedicated approved GitHub
+environment. This is not fully secretless authentication. Client revocation blocks
+new issuance, while already issued RPST access also depends on token expiry and
+the temporary exact-key policy deadline. Do not claim immediate invalidation of
+already-issued tokens. Only an observed provider denial establishes that outcome.
+
+`command3-auth-browser.yml` has manual `bootstrap` and `custody` modes. The ordinary
+PR/browser job does not receive this environment's secret. Bootstrap discovers the
+real principal without KMS permissions. Custody uses that separately approved,
+exact-principal Key-A grant and the existing disposable PostgreSQL environment.
+The two persistence steps use separate processes and the canonical startup and
+provider-key writer/reader. They certify only their recorded cases, not the entire
+acceptance contract. The separate health workflow has an opt-in genuine signed
+wrong-workflow control and skips production health requests in that mode.
+
+Neither opt-in harness proves a Fly deployment or live customer cutover. Final
+custody, renewal, isolation and applicable lifecycle receipts remain required.
+Keep the trust inactive until its SHA is pinned. After proof, disable only the new
+client/trust, remove its bootstrap secret, expire/remove its temporary policy,
+and preserve all original keys, versions, test identities and historical evidence.

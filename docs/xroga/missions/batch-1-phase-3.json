@@ -10,6 +10,12 @@
   "risk": "high",
   "scope": "Founder-authorized Phase3 only, original Command008 and009, all22 criteria unchanged. Preserve accepted Phase2 source and proof. No Phase4 implementation or production authorization.",
   "changedFiles": [
+    "backend/src/services/integrations/ociWorkloadFederation.ts",
+    "backend/src/services/integrations/ociWorkloadFederation.test.ts",
+    "scripts/security/verify-oci-federation.ts",
+    "scripts/security/verify-oci-wrong-workflow.ts",
+    ".github/workflows/command3-auth-browser.yml",
+    ".github/workflows/backend-health-verification.yml",
     "backend/src/index.ts",
     "backend/src/services/integrations/credentialVaultStartup.ts",
     "backend/src/services/integrations/credentialVaultStartup.test.ts",
@@ -260,7 +266,7 @@
     "rfc": null
   },
   "rollout": "Draft PR only. One standard OCI test vault and one SOFTWARE AES-256 key with retained test versions are authorized at zero cost. No deployment, production migration, merge, DNS change or live customer effect.",
-  "rollback": "Revert only the OCI addition to accepted d750836b without rewriting its commit or accepted Phase2 history. Preserve receipts and both test key versions. Do not destroy keys, migrate live credentials or change existing schema.",
+  "rollback": "Revert only the bounded federation addition to ed524497 without rewriting accepted history. Disable only the new workload trust/client, remove its dedicated GitHub bootstrap secret and expire/remove only its new temporary exact-Key-A policy. Preserve all original identities, groups, policies, keys, versions and receipts. No deployed runtime or live records are changed.",
   "knownGaps": [
     "Accepted d750836b CI and 22 software criteria are preserved, not relabeled as proof for the additive OCI source",
     "Final changed-source verification for the OCI addition is pending",

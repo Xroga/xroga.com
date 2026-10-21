@@ -15571,13 +15571,13 @@
     },
     {
       "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
-      "sourceSha256": "1dab15a26ba08c148e4e96f58294229238e276a24bcdb46ca20e1f7b0b9725e4",
+      "sourceSha256": "372c7f8bd36ec6350c233c8476f240e2ad36f6e95ea2c9517867b7bd98b5c7b3",
       "callIds": [
-        "bff61b767ee1e128b87e",
-        "f4d0c2af0d78fba9284a",
-        "291af662ce05f5be45fd",
-        "658b27f714265c1c2858",
-        "567626db68706994f055"
+        "2536d04a15d3a5485f02",
+        "f192cb888d97c4e94f8d",
+        "524cf7b659b3ddc9e653",
+        "e6d744a3f703e11fb4d2",
+        "6d1834aa55943b101afd"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected each exact receiver in this module. These five classified Buffer.from calls perform local base64 decoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or local SDK session-claims decoding for workload identity admission. No classified receiver is a database client, bucket or provider transport. Claims admission does not verify the JWT signature or grant IAM; the actual OCI request must do so. The OCI transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
@@ -15588,6 +15588,15 @@
           "marker": "export class OciKmsCryptoProvider"
         }
       ]
+    },
+    {
+      "path": "backend/src/services/integrations/ociWorkloadFederation.ts",
+      "sourceSha256": "51bd6e8589860a48c37b8c4b65e014782d62ff31fe2f95ce3ad4906b2a8f4436",
+      "callIds": ["d100118cef42638a9330", "45049a393a26b35890dd"],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Both classified receivers are Buffer.from. One decodes the bounded JWT payload for local claim admission. The other encodes the exchange client's Basic header for the exact configured Oracle domain. Neither receiver is a database or storage client. The HTTPS exchange itself remains an explicit Command009 authentication and secret-custody boundary, without inherited provider certification.",
+      "reason": "These two local byte conversions do not persist tenant data or grant authority. Actual source-claim trust, non-user principal mapping, provider authorization and renewal still require real provider-backed proof. Protocol fixtures alone do not close custody acceptance.",
+      "evidence": [{"path":"backend/src/services/integrations/ociWorkloadFederation.ts","marker":"export function createOciWorkloadFederation"}]
     }
   ]
 }

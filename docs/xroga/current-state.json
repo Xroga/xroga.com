@@ -11940,7 +11940,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/buildImprovementMemory.ts:1",
@@ -21037,7 +21038,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:12",
@@ -21588,7 +21590,8 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/buildOutcomeMemory.ts:1",
@@ -21673,7 +21676,8 @@
         "backend/src/security/tenantErrors.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/budgetOwnerBoundary.test.ts:4",
@@ -21911,7 +21915,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/runStore.ts:12",
@@ -22952,7 +22957,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/integrations/credentialEnvelope.test.ts:3",
@@ -22996,7 +23002,8 @@
         "backend/src/security/serviceRoleGuard.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/security/credentialReadMatrix.local.integration.ts:7",
@@ -23078,7 +23085,8 @@
         "backend/src/services/integrations/cryptoProvider.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/integrations/credentialVault.test.ts:5",
@@ -23147,7 +23155,8 @@
         "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts:9",
@@ -23155,7 +23164,7 @@
         "backend/src/security/oauthSession.local.integration.ts:5",
         "backend/src/security/vercelRefreshAccount.local.integration.ts:7",
         "backend/src/services/integrations/credentialVaultRuntime.test.ts:6",
-        "backend/src/services/integrations/credentialVaultStartup.ts:6",
+        "backend/src/services/integrations/credentialVaultStartup.ts:7",
         "backend/src/services/integrations/githubAuth.ts:6",
         "backend/src/services/integrations/githubTokenStore.ts:5",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:9",
@@ -23202,7 +23211,7 @@
       "id": "surface:150ecf04bcc64698f6a1",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/credentialVaultStartup.ts",
-      "sha256": "61dbe360b7b20dba31d7af36cfafaa91028dc5c5161423572e56770b14be5631",
+      "sha256": "255488d13be2163c09dfae9ac2f4857383ae8740adabb36d70f063c12b4b149f",
       "symbols": [
         "Environment",
         "ManagedConfiguration",
@@ -23214,10 +23223,12 @@
         "configuration",
         "createManaged",
         "credentialVaultReadinessMiddleware",
+        "domain",
         "healthy",
         "initializeCredentialVaultForServer",
         "invalid",
         "managedCredentialConfiguration",
+        "managedOciFederationConfiguration",
         "now",
         "oci",
         "pending",
@@ -23235,6 +23246,7 @@
         "./cryptoProvider.js",
         "./googleCloudKmsCryptoProvider.js",
         "./ociKmsCryptoProvider.js",
+        "./ociWorkloadFederation.js",
         "express",
         "node:crypto"
       ],
@@ -23242,14 +23254,18 @@
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/services/integrations/cryptoProvider.ts",
         "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-        "backend/src/services/integrations/ociKmsCryptoProvider.ts"
+        "backend/src/services/integrations/ociKmsCryptoProvider.ts",
+        "backend/src/services/integrations/ociWorkloadFederation.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/index.ts:63",
-        "backend/src/services/integrations/credentialVaultStartup.test.ts:4"
+        "backend/src/services/integrations/credentialVaultStartup.test.ts:4",
+        "backend/src/services/integrations/ociWorkloadFederation.test.ts:5",
+        "scripts/security/verify-oci-federation.ts:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -23263,7 +23279,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/services/integrations/credentialVaultStartup.test.ts"
+        "backend/src/services/integrations/credentialVaultStartup.test.ts",
+        "backend/src/services/integrations/ociWorkloadFederation.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -23298,7 +23315,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/integrations/credentialVault.test.ts:6",
@@ -24289,7 +24307,8 @@
         "backend/src/services/integrations/credentialVaultRuntime.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/security/tenantIsolation.local.integration.ts:37",
@@ -24410,7 +24429,8 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/integrations/credentialVaultRuntime.ts:4",
@@ -24494,7 +24514,8 @@
         "backend/src/services/integrations/credentialVaultRuntime.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/routes/github.ts:7",
@@ -24552,13 +24573,14 @@
       "id": "surface:db1194736a6b6085d970",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
-      "sha256": "1dab15a26ba08c148e4e96f58294229238e276a24bcdb46ca20e1f7b0b9725e4",
+      "sha256": "372c7f8bd36ec6350c233c8476f240e2ad36f6e95ea2c9517867b7bd98b5c7b3",
       "symbols": [
         "OciKmsAuthMode",
         "OciKmsCryptoProvider",
         "OciKmsRequest",
         "OciKmsTransport",
         "associatedData",
+        "authentication",
         "authenticationDetailsProvider",
         "base64",
         "bytes",
@@ -24569,6 +24591,7 @@
         "createOciKmsCryptoProvider",
         "encoded",
         "fail",
+        "federation",
         "file",
         "jwt",
         "kms",
@@ -24582,18 +24605,23 @@
       ],
       "imports": [
         "./cryptoProvider.js",
+        "./ociWorkloadFederation.js",
         "node:crypto",
         "oci-common",
         "oci-keymanagement"
       ],
-      "runtimeImports": [],
+      "runtimeImports": [
+        "backend/src/services/integrations/ociWorkloadFederation.ts"
+      ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/integrations/credentialVaultStartup.test.ts:8",
         "backend/src/services/integrations/credentialVaultStartup.ts:5",
         "backend/src/services/integrations/ociKmsCryptoProvider.test.ts:4",
+        "scripts/security/verify-oci-federation.ts:10",
         "scripts/security/verify-oci-kms.ts:6"
       ],
       "reachable": true,
@@ -24605,6 +24633,7 @@
       ],
       "authBoundary": [
         "backend/src/services/integrations/ociKmsCryptoProvider.ts#OciKmsAuthMode",
+        "backend/src/services/integrations/ociKmsCryptoProvider.ts#authentication",
         "backend/src/services/integrations/ociKmsCryptoProvider.ts#authenticationDetailsProvider",
         "backend/src/services/integrations/ociKmsCryptoProvider.ts#cloudShellAuth",
         "backend/src/services/integrations/ociKmsCryptoProvider.ts#requireOciWorkloadIdentity"
@@ -24616,6 +24645,93 @@
       "testCoverage": [
         "backend/src/services/integrations/credentialVaultStartup.test.ts",
         "backend/src/services/integrations/ociKmsCryptoProvider.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:e93097692d5e35d1072f",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/ociWorkloadFederation.ts",
+      "sha256": "51bd6e8589860a48c37b8c4b65e014782d62ff31fe2f95ce3ad4906b2a8f4436",
+      "symbols": [
+        "OciExchangeReceipt",
+        "OciFederationConfiguration",
+        "acquire",
+        "auth",
+        "body",
+        "boundedJson",
+        "cached",
+        "claims",
+        "createOciWorkloadFederation",
+        "current",
+        "exchanges",
+        "expected",
+        "expectedJwk",
+        "id",
+        "jwk",
+        "keys",
+        "length",
+        "lifetime",
+        "now",
+        "parts",
+        "pending",
+        "principal",
+        "reader",
+        "request",
+        "requestId",
+        "response",
+        "rpst",
+        "session",
+        "size",
+        "source",
+        "sourceResponse",
+        "sourceToken",
+        "stopped",
+        "token",
+        "unavailable",
+        "url",
+        "validateOciFederationConfiguration",
+        "value"
+      ],
+      "imports": [
+        "node:crypto",
+        "oci-common"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/services/integrations/credentialVaultStartup.ts:6",
+        "backend/src/services/integrations/ociKmsCryptoProvider.ts:3",
+        "backend/src/services/integrations/ociWorkloadFederation.test.ts:4",
+        "scripts/security/verify-oci-federation.ts:8"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:token.actions.githubusercontent.com",
+        "node:crypto",
+        "oci-common"
+      ],
+      "authBoundary": [
+        "backend/src/services/integrations/ociWorkloadFederation.ts#AuthenticationDetailsProvider",
+        "backend/src/services/integrations/ociWorkloadFederation.ts#auth"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/services/integrations/ociWorkloadFederation.ts#OciExchangeReceipt"
+      ],
+      "testCoverage": [
+        "backend/src/services/integrations/ociWorkloadFederation.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -24753,7 +24869,8 @@
         "backend/src/services/integrations/oauthPkceStore.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/lib/platformReady.ts:8",
@@ -24825,7 +24942,8 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/services/integrations/supabaseProvision.ts:21",
@@ -24932,7 +25050,8 @@
         "backend/src/services/integrations/userProviderKeys.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:3791",
@@ -25181,7 +25300,8 @@
         "backend/src/services/integrations/supabaseProvision.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts"
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:116",
@@ -25215,7 +25335,8 @@
         "backend/src/services/publish/easCredentials.ts:6",
         "backend/src/services/publish/easPublish.ts:7",
         "backend/src/services/publish/electronSecrets.ts:7",
-        "backend/src/services/publish/userOwnedPublish.ts:9"
+        "backend/src/services/publish/userOwnedPublish.ts:9",
+        "scripts/security/verify-oci-federation.ts:11"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -90038,6 +90159,86 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:b0ecb2b4dffc411987ec",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/verify-oci-federation.ts",
+      "sha256": "7f532fcbfbe1590eefb42569f7773bacbecc6e1448a3d4686b9bfccb1c83d291",
+      "symbols": [
+        "bridge",
+        "calls",
+        "cases",
+        "configuration",
+        "created",
+        "db",
+        "error",
+        "execute",
+        "mode",
+        "observed",
+        "out",
+        "owner",
+        "passed",
+        "provider",
+        "readiness",
+        "receipt",
+        "receipts",
+        "result",
+        "row",
+        "state",
+        "statePath",
+        "value"
+      ],
+      "imports": [
+        "../../backend/src/services/integrations/credentialVaultStartup.js",
+        "../../backend/src/services/integrations/ociKmsCryptoProvider.js",
+        "../../backend/src/services/integrations/ociWorkloadFederation.js",
+        "../../backend/src/services/integrations/userProviderKeys.js",
+        "@supabase/supabase-js",
+        "node:assert/strict",
+        "node:crypto",
+        "node:fs/promises",
+        "node:path"
+      ],
+      "runtimeImports": [
+        "backend/src/services/integrations/credentialVaultStartup.ts",
+        "backend/src/services/integrations/ociKmsCryptoProvider.ts",
+        "backend/src/services/integrations/ociWorkloadFederation.ts",
+        "backend/src/services/integrations/userProviderKeys.ts"
+      ],
+      "entryPoints": [
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [
+        "user_integrations"
+      ],
+      "externalProviderDependencies": [
+        "@supabase/supabase-js",
+        "declared-host:127.0.0.1",
+        "node:assert/strict",
+        "node:crypto",
+        "node:fs/promises",
+        "node:path"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [
+        "scripts/security/verify-oci-federation.ts:69 (user_id)"
+      ],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/security/verify-oci-federation.ts#receipt",
+        "scripts/security/verify-oci-federation.ts#receipts"
+      ],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:36380a6231ac607850bc",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/verify-oci-kms.ts",
@@ -90120,6 +90321,60 @@
       "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:afd24cb01b9eca09410e",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/verify-oci-wrong-workflow.ts",
+      "sha256": "690b5de2f15555fa60c1ac344dc920978d1db94fa4e9643360716eb00fe6d36a",
+      "symbols": [
+        "audience",
+        "body",
+        "claims",
+        "domain",
+        "error",
+        "id",
+        "receipt",
+        "response",
+        "source",
+        "text",
+        "token",
+        "url"
+      ],
+      "imports": [
+        "node:assert/strict",
+        "node:crypto",
+        "node:fs/promises",
+        "node:path"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "scripts/security/verify-oci-wrong-workflow.ts"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:token.actions.githubusercontent.com",
+        "node:assert/strict",
+        "node:crypto",
+        "node:fs/promises",
+        "node:path"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/security/verify-oci-wrong-workflow.ts#receipt"
+      ],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -100771,8 +101026,10 @@
     {
       "id": "workflow:8f9ce8b8490a8edd7248",
       "sourcePath": ".github/workflows/backend-health-verification.yml",
-      "sha256": "aff410e4746cbd1f8d842a1f72b47d1fa8c434f923e7d1e26d1c4959cb2bfca5",
-      "sourceEntrypoints": [],
+      "sha256": "6b192da03d3ad1d56d56f378e759cf38d3561ef34a7915972612f3a2fd85f270",
+      "sourceEntrypoints": [
+        "scripts/security/verify-oci-wrong-workflow.ts"
+      ],
       "hasSchedule": false
     },
     {
@@ -100785,12 +101042,13 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "1d69df118205b990307d45a179e03432c2b48425142f2b495f326ec6146715c3",
+      "sha256": "95be961d64b564ea27bba4b60742e74ad35fb0158ef24afbb9dcbf39231aa502",
       "sourceEntrypoints": [
         "scripts/security/collect-local-security-logs.mjs",
         "scripts/security/disposable-supabase.mjs",
         "scripts/security/disposable-supabase.test.mjs",
-        "scripts/security/full-supabase-history.mjs"
+        "scripts/security/full-supabase-history.mjs",
+        "scripts/security/verify-oci-federation.ts"
       ],
       "hasSchedule": false
     },
@@ -109734,6 +109992,13 @@
       "id": "test-suite:0493fcc06ed56795db53",
       "sourcePath": "backend/src/services/integrations/ociKmsCryptoProvider.test.ts",
       "declaredTests": 6,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:0f8432e58286144bb027",
+      "sourcePath": "backend/src/services/integrations/ociWorkloadFederation.test.ts",
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },

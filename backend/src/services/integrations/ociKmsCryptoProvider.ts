@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import type { CryptoProvider, WrappedDataKey } from './cryptoProvider.js';
+import { createOciWorkloadFederation, type OciFederationConfiguration } from './ociWorkloadFederation.js';
 
 const fail = (): never => { throw new Error('Managed credential key operation failed.'); };
 const ocid = (value: unknown, type: 'key' | 'keyversion'): value is string => typeof value === 'string'
@@ -62,7 +63,7 @@ export class OciKmsCryptoProvider implements CryptoProvider {
   }
 }
 
-export type OciKmsAuthMode = 'instance_principal' | 'resource_principal' | 'workload_session' | 'cloud_shell';
+export type OciKmsAuthMode = 'instance_principal' | 'resource_principal' | 'workload_federation' | 'workload_session' | 'cloud_shell';
 export function requireOciWorkloadIdentity(signingKeyId: string, expectedPrincipalId: string, now = Date.now()): void {
   // Admission only. OCI verifies the signature, proof-of-possession and IAM on
   // the actual crypto request. Never emit the SDK's ST$ token/signing key ID.
@@ -88,9 +89,12 @@ export function validateOciKmsConfiguration(options: { keyId: string; endpoint: 
 export async function createOciKmsCryptoProvider(options: {
   endpoint: string; keyId: string; authMode: OciKmsAuthMode; encryptVersionId?: string;
   configFile?: string; profile?: string; expectedPrincipalId?: string;
+  federation?: OciFederationConfiguration;
 }): Promise<OciKmsCryptoProvider> {
   validateOciKmsConfiguration(options);
-  if (!['instance_principal', 'resource_principal', 'workload_session', 'cloud_shell'].includes(options.authMode)) throw new Error('Explicit short-lived OCI authentication is required.');
+  if (!['instance_principal', 'resource_principal', 'workload_federation', 'workload_session', 'cloud_shell'].includes(options.authMode)) throw new Error('Explicit short-lived OCI authentication is required.');
+  if ((options.authMode === 'workload_federation') !== Boolean(options.federation)
+    || (options.federation && (!options.expectedPrincipalId || options.federation.expectedPrincipalId !== options.expectedPrincipalId || options.configFile || options.profile))) return fail();
   if (options.authMode === 'cloud_shell' && (!['test', 'development'].includes(process.env.NODE_ENV ?? '')
     || process.env.FLY_APP_NAME || process.env.VERCEL_ENV === 'production')) throw new Error('Cloud Shell authentication is verification-only.');
   const common = await import('oci-common'), kms = await import('oci-keymanagement');
@@ -108,14 +112,17 @@ export async function createOciKmsCryptoProvider(options: {
     }
     throw new Error('Short-lived Cloud Shell delegation or session authentication is required.');
   };
-  const authenticationDetailsProvider = ['cloud_shell', 'workload_session'].includes(options.authMode)
+  const federation = options.federation ? createOciWorkloadFederation(options.federation) : undefined;
+  const authenticationDetailsProvider = federation ? undefined : ['cloud_shell', 'workload_session'].includes(options.authMode)
     ? cloudShellAuth()
     : options.authMode === 'instance_principal'
       ? await new common.InstancePrincipalsAuthenticationDetailsProviderBuilder().build()
       : common.ResourcePrincipalAuthenticationDetailsProvider.builder();
   const client = async () => {
-    if (options.expectedPrincipalId) requireOciWorkloadIdentity(await authenticationDetailsProvider.getKeyId(), options.expectedPrincipalId);
-    const result = new kms.KmsCryptoClient({ authenticationDetailsProvider }, {
+    const authentication = federation ? await federation.session() : authenticationDetailsProvider;
+    if (!authentication) return fail();
+    if (options.expectedPrincipalId) requireOciWorkloadIdentity(await authentication.getKeyId(), options.expectedPrincipalId);
+    const result = new kms.KmsCryptoClient({ authenticationDetailsProvider: authentication }, {
       retryConfiguration: common.NoRetryConfigurationDetails,
       httpOptions: { signal: AbortSignal.timeout(15000), redirect: 'error' },
     });
