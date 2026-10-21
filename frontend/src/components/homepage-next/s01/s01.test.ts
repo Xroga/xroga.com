@@ -476,26 +476,18 @@ test('one S01 narrative: no separate six-item strip or footer disclaimer; its us
   assert.equal(CAPABILITIES.length, 8);
 });
 
-test('S01 uses a section-scoped moving particle mask, never the old WebGL galaxy', () => {
+test('S01 has no background of its own: it sits on the shared S01–S05 dot grid, never the old WebGL galaxy', () => {
   const deck = read('./S01CapabilityDeck.tsx');
   const css = read('./S01.module.css');
   assert.ok(!deck.includes('GalaxyField'));
   assert.ok(!deck.includes('next/dynamic'));
   assert.ok(!css.includes('.galaxy {'));
-  assert.ok(css.includes('.particles {'));
-  assert.ok(css.includes('--size: 20px;'), 'the reference 20px dot pitch');
-  assert.ok(css.includes("url('/s01/noise-mask.svg')"));
-  assert.ok(css.includes('mask-composite: intersect, intersect;'));
-  assert.ok(css.includes('background: radial-gradient(circle, #f5f7fb 2px, transparent 2.5px) 0 0 / var(--size) var(--size);'), 'safe static dot fallback');
-  assert.ok(css.includes('@supports (mask-composite: intersect) or (-webkit-mask-composite: source-in)'), 'intersection feature guard');
-  assert.ok(css.includes('radial-gradient(circle at 50% 50%, black 2px, transparent 2.5px)'), 'the reference dot mask, intersected with the noise');
-  assert.ok(css.includes('mask-position: 50% 50%, 256px 50%, center;'), 'noise starts a tile to the right of the dots');
-  assert.ok(css.includes('mask-position: 50% 50%, 0 50%, center;'), 'and drifts one tile left over the animation');
-  assert.ok(css.includes('pointer-events: none;'), 'decorative layer does not intercept cards');
-  assert.ok(css.includes('animation: s01Flicker 20s linear infinite;'));
-  assert.ok(css.includes('@media (prefers-reduced-motion: reduce)'));
-  assert.ok(css.includes('@media (max-width: 1024px), (pointer: coarse)'));
-  const stage = deck.slice(deck.indexOf('function DeckStage('), deck.indexOf('function Gallery('));
-  assert.ok(stage.indexOf('className={s.particles}') < stage.indexOf('<ol className={s.deck}'), 'particles are behind cards');
-  assert.equal(deck.split('className={s.particles}').length - 1, 4, 'stage, carousel, static and first paint all receive the pattern');
+  // the local dot layer is gone (the shared grid replaces it, it is not stacked under it)
+  assert.ok(!deck.includes('s.particles'));
+  assert.ok(!css.includes('.particles'));
+  assert.match(css, /\.section \{[^}]*background: transparent;/);
+  // the opaque graphite volumes and tinted light pools are not painted; the card contact shadows stay
+  assert.ok(!css.includes('rgba(22, 22, 25, 0.95)'));
+  assert.match(css, /\.lights \{\s*display: none;/);
+  assert.ok(css.includes('.shadows span {'));
 });

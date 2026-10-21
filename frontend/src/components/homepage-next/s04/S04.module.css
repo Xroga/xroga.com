@@ -27,10 +27,10 @@
   color: var(--pearl);
   font-family: var(--font-inter), system-ui, sans-serif;
 }
-/* the homepage stylesheet clears section background images; the release environment is painted by the ambient layer and
-   the section asserts only the shared near-black ground (as S03 does) */
+/* transparent: S01–S05 share one dot-grid background (../backdrop/SharedDotBackdrop); the doubled class still wins over
+   any homepage-wide section paint (as S03 does) */
 .section.section.section {
-  background-color: #050607 !important;
+  background-color: transparent !important;
 }
 .section.section :is(h2, h3, p, small, b, span, em, i, li, dt, dd, label, figcaption, code) {
   text-shadow: none !important;

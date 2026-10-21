@@ -25,23 +25,11 @@
   color: var(--pearl);
   font-family: var(--font-inter), system-ui, sans-serif;
 }
-/* the homepage stylesheet clears section backgrounds; re-assert ours with higher specificity (as S03 and S04 do) */
+/* transparent: S01–S05 share one dot-grid background (../backdrop/SharedDotBackdrop); the tripled class still wins over
+   any homepage-wide section paint */
 .s5.s5.s5 {
-  background-color: #05070b !important;
-  background-image:
-    linear-gradient(180deg, #050607 0, rgba(5, 6, 7, 0) 160px),
-    radial-gradient(60% 22% at 30% 0%, rgba(90, 130, 230, 0.07), rgba(90, 130, 230, 0) 80%),
-    linear-gradient(180deg, #05070b 0%, #070a10 55%, #05070b 100%) !important;
-}
-/* static micro grain, so the ink reads as a material rather than a flat fill */
-.s5::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-color: transparent !important;
+  background-image: none !important;
 }
 .s5.s5 :is(h2, h3, h4, p, span, b, li) {
   text-shadow: none !important;

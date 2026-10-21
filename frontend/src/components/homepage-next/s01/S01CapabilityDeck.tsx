@@ -268,7 +268,6 @@ function DeckStage({ layout: base, onExplore, detail }: StageProps) {
   return (
     <div ref={trackRef} className={s.track} style={{ height: `${(1 + TRACK_VH) * 100}vh` }} data-chapter={chapter}>
       <div className={s.stage} style={stageVars}>
-        <div className={s.particles} aria-hidden="true" />
         <header ref={headRef} className={s.head}>
           <Heading inStage />
         </header>
@@ -452,7 +451,6 @@ function Gallery({ mode, onExplore, detail }: GalleryProps) {
   if (mode === 'static') {
     return (
       <div className={s.flow}>
-        <div className={s.particles} aria-hidden="true" />
         <header className={s.headFlow}>
           <Heading />
         </header>
@@ -473,7 +471,6 @@ function Gallery({ mode, onExplore, detail }: GalleryProps) {
   const activeCap = CAPABILITIES[active];
   return (
     <div className={s.flow}>
-      <div className={s.particles} aria-hidden="true" />
       <header className={s.headFlow}>
         <Heading />
       </header>
@@ -584,7 +581,6 @@ export function S01CapabilityDeck() {
       ) : view.mode === 'deck' ? (
         // first paint before measuring: a static heading so the section never renders empty
         <div className={s.flow}>
-          <div className={s.particles} aria-hidden="true" />
           <header className={s.headFlow}>
             <Heading />
           </header>

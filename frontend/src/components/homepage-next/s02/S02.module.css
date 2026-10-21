@@ -9,8 +9,8 @@
   --x-blue: #4589ff;
   position: relative;
   z-index: 1;
-  /* the homepage stylesheet clears section background images; the light lives in the ambient layer */
-  background-color: #050607;
+  /* transparent: S01–S05 share one dot-grid background (../backdrop/SharedDotBackdrop) */
+  background-color: transparent;
   color: var(--ink);
   font-family: var(--font-inter), system-ui, sans-serif;
   overflow-x: clip;
