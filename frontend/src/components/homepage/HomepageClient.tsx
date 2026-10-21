@@ -16,6 +16,7 @@ import { S03Growth } from '@/components/homepage-next/s03/S03Growth';
 import { S04Publish } from '@/components/homepage-next/s04/S04Publish';
 import { S05Capabilities } from '@/components/homepage-next/s05/S05Capabilities';
 import { SharedDotBackdrop } from '@/components/homepage-next/backdrop/SharedDotBackdrop';
+import { OptionalVisualErrorBoundary } from '@/components/homepage/OptionalVisualErrorBoundary';
 import { Ambient } from '@/components/homepage-next/ambient/Ambient';
 import { useSeen } from '@/components/homepage-next/ambient/useSeen';
 import { AiCodingAgentSquaresTerminal } from '@/components/marketing/AiCodingAgentSquaresTerminal';
@@ -109,7 +110,7 @@ export function HomepageClient() {
       {/* S01: capability deck (docs/homepage-implementation/XROGA_S01_CAPABILITY_DECK_CLAUDE_BRIEF.md) */}
       {/* S01–S05 share one background: a single dot grid behind all five sections (homepage-next/backdrop) */}
       <div className="xv-unified-sections">
-        <SharedDotBackdrop />
+        <OptionalVisualErrorBoundary><SharedDotBackdrop /></OptionalVisualErrorBoundary>
         <S01CapabilityDeck />
         {/* S02: Browser Automation and AI Employees (docs/homepage-implementation/XROGA_S02_FINAL_CLAUDE_IMPLEMENTATION_BRIEF.md) */}
         <S02Work loggedIn={loggedIn} />
