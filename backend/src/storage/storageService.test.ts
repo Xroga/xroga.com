@@ -463,3 +463,19 @@ describe('no signed material in logs, audit trail or errors', () => {
     } finally { Object.assign(console, orig); }
   });
 });
+
+describe('memory repository mirrors the SQL ledger semantics (parity with the real-Postgres suite)', () => {
+  it('commit/release/free are idempotent and never go negative', async () => {
+    const h = harness();
+    const init = await h.svc.initiateUpload(h.alice, { filename: 'a.txt', contentType: 'text/plain', size: 10 });
+    assert.equal(await h.repo.commit(init.objectId, 10), 'OK');
+    assert.equal(await h.repo.commit(init.objectId, 10), 'ALREADY_COMMITTED');
+    assert.equal(await h.repo.release(init.objectId), 'NOOP');
+    assert.equal(await h.repo.free(init.objectId), 'OK');
+    assert.equal(await h.repo.free(init.objectId), 'NOOP');
+    assert.equal(await h.repo.commit(init.objectId, 10), 'RESERVATION_LOST');
+    const u = await h.repo.getUsage(h.alice.tenantId);
+    assert.deepEqual([u.reservedBytes, u.committedBytes], [0, 0]);
+    assert.equal(await h.repo.commit(randomUUID(), 1), 'NO_RESERVATION');
+  });
+});

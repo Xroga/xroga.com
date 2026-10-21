@@ -1,0 +1,27 @@
+# INFRA-001 · Data-location inventory
+
+Classes: `DURABLE_OBJECT` · `DATABASE_METADATA` · `ENCRYPTED_SECRET` · `RECOVERABLE_LEGACY` · `EPHEMERAL_CACHE` · `BACKUP` · `UNKNOWN`.
+Machine-readable copy: [`data-location-inventory.json`](data-location-inventory.json). **Counts and sizes are `UNKNOWN` everywhere**: no read access to the live R2 bucket, Supabase or Fly existed in this sandbox.
+
+| ID | Location | Provider · source module | Class | Tenant binding | Durability / encryption | Retention · recoverability | Data-loss risk | Migration priority | Constraints |
+|---|---|---|---|---|---|---|---|---|---|
+| OBJ-1 | R2 bucket `xroga-assets`, keys `users/{userId}/{ts}-{name}` | Cloudflare R2 · `backend/src/lib/r2.ts` | RECOVERABLE_LEGACY | userId in key only (no DB row ties key→owner except `project_files.file_path`) | durable; **public URL served** (`CLOUDFLARE_R2_PUBLIC_URL` or `https://{bucket}.r2.dev/…`); R2 server-side encryption (provider default, unverified) | none defined | low (R2 is durable) but **privacy risk: public** | P1 | bucket public settings/CORS **UNKNOWN**; object count UNKNOWN |
+| OBJ-2 | `project_files.file_url` = `data:…;base64,…` | Postgres · `services/storage/projectFiles.ts` | RECOVERABLE_LEGACY (inline DB) | via `project_id → projects.user_id` | as durable as the DB | none | medium: bloats rows, only copy when R2 failed | P1 | row count UNKNOWN; adapter `ProjectFilesInlineSource` |
+| OBJ-3 | `project_files.content` (text ≤ 50 000 chars) | Postgres · same | DATABASE_METADATA + RECOVERABLE_LEGACY | via project | durable | none | low | P2 (text stays; copy for parity) | code files for restore (`GET /:id/code`) |
+| OBJ-4 | `swarm_runs.output` JSONB | Postgres · `ai/runStore.ts` | RECOVERABLE_LEGACY (inline DB) | `swarm_runs.user_id` | durable | none | medium: large blobs in JSON | P3 | **no adapter yet**; extracting embedded artifacts is Phase 2/3 design work |
+| OBJ-5 | Supabase Storage `avatars` | Supabase · `003_production_setup.sql`, `useAvatarUpdate.ts` | RECOVERABLE_LEGACY | folder = uid by policy; frontend path mismatch | durable; public bucket by design | none | low | P3 | upload path vs policy mismatch: UNKNOWN whether it works; avatars are intentionally public |
+| OBJ-6 | `/tmp/xroga-media/**` | API machine disk · `services/storage/localMediaCache.ts` | EPHEMERAL_CACHE | key prefix `users/{userId}` | **lost on machine restart/redeploy** | none | high if it was the only copy | P2 (opt-in rescue) | only reachable by dead code today; adapter `LocalMediaCacheSource` skips unless opted in |
+| OBJ-7 | `data:` URLs returned in API payloads (audio/image providers) | in-flight only · `lib/audioProviders.ts`, `comfyui.ts`, `hailuo.ts` | EPHEMERAL_CACHE | n/a | not persisted | none | n/a | n/a | |
+| STATE-1 | `projects`, `project_files` metadata, `project_messages` | Supabase Postgres | DATABASE_METADATA | RLS: owner via `projects.user_id` (`002a_reconcile_foundation.sql`) | durable; backups **UNKNOWN** | | | | |
+| STATE-2 | Execution state, checkpoints, cost ledgers | Supabase (`swarm_runs`, `software_agent_checkpoints`, `project_change_checkpoints`, `ai_usage_ledger`) | DATABASE_METADATA | by user | durable | | | | |
+| STATE-3 | Job queues | Redis via `REDIS_URL` · `config/jobQueues.ts` | EPHEMERAL_CACHE (unless Redis persistence on) | none | **UNKNOWN** provider/persistence | | | | audit in Phase 3 (INFRA-006) |
+| SEC-1 | `xroga-github-tokens` bucket (GitHub OAuth tokens) | Supabase Storage (private) · `services/integrations/githubTokenStore.ts:58-64` | **UNKNOWN → not ENCRYPTED_SECRET: the token JSON is uploaded as plaintext (`JSON.stringify(data)`), protected only by the private bucket** | per user path | durable | | **high sensitivity; confirmed finding** | **NEVER via the object pipeline**; CredentialVault (INFRA-004) | `SECRET_BUCKETS` denylist refuses it by construction |
+| SEC-2 | Vercel tokens, same bucket | `services/integrations/vercelAuth.ts` (`TOKEN_BUCKET='xroga-github-tokens'`) | same | | | | | | one bucket holds two providers' tokens |
+| SEC-3 | `user_integrations`, provider keys | Postgres · `integrations/userProviderKeys.ts:215-237`, `020_user_integrations.sql` | ENCRYPTED_SECRET (AES-256-GCM, app-layer). **Key = `USER_SECRETS_ENCRYPTION_KEY`, falling back to `SUPABASE_SERVICE_ROLE_KEY`, and an explicit "insecure dev encryption fallback"** (`:224-228`): key custody is the gap INFRA-004 closes | per user | durable | | **high** | INFRA-004 | out of Phase 1 scope |
+| BKP-1 | Supabase backups / PITR | Supabase | BACKUP | | **UNKNOWN** plan and retention | | | | needs dashboard read |
+| FLY-1 | Fly volumes | Fly | UNKNOWN | | `fly.api.toml` and `backend/fly.toml` declare none; sandbox machines not inspected | | | | confirm with `fly volumes list` |
+
+## Rules this branch enforces
+1. OAuth/provider secrets are never migrated as ordinary objects (`SECRET_BUCKETS`, tested).
+2. Ephemeral caches are *counted* but skipped unless an operator opts in.
+3. Anything the adapter cannot recover (`INLINE_CONTENT_NOT_RECOVERABLE`, unknown owner) is `BLOCKED` with a reason, never counted as migrated.
