@@ -10,6 +10,7 @@ import './SidebarOrganize.css';
 import {
  meaningfulSidebarTitle,visiblePage,sortPinned,loadSidebarMeta,loadSidebarSections,
  loadSidebarProjects,loadSidebarChats,loadSidebarChatById,changeSidebarMeta,
+ loadPinnedSidebarRecords,swapSidebarPins,
  createSidebarSection,deleteSidebarChat,type SidebarMeta,type SidebarSection,
  type SidebarProject,type SidebarChat,type SidebarKind
 } from '@/lib/sidebarOrganization';
@@ -184,6 +185,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const [sections,setSections] = useState<SidebarSection[]>([]);
   const [accountProjects,setAccountProjects] = useState<SidebarProject[]>([]);
   const [sidebarChats,setSidebarChats] = useState<SidebarChat[]>([]);
+  const [pinnedProjectRecords,setPinnedProjectRecords]=useState<SidebarProject[]>([]);
+  const [pinnedSessionRecords,setPinnedSessionRecords]=useState<RepoSession[]>([]);
   const [shownProjects,setShownProjects] = useState(5);
   const [shownPins,setShownPins] = useState(10);
   const [allProjectChats,setAllProjectChats] = useState<Record<string,boolean>>({});
@@ -227,6 +230,13 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       setItemMeta(metadata);setSections(sectionList);
       setAccountProjects(firstProjects.slice(0,5));setProjectsHasMore(firstProjects.length>5);
       setSidebarChats(chats);setPinnedIds(sortPinned(metadata.filter(item=>item.pin_order!==null&&!item.archived_at)).map(item=>item.item_id));
+      const hydrated=await loadPinnedSidebarRecords(accountId,metadata);
+      setPinnedProjectRecords(hydrated.projects);
+      setPinnedSessionRecords(hydrated.sessions.filter(x=>x.messageCount>0).map(x=>({
+        id:x.id,title:meaningfulSidebarTitle(x.title,x.preview),preview:x.preview,updatedAt:x.updatedAt,
+        githubRepoName:x.githubRepoName,githubBranch:x.githubBranch,terminalNumber:x.terminalNumber,
+        status:x.status as TerminalHistoryStatus,cloudSynced:true,kind:'cloud' as const,
+      })));
       setSidebarError('');
     }catch(error){setSidebarError((error as Error).message||'Could not load your saved work');}
   },[accountId]);
@@ -749,8 +759,12 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
           updatedAt:chat.updated_at,status:chat.status as TerminalHistoryStatus,cloudSynced:true,kind:'cloud',terminalNumber:0});
       }
     }
+    for(const x of pinnedSessionRecords){
+      const prev=map.get(x.id);
+      if(!prev||Date.parse(x.updatedAt)>Date.parse(prev.updatedAt))map.set(x.id,x);
+    }
     return Array.from(map.values()).sort((a, b) => (Date.parse(b.updatedAt) || 0) - (Date.parse(a.updatedAt) || 0));
-  }, [allHistory, entries, cloudSessions, sidebarChats]);
+  }, [allHistory, entries, cloudSessions, sidebarChats, pinnedSessionRecords]);
 
   const organizedProjects = useMemo(()=>{
     const actual=accountProjects.map(p=>({id:p.id,label:p.name,repo:p.github_repo_name||null,actual:p}));
@@ -760,7 +774,11 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     }));
     return [...actual,...old];
   },[accountProjects,folders]);
-  const projectById=(id:string)=>organizedProjects.find(p=>p.id===id);
+  const projectById=(id:string)=>organizedProjects.find(p=>p.id===id)
+    ||(pinnedProjectRecords.find(p=>p.id===id)?(()=>{
+       const p=pinnedProjectRecords.find(p=>p.id===id)!;
+       return {id:p.id,label:p.name,repo:p.github_repo_name||null,actual:p};
+      })():undefined);
   const activeItems=savedConversations.filter(s=>!metaOf('conversation',s.id)?.archived_at);
   const pinnedItems=sortPinned(itemMeta.filter(m=>m.pin_order!==null&&!m.archived_at))
     .filter(m=>m.item_type==='conversation'?activeItems.some(s=>s.id===m.item_id):
@@ -801,10 +819,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         if(!pinned||!source||source===target)return;
         const src=pinnedItems.find(m=>m.item_type+':'+m.item_id===source);
         const dst=pinnedItems.find(m=>m.item_type+':'+m.item_id===target);
-        if(src&&dst)void Promise.all([
-          updateItem(src.item_type,src.item_id,{pin_order:dst.pin_order}),
-          updateItem(dst.item_type,dst.item_id,{pin_order:src.pin_order})
-        ]).then(()=>refreshSidebarData());
+        if(src&&dst&&accountId)void swapSidebarPins(accountId,src,dst)
+          .then(refreshSidebarData).catch(e=>toast.error((e as Error).message));
       }}>
       <button type="button" onClick={open} className="min-w-0 flex-1 flex items-center gap-1.5 text-left py-1.5 px-1.5 rounded-md focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
         title={undefined} aria-label={label}>
@@ -848,9 +864,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       const idx=pinnedItems.findIndex(m=>m.item_type===kind&&m.item_id===itemId);
       const neighbor=pinnedItems[idx+(id==='pin-up'?-1:1)];
       if(idx<0||!neighbor)return;
-      const before=pinnedItems[idx];
-      await updateItem(kind,itemId,{pin_order:neighbor.pin_order});
-      await updateItem(neighbor.item_type,neighbor.item_id,{pin_order:before.pin_order});
+      await swapSidebarPins(accountId,pinnedItems[idx],neighbor);
+      await refreshSidebarData();
       return;
     }
     const mode=id==='move-project'?'move-project':id==='move-section'?'move-section':
