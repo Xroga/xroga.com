@@ -1,8 +1,8 @@
 'use client';
-import { useRef, useState } from 'react';
+import { memo, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 
-export function SidebarMovingTitle({text}:{text:string}){
+export const SidebarMovingTitle = memo(function SidebarMovingTitle({text}:{text:string}){
  const viewport=useRef<HTMLSpanElement>(null);const content=useRef<HTMLSpanElement>(null);
  const [overflow,setOverflow]=useState(0);const [hovered,setHovered]=useState(false);
  const enter=()=>{
@@ -20,4 +20,4 @@ export function SidebarMovingTitle({text}:{text:string}){
      '--sidebar-title-duration':`${Math.max(1.2,Math.min(5.5,overflow/24))}s`} as CSSProperties}
    >{text}</span>
   </span>;
-}
+});

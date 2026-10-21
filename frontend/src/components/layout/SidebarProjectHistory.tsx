@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import { Cloud, FolderOpen, GitBranch, ChevronDown, ChevronRight, Pin, PinOff, MoreHorizontal, Plus, ArrowUp, ArrowDown, MessageSquare } from 'lucide-react';
+import { Cloud, FolderOpen, GitBranch, ChevronDown, ChevronRight, Pin, PinOff, MoreHorizontal, Plus, ArrowUp, ArrowDown } from 'lucide-react';
 import { SidebarActionMenu, type SidebarActionId, type SidebarMenuAction } from './SidebarActionMenu';
 import { SidebarMovingTitle } from './SidebarMovingTitle';
 import './SidebarOrganize.css';
@@ -192,6 +192,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const [pinnedSessionRecords,setPinnedSessionRecords]=useState<RepoSession[]>([]);
   const [shownProjects,setShownProjects] = useState(5);
   const [shownPins,setShownPins] = useState(10);
+  const [shownRecents,setShownRecents] = useState(12);
   const [allProjectChats,setAllProjectChats] = useState<Record<string,boolean>>({});
   const [archivedOpen,setArchivedOpen] = useState(false);
   const [projectsHasMore,setProjectsHasMore] = useState(false);
@@ -224,6 +225,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
    * Refs give the same values without making the callback unstable.
    */
   const accountId = !isGuest ? workspaceIdentity.userId ?? '' : '';
+  const lastSidebarFetchRef = useRef(0);
+  const refreshTimerRef = useRef<number | null>(null);
   const activeAccountRef=useRef(accountId);
   activeAccountRef.current=accountId;
   useEffect(()=>{
@@ -233,7 +236,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     setEntries([]);setAllHistory([]);setCloudSessions([]);
     setOpenFolders({});setActiveSessionId(null);
     setPinnedProjectRecords([]);setPinnedSessionRecords([]);setPinnedIds([]);
-    setShownProjects(5);setShownPins(10);setProjectsHasMore(false);
+    setShownProjects(5);setShownPins(10);setShownRecents(12);setProjectsHasMore(false);
   },[accountId]);
   const refreshSidebarData = useCallback(async()=>{
     if(!accountId){setItemMeta([]);setSections([]);setAccountProjects([]);setSidebarChats([]);setPinnedIds([]);return;}
@@ -254,16 +257,32 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         status:x.status as TerminalHistoryStatus,cloudSynced:true,kind:'cloud' as const,
       })));
       setSidebarError('');
+      lastSidebarFetchRef.current=Date.now();
     }catch(error){if(activeAccountRef.current===accountId)setSidebarError((error as Error).message||'Could not load your saved work');}
   },[accountId]);
   useEffect(()=>{
     void refreshSidebarData();
-    const listener=()=>void refreshSidebarData();
-    window.addEventListener('xroga-sidebar-chats-changed',listener);
-    window.addEventListener('focus',listener);
-    return()=>{window.removeEventListener('xroga-sidebar-chats-changed',listener);window.removeEventListener('focus',listener);};
+    // A stream of chat saves should cause one data refresh, not a fetch storm.
+    const queue=()=>{
+      if(refreshTimerRef.current)window.clearTimeout(refreshTimerRef.current);
+      refreshTimerRef.current=window.setTimeout(()=>{
+        refreshTimerRef.current=null;
+        if(!document.hidden)void refreshSidebarData();
+      },1200);
+    };
+    const onFocus=()=>{
+      if(Date.now()-lastSidebarFetchRef.current>30000)queue();
+    };
+    window.addEventListener('xroga-sidebar-chats-changed',queue);
+    window.addEventListener('focus',onFocus);
+    return()=>{
+      window.removeEventListener('xroga-sidebar-chats-changed',queue);
+      window.removeEventListener('focus',onFocus);
+      if(refreshTimerRef.current)window.clearTimeout(refreshTimerRef.current);
+    };
   },[refreshSidebarData]);
-  const metaOf=(kind:SidebarKind,id:string)=>itemMeta.find(x=>x.item_type===kind&&x.item_id===id);
+  const metaIndex=useMemo(()=>new Map(itemMeta.map(item=>[item.item_type+':'+item.item_id,item])),[itemMeta]);
+  const metaOf=(kind:SidebarKind,id:string)=>metaIndex.get(kind+':'+id);
   async function updateItem(kind:SidebarKind,id:string,changes:Partial<SidebarMeta>){
     if(!accountId){requestAuthGate('history');return;}
     const previous=itemMeta;
@@ -327,8 +346,11 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         flushCloud: true,
       });
     }
+    // Read and sanitize local chat history once per refresh, not once per item.
+    const localHistory=loadTerminalHistory();
+    const historyById=new Map(localHistory.map(e=>[e.id,e]));
     const verifiedIdsForHistory=new Set([...verifiedCloudRef.current.map(c=>c.id),...verifiedSidebarChatsRef.current.map(c=>c.id),...verifiedPinnedRef.current.map(c=>c.id)]);
-    setAllHistory(loadTerminalHistory().filter((e)=>e.id&&e.messageCount>0&&verifiedIdsForHistory.has(e.id)));
+    setAllHistory(localHistory.filter(e=>e.id&&e.messageCount>0&&verifiedIdsForHistory.has(e.id)));
     const synced = syncRepoTerminalSessions();
     // The legacy local history store has no owner ID. It must not be trusted
     // as a history source after account switches; only authenticated cloud IDs
@@ -337,13 +359,13 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     let nextEntries =
       (synced.length
         ? synced
-        : loadTerminalHistory().filter((e) => e.messageCount > 0 && e.githubRepoName?.includes('/')))
+        : localHistory.filter((e) => e.messageCount > 0 && e.githubRepoName?.includes('/')))
       .filter(e=>verifiedIds.has(e.id));
 
     // Live chat appears under its sticky repo (or selected if still unbound).
     // Never rewrite an existing #N onto a newly selected repo.
     if (messagesRef.current.length > 0 && sessionIdRef.current) {
-      const hist = loadTerminalHistory().find((e) => e.id === sessionIdRef.current);
+      const hist = historyById.get(sessionIdRef.current);
       const bindRepo =
         (hist?.githubRepoName?.includes('/') ? hist.githubRepoName : null) ??
         (selected?.repo?.includes('/') ? selected.repo : null);
@@ -392,7 +414,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     for (const idx of loadRepoSessionsIndex()) {
       if (!idx.githubRepoName?.includes('/') || !idx.sessionId) continue;
       if (nextEntries.some((e) => e.id === idx.sessionId)) continue;
-      const hist = loadTerminalHistory().find((e) => e.id === idx.sessionId);
+      const hist = historyById.get(idx.sessionId);
       if (hist?.messages?.length) {
         nextEntries = [...nextEntries, hist];
       }
@@ -493,7 +515,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     const t = window.setTimeout(() => {
       refreshLocal();
       refreshCloud();
-    }, 100);
+    }, 360);
     return () => window.clearTimeout(t);
     // `messages.length`, not `messages`: the array identity changes on every streamed
     // token, so depending on it re-ran this effect continuously during a response.
@@ -895,7 +917,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     const f=folders.find(folder=>'repo:'+folder.key===id);
     if(f)void openRepoFolder(f);
   }
-  function renderRow(kind:SidebarKind,id:string,label:string,open:()=>void,pinned:boolean,leading?:React.ReactNode){
+  function renderRow(kind:SidebarKind,id:string,label:string,open:()=>void,pinned:boolean){
     const saved=metaOf(kind,id)?.pin_order!=null;
     return <div key={kind+':'+id} className="xv-sidebar-work-row group flex items-center gap-1 min-w-0 rounded-md hover:bg-[var(--foreground)]/[0.05]"
       onContextMenu={event=>openMenu(event,kind,id)} draggable={pinned}
@@ -910,9 +932,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         if(src&&dst&&accountId)void swapSidebarPins(accountId,src,dst)
           .then(refreshSidebarData).catch(e=>toast.error((e as Error).message));
       }}>
-      <button type="button" onClick={open} className="min-w-0 flex-1 flex items-center gap-1.5 text-left py-1.5 px-1.5 rounded-md focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
-        title={undefined} aria-label={label}>
-        {leading}
+      <button type="button" onClick={open} className="min-w-0 flex-1 flex items-center text-[10px] font-normal leading-[1.35] text-left py-1 px-1.5 rounded-md focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
+        aria-label={label}>
         <SidebarMovingTitle text={label}/>
       </button>
       <div className="xv-sidebar-work-actions shrink-0 flex items-center gap-0.5">
@@ -1035,7 +1056,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   }
 
   if (!expanded) return null;
-  const sectionTitle = 'px-2 pb-1 text-[9px] font-bold uppercase tracking-[0.1em] text-[var(--muted)]';
+  const sectionTitle = 'px-2 pb-0.5 text-[9px] font-bold uppercase tracking-[0.1em] text-[var(--muted)]';
   const secondary = 'text-[10px] text-[var(--muted)] hover:text-[var(--foreground)] transition-colors focus-visible:outline-2 focus-visible:outline-[var(--accent)]';
   const getProjectChats = (p:(typeof organizedProjects)[number]) =>
     recentConversations.filter(session => {
@@ -1045,7 +1066,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     });
   const openedMenu=menu?menuActions:[];
   return <div className="mt-2 mb-1 px-1.5" data-sidebar-work-organizer>
-    <section aria-label="Projects" className="space-y-1">
+    <section aria-label="Projects" className="space-y-0.5">
       <div className="flex items-center justify-between gap-2">
         <h2 className={sectionTitle}>Projects</h2>
         <div className="flex items-center gap-2">
@@ -1069,7 +1090,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
               {expandedProject?<ChevronDown size={13}/>:<ChevronRight size={13}/>}
             </button>
             <div className="min-w-0 flex-1">
-              {renderRow('project',p.id,projectTitle(p.id,p.label),()=>openProject(p.id),false,<FolderOpen size={13} className="shrink-0 text-[var(--muted)]"/>)}
+              {renderRow('project',p.id,projectTitle(p.id,p.label),()=>openProject(p.id),false)}
             </div>
           </div>
           {expandedProject ? <div className="pl-4 space-y-0.5" aria-label={p.label+' conversations'}>
@@ -1079,11 +1100,11 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
               return <div key={section.id}>
                 <p className="px-2 py-0.5 text-[9px] font-medium text-[var(--muted)]">{section.title}</p>
                 {(allProjectChats[p.id]?grouped:grouped.slice(0,3)).map(session=>
-                  renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),false,<MessageSquare size={12} className="shrink-0 opacity-60"/>))}
+                  renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),false))}
               </div>;
             })}
             {children.filter(session=>!metaOf('conversation',session.id)?.section_id).map(session=>
-              renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),false,<MessageSquare size={12} className="shrink-0 opacity-60"/>))}
+              renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),false))}
             {related.length>3&&!allProjectChats[p.id]?
               <button type="button" className={secondary+' px-2 py-1'} onClick={()=>setAllProjectChats(prev=>({...prev,[p.id]:true}))}>View all chats</button>:null}
             {allProjectChats[p.id]&&related.length>3?
@@ -1104,10 +1125,10 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       {pinnedItems.slice(0,shownPins).map(item=>{
         if(item.item_type==='project'){
           const p=projectById(item.item_id);if(!p)return null;
-          return renderRow('project',p.id,projectTitle(p.id,p.label),()=>openProject(p.id),true,<FolderOpen size={12} className="shrink-0 opacity-65"/>);
+          return renderRow('project',p.id,projectTitle(p.id,p.label),()=>openProject(p.id),true);
         }
         const session=savedConversations.find(s=>s.id===item.item_id);if(!session)return null;
-        return renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),true,<MessageSquare size={12} className="shrink-0 opacity-65"/>);
+        return renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),true);
       })}
       {pinnedItems.length>shownPins?<button type="button" className={secondary+' px-2 py-1'} onClick={()=>setShownPins(prev=>prev+10)}>View more pins</button>:null}
       {shownPins>10?<button type="button" className={secondary+' px-2 py-1'} onClick={()=>setShownPins(10)}>Show less</button>:null}
@@ -1115,12 +1136,15 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
 
     {!isGuest?<section className="mt-3" aria-label="Recent conversations">
       <h2 className={sectionTitle}>Recents</h2>
-      {recentConversations.map(session=>
-        renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),false,
-          <MessageSquare size={12} className="shrink-0 text-[var(--muted)]"/>))}
+      {recentConversations.slice(0,shownRecents).map(session=>
+        renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),false))}
       {recentConversations.length===0?<p className="px-2 py-1 text-[10px] text-[var(--muted)]">Your saved conversations will appear here.</p>:null}
-      {moreCloudSessions||moreSidebarChats?<button type="button" className={secondary+' px-2 py-1'}
-        onClick={()=>void loadMoreRecents()}>View more recents</button>:null}
+      {recentConversations.length>shownRecents?
+        <button type="button" className={secondary+' px-2 py-1'} onClick={()=>setShownRecents(prev=>prev+12)}>View more recents</button>
+        :moreCloudSessions||moreSidebarChats?<button type="button" className={secondary+' px-2 py-1'}
+          onClick={()=>void loadMoreRecents()}>Load older recents</button>:null}
+      {shownRecents>12?<button type="button" className={secondary+' px-2 py-1'}
+        onClick={()=>setShownRecents(12)}>Show fewer</button>:null}
       <button type="button" className={secondary+' px-2 py-1'} onClick={()=>setArchivedOpen(prev=>!prev)}
         aria-expanded={archivedOpen}>{archivedOpen?'Hide archive':'Archived items'}</button>
       {archivedOpen?itemMeta.filter(item=>item.archived_at!==null).map(item=>{
