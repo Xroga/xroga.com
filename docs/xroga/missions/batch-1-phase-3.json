@@ -204,6 +204,7 @@
   "schemaImpact": {
     "changed": true,
     "migrations": [
+      "supabase/migrations/20261021233500_sidebar_organization.sql",
       "supabase/migrations/20261022003000_sidebar_exact_parent_guards.sql",
       "supabase/migrations/20261020000300_business_authority_dispatch.sql",
       "supabase/migrations/20261020000400_operations_provider_budget_authority.sql",
