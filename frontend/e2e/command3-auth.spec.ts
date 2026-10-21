@@ -237,10 +237,14 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // page itself already use that word for the whole surface, so the button that opens
   // the file tree and the diff says what it opens instead.
   await expect(terminalHeader.getByRole('button', { name: 'Project edits' })).toBeVisible();
-  // PR831 removed the idle hide/restore controls. Preserve their absence and
-  // the always-available single composer rather than restoring obsolete UI.
-  await expect(terminalHeader.getByRole('button', { name: 'Hide the chatbar' })).toHaveCount(0);
+  // WorkspaceLauncher owns the one hide/restore control in the title bar.
+  // Hiding must remove the composer without leaving a floating replacement.
+  const hideChatbar = terminalHeader.getByRole('button', { name: 'Hide the chatbar' });
+  await expect(hideChatbar).toBeVisible();
   await expect(composerInput).toBeVisible();
+  await hideChatbar.click();
+  await expect(terminalDock.locator('.xv-chatbar-solid')).toHaveCount(0);
+  await expect(composerInput).toHaveCount(0);
 
   /*
    * Hiding the chatbar hides the chatbar, and leaves nothing floating in its place.
@@ -254,7 +258,10 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
    */
   await expect(terminalDock.getByRole('button', { name: 'Show the chatbar' })).toHaveCount(0);
   const showChatbar = terminalHeader.getByRole('button', { name: 'Show the chatbar' });
-  await expect(showChatbar).toHaveCount(0);
+  await expect(showChatbar).toBeVisible();
+  await expect(showChatbar).toHaveAttribute('aria-pressed', 'true');
+  await showChatbar.click();
+  await expect(hideChatbar).toHaveAttribute('aria-pressed', 'false');
   await expect(composerInput).toHaveCount(1);
   await expect(composerInput).toBeVisible();
 
@@ -292,8 +299,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   }
   await expect(page.locator('.xv-chatbar-integration-btn')).toHaveCount(0);
 
-  // Two columns keep the working palette compact without spreading its actions
-  // across the full composer like dashboard tabs.
+  // The approved picker follows the composer width with one readable column.
   const grid = plusMenu.locator('.xv-cba-grid');
   await expect(grid).toBeVisible();
   const gridColumns = await grid.evaluate(

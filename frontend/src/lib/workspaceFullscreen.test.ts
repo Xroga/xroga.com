@@ -159,7 +159,9 @@ test('the geometry is asserted where the workspace can actually be reached', () 
   assert.match(E2E, /the sidebar is still on screen in fullscreen/);
   assert.match(E2E, /the hidden sidebar still reserves its width/);
   assert.match(E2E, /the sidebar did not reopen after fullscreen/);
-  assert.match(E2E, /the plus menu should lay out in two compact columns/);
+  assert.match(E2E, /expect\(gridColumns, 'the current full-width work picker uses one readable column'\)\.toBe\(1\)/);
+  assert.match(E2E, /expect\(menuBox\.width\)\.toBeCloseTo\(Math\.min\(composerBox\.width/);
+  assert.match(E2E, /await expect\(lastAction\)\.toBeInViewport\(\)/);
 });
 
 /**

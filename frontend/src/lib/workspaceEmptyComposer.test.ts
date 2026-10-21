@@ -343,7 +343,8 @@ test('a conversation exposes one context-aware navigator that follows scroll pos
   );
 
   assert.match(CSS, /\.xv-conversation-navigator\s*\{[\s\S]*?width:\s*2\.25rem[\s\S]*?border-radius:\s*0\.62rem/);
-  assert.match(DOCK, /data-tooltip=\{showJumpToLatest \? 'Latest' : 'Top'\}/);
+  assert.match(DOCK, /aria-label=\{showJumpToLatest \? 'Scroll to latest' : 'Scroll to top'\}/);
+  assert.doesNotMatch(DOCK, /data-tooltip|data-short-tip/);
   assert.doesNotMatch(DOCK, /xv-conversation-navigator__label/);
 });
 
@@ -725,7 +726,9 @@ test('new terminal renders theme-aware readable cards without black-hole artwork
 
 test('starter cards preserve immediate local drafts and do not auto-submit', () => {
   assert.match(START, /composer\?\.value \?\? prompt/);
-  assert.match(START, /setPrompt\(!currentDraft\.trim\(\) \|\| isStarter \? text/);
+  assert.match(START, /setPrompt\(!currentDraft\.trim\(\) \|\| isStarter \? instruction : `\$\{currentDraft\.trimEnd\(\)\}\\n\\n\$\{instruction\}`\)/);
+  assert.match(START, /Ask for approval before publishing, spending money, or taking consequential external actions/);
+  assert.match(START, /Do not claim successful execution without evidence/);
   assert.match(START, /currentDraft\.trimEnd\(\)/);
   assert.match(START, /6000/);
   assert.match(START, /aria-haspopup="menu"/);
