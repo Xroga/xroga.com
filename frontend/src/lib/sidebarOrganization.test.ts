@@ -47,3 +47,13 @@ test('real history, conditional pins, project paging, right-click, and contextua
  assert.match(sidebar,/SidebarActionMenu/);
  assert.doesNotMatch(sidebar,/Chat below to create/);
 });
+
+test('legacy backfill SQL is unbroken, reversible, and modifies titles only',()=>{
+ const matches=migration.match(/update public\.terminal_sessions/g)||[];
+ assert.equal(matches.length,2);
+ assert.match(migration,/on conflict \(session_id\) do nothing;/);
+ assert.match(migration,/original_title/);
+ assert.match(migration,/set title=left\(regexp_replace\(btrim\(prompt\)/);
+ assert.doesNotMatch(migration,/terminal\s*\n-- Manually/);
+ assert.match(migration,/terminal\$'\)\s*\n on conflict \(session_id\) do nothing;/);
+});
