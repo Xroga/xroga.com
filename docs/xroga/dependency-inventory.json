@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "d12a527abb04d81214c2c15b115180e21dac1b21",
+  "source_sha": "28906f79c128908e80b7001657133927eba269c5",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16956,7 +16956,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "b360681bded02eaaa0d68b04646aa69f21d71207148927f1230c516c4b2e4f10"
+      "sha256": "78ba203dd26396c0c5e888d3b148fb8757ae1728dfb32f71c0960d87a89c156b"
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
@@ -17012,7 +17012,7 @@
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceLauncher.tsx",
-      "sha256": "4496c7368076a989415b84bb9a855a21da810c5152ff7ef85da97a65a8f2c403"
+      "sha256": "4c58360131b9e9a5bc17631fb5dfaa67661399c264a7c7898f05ec98c71b8063"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceSearchButton.tsx",
@@ -17389,6 +17389,10 @@
     {
       "path": "frontend/src/lib/companyContact.ts",
       "sha256": "40689264bb18015dbf6974a061eea0125b1ae59bfb08549a5068c012fb9c8bad"
+    },
+    {
+      "path": "frontend/src/lib/composerDraft.ts",
+      "sha256": "8bc82e7d7a37fc5de2e9e70409d1a5560de680a717fc2688ed96b1c9fb93ce8e"
     },
     {
       "path": "frontend/src/lib/connectableIntegrations.ts",

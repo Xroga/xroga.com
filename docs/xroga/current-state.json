@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "5656525d87c076163361e62fdcdfdaeebd3f4555",
-    "sourceTimestampUtc": "2026-10-21T16:09:47+05:00",
-    "auditStartedUtc": "2026-10-21T11:09:52.156Z",
+    "sha": "28906f79c128908e80b7001657133927eba269c5",
+    "sourceTimestampUtc": "2026-10-21T16:39:33+05:00",
+    "auditStartedUtc": "2026-10-21T11:39:52.827Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -59103,6 +59103,7 @@
         "frontend/src/components/notifications/NotificationExperience.tsx:8",
         "frontend/src/components/providers/AppProviders.tsx:8",
         "frontend/src/components/terminal/TerminalChatBar.tsx:34",
+        "frontend/src/components/terminal/WorkspaceLauncher.tsx:10",
         "frontend/src/components/workspace/WorkspaceAuthGate.tsx:23",
         "frontend/src/context/TerminalChatContext.tsx:70"
       ],
@@ -68359,7 +68360,7 @@
       "id": "surface:3a6e395bda32efc304e5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "b360681bded02eaaa0d68b04646aa69f21d71207148927f1230c516c4b2e4f10",
+      "sha256": "78ba203dd26396c0c5e888d3b148fb8757ae1728dfb32f71c0960d87a89c156b",
       "symbols": [
         "MIN_INPUT_H",
         "TerminalChatBar",
@@ -69372,26 +69373,37 @@
       "id": "surface:4330f7386efdd6e1cd7c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/WorkspaceLauncher.tsx",
-      "sha256": "4496c7368076a989415b84bb9a855a21da810c5152ff7ef85da97a65a8f2c403",
+      "sha256": "4c58360131b9e9a5bc17631fb5dfaa67661399c264a7c7898f05ec98c71b8063",
       "symbols": [
         "WorkspaceLauncher",
         "chatbarHidden",
+        "identity",
+        "latestDraft",
         "setChatbarHidden",
         "setWorkspaceOpen",
+        "snapshots",
+        "toggleChatbar",
         "workspaceOpen"
       ],
       "imports": [
         "@/components/icons/animated/AnimatedIcon",
         "@/components/icons/animated/EyeClosedIcon",
         "@/components/icons/animated/FilePenIcon",
+        "@/components/layout/WorkspaceIdentityContext",
+        "@/context/TerminalChatContext",
+        "@/lib/composerDraft",
         "@/lib/utils",
         "@/store/useProjectWorkspaceStore",
-        "@/store/useThemeStore"
+        "@/store/useThemeStore",
+        "react-dom"
       ],
       "runtimeImports": [
         "frontend/src/components/icons/animated/AnimatedIcon.tsx",
         "frontend/src/components/icons/animated/EyeClosedIcon.tsx",
         "frontend/src/components/icons/animated/FilePenIcon.tsx",
+        "frontend/src/components/layout/WorkspaceIdentityContext.tsx",
+        "frontend/src/context/TerminalChatContext.tsx",
+        "frontend/src/lib/composerDraft.ts",
         "frontend/src/lib/utils.ts",
         "frontend/src/store/useProjectWorkspaceStore.ts",
         "frontend/src/store/useThemeStore.ts"
@@ -69406,8 +69418,13 @@
       ],
       "reachable": true,
       "persistenceDependencies": [],
-      "externalProviderDependencies": [],
-      "authBoundary": [],
+      "externalProviderDependencies": [
+        "react-dom"
+      ],
+      "authBoundary": [
+        "frontend/src/components/terminal/WorkspaceLauncher.tsx#identity",
+        "frontend/src/components/terminal/WorkspaceLauncher.tsx#useWorkspaceIdentity"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -72967,6 +72984,7 @@
         "frontend/src/components/terminal/TerminalChatBar.tsx:4",
         "frontend/src/components/terminal/TerminalDock.tsx:19",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx:21",
+        "frontend/src/components/terminal/WorkspaceLauncher.tsx:9",
         "frontend/src/components/terminal/XrogaVoiceControl.tsx:9"
       ],
       "reachable": true,
@@ -73935,7 +73953,7 @@
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:5",
         "frontend/src/components/terminal/TerminalChatBar.tsx:11",
         "frontend/src/components/terminal/TerminalChatBar.tsx:23",
-        "frontend/src/components/terminal/TerminalChatBar.tsx:299",
+        "frontend/src/components/terminal/TerminalChatBar.tsx:302",
         "frontend/src/components/terminal/VercelBuildGateModal.tsx:5",
         "frontend/src/components/terminal/VercelDeployButton.tsx:5",
         "frontend/src/components/terminal/WorkspaceConnectionsStrip.tsx:10",
@@ -75345,6 +75363,45 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:dfc3793e9fd002e0376f",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/composerDraft.ts",
+      "sha256": "8bc82e7d7a37fc5de2e9e70409d1a5560de680a717fc2688ed96b1c9fb93ce8e",
+      "symbols": [
+        "ComposerDraftScope",
+        "ComposerDraftSnapshot",
+        "draftForExplicitHide",
+        "snapshot"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(shell)/dashboard/projects/[id]/page.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/terminal/WorkspaceLauncher.tsx:11",
+        "frontend/src/lib/composerDraft.test.ts:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/composerDraft.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:93c7148cc039ce3a5688",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/connectableIntegrations.ts",
@@ -76614,7 +76671,7 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx:18",
         "frontend/src/components/terminal/RepoContextBar.tsx:21",
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:8",
-        "frontend/src/components/terminal/TerminalChatBar.tsx:248",
+        "frontend/src/components/terminal/TerminalChatBar.tsx:251",
         "frontend/src/context/TerminalChatContext.tsx:1798",
         "frontend/src/context/TerminalChatContext.tsx:3212",
         "frontend/src/context/TerminalChatContext.tsx:57",
@@ -78914,7 +78971,7 @@
       "callers": [
         "frontend/src/components/terminal/ImageStudioCard.tsx:26",
         "frontend/src/components/terminal/ReasoningAndFollowUps.tsx:6",
-        "frontend/src/components/terminal/TerminalChatBar.tsx:321",
+        "frontend/src/components/terminal/TerminalChatBar.tsx:324",
         "frontend/src/context/TerminalChatContext.tsx:55",
         "frontend/src/lib/phase1Routing.ts:2",
         "frontend/src/lib/workLanes.ts:2"
@@ -80454,7 +80511,7 @@
         "frontend/src/components/terminal/RepoContextBar.tsx:10",
         "frontend/src/components/terminal/RepoContextBar.tsx:214",
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:7",
-        "frontend/src/components/terminal/TerminalChatBar.tsx:222",
+        "frontend/src/components/terminal/TerminalChatBar.tsx:225",
         "frontend/src/context/TerminalChatContext.tsx:1791",
         "frontend/src/context/TerminalChatContext.tsx:47",
         "frontend/src/lib/buildDefaultTodos.ts:2",
@@ -103337,9 +103394,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:cb58e959d783a596d37f",
+      "id": "finding:766c15c7b3810c82b82f",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 720,
+      "line": 727,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -103347,9 +103404,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:bceb2cc35ad71ccac500",
+      "id": "finding:2e4008f2f900c824fa81",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 728,
+      "line": 735,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -103357,9 +103414,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:5047785114227bca9286",
+      "id": "finding:6ec4ca056034743d2925",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 728,
+      "line": 735,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -104386,86 +104443,86 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:a5b662c85df73bd04b9d",
+      "id": "frontend-call:965bdc3c50146618846e",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 102,
+      "line": 147,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:0da61f37fe304042b34a",
+      "id": "frontend-call:a5f80073402b26c05294",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 105,
+      "line": 150,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:03ade25ac7c9af67ccca",
+      "id": "frontend-call:7b9fba3bd657db914be6",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 823,
+      "line": 871,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:98f00ea8fb808abcbf0f",
+      "id": "frontend-call:f3614525ac405f302f06",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 824,
+      "line": 872,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:20d8d28cd2f8120e6989",
+      "id": "frontend-call:62dd1b405b0479435a32",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 829,
+      "line": 877,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:b9f13ca58435bd119f3d",
+      "id": "frontend-call:34b4f5da84ae254c4c0e",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 830,
+      "line": 878,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:31c0099984b2ab807ffa",
+      "id": "frontend-call:398b7c99c0c91e177ce4",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 836,
+      "line": 884,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:c38430f06daf1a19856f",
+      "id": "frontend-call:6fe47967a1876e361d73",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 841,
+      "line": 889,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:e222fc28f7bdbc5ef14e",
+      "id": "frontend-call:c99acd02bd017def69fa",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 854,
+      "line": 902,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:fc810b2399066532d048",
+      "id": "frontend-call:33fd230815b5183c5ca4",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 855,
+      "line": 903,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:be5625b23f49931b04ea",
+      "id": "frontend-call:243c167c2d357d4805b8",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 862,
+      "line": 910,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:52c789f72af8efd1769a",
+      "id": "frontend-call:72a5db0cb6f1d85f6566",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 876,
+      "line": 924,
       "callee": "fetch",
       "reachable": false
     },
@@ -106241,72 +106298,72 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:4618341fe13a2ef79cf4",
+      "id": "frontend-call:2995494333966fa9170a",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 168,
+      "line": 171,
       "callee": "api.github.status().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:a3ab62b38c740bb09742",
+      "id": "frontend-call:7ded7908b28628daf1be",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 168,
+      "line": 171,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:509205d718821dee98c8",
+      "id": "frontend-call:b942fa38333cba421705",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 168,
+      "line": 171,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:eee6ead5386470f54d45",
+      "id": "frontend-call:f3eaf757ba7d1cebd95f",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 172,
+      "line": 175,
       "callee": "api.vercel.status().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:f801765976af950a9ba8",
+      "id": "frontend-call:e18d1045ef077cc5a21f",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 172,
+      "line": 175,
       "callee": "api.vercel.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:1359e5abaa89d2178181",
+      "id": "frontend-call:c8eabc563d586ef3ffae",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 172,
+      "line": 175,
       "callee": "api.vercel.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:8f82db6105c8c7f2d1b8",
+      "id": "frontend-call:867fce0c3ff4afd8b799",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 232,
+      "line": 235,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:a133fa2ca28d9bc68986",
+      "id": "frontend-call:04a3206e1211c609ceaa",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 515,
+      "line": 518,
       "callee": "api.github.status().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:bec5119f14bc3d381f75",
+      "id": "frontend-call:49f48bbe04787098305f",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 515,
+      "line": 518,
       "callee": "api.github.status().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:e12dffbce13e4c368798",
+      "id": "frontend-call:a187ab7ed1a525c55919",
       "sourcePath": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 515,
+      "line": 518,
       "callee": "api.github.status",
       "reachable": true
     },
@@ -110426,7 +110483,7 @@
     {
       "id": "test-suite:967afee80eba90847db7",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -110596,7 +110653,7 @@
     {
       "id": "test-suite:fe480b4d0f729d8b130d",
       "sourcePath": "frontend/e2e/workspace-new-terminal.spec.ts",
-      "declaredTests": 18,
+      "declaredTests": 19,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -110834,6 +110891,13 @@
     {
       "id": "test-suite:23ba9324ea22319564f4",
       "sourcePath": "frontend/src/lib/companionCrown.test.ts",
+      "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:c01d717a838c4ec85317",
+      "sourcePath": "frontend/src/lib/composerDraft.test.ts",
       "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []

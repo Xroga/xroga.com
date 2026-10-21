@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "2449172f39bc8da071cc73030df31c2ffc8b010a71ed2f6681de55da01a9cbc7",
+  "reviewRegistrySha256": "5c04d175ae313a27abdb2d7fcd2108529ebc4a359a63e6e35b57c6eba9ff2e6b",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -3540,7 +3540,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d3b6981962c32370d75e"
+        "id": "ee3a52d31fb1a4645f1c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5776,7 +5776,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "d3b6981962c32370d75e"
+        "id": "ee3a52d31fb1a4645f1c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -21596,15 +21596,15 @@
       }
     },
     {
-      "id": "d3b6981962c32370d75e",
+      "id": "ee3a52d31fb1a4645f1c",
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 400,
+      "line": 403,
       "enclosing": "TerminalChatBar",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "b360681bded02eaaa0d68b04646aa69f21d71207148927f1230c516c4b2e4f10",
+      "sourceSha256": "78ba203dd26396c0c5e888d3b148fb8757ae1728dfb32f71c0960d87a89c156b",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
