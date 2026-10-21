@@ -1,6 +1,8 @@
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { uploadToR2, buildR2Key, buildPlaybackUrl, downloadFromR2, type R2UploadResult } from '../../lib/r2.js';
 import { saveLocalMedia, readLocalMedia } from './localMediaCache.js';
+import { actorFromUserId, getStorageService, storageWriteMode } from '../../storage/runtime.js';
+import { StorageError, type ObjectClass } from '../../storage/types.js';
 
 export interface StoredFile {
   id: string;
@@ -8,6 +10,26 @@ export interface StoredFile {
   fileUrl: string;
   fileType: 'code' | 'video' | 'image' | 'audio' | 'pdf' | 'other';
   projectId?: string;
+  /** Canonical Xroga Drive object, present only when the verified private write succeeded. */
+  storageObjectId?: string;
+  /**
+   * True only when the bytes are in verified private storage. `false` means the legacy path (public R2 URL, data URL or
+   * ephemeral cache) is the only copy: callers must not present it as durable.
+   */
+  canonicalDurable?: boolean;
+}
+
+const CLASS_BY_FILE_TYPE: Record<StoredFile['fileType'], ObjectClass> = {
+  code: 'artifact', video: 'media', image: 'media', audio: 'media', pdf: 'artifact', other: 'artifact',
+};
+
+async function writeCanonical(userId: string, projectId: string | null, filename: string, content: Buffer | string, contentType: string, fileType: StoredFile['fileType']) {
+  const svc = getStorageService();
+  if (!svc) throw new StorageError('PROVIDER_UNAVAILABLE', 'Xroga Drive is not configured', 503);
+  return svc.putServerObject(actorFromUserId(userId), {
+    projectId, objectClass: CLASS_BY_FILE_TYPE[fileType], filename, contentType,
+    body: typeof content === 'string' ? Buffer.from(content) : content,
+  });
 }
 
 export async function storeProjectFile(
@@ -18,8 +40,15 @@ export async function storeProjectFile(
   contentType: string,
   fileType: StoredFile['fileType']
 ): Promise<StoredFile> {
+  const mode = storageWriteMode();
+  if (mode === 'r2') return storeProjectFileCanonicalOnly(userId, projectId, filename, content, contentType, fileType);
+
   const key = buildR2Key(userId, filename);
   let r2Result: R2UploadResult;
+  // dual: the canonical write runs alongside the legacy one. Its failure is recorded, never hidden, and never upgraded to "durable".
+  const canonical = mode === 'dual'
+    ? await writeCanonical(userId, projectId, filename, content, contentType, fileType).then((o) => o, (e) => { console.error('[Storage] canonical write failed in dual mode:', (e as Error).message); return null; })
+    : null;
 
   try {
     r2Result = await uploadToR2(key, content, contentType);
@@ -43,6 +72,7 @@ export async function storeProjectFile(
       file_type: fileType,
       file_url: r2Result.publicUrl,
       content: typeof content === 'string' && content.length < 50000 ? content : null,
+      ...(canonical ? { storage_object_id: canonical.id } : {}),
     })
     .select()
     .single();
@@ -57,7 +87,30 @@ export async function storeProjectFile(
     fileUrl: r2Result.publicUrl,
     fileType,
     projectId,
+    storageObjectId: canonical?.id,
+    canonicalDurable: canonical?.state === 'READY',
   };
+}
+
+/** `STORAGE_WRITE_MODE=r2`: verified private storage or a hard failure. No data-URL, no /tmp cache, no public URL. */
+async function storeProjectFileCanonicalOnly(
+  userId: string, projectId: string, filename: string, content: Buffer | string, contentType: string, fileType: StoredFile['fileType'],
+): Promise<StoredFile> {
+  const obj = await writeCanonical(userId, projectId, filename, content, contentType, fileType);
+  if (obj.state !== 'READY') throw new StorageError('BAD_STATE', 'canonical write did not reach READY', 409);
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from('project_files')
+    .insert({
+      project_id: projectId, file_name: filename, file_path: null, file_type: fileType,
+      // stable reference, resolved through POST /api/drive/objects/:id/download-url (never a public URL)
+      file_url: `drive://${obj.id}`,
+      content: typeof content === 'string' && content.length < 50000 ? content : null,
+      storage_object_id: obj.id,
+    })
+    .select().single();
+  if (error || !data) throw new Error(`Failed to record project file: ${error?.message}`);
+  return { id: data.id, fileName: filename, fileUrl: `drive://${obj.id}`, fileType, projectId, storageObjectId: obj.id, canonicalDurable: true };
 }
 
 export async function storeUserFile(

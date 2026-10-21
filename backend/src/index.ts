@@ -40,6 +40,7 @@ import { metricsMiddleware, getMetricsText } from './middleware/metricsMiddlewar
 import { getSupabaseCounterText } from './lib/supabaseCallCounters.js';
 import { phase1AuthMiddleware } from './middleware/phase1Auth.js';
 import mediaRouter from './routes/media.js';
+import driveRouter from './routes/drive.js';
 import capabilitiesRouter from './routes/capabilities.js';
 import { adminMiddleware } from './middleware/admin.js';
 import { ensureGithubSchema } from './db/ensureGithubSchema.js';
@@ -230,6 +231,7 @@ app.use('/api/profile', authMiddleware, profileRouter);
 // Showcase template export writes to a user's repository, so it is auth-gated.
 app.use('/api/showcase', authMiddleware, showcaseRouter);
 app.use('/api/media', authMiddleware, mediaRouter);
+app.use('/api/drive', authMiddleware, driveRouter);
 app.use('/api/capabilities', authMiddleware, capabilitiesRouter);
 app.use('/api/debug', authMiddleware, debugRouter);
 app.use('/api/wellbeing', authMiddleware, wellbeingRouter);
