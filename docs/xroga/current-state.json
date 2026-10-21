@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "8fc01fc2833d9b6b1dba215559a1185a73a09938",
-    "sourceTimestampUtc": "2026-10-21T16:51:46+05:00",
-    "auditStartedUtc": "2026-10-21T11:52:15.480Z",
+    "sha": "f426b8e5147ab8937ad1572188165880a534c25e",
+    "sourceTimestampUtc": "2026-10-21T17:41:23+05:00",
+    "auditStartedUtc": "2026-10-21T14:17:53.434Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -45798,85 +45798,26 @@
       "id": "surface:e800d83b736eb51a8f8a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/ambient/Ambient.tsx",
-      "sha256": "a4e07216808e61920be85f408417a1883b1c00725eab83735ea87a6dced537e7",
+      "sha256": "25794dff544ab2f47ca423aa4639da258673e2b38246fef65c41b9c15c8b9db8",
       "symbols": [
         "Ambient",
         "AmbientKind",
-        "AmbientLayer",
         "el",
         "io",
         "ref"
       ],
       "imports": [
         "./Ambient.module.css",
-        "./S02Scene",
         "react"
       ],
       "runtimeImports": [
-        "frontend/src/components/homepage-next/ambient/Ambient.module.css",
-        "frontend/src/components/homepage-next/ambient/S02Scene.tsx"
+        "frontend/src/components/homepage-next/ambient/Ambient.module.css"
       ],
       "entryPoints": [
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:25",
-        "frontend/src/components/homepage-next/s03/S03Growth.tsx:19",
-        "frontend/src/components/homepage-next/s04/S04Publish.tsx:21",
-        "frontend/src/components/homepage/HomepageClient.tsx:18"
-      ],
-      "reachable": true,
-      "persistenceDependencies": [],
-      "externalProviderDependencies": [
-        "react"
-      ],
-      "authBoundary": [],
-      "tenantBoundary": [],
-      "approvalBoundary": [],
-      "costBoundary": [],
-      "evidenceBoundary": [],
-      "testCoverage": [],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
-      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
-      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
-    },
-    {
-      "id": "surface:c9b3418b9d35a7d96b4b",
-      "subsystem": "frontend",
-      "sourcePath": "frontend/src/components/homepage-next/ambient/S02Scene.tsx",
-      "sha256": "9bd5fa092a1fe1ee81ca07b3e5d5323aa01bc766350d05f2cf68f5621385b14d",
-      "symbols": [
-        "S02Scene",
-        "base",
-        "io",
-        "kids",
-        "measure",
-        "mo",
-        "r",
-        "rects",
-        "ref",
-        "ro",
-        "root",
-        "sec",
-        "settle",
-        "stage",
-        "syncMode"
-      ],
-      "imports": [
-        "./S02Scene.module.css",
-        "react"
-      ],
-      "runtimeImports": [
-        "frontend/src/components/homepage-next/ambient/S02Scene.module.css"
-      ],
-      "entryPoints": [
-        "frontend/src/app/page.tsx"
-      ],
-      "callers": [
-        "frontend/src/components/homepage-next/ambient/Ambient.tsx:16"
+        "frontend/src/components/homepage/HomepageClient.tsx:19"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -45914,8 +45855,73 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:26",
-        "frontend/src/components/homepage/HomepageClient.tsx:19"
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:25",
+        "frontend/src/components/homepage/HomepageClient.tsx:20"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:f6f3f9672dea5264886c",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/backdrop/SharedDotBackdrop.tsx",
+      "sha256": "199af533c513f1e466ae6d03c2023a6225e33aecd085df4eaee28068b154c051",
+      "symbols": [
+        "EASE",
+        "HALF",
+        "PITCH",
+        "SharedDotBackdrop",
+        "active",
+        "cx",
+        "cy",
+        "enabled",
+        "fine",
+        "frame",
+        "host",
+        "kick",
+        "layer",
+        "leave",
+        "move",
+        "paint",
+        "placed",
+        "prefs",
+        "px",
+        "py",
+        "r",
+        "raf",
+        "reduced",
+        "ref",
+        "scroll",
+        "x",
+        "y"
+      ],
+      "imports": [
+        "./SharedDotBackdrop.module.css",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/backdrop/SharedDotBackdrop.module.css"
+      ],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage/HomepageClient.tsx:18"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -47350,7 +47356,7 @@
       "id": "surface:1d1bd416e3c746861aa2",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s01/S01CapabilityDeck.tsx",
-      "sha256": "f10935057dfc7b225e5b6c1ad9e1cf83c49fa93d3bf2c4638844e47ce2a9758a",
+      "sha256": "1bdbec9e683c76fd365a58682aa32c4c8678a1c88b09029448b4eb9a9352ab67",
       "symbols": [
         "DeckStage",
         "Gallery",
@@ -47895,7 +47901,7 @@
       "id": "surface:e91efcfd09bfe6cbb4b9",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s02/S02Work.tsx",
-      "sha256": "da205d37f1facfd3a0fa946cb23353ac81cb00c769252b182adc6ca3211ebd2f",
+      "sha256": "80e59b4b18fff55d356d107ee19a090d4525435f1ebd0f9d3e10c8ebe71609ae",
       "symbols": [
         "Hold",
         "MODES",
@@ -47928,7 +47934,6 @@
         "titleSeen"
       ],
       "imports": [
-        "../ambient/Ambient",
         "../ambient/useSeen",
         "./Companion",
         "./Glyphs",
@@ -47946,7 +47951,6 @@
         "react"
       ],
       "runtimeImports": [
-        "frontend/src/components/homepage-next/ambient/Ambient.tsx",
         "frontend/src/components/homepage-next/ambient/useSeen.ts",
         "frontend/src/components/homepage-next/s02/Companion.tsx",
         "frontend/src/components/homepage-next/s02/Glyphs.tsx",
@@ -48030,7 +48034,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage-next/s02/S02Work.tsx:33"
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:32"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -48709,7 +48713,7 @@
       "id": "surface:1aeaaff28fa1b90a8110",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s03/S03Growth.tsx",
-      "sha256": "79ca49465d08f4a606303363687aabe45a934670d13fde39168addaaca2bcb20",
+      "sha256": "b6e8883db1951f9b10e88b9318f4f3db2e319d66a2f18cb7cd0f113c23394ef3",
       "symbols": [
         "LAST_AT",
         "LEAD_AT",
@@ -48732,7 +48736,6 @@
         "tour"
       ],
       "imports": [
-        "../ambient/Ambient",
         "./GrowthStudio",
         "./S03.module.css",
         "./SearchStudio",
@@ -48745,7 +48748,6 @@
         "react"
       ],
       "runtimeImports": [
-        "frontend/src/components/homepage-next/ambient/Ambient.tsx",
         "frontend/src/components/homepage-next/s03/GrowthStudio.tsx",
         "frontend/src/components/homepage-next/s03/S03.module.css",
         "frontend/src/components/homepage-next/s03/SearchStudio.tsx",
@@ -49873,7 +49875,7 @@
       "id": "surface:44422fb198b6ae2c6fee",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage-next/s04/S04Publish.tsx",
-      "sha256": "6a2df3a4c580b6d03b0ab38c443b440149fd890307ba8853444c74bf15652da3",
+      "sha256": "11981f6481222ae470abddc343bed0d7e181d48ee12c6f9f90eecb17baff491b",
       "symbols": [
         "S",
         "S04Publish",
@@ -49891,7 +49893,6 @@
         "theater"
       ],
       "imports": [
-        "../ambient/Ambient",
         "./S04.module.css",
         "./StoreMark",
         "./publish",
@@ -49903,7 +49904,6 @@
         "react"
       ],
       "runtimeImports": [
-        "frontend/src/components/homepage-next/ambient/Ambient.tsx",
         "frontend/src/components/homepage-next/s04/S04.module.css",
         "frontend/src/components/homepage-next/s04/StoreMark.tsx",
         "frontend/src/components/homepage-next/s04/publish.ts",
@@ -51057,7 +51057,7 @@
       "id": "surface:5400c5a86d8ffd5dc540",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage/HomepageClient.tsx",
-      "sha256": "debd96aae99e9596dfcaf32d9de19c18132d415543816a6f82fec097c1e904b5",
+      "sha256": "54167d0bd55ddff35aa3f42e128835e74b86caa32ebadd1e945b79fb0ccf6b15",
       "symbols": [
         "HomepageClient",
         "active",
@@ -51082,6 +51082,7 @@
         "@/components/feedback/FeedbackModal",
         "@/components/homepage-next/ambient/Ambient",
         "@/components/homepage-next/ambient/useSeen",
+        "@/components/homepage-next/backdrop/SharedDotBackdrop",
         "@/components/homepage-next/phase1/S00Hero",
         "@/components/homepage-next/s01/S01CapabilityDeck",
         "@/components/homepage-next/s02/S02Work",
@@ -51102,6 +51103,7 @@
         "frontend/src/components/feedback/FeedbackModal.tsx",
         "frontend/src/components/homepage-next/ambient/Ambient.tsx",
         "frontend/src/components/homepage-next/ambient/useSeen.ts",
+        "frontend/src/components/homepage-next/backdrop/SharedDotBackdrop.tsx",
         "frontend/src/components/homepage-next/phase1/S00Hero.tsx",
         "frontend/src/components/homepage-next/s01/S01CapabilityDeck.tsx",
         "frontend/src/components/homepage-next/s02/S02Work.tsx",
@@ -60145,7 +60147,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage/HomepageClient.tsx:20",
+        "frontend/src/components/homepage/HomepageClient.tsx:21",
         "frontend/src/components/marketing/AiCodingAgentLanding.tsx:32"
       ],
       "reachable": true,
@@ -104445,72 +104447,72 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:7b9fba3bd657db914be6",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 871,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:f3614525ac405f302f06",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 872,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:62dd1b405b0479435a32",
+      "id": "frontend-call:9566b362175278945395",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 877,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:34b4f5da84ae254c4c0e",
+      "id": "frontend-call:e1d772cb4b280b31722e",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 878,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:398b7c99c0c91e177ce4",
+      "id": "frontend-call:a2ac7e4b66fc14c0075a",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 883,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:c6f9a0d13a870077283c",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 884,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:6fe47967a1876e361d73",
+      "id": "frontend-call:c83647c56e0c2470e1be",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 889,
+      "line": 890,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:c99acd02bd017def69fa",
+      "id": "frontend-call:9f902c4183da2078fa35",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 902,
+      "line": 895,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:33fd230815b5183c5ca4",
+      "id": "frontend-call:c07d66cc51cb9f82c511",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 903,
+      "line": 908,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:243c167c2d357d4805b8",
+      "id": "frontend-call:c43a191e7294d61fbfdf",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 910,
+      "line": 909,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:72a5db0cb6f1d85f6566",
+      "id": "frontend-call:868f28937f8c1a1c8eea",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 924,
+      "line": 916,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:7a7fc62320c9186a21a2",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 930,
       "callee": "fetch",
       "reachable": false
     },
@@ -110641,7 +110643,7 @@
     {
       "id": "test-suite:fe480b4d0f729d8b130d",
       "sourcePath": "frontend/e2e/workspace-new-terminal.spec.ts",
-      "declaredTests": 19,
+      "declaredTests": 20,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -110660,8 +110662,8 @@
       "focusLocations": []
     },
     {
-      "id": "test-suite:53ce8cd035868c68a3fd",
-      "sourcePath": "frontend/src/components/homepage-next/ambient/s02Scene.test.ts",
+      "id": "test-suite:07d963daa01fc7449712",
+      "sourcePath": "frontend/src/components/homepage-next/backdrop/sharedDotBackdrop.test.ts",
       "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
