@@ -10,7 +10,7 @@ const ambient = readFileSync(join(dir, 'Ambient.tsx'), 'utf8');
 
 describe('S02 studio environment', () => {
   it('replaces the S02 ambient layer and leaves the other environments alone', () => {
-    assert.match(ambient, /kind === 's02' \? <S02Scene \/>/);
+    assert.match(ambient, /kind === 's02'\) return <S02Scene \/>/);
     assert.match(ambient, /<AmbientLayer kind=\{kind\} \/>/);
   });
 

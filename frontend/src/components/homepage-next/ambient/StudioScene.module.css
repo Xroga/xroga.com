@@ -1,0 +1,210 @@
+/* S03 atelier + S04 theater (see StudioScene.tsx). Geometry from the measured product rectangle:
+   --cl/--ct/--cw/--ch = left/top/width/height of everything after the heading, --hb = heading bottom, --sh = section
+   height. Defaults are the 1920×1080 layout so the first paint is already composed. The architecture is authored
+   imagery (offline physically based renders); CSS only places it and moves one highlight layer along it. */
+.scene {
+  --cl: 304px;
+  --ct: 350px;
+  --cw: 1312px;
+  --ch: 800px;
+  --hb: 322px;
+  --sh: 1250px;
+  --cyc: 52s;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: layout paint;
+  background: #050607;
+}
+.scene > * {
+  position: absolute;
+}
+.scene:not([data-awake]) * {
+  animation-play-state: paused !important;
+}
+.base {
+  inset: 0;
+}
+.img {
+  position: absolute;
+  inset: 0;
+  background-image: var(--img);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+/* the highlight layer lives inside a static mask shaped like the architecture, so light can only fall on the material */
+.clip {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: var(--img);
+  mask-image: var(--img);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+.sprite {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 150%;
+  background-image: var(--img);
+  background-size: 100% 100%;
+  mix-blend-mode: screen;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.vignette {
+  inset: 0;
+  background: radial-gradient(130% 100% at 50% 48%, rgba(3, 4, 5, 0) 58%, rgba(3, 4, 5, 0.5) 100%);
+}
+/* the section's lower edge: light falls away so the next story begins in clean obsidian */
+.closure {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 210px;
+  background: linear-gradient(180deg, rgba(5, 6, 7, 0) 0, #050607 100%);
+}
+
+/* ================================================================== S03 · Optical Intelligence Atelier */
+.s03 .base {
+  background: linear-gradient(180deg, #050607 0, #060708 calc(var(--ct) - 60px), #0a0b0e calc(var(--ct) + var(--ch) * 0.35), #0b0d10 calc(var(--ct) + var(--ch) * 0.8), #060708 100%);
+}
+/* left: a folded, bevelled titanium plane, cropped by the section; its return edge sits 8px outside the content */
+.s03 .planeL {
+  left: calc(var(--cl) - 8px - 520px);
+  top: calc(var(--ct) - 30px);
+  width: 520px;
+  height: 1000px;
+}
+/* right: a lower, more restrained plane (its return edge faces the content) */
+.s03 .planeR {
+  left: calc(var(--cl) + var(--cw) + 8px);
+  top: calc(var(--ct) + 20px);
+  width: 520px;
+  height: 820px;
+}
+/* one off-axis light slides down the fold (light centre sits at 50% of the sprite) and fades; it rests for the rest of the cycle */
+.s03 .planeL .sprite {
+  top: calc(100px - 75%);
+  animation: lightDown var(--cyc) cubic-bezier(0.45, 0.05, 0.35, 1) infinite;
+}
+@keyframes lightDown {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  8% { opacity: 0; }
+  20% { opacity: 1; }
+  58% { opacity: 1; }
+  70% { transform: translate3d(0, 860px, 0); opacity: 0; }
+  100% { transform: translate3d(0, 860px, 0); opacity: 0; }
+}
+/* Launch & Marketing: the same architecture, the light arrives from the other end */
+.s03[data-mode='b'] .planeL .sprite {
+  animation-direction: reverse;
+}
+
+/* ================================================================== S04 · Obsidian Release Theater */
+.s04 .base {
+  background:
+    radial-gradient(90% 60% at 50% 46%, rgba(26, 29, 36, 0.55), rgba(26, 29, 36, 0) 100%),
+    linear-gradient(180deg, #050607 0, #07080a calc(var(--ct) - 40px), #0b0d11 calc(var(--ct) + var(--ch) * 0.5), #08090c 100%);
+}
+/* two curved architectural fins either side of the Release Studio: a bullnose shoulder and a chamfered return */
+.s04 .finL,
+.s04 .finR {
+  top: calc(var(--ct) - 10px);
+  width: 400px;
+  height: calc(var(--ch) + 170px);
+}
+.s04 .finL {
+  left: calc(var(--cl) - 14px - 400px);
+}
+.s04 .finR {
+  left: calc(var(--cl) + var(--cw) + 14px);
+  transform: scaleX(-1);
+}
+.s04 .finL .sprite {
+  top: calc(40px - 75%);
+  animation: finLeft var(--cyc) cubic-bezier(0.45, 0.05, 0.35, 1) infinite;
+}
+.s04 .finR .sprite {
+  top: calc(40px - 75%);
+  animation: finRight var(--cyc) cubic-bezier(0.45, 0.05, 0.35, 1) infinite;
+}
+/* one studio light visits the left fin, then the right fin, while the shell's rim answers it */
+@keyframes finLeft {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  6% { opacity: 0; }
+  16% { opacity: 1; }
+  38% { transform: translate3d(0, 520px, 0); opacity: 1; }
+  48% { transform: translate3d(0, 620px, 0); opacity: 0; }
+  100% { transform: translate3d(0, 620px, 0); opacity: 0; }
+}
+@keyframes finRight {
+  0% { transform: translate3d(0, 120px, 0); opacity: 0; }
+  50% { opacity: 0; }
+  60% { opacity: 1; }
+  84% { transform: translate3d(0, 640px, 0); opacity: 1; }
+  94% { transform: translate3d(0, 740px, 0); opacity: 0; }
+  100% { transform: translate3d(0, 740px, 0); opacity: 0; }
+}
+/* soft edge light along the shell's perimeter: a rim, not a frame */
+.s04 .edge {
+  left: var(--cl);
+  top: var(--ct);
+  width: var(--cw);
+  height: var(--ch);
+  border-radius: 26px;
+  box-shadow:
+    0 0 0 1px rgba(214, 220, 232, 0.05),
+    0 -2px 40px rgba(214, 220, 232, 0.1),
+    0 0 120px rgba(190, 198, 212, 0.07);
+  animation: rim var(--cyc) ease-in-out infinite;
+}
+@keyframes rim {
+  0%, 8% { opacity: 0.7; }
+  26%, 38% { opacity: 1; }
+  52%, 62% { opacity: 0.72; }
+  74%, 84% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+/* grounding: a broad contact shadow under the shell and a dark, faint reflection */
+.s04 .contact {
+  left: calc(var(--cl) - 30px);
+  top: calc(var(--ct) + var(--ch) - 18px);
+  width: calc(var(--cw) + 60px);
+  height: 74px;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.3) 58%, rgba(0, 0, 0, 0) 100%);
+}
+.s04 .reflection {
+  left: calc(var(--cl) + 60px);
+  top: calc(var(--ct) + var(--ch) + 4px);
+  width: calc(var(--cw) - 120px);
+  height: 90px;
+  background: linear-gradient(180deg, rgba(196, 204, 220, 0.05), rgba(196, 204, 220, 0));
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sprite,
+  .edge {
+    animation: none !important;
+  }
+  .s03 .planeL .sprite {
+    transform: translate3d(0, 300px, 0);
+    opacity: 0.8;
+  }
+  .s04 .finL .sprite {
+    transform: translate3d(0, 280px, 0);
+    opacity: 0.7;
+  }
+  .s04 .finR .sprite {
+    opacity: 0;
+  }
+}
+@media (max-width: 720px) {
+  .scene {
+    --cyc: 64s;
+  }
+}

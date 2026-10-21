@@ -14,11 +14,14 @@
 import { useEffect, useRef, useState } from 'react';
 import a from './Ambient.module.css';
 import { S02Scene } from './S02Scene';
+import { StudioScene } from './StudioScene';
 
 export type AmbientKind = 's02' | 's03' | 's04' | 'horizon';
 
 export function Ambient({ kind }: { kind: AmbientKind }) {
-  return kind === 's02' ? <S02Scene /> : <AmbientLayer kind={kind} />;
+  if (kind === 's02') return <S02Scene />;
+  if (kind === 's03' || kind === 's04') return <StudioScene kind={kind} />;
+  return <AmbientLayer kind={kind} />;
 }
 
 function AmbientLayer({ kind }: { kind: AmbientKind }) {
