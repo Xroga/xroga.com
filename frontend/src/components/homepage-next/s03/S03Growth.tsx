@@ -16,7 +16,6 @@ import { SearchStudio } from './SearchStudio';
 import { initialState, reducer, type Chapter } from './state';
 import { StageHead, useTour } from './Tour';
 import { BEATS, MOBILE_BEATS, type Beat } from './tourBeats';
-import { Ambient } from '../ambient/Ambient';
 import s from './S03.module.css';
 
 const MODES: Chapter[] = ['search', 'growth'];
@@ -111,7 +110,6 @@ export function S03Growth({ loggedIn = false }: { loggedIn?: boolean }) {
       data-title-seen={titleSeen || undefined}
       data-tour={tour.status}
     >
-      <Ambient kind="s03" />
       <div className={s.shield} aria-hidden="true" />
       <div className={s.inner}>
         <header className={s.head}>
