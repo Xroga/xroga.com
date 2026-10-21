@@ -3,9 +3,9 @@
   "reviews": [
     {
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sourceSha256": "44cf6b1bf141b235710aa44d3e24abcfa3c6719b242c4669f2ae0a39f9337db4",
+      "sourceSha256": "51c8408ad81f809eb1968a0b4d64eb30570f2f279d94ca94826a054ae1916a06",
       "callIds": [
-        "228970c28a2f4129901c"
+        "2ed3a7f48977d8096eb2"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Native Array.from materializes locally queried menu buttons for keyboard focus navigation. The subsequent index/focus operations touch the DOM only. No database, storage client, credential or provider write is involved.",
@@ -51,9 +51,9 @@
     },
     {
       "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "sourceSha256": "d7351508a263086f2ad8ba26279aa3d522226d0e7765a830f5ea58104516cb67",
+      "sourceSha256": "0dbd96995b155733fa243bf3ce5cab4f3a5e374f86e566ff29f850f3cae8f8c1",
       "callIds": [
-        "0c67d986d8bb106cd2e0"
+        "8204b932fb1d657bcf51"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Native Array.from copies a local Map iterator into React state for rendering validated plugin search results. This disposition covers only that conversion, not adjacent connector search or any consequential integration action.",

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "1b794f50f88e2e4eb0ec0056f5857fe8264c4906",
+  "source_sha": "b2dbb4e9beabe50a254ff362391185bbbee706d0",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12151,6 +12151,11 @@
       "role": "Existing runtime/build/verification configuration"
     },
     {
+      "path": ".github/workflows/chat-turn-rail-browser.yml",
+      "presence": "PRESENT",
+      "role": "Existing runtime/build/verification configuration"
+    },
+    {
       "path": ".github/workflows/command3-auth-browser.yml",
       "presence": "PRESENT",
       "role": "Existing runtime/build/verification configuration"
@@ -12238,6 +12243,10 @@
     {
       "path": ".github/workflows/backend-health-verification.yml",
       "sha256": "aff410e4746cbd1f8d842a1f72b47d1fa8c434f923e7d1e26d1c4959cb2bfca5"
+    },
+    {
+      "path": ".github/workflows/chat-turn-rail-browser.yml",
+      "sha256": "55a3208c89bc8aab2dcfd7a582630a89ade2238d14d33f79bc67954d2f9a8493"
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
@@ -15305,7 +15314,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "1c60a772b12ba36882667996424a263084a0ab7949d3a71e7b5cba3196a00729"
+      "sha256": "0ccfb78bcbf6f1a09ee48a1752d8f7891662a5dc64f7fa83b91ebd3fffb85f52"
     },
     {
       "path": "frontend/src/components/dashboard/DashboardWelcome.tsx",
@@ -15377,7 +15386,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sha256": "44cf6b1bf141b235710aa44d3e24abcfa3c6719b242c4669f2ae0a39f9337db4"
+      "sha256": "51c8408ad81f809eb1968a0b4d64eb30570f2f279d94ca94826a054ae1916a06"
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceResumeList.tsx",
@@ -16265,7 +16274,7 @@
     },
     {
       "path": "frontend/src/components/layout/AppShell.tsx",
-      "sha256": "ccb953434b9675107f21ef244a3a175fd0ef37f85c47ab5e1e2bee710cebaf0f"
+      "sha256": "823c46a400c9263c64ce8a5cc41d4175fad36be8e4d370ab78e3ac4c84999865"
     },
     {
       "path": "frontend/src/components/layout/BetaExpectationBanner.tsx",
@@ -16329,7 +16338,7 @@
     },
     {
       "path": "frontend/src/components/layout/Sidebar.tsx",
-      "sha256": "47a8270646dd8988864a703f2709b608541659f4fc5f7711e9bf14182df2f7be"
+      "sha256": "7086809adcf528e0eca019ff09c7bba828cb41136444db72ae8a4d179bcf712e"
     },
     {
       "path": "frontend/src/components/layout/SidebarNavScroller.tsx",
@@ -16805,7 +16814,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatTurnRail.tsx",
-      "sha256": "4a4ffb02a6b0352e21cd75c9ea48108bb13186e5f39ebe6403d07ca536ce217c"
+      "sha256": "6afcf033d68796efb15e3bcec771bec8840bda755b3b9f7ffe660e1ad40b843d"
     },
     {
       "path": "frontend/src/components/terminal/ChatbarQueueOutside.tsx",
@@ -16865,7 +16874,7 @@
     },
     {
       "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "sha256": "d7351508a263086f2ad8ba26279aa3d522226d0e7765a830f5ea58104516cb67"
+      "sha256": "0dbd96995b155733fa243bf3ce5cab4f3a5e374f86e566ff29f850f3cae8f8c1"
     },
     {
       "path": "frontend/src/components/terminal/LegacyLandingOutputView.tsx",
@@ -16941,7 +16950,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "9d10de80f886fe5fd4b1970e12bc2884484d767c5aef3264632cfb9a168d51d7"
+      "sha256": "9b34ae0b8881295ac7f1baae0f7dd73652272201d2c749836b158894e14dd542"
     },
     {
       "path": "frontend/src/components/terminal/TerminalBuildReport.tsx",
@@ -16953,7 +16962,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
-      "sha256": "07a0207ea2620f6eb1cab208d8c304f36d765d47f5ed0b91d94ee9982dbf02ae"
+      "sha256": "74520585dd345b93dde28faab763a26e5c7f157c6ed422bca93be4142fbbfc64"
     },
     {
       "path": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
@@ -17001,7 +17010,7 @@
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
-      "sha256": "6fcdf38d1438f0458dcf836e3f902cda2f57ce7cfe52b6bf8938a501faafe59e"
+      "sha256": "a7c9278b561aab59d3744e634d7c8e87d4bad629f237eb59fa652c42a967cd26"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceLauncher.tsx",
@@ -17216,8 +17225,16 @@
       "sha256": "da3103586b081b4d6bdcac9b6fb08e605fc3896a47638a12406a0a12ef39b0bc"
     },
     {
+      "path": "frontend/src/components/ui/locate-icon.tsx",
+      "sha256": "1278064585f3bbea67d124c03357c46b2c1740e66fdb544d20f4ab0f6bbc9245"
+    },
+    {
       "path": "frontend/src/components/ui/semanticIcons.tsx",
       "sha256": "aa1f8b11ba347818b48448db8f7dc2e64bdf968092c7e0982788358ad9df3dd1"
+    },
+    {
+      "path": "frontend/src/components/ui/square-chevron-up-icon.tsx",
+      "sha256": "eb4be368bc3baba045b6bac57380cc6eaa7877c88ce8fba721b9e4d0861e864b"
     },
     {
       "path": "frontend/src/components/workspace/WorkspaceAuthGate.tsx",
@@ -28724,6 +28741,20 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "frontend/src/components/terminal/ChatTurnRail.tsx",
+      "line": 155,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/terminal/ChatTurnRail.tsx",
+      "line": 164,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "frontend/src/components/terminal/ImageStudioCard.tsx",
       "line": 204,
       "scope": "FUNCTION_LOCAL",
@@ -28732,7 +28763,14 @@
     },
     {
       "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "line": 98,
+      "line": 101,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
+      "line": 156,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28740,13 +28778,6 @@
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
       "line": 214,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 252,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
