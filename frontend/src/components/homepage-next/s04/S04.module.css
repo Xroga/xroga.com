@@ -1,0 +1,700 @@
+/* S04 · Publish & distribute (V10, Release Studio).
+   A graphite release environment: one diffused neutral key light behind the studio, light pooling under it like a
+   stage floor, structural margin lines and a rail that leaves the heading toward distribution (../ambient). The
+   homepage's pearl type and hairlines, Xroga blue for Xroga's work, jade only for something done, amber only for the
+   owner. */
+.section {
+  --ink: #0e0f12;
+  --graphite: #131418;
+  --plate: #1a1c21;
+  --pearl: #f3f4f6;
+  --silver: #b3bcc9;
+  --steel: #7d8898;
+  --hair: rgba(236, 240, 246, 0.08);
+  --hair-2: rgba(236, 240, 246, 0.15);
+  --blue: #4d86ff;
+  --ice: #a9c8ff;
+  --jade: #78d6b8;
+  --amber: #d6a868;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  overflow-x: clip;
+  scroll-margin-top: 88px;
+  --pad-top: clamp(96px, 8vw, 124px);
+  padding: var(--pad-top) 0 clamp(72px, 7vw, 100px);
+  color: var(--pearl);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+/* the homepage stylesheet clears section background images; the release environment is painted by the ambient layer and
+   the section asserts only the shared near-black ground (as S03 does) */
+.section.section.section {
+  background-color: #050607 !important;
+}
+.section.section :is(h2, h3, p, small, b, span, em, i, li, dt, dd, label, figcaption, code) {
+  text-shadow: none !important;
+}
+.section.section :is(h2, h3, p, small, label) {
+  z-index: auto !important;
+}
+.section.section :is(button, a) {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  isolation: auto !important;
+}
+.section.section :is(button, a):hover {
+  transform: none !important;
+  filter: none !important;
+}
+.section button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border: 0;
+  background: none;
+  padding: 0;
+  text-align: inherit;
+}
+.section :focus-visible {
+  outline: 2px solid var(--ice);
+  outline-offset: 3px;
+}
+.section :is(ul, ol, dl) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.section :is(p, dd, figure) {
+  margin: 0;
+}
+.inner {
+  position: relative;
+  width: min(1312px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+/* the header shield: S04's own ink under the fixed site header, so nothing peeks around it while S04 scrolls under */
+.shield {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: 92px;
+  /* the shield rests at the section's own top edge, inside the empty top padding, so it can only ever cover content
+     once it is actually stuck under the site header (never the eyebrow and heading below the padding) */
+  margin-top: calc(-1 * var(--pad-top));
+  margin-bottom: calc(var(--pad-top) - 92px);
+  background: linear-gradient(180deg, rgba(8, 9, 11, 0.98) 0%, rgba(8, 9, 11, 0.95) 62%, rgba(8, 9, 11, 0));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 160ms linear;
+}
+.section[data-under] .shield {
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------------ the editorial head */
+/* one statement on one line from tablet up, in the homepage's warm-white type; the payoff phrase is set in satin
+   platinum. A short outcome line under it. */
+.head {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+}
+.eyebrow.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12.5px;
+  font-weight: 650;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8a96a8;
+}
+.eyebrow.eyebrow::before {
+  content: '';
+  width: 26px;
+  height: 1px;
+  background: linear-gradient(90deg, #d9dde4, rgba(217, 221, 228, 0));
+}
+.title.title {
+  margin: 0;
+  font-size: clamp(34px, 3.8vw, 58px);
+  font-weight: 620;
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+  color: var(--pearl) !important;
+}
+.titleA,
+.titleB {
+  display: inline-block;
+  padding-bottom: 0.06em;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.titleA {
+  background-image: linear-gradient(180deg, #faf9f6 0%, #f0eee9 60%, #e2e1dc 100%);
+}
+/* "Launch with Xroga.": satin platinum, machined rather than polished. A bright top edge falls to one crisp horizon
+   line just under the x-height (the engraved band of a turned metal part) and lifts again to the baseline. On the
+   entrance a single soft light travels in from the right once and leaves the material at rest. */
+.titleB {
+  font-weight: 660;
+  background-image:
+    linear-gradient(100deg, rgba(255, 255, 255, 0) 38%, rgba(255, 255, 255, 0.92) 50%, rgba(255, 255, 255, 0) 62%),
+    linear-gradient(180deg, #fbfbfa 0%, #e9ebee 44%, #b4bac4 54%, #d9dce2 68%, #f1f2f4 92%, #c9ced6 100%);
+  background-size: 260% 100%, 100% 100%;
+  background-position: -60% 50%, 0 0;
+  background-repeat: no-repeat;
+}
+.lede.lede {
+  max-width: 62ch;
+  font-size: clamp(17px, 0.9rem + 0.36vw, 20px);
+  font-weight: 500;
+  line-height: 1.5;
+  color: #c9d2de;
+}
+.ledeNote {
+  display: block;
+  margin-top: 4px;
+  font-size: clamp(14.5px, 0.82rem + 0.16vw, 16px);
+  font-weight: 400;
+  color: var(--silver);
+}
+
+/* the entrance (data-intro, S04Publish): transform and opacity only, every element keeps its space throughout */
+.section[data-intro='armed'] :is(.titleA, .titleB, .lede, .studio) {
+  opacity: 0;
+}
+.section[data-intro='play'] .titleA {
+  animation: s04Rise 720ms var(--ease) both;
+}
+.section[data-intro='play'] .titleB {
+  animation:
+    s04Rise 720ms var(--ease) 110ms both,
+    s04Light 1300ms cubic-bezier(0.4, 0, 0.2, 1) 420ms both;
+}
+.section[data-intro='play'] .lede {
+  animation: s04Rise 640ms var(--ease) 340ms both;
+}
+.section[data-intro='play'] .studio {
+  animation: s04Studio 820ms var(--ease) 480ms both;
+}
+@keyframes s04Rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+@keyframes s04Light {
+  from {
+    background-position: 160% 50%, 0 0;
+  }
+  to {
+    background-position: -60% 50%, 0 0;
+  }
+}
+@keyframes s04Studio {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+}
+
+/* ------------------------------------------------------------------ the Release Studio */
+.studio {
+  position: relative;
+  margin-top: 36px;
+  border-radius: 26px;
+  overflow: hidden;
+  background:
+    radial-gradient(70% 70% at 30% 30%, rgba(196, 204, 218, 0.07), rgba(196, 204, 218, 0) 70%),
+    linear-gradient(180deg, #15171b 0%, #101114 100%);
+  /* a neutral rim where the key light catches the studio's top edge, and a soft graphite halo into the room */
+  box-shadow:
+    inset 0 1px 0 rgba(236, 240, 246, 0.14),
+    inset 0 0 0 1px var(--hair),
+    0 0 0 1px rgba(226, 232, 242, 0.06),
+    0 30px 120px -50px rgba(200, 208, 222, 0.2),
+    0 70px 120px -60px rgba(0, 0, 0, 0.95);
+}
+.studio[data-hold] * {
+  animation-play-state: paused !important;
+}
+.titlebar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  min-height: 58px;
+  padding: 6px 18px;
+  border-bottom: 1px solid var(--hair);
+  background: rgba(8, 9, 11, 0.35);
+}
+.app {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14.5px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--pearl);
+}
+.app > span {
+  display: grid;
+  gap: 0;
+}
+.app small {
+  font-size: 11.5px;
+  font-weight: 560;
+  color: var(--steel);
+}
+.orb {
+  display: block;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+}
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 16px;
+  background: rgba(236, 240, 246, 0.04);
+  box-shadow: inset 0 0 0 1px var(--hair);
+}
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 6px 18px !important;
+  border-radius: 12px !important;
+  transition:
+    background-color 220ms var(--ease),
+    box-shadow 220ms var(--ease);
+}
+.tab:hover {
+  background: rgba(236, 240, 246, 0.04) !important;
+}
+.tab[aria-selected='true'] {
+  background: linear-gradient(180deg, rgba(77, 134, 255, 0.2), rgba(77, 134, 255, 0.08)) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(77, 134, 255, 0.55),
+    0 8px 20px -12px rgba(77, 134, 255, 0.8);
+}
+.tabText {
+  display: grid;
+  gap: 1px;
+  text-align: left;
+}
+.tabText b {
+  font-size: 16px;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+  color: #c3ccd7;
+}
+.tab[aria-selected='true'] .tabText b {
+  color: #fff;
+}
+.tabText small {
+  font-size: 12px;
+  color: var(--steel);
+  white-space: nowrap;
+}
+.tab[aria-selected='true'] .tabText small {
+  color: #b8cdf5;
+}
+.state {
+  display: inline-flex;
+  align-items: center;
+  justify-self: end;
+  gap: 10px;
+  min-width: 0;
+  font-size: 13.5px;
+  font-weight: 560;
+  color: #c8d2de;
+}
+.state i {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--blue);
+  box-shadow: 0 0 0 4px rgba(77, 134, 255, 0.2);
+}
+.studio[data-phase='idle'] .state i {
+  background: var(--steel);
+  box-shadow: none;
+}
+.studio[data-phase='ready'] .state i {
+  background: var(--amber);
+  box-shadow: 0 0 0 4px rgba(214, 168, 104, 0.2);
+}
+.say {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.state em {
+  flex: none;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(236, 240, 246, 0.06);
+  font-size: 11.5px;
+  font-style: normal;
+  font-weight: 600;
+  color: var(--steel);
+}
+.stage {
+  position: relative;
+  padding: 14px 28px 16px;
+  animation: s04Swap 420ms var(--ease) both;
+}
+.intro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 24px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--hair);
+}
+.intro p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--silver);
+}
+.intro b {
+  font-size: 20px;
+  font-weight: 640;
+  letter-spacing: -0.015em;
+  color: var(--pearl);
+}
+.intro em {
+  font-size: 13px;
+  font-style: normal;
+  color: var(--steel);
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------ readiness */
+.rail {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 14px 6px 12px;
+  border-top: 1px solid var(--hair);
+  background: rgba(6, 9, 15, 0.35);
+}
+.items {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 4px;
+}
+.items button {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr);
+  align-items: start;
+  gap: 9px;
+  width: 100%;
+  min-height: 46px;
+  padding: 6px 10px !important;
+  border-radius: 12px !important;
+  text-align: left;
+  transition: background-color 200ms var(--ease);
+}
+.items button:hover {
+  background: rgba(236, 240, 246, 0.04) !important;
+}
+.items i {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  margin-top: 2px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px #4f5a6b;
+  transition:
+    background-color 300ms ease,
+    box-shadow 300ms ease;
+}
+.items span {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+.items b {
+  font-size: 13.5px;
+  font-weight: 620;
+  color: #aeb8c6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.items small {
+  font-size: 12px;
+  color: var(--steel);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.items li[data-state='working'] i {
+  box-shadow: inset 0 0 0 1.5px var(--blue);
+  background: radial-gradient(circle, var(--blue) 0 3px, transparent 3.5px);
+}
+.items li[data-state='working'] b {
+  color: #dbe6ff;
+}
+.items li[data-state='working'] small {
+  color: #9fb6d9;
+}
+.items li[data-state='done'] i {
+  box-shadow: none;
+  background: rgba(120, 214, 184, 0.18);
+}
+.items li[data-state='done'] i::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 3.6px;
+  width: 6px;
+  height: 3.5px;
+  border-left: 1.6px solid var(--jade);
+  border-bottom: 1.6px solid var(--jade);
+  transform: rotate(-45deg);
+}
+.items li[data-state='done'] b {
+  color: var(--pearl);
+}
+.items li[data-state='owner'] i {
+  box-shadow: none;
+  background: radial-gradient(circle, var(--amber) 0 4px, rgba(214, 168, 104, 0.22) 4.5px);
+}
+.items li[data-state='owner'] b {
+  color: var(--pearl);
+}
+.items li[data-state='owner'] small {
+  color: #e3c18f;
+}
+.replay {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 16px !important;
+  border-radius: 999px !important;
+  box-shadow: inset 0 0 0 1px var(--hair-2);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #c8d2de;
+  transition: background-color 200ms var(--ease);
+}
+.replay:hover {
+  background: rgba(236, 240, 246, 0.05) !important;
+}
+.replay svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.note.note {
+  margin-top: 16px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #6f7b8c;
+}
+
+@keyframes s04Swap {
+  from {
+    opacity: 0.2;
+    transform: translateY(8px);
+  }
+}
+
+/* ------------------------------------------------------------------ short desktop screens: the frame gives its height to the scene */
+@media (min-width: 1025px) and (max-height: 860px) {
+  .titlebar {
+    min-height: 50px;
+    padding: 4px 18px;
+  }
+  .tab {
+    min-height: 40px;
+    padding: 3px 16px !important;
+  }
+  .tabText b {
+    line-height: 1.2;
+  }
+  .tabText small {
+    line-height: 1.25;
+  }
+  .stage {
+    padding: 8px 28px 10px;
+  }
+  .intro {
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+  }
+  .rail {
+    padding-block: 4px;
+  }
+  .intro p {
+    font-size: 15px;
+  }
+  .intro b {
+    font-size: 18px;
+  }
+  .items button {
+    min-height: 34px;
+    align-items: center;
+  }
+  .items small {
+    display: none;
+  }
+  .replay {
+    min-height: 36px;
+  }
+}
+
+/* ------------------------------------------------------------------ laptop */
+@media (max-width: 1240px) {
+  .titlebar {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'app state'
+      'tabs tabs';
+    row-gap: 12px;
+  }
+  .app {
+    grid-area: app;
+  }
+  .state {
+    grid-area: state;
+  }
+  .tabs {
+    grid-area: tabs;
+  }
+  .tab {
+    flex: 1;
+  }
+  .items {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ------------------------------------------------------------------ tablet */
+@media (max-width: 980px) {
+  .stage {
+    padding: 22px 22px 24px;
+  }
+}
+
+/* ------------------------------------------------------------------ phones */
+@media (max-width: 760px) {
+  .inner {
+    width: calc(100% - 32px);
+  }
+  .section {
+    --pad-top: 80px;
+  }
+  .title.title {
+    font-size: clamp(32px, 9.6vw, 42px);
+    white-space: normal;
+  }
+  /* phones: one sentence per line, at full size */
+  .titleA,
+  .titleB {
+    display: block;
+  }
+  .studio {
+    margin-top: 28px;
+    border-radius: 20px;
+  }
+  .titlebar {
+    padding: 12px;
+  }
+  .state em {
+    display: none;
+  }
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .tab {
+    justify-content: center;
+    min-height: 52px;
+    padding: 6px 4px !important;
+  }
+  .tabText {
+    text-align: center;
+  }
+  .tabText b {
+    font-size: 13.5px;
+    white-space: normal;
+    line-height: 1.15;
+  }
+  .tabText small {
+    display: none;
+  }
+  .stage {
+    padding: 16px 14px 20px;
+  }
+  .intro b {
+    display: block;
+    font-size: 18px;
+  }
+  .intro p {
+    font-size: 14.5px;
+  }
+  .intro em {
+    white-space: normal;
+  }
+  .rail {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 10px;
+  }
+  .items {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .items :is(b, small) {
+    white-space: normal;
+  }
+  .replay {
+    justify-self: stretch;
+    justify-content: center;
+  }
+}
+
+/* the narrowest phones: the status sits under the studio name instead of beside it */
+@media (max-width: 480px) {
+  .titlebar {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'app'
+      'state'
+      'tabs';
+    row-gap: 8px;
+  }
+  .state {
+    justify-self: start;
+    max-width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage,
+  .shield {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -3,7 +3,9 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { ChatBarActionsMenu } from './ChatBarActionsMenu';
-import { buildComposerPreamble, useComposerToolsStore } from '@/store/useComposerToolsStore';
+import { ComposerToolChip } from './ComposerToolChip';
+import type { ComposerInsertOptions } from './ChatBarActionsMenu';
+import { buildComposerPreamble, COMPOSER_SKILLS, useComposerToolsStore } from '@/store/useComposerToolsStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
 import { uploadChatImage, type ChatAttachment } from '@/lib/api';
@@ -31,7 +33,8 @@ import { requiresGitHubForBuild } from '@/lib/messageHelpers';
 import { composerMaxHeightForViewport } from '@/lib/chatComposerSizing';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 import { useWorkspaceAuthGate } from '@/components/workspace/WorkspaceAuthGate';
-import { X } from 'lucide-react';
+import { X, Folder, Puzzle } from 'lucide-react';
+import startStyles from '@/components/dashboard/WorkspaceNewTerminal.module.css';
 import { buildArtifactContextPreamble, useXrogaArtifactContext } from '@/lib/xrogaArtifactContext';
 import { XrogaVoiceControl } from './XrogaVoiceControl';
 
@@ -50,7 +53,7 @@ function renameFile(file: File, newName: string) {
   return new File([file], newName, { type: file.type, lastModified: file.lastModified });
 }
 
-export function TerminalChatBar() {
+export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
   const workspaceIdentity = useWorkspaceIdentity();
   const isGuest = workspaceIdentity.status === 'guest';
   const { requestAuthGate } = useWorkspaceAuthGate();
@@ -78,6 +81,8 @@ export function TerminalChatBar() {
    * re-render on every letter (that caused double characters / rewritten input).
    */
   const [draft, setDraft] = useState(prompt);
+  const [selectedTool, setSelectedTool] = useState<({ scaffold: string } & ComposerInsertOptions) | null>(null);
+  const enabledSkills = useComposerToolsStore((state) => state.enabledSkills);
   const draftRef = useRef(draft);
   draftRef.current = draft;
   const composingRef = useRef(false);
@@ -105,6 +110,7 @@ export function TerminalChatBar() {
     return () => window.clearTimeout(timer);
   }, [draft, prompt, setPrompt]);
   const [integrationsOpen, setIntegrationsOpen] = useState(false);
+  const pluginsButtonRef = useRef<HTMLButtonElement>(null);
   const [githubOpen, setGithubOpen] = useState(false);
   const [githubConnected, setGithubConnected] = useState(false);
   const [vercelConnected, setVercelConnected] = useState(false);
@@ -316,6 +322,7 @@ export function TerminalChatBar() {
         : undefined);
 
     setDraft('');
+    setSelectedTool(null);
     draftRef.current = '';
     lastExternalPrompt.current = '';
     setPrompt('');
@@ -478,7 +485,17 @@ export function TerminalChatBar() {
 
   return (
     <>
-      <IntegrationsModal open={integrationsOpen} onClose={() => setIntegrationsOpen(false)} />
+      <IntegrationsModal open={integrationsOpen} onClose={() => setIntegrationsOpen(false)} anchorRef={pluginsButtonRef}
+        onSelect={(plugin) => {
+          const scaffold = 'Use the connected ' + plugin.name + ' plugin for this task: ';
+          const next = draftRef.current.trim() ? scaffold + draftRef.current : scaffold;
+          setSelectedTool({ label: plugin.name, category: 'Connected plugin', description: 'Connected app selected. Actual execution still follows your tool permissions.', tone: 'purple', scaffold });
+          setDraft(next);
+          draftRef.current = next;
+          setIntegrationsOpen(false);
+          window.setTimeout(() => textareaRef.current?.focus(), 20);
+        }}
+      />
       <GithubRepoModal
         open={githubOpen}
         onClose={() => setGithubOpen(false)}
@@ -533,6 +550,32 @@ export function TerminalChatBar() {
             {artifactSelections.map((selection) => <span key={selection.blockId} className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--border)] px-2.5 py-1 text-[11px]">{selection.label}<button type="button" onClick={() => removeArtifactSelection(selection.blockId)} aria-label={`Remove ${selection.label}`}><X className="h-3 w-3" /></button></span>)}
           </div> : null}
 
+          {!incognito && hydrated && (selectedTool || enabledSkills.length > 0) ? (
+            <div className="flex max-w-full flex-wrap gap-1.5 px-3 pt-2" aria-label="Selected composer tools">
+              {selectedTool?.label ? <ComposerToolChip
+                label={selectedTool.label}
+                category={selectedTool.category ?? 'Selected action'}
+                description={selectedTool.description ?? 'An editable instruction attached to this draft.'}
+                tone={selectedTool.tone ?? 'blue'}
+                onRemove={() => {
+                  const next = draftRef.current.startsWith(selectedTool.scaffold)
+                    ? draftRef.current.slice(selectedTool.scaffold.length).trimStart()
+                    : draftRef.current;
+                  setDraft(next);
+                  draftRef.current = next;
+                  setSelectedTool(null);
+                  textareaRef.current?.focus();
+                }}
+              /> : null}
+              {enabledSkills.map(id => {
+                const skill = COMPOSER_SKILLS.find(item => item.id === id);
+                return skill ? <ComposerToolChip key={id} label={skill.label} category="Active skill"
+                  description={skill.description} tone={id === 'plan-first' ? 'orange' : id === 'tests-first' ? 'green' : id === 'no-secrets' ? 'red' : 'purple'}
+                  onRemove={() => useComposerToolsStore.getState().toggleSkill(id)} /> : null;
+              })}
+            </div>
+          ) : null}
+
           {/* The toolbar row above the input is gone.
               It carried Black Hole, Integrations, GitHub and Vercel as chips and
               scrolled horizontally on a phone, which is what made the composer feel
@@ -553,6 +596,7 @@ export function TerminalChatBar() {
 
           <form ref={formRef} onSubmit={handleSubmit} className="px-2 sm:px-2.5 py-0.5 sm:py-1 xv-chatbar-input-form">
             <ChatBarInputRow
+              arrowSend={starter}
               uploading={uploading}
               onUploadClick={requestFilePicker}
               hideUpload
@@ -560,6 +604,7 @@ export function TerminalChatBar() {
                 !incognito ? (
                   <div className="xv-chatbar-primary-tools">
                     <ChatBarActionsMenu
+                      plusIcon={starter}
                       className="shrink-0"
                       disabled={loading}
                       onAddFiles={requestFilePicker}
@@ -579,13 +624,14 @@ export function TerminalChatBar() {
                       // these are scaffolds the user finishes, and sending a
                       // half-written prompt would burn a real run.
                       const next = draftRef.current.trim() ? `${text}${draftRef.current}` : text;
+                      setSelectedTool(options?.label ? { ...options, scaffold: text } : null);
                       setDraft(next);
                       draftRef.current = next;
                       window.setTimeout(() => {
                         const textarea = textareaRef.current;
                         if (!textarea) return;
                         textarea.focus();
-                        if (options) {
+                        if (options?.highlight && options.selectionLength) {
                           textarea.dataset.insertHighlight = options.highlight;
                           textarea.setSelectionRange(0, options.selectionLength);
                         }
@@ -593,6 +639,16 @@ export function TerminalChatBar() {
                       }}
                     />
                     <BlackHoleVButton compact className="xv-companion-blackhole" />
+                    {starter ? <>
+                      <button type="button" className={startStyles.tool} aria-label="Projects" onClick={() => {
+                        if (isGuest) { requestAuthGate('integration'); return; }
+                        setGithubOpen(true);
+                      }}><Folder aria-hidden="true" /><span>Projects</span></button>
+                      <button ref={pluginsButtonRef} type="button" className={startStyles.tool} aria-label="Plugins" onClick={() => {
+                        if (isGuest) { requestAuthGate('integration'); return; }
+                        setIntegrationsOpen(true);
+                      }}><Puzzle aria-hidden="true" /><span>Plugins</span></button>
+                    </> : <button ref={pluginsButtonRef} type="button" className={startStyles.tool} aria-label="Plugins" onClick={() => { if (isGuest) { requestAuthGate('integration'); return; } setIntegrationsOpen(true); }}><Puzzle aria-hidden="true" /><span>Plugins</span></button>}
                   </div>
                 ) : null
               }
@@ -600,6 +656,7 @@ export function TerminalChatBar() {
               trailingExtras={
                 !incognito ? (
                   <XrogaVoiceControl
+                    microphoneIcon={starter}
                     composerText={draft}
                     onVoiceDraft={handleVoiceDraft}
                     onVoiceSend={handleVoiceSend}
@@ -632,6 +689,7 @@ export function TerminalChatBar() {
                 onChange={(e) => {
                   const next = e.target.value;
                   delete e.currentTarget.dataset.insertHighlight;
+                  if (selectedTool && !next.startsWith(selectedTool.scaffold)) setSelectedTool(null);
                   setDraft(next);
                   draftRef.current = next;
                   triggerComposerSignal(900);
@@ -659,7 +717,7 @@ export function TerminalChatBar() {
                     void handleSubmit(e, false);
                   }
                 }}
-                placeholder={incognito ? 'Type a private message…' : 'Describe what you want to build or change…'}
+                placeholder={incognito ? 'Type a private message…' : starter ? 'Ask anything…' : 'Describe what you want to build or change…'}
                 aria-label="Message Xroga"
                 rows={1}
                 spellCheck={false}

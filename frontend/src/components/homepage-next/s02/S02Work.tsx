@@ -22,6 +22,8 @@ import { useDemoClock } from './useDemoClock';
 import { busy, delayOf, gateOf, initialWorkforce, workforceReducer } from './workforce';
 import { Companion } from './Companion';
 import { MissionGlyph } from './Glyphs';
+import { Ambient } from '../ambient/Ambient';
+import { useSeen } from '../ambient/useSeen';
 import s from './S02.module.css';
 
 const MODES: Mode[] = ['browser', 'workforce'];
@@ -29,6 +31,11 @@ const MODES: Mode[] = ['browser', 'workforce'];
 // The computer loads as its own chunk shortly before the section is reached, behind a computer-sized hold.
 const Hold = () => <div className={s.hold} aria-hidden="true" />;
 const Theater = dynamic(() => import('./Theater').then((m) => m.Theater), { ssr: false, loading: Hold });
+
+
+// the heading's emphasis: "AI Employee" carries the section's brushed-platinum treatment
+const TITLE_EM = 'AI Employee';
+const TITLE = COPY.title.split(TITLE_EM) as [string, string];
 
 export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
   const root = useRef<HTMLElement>(null);
@@ -39,6 +46,8 @@ export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
   const { state, dispatch, running, onScreen, hidden } = useDemoClock(root, reduced, mode === 'browser');
   const [wf, wfDispatch] = useReducer(workforceReducer, undefined, initialWorkforce);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const titleSeen = useSeen(titleRef);
 
   // mount the computer once the section is within about a screen and a half
   const [near, setNear] = useState(false);
@@ -117,14 +126,17 @@ export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
       data-settled={(last && (state.ended || reduced)) || undefined}
       data-running={running || undefined}
       data-reduced={reduced || undefined}
+      data-title-seen={titleSeen || undefined}
     >
-      <div className={s.ambient} aria-hidden="true" />
+      <Ambient kind="s02" />
       <div className={s.inner}>
         <header className={s.head}>
           <div className={s.copy}>
             <p className={s.eyebrow}>{COPY.eyebrow}</p>
-            <h2 id="s02-title" className={s.title}>
-              {COPY.title}
+            <h2 ref={titleRef} id="s02-title" className={s.title}>
+              {TITLE[0]}
+              <span className={s.titleEm}>{TITLE_EM}</span>
+              {TITLE[1]}
             </h2>
             <p key={mode} className={s.lede}>
               {COPY.lede[mode]}

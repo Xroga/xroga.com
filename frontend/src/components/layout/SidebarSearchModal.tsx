@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { Search, X, FolderOpen, MessageSquare } from 'lucide-react';
 import { api, type Project } from '@/lib/api';
@@ -13,6 +14,7 @@ interface SidebarSearchModalProps {
 
 export function SidebarSearchModal({ open, onClose }: SidebarSearchModalProps) {
   const [query, setQuery] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -35,27 +37,37 @@ export function SidebarSearchModal({ open, onClose }: SidebarSearchModalProps) {
     return () => window.removeEventListener('keydown', onKey);
   }, [open, onClose]);
 
+  useEffect(() => {
+    if (!open) return;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    searchInputRef.current?.focus();
+    return () => previouslyFocused?.focus?.();
+  }, [open]);
+
   if (!open) return null;
 
   const q = query.toLowerCase();
   const filtered = projects.filter((p) => p.name.toLowerCase().includes(q));
 
-  return (
-    <div className="fixed inset-0 z-[60] flex items-start justify-center pt-20 px-4 bg-black/60 backdrop-blur-sm">
-      <div
-        className="w-full max-w-lg rounded-2xl border border-[var(--card-border)] bg-[var(--card)] backdrop-blur-xl shadow-2xl overflow-hidden"
+  return createPortal(
+    <div className="fixed inset-0 z-[3000] flex items-start justify-center px-3 pt-[min(10vh,80px)] bg-black/80" onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}>
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-label="Search projects and chats"
+        className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-[#484848] bg-[#191919] text-[#f5f5f5] shadow-[0_24px_72px_rgba(0,0,0,.72)]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-2 px-4 py-3 border-b border-[var(--card-border)]">
           <Search className="w-4 h-4 text-[var(--muted)]" />
           <input
-            autoFocus
+            ref={searchInputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search projects and chats..."
-            className="flex-1 bg-transparent text-sm focus:outline-none"
+            className="min-w-0 flex-1 bg-transparent text-sm text-white placeholder:text-[#b4b4b4] focus:outline-none"
           />
-          <button type="button" onClick={onClose} className="p-1 rounded hover:bg-white/5">
+          <button type="button" onClick={onClose} className="p-1 rounded hover:bg-white/10" aria-label="Close search">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -91,7 +103,8 @@ export function SidebarSearchModal({ open, onClose }: SidebarSearchModalProps) {
             <span>View all chats</span>
           </Link>
         </div>
-      </div>
-    </div>
+      </section>
+    </div>,
+    document.body,
   );
 }

@@ -2,16 +2,16 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowUpRight, Bug, Check, Command, ListChecks, Paperclip, ScrollText, Sparkles, TerminalSquare, X } from 'lucide-react';
+import { ArrowUpRight, Bot, Bug, Check, ChevronRight, Command, FolderOpen, Globe2, Library, ListChecks, Paperclip, Plus, Puzzle, ScrollText, Sparkles, TerminalSquare, Workflow, X } from 'lucide-react';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { CirclePlayIcon } from '@/components/icons/animated/CirclePlayIcon';
-import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
 import {
   COMPOSER_COMMANDS,
   COMPOSER_SKILLS,
   useComposerToolsStore,
 } from '@/store/useComposerToolsStore';
 import { cn } from '@/lib/utils';
+import controls from './WorkspaceControls.module.css';
 
 /**
  * The composer's extra actions, behind one compact trigger.
@@ -24,6 +24,43 @@ import { cn } from '@/lib/utils';
  * A dot on the trigger marks that rules or packs are active, because a prompt being
  * silently modified is worse than no feature at all.
  */
+const WORK_OPTIONS = [
+  { id: 'library', label: 'Library', description: 'Find, read and reuse your saved files.', icon: Library, examples: [
+    ['Find a file', 'Find the document or file about: '],
+    ['Summarize files', 'Summarize these files and list the important findings: '],
+    ['Create a deliverable', 'Use my attached files to create a polished deliverable about: '],
+  ] },
+  { id: 'projects', label: 'Projects', description: 'Continue building and testing in your projects.', icon: FolderOpen, examples: [
+    ['Continue a project', 'Continue work on my current project. Inspect its state and remaining tasks: '],
+    ['Build a feature', 'Implement and verify this feature in my selected project: '],
+    ['Review a repository', 'Review my selected repository and propose evidence-based repairs: '],
+  ] },
+  { id: 'browser', label: 'Browser automation', description: 'Research sites and test browser workflows.', icon: Globe2, examples: [
+    ['Research a website', 'Inspect and research this website, citing what you find: '],
+    ['Test a workflow', 'Test this website workflow and report verified results: '],
+    ['Automate a browser task', 'Plan and perform this browser task with approval for sensitive actions: '],
+  ] },
+  { id: 'employees', label: 'AI Employees', description: 'Delegate repeatable work to specialist assistants.', icon: Bot, examples: [
+    ['Research employee', 'Set up a research assistant for the following task: '],
+    ['Operations employee', 'Plan an AI employee for this recurring operations work: '],
+    ['Content employee', 'Plan and delegate this content workflow to an AI employee: '],
+  ] },
+  { id: 'apps', label: 'Apps automation', description: 'Use authorized apps for connected workflows.', icon: Workflow, examples: [
+    ['Connect an app', 'Help connect the app required for this task: '],
+    ['Design a workflow', 'Build a workflow across my connected apps to: '],
+    ['Sync information', 'Check permissions and plan a data sync between my authorized apps: '],
+  ] },
+] as const;
+
+export type ComposerInsertOptions = {
+  highlight?: 'command' | 'plan' | 'debug';
+  selectionLength?: number;
+  label?: string;
+  category?: string;
+  description?: string;
+  tone?: 'blue' | 'orange' | 'red' | 'green' | 'purple' | 'gray';
+};
+
 export function ChatBarActionsMenu({
   onInsert,
   onAddFiles,
@@ -32,9 +69,10 @@ export function ChatBarActionsMenu({
   recentTerminal,
   disabled,
   className,
+  plusIcon = false,
 }: {
   /** Fills the composer with a scaffold for the user to edit. Never auto-sends. */
-  onInsert: (text: string, options?: { highlight: 'command' | 'plan' | 'debug'; selectionLength: number }) => void;
+  onInsert: (text: string, options?: ComposerInsertOptions) => void;
   onAddFiles?: () => void;
   /**
    * Opens the integrations surface. This used to be a pill sitting beside the `+`,
@@ -52,9 +90,12 @@ export function ChatBarActionsMenu({
   };
   disabled?: boolean;
   className?: string;
+  plusIcon?: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const [panel, setPanel] = useState<'menu' | 'commands' | 'skills' | 'rules'>('menu');
+  const [panel, setPanel] = useState<'menu' | 'commands' | 'skills' | 'rules' | 'work'>('menu');
+  const [workId, setWorkId] = useState<string>('library');
+  const activeWork = WORK_OPTIONS.find(item => item.id === workId) ?? WORK_OPTIONS[0];
   const rootRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
@@ -87,26 +128,29 @@ export function ChatBarActionsMenu({
     const sync = () => {
       const composer = rootRef.current?.closest<HTMLElement>('.xv-chatbar-solid');
       if (!composer) return;
-      const rect = composer.getBoundingClientRect();
-      const mobile = window.innerWidth < 640;
-      if (mobile) {
-        setMenuStyle({
-          position: 'fixed',
-          left: rect.left,
-          right: 'auto',
-          bottom: Math.max(8, window.innerHeight - rect.top + 11),
-          width: rect.width,
-          maxHeight: Math.min(panel === 'menu' ? 390 : 304, Math.max(150, rect.top - 8)),
+      const frame = composer.closest<HTMLElement>('.xv-kimi-composer-frame') ?? composer;
+      const rect = frame.getBoundingClientRect();
+      const width = Math.min(rect.width, window.innerWidth - 16);
+      const left = Math.max(8, Math.min(rect.left, window.innerWidth - width - 8));
+      const idle = Boolean(composer.closest('.xv-terminal-dock--idle'));
+      if (idle) {
+        const available = window.innerHeight - rect.bottom - 16;
+        setMenuStyle(available >= 160 ? {
+          position: 'fixed', left, top: rect.bottom + 6,
+          bottom: 'auto', width,
+          maxHeight: Math.max(120, Math.min(480, available)),
+        } : {
+          position: 'fixed', left, top: 'auto',
+          bottom: Math.max(8, window.innerHeight - rect.top + 6), width,
+          maxHeight: Math.max(120, Math.min(440, rect.top - 12)),
         });
         return;
       }
-      const width = Math.min(rect.width, 520);
       setMenuStyle({
-        position: 'fixed',
-        left: Math.min(Math.max(8, rect.left), window.innerWidth - width - 8),
-        bottom: Math.max(8, window.innerHeight - rect.top + 11),
-        width: Math.min(width, 480),
-        maxHeight: Math.min(panel === 'menu' ? 330 : 340, Math.max(176, rect.top - 12)),
+        position: 'fixed', left, top: 'auto',
+        bottom: Math.max(8, window.innerHeight - rect.top + 6),
+        width,
+        maxHeight: Math.min(480, Math.max(130, rect.top - 12)),
       });
     };
     sync();
@@ -132,7 +176,7 @@ export function ChatBarActionsMenu({
     if (!open) setPanel('menu');
   }, [open]);
 
-  function insert(text: string, options?: { highlight: 'command' | 'plan' | 'debug'; selectionLength: number }) {
+  function insert(text: string, options?: ComposerInsertOptions) {
     onInsert(text, options);
     setOpen(false);
   }
@@ -157,12 +201,12 @@ export function ChatBarActionsMenu({
             marked the open state came from the plus reading as a close cross when
             rotated; this glyph is not a cross, so the open state is carried by
             `data-open` in the stylesheet instead. */}
-        <AnimatedIcon icon={CirclePlayIcon} size={16} />
+        {plusIcon ? <Plus size={18} aria-hidden="true" /> : <AnimatedIcon icon={CirclePlayIcon} size={16} />}
         {activeCount > 0 && <span className="xv-cba-dot" aria-hidden="true" />}
       </button>
 
       {open && typeof document !== 'undefined' ? createPortal(
-        <div ref={menuRef} className="xv-cba-menu" role="dialog" aria-label="Composer actions" style={menuStyle}>
+        <div ref={menuRef} className={cn('xv-cba-menu', controls.actions)} role="dialog" aria-label="Composer actions" style={{ ...menuStyle, '--xv-actions-width': `${menuStyle.width}px` } as React.CSSProperties}>
           {panel === 'menu' && (
             <div className="xv-cba-grid">
               {recentTerminal && (
@@ -184,48 +228,68 @@ export function ChatBarActionsMenu({
                 </button>
               )}
 
-              <button type="button" className="xv-cba-item" disabled={!onAddFiles} onClick={() => { onAddFiles?.(); setOpen(false); }}>
+              <button type="button" className="xv-cba-item" data-tone="gray" disabled={!onAddFiles} onClick={() => { onAddFiles?.(); setOpen(false); }}>
                 <Paperclip className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Add files or photos</b><i>Upload from computer</i></span>
                 <kbd className="xv-cba-kbd">Ctrl+U</kbd>
               </button>
-              <button type="button" className="xv-cba-item xv-cba-item--integrations" disabled={!onOpenIntegrations} onClick={() => { onOpenIntegrations?.(); setOpen(false); }}>
-                <span className="xv-cba-integrations-logo" aria-hidden="true">
-                  <IntegrationLogo id="github" name="GitHub" size={10} />
-                  <IntegrationLogo id="vercel" name="Vercel" size={10} />
-                  <IntegrationLogo id="supabase" name="Supabase" size={10} />
-                </span>
-                <span className="xv-cba-item__text"><b>Integrations</b><i>GitHub, Vercel, and your authorised accounts</i></span>
+              <button type="button" className="xv-cba-item xv-cba-item--integrations" data-tone="purple" disabled={!onOpenIntegrations} onClick={() => { onOpenIntegrations?.(); setOpen(false); }}>
+                <Puzzle className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <span className="xv-cba-item__text"><b>Plugins</b><i>Connect and manage supported apps</i></span>
                 {connectorsNeedingAttention > 0 && <i className="xv-cba-flag" aria-hidden="true" />}
-                <span className="xv-cba-integration-preview" aria-hidden="true">
-                  <strong>Integrations</strong>
-                  <span><IntegrationLogo id="github" name="GitHub" size={14} /> GitHub</span>
-                  <span><IntegrationLogo id="vercel" name="Vercel" size={14} /> Vercel</span>
-                  <span><IntegrationLogo id="supabase" name="Supabase" size={14} /> Supabase</span>
-                  <small>Click to manage all connections</small>
-                </span>
               </button>
-              <button type="button" className="xv-cba-item xv-cba-item--command" onClick={() => setPanel('commands')}>
+              {WORK_OPTIONS.map(item => {
+                const Icon = item.icon;
+                return <button key={item.id} type="button" className="xv-cba-item xv-cba-work"
+                  data-tone={item.id === 'library' || item.id === 'browser' ? 'blue' : item.id === 'projects' || item.id === 'apps' ? 'green' : 'purple'}
+                  onClick={() => { setWorkId(item.id); setPanel('work'); }}>
+                  <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  <span className="xv-cba-item__text"><b>{item.label}</b><i>{item.description}</i></span>
+                  <ChevronRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                </button>;
+              })}
+              <button type="button" className="xv-cba-item xv-cba-item--command" data-tone="blue" onClick={() => setPanel('commands')}>
                 <Command className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Slash commands</b><i>Build, plan, debug, audit, test, or deploy</i></span>
               </button>
-              <button type="button" className="xv-cba-item xv-cba-item--plan" onClick={() => insert('Plan this build first. Show the approach, affected files, checks, and blockers before changing anything: ', { highlight: 'plan', selectionLength: 'Plan this build first.'.length })}>
+              <button type="button" className="xv-cba-item xv-cba-item--plan" data-tone="orange" onClick={() => insert('Plan this build first. Show the approach, affected files, checks, and blockers before changing anything: ', { highlight: 'plan', selectionLength: 'Plan this build first.'.length, label: 'Plan before build', category: 'Planning', description: 'Draft a plan before changing any files. Execution still requires you to send.', tone: 'orange' })}>
                 <ListChecks className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Plan before build</b><i>Get the approach first, change nothing yet</i></span>
               </button>
-              <button type="button" className="xv-cba-item xv-cba-item--debug" onClick={() => insert('Debug this error, identify the root cause, and fix it: ', { highlight: 'debug', selectionLength: 'Debug this error'.length })}>
+              <button type="button" className="xv-cba-item xv-cba-item--debug" data-tone="red" onClick={() => insert('Debug this error, identify the root cause, and fix it: ', { highlight: 'debug', selectionLength: 'Debug this error'.length, label: 'Debug an error', category: 'Debugging', description: 'Inspect the error, identify the cause, and verify the repair.', tone: 'red' })}>
                 <Bug className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Debug an error</b><i>Paste the error, get the root cause</i></span>
               </button>
-              <button type="button" className="xv-cba-item" onClick={() => setPanel('skills')}>
+              <button type="button" className="xv-cba-item" data-tone="purple" onClick={() => setPanel('skills')}>
                 <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Skills</b><i>{enabledSkills.length ? `${enabledSkills.length} active` : 'Reusable instruction packs'}</i></span>
               </button>
-              <button type="button" className="xv-cba-item" onClick={() => setPanel('rules')}>
+              <button type="button" className="xv-cba-item" data-tone="gray" onClick={() => setPanel('rules')}>
                 <ScrollText className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Rules</b><i>{rules.trim() ? 'Applied to every prompt' : 'Standing instructions you write'}</i></span>
               </button>
             </div>
+          )}
+
+          {panel === 'work' && (
+            <>
+              <div className="xv-cba-head">
+                <button type="button" onClick={() => setPanel('menu')} className="xv-cba-back">Back</button>
+                <span>{activeWork.label}</span>
+                <button type="button" onClick={() => setOpen(false)} aria-label="Close"><X className="h-3.5 w-3.5" aria-hidden="true" /></button>
+              </div>
+              <p className="xv-cba-note">{activeWork.description} Choose an example to edit. Nothing runs until you send.</p>
+              <div className="xv-cba-command-list" role="group" aria-label={activeWork.label + ' examples'}>
+                {activeWork.examples.map(([label, prompt]) => (
+                  <button key={label} type="button" className="xv-cba-item xv-cba-work-example"
+                    data-tone={activeWork.id === 'library' || activeWork.id === 'browser' ? 'blue' : activeWork.id === 'projects' || activeWork.id === 'apps' ? 'green' : 'purple'}
+                    onClick={() => insert(prompt, { label, category: activeWork.label, description: activeWork.description, tone: activeWork.id === 'library' || activeWork.id === 'browser' ? 'blue' : activeWork.id === 'projects' || activeWork.id === 'apps' ? 'green' : 'purple' })}>
+                    <span className="xv-cba-item__text"><b>{label}</b><i>{prompt}</i></span>
+                    <ChevronRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  </button>
+                ))}
+              </div>
+            </>
           )}
 
           {panel === 'commands' && (
@@ -246,7 +310,8 @@ export function ChatBarActionsMenu({
                     type="button"
                     role="menuitem"
                     className="xv-cba-item xv-cba-command"
-                    onClick={() => insert(command.prompt, { highlight: 'command', selectionLength: command.command.length })}
+                    data-tone="blue"
+                    onClick={() => insert(command.prompt, { highlight: 'command', selectionLength: command.command.length, label: command.command, category: 'Slash command', description: command.description, tone: 'blue' })}
                   >
                     <code>{command.command}</code>
                     <span className="xv-cba-item__text">
@@ -283,7 +348,7 @@ export function ChatBarActionsMenu({
                     role="switch"
                     aria-checked={on}
                     onClick={() => toggleSkill(skill.id)}
-                    className={cn('xv-cba-item', on && 'is-active')}
+                    className={cn('xv-cba-item', on && 'is-active')} data-tone="purple"
                   >
                     <span className={cn('xv-cba-check', on && 'is-on')} aria-hidden="true">
                       {on && <Check className="h-2.5 w-2.5" />}

@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { useEffect, useRef, useState } from 'react';
-import { CloudUpload, LoaderCircle } from 'lucide-react';
+import { ArrowUp, CloudUpload, LoaderCircle } from 'lucide-react';
 import { AudioLinesIcon, type AudioLinesIconHandle } from '@/components/icons/animated/AudioLinesIcon';
 import { ChatBarSendIcon, isSendBusy, isSendLoading, type SendButtonState } from './ChatBarSendIcon';
 
@@ -188,6 +188,7 @@ export function ChatBarMicrophoneButton({
 }
 
 export function ChatBarSendButton({
+  arrowIcon = false,
   stopping = false,
   onStop,
   state = 'idle',
@@ -196,6 +197,7 @@ export function ChatBarSendButton({
   idleLabel = 'Send prompt',
   loadingLabel = 'Sending message',
 }: {
+  arrowIcon?: boolean;
   stopping?: boolean;
   onStop?: () => void;
   state?: SendButtonState;
@@ -242,7 +244,7 @@ export function ChatBarSendButton({
       aria-live="polite"
     >
       <span className="xv-send__glow" aria-hidden="true" />
-      <ChatBarSendIcon state={stopping ? 'thinking' : state} size={compact ? 18 : 20} />
+      {arrowIcon && !loading && !busy ? <ArrowUp size={23} aria-hidden="true" /> : <ChatBarSendIcon state={stopping ? 'thinking' : state} size={compact ? 18 : 20} />}
     </button>
   );
 }

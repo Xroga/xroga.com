@@ -17,34 +17,15 @@ import { INCOGNITO_PRIVATE_ROOM_NOTICE } from '@/lib/incognito';
 import { cn } from '@/lib/utils';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useTerminalChat } from '@/context/TerminalChatContext';
-import { WorkspaceShowcaseStarts } from '@/components/dashboard/WorkspaceShowcaseStarts';
-import {
-  DashboardWelcome,
-  WorkspaceComposerKicker,
-} from '@/components/dashboard/DashboardWelcome';
-import { useAppStore } from '@/store/useAppStore';
-import { useShellIdentity } from '@/components/layout/ShellIdentityContext';
+import { WorkspaceStartHeader, WorkspaceStartCards } from '@/components/dashboard/WorkspaceNewTerminal';
+import startStyles from '@/components/dashboard/WorkspaceNewTerminal.module.css';
 import { WorkspaceConnectionsStrip } from './WorkspaceConnectionsStrip';
 import { CompanionComposerAnchor } from '@/components/companion/CompanionSurfaces';
-
-const FULLSCREEN_BUILD_COMMANDS = [
-  '/ launch-ready product from one clear brief',
-  '/audit this repository and fix the highest-impact issue',
-  '/ship a responsive app with tests and deployment',
-  '/turn a rough idea into a working first release',
-] as const;
 
 export function TerminalDock() {
   const dockRef = useRef<HTMLDivElement>(null);
 
   const pathname = usePathname();
-
-  const shellIdentity = useShellIdentity();
-
-  const profile = useAppStore((s) => s.profile);
-
-  const displayName =
-    profile?.display_name ?? shellIdentity.displayName;
 
   const hydrated = useHydrated();
 
@@ -176,6 +157,8 @@ export function TerminalDock() {
           !chatbarHidden &&
           'xv-terminal-dock--idle',
 
+        showStarterExperience && !incognito && !chatbarHidden && startStyles.dock,
+
         `terminal-skin-${
           incognito
             ? 'dark'
@@ -195,6 +178,7 @@ export function TerminalDock() {
 
           bottom:
             keyboardOffset,
+          '--xv-start-keyboard': `${keyboardOffset}px`,
         } as React.CSSProperties
       }
       aria-hidden={!isDashboard}
@@ -222,41 +206,11 @@ export function TerminalDock() {
           <div className="flex items-end gap-3">
             <div className="flex-1 min-w-0">
 
-              {dashboardFullscreen &&
-              emptyWorkspace &&
-              !incognito ? (
-                <div
-                  className="xv-fullscreen-inspiration"
-                  aria-label="Command inspiration"
-                >
-                  <div aria-hidden="true">
-                    {FULLSCREEN_BUILD_COMMANDS.map(
-                      (
-                        command,
-                        index
-                      ) => (
-                        <code
-                          key={command}
-                          style={
-                            {
-                              '--xv-command-index':
-                                index,
-                            } as React.CSSProperties
-                          }
-                        >
-                          {command}
-                        </code>
-                      )
-                    )}
-                  </div>
-                </div>
-              ) : null}
-
               <ChatbarQueueOutside />
 
               {showStarterExperience &&
               !incognito ? (
-                <DashboardWelcome composer />
+                <WorkspaceStartHeader />
               ) : null}
 
               {/* =========================================
@@ -267,7 +221,7 @@ export function TerminalDock() {
 
                 <div className="xv-chatbar-stack relative">
 
-                  {!incognito ? <CompanionComposerAnchor /> : null}
+                  {!incognito && !showStarterExperience ? <CompanionComposerAnchor /> : null}
 
                   {messages.length > 0 &&
                   !incognito ? (
@@ -290,20 +244,11 @@ export function TerminalDock() {
                     </button>
                   ) : null}
 
-                  {showStarterExperience &&
-                  !incognito ? (
-                    <WorkspaceComposerKicker
-                      displayName={
-                        displayName
-                      }
-                    />
-                  ) : null}
-
-                 <TerminalChatBar />
+                 <TerminalChatBar starter={showStarterExperience && !incognito} />
 
 </div>
 
-{!incognito ? (
+{!incognito && !showStarterExperience ? (
   <div className="xv-chatbar-context-strip">
     <RepoContextBar
       compact
@@ -319,17 +264,11 @@ export function TerminalDock() {
 
 </div>
 
-              {/* IMPORTANT:
-                  This must stay OUTSIDE the Kimi composer.
-                  Your failed edit accidentally removed it. */}
+              {/* Starters remain outside the persistent, functional composer. */}
 
               {showStarterExperience &&
               !incognito ? (
-                <div className="xv-workspace-starter-stack">
-                  <WorkspaceShowcaseStarts
-                    className="xv-workspace-showcase-below-fold"
-                  />
-                </div>
+                <WorkspaceStartCards />
               ) : null}
 
             </div>

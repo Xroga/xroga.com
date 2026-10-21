@@ -241,7 +241,7 @@ export function HomepageChatBar({
                   const textarea = textareaRef.current;
                   if (!textarea) return;
                   textarea.focus();
-                  if (options) {
+                  if (options?.highlight && options.selectionLength) {
                     textarea.dataset.insertHighlight = options.highlight;
                     textarea.setSelectionRange(0, options.selectionLength);
                   }

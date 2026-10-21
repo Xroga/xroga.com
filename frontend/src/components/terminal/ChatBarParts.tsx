@@ -79,6 +79,7 @@ export function ChatBarDragOverlay({ active }: { active: boolean }) {
 }
 
 export function ChatBarInputRow({
+  arrowSend = false,
   uploading,
   onUploadClick,
   sendState,
@@ -93,6 +94,7 @@ export function ChatBarInputRow({
   compactGo = false,
   children,
 }: {
+  arrowSend?: boolean;
   uploading: boolean;
   onUploadClick: () => void;
   sendState: SendButtonState;
@@ -129,7 +131,7 @@ export function ChatBarInputRow({
           {!hideMicrophone && onTranscript ? (
             <ChatBarMicrophoneButton onTranscript={onTranscript} surface={surface} />
           ) : null}
-          <ChatBarSendButton stopping={stopping} onStop={onStop} state={sendState} surface={surface} compact={compactGo} />
+          <ChatBarSendButton arrowIcon={arrowSend} stopping={stopping} onStop={onStop} state={sendState} surface={surface} compact={compactGo} />
         </div>
       </div>
     </div>

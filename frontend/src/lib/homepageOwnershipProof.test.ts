@@ -8,30 +8,22 @@ const PROOF = read('../components/homepage/HomepageOwnershipProof.tsx');
 const AUDIENCE = read('../components/homepage/HomepageAudienceSlider.tsx');
 const CSS = read('../styles/homepage-coding.css');
 
-test('the audience selector is the last product section before FAQ', () => {
+test('legacy audience and FAQ are unmounted from the founder-approved short homepage', () => {
   assert.doesNotMatch(PROOF, /THE REAL GAP IS AFTER THE PROMPT|THE DIFFERENCE IS WHAT YOU KEEP/);
   assert.doesNotMatch(PROOF, /xv-home-proof__brief-card|xv-home-proof__compact-row|HomepageBuildStrip/);
   assert.match(PROOF, /<HomepageAudienceSlider \/>/);
-  const audience = PAGE.indexOf('<HomepageOwnershipProof />');
-  const faq = PAGE.indexOf('<HomepageFaqSection />');
-  assert.ok(audience !== -1 && faq !== -1 && audience < faq, 'audience must render before FAQ');
-  assert.doesNotMatch(PAGE.slice(audience, faq), /<Homepage(?:Showcase|ShipStack|EnterpriseProof|WorkspaceTour)/);
+  assert.doesNotMatch(PAGE, /<HomepageOwnershipProof|<HomepageFaqSection/);
 });
 
-test('capabilities, browser employees, workspace, and intelligence follow the hero in order', () => {
-  const heroEnd = PAGE.indexOf('<S00Hero />');
-  const capabilities = PAGE.indexOf('<S01CapabilityDeck />');
-  const browserEmployees = PAGE.indexOf('<S02Work loggedIn={loggedIn} />');
-  const workspace = PAGE.indexOf('<HomepageWorkspaceTour loggedIn={loggedIn} />');
-  const intelligence = PAGE.indexOf('<XrogaIntelligenceSection />');
-  assert.ok(
-    heroEnd !== -1 &&
-      heroEnd < capabilities &&
-      capabilities < browserEmployees &&
-      browserEmployees < workspace &&
-      workspace < intelligence,
-    'the approved homepage product sections must render in their canonical order',
-  );
+test('homepage follows hero through S05 and immediately reaches the retained closing action', () => {
+  const tokens = ['<S00Hero />', '<S01CapabilityDeck />', '<S02Work loggedIn={loggedIn} />',
+    '<S03Growth loggedIn={loggedIn} />', '<S04Publish loggedIn={loggedIn} />',
+    '<S05Capabilities />', 'className="xv-closing-frame"'];
+  const positions = tokens.map((token) => PAGE.indexOf(token));
+  assert.ok(positions.every((position) => position !== -1));
+  assert.ok(positions.every((position, i) => i === 0 || position > positions[i - 1]));
+  // the closing card sits directly after S05, inside its graphite horizon environment
+  assert.match(PAGE, /<S05Capabilities \/>\s*(?:\{\/\*[^*]*\*\/\}\s*)?<div className="xv-horizon"[^>]*>\s*<Ambient kind="horizon" \/>\s*<section\s+ref=\{closingRef\}\s+className="xv-closing-frame"/);
 });
 
 test('the audience selector covers founders, developers, non-coders, and teams', () => {
@@ -48,10 +40,9 @@ test('the audience selector covers founders, developers, non-coders, and teams',
   assert.match(AUDIENCE, /prefers-reduced-motion: reduce/);
 });
 
-test('audience and FAQ share one compact frame and the closing actions share another', () => {
-  assert.match(PAGE, /className="xv-endgame-frame"[\s\S]*<HomepageOwnershipProof \/>[\s\S]*<HomepageFaqSection \/>[\s\S]*<\/div>/);
+test('closing community and signup CTA survive while legacy audience FAQ frame is removed', () => {
+  assert.doesNotMatch(PAGE, /xv-endgame-frame|<HomepageOwnershipProof|<HomepageFaqSection/);
   assert.match(PAGE, /className="xv-closing-frame"[\s\S]*xv-hc-community[\s\S]*xv-hc-mid-cta[\s\S]*<\/section>/);
-  assert.match(CSS, /\.xv-home-coding \.xv-endgame-frame\s*\{/);
   assert.match(CSS, /\.xv-home-coding \.xv-closing-frame\s*\{[\s\S]*grid-template-columns/);
   assert.doesNotMatch(PAGE, /HomepageIntegrationOrbit/);
   assert.doesNotMatch(PAGE, /<span>SOON<\/span>/);

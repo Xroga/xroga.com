@@ -1,321 +1,83 @@
 'use client';
 
-import {
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
+import Image from 'next/image';
+import { Plus, ScanSearch, Globe2, SquareTerminal } from 'lucide-react';
+import { type CSSProperties, useEffect, useState } from 'react';
+import styles from './AuthPowerPanel.module.css';
 
-import {
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
-
-import { useThemeStore } from '@/store/useThemeStore';
-
-const AUTH_SLIDES = [
-  {
-    src: 'https://i.postimg.cc/q72v3yFz/image.png',
-    alt: 'Learn more and build beyond with Xroga',
-    position: '32% center',
-  },
-  {
-    src: 'https://i.postimg.cc/W47PVnKh/image.png',
-    alt: 'Explore worlds and learn deeper with Xroga',
-    position: '32% center',
-  },
-  {
-    src: 'https://i.postimg.cc/0NPLVSQQ/image.png',
-    alt: 'Create together and move forward with Xroga',
-    position: '34% center',
-  },
-  {
-    src: 'https://i.postimg.cc/nLVnCgqq/image.png',
-    alt: 'Dream bigger and ship brighter with Xroga',
-    position: '34% center',
-  },
-  {
-    src: 'https://i.postimg.cc/SKKpy8hx/image.png',
-    alt: 'Code smarter and build stronger with Xroga AI',
-    position: '35% center',
-  },
-  {
-    src: 'https://i.postimg.cc/m2NxCVL8/image.png',
-    alt: 'Move fast and stay ahead with Xroga AI',
-    position: '35% center',
-  },
-  {
-    src: 'https://i.postimg.cc/Vvqh9L89/image.png',
-    alt: 'Discover wonder and rise beyond with Xroga',
-    position: '32% center',
-  },
+const STORIES = [
+  { label: 'Create · write · organize', title: 'Your next big idea.', accent: 'Built with Xroga.', description: 'Create images, documents, slides, spreadsheets, and content—from a single idea.', color: '#22c9e8' },
+  { label: 'Code · test · repair · launch', title: 'Build for every screen.', accent: 'Keep moving forward.', description: 'Build responsive apps, test in the browser, repair errors, and prepare for launch.', color: '#8b83f6' },
+  { label: 'Find · connect · automate', title: 'Your tools, together.', accent: 'Less busywork.', description: 'Find files and answers. Connect apps, automate browser work, and delegate to AI employees.', color: '#eda46c' },
+  { label: 'Research · discover · grow', title: 'Explore every angle.', accent: 'Move with insight.', description: 'Explore web and X sources, plan travel, and grow with SEO, AEO, and GEO.', color: '#69cbb0' },
 ] as const;
 
-const ROTATION_INTERVAL = 7000;
+const CAPABILITIES = [
+  { title: 'Create', description: 'Tasks, images, docs & slides', icon: Plus, slide: 0 },
+  { title: 'Find', description: 'Answers, files & connected apps', icon: ScanSearch, slide: 2 },
+  { title: 'Research', description: 'Web, sources, travel & insights', icon: Globe2, slide: 3 },
+  { title: 'Code', description: 'Build, test, fix & launch apps', icon: SquareTerminal, slide: 1 },
+] as const;
 
 export function AuthShowcase() {
-  const [activeIndex, setActiveIndex] =
-    useState(0);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [paused, setPaused] = useState(false);
 
-  const [paused, setPaused] =
-    useState(false);
-
-  const reducedMotion =
-    useThemeStore(
-      (state) => state.reducedMotion
-    );
-
-  const goTo = useCallback(
-    (nextIndex: number) => {
-      const total =
-        AUTH_SLIDES.length;
-
-      setActiveIndex(
-        ((nextIndex % total) + total) %
-          total
-      );
-    },
-    []
-  );
-
-  /*
-   * Preload every artwork immediately.
-   * All seven also stay mounted below.
-   */
   useEffect(() => {
-    const images =
-      AUTH_SLIDES.map((slide) => {
-        const image =
-          new window.Image();
-
-        image.src =
-          slide.src;
-
-        image.decoding =
-          'async';
-
-        return image;
-      });
-
-    return () => {
-      images.forEach((image) => {
-        image.onload =
-          null;
-
-        image.onerror =
-          null;
-      });
-    };
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updatePreference = () => setReducedMotion(query.matches);
+    updatePreference();
+    query.addEventListener('change', updatePreference);
+    return () => query.removeEventListener('change', updatePreference);
   }, []);
 
   useEffect(() => {
-    if (
-      paused ||
-      reducedMotion
-    ) {
-      return;
-    }
-
-    const timer =
-      window.setInterval(() => {
-        setActiveIndex(
-          (current) =>
-            (current + 1) %
-            AUTH_SLIDES.length
-        );
-      }, ROTATION_INTERVAL);
-
-    return () => {
-      window.clearInterval(
-        timer
-      );
-    };
-  }, [
-    paused,
-    reducedMotion,
-  ]);
+    if (reducedMotion || paused) return;
+    const timer = window.setTimeout(() => setActiveSlide(current => (current + 1) % STORIES.length), 6500);
+    return () => window.clearTimeout(timer);
+  }, [activeSlide, reducedMotion, paused]);
 
   return (
-    <section
-      aria-label="Xroga inspiration"
-      onPointerEnter={() =>
-        setPaused(true)
-      }
-      onPointerLeave={() =>
-        setPaused(false)
-      }
-      className="
-        group
-        relative
-        h-full
-        w-full
-        overflow-hidden
-        bg-[#06101d]
-      "
-    >
-      {AUTH_SLIDES.map(
-        (
-          slide,
-          index
-        ) => {
-          const active =
-            index ===
-            activeIndex;
-
-          return (
-            <img
-              key={slide.src}
-              src={slide.src}
-              alt={slide.alt}
-              draggable={false}
-              loading="eager"
-              decoding="async"
-              aria-hidden={!active}
-              style={{
-                objectPosition:
-                  slide.position,
-              }}
-              className={[
-                'absolute inset-0',
-                'block h-full w-full',
-                'object-cover',
-                'select-none',
-                'transition-[opacity,transform]',
-                'duration-700 ease-out',
-
-                active
-                  ? 'z-10 scale-100 opacity-100'
-                  : 'pointer-events-none z-0 scale-[1.01] opacity-0',
-              ].join(' ')}
-            />
-          );
-        }
-      )}
-
-      {/*
-       * Very subtle edge treatment only.
-       * This is NOT another background.
-       */}
-      <div
-        aria-hidden
-        className="
-          pointer-events-none
-          absolute
-          inset-0
-          z-[15]
-          ring-1
-          ring-inset
-          ring-white/15
-        "
-      />
-
-      <button
-        type="button"
-        aria-label="Previous image"
-        onClick={() =>
-          goTo(
-            activeIndex - 1
-          )
-        }
-        className="
-          absolute
-          left-4
-          top-1/2
-          z-20
-
-          grid
-          h-11
-          w-11
-
-          -translate-y-1/2
-          place-items-center
-
-          rounded-full
-
-          border
-          border-white/20
-
-          bg-black/45
-          text-white
-
-          shadow-[0_10px_30px_rgba(0,0,0,0.28)]
-          backdrop-blur-xl
-
-          transition-all
-          duration-200
-
-          opacity-80
-
-          xl:opacity-0
-          xl:group-hover:opacity-100
-
-          hover:scale-105
-          hover:bg-black/65
-
-          focus-visible:opacity-100
-          focus-visible:outline-none
-          focus-visible:ring-2
-          focus-visible:ring-white/50
-        "
-      >
-        <ChevronLeft
-          className="h-5 w-5"
-        />
-      </button>
-
-      <button
-        type="button"
-        aria-label="Next image"
-        onClick={() =>
-          goTo(
-            activeIndex + 1
-          )
-        }
-        className="
-          absolute
-          right-4
-          top-1/2
-          z-20
-
-          grid
-          h-11
-          w-11
-
-          -translate-y-1/2
-          place-items-center
-
-          rounded-full
-
-          border
-          border-white/20
-
-          bg-black/45
-          text-white
-
-          shadow-[0_10px_30px_rgba(0,0,0,0.28)]
-          backdrop-blur-xl
-
-          transition-all
-          duration-200
-
-          opacity-80
-
-          xl:opacity-0
-          xl:group-hover:opacity-100
-
-          hover:scale-105
-          hover:bg-black/65
-
-          focus-visible:opacity-100
-          focus-visible:outline-none
-          focus-visible:ring-2
-          focus-visible:ring-white/50
-        "
-      >
-        <ChevronRight
-          className="h-5 w-5"
-        />
-      </button>
+    <section className={styles.panel} aria-label="Xroga capability story" aria-roledescription="carousel"
+      onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false); }}>
+      <div className={styles.pattern} aria-hidden="true" style={{ backgroundColor: STORIES[activeSlide].color }} />
+      <header className={styles.header}>
+        <Image src="/brand/xroga-orb-wordmark-dark-v3.webp" alt="Xroga" width={160} height={60} priority />
+      </header>
+      <nav className={styles.capabilities} aria-label="Explore Xroga capabilities">
+        {CAPABILITIES.map(({ title, description, icon: Icon, slide }) => (
+          <button key={title} type="button" onClick={() => setActiveSlide(slide)}
+            style={{ '--card-accent': STORIES[slide].color } as CSSProperties}
+            aria-pressed={activeSlide === slide}>
+            <Icon aria-hidden="true" />
+            <strong>{title}</strong>
+            <span>{description}</span>
+          </button>
+        ))}
+      </nav>
+      <p className={styles.voicePrompt}>
+        <span>Describe your idea in your language.</span>
+        <strong>Speak with voice, or simply type.</strong>
+      </p>
+      <div className={styles.copyArea}>
+        {STORIES.map((story, index) => (
+          <article key={story.title} className={styles.story} hidden={activeSlide !== index}>
+            <p className={styles.eyebrow}><span />{story.label}</p>
+            <h2>{story.title}<br /><em>{story.accent}</em></h2>
+            <p className={styles.description}>{story.description}</p>
+          </article>
+        ))}
+        <nav className={styles.dots} aria-label="Choose a capability slide">
+          {STORIES.map((story, index) => (
+            <button key={story.title} type="button" aria-label={`Show capability slide ${index + 1}`}
+              aria-current={activeSlide === index ? 'true' : undefined}
+              onClick={() => setActiveSlide(index)}><span /></button>
+          ))}
+        </nav>
+      </div>
     </section>
   );
 }

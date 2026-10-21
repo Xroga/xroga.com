@@ -6,11 +6,11 @@ export interface ProfileAvatar {
 }
 
 export const XROGA_PROFILE_AVATARS: ProfileAvatar[] = [
-  { url: '/profiles/profile-1-hero.png', label: 'Profile 1' },
-  { url: '/profiles/profile-2-astronaut.png', label: 'Profile 2' },
-  { url: '/profiles/profile-3-cat.png', label: 'Profile 3' },
-  { url: '/profiles/profile-4-hero.png', label: 'Profile 4' },
-  { url: '/profiles/profile-5-oggy.png', label: 'Profile 5' },
+  { url: '/profiles/portrait-friendly-v2.webp', label: 'Friendly builder' },
+  { url: '/profiles/portrait-sunset-v2.webp', label: 'Sunset portrait' },
+  { url: '/profiles/portrait-agent-v2.webp', label: 'Secret agent' },
+  { url: '/profiles/portrait-golden-v2.webp', label: 'Golden-hour portrait' },
+  { url: '/profiles/portrait-adventurer-v2.webp', label: 'Block adventurer' },
 ];
 
 export const XROGA_PROFILE_AVATAR_URLS: string[] = XROGA_PROFILE_AVATARS.map((a) => a.url);

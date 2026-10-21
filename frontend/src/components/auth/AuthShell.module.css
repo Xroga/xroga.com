@@ -1,0 +1,54 @@
+.page {
+  --auth-page: #000;
+  --auth-shell: #080808;
+  --auth-surface: #000;
+  --auth-side: #080808;
+  --auth-border: #242424;
+  --auth-border-strong: #454545;
+  --auth-text: #f5f5f5;
+  --auth-muted: #999;
+  --auth-input: #111;
+  --auth-input-hover: #171717;
+  --auth-soft: #151515;
+  --auth-shadow: none;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: #000;
+  color: var(--auth-text);
+  font-family: Arial, Helvetica, sans-serif;
+  position: relative;
+  isolation: isolate;
+}
+.particles { position: fixed; z-index: -1; inset: 0; pointer-events: none; background: #fff; opacity: .5; mask: radial-gradient(circle at 50% 50%, white 2px, transparent 2.5px) 50% 50% / 20px 20px, url('/brand/particle-noise-mask.png') 256px 50% / 256px 256px; mask-composite: intersect; animation: particleFlicker 20s infinite linear; }
+@keyframes particleFlicker { to { mask-position: 50% 50%, 0 50%; } }
+.shell { display: grid; grid-template-columns: minmax(0, 460px) minmax(0, 440px); justify-content: space-between; gap: 70px; width: 100%; max-width: 1060px; }
+.story { min-width: 0; overflow: hidden; border-radius: 18px; align-self: center; }
+.formArea { display: flex; align-items: center; justify-content: center; min-width: 0; padding: 0; }
+.form { width: 100%; max-width: 420px; }
+.form [data-auth-github] { height: 44px; padding: 10px 15px; gap: 15px; border: none; border-radius: 5px; outline: 3px solid #181717; outline-offset: -3px; color: #fff; background: #181717; box-shadow: none; transition: background .4s, color .4s; }
+.form [data-auth-github] svg { width: 24px; height: 24px; }
+.form [data-auth-github]:hover:not(:disabled) { color: #181717; background: #fff; transform: none; }
+.form [data-auth-github]:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.form h1 { font-family: Arial, Helvetica, sans-serif; font-size: 32px; font-weight: 500; letter-spacing: -.045em; line-height: 1.1; }
+.form input { border-radius: 9px; }
+.form button[type='submit'] { border: 1px solid #fff; border-radius: 9px; color: #111; background: #fff; box-shadow: 0 5px 12px #0006; }
+.form button[type='submit'] span { color: inherit; }
+.form button[type='submit']:hover:not(:disabled) { background: #e8e8e8; transform: translateY(-1px); }
+.form a { color: #ddd; }
+.form a[data-auth-switch] { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; margin-left: 8px; padding: 0 14px; border: 1px solid #eee; border-radius: 8px; background: #000; color: #fff; font-size: 12px; font-weight: 500; text-decoration: none; transition: background .18s, transform .18s; }
+.form a[data-auth-switch]:hover { background: #2a2a2a; transform: translateY(-1px); opacity: 1; }
+.form a[data-auth-switch]:focus-visible { outline: 2px solid #bbb; outline-offset: 3px; }
+/* Adapted from Uiverse.io by Spacious74; keep real link/button semantics. */
+.page[data-auth-mode='login'] .form button[type='submit'],
+.form a[data-auth-switch][href*='/auth/login'] { position: relative; isolation: isolate; border: none; border-radius: 12px; padding: 12px 20px; color: #fff; background: linear-gradient(90deg, #5bfcc4, #f593e4, #71a4f0); box-shadow: inset 0 0 5px #ffffffa9, inset 0 35px 30px #000, 0 5px 10px #000c; text-shadow: 1px 1px 1px #000; transition: box-shadow .3s, transform .3s; }
+.page[data-auth-mode='login'] .form button[type='submit']::before,
+.form a[data-auth-switch][href*='/auth/login']::before { content: ''; position: absolute; inset: 0; border-radius: 12px; z-index: -1; background: conic-gradient(#0000 80deg, #40baf7, #f34ad7, #5bfcc4, #0000 280deg); opacity: 0; transition: filter .3s, opacity .3s; }
+.page[data-auth-mode='login'] .form button[type='submit']:hover:not(:disabled)::before,
+.form a[data-auth-switch][href*='/auth/login']:hover::before { filter: blur(15px); opacity: 1; }
+.page[data-auth-mode='login'] .form button[type='submit']:active,
+.form a[data-auth-switch][href*='/auth/login']:active { transform: translateY(1px); }
+@media (max-width: 900px) { .page { padding: 24px; } .shell { gap: 32px; } }
+@media (max-width: 700px) { .page { padding: 20px; } .shell { grid-template-columns: minmax(0, 1fr); gap: 22px; max-width: 460px; } .story { min-height: 500px; border-radius: 22px; } .formArea { padding: 20px 0; } }
+@media (prefers-reduced-motion: reduce) { .form button { transition: none; transform: none !important; } .particles { animation: none; } }

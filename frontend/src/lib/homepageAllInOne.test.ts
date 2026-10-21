@@ -7,11 +7,10 @@ const PAGE = read('../components/homepage/HomepageClient.tsx');
 const COMPONENT = read('../components/homepage/HomepageAllInOne.tsx');
 const CSS = read('../styles/homepage-coding.css');
 
-test('the universal workflow appears directly after the workspace', () => {
-  const workspace = PAGE.indexOf('<HomepageWorkspaceTour loggedIn={loggedIn} />');
-  const allInOne = PAGE.indexOf('<HomepageAllInOne />');
-  const intelligence = PAGE.indexOf('<XrogaIntelligenceSection />');
-  assert.ok(workspace !== -1 && workspace < allInOne && allInOne < intelligence);
+test('legacy all-in-one workflow is not mounted after the approved S05 finale', () => {
+  assert.doesNotMatch(PAGE, /<HomepageWorkspaceTour|<HomepageAllInOne|<XrogaIntelligenceSection/);
+  // the closing card sits directly after S05, inside its graphite horizon environment
+  assert.match(PAGE, /<S05Capabilities \/>\s*(?:\{\/\*[^*]*\*\/\}\s*)?<div className="xv-horizon"[^>]*>\s*<Ambient kind="horizon" \/>\s*<section\s+ref=\{closingRef\}\s+className="xv-closing-frame"/);
 });
 
 test('the workflow uses varied product scenarios instead of a real-estate special case', () => {

@@ -14241,6 +14241,36 @@ body.theme-beige .xv-cba-kbd { color: var(--muted) !important; background: color
   }
 }
 
+/* Mobile workspace: one connected frame, with the toolbar as its top edge. */
+body.xv-sidebar-resizing .xv-terminal-dock { transition: none !important; }
+@media (max-width: 1023px) {
+  body:has(.xv-workspace-main) { --xv-mobile-connected-surface: var(--app-panel); }
+  body:has(.xv-workspace-shell.terminal-skin-dark) { --xv-mobile-connected-surface: #000; }
+  body:has(.xv-workspace-main) .xv-mobile-workspace-header {
+    left: 8px; right: 8px; top: max(8px,env(safe-area-inset-top));
+  }
+  body:has(.xv-workspace-main) .xv-mobile-workspace-pill {
+    min-height: 44px; height: 44px; border-radius: 24px;
+    border: 1px solid color-mix(in srgb,var(--foreground) 22%,transparent);
+    background: linear-gradient(180deg,color-mix(in srgb,var(--foreground) 8%,var(--xv-mobile-connected-surface)),var(--xv-mobile-connected-surface) 55%);
+    box-shadow: inset 0 1px 2px color-mix(in srgb,var(--foreground) 24%,transparent),0 2px 5px #0002;
+  }
+  body:has(.xv-workspace-main) .xv-mobile-workspace-pill::before,
+  body:has(.xv-workspace-main) .xv-mobile-workspace-pill::after { display: none; }
+  body:has(.xv-workspace-main) .xv-mobile-workspace-actions { filter: grayscale(1); --accent: var(--foreground); }
+  body:not(.xv-terminal-fullscreen-active):not(.xv-workspace-expanded-active):not(.xv-page-fullscreen-active) .xv-workspace-main {
+    padding-top: calc(max(8px,env(safe-area-inset-top)) + 44px) !important;
+  }
+  body:not(.xv-terminal-fullscreen-active):not(.xv-workspace-expanded-active) .xv-workspace-main .xv-app-stage {
+    padding: 0 8px max(8px,env(safe-area-inset-bottom)) !important;
+  }
+  body:not(.xv-terminal-fullscreen-active):not(.xv-workspace-expanded-active) .xv-workspace-shell {
+    border-top: 1px solid var(--terminal-ui-border) !important; border-top-left-radius: 18px !important; border-top-right-radius: 18px !important;
+  }
+  .xv-workspace-identity .xv-term-title--button h3 { display: block; font-size: 11px; max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
+  .xv-workspace-identity .xv-term-title--button .xv-term-path { display: none; }
+}
+
 .xv-workspace-identity-cluster {
   display: inline-flex;
   min-width: 0;

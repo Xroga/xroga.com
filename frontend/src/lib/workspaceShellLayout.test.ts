@@ -220,7 +220,7 @@ test('opening the menu overlays the terminal instead of resizing anything', () =
   assert.match(MENU, /createPortal\(/);
   assert.match(MENU, /document\.body/);
   assert.match(MENU, /maxHeight:\s*Math\.min\(panel === 'menu' \? 330 : 340, Math\.max\(176, rect\.top - 12\)\)/);
-  assert.match(MENU, /const width = Math\.min\(rect\.width, 520\)/);
+  assert.match(MENU, /const width = rect\.width/);
   assert.match(MENU, /window\.addEventListener\('scroll', sync, \{ capture: true, passive: true \}\)/, 'the portal can detach while its dock scrolls');
 });
 

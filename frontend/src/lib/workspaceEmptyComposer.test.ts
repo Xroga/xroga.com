@@ -17,6 +17,8 @@ const CONNECTIONS = read('../components/terminal/WorkspaceConnectionsStrip.tsx')
 const INTEGRATIONS = read('../components/terminal/IntegrationsModal.tsx');
 const PRIVACY = read('../components/settings/PrivacySettingsPanel.tsx');
 const AVATAR_PICKER = read('../components/profile/AvatarPickerModal.tsx');
+const START = read('../components/dashboard/WorkspaceNewTerminal.tsx');
+const START_CSS = read('../components/dashboard/WorkspaceNewTerminal.module.css');
 const CSS = read('../app/globals.css').replace(/\/\*[\s\S]*?\*\//g, '');
 
 test('an empty terminal centers the one canonical composer without duplicate suggestion tabs', () => {
@@ -29,10 +31,10 @@ test('an empty terminal centers the one canonical composer without duplicate sug
 
   assert.match(DOCK, /xv-terminal-dock--idle/);
 
-  assert.match(DOCK, /<TerminalChatBar \/>/);
+  assert.match(DOCK, /<TerminalChatBar starter=\{showStarterExperience && !incognito\} \/>/);
 
   assert.equal(
-    (DOCK.match(/<TerminalChatBar \/>/g) ?? []).length,
+    (DOCK.match(/<TerminalChatBar starter=\{showStarterExperience && !incognito\} \/>/g) ?? []).length,
     1,
   );
 
@@ -43,7 +45,7 @@ test('an empty terminal centers the one canonical composer without duplicate sug
 
   assert.match(
     DOCK,
-    /showStarterExperience[\s\S]*<WorkspaceShowcaseStarts[\s\S]*?className="xv-workspace-showcase-below-fold"[\s\S]*?\/>/,
+    /showStarterExperience[\s\S]*<WorkspaceStartCards \/>/,
   );
 
   assert.match(
@@ -352,7 +354,7 @@ test('workspace transcript keeps balanced responsive gutters', () => {
 
 test('the live transcript does not mount the starter headline as a scrolling wall', () => {
   assert.doesNotMatch(DASHBOARD, /<DashboardWelcome/);
-  assert.match(DOCK, /<DashboardWelcome\s+composer\s*\/>/);
+  assert.match(DOCK, /showStarterExperience &&\s*!incognito \? \(\s*<WorkspaceStartHeader \/>/);
 });
 
 
@@ -408,7 +410,7 @@ test('connection management reads real provider status and routes full managemen
 
   assert.match(
     INTEGRATIONS,
-    /Manage Plugins/,
+    /Browse all plugins/,
   );
 
   assert.match(INTEGRATIONS, /placeholder="Search plugins…"/);
@@ -468,7 +470,7 @@ test('the companion sits outside the composer while model identity stays beside 
 
   assert.doesNotMatch(CHATBAR, /<CompanionComposerAnchor \/>/);
   assert.match(CHATBAR, /<BlackHoleVButton compact className="xv-companion-blackhole" \/>/);
-  assert.match(DOCK, /!incognito \? <CompanionComposerAnchor \/> : null/);
+  assert.match(DOCK, /!incognito && !showStarterExperience \? <CompanionComposerAnchor \/> : null/);
 
   assert.match(
     CSS,
@@ -510,43 +512,12 @@ test('the empty dock inherits the selected terminal skin and keeps mobile starte
 });
 
 
-test('fullscreen command inspiration is in flow before the composer', () => {
-  const inspiration =
-    DOCK.indexOf(
-      'className="xv-fullscreen-inspiration"',
-    );
-
-  const composer =
-    DOCK.indexOf(
-      'className="xv-chatbar-stack relative"',
-    );
-
-  assert.ok(
-    inspiration !== -1 &&
-    inspiration < composer,
-  );
-
-  assert.match(
-    CSS,
-    /\.xv-fullscreen-inspiration\s*\{[^}]*position:\s*static[^}]*margin:\s*0 auto/,
-  );
-
-  assert.match(
-    CSS,
-    /\.xv-terminal-dock--fullscreen\.xv-terminal-dock--idle\s*\{[^}]*overflow-y:\s*auto/,
-  );
-
-  assert.match(
-    DOCK,
-    /'\/ launch-ready product from one clear brief'/,
-  );
-
-  assert.doesNotMatch(
-    DOCK,
-    /Try a command/,
-  );
+test('the same starter header stays in flow before the composer, including fullscreen', () => {
+  assert.ok(DOCK.indexOf('<WorkspaceStartHeader />') < DOCK.indexOf('className="xv-chatbar-stack relative"'));
+  assert.doesNotMatch(DOCK, /xv-fullscreen-inspiration/);
+  assert.match(START_CSS, /overflow-y: auto !important/);
+  assert.match(START_CSS, /max-width: 1040px !important/);
 });
-
 
 test('repository status is brief and is not replayed during passive restore', () => {
   assert.match(
@@ -734,125 +705,43 @@ test('the bottom inspiration bar opens the real catalog automatically on workspa
 });
 
 
-test('the empty workspace uses an editorial action lockup above the canonical composer', () => {
-  assert.match(
-    WELCOME,
-    /xv-welcome-editorial/,
-  );
+test('new terminal renders theme-aware readable cards without black-hole artwork', () => {
+  assert.doesNotMatch(START + START_CSS, /black-hole.webp|next\/image/);
+  assert.match(START, /Super Intelligence/);
+  assert.match(START, /One AI workspace for every kind of/);
+  assert.doesNotMatch(START, /DESCRIBE IT\.|SHIP IT\./);
+  assert.match(START, /<CapabilityVisual id=\{card.id\}/);
+  assert.doesNotMatch(START, /cardImage|1536/);
+  assert.doesNotMatch(DASHBOARD, /BetaExpectationBanner/);
+  assert.match(START_CSS, /background-clip: text/);
+  assert.equal((START.match(/id: '/g) ?? []).length, 7);
+  assert.match(START_CSS, /background: var\(--terminal-ui-surface\) !important/);
+  assert.match(START_CSS, /color: var\(--foreground\)/);
+  assert.match(START_CSS, /font: 12px\/1\.5/);
+  assert.match(START_CSS, /@container \(max-width: 580px\)/);
+  assert.match(START_CSS, /repeat\(2,minmax\(0,1fr\)\)/);
+  assert.match(DOCK, /<WorkspaceStartCards \/>/);
+});
 
-  assert.match(
-    WELCOME,
-    /xv-welcome-editorial__build/,
-  );
+test('starter cards preserve immediate local drafts and do not auto-submit', () => {
+  assert.match(START, /composer\?\.value \?\? prompt/);
+  assert.match(START, /setPrompt\(!currentDraft\.trim\(\) \|\| isStarter \? text/);
+  assert.match(START, /currentDraft\.trimEnd\(\)/);
+  assert.match(START, /6000/);
+  assert.match(START, /aria-haspopup="menu"/);
+  assert.doesNotMatch(START, /<sup>/);
+  assert.doesNotMatch(START, /\bsubmit\s*\(/);
+  assert.match(START, /preventScroll: true/);
+});
 
-  assert.match(
-    WELCOME,
-    /xv-welcome-composer-kicker/,
-  );
-
-  assert.match(
-    WELCOME,
-    /Describe it\./,
-  );
-
-  assert.match(
-    WELCOME,
-    /Build it\./,
-  );
-
-  assert.match(
-    WELCOME,
-    /Ship it\./,
-  );
-
-  assert.match(
-    WELCOME,
-    /Turn an idea into something live\./,
-  );
-
-  assert.match(
-    CSS,
-    /\.xv-welcome-editorial\s*\{[^}]*display:\s*flex[^}]*justify-content:\s*center[^}]*text-transform:\s*uppercase/,
-  );
-
-  assert.match(
-    CSS,
-    /\.xv-welcome-editorial__build\s*\{[^}]*background:\s*transparent/,
-  );
-
-  assert.match(
-    CSS,
-    /\.xv-welcome-editorial__build::before,[\s\S]*?\.xv-welcome-editorial__build::after\s*\{[^}]*content:\s*none/,
-  );
-
-  assert.match(
-    CSS,
-    /\.xv-welcome-composer-kicker\s*\{[^}]*text-align:\s*left[^}]*text-transform:\s*none/,
-  );
-
-  assert.match(
-    CSS,
-    /\.xv-dashboard-welcome--composer\s*\{[^}]*background:\s*transparent !important[^}]*box-shadow:\s*none !important/,
-  );
-
-  assert.match(
-    WELCOME,
-    /<strong>\s*Turn an idea into something live\.\s*<\/strong>/,
-  );
-
-  assert.match(
-    WELCOME,
-    /xv-welcome-short-name/,
-  );
-
-  assert.match(
-    DOCK,
-    /<DashboardWelcome\s+composer\s*\/>[\s\S]*?<div\s+className="xv-chatbar-stack relative">[\s\S]*?<WorkspaceComposerKicker[\s\S]*?displayName=\{\s*displayName\s*\}[\s\S]*?\/>/,
-  );
-
-  assert.match(
-    CSS,
-    /\.xv-chatbar-stack > \.xv-welcome-composer-kicker\s*\{[^}]*position:\s*absolute[^}]*top:\s*-1\.04rem[^}]*left:\s*0\.18rem/,
-  );
-
-  assert.match(
-    WELCOME,
-    /\{!composer \? \(/,
-    'the first-run checklist should not crowd the composer welcome',
-  );
-
-  assert.match(
-    DOCK,
-    /WorkspaceShowcaseStarts[\s\S]*?className="xv-workspace-showcase-below-fold"/,
-  );
-
-  assert.match(
-    CSS,
-    /\.xv-workspace-showcase-below-fold\[data-expanded='false'\] \.xv-workspace-explore-bar\s*\{[^}]*position:\s*fixed/,
-  );
-
-  assert.doesNotMatch(
-    WELCOME,
-    /One prompt|>Yours</,
-  );
-
-  assert.doesNotMatch(
-    WELCOME,
-    /Good morning|Good afternoon|Good evening|Good night/,
-  );
-
-  assert.doesNotMatch(
-    WELCOME,
-    /xv-blackhole-identity/,
-  );
-
-  assert.doesNotMatch(
-    WELCOME,
-    /first[\s\S]*last[\s\S]*model you will ever need/i,
-  );
-
-  assert.match(CSS, /\.xv-dashboard-welcome--composer \.xv-welcome-editorial\s*\{[^}]*font-family:\s*var\(--font-goga\)[^}]*font-weight:\s*760 !important[^}]*text-transform:\s*none !important/);
-  assert.match(CSS, /\.xv-dashboard-welcome--composer \.xv-welcome-editorial \.xv-welcome-editorial__build\s*\{[^}]*color:\s*#e5484d !important/);
+test('new terminal styling and icons cannot leak into an existing conversation', () => {
+  assert.match(DOCK, /!sessionRestoring &&\s*messages\.length === 0 &&\s*!loading/);
+  assert.match(DOCK, /showStarterExperience && !incognito && !chatbarHidden && startStyles.dock/);
+  assert.match(DASHBOARD, /showNewTerminal && startStyles.window/);
+  assert.match(CHATBAR, /arrowSend=\{starter\}/);
+  assert.match(CHATBAR, /microphoneIcon=\{starter\}/);
+  assert.match(CHATBAR, /setGithubOpen\(true\)/);
+  assert.match(CHATBAR, /setIntegrationsOpen\(true\)/);
 });
 
 test('default monochrome accents keep primary buttons legible in dark themes', () => {

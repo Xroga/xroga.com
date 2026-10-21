@@ -1,0 +1,174 @@
+/* Idle-only layout. Every surface follows the selected terminal skin. */
+.dock.dock.dock {
+  top: var(--xv-pane-top, 80px) !important;
+  bottom: max(var(--xv-pane-bottom, 12px), var(--xv-start-keyboard, 0px)) !important;
+  left: var(--xv-pane-left, 0px) !important;
+  right: var(--xv-pane-right, 0px) !important;
+  width: auto !important; height: auto !important; max-height: none !important;
+  padding: 18px 24px !important;
+  display: flex; align-items: safe center; justify-content: center;
+  overflow-y: auto !important; overflow-x: hidden; scrollbar-width: none;
+  color: var(--foreground);
+  --composer-surface: var(--terminal-ui-raised);
+  container-type: inline-size;
+  font-family: Arial, Helvetica, sans-serif;
+}
+/* Black means true black; raised controls remain distinguishable. */
+.dock:global(.terminal-skin-dark),.window:global(.terminal-skin-dark) {
+  --terminal-ui-surface: #000000;
+  --terminal-ui-raised: #161616;
+  --terminal-ui-inset: #222222;
+  --terminal-ui-border: #ffffff14;
+  --muted: #b0b0b0;
+}
+/* The idle workspace still scrolls, but never displays a browser-native white track. */
+.dock.dock.dock::-webkit-scrollbar { display: none; width: 0; }
+.dock.dock.dock :global(.xv-terminal-dock-inner) { width: 100% !important; max-width: 1040px !important; padding: 0 !important; margin: auto !important; max-height: none !important; }
+.window.window { background: var(--terminal-ui-surface) !important; color: var(--foreground); }
+.window.window::after { display: none !important; }
+.window :global(.xv-workspace-header) { background: var(--terminal-ui-surface); border-bottom-color: var(--terminal-ui-border); color: var(--foreground); }
+.window :global(.xv-workspace-header button) { color: var(--foreground); }
+.repoStatus { min-width: 0; margin-right: auto; }
+.repoStatus :global(.xv-repo-chip--compact) { max-width: 200px; color: var(--muted) !important; background: var(--terminal-ui-raised) !important; border-color: var(--terminal-ui-border) !important; }
+.hero { text-align: center; margin: 0 auto 28px; }
+.superIntelligence { margin: 0; font: 500 clamp(30px,4cqw,43px)/1.13 Georgia,'Times New Roman',serif; letter-spacing: -.035em; color: var(--foreground); background: linear-gradient(180deg,var(--foreground) 15%,color-mix(in srgb,var(--foreground) 65%,var(--terminal-ui-surface)) 48%,var(--foreground) 62%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.taglineRow { position: relative; display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 12px; }
+.tagline { margin: 0; font-family: var(--font-geist-sans), 'Inter', Arial, sans-serif; font-size: clamp(15px,2cqw,20px); font-weight: 400; letter-spacing: -.04em; line-height: 1.45; color: var(--muted); white-space: nowrap; }
+ .dynamicWord { display: inline-block; color: var(--foreground); animation: wordReveal 500ms cubic-bezier(.19,1,.22,1) both; }
+@keyframes wordReveal { from { opacity: 0; filter: blur(8px); transform: translateY(4px); } to { opacity: 1; filter: blur(0); transform: translateY(0); } }
+.mobileBreak { display: none; }
+.rotationControl { display: grid; place-items: center; width: 24px; height: 24px; color: var(--muted); border-radius: 6px; }
+.rotationControl svg { width: 11px; height: 11px; }
+.rotationControl:hover { background: var(--terminal-ui-inset); }
+.dock.dock.dock :global(.xv-kimi-composer-frame) { max-width: 740px; margin-inline: auto; padding: 4px; border: 1px solid var(--terminal-ui-border); border-radius: 20px; background: var(--terminal-ui-inset); box-shadow: 0 6px 24px #0000000c; }
+.dock.dock.dock :global(.xv-chatbar-solid) { min-height: 0 !important; margin: 0 !important; border-radius: 16px !important; border: 1px solid var(--terminal-ui-border) !important; background: var(--terminal-ui-raised) !important; box-shadow: none !important; color: var(--foreground); }
+.dock.dock.dock :global(.xv-chatbar-solid)::before,.dock.dock.dock :global(.xv-chatbar-solid)::after { display: none !important; }
+.dock.dock.dock :global(.xv-chatbar-input-form) { min-height: 0 !important; padding: 10px 12px !important; }
+.dock.dock.dock :global(.xv-chatbar-composer) { min-height: 30px !important; padding: 3px 5px !important; font: 14px/22px Arial,sans-serif !important; color: var(--foreground) !important; caret-color: var(--foreground); }
+.dock :global(.xv-chatbar-composer)::placeholder { color: var(--muted) !important; }
+.dock.dock.dock :global(.xv-chatbar-composer):placeholder-shown { height: 34px !important; }
+.dock.dock.dock :global(.xv-chatbar-tools) { min-height: 32px; margin-top: 3px; gap: 7px; }
+.dock :global(.xv-chatbar-primary-tools) { display: flex; align-items: center; gap: 9px; }
+.dock :global(.xv-companion-blackhole)>button { height: 32px; padding: 4px 10px; gap: 5px; border: 1px solid var(--terminal-ui-border); border-radius: 10px; background: var(--terminal-ui-raised); color: var(--foreground); }
+.dock :global(.xv-companion-blackhole) span { font: 11px/1.2 Arial,sans-serif !important; color: inherit !important; }
+.dock :global(.xv-companion-blackhole) svg { color: var(--muted) !important; }
+.tool { display: inline-flex; gap: 7px; align-items: center; justify-content: center; flex-shrink: 0; min-height: 32px; padding: 5px 12px; border: 1px solid var(--terminal-ui-border); border-radius: 10px; background: var(--terminal-ui-raised); color: var(--foreground); font: 11px/1 Arial,sans-serif; }
+.tool svg { width: 15px; height: 15px; }
+.tool:hover { background: var(--terminal-ui-inset); }
+.dock :global(.xv-cba-trigger),.dock :global(.xv-voice-icon-only) { width: 32px !important; height: 32px !important; min-width: 32px !important; border: 1px solid var(--terminal-ui-border) !important; border-radius: 10px !important; background: var(--terminal-ui-raised) !important; color: var(--foreground) !important; }
+.dock :global(.xv-send) { height: 34px !important; width: 34px !important; min-width: 34px !important; border: none !important; border-radius: 10px !important; background: var(--foreground) !important; color: var(--terminal-ui-surface) !important; box-shadow: none !important; }
+.dock :global(.xv-send__glow) { display: none; }
+.dock :global(.xv-send)>svg { color: var(--terminal-ui-surface) !important; stroke: var(--terminal-ui-surface) !important; }
+.dock.dock.dock :global(.xv-chatbar-row-modern) { gap: 4px; }
+ .automatic { display: grid; gap: 3px; margin: 14px auto 20px; max-width: 570px; color: var(--muted); font: 12px/1.5 Arial,sans-serif; letter-spacing: .015em; text-align: center; text-wrap: balance; min-height: 47px; }
+.automatic strong { color: var(--foreground); font-weight: 600; }
+.automaticDetail { display: block; opacity: 0; visibility: hidden; }
+.automaticDetail[data-visible='true'] { visibility: visible; animation: automaticReveal .5s ease-out both; }
+@keyframes automaticReveal { from { opacity: 0; filter: blur(7px); transform: translateY(5px); } to { opacity: 1; filter: blur(0); transform: translateY(0); } }
+.cards { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)) minmax(180px,.8fr); gap: 12px; max-width: 900px; margin-inline: auto; }
+.cardShell,.carouselShell { min-width: 0; position: relative; }
+.card { width: 100%; height: 100%; position: relative; display: flex; align-items: center; min-height: 118px; padding: 18px; text-align: left; background: color-mix(in srgb,var(--terminal-ui-raised) 75%,var(--terminal-ui-inset)); border: 1px solid var(--terminal-ui-border); border-radius: 14px; overflow: hidden; color: var(--foreground); min-width: 0; cursor: pointer; transition: background-color .18s,border-color .18s; }
+.card:hover,.card[aria-expanded='true'] { background: var(--terminal-ui-inset); border-color: color-mix(in srgb,var(--foreground) 35%,transparent); }
+.cardCopy { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.cardIcon { display: flex; color: var(--foreground); }
+.cardIcon svg { width: 22px; height: 22px; stroke-width: 1.8; }
+.cardWords { display: block; min-width: 0; }
+.cardWords strong { display: flex; align-items: center; gap: 5px; font: 500 22px/1.2 Georgia,'Times New Roman',serif; margin-bottom: 5px; }
+.cardWords>span { display: block; font: 12px/1.5 Arial,sans-serif; color: var(--muted); text-wrap: pretty; }
+.cardArrow { width: 14px; height: 14px; color: var(--muted); }
+.card:focus-visible,.tool:focus-visible { outline: 2px solid var(--foreground); outline-offset: 3px; }
+.visual { position: absolute; width: 100px; height: 100px; right: -28px; top: -16px; color: var(--foreground); opacity: .07; pointer-events: none; transition: transform .35s,opacity .35s; }
+.visual svg { width: 100%; height: 100%; stroke-width: .7; }
+.visual i { position: absolute; inset: 8px; border: 1px solid currentColor; border-radius: 7px; transform: rotate(-12deg); }
+.visual i:nth-child(2) { transform: rotate(8deg) translate(10px,8px); background: currentColor; }
+.visual i:nth-child(3) { transform: rotate(24deg) translate(20px,16px); }
+.visual[data-visual='build'] { background-image: linear-gradient(currentColor 1px,transparent 1px),linear-gradient(90deg,currentColor 1px,transparent 1px); background-size: 20px 20px; }
+.visual[data-visual='build'] i { border-radius: 50%; transform: none; }
+.visual[data-visual='build'] i:nth-child(2) { inset: 24px; background: none; }
+.visual[data-visual='build'] i:nth-child(3) { inset: 36px; }
+.carouselShell { grid-column: 3; grid-row: 1/3; }
+.carouselShell .card { align-items: flex-end; padding-bottom: 42px; }
+.carouselDots { position: absolute; bottom: 9px; left: 14px; right: 14px; display: flex; gap: 2px; align-items: center; }
+.carouselDots button { display: grid; place-items: center; width: 24px; height: 24px; color: var(--muted); border-radius: 6px; }
+.carouselDots button span { width: 5px; height: 5px; border-radius: 50%; background: var(--muted); opacity: .4; }
+.carouselDots button[aria-pressed="true"] span { opacity: 1; width: 15px; border-radius: 4px; background: var(--foreground); }
+.carouselDots button:last-child { margin-left: auto; }
+.carouselDots svg { width: 11px; height: 11px; }
+.carouselDots button:hover { background: var(--terminal-ui-inset); }
+.card:hover .visual,.card[aria-expanded="true"] .visual { opacity: .2; transform: translate(-7px,4px) scale(1.08); }
+.card:hover .visual[data-visual="create"] { transform: rotate(-9deg) translate(-6px,6px); }
+.card:hover .visual[data-visual="ship"] { transform: translate(-5px,-6px); }
+.carouselShell .card .visual { width: 92px; height: 92px; top: 25px; right: calc(50% - 46px); opacity: .16; }
+.carouselShell .card .cardIcon { display: none; }
+@container (max-width: 720px) {
+  .cards { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+  .card { min-height: 110px; padding: 14px; }
+  .carouselShell { grid-column: 1/-1; grid-row: auto; }
+  .carouselShell .card { min-height: 110px; align-items: center; padding-bottom: 35px; }
+  .carouselShell .card .cardCopy { flex-direction: row; align-items: center; gap: 12px; padding-right: 50px; }
+  .carouselShell .card .cardIcon { display: flex; }
+  .carouselShell .card .cardWords>span { max-width: none; }
+  .carouselShell .card .visual { width: 62px; height: 62px; top: 12px; right: 8px; opacity: .07; }
+  .hero { margin-bottom: 22px; }
+}
+@container (max-width: 580px) {
+  .card { min-height: 112px; padding: 12px; }
+  .cardCopy { display: grid; grid-template-columns: 18px minmax(0,1fr); gap: 7px; align-items: center; }
+  .cardIcon svg { width: 18px; height: 18px; }
+  .cardWords { display: contents; }
+  .cardWords>span { grid-column: 1/-1; }
+  .carouselShell .card .cardCopy { display: block; padding-right: 0; }
+  .carouselShell .card .cardIcon { display: none; }
+  .cardWords strong { font-size: 19px; margin-bottom: 0; }
+  .carouselShell .cardWords strong { margin-bottom: 5px; }
+  .cardWords>span { font-size: 12px; line-height: 1.4; }
+  .visual { width: 70px; height: 70px; }
+  .superIntelligence { font-size: 31px; }
+  .tagline { font-size: 16px; }
+  .tagline { font-size: clamp(10px,2.95cqw,13px); letter-spacing: -.045em; }
+  .dynamicWord { min-width: 9ch; }
+  .dock.dock.dock :global(.xv-chatbar-primary-tools) { gap: 5px; }
+  .tool { padding: 5px; width: 29px; }
+  .tool span { display: none; }
+  .automatic { font-size: 11px; margin: 12px 0 15px; }
+}
+@media (max-width: 639px) {
+  .repoStatus { display: none; }
+  .dock.dock.dock { padding: 12px !important; }
+  .dock.dock.dock :global(.xv-chatbar-input-form) { padding: 6px 7px !important; }
+  .dock.dock.dock :global(.xv-chatbar-tools) { gap: 4px; }
+  .dock.dock.dock :global(.xv-chatbar-compose-field) { min-height: 32px !important; }
+  .dock :global(.xv-companion-blackhole)>button { padding: 3px 6px; gap: 3px; }
+}
+@container (max-width: 320px) {
+  .superIntelligence { font-size: 27px; }
+  .tagline { font-size: clamp(9px,2.8cqw,11px); }
+  .hero { margin-bottom: 16px; }
+  .automatic { margin: 10px 0 12px; }
+  .card { padding: 10px; min-height: 106px; }
+  .carouselShell .card .cardCopy { padding-right: 0; }
+  .carouselShell .card .visual { display: none; }
+  .dock :global(.xv-companion-blackhole)>button { padding: 3px 5px; gap: 1px; }
+  .dock :global(.xv-companion-blackhole) span { font-size: 10px !important; }
+  .dock :global(.xv-companion-blackhole) svg { width: 12px; }
+  .dock :global(.xv-cba-trigger),.dock :global(.xv-voice-icon-only) { width: 27px !important; min-width: 27px !important; height: 28px !important; }
+  .dock :global(.xv-send) { width: 29px !important; min-width: 29px !important; height: 30px !important; }
+  .tool { width: 25px; padding: 3px; }
+  .dock.dock.dock :global(.xv-chatbar-primary-tools) { gap: 3px; }
+}
+@media (prefers-reduced-motion: reduce) { .card,.tool,.visual { transition: none; } .dynamicWord,.automaticDetail[data-visible='true'] { animation: none; filter: none; opacity: 1; transform: none; } }
+.window :global(.xv-workspace-header),.dock :global(.xv-chatbar-tools) { --accent: var(--foreground); filter: grayscale(1); }
+.dock :global(.xv-companion-blackhole) svg[data-testid='mobile-model-icon'] { width: 22px; height: 22px; color: var(--foreground) !important; }
+@media (max-height: 700px) and (min-width: 640px) {
+  .hero { margin-bottom: 18px; }
+  .automatic { margin-block: 10px 14px; }
+  .card { padding-block: 14px; }
+  .carouselShell .card { padding-bottom: 40px; }
+}
+/* Five readable mobile cards. */
+@media (max-width: 639px) {
+ .cards { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+ .card { min-height: 106px; padding: 11px; }
+ .carouselShell .card { min-height: 104px; padding-bottom: 32px; }
+ .hero { margin-bottom: 12px; }
+}

@@ -7535,10 +7535,12 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2,
 body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2 em{color:#fff!important;text-shadow:0 5px 30px rgba(0,8,45,.25)}
 .xv-home-coding .xv-hc-mid-cta-actions{display:flex;width:auto;min-width:min(100%,240px);justify-content:flex-end;padding:0;border:0;background:transparent;backdrop-filter:none}
 .xv-home-coding .xv-hc-mid-cta-actions button{width:100%;min-width:220px;border:1px solid rgba(255,255,255,.78);background:linear-gradient(105deg,#fff 0%,#dbe9ff 42%,#fff 70%);background-size:220% 100%;color:#071c55;box-shadow:0 14px 34px rgba(0,0,0,.22),inset 0 1px 0 #fff;animation:xv-home-button-flow 4s linear infinite,xv-free-cta-pulse 2.6s ease-in-out infinite}
-.xv-home-coding :where(button,.xv-hc-btn-primary,.xv-hc-btn-ghost){transition:transform .2s ease,box-shadow .2s ease,filter .2s ease,border-color .2s ease}
+/* S03 positions controls with transforms and owns its own hover states, so it is left out of this lift (zero-specificity
+   exclusion: every other section matches exactly as before). */
+.xv-home-coding :where(button,.xv-hc-btn-primary,.xv-hc-btn-ghost):where(:not(#s03 *)){transition:transform .2s ease,box-shadow .2s ease,filter .2s ease,border-color .2s ease}
 @media(hover:hover){
-  .xv-home-coding :where(button,.xv-hc-btn-primary,.xv-hc-btn-ghost):not(:disabled):hover{transform:translateY(-2px);filter:saturate(1.08);box-shadow:0 10px 26px rgba(19,76,181,.2)}
-  .xv-home-coding :where(button,.xv-hc-btn-primary,.xv-hc-btn-ghost):not(:disabled):active{transform:translateY(0) scale(.98)}
+  .xv-home-coding :where(button,.xv-hc-btn-primary,.xv-hc-btn-ghost):where(:not(#s03 *)):not(:disabled):hover{transform:translateY(-2px);filter:saturate(1.08);box-shadow:0 10px 26px rgba(19,76,181,.2)}
+  .xv-home-coding :where(button,.xv-hc-btn-primary,.xv-hc-btn-ghost):where(:not(#s03 *)):not(:disabled):active{transform:translateY(0) scale(.98)}
 }
 @keyframes xv-home-button-flow{to{background-position:-220% 0}}
 
@@ -9560,10 +9562,11 @@ body .xv-home-coding .xv-hc-category-group li {
   width: min(1240px, calc(100% - 1.5rem));
   margin: clamp(2rem, 5vw, 4rem) auto;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--hc-blue) 20%, var(--hc-border));
+  border: 1px solid var(--hc-border);
   border-radius: clamp(26px, 3.5vw, 42px);
   background: var(--hc-bg);
-  box-shadow: 0 40px 100px -72px color-mix(in srgb, var(--hc-blue) 72%, var(--hc-ink));
+  /* a neutral silver lift into the graphite horizon below (homepage-closing-animation.css) */
+  box-shadow: 0 40px 100px -72px rgba(206, 212, 222, 0.32);
 }
 
 .xv-home-coding .xv-closing-terminal {
@@ -9642,7 +9645,7 @@ body .xv-home-coding .xv-hc-category-group li {
 }
 
 body .xv-home-coding .xv-closing-frame .xv-hc-community .xv-hc-pixel-kicker {
-  color: var(--hc-blue) !important;
+  color: color-mix(in srgb, var(--hc-ink) 64%, transparent) !important;
   text-shadow: none !important;
 }
 

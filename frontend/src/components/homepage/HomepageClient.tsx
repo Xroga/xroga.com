@@ -1,35 +1,30 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
 import { S00Hero } from '@/components/homepage-next/phase1/S00Hero';
 import '@/components/homepage-next/tokens.css';
-import { HomepageShipStack } from '@/components/homepage/HomepageShipStack';
-import { HomepageEnterpriseProof } from '@/components/homepage/HomepageEnterpriseProof';
-import { HomepageFaqSection } from '@/components/homepage/HomepageFaqSection';
-import { HomepageShowcase } from '@/components/showcase/HomepageShowcase';
 import '@/styles/homepage-coding.css';
 import '@/styles/homepage-closing-animation.css';
 import { createClient } from '@/lib/supabase/client';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
-import { HomepageWorkspaceTour } from '@/components/homepage/HomepageWorkspaceTour';
-import { XrogaIntelligenceSection } from '@/components/homepage/XrogaIntelligenceSection';
-import { HomepageOwnershipProof } from '@/components/homepage/HomepageOwnershipProof';
-import { HomepageStackStudio } from '@/components/homepage/HomepageStackStudio';
-import { HomepageAllInOne } from '@/components/homepage/HomepageAllInOne';
-import { HomepagePricingPreview } from '@/components/homepage/HomepagePricingPreview';
 import { S01CapabilityDeck } from '@/components/homepage-next/s01/S01CapabilityDeck';
 import { S02Work } from '@/components/homepage-next/s02/S02Work';
 import { S03Growth } from '@/components/homepage-next/s03/S03Growth';
-import { HomepagePowerStories } from '@/components/homepage/HomepagePowerStories';
+import { S04Publish } from '@/components/homepage-next/s04/S04Publish';
+import { S05Capabilities } from '@/components/homepage-next/s05/S05Capabilities';
+import { Ambient } from '@/components/homepage-next/ambient/Ambient';
+import { useSeen } from '@/components/homepage-next/ambient/useSeen';
 import { AiCodingAgentSquaresTerminal } from '@/components/marketing/AiCodingAgentSquaresTerminal';
 
 export function HomepageClient() {
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const closingRef = useRef<HTMLElement>(null);
+  const closingSeen = useSeen(closingRef, 0.35);
 
   useLayoutEffect(() => {
     if (window.location.hash) return;
@@ -115,21 +110,13 @@ export function HomepageClient() {
       {/* S02: Browser Automation and AI Employees (docs/homepage-implementation/XROGA_S02_FINAL_CLAUDE_IMPLEMENTATION_BRIEF.md) */}
       <S02Work loggedIn={loggedIn} />
       <S03Growth loggedIn={loggedIn} />
-      <HomepagePowerStories />
-      <HomepageWorkspaceTour loggedIn={loggedIn} />
-      <div id="product"><HomepageAllInOne /></div>
-      <div className="xv-system-combined" aria-label="Xroga intelligence and build system"><XrogaIntelligenceSection /><HomepageStackStudio /></div>
-      <div id="showcase"><HomepageShowcase /></div>
-      <div id="how-xroga-works"><HomepageShipStack /></div>
-      <HomepageEnterpriseProof />
-      <HomepagePricingPreview loggedIn={loggedIn} />
-
-      <div className="xv-endgame-frame" aria-label="Who Xroga is for and common questions">
-        <HomepageOwnershipProof />
-        <HomepageFaqSection />
-      </div>
-
+      <S04Publish loggedIn={loggedIn} />
+      <S05Capabilities />
+      {/* Closing: the graphite horizon (homepage-closing-animation.css) frames the closing card and runs into the footer */}
+      <div className="xv-horizon" data-seen={closingSeen || undefined}>
+      <Ambient kind="horizon" />
       <section
+  ref={closingRef}
   className="xv-closing-frame"
   aria-label="Community, support, and getting started"
 >
@@ -158,6 +145,7 @@ export function HomepageClient() {
           </div>
         </section>
       </section>
+      </div>
 
       <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
     </div>

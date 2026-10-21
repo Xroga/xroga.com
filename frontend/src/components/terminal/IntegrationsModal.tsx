@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type RefObject } from 'react';
+import { AnchoredPortalPopover } from '@/components/ui/AnchoredPortalPopover';
+import compactStyles from './PluginsMenu.module.css';
 import { ArrowUpRight, Check, Loader2, Plus, Search, X } from 'lucide-react';
 
 import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
@@ -16,24 +18,29 @@ type ModalPlugin = {
   checking?: boolean;
 };
 
-const APP_IDS = ['gmail', 'slack', 'notion'] as const;
 
 export function IntegrationsModal({
   open,
   onClose,
+  anchorRef,
+  onSelect,
 }: {
   open: boolean;
   onClose: () => void;
+  anchorRef: RefObject<HTMLElement | null>;
+  onSelect?: (plugin: { id: string; name: string }) => void;
 }) {
   const [native, setNative] = useState<ModalPlugin[]>([]);
   const [apps, setApps] = useState<ModalPlugin[]>([]);
   const [loadingApps, setLoadingApps] = useState(false);
   const [query, setQuery] = useState('');
+  const [connecting, setConnecting] = useState(false);
 
   useEffect(() => {
     if (!open) return;
 
     setQuery('');
+    setConnecting(false);
 
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose();
@@ -79,6 +86,7 @@ export function IntegrationsModal({
       ]);
     });
 
+    setApps([]);
     setLoadingApps(true);
     void xrogaConnect
       .status()
@@ -87,20 +95,13 @@ export function IntegrationsModal({
         const result = await xrogaConnect.search(POPULAR_HYDRATION_QUERY);
         if (!active) return;
 
-        const map = new Map(
-          (result.toolkits ?? []).map((toolkit) => [
-            canonicalPluginId(`${toolkit.name ?? ''} ${toolkit.toolkit}`),
-            toolkit,
-          ]),
-        );
-
-        setApps(
-          APP_IDS.map((id) => ({
-            id,
-            name: id === 'gmail' ? 'Gmail' : id === 'slack' ? 'Slack' : 'Notion',
-            connected: Boolean(map.get(id)?.connected || map.get(id)?.noAuth),
-          })),
-        );
+        const available = new Map<string, ModalPlugin>();
+        for (const toolkit of result.toolkits ?? []) {
+          const id = canonicalPluginId(`${toolkit.name ?? ''} ${toolkit.toolkit}`);
+          if (!id || ['github', 'vercel', 'supabase'].includes(id)) continue;
+          available.set(id, { id, name: toolkit.name || toolkit.toolkit, connected: Boolean(toolkit.connected) });
+        }
+        setApps(Array.from(available.values()));
       })
       .catch(() => {
         if (active) setApps([]);
@@ -125,16 +126,9 @@ export function IntegrationsModal({
   if (!open) return null;
 
   return (
-    <div
-      className="xv-plugins-popover-backdrop"
-      role="presentation"
-      onMouseDown={(event) => {
-        if (event.currentTarget === event.target) onClose();
-      }}
-    >
+    <AnchoredPortalPopover open={open} onClose={onClose} anchorRef={anchorRef} placement="top-start" width={260} className={compactStyles.menu} ariaLabel="Plugin shortcuts">
       <section
         role="dialog"
-        aria-modal="true"
         aria-labelledby="workspace-plugins-title"
         className="xv-plugins-popover"
       >
@@ -147,7 +141,6 @@ export function IntegrationsModal({
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search plugins…"
-              autoFocus
             />
           </label>
           <button
@@ -163,37 +156,23 @@ export function IntegrationsModal({
         <div className="xv-plugins-popover__body">
           <div className="xv-plugins-popover__primary">
             <p className="xv-plugins-popover__eyebrow">Plugins</p>
-            {plugins.map((plugin) => (
-              <Link
-                key={plugin.id}
-                href={`/dashboard/integrations/${plugin.id}`}
-                onClick={onClose}
-                className="xv-plugins-popover__item"
-              >
-                <span className="xv-plugins-popover__logo">
-                  <IntegrationLogo id={plugin.id} name={plugin.name} size={16} />
-                </span>
+            {plugins.map((plugin) => {
+              const entry = <>
+                <span className="xv-plugins-popover__logo"><IntegrationLogo id={plugin.id} name={plugin.name} size={17} /></span>
                 <span className="xv-plugins-popover__name">
                   <strong>{plugin.name}</strong>
-                  <small>
-                    {plugin.checking ? (
-                      <>
-                        <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
-                        Checking
-                      </>
-                    ) : plugin.connected ? (
-                      <>
-                        <Check className="h-3 w-3 text-[var(--accent)]" aria-hidden="true" />
-                        Connected
-                      </>
-                    ) : (
-                      'Available'
-                    )}
-                  </small>
+                  <small>{plugin.checking ? <><Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />Checking</>
+                    : plugin.connected ? <><Check className="h-3 w-3" aria-hidden="true" />Connected · select</>
+                    : 'Connect to use'}</small>
                 </span>
-                <Plus aria-hidden="true" className="xv-plugins-popover__plus" />
-              </Link>
-            ))}
+                {plugin.connected && onSelect ? <Check className="xv-plugins-popover__plus" aria-hidden="true" /> : <Plus className="xv-plugins-popover__plus" aria-hidden="true" />}
+              </>;
+              return plugin.connected && onSelect
+                ? <button type="button" key={plugin.id} onClick={() => { onSelect(plugin); onClose(); }}
+                    className="xv-plugins-popover__item" aria-label={'Select ' + plugin.name + ' plugin'}>{entry}</button>
+                : <Link key={plugin.id} href={`/dashboard/integrations/${plugin.id}`} onClick={onClose}
+                    className="xv-plugins-popover__item">{entry}</Link>;
+            })}
 
             {loadingApps && !apps.length ? (
               <div className="xv-plugins-popover__loading">
@@ -207,20 +186,19 @@ export function IntegrationsModal({
           </div>
 
           <aside className="xv-plugins-popover__aside">
-            <p className="xv-plugins-popover__eyebrow">Manage</p>
-            <strong>Connect more tools</strong>
-            <span>Browse capabilities and choose which accounts Xroga may use.</span>
+            <button type="button" className={compactStyles.connect} onClick={() => setConnecting(value => !value)} aria-expanded={connecting}>Connect plugins <Plus size={14} /></button>
+            {connecting ? <div className={compactStyles.connectList}>{[...native, ...apps].filter(plugin => !plugin.connected).map(plugin => <Link key={plugin.id} href={`/dashboard/integrations/${plugin.id}`} onClick={onClose}><IntegrationLogo id={plugin.id} name={plugin.name} size={16} />{plugin.name}<Plus size={12} /></Link>)}</div> : null}
             <Link
               href="/dashboard/integrations"
               onClick={onClose}
               className="xv-plugins-popover__browse"
             >
-              Manage Plugins · Browse all
+              Browse all plugins
               <ArrowUpRight aria-hidden="true" />
             </Link>
           </aside>
         </div>
       </section>
-    </div>
+    </AnchoredPortalPopover>
   );
 }

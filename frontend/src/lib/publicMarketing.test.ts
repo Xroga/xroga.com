@@ -13,10 +13,11 @@ test('public chrome excludes product, auth, private and preview surfaces', () =>
 });
 
 test('image backgrounds are explicit and never inferred from being public', () => {
-  for (const path of ['/pricing', '/features/ai-chat', '/blog/arbitrary-slug', '/compare/a-vs-b', '/docs', '/terms', '/privacy']) {
+  // the homepage paints its own graphite environments, so the theme artwork never loads there
+  for (const path of ['/', '/pricing', '/features/ai-chat', '/blog/arbitrary-slug', '/compare/a-vs-b', '/docs', '/terms', '/privacy']) {
     assert.equal(hasPublicImageBackground(path), false, path);
   }
-  for (const path of ['/', '/about', '/ai-app-builder', '/ai-coding-agent', '/image', '/software']) {
+  for (const path of ['/about', '/ai-app-builder', '/ai-coding-agent', '/image', '/software']) {
     assert.equal(hasPublicImageBackground(path), true, path);
   }
 });
