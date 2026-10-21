@@ -1,0 +1,561 @@
+{
+  "scope": "CURRENT_SOURCE_RESUME_NOT_PHASE3_ACCEPTANCE",
+  "sourceSha": "d11bbcc7dbb781f460afe14bdad95dd55cfd0dc3",
+  "observedAt": "2026-10-21T12:08:35.309Z",
+  "acceptedSoftware": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+  "acceptedOci": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+  "acceptedPhase2": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+  "backendByteIdentical": true,
+  "originalGateAnd22CriteriaUnchanged": true,
+  "historicalSourceVerification": {
+    "sourceSha": "8227200a506716a8fd503d018ec79fa25e8af48c",
+    "unitRun": "https://github.com/Xroga/xroga.com/actions/runs/39595293043",
+    "branch": {
+      "result": "PASS_REPEATED_CLEAN_BASELINE",
+      "sourceSha": "8227200a506716a8fd503d018ec79fa25e8af48c",
+      "stagesPerRun": 21,
+      "installedDependencySha256": "7b37dd99cbad59822d33fc68d806e9c6921dfcbbcc34b3009d3e526600a61cfc",
+      "sourceTreeMutated": false
+    },
+    "integrated": {
+      "result": "PASS_REPEATED_CLEAN_BASELINE",
+      "sourceSha": "e7edbf1402b22e730ab80d4044d19f3a93179a83",
+      "stagesPerRun": 21,
+      "installedDependencySha256": "7b37dd99cbad59822d33fc68d806e9c6921dfcbbcc34b3009d3e526600a61cfc",
+      "sourceTreeMutated": false
+    },
+    "actualParents": [
+      "e2450a644a62bffdeffe03ab5d1b91234e92f45e",
+      "8227200a506716a8fd503d018ec79fa25e8af48c"
+    ],
+    "authenticatedRun": "https://github.com/Xroga/xroga.com/actions/runs/39595293149",
+    "authenticatedResult": "FAILED_STALE_DASHBOARD_SELECTOR_5_OF_6_BROWSER_CASES_PASS_NOT_CURRENT_SOURCE_ACCEPTANCE"
+  },
+  "currentSourceWorkflows": [
+    {
+      "id": 39596937995,
+      "name": "Xroga golden acceptance harness",
+      "headSha": "d11bbcc7dbb781f460afe14bdad95dd55cfd0dc3",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39596937995"
+    },
+    {
+      "id": 39596937524,
+      "name": "Unit tests",
+      "headSha": "d11bbcc7dbb781f460afe14bdad95dd55cfd0dc3",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39596937524"
+    },
+    {
+      "id": 39596937760,
+      "name": "Isolated Supabase authenticated browser verification",
+      "headSha": "d11bbcc7dbb781f460afe14bdad95dd55cfd0dc3",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39596937760"
+    },
+    {
+      "id": 39596937706,
+      "name": "Conversation dash guest browser verification",
+      "headSha": "d11bbcc7dbb781f460afe14bdad95dd55cfd0dc3",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39596937706"
+    },
+    {
+      "id": 39596937743,
+      "name": "Command 4 authority distribution",
+      "headSha": "d11bbcc7dbb781f460afe14bdad95dd55cfd0dc3",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39596937743"
+    },
+    {
+      "id": 39596937770,
+      "name": "Supabase migration gate",
+      "headSha": "d11bbcc7dbb781f460afe14bdad95dd55cfd0dc3",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39596937770"
+    },
+    {
+      "id": 39596937846,
+      "name": "Xroga mission operating policy",
+      "headSha": "d11bbcc7dbb781f460afe14bdad95dd55cfd0dc3",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39596937846"
+    },
+    {
+      "id": 39596937688,
+      "name": "Xroga tenant security fixtures",
+      "headSha": "d11bbcc7dbb781f460afe14bdad95dd55cfd0dc3",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39596937688"
+    },
+    {
+      "id": 39596937619,
+      "name": "Growth technical publishing",
+      "headSha": "d11bbcc7dbb781f460afe14bdad95dd55cfd0dc3",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39596937619"
+    },
+    {
+      "id": 39596938024,
+      "name": "Frontend production build check",
+      "headSha": "d11bbcc7dbb781f460afe14bdad95dd55cfd0dc3",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39596938024"
+    },
+    {
+      "id": 39596937567,
+      "name": "Feedback isolated Supabase authorization",
+      "headSha": "d11bbcc7dbb781f460afe14bdad95dd55cfd0dc3",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39596937567"
+    },
+    {
+      "id": 39596937368,
+      "name": "API Docker build check",
+      "headSha": "d11bbcc7dbb781f460afe14bdad95dd55cfd0dc3",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39596937368"
+    },
+    {
+      "id": 39596937513,
+      "name": "Agent V2 dependency lock",
+      "headSha": "d11bbcc7dbb781f460afe14bdad95dd55cfd0dc3",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xroga/xroga.com/actions/runs/39596937513"
+    }
+  ],
+  "localBrowser": {
+    "cases": 25,
+    "passed": 25,
+    "skipped": 0,
+    "scope": "LOCAL_UI_FIXTURES_NOT_AUTHENTICATED_DATABASE_TESTS",
+    "additionalChangedSidebarCase": "PASS"
+  },
+  "realProviderEvidence": {
+    "status": "REAL_ISOLATED_NONADMIN_LOCAL_BACKEND_VERIFIED_NOT_FULL_PHASE3_ACCEPTANCE",
+    "sourceSha": "d11bbcc7dbb781f460afe14bdad95dd55cfd0dc3",
+    "acceptedSoftware": "d750836bfa44bd6fa668f827a4529ed49dec5269",
+    "acceptedOciImplementation": "9d6234afdd0a20e99f584acf7f93e346c5c49164",
+    "backendTree": "fefff6f6b6255399d7c7194d34f5a87410d3ce20",
+    "acceptedBackendByteIdentical": true,
+    "timestamp": "2026-10-21T12:07:01.341Z",
+    "receipts": [
+      {
+        "path": "artifacts/oci-runtime-native-prepare.json",
+        "sha256": "35df0d2a608d2f30087bb38ed028d3373728edab1d7b2078fb235ccaa605e69e",
+        "receipt": {
+          "scope": "ISOLATED_LOCAL_BACKEND_PROVIDER_PROBE_NOT_DEPLOYED_FLY_OR_DATABASE_MIGRATION_PROOF",
+          "phase": "prepare",
+          "sourceSha": "1321e3f9bbef46563bf5684e71cc8831e18be213",
+          "harnessSha256": "52845efe2786460f3b524da4cd2742d34a14d3351a5573f44610a435554c3d1e",
+          "timestamp": "2026-10-21T11:01:56.731Z",
+          "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+          "encryptVersion": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna",
+          "principal": "ocid1.user.oc1..aaaaaaaaog4fiikgjyfxdwcdqng3m3juppbgsq4uferybipuw4rilzj2pppa",
+          "sessionExpiresAt": "2026-10-21T11:56:06.000Z",
+          "cases": [
+            "REAL_APPLICATION_RUNTIME_MANAGED_SESSION_ROUNDTRIP",
+            "XR0GA_RUNTIME_OWNER_AND_IDENTITY_NEGATIVES_NOT_ALL_PROVIDER_DENIALS",
+            "REAL_OCI_WRONG_AAD_DENIED",
+            "REAL_OCI_WRAPPED_CIPHERTEXT_TAMPER_DENIED",
+            "REAL_UNAVAILABLE_DIFFERENT_KEY_ID_DENIED_NOT_EXISTING_FOREIGN_KEY_PROOF",
+            "REAL_NONCURRENT_VERSION_ENCRYPT_REJECTED_OLD_CIPHERTEXT_RUNTIME_READ_STILL_PENDING",
+            "REAL_CANONICAL_REVISION_ROTATION_CURRENT_KEY_VERSION_NOT_KEY_BACKUP",
+            "SYNTHETIC_ENCRYPTED_FILE_RECEIPT_PRESERVED_NO_DATABASE_CLAIM"
+          ],
+          "requests": [
+            {
+              "operation": "encrypt",
+              "result": "SUCCESS",
+              "requestId": "D3F548D0CD3E-11F1-A60A-67B3D0492",
+              "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+              "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna"
+            },
+            {
+              "operation": "decrypt",
+              "result": "SUCCESS",
+              "requestId": "D41D1C20CD3E-11F1-A60A-67B3D0492",
+              "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+              "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna"
+            },
+            {
+              "operation": "decrypt",
+              "result": "DENIED",
+              "status": 400,
+              "requestId": "D43ED4F0CD3E-11F1-A60A-67B3D0492"
+            },
+            {
+              "operation": "decrypt",
+              "result": "DENIED",
+              "status": 400,
+              "requestId": "D44A1F90CD3E-11F1-A60A-67B3D0492"
+            },
+            {
+              "operation": "decrypt",
+              "result": "DENIED",
+              "status": 400,
+              "requestId": "D453E390CD3E-11F1-A60A-67B3D0492"
+            },
+            {
+              "operation": "decrypt",
+              "result": "DENIED",
+              "status": 400,
+              "requestId": "D45C20F0CD3E-11F1-A60A-67B3D0492"
+            },
+            {
+              "operation": "decrypt",
+              "result": "DENIED",
+              "status": 400,
+              "requestId": "D463E920CD3E-11F1-A60A-67B3D0492"
+            },
+            {
+              "operation": "decrypt",
+              "result": "DENIED",
+              "status": 400,
+              "requestId": "D46C74A0CD3E-11F1-A60A-67B3D0492"
+            },
+            {
+              "operation": "decrypt",
+              "result": "DENIED",
+              "status": 400,
+              "requestId": "D4748AF0CD3E-11F1-A60A-67B3D0492"
+            },
+            {
+              "operation": "encrypt",
+              "result": "SUCCESS",
+              "requestId": "D47CA140CD3E-11F1-A60A-67B3D0492",
+              "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+              "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna"
+            },
+            {
+              "operation": "decrypt",
+              "result": "DENIED",
+              "status": 400,
+              "requestId": "D4852CC0CD3E-11F1-A60A-67B3D0492"
+            },
+            {
+              "operation": "decrypt",
+              "result": "DENIED",
+              "status": 400,
+              "requestId": "D48DB840CD3E-11F1-A60A-67B3D0492"
+            },
+            {
+              "operation": "encrypt",
+              "result": "DENIED",
+              "status": 404,
+              "requestId": "D4953250CD3E-11F1-A60A-67B3D0492"
+            },
+            {
+              "operation": "encrypt",
+              "result": "DENIED",
+              "status": 400,
+              "requestId": "D49CD370CD3E-11F1-A60A-67B3D0492"
+            },
+            {
+              "operation": "decrypt",
+              "result": "SUCCESS",
+              "requestId": "D4A4C2B0CD3E-11F1-A60A-67B3D0492",
+              "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+              "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna"
+            },
+            {
+              "operation": "encrypt",
+              "result": "SUCCESS",
+              "requestId": "D4AC15B0CD3E-11F1-A60A-67B3D0492",
+              "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+              "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna"
+            },
+            {
+              "operation": "decrypt",
+              "result": "SUCCESS",
+              "requestId": "D4B38FC0CD3E-11F1-A60A-67B3D0492",
+              "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+              "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna"
+            },
+            {
+              "operation": "decrypt",
+              "result": "DENIED",
+              "status": 400,
+              "requestId": "D4BB57F0CD3E-11F1-A60A-67B3D0492"
+            }
+          ],
+          "productionEffects": false,
+          "liveCredentialsMigrated": false,
+          "databaseMigrationVerified": false,
+          "deployedRuntimeCustodyVerified": false,
+          "keyBackupVerified": false
+        }
+      },
+      {
+        "path": "artifacts/oci-runtime-native-read.json",
+        "sha256": "19317e9e8fb7b66f6c1712512d638173626a782c75a22c86c2d76684191b19a5",
+        "receipt": {
+          "scope": "ISOLATED_LOCAL_BACKEND_PROVIDER_PROBE_NOT_DEPLOYED_FLY_OR_DATABASE_MIGRATION_PROOF",
+          "phase": "read",
+          "sourceSha": "1321e3f9bbef46563bf5684e71cc8831e18be213",
+          "harnessSha256": "52845efe2786460f3b524da4cd2742d34a14d3351a5573f44610a435554c3d1e",
+          "timestamp": "2026-10-21T11:02:12.109Z",
+          "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+          "encryptVersion": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna",
+          "principal": "ocid1.user.oc1..aaaaaaaaog4fiikgjyfxdwcdqng3m3juppbgsq4uferybipuw4rilzj2pppa",
+          "sessionExpiresAt": "2026-10-21T11:56:06.000Z",
+          "cases": [
+            "REAL_APPLICATION_RUNTIME_SEPARATE_PROCESS_FILE_ENVELOPE_READ_NOT_DATABASE_PROOF"
+          ],
+          "requests": [
+            {
+              "operation": "decrypt",
+              "result": "SUCCESS",
+              "requestId": "DDA76E80CD3E-11F1-BCFF-CDC57D37E",
+              "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+              "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna"
+            },
+            {
+              "operation": "decrypt",
+              "result": "SUCCESS",
+              "requestId": "DDCBBF60CD3E-11F1-BCFF-CDC57D37E",
+              "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+              "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna"
+            },
+            {
+              "operation": "decrypt",
+              "result": "SUCCESS",
+              "requestId": "DDE9F5C0CD3E-11F1-BCFF-CDC57D37E",
+              "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+              "keyVersionId": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna"
+            }
+          ],
+          "productionEffects": false,
+          "liveCredentialsMigrated": false,
+          "databaseMigrationVerified": false,
+          "deployedRuntimeCustodyVerified": false,
+          "keyBackupVerified": false
+        }
+      },
+      {
+        "path": "artifacts/oci-runtime-native-expired.json",
+        "sha256": "bc068074cea588c82ee754f9cec5ba80f8023345776a8519ee894104b9964bff",
+        "receipt": {
+          "scope": "ISOLATED_LOCAL_BACKEND_PROVIDER_PROBE_NOT_DEPLOYED_FLY_OR_DATABASE_MIGRATION_PROOF",
+          "phase": "expired",
+          "sourceSha": "d12a527abb04d81214c2c15b115180e21dac1b21",
+          "harnessSha256": "52845efe2786460f3b524da4cd2742d34a14d3351a5573f44610a435554c3d1e",
+          "timestamp": "2026-10-21T11:06:51.798Z",
+          "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+          "encryptVersion": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna",
+          "principal": "ocid1.user.oc1..aaaaaaaaog4fiikgjyfxdwcdqng3m3juppbgsq4uferybipuw4rilzj2pppa",
+          "sessionExpiresAt": "2026-10-21T11:06:29.000Z",
+          "cases": [
+            "REAL_EXPIRED_SESSION_DENIED_WITHOUT_REFRESH"
+          ],
+          "requests": [
+            {
+              "operation": "encrypt",
+              "result": "DENIED",
+              "status": 401,
+              "requestId": "848553C0CD3F-11F1-859F-E7040F12F"
+            }
+          ],
+          "productionEffects": false,
+          "liveCredentialsMigrated": false,
+          "databaseMigrationVerified": false,
+          "deployedRuntimeCustodyVerified": false,
+          "keyBackupVerified": false
+        }
+      },
+      {
+        "path": "artifacts/oci-runtime-native-denied.json",
+        "sha256": "901bb81d33883d3a7d8e5aae30999ce83adbbafff71815969680f92c9a38a330",
+        "receipt": {
+          "scope": "ISOLATED_LOCAL_BACKEND_PROVIDER_PROBE_NOT_DEPLOYED_FLY_OR_DATABASE_MIGRATION_PROOF",
+          "phase": "denied",
+          "sourceSha": "5656525d87c076163361e62fdcdfdaeebd3f4555",
+          "harnessSha256": "52845efe2786460f3b524da4cd2742d34a14d3351a5573f44610a435554c3d1e",
+          "timestamp": "2026-10-21T11:10:02.734Z",
+          "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+          "encryptVersion": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna",
+          "principal": "ocid1.user.oc1..aaaaaaaatwyy4lquluqo52eajcacxv6uxqbpllf5vungmfqm7h35q7gzypca",
+          "sessionExpiresAt": "2026-10-21T12:09:43.000Z",
+          "cases": [
+            "REAL_VALID_UNGRANTED_PRINCIPAL_DENIED"
+          ],
+          "requests": [
+            {
+              "operation": "encrypt",
+              "result": "DENIED",
+              "status": 404,
+              "requestId": "F65586F0CD3F-11F1-8511-CB2DF8E67"
+            }
+          ],
+          "productionEffects": false,
+          "liveCredentialsMigrated": false,
+          "databaseMigrationVerified": false,
+          "deployedRuntimeCustodyVerified": false,
+          "keyBackupVerified": false
+        }
+      },
+      {
+        "path": "artifacts/oci-runtime-native-revoked.json",
+        "sha256": "7824f6207cbe9a655e3766233011a646329d246d4d55c4bd8a40316fc2a76f73",
+        "receipt": {
+          "scope": "ISOLATED_LOCAL_BACKEND_PROVIDER_PROBE_NOT_DEPLOYED_FLY_OR_DATABASE_MIGRATION_PROOF",
+          "phase": "revoked",
+          "sourceSha": "06534c5b51608a816cc3fd4924f5079aebaaf952",
+          "harnessSha256": "8a6edebfa9759300da8c1fbbbe82521b89b1e719f4843e8d15e74bb681d09136",
+          "timestamp": "2026-10-21T11:17:24.549Z",
+          "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+          "encryptVersion": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna",
+          "principal": "ocid1.user.oc1..aaaaaaaaog4fiikgjyfxdwcdqng3m3juppbgsq4uferybipuw4rilzj2pppa",
+          "sessionExpiresAt": "2026-10-21T11:56:06.000Z",
+          "cases": [
+            "REAL_PROVIDER_ENCRYPT_AND_EXISTING_ENVELOPE_DECRYPT_DENIED",
+            "REAL_VALID_SESSION_AFTER_GROUP_REVOCATION_DENIED"
+          ],
+          "requests": [
+            {
+              "operation": "encrypt",
+              "result": "DENIED",
+              "status": 404,
+              "requestId": "FD6EBCD0CD40-11F1-AAF0-B79B0D5EC"
+            },
+            {
+              "operation": "decrypt",
+              "result": "DENIED",
+              "status": 404,
+              "requestId": "FDBC1980CD40-11F1-AAF0-B79B0D5EC"
+            }
+          ],
+          "productionEffects": false,
+          "liveCredentialsMigrated": false,
+          "databaseMigrationVerified": false,
+          "deployedRuntimeCustodyVerified": false,
+          "keyBackupVerified": false
+        }
+      },
+      {
+        "path": "artifacts/oci-runtime-native-denied-both.json",
+        "sha256": "db4634ba077bc807f4ba8cbdf4e129b725bc5130bda99a5d4456bed4a59e36fc",
+        "receipt": {
+          "scope": "ISOLATED_LOCAL_BACKEND_PROVIDER_PROBE_NOT_DEPLOYED_FLY_OR_DATABASE_MIGRATION_PROOF",
+          "phase": "denied",
+          "sourceSha": "06534c5b51608a816cc3fd4924f5079aebaaf952",
+          "harnessSha256": "8a6edebfa9759300da8c1fbbbe82521b89b1e719f4843e8d15e74bb681d09136",
+          "timestamp": "2026-10-21T11:17:44.096Z",
+          "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+          "encryptVersion": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna",
+          "principal": "ocid1.user.oc1..aaaaaaaatwyy4lquluqo52eajcacxv6uxqbpllf5vungmfqm7h35q7gzypca",
+          "sessionExpiresAt": "2026-10-21T12:09:43.000Z",
+          "cases": [
+            "REAL_PROVIDER_ENCRYPT_AND_EXISTING_ENVELOPE_DECRYPT_DENIED",
+            "REAL_VALID_UNGRANTED_PRINCIPAL_DENIED"
+          ],
+          "requests": [
+            {
+              "operation": "encrypt",
+              "result": "DENIED",
+              "status": 404,
+              "requestId": "092A6E20CD41-11F1-8DD1-17C7BD86F"
+            },
+            {
+              "operation": "decrypt",
+              "result": "DENIED",
+              "status": 404,
+              "requestId": "096B6EC0CD41-11F1-8DD1-17C7BD86F"
+            }
+          ],
+          "productionEffects": false,
+          "liveCredentialsMigrated": false,
+          "databaseMigrationVerified": false,
+          "deployedRuntimeCustodyVerified": false,
+          "keyBackupVerified": false
+        }
+      },
+      {
+        "path": "artifacts/oci-runtime-native-expired-both.json",
+        "sha256": "093142f960937ad3953cee90665f9d0e0b17955ec3d5f728698c605078e78e42",
+        "receipt": {
+          "scope": "ISOLATED_LOCAL_BACKEND_PROVIDER_PROBE_NOT_DEPLOYED_FLY_OR_DATABASE_MIGRATION_PROOF",
+          "phase": "expired",
+          "sourceSha": "06534c5b51608a816cc3fd4924f5079aebaaf952",
+          "harnessSha256": "8a6edebfa9759300da8c1fbbbe82521b89b1e719f4843e8d15e74bb681d09136",
+          "timestamp": "2026-10-21T11:17:45.746Z",
+          "keyId": "ocid1.key.oc1.me-dubai-1.gvvnprwtaaawu.abshqljrcinx2ggce5ym4hl66zlr5kk4gxllaodlzn4zh5rqhmcsfpzezzdq",
+          "encryptVersion": "ocid1.keyversion.oc1.me-dubai-1.gvvnprwtaaawu.kei7nll4vkqaa.abshqljrpnp6bad3rhy3xos27g7cik3juhlfbs6koygslp4nbl4c5o7qnwna",
+          "principal": "ocid1.user.oc1..aaaaaaaaog4fiikgjyfxdwcdqng3m3juppbgsq4uferybipuw4rilzj2pppa",
+          "sessionExpiresAt": "2026-10-21T11:06:29.000Z",
+          "cases": [
+            "REAL_PROVIDER_ENCRYPT_AND_EXISTING_ENVELOPE_DECRYPT_DENIED",
+            "REAL_EXPIRED_SESSION_DENIED_WITHOUT_REFRESH"
+          ],
+          "requests": [
+            {
+              "operation": "encrypt",
+              "result": "DENIED",
+              "status": 401,
+              "requestId": "0A3C7A60CD41-11F1-9AF1-F90332D83"
+            },
+            {
+              "operation": "decrypt",
+              "result": "DENIED",
+              "status": 401,
+              "requestId": "0A653810CD41-11F1-9AF1-F90332D83"
+            }
+          ],
+          "productionEffects": false,
+          "liveCredentialsMigrated": false,
+          "databaseMigrationVerified": false,
+          "deployedRuntimeCustodyVerified": false,
+          "keyBackupVerified": false
+        }
+      }
+    ],
+    "providerRequestCount": 29,
+    "sessionAuthentication": "Native OCI browser-issued non-admin proof-of-possession sessions. Five-minute expiry child self-issued by probe, no administrator bootstrap.",
+    "localCredentialProtection": "Outside Git under user/SYSTEM ACL during tests. All 12 exact task-owned session/config/key/handoff files removed afterwards, zero private files remain. No permanent IAM API keys uploaded. No server-side token invalidation claim.",
+    "oldRejectedAdministratorFlow": "Rejected before persistence and never used. No server-revocation claim. Last observed rejected-token expiry2026-10-21T11:24:16Z has passed.",
+    "revocationMembership": "Founder confirmed removal of probe from the exact approved crypto group. No read-only IAM listing claim is made. Both real denied operations independently verify loss of effective crypto permission while token remains unexpired.",
+    "remaining": [
+      "Pre-rotation synthetic ciphertext unavailable locally, prior real Cloud Shell recovery preserved separately",
+      "Real managed-provider synthetic database migration, interruption, retry and rollback not jointly verified",
+      "No existing unrelated second key: different unavailable key404 is not existing-foreign-key proof",
+      "Final changed-source branch and current-main integrated CI"
+    ],
+    "deployedRuntimeScope": "No deployed Fly runtime authentication configured, authorized or claimed. The approved provider probe scope is the isolated local Node backend.",
+    "recovery": "Both SOFTWARE versions retained enabled. Version/process recovery is not disaster recovery. SOFTWARE key backup unsupported.",
+    "productionEffects": false,
+    "liveCredentialsMigrated": false,
+    "phase4Started": false,
+    "additionalSpendAuthorized": 0
+  },
+  "evidenceSha256": {
+    "oci-native-runtime-evidence-bundle.json": "ee963569a228c4c50951b6901aa2127d262e27182452a6ce4f5b2e8e54c737d7",
+    "pr834-corrected-full-browser.json": "b62629171fcf2c33e708456bf2133b199ffe979ad720d837e6540c17a18db466",
+    "pr834-collapsed-sidebar-contract.json": "eb5c21e4b07228640a29cd740cee80a39caa16866faeed1d138ec30281e2a103"
+  },
+  "softwareCriterionEvidence": "22 original software criteria preserved from accepted baseline. New-source CI and actual complete provider cutover are separate requirements.",
+  "pending": [
+    "Pre-rotation synthetic ciphertext unavailable locally, prior real Cloud Shell recovery preserved separately",
+    "Real managed-provider synthetic database migration, interruption, retry and rollback not jointly verified",
+    "No existing unrelated second key: different unavailable key404 is not existing-foreign-key proof",
+    "Final changed-source branch and current-main integrated CI"
+  ],
+  "localCredentialFilesRemaining": 0,
+  "strictAcceptance": "NOT_VERIFIED_PENDING_EXACT_SOURCE_CI_AND_REQUIRED_PROVIDER_PROOF",
+  "noProductionChanges": true,
+  "noMerge": true,
+  "noPhase4": true,
+  "additionalSpend": 0
+}
