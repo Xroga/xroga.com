@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 
 const sidebar=readFileSync(new URL('../components/layout/SidebarProjectHistory.tsx',import.meta.url),'utf8');
+const title=readFileSync(new URL('../components/layout/SidebarMovingTitle.tsx',import.meta.url),'utf8');
 const css=readFileSync(new URL('../components/layout/SidebarOrganize.css',import.meta.url),'utf8');
 const visible=sidebar.slice(sidebar.indexOf('  return <div className="mt-2 mb-1'),sidebar.indexOf('    <SidebarActionMenu point='));
 
@@ -39,4 +40,8 @@ test('row actions remain keyboard-reachable and titles respect reduced motion',(
   assert.match(sidebar, /aria-label=\{saved\?'Unpin '\+label:'Pin '\+label\}/);
   assert.match(sidebar, /aria-haspopup="menu"/);
   assert.match(css, /prefers-reduced-motion:reduce/);
+});
+
+test('title hover rendering is isolated from unrelated sidebar parent renders',()=>{
+  assert.match(title,/memo\(function SidebarMovingTitle/);
 });
