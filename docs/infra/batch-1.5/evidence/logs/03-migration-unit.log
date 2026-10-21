@@ -1,0 +1,246 @@
+# cmd: npx tsx --test src/storage/migration/engine.test.ts src/storage/migration/readCompat.test.ts src/storage/migration/cli.test.ts
+TAP version 13
+# Subtest: operator scripts: safe by default
+    # Subtest: every mutating phase is a no-op report without --execute, even for an approved job
+    ok 1 - every mutating phase is a no-op report without --execute, even for an approved job
+      ---
+      duration_ms: 3.963473
+      type: 'test'
+      ...
+    # Subtest: --execute performs the phase, and the receipt records that it did
+    ok 2 - --execute performs the phase, and the receipt records that it did
+      ---
+      duration_ms: 12.086502
+      type: 'test'
+      ...
+    # Subtest: read-only phases run without --execute
+    ok 3 - read-only phases run without --execute
+      ---
+      duration_ms: 2.476139
+      type: 'test'
+      ...
+    # Subtest: redacts signatures, keys and secret-named fields from logs and receipts
+    ok 4 - redacts signatures, keys and secret-named fields from logs and receipts
+      ---
+      duration_ms: 0.22908
+      type: 'test'
+      ...
+    # Subtest: parses flags without mistaking values for commands
+    ok 5 - parses flags without mistaking values for commands
+      ---
+      duration_ms: 1.366876
+      type: 'test'
+      ...
+    1..5
+ok 1 - operator scripts: safe by default
+  ---
+  duration_ms: 21.270567
+  type: 'suite'
+  ...
+# Subtest: migration: safety gates
+    # Subtest: discover and dry-run read the source and classify but write nothing to the destination
+    ok 1 - discover and dry-run read the source and classify but write nothing to the destination
+      ---
+      duration_ms: 11.445317
+      type: 'test'
+      ...
+    # Subtest: copy is refused for a dry-run job and for an unapproved job
+    ok 2 - copy is refused for a dry-run job and for an unapproved job
+      ---
+      duration_ms: 1.550915
+      type: 'test'
+      ...
+    # Subtest: read-new and freeze-old need their own approvals; legacy deletion is not implemented at all
+    ok 3 - read-new and freeze-old need their own approvals; legacy deletion is not implemented at all
+      ---
+      duration_ms: 6.158233
+      type: 'test'
+      ...
+    # Subtest: the secret OAuth-token bucket can never be a migration source
+    ok 4 - the secret OAuth-token bucket can never be a migration source
+      ---
+      duration_ms: 0.306867
+      type: 'test'
+      ...
+    1..4
+ok 2 - migration: safety gates
+  ---
+  duration_ms: 20.455545
+  type: 'suite'
+  ...
+# Subtest: migration: end to end
+    # Subtest: copies, verifies SHA-256, reconciles honest counts, and leaves every source object byte-identical
+    ok 1 - copies, verifies SHA-256, reconciles honest counts, and leaves every source object byte-identical
+      ---
+      duration_ms: 5.51196
+      type: 'test'
+      ...
+    # Subtest: is idempotent: replaying every phase creates no duplicates and changes nothing
+    ok 2 - is idempotent: replaying every phase creates no duplicates and changes nothing
+      ---
+      duration_ms: 2.414862
+      type: 'test'
+      ...
+    # Subtest: resumes discovery from the persisted cursor after a restart
+    ok 3 - resumes discovery from the persisted cursor after a restart
+      ---
+      duration_ms: 0.788932
+      type: 'test'
+      ...
+    # Subtest: classifies unknown owners, unparseable keys and oversize objects as BLOCKED with a reason, not as success
+    ok 4 - classifies unknown owners, unparseable keys and oversize objects as BLOCKED with a reason, not as success
+      ---
+      duration_ms: 0.748151
+      type: 'test'
+      ...
+    # Subtest: ephemeral cache files are skipped unless the operator opts in, and are counted honestly
+    ok 5 - ephemeral cache files are skipped unless the operator opts in, and are counted honestly
+      ---
+      duration_ms: 9.731982
+      type: 'test'
+      ...
+    1..5
+ok 3 - migration: end to end
+  ---
+  duration_ms: 19.805693
+  type: 'suite'
+  ...
+# Subtest: migration: fault injection
+    # Subtest: destination temporarily unavailable: item FAILED with backoff, then succeeds on retry; nothing is half-READY
+    ok 1 - destination temporarily unavailable: item FAILED with backoff, then succeeds on retry; nothing is half-READY
+      ---
+      duration_ms: 2.708919
+      type: 'test'
+      ...
+    # Subtest: timeout AFTER a successful destination write is not trusted until read-back verifies it
+    ok 2 - timeout AFTER a successful destination write is not trusted until read-back verifies it
+      ---
+      duration_ms: 1.432429
+      type: 'test'
+      ...
+    # Subtest: process killed after the destination upload but before the ledger commit: a second worker finishes without re-uploading
+    ok 3 - process killed after the destination upload but before the ledger commit: a second worker finishes without re-uploading
+      ---
+      duration_ms: 2.066931
+      type: 'test'
+      ...
+    # Subtest: DB commit failure while recording COPIED is retried and converges on one destination
+    ok 4 - DB commit failure while recording COPIED is retried and converges on one destination
+      ---
+      duration_ms: 2.088784
+      type: 'test'
+      ...
+    # Subtest: destination written with corrupted bytes: detected against the SOURCE hash, destination marked CORRUPT, never READY, source preserved
+    ok 5 - destination written with corrupted bytes: detected against the SOURCE hash, destination marked CORRUPT, never READY, source preserved
+      ---
+      duration_ms: 1.754427
+      type: 'test'
+      ...
+    # Subtest: destination corrupted after copy is caught by VERIFY
+    ok 6 - destination corrupted after copy is caught by VERIFY
+      ---
+      duration_ms: 1.475732
+      type: 'test'
+      ...
+    # Subtest: destination object deleted after copy: VERIFY reports it missing, never VERIFIED
+    ok 7 - destination object deleted after copy: VERIFY reports it missing, never VERIFIED
+      ---
+      duration_ms: 1.149842
+      type: 'test'
+      ...
+    # Subtest: source missing or changed mid-migration is reported, never counted as migrated; re-discovery recopies the new bytes
+    ok 8 - source missing or changed mid-migration is reported, never counted as migrated; re-discovery recopies the new bytes
+      ---
+      duration_ms: 1.484112
+      type: 'test'
+      ...
+    # Subtest: two workers running at once copy each source exactly once
+    ok 9 - two workers running at once copy each source exactly once
+      ---
+      duration_ms: 3.960522
+      type: 'test'
+      ...
+    # Subtest: a worker that lost its lease cannot overwrite the ledger
+    ok 10 - a worker that lost its lease cannot overwrite the ledger
+      ---
+      duration_ms: 0.353596
+      type: 'test'
+      ...
+    # Subtest: retries are bounded: a persistently failing item ends BLOCKED(MAX_ATTEMPTS), not an infinite loop
+    ok 11 - retries are bounded: a persistently failing item ends BLOCKED(MAX_ATTEMPTS), not an infinite loop
+      ---
+      duration_ms: 0.612975
+      type: 'test'
+      ...
+    1..11
+ok 4 - migration: fault injection
+  ---
+  duration_ms: 19.540664
+  type: 'suite'
+  ...
+# Subtest: migration: read mode switch and rollback
+    # Subtest: switches only VERIFIED items, rolls back idempotently, and never touches objects or newer writes
+    ok 1 - switches only VERIFIED items, rolls back idempotently, and never touches objects or newer writes
+      ---
+      duration_ms: 2.402407
+      type: 'test'
+      ...
+    # Subtest: FREEZE_OLD is a ledger marker only and the deletion manifest deletes nothing
+    ok 2 - FREEZE_OLD is a ledger marker only and the deletion manifest deletes nothing
+      ---
+      duration_ms: 1.070605
+      type: 'test'
+      ...
+    # Subtest: the migrated object stays tenant-bound: another tenant cannot read it
+    ok 3 - the migrated object stays tenant-bound: another tenant cannot read it
+      ---
+      duration_ms: 1.823022
+      type: 'test'
+      ...
+    1..3
+ok 5 - migration: read mode switch and rollback
+  ---
+  duration_ms: 5.424426
+  type: 'suite'
+  ...
+# Subtest: STORAGE_READ_ORDER compatibility
+    # Subtest: legacy,r2 serves legacy; r2,legacy serves canonical only after READ_NEW; rollback flips it back
+    ok 1 - legacy,r2 serves legacy; r2,legacy serves canonical only after READ_NEW; rollback flips it back
+      ---
+      duration_ms: 9.096455
+      type: 'test'
+      ...
+    # Subtest: ownership is enforced on BOTH paths: another user is refused, not served from the fallback
+    ok 2 - ownership is enforced on BOTH paths: another user is refused, not served from the fallback
+      ---
+      duration_ms: 2.772333
+      type: 'test'
+      ...
+    # Subtest: a corrupt canonical copy is an error, not a silent fallback to the other copy
+    ok 3 - a corrupt canonical copy is an error, not a silent fallback to the other copy
+      ---
+      duration_ms: 2.091196
+      type: 'test'
+      ...
+    # Subtest: a missing legacy object falls through to the verified canonical copy (and vice versa)
+    ok 4 - a missing legacy object falls through to the verified canonical copy (and vice versa)
+      ---
+      duration_ms: 1.515412
+      type: 'test'
+      ...
+    1..4
+ok 6 - STORAGE_READ_ORDER compatibility
+  ---
+  duration_ms: 18.85032
+  type: 'suite'
+  ...
+1..6
+# tests 32
+# suites 6
+# pass 32
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 403.604687
+# exit: 0

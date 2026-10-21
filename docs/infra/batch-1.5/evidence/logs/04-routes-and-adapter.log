@@ -1,0 +1,84 @@
+# cmd: npx tsx --test src/routes/drive.test.ts src/services/storage/projectFiles.canonical.test.ts
+TAP version 13
+# Subtest: /api/drive routes
+    # Subtest: end to end over HTTP: initiate, upload to the synthetic provider, complete, sign, download, delete
+    ok 1 - end to end over HTTP: initiate, upload to the synthetic provider, complete, sign, download, delete
+      ---
+      duration_ms: 86.260705
+      type: 'test'
+      ...
+    # Subtest: identity cannot be supplied by the client: owner/tenant fields are rejected, other users get 404
+    ok 2 - identity cannot be supplied by the client: owner/tenant fields are rejected, other users get 404
+      ---
+      duration_ms: 17.469018
+      type: 'test'
+      ...
+    # Subtest: refuses unauthenticated calls, malformed ids and bad bodies without leaking internals
+    ok 3 - refuses unauthenticated calls, malformed ids and bad bodies without leaking internals
+      ---
+      duration_ms: 9.070991
+      type: 'test'
+      ...
+    # Subtest: quota exhaustion is a 413; unconfigured storage is a 503, never a silent local fallback
+    ok 4 - quota exhaustion is a 413; unconfigured storage is a 503, never a silent local fallback
+      ---
+      duration_ms: 9.795003
+      type: 'test'
+      ...
+    1..4
+ok 1 - /api/drive routes
+  ---
+  duration_ms: 139.263108
+  type: 'suite'
+  ...
+# [Storage] R2 upload failed, using data URL fallback: Cloudflare R2 credentials not configured
+# Subtest: storeProjectFile compatibility modes
+    # Subtest: legacy mode (default) is unchanged and never claims canonical durability
+    ok 1 - legacy mode (default) is unchanged and never claims canonical durability
+      ---
+      duration_ms: 27.784098
+      type: 'test'
+      ...
+# [Storage] R2 upload failed, using data URL fallback: Cloudflare R2 credentials not configured
+    # Subtest: r2 mode writes a verified private object and records only a drive:// reference
+    ok 2 - r2 mode writes a verified private object and records only a drive:// reference
+      ---
+      duration_ms: 12.210382
+      type: 'test'
+      ...
+    # Subtest: r2 mode fails closed: provider outage means an error, no data URL, no cache, no project_files row
+    ok 3 - r2 mode fails closed: provider outage means an error, no data URL, no cache, no project_files row
+      ---
+      duration_ms: 1.385224
+      type: 'test'
+      ...
+    # Subtest: r2 mode with Drive unconfigured fails closed too
+    ok 4 - r2 mode with Drive unconfigured fails closed too
+      ---
+      duration_ms: 0.521655
+      type: 'test'
+      ...
+# [Storage] canonical write failed in dual mode: artifact write did not complete
+# [Storage] R2 upload failed, using data URL fallback: Cloudflare R2 credentials not configured
+    # Subtest: dual mode records canonical success, and records (not hides) a canonical failure
+    ok 5 - dual mode records canonical success, and records (not hides) a canonical failure
+      ---
+      duration_ms: 16.32798
+      type: 'test'
+      ...
+    1..5
+ok 2 - storeProjectFile compatibility modes
+  ---
+  duration_ms: 172.295441
+  type: 'suite'
+  ...
+1..2
+# tests 9
+# suites 2
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 702.645395
+# exit: 0

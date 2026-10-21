@@ -16,4 +16,7 @@ run 04-routes-and-adapter npx tsx --test src/routes/drive.test.ts src/services/s
 if [ -n "${STORAGE_TEST_DATABASE_URL:-}" ]; then
   run 05-postgres-integration npx tsx --test src/storage/postgresRepository.integration.test.ts src/storage/migration/postgresMigration.integration.test.ts
 else echo "05-postgres-integration: SKIPPED (STORAGE_TEST_DATABASE_URL not set)" | tee "$OUT/05-postgres-integration.log"; fi
+if [ -n "${STORAGE_TEST_S3_ENDPOINT:-}" ]; then
+  run 05b-s3-wire-emulator npx tsx --test src/storage/r2ObjectStore.wire.integration.test.ts
+else echo "05b-s3-wire-emulator: SKIPPED (STORAGE_TEST_S3_ENDPOINT not set)" | tee "$OUT/05b-s3-wire-emulator.log"; fi
 run 06-full-backend-suite npm test
