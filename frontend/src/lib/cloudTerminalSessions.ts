@@ -141,10 +141,18 @@ async function pushTerminalSessionToCloudNow(
         const { data:auth, error:authError } = await client.auth.getUser();
         if (authError || !auth.user?.id) throw new Error('Sign in to save conversations');
         const { data:existing } = await client.from('terminal_sessions')
-          .select('created_at').eq('id',entry.id).eq('user_id',auth.user.id).maybeSingle();
-        const { data, error } = await client.from('terminal_sessions')
+          .select('created_at,terminal_number').eq('id',entry.id).eq('user_id',auth.user.id).maybeSingle();
+        const maxGeneralOrdinal=async()=>{
+          const {data,error}=await client.from('terminal_sessions').select('terminal_number')
+            .eq('user_id',auth.user.id).eq('github_repo_name','')
+            .order('terminal_number',{ascending:false}).limit(1).maybeSingle();
+          if(error)throw error;
+          return Number(data?.terminal_number||0)+1;
+        };
+        let ordinal=existing?.terminal_number||await maxGeneralOrdinal();
+        const saveGeneral=async(number:number)=>client.from('terminal_sessions')
           .upsert({
-            id:entry.id,user_id:auth.user.id,github_repo_name:'',github_branch:'main',terminal_number:1,
+            id:entry.id,user_id:auth.user.id,github_repo_name:'',github_branch:'main',terminal_number:number,
             title:safeConversationTitle(entry.title,entry.prompt),prompt:entry.prompt,preview:entry.preview,
             messages:body.messages,kind:entry.kind,status:entry.status || 'active',
             message_count:body.messages.length,created_at:existing?.created_at || entry.createdAt,
@@ -152,6 +160,12 @@ async function pushTerminalSessionToCloudNow(
           },{onConflict:'id'})
           .select('id,github_repo_name,github_branch,terminal_number,title,preview,kind,status,message_count,created_at,updated_at')
           .single();
+        let {data,error}=await saveGeneral(ordinal);
+        for(let attempt=0;error&&attempt<3&&
+          (error.code==='23505'||/terminal_number|uq_terminal_sessions/i.test(error.message||''));attempt++){
+          ordinal=Math.max(ordinal+1,await maxGeneralOrdinal());
+          ({data,error}=await saveGeneral(ordinal));
+        }
         if(error || !data) throw error || new Error('General conversation was not saved');
         session={
           id:data.id,githubRepoName:'',githubBranch:'main',terminalNumber:1,

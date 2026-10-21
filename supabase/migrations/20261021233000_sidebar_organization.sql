@@ -42,12 +42,9 @@ create policy "sidebar_items_own" on public.sidebar_items for all to authenticat
    ))
  );
 grant select,insert,update,delete on public.sidebar_items,public.sidebar_sections to authenticated;
--- Existing chat records remain untouched. The frontend may persist a general session using
--- an empty repo name, which never masquerades as an actual GitHub repository.
-drop index if exists public.uq_terminal_sessions_user_repo_number;
-create unique index uq_terminal_sessions_user_repo_number
-  on public.terminal_sessions(user_id,github_repo_name,terminal_number)
-  where github_repo_name <> '';
+-- Retain the existing (user, repository, ordinal) unique index.
+-- General chats receive a unique ordinal within the empty-repository namespace;
+-- no destructive index change or repository simulation is required.
 -- Fix only system-generated ordinal names, using the user's saved text, never fabricated output.
 update public.terminal_sessions
 set title = left(
