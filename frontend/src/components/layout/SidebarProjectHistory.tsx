@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import { Cloud, FolderOpen, GitBranch, ChevronDown, ChevronRight, Pin, PinOff } from 'lucide-react';
+import { Cloud, FolderOpen, Folder, MessageSquare, ChevronDown, ChevronRight, Pin, PinOff, Ellipsis, Plus, ArchiveRestore } from 'lucide-react';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { FilterIcon } from '@/components/icons/animated/FilterIcon';
 import { GitForkIcon } from '@/components/icons/animated/GitForkIcon';
@@ -34,7 +34,14 @@ import {
   onCloudTerminalsChanged,
 } from '@/lib/cloudTerminalSessions';
 import { loadRepoSessionsIndex } from '@/lib/repoSessionsIndex';
-import type { CloudTerminalSessionSummary } from '@/lib/api';
+import { api, type CloudTerminalSessionSummary, type Project } from '@/lib/api';
+import { createClient } from '@/lib/supabase/client';
+import { removeTerminalHistoryEntry } from '@/lib/terminalHistory';
+import { SidebarOrganizerMenu, SidebarRevealTitle, type SidebarMenuTarget } from './SidebarOrganizerUI';
+import './SidebarOrganizer.css';
+import { loadSidebarMetadata, saveSidebarMetadata, removeSidebarMetadata,
+  listSidebarProjects, listSidebarSections, createSidebarSection, safeConversationTitle,
+  type SidebarItemMeta, type SidebarSection, type SidebarItemType } from '@/lib/sidebarOrganization';
 import { formatCompactAgo } from '@/lib/safeDates';
 import { cn } from '@/lib/utils';
 import { loadWorkspaceSession } from '@/lib/workspacePersistence';
@@ -177,6 +184,25 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
   const [busyId, setBusyId] = useState<string | null>(null);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  const [projectRows,setProjectRows]=useState<Project[]>([]);
+  const [projectsLoading,setProjectsLoading]=useState(false);
+  const [projectsMore,setProjectsMore]=useState(false);
+  const [projectCount,setProjectCount]=useState(5);
+  const [sections,setSections]=useState<SidebarSection[]>([]);
+  const [metadata,setMetadata]=useState<SidebarItemMeta[]>([]);
+  const [metaLoaded,setMetaLoaded]=useState(false);
+  const [morePins,setMorePins]=useState(10);
+  const [moreRecent,setMoreRecent]=useState(50);
+  const [loadingMoreRecent,setLoadingMoreRecent]=useState(false);
+  const [recentsMore,setRecentsMore]=useState(true);
+  const [showArchived,setShowArchived]=useState(false);
+  const [expandedProjects,setExpandedProjects]=useState<Record<string,boolean>>({});
+  const [fullProjects,setFullProjects]=useState<Record<string,boolean>>({});
+  const [menuTarget,setMenuTarget]=useState<SidebarMenuTarget|null>(null);
+  const [menuPoint,setMenuPoint]=useState<{x:number;y:number}|null>(null);
+  const menuTriggerRef=useRef<HTMLElement|null>(null);
+  const handledLinkRef=useRef<string|null>(null);
+  const [pinNames,setPinNames]=useState<Record<string,string>>({});
 
   /**
    * Live chat state is read through refs, not closed over.
@@ -336,7 +362,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       const list = await listCloudTerminalSessions();
       setCloudSessions(list);
       const local = loadTerminalHistory().filter(
-        (e) => e.messageCount > 0 && e.githubRepoName?.includes('/') && e.messages?.length
+        (e) => e.messageCount > 0 && e.messages?.length
       );
       if (!local.length) return;
       // `migrateLocalSessionsToCloud` runs at most once per page load and reports
@@ -578,8 +604,9 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       const branch = session.githubBranch || 'main';
       const repo = session.githubRepoName;
       if (!repo?.includes('/')) {
-        if (session.entry?.messages?.length) await applyRestore(session.entry, 'main');
-        else { router.push('/workspace'); toast('The saved conversation is unavailable on this device'); }
+        const saved=session.entry?.messages?.length?session.entry:await loadTerminalFromAnywhere(session.id);
+        if(saved?.messages?.length)await applyRestore(saved,'main');
+        else toast.error('This conversation is unavailable; no empty chat was opened');
         return;
       }
 
@@ -611,11 +638,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         return;
       }
 
-      // A session stub may exist while its history body is unavailable —
-      // still open the workspace with this repo selected so chat/builds work.
-      setActiveSessionId(session.id);
-      router.push('/workspace');
-      toast('Opened terminal — start chatting or building in this repo');
+      toast.error('Saved messages are unavailable; no empty chat was opened');
     } finally {
       setBusyId(null);
     }
