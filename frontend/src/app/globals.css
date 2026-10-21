@@ -14600,3 +14600,11 @@ html.xv-home-scroll-lock body {
 .xv-pqm-copy-email span { opacity:0; flex:none; }
 .xv-pqm-copy-email:hover span,.xv-pqm-copy-email:focus-visible span { opacity:1; }
 .xv-pqm-copy-email:focus-visible { outline: 1px solid var(--foreground); }
+
+/* Opaque, constrained surface for every sidebar automation and plugin flyout. */
+.xv-sidebar-hover-menu,.xv-sidebar-hover-menu__card,.xv-plugins-popover {
+  background:var(--card) !important; opacity:1 !important;
+  border-color:var(--card-border) !important;
+  backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
+}
+.xv-plugins-popover { max-height:calc(100dvh - 32px); overflow-y:auto; overscroll-behavior:contain; }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { ChevronRight, Search, Code2, Rocket, Users, Layers, Bot, Globe2, Puzzle, Pause, Play, X } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Search, Code2, Rocket, Users, Layers, Bot, Globe2, Puzzle, Pause, Play, X } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { AnchoredPortalPopover } from '@/components/ui/AnchoredPortalPopover';
@@ -105,25 +105,41 @@ function AutomaticIntro() {
 function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?: (active: boolean) => void }) {
   const { prompt, setPrompt } = useTerminalChat();
   const [open, setOpen] = useState(false);
+  const [selectedFeature, setSelectedFeature] = useState<number | null>(null);
   const anchorRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  function close() { setOpen(false); onInteraction?.(false); }
-  function choose(text: string) {
+  function close() { setOpen(false); setSelectedFeature(null); onInteraction?.(false); }
+  function choose(feature: (typeof card.features)[number]) {
+    const [label, text] = feature;
     const composer = document.querySelector<HTMLTextAreaElement>('[data-terminal-composer]');
     const currentDraft = composer?.value ?? prompt;
     const isStarter = STARTER_PROMPTS.some(starter => currentDraft === starter);
-    // Feature selection is deliberate, but a user's existing brief is never discarded.
-    setPrompt(!currentDraft.trim() || isStarter ? text : `${currentDraft.trimEnd()}\n\n${text}`);
+    // A complete, editable work request. Never send or run work on selection.
+    const instruction = [
+      `I want Xroga to help with ${label.toLowerCase()} (${card.title.toLowerCase()}).`,
+      '',
+      `My goal: ${text.trim()} [Describe your specific goal, content, links, audience, or constraints here.]`,
+      '',
+      'Please:',
+      '1. Understand the intended outcome and ask only for genuinely missing essential information.',
+      '2. Identify the relevant resources, files, tools, and permissions automatically.',
+      '3. Plan and carry out the appropriate work, with clear progress and checkpoints.',
+      '4. Verify the results against the goal, identify anything incomplete, and provide the finished deliverable.',
+      '5. Ask for approval before publishing, spending money, or taking consequential external actions.',
+      '',
+      'Make the result polished and usable. Do not claim successful execution without evidence.',
+    ].join('\n');
+    setPrompt(!currentDraft.trim() || isStarter ? instruction : `${currentDraft.trimEnd()}\n\n${instruction}`);
     close();
     requestAnimationFrame(() => composer?.focus({ preventScroll: true }));
   }
   const Icon = card.icon;
   return <>
     <button ref={anchorRef} type="button" className={styles.card} data-capability={card.id}
-      aria-haspopup="menu" aria-expanded={open} aria-label={card.title} title={card.title}
+      aria-haspopup="menu" aria-expanded={open} aria-label={card.title}
       onFocus={() => onInteraction?.(true)}
       onBlur={() => { if (!open) onInteraction?.(false); }}
-      onClick={() => { if (open) { close(); return; } setOpen(true); onInteraction?.(true); requestAnimationFrame(() => menuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus()); }}
+      onClick={() => { if (open) { close(); return; } setSelectedFeature(null); setOpen(true); onInteraction?.(true); }}
     >
       <span className={styles.cardCopy}>
         <span className={styles.cardIcon}><Icon aria-hidden="true" /></span>
@@ -131,7 +147,7 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
       </span>
       <CapabilityVisual id={card.id} />
     </button>
-    <AnchoredPortalPopover open={open} onClose={close} anchorRef={anchorRef} placement="top-start" width={260} ariaLabel={`${card.title} features`} className={controls.featureMenu}>
+    <AnchoredPortalPopover open={open} onClose={close} anchorRef={anchorRef} placement="top-start" width={292} ariaLabel={`${card.title} features`} className={controls.featureMenu}>
       <div ref={menuRef}
         onKeyDown={event => {
           if (event.key === 'Escape') { close(); anchorRef.current?.focus(); }
@@ -143,11 +159,30 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
             items[next]?.focus();
           }
         }}
-        onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget as Node) && event.relatedTarget !== anchorRef.current) close(); }}
+
       >
-        <div className={controls.featureHeading}><strong>{card.title}</strong><button type="button" onClick={() => { close(); anchorRef.current?.focus(); }} aria-label="Close features"><X size={14} /></button></div>
+        <div className={controls.featureHeading}>
+          {selectedFeature !== null
+            ? <button type="button" aria-label="Back to categories" className={controls.featureBack} onClick={() => setSelectedFeature(null)}><ChevronLeft size={15} /><span>Back</span></button>
+            : <strong>{card.title}</strong>}
+          <button type="button" onClick={() => { close(); anchorRef.current?.focus(); }} aria-label="Close features"><X size={14} /></button>
+        </div>
         <p>{card.description}</p>
-        {card.features.map(([label, text]) => <button type="button" role="menuitem" key={label} onClick={() => choose(text)}><span>{label}</span><ChevronRight size={14} aria-hidden="true" /></button>)}
+        <div className={controls.featureOptions} role="group" aria-label={`${card.title} categories`}>
+          {card.features.map((feature, index) => <button type="button" role="menuitem"
+            key={feature[0]} aria-current={selectedFeature === index ? 'true' : undefined}
+            onMouseEnter={() => setSelectedFeature(index)}
+            onFocus={() => setSelectedFeature(index)}
+            onClick={() => setSelectedFeature(index)}>
+            <span>{feature[0]}</span><ChevronRight size={14} aria-hidden="true" />
+          </button>)}
+        </div>
+        {selectedFeature !== null ? <div className={controls.featureDetail} role="region" aria-label={`${card.features[selectedFeature][0]} action`}>
+          <strong>{card.features[selectedFeature][0]}</strong>
+          <p>Describe your objective and Xroga will prepare the steps, discover the tools, carry out authorized work, and verify the deliverable.</p>
+          <button type="button" className={controls.featureChoose}
+            onClick={() => choose(card.features[selectedFeature])}>Use this in chat <ChevronRight size={14} aria-hidden="true" /></button>
+        </div> : null}
       </div>
     </AnchoredPortalPopover>
   </>;

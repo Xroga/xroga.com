@@ -192,7 +192,7 @@ export function ProfileQuickMenu({ onLogout, anchorRef, children, triggerClassNa
             <div className="xv-pqm-identity">
               <span className="xv-pqm-avatar" aria-hidden="true">{accountName.charAt(0).toUpperCase()}</span>
               <span className="min-w-0"><strong>{accountName}</strong>{email ? <button type="button" className="xv-pqm-copy-email"
-                  title="Copy email address" aria-label="Copy account email" onClick={async () => {
+                  aria-label="Copy account email" onClick={async () => {
                     try { await navigator.clipboard.writeText(email); setEmailCopied(true); }
                     catch { setEmailCopied(false); }
                   }}><small>{email}</small><span aria-hidden="true">{emailCopied ? '✓' : '⧉'}</span></button> : null}<em>{provider} account</em></span>

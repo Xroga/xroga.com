@@ -40,7 +40,7 @@ import { cn } from '@/lib/utils';
 import { WorkflowIcon as LucideWorkflowIcon } from '@/components/icons/animated/lucide-animated/workflow';
 import { ClockIcon as LucideClockIcon } from '@/components/icons/animated/lucide-animated/clock';
 import { BotIcon as LucideBotIcon } from '@/components/icons/animated/lucide-animated/bot';
-import { BlocksIcon as LucideBlocksIcon } from '@/components/icons/animated/lucide-animated/blocks';
+import { BlocksIcon as LucideBlocksIcon, type BlocksIconHandle } from '@/components/icons/animated/lucide-animated/blocks';
 import { LocateIcon } from '@/components/ui/locate-icon';
 import { HistoryIcon as LucideHistoryIcon } from '@/components/icons/animated/lucide-animated/history';
 import { FoldersIcon as LucideFoldersIcon } from '@/components/icons/animated/lucide-animated/folders';
@@ -239,6 +239,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
   const { requestAuthGate } = useWorkspaceAuthGate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const overviewIconRef = useRef<BlocksIconHandle>(null);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
   const navScrollRef = useRef<HTMLDivElement>(null);
@@ -728,11 +729,15 @@ export function Sidebar({ displayName, email }: SidebarProps) {
               </HoverTip>
                 <Link
                   href="/dashboard"
-                  aria-label="Dashboard"
+                  aria-label="Overview"
+                  onMouseEnter={() => overviewIconRef.current?.startAnimation()}
+                  onMouseLeave={() => overviewIconRef.current?.stopAnimation()}
+                  onFocus={() => overviewIconRef.current?.startAnimation()}
+                  onBlur={() => overviewIconRef.current?.stopAnimation()}
                   onClick={(event) => handleNavEntryClick(event, '/dashboard')}
                   className={cn(isActive('/dashboard') && 'is-active')}
                 >
-                  <span className="xv-animated-blocks-hover"><LucideBlocksIcon size={16} /></span>
+                  <span className="xv-animated-blocks-hover"><LucideBlocksIcon ref={overviewIconRef} size={16} /></span>
                 </Link>
                 <Link
                   href="/dashboard/projects"
@@ -762,7 +767,10 @@ export function Sidebar({ displayName, email }: SidebarProps) {
 
       {navExpanded ? <div className="xv-sidebar-primary-row">
         <button type="button" onClick={handleNewChat} aria-label="New Work" className="xv-new-work-button"><AnimatedIcon icon={NewTerminalIcon} size={15} /><span>New Work</span></button>
-        <Link href="/dashboard" onClick={event => handleNavEntryClick(event, '/dashboard')} aria-label="Overview"><span className="xv-animated-blocks-hover"><LucideBlocksIcon size={15} aria-hidden="true" /></span><span>Overview</span></Link>
+        <Link href="/dashboard" onClick={event => handleNavEntryClick(event, '/dashboard')} aria-label="Overview"
+          onMouseEnter={() => overviewIconRef.current?.startAnimation()} onMouseLeave={() => overviewIconRef.current?.stopAnimation()}
+          onFocus={() => overviewIconRef.current?.startAnimation()} onBlur={() => overviewIconRef.current?.stopAnimation()}>
+          <span className="xv-animated-blocks-hover"><LucideBlocksIcon ref={overviewIconRef} size={15} aria-hidden="true" /></span><span>Overview</span></Link>
       </div> : null}
       {navExpanded && notificationsOpen ? <SidebarNotificationCenter open onClose={() => setNotificationsOpen(false)} /> : navExpanded ? <SidebarNavScroller targetRef={navScrollRef} className="flex-1 min-h-0">
         <nav
