@@ -2,7 +2,7 @@
 "use client";
 
 import type { Variants } from "motion/react";
-import { useAnimation } from "motion/react";
+import { useAnimation, useReducedMotion } from "motion/react";
 import * as m from "motion/react-m";
 import type { HTMLAttributes } from "react";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
@@ -20,19 +20,21 @@ interface BlocksIconProps extends HTMLAttributes<HTMLDivElement> {
 
 const VARIANTS: Variants = {
   normal: { translateX: 0, translateY: 0 },
-  animate: { translateX: -4, translateY: 4 },
+  animate: { translateX: [0, -4, 0], translateY: [0, 4, 0],
+    transition: { duration: .65, ease: 'easeInOut' } },
 };
 
 const BlocksIcon = forwardRef<BlocksIconHandle, BlocksIconProps>(
   ({ onMouseEnter, onMouseLeave, className, size = 28, ...props }, ref) => {
     const controls = useAnimation();
+    const reduced = useReducedMotion();
     const isControlledRef = useRef(false);
 
     useImperativeHandle(ref, () => {
       isControlledRef.current = true;
 
       return {
-        startAnimation: () => controls.start("animate"),
+        startAnimation: () => controls.start(reduced ? "normal" : "animate"),
         stopAnimation: () => controls.start("normal"),
       };
     });
@@ -42,7 +44,7 @@ const BlocksIcon = forwardRef<BlocksIconHandle, BlocksIconProps>(
         if (isControlledRef.current) {
           onMouseEnter?.(e);
         } else {
-          controls.start("animate");
+          controls.start(reduced ? "normal" : "animate");
         }
       },
       [controls, onMouseEnter]

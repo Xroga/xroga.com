@@ -5,7 +5,6 @@ import {
   AlertTriangle,
   Archive,
   CheckCircle2,
-  ChevronDown,
   ChevronRight,
   ExternalLink,
   Globe2,
