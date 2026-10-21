@@ -10,7 +10,8 @@ async function chooseStarter(page: Page, feature: string) {
   await expect.poll(() => input.inputValue()).toContain('My goal:');
   const next = await input.inputValue();
   expect(next.startsWith(`${previous ? `${previous.trimEnd()}\n\n` : ''}I want Xroga to help with ${feature.toLowerCase()}`)).toBe(true);
-  expect(next).toContain('Ask for approval before publishing, spending money, or taking consequential external actions.');
+  expect(next).toContain('Ask for approval before publishing, making payments, sending messages, or changing external systems.');
+  expect(next).toContain('Acceptance criteria:');
   expect(next).toContain('Do not claim successful execution without evidence.');
 }
 
@@ -35,7 +36,7 @@ test.beforeEach(async ({ page, baseURL }) => {
   }));
 });
 
-test('starter plus is opt-in and conversation restores the ordinary ring without a second composer', async ({ page }) => {
+test('canonical public composers preserve the approved Plus controls without a second composer', async ({ page }) => {
   await page.goto('/workspace');
   const composer = page.locator('[data-terminal-composer]');
   const actions = page.getByRole('button', { name: 'More composer actions', exact: true });
@@ -47,8 +48,10 @@ test('starter plus is opt-in and conversation restores the ordinary ring without
   await expect(page.getByText('Local UI fixture reply verified.', { exact: false }).first()).toBeVisible();
   await expect(page.getByTestId('workspace-start-header')).toHaveCount(0);
   await expect(page.getByTestId('workspace-start-cards')).toHaveCount(0);
-  await expect(actions.locator('svg.lucide-plus')).toHaveCount(0);
+  await expect(actions.locator('svg.lucide-plus')).toHaveCount(1);
   await expect(actions.locator('svg')).toHaveCount(1);
+  await expect(page.locator('.xv-chatbar-solid').getByRole('button', { name: 'Projects', exact: true })).toBeVisible();
+  await expect(page.locator('.xv-chatbar-solid').getByRole('button', { name: 'Plugins', exact: true })).toBeVisible();
   await expect(composer).toHaveCount(1);
 });
 
@@ -119,7 +122,7 @@ test('private empty workspace never exposes starter cards or starter plus', asyn
   await expect(page.locator('[data-terminal-composer]')).toHaveAttribute('placeholder', 'Type a private message…');
   await expect(page.getByTestId('workspace-start-header')).toHaveCount(0);
   await expect(page.getByTestId('workspace-start-cards')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'More composer actions', exact: true }).locator('svg.lucide-plus')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'More composer actions', exact: true })).toHaveCount(0);
 });
 
 test('visual starter stays within the pane and every control remains reachable at each viewport', async ({ page }) => {
