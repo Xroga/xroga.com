@@ -720,7 +720,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       if (!e.id || e.messageCount <= 0) continue;
       const repo = e.githubRepoName?.includes('/') ? e.githubRepoName : undefined;
       map.set(e.id, {
-        id: e.id, title: e.title, preview: e.prompt || e.preview, updatedAt: e.updatedAt,
+        id: e.id, title: meaningfulSidebarTitle(e.title,e.prompt), preview: e.prompt || e.preview, updatedAt: e.updatedAt,
         status: e.status, githubRepoName: repo, githubBranch: e.githubBranch || 'main',
         projectRoot: e.projectRoot || '/', cloudSynced: Boolean(repo && cachedTerminalNumber(e.id)),
         kind: 'local', terminalNumber: repo ? cachedTerminalNumber(e.id) ?? 0 : 0, entry: e,
@@ -734,41 +734,195 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
           terminalNumber: c.terminalNumber || previous.terminalNumber,
           updatedAt: Date.parse(c.updatedAt) > Date.parse(previous.updatedAt) ? c.updatedAt : previous.updatedAt });
       } else {
-        map.set(c.id, { id: c.id, title: c.title, preview: c.preview, updatedAt: c.updatedAt,
+        map.set(c.id, { id: c.id, title: meaningfulSidebarTitle(c.title,c.preview), preview: c.preview, updatedAt: c.updatedAt,
           githubRepoName: c.githubRepoName, githubBranch: c.githubBranch || 'main',
           projectRoot: '/', cloudSynced: true, kind: 'cloud', terminalNumber: c.terminalNumber,
           status: c.status as TerminalHistoryStatus });
       }
     }
+    for(const chat of sidebarChats){
+      if(chat.message_count<=0)continue;
+      const previous=map.get(chat.id);
+      if(!previous||Date.parse(chat.updated_at)>Date.parse(previous.updatedAt)){
+        map.set(chat.id,{id:chat.id,title:meaningfulSidebarTitle(chat.title,chat.prompt),preview:chat.prompt||chat.preview,
+          updatedAt:chat.updated_at,status:chat.status as TerminalHistoryStatus,cloudSynced:true,kind:'cloud',terminalNumber:0});
+      }
+    }
     return Array.from(map.values()).sort((a, b) => (Date.parse(b.updatedAt) || 0) - (Date.parse(a.updatedAt) || 0));
-  }, [allHistory, entries, cloudSessions]);
-  const pinnedConversations = useMemo(() => savedConversations.filter(s => pinnedIds.includes(s.id)), [savedConversations, pinnedIds]);
-  const recentConversations = useMemo(() => savedConversations.filter(s => !pinnedIds.includes(s.id)), [savedConversations, pinnedIds]);
+  }, [allHistory, entries, cloudSessions, sidebarChats]);
 
-  function conversationTitle(session: RepoSession) {
-    const title = session.title?.trim() || '';
-    const contextual = (session.entry?.prompt || session.preview || '').trim();
-    return ((/^#\d+\s+terminal$/i.test(title) && contextual ? contextual : title || contextual || 'Untitled conversation')).slice(0, 180);
+  const organizedProjects = useMemo(()=>{
+    const actual=accountProjects.map(p=>({id:p.id,label:p.name,repo:p.github_repo_name||null,actual:p}));
+    const known=new Set(actual.map(p=>p.repo).filter(Boolean));
+    const old=folders.filter(folder=>!known.has(folder.repo)).map(folder=>({
+      id:'repo:'+folder.key,label:folder.label,repo:folder.repo,actual:null as SidebarProject|null,
+    }));
+    return [...actual,...old];
+  },[accountProjects,folders]);
+  const projectById=(id:string)=>organizedProjects.find(p=>p.id===id);
+  const activeItems=savedConversations.filter(s=>!metaOf('conversation',s.id)?.archived_at);
+  const pinnedItems=sortPinned(itemMeta.filter(m=>m.pin_order!==null&&!m.archived_at))
+    .filter(m=>m.item_type==='conversation'?activeItems.some(s=>s.id===m.item_id):
+      Boolean(projectById(m.item_id)));
+  const recentConversations=activeItems;
+  function conversationTitle(session:RepoSession){
+    return metaOf('conversation',session.id)?.title_override ||
+      meaningfulSidebarTitle(session.title,session.entry?.prompt||session.preview);
   }
-  function renderConversationRow(session: RepoSession, pinned: boolean) {
-    return (
-      <div key={session.id} className="group flex min-w-0 items-center gap-1 rounded-lg hover:bg-[var(--foreground)]/[0.05]">
-        <button type="button" className="min-w-0 flex-1 truncate rounded-md px-2 py-1.5 text-left text-[10.5px] text-[var(--foreground)]/85 hover:text-[var(--foreground)]"
-          onClick={() => void openSession(session)} disabled={busyId === session.id} title={conversationTitle(session)}>
-          <span className="block truncate">{conversationTitle(session)}</span>
+  function projectTitle(id:string,original:string){
+    return metaOf('project',id)?.title_override||original;
+  }
+  const openMenu=(event:React.MouseEvent,kind:SidebarKind,id:string)=>{
+    event.preventDefault();event.stopPropagation();
+    setMenu({kind,id,x:event.clientX,y:event.clientY});
+  };
+  function contextLink(kind:SidebarKind,id:string){
+    if(kind==='project') return projectById(id)?.actual
+      ? `${window.location.origin}/dashboard/projects/${encodeURIComponent(id)}`
+      : `${window.location.origin}/dashboard/projects`;
+    return `${window.location.origin}/workspace?conversation=${encodeURIComponent(id)}`;
+  }
+  function openProject(id:string){
+    const p=projectById(id);
+    if(p?.actual){router.push(`/dashboard/projects/${encodeURIComponent(p.actual.id)}`);return;}
+    const f=folders.find(folder=>'repo:'+folder.key===id);
+    if(f)void openRepoFolder(f);
+  }
+  function renderRow(kind:SidebarKind,id:string,label:string,open:()=>void,pinned:boolean,leading?:React.ReactNode){
+    const saved=metaOf(kind,id)?.pin_order!=null;
+    return <div key={kind+':'+id} className="xv-sidebar-work-row group flex items-center gap-1 min-w-0 rounded-md hover:bg-[var(--foreground)]/[0.05]"
+      onContextMenu={event=>openMenu(event,kind,id)} draggable={pinned}
+      onDragStart={event=>event.dataTransfer.setData('text/plain',kind+':'+id)}
+      onDragOver={event=>{if(pinned)event.preventDefault();}}
+      onDrop={event=>{
+        event.preventDefault();const source=event.dataTransfer.getData('text/plain');
+        const target=kind+':'+id;
+        if(!pinned||!source||source===target)return;
+        const src=pinnedItems.find(m=>m.item_type+':'+m.item_id===source);
+        const dst=pinnedItems.find(m=>m.item_type+':'+m.item_id===target);
+        if(src&&dst)void Promise.all([
+          updateItem(src.item_type,src.item_id,{pin_order:dst.pin_order}),
+          updateItem(dst.item_type,dst.item_id,{pin_order:src.pin_order})
+        ]).then(()=>refreshSidebarData());
+      }}>
+      <button type="button" onClick={open} className="min-w-0 flex-1 flex items-center gap-1.5 text-left py-1.5 px-1.5 rounded-md focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
+        title={undefined} aria-label={label}>
+        {leading}
+        <SidebarMovingTitle text={label}/>
+      </button>
+      <div className="xv-sidebar-work-actions shrink-0 flex items-center gap-0.5">
+        <button type="button" className="p-1 rounded-md hover:bg-[var(--foreground)]/10 focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
+          aria-label={saved?'Unpin '+label:'Pin '+label} aria-pressed={saved}
+          onClick={()=>togglePin(id,kind)}><Pin size={12} fill={saved?'currentColor':'none'} aria-hidden="true"/></button>
+        <button type="button" className="p-1 rounded-md hover:bg-[var(--foreground)]/10 focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
+          aria-label={'More options for '+label} aria-haspopup="menu" aria-expanded={menu?.id===id&&menu.kind===kind}
+          onClick={event=>{const box=event.currentTarget.getBoundingClientRect();setMenu({kind,id,x:box.right+8,y:box.top});}}>
+          <MoreHorizontal size={13} aria-hidden="true"/>
         </button>
-        {pinStorageKey ? (
-          <button type="button" onClick={() => togglePin(session.id)}
-            aria-label={pinned ? 'Unpin conversation' : 'Pin conversation'} aria-pressed={pinned}
-            title={pinned ? 'Unpin conversation' : 'Pin conversation'}
-            className="shrink-0 rounded-md p-1.5 text-[var(--muted)] opacity-70 transition-opacity hover:text-[var(--foreground)] focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-[var(--accent)] sm:opacity-0 sm:group-hover:opacity-100">
-            {pinned ? <PinOff size={12} aria-hidden="true" /> : <Pin size={12} aria-hidden="true" />}
-          </button>
-        ) : null}
       </div>
-    );
+    </div>;
   }
+  async function handleMenuAction(id:SidebarActionId){
+    const selected=menu;setMenu(null);if(!selected)return;
+    const {kind,id:itemId}=selected;
+    const current=metaOf(kind,itemId);
+    const title=kind==='project' ? projectTitle(itemId,projectById(itemId)?.label||'Project') :
+      conversationTitle(savedConversations.find(s=>s.id===itemId) || {id:itemId,title:'Untitled conversation',preview:'',updatedAt:'',cloudSynced:false,kind:'local',terminalNumber:0});
+    if(id==='pin'){togglePin(itemId,kind);return;}
+    if(id==='copy'||id==='share'){
+      const link=contextLink(kind,itemId);
+      if(id==='share'&&navigator.share){
+        try{await navigator.share({title,url:link});}catch{/* cancelled */}return;
+      }
+      try{await navigator.clipboard.writeText(link);
+        toast.success(id==='share'?'Private link copied; sign-in access is still required':'Link copied');}
+      catch{toast.error('Copy failed');}
+      return;
+    }
+    if(id==='open'){window.open(contextLink(kind,itemId),'_blank','noopener,noreferrer');return;}
+    if(id==='archive'){
+      void updateItem(kind,itemId,{archived_at:new Date().toISOString()});return;
+    }
+    if(id==='pin-up'||id==='pin-down'){
+      const idx=pinnedItems.findIndex(m=>m.item_type===kind&&m.item_id===itemId);
+      const neighbor=pinnedItems[idx+(id==='pin-up'?-1:1)];
+      if(idx<0||!neighbor)return;
+      const before=pinnedItems[idx];
+      await updateItem(kind,itemId,{pin_order:neighbor.pin_order});
+      await updateItem(neighbor.item_type,neighbor.item_id,{pin_order:before.pin_order});
+      return;
+    }
+    const mode=id==='move-project'?'move-project':id==='move-section'?'move-section':
+      id==='rename'?'rename':id==='delete'?'delete':'rename';
+    setEditor({mode,kind,id:itemId,title,projectId:current?.project_id||undefined});
+    setEditorText(mode==='rename'?title:'');
+    if(mode==='move-project'&&accountId){
+      try{const projects=await loadSidebarProjects(accountId,0,100);setAllProjectOptions(projects);}
+      catch(e){toast.error((e as Error).message);}
+    }
+  }
+  const menuActions:SidebarMenuAction[]=menu?[
+    {id:'share',label:'Share private link'},{id:'copy',label:'Copy link'},
+    {id:'open',label:'Open in new tab'},{id:'rename',label:'Rename'},
+    {id:'pin',label:metaOf(menu.kind,menu.id)?.pin_order!=null?'Unpin':'Pin'},
+    ...(menu.kind==='conversation'?[
+      {id:'move-project' as const,label:'Move to project'},
+      {id:'move-section' as const,label:'Move to section'},
+    ]:[]),
+    ...(metaOf(menu.kind,menu.id)?.pin_order!=null?[
+      {id:'pin-up' as const,label:'Move pin up'},
+      {id:'pin-down' as const,label:'Move pin down'},
+    ]:[]),
+    {id:'archive',label:'Archive'},
+    {id:'delete',label:'Delete',danger:true,disabled:menu.kind==='project'&&menu.id.startsWith('repo:')}
+  ]:[];
 
+  useEffect(()=>{
+    if(typeof window==='undefined'||!savedConversations.length)return;
+    if(window.location.pathname!=='/workspace')return;
+    const id=new URLSearchParams(window.location.search).get('conversation');
+    if(!id||id===activeSessionId)return;
+    const match=savedConversations.find(s=>s.id===id);
+    if(!match)return;
+    window.history.replaceState(window.history.state,'','/workspace');
+    void openSession(match);
+    // The session target is a deep link, not a new chat.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[savedConversations,activeSessionId]);
+
+  async function saveEditor(){
+    if(!editor||!accountId||saving)return;
+    setSaving(true);
+    try{
+      if(editor.mode==='rename'){
+        const value=editorText.trim();
+        if(!value||value.length>120)throw new Error('Enter a title under 120 characters');
+        if(editor.kind==='project'&&!editor.id.startsWith('repo:')){
+          const {error}=await createClient().from('projects').update({name:value}).eq('user_id',accountId).eq('id',editor.id);
+          if(error)throw error;
+        }else await changeSidebarMeta(accountId,editor.kind,editor.id,{title_override:value});
+      }else if(editor.mode==='new-project'){
+        const value=editorText.trim();if(!value)throw new Error('Enter a project name');
+        const p=await api.projects.create({name:value,type:'app'});
+        if(editor.kind==='conversation')await changeSidebarMeta(accountId,'conversation',editor.id,{project_id:p.id,section_id:null});
+      }else if(editor.mode==='new-section'){
+        const value=editorText.trim();if(!value||!editor.projectId)throw new Error('Select a project and section name');
+        const sec=await createSidebarSection(accountId,editor.projectId,value);
+        if(editor.kind==='conversation')await changeSidebarMeta(accountId,'conversation',editor.id,{project_id:editor.projectId,section_id:sec.id});
+      }else if(editor.mode==='delete'){
+        if(editor.kind==='project')await api.projects.delete(editor.id);
+        else{
+          const conv=savedConversations.find(s=>s.id===editor.id);
+          if(conv?.githubRepoName?.includes('/')&&conv.cloudSynced)await api.terminalSessions.delete(editor.id);
+          if(!conv?.githubRepoName)await deleteSidebarChat(accountId,editor.id);
+          removeTerminalHistoryEntry(editor.id);
+        }
+      }
+      setEditor(null);setEditorText('');await refreshSidebarData();refreshLocal();refreshCloud();
+      toast.success('Saved');
+    }catch(e){toast.error((e as Error).message||'Could not save');}
+    finally{setSaving(false);}
+  }
   if (!expanded) return null;
 
   return (
