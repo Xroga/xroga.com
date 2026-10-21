@@ -189,15 +189,21 @@ test('the sidebar nav rows carry their animated icons', () => {
   }
 });
 
-test('the collapsed rail names each of its four shortcuts', () => {
+test('the collapsed rail keeps named workspace, creation, search and project shortcuts', () => {
   // Searched forward from the rail, not from the top of the file: `SidebarNavScroller`
   // is imported above it, so an unanchored lookup ends the slice before it starts.
   const start = SIDEBAR.indexOf('xv-sidebar-collapsed-actions');
   const rail = SIDEBAR.slice(start, SIDEBAR.indexOf('<SidebarNavScroller', start));
   assert.ok(rail.length > 0, 'the collapsed rail could not be located');
-  assert.match(rail, /icon=\{LocateFixedIcon\}/, 'the rail lost the search glyph');
-  assert.match(rail, /icon=\{LayoutGridIcon\}/, 'the rail lost the dashboard glyph');
+  assert.match(rail, /<LocateIcon size=\{16\} duration=\{1\}/, 'the rail lost the animated search glyph');
+  assert.match(rail, /<LucideBlocksIcon size=\{16\}/, 'the rail lost the animated dashboard glyph');
   assert.match(rail, /icon=\{FolderOpenIcon\}/, 'the rail lost the folder');
+  for (const label of ['Workspace', 'New Terminal', 'Search', 'Dashboard', 'Projects', 'Integrations']) {
+    assert.ok(rail.includes(`aria-label="${label}"`), `${label} lost its accessible name`);
+  }
+  assert.match(rail, /onClick=\{\(\) => setSearchOpen\(true\)\}/);
+  assert.match(rail, /icon=\{TerminalIcon\}/);
+  assert.match(rail, /icon=\{ConnectIcon\}/);
   /*
    * The rail's second button carries the new-terminal window, not the code brackets.
    *
