@@ -14527,3 +14527,43 @@ html.xv-home-scroll-lock body {
 .xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--muted) 58%, transparent); border-radius: 999px; }
 .xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--muted) 84%, transparent); }
 .xv-repos-scroll { overflow: visible !important; max-height: none !important; }
+
+/* Unambiguous outside-composer chat navigation: outlined by default, dark-filled when clicked. */
+.xv-conversation-navigator.is-pressed,
+.xv-conversation-navigator:active {
+  background: #111 !important;
+  border-color: #505050 !important;
+  color: #fff !important;
+}
+.xv-conversation-navigator > div { line-height: 0; }
+.xv-conversation-navigator > div svg { display: block; }
+
+/* Bounded, theme-aware, unobtrusive conversation index. */
+.xv-chat-turn-rail.xv-chat-turn-rail--dock {
+  display: block; background: transparent !important; border: 0 !important;
+  box-shadow: none !important; backdrop-filter: none !important;
+}
+.xv-chat-turn-rail .xv-chat-turn-tick { background: transparent !important; box-shadow: none !important; }
+.xv-chat-turn-rail .xv-chat-turn-tick--bookmarked > span {
+  opacity: .74; height: 2px; box-shadow: none;
+  background: color-mix(in srgb, var(--xv-dash-strong) 70%, transparent);
+}
+.xv-chat-rail-page {
+  position: absolute; left: 0; display: grid; place-items: center;
+  width: 32px; height: 24px; padding: 0; color: var(--xv-dash-muted);
+  background: transparent; border: 0; border-radius: 6px;
+  pointer-events: auto; cursor: pointer;
+}
+.xv-chat-rail-page--older { top: 0; }
+.xv-chat-rail-page--newer { bottom: 0; }
+.xv-chat-rail-page:hover,.xv-chat-rail-page:focus-visible {
+  color: var(--xv-dash-strong); background: color-mix(in srgb, var(--xv-dash-strong) 7%, transparent);
+}
+.xv-chat-rail-page:focus-visible { outline: 1px solid currentColor; }
+@media (max-width: 1023px) {
+  .xv-chat-turn-rail.xv-chat-turn-rail--dock { display: block !important; z-index: 44; }
+  .xv-chat-turn-preview { left: 35px; width: min(250px,calc(100vw - 77px)); }
+}
+@media (max-width: 359px) {
+  .xv-chat-turn-rail.xv-chat-turn-rail--dock { display: none !important; }
+}

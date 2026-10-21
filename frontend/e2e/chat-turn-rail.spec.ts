@@ -37,7 +37,7 @@ async function populate(page: import('@playwright/test').Page) {
   }
   const rail = page.getByRole('navigation', { name: 'Conversation turn navigation' });
   await expect(rail).toBeVisible();
-  await expect(rail.locator('.xv-chat-turn-tick')).toHaveCount(8);
+  await expect(rail.locator('.xv-chat-turn-tick')).toHaveCount(4);
   return rail;
 }
 
@@ -45,18 +45,18 @@ test('dash geometry, proximity hover, actual preview, bookmark and jump', async 
   const rail = await populate(page);
   const dashes = rail.locator('.xv-chat-turn-tick');
   await page.screenshot({ path: 'test-results/rail-default.png' });
-  await dashes.nth(2).hover();
+  await dashes.nth(1).hover();
   await expect(rail.locator('.xv-chat-turn-preview')).toContainText('Conversation rail prompt 2');
   await expect(rail.locator('.xv-chat-turn-preview')).toContainText('Answer marker 2');
   // Wait until the 185 ms proximity interpolation settles before measuring geometry.
   await page.waitForTimeout(240);
   const widths = await dashes.evaluateAll(elements =>
-    elements.slice(0, 7).map(element => parseFloat(getComputedStyle(element.firstElementChild!).width))
+    elements.slice(0, 4).map(element => parseFloat(getComputedStyle(element.firstElementChild!).width))
   );
-  expect(widths[2]).toBeGreaterThanOrEqual(28);
-  expect(widths[1]).toBeGreaterThanOrEqual(18);
-  expect(widths[3]).toBeGreaterThanOrEqual(18);
-  expect(widths[0]).toBeGreaterThanOrEqual(12);
+  expect(widths[1]).toBeGreaterThanOrEqual(28);
+  expect(widths[0]).toBeGreaterThanOrEqual(18);
+  expect(widths[2]).toBeGreaterThanOrEqual(18);
+  expect(widths[3]).toBeGreaterThanOrEqual(12);
   await page.screenshot({ path: 'test-results/rail-hover.png' });
   await rail.locator('.xv-chat-turn-preview').hover();
   await expect(rail.locator('.xv-chat-turn-preview')).toBeVisible();

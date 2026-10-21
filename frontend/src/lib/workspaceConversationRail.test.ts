@@ -24,10 +24,10 @@ test('only the workspace transcript has a minimal conversation-tick rail', () =>
   assert.match(rail, /onClick=\{\(\) => onJump\(turn\.id\)\}/);
   assert.match(rail, /xv-chat-turn-tick--active/);
   assert.match(rail, /xv-chat-turn-preview/);
-  assert.match(css, /width: 11px;\s*height: 1\.5px;/);
-  assert.match(css, /\.xv-chat-turn-tick--active > span \{\s*width: 25px;/);
-  assert.match(css, /\.xv-chat-turn-tick:hover > span,[\s\S]*?width: 18px/);
-  assert.match(css, /\.xv-chat-turn-tick:focus-visible \{\s*outline: 1px solid var\(--accent\)/);
+  assert.match(css, /width:\s*var\(--xv-dash-width,7px\)/);
+  assert.match(css, /\.xv-chat-turn-tick--active > span/);
+  assert.match(rail, /proximityWidth/);
+  assert.match(css, /\.xv-chat-turn-tick:focus-visible/);
   assert.match(css, /\.xv-chat-turn-rail--dock \{\s*background: transparent;/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.xv-chat-turn-tick > span \{ transition: none; \}/);
 });

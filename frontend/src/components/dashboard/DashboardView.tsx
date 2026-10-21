@@ -234,11 +234,7 @@ export function DashboardView() {
         <header className="xv-workspace-header" data-testid="terminal-identity-header">
           <div className="xv-workspace-identity-cluster">
             <WorkspaceIdentityMenu incognito={incognito} />
-            <span className="xv-term-lights" aria-hidden="true">
-              <i />
-              <i />
-              <i />
-            </span>
+
           </div>
 
           {showNewTerminal ? <div className={startStyles.repoStatus}><RepoContextBar compact /></div> : null}

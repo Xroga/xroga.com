@@ -32,6 +32,9 @@ export function IntegrationsModal({
 }) {
   const [native, setNative] = useState<ModalPlugin[]>([]);
   const [apps, setApps] = useState<ModalPlugin[]>([]);
+  const [catalogMatches, setCatalogMatches] = useState<ModalPlugin[]>([]);
+  const [catalogSearching, setCatalogSearching] = useState(false);
+  const [catalogError, setCatalogError] = useState(false);
   const [loadingApps, setLoadingApps] = useState(false);
   const [query, setQuery] = useState('');
   const [connecting, setConnecting] = useState(false);
@@ -115,13 +118,51 @@ export function IntegrationsModal({
     };
   }, [open]);
 
+  // Search the complete supported catalog, not only the few hydrated popular apps.
+  // Debounced and abort-safe: a slow previous query cannot replace a newer result.
+  useEffect(() => {
+    if (!open || query.trim().length < 2) {
+      setCatalogMatches([]);
+      setCatalogSearching(false);
+      setCatalogError(false);
+      return;
+    }
+    let cancelled = false;
+    setCatalogSearching(true);
+    setCatalogError(false);
+    const timer = window.setTimeout(() => {
+      void xrogaConnect.catalog({ search: query.trim(), limit: 25 })
+        .then(result => {
+          if (cancelled) return;
+          const matches = (result.items ?? []).map(item => ({
+            id: canonicalPluginId(item.slug) || item.slug,
+            name: item.name || item.slug,
+            connected: false,
+          }));
+          setCatalogMatches(matches);
+        })
+        .catch(() => {
+          if (cancelled) return;
+          setCatalogMatches([]);
+          setCatalogError(true);
+        })
+        .finally(() => { if (!cancelled) setCatalogSearching(false); });
+    }, 240);
+    return () => { cancelled = true; window.clearTimeout(timer); };
+  }, [open, query]);
+
   const plugins = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    const all = [...native, ...apps];
+    const byId = new Map<string, ModalPlugin>();
+    // Known connected state always wins over discovery-only catalog metadata.
+    for (const item of catalogMatches) byId.set(item.id, item);
+    for (const item of apps) byId.set(item.id, item);
+    for (const item of native) byId.set(item.id, item);
+    const all = [...byId.values()];
     return normalized
       ? all.filter((plugin) => plugin.name.toLowerCase().includes(normalized))
-      : all;
-  }, [native, apps, query]);
+      : [...native, ...apps];
+  }, [native, apps, catalogMatches, query]);
 
   if (!open) return null;
 
@@ -180,8 +221,16 @@ export function IntegrationsModal({
                 Checking business Plugins…
               </div>
             ) : null}
-            {!loadingApps && plugins.length === 0 ? (
-              <p className="xv-plugins-popover__empty">No matching plugins.</p>
+            {catalogSearching && query.trim().length >= 2 ? (
+              <div className="xv-plugins-popover__loading" role="status">
+                <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> Searching supported plugins…
+              </div>
+            ) : null}
+            {catalogError && query.trim().length >= 2 ? (
+              <p className="xv-plugins-popover__empty">Live plugin search is unavailable. Browse the full catalog below.</p>
+            ) : null}
+            {!loadingApps && !catalogSearching && !catalogError && plugins.length === 0 ? (
+              <p className="xv-plugins-popover__empty">No matching plugins in the catalog.</p>
             ) : null}
           </div>
 

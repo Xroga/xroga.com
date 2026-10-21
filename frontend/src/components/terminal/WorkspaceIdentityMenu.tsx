@@ -76,7 +76,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
   const rootRef = useRef<HTMLDivElement>(null);
   const repoIdentity = {
     fullName: activeProject?.repo || '',
-    label: projectName || activeProject?.repo.split('/').pop() || 'Workspace',
+    label: activeProject?.repo.split('/').pop() || (githubRepoUrl?.split('/').filter(Boolean).pop()) || 'Workspace',
     branch: activeProject?.branch || '',
   };
   const visibleStatus: ProjectWorkspaceStatus = activeProject ? status : 'idle';
@@ -228,11 +228,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
         aria-haspopup="menu"
         aria-expanded={open}
       >
-        <TerminalPromptIcon className="shrink-0 opacity-70" aria-hidden="true" />
-        <h3 title={repoIdentity.fullName || 'No repository selected'}>{repoIdentity.label}</h3>
-        <span className="xv-term-path">
-          {repoIdentity.branch} · {STATUS_LABEL[visibleStatus]}
-        </span>
+        <h3 className="max-w-[136px] truncate" title={repoIdentity.fullName || 'No repository selected'}>{repoIdentity.label}</h3>
         <ChevronDown
           className={`h-3 w-3 shrink-0 opacity-55 transition-transform ${open ? 'rotate-180' : ''}`}
           aria-hidden="true"
