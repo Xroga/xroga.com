@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 import { draftForExplicitHide } from '@/lib/composerDraft';
+import { flushSync } from 'react-dom';
 
 /**
  * Compact workspace and composer controls owned by the terminal title bar.
@@ -35,7 +36,7 @@ export function WorkspaceLauncher({ className }: { className?: string }) {
         owner: identity.status === 'guest' ? 'guest' : identity.userId ?? '',
         session: sessionId, project: projectId ?? '',
       }, sessionRestoring);
-      if (latestDraft !== undefined) setPrompt(latestDraft);
+      if (latestDraft !== undefined) flushSync(() => setPrompt(latestDraft));
     }
     setChatbarHidden(!chatbarHidden);
   }

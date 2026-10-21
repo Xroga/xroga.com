@@ -73,6 +73,9 @@ test('the title-bar toggle hides the single composer and restores its draft with
   await page.goto('/workspace');
   const composer = page.locator('[data-terminal-composer]');
   const header = page.getByTestId('terminal-identity-header');
+  await expect(composer).toHaveAttribute('data-draft-restoring', 'false');
+  await page.clock.install();
+  await page.clock.pauseAt(new Date(Date.now() + 1_000));
   for (const draft of ['Retained local hide/restore draft', 'rapid second edit\n日本語', '', 'final draft']) {
   await composer.fill(draft);
   await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
@@ -92,6 +95,8 @@ test('explicit hide refuses a stale account, conversation or project snapshot', 
   const composer = page.locator('[data-terminal-composer]');
   const header = page.getByTestId('terminal-identity-header');
   await expect(composer).toBeVisible();
+  await page.clock.install();
+  await page.clock.pauseAt(new Date(Date.now() + 1_000));
   // Local defensive UI guard, not a substitute for real authenticated tests.
   for (const attribute of ['data-draft-owner', 'data-draft-session', 'data-draft-project']) {
     await composer.fill(`STALE_UI_${attribute}`);
