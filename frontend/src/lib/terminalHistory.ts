@@ -175,9 +175,8 @@ export function saveTerminalHistorySession(opts: {
 
   const firstUser = opts.messages.find((m) => m.role === 'user');
   const titlePrompt = firstUser?.content?.trim() || opts.prompt.trim() || 'Terminal session';
-  // Keep automation out of the Repositories tree; everything else (chat/image/research/code)
-  // saves under the selected GitHub repo workspace on Xroga.
-  if (isAutomationPrompt(titlePrompt)) return null;
+  // Every genuine conversation is saved, including browser/automation-related requests.
+  // Execution records remain separate and must not be inferred from prompt wording.
 
   const preview =
     opts.messages
@@ -222,7 +221,9 @@ export function saveTerminalHistorySession(opts: {
 
   const entry: TerminalHistoryEntry = {
     id: opts.sessionId,
-    title: terminalNumber ? cloudTerminalLabel(terminalNumber) : titlePrompt.slice(0, 56),
+    title: existing?.title && !/^#\d+\s+terminal$/i.test(existing.title)
+      ? existing.title
+      : titlePrompt.replace(/\s+/g,' ').trim().slice(0,90),
     preview,
     prompt: opts.prompt || titlePrompt,
     messages: opts.messages,
@@ -243,6 +244,10 @@ export function saveTerminalHistorySession(opts: {
   const rest = loadTerminalHistory().filter((e) => e.id !== opts.sessionId);
   save([entry, ...rest]);
   void saveTerminalSessionToIndexedDB(entry);
+  // Non-GitHub chats need the same cross-device restoration capability.
+  if (!entry.githubRepoName?.includes('/')) {
+    void import('@/lib/sidebarOrganization').then(({scheduleSidebarChatSave}) => scheduleSidebarChatSave(entry));
+  }
 
   if (entry.githubRepoName?.includes('/') && terminalNumber) {
     registerRepoSession({
