@@ -102,6 +102,20 @@ function AutomaticIntro() {
   </div>;
 }
 
+/** Mouse-only highlight coordinates avoid React render work on every pointer movement. */
+function moveCardSpotlight(event: React.PointerEvent<HTMLButtonElement>) {
+  if (event.pointerType !== 'mouse') return;
+  const bounds = event.currentTarget.getBoundingClientRect();
+  if (!bounds.width || !bounds.height) return;
+  event.currentTarget.style.setProperty('--spot-x', `${((event.clientX - bounds.left) / bounds.width * 100).toFixed(1)}%`);
+  event.currentTarget.style.setProperty('--spot-y', `${((event.clientY - bounds.top) / bounds.height * 100).toFixed(1)}%`);
+}
+
+function resetCardSpotlight(event: React.PointerEvent<HTMLButtonElement>) {
+  event.currentTarget.style.removeProperty('--spot-x');
+  event.currentTarget.style.removeProperty('--spot-y');
+}
+
 function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?: (active: boolean) => void }) {
   const { prompt, setPrompt } = useTerminalChat();
   const [open, setOpen] = useState(false);
@@ -123,6 +137,8 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
       aria-haspopup="menu" aria-expanded={open} aria-label={card.title} title={card.title}
       onFocus={() => onInteraction?.(true)}
       onBlur={() => { if (!open) onInteraction?.(false); }}
+      onPointerMove={moveCardSpotlight}
+      onPointerLeave={resetCardSpotlight}
       onClick={() => { if (open) { close(); return; } setOpen(true); onInteraction?.(true); requestAnimationFrame(() => menuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus()); }}
     >
       <span className={styles.cardCopy}>
