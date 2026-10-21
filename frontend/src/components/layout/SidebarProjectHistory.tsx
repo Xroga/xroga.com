@@ -14,7 +14,9 @@ import {
  createSidebarSection,deleteSidebarChat,type SidebarMeta,type SidebarSection,
  type SidebarProject,type SidebarChat,type SidebarKind
 } from '@/lib/sidebarOrganization';
-import { api } from '@/lib/api';
+import { api, type GitHubRepo } from '@/lib/api';
+import { saveActiveProjectWork } from '@/lib/projectWorkScope';
+import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { createClient } from '@/lib/supabase/client';
 import { removeTerminalHistoryEntry } from '@/lib/terminalHistory';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
@@ -27,7 +29,7 @@ import {
   type TerminalHistoryEntry,
   type TerminalHistoryStatus,
 } from '@/lib/terminalHistory';
-import { getSelectedRepoContext, saveSelectedRepoContext, PROJECT_CONTEXT_CHANGED_EVENT } from '@/lib/repoContext';
+import { getSelectedRepoContext, saveSelectedRepoContext, clearSelectedRepoContext, PROJECT_CONTEXT_CHANGED_EVENT } from '@/lib/repoContext';
 import {
   GITHUB_PROJECT_SAVED_EVENT,
   GITHUB_REPO_CONTEXT_EVENT,
@@ -199,6 +201,11 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const [menu,setMenu] = useState<{kind:SidebarKind;id:string;x:number;y:number}|null>(null);
   const [editor,setEditor] = useState<{mode:'rename'|'new-project'|'new-section'|'move-project'|'move-section'|'delete';kind:SidebarKind;id:string;title:string;projectId?:string}|null>(null);
   const [editorText,setEditorText] = useState('');
+  const [newProjectType,setNewProjectType] = useState<'app'|'website'|'video'|'game'|'research'|'automation'>('app');
+  const [githubRepos,setGithubRepos] = useState<GitHubRepo[]>([]);
+  const [githubChoice,setGithubChoice] = useState('');
+  const [repoQuery,setRepoQuery] = useState('');
+  const [githubAvailability,setGithubAvailability] = useState<'loading'|'connected'|'disconnected'|'unavailable'>('loading');
   const [allProjectOptions,setAllProjectOptions] = useState<SidebarProject[]>([]);
   const [saving,setSaving] = useState(false);
   const [sidebarError,setSidebarError] = useState('');
@@ -300,6 +307,20 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     const highest=Math.max(0,...itemMeta.map(item=>item.pin_order??0));
     void updateItem(kind,id,{pin_order:existing?.pin_order!=null?null:highest+1000});
   }
+  useEffect(()=>{
+    if(editor?.mode!=='new-project')return;
+    let cancelled=false;
+    setGithubAvailability('loading');
+    void api.github.status().then(async status=>{
+      if(cancelled)return;
+      if(!status.connected){setGithubRepos([]);setGithubAvailability('disconnected');return;}
+      const response=await api.github.listRepos();
+      if(cancelled)return;
+      setGithubRepos(response.repos);setGithubAvailability('connected');
+    }).catch(()=>{if(!cancelled){setGithubRepos([]);setGithubAvailability('unavailable');}});
+    return()=>{cancelled=true;};
+  },[editor?.mode]);
+
   async function moreProjects(){
     if(!accountId)return;
     try{
@@ -911,9 +932,51 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       : `${window.location.origin}/dashboard/projects`;
     return `${window.location.origin}/workspace?conversation=${encodeURIComponent(id)}`;
   }
+  async function startProjectWork(project:SidebarProject){
+    if(!accountId){requestAuthGate('history');return;}
+    // Verify GitHub access, rather than assuming a stale local repository selection
+    // grants access. A project remains usable without GitHub.
+    let linked:{repo:string;branch:string}|null=null;
+    if(project.github_repo_name?.includes('/')){
+      try{
+        const list=await api.github.listRepos();
+        const repo=list.repos.find(r=>r.fullName===project.github_repo_name);
+        if(repo)linked={repo:repo.fullName,branch:repo.defaultBranch||'main'};
+        else toast('Project opened without GitHub. Connect the repository to use its code.');
+      }catch{toast('GitHub is unavailable; you can still chat and work on this project.');}
+    }
+    const freshId=startNewChat();
+    if(linked){
+      saveSelectedRepoContext({repo:linked.repo,branch:linked.branch,projectRoot:'/'});
+      notifyGithubRepoContext(linked.repo,linked.branch);
+    }else clearSelectedRepoContext();
+    useProjectWorkspaceStore.getState().applyDelivery({
+      projectId:project.id,repo:linked?.repo??null,
+      githubRepoUrl:linked?.repo?`https://github.com/${linked.repo}`:null,
+      branch:linked?.branch||'main',
+    });
+    try{
+      await changeSidebarMeta(accountId,'conversation',freshId,{project_id:project.id,section_id:null});
+      saveActiveProjectWork({
+        sessionId:freshId,projectId:project.id,projectName:project.name,
+        githubRepoName:linked?.repo,branch:linked?.branch,
+      });
+      setOpenFolders(prev=>({...prev,[project.id]:true}));
+      router.push('/workspace');
+      toast.success(`New Work in ${project.name}`);
+    }catch(error){
+      saveActiveProjectWork(null);
+      toast.error((error as Error).message||'Could not save project workspace');
+    }
+  }
   function openProject(id:string){
     const p=projectById(id);
-    if(p?.actual){router.push(`/dashboard/projects/${encodeURIComponent(p.actual.id)}`);return;}
+    if(p?.actual){
+      const recent=getProjectChats(p)[0];
+      if(recent)void openSession(recent);
+      else void startProjectWork(p.actual);
+      return;
+    }
     const f=folders.find(folder=>'repo:'+folder.key===id);
     if(f)void openRepoFolder(f);
   }
@@ -1032,8 +1095,28 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         }else await changeSidebarMeta(accountId,editor.kind,editor.id,{title_override:value});
       }else if(editor.mode==='new-project'){
         const value=editorText.trim();if(!value)throw new Error('Enter a project name');
-        const p=await api.projects.create({name:value,type:'app'});
-        if(editor.kind==='conversation')await changeSidebarMeta(accountId,'conversation',editor.id,{project_id:p.id,section_id:null});
+        let linked:GitHubRepo|undefined;
+        if(githubChoice){
+          linked=githubRepos.find(repo=>repo.fullName===githubChoice);
+          if(!linked)throw new Error('Selected GitHub repository is not available. Reconnect GitHub and try again.');
+          const existing=await loadSidebarProjects(accountId,0,200);
+          if(existing.some(project=>project.github_repo_name===linked?.fullName)){
+            throw new Error('This GitHub repository already belongs to an Xroga project. Open that project instead.');
+          }
+        }
+        const p=await api.projects.create({
+          name:value,type:newProjectType,
+          ...(linked?{github_repo_name:linked.fullName,
+            github_repo_url:`https://github.com/${linked.fullName}`,
+            github_branch:linked.defaultBranch||'main'}:{}),
+        });
+        setAccountProjects(prev=>[{id:p.id,name:p.name,github_repo_name:p.github_repo_name,updated_at:p.updated_at},...prev.filter(x=>x.id!==p.id)].slice(0,5));
+        if(editor.kind==='conversation'&&editor.id){
+          await changeSidebarMeta(accountId,'conversation',editor.id,{project_id:p.id,section_id:null});
+        }else{
+          await startProjectWork({id:p.id,name:p.name,github_repo_name:p.github_repo_name,updated_at:p.updated_at});
+        }
+        setGithubChoice('');setRepoQuery('');setNewProjectType('app');
       }else if(editor.mode==='new-section'){
         const value=editorText.trim();if(!value||!editor.projectId)throw new Error('Select a project and section name');
         const sec=await createSidebarSection(accountId,editor.projectId,value);
@@ -1094,6 +1177,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
             </div>
           </div>
           {expandedProject ? <div className="pl-4 space-y-0.5" aria-label={p.label+' conversations'}>
+            {p.actual?<button type="button" className={secondary+' rounded-md px-2 py-1 text-left font-medium'}
+              aria-label={'New work in '+p.label} onClick={()=>void startProjectWork(p.actual!)}>+ New Work</button>:null}
             {childSections.map(section=>{
               const grouped=related.filter(item=>metaOf('conversation',item.id)?.section_id===section.id);
               if(!grouped.length)return null;
@@ -1166,7 +1251,44 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         onPointerDown={event=>{if(event.target===event.currentTarget&&!saving)setEditor(null);}}>
         <div role="dialog" aria-modal="true" aria-label={editor.mode+' saved work'} className="w-full max-w-[350px] rounded-xl border border-[var(--card-border)] bg-[var(--card)] text-[var(--foreground)] shadow-2xl p-4 space-y-3">
           <h3 className="text-sm font-semibold capitalize">{editor.mode.replace(/-/g,' ')}</h3>
-          {editor.mode==='move-project'?<>
+          {editor.mode==='new-project'?<>
+            <label className="block text-[11px] font-medium">Project name
+              <input autoFocus value={editorText} maxLength={120} onChange={event=>setEditorText(event.target.value)}
+                aria-label="Project name" placeholder="e.g. Hi, Website Redesign, Research"
+                className="mt-1 w-full rounded-lg border border-[var(--card-border)] bg-transparent px-2.5 py-2 text-xs"
+                onKeyDown={event=>{if(event.key==='Enter'){event.preventDefault();void saveEditor();}}}/>
+            </label>
+            <label className="block text-[11px] font-medium">Project type
+              <select value={newProjectType} onChange={event=>setNewProjectType(event.target.value as typeof newProjectType)}
+                className="mt-1 w-full rounded-lg border border-[var(--card-border)] bg-[var(--card)] px-2.5 py-2 text-xs">
+                <option value="app">App / Software</option><option value="website">Website</option>
+                <option value="research">Research</option><option value="automation">Automation</option>
+                <option value="video">Video</option><option value="game">Game</option>
+              </select>
+            </label>
+            <div className="rounded-lg border border-[var(--card-border)] p-2.5 space-y-2">
+              <div className="text-[11px] font-semibold">GitHub repository <span className="font-normal text-[var(--muted)]">(optional)</span></div>
+              {githubAvailability==='loading'?<p className="text-[10px] text-[var(--muted)]">Checking your GitHub connection…</p>:
+                githubAvailability==='connected'?<>
+                  <input value={repoQuery} onChange={event=>setRepoQuery(event.target.value)} placeholder="Find a repository"
+                    aria-label="Search connected repositories"
+                    className="w-full rounded-md border border-[var(--card-border)] bg-transparent px-2 py-1.5 text-[11px]"/>
+                  <select value={githubChoice} onChange={event=>setGithubChoice(event.target.value)}
+                    aria-label="Optional GitHub repository"
+                    className="w-full rounded-md border border-[var(--card-border)] bg-[var(--card)] px-2 py-2 text-[11px]">
+                    <option value="">No repository — work in Xroga</option>
+                    {githubRepos.filter(repo=>repo.fullName.toLowerCase().includes(repoQuery.toLowerCase())).map(repo=>
+                      <option key={repo.fullName} value={repo.fullName}>{repo.fullName}{repo.private?' (private)':''}</option>)}
+                  </select>
+                </>:<div className="text-[10px] text-[var(--muted)] space-y-1">
+                  <p>{githubAvailability==='unavailable'?'GitHub could not be checked.':'GitHub is not connected.'} You can create this project without it.</p>
+                  <button type="button" className="underline" onClick={()=>router.push('/dashboard/integrations')}>Connect GitHub</button>
+                </div>}
+            </div>
+            <p className="text-[10px] leading-relaxed text-[var(--muted)]">
+              Create a separate project, then begin its first Work session. Additional work sessions appear beneath the same project.
+            </p>
+          </>:editor.mode==='move-project'?<>
             <input autoFocus value={editorText} onChange={e=>setEditorText(e.target.value)} placeholder="Search projects" aria-label="Search destination projects"
               className="w-full rounded-lg border border-[var(--card-border)] bg-transparent p-2 text-xs"/>
             <div className="max-h-[220px] overflow-y-auto space-y-1">
@@ -1199,7 +1321,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
             {editor.mode!=='move-project'&&editor.mode!=='move-section'?
               <button type="button" disabled={saving||(!editorText.trim()&&editor.mode!=='delete')}
                 className="rounded-md px-3 py-2 text-xs font-semibold bg-[var(--foreground)] text-[var(--background)] disabled:opacity-50"
-                onClick={()=>void saveEditor()}>{saving?'Saving…':editor.mode==='delete'?'Delete':'Save'}</button>:null}
+                onClick={()=>void saveEditor()}>{saving?'Saving…':editor.mode==='delete'?'Delete':editor.mode==='new-project'?'Create project':'Save'}</button>:null}
           </div>
         </div>
       </div>,document.body):null}
