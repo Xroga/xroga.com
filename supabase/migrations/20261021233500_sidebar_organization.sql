@@ -89,6 +89,30 @@ $$;
 revoke all on function public.xroga_swap_sidebar_pins(text,text,text,text) from public,anon;
 grant execute on function public.xroga_swap_sidebar_pins(text,text,text,text) to authenticated;
 
+-- Preserve original titles for reversible, per-session rollback.
+create table if not exists public.xroga_sidebar_legacy_title_backup (
+ session_id text primary key,
+ user_id uuid not null references auth.users(id) on delete cascade,
+ original_title text not null,
+ recorded_at timestamptz not null default now()
+);
+alter table public.xroga_sidebar_legacy_title_backup enable row level security;
+drop policy if exists "sidebar_title_backup_own" on public.xroga_sidebar_legacy_title_backup;
+create policy "sidebar_title_backup_own" on public.xroga_sidebar_legacy_title_backup
+ for select to authenticated using ((select auth.uid())=user_id);
+grant select on public.xroga_sidebar_legacy_title_backup to authenticated,service_role;
+grant insert,update,delete on public.xroga_sidebar_legacy_title_backup to service_role;
+insert into public.xroga_sidebar_legacy_title_backup(session_id,user_id,original_title)
+ select id,user_id,title from public.terminal_sessions
+ where title ~* '^#?[0-9]+[[:space:]]+terminal
+-- Manually edited titles are untouched; original IDs and activity timestamps remain intact.
+update public.terminal_sessions set title=left(regexp_replace(btrim(prompt),'[[:space:]]+',' ','g'),90)
+ where title ~* '^#?[0-9]+[[:space:]]+terminal$' and length(btrim(prompt))>0;
+update public.terminal_sessions set title='Untitled conversation'
+ where title ~* '^#?[0-9]+[[:space:]]+terminal$' and length(btrim(prompt))=0;
+
+ on conflict (session_id) do nothing;
+
 -- Truthful legacy-title backfill uses the saved user prompt, never assistant preview.
 -- Manually edited titles are untouched; original IDs and activity timestamps remain intact.
 update public.terminal_sessions set title=left(regexp_replace(btrim(prompt),'[[:space:]]+',' ','g'),90)
