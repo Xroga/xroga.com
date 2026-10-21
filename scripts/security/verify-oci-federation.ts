@@ -19,6 +19,7 @@ assert.equal(process.env.GITHUB_REF, 'refs/heads/codex/xroga-batch-01');
 assert.equal(process.env.GITHUB_SHA, process.env.XROGA_RELEASE_SHA);
 assert.ok(process.env.RUNNER_TEMP);
 const receipts: unknown[] = [], cases: string[] = [];
+let diagnosticDialectOverride=false;
 const configuration = managedOciFederationConfiguration(process.env);
 const out = join(process.env.RUNNER_TEMP!, `oci-federation-${mode}.json`);
 let passed = false;
@@ -53,6 +54,23 @@ try {
           }
         }catch{/* No raw provider parsing error is emitted. */}
         receipts.push(record);
+        // One explicit standards-compatibility diagnostic after the documented
+        // short token type was rejected. RFC8693 section3 defines the JWT URN.
+        // This cannot change production provider behavior or grant KMS access.
+        if(response.status===400&&record.errorCode==='invalid_request'&&init?.body instanceof URLSearchParams
+          &&init.body.get('subject_token_type')==='jwt') {
+          const body=new URLSearchParams(init.body);body.set('subject_token_type','urn:ietf:params:oauth:token-type:jwt');
+          const alternative=await fetch(url,{...init,body,signal:AbortSignal.timeout(10000)});
+          const alternateRecord:Record<string,unknown>={requestDialect:'RFC8693_DIAGNOSTIC_NOT_PRODUCTION_DEFAULT',
+            exchangeHttpStatus:alternative.status,requestId:alternative.headers.get('opc-request-id')};
+          const alternateText=await alternative.clone().text();
+          if(Buffer.byteLength(alternateText)<65536)try {
+            const value=JSON.parse(alternateText);
+            if(typeof value.error==='string'&&/^[a-z_]{1,60}$/.test(value.error))alternateRecord.errorCode=value.error;
+          }catch{/* Preserve status, never a raw body. */}
+          receipts.push(alternateRecord);
+          if(alternative.ok){diagnosticDialectOverride=true;return alternative;}
+        }
       }
       return response;
     };
@@ -163,7 +181,7 @@ try {
   process.exitCode=1;
 } finally {
   const receipt={schemaVersion:1,status:passed?'PASS_BOUNDED_SCOPE':'FAIL',sourceSha:process.env.GITHUB_SHA,
-    runId:process.env.GITHUB_RUN_ID,runAttempt:process.env.GITHUB_RUN_ATTEMPT,mode,cases,receipts,
+    runId:process.env.GITHUB_RUN_ID,runAttempt:process.env.GITHUB_RUN_ATTEMPT,mode,cases,receipts,diagnosticDialectOverride,
     scope:'ISOLATED_GITHUB_HOSTED_BACKEND_NOT_FLY_DEPLOYMENT_OR_LIVE_CUTOVER',timestamp:new Date().toISOString()};
   await writeFile(out,JSON.stringify(receipt,null,2),{mode:0o600});
   console.log(JSON.stringify(receipt));
