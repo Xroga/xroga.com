@@ -13,3 +13,4 @@ CAUGHT | SQL: remove tenant row lock in storage_reserve | # pass 13 # fail 1
 CAUGHT | SQL: FORCE RLS removed from storage_objects | # pass 4 # fail 1 
 CAUGHT | SQL: search_path pin removed from storage_reserve | # pass 4 # fail 1 
 CAUGHT | SQL: authenticated can read object_key | # pass 13 # fail 1 
+restored: working tree clean for mutated files

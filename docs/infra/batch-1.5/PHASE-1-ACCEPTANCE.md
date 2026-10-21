@@ -1,71 +1,63 @@
-# Batch 1.5 · Phase 1 acceptance (INFRA-001 · INFRA-002 · INFRA-003)
+# Batch 1.5 · Phase 1 acceptance — closure revision
 
-**Overall verdict: `B15_PHASE1_ENGINEERING_COMPLETE_EXTERNAL_VERIFICATION_PENDING`**
+**Verdict: `B15_PHASE1_ENGINEERING_COMPLETE_EXTERNAL_VERIFICATION_PENDING`**
 
-`B15_PHASE1_VERIFIED` is **not** claimed: no real Cloudflare R2, Supabase, Fly or GitHub-Actions evidence exists. Everything below is `LOCAL_TESTED` against a real PostgreSQL 16 plus synthetic stores. No gate is promoted past what its evidence supports.
+Not `B15_PHASE1_VERIFIED`: three gates need evidence that only the real Cloudflare R2 provider and a pushed GitHub branch can give (B, D, H). All independent engineering is done and tested locally on real PostgreSQL 16 plus synthetic stores. No gate criterion was changed to force a pass.
 
 | | |
 |---|---|
-| Branch | `claude/xroga-batch-1-5` (local only; **push blocked: HTTP 403**, see §6) |
-| Starting `main` | `80d1f417338b4c5b95a07fc956604a1652cef7c7` (not modified) |
-| Source SHA the evidence is bound to | `bc0c6fd67bb0787aa9622c0cd43739f9081b50b3` (docs/evidence-only commit follows; `git diff bc0c6fd6..HEAD -- backend supabase scripts` is empty) |
-| Production / main / Codex branch touched | no / no / no |
-| Additional spend | $0.00 |
+| Local branch / worktree | `claude/xroga-batch-1-5` · `/home/user/xroga-b15` |
+| Evidence source SHA | `f3de2b5597a26658ab452151b19911e9bfccca8b` (all tests below ran on exactly this commit; a later commit changes `docs/` only) |
+| Starting `main` | `80d1f417338b4c5b95a07fc956604a1652cef7c7` — **not modified** (also not Codex's branch, not the S00 edits) |
+| Remote | **not pushed**: session token has `push:false` on the repo (`github-access-diagnosis.md`) |
+| Recovery artifact | `git bundle` of `origin/main..HEAD`; verified; HEAD of bundle = branch HEAD |
+| Spend | $0.00 · no cloud resource touched |
+
+## What the closure pass found and fixed (real defects, not paperwork)
+| # | Defect | Severity | Fix | Proof |
+|---|---|---|---|---|
+| 1 | Provider network errors (`ECONNREFUSED`, `ETIMEDOUT`…) were **not** classified transient (`name ?? code` never reached `code`), so an outage surfaced as a raw error instead of a retryable 503 | real bug | `isTransient` checks name, code, cause | wire test `[APPLICATION] an unreachable provider…` failed first, then passed; unit + mutation |
+| 2 | An **invalid** `STORAGE_WRITE_MODE`/`READ_ORDER` silently meant `legacy` | unsafe default | invalid ⇒ `StorageConfigError`, fail closed, loud at boot | 17-case matrix, mutation caught |
+| 3 | `dual` with Drive unconfigured quietly wrote legacy only | misleading | configuration error | `projectFiles.canonical.test` |
+| 4 | Migration "approval" was a JSON field in a database row, forgeable by anyone with the flag or DB access | **security** | Ed25519-signed approvals bound to job/stage/environment/source/bucket/plan digest/expiry/tenants; engine holds only the public key; re-verified before every batch | `approvals.test` (12) + 3 mutations caught |
+| 5 | Privileged SQL functions had no pinned `search_path`; RLS not forced | hardening | `set search_path = public, pg_temp` on all 8; `FORCE ROW LEVEL SECURITY` on all 6 | `schemaUpgrade.integration`, 2 mutations caught |
+| 6 | A server-side read of an object the provider lost threw a raw provider error | correctness | `NOT_FOUND` / retryable `PROVIDER_UNAVAILABLE`; never a corruption verdict on a transient failure | 3 new tests |
+| 7 | The evidence runner could print success with skipped fixtures | evidence integrity | strict runner: missing/unreachable fixture ⇒ FAIL under `REQUIRE_PHASE1_FIXTURES=1`; SKIP ≠ PASS; machine-readable `results.json`; baseline failures allow-listed by name | `--check-fixtures` negative runs |
+
+Deliberately **not** changed: the Drive architecture, the legacy write path's default behaviour, any entitlement, the scheduler, the vault.
 
 ## Gates
 | Gate | Result | Proof | Not proven / why |
 |---|---|---|---|
-| **A** Baseline correctness | **PASS** (source baseline) | `current-state.md`, `data-location-inventory.{md,json}`, `dependency-inventory.md`, `product-capability-baseline.md`: every row cites a file. Found: legacy writer is dormant on `main`; no upload endpoint existed; run output lives in `swarm_runs.output`; GitHub tokens are stored as plaintext JSON in a private bucket | **Live cloud inventory BLOCKED** (Cloudflare/Supabase/Fly): counts and sizes are `UNKNOWN`. Needs operator-checklist A1–A5 |
-| **B** Private storage security | **BLOCKED** | Private-by-default, server-derived identity, no key/bucket exposure, cross-tenant refusal, no browser credentials: `evidence/logs/02,04,05` (cross-tenant refusal on download, complete, delete, metadata, server-read, part-signing and listing; RLS and grants tested as `authenticated`/`anon` roles on real Postgres; routes reject `tenantId/ownerUserId/bucket` in bodies) | "no public raw object access" is a property of the **real bucket** (public domain, r2.dev, CORS) and was not inspected. Needs checklist B1–B2 |
-| **C** Complete lifecycle | **PASS** (LOCAL_TESTED) | initiate→reserve→signed PUT→complete→verify→READY; download; delete; retention; reconcile; multipart incl. crash-after-complete, abandoned abort: `02-storage-unit`, `04`, `05`, `05b` | Multipart and signed-header enforcement on **real R2** unproven |
-| **D** Durability and integrity | **BLOCKED** (provider part) | SHA-256 read-back, tamper → CORRUPT, size/type quarantine, no false READY (DB CHECK + trigger, mutation-tested), retrieval after "process exit" via a fresh service over the same stores, provider timeout after write handled | durability of the bytes at **R2** is a provider property; not observed |
-| **E** Quotas | **PASS** (LOCAL_TESTED) | atomic reserve/commit/release/free/expire/reconcile in SQL; 50 concurrent reservations → exactly 10 admitted (real Postgres); idempotent replay; no negatives; expiry re-reserve; no entitlement changed (`STORAGE_QUOTA_BYTES` unset = tracked, not enforced) | candidate Free 500 MB / Pro 20 GB **not activated** by design |
-| **F** Migration safety | **PASS** (LOCAL_TESTED) | inventory, dry-run (writes nothing), durable ledger, deterministic ids, lease claims (`SKIP LOCKED`, real Postgres), checkpoint resume, source-hash vs destination-hash, read-back verify, honest reconciliation (`consistent` flag), idempotent replay, rollback that never deletes, fault injection ×11; **no live migration performed**, sources byte-identical | live-data migration deliberately not run |
-| **G** Integration compatibility | **PASS** | existing `project_files`/projects contracts preserved (additive column only); `STORAGE_WRITE_MODE=legacy` default = unchanged; no scheduler/task graph added; no credential exposure; token buckets excluded by construction; `WAITING_FOR_BATCH1_ACCEPTED_INTERFACE` recorded for TenantContext | no enabled production writer exists to switch (finding W1–W3) |
-| **H** Source and CI evidence | **BLOCKED** | attributable commits ✔; relevant tests pass ✔ (51+32+9+17+4 targeted; full backend suite 2827/2830); security negative tests pass ✔; mutation checks 8/8 caught ✔; no production/main mutation ✔ | **GitHub Actions CI did not run**: the branch could not be pushed (403). The 3 failing tests also fail on pristine `main` (`evidence/logs/08`) |
+| **A** Baseline accuracy | **PASS** (source scope) | `current-state.md`, `data-location-inventory.*`, `dependency-inventory.md`, `product-capability-baseline.md`, `requirements-matrix.md`; two baseline errors **corrected** during closure (legacy writer is dormant; token storage is wider than first reported) | live Cloudflare/Supabase/Fly counts are `UNKNOWN` (EXTERNAL) |
+| **B** Private storage + tenant authorization | **BLOCKED** | forced RLS, 14-column grant, `anon` nothing, client cannot name tenant/owner/bucket, cross-tenant NOT_FOUND on every operation, project revocation on next request, no key/URL in logs — all LOCAL_TESTED (`evidence/logs/03`, `02`) | "no public raw access" and CORS are properties of the **real bucket**: `r2.provider.integration.test.ts` step 4–5, 7 **never run** |
+| **C** Lifecycle completeness | **PASS** (LOCAL_TESTED) | upload→verify→READY, download, delete/retention, reconcile, multipart incl. duplicate/wrong-ETag/missing/extra part, abandoned abort, listing; wire suite on emulator | R2-side multipart/ListParts/pagination unproven; emulator gaps classified `EMULATOR_LIMITATION` (ListParts 405, truncated list 500, presigned part 405 — each reproduced with bare SDK calls, none an application bug) |
+| **D** Real durability + integrity | **BLOCKED** | server read-back SHA-256, tamper→CORRUPT, size/type→QUARANTINED, no false READY (CHECK+trigger, mutation-proven), fresh-service retrieval | durability and signed-constraint enforcement **at R2** unobserved |
+| **E** Quota consistency | **PASS** (LOCAL_TESTED, real PostgreSQL) | 50 parallel reservations → exactly 10; idempotent commit/release/free; crash/expiry/re-reserve; drift repair; wrong-tenant refused by the DB | behaviour behind a transaction pooler not run |
+| **F** Migration safety | **PASS** (LOCAL_TESTED) | cryptographic approvals; dry-run writes nothing; kill-after-upload, DB-commit failure, timeout-after-write, corrupt destination, source missing/changed, duplicate workers (memory + real SKIP LOCKED), rollback idempotent, deletion not implemented; **no live migration** | no real customer data touched (by design) |
+| **G** Compatibility | **PASS** | additive migration; `legacy` default unchanged; `/api/drive` mounted once behind `authMiddleware`; no scheduler/vault added; token bucket refused by the engine; `WAITING_FOR_BATCH1_ACCEPTED_INTERFACE: TenantContext` | Batch 1 not yet in `main` |
+| **H** Source, CI, branch evidence | **BLOCKED** | clean attributable commits; strict runner `overall=PASS`; 15/15 injected defects caught; baseline failures identical on `main` | branch **not on GitHub**, so no Actions run; `storage-phase1.yml` is ready (push-to-branch/dispatch only, no secrets) |
 
-## Test results (exact)
-| Log | Command | Result |
-|---|---|---|
-| `01-typecheck` | `tsc --noEmit -p backend` | exit 0 |
-| `02-storage-unit` | `tsx --test storageService / r2ObjectStore / artifactSink` | 51 / 51 pass |
-| `03-migration-unit` | `engine / readCompat / cli` | 32 / 32 pass |
-| `04-routes-and-adapter` | `drive.test / projectFiles.canonical.test` | 9 / 9 pass |
-| `05-postgres-integration` | real PostgreSQL 16.15, disposable DB | 17 / 17 pass |
-| `05b-s3-wire-emulator` | AWS SDK v3 over HTTP to **s3rver (SYNTHETIC)** | 4 / 4 pass |
-| `06-full-backend-suite` | `npm test --workspace=backend` | 2827 pass / **3 fail** / 0 skip — same 3 as `main`: `organicIntelligence` `STALE_FACT` date drift vs sandbox clock |
-| `07-mutation-checks` | 8 injected defects | 8 CAUGHT, 0 survived (a first single-check mutant of size verification was *equivalent* — the size is checked twice — and was replaced by a both-checks mutant) |
-| `08-main-baseline` | same file on `origin/main` @ `80d1f417` | same 3 failures |
-
-Skipped-by-default suites need env (`STORAGE_TEST_DATABASE_URL`, `STORAGE_TEST_S3_ENDPOINT`); without them they report SKIP, never pass.
-
-## Evidence classification (per the "no false completion" rule)
-| Claim | Class |
+## Test evidence (on `f3de2b55`; `evidence/logs/results.json`)
+| Step | Result |
 |---|---|
-| SQL schema, state trigger, RLS/grants, quota functions, migration claim | **LOCAL_TESTED** (real PostgreSQL) |
-| StorageService / migration engine logic | **LOCAL_TESTED** (synthetic object store) |
-| R2ObjectStore wire behaviour | **LOCAL_TESTED, SYNTHETIC** (s3rver; 3 emulator gaps listed in `evidence/start-s3-emulator.cjs`; `listParts`, truncated `list` pagination and presigned parts **not exercised on the wire**) |
-| Presigned request shape (signed headers, expiry, forced disposition) | offline SDK output inspected (`r2ObjectStore.test.ts`) — what we *ask* R2 to enforce, not proof R2 enforces it |
-| Cloudflare R2 | **BLOCKED** — no credentials |
-| Supabase production schema/RLS | **BLOCKED** — migration not applied anywhere |
-| GitHub Actions | **BLOCKED** |
-| Anything in production | **NOT_STARTED** (deliberately) |
+| typecheck | PASS |
+| unit + adapters + routes + config + approvals | **135 / 135** |
+| real PostgreSQL 16.15 (schema, RLS, quota races, upgrade, idempotency, rollback, migration ledger) | **22 / 22** |
+| AWS-SDK wire tests vs s3rver (**SYNTHETIC**) | **7 / 7** |
+| Cloudflare R2 provider suite | **NOT_RUN** — not authorised; never executed |
+| full backend suite | 2878 pass · **3 BASELINE_FAILURE** · 0 regressions (same 3 on pristine `main` `80d1f417`, same toolchain: `STALE_FACT` verification-date drift in `organicIntelligence.test.ts`) |
+| injected-defect checks | **15 / 15 caught**, none survive in source (`git status` clean after the run) |
 
-## Known limitations (honest list)
-1. Objects > 1 GiB in migration → `BLOCKED(NEEDS_MULTIPART_COPY)`; server-side multipart copy not built.
-2. `reconcile()` checks the first `limit` READY objects per run (no cursor yet).
-3. Dead code `storeUserFile`/`readStoredFile(no actor)` still has the unsafe 3-tier fallback; not deleted (no behaviour changes in legacy mode).
-4. No frontend resolver for `drive://{id}` references (only produced in `STORAGE_WRITE_MODE=r2`, off by default).
-5. `swarm_runs.output` inline artifacts have no migration adapter.
-6. GitHub/Vercel OAuth tokens remain plaintext JSON in a private bucket — out of Phase 1, flagged for INFRA-004.
-7. Migration of `FREEZE_OLD` is a ledger marker; no legacy source is ever modified or deleted by this code.
-8. rclone was evaluated and not needed: the SDK path streams, hashes in one pass and resumes through the ledger.
+The full backend suite is **not green**; it has 3 pre-existing, unrelated failures that are classified, not hidden.
 
-## Blockers (consolidated)
-| # | Blocker | Blocks | Minimum to unblock |
-|---|---|---|---|
-| 1 | GitHub 403 on branch create/push | remote CI, review | grant write access or create the branch (operator-checklist D) |
-| 2 | No Cloudflare access | Gates A-live, B, D; PROVIDER_VERIFIED | checklist A1, B1–B2 |
-| 3 | No Supabase/Fly/Redis facts | live data-location counts | checklist A2–A5 |
-| 4 | Batch 1 `TenantContext` not in `main` | tenant_id = user id until then | accepted interface from Codex |
-| 5 | Owner approvals (copy / read_new / freeze / production) | any live migration | recorded via `create-migration-job.mts approve` |
+## Evidence classes
+LOCAL_TESTED = real PostgreSQL / in-process logic · SYNTHETIC = s3rver · **PROVIDER_VERIFIED = none** · STAGING/PRODUCTION = none.
+
+## Remaining external dependencies (one list)
+1. GitHub write access (or import the bundle) — Gate H.
+2. One bucket + one scoped token + CORS + confirmation — `r2-provider-verification-request.md` — Gates B, D.
+3. Confirm `Preview` environment secrets are not production's before opening any PR (`github-access-diagnosis.md`).
+4. Batch 1 `TenantContext` accepted into `main`.
+5. Owner approvals via the signed flow before any live migration stage.
+6. Decide on the OAuth plaintext finding (`oauth-token-finding.md`): recommended to schedule with INFRA-004.

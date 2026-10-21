@@ -12,6 +12,10 @@ Phase 2 (INFRA-004/005/006) is **not started**. This lists the exact seams that 
 | `QuotaResolver` | `storageService.ts` | plug the real entitlement lookup; do **not** activate 500 MB / 20 GB without approval |
 | `MigrationLedger`, `SourceAdapter`, `MigrationEngine` | `storage/migration/*` | add adapters (e.g. `swarm_runs` artifacts, Fly volume objects) without touching the engine; run engine from an Oracle worker instead of a laptop |
 | `runPhase` + `scripts/storage/*.mts` | `migration/cli.ts` | same entry points under OCI; receipts are redacted JSON |
+| `ApprovalClaims` / `verifyApproval` (Ed25519) | `migration/approvals.ts` | the template for any Phase 2 consequential stage: signed, scoped, expiring; verifier holds only a public key. The OCI Vault can hold the approver *public* key; the private key stays with the human approver |
+| `resolveStorageConfig` | `storage/runtime.ts` | single validator for the storage switches; reuse it for OCI-side config so invalid values fail closed identically |
+| Evidence runner | `docs/infra/batch-1.5/evidence/run-phase1-tests.mjs` | strict fixture handling, baseline allow-list, `results.json`; extend with Oracle/KMS steps rather than writing a second runner |
+| R2 provider suite | `storage/r2.provider.integration.test.ts` (`npm run test:storage-provider`) | becomes the Oracle-side smoke test for the same bucket |
 | `STORAGE_WRITE_MODE`, `STORAGE_READ_ORDER` | `storage/runtime.ts` | cutover switches; default `legacy` |
 | `storage_migration_claim` (lease + `SKIP LOCKED`) | migration SQL | the *pattern* for INFRA-006 durable claims/leases; do not fork it into a second scheduler |
 
@@ -22,6 +26,26 @@ Phase 2 (INFRA-004/005/006) is **not started**. This lists the exact seams that 
 | Oracle API (INFRA-005) | `/api/drive` router is host-agnostic; needs `XROGA_DRIVE_R2_*` + `DATABASE_URL` as OCI secrets; health: `GET /api/drive/objects` → 200/503 | change DNS or callbacks without approval |
 | Oracle workers / scheduler (INFRA-006) | `putServerObject` for outputs; ledger-style leases; BullMQ/Redis untouched (provider/persistence still `UNKNOWN`) | add a second task graph |
 | AI Employees / workflows / browser / sandbox | storage is ready to receive evidence; **those capabilities themselves are NOT_IMPLEMENTED or UI-only today** (`product-capability-baseline.md`) | treat the homepage demo as capability |
+
+## R2 object service API (what Oracle code calls)
+`StorageService` (in-process, no raw R2 admin surface): `initiateUpload`, `signUploadParts`, `completeUpload`, `getDownload`, `getObjectMeta`, `listObjects`, `readObjectBytes`, `deleteObject`, `putServerObject`, `ingestLegacy`, `verifyStoredObject`, `reconcile`. HTTP: `/api/drive/*` (authenticated; 503 `STORAGE_NOT_CONFIGURED` when off).
+
+## Dependencies Phase 2 inherits
+| Area | State |
+|---|---|
+| CredentialVault / KMS | **Batch 1 vault not in `main`.** Plaintext OAuth tokens (`oauth-token-finding.md`) are the first migration target; Drive must keep refusing the token bucket |
+| Redis/BullMQ | provider and persistence **UNKNOWN**; untouched |
+| Supabase | migration `20261022000000_storage_drive_foundation.sql` not applied anywhere; needs `rolbypassrls=true` for the API role (forced RLS); rollback script exists |
+| Batch 1 | `TenantContext` → replace `actorFromUserId`; `requireLegacyCredentialMigrationWindow` pattern (Codex) is the model for retiring legacy paths |
+| Provider approvals | one R2 test bucket/token (`r2-provider-verification-request.md`); production bucket, CORS, secrets, `STORAGE_WRITE_MODE`, each migration stage = separate signed approvals |
+
+## Known risks carried into Phase 2
+1. Signed-constraint enforcement at R2 unknown → server read-back is the only integrity control until observed.
+2. Already-issued presigned URLs outlive revocation until expiry (≤ 5 min GET / 15 min PUT).
+3. `Preview` environment secrets in `supabase-migrate.yml` may be production's — check before any PR.
+4. Objects > 1 GiB cannot be migrated yet (server-side multipart copy not built).
+5. `reconcile()` is batch-limited per run.
+6. Full backend suite has 3 pre-existing failures (`organicIntelligence`, STALE_FACT) that will keep CI red until fixed upstream.
 
 ## Preconditions before Phase 2 can be verified
 1. GitHub write access restored and this branch pushed; first remote CI run recorded.
