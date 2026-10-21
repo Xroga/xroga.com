@@ -433,7 +433,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
    * a control ceasing to exist after an interaction, which only a second interaction
    * can catch.
    */
-  const edgeToggle = page.locator('.xv-sidebar-edge-toggle');
+  const edgeToggle = rail.getByRole('button', { name: 'Close sidebar', exact: true });
   await expect(edgeToggle).toBeVisible();
   await edgeToggle.click();
   await page.waitForTimeout(400);
@@ -460,10 +460,13 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const sidebarMark = rail.locator('.xv-sidebar-brand a[aria-label="Xroga"]');
   await expect(sidebarMark).toHaveCount(1);
   await sidebarMark.hover();
-  // Longer than the hover-intent delay, which is deliberately not instant.
+  // Approved compact rail does not expand under a passing pointer.
   await page.waitForTimeout(900);
+  await expect(rail, 'hovering the mark must not reopen the sidebar').toHaveClass(/is-collapsed/);
+  await sidebarMark.click();
+  await expect(rail).not.toHaveClass(/is-collapsed/);
   const reopened = (await rail.boundingBox())!;
-  expect(reopened.width, 'hovering the mark did not reopen the sidebar').toBeGreaterThan(72);
+  expect(reopened.width, 'clicking the mark did not reopen the sidebar').toBeGreaterThan(72);
 
   /*
    * And a drag that starts on the toggle widens rather than doing nothing. The toggle

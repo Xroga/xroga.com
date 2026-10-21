@@ -70,7 +70,7 @@ test('private empty workspace never exposes starter cards or starter plus', asyn
   await expect(page.getByRole('button', { name: 'More composer actions', exact: true }).locator('svg.lucide-plus')).toHaveCount(0);
 });
 
-test('compact visual starter fits desktop, tablet and phones without overflowing', async ({ page }) => {
+test('visual starter stays within the pane and every control remains reachable at each viewport', async ({ page }) => {
   await page.goto('/workspace');
   const header = page.getByTestId('workspace-start-header');
   await expect(header).toBeVisible();
@@ -87,7 +87,23 @@ test('compact visual starter fits desktop, tablet and phones without overflowing
     const dock = page.getByTestId('persistent-terminal-dock');
     const sizes = await dock.evaluate(el => ({ width: el.clientWidth, scrollWidth: el.scrollWidth, height: el.clientHeight, scrollHeight: el.scrollHeight }));
     expect(sizes.scrollWidth, JSON.stringify(viewport)).toBeLessThanOrEqual(sizes.width + 1);
-    expect(sizes.scrollHeight, JSON.stringify(viewport)).toBeLessThanOrEqual(sizes.height + 1);
+    // The current idle dock explicitly permits vertical scrolling. Verify
+    // containment and actual reachability instead of requiring a retired fit.
+    expect(sizes.height, JSON.stringify(viewport)).toBeLessThanOrEqual(viewport.height);
+    expect(await dock.evaluate(el => getComputedStyle(el).overflowY)).toBe('auto');
+    const lastCard = page.locator('[data-capability]').last();
+    await lastCard.scrollIntoViewIfNeeded();
+    await expect(lastCard).toBeInViewport();
+    if (sizes.scrollHeight > sizes.height + 1) {
+      // Overflow can be only bottom padding, so scrollIntoView needn't move.
+      // Exercise the actual scroll range explicitly before asserting it.
+      await dock.evaluate(el => { el.scrollTop = el.scrollHeight; });
+      expect(await dock.evaluate(el => el.scrollTop)).toBeGreaterThan(0);
+    }
+    const input = page.locator('[data-terminal-composer]');
+    await input.scrollIntoViewIfNeeded();
+    await expect(input).toBeInViewport();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport.width);
     await expect(page.locator('[data-capability]')).toHaveCount(5);
     await expect(page.locator('[data-terminal-composer]')).toHaveCount(1);
     await expect(header.locator('img')).toHaveCount(0);
@@ -279,7 +295,10 @@ test('compact sidebar keeps utilities and primary destinations in two aligned ro
   await expect(sidebar.getByRole('button', { name: 'New Work', exact: true })).toBeVisible();
   await sidebar.getByRole('button', { name: 'Close sidebar', exact: true }).click();
   await expect(sidebar).toHaveClass(/is-collapsed/);
-  await expect(sidebar.getByRole('link', { name: 'Overview', exact: true })).toBeVisible();
+  // Expanded Overview becomes the explicitly named Workspace icon in the rail.
+  const workspace = sidebar.getByRole('link', { name: 'Workspace', exact: true });
+  await expect(workspace).toBeVisible();
+  await expect(workspace).toHaveAttribute('href', '/workspace');
   await sidebar.locator('img').first().hover();
   await page.waitForTimeout(500);
   await expect(sidebar).toHaveClass(/is-collapsed/);
@@ -342,7 +361,7 @@ test('mobile tagline stays on one line and tool picks are editable, removable an
 
 test('search dialog escapes workspace stacking context and has an opaque foreground', async ({ page }) => {
   await page.goto('/workspace');
-  const search = page.getByRole('button', { name: 'Search', exact: true }).first();
+  const search = page.getByRole('button', { name: 'Search workspace', exact: true });
   await search.click();
   const dialog = page.getByRole('dialog', { name: 'Search projects and chats' });
   await expect(dialog).toBeVisible();

@@ -2,6 +2,111 @@
   "version": "1.0",
   "reviews": [
     {
+      "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
+      "sourceSha256": "44cf6b1bf141b235710aa44d3e24abcfa3c6719b242c4669f2ae0a39f9337db4",
+      "callIds": [
+        "228970c28a2f4129901c"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Native Array.from materializes locally queried menu buttons for keyboard focus navigation. The subsequent index/focus operations touch the DOM only. No database, storage client, credential or provider write is involved.",
+      "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
+          "marker": "const items = Array.from(menuRef.current?.querySelectorAll"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/homepage-next/ambient/S02Scene.tsx",
+      "sourceSha256": "9bd5fa092a1fe1ee81ca07b3e5d5323aa01bc766350d05f2cf68f5621385b14d",
+      "callIds": [
+        "67199a84c29a66c8fc8c"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Native Array.from materializes the local stage HTMLCollection for rectangle measurement and CSS-variable updates. The receiver is not a persistence client. No customer or provider data is stored by this expression.",
+      "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/homepage-next/ambient/S02Scene.tsx",
+          "marker": "const kids = stage ? Array.from(stage.children) : [];"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s04/apps/Arcset.tsx",
+      "sourceSha256": "eb36e41bf156a969a1cad1bbcc4997c34ec8c766df8b8d50c0e6732126cf9c2b",
+      "callIds": [
+        "e3dc4a21fe9d460a1ee9"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Native Array.from creates twelve decorative JSX progress bars in a fictional preview. React keys and local UI state control appearance, without persistence, credentials, tenancy or external effects.",
+      "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/homepage-next/s04/apps/Arcset.tsx",
+          "marker": "Array.from({ length: 12 }, (_, i) => ("
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
+      "sourceSha256": "d7351508a263086f2ad8ba26279aa3d522226d0e7765a830f5ea58104516cb67",
+      "callIds": [
+        "0c67d986d8bb106cd2e0"
+      ],
+      "disposition": "NOT_PERSISTENCE",
+      "authority": "Native Array.from copies a local Map iterator into React state for rendering validated plugin search results. This disposition covers only that conversion, not adjacent connector search or any consequential integration action.",
+      "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
+      "evidence": [
+        {
+          "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
+          "marker": "setApps(Array.from(available.values()));"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/feedbackStorage.ts",
+      "sourceSha256": "c9451abb660e977c92a451c65b5984345c49674790013808f0943b4af1b09e86",
+      "callIds": [
+        "a68e53a94294615ebff8"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The public browser Supabase client supplies no owner/email fields. Database defaults use authenticated auth.uid and signed email claims, with RLS rejecting forged identities and mixed batches atomically. Anonymous insertion is an explicit public product contract, not a service-role exception. No browser reads or mutations are granted.",
+      "reason": "Reviewed against exact PR824 source and real disposable Supabase fresh/upgrade receipts in run39502624238 at e4ae5e7cc4bb2709fbe0c32d452546b899eedfcf. Current-source integration still requires independent authenticated proof. Manual disposition is not a security certificate.",
+      "evidence": [
+        {
+          "path": "frontend/src/lib/feedbackStorage.ts",
+          "marker": "supabase.from('product_feedback').insert({"
+        },
+        {
+          "path": "scripts/security/feedback-rls.supabase.mjs",
+          "marker": "product_feedback"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/app/admin/feedback/page.tsx",
+      "sourceSha256": "58080fc13d8389ee7feb467b7d672489c8ccfa558e2ce6a70f5e3c5cd9281ac8",
+      "callIds": [
+        "2922acfd42156496680f",
+        "ff1f5d7bab864cb0babd"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The SSR client retains the authenticated user's cookie identity and public-role RLS, never service-role credentials. The no-argument current_community_role RPC is scoped to auth.uid. Before global reading the canonical guard requires current confirmed founder, server owner role and AAL2. SQL independently enforces the same invariant with a restrictive SELECT policy. Denial precedes the read. This intentional founder-global read is not an arbitrary tenant-admin bypass.",
+      "reason": "Reviewed against exact PR824 source and real disposable Supabase fresh/upgrade receipts in run39502624238 at e4ae5e7cc4bb2709fbe0c32d452546b899eedfcf. Current-source integration still requires independent authenticated proof. Manual disposition is not a security certificate.",
+      "evidence": [
+        {
+          "path": "frontend/src/app/admin/feedback/page.tsx",
+          "marker": "const decision = await authorizeFounderRequest({"
+        },
+        {
+          "path": "scripts/security/feedback-rls.supabase.mjs",
+          "marker": "product_feedback"
+        }
+      ]
+    },
+    {
       "path": "backend/src/ai/runStore.ts",
       "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
       "callIds": [
@@ -4340,38 +4445,6 @@
       ]
     },
     {
-      "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
-      "sourceSha256": "e975c68b0642525b5a900f2bb062be17b0d33e346222596a6d05f6ce1cfaa1df",
-      "callIds": [
-        "2d98522349041018aafe"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in PublicMarketingHeader, with no database or Storage client receiver.",
-      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
-      "evidence": [
-        {
-          "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
-          "marker": "{Array.from({ length: 10 }, (_, index) => <i key={index} />)}"
-        }
-      ]
-    },
-    {
-      "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
-      "sourceSha256": "e975c68b0642525b5a900f2bb062be17b0d33e346222596a6d05f6ce1cfaa1df",
-      "callIds": [
-        "0481d4c53113a3184a8b"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in PublicMarketingHeader, with no database or Storage client receiver.",
-      "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
-      "evidence": [
-        {
-          "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
-          "marker": "{Array.from({ length: 10 }, (_, index) => <i key={index} />)}"
-        }
-      ]
-    },
-    {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
       "sourceSha256": "630ba11b6c231c10e4e7aa507a0cec0a235fb1f27fa47d762cc61168e2d8f7f2",
       "callIds": [
@@ -4597,9 +4670,9 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sourceSha256": "c58fb061c167cabb652546b7bfacaf496fc3c81f9aca6b27a957217ef7e0ceee",
+      "sourceSha256": "b360681bded02eaaa0d68b04646aa69f21d71207148927f1230c516c4b2e4f10",
       "callIds": [
-        "ec56e3c528ebf6bc672d"
+        "d3b6981962c32370d75e"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
@@ -4629,9 +4702,9 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sourceSha256": "fe997b93bc62ba921569d3e31394aa2417ce679b50e22f3503a52351a1b3bc29",
+      "sourceSha256": "88ab1ba8380f32fb30f98e8bd345501ad9d190f1522e6072afd244c1151893a8",
       "callIds": [
-        "6520ef22b7832bcb902c"
+        "8f3c7995974f0b7357a6"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in VoiceWave, with no database or Storage client receiver.",

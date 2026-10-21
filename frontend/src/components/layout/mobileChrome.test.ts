@@ -335,12 +335,14 @@ test('the drawer close button belongs to the toolbar it sits in', () => {
   // three 28px borderless siblings — it sat a head taller with a box drawn round it.
   assert.match(
     SIDEBAR,
-    /<ModalCloseButton onClick=\{closeMobile\} className="xv-sidebar-head-icon" \/>/,
-    'the close button is back to its modal size',
+    /aria-label="Close sidebar" onPointerDown=\{isMobile \? undefined : startEdgeToggleDrag\}[\s\S]{0,240}if \(isMobile\) closeMobile\(\); else toggleSidebar\(\);/,
+    'the shared utility close control must close the drawer on mobile and avoid resize gestures',
   );
   // The compound selector outranks the button's own utilities whatever order they
   // are emitted in, which is the whole reason it is written this way.
   assert.match(CSS, /\.xv-sidebar-header-actions \.xv-sidebar-head-icon svg \{ width: 14px;/);
+  const compact = readFileSync(new URL('./SidebarCompact.module.css', import.meta.url), 'utf8');
+  assert.match(compact, /:global\(\.xv-sidebar-utilities\) button[^}]*height: 30px !important/);
 });
 
 test('the phone can change theme without opening the drawer', () => {

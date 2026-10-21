@@ -1,5 +1,48 @@
 # Phase 3 execution state
 
+## Current reconciliation, 2026-10-21
+
+This section supersedes earlier pending/current engineering descriptions below, not historical receipts. Accepted software d750836bfa44bd6fa668f827a4529ed49dec5269 and OCI source 9d6234afdd0a20e99f584acf7f93e346c5c49164 remain separate immutable sources. Current main is pinned to da76de8947668cc17fd2a99e9d673bc6de24b21e. Main was reconciled into the review branch only, with UI PR825 and feedback PR824 corrections retained as individual commits. Nothing was merged into main or applied to production.
+
+One criterion scoreboard follows. VERIFIED below describes the preserved accepted software proof, not final current-source acceptance. Every current acceptance row is BLOCKED until the new exact-source branch/integrated receipts are authenticated. C009 AC10 also retains the independent mandatory non-admin runtime-custody dependency. No Command008 implementation is classified as broken because custody is missing.
+
+| Original criterion | Preserved software proof | Current acceptance | Exact remaining proof |
+| --- | --- | --- | --- |
+| XB01-C008-AC01 | VERIFIED | BLOCKED | Current-source canonical authority regression and authenticated CI |
+| XB01-C008-AC02 | VERIFIED | BLOCKED | Current-source business dispatch/database regression and authenticated CI |
+| XB01-C008-AC03 | VERIFIED | BLOCKED | Current-source Operations compatibility/database regression and authenticated CI |
+| XB01-C008-AC04 | VERIFIED | BLOCKED | Current-source immutable binding regression and authenticated CI |
+| XB01-C008-AC05 | VERIFIED | BLOCKED | Current-source replay/concurrency regression and authenticated CI |
+| XB01-C008-AC06 | VERIFIED | BLOCKED | Current-source payload mutation regression and authenticated CI |
+| XB01-C008-AC07 | VERIFIED | BLOCKED | Current-source expiry/revocation/lock-wait regression and authenticated CI |
+| XB01-C008-AC08 | VERIFIED | BLOCKED | Current-source spend reservation/settlement regression and authenticated CI |
+| XB01-C008-AC09 | VERIFIED | BLOCKED | Current-source forged/model-only authority regression and authenticated CI |
+| XB01-C008-AC10 | VERIFIED | BLOCKED | Current-source twelve-class inventory regression and authenticated CI |
+| XB01-C009-AC01 | VERIFIED | BLOCKED | Current-source enabled writer regression and authenticated CI |
+| XB01-C009-AC02 | VERIFIED | BLOCKED | Current-source frontend/API secret-canary regression and authenticated CI |
+| XB01-C009-AC03 | VERIFIED | BLOCKED | Current-source model/task redaction regression and authenticated CI |
+| XB01-C009-AC04 | VERIFIED | BLOCKED | Current-source owner/AAD rejection regression and authenticated CI |
+| XB01-C009-AC05 | VERIFIED | BLOCKED | Current-source tamper rejection regression and authenticated CI |
+| XB01-C009-AC06 | VERIFIED | BLOCKED | Current-source rotation/recovery regression and authenticated CI |
+| XB01-C009-AC07 | VERIFIED | BLOCKED | Current-source revocation/revision regression and authenticated CI |
+| XB01-C009-AC08 | VERIFIED | BLOCKED | Current-source PKCE TTL/consume regression and authenticated CI |
+| XB01-C009-AC09 | VERIFIED | BLOCKED | Current-source idempotent migration/interruption regression and authenticated CI |
+| XB01-C009-AC10 | VERIFIED | BLOCKED | Current CI plus approved least-privilege identity, actual backend/provider access, valid wrong-principal denial, expiry/renewal/revocation and custody/cutover receipts |
+| XB01-C009-AC11 | VERIFIED | BLOCKED | Current bounded credential inventory regression and authenticated CI |
+| XB01-C009-AC12 | VERIFIED | BLOCKED | Current-source legacy cutover denial regression and authenticated CI |
+
+Exact proof paths/markers remain in the unchanged command008/009 manifests. Original criterion text, 12 classes, 20 frozen bindings and evaluator are unchanged. No planning marker is treated as test proof.
+
+The three current-main growth failures reproduce as nine STALE_FACT results caused by real time advancing beyond dated facts. Existing Phase3 tests already freeze only their test children and explicitly reject overdue facts. All three pass on the proposed integrated source. Separate review PR830 ports that bounded correction to main and corrects S03 placement after S02/before approved S04, following homepage removal commit0ff3f2a8. Main's later PR827/828 also intentionally removed the New Terminal text label, made the picker composer-wide and renamed Integrations to Plugins. Test corrections retain accessible names, visible icons, viewport bounds, upload order and real callbacks. No UI behavior was changed.
+
+PR824 retains ten passing real disposable Supabase Auth/MFA/PostgREST/PG17 cases at e4ae5e7cc4bb2709fbe0c32d452546b899eedfcf. Targeted fresh/upgrade proof is not full-history or production parity. Legitimate-founder confirmation, owner role and MFA prerequisites must be reviewed before any production application. No founder account or role was changed.
+
+The accepted Phase3 branch already has a disposable-only browser workflow with per-run keys, local endpoints, full-history migration, readiness and teardown. Main's missing hosted-project secrets are not supplied or bypassed. Reuse that existing workflow for the reconciled source. Preserve the previous cold-start timeout. Local browser runs now wait for a real HTTP200 Next document before navigating and assert the rendered composer, rather than sleeping or raising assertion timeouts.
+
+Read-only OCI inspection confirms the existing Dubai SOFTWARE AES256 key remains enabled. Earlier real Cloud Shell crypto receipts remain scoped to operator cryptography. The existing Free domain had only an administrator user, so no approved non-admin application identity exists. The exact local/native-session proposal is durably preserved in refs/notes/xroga-phase3-acceptance at6385041f3f11ca09dcbb44df86ca9c536c767aa4 and in the founder delivery bundle. No identity, group, policy, trust, credential or grant is authorized by this directive. Stop those actions until explicit owner approval. Keep both versions and ciphertexts. SOFTWARE key backup is unsupported, and retained-version/process recovery is not disaster recovery. Google billing is untouched.
+
+Current final status remains B1_P3_BLOCKED while new integration evidence is pending. If software/integration proof completes and only external custody remains, use the founder-requested reporting label B1_P3_CODE_READY_EXTERNAL_CUSTODY_BLOCKED without changing the evaluator's original CODE_READY_KMS_CUTOVER_BLOCKED semantics. No Phase4 implementation.
+
 This ledger references the unchanged canonical `../PHASE-3-FROZEN-WORKLIST.json`. It adds no acceptance criteria and changes none of its 22 original criteria, 12 action classes or 20 baseline interface bindings. Historical baseline statuses describe the frozen handoff, not current implementation certification.
 
 ## Preserved source and admission
