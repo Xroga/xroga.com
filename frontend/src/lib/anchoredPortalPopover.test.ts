@@ -4,8 +4,21 @@ import { test } from 'node:test';
 import { clampAnchoredPosition } from '../components/ui/AnchoredPortalPopover';
 
 test('anchored popover clamps to every viewport edge', () => {
-  assert.deepEqual(clampAnchoredPosition({ left: 290, right: 310, top: 180, bottom: 200 }, { width: 160, height: 120 }, { width: 320, height: 240 }, 'bottom-start'), { left: 148, top: 108 });
-  assert.deepEqual(clampAnchoredPosition({ left: -20, right: 0, top: -10, bottom: 5 }, { width: 100, height: 50 }, { width: 320, height: 240 }, 'top-end'), { left: 12, top: 12 });
+  // Bottom placement flips above when that side has enough room.
+  assert.deepEqual(clampAnchoredPosition({ left: 290, right: 310, top: 180, bottom: 200 }, { width: 160, height: 120 }, { width: 320, height: 240 }, 'bottom-start'), { left: 148, top: 52 });
+  // Near the top edge it flips below and preserves the requested eight-pixel gap.
+  assert.deepEqual(clampAnchoredPosition({ left: -20, right: 0, top: -10, bottom: 5 }, { width: 100, height: 50 }, { width: 320, height: 240 }, 'top-end'), { left: 12, top: 13 });
+});
+
+test('anchored popover preserves preferred placement when it fits and flips only when needed', () => {
+  const viewport = { width: 320, height: 240 }, popover = { width: 100, height: 50 };
+  assert.deepEqual(clampAnchoredPosition({ left: 40, right: 80, top: 80, bottom: 100 }, popover, viewport, 'bottom-start'), { left: 40, top: 108 });
+  assert.deepEqual(clampAnchoredPosition({ left: 140, right: 180, top: 100, bottom: 120 }, popover, viewport, 'top-end'), { left: 80, top: 42 });
+  assert.deepEqual(clampAnchoredPosition({ left: 40, right: 80, top: 15, bottom: 35 }, popover, viewport, 'top-start'), { left: 40, top: 43 });
+  for (const placement of ['bottom-start', 'bottom-end', 'top-start', 'top-end'] as const) {
+    const point = clampAnchoredPosition({ left: -20, right: 350, top: 0, bottom: 240 }, { width: 600, height: 500 }, viewport, placement);
+    assert.deepEqual(point, { left: 12, top: 12 });
+  }
 });
 
 test('workspace identity uses the shared body portal with complete dismissal and reposition behavior', () => {

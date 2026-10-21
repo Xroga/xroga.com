@@ -30,7 +30,9 @@ test('repo header is only the actual repository name; menu still has complete id
 test('sidebar uses animated Blocks for Overview and Locate for Search', () => {
   assert.match(sidebar, /import \{ LocateIcon \} from '@\/components\/ui\/locate-icon'/);
   assert.match(sidebar, /<LocateIcon size=\{16\} duration=\{1\}/);
-  assert.match(sidebar, /<LucideBlocksIcon size=\{15\}/);
+  assert.match(sidebar, /<LucideBlocksIcon ref=\{overviewIconRef\} size=\{15\} aria-hidden="true"/);
+  assert.match(sidebar, /overviewIconRef\.current\?\.startAnimation\(\)/);
+  assert.match(sidebar, /overviewIconRef\.current\?\.stopAnimation\(\)/);
 });
 
 test('plugin search uses full catalog with debounce and cannot misrepresent unloaded results', () => {

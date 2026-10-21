@@ -196,9 +196,11 @@ test('the collapsed rail keeps named workspace, creation, search and project sho
   const rail = SIDEBAR.slice(start, SIDEBAR.indexOf('<SidebarNavScroller', start));
   assert.ok(rail.length > 0, 'the collapsed rail could not be located');
   assert.match(rail, /<LocateIcon size=\{16\} duration=\{1\}/, 'the rail lost the animated search glyph');
-  assert.match(rail, /<LucideBlocksIcon size=\{16\}/, 'the rail lost the animated dashboard glyph');
+  assert.match(rail, /<LucideBlocksIcon ref=\{overviewIconRef\} size=\{16\}/, 'the rail lost the animated overview glyph');
+  assert.match(rail, /overviewIconRef\.current\?\.startAnimation\(\)/);
+  assert.match(rail, /overviewIconRef\.current\?\.stopAnimation\(\)/);
   assert.match(rail, /icon=\{FolderOpenIcon\}/, 'the rail lost the folder');
-  for (const label of ['Workspace', 'New Terminal', 'Search', 'Dashboard', 'Projects', 'Integrations']) {
+  for (const label of ['Workspace', 'New Terminal', 'Search', 'Overview', 'Projects', 'Integrations']) {
     assert.ok(rail.includes(`aria-label="${label}"`), `${label} lost its accessible name`);
   }
   assert.match(rail, /onClick=\{\(\) => setSearchOpen\(true\)\}/);
