@@ -23,7 +23,7 @@ test('composer only mounts on /workspace; never paints above projects, plugins o
 test('repo header is only the actual repository name; menu still has complete identity', () => {
   assert.match(identity, /activeProject\?\.repo\.split\('\/'\)\.pop\(\)/);
   assert.match(identity, /max-w-\[136px\] truncate/);
-  assert.match(identity, /title=\{repoIdentity\.fullName/);
+  assert.doesNotMatch(identity.slice(identity.indexOf('className="xv-term-title xv-term-title--button"'), identity.indexOf('<AnchoredPortalPopover open={open}')), /title=|ChevronDown/);
   assert.match(identity, /repoIdentity\.fullName \|\| 'No GitHub repository'/);
 });
 
