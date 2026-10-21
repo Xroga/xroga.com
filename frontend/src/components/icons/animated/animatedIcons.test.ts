@@ -592,7 +592,14 @@ test('the New Terminal label is hidden by name, not by element', () => {
     'a bare span rule is back, which hides the icon along with the label',
   );
   assert.match(CSS, /\.xv-new-terminal-compact__label \{ display: none; \}/, 'the label is no longer hidden');
-  assert.match(SIDEBAR, /className="xv-new-terminal-compact__label"/, 'the label lost the class the rule targets');
+  // PR827 replaced the compact text label with named icon-only controls.
+  // Both desktop and mobile still need an accessible name and a visible glyph.
+  const buttons = [...SIDEBAR.matchAll(/<button\b[^>]*aria-label="New Terminal"[^>]*>([\s\S]*?)<\/button>/g)];
+  assert.equal(buttons.length, 2, 'desktop and mobile New Terminal controls must remain present');
+  for (const [, content] of buttons) {
+    assert.match(content, /<AnimatedIcon icon=\{NewTerminalIcon\}/);
+    assert.doesNotMatch(content, /xv-new-terminal-compact__label/, 'the retired hidden label must not wrap the icon');
+  }
 
   // The icon's own wrapper is a span, which is the whole reason the rule had to change.
   assert.match(HOST, /<span ref=\{hostRef\}/, 'the host is no longer a span, so this guard is checking the wrong thing');
