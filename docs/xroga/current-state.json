@@ -39158,9 +39158,12 @@
       "id": "surface:520dedfbf5af4bb00b71",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/global-error.tsx",
-      "sha256": "f69ca462bff4423ada83a586e611b16f2d30a735b43b4a708096fc6e47576592",
+      "sha256": "af5f47ecd57f02c553dca647f879c789291b3158bbe1e42eaf700c7c190e708c",
       "symbols": [
-        "GlobalError"
+        "GlobalError",
+        "key",
+        "last",
+        "message"
       ],
       "imports": [
         "./global-error-styles",
@@ -46029,7 +46032,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage/HomepageClient.tsx:19"
+        "frontend/src/components/homepage/HomepageClient.tsx:20"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -46068,7 +46071,7 @@
       ],
       "callers": [
         "frontend/src/components/homepage-next/s02/S02Work.tsx:25",
-        "frontend/src/components/homepage/HomepageClient.tsx:20"
+        "frontend/src/components/homepage/HomepageClient.tsx:21"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -51269,7 +51272,7 @@
       "id": "surface:5400c5a86d8ffd5dc540",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage/HomepageClient.tsx",
-      "sha256": "54167d0bd55ddff35aa3f42e128835e74b86caa32ebadd1e945b79fb0ccf6b15",
+      "sha256": "050ea5eebb0639352c3619c4fb52c7a4e22358dc093eb6cac7202658c980c4b4",
       "symbols": [
         "HomepageClient",
         "active",
@@ -51302,6 +51305,7 @@
         "@/components/homepage-next/s04/S04Publish",
         "@/components/homepage-next/s05/S05Capabilities",
         "@/components/homepage-next/tokens.css",
+        "@/components/homepage/OptionalVisualErrorBoundary",
         "@/components/marketing/AiCodingAgentSquaresTerminal",
         "@/lib/supabase/client",
         "@/styles/homepage-closing-animation.css",
@@ -51323,6 +51327,7 @@
         "frontend/src/components/homepage-next/s04/S04Publish.tsx",
         "frontend/src/components/homepage-next/s05/S05Capabilities.tsx",
         "frontend/src/components/homepage-next/tokens.css",
+        "frontend/src/components/homepage/OptionalVisualErrorBoundary.tsx",
         "frontend/src/components/marketing/AiCodingAgentSquaresTerminal.tsx",
         "frontend/src/lib/supabase/client.ts",
         "frontend/src/styles/homepage-closing-animation.css",
@@ -51742,6 +51747,42 @@
         "next/image",
         "next/link",
         "next/navigation",
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:05bb1ad0c6f5ecfc8240",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage/OptionalVisualErrorBoundary.tsx",
+      "sha256": "ef8014e33e8bec9601efaaf3d00269a992442adba036239bd5f92e39eee72ff6",
+      "symbols": [
+        "OptionalVisualErrorBoundary"
+      ],
+      "imports": [
+        "react"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage/HomepageClient.tsx:19"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
         "react"
       ],
       "authBoundary": [],
@@ -52350,7 +52391,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/WorkspaceStarterIdeas.tsx:13",
-        "frontend/src/components/layout/Sidebar.tsx:86"
+        "frontend/src/components/layout/Sidebar.tsx:87"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -52454,8 +52495,8 @@
         "frontend/src/components/icons/GitHubIcon.tsx:4",
         "frontend/src/components/layout/MobileNav.tsx:7",
         "frontend/src/components/layout/PageFullscreenFrame.tsx:5",
-        "frontend/src/components/layout/Sidebar.tsx:76",
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:7",
+        "frontend/src/components/layout/Sidebar.tsx:77",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:20",
         "frontend/src/components/layout/ThemeToggle.tsx:5",
         "frontend/src/components/projects/GitHubProjectCard.tsx:5",
         "frontend/src/components/settings/SettingsView.tsx:19",
@@ -52844,7 +52885,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/MobileNav.tsx:14",
-        "frontend/src/components/layout/Sidebar.tsx:89"
+        "frontend/src/components/layout/Sidebar.tsx:90"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -53052,7 +53093,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/MobileNav.tsx:15",
-        "frontend/src/components/layout/Sidebar.tsx:82",
+        "frontend/src/components/layout/Sidebar.tsx:83",
         "frontend/src/components/ui/ProfileQuickMenu.tsx:10"
       ],
       "reachable": true,
@@ -53110,7 +53151,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/MobileNav.tsx:11",
-        "frontend/src/components/layout/Sidebar.tsx:84",
+        "frontend/src/components/layout/Sidebar.tsx:85",
         "frontend/src/components/settings/SettingsView.tsx:24"
       ],
       "reachable": true,
@@ -53782,7 +53823,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:8"
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:21"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -53841,7 +53882,7 @@
       "callers": [
         "frontend/src/app/(shell)/dashboard/projects/page.tsx:16",
         "frontend/src/components/layout/MobileNav.tsx:10",
-        "frontend/src/components/layout/Sidebar.tsx:85"
+        "frontend/src/components/layout/Sidebar.tsx:86"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -53897,7 +53938,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:9"
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:22"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -54083,7 +54124,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/MobileNav.tsx:13",
-        "frontend/src/components/layout/Sidebar.tsx:90"
+        "frontend/src/components/layout/Sidebar.tsx:91"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -54199,7 +54240,7 @@
       "callers": [
         "frontend/src/components/dashboard/WorkspaceShowcaseStarts.tsx:21",
         "frontend/src/components/layout/MobileNav.tsx:9",
-        "frontend/src/components/layout/Sidebar.tsx:81"
+        "frontend/src/components/layout/Sidebar.tsx:82"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -54312,7 +54353,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:79"
+        "frontend/src/components/layout/Sidebar.tsx:80"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -54615,7 +54656,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:78"
+        "frontend/src/components/layout/Sidebar.tsx:79"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -54740,7 +54781,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/MobileNav.tsx:12",
-        "frontend/src/components/layout/Sidebar.tsx:80"
+        "frontend/src/components/layout/Sidebar.tsx:81"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -55009,7 +55050,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:88",
+        "frontend/src/components/layout/Sidebar.tsx:89",
         "frontend/src/components/ui/ProfileQuickMenu.tsx:13"
       ],
       "reachable": true,
@@ -55113,7 +55154,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:83"
+        "frontend/src/components/layout/Sidebar.tsx:84"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -55171,7 +55212,7 @@
       "callers": [
         "frontend/src/app/(shell)/dashboard/projects/page.tsx:17",
         "frontend/src/components/layout/MobileNav.tsx:8",
-        "frontend/src/components/layout/Sidebar.tsx:77"
+        "frontend/src/components/layout/Sidebar.tsx:78"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -55563,7 +55604,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/WorkspaceShowcaseStarts.tsx:23",
-        "frontend/src/components/layout/Sidebar.tsx:87",
+        "frontend/src/components/layout/Sidebar.tsx:88",
         "frontend/src/components/ui/ProfileQuickMenu.tsx:12"
       ],
       "reachable": true,
@@ -56430,7 +56471,7 @@
       "callers": [
         "frontend/src/components/dashboard/IncognitoDashboard.tsx:4",
         "frontend/src/components/layout/IncognitoModeButton.tsx:10",
-        "frontend/src/components/layout/Sidebar.tsx:74",
+        "frontend/src/components/layout/Sidebar.tsx:75",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:29"
       ],
       "reachable": true,
@@ -57675,7 +57716,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:75"
+        "frontend/src/components/layout/Sidebar.tsx:76"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -58649,7 +58690,7 @@
       "id": "surface:7da6f201c8b9c4811bef",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "sha256": "dfc52ce6b75149d547b21422f6f447df4a4a9dca596cf36cb28f26c5c8317223",
+      "sha256": "61d961dc9f406b49f6d3ac887f1befcebfdf8b255b5ed3dea2b981b0d1e843aa",
       "symbols": [
         "EDGE_DRAG_THRESHOLD_PX",
         "HOVER_OPEN_DELAY_MS",
@@ -58725,6 +58766,7 @@
         "./AnimatedNavIcon",
         "./Logo",
         "./SidebarCompact.module.css",
+        "./SidebarHistoryErrorBoundary",
         "./SidebarNavScroller",
         "./SidebarProjectHistory",
         "./SidebarSearchModal",
@@ -58816,6 +58858,7 @@
         "frontend/src/components/layout/AnimatedNavIcon.tsx",
         "frontend/src/components/layout/Logo.tsx",
         "frontend/src/components/layout/SidebarCompact.module.css",
+        "frontend/src/components/layout/SidebarHistoryErrorBoundary.tsx",
         "frontend/src/components/layout/SidebarNavScroller.tsx",
         "frontend/src/components/layout/SidebarProjectHistory.tsx",
         "frontend/src/components/layout/SidebarSearchModal.tsx",
@@ -58879,6 +58922,139 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:7a8e7b95107436c7fb17",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/layout/SidebarActionMenu.tsx",
+      "sha256": "017f18809ddcdcd868d74ad5b3e2f82ac2ced4b25a89c6bea904ace8b79204e8",
+      "symbols": [
+        "Icon",
+        "Icons",
+        "SidebarActionId",
+        "SidebarActionMenu",
+        "SidebarMenuAction",
+        "box",
+        "height",
+        "index",
+        "key",
+        "menu",
+        "options",
+        "pointer",
+        "width"
+      ],
+      "imports": [
+        "lucide-react",
+        "react",
+        "react-dom"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:7"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "react",
+        "react-dom"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:598ad446ab5782bc67dd",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/layout/SidebarHistoryErrorBoundary.tsx",
+      "sha256": "5330fcea7203af297017de252e08f62583529cee40100bab22cf4305bb43eecc",
+      "symbols": [
+        "SidebarHistoryErrorBoundary"
+      ],
+      "imports": [
+        "next/link",
+        "react"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/layout/Sidebar.tsx:55"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "next/link",
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:a1e3d01e79062dd0a2b3",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/layout/SidebarMovingTitle.tsx",
+      "sha256": "befac66f051f5f452b00e8b8088f6f1b3c916e32aec791ee4ddd10de79ac9aa1",
+      "symbols": [
+        "SidebarMovingTitle",
+        "content",
+        "distance",
+        "enter",
+        "viewport"
+      ],
+      "imports": [
+        "react"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:8"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:a3410a23de32b31608f8",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/layout/SidebarNavScroller.tsx",
@@ -58898,7 +59074,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:91"
+        "frontend/src/components/layout/Sidebar.tsx:92"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -58922,9 +59098,8 @@
       "id": "surface:dae82b1420f0fd73a0bb",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sha256": "630ba11b6c231c10e4e7aa507a0cec0a235fb1f27fa47d762cc61168e2d8f7f2",
+      "sha256": "c48a9cee91f8cb1e90bb52fcc2aab9d3f2ed72d3d1c4ef11025355f873932e85",
       "symbols": [
-        "FolderIcon",
         "REPO_FILTERS",
         "RepoFilter",
         "RepoFolder",
@@ -58932,88 +59107,162 @@
         "RepositoryFilterPopover",
         "SidebarProjectHistory",
         "aT",
+        "accountId",
+        "activeAccountRef",
+        "activeItems",
+        "actual",
         "applyRestore",
         "bT",
         "bindRepo",
+        "box",
         "branch",
         "bucket",
+        "byId",
         "c",
+        "cancelled",
+        "candidates",
         "changeFilter",
         "changed",
+        "chat",
+        "childSections",
+        "children",
         "close",
         "closeFilter",
         "cloudRefreshInFlight",
         "cloudRefreshTimer",
-        "contextual",
+        "contextLink",
+        "conv",
         "conversationTitle",
+        "current",
+        "data",
         "direct",
+        "dst",
         "e",
+        "error",
         "escape",
+        "existing",
+        "expandedProject",
         "f",
         "filterAnchorRef",
         "folders",
         "foldersList",
+        "getProjectChats",
+        "grouped",
+        "handleMenuAction",
         "height",
+        "highest",
         "hist",
+        "historyById",
+        "hydrated",
+        "i",
+        "id",
+        "ids",
         "idx",
-        "isActiveRepo",
-        "isActiveSession",
         "isGuest",
-        "isOpen",
         "key",
+        "known",
+        "label",
+        "lastSidebarFetchRef",
         "latest",
         "left",
+        "legacy",
+        "link",
         "list",
         "live",
+        "loadMoreRecents",
         "local",
+        "localHistory",
         "map",
+        "match",
+        "menuActions",
         "menuRef",
         "messagesRef",
+        "metaIndex",
+        "metaOf",
+        "migratedKey",
+        "mode",
+        "moreProjects",
         "n",
+        "neighbor",
         "next",
         "nextEntries",
         "number",
         "offCloud",
+        "offset",
+        "old",
+        "oldKey",
+        "onFocus",
         "onRefresh",
+        "openMenu",
+        "openProject",
         "openRepoFolder",
         "openSession",
-        "parsed",
-        "pinStorageKey",
-        "pinnedConversations",
+        "openedMenu",
+        "organizedProjects",
+        "p",
+        "pinnedItems",
         "preferId",
         "prev",
         "previous",
         "previousKey",
+        "projectById",
+        "projectTitle",
+        "projects",
         "promptRef",
         "push",
-        "read",
+        "queue",
         "recentConversations",
         "rect",
         "refreshCloud",
         "refreshCloudNow",
         "refreshLocal",
-        "renderConversationRow",
+        "refreshSidebarData",
+        "refreshTimerRef",
+        "related",
+        "renderRow",
         "repo",
         "repoLabel",
         "resolved",
+        "rest",
+        "restored",
         "roomOnRight",
         "router",
         "s",
+        "saveEditor",
+        "saved",
         "savedConversations",
+        "sec",
+        "secondary",
+        "sectionTitle",
         "selected",
+        "session",
         "sessionIdRef",
+        "source",
+        "src",
         "synced",
         "t",
         "target",
         "title",
         "togglePin",
         "top",
+        "updateItem",
         "uploaded",
+        "value",
+        "verified",
+        "verifiedCloudRef",
+        "verifiedIds",
+        "verifiedIdsForHistory",
+        "verifiedPinnedRef",
+        "verifiedSidebarChatsRef",
         "width",
         "workspaceIdentity",
-        "ws"
+        "ws",
+        "x"
       ],
       "imports": [
+        "./SidebarActionMenu",
+        "./SidebarMovingTitle",
+        "./SidebarOrganize.css",
         "@/components/icons/animated/AnimatedIcon",
         "@/components/icons/animated/FilterIcon",
         "@/components/icons/animated/GitForkIcon",
@@ -59028,6 +59277,8 @@
         "@/lib/repoSessionsIndex",
         "@/lib/restoreRepoTerminal",
         "@/lib/safeDates",
+        "@/lib/sidebarOrganization",
+        "@/lib/supabase/client",
         "@/lib/syncRepoTerminalSessions",
         "@/lib/terminalHistory",
         "@/lib/utils",
@@ -59042,9 +59293,13 @@
         "frontend/src/components/icons/animated/AnimatedIcon.tsx",
         "frontend/src/components/icons/animated/FilterIcon.tsx",
         "frontend/src/components/icons/animated/GitForkIcon.tsx",
+        "frontend/src/components/layout/SidebarActionMenu.tsx",
+        "frontend/src/components/layout/SidebarMovingTitle.tsx",
+        "frontend/src/components/layout/SidebarOrganize.css",
         "frontend/src/components/layout/WorkspaceIdentityContext.tsx",
         "frontend/src/components/workspace/WorkspaceAuthGate.tsx",
         "frontend/src/context/TerminalChatContext.tsx",
+        "frontend/src/lib/api.ts",
         "frontend/src/lib/cloudTerminalSessions.ts",
         "frontend/src/lib/githubProjectEvents.ts",
         "frontend/src/lib/projectContext.ts",
@@ -59052,6 +59307,8 @@
         "frontend/src/lib/repoSessionsIndex.ts",
         "frontend/src/lib/restoreRepoTerminal.ts",
         "frontend/src/lib/safeDates.ts",
+        "frontend/src/lib/sidebarOrganization.ts",
+        "frontend/src/lib/supabase/client.ts",
         "frontend/src/lib/syncRepoTerminalSessions.ts",
         "frontend/src/lib/terminalHistory.ts",
         "frontend/src/lib/utils.ts",
@@ -59065,7 +59322,10 @@
         "frontend/src/components/layout/Sidebar.tsx:54"
       ],
       "reachable": true,
-      "persistenceDependencies": [],
+      "persistenceDependencies": [
+        "projects",
+        "xroga_sidebar_items"
+      ],
       "externalProviderDependencies": [
         "lucide-react",
         "next/navigation",
@@ -59078,13 +59338,22 @@
         "frontend/src/components/layout/SidebarProjectHistory.tsx#useWorkspaceIdentity",
         "frontend/src/components/layout/SidebarProjectHistory.tsx#workspaceIdentity"
       ],
-      "tenantBoundary": [],
+      "tenantBoundary": [
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:1030 (user_id)",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:1049 (user_id)"
+      ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [
         "frontend/src/components/layout/SidebarProjectHistory.tsx#GITHUB_PROJECT_SAVED_EVENT",
         "frontend/src/components/layout/SidebarProjectHistory.tsx#GITHUB_REPO_CONTEXT_EVENT",
-        "frontend/src/components/layout/SidebarProjectHistory.tsx#PROJECT_CONTEXT_CHANGED_EVENT"
+        "frontend/src/components/layout/SidebarProjectHistory.tsx#PROJECT_CONTEXT_CHANGED_EVENT",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx#verified",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx#verifiedCloudRef",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx#verifiedIds",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx#verifiedIdsForHistory",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx#verifiedPinnedRef",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx#verifiedSidebarChatsRef"
       ],
       "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -59260,7 +59529,7 @@
       ],
       "callers": [
         "frontend/src/components/homepage/HomepageWorkspaceTour.tsx:27",
-        "frontend/src/components/layout/Sidebar.tsx:92"
+        "frontend/src/components/layout/Sidebar.tsx:93"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -59312,8 +59581,8 @@
         "frontend/src/components/dashboard/DashboardHomeView.tsx:22",
         "frontend/src/components/integrations/PluginMarketplace.tsx:57",
         "frontend/src/components/layout/AppShell.tsx:18",
-        "frontend/src/components/layout/Sidebar.tsx:96",
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:42",
+        "frontend/src/components/layout/Sidebar.tsx:97",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:56",
         "frontend/src/components/notifications/NotificationExperience.tsx:8",
         "frontend/src/components/providers/AppProviders.tsx:8",
         "frontend/src/components/terminal/TerminalChatBar.tsx:34",
@@ -60359,7 +60628,7 @@
         "frontend/src/app/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/homepage/HomepageClient.tsx:21",
+        "frontend/src/components/homepage/HomepageClient.tsx:22",
         "frontend/src/components/marketing/AiCodingAgentLanding.tsx:32"
       ],
       "reachable": true,
@@ -61236,7 +61505,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:99"
+        "frontend/src/components/layout/Sidebar.tsx:100"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -62135,7 +62404,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:67",
+        "frontend/src/components/layout/Sidebar.tsx:68",
         "frontend/src/components/settings/GeneralSettingsPanel.tsx:11"
       ],
       "reachable": true,
@@ -62182,7 +62451,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:68",
+        "frontend/src/components/layout/Sidebar.tsx:69",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:30"
       ],
       "reachable": true,
@@ -71235,7 +71504,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:55"
+        "frontend/src/components/layout/Sidebar.tsx:56"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -71662,7 +71931,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:57"
+        "frontend/src/components/layout/Sidebar.tsx:58"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -71982,7 +72251,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:56"
+        "frontend/src/components/layout/Sidebar.tsx:57"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -72318,7 +72587,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:58",
+        "frontend/src/components/layout/Sidebar.tsx:59",
         "frontend/src/components/ui/ProfileQuickMenu.tsx:19"
       ],
       "reachable": true,
@@ -72674,8 +72943,8 @@
       "callers": [
         "frontend/src/components/integrations/PluginMarketplace.tsx:58",
         "frontend/src/components/layout/AppShell.tsx:19",
-        "frontend/src/components/layout/Sidebar.tsx:97",
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:43",
+        "frontend/src/components/layout/Sidebar.tsx:98",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:57",
         "frontend/src/components/terminal/TerminalChatBar.tsx:35",
         "frontend/src/context/TerminalChatContext.tsx:71"
       ],
@@ -73176,8 +73445,8 @@
         "frontend/src/components/dashboard/WorkspaceStarterIdeas.tsx:8",
         "frontend/src/components/layout/AppShell.tsx:7",
         "frontend/src/components/layout/IncognitoModeButton.tsx:8",
-        "frontend/src/components/layout/Sidebar.tsx:71",
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:11",
+        "frontend/src/components/layout/Sidebar.tsx:72",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:24",
         "frontend/src/components/showcase/ShowcaseResumeBridge.tsx:14",
         "frontend/src/components/terminal/ChatbarQueueOutside.tsx:4",
         "frontend/src/components/terminal/ImageEditModal.tsx:29",
@@ -73311,7 +73580,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:69",
+        "frontend/src/components/layout/Sidebar.tsx:70",
         "frontend/src/components/settings/GeneralSettingsPanel.tsx:9",
         "frontend/src/components/terminal/ImageStudioCard.tsx:20"
       ],
@@ -73528,7 +73797,7 @@
         "frontend/src/components/layout/AnimatedNavIcon.tsx:8",
         "frontend/src/components/layout/AppShell.tsx:13",
         "frontend/src/components/layout/IncognitoModeButton.tsx:7",
-        "frontend/src/components/layout/Sidebar.tsx:73",
+        "frontend/src/components/layout/Sidebar.tsx:74",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:32",
         "frontend/src/components/terminal/ProjectWorkspaceRail.tsx:6",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:32",
@@ -73576,7 +73845,7 @@
         "frontend/src/app/(workspace)/layout.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:70"
+        "frontend/src/components/layout/Sidebar.tsx:71"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -74129,6 +74398,7 @@
         "frontend/src/components/integrations/PluginDetail.tsx:23",
         "frontend/src/components/integrations/PluginMarketplace.tsx:33",
         "frontend/src/components/integrations/SupabaseConnectPanel.tsx:5",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:17",
         "frontend/src/components/layout/SidebarSearchModal.tsx:7",
         "frontend/src/components/notifications/NotificationBell.tsx:6",
         "frontend/src/components/notifications/NotificationExperience.tsx:6",
@@ -75171,7 +75441,7 @@
       "id": "surface:b344e6be193f7fda6b24",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/cloudTerminalSessions.ts",
-      "sha256": "14fe353341fdcc23bcb081f12d96bd9c3c7f9fcff07c874860e9cb603efdcc69",
+      "sha256": "e79dfedd5a75134545dbbaf7dafcd53dcefd63f8fd3b245450772a56b6ed5a76",
       "symbols": [
         "CLOUD_EVENT",
         "allocateTerminalNumber",
@@ -75234,12 +75504,12 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:28",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:41",
         "frontend/src/context/TerminalChatContext.tsx:1945",
         "frontend/src/lib/restoreRepoTerminal.ts:10",
         "frontend/src/lib/syncRepoTerminalSessions.ts:17",
         "frontend/src/lib/terminalHistory.ts:13",
-        "frontend/src/lib/terminalHistory.ts:271"
+        "frontend/src/lib/terminalHistory.ts:276"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -76872,7 +77142,7 @@
       "callers": [
         "frontend/src/app/(shell)/dashboard/projects/page.tsx:23",
         "frontend/src/components/dashboard/WorkspaceResumeList.tsx:10",
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:18",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:31",
         "frontend/src/components/terminal/RepoContextBar.tsx:21",
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:8",
         "frontend/src/components/terminal/TerminalChatBar.tsx:251",
@@ -77028,7 +77298,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:98",
+        "frontend/src/components/layout/Sidebar.tsx:99",
         "frontend/src/components/workspace/WorkspaceAuthGate.tsx:31",
         "frontend/src/lib/runGuestLaneChat.ts:3",
         "frontend/src/lib/userScopedCache.test.ts:11",
@@ -79786,7 +80056,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:41",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:55",
         "frontend/src/components/terminal/RepoContextBar.tsx:32",
         "frontend/src/context/TerminalChatContext.tsx:106",
         "frontend/src/lib/projectContext.test.ts:3",
@@ -80048,7 +80318,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/Sidebar.tsx:95",
+        "frontend/src/components/layout/Sidebar.tsx:96",
         "frontend/src/store/useProjectWorkspaceStore.ts:24"
       ],
       "reachable": true,
@@ -80709,7 +80979,7 @@
         "frontend/src/app/(shell)/dashboard/projects/page.tsx:34",
         "frontend/src/components/dashboard/DashboardView.tsx:23",
         "frontend/src/components/dashboard/WorkspaceResumeList.tsx:7",
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:17",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:30",
         "frontend/src/components/terminal/RepoContextBar.tsx:10",
         "frontend/src/components/terminal/RepoContextBar.tsx:214",
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:7",
@@ -80791,7 +81061,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:36",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:50",
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:9",
         "frontend/src/components/terminal/TerminalChatBar.tsx:29",
         "frontend/src/context/TerminalChatContext.tsx:40",
@@ -80949,7 +81219,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:27",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:40",
         "frontend/src/components/terminal/RepoContextBar.tsx:372"
       ],
       "reachable": true,
@@ -81170,7 +81440,7 @@
         "frontend/src/components/dashboard/DashboardHomeView.tsx:20",
         "frontend/src/components/dashboard/TerminalHistoryView.tsx:22",
         "frontend/src/components/dashboard/WorkspaceResumeList.tsx:11",
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:38"
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:52"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82221,6 +82491,108 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:3f2965f2e342555c0e07",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/sidebarOrganization.ts",
+      "sha256": "61fe6f15651f09c31eece5ebee61505290569b1d6a48c078fe1140c5cda21da4",
+      "symbols": [
+        "SidebarChat",
+        "SidebarKind",
+        "SidebarMeta",
+        "SidebarProject",
+        "SidebarSection",
+        "actual",
+        "c",
+        "changeSidebarMeta",
+        "clean",
+        "client",
+        "createSidebarSection",
+        "deleteSidebarChat",
+        "deleteSidebarMeta",
+        "e",
+        "existing",
+        "id",
+        "loadPinnedSidebarRecords",
+        "loadSidebarChatById",
+        "loadSidebarChats",
+        "loadSidebarMeta",
+        "loadSidebarProjects",
+        "loadSidebarSections",
+        "meaningfulSidebarTitle",
+        "owned",
+        "pendingChats",
+        "pinned",
+        "prev",
+        "projects",
+        "removeSidebarSection",
+        "results",
+        "saveSidebarChat",
+        "scheduleSidebarChatSave",
+        "sessions",
+        "sortPinned",
+        "swapSidebarPins",
+        "visiblePage"
+      ],
+      "imports": [
+        "@/lib/storageSafe",
+        "@/lib/supabase/client",
+        "@/lib/terminalHistory"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/storageSafe.ts",
+        "frontend/src/lib/supabase/client.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/dashboard/projects/[id]/page.tsx",
+        "frontend/src/app/(shell)/dashboard/projects/page.tsx",
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:10",
+        "frontend/src/lib/sidebarOrganization.test.ts:4",
+        "frontend/src/lib/terminalHistory.ts:249"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "projects",
+        "terminal_sessions",
+        "xroga_sidebar_chats",
+        "xroga_sidebar_items",
+        "xroga_sidebar_sections"
+      ],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [
+        "frontend/src/lib/sidebarOrganization.ts:30 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:34 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:38 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:42 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:46 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:64 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:68 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:84 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:92 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:96 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:132 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:134 (user_id)",
+        "frontend/src/lib/sidebarOrganization.ts:136 (user_id)"
+      ],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/sidebarOrganization.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:058921238e398b053dd4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/siteHealthAudit.ts",
@@ -82484,6 +82856,7 @@
         "frontend/src/lib/cloudTerminalSessions.ts:8",
         "frontend/src/lib/mediaStorage.ts:2",
         "frontend/src/lib/repoSessionsIndex.ts:7",
+        "frontend/src/lib/sidebarOrganization.ts:3",
         "frontend/src/lib/storageSafe.test.ts:4",
         "frontend/src/lib/syncRepoTerminalSessions.ts:15",
         "frontend/src/lib/terminalHistory.ts:5",
@@ -82845,7 +83218,8 @@
         "frontend/src/components/homepage-next/s01/CapabilityFocus.tsx:20",
         "frontend/src/components/homepage/HomepageClient.tsx:11",
         "frontend/src/components/layout/PublicMarketingHeader.tsx:20",
-        "frontend/src/components/layout/Sidebar.tsx:66",
+        "frontend/src/components/layout/Sidebar.tsx:67",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:18",
         "frontend/src/components/pricing/PricingPageClient.tsx:24",
         "frontend/src/components/settings/DataAiSettingsPanel.tsx:6",
         "frontend/src/components/settings/SecuritySettingsPanel.tsx:6",
@@ -82859,7 +83233,8 @@
         "frontend/src/lib/feedbackStorage.ts:1",
         "frontend/src/lib/projectDeliveryApi.ts:7",
         "frontend/src/lib/projectRuntimeApi.ts:3",
-        "frontend/src/lib/runLightLaneChat.ts:1"
+        "frontend/src/lib/runLightLaneChat.ts:1",
+        "frontend/src/lib/sidebarOrganization.ts:2"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -83452,7 +83827,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:23",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:36",
         "frontend/src/components/terminal/RepoContextBar.tsx:355",
         "frontend/src/context/TerminalChatContext.tsx:1036",
         "frontend/src/context/TerminalChatContext.tsx:1357",
@@ -84036,7 +84411,7 @@
       "id": "surface:af3de59afc346b2429f7",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/terminalHistory.ts",
-      "sha256": "5bc6addb28faf59c8ad5ce9d8e6fb4f426fb96462dfb4f87c930d0fad77387e5",
+      "sha256": "beaf0d9ff332f4165d46355fdd3afa2ec6cd364a15ce25172c885753eb0c437b",
       "symbols": [
         "BROWSER_KEYWORDS",
         "KEY",
@@ -84095,6 +84470,7 @@
         "@/lib/projectContext",
         "@/lib/repoContext",
         "@/lib/repoSessionsIndex",
+        "@/lib/sidebarOrganization",
         "@/lib/storageSafe",
         "@/lib/terminalSessionStorage",
         "@/store/useProjectWorkspaceStore"
@@ -84105,6 +84481,7 @@
         "frontend/src/lib/projectContext.ts",
         "frontend/src/lib/repoContext.ts",
         "frontend/src/lib/repoSessionsIndex.ts",
+        "frontend/src/lib/sidebarOrganization.ts",
         "frontend/src/lib/storageSafe.ts",
         "frontend/src/lib/terminalSessionStorage.ts",
         "frontend/src/store/useProjectWorkspaceStore.ts"
@@ -84121,7 +84498,8 @@
         "frontend/src/components/dashboard/TerminalHistoryView.tsx:16",
         "frontend/src/components/dashboard/WorkspaceResumeList.tsx:8",
         "frontend/src/components/dashboard/WorkspaceShowcaseStarts.tsx:25",
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:12",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:19",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:25",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx:22",
         "frontend/src/context/TerminalChatContext.tsx:1804",
         "frontend/src/context/TerminalChatContext.tsx:1946",
@@ -84672,7 +85050,7 @@
       ],
       "callers": [
         "frontend/src/components/bootstrap/UserCacheScopeBootstrap.tsx:1",
-        "frontend/src/components/layout/Sidebar.tsx:65",
+        "frontend/src/components/layout/Sidebar.tsx:66",
         "frontend/src/components/settings/SecuritySettingsPanel.tsx:10",
         "frontend/src/lib/userScopedCache.test.ts:5"
       ],
@@ -84872,7 +85250,7 @@
         "frontend/src/components/layout/ProcessingLogo.tsx:5",
         "frontend/src/components/layout/Sidebar.tsx:39",
         "frontend/src/components/layout/SidebarNavScroller.tsx:3",
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:39",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:53",
         "frontend/src/components/layout/SidebarSearchModal.tsx:8",
         "frontend/src/components/layout/ThemeToggle.tsx:9",
         "frontend/src/components/magicui/globe.tsx:7",
@@ -85325,7 +85703,7 @@
         "frontend/src/components/dashboard/DashboardErrorBoundary.tsx:4",
         "frontend/src/components/dashboard/MediaPageClient.tsx:20",
         "frontend/src/components/dashboard/SwarmRunHistory.tsx:15",
-        "frontend/src/components/layout/SidebarProjectHistory.tsx:40",
+        "frontend/src/components/layout/SidebarProjectHistory.tsx:54",
         "frontend/src/components/notifications/NotificationBell.tsx:10",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:33",
         "frontend/src/context/TerminalChatContext.tsx:30",
@@ -86774,7 +87152,7 @@
         "frontend/src/components/integrations/PluginDetail.tsx:52",
         "frontend/src/components/layout/HeaderActionMeter.tsx:5",
         "frontend/src/components/layout/MiniActionMeter.tsx:4",
-        "frontend/src/components/layout/Sidebar.tsx:64",
+        "frontend/src/components/layout/Sidebar.tsx:65",
         "frontend/src/components/notifications/NotificationBell.tsx:7",
         "frontend/src/components/notifications/NotificationExperience.tsx:7",
         "frontend/src/components/notifications/SidebarNotificationCenter.tsx:9",
@@ -87125,7 +87503,7 @@
         "frontend/src/components/incognito/IncognitoFullscreenBackground.tsx:6",
         "frontend/src/components/layout/AppShell.tsx:12",
         "frontend/src/components/layout/IncognitoModeButton.tsx:6",
-        "frontend/src/components/layout/Sidebar.tsx:72",
+        "frontend/src/components/layout/Sidebar.tsx:73",
         "frontend/src/components/providers/AppProviders.tsx:6",
         "frontend/src/components/settings/PrivacySettingsPanel.tsx:5",
         "frontend/src/components/terminal/SwarmMessageLog.tsx:31",
@@ -87223,7 +87601,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/DashboardView.tsx:15",
-        "frontend/src/components/layout/Sidebar.tsx:94",
+        "frontend/src/components/layout/Sidebar.tsx:95",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:21",
         "frontend/src/components/terminal/ProjectDeliveryPanel.tsx:33",
         "frontend/src/components/terminal/ProjectPreviewDock.tsx:5",
@@ -87350,7 +87728,7 @@
         "frontend/src/components/icons/animated/VercelIcon.tsx:11",
         "frontend/src/components/layout/AnimatedNavIcon.tsx:7",
         "frontend/src/components/layout/AppShell.tsx:9",
-        "frontend/src/components/layout/Sidebar.tsx:59",
+        "frontend/src/components/layout/Sidebar.tsx:60",
         "frontend/src/components/layout/ThemeToggle.tsx:7",
         "frontend/src/components/providers/ThemeProvider.tsx:5",
         "frontend/src/components/settings/ThemeSettingsPanel.tsx:4",
@@ -101048,10 +101426,17 @@
       "sha256": "b4298f22c6ac16682b1f5b953adaebcd1b15326bf27e94a7cfe216b3ccf297ec"
     },
     {
+      "id": "migration:6154f003092db7aa1f38",
+      "sourcePath": "supabase/migrations/20261021233500_sidebar_organization.sql",
+      "version": "20261021233500",
+      "order": 140,
+      "sha256": "a60e170e2087eaa3b5357b91efa78dac397307aee8eedec50fa3c4f03c7555f4"
+    },
+    {
       "id": "migration:575c5d423a208a9a4a5d",
       "sourcePath": "supabase/migrations/20261022003000_sidebar_exact_parent_guards.sql",
       "version": "20261022003000",
-      "order": 140,
+      "order": 141,
       "sha256": "501fc5d78726ee296ac9e56865581c80da1517c7d7fa37629f6736d59941f082"
     }
   ],
@@ -102696,9 +103081,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:6fa10877a8ef16aa0184",
+      "id": "finding:b1dbae13a8dbbd2d52df",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "line": 165,
+      "line": 166,
       "kind": "COMING_SOON",
       "reachable": true,
       "state": "PARTIAL",
@@ -102706,17 +103091,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:a73ff55c017e1a0b790e",
-      "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "line": 167,
-      "kind": "COMING_SOON",
-      "reachable": true,
-      "state": "PARTIAL",
-      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
-      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
-    },
-    {
-      "id": "finding:e3d0ac70fb3b239ddd17",
+      "id": "finding:5e42f19446f88fe8ae75",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 168,
       "kind": "COMING_SOON",
@@ -102726,7 +103101,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:777d0f514483a9ff9520",
+      "id": "finding:0cefe1c7f2f6e6a0466b",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 169,
       "kind": "COMING_SOON",
@@ -102736,7 +103111,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:8413c2c4da9deca6a89c",
+      "id": "finding:50148b58251c70b5f67d",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 170,
       "kind": "COMING_SOON",
@@ -102746,7 +103121,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:4038a06dbfe2f507831c",
+      "id": "finding:fa77634fa354efd790ba",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 171,
       "kind": "COMING_SOON",
@@ -102756,9 +103131,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:029822761904355b231f",
+      "id": "finding:d6dbc6a56150dd3b524f",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "line": 178,
+      "line": 172,
       "kind": "COMING_SOON",
       "reachable": true,
       "state": "PARTIAL",
@@ -102766,7 +103141,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:cc39e5512e213f3dac3d",
+      "id": "finding:6c20ce36c423eb0f6225",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 179,
       "kind": "COMING_SOON",
@@ -102776,9 +103151,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:8c341209bc965949ede7",
+      "id": "finding:8fd7570abb39ce754377",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "line": 181,
+      "line": 180,
       "kind": "COMING_SOON",
       "reachable": true,
       "state": "PARTIAL",
@@ -102786,7 +103161,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:a748b8a06bc74d273dc7",
+      "id": "finding:e71374c41210b0f8b332",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 182,
       "kind": "COMING_SOON",
@@ -102796,19 +103171,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:5f12f583dc1e80e990e3",
+      "id": "finding:669797422b086e75b016",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "line": 479,
-      "kind": "SIMULATED",
-      "reachable": true,
-      "state": "PARTIAL",
-      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
-      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
-    },
-    {
-      "id": "finding:199d89cf3e232b1b0ce8",
-      "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "line": 811,
+      "line": 183,
       "kind": "COMING_SOON",
       "reachable": true,
       "state": "PARTIAL",
@@ -102816,9 +103181,29 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:2907969c7adfdca2703d",
+      "id": "finding:d55d08893258702564ab",
+      "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
+      "line": 480,
+      "kind": "SIMULATED",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:f7ab55dd2d218409045b",
+      "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
+      "line": 812,
+      "kind": "COMING_SOON",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:c08127e664fc45878d52",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 161,
+      "line": 175,
       "kind": "STUB",
       "reachable": true,
       "state": "PARTIAL",
@@ -102826,9 +103211,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:4a947c0aaa0f6931595e",
+      "id": "finding:12471464491250e7fdc4",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 472,
+      "line": 587,
       "kind": "STUB",
       "reachable": true,
       "state": "PARTIAL",
@@ -102836,10 +103221,20 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:161a083f727997d9f3d1",
+      "id": "finding:6023980378b964cd539b",
       "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 614,
-      "kind": "STUB",
+      "line": 1170,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:a10b82a3f5adaabcf079",
+      "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+      "line": 1193,
+      "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
@@ -105981,6 +106376,27 @@
       "line": 267,
       "callee": "api.supabase.disconnect",
       "reachable": false
+    },
+    {
+      "id": "frontend-call:5770b8428b205ab95015",
+      "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+      "line": 1035,
+      "callee": "api.projects.create",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:5bacaaac8bf8c8f4e331",
+      "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+      "line": 1042,
+      "callee": "api.projects.delete",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:77d07b982b0d2e87ca34",
+      "sourcePath": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+      "line": 1045,
+      "callee": "api.terminalSessions.delete",
+      "reachable": true
     },
     {
       "id": "frontend-call:a5693ee2c431571dcaa3",
@@ -111281,6 +111697,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:8ee0fad3a562efad2070",
+      "sourcePath": "frontend/src/lib/clientCrashRecovery.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:e27c529cbdfcc5179b2c",
       "sourcePath": "frontend/src/lib/cloudTerminalSessions.test.ts",
       "declaredTests": 1,
@@ -111820,6 +112243,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:36318423da7f6a15e4e6",
+      "sourcePath": "frontend/src/lib/sidebarCompactSmooth.test.ts",
+      "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:3aec67f945053d0f3de1",
       "sourcePath": "frontend/src/lib/sidebarEdgeToggle.test.ts",
       "declaredTests": 11,
@@ -111830,6 +112260,13 @@
       "id": "test-suite:da0fe9b8902b88c01abd",
       "sourcePath": "frontend/src/lib/sidebarHistoryScroll.test.ts",
       "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:228752fdd611b8eccc03",
+      "sourcePath": "frontend/src/lib/sidebarOrganization.test.ts",
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },

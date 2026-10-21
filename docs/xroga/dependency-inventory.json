@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "3dbd8996abd1d8ea232958b2b0cc303f2a6fae16",
+  "source_sha": "e883f4f339caf370564806fe6b37f104adf62a34",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -14964,7 +14964,7 @@
     },
     {
       "path": "frontend/src/app/global-error.tsx",
-      "sha256": "f69ca462bff4423ada83a586e611b16f2d30a735b43b4a708096fc6e47576592"
+      "sha256": "af5f47ecd57f02c553dca647f879c789291b3158bbe1e42eaf700c7c190e708c"
     },
     {
       "path": "frontend/src/app/image/page.tsx",
@@ -15872,7 +15872,7 @@
     },
     {
       "path": "frontend/src/components/homepage/HomepageClient.tsx",
-      "sha256": "54167d0bd55ddff35aa3f42e128835e74b86caa32ebadd1e945b79fb0ccf6b15"
+      "sha256": "050ea5eebb0639352c3619c4fb52c7a4e22358dc093eb6cac7202658c980c4b4"
     },
     {
       "path": "frontend/src/components/homepage/HomepageEnterpriseProof.tsx",
@@ -15905,6 +15905,10 @@
     {
       "path": "frontend/src/components/homepage/HomepageWorkspaceTour.tsx",
       "sha256": "99a008812490b651afd81e548666646f6f8de92bec7f1cd2ab7e3da31a0a7bef"
+    },
+    {
+      "path": "frontend/src/components/homepage/OptionalVisualErrorBoundary.tsx",
+      "sha256": "ef8014e33e8bec9601efaaf3d00269a992442adba036239bd5f92e39eee72ff6"
     },
     {
       "path": "frontend/src/components/homepage/TechnologyMarquee.tsx",
@@ -16380,7 +16384,19 @@
     },
     {
       "path": "frontend/src/components/layout/Sidebar.tsx",
-      "sha256": "dfc52ce6b75149d547b21422f6f447df4a4a9dca596cf36cb28f26c5c8317223"
+      "sha256": "61d961dc9f406b49f6d3ac887f1befcebfdf8b255b5ed3dea2b981b0d1e843aa"
+    },
+    {
+      "path": "frontend/src/components/layout/SidebarActionMenu.tsx",
+      "sha256": "017f18809ddcdcd868d74ad5b3e2f82ac2ced4b25a89c6bea904ace8b79204e8"
+    },
+    {
+      "path": "frontend/src/components/layout/SidebarHistoryErrorBoundary.tsx",
+      "sha256": "5330fcea7203af297017de252e08f62583529cee40100bab22cf4305bb43eecc"
+    },
+    {
+      "path": "frontend/src/components/layout/SidebarMovingTitle.tsx",
+      "sha256": "befac66f051f5f452b00e8b8088f6f1b3c916e32aec791ee4ddd10de79ac9aa1"
     },
     {
       "path": "frontend/src/components/layout/SidebarNavScroller.tsx",
@@ -16388,7 +16404,7 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sha256": "630ba11b6c231c10e4e7aa507a0cec0a235fb1f27fa47d762cc61168e2d8f7f2"
+      "sha256": "c48a9cee91f8cb1e90bb52fcc2aab9d3f2ed72d3d1c4ef11025355f873932e85"
     },
     {
       "path": "frontend/src/components/layout/SidebarSearchModal.tsx",
@@ -17416,7 +17432,7 @@
     },
     {
       "path": "frontend/src/lib/cloudTerminalSessions.ts",
-      "sha256": "14fe353341fdcc23bcb081f12d96bd9c3c7f9fcff07c874860e9cb603efdcc69"
+      "sha256": "e79dfedd5a75134545dbbaf7dafcd53dcefd63f8fd3b245450772a56b6ed5a76"
     },
     {
       "path": "frontend/src/lib/codeBuildProcessing.ts",
@@ -17915,6 +17931,10 @@
       "sha256": "edb53ddc21b8d0e5bd80f4926f45573319db4d4f0af9526b780ee7fe9ebc2252"
     },
     {
+      "path": "frontend/src/lib/sidebarOrganization.ts",
+      "sha256": "61fe6f15651f09c31eece5ebee61505290569b1d6a48c078fe1140c5cda21da4"
+    },
+    {
       "path": "frontend/src/lib/siteHealthAudit.ts",
       "sha256": "8fffc4ba4413ae3ba0f5c99923fb7a8d01fb6b53193c191b24b38bae260c2f9a"
     },
@@ -18020,7 +18040,7 @@
     },
     {
       "path": "frontend/src/lib/terminalHistory.ts",
-      "sha256": "5bc6addb28faf59c8ad5ce9d8e6fb4f426fb96462dfb4f87c930d0fad77387e5"
+      "sha256": "beaf0d9ff332f4165d46355fdd3afa2ec6cd364a15ce25172c885753eb0c437b"
     },
     {
       "path": "frontend/src/lib/terminalSearch.ts",
@@ -23167,7 +23187,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/lib/cloudTerminalSessions.ts",
-      "line": 221,
+      "line": 222,
       "credentialsInUrl": false
     },
     {
@@ -24504,7 +24524,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/lib/terminalHistory.ts",
-      "line": 231,
+      "line": 232,
       "credentialsInUrl": false
     }
   ],
@@ -28704,14 +28724,84 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 411,
+      "line": 284,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 667,
+      "line": 351,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+      "line": 352,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+      "line": 358,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+      "line": 451,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+      "line": 525,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+      "line": 783,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+      "line": 784,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+      "line": 843,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+      "line": 868,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+      "line": 872,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
+      "line": 879,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -29019,7 +29109,7 @@
     },
     {
       "path": "frontend/src/lib/cloudTerminalSessions.ts",
-      "line": 246,
+      "line": 247,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -29307,6 +29397,20 @@
     {
       "path": "frontend/src/lib/seoFeeds.ts",
       "line": 19,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/sidebarOrganization.ts",
+      "line": 101,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/sidebarOrganization.ts",
+      "line": 140,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

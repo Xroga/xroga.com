@@ -52,6 +52,7 @@ import { HardDriveDownloadIcon as LucideHardDriveIcon } from '@/components/icons
 import { Logo } from './Logo';
 import { SidebarSearchModal } from './SidebarSearchModal';
 import { SidebarProjectHistory } from './SidebarProjectHistory';
+import { SidebarHistoryErrorBoundary } from './SidebarHistoryErrorBoundary';
 import { HoverTip } from '@/components/ui/HoverTip';
 import { SidebarHoverMenu } from '@/components/ui/SidebarHoverMenu';
 import { ProfileQuickMenu } from '@/components/ui/ProfileQuickMenu';
@@ -825,7 +826,9 @@ export function Sidebar({ displayName, email }: SidebarProps) {
               )}
 
           </div>
-          <SidebarProjectHistory expanded={navExpanded} />
+          <SidebarHistoryErrorBoundary>
+            <SidebarProjectHistory expanded={navExpanded} />
+          </SidebarHistoryErrorBoundary>
         </nav>
       </SidebarNavScroller> : <div className="flex-1" aria-hidden="true" />}
 

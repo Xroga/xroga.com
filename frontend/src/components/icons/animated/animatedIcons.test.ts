@@ -227,7 +227,12 @@ test('no static lucide glyph is left at a control that was given an animated one
     assert.ok(!gone.test(source), `${name} still renders the static glyph`);
   }
   assert.match(THEME, /icon=\{PaletteIcon\}/);
-  assert.match(HISTORY, /icon=\{FilterIcon\}/);
+  // PR836 replaced the repository-filter control with the Projects organizer.
+  // Assert the actual rendered scope, not now-unused legacy icon imports.
+  const organizer = HISTORY.slice(HISTORY.indexOf('  return <div className="mt-2 mb-1 px-1.5" data-sidebar-work-organizer>'));
+  assert.match(organizer, /<section aria-label="Projects"/);
+  assert.match(organizer, /aria-label="Create project"/);
+  assert.doesNotMatch(organizer, /<Filter\b|icon=\{FilterIcon\}|<RepositoryFilterPopover\b/);
   assert.match(PROFILE, /icon=\{SlidersHorizontalIcon\}/);
 });
 

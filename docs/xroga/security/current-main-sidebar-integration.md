@@ -3,6 +3,26 @@
 Upstream source `20ba42d658140994dbcd4ef58b07782cbe413b72`, PR #836, is
 separate from frozen accepted Phase 2. No production UI is changed here.
 
+## Targeted remediation against current main
+
+The founder subsequently authorized integrating the five reviewed test-contract
+corrections into the Batch 1 feature branch. The feature branch now incorporates
+existing main `b41e783bed36cfa39d21daebc3fa34fa3a2ea36a`, including PRs 838/839,
+without merging the feature into main or deploying. Its approved text-only rows
+and twelve-item Recents paging replace the older repository/filter rendering.
+Tests preserve actual project selection/expansion/navigation, account-scoped
+durable pins, chronological Recents including pins, archived-item filtering,
+accessible labels, conditional sections and functional pagination updates.
+No production component was edited beyond incorporating the already merged main
+version. The full frontend suite passes 1,154 tests with zero skips locally.
+That local result is not authenticated CI or acceptance.
+
+Only the two traced native Array conversions are rebound in the current manual
+registry under exact file/function evidence. Twenty new main caller candidates
+remain explicit and unverified, not converted into inherited Phase 2 proof.
+Historical frozen mappings and the strict evaluators are unchanged. The actual
+SQL, ownership and two-client lock tests are retained for source-bound CI.
+
 ## Confirmed defect and scope
 
 The upstream sidebar policies used unqualified outer `user_id` and `project_id`

@@ -23,6 +23,24 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
+    // After a deployment, one outdated dynamic chunk may fail while the new
+    // deployment is already healthy. A single guarded reload can recover it
+    // without clearing conversations, credentials or other stored work.
+    const message = String(error?.name || '') + ' ' + String(error?.message || '');
+    if (/chunkloaderror|loading chunk|failed to fetch dynamically imported module|importing a module script failed|css_chunk_load_failed/i.test(message)) {
+      const key = 'xroga-chunk-recovery:' + window.location.pathname;
+      try {
+        const last = Number(sessionStorage.getItem(key) || '0');
+        if (!last || Date.now() - last > 2 * 60 * 1000) {
+          sessionStorage.setItem(key, String(Date.now()));
+          window.location.reload();
+          return;
+        }
+      } catch {
+        // Storage can be blocked by browser privacy settings; leave manual
+        // reload available instead of looping automatically.
+      }
+    }
     // Grouped, so the name, message, digest and stack arrive together rather than as
     // four separate lines that interleave with whatever else is logging.
     console.error('[GlobalError]', {
@@ -57,8 +75,8 @@ export default function GlobalError({
             </p>
             <h1 className="xv-ge__title">Xroga could not load this page</h1>
             <p className="xv-ge__desc">
-              The problem has been recorded. Reload this page or return to the public homepage; your
-              account and projects are unchanged.
+              An unexpected error interrupted this page. Reload to try again. Your saved
+              account and project records are not intentionally changed by this error screen.
             </p>
             <div className="xv-ge__actions">
               <button type="button" className="xv-ge__btn xv-ge__btn--primary" onClick={() => window.location.reload()}>

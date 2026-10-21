@@ -164,8 +164,28 @@
     "scripts/xroga/phase-two.mjs",
     "docs/xroga/batch-1/phases/phase-4/PHASE-4-FROZEN-WORKLIST.json",
     "docs/xroga/batch-1/phases/phase-4/PHASE-4-HANDOFF.md",
-    "scripts/xroga/validate-phase-four-handoff.mjs"
-    ,"package-lock.json"
+    "scripts/xroga/validate-phase-four-handoff.mjs",
+    "package-lock.json",
+    "frontend/src/app/global-error.tsx",
+    "frontend/src/components/homepage/HomepageClient.tsx",
+    "frontend/src/components/homepage/OptionalVisualErrorBoundary.tsx",
+    "frontend/src/components/layout/Sidebar.tsx",
+    "frontend/src/components/layout/SidebarActionMenu.tsx",
+    "frontend/src/components/layout/SidebarHistoryErrorBoundary.tsx",
+    "frontend/src/components/layout/SidebarMovingTitle.tsx",
+    "frontend/src/components/layout/SidebarOrganize.css",
+    "frontend/src/components/layout/SidebarProjectHistory.tsx",
+    "frontend/src/lib/clientCrashRecovery.test.ts",
+    "frontend/src/lib/cloudTerminalSessions.ts",
+    "frontend/src/lib/sidebarCompactSmooth.test.ts",
+    "frontend/src/lib/sidebarOrganization.test.ts",
+    "frontend/src/lib/sidebarOrganization.ts",
+    "frontend/src/lib/terminalHistory.ts",
+    "supabase/migrations/20261021233500_sidebar_organization.sql",
+    "frontend/src/components/icons/animated/animatedIcons.test.ts",
+    "frontend/src/components/layout/mobileChrome.test.ts",
+    "frontend/src/lib/sidebarHistoryScroll.test.ts",
+    "frontend/src/lib/workspaceConversationRail.test.ts"
   ],
   "decisions": {
     "keep": [

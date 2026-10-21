@@ -8,12 +8,16 @@ const rail = read('../components/terminal/ChatTurnRail.tsx');
 const log = read('../components/terminal/SwarmMessageLog.tsx');
 const css = read('../app/globals.css');
 
-test('repository, pinned and recent sidebar rows have their original readable labels', () => {
+test('project, pinned and recent sidebar rows retain readable labels and accessible open controls', () => {
   assert.doesNotMatch(sidebar, /HistoryTick|xv-history-tick/);
-  assert.match(sidebar, /folder\.sessions\.map\(\(session\) =>/);
-  assert.match(sidebar, /className=\{cn\(\s*'w-full flex items-center/);
+  assert.match(sidebar, /function renderRow\(kind:SidebarKind,id:string,label:string,open:\(\)=>void/);
+  assert.match(sidebar, /onClick=\{open\}/);
+  assert.match(sidebar, /aria-label=\{label\}/);
+  assert.match(sidebar, /<SidebarMovingTitle text=\{label\}\/>/);
+  assert.doesNotMatch(sidebar, /\{leading\}/);
   assert.match(sidebar, /session\.title/);
-  assert.match(sidebar, /aria-label="Pinned conversations"/);
+  assert.match(sidebar, /aria-label="Projects"/);
+  assert.match(sidebar, /aria-label="Pinned items"/);
   assert.match(sidebar, /aria-label="Recent conversations"/);
 });
 

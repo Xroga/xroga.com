@@ -4430,9 +4430,9 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "630ba11b6c231c10e4e7aa507a0cec0a235fb1f27fa47d762cc61168e2d8f7f2",
+      "sourceSha256": "c48a9cee91f8cb1e90bb52fcc2aab9d3f2ed72d3d1c4ef11025355f873932e85",
       "callIds": [
-        "3095a3a2c1da8e735ac5"
+        "b8ef33bd57715ef2cbbe"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
@@ -4446,9 +4446,9 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "630ba11b6c231c10e4e7aa507a0cec0a235fb1f27fa47d762cc61168e2d8f7f2",
+      "sourceSha256": "c48a9cee91f8cb1e90bb52fcc2aab9d3f2ed72d3d1c4ef11025355f873932e85",
       "callIds": [
-        "af91e03153d803870e5e"
+        "5f13844b2f1b712e7919"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
@@ -15592,11 +15592,19 @@
     {
       "path": "backend/src/services/integrations/ociWorkloadFederation.ts",
       "sourceSha256": "51bd6e8589860a48c37b8c4b65e014782d62ff31fe2f95ce3ad4906b2a8f4436",
-      "callIds": ["d100118cef42638a9330", "45049a393a26b35890dd"],
+      "callIds": [
+        "d100118cef42638a9330",
+        "45049a393a26b35890dd"
+      ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Both classified receivers are Buffer.from. One decodes the bounded JWT payload for local claim admission. The other encodes the exchange client's Basic header for the exact configured Oracle domain. Neither receiver is a database or storage client. The HTTPS exchange itself remains an explicit Command009 authentication and secret-custody boundary, without inherited provider certification.",
       "reason": "These two local byte conversions do not persist tenant data or grant authority. Actual source-claim trust, non-user principal mapping, provider authorization and renewal still require real provider-backed proof. Protocol fixtures alone do not close custody acceptance.",
-      "evidence": [{"path":"backend/src/services/integrations/ociWorkloadFederation.ts","marker":"export function createOciWorkloadFederation"}]
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/ociWorkloadFederation.ts",
+          "marker": "export function createOciWorkloadFederation"
+        }
+      ]
     }
   ]
 }
