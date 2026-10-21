@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
-import { OciKmsCryptoProvider, createOciKmsCryptoProvider, type OciKmsTransport } from './ociKmsCryptoProvider.js';
+import { OciKmsCryptoProvider, createOciKmsCryptoProvider, requireOciWorkloadIdentity, type OciKmsTransport } from './ociKmsCryptoProvider.js';
 import { CredentialVault, type VaultIdentity } from './credentialVault.js';
 import { createTenantContext } from '../../security/tenantContext.js';
 import { mkdtemp, writeFile, unlink, rmdir } from 'node:fs/promises';
@@ -11,6 +11,15 @@ import { tmpdir } from 'node:os';
 const keyId = 'ocid1.key.oc1.me-dubai-1.fixture.aaaaaaaa';
 const v1 = 'ocid1.keyversion.oc1.me-dubai-1.fixture.aaaaaaaa';
 const v2 = 'ocid1.keyversion.oc1.me-dubai-1.fixture.bbbbbbbb';
+test('OCI application identity admission rejects user sessions, wrong subjects and expired tokens without emitting them', () => {
+  const principal='ocid1.fnfunc.oc1.me-dubai-1.fixture.aaaaaaaa';
+  const jwt=(sub:string,exp:number)=>`ST$e30.${Buffer.from(JSON.stringify({sub,exp})).toString('base64url')}.synthetic`;
+  requireOciWorkloadIdentity(jwt(principal,200),principal,100000);
+  for(const token of [jwt(principal,99),jwt('ocid1.user.oc1..founder',200),jwt(principal+'b',200),'malformed']) {
+    assert.throws(()=>requireOciWorkloadIdentity(token,principal,100000),{message:'Managed credential key operation failed.'});
+  }
+  assert.throws(()=>requireOciWorkloadIdentity(jwt('ocid1.user.oc1..founder',200),'ocid1.user.oc1..founder',100000));
+});
 function fixture() {
   const versions = new Map([[v1, randomBytes(32)], [v2, randomBytes(32)]]);
   const calls: unknown[] = [];

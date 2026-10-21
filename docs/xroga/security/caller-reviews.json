@@ -15571,15 +15571,16 @@
     },
     {
       "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
-      "sourceSha256": "7b9124829a81b6638126b9492e79c9cb03691993eae41589ea5aef93376a92e6",
+      "sourceSha256": "1dab15a26ba08c148e4e96f58294229238e276a24bcdb46ca20e1f7b0b9725e4",
       "callIds": [
         "bff61b767ee1e128b87e",
         "f4d0c2af0d78fba9284a",
         "291af662ce05f5be45fd",
-        "658b27f714265c1c2858"
+        "658b27f714265c1c2858",
+        "567626db68706994f055"
       ],
       "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
+      "authority": "Inspected each exact receiver in this module. These five classified Buffer.from calls perform local base64 decoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or local SDK session-claims decoding for workload identity admission. No classified receiver is a database client, bucket or provider transport. Claims admission does not verify the JWT signature or grant IAM; the actual OCI request must do so. The OCI transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
       "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
       "evidence": [
         {

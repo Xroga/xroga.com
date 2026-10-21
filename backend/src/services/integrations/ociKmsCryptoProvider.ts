@@ -63,17 +63,33 @@ export class OciKmsCryptoProvider implements CryptoProvider {
 }
 
 export type OciKmsAuthMode = 'instance_principal' | 'resource_principal' | 'workload_session' | 'cloud_shell';
+export function requireOciWorkloadIdentity(signingKeyId: string, expectedPrincipalId: string, now = Date.now()): void {
+  // Admission only. OCI verifies the signature, proof-of-possession and IAM on
+  // the actual crypto request. Never emit the SDK's ST$ token/signing key ID.
+  try {
+    if (!/^ocid1\.(?!user\.|group\.|tenancy\.|domain\.)[a-z][a-z0-9]*\.[a-z0-9.-]+$/.test(expectedPrincipalId)
+      || !signingKeyId.startsWith('ST$') || signingKeyId.length > 32768) return fail();
+    const jwt = signingKeyId.slice(3).split('.');
+    if (jwt.length !== 3) return fail();
+    const claims = JSON.parse(Buffer.from(jwt[1]!, 'base64url').toString('utf8'));
+    if (claims.sub !== expectedPrincipalId || !Number.isFinite(claims.exp) || claims.exp * 1000 <= now) return fail();
+  } catch { return fail(); }
+}
+export function validateOciKmsConfiguration(options: { keyId: string; endpoint: string; encryptVersionId?: string }): void {
+  if (!ocid(options.keyId, 'key') || (options.encryptVersionId !== undefined && !ocid(options.encryptVersionId, 'keyversion'))) throw new Error('Invalid OCI KMS key identity.');
+  const region = options.keyId.split('.')[3];
+  if (options.encryptVersionId && options.encryptVersionId.split('.')[3] !== region) throw new Error('Invalid OCI KMS key version region.');
+  if (!new RegExp(`^https://[a-z0-9]+-crypto\\.kms\\.${region}\\.oci\\.oraclecloud\\.com$`).test(options.endpoint)) throw new Error('Invalid OCI KMS cryptographic endpoint.');
+}
 /** Official SDK signing, no API private-key download or environment fallback.
  * Cloud Shell is an interactive verification identity, prohibited for production.
  * Production callers inject the returned provider through the existing runtime
  * configureCredentialVaultProvider() startup boundary, never browser credentials. */
 export async function createOciKmsCryptoProvider(options: {
   endpoint: string; keyId: string; authMode: OciKmsAuthMode; encryptVersionId?: string;
-  configFile?: string; profile?: string;
+  configFile?: string; profile?: string; expectedPrincipalId?: string;
 }): Promise<OciKmsCryptoProvider> {
-  if (!ocid(options.keyId, 'key')) throw new Error('Invalid OCI KMS key identity.');
-  const region = options.keyId.split('.')[3];
-  if (!new RegExp(`^https://[a-z0-9]+-crypto\\.kms\\.${region}\\.oci\\.oraclecloud\\.com$`).test(options.endpoint)) throw new Error('Invalid OCI KMS cryptographic endpoint.');
+  validateOciKmsConfiguration(options);
   if (!['instance_principal', 'resource_principal', 'workload_session', 'cloud_shell'].includes(options.authMode)) throw new Error('Explicit short-lived OCI authentication is required.');
   if (options.authMode === 'cloud_shell' && (!['test', 'development'].includes(process.env.NODE_ENV ?? '')
     || process.env.FLY_APP_NAME || process.env.VERCEL_ENV === 'production')) throw new Error('Cloud Shell authentication is verification-only.');
@@ -97,7 +113,8 @@ export async function createOciKmsCryptoProvider(options: {
     : options.authMode === 'instance_principal'
       ? await new common.InstancePrincipalsAuthenticationDetailsProviderBuilder().build()
       : common.ResourcePrincipalAuthenticationDetailsProvider.builder();
-  const client = () => {
+  const client = async () => {
+    if (options.expectedPrincipalId) requireOciWorkloadIdentity(await authenticationDetailsProvider.getKeyId(), options.expectedPrincipalId);
     const result = new kms.KmsCryptoClient({ authenticationDetailsProvider }, {
       retryConfiguration: common.NoRetryConfigurationDetails,
       httpOptions: { signal: AbortSignal.timeout(15000), redirect: 'error' },
@@ -106,7 +123,7 @@ export async function createOciKmsCryptoProvider(options: {
     return result;
   };
   return new OciKmsCryptoProvider(options.keyId, {
-    async encrypt(input) { const result = await client().encrypt({ encryptDataDetails: { ...input, encryptionAlgorithm: kms.models.EncryptDataDetails.EncryptionAlgorithm.Aes256Gcm } }); return { ...result.encryptedData, requestId: result.opcRequestId }; },
-    async decrypt(input) { const result = await client().decrypt({ decryptDataDetails: { ...input, encryptionAlgorithm: kms.models.DecryptDataDetails.EncryptionAlgorithm.Aes256Gcm } }); return { ...result.decryptedData, requestId: result.opcRequestId }; },
+    async encrypt(input) { const result = await (await client()).encrypt({ encryptDataDetails: { ...input, encryptionAlgorithm: kms.models.EncryptDataDetails.EncryptionAlgorithm.Aes256Gcm } }); return { ...result.encryptedData, requestId: result.opcRequestId }; },
+    async decrypt(input) { const result = await (await client()).decrypt({ decryptDataDetails: { ...input, encryptionAlgorithm: kms.models.DecryptDataDetails.EncryptionAlgorithm.Aes256Gcm } }); return { ...result.decryptedData, requestId: result.opcRequestId }; },
   }, options.encryptVersionId);
 }

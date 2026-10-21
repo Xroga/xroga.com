@@ -60,11 +60,15 @@ import {
 import projectRuntimeRouter from './routes/projectRuntime.js';
 import deliveryRouter from './routes/delivery.js';
 import voiceRouter from './routes/voice.js';
+import { initializeCredentialVaultForServer, credentialVaultReadinessMiddleware } from './services/integrations/credentialVaultStartup.js';
 import {
   attachRuntimePreviewWebSocketGateway,
   runtimePreviewGateway,
 } from './middleware/runtimePreviewGateway.js';
 
+// No HTTP/WebSocket admission or worker startup before managed custody readiness.
+// Missing/denied/expired workload identity stops startup without a crypto fallback.
+const credentialVaultReadiness = await initializeCredentialVaultForServer();
 const app = express();
 
 /*
@@ -162,7 +166,7 @@ app.get('/health', (_req, res) => {
   res.json(publicHealthPayload());
 });
 
-app.get('/ready', async (_req, res) => {
+app.get('/ready', credentialVaultReadinessMiddleware(credentialVaultReadiness), async (_req, res) => {
   if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
     res.status(503).json({ status: 'not_ready', reason: 'database_not_configured' });
     return;

@@ -10,6 +10,10 @@
   "risk": "high",
   "scope": "Founder-authorized Phase3 only, original Command008 and009, all22 criteria unchanged. Preserve accepted Phase2 source and proof. No Phase4 implementation or production authorization.",
   "changedFiles": [
+    "backend/src/index.ts",
+    "backend/src/services/integrations/credentialVaultStartup.ts",
+    "backend/src/services/integrations/credentialVaultStartup.test.ts",
+    "docs/xroga/security/credential-vault-startup.md",
     "backend/src/services/integrations/ociKmsCryptoProvider.ts",
     "backend/src/services/integrations/ociKmsCryptoProvider.test.ts",
     "scripts/security/verify-oci-kms.ts",
@@ -213,6 +217,12 @@
     }
   },
   "tests": [
+    {
+      "command": "node --import tsx --test backend/src/services/integrations/credentialVaultStartup.test.ts",
+      "scope": "Explicit managed startup, noninteractive identity, fail-closed admission, timeout and actual readiness HTTP outage/recovery. Offline fixtures, not deployed OCI custody.",
+      "negative": true,
+      "reference": "backend/src/services/integrations/credentialVaultStartup.test.ts"
+    },
     {
       "command": "node --import tsx --test backend/src/services/integrations/ociKmsCryptoProvider.test.ts",
       "scope": "OCI SOFTWARE-key adapter, exact AAD and key version, malformed receipts, retained old versions, canonical vault identity and production Cloud Shell refusal. Real Cloud Shell probe is separately recorded and cannot certify production runtime IAM.",
