@@ -73,7 +73,8 @@ test('the title-bar toggle hides the single composer and restores its draft with
   await page.goto('/workspace');
   const composer = page.locator('[data-terminal-composer]');
   const header = page.getByTestId('terminal-identity-header');
-  await composer.fill('Retained local hide/restore draft');
+  for (const draft of ['Retained local hide/restore draft', 'rapid second edit\n日本語', '', 'final draft']) {
+  await composer.fill(draft);
   await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
   await expect(composer).toHaveCount(0);
   await expect(page.getByTestId('persistent-terminal-dock').getByRole('button', { name: 'Show the chatbar' })).toHaveCount(0);
@@ -81,8 +82,24 @@ test('the title-bar toggle hides the single composer and restores its draft with
   await expect(restore).toHaveAttribute('aria-pressed', 'true');
   await restore.click();
   await expect(composer).toHaveCount(1);
-  await expect(composer).toHaveValue('Retained local hide/restore draft');
+  await expect(composer).toHaveValue(draft);
   await expect(header.getByRole('button', { name: 'Hide the chatbar', exact: true })).toHaveAttribute('aria-pressed', 'false');
+  }
+});
+
+test('explicit hide refuses a stale account, conversation or project snapshot', async ({ page }) => {
+  await page.goto('/workspace');
+  const composer = page.locator('[data-terminal-composer]');
+  const header = page.getByTestId('terminal-identity-header');
+  await expect(composer).toBeVisible();
+  // Local defensive UI guard, not a substitute for real authenticated tests.
+  for (const attribute of ['data-draft-owner', 'data-draft-session', 'data-draft-project']) {
+    await composer.fill(`STALE_UI_${attribute}`);
+    await composer.evaluate((element, name) => element.setAttribute(name, 'foreign-scope'), attribute);
+    await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
+    await header.getByRole('button', { name: 'Show the chatbar', exact: true }).click();
+    await expect(composer).toHaveValue('');
+  }
 });
 
 test('private empty workspace never exposes starter cards or starter plus', async ({ page }) => {
