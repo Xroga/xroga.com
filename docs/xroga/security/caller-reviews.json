@@ -18,22 +18,6 @@
       ]
     },
     {
-      "path": "frontend/src/components/homepage-next/ambient/S02Scene.tsx",
-      "sourceSha256": "9bd5fa092a1fe1ee81ca07b3e5d5323aa01bc766350d05f2cf68f5621385b14d",
-      "callIds": [
-        "67199a84c29a66c8fc8c"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Native Array.from materializes the local stage HTMLCollection for rectangle measurement and CSS-variable updates. The receiver is not a persistence client. No customer or provider data is stored by this expression.",
-      "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
-      "evidence": [
-        {
-          "path": "frontend/src/components/homepage-next/ambient/S02Scene.tsx",
-          "marker": "const kids = stage ? Array.from(stage.children) : [];"
-        }
-      ]
-    },
-    {
       "path": "frontend/src/components/homepage-next/s04/apps/Arcset.tsx",
       "sourceSha256": "eb36e41bf156a969a1cad1bbcc4997c34ec8c766df8b8d50c0e6732126cf9c2b",
       "callIds": [

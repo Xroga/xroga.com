@@ -1,17 +1,17 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "2b774b8383ef0a653ac6e30025471baa29e7082c63e2c9fa0ecfa563e05134b5",
+  "reviewRegistrySha256": "d6decb43bbc311a277d7f80d67c2f809f51cd4a066a05942bd3b0f03e07ec23b",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 166,
-    "persistenceCandidates": 678,
+    "persistenceCandidates": 677,
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
-    "reviewedCandidates": 678,
+    "reviewedCandidates": 677,
     "unresolvedSafetyCandidates": 25,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 18
@@ -20,7 +20,7 @@
     "REVIEW_REQUIRED": 0,
     "SCOPED_BOUNDARY": 453,
     "NARROW_EXCEPTION": 40,
-    "NOT_PERSISTENCE": 160,
+    "NOT_PERSISTENCE": 159,
     "REVIEWED_GAP": 25
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 116,
-    "unresolvedCandidateBoundaries": 562,
+    "unresolvedCandidateBoundaries": 561,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3528,10 +3528,6 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "67199a84c29a66c8fc8c"
-      },
-      {
-        "code": "MISSING_CALLER_REVIEW",
         "id": "e3dc4a21fe9d460a1ee9"
       },
       {
@@ -5760,10 +5756,6 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "67199a84c29a66c8fc8c"
-      },
-      {
-        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "e3dc4a21fe9d460a1ee9"
       },
       {
@@ -5801,11 +5793,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 678,
+    "currentCallers": 677,
     "structuredVerified": 116,
-    "structuredUnproven": 562,
+    "structuredUnproven": 561,
     "manualUnresolved": 25,
-    "manualUnsupported": 537,
+    "manualUnsupported": 536,
     "agreedVerified": 116,
     "proofAwaitingManualReconciliation": 0
   },
@@ -21062,27 +21054,6 @@
           {
             "path": "frontend/src/components/game-builder/GamePreview.tsx",
             "marker": "{Array.from({ length: 8 }, (_, i) => ("
-          }
-        ]
-      }
-    },
-    {
-      "id": "67199a84c29a66c8fc8c",
-      "path": "frontend/src/components/homepage-next/ambient/S02Scene.tsx",
-      "line": 32,
-      "enclosing": "S02Scene",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "NOT_PERSISTENCE",
-      "sourceSha256": "9bd5fa092a1fe1ee81ca07b3e5d5323aa01bc766350d05f2cf68f5621385b14d",
-      "semanticReview": {
-        "authority": "Native Array.from materializes the local stage HTMLCollection for rectangle measurement and CSS-variable updates. The receiver is not a persistence client. No customer or provider data is stored by this expression.",
-        "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
-        "evidence": [
-          {
-            "path": "frontend/src/components/homepage-next/ambient/S02Scene.tsx",
-            "marker": "const kids = stage ? Array.from(stage.children) : [];"
           }
         ]
       }
