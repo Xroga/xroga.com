@@ -717,16 +717,12 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                 >
                   <AnimatedIcon icon={TerminalIcon} />
                 </Link>
-              <HoverTip label="New terminal" description="Start a fresh workspace terminal.">
-                <button type="button" onClick={handleNewChat} aria-label="New Terminal">
-                  <AnimatedIcon icon={NewTerminalIcon} />
-                </button>
-              </HoverTip>
-              <HoverTip label="Search" description="Search projects, chats, and commands." side="bottom">
-                <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
-                  <LocateIcon size={16} duration={1} />
-                </button>
-              </HoverTip>
+              <button type="button" onClick={handleNewChat} aria-label="New Work">
+                <AnimatedIcon icon={NewTerminalIcon} />
+              </button>
+              <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
+                <LocateIcon size={16} duration={1} />
+              </button>
                 <Link
                   href="/dashboard"
                   aria-label="Overview"
