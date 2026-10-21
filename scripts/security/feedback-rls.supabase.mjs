@@ -59,6 +59,9 @@ for(const phase of ['upgrade','fresh']){
   const seed=randomUUID();ok(await owner.client.from('product_feedback').insert({id:seed,rating:5,experience:'Synthetic pre-upgrade receipt'}));
   if(phase==='upgrade')assert.equal(ok(await staleFounder.from('product_feedback').select('id')).length,1,'Reproduce old email-only policy');
   await db.query(correction);assert.equal(await count(seed),1,'Migration preserves existing submissions');
+  await db.query(correction);assert.equal(await count(seed),1,'Migration replay preserves existing submissions and founder policies');
+  const founderPolicies=(await db.query("select policyname,permissive from pg_policies where schemaname='public' and tablename='product_feedback' and policyname in ('Verified founder can review product feedback','Feedback founder read guard') order by policyname")).rows;
+  assert.deepEqual(founderPolicies,[{policyname:'Feedback founder read guard',permissive:'RESTRICTIVE'},{policyname:'Verified founder can review product feedback',permissive:'PERMISSIVE'}]);
   await db.query("select pg_notify('pgrst','reload schema')");
   await test(`${phase}: authenticated and anonymous submissions persist exact caller ownership`,async()=>{
     for(const actor of [owner,other,{client:anon,id:null,email:null}]){
