@@ -56,87 +56,29 @@ const AudioLinesIcon = forwardRef<AudioLinesIconHandle, AudioLinesIconProps>(
       [active, controls, onMouseLeave],
     );
 
+    const barVariants = (scale: number, delay: number) => ({
+      normal: { scaleY: 1 },
+      animate: {
+        scaleY: [1, scale, 1],
+        transition: { duration: .6, ease: 'easeInOut' as const, delay },
+      },
+    });
+
     return (
-      <div
-        className={cn('inline-flex items-center justify-center', className)}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        {...props}
-      >
-        <svg
-          fill="none"
-          height={size}
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          viewBox="0 0 24 24"
-          width={size}
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path d="M2 10v3" />
-          <motion.path
-            animate={active ? 'animate' : controls}
-            d="M6 6v11"
-            variants={{
-              normal: { d: 'M6 6v11' },
-              animate: {
-                d: ['M6 6v11', 'M6 10v3', 'M6 6v11'],
-                transition: {
-                  duration: 1.5,
-                  repeat: Number.POSITIVE_INFINITY,
-                  ease: 'easeInOut',
-                },
-              },
-            }}
-          />
-          <motion.path
-            animate={active ? 'animate' : controls}
-            d="M10 3v18"
-            variants={{
-              normal: { d: 'M10 3v18' },
-              animate: {
-                d: ['M10 3v18', 'M10 9v5', 'M10 3v18'],
-                transition: {
-                  duration: 1,
-                  repeat: Number.POSITIVE_INFINITY,
-                  ease: 'easeInOut',
-                },
-              },
-            }}
-          />
-          <motion.path
-            animate={active ? 'animate' : controls}
-            d="M14 8v7"
-            variants={{
-              normal: { d: 'M14 8v7' },
-              animate: {
-                d: ['M14 8v7', 'M14 6v11', 'M14 8v7'],
-                transition: {
-                  duration: 0.8,
-                  repeat: Number.POSITIVE_INFINITY,
-                  ease: 'easeInOut',
-                },
-              },
-            }}
-          />
-          <motion.path
-            animate={active ? 'animate' : controls}
-            d="M18 5v13"
-            variants={{
-              normal: { d: 'M18 5v13' },
-              animate: {
-                d: ['M18 5v13', 'M18 7v9', 'M18 5v13'],
-                transition: {
-                  duration: 1.5,
-                  repeat: Number.POSITIVE_INFINITY,
-                  ease: 'easeInOut',
-                },
-              },
-            }}
-          />
-          <path d="M22 10v3" />
+      <div className={cn('inline-flex items-center justify-center', className)}
+        onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} {...props}>
+        <svg fill="none" height={size} stroke="currentColor" strokeLinecap="round"
+          strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width={size} aria-hidden="true">
+          {[
+            { x: 2, d: 'M2 10v3', scale: 2.4, delay: 0 },
+            { x: 6, d: 'M6 6v11', scale: .55, delay: .05 },
+            { x: 10, d: 'M10 3v18', scale: .55, delay: .1 },
+            { x: 14, d: 'M14 8v7', scale: 1.7, delay: .15 },
+            { x: 18, d: 'M18 5v13', scale: .6, delay: .2 },
+            { x: 22, d: 'M22 10v3', scale: 2.4, delay: .25 },
+          ].map(bar => <motion.path key={bar.x} d={bar.d} animate={active ? 'animate' : controls}
+            variants={barVariants(bar.scale, bar.delay)}
+            style={{ transformBox: 'view-box', originX: `${bar.x}px`, originY: '12px' }} />)}
         </svg>
       </div>
     );
