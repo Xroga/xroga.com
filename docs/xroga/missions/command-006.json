@@ -1,0 +1,35 @@
+{
+  "version": "1.0",
+  "missionId": "XB01-C006",
+  "baseSha": "e9543986c10331ef2795920ebf60d3494ee7f1aa",
+  "requirementIds": ["XB01-C006", "XR-FAMILY-engineering-rules"],
+  "state": "VERIFIED_SCOPE",
+  "risk": "low",
+  "scope": "Engineering operating contract and executable structured policy; no product engines, schema or live release",
+  "changedFiles": ["AGENTS.md", "README.md", "CONTRIBUTING.md", "SHIP_COMPLETENESS.md", ".cursor/install.sh", ".github/pull_request_template.md", ".github/workflows/unit-tests.yml", ".github/workflows/xroga-mission-policy.yml", "docs/xroga/ARCHITECTURE_INVARIANTS.md", "docs/xroga/DEFINITION_OF_DONE.md", "docs/xroga/CHANGE_SAFETY.md", "docs/xroga/PR_EVIDENCE_TEMPLATE.md", "docs/xroga/IMPLEMENTATION_STATUS.md", "docs/xroga/mission-manifest.schema.json", "docs/xroga/missions/command-006.json", "scripts/xroga/mission-policy.mjs", "scripts/xroga/mission-check.mjs", "scripts/xroga/mission-schema.mjs", "scripts/ci/run-baseline.mjs", "scripts/ci/baseline.test.mjs", "scripts/ci/compare-baseline-runs.mjs", "tests/mission-policy/fixtures.mjs", "tests/mission-policy/mission-policy.test.mjs"],
+  "decisions": {"keep": ["Actual Swarm/pipeline/SoftwareAgent, event/output adapters, auth, integrations and hosting", "Useful existing setup, security and contribution guidance"], "extend": ["Twelve architecture invariants, structured impact/evidence validation, PR checklist and honest subsystem status"], "replace": ["Stale Next.js 14/npm install/retired-chat/signup-only instructions"], "deprecate": ["Historic Done labels as current proof", "UI-only or fixture PASS as live product completion"]},
+  "schemaImpact": {"changed": false, "migrations": [], "rollout": "No database or provider migration", "rollback": "Normal revert of documentation/tooling; no user data changed"},
+  "securityImpact": {
+    "auth": {"changed": false, "description": "No authentication runtime or roles changed; mandatory isolated gate preserved"},
+    "tenant": {"changed": false, "description": "No tenant/runtime/RLS change; ownership invariant is policy, not current certification"},
+    "approval": {"changed": false, "description": "No operational approval grant changed; structured release rules reinforce existing requirements"},
+    "credentials": {"changed": false, "description": "No key retrieval/rotation/migration; values prohibited in evidence"},
+    "egress": {"changed": false, "description": "No application network adapter changed; no provider migration"},
+    "cost": {"changed": false, "description": "No spend/accounting/price behavior changed"},
+    "billing": {"changed": false, "description": "No live payment change or charge"}
+  },
+  "tests": [
+    {"command": "node --test tests/mission-policy/mission-policy.test.mjs", "scope": "Structured valid/schema/security fixtures plus rejection of missing tests/rollback/RFC/impacts, false Done and credential canaries", "negative": true, "reference": "tests/mission-policy/mission-policy.test.mjs"},
+    {"command": "node scripts/xroga/mission-check.mjs", "scope": "Actual requirements/refs/ancestor/schema/invariant policy", "negative": false, "reference": "scripts/xroga/mission-check.mjs"},
+    {"command": "npm run verify:baseline", "scope": "Actual unchanged application regression and engineering gate", "negative": true, "reference": "scripts/ci/run-baseline.mjs"}
+  ],
+  "architecture": {"change": "none", "reason": "No orchestrator, scheduler, worker loop, provider or auth runtime introduced; enforce review for future control-plane changes", "rfc": null},
+  "rollout": "Reviewable branch/CI-only policy. Production merge/deploy remains blocked by independent Batch security gates",
+  "rollback": "Revert policy/tooling commit; retain earlier verified evidence and all existing product/runtime data",
+  "knownGaps": ["Authenticated E2E BLOCKED_PENDING_TEST_CONFIGURATION plus approved isolated frontend realm", "Commands 007–010 fresh/upgrade/staging security proof and actual KMS", "Original historical 119/72 sources INACCESSIBLE_PENDING_EXPORT", "Optional integrations and twelve full golden journeys not independently verified"],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": ["docs/xroga/evidence/command-006/summary.md", "docs/xroga/evidence/command-006/manifest.json", "docs/xroga/evidence/command-005/manifest.json"],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {"state": "BLOCKED", "blockers": ["Mandatory isolated authenticated/staged security verification and final ten-command GO/NO-GO are not passed"], "authenticatedE2e": "BLOCKED", "stagedSecurity": "BLOCKED", "liveUrl": null, "deployedSha": null}
+}

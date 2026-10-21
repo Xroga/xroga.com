@@ -31,7 +31,9 @@ test('readiness checker reports evidence without an invented score', () => {
 
 test('crawler policy explicitly distinguishes search crawlers and user retrieval', () => {
   const policy = JSON.parse(readFileSync(new URL('../../../scripts/seo-crawlers.json', import.meta.url), 'utf8'));
-  const byAgent = new Map(policy.crawlers.map((crawler: { userAgent: string }) => [crawler.userAgent, crawler]));
+  const byAgent = new Map<string, { userAgent: string; robotsApplies: boolean }>(
+    policy.crawlers.map((crawler: { userAgent: string; robotsApplies: boolean }) => [crawler.userAgent, crawler]),
+  );
   assert.equal(byAgent.get('OAI-SearchBot')?.robotsApplies, true);
   assert.equal(byAgent.get('PerplexityBot')?.robotsApplies, true);
   assert.equal(byAgent.get('ChatGPT-User')?.robotsApplies, false);

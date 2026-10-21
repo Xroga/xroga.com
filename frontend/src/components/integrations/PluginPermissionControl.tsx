@@ -31,19 +31,19 @@ const PERMISSION_OPTIONS: Array<{
     id: 'read_only',
     label: 'Allow read-only tools',
     description:
-      'Read requests can run directly. Every external change still asks first.',
+      'Read requests can run directly. External changes are blocked for this app.',
   },
   {
     id: 'low_risk',
     label: 'Allow low-risk tools',
     description:
-      'Routine requested actions can run directly. Sensitive or uncertain actions still ask first.',
+      'Routine reads can run directly. Every consequential change still needs exact approval.',
   },
   {
     id: 'full_access',
     label: 'Full access',
     description:
-      'Explicitly requested actions can run without an extra Xroga confirmation. Provider and platform safeguards still apply.',
+      'Your app permissions remain unchanged. Consequential actions still need exact Xroga approval. Provider and platform safeguards still apply.',
     highTrust: true,
   },
 ];
@@ -277,8 +277,8 @@ export function PluginPermissionControl({
       {!compact ? (
         <p className="mt-2 text-[10px] leading-4 text-[var(--text-muted)]">
           {toolkit
-            ? `This setting applies to ${pluginName || 'this Plugin'}. Full access removes extra Xroga confirmation checkpoints only for actions you explicitly request; provider authorization and platform safeguards still apply.`
-            : 'Full access removes extra Xroga confirmation checkpoints only for actions you explicitly ask Xroga to perform; provider OAuth scopes, account permissions, and platform safeguards still apply.'}
+            ? `This setting applies to ${pluginName || 'this Plugin'}. Full access never grants unlimited or unscoped changes. Exact action approval, provider authorization and platform safeguards still apply.`
+            : 'Full access never grants unlimited or unscoped changes. Exact action approval, provider OAuth scopes, account permissions and platform safeguards still apply.'}
         </p>
       ) : null}
     </div>

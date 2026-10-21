@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "scope": "PHASE3_COMMAND008_009_SOURCE_EVIDENCE_NOT_RELEASE_AUTHORIZATION",
+  "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+  "frozenWorklist": "docs/xroga/batch-1/phases/PHASE-3-FROZEN-WORKLIST.json",
+  "commandManifests": [
+    "docs/xroga/evidence/command-008/manifest.json",
+    "docs/xroga/evidence/command-009/manifest.json"
+  ],
+  "phase4Started": false,
+  "productionEffects": false
+}

@@ -12,28 +12,101 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: xroga-baseline-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   unit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          # A feature inventory cannot describe changes subsequently merged to
+          # main. Check committed feature truth here; verify the actual GitHub
+          # virtual merge independently below with the same complete baseline.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version-file: '.node-version'
           cache: npm
       - run: npm ci
 
-      - name: Backend and frontend unit tests
-        run: npm test
-
-      # An unquoted `src/**/*.test.ts` silently collects only the files two levels
-      # deep in POSIX sh, which once hid 15 backend files and 6 frontend files
-      # while still reporting success. These floors make that collapse fail loudly.
-      - name: Assert both suites actually collected their tests
+      - name: Verify frozen Phase 2 register before expensive regression
         run: |
-          set -euo pipefail
-          backend=$(npm run test --workspace=backend 2>&1 | sed -n 's/^[^0-9]*tests \([0-9][0-9]*\)[[:space:]]*$/\1/p' | tail -1)
-          frontend=$(npm run test:frontend 2>&1 | sed -n 's/^[^0-9]*tests \([0-9][0-9]*\)[[:space:]]*$/\1/p' | tail -1)
-          echo "backend=$backend frontend=$frontend"
-          test "${backend:-0}" -ge 350 || { echo "Backend collected only ${backend:-0} tests"; exit 1; }
-          test "${frontend:-0}" -ge 40 || { echo "Frontend collected only ${frontend:-0} tests"; exit 1; }
+          node scripts/xroga/phase-two.mjs
+          node scripts/xroga/inventory.mjs --check
+          node scripts/xroga/validate-requirements-ledger.mjs
+
+      - name: Install pinned browser for existing local browser integration tests
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/batch-01-playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Canonical build, test and security baseline
+        env:
+          # Share the cache between the probe and existing local sandbox executor.
+          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/batch-01-playwright
+        run: |
+          npm run verify:baseline
+          cp artifacts/batch-01-baseline/manifest.json artifacts/batch-01-baseline/run-a-manifest.json
+          npm run verify:baseline
+          cp artifacts/batch-01-baseline/manifest.json artifacts/batch-01-baseline/run-b-manifest.json
+          node scripts/ci/compare-baseline-runs.mjs
+
+      - name: Preserve redacted build and test summaries
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: batch-01-baseline-${{ github.sha }}
+          path: artifacts/batch-01-baseline/
+          if-no-files-found: error
+          retention-days: 14
+
+  integrated-candidate:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.node-version'
+          cache: npm
+      - run: npm ci
+      - name: Verify and record the actual virtual merge inventory
+        env:
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: node scripts/ci/prepare-pr-integration.mjs
+      - name: Verify integrated Phase 2 register before expensive regression
+        run: |
+          node scripts/xroga/phase-two.mjs
+          node scripts/xroga/inventory.mjs --check
+          node scripts/xroga/validate-requirements-ledger.mjs
+      - name: Install the same pinned browser for integrated regression
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/batch-01-playwright
+        run: npx playwright install --with-deps chromium
+      - name: Complete integrated baseline twice without source mutation
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/batch-01-playwright
+        run: |
+          npm run verify:baseline
+          cp artifacts/batch-01-baseline/manifest.json artifacts/batch-01-baseline/run-a-manifest.json
+          npm run verify:baseline
+          cp artifacts/batch-01-baseline/manifest.json artifacts/batch-01-baseline/run-b-manifest.json
+          node scripts/ci/compare-baseline-runs.mjs
+      - name: Preserve separately labelled candidate evidence (never committed automatically)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: batch-01-integrated-candidate-${{ github.sha }}
+          path: |
+            artifacts/batch-01-baseline/
+            artifacts/batch-01-integration/
+          if-no-files-found: error
+          retention-days: 14

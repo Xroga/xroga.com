@@ -3,6 +3,7 @@
  */
 
 import { getSupabaseAdmin } from '../../config/supabase.js';
+import {requireTenantContext,type TenantContext} from '../../security/tenantContext.js';
 
 export interface PastBuild {
   projectName: string;
@@ -38,7 +39,8 @@ function extractTheme(prompt: string, output?: Record<string, unknown>): string 
 }
 
 /** Query recent completed landing-page builds for this user. */
-export async function getPreviousBuilds(userId: string, limit = 5): Promise<PastBuild[]> {
+export async function getPreviousBuilds(context: TenantContext, limit = 5): Promise<PastBuild[]> {
+  const {userId}=requireTenantContext(context);
   try {
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase

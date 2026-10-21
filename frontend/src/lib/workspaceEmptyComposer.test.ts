@@ -328,10 +328,13 @@ test('a conversation exposes one context-aware navigator that follows scroll pos
 
   assert.match(
     DOCK,
-    /showJumpToLatest\s*\? scrollToLatest\('smooth'\)\s*:\s*scrollToFirst\('smooth'\)/,
+    /setNavigationPressed\(true\);\s*if \(showJumpToLatest\) scrollToLatest\('smooth'\);\s*else scrollToFirst\('smooth'\);/,
   );
 
-  assert.match(DOCK, /<SquareChevronUpIcon size=\{19\}/);
+  assert.match(
+    DOCK,
+    /<SquareChevronUpIcon size=\{19\} direction=\{showJumpToLatest \? 'down' : 'up'\}/,
+  );
 
   assert.match(
     CSS,
@@ -339,7 +342,8 @@ test('a conversation exposes one context-aware navigator that follows scroll pos
   );
 
   assert.match(CSS, /\.xv-conversation-navigator\s*\{[\s\S]*?width:\s*2\.25rem[\s\S]*?border-radius:\s*0\.62rem/);
-  assert.doesNotMatch(DOCK, /data-tooltip=\{showJumpToLatest/);
+  assert.match(DOCK, /aria-label=\{showJumpToLatest \? 'Scroll to latest' : 'Scroll to top'\}/);
+  assert.doesNotMatch(DOCK, /data-tooltip|data-short-tip/);
   assert.doesNotMatch(DOCK, /xv-conversation-navigator__label/);
 });
 
@@ -721,7 +725,10 @@ test('new terminal renders theme-aware readable cards without black-hole artwork
 
 test('starter cards preserve immediate local drafts and do not auto-submit', () => {
   assert.match(START, /composer\?\.value \?\? prompt/);
-  assert.match(START, /setPrompt\(!currentDraft\.trim\(\) \|\| isStarter \? text/);
+  assert.match(START, /setPrompt\(!currentDraft\.trim\(\) \|\| isStarter \? instruction : `\$\{currentDraft\.trimEnd\(\)\}\\n\\n\$\{instruction\}`\)/);
+  assert.match(START, /Ask for approval before publishing, making payments, sending messages, or changing external systems/);
+  assert.match(START, /Acceptance criteria: \$\{TASK_ACCEPTANCE\[label\]/);
+  assert.match(START, /Do not claim successful execution without evidence/);
   assert.match(START, /currentDraft\.trimEnd\(\)/);
   assert.match(START, /6000/);
   assert.match(START, /aria-haspopup="menu"/);
@@ -730,12 +737,13 @@ test('starter cards preserve immediate local drafts and do not auto-submit', () 
   assert.match(START, /preventScroll: true/);
 });
 
-test('new terminal styling and icons cannot leak into an existing conversation', () => {
+test('new terminal styling stays scoped while approved active composer controls retain parity', () => {
   assert.match(DOCK, /!sessionRestoring &&\s*messages\.length === 0 &&\s*!loading/);
   assert.match(DOCK, /showStarterExperience && !incognito && !chatbarHidden && startStyles.dock/);
   assert.match(DASHBOARD, /showNewTerminal && startStyles.window/);
-  assert.match(CHATBAR, /arrowSend=\{starter\}/);
-  assert.match(CHATBAR, /microphoneIcon=\{starter\}/);
+  assert.match(CHATBAR, /arrowSend=\{!incognito\}/);
+  assert.match(CHATBAR, /plusIcon=\{!incognito\}/);
+  assert.doesNotMatch(CHATBAR, /microphoneIcon=\{starter\}/);
   assert.match(CHATBAR, /setGithubOpen\(true\)/);
   assert.match(CHATBAR, /setIntegrationsOpen\(true\)/);
 });

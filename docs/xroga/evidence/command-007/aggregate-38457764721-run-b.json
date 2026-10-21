@@ -1,0 +1,525 @@
+{
+  "sourceSha": "1a8a5b2c43c8f058b4b8461273e0400c969b89f4",
+  "toolchain": {
+    "node": "22.21.1",
+    "npm": "10.9.4"
+  },
+  "installedDependencies": {
+    "result": "PASS_INSTALLED_LOCK_INDEX_AND_DIRECT_RANGES",
+    "packages": 1144,
+    "sha256": "5ecdde70804b5ef055d7d58ded18b23690f30774e8e153332956949bae064e34",
+    "direct": [
+      {
+        "workspace": "root",
+        "name": "@axe-core/playwright",
+        "version": "4.13.0"
+      },
+      {
+        "workspace": "root",
+        "name": "@playwright/test",
+        "version": "1.62.0"
+      },
+      {
+        "workspace": "root",
+        "name": "concurrently",
+        "version": "10.0.4"
+      },
+      {
+        "workspace": "root",
+        "name": "libpg-query",
+        "version": "18.1.5"
+      },
+      {
+        "workspace": "root",
+        "name": "pg",
+        "version": "8.22.0"
+      },
+      {
+        "workspace": "root",
+        "name": "zod",
+        "version": "4.6.5"
+      },
+      {
+        "workspace": "backend",
+        "name": "@aws-sdk/client-s3",
+        "version": "3.1075.0"
+      },
+      {
+        "workspace": "backend",
+        "name": "@cline/sdk",
+        "version": "0.0.82"
+      },
+      {
+        "workspace": "backend",
+        "name": "@supabase/supabase-js",
+        "version": "2.110.7"
+      },
+      {
+        "workspace": "backend",
+        "name": "bullmq",
+        "version": "5.79.1"
+      },
+      {
+        "workspace": "backend",
+        "name": "cors",
+        "version": "2.8.6"
+      },
+      {
+        "workspace": "backend",
+        "name": "dotenv",
+        "version": "16.6.1"
+      },
+      {
+        "workspace": "backend",
+        "name": "express",
+        "version": "4.22.2"
+      },
+      {
+        "workspace": "backend",
+        "name": "helmet",
+        "version": "8.2.0"
+      },
+      {
+        "workspace": "backend",
+        "name": "ioredis",
+        "version": "5.11.1"
+      },
+      {
+        "workspace": "backend",
+        "name": "jose",
+        "version": "5.10.0"
+      },
+      {
+        "workspace": "backend",
+        "name": "libsodium-wrappers",
+        "version": "0.7.15"
+      },
+      {
+        "workspace": "backend",
+        "name": "morgan",
+        "version": "1.11.0"
+      },
+      {
+        "workspace": "backend",
+        "name": "openai",
+        "version": "4.104.0"
+      },
+      {
+        "workspace": "backend",
+        "name": "pdf-lib",
+        "version": "1.17.1"
+      },
+      {
+        "workspace": "backend",
+        "name": "pdf-parse",
+        "version": "1.1.1"
+      },
+      {
+        "workspace": "backend",
+        "name": "pg",
+        "version": "8.22.0"
+      },
+      {
+        "workspace": "backend",
+        "name": "winston",
+        "version": "3.19.0"
+      },
+      {
+        "workspace": "backend",
+        "name": "ws",
+        "version": "8.21.0"
+      },
+      {
+        "workspace": "backend",
+        "name": "zod",
+        "version": "3.25.76"
+      },
+      {
+        "workspace": "backend",
+        "name": "@types/cors",
+        "version": "2.8.19"
+      },
+      {
+        "workspace": "backend",
+        "name": "@types/express",
+        "version": "5.0.6"
+      },
+      {
+        "workspace": "backend",
+        "name": "@types/libsodium-wrappers",
+        "version": "0.7.14"
+      },
+      {
+        "workspace": "backend",
+        "name": "@types/morgan",
+        "version": "1.9.10"
+      },
+      {
+        "workspace": "backend",
+        "name": "@types/node",
+        "version": "22.20.1"
+      },
+      {
+        "workspace": "backend",
+        "name": "@types/pdf-parse",
+        "version": "1.1.5"
+      },
+      {
+        "workspace": "backend",
+        "name": "@types/pg",
+        "version": "8.20.0"
+      },
+      {
+        "workspace": "backend",
+        "name": "@types/ws",
+        "version": "8.18.1"
+      },
+      {
+        "workspace": "backend",
+        "name": "nodemon",
+        "version": "3.1.14"
+      },
+      {
+        "workspace": "backend",
+        "name": "tsx",
+        "version": "4.23.1"
+      },
+      {
+        "workspace": "backend",
+        "name": "typescript",
+        "version": "5.9.3"
+      },
+      {
+        "workspace": "frontend",
+        "name": "@supabase/ssr",
+        "version": "0.12.0"
+      },
+      {
+        "workspace": "frontend",
+        "name": "@supabase/supabase-js",
+        "version": "2.108.2"
+      },
+      {
+        "workspace": "frontend",
+        "name": "@tanstack/react-table",
+        "version": "8.21.3"
+      },
+      {
+        "workspace": "frontend",
+        "name": "@tanstack/react-virtual",
+        "version": "3.14.13"
+      },
+      {
+        "workspace": "frontend",
+        "name": "clsx",
+        "version": "2.1.1"
+      },
+      {
+        "workspace": "frontend",
+        "name": "cobe",
+        "version": "0.6.5"
+      },
+      {
+        "workspace": "frontend",
+        "name": "date-fns",
+        "version": "4.4.0"
+      },
+      {
+        "workspace": "frontend",
+        "name": "docx",
+        "version": "9.9.0"
+      },
+      {
+        "workspace": "frontend",
+        "name": "exceljs",
+        "version": "4.4.0"
+      },
+      {
+        "workspace": "frontend",
+        "name": "katex",
+        "version": "0.17.0"
+      },
+      {
+        "workspace": "frontend",
+        "name": "lucide-react",
+        "version": "1.21.0"
+      },
+      {
+        "workspace": "frontend",
+        "name": "motion",
+        "version": "12.42.2"
+      },
+      {
+        "workspace": "frontend",
+        "name": "next",
+        "version": "15.5.21"
+      },
+      {
+        "workspace": "frontend",
+        "name": "ogl",
+        "version": "1.0.11"
+      },
+      {
+        "workspace": "frontend",
+        "name": "pdf-lib",
+        "version": "1.17.1"
+      },
+      {
+        "workspace": "frontend",
+        "name": "pptxgenjs",
+        "version": "4.0.1"
+      },
+      {
+        "workspace": "frontend",
+        "name": "react",
+        "version": "18.3.1"
+      },
+      {
+        "workspace": "frontend",
+        "name": "react-dom",
+        "version": "18.3.1"
+      },
+      {
+        "workspace": "frontend",
+        "name": "react-hot-toast",
+        "version": "2.6.0"
+      },
+      {
+        "workspace": "frontend",
+        "name": "react-markdown",
+        "version": "10.1.0"
+      },
+      {
+        "workspace": "frontend",
+        "name": "recharts",
+        "version": "3.10.1"
+      },
+      {
+        "workspace": "frontend",
+        "name": "remark-gfm",
+        "version": "4.0.1"
+      },
+      {
+        "workspace": "frontend",
+        "name": "sharp",
+        "version": "0.35.3"
+      },
+      {
+        "workspace": "frontend",
+        "name": "simple-icons",
+        "version": "16.28.0"
+      },
+      {
+        "workspace": "frontend",
+        "name": "tailwind-merge",
+        "version": "3.6.0"
+      },
+      {
+        "workspace": "frontend",
+        "name": "xroga",
+        "version": "0.1.0"
+      },
+      {
+        "workspace": "frontend",
+        "name": "zod",
+        "version": "4.6.5"
+      },
+      {
+        "workspace": "frontend",
+        "name": "zustand",
+        "version": "5.0.14"
+      },
+      {
+        "workspace": "frontend",
+        "name": "@types/katex",
+        "version": "0.16.8"
+      },
+      {
+        "workspace": "frontend",
+        "name": "@types/node",
+        "version": "20.19.43"
+      },
+      {
+        "workspace": "frontend",
+        "name": "@types/react",
+        "version": "18.3.31"
+      },
+      {
+        "workspace": "frontend",
+        "name": "@types/react-dom",
+        "version": "18.3.7"
+      },
+      {
+        "workspace": "frontend",
+        "name": "eslint",
+        "version": "8.57.1"
+      },
+      {
+        "workspace": "frontend",
+        "name": "eslint-config-next",
+        "version": "15.5.21"
+      },
+      {
+        "workspace": "frontend",
+        "name": "jszip",
+        "version": "3.10.2"
+      },
+      {
+        "workspace": "frontend",
+        "name": "postcss",
+        "version": "8.5.24"
+      },
+      {
+        "workspace": "frontend",
+        "name": "tailwindcss",
+        "version": "3.4.19"
+      },
+      {
+        "workspace": "frontend",
+        "name": "typescript",
+        "version": "5.9.3"
+      }
+    ]
+  },
+  "result": "PASS",
+  "exitCode": 0,
+  "lockfiles": [
+    {
+      "path": "package-lock.json",
+      "sha256": "25db1eb64d2922003687d616dd98b7296eb7bc9a60a8cc62e8b471bd5739a01d"
+    },
+    {
+      "path": "backend/package-lock.json",
+      "sha256": "8b67b0666a89c51adf5561bab92dd164dcdabe5bbf11f5071c7dde9a1beffe22"
+    },
+    {
+      "path": "frontend/package-lock.json",
+      "sha256": "cb476c26c447dbcd09df20412e99dcd3c24bb7430bd007b93aa054bbeac6c513"
+    }
+  ],
+  "results": [
+    {
+      "name": "lockfile-integrity",
+      "exitCode": 0,
+      "durationMs": 37
+    },
+    {
+      "name": "focused-and-skipped-tests",
+      "exitCode": 0,
+      "durationMs": 516
+    },
+    {
+      "name": "backend-typecheck",
+      "exitCode": 0,
+      "durationMs": 7733
+    },
+    {
+      "name": "backend-build",
+      "exitCode": 0,
+      "durationMs": 9652
+    },
+    {
+      "name": "backend-unit-tests",
+      "exitCode": 0,
+      "durationMs": 50863,
+      "tests": 2764,
+      "pass": 2764,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frontend-route-type-generation",
+      "exitCode": 0,
+      "durationMs": 372
+    },
+    {
+      "name": "frontend-typecheck",
+      "exitCode": 0,
+      "durationMs": 15377
+    },
+    {
+      "name": "frontend-lint",
+      "exitCode": 0,
+      "durationMs": 1013
+    },
+    {
+      "name": "frontend-build",
+      "exitCode": 0,
+      "durationMs": 44309
+    },
+    {
+      "name": "frontend-unit-tests",
+      "exitCode": 0,
+      "durationMs": 15708,
+      "tests": 1010,
+      "pass": 1010,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "migration-syntax-and-order",
+      "exitCode": 0,
+      "durationMs": 168
+    },
+    {
+      "name": "inventory-drift",
+      "exitCode": 0,
+      "durationMs": 3647
+    },
+    {
+      "name": "requirements-integrity",
+      "exitCode": 0,
+      "durationMs": 286
+    },
+    {
+      "name": "runtime-config-integrity",
+      "exitCode": 0,
+      "durationMs": 2273
+    },
+    {
+      "name": "golden-contract-integrity",
+      "exitCode": 0,
+      "durationMs": 70
+    },
+    {
+      "name": "mission-operating-policy",
+      "exitCode": 0,
+      "durationMs": 68
+    },
+    {
+      "name": "tenant-audit-integrity",
+      "exitCode": 0,
+      "durationMs": 1038
+    },
+    {
+      "name": "baseline-negative-fixtures",
+      "exitCode": 0,
+      "durationMs": 491,
+      "tests": 13,
+      "pass": 13,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "inventory-and-ledger-fixtures",
+      "exitCode": 0,
+      "durationMs": 7744,
+      "tests": 62,
+      "pass": 62,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "agent-dependency-resolution",
+      "exitCode": 0,
+      "durationMs": 150
+    },
+    {
+      "name": "git-diff-whitespace",
+      "exitCode": 0,
+      "durationMs": 5
+    }
+  ],
+  "sourceTreeMutated": false,
+  "migrationEvidence": "Parser/identifier gate only; fresh/upgrade DB and staging checks remain mandatory before security rollout"
+}

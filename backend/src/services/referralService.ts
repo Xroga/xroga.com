@@ -1,31 +1,52 @@
-import { randomInt, randomUUID } from 'node:crypto';
-import { getSupabaseAdmin } from '../config/supabase.js';
+import { randomInt } from 'node:crypto';
+import { getTenantSupabaseAdmin } from '../security/serviceRoleGuard.js';
+import type { TenantContext } from '../security/tenantContext.js';
 
 const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 function code(): string { return `XROGA-${Array.from({ length: 6 }, () => CHARS[randomInt(0, CHARS.length)]).join('')}`; }
 function site(): string { return (process.env.FRONTEND_URL ?? 'https://xroga.com').replace(/\/$/, ''); }
 
-async function ensureProfile(userId: string): Promise<Record<string, any>> {
-  const db = getSupabaseAdmin();
+async function ensureProfile(context: TenantContext): Promise<Record<string, any>> {
+  const db = getTenantSupabaseAdmin(context), userId = context.userId;
   const { data: existing, error } = await db.from('user_referral_profiles').select('*').eq('user_id', userId).maybeSingle();
   if (error) throw new Error('Referral profile unavailable');
   if (existing) return existing;
   for (let attempt = 0; attempt < 5; attempt += 1) {
     const { data, error: insertError } = await db.from('user_referral_profiles').insert({ user_id: userId, code: code() }).select('*').single();
     if (!insertError && data) return data;
+    if (insertError?.code !== '23505') throw new Error('Referral profile could not be created');
+    // A concurrent request can win this owner's profile, not just collide on code.
+    const winner = await db.from('user_referral_profiles').select('*').eq('user_id', userId).maybeSingle();
+    if (winner.error) throw new Error('Referral profile unavailable');
+    if (winner.data) return winner.data;
   }
   throw new Error('Referral profile could not be created');
 }
 
-export async function getReferralSummary(userId: string): Promise<Record<string, unknown>> {
-  const db = getSupabaseAdmin();
-  const profile = await ensureProfile(userId);
+export async function getReferralSummary(context: TenantContext): Promise<Record<string, unknown>> {
+  const db = getTenantSupabaseAdmin(context), userId = context.userId;
+  const profile = await ensureProfile(context);
   const [{ data: rows, error: referralsError }, { data: rewards, error: rewardsError }] = await Promise.all([
-    db.from('referrals').select('id,referred_id,created_at,referrer_rewarded,retention_bonus_released,qualification_status').eq('referrer_id', userId).order('created_at', { ascending: false }),
+    db.from('referrals').select('id,referred_id,code,created_at,referrer_rewarded,retention_bonus_released,qualification_status').eq('referrer_id', userId).order('created_at', { ascending: false }),
     db.from('referral_rewards').select('ai_token_amount,xrg_amount,status').eq('user_id', userId).eq('status', 'rewarded'),
   ]);
   if (referralsError || rewardsError) throw new Error('Referral evidence unavailable');
-  const ids = (rows ?? []).map((row) => row.referred_id);
+  if ((rows ?? []).some(row => row.code !== profile.code || row.referred_id === userId)) {
+    throw new Error('Referral relationship evidence unavailable');
+  }
+  const ids = [...new Set((rows ?? []).map((row) => row.referred_id))];
+  // A referral row alone is not authority to reveal another account's label.
+  // The referred account must independently retain the backlink written by the
+  // atomic link operation. Corrupt legacy relations fail before profile access.
+  if (ids.length) {
+    const links = await db.from('user_referral_profiles').select('user_id,referred_by_user_id,referred_by_code')
+      .in('user_id', ids).eq('referred_by_user_id', userId).eq('referred_by_code', profile.code);
+    if (links.error || !links.data || links.data.length !== ids.length
+      || new Set(links.data.map(item => item.user_id)).size !== ids.length
+      || links.data.some(item => !ids.includes(item.user_id) || item.referred_by_user_id !== userId || item.referred_by_code !== profile.code)) {
+      throw new Error('Referral relationship evidence unavailable');
+    }
+  }
   const profiles = ids.length ? await db.from('profiles').select('id,display_name').in('id', ids) : { data: [], error: null };
   if (profiles.error) throw new Error('Referral identity labels unavailable');
   const names = new Map((profiles.data ?? []).map((item) => [item.id, item.display_name ?? 'Friend']));
@@ -38,25 +59,16 @@ export async function getReferralSummary(userId: string): Promise<Record<string,
   };
 }
 
-export async function applyReferralCode(referredUserId: string, raw: string): Promise<{ success: boolean; message: string }> {
+export async function applyReferralCode(context: TenantContext, raw: string): Promise<{ success: boolean; message: string }> {
+  const db = getTenantSupabaseAdmin(context), referredUserId = context.userId;
   const normalized = raw.trim().toUpperCase();
   if (!/^XROGA-[A-HJ-NP-Z2-9]{6}$/.test(normalized)) return { success: false, message: 'Invalid referral code format.' };
-  const db = getSupabaseAdmin();
-  const own = await ensureProfile(referredUserId);
-  if (own.referred_by_code) return { success: false, message: 'A referral is already linked to this account.' };
-  const { data: referrer, error } = await db.from('user_referral_profiles').select('user_id,code').eq('code', normalized).maybeSingle();
-  if (error) throw new Error('Referral lookup failed');
-  if (!referrer) return { success: false, message: 'Referral code not found.' };
-  if (referrer.user_id === referredUserId) return { success: false, message: 'Self-referrals are not allowed.' };
-  const { data: existing } = await db.from('referrals').select('id').eq('referred_id', referredUserId).maybeSingle();
-  if (existing) return { success: false, message: 'A referral is already linked to this account.' };
-  const evidence = `referral-application:${randomUUID()}`;
-  const { data: referral, error: insertError } = await db.from('referrals').insert({ referrer_id: referrer.user_id, referred_id: referredUserId, code: normalized, qualification_status: 'pending', qualification_evidence: evidence }).select('id').single();
-  if (insertError || !referral) throw new Error('Referral could not be recorded');
-  const { error: profileError } = await db.from('user_referral_profiles').update({ referred_by_user_id: referrer.user_id, referred_by_code: normalized, updated_at: new Date().toISOString() }).eq('user_id', referredUserId).is('referred_by_user_id', null);
-  if (profileError) {
-    await db.from('referrals').delete().eq('id', referral.id);
-    throw new Error('Referral link could not be completed');
-  }
-  return { success: true, message: 'Referral recorded. Rewards remain pending until qualification evidence is verified.' };
+  await ensureProfile(context);
+  const { data, error } = await db.rpc('apply_referral_code_atomic', { p_owner_id: referredUserId, p_code: normalized });
+  if (error) throw new Error('Referral could not be recorded');
+  if (data === 'recorded') return { success: true, message: 'Referral recorded. Rewards remain pending until qualification evidence is verified.' };
+  if (data === 'already_linked') return { success: false, message: 'A referral is already linked to this account.' };
+  if (data === 'not_found') return { success: false, message: 'Referral code not found.' };
+  if (data === 'self_referral') return { success: false, message: 'Self-referrals are not allowed.' };
+  throw new Error('Referral link could not be completed');
 }

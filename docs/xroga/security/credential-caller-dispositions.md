@@ -1,0 +1,17 @@
+# Credential caller dispositions
+
+This reconciles the 37 source groups in `credential-usage-audit.json`. The AST inventory is deliberately conservative. A disposition describes the reachable boundary and does not turn syntax into proof.
+
+| Groups | Disposition | Evidence boundary |
+| --- | --- | --- |
+| `userProviderKeys.ts` | Current v3 writer and private consumer | BYOK, custom, CWS and Supabase bundle writes seal before CAS persistence. Reads recheck authority after unwrap. Private object mirrors contain the same v3 envelope. Legacy migration is explicit and idempotent. |
+| `oauthPkceStore.ts`, `supabaseAuth.ts`, `vercelAuth.ts` | Current v3 OAuth and PKCE boundary | Access and refresh values are one v3 envelope, PKCE verifier is one-use v3, personal-token writes have their own admission. Vercel DB refresh values are non-secret lease markers. Raw legacy reads need the production migration flag. |
+| `githubAuth.ts` | Current v3 GitHub authority | Both canonical rows receive the same envelope under one RPC. Reads require both rows, exact revision and post-unwrap recheck. Settings metadata comes from the canonical DB row. |
+| `githubTokenStore.ts` | Legacy-only, production blocked | No production save caller remains. Raw save/read helpers require the explicit legacy migration window. Disconnect cleanup remains enabled and cannot create authority. |
+| `projectRuntime/store.ts` | Envelope persistence adapter | The only enabled writer is `ProjectSecretManager`, which seals v3 before calling the store. Owner-inclusive keys and post-unwrap recheck remain mandatory. |
+| `frontend/src/lib/credentialVault.ts` | Legacy browser cleanup only | The single `setItem` candidate removes one imported record from the old list. No new-secret writer or general reveal API exists. Import requires record selection, password and explicit consent. |
+| `pluginPermissionPolicy.ts` | Non-secret policy value | `always_ask`, `read_only`, `low_risk` and `full_access` are permission preferences, not provider credentials or grants. Their DB row remains in the audit because it shares the integrations table. |
+| AI and platform `getSecret` groups | Platform-owned server configuration | `black-hole/webIntelligence.ts`, `modelCapabilityRegistry.ts`, `openaiCompat.ts`, `parallelWeb.ts`, `research.ts`, `envSecrets.ts`, `gemini.ts`, `netlify.ts`, `platformReady.ts`, `vercel.ts` and `youtubeSearch.ts` consume deployment-owned environment configuration. They never persist or return user-owned vault records. Production KMS does not replace platform bootstrap configuration. |
+| Pipeline, route, GitHub and publish consumers | Canonical private readers | `pipeline.ts`, `softwareAgentGitHubPersistence.ts`, `semanticRequestPlanner.ts`, `routes/github.ts`, `routes/integrations.ts`, `routes/publish.ts`, `routes/supabaseOAuth.ts`, `routes/vercel.ts`, `githubDeploy.ts`, `supabaseProvision.ts`, `chromeWebStore.ts`, `easCredentials.ts`, `easPublish.ts`, `electronSecrets.ts`, `nonWebShip.ts`, `userOwnedPublish.ts` and `templateExport.ts` call the canonical GitHub, OAuth or provider-key readers. Plaintext exists transiently only in the backend adapter that needs it. Public projections are masked or boolean. |
+
+Release is blocked if any new direct writer appears, a production host enables legacy reads outside a controlled migration, the managed provider is absent, or the final source-bound audit and secret-canary tests do not pass.

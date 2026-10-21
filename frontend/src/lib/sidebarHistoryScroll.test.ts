@@ -21,17 +21,21 @@ test('a single native thumb scrolls all sidebar content, no arrow controls or ne
   assert.match(GLOBAL, /xv-repos-scroll \{ overflow: visible !important; max-height: none !important/);
 });
 
-test('repository terminals precede pinned and recent conversations with account-scoped pins', () => {
-  const repo = HISTORY.indexOf('Repositories');
-  const pin = HISTORY.indexOf('aria-label="Pinned conversations"');
+test('projects precede conditional pinned items and recents with account-scoped durable pins', () => {
+  const repo = HISTORY.indexOf('<section aria-label="Projects"');
+  const pin = HISTORY.indexOf('aria-label="Pinned items"');
   const rec = HISTORY.indexOf('aria-label="Recent conversations"');
   assert.ok(repo !== -1 && repo < pin && pin < rec, 'sidebar history ordering');
   assert.match(HISTORY, /xroga_sidebar_pins_v1:/);
   assert.match(HISTORY, /workspaceIdentity\.userId/);
-  assert.match(HISTORY, /aria-label=\{pinned \? 'Unpin conversation' : 'Pin conversation'\}/);
-  assert.match(HISTORY, /savedConversations\.filter\(s => !pinnedIds\.includes\(s\.id\)\)/);
+  assert.match(HISTORY, /\{pinnedItems\.length>0\?<section/);
+  assert.match(HISTORY, /aria-label=\{saved\?'Unpin '\+label:'Pin '\+label\}/);
+  assert.match(HISTORY, /changeSidebarMeta\(accountId,kind,id/);
+  // PR836 explicitly includes pins in chronological Recents as well as Pinned.
+  assert.match(HISTORY, /const recentConversations=activeItems;/);
+  assert.match(HISTORY, /const activeItems=savedConversations\.filter\(s=>!metaOf\('conversation',s\.id\)\?\.archived_at\)/);
   assert.doesNotMatch(HISTORY, /foldersList = foldersList\.slice\(0, 12\)/);
-  assert.match(HISTORY, /onClick=\{\(\) => void openSession\(session\)\}/);
+  assert.match(HISTORY, /renderRow\('conversation',session\.id,conversationTitle\(session\),\(\)=>void openSession\(session\)/);
 });
 
 test('sidebar font changes are scoped, with full-size touch targets on mobile', () => {

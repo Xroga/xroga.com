@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { spawn } from 'node:child_process';
-import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -16,12 +15,15 @@ import { renderReport } from './report.js';
 import type { DemandItem, Evidence, FormatCoverage, Mention, OpportunityScores, PromptObservation, VisibilityMetric } from './model.js';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
-const require = createRequire(import.meta.url);
-const tsxCli = require.resolve('tsx/cli');
 
-function runCli(command: string, flags: string[] = []): Promise<{ code: number | null; stdout: string; stderr: string }> {
+const fixtureNow = new Date('2026-09-22T00:00:00.000Z');
+
+function runCli(command: string, flags: string[] = [], now = fixtureNow): Promise<{ code: number | null; stdout: string; stderr: string }> {
   return new Promise((resolve, reject) => {
-    const child = spawn(process.execPath, [tsxCli, path.join(repoRoot, 'backend', 'src', 'organicIntelligence', 'cli.ts'), command, '--dry-run', ...flags], { cwd: repoRoot, stdio: ['ignore', 'pipe', 'pipe'] });
+    // Repository evidence is dated. Freeze only this test child, never the CLI's
+    // production clock or verification interval. The overdue case below still fails.
+    const clock = `import {mock} from 'node:test';mock.timers.enable({apis:['Date'],now:new Date(${JSON.stringify(now.toISOString())})});`;
+    const child = spawn(process.execPath, ['--import', 'tsx', '--import', `data:text/javascript,${encodeURIComponent(clock)}`, path.join(repoRoot, 'backend', 'src', 'organicIntelligence', 'cli.ts'), command, '--dry-run', ...flags], { cwd: repoRoot, stdio: ['ignore', 'pipe', 'pipe'] });
     let stdout = ''; let stderr = '';
     child.stdout.on('data', (chunk) => { stdout += String(chunk); });
     child.stderr.on('data', (chunk) => { stderr += String(chunk); });
@@ -219,7 +221,7 @@ test('format gaps require an observed preference signal, not only a missing form
 
 test('intelligence and report expose product opportunities and missing data honestly', async () => {
   const source = await loadSource();
-  const snapshot = await buildIntelligence(source);
+  const snapshot = await buildIntelligence(source, {now: fixtureNow});
   assert.equal(snapshot.validationIssues.length, 0);
   assert.ok(snapshot.gaps.length > 0);
   assert.ok(snapshot.opportunities.every((item) => item.rationale.length > 1 && item.remeasurementPlan.length > 20));
@@ -238,6 +240,13 @@ test('CLI validation and report commands execute as non-destructive dry runs', a
   assert.equal(report.code, 0, report.stderr);
   assert.match(report.stdout, /Xroga Organic Intelligence Report/);
   assert.match(report.stderr, /Dry run/);
+});
+
+test('CLI still rejects overdue repository facts with the production freshness validator',async()=>{
+  const validation=await runCli('validate',[],new Date('2027-09-22T00:00:00.000Z'));
+  assert.equal(validation.code,1);
+  const result=JSON.parse(validation.stdout);assert.equal(result.valid,false);
+  for(const key of ['pricing.free','pricing.pro'])assert.ok(result.issues.some((issue:{code:string;path:string})=>issue.code==='STALE_FACT'&&issue.path===key));
 });
 
 test('all six Brand Gap types are generated from realistic evidence paths', async () => {

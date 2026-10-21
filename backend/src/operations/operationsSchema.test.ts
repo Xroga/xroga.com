@@ -9,6 +9,16 @@ function readSql(url: URL): string {
 
 const migration = readSql(new URL('../../../supabase/migrations/20260726211546_command3b_operations_centre.sql', import.meta.url));
 const retryHardening = readSql(new URL('../../../supabase/migrations/20260726211810_command3b_action_retry_hardening.sql', import.meta.url));
+const claimClock = readSql(new URL('../../../supabase/migrations/20261018000400_operations_claim_clock.sql', import.meta.url));
+
+test('action lease clock is sampled after current-row locking without weakening retry exclusion', () => {
+  assert.match(claimClock, /for update;[\s\S]*claimed_time:=clock_timestamp\(\)/);
+  assert.match(claimClock, /pg_try_advisory_xact_lock/);
+  assert.match(claimClock, /action_row\.attempt_count>=action_row\.max_attempts/);
+  assert.match(claimClock, /lease_expires_at=claimed_time\+make_interval/);
+  assert.match(claimClock, /from public,anon,authenticated/);
+  assert.doesNotMatch(claimClock, /\bnow\(\)/i);
+});
 
 test('canonical operations schema contains every durable control table', () => {
   for (const table of ['operations_memberships','operations_environments','operations_resources','operations_actions','operations_action_approvals','operations_action_runs','operations_alerts','operations_automation_rules','operations_automation_runs','operations_maintenance_windows','operations_config_checks','operations_slo_snapshots']) {

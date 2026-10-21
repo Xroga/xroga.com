@@ -15,7 +15,7 @@ import { useRef, useState } from 'react';
 import { makeCtx, type Ctx } from './ctx';
 import { Pins, Pointer, usePush } from './motion';
 import { MISSION_APPS } from './Missions';
-import { Workforce, WorkforceMenu } from './Workforce';
+import { Workforce, WorkforceMenu } from './WorkforceSurface';
 import { COPY, missionOf, stepsOf, type Mission, type Mode, type Step, type TrackId } from './script';
 import type { WfAction, WfState } from './workforce';
 import { inertIf } from './inert';

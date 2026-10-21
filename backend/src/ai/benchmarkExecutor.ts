@@ -25,7 +25,7 @@
  *    `succeeded()` in the runner already refuses to treat an all-null outcome as a pass.
  */
 
-import { chatCompletion } from './openaiCompat.js';
+import { chatCompletion, type ChatMessage, type ChatResult } from './openaiCompat.js';
 import { scanProjectFiles } from './securityScan.js';
 import type { BenchmarkCase, CaseExecutor, CaseOutcome } from './benchmarkRunner.js';
 import type { ModelId } from './models.js';
@@ -167,7 +167,18 @@ function unvalidatedOutcome(
  * which is the number the ledger needs — an estimate would make cost-aware routing rank
  * models by a guess about their own price.
  */
-export function singleModelImplementation(): BenchmarkExecutorDeps['implement'] {
+export type BenchmarkCompletionAuthority = (input: {
+  modelId: ModelId;
+  messages: ChatMessage[];
+  maximumOutputTokens: number;
+  sequence: number;
+  execute: () => Promise<ChatResult>;
+}) => Promise<ChatResult>;
+
+export function singleModelImplementation(authorize?: BenchmarkCompletionAuthority): BenchmarkExecutorDeps['implement'] {
+  // One sequence for the whole approved run. Resetting per case would reuse a reservation
+  // key for a different prompt and the database would correctly reject the changed replay.
+  let sequence = 0;
   return async ({ brief, modelId, signal }) => {
     let inputTokens = 0;
     let outputTokens = 0;
@@ -180,7 +191,11 @@ export function singleModelImplementation(): BenchmarkExecutorDeps['implement'] 
           `benchmark case is pinned to ${modelId} but the implementation attempted ${candidateId}`,
         );
       }
-      const reply = await chatCompletion(candidateId as ModelId, messages, { ...opts, signal });
+      const execute = () => chatCompletion(candidateId as ModelId, messages, { ...opts, signal });
+      const reply = authorize
+        ? await authorize({ modelId, messages, maximumOutputTokens: opts.maxTokens,
+          sequence: sequence++, execute })
+        : await execute();
       inputTokens += reply.inputTokens;
       outputTokens += reply.outputTokens;
       return reply;

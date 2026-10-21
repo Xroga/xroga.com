@@ -7,7 +7,7 @@ import {
   canUserAccessComposioToolkit,
   canUserAccessComposioToolSlug,
   xrogaCustomToolkitPrefix,
-} from '../../../backend/src/services/integrations/composioClient';
+} from '../../../backend/src/services/integrations/composioNamespace';
 
 function source(path: string): string {
   return readFileSync(resolve(process.cwd(), path), 'utf8');

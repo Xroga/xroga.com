@@ -1,10 +1,15 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { getSupabaseAdmin } from '../config/supabase.js';
+import { getTenantSupabaseAdmin } from '../security/serviceRoleGuard.js';
+import { requireTenantContext } from '../security/tenantContext.js';
 import type { AuthRequest } from '../middleware/auth.js';
 import { forgetProvisionedUser } from '../services/userProvisioningCache.js';
 
 const router = Router();
+router.use((req: AuthRequest, res, next) => {
+  try { req.userId = requireTenantContext(req.tenantContext).userId; next(); }
+  catch { res.status(401).json({ error: 'Sign in again and retry.' }); }
+});
 
 export const companionPreferencesSchema = z.object({
   name: z.string().trim().min(1).max(24),
@@ -75,7 +80,7 @@ export const onboardingSchema = z.object({
 });
 
 router.get('/', async (req: AuthRequest, res) => {
-  const supabase = getSupabaseAdmin();
+  const supabase = getTenantSupabaseAdmin(requireTenantContext(req.tenantContext));
   const { data, error } = await supabase
     .from('profiles')
     .select('*')
@@ -130,7 +135,7 @@ router.patch('/', async (req: AuthRequest, res) => {
     return;
   }
 
-  const supabase = getSupabaseAdmin();
+  const supabase = getTenantSupabaseAdmin(requireTenantContext(req.tenantContext));
   const { data, error } = await supabase
     .from('profiles')
     .update(patch)
@@ -139,7 +144,7 @@ router.patch('/', async (req: AuthRequest, res) => {
     .single();
 
   if (error) {
-    res.status(500).json({ error: error.message });
+    res.status(503).json({ error: 'Profile could not be updated. Retry shortly.' });
     return;
   }
   res.json(data);
@@ -154,34 +159,60 @@ router.delete('/', async (req: AuthRequest, res) => {
     return;
   }
 
-  const supabase = getSupabaseAdmin();
-  const { error } = await supabase.auth.admin.deleteUser(req.userId!);
+  const context = requireTenantContext(req.tenantContext);
+  const userId = context.userId, accessToken = req.accessToken;
+  const supabase = getTenantSupabaseAdmin(context);
+  if (!accessToken) {
+    res.status(401).json({ error: 'Sign in again before deleting this account.' });
+    return;
+  }
+  // Local JWT admission establishes signed identity, not current user existence.
+  // Recheck Auth immediately before this destructive admin operation. This is
+  // not an atomic session-revocation fence or a substitute for recent-login MFA.
+  try {
+    const fresh = await supabase.auth.getUser(accessToken);
+    if (fresh.error) {
+      res.status(fresh.error.status === 401 || fresh.error.status === 403 ? 401 : 503)
+        .json({ error: 'Account identity could not be verified. Sign in again and retry.' });
+      return;
+    }
+    if (!fresh.data.user || fresh.data.user.id !== userId) {
+      res.status(401).json({ error: 'Sign in again before deleting this account.' });
+      return;
+    }
+  } catch {
+    res.status(503).json({ error: 'Account identity could not be verified. Retry shortly.' });
+    return;
+  }
+  const { error } = await supabase.auth.admin.deleteUser(userId);
   if (error) {
-    res.status(500).json({ error: error.message });
+    res.status(503).json({ error: 'Account could not be deleted. Retry shortly.' });
     return;
   }
   // The provisioning cache remembers only that this user's rows existed. Drop the
   // entry so a re-registration under the same id provisions again from scratch
   // rather than inheriting a stale "already provisioned" answer.
-  forgetProvisionedUser(req.userId!);
+  forgetProvisionedUser(userId);
   // profiles/projects/etc. cascade via `ON DELETE CASCADE` FKs to auth.users.
   res.json({ deleted: true });
 });
 
 router.get('/activity', async (req: AuthRequest, res) => {
-  const supabase = getSupabaseAdmin();
+  const supabase = getTenantSupabaseAdmin(requireTenantContext(req.tenantContext));
   const { data, error } = await supabase
     .from('activity_logs')
-    .select('*, projects(name)')
+    .select('*, projects(name,user_id)')
     .eq('user_id', req.userId!)
     .order('created_at', { ascending: false })
     .limit(20);
 
   if (error) {
-    res.status(500).json({ error: error.message });
+    res.status(503).json({ error: 'Activity could not be loaded. Retry shortly.' });
     return;
   }
-  res.json(data);
+  // An owner-filtered log may still have a corrupt foreign project reference.
+  // Preserve project-less activity and the existing public shape, never its name.
+  res.json(data?.map(row => ({ ...row, projects: row.projects?.user_id === req.userId ? { name: row.projects.name } : null })) ?? []);
 });
 
 export default router;

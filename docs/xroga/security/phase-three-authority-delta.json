@@ -1,0 +1,1188 @@
+{
+  "version": 1,
+  "scope": "SOURCE_POSITION_DELTA_NOT_SECURITY_CERTIFICATION",
+  "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+  "remappings": [
+    {
+      "previousCallerId": "74229d60e093f2e44542",
+      "currentCallerId": "ebede146c851a085d2b8"
+    },
+    {
+      "previousCallerId": "c37a93be0605e64b3156",
+      "currentCallerId": "d9d2547770aa24b0841c"
+    },
+    {
+      "previousCallerId": "94fb30ec710f32d062c2",
+      "currentCallerId": "d58b6fdbfd8c7bd723ea"
+    },
+    {
+      "previousCallerId": "36d0fbfc5ddf864ad6ea",
+      "currentCallerId": "0b783f584a470b13209e"
+    },
+    {
+      "previousCallerId": "bda77ff34ad9e973cbde",
+      "currentCallerId": "dd1e78725f475509a9cd"
+    },
+    {
+      "previousCallerId": "a1e1f647efb6e7002993",
+      "currentCallerId": "7f2df45a035153bcbf55"
+    },
+    {
+      "previousCallerId": "7c2970e3ea0940d5d136",
+      "currentCallerId": "408a89ba73f0f4572071"
+    },
+    {
+      "previousCallerId": "986c86eebabfae033939",
+      "currentCallerId": "456ab4492b8fe9318933"
+    },
+    {
+      "previousCallerId": "884cad1975974abc0599",
+      "currentCallerId": "138a7b9c83878cb3dc82"
+    },
+    {
+      "previousCallerId": "1a3d2ad705ca358ebbe3",
+      "currentCallerId": "2de50011885a1231ce06"
+    },
+    {
+      "previousCallerId": "b6708d08741254f6da06",
+      "currentCallerId": "9393c7ce95c3aee1b590"
+    },
+    {
+      "previousCallerId": "85d5a147aa59e4f62e68",
+      "currentCallerId": "3e7f7e1fcb903f426f23"
+    },
+    {
+      "previousCallerId": "bbf934631616a292169c",
+      "currentCallerId": "1638b66c83949be618af"
+    },
+    {
+      "previousCallerId": "840920438b3c862c0e91",
+      "currentCallerId": "2697b20e243c70e7d302"
+    },
+    {
+      "previousCallerId": "f197672e0af42c7398f3",
+      "currentCallerId": "36e68319daa5aa4c7597"
+    },
+    {
+      "previousCallerId": "04afb9d897d4070340c6",
+      "currentCallerId": "1f2c229d57afaf5c5df9"
+    },
+    {
+      "previousCallerId": "8ff7dfb0a06ace7ee7e5",
+      "currentCallerId": "82a2d0b9bd4b43a35c6d"
+    },
+    {
+      "previousCallerId": "06f3e17ef612ff0deb74",
+      "currentCallerId": "46dc8bafa13b56836727"
+    },
+    {
+      "previousCallerId": "c7d109715d2f37cc95b2",
+      "currentCallerId": "bdf5ffe6c8a34bf8d3af"
+    },
+    {
+      "previousCallerId": "046674e946dedc2dbd0a",
+      "currentCallerId": "1169e490665cdec7b3a3"
+    },
+    {
+      "previousCallerId": "f7d8e33dac1c0de787f8",
+      "currentCallerId": "2fbd469f16851f3b71ab"
+    },
+    {
+      "previousCallerId": "2384f6f1c188f4f6ce83",
+      "currentCallerId": "6f058d1957df9ddef58e"
+    },
+    {
+      "previousCallerId": "03557d58e528c5852636",
+      "currentCallerId": "263d64635be54643daaf"
+    },
+    {
+      "previousCallerId": "e2e547f8796cd0aad243",
+      "currentCallerId": "28c7a352253f65a4d63b"
+    },
+    {
+      "previousCallerId": "f602ab2d6bfebc170a02",
+      "currentCallerId": "ec7738731d0c6be00798"
+    },
+    {
+      "previousCallerId": "8a48ae3957449eee9587",
+      "currentCallerId": "0882d94061fd33117251"
+    },
+    {
+      "previousCallerId": "685bdab3b4b31bd28d43",
+      "currentCallerId": "ba74f371a047c8305b9a"
+    },
+    {
+      "previousCallerId": "9a847ab5769bb707c1f2",
+      "currentCallerId": "9e5ee446a0fb192d8f39"
+    },
+    {
+      "previousCallerId": "e489f9a48f400005cb2d",
+      "currentCallerId": "3a904e92ac521ad89ef0"
+    },
+    {
+      "previousCallerId": "d9435c22813b64a1f1f5",
+      "currentCallerId": "495469d5a798cf52f829"
+    },
+    {
+      "previousCallerId": "1d3ef9e110d2f000f590",
+      "currentCallerId": "4ac1c2be7bfccf034c8e"
+    },
+    {
+      "previousCallerId": "0b24ee0eecebdda0e6f3",
+      "currentCallerId": "a50ebf735a3e2d6e8587"
+    },
+    {
+      "previousCallerId": "ace18dec175b4875e7f7",
+      "currentCallerId": "e5f59ad9b6097a1bb115"
+    },
+    {
+      "previousCallerId": "c07b5b1f63ae0e361ae7",
+      "currentCallerId": "8b8545e8ee1fbbfb3fbf"
+    },
+    {
+      "previousCallerId": "fba07b765dafacccf133",
+      "currentCallerId": "60a088c3f2c03ec9402c"
+    },
+    {
+      "previousCallerId": "cd8790e39c3283f05482",
+      "currentCallerId": "7a9e5d79bbfd57405e36"
+    },
+    {
+      "previousCallerId": "dd0917f84f2764fd0472",
+      "currentCallerId": "9212d824a3c29d4bb03f"
+    },
+    {
+      "previousCallerId": "c841bcae277927c0b193",
+      "currentCallerId": "dede246709a532feb59c"
+    },
+    {
+      "previousCallerId": "7215f4419b9fff60e893",
+      "currentCallerId": "fd965b8923a6917132c4"
+    },
+    {
+      "previousCallerId": "e99258e8fe888ab954f2",
+      "currentCallerId": "de3480ffbba4f9fbcd58"
+    },
+    {
+      "previousCallerId": "2c208df1de69d1f07815",
+      "currentCallerId": "c1343e8f4698edbb3b96"
+    },
+    {
+      "previousCallerId": "7b8df2255ca0983e614a",
+      "currentCallerId": "7f157bef6290158479f8"
+    },
+    {
+      "previousCallerId": "09bb9c60fbd0fd04be96",
+      "currentCallerId": "78efc53fc23790bc1535"
+    },
+    {
+      "previousCallerId": "5787838213972784b847",
+      "currentCallerId": "bbbe7f2155aaf4b25312"
+    },
+    {
+      "previousCallerId": "5c17851ca38b07bb7ffb",
+      "currentCallerId": "7436d66a39f9c451c923"
+    },
+    {
+      "previousCallerId": "2888bfffa0c836cfe4d0",
+      "currentCallerId": "28643ba9e4cdb68728c1"
+    },
+    {
+      "previousCallerId": "6c91bf08973230eae654",
+      "currentCallerId": "45f1159fe1dd3d23a827"
+    },
+    {
+      "previousCallerId": "209cb80277f955a0b2ef",
+      "currentCallerId": "59a8aefb93375383904e"
+    },
+    {
+      "previousCallerId": "049ee8c1e87f4ac7f5d8",
+      "currentCallerId": "406272621392ee52f4d4"
+    },
+    {
+      "previousCallerId": "6f59ac6dda85bb3fbb9c",
+      "currentCallerId": "802e0edc5797b7cd7984"
+    },
+    {
+      "previousCallerId": "b44752820b98684f3403",
+      "currentCallerId": "85e772ccae86a6f082df"
+    },
+    {
+      "previousCallerId": "cad9b3cf4560fbd519a6",
+      "currentCallerId": "62f37331b53797a3f32a"
+    },
+    {
+      "previousCallerId": "80f60224ace1fcf16149",
+      "currentCallerId": "18665b10e596e24407aa"
+    },
+    {
+      "previousCallerId": "67c858caffe8cc6b8a2d",
+      "currentCallerId": "3462c13d043bf9251050"
+    },
+    {
+      "previousCallerId": "15864a27c46a501fafd1",
+      "currentCallerId": "ba3b472c4a71cdff7e05"
+    },
+    {
+      "previousCallerId": "230afc26fd02a5f73e5c",
+      "currentCallerId": "c7809ed98b77f723132f"
+    },
+    {
+      "previousCallerId": "1482b8a9c1d9ae835bdb",
+      "currentCallerId": "a6018e5f4efa81a4cb82"
+    },
+    {
+      "previousCallerId": "267d14135fb3bd1d98a1",
+      "currentCallerId": "af5cd270d6b9f51529ee"
+    },
+    {
+      "previousCallerId": "42fc90e399eed5c0de97",
+      "currentCallerId": "152f35103432948fed4f"
+    },
+    {
+      "previousCallerId": "044cf8649bf888fbbc93",
+      "currentCallerId": "935d852135d231c593f5"
+    },
+    {
+      "previousCallerId": "b499a6018afaf6b8b490",
+      "currentCallerId": "f5bfc6e77b89d12c684c"
+    },
+    {
+      "previousCallerId": "2623d45568826e06288e",
+      "currentCallerId": "ddacac1b1a8e2626940d"
+    },
+    {
+      "previousCallerId": "af2e0acf3186708a5107",
+      "currentCallerId": "c07f770a3dc21c9c9c69"
+    },
+    {
+      "previousCallerId": "58357b840ab8890eba45",
+      "currentCallerId": "c6050d4250817509deaa"
+    },
+    {
+      "previousCallerId": "9ea21ff62008b510bd7f",
+      "currentCallerId": "a80afd6985fc9bbbcd7e"
+    },
+    {
+      "previousCallerId": "6abbcd4bdc2a8835113a",
+      "currentCallerId": "8c539a6548ff62cad070"
+    },
+    {
+      "previousCallerId": "b88fc4f8215d76b34ea8",
+      "currentCallerId": "4e3ec0bc5729a7fb01d4"
+    },
+    {
+      "previousCallerId": "82752ae689b24bd04b63",
+      "currentCallerId": "ee61098b360e9f41c52b"
+    },
+    {
+      "previousCallerId": "ed0903282a7144871281",
+      "currentCallerId": "3715ae56c1b86b307a49"
+    },
+    {
+      "previousCallerId": "fd2a647124264e9a2f63",
+      "currentCallerId": "33042df3ec8f74b6f868"
+    },
+    {
+      "previousCallerId": "00aea7c9a2f2d60601a1",
+      "currentCallerId": "8bdfed63b760e71b4348"
+    },
+    {
+      "previousCallerId": "f175f84e5afd902c17c0",
+      "currentCallerId": "6086aea564a93d1f047f"
+    },
+    {
+      "previousCallerId": "9fc45d30478dc34f0ea6",
+      "currentCallerId": "b39940f71a054d8960ae"
+    },
+    {
+      "previousCallerId": "9cd0878995ac81bc7fa1",
+      "currentCallerId": "35cb220ec92000ca6560"
+    },
+    {
+      "previousCallerId": "0790e2862f113cd5cb2a",
+      "currentCallerId": "0bf3a6e55a3c5a08197f"
+    },
+    {
+      "previousCallerId": "e1b151df5a5cc43046f5",
+      "currentCallerId": "77b4a7bdd6861b6c6738"
+    },
+    {
+      "previousCallerId": "1087d778492ba0d90fe8",
+      "currentCallerId": "1d88d171af77534a178a"
+    },
+    {
+      "previousCallerId": "8d4bf26a3a0a5c932b8a",
+      "currentCallerId": "b52c7d177222da764f26"
+    },
+    {
+      "previousCallerId": "823e5f2a3bdf5991cb4d",
+      "currentCallerId": "b9db7a06f5e7753785af"
+    },
+    {
+      "previousCallerId": "db901ea4f35f29872b83",
+      "currentCallerId": "e172a2270d2c62448db0"
+    },
+    {
+      "previousCallerId": "62993f74348668414e94",
+      "currentCallerId": "508a2161e8178e476541"
+    },
+    {
+      "previousCallerId": "0541a105ff0d867f7ea6",
+      "currentCallerId": "c4552cc974811c97ac12"
+    },
+    {
+      "previousCallerId": "ed9a76f66fdce2fa62cb",
+      "currentCallerId": "cbdf571cbd814bbb0de4"
+    },
+    {
+      "previousCallerId": "3511bf786d2e1a877754",
+      "currentCallerId": "6b19c8dd2f2f287c628f"
+    },
+    {
+      "previousCallerId": "251a62ca944e59b4d35c",
+      "currentCallerId": "4c9c398e76b50048de46"
+    },
+    {
+      "previousCallerId": "d6f7994c8a29114879a2",
+      "currentCallerId": "0ff33a1a723a799a873c"
+    },
+    {
+      "previousCallerId": "8d4b368daaafa2527fdb",
+      "currentCallerId": "f6fc2afb658b10f92331"
+    },
+    {
+      "previousCallerId": "7b6b74d024cad1ca24e0",
+      "currentCallerId": "cd6ca2f582b59a0402d0"
+    },
+    {
+      "previousCallerId": "e9b9cdd86cd68f7e67a2",
+      "currentCallerId": "4e9be61dea30fa56beda"
+    },
+    {
+      "previousCallerId": "d4c63bed6343238269db",
+      "currentCallerId": "699307fbf252e22adcea"
+    },
+    {
+      "previousCallerId": "45a30098dbb7ff275b41",
+      "currentCallerId": "d83a3b327bed33484040"
+    },
+    {
+      "previousCallerId": "2191a3a351b0999fd707",
+      "currentCallerId": "0d95312c5a8983a24e4d"
+    },
+    {
+      "previousCallerId": "5412270a1f23caa82419",
+      "currentCallerId": "3d37b6e83c9a6741f44c"
+    },
+    {
+      "previousCallerId": "d8571ea361a453805958",
+      "currentCallerId": "1c3679fa3f9634e8eba2"
+    },
+    {
+      "previousCallerId": "1432ffb1661e42ad2afd",
+      "currentCallerId": "f4efe9d19d422cec228d"
+    },
+    {
+      "previousCallerId": "67ddc3c9a3c2badcee94",
+      "currentCallerId": "27f5baf3ecc7df50197e"
+    },
+    {
+      "previousCallerId": "889de9bf998a6a1b47f0",
+      "currentCallerId": "fb18934384701022a76d"
+    },
+    {
+      "previousCallerId": "c316ee518cf610c4056b",
+      "currentCallerId": "4e8ee277965ff5db268d"
+    },
+    {
+      "previousCallerId": "d5146ca43cf901817c09",
+      "currentCallerId": "41ad1c8958ec765129f6"
+    },
+    {
+      "previousCallerId": "8bbc1aefc2e270847934",
+      "currentCallerId": "9a10ce83e0cf8e6cb603"
+    },
+    {
+      "previousCallerId": "ff751d80f168344fe806",
+      "currentCallerId": "b773575fb8907d472328"
+    },
+    {
+      "previousCallerId": "7f998fefa7c4a4af4629",
+      "currentCallerId": "172a80ad86167a95659e"
+    },
+    {
+      "previousCallerId": "4e72ed7e46664a864fcd",
+      "currentCallerId": "a856de9382efd69a1c5a"
+    },
+    {
+      "previousCallerId": "d8c7d0bde0dddf656d0c",
+      "currentCallerId": "7bb4efe63cf777f33b7d"
+    },
+    {
+      "previousCallerId": "8a200819c73b59f40fe6",
+      "currentCallerId": "da6e22f8e6322292eefc"
+    },
+    {
+      "previousCallerId": "9cfcc5a519e6e0cda19a",
+      "currentCallerId": "eae30167536fc558ce02"
+    },
+    {
+      "previousCallerId": "2c1e9775b28e4419ca8c",
+      "currentCallerId": "758a0cb15455f7b37584"
+    },
+    {
+      "previousCallerId": "541c1bc5f61f88e7c873",
+      "currentCallerId": "1972d4de6dab6705344f"
+    },
+    {
+      "previousCallerId": "254a09774311f04897b1",
+      "currentCallerId": "b0997709c401929677ac"
+    },
+    {
+      "previousCallerId": "1ac34398173cf0fedf3a",
+      "currentCallerId": "cf05312d059ea6781bbc"
+    },
+    {
+      "previousCallerId": "d87e4598104184aa00dd",
+      "currentCallerId": "e3f33f1fd8952449d417"
+    },
+    {
+      "previousCallerId": "2d83b6fa32b99099b19e",
+      "currentCallerId": "8044413b8891bfc09677"
+    },
+    {
+      "previousCallerId": "da8ff71a038a365d4e60",
+      "currentCallerId": "847bd2b7cd21a03aafd5"
+    },
+    {
+      "previousCallerId": "9b97e6de9a2c6c753011",
+      "currentCallerId": "03d2f8a7af9fb1e255b8"
+    },
+    {
+      "previousCallerId": "d12c617bb45c7981e210",
+      "currentCallerId": "2492de8077e3a3a33b32"
+    },
+    {
+      "previousCallerId": "9e95745053a0044758eb",
+      "currentCallerId": "33a181513385ddf5c39a"
+    },
+    {
+      "previousCallerId": "474d98f6d07da849e67a",
+      "currentCallerId": "c98adc818bef4518e641"
+    },
+    {
+      "previousCallerId": "b8d0ad5c152e8ec1c565",
+      "currentCallerId": "86ef2fd4e7978d4403fe"
+    },
+    {
+      "previousCallerId": "5d90ff0ff5c303419423",
+      "currentCallerId": "0fef437b70958624f811"
+    },
+    {
+      "previousCallerId": "71763251ce3650f64a42",
+      "currentCallerId": "35748705d2c5685f956f"
+    },
+    {
+      "previousCallerId": "efdb39bc229d1fb04151",
+      "currentCallerId": "af9fa89437812bdd73ca"
+    },
+    {
+      "previousCallerId": "e7db064acbe958d8fd76",
+      "currentCallerId": "d1428a2ff470c82a5576"
+    },
+    {
+      "previousCallerId": "0a50f29a357989f22449",
+      "currentCallerId": "c4d272d36fd17081c885"
+    },
+    {
+      "previousCallerId": "b2603393f6e57aa8c372",
+      "currentCallerId": "44d085a0e5407f7503b8"
+    },
+    {
+      "previousCallerId": "b94338b6bb001b7e55ce",
+      "currentCallerId": "eef73c4316c6fbd4b6b8"
+    },
+    {
+      "previousCallerId": "4ed0f34665473f6b62ce",
+      "currentCallerId": "a51e78385237ffa31bbf"
+    },
+    {
+      "previousCallerId": "288a27a7d2a5f5cd103e",
+      "currentCallerId": "4040b83a9304ebbe0fce"
+    },
+    {
+      "previousCallerId": "180631f7a6bd706af8d0",
+      "currentCallerId": "288caf92ba11e16d8eed"
+    },
+    {
+      "previousCallerId": "14438be451fcb7f3bbe1",
+      "currentCallerId": "4b224789557c61aa08aa"
+    },
+    {
+      "previousCallerId": "c14b0badea7dd2cc312f",
+      "currentCallerId": "e048987bc4abfb1f8db9"
+    },
+    {
+      "previousCallerId": "4325b87a6699a71f0325",
+      "currentCallerId": "39c5335d86a238a91087"
+    },
+    {
+      "previousCallerId": "7595558fe3d8cbd76faa",
+      "currentCallerId": "1856557f92c741e0f414"
+    },
+    {
+      "previousCallerId": "3028f7fe3ff9804dd3e6",
+      "currentCallerId": "d23d37fea68abdab00bb"
+    },
+    {
+      "previousCallerId": "3696472e5c2e79ec3877",
+      "currentCallerId": "a6063fe099976dc970f7"
+    },
+    {
+      "previousCallerId": "793cd087bfe58a1323e9",
+      "currentCallerId": "67a6738bb98de6ea35e6"
+    },
+    {
+      "previousCallerId": "b2c86b6db6573be9213f",
+      "currentCallerId": "fa8edcff0bd9d41187f5"
+    },
+    {
+      "previousCallerId": "e5b57581e4457cd58ff2",
+      "currentCallerId": "1e079f47b68cfa4b0ee1"
+    },
+    {
+      "previousCallerId": "2ce84a51bf89c83602d6",
+      "currentCallerId": "2d2e0b1518dc39fd144c"
+    },
+    {
+      "previousCallerId": "f77c97eed440f2d836c0",
+      "currentCallerId": "7ce8a829e7682246c531"
+    },
+    {
+      "previousCallerId": "f651340939c0fe9a8786",
+      "currentCallerId": "877306d453c374d2e0b5"
+    },
+    {
+      "previousCallerId": "bf25908290a49aa14bd7",
+      "currentCallerId": "064e4bfd4f37af44215d"
+    },
+    {
+      "previousCallerId": "399344f16bc489f1e5b1",
+      "currentCallerId": "a17b512e046309335346"
+    },
+    {
+      "previousCallerId": "a2b9af9cc94fc4528e67",
+      "currentCallerId": "985a191bb6a3829d93a3"
+    },
+    {
+      "previousCallerId": "973e39406d138c83edea",
+      "currentCallerId": "5de53ce023fae631bbe1"
+    },
+    {
+      "previousCallerId": "ee377e28847a820d3e60",
+      "currentCallerId": "60641ebebf916f3f47ab"
+    },
+    {
+      "previousCallerId": "77b006f82faf88017a2c",
+      "currentCallerId": "ee7bb2f7b51795d5885a"
+    },
+    {
+      "previousCallerId": "5a80567257e34b837a33",
+      "currentCallerId": "5325278cd77c5cf43ece"
+    },
+    {
+      "previousCallerId": "912679b2d70aeb54860e",
+      "currentCallerId": "2604632d4df816296c98"
+    },
+    {
+      "previousCallerId": "8e483e5db88e334d4fd9",
+      "currentCallerId": "90411ad954f04510350e"
+    },
+    {
+      "previousCallerId": "2714bcb8dd844631154a",
+      "currentCallerId": "4d24d57fe7012dc5dd75"
+    },
+    {
+      "previousCallerId": "b11077c6032271361558",
+      "currentCallerId": "c14b11328e9369fa6e7f"
+    },
+    {
+      "previousCallerId": "9f316f0cfad5794c27c5",
+      "currentCallerId": "c06d3f691fef0e9a9320"
+    },
+    {
+      "previousCallerId": "965d682f9f5d530bb929",
+      "currentCallerId": "d235d34aeef6e920a127"
+    },
+    {
+      "previousCallerId": "208413eede9db532d440",
+      "currentCallerId": "8716b1816d340d8ef220"
+    },
+    {
+      "previousCallerId": "76af43fa48bf2989a7da",
+      "currentCallerId": "b4fad07683df7604b45b"
+    },
+    {
+      "previousCallerId": "4bbd68abc608cd40cf5e",
+      "currentCallerId": "1ba202fc5a6dd57faf27"
+    },
+    {
+      "previousCallerId": "b13ab17aa7429003241b",
+      "currentCallerId": "22b15fbd9a04f1c32cb6"
+    },
+    {
+      "previousCallerId": "281beef588e15d39be66",
+      "currentCallerId": "c10dcb70902c0260de04"
+    },
+    {
+      "previousCallerId": "251a8f22c720652f36a5",
+      "currentCallerId": "d402557729d7b229c33f"
+    },
+    {
+      "previousCallerId": "0671bfb9368569581fba",
+      "currentCallerId": "14b09354c0efcdc2fdbf"
+    },
+    {
+      "previousCallerId": "7dd7b79ecd7c4840a960",
+      "currentCallerId": "88d220a299b3576a5c37"
+    },
+    {
+      "previousCallerId": "c0ae76586326abbbba08",
+      "currentCallerId": "8d454ae0583ff0b8a697"
+    },
+    {
+      "previousCallerId": "27483f27b03af7e1669b",
+      "currentCallerId": "e4b3729dbce70a455196"
+    },
+    {
+      "previousCallerId": "78fbb99c106916e565c3",
+      "currentCallerId": "e17cae98899a7ed70612"
+    },
+    {
+      "previousCallerId": "4b2e42e58a10751072e2",
+      "currentCallerId": "37a3830ff80942ec3e00"
+    },
+    {
+      "previousCallerId": "f5f03db18b208dcd4855",
+      "currentCallerId": "f59d11df4719c567f3ba"
+    },
+    {
+      "previousCallerId": "bf2f29e05f610d929567",
+      "currentCallerId": "2ee5ca9468b0a47bc429"
+    },
+    {
+      "previousCallerId": "8eadb3d8b716ca3f7120",
+      "currentCallerId": "f1c0b859e956f853f600"
+    },
+    {
+      "previousCallerId": "dcde97f1e49cda370789",
+      "currentCallerId": "30f1b688a8b8ec4f22c0"
+    },
+    {
+      "previousCallerId": "7202e4ceaf1fab023f7d",
+      "currentCallerId": "f5a449e18aa070e708bf"
+    },
+    {
+      "previousCallerId": "914547501e0ad5d35cbb",
+      "currentCallerId": "2f4adaffabba4e9c17b8"
+    },
+    {
+      "previousCallerId": "2ae451e4fa2142cb3d3b",
+      "currentCallerId": "6cd8c24a9e60be01c103"
+    },
+    {
+      "previousCallerId": "533babcf253a3df300ac",
+      "currentCallerId": "1f7990192c0a2ca3a76f"
+    },
+    {
+      "previousCallerId": "d32647f80bd545a451f4",
+      "currentCallerId": "4e906804cf01a3be86b8"
+    },
+    {
+      "previousCallerId": "795e7e19975095f341c6",
+      "currentCallerId": "3c6dd575e54ba2b2717c"
+    },
+    {
+      "previousCallerId": "50cfec47a00c8f934d4c",
+      "currentCallerId": "05048acae9b1850cc04a"
+    },
+    {
+      "previousCallerId": "9536d36325c5502652c0",
+      "currentCallerId": "5c951f6e7fdbc9713651"
+    },
+    {
+      "previousCallerId": "ff1b1bd1a685d5e751ee",
+      "currentCallerId": "7865641cd30c1a0e72b5"
+    },
+    {
+      "previousCallerId": "ae203bf10a8747bfd6de",
+      "currentCallerId": "7a2acf8694991f2fecf6"
+    },
+    {
+      "previousCallerId": "52bb46e68e4a103d4782",
+      "currentCallerId": "eba320f0c59bba39be70"
+    },
+    {
+      "previousCallerId": "8fc7cf5dd562db7dcd3a",
+      "currentCallerId": "a7a1747d2192d62b505b"
+    },
+    {
+      "previousCallerId": "ed5cdf592a4a0494dc20",
+      "currentCallerId": "4623023af1a7fe9573f6"
+    },
+    {
+      "previousCallerId": "4405d6096d2e71e981b2",
+      "currentCallerId": "af204e0e037ebe211a63"
+    },
+    {
+      "previousCallerId": "98d184ab88f7ab61318b",
+      "currentCallerId": "1bb48a0fd529036dbd67"
+    },
+    {
+      "previousCallerId": "60631ccec69849a4ead7",
+      "currentCallerId": "0053e3638ad34a6cbb95"
+    },
+    {
+      "previousCallerId": "56973b18bffeba04db38",
+      "currentCallerId": "1d84483f4cae80e8b954"
+    },
+    {
+      "previousCallerId": "530ec12058ab9d32794b",
+      "currentCallerId": "dfd2b022b39413db1561"
+    },
+    {
+      "previousCallerId": "0aa7bcbcf75b4fc1eceb",
+      "currentCallerId": "1f977fbbb1102e6dac1d"
+    },
+    {
+      "previousCallerId": "b5d3e5c94e9160b42afb",
+      "currentCallerId": "b404673ae5984ef51dee"
+    },
+    {
+      "previousCallerId": "419bf279075e606b8b1f",
+      "currentCallerId": "6da2a4d0d15144e0aad0"
+    },
+    {
+      "previousCallerId": "8da826b4f1382152e9e9",
+      "currentCallerId": "2a0d2f322b23c157502d"
+    },
+    {
+      "previousCallerId": "6fb334291b6218b12f4c",
+      "currentCallerId": "e49e4b26ba7d2860dc41"
+    },
+    {
+      "previousCallerId": "f4643ffb0f1224d7da80",
+      "currentCallerId": "a2f0c39a047770542a8b"
+    },
+    {
+      "previousCallerId": "67ce8a604d6d6502cc94",
+      "currentCallerId": "492e2a6c5aee7adbc460"
+    },
+    {
+      "previousCallerId": "87f57b0ac97d6b473fa3",
+      "currentCallerId": "7f42805766f9e4a7622d"
+    },
+    {
+      "previousCallerId": "99b6b7ce0de9df1778a6",
+      "currentCallerId": "32701c89f04a3536291d"
+    },
+    {
+      "previousCallerId": "8bea5ef54bd825f8e224",
+      "currentCallerId": "18ace9b81c3f92c7fa17"
+    },
+    {
+      "previousCallerId": "149b3684632af4931199",
+      "currentCallerId": "0e4c41c7ca91a4914c3f"
+    }
+  ],
+  "retiredCalls": [
+    {
+      "id": "c47cd353f14ba5046be8",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 103,
+      "enclosing": "saveVercelTokenToStorage",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
+      "reason": "The accepted Phase2 persistence expression was removed during the Phase3 credential or authority cutover. No replacement operation is inferred and no prior acceptance scope is extended."
+    },
+    {
+      "id": "2d2eae5cbd895d303fc1",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 105,
+      "enclosing": "saveVercelTokenToStorage",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
+      "reason": "The accepted Phase2 persistence expression was removed during the Phase3 credential or authority cutover. No replacement operation is inferred and no prior acceptance scope is extended."
+    },
+    {
+      "id": "bc094f879c6c567e670b",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 491,
+      "enclosing": "loadVercelConnection",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
+      "reason": "The accepted Phase2 persistence expression was removed during the Phase3 credential or authority cutover. No replacement operation is inferred and no prior acceptance scope is extended."
+    },
+    {
+      "id": "5c8cf02d349ac91cfb0e",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 492,
+      "enclosing": "loadVercelConnection",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
+      "reason": "The accepted Phase2 persistence expression was removed during the Phase3 credential or authority cutover. No replacement operation is inferred and no prior acceptance scope is extended."
+    },
+    {
+      "id": "0a6d81aa80ada5c7b14d",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 718,
+      "enclosing": "saveVercelConnection",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
+      "reason": "The accepted Phase2 persistence expression was removed during the Phase3 credential or authority cutover. No replacement operation is inferred and no prior acceptance scope is extended."
+    },
+    {
+      "id": "832762c1055a84889f0d",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "line": 748,
+      "enclosing": "saveVercelConnection",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
+      "reason": "The accepted Phase2 persistence expression was removed during the Phase3 credential or authority cutover. No replacement operation is inferred and no prior acceptance scope is extended."
+    },
+    {
+      "id": "8fa3e05253b5cb321d2f",
+      "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
+      "line": 142,
+      "enclosing": "decrypt",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c87a85c867c50912011975a9feb919194a37aada4dada38f59c3cbf1eb769898",
+      "reason": "The accepted Phase2 persistence expression was removed during the Phase3 credential or authority cutover. No replacement operation is inferred and no prior acceptance scope is extended."
+    },
+    {
+      "id": "ad66138cae3124677264",
+      "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
+      "line": 149,
+      "enclosing": "decrypt",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c87a85c867c50912011975a9feb919194a37aada4dada38f59c3cbf1eb769898",
+      "reason": "The accepted Phase2 persistence expression was removed during the Phase3 credential or authority cutover. No replacement operation is inferred and no prior acceptance scope is extended."
+    },
+    {
+      "id": "fb4acb09ded05c973821",
+      "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
+      "line": 157,
+      "enclosing": "decrypt",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c87a85c867c50912011975a9feb919194a37aada4dada38f59c3cbf1eb769898",
+      "reason": "The accepted Phase2 persistence expression was removed during the Phase3 credential or authority cutover. No replacement operation is inferred and no prior acceptance scope is extended."
+    }
+  ],
+  "newCalls": [
+    {
+      "id": "9ad5f0d15e0e54d3d953",
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "line": 530,
+      "enclosing": "cancelClaimedBusinessActionConfirmation",
+      "kind": "RPC_CANDIDATE",
+      "target": "cancel_business_action_confirmation",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b"
+    },
+    {
+      "id": "b3a2b5af5ead58408dba",
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "line": 530,
+      "enclosing": "cancelClaimedBusinessActionConfirmation",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b"
+    },
+    {
+      "id": "a48d99cb6019142baf77",
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "line": 779,
+      "enclosing": "confirmBusinessAction",
+      "kind": "RPC_CANDIDATE",
+      "target": "authorize_business_action_dispatch",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b"
+    },
+    {
+      "id": "8aa7e4818165f80a2954",
+      "path": "backend/src/ai/providerBudget.ts",
+      "line": 419,
+      "enclosing": "reserveOperationsProviderBudget",
+      "kind": "RPC_CANDIDATE",
+      "target": "reserve_operations_provider_budget",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876"
+    },
+    {
+      "id": "0dc96ad35c877b5c6b81",
+      "path": "backend/src/ai/providerBudget.ts",
+      "line": 419,
+      "enclosing": "reserveOperationsProviderBudget",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876"
+    },
+    {
+      "id": "1e296c319fef476f484e",
+      "path": "backend/src/ai/providerBudget.ts",
+      "line": 431,
+      "enclosing": "reserveOperationsProviderBudget",
+      "kind": "RPC_CANDIDATE",
+      "target": "ensure_xroga_free_cycle",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876"
+    },
+    {
+      "id": "10d24b0a58511aa77d5a",
+      "path": "backend/src/ai/providerBudget.ts",
+      "line": 431,
+      "enclosing": "reserveOperationsProviderBudget",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876"
+    },
+    {
+      "id": "7b7e6c777416feab8b85",
+      "path": "backend/src/services/integrations/githubAuth.ts",
+      "line": 35,
+      "enclosing": "getGitHubToken",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "github_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "0d5941e1c14044be6b4bd69f6d15ee5815cb3e1cbd22842f33c08962bfb33d29"
+    },
+    {
+      "id": "d7f4173efd2d4cc64e5b",
+      "path": "backend/src/services/integrations/githubAuth.ts",
+      "line": 36,
+      "enclosing": "getGitHubToken",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "0d5941e1c14044be6b4bd69f6d15ee5815cb3e1cbd22842f33c08962bfb33d29"
+    },
+    {
+      "id": "d6cadca58e0d835e4511",
+      "path": "backend/src/services/integrations/githubAuth.ts",
+      "line": 60,
+      "enclosing": "getGitHubStorageMeta",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "github_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "0d5941e1c14044be6b4bd69f6d15ee5815cb3e1cbd22842f33c08962bfb33d29"
+    },
+    {
+      "id": "81994a30fad0ce915932",
+      "path": "backend/src/services/integrations/githubAuth.ts",
+      "line": 60,
+      "enclosing": "getGitHubStorageMeta",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "0d5941e1c14044be6b4bd69f6d15ee5815cb3e1cbd22842f33c08962bfb33d29"
+    },
+    {
+      "id": "007ea6cd943530023202",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "line": 70,
+      "enclosing": "saveDirectOAuthConnection",
+      "kind": "RPC_CANDIDATE",
+      "target": "prepare_direct_oauth_write",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d0d00b074aee1a1c610abbe6dd2424f8b9f581c3c73f7780619317d69ce7fc96"
+    },
+    {
+      "id": "b0706acd19f74cf79aa3",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "line": 70,
+      "enclosing": "saveDirectOAuthConnection",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d0d00b074aee1a1c610abbe6dd2424f8b9f581c3c73f7780619317d69ce7fc96"
+    },
+    {
+      "id": "0401ef685a68e0335b5b",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "line": 77,
+      "enclosing": "saveDirectOAuthConnection",
+      "kind": "RPC_CANDIDATE",
+      "target": "save_direct_oauth_connection",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d0d00b074aee1a1c610abbe6dd2424f8b9f581c3c73f7780619317d69ce7fc96"
+    },
+    {
+      "id": "7f78c962cb931d03f3ce",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "line": 77,
+      "enclosing": "saveDirectOAuthConnection",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d0d00b074aee1a1c610abbe6dd2424f8b9f581c3c73f7780619317d69ce7fc96"
+    },
+    {
+      "id": "6187e7ce8ad7416fb038",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "line": 241,
+      "enclosing": "loadProviderToken",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d0d00b074aee1a1c610abbe6dd2424f8b9f581c3c73f7780619317d69ce7fc96"
+    },
+    {
+      "id": "9410f0207c086070cbe9",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "line": 319,
+      "enclosing": "openCanonicalProviderRow",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785"
+    },
+    {
+      "id": "7839b0a49e20e551f26b",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "line": 319,
+      "enclosing": "openCanonicalProviderRow",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785"
+    },
+    {
+      "id": "ed5b917b1d684e7326d9",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "line": 499,
+      "enclosing": "migrateLegacyProviderKey",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785"
+    },
+    {
+      "id": "02bcd9af68c7c3ac2c1e",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "line": 500,
+      "enclosing": "migrateLegacyProviderKey",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785"
+    },
+    {
+      "id": "b5dbe13cb2b6b496c93a",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "line": 531,
+      "enclosing": "migrateLegacyProviderKey",
+      "kind": "RPC_CANDIDATE",
+      "target": "migrate_provider_key_to_vault",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785"
+    },
+    {
+      "id": "e0456ce0f2abfa813fb5",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "line": 541,
+      "enclosing": "migrateLegacyProviderKey",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785"
+    },
+    {
+      "id": "8831772e1415698008d8",
+      "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
+      "line": 98,
+      "enclosing": "decryptLegacy",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "8754a9c139247caff08038eed891e96343796b9019ddb379e7e4596c02dd3fa2"
+    },
+    {
+      "id": "a7071c4b1aea42021299",
+      "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
+      "line": 105,
+      "enclosing": "decryptLegacy",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "8754a9c139247caff08038eed891e96343796b9019ddb379e7e4596c02dd3fa2"
+    },
+    {
+      "id": "4309e81e72c6705aade9",
+      "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
+      "line": 113,
+      "enclosing": "decryptLegacy",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "8754a9c139247caff08038eed891e96343796b9019ddb379e7e4596c02dd3fa2"
+    }
+  ],
+  "completion": "ACTUAL_DISPOSABLE_AND_SOURCE_BOUND_REGRESSION_PENDING",
+  "productionEffects": false
+}

@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { Router, type Response } from 'express';
 import { z } from 'zod';
-import { getSupabaseAdmin } from '../config/supabase.js';
+import { getGlobalSupabaseAdmin } from '../security/serviceRoleGuard.js';
 import { isQueueSystemReady } from '../config/jobQueues.js';
 import { computePlatformReady } from '../lib/platformReady.js';
 import type { AuthRequest } from '../middleware/auth.js';
@@ -62,7 +62,7 @@ function currentChecks(): ReadinessCheck[] {
 router.get('/readiness', adminMiddleware, async (_req, res) => {
   const checks = currentChecks();
   try {
-    const { data, error } = await getSupabaseAdmin().from('production_evidence').select('id,kind,status,summary,reference,observed_at').order('observed_at', { ascending: false }).limit(50);
+    const { data, error } = await getGlobalSupabaseAdmin('authorized_release_readiness').from('production_evidence').select('id,kind,status,summary,reference,observed_at').order('observed_at', { ascending: false }).limit(50);
     if (error) throw error;
     const deployment = data?.find((item) => item.kind === 'deployment_verification');
     if (deployment) {

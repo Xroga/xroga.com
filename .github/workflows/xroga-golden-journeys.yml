@@ -1,0 +1,49 @@
+name: Xroga golden acceptance harness
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: xroga-golden-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+jobs:
+  deterministic-golden:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://batch-one-test.invalid
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_batch_one_fixture_only
+      NEXT_PUBLIC_API_URL: http://127.0.0.1:8080
+      NEXT_TELEMETRY_DISABLED: '1'
+      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.golden-browser-cache
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - name: Contract and negative coverage
+        run: |
+          node scripts/xroga/validate-golden-journeys.mjs
+          node --test scripts/xroga/golden-journeys.test.mjs
+          node node_modules/tsx/dist/cli.mjs --test backend/src/e2e/xrogaGoldenJourneys.test.ts
+          node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/lib/goldenJourneyRendering.test.ts
+      - name: Build existing frontend with public fixture configuration
+        run: npm run build --workspace=frontend
+      - run: npx playwright install --with-deps chromium
+      - name: Existing Playwright guest and denied-founder boundaries
+        run: node scripts/xroga/run-golden-browser.mjs
+      - name: Preserve fictional-fixture diagnostics (no real users or credentials)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: golden-fixture-${{ github.sha }}
+          path: artifacts/batch-01-golden/
+          if-no-files-found: warn
+          retention-days: 14
+# Real authenticated/staging security remains in command3-auth-browser.yml.
+# Provider sandbox completion is BLOCKED_KNOWN_GAP until approved isolated
+# provider resources/cleanup are supplied; fixture passes never certify it.
+# Production read-only smoke remains launch-production-verification.yml.

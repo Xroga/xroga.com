@@ -1,8 +1,10 @@
 import { randomUUID } from 'node:crypto';
 import { getSupabaseAdmin } from '../config/supabase.js';
+import { requireResourceOwner, requireTenantContext, type TenantContext } from '../security/tenantContext.js';
 import { MODELS, requirePricing, type ModelId } from './models.js';
 import { normalizeProviderError } from './providerRuntime.js';
 import { capacityUnavailableError } from './capacityUnavailable.js';
+import { PostCompletionAccountingError } from './postCompletionAccounting.js';
 
 export const SHARED_PROVIDER_ENTITLEMENT_MICRO_USD = 20_000_000;
 export const FREE_PROVIDER_ENTITLEMENT_MICRO_USD = 1_650_000;
@@ -24,6 +26,8 @@ export interface ProviderReservation {
   reservedMicroUsd: number;
   priceVersion: string;
 }
+
+type AdmittedOperationsAction = Record<string, unknown>;
 
 export interface EntitlementStatus {
   state: 'free_active' | 'promotional_active' | 'promotional_expired' | 'paid_active' | 'past_due' | 'paused' | 'cancelled' | 'billing_unavailable';
@@ -50,10 +54,21 @@ type MemoryCycle = {
 };
 
 const memoryCycles = new Map<string, MemoryCycle>();
-const memoryReservations = new Map<string, { userId: string; idempotencyKey: string; amount: number; status: string }>();
+const memoryReservations = new Map<string, { userId: string; idempotencyKey: string; amount: number; status: string;
+  modelId: ModelId; purpose: BudgetPurpose; estimatedInputTokens: number; maximumOutputTokens: number }>();
+
+function exactAccountingCount(value: unknown, expected: number): boolean {
+  return (typeof value === 'number' || (typeof value === 'string' && /^\d+$/.test(value))) &&
+    Number.isSafeInteger(Number(value)) && Number(value) === expected;
+}
 
 function asSafeInteger(value: number): number {
+  if (!Number.isFinite(value) || value < 0 || value > Number.MAX_SAFE_INTEGER) throw new Error('Invalid provider accounting amount');
   return Math.max(0, Math.min(Number.MAX_SAFE_INTEGER, Math.round(value)));
+}
+
+function requireUsageCounts(...values: number[]): void {
+  if (values.some(value => !Number.isSafeInteger(value) || value < 0)) throw new Error('Invalid provider usage count');
 }
 
 export function estimateProviderReservationMicroUsd(input: {
@@ -62,6 +77,8 @@ export function estimateProviderReservationMicroUsd(input: {
   maximumOutputTokens: number;
   billingTolerance?: number;
 }): number {
+  requireUsageCounts(input.estimatedInputTokens, input.maximumOutputTokens);
+  if (input.billingTolerance !== undefined && (!Number.isFinite(input.billingTolerance) || input.billingTolerance < 1)) throw new Error('Invalid provider billing tolerance');
   const price = requirePricing(input.modelId);
   const inputCost = (Math.max(0, input.estimatedInputTokens) * price.inputUsdPer1M);
   const outputCost = (Math.max(0, input.maximumOutputTokens) * price.outputUsdPer1M);
@@ -77,6 +94,7 @@ export function actualProviderCostMicroUsd(input: {
   outputTokens: number;
   reasoningTokens?: number;
 }): number {
+  requireUsageCounts(input.inputTokens, input.outputTokens, input.cachedInputTokens ?? 0, input.reasoningTokens ?? 0);
   const price = requirePricing(input.modelId);
   const cachedInput = Math.min(Math.max(0, input.cachedInputTokens ?? 0), Math.max(0, input.inputTokens));
   const billableInput = Math.max(0, input.inputTokens - cachedInput);
@@ -123,28 +141,39 @@ function boundedPercent(numerator: number, denominator: number): number | null {
 }
 
 function hasDurableStore(): boolean {
-  return Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
+  const configured = Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
+  if (!configured && process.env.NODE_ENV === 'production') throw new Error('Durable provider accounting is unavailable');
+  return configured;
 }
 
-export async function activatePaidCycle(input: {
+export async function activatePaidCycle(context: TenantContext, input: {
   userId: string;
   providerReference: string;
   startsAt: Date;
   endsAt: Date;
 }): Promise<EntitlementStatus> {
+  const { userId } = requireTenantContext(context);
+  requireResourceOwner(context, input.userId);
+  // Keep the verified subject and payment-period intent fixed across RPC waits.
+  input = structuredClone(input);
   if (!input.providerReference.trim()) throw new Error('Paid cycle evidence reference is required');
   const duration = input.endsAt.getTime() - input.startsAt.getTime();
-  if (duration <= 0 || duration > 31 * 86_400_000) throw new Error('Invalid paid cycle period');
+  if (!Number.isFinite(duration) || duration <= 0 || duration > 31 * 86_400_000) throw new Error('Invalid paid cycle period');
   if (hasDurableStore()) {
-    const { error } = await getSupabaseAdmin().rpc('activate_xroga_paid_cycle', {
-      p_user_id: input.userId,
+    const { data, error } = await getSupabaseAdmin().rpc('activate_xroga_paid_cycle', {
+      p_user_id: userId,
       p_provider_reference: input.providerReference,
       p_starts_at: input.startsAt.toISOString(),
       p_ends_at: input.endsAt.toISOString(),
     });
-    if (error) throw new Error('Paid entitlement could not be activated');
+    if (error || !data || Array.isArray(data) || typeof data !== 'object'
+      || typeof data.id !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(data.id)
+      || data.user_id !== userId || data.cycle_kind !== 'paid'
+      || data.provider_reference !== input.providerReference.trim()
+      || Date.parse(data.starts_at) !== input.startsAt.getTime()
+      || Date.parse(data.ends_at) !== input.endsAt.getTime()) throw new Error('Paid entitlement could not be activated');
   } else {
-    memoryCycles.set(input.userId, {
+    memoryCycles.set(userId, {
       kind: 'paid',
       startsAt: input.startsAt,
       endsAt: input.endsAt,
@@ -155,7 +184,7 @@ export async function activatePaidCycle(input: {
       entitlement: SHARED_PROVIDER_ENTITLEMENT_MICRO_USD,
     });
   }
-  return getProviderEntitlementStatus(input.userId);
+  return getProviderEntitlementStatus(userId);
 }
 
 function nextCycleUnlock(startsAt: Date, now: Date, endsAt: Date): string | null {
@@ -314,7 +343,14 @@ export async function reserveProviderBudget(input: {
       const atCapacity = status?.availableNowPercent != null && status.availableNowPercent <= 0;
       throw capacityUnavailableError(atCapacity, status?.nextUnlockAt ?? null);
     }
-    const row = result.data as unknown as { id: string; reserved_micro_usd: number; price_version: string };
+    const row = result.data as Record<string, unknown> | null;
+    if (!row || Array.isArray(row) || typeof row.id !== 'string' || !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(row.id) ||
+      row.user_id !== input.userId || row.idempotency_key !== idempotencyKey ||
+      row.internal_route !== input.modelId || row.purpose !== purpose || row.status !== 'reserved' ||
+      !exactAccountingCount(row.estimated_input_tokens, input.estimatedInputTokens) ||
+      !exactAccountingCount(row.maximum_output_tokens, input.maximumOutputTokens) ||
+      !exactAccountingCount(row.reserved_micro_usd, amount) ||
+      row.price_version !== PROVIDER_PRICE_VERSION) throw new Error('Provider reservation evidence is invalid');
     return { id: row.id, reservedMicroUsd: Number(row.reserved_micro_usd), priceVersion: row.price_version };
   }
 
@@ -322,6 +358,10 @@ export async function reserveProviderBudget(input: {
     row.userId === input.userId && row.idempotencyKey === idempotencyKey,
   );
   if (existingReservation) {
+    const row = existingReservation[1];
+    if (row.status !== 'reserved' || row.modelId !== input.modelId || row.purpose !== purpose ||
+      row.estimatedInputTokens !== input.estimatedInputTokens || row.maximumOutputTokens !== input.maximumOutputTokens ||
+      row.amount !== amount) throw new Error('Provider reservation evidence is invalid');
     return {
       id: existingReservation[0],
       reservedMicroUsd: existingReservation[1].amount,
@@ -355,8 +395,84 @@ export async function reserveProviderBudget(input: {
   }
   cycle.reserved += amount;
   const id = randomUUID();
-  memoryReservations.set(id, { userId: input.userId, idempotencyKey, amount, status: 'reserved' });
+  memoryReservations.set(id, { userId: input.userId, idempotencyKey, amount, status: 'reserved',
+    modelId: input.modelId, purpose, estimatedInputTokens: input.estimatedInputTokens, maximumOutputTokens: input.maximumOutputTokens });
   return { id, reservedMicroUsd: amount, priceVersion: PROVIDER_PRICE_VERSION };
+}
+
+/**
+ * Reserves an individual provider call against both the owner's normal entitlement and the
+ * immutable ceiling of an already-admitted Operations action. The database rechecks the
+ * current actor, project membership, approval, lease and action snapshot under one lock.
+ */
+export async function reserveOperationsProviderBudget(input: {
+  ownerId: string;
+  actorId: string;
+  admittedAction: AdmittedOperationsAction;
+  modelId: ModelId;
+  estimatedInputTokens: number;
+  maximumOutputTokens: number;
+  idempotencyKey: string;
+}): Promise<ProviderReservation> {
+  const amount = estimateProviderReservationMicroUsd(input);
+  if (!hasDurableStore()) throw new Error('Durable Operations provider accounting is unavailable');
+  const request = () => getSupabaseAdmin().rpc('reserve_operations_provider_budget', {
+    p_actor: input.actorId,
+    p_expected: input.admittedAction,
+    p_idempotency_key: input.idempotencyKey,
+    p_internal_route: input.modelId,
+    p_price_version: PROVIDER_PRICE_VERSION,
+    p_estimated_input_tokens: Math.max(0, Math.round(input.estimatedInputTokens)),
+    p_maximum_output_tokens: Math.max(0, Math.round(input.maximumOutputTokens)),
+    p_reservation_micro_usd: amount,
+  });
+  let result = await request();
+  if (result.error && /active_billing_cycle_required/i.test(result.error.message)) {
+    await getSupabaseAdmin().rpc('ensure_xroga_free_cycle', { p_user_id: input.ownerId });
+    result = await request();
+  }
+  if (result.error) throw capacityUnavailableError(true, null);
+  const row = result.data as Record<string, unknown> | null;
+  if (!row || Array.isArray(row) || typeof row.id !== 'string'
+    || !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(row.id)
+    || row.user_id !== input.ownerId || row.idempotency_key !== input.idempotencyKey
+    || row.internal_route !== input.modelId || row.purpose !== 'completion' || row.status !== 'reserved'
+    || row.authority_action_id !== input.admittedAction.id
+    || !exactAccountingCount(row.estimated_input_tokens, input.estimatedInputTokens)
+    || !exactAccountingCount(row.maximum_output_tokens, input.maximumOutputTokens)
+    || !exactAccountingCount(row.reserved_micro_usd, amount)
+    || row.price_version !== PROVIDER_PRICE_VERSION) {
+    throw new Error('Operations provider reservation evidence is invalid');
+  }
+  return { id: row.id, reservedMicroUsd: Number(row.reserved_micro_usd), priceVersion: row.price_version as string };
+}
+
+export async function withOperationsProviderReservation<T extends ProviderUsageResult>(input: {
+  ownerId: string;
+  actorId: string;
+  admittedAction: AdmittedOperationsAction;
+  modelId: ModelId;
+  estimatedInputTokens: number;
+  maximumOutputTokens: number;
+  idempotencyKey: string;
+  execute: () => Promise<T>;
+}): Promise<T> {
+  const reservation = await reserveOperationsProviderBudget(input);
+  let providerCompleted = false;
+  try {
+    const result = await input.execute();
+    providerCompleted = true;
+    await settleProviderBudget({ userId: input.ownerId, modelId: input.modelId, reservation, result });
+    return result;
+  } catch (error) {
+    await finishFailedProviderReservation({
+      userId: input.ownerId,
+      reservation,
+      error: providerCompleted ? new Error('Provider accounting outcome requires reconciliation') : error,
+    }).catch(() => undefined);
+    if (providerCompleted) throw new PostCompletionAccountingError();
+    throw error;
+  }
 }
 
 export async function settleProviderBudget(input: {
@@ -365,12 +481,14 @@ export async function settleProviderBudget(input: {
   reservation: ProviderReservation;
   result: ProviderUsageResult;
 }): Promise<void> {
+  requireUsageCounts(input.result.toolCalls ?? 0, input.result.searchCalls ?? 0);
+  if (!Number.isSafeInteger(input.reservation.reservedMicroUsd) || input.reservation.reservedMicroUsd < 0) throw new Error('Provider reservation evidence is invalid');
   const actual = actualProviderCostMicroUsd({ modelId: input.modelId, ...input.result });
   if (actual > input.reservation.reservedMicroUsd) {
     throw new Error('Provider cost exceeded the conservative reservation');
   }
   if (hasDurableStore()) {
-    const { error } = await getSupabaseAdmin().rpc('settle_xroga_provider_budget', {
+    const { data, error } = await getSupabaseAdmin().rpc('settle_xroga_provider_budget', {
       p_user_id: input.userId,
       p_reservation_id: input.reservation.id,
       p_actual_micro_usd: actual,
@@ -383,11 +501,27 @@ export async function settleProviderBudget(input: {
       p_search_calls: input.result.searchCalls ?? 0,
     });
     if (error) throw new Error('Provider reservation settlement failed');
+    const row = data as Record<string, unknown> | null;
+    const exactCount = exactAccountingCount;
+    if (!row || Array.isArray(row) ||
+      row.id !== input.reservation.id || row.user_id !== input.userId || row.status !== 'settled' ||
+      row.internal_route !== input.modelId || row.price_version !== input.reservation.priceVersion ||
+      !exactCount(row.reserved_micro_usd, input.reservation.reservedMicroUsd) ||
+      !exactCount(row.settled_micro_usd, actual) ||
+      row.provider_request_id !== (input.result.providerRequestId?.trim() || null) ||
+      !exactCount(row.actual_input_tokens, input.result.inputTokens) ||
+      !exactCount(row.cached_input_tokens, input.result.cachedInputTokens ?? 0) ||
+      !exactCount(row.output_tokens, input.result.outputTokens) ||
+      !exactCount(row.reasoning_tokens, input.result.reasoningTokens ?? 0) ||
+      !exactCount(row.tool_calls, input.result.toolCalls ?? 0) ||
+      !exactCount(row.search_calls, input.result.searchCalls ?? 0)) {
+      throw new Error('Provider settlement evidence is inconsistent or unavailable');
+    }
     return;
   }
   const row = memoryReservations.get(input.reservation.id);
   const cycle = memoryCycles.get(input.userId);
-  if (!row || !cycle || row.status !== 'reserved') return;
+  if (!row || row.userId !== input.userId || !cycle || row.status !== 'reserved') return;
   cycle.reserved -= row.amount;
   cycle.settled += actual;
   row.status = 'settled';
@@ -412,7 +546,7 @@ export async function finishFailedProviderReservation(input: {
   }
   const row = memoryReservations.get(input.reservation.id);
   const cycle = memoryCycles.get(input.userId);
-  if (!row || !cycle || row.status !== 'reserved') return;
+  if (!row || row.userId !== input.userId || !cycle || row.status !== 'reserved') return;
   if (pending) {
     row.status = 'pending_reconciliation';
   } else {
@@ -430,11 +564,25 @@ export async function withProviderReservation<T extends ProviderUsageResult>(inp
   execute: () => Promise<T>;
 }): Promise<T> {
   const reservation = await reserveProviderBudget(input);
+  let providerCompleted = false;
   try {
     const result = await input.execute();
+    providerCompleted = true;
     await settleProviderBudget({ userId: input.userId, modelId: input.modelId, reservation, result });
     return result;
   } catch (error) {
+    // A completed provider request may already have incurred cost. Accounting
+    // validation/storage failure must retain the hold, regardless of error text.
+    if (providerCompleted) {
+      try {
+        await finishFailedProviderReservation({ userId: input.userId, reservation,
+          error: new Error('Provider accounting outcome requires reconciliation') });
+      } catch {
+        // The original reservation remains held if reconciliation cannot be written.
+        // A second accounting failure must not turn completed work into a retry.
+      }
+      throw new PostCompletionAccountingError();
+    }
     await finishFailedProviderReservation({ userId: input.userId, reservation, error });
     throw error;
   }

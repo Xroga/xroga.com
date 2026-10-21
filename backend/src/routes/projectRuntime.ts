@@ -5,6 +5,9 @@ import {
 import type {
   AuthRequest,
 } from '../middleware/auth.js';
+import { requireTenantContext } from '../security/tenantContext.js';
+import { runtimeAccessFailure, resourceNotFound } from '../security/tenantErrors.js';
+import { loadProjectRuntimeSession } from '../security/runtimeProjectBinding.js';
 
 import {
   createProjectRuntimeManager,
@@ -44,15 +47,7 @@ function requireUser(
   req:
     AuthRequest,
 ): string {
-  if (
-    !req.userId
-  ) {
-    throw new Error(
-      'Sign in required.',
-    );
-  }
-
-  return req.userId;
+  return requireTenantContext(req.tenantContext).userId;
 }
 
 router.get(
@@ -100,15 +95,7 @@ router.get(
           });
       }
 
-      const session =
-        await store
-          .loadSession(
-            userId,
-            revision
-              .project
-              .runtime
-              .sessionId,
-          );
+      const session = await loadProjectRuntimeSession(store,userId,projectId,revision.project.runtime.sessionId);
 
       if (
         !session
@@ -167,19 +154,8 @@ const process =
     } catch (
       error
     ) {
-      return res
-        .status(
-          500,
-        )
-        .json({
-          error:
-            error instanceof
-              Error
-              ? error.message
-              : String(
-                  error,
-                ),
-        });
+      const failure = runtimeAccessFailure(error);
+      return res.status(failure.status).json({ error: failure.error, code: failure.code });
     }
   },
 );
@@ -227,6 +203,9 @@ router.post(
           });
       }
 
+      if (revision.project.runtime) {
+        await loadProjectRuntimeSession(store,userId,projectId,revision.project.runtime.sessionId);
+      }
       const result =
         await startOrRefreshLivePreview({
           userId,
@@ -255,19 +234,8 @@ router.post(
     } catch (
       error
     ) {
-      return res
-        .status(
-          500,
-        )
-        .json({
-          error:
-            error instanceof
-              Error
-              ? error.message
-              : String(
-                  error,
-                ),
-        });
+      const failure = runtimeAccessFailure(error);
+      return res.status(failure.status).json({ error: failure.error, code: failure.code });
     }
   },
 );
@@ -318,6 +286,7 @@ router.post(
           userId,
         );
 
+      if(!await loadProjectRuntimeSession(store,userId,projectId,revision.project.runtime.sessionId))resourceNotFound();
       await runtime
         .destroy(
           revision
@@ -364,19 +333,8 @@ router.post(
     } catch (
       error
     ) {
-      return res
-        .status(
-          500,
-        )
-        .json({
-          error:
-            error instanceof
-              Error
-              ? error.message
-              : String(
-                  error,
-                ),
-        });
+      const failure = runtimeAccessFailure(error);
+      return res.status(failure.status).json({ error: failure.error, code: failure.code });
     }
   },
 );
@@ -424,15 +382,12 @@ router.get(
           });
       }
 
+      const binding = revision.project.runtime;
+      let session = binding ? await loadProjectRuntimeSession(store,userId,projectId,binding.sessionId) : null;
       const plan =
         planLivePreview(
           revision.project,
         );
-
-      const binding =
-        revision
-          .project
-          .runtime;
 
       const runnable =
   Boolean(
@@ -444,15 +399,6 @@ router.get(
         createProjectRuntimeManager(
           userId,
         );
-
-      let session =
-        binding
-          ? await store
-              .loadSession(
-                userId,
-                binding.sessionId,
-              )
-          : null;
 
       let runtimeRunning =
         false;
@@ -672,19 +618,8 @@ router.get(
     } catch (
       error
     ) {
-      return res
-        .status(
-          500,
-        )
-        .json({
-          error:
-            error instanceof
-              Error
-              ? error.message
-              : String(
-                  error,
-                ),
-        });
+      const failure = runtimeAccessFailure(error);
+      return res.status(failure.status).json({ error: failure.error, code: failure.code });
     }
   },
 );

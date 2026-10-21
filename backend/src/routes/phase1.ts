@@ -1,3 +1,4 @@
+import { requireTenantContext } from '../security/tenantContext.js';
 import {
   Buffer,
 } from 'node:buffer';
@@ -1874,7 +1875,7 @@ router.post(
     try {
       const result =
         await confirmBusinessAction(
-          userId,
+          requireTenantContext(req.tenantContext),
 
           String(
             req.params.id ??
@@ -1891,7 +1892,7 @@ router.post(
             result.confirmation,
 
           response:
-            `Done — ${result.confirmation.summary}`,
+            `The provider reported completion: ${result.confirmation.summary}. Receipt ${result.confirmation.id}.`,
 
           toolkit:
             result.execution
@@ -2032,7 +2033,7 @@ router.get(
             ),
         },
       );
-    } catch {
+    } catch (error) {
       console.error(
         '[phase1/usage]',
         {
@@ -2043,7 +2044,7 @@ router.get(
 
       return res
         .status(
-          500,
+          (error as { code?: string })?.code === 'QUOTA_UNAVAILABLE' ? 503 : 500,
         )
         .json(
           {
@@ -2218,7 +2219,7 @@ router.get(
 
       res
         .status(
-          402,
+          error.code === 'QUOTA_UNAVAILABLE' ? 503 : 402,
         )
         .json(
           {

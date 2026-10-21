@@ -103,25 +103,36 @@ test('the composer stops where the terminal does', () => {
   assert.match(block, /right: var\(--xv-app-gutter\) !important/, 'and stop at it');
 });
 
-test('the plus menu is a compact two-column launcher rather than a composer-wide dashboard', () => {
+test('the current plus menu follows the composer width and stays within the viewport', () => {
   assert.match(MENU, /className="xv-cba-grid"/, 'the root list needs the grid wrapper');
   const at = code.indexOf('.xv-cba-grid {');
   assert.notEqual(at, -1, 'the grid has no styles');
 
-  assert.match(code, /\.xv-cba-menu\s*\{[\s\S]*?width:\s*min\(480px, calc\(100vw - 18px\)\) !important/, 'the desktop panel should remain compact');
-  assert.match(MENU, /const width = Math\.min\(rect\.width, 520\)/, 'runtime width should match the CSS cap');
-  assert.match(MENU, /width:\s*Math\.min\(width, 480\)/, 'runtime width should enforce the compact cap');
-  assert.ok(MENU.indexOf('<b>Add files or photos</b>') < MENU.indexOf('<b>Integrations</b>'), 'upload should lead the action palette');
-
-  assert.match(code, /\.xv-cba-grid\s*\{[\s\S]*?grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/, 'the desktop launcher needs two compact columns');
+  // PR827 intentionally made the portalled picker composer-wide and one-column.
+  const controls = readFileSync(new URL('../components/terminal/WorkspaceControls.module.css', import.meta.url), 'utf8');
+  assert.match(MENU, /const width = Math\.min\(rect\.width, window\.innerWidth - 16\)/);
+  assert.match(MENU, /const left = Math\.max\(8, Math\.min\(rect\.left, window\.innerWidth - width - 8\)\)/);
+  assert.match(MENU, /'--xv-actions-width': `\$\{menuStyle\.width\}px`/);
+  assert.match(controls, /\.actions\.actions\s*\{[^}]*width: var\(--xv-actions-width\) !important;[^}]*max-width: calc\(100vw - 16px\) !important/);
+  assert.match(controls, /\.actions\.actions :global\(\.xv-cba-grid\)\s*\{[^}]*grid-template-columns: 1fr/);
+  const upload = MENU.indexOf('<b>Add files or photos</b>');
+  const plugins = MENU.indexOf('<b>Plugins</b>');
+  assert.ok(upload >= 0 && plugins > upload, 'upload must still precede the renamed Plugins entry');
+  assert.match(MENU, /disabled=\{!onAddFiles\} onClick=\{\(\) => \{ onAddFiles\?\.\(\); setOpen\(false\); \}\}/);
+  assert.match(MENU, /disabled=\{!onOpenIntegrations\} onClick=\{\(\) => \{ onOpenIntegrations\?\.\(\); setOpen\(false\); \}\}/);
 });
 
-test('an empty fullscreen terminal shows rotating build-command inspiration', () => {
+test('fullscreen preserves the current empty-workspace starter and one canonical composer', () => {
   const DOCK = read('../components/terminal/TerminalDock.tsx');
-  assert.match(DOCK, /dashboardFullscreen\s*&&\s*emptyWorkspace\s*&&\s*!incognito/);
-  assert.match(DOCK, /xv-fullscreen-inspiration/);
-  assert.match(DOCK, /FULLSCREEN_BUILD_COMMANDS\.map/);
-  assert.match(code, /\.xv-fullscreen-inspiration code\s*\{[^}]*animation:\s*xv-fullscreen-command-cycle/);
+  assert.match(DOCK, /emptyWorkspace\s*=\s*hydrated\s*&&\s*!sessionRestoring\s*&&\s*messages\.length === 0\s*&&\s*!loading/);
+  assert.match(DOCK, /showStarterExperience\s*=\s*emptyWorkspace\s*&&\s*!workspaceOpen/);
+  assert.match(DOCK, /dashboardFullscreen\s*\?\s*'z-\[210\] xv-terminal-dock--fullscreen'/);
+  for (const component of ['WorkspaceStartHeader', 'WorkspaceStartCards']) {
+    assert.match(DOCK, new RegExp(`showStarterExperience\\s*&&\\s*!incognito\\s*\\?\\s*\\(\\s*<${component} \\/>`));
+  }
+  assert.equal((DOCK.match(/<TerminalChatBar\b/g) ?? []).length, 1);
+  assert.match(DOCK, /<TerminalChatBar starter=\{showStarterExperience && !incognito\} \/>/);
+  assert.doesNotMatch(DOCK, /FULLSCREEN_BUILD_COMMANDS|xv-fullscreen-inspiration/);
 });
 
 test('only the root list is a grid', () => {
@@ -148,7 +159,9 @@ test('the geometry is asserted where the workspace can actually be reached', () 
   assert.match(E2E, /the sidebar is still on screen in fullscreen/);
   assert.match(E2E, /the hidden sidebar still reserves its width/);
   assert.match(E2E, /the sidebar did not reopen after fullscreen/);
-  assert.match(E2E, /the plus menu should lay out in two compact columns/);
+  assert.match(E2E, /expect\(gridColumns, 'the current full-width work picker uses one readable column'\)\.toBe\(1\)/);
+  assert.match(E2E, /expect\(menuBox\.width\)\.toBeCloseTo\(Math\.min\(composerBox\.width/);
+  assert.match(E2E, /await expect\(lastAction\)\.toBeInViewport\(\)/);
 });
 
 /**

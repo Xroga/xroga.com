@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "scope": "AUTHENTICATED_EXACT_SOURCE_BUSINESS_AUTHORITY_SUBSET_NOT_PHASE3_ACCEPTANCE",
+  "sourceSha": "f011d7e1a8e29970e883b921e2a36fa672a8107a",
+  "runId": 39439419199,
+  "jobId": 118685013898,
+  "workflow": "Isolated Supabase authenticated browser verification",
+  "conclusion": "success",
+  "jobLogSha256": "a21717b246dd0e48a5df913e690151102ee37d78d722164d73c54adb32ff3fd8",
+  "logNormalization": "CRLF_TO_LF_WITH_GH_ALLOW_ESCAPE_SEQUENCES",
+  "passedTests": [
+    "real canonical business confirmation claims once and persists exact dispatch and terminal receipts with a synthetic provider",
+    "real business dispatch admission rejects foreign, changed, cancelled, expired and replayed claims and browser roles",
+    "real business dispatch rechecks expiry, cancellation and plan after lock waits and rolls admission back",
+    "real business dispatch observes a read-only policy committed during its final policy lock wait"
+  ],
+  "fullSecuritySuite": {
+    "tests": 208,
+    "passed": 208,
+    "failed": 0,
+    "skipped": 0
+  },
+  "database": "REAL_DISPOSABLE_SUPABASE",
+  "provider": "INTERCEPTED_SYNTHETIC_NOT_LIVE",
+  "productionChanges": false,
+  "phase3Accepted": false
+}

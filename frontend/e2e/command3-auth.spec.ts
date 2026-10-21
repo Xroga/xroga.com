@@ -14,7 +14,7 @@ const password = `C3!${randomUUID()}aA9`;
 const ownerEmail = `command3-owner-${run}@example.com`;
 const outsiderEmail = `command3-outsider-${run}@example.invalid`;
 const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
-let ownerId = ''; let outsiderId = ''; let ownerProjectId = ''; let outsiderProjectId = '';
+let ownerId = ''; let outsiderId = ''; let ownerProjectId = ''; let outsiderProjectId = ''; let privateFileId=''; let foreignFileId='';
 
 test.setTimeout(180_000);
 
@@ -39,7 +39,8 @@ async function browserSession(page: import('@playwright/test').Page): Promise<{ 
 test.beforeAll(async () => {
   const isolatedRef = process.env.E2E_ISOLATED_PROJECT_REF?.trim();
   const actualHost = new URL(supabaseUrl).hostname;
-  if (!isolatedRef || isolatedRef === 'nzenxdfumxrnsmybazmo' || actualHost !== `${isolatedRef}.supabase.co`) {
+  const disposableLocal = process.env.CI === 'true' && process.env.XB01_DISPOSABLE_SUPABASE === '1' && isolatedRef === 'local-disposable' && supabaseUrl === 'http://127.0.0.1:54321' && process.env.SUPABASE_URL === supabaseUrl && backendUrl === 'http://127.0.0.1:4000' && !launchBillingApiUrl;
+  if (!disposableLocal && (!isolatedRef || ['nzenxdfumxrnsmybazmo', 'lztqfktsahpzitybthld', 'local-disposable'].includes(isolatedRef) || actualHost !== `${isolatedRef}.supabase.co`)) {
     throw new Error('Authenticated fixture tests require a dedicated isolated TEST Supabase project; production is forbidden.');
   }
   const owner = await admin.auth.admin.createUser({ email: ownerEmail, password, email_confirm: true, user_metadata: { fixture: 'command3_isolated_demo' } });
@@ -54,20 +55,15 @@ test.beforeAll(async () => {
    * sends every one of them to `/onboarding` — which is correct behaviour and would
    * fail every workspace assertion below, since none of them would reach a workspace.
    *
-   * Written with a fallback because the column arrives with a migration: a run
-   * against a database that does not have it yet must not fail in `beforeAll`, which
-   * would take the whole suite down before a single assertion ran.
+   * The disposable suite requires the complete migration history. Verify the
+   * exact durable setup receipt rather than masking a failed upsert with a
+   * second write that omits the required onboarding state.
    */
   const onboarded = { status: 'completed', current_step: 'complete', backfilled: true };
-  const withOnboarding = await admin.from('profiles').upsert([
-    { id: ownerId, display_name: 'Command 3 Owner', onboarding: onboarded },
-    { id: outsiderId, display_name: 'Command 3 Outsider', onboarding: onboarded },
-  ]);
-  if (withOnboarding.error) {
-    await admin.from('profiles').upsert([
-      { id: ownerId, display_name: 'Command 3 Owner' },
-      { id: outsiderId, display_name: 'Command 3 Outsider' },
-    ]);
+  for (const [id,display_name] of [[ownerId,'Command 3 Owner'],[outsiderId,'Command 3 Outsider']]) {
+    const receipt = await admin.from('profiles').update({display_name,onboarding:onboarded}).eq('id',id).select('id,display_name,onboarding').single();
+    expect(receipt.error).toBeNull();
+    expect(receipt.data).toEqual({id,display_name,onboarding:onboarded});
   }
   const projects = await admin.from('projects').insert([
     { user_id: ownerId, name: `command3-demo-owner-${run}`, type: 'app', status: 'in_progress' },
@@ -76,22 +72,77 @@ test.beforeAll(async () => {
   if (projects.error || !projects.data) throw new Error('Isolated tenant fixtures could not be created');
   ownerProjectId = projects.data.find((item) => item.user_id === ownerId)!.id;
   outsiderProjectId = projects.data.find((item) => item.user_id === outsiderId)!.id;
+  const files=await admin.from('project_files').insert([
+    {project_id:ownerProjectId,file_name:'private-browser-fixture.txt',content:'PRIVATE_BROWSER_FIXTURE_ONLY'},
+    {project_id:outsiderProjectId,file_name:'foreign-browser-fixture.txt',content:'FOREIGN_BROWSER_CANARY'},
+  ]).select('id,project_id');
+  if(files.error || files.data?.length!==2)throw new Error('Private file browser fixtures could not be created');
+  privateFileId=files.data.find(item=>item.project_id===ownerProjectId)!.id;
+  foreignFileId=files.data.find(item=>item.project_id===outsiderProjectId)!.id;
 });
 
 test.afterAll(async () => {
-  if (ownerId) await admin.auth.admin.deleteUser(ownerId);
-  if (outsiderId) await admin.auth.admin.deleteUser(outsiderId);
+  if (ownerId) expect((await admin.auth.admin.deleteUser(ownerId)).error).toBeNull();
+  if (outsiderId) expect((await admin.auth.admin.deleteUser(outsiderId)).error).toBeNull();
+});
+
+test('explicit hide preserves drafts without crossing real account and conversation boundaries', async ({ page }) => {
+  async function login(email: string) {
+    await page.goto('/auth/login', { waitUntil: 'domcontentloaded' });
+    const form = page.locator('form', { has: page.locator('#login-email') });
+    await form.locator('#login-email').fill(email);
+    await form.locator('#login-password').fill(password);
+    await form.getByRole('button', { name: 'Sign in' }).click();
+    await expect(page).toHaveURL(/\/(workspace|dashboard)/, { timeout: AUTH_TRANSITION_TIMEOUT_MS });
+    await page.goto('/workspace');
+  }
+  await login(ownerEmail);
+  const composer = page.locator('[data-terminal-composer]');
+  const header = page.getByTestId('terminal-identity-header');
+  await expect(composer).toHaveAttribute('data-draft-owner', ownerId);
+  await expect(composer).toHaveAttribute('data-draft-restoring', 'false');
+  const firstConversation = await composer.getAttribute('data-draft-session');
+  const canary = `OWNER_DRAFT_${run}`;
+  await composer.fill(canary);
+  await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
+  await header.getByRole('button', { name: 'Show the chatbar', exact: true }).click();
+  await expect(composer).toHaveValue(canary);
+  await page.getByRole('button', { name: 'New Work', exact: true }).click();
+  await expect(composer).toHaveValue('');
+  await expect(composer).not.toHaveAttribute('data-draft-session', firstConversation!);
+  await composer.fill('');
+  await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
+  await header.getByRole('button', { name: 'Show the chatbar', exact: true }).click();
+  await expect(composer).toHaveValue('');
+  await composer.fill(canary);
+  await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
+  await header.getByRole('button', { name: 'Show the chatbar', exact: true }).click();
+  await expect(composer).toHaveValue(canary);
+  await page.goto('/settings');
+  await page.getByRole('tab', { name: 'Security' }).click();
+  await page.getByRole('button', { name: 'Sign out' }).first().click();
+  await expect.poll(() => new URL(page.url()).pathname).toMatch(/^\/(auth\/login)?$/);
+  expect(await browserSession(page)).toEqual({ status: 401, authenticated: false });
+  await login(outsiderEmail);
+  await expect(composer).toHaveAttribute('data-draft-owner', outsiderId);
+  await expect(composer).toHaveValue('');
+  await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
+  await header.getByRole('button', { name: 'Show the chatbar', exact: true }).click();
+  await expect(composer).toHaveValue('');
 });
 
 test('real Supabase login persists, Operations works, cross-tenant access is denied, and logout clears the session', async ({ page }) => {
   let browserBearer = '';
+  let productionTelemetryRequests=0;
   page.on('request', (request) => {
     if (request.url().includes('/api/operations/') && request.headers().authorization?.startsWith('Bearer ')) browserBearer = request.headers().authorization;
+    if(/(?:clarity\.ms|google-analytics\.com|googletagmanager\.com|analytics\.google\.com|analytics\.ahrefs\.com)/.test(new URL(request.url()).hostname))productionTelemetryRequests++;
   });
   // The sign-in shell is interactive at DOMContentLoaded. Do not let a slow third-party
   // font request consume the entire authenticated-flow budget while waiting for `load`;
   // the locators and API assertions below still prove the rendered app is usable.
   await page.goto('/auth/login', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('script#xroga-microsoft-clarity,script#xroga-google-tag,script[src*="analytics.ahrefs.com"],script[src*="googletagmanager.com"]')).toHaveCount(0);
   const webRelease = await page.evaluate(async () => {
     const response = await fetch('/api/release', { cache: 'no-store' });
     return { status: response.status, body: await response.json() as { release?: string; environment?: string } };
@@ -165,14 +216,22 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(shell).toBeVisible();
   const shellBox = (await shell.boundingBox())!;
   expect(shellBox).not.toBeNull();
-  const welcomeBox = (await page.getByTestId('workspace-welcome').boundingBox())!;
+  const starter = page.getByTestId('workspace-start-header');
+  await expect(starter).toBeVisible();
+  await expect(starter).toHaveCount(1);
+  await expect(starter.getByRole('heading', { name: /Super Intelligence/ })).toBeVisible();
+  const welcomeBox = (await starter.boundingBox())!;
   expect(welcomeBox).not.toBeNull();
   expect(welcomeBox.y).toBeGreaterThanOrEqual(shellBox.y);
   // Tolerance, not slack: the API-connection banner sits above the greeting and only
   // renders when the API is unreachable, so the exact offset depends on conditional
   // content this assertion is not about. What it proves either way is that the
   // greeting begins at the top of the transcript rather than somewhere down it.
-  expect(welcomeBox.y - shellBox.y).toBeLessThan(260);
+  expect(welcomeBox.y + welcomeBox.height).toBeLessThanOrEqual(shellBox.y + shellBox.height);
+  await expect(page.getByTestId('workspace-start-cards').locator('[data-capability]')).toHaveCount(5);
+  await expect(composerInput).toHaveCount(1);
+  await expect(terminalDock).toHaveAttribute('data-workspace-state', 'empty');
+  await expect(terminalDock).toHaveCSS('overflow-y', 'auto');
 
   // The title bar is real window chrome: a sibling of the panes, not a sticky element
   // compensating for page padding. It must not scroll with the history.
@@ -200,7 +259,9 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(shell).toHaveCSS('border-radius', '20px');
 
   for (const offset of [100, 500, 1000, 10_000]) {
-    await transcript.evaluate((el, top) => { el.scrollTop = top; }, offset);
+    // Current empty-workspace content scrolls inside its idle dock, while the
+    // empty transcript remains inert. The outer window and toolbar stay fixed.
+    await terminalDock.evaluate((el, top) => { el.scrollTop = top; }, offset);
     const scrolled = await page.evaluate(() => ({
       page: document.scrollingElement!.scrollHeight - document.scrollingElement!.clientHeight,
       horizontal: document.documentElement.scrollWidth - window.innerWidth,
@@ -215,16 +276,20 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     const headerNow = (await terminalHeader.boundingBox())!;
     expect(headerNow.y, `the title bar scrolled away at offset ${offset}`).toBeCloseTo(headerBefore.y, 0);
   }
-  await transcript.evaluate((el) => { el.scrollTop = 0; });
+  await terminalDock.evaluate((el) => { el.scrollTop = 0; });
 
   // "Project edits", not "Workspace": the sidebar row, the mobile bottom bar and the
   // page itself already use that word for the whole surface, so the button that opens
   // the file tree and the diff says what it opens instead.
   await expect(terminalHeader.getByRole('button', { name: 'Project edits' })).toBeVisible();
+  // WorkspaceLauncher owns the one hide/restore control in the title bar.
+  // Hiding must remove the composer without leaving a floating replacement.
   const hideChatbar = terminalHeader.getByRole('button', { name: 'Hide the chatbar' });
   await expect(hideChatbar).toBeVisible();
+  await expect(composerInput).toBeVisible();
   await hideChatbar.click();
-  await expect(composerInput).toBeHidden();
+  await expect(terminalDock.locator('.xv-chatbar-solid')).toHaveCount(0);
+  await expect(composerInput).toHaveCount(0);
 
   /*
    * Hiding the chatbar hides the chatbar, and leaves nothing floating in its place.
@@ -239,23 +304,31 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(terminalDock.getByRole('button', { name: 'Show the chatbar' })).toHaveCount(0);
   const showChatbar = terminalHeader.getByRole('button', { name: 'Show the chatbar' });
   await expect(showChatbar).toBeVisible();
+  await expect(showChatbar).toHaveAttribute('aria-pressed', 'true');
   await showChatbar.click();
+  await expect(hideChatbar).toHaveAttribute('aria-pressed', 'false');
+  await expect(composerInput).toHaveCount(1);
   await expect(composerInput).toBeVisible();
 
   // The portal intentionally floats 8 px above the composer (see
   // ChatBarActionsMenu's rect-based bottom offset). Keep its positioning close,
   // horizontally anchored, and consistent with the actual interface contract.
-  const composerSurface = terminalDock.locator('.xv-chatbar-solid');
+  const composerSurface = terminalDock.locator('.xv-kimi-composer-frame');
   await terminalDock.locator('.xv-cba-trigger').first().click();
   const plusMenu = page.locator('.xv-cba-menu');
   await expect(plusMenu).toBeVisible();
+  // Measure the settled 150 ms entry animation, not an intermediate transform.
+  // Keep the existing gap and viewport bounds unchanged.
+  await expect.poll(() => plusMenu.evaluate(el => el.getAnimations().every(animation => animation.playState === 'finished' || animation.playState === 'idle'))).toBe(true);
   const menuBox = (await plusMenu.boundingBox())!;
   const composerBox = (await composerSurface.boundingBox())!;
-  const composerGap = composerBox.y - (menuBox.y + menuBox.height);
+  const composerGap = menuBox.y >= composerBox.y + composerBox.height
+    ? menuBox.y - (composerBox.y + composerBox.height)
+    : composerBox.y - (menuBox.y + menuBox.height);
   expect(composerGap).toBeGreaterThanOrEqual(4);
   expect(composerGap).toBeLessThanOrEqual(12);
   expect(Math.abs(menuBox.x - composerBox.x)).toBeLessThanOrEqual(2);
-  expect(menuBox.width).toBeLessThanOrEqual(composerBox.width);
+  expect(menuBox.width).toBeCloseTo(Math.min(composerBox.width, (await page.evaluate(() => window.innerWidth)) - 16), 0);
 
   // Every action survived the redesign, Integrations among them — and the detached
   // Integrations pill that used to duplicate it is gone.
@@ -266,7 +339,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     'Debug an error',
     'Skills',
     'Rules',
-    'Integrations',
+    'Plugins',
   ]) {
     await expect(
       plusMenu.getByRole('button', { name: new RegExp(`^${action}(?:\\s|$)`) }),
@@ -274,18 +347,19 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   }
   await expect(page.locator('.xv-chatbar-integration-btn')).toHaveCount(0);
 
-  // Two columns keep the working palette compact without spreading its actions
-  // across the full composer like dashboard tabs.
+  // The approved picker follows the composer width with one readable column.
   const grid = plusMenu.locator('.xv-cba-grid');
   await expect(grid).toBeVisible();
   const gridColumns = await grid.evaluate(
     (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length,
   );
-  expect(gridColumns, 'the plus menu should lay out in two compact columns').toBe(2);
-  expect(
-    menuBox.height / menuBox.width,
-    'the plus menu is far taller than it is wide',
-  ).toBeLessThan(1.35);
+  expect(gridColumns, 'the current full-width work picker uses one readable column').toBe(1);
+  expect(menuBox.y).toBeGreaterThanOrEqual(0);
+  expect(menuBox.y + menuBox.height).toBeLessThanOrEqual(await page.evaluate(() => window.innerHeight));
+  await expect(plusMenu).toHaveCSS('overflow-y', 'auto');
+  const lastAction = plusMenu.getByRole('button', { name: /^Rules(?:\s|$)/ });
+  await lastAction.scrollIntoViewIfNeeded();
+  await expect(lastAction).toBeInViewport();
 
   // Escape still closes it, and opening it never moved the window.
   await page.keyboard.press('Escape');
@@ -396,7 +470,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
    * be a second route to the collapsed rail; it now hides the sidebar outright, so it
    * can no longer be used to inspect one.
    */
-  await page.locator('.xv-sidebar-edge-toggle').click();
+  await rail.getByRole('button', { name: 'Close sidebar', exact: true }).click();
   await page.waitForTimeout(400);
   await expect(rail).toHaveClass(/is-collapsed/);
   const railProfile = rail.locator('.xv-sidebar-rail-profile');
@@ -415,6 +489,8 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await rail.locator('.xv-sidebar-brand a[aria-label="Xroga"]')
     .hover();
   await page.waitForTimeout(900);
+  await expect(rail).toHaveClass(/is-collapsed/);
+  await rail.locator('.xv-sidebar-brand a[aria-label="Xroga"]').click();
   await expect(rail).not.toHaveClass(/is-collapsed/);
 
   /**
@@ -427,7 +503,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
    * a control ceasing to exist after an interaction, which only a second interaction
    * can catch.
    */
-  const edgeToggle = page.locator('.xv-sidebar-edge-toggle');
+  const edgeToggle = rail.getByRole('button', { name: 'Close sidebar', exact: true });
   await expect(edgeToggle).toBeVisible();
   await edgeToggle.click();
   await page.waitForTimeout(400);
@@ -442,8 +518,9 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     rail.getByRole('button', { name: 'Open sidebar' }),
     'the collapsed rail still carries its own open button',
   ).toHaveCount(0);
-  // The two destinations that replaced them.
-  await expect(rail.getByRole('link', { name: 'Dashboard' })).toBeVisible();
+  // Current owning UI names this dashboard destination Overview in both modes.
+  await expect(rail.getByRole('link', { name: 'Overview', exact: true })).toBeVisible();
+  await expect(rail.getByRole('link', { name: 'Overview', exact: true })).toHaveAttribute('href', '/dashboard');
   await expect(rail.getByRole('link', { name: 'Projects' })).toBeVisible();
 
   /*
@@ -454,10 +531,18 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const sidebarMark = rail.locator('.xv-sidebar-brand a[aria-label="Xroga"]');
   await expect(sidebarMark).toHaveCount(1);
   await sidebarMark.hover();
-  // Longer than the hover-intent delay, which is deliberately not instant.
+  // Approved compact rail does not expand under a passing pointer.
   await page.waitForTimeout(900);
+  await expect(rail, 'hovering the mark must not reopen the sidebar').toHaveClass(/is-collapsed/);
+  await sidebarMark.click();
+  await expect(rail).not.toHaveClass(/is-collapsed/);
+  // The outer rail changes immediately, but its inner panel transitions for
+  // 200 ms. Wait for the actual control's owner before capturing coordinates.
+  const configuredSidebarWidth = Number(await page.getByRole('separator', { name: 'Resize sidebar' }).getAttribute('aria-valuenow'));
+  await expect(rail.locator('.xv-sidebar-floating')).toHaveCSS('width', `${configuredSidebarWidth}px`);
+  await edgeToggle.hover();
   const reopened = (await rail.boundingBox())!;
-  expect(reopened.width, 'hovering the mark did not reopen the sidebar').toBeGreaterThan(72);
+  expect(reopened.width, 'clicking the mark did not reopen the sidebar').toBeGreaterThan(72);
 
   /*
    * And a drag that starts on the toggle widens rather than doing nothing. The toggle
@@ -561,7 +646,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   expect(shellAfterMenu.height).toBeCloseTo(shellBox.height, 0);
 
   const desktopSidebar = page.locator('.xv-sidebar-root');
-  await expect(desktopSidebar.getByRole('button', { name: 'New Terminal' })).toBeVisible();
+  await expect(desktopSidebar.getByRole('button', { name: 'New Work', exact: true })).toBeVisible();
   await expect(desktopSidebar.getByRole('separator', { name: 'Resize sidebar' })).toBeVisible();
   await expect(desktopSidebar.getByRole('button', { name: 'Change theme' })).toBeVisible();
   // Expanded navigation now uses the accessible image wordmark supplied by Logo.
@@ -575,7 +660,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   );
   const expandedLogoBox = await expandedWordmark.boundingBox();
   expect(expandedLogoBox).not.toBeNull();
-  const brandToolbarBox = (await desktopSidebar.locator('.xv-sidebar-header-actions').boundingBox())!;
+  const brandToolbarBox = (await desktopSidebar.locator('.xv-sidebar-utilities').boundingBox())!;
   // Depending on responsive layout, utilities can be beside or below the mark.
   // In either case they must not visually overlap.
   const separatedHorizontally =
@@ -590,7 +675,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
    * the mobile trigger carries a sidebar label too, and a page-wide lookup resolves
    * to both. The toggle closes only — reopening is the mark's job, below.
    */
-  await page.locator('.xv-sidebar-edge-toggle').click();
+  await desktopSidebar.getByRole('button', { name: 'Close sidebar', exact: true }).click();
   await expect(desktopSidebar).toHaveCSS('width', '64px');
   // Collapsed rail uses the current square icon asset, not the retired PNG.
   await expect(desktopSidebar.locator('.xv-sidebar-brand img[alt="Xroga"]')).toHaveAttribute(
@@ -607,22 +692,33 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(desktopSidebar.locator('.xv-sidebar-floating')).toHaveCSS('border-top-width', '0px');
   const collapsedTheme = desktopSidebar.getByRole('button', { name: 'Change theme' });
   await expect(collapsedTheme).toBeVisible();
-  await collapsedTheme.click();
-  await expect(page.getByRole('menu')).toBeVisible();
-  await collapsedTheme.click();
-  await expect(page.getByRole('menu')).toHaveCount(0);
   await expect(desktopSidebar.getByRole('button', { name: 'Search' })).toBeVisible();
-  await expect(desktopSidebar.getByRole('button', { name: 'New Terminal' })).toBeVisible();
+  await expect(desktopSidebar.getByRole('button', { name: 'New Work', exact: true })).toBeVisible();
   await expect(desktopSidebar.locator('nav')).toHaveCount(0);
   /*
-   * Reopened by hovering the mark. The toggle does not exist while collapsed — the rail
+   * Reopened by clicking the mark. The toggle does not exist while collapsed — the rail
    * used to carry it alongside its own PanelLeft button, two controls a few pixels
    * apart for one job — so clicking it here waited for an element that never appears
    * and took the whole spec to its timeout.
    */
   await desktopSidebar.locator('.xv-sidebar-brand a[aria-label="Xroga"]')
     .hover();
+  await expect(desktopSidebar).toHaveClass(/is-collapsed/);
+  await desktopSidebar.locator('.xv-sidebar-brand a[aria-label="Xroga"]').click();
   await expect(desktopSidebar).not.toHaveCSS('width', '64px');
+  // The owning rail capture handler opens a collapsed rail before utility actions.
+  // Exercise theme toggling on the explicitly reopened, stable control instead of
+  // treating a collapsed child as a second independent open/close menu owner.
+  const themeWidth = Number(await page.getByRole('separator', { name: 'Resize sidebar' }).getAttribute('aria-valuenow'));
+  await expect(desktopSidebar.locator('.xv-sidebar-floating')).toHaveCSS('width', `${themeWidth}px`);
+  const expandedTheme = desktopSidebar.getByRole('button', { name: 'Change theme', exact: true });
+  await expandedTheme.click();
+  await expect(expandedTheme).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByRole('menu')).toBeVisible();
+  await expect(page.getByRole('menuitemradio')).toHaveCount(4);
+  await expandedTheme.click();
+  await expect(expandedTheme).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByRole('menu')).toHaveCount(0);
 
   // Internal navigation must retain the shared shell and the mounted composer.
   const shellSentinel = randomUUID();
@@ -687,12 +783,11 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   expect(await page.locator('html').getAttribute('data-reduced-motion')).toBe('true');
   await expect(page.locator('body')).toHaveClass(/theme-black/);
 
-  const companion = page.getByTestId('xroga-companion-composer');
-  await expect(companion).toBeVisible();
-  // Scoped to the companion, not the page. The claim this protects is that *Smoky*
-  // does not do voice — the composer's own dictation is intended and always was, and
-  // it now carries this label, so a page-wide locator asserts something nobody meant.
-  await expect(companion.getByRole('button', { name: 'Start voice input' })).toHaveCount(0);
+  // The approved empty-workspace experience owns one composer and omits Smoky's
+  // active-conversation anchor. Its usage/no-voice contract is checked on the
+  // authenticated global surface below, not on an intentionally absent anchor.
+  await expect(page.getByTestId('xroga-companion-composer')).toHaveCount(0);
+  await expect(page.locator('[data-terminal-composer]')).toHaveCount(1);
   const canonicalComposer = page.locator('.xv-terminal-dock');
   // The current voice controls use accessible names from XrogaVoiceControl.
   await expect(canonicalComposer.getByRole('button', { name: 'Start voice typing' })).toBeVisible();
@@ -717,14 +812,14 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const actionsMenu = page.getByRole('dialog', { name: 'Composer actions' });
   await expect(actionsMenu.getByRole('button', { name: /Add files or photos/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: 'Slash commands' })).toBeVisible();
-  await expect(actionsMenu.getByRole('button', { name: /Integrations/ })).toBeVisible();
+  await expect(actionsMenu.getByRole('button', { name: /Plugins/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: /Plan before build/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: /Debug an error/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: /Skills/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: /Rules/ })).toBeVisible();
   // The menu's attachment geometry is asserted once, earlier in this test. What is
   // checked here is its contents and the Integrations flow.
-  await actionsMenu.getByRole('button', { name: /Integrations/ }).click();
+  await actionsMenu.getByRole('button', { name: /Plugins/ }).click();
   // Accounts with GitHub authority see the full manager; a clean authenticated
   // account sees the truthful first-connection state. The transient readiness probe
   // may appear between them, but it is not the completed interaction state.
@@ -743,8 +838,6 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // readout, dictation, feed control — stays removed, and so does its speech
   // synthesis. Companion preferences live in Settings → Companion, exercised later.
   // Because it is interactive it is a real button, so it must NOT be aria-hidden.
-  await expect(companion.getByRole('button', { name: /show usage/i })).toBeVisible();
-  await expect(companion.getByRole('button', { name: /Open .*Xroga companion/ })).toHaveCount(0);
   await expect(page.getByRole('region', { name: /companion panel/ })).toHaveCount(0);
 
   const routeChecks = [
@@ -769,6 +862,12 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     expect(shellState.text).not.toContain("We give our best — perfection is Allah's alone. Xroga verifies before publish.");
     expect(shellState.overflow).toBe(false);
   }
+  const companion = page.getByTestId('xroga-companion-floating');
+  await expect(companion).toBeVisible();
+  await expect(companion.getByRole('button', { name: /show usage/i })).toBeVisible();
+  await expect(companion.getByRole('button', { name: 'Start voice input' })).toHaveCount(0);
+  await expect(companion.getByRole('button', { name: /Open .*Xroga companion/ })).toHaveCount(0);
+  await expect(page.getByRole('region', { name: /companion panel/ })).toHaveCount(0);
 
   for (const viewport of [
     { width: 390, height: 844 },
@@ -785,11 +884,41 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // A freshly deployed API can need more than Playwright's 5-second assertion
   // default to warm its authenticated portfolio query. Wait for the durable product
   // result; the assertion still fails if the API never returns it.
-  await expect(page.getByText(`command3-demo-owner-${run}`)).toBeVisible({ timeout: 20_000 });
+  // The same project also appears in the persistent sidebar. Require the
+  // Operations product heading so navigation alone cannot satisfy this check.
+  await expect(page.getByRole('heading', { level: 2, name: `command3-demo-owner-${run}`, exact: true })).toBeVisible({ timeout: 20_000 });
   expect(browserBearer).toMatch(/^Bearer /);
   const allowed = await fetch(`${backendUrl}/api/operations/products/${ownerProjectId}`, { headers: { Authorization: browserBearer } });
   const denied = await fetch(`${backendUrl}/api/operations/products/${outsiderProjectId}`, { headers: { Authorization: browserBearer } });
   expect(allowed.status).toBe(200); expect(denied.status).toBe(403);
+  // Real SSR cookie authentication -> canonical API owner boundary -> durable local PG text.
+  // No mocked transport and no R2 writes. Signed links do not authorize a different account.
+  const privateDelivery=await page.evaluate(async({project,file,foreignProject,foreignFile})=>{
+    const own=await fetch(`/api/private-files/${project}/${file}`,{cache:'no-store'});
+    const denied=await fetch(`/api/private-files/${foreignProject}/${foreignFile}`,{cache:'no-store'});
+    return {own:own.status,body:await own.text(),cache:own.headers.get('cache-control'),foreign:denied.status,foreignBody:await denied.text()};
+  },{project:ownerProjectId,file:privateFileId,foreignProject:outsiderProjectId,foreignFile:foreignFileId});
+  expect(privateDelivery.own).toBe(200);expect(privateDelivery.body).toBe('PRIVATE_BROWSER_FIXTURE_ONLY');
+  expect(privateDelivery.cache).toContain('no-store');expect(privateDelivery.foreign).toBe(404);
+  expect(privateDelivery.foreignBody).not.toContain('FOREIGN_BROWSER_CANARY');
+  const signedResponse=await fetch(`${backendUrl}/api/projects/${ownerProjectId}/files/${privateFileId}/link`,{method:'POST',headers:{Authorization:browserBearer,'Content-Type':'application/json'},body:JSON.stringify({expiresIn:60})});
+  expect(signedResponse.status).toBe(200);const signed=await signedResponse.json() as {url:string};
+  expect((await page.request.get(signed.url)).status()).toBe(200);
+  const anonymous=await page.context().browser()!.newContext();
+  try{expect((await anonymous.request.get(new URL(signed.url,page.url()).href)).status()).toBe(401);}finally{await anonymous.close();}
+  expect((await fetch(`${backendUrl}/api/projects/${ownerProjectId}/files/${privateFileId}/links`,{method:'DELETE',headers:{Authorization:browserBearer}})).status).toBe(200);
+  expect((await page.request.get(signed.url)).status()).toBe(404);
+  await page.goto(`/dashboard/projects/${ownerProjectId}`);
+  await expect(page.getByRole('link',{name:'Download selected file'})).toHaveAttribute('href',`/api/private-files/${ownerProjectId}/${privateFileId}`);
+  await expect(page.getByRole('button',{name:'Download All'})).toHaveCount(0);
+  await page.getByRole('button',{name:'Copy 60-second link'}).click();
+  const timedLink=page.getByLabel('Temporary owner-only link');await expect(timedLink).toBeVisible();
+  const copied=await timedLink.inputValue();expect(new URL(copied).pathname).toBe(`/api/private-files/${ownerProjectId}/${privateFileId}`);
+  expect((await page.request.get(copied)).status()).toBe(200);
+  await page.getByRole('button',{name:'Revoke timed links'}).click();
+  await expect(page.getByRole('status')).toContainText('Timed links revoked');
+  expect((await page.request.get(copied)).status()).toBe(404);
+  await page.goto('/dashboard/operations');
   const notifications = await fetch(`${backendUrl}/api/notifications`, { headers: { Authorization: browserBearer } });
   const unreadNotifications = await fetch(`${backendUrl}/api/notifications/unread-count`, { headers: { Authorization: browserBearer } });
   expect(notifications.status).toBe(200);
@@ -887,5 +1016,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(page).toHaveURL(/\/auth\/login/);
   const loggedOut = await browserSession(page); expect(loggedOut).toEqual({ status: 401, authenticated: false });
   await mkdir('test-results', { recursive: true });
+  expect(productionTelemetryRequests).toBe(0);
+  await writeFile('test-results/batch01-private-delivery-evidence.json',JSON.stringify({expectedRelease,privateCookieDelivery:privateDelivery.own,crossTenantDenial:privateDelivery.foreign,signedOwnerAccess:200,anonymousSignedAccess:401,revokedLinkAccess:404,renderedCopyAndRevoke:'PASS',productionTelemetryRequests,realR2:'NOT_EXECUTED',observedAt:new Date().toISOString()},null,2));
   await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, expectedWebRelease: expectedWebRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', frontendArtifactEquivalent: expectedWebRelease !== expectedRelease ? 'verified_by_zero_frontend_diff' : 'exact_release', login: 'verified', sessionRefresh: 'verified', authenticatedRoutes: routeChecks.length, responsiveViewports: 3, persistentWorkspaceShell: 'verified', workspaceMetrics, hardRefreshDraftRestore: 'verified', offlineShellContinuity: 'verified', userCacheIsolation: 'verified', prepaintTheme: 'verified', companionComposer: 'verified', canonicalComposerProductChips: 'removed', canonicalComposerVoice: 'wake_word_icon_verified', companionProfilePersistence, operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, billingTransaction: 'not_submitted', initialRealCharge: 0, logout: loggedOut.status, fixtureIsolation: 'temporary users, projects, billing cycles, and companion preferences cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
 });

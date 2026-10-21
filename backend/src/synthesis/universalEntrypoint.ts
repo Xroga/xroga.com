@@ -52,6 +52,7 @@ import {
 import {
   getSupabaseAdmin,
 } from '../config/supabase.js';
+import { createTenantContext } from '../security/tenantContext.js';
 
 import {
   routeByCapability,
@@ -1065,6 +1066,7 @@ const measuredEvidence =
         input.store ??
         universalStore(
           getSupabaseAdmin(),
+          createTenantContext({userId:input.userId,via:'persisted_owner'}),
         ),
 
       adapters:

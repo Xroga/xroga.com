@@ -32,6 +32,9 @@ import {
   type CaseExecutor,
 } from '../ai/benchmarkRunner.js';
 import { createBenchmarkCaseExecutor, singleModelImplementation } from '../ai/benchmarkExecutor.js';
+import { estimateMessageTokens } from '../ai/openaiCompat.js';
+import { withOperationsProviderReservation } from '../ai/providerBudget.js';
+import { createHash } from 'node:crypto';
 import { sandboxValidationRunner } from '../synthesis/productionAdapters.js';
 import type { ProviderAdapter, ProviderResult } from './types.js';
 
@@ -72,6 +75,11 @@ export function capsFromParameters(parameters: Record<string, unknown>): Benchma
   };
 }
 
+/** Freezes all effective limits into the plan that confirmation and approval digest. */
+export function canonicalBenchmarkParameters(parameters: Record<string, unknown>): Record<string, unknown> {
+  return { ...parameters, ...capsFromParameters(parameters) };
+}
+
 /**
  * The selection a request asks for.
  *
@@ -110,6 +118,11 @@ export interface BenchmarkAdapterDeps {
   /** Overridable for tests; production runs real models through the real sandbox. */
   readonly executor?: CaseExecutor;
   readonly models?: () => readonly ModelId[];
+}
+
+function reservationKey(actionId: string, sequence: number): string {
+  const hex = createHash('sha256').update(`xroga-benchmark:${actionId}:${sequence}`).digest('hex').slice(0, 32);
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-4${hex.slice(13, 16)}-8${hex.slice(17, 20)}-${hex.slice(20)}`;
 }
 
 export function createBenchmarkAdapter(deps: BenchmarkAdapterDeps = {}): ProviderAdapter {
@@ -157,23 +170,41 @@ export function createBenchmarkAdapter(deps: BenchmarkAdapterDeps = {}): Provide
       }
 
       const store = deps.store ?? new InMemoryBenchmarkResultStore();
+      const action = input.admittedAction as Record<string, unknown> | undefined;
+      const ownerId = typeof input.userId === 'string' ? input.userId : '';
+      const actorId = typeof input.actorId === 'string' ? input.actorId : '';
+      const actionId = typeof input.actionId === 'string' ? input.actionId : '';
+      if (!deps.executor && (!action || action.id !== actionId || action.user_id !== ownerId
+        || action.requested_by !== actorId || action.action_type !== 'run_model_benchmark'
+        || action.status !== 'running')) {
+        return { status: 'blocked', safeSummary: 'A current admitted benchmark action is required', errorCategory: 'authority_required' };
+      }
       const executor = deps.executor ?? createBenchmarkCaseExecutor({
-        implement: singleModelImplementation(),
+        implement: singleModelImplementation(async completion => withOperationsProviderReservation({
+          ownerId, actorId, admittedAction: action!, modelId: completion.modelId,
+          estimatedInputTokens: estimateMessageTokens(completion.messages),
+          maximumOutputTokens: completion.maximumOutputTokens,
+          idempotencyKey: reservationKey(actionId, completion.sequence),
+          execute: completion.execute,
+        })),
         runValidation: sandboxValidationRunner(),
       });
 
       const report = await runBenchmarks({ selection, models, execute: executor, store, caps });
 
-      // `verified` means the run happened and produced measurements, not that the models
-      // passed. A suite where every model fails is a valid, useful measurement.
+      // The operations service promotes `verified` to durable action evidence. A completed
+      // measurement with uncertain storage must retain its output but cannot be promoted.
+      const persisted = Boolean(deps.store) && report.attempted > 0 && report.recorded === report.attempted;
       return {
-        status: report.attempted > 0 ? 'verified' : 'failed',
+        status: persisted ? 'verified' : 'failed',
+        ...(!persisted ? { errorCategory: 'benchmark_persistence_unverified' } : {}),
         safeSummary:
           `Measured ${report.attempted} case${report.attempted === 1 ? '' : 's'}: ` +
           `${report.succeeded} passed, ${report.failed} failed, $${report.actualCostUsd.toFixed(2)} of the ` +
           `$${caps.maximumCostUsd} budget spent` +
           (report.stoppedEarly ? `; stopped early because ${report.stoppedEarly}` : '') +
-          (deps.store ? '' : ' (results not persisted: no durable store was configured)'),
+          (!deps.store ? ' (results not persisted: no durable store was configured)'
+            : report.recordingFailures ? ' (results not fully persisted: storage acknowledgement failed)' : ''),
         observedState: {
           attempted: report.attempted,
           succeeded: report.succeeded,
@@ -183,7 +214,9 @@ export function createBenchmarkAdapter(deps: BenchmarkAdapterDeps = {}): Provide
           plannedCases: planned.cases.length,
           skippedCases: planned.skipped.length,
           modelsMeasured: [...new Set(planned.cases.map((entry) => entry.modelId))].length,
-          persisted: Boolean(deps.store),
+          persisted,
+          recorded: report.recorded,
+          recordingFailures: report.recordingFailures,
         },
       };
     },

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
   BENCHMARK_ACTION_CEILINGS,
+  canonicalBenchmarkParameters,
   capsFromParameters,
   createBenchmarkAdapter,
   selectionFromParameters,
@@ -63,6 +64,17 @@ test('a request may ask for less than the ceiling and is given less', () => {
   assert.equal(caps.maximumCostUsd, 0.5);
 });
 
+test('effective spend and case ceilings are frozen into the approved operation plan', () => {
+  const parameters = canonicalBenchmarkParameters({ maximumCostUsd: 0.5, maximumCases: 2, benchmarkIds: ['api'] });
+  assert.deepEqual(parameters, {
+    maximumCostUsd: 0.5,
+    maximumCases: 2,
+    benchmarkIds: ['api'],
+    perCaseTimeoutMs: BENCHMARK_ACTION_CEILINGS.perCaseTimeoutMs,
+    consecutiveFailureLimit: BENCHMARK_ACTION_CEILINGS.consecutiveFailureLimit,
+  });
+});
+
 test('nonsense caps fall back to the ceiling rather than disabling the limit', () => {
   for (const value of [0, -5, Number.NaN, Number.POSITIVE_INFINITY, '20', null, undefined]) {
     const caps = capsFromParameters({ maximumCases: value, maximumCostUsd: value });
@@ -97,6 +109,13 @@ test('an unrelated capability is refused rather than silently run', async () => 
   const adapter = createBenchmarkAdapter({ executor: passingCase, models });
   const result = await adapter.execute('rollback_release', {});
   assert.equal(result.status, 'unsupported');
+});
+
+test('the real executor refuses to start without the exact admitted action', async () => {
+  const adapter = createBenchmarkAdapter({ models: () => ['kimi_k3'] });
+  const result = await adapter.execute('run_model_benchmark', { maximumCases: 1, maximumCostUsd: 0.5 });
+  assert.equal(result.status, 'blocked');
+  assert.equal(result.errorCategory, 'authority_required');
 });
 
 test('a selection that resolves to no case is blocked rather than reported as a clean run', async () => {
@@ -140,6 +159,8 @@ test('a run with no durable store says so instead of implying the results were k
   const adapter = createBenchmarkAdapter({ executor: passingCase, models });
   const result = await adapter.execute('run_model_benchmark', { parameters: { maximumCases: 1 } });
   assert.equal((result.observedState as { persisted: boolean }).persisted, false);
+  assert.equal(result.status, 'failed');
+  assert.equal(result.errorCategory, 'benchmark_persistence_unverified');
   assert.match(result.safeSummary, /not persisted/);
 });
 

@@ -1,4 +1,6 @@
 import { randomUUID } from 'crypto';
+import {requireTenantContext,requireResourceOwner,type TenantContext} from '../security/tenantContext.js';
+import {requireOptionalOwnedDatabaseProject} from '../security/ownership.js';
 import { convertUserRequest } from './converter.js';
 import { BLACK_HOLE_PUBLIC_NAME } from './black-hole/publicIdentity.js';
 import { readCutoverPlan } from './black-hole/cutover.js';
@@ -81,6 +83,7 @@ import { reviewBuildOutput } from './qa.js';
 import {
   completeRun,
   createRunDurable,
+  captureAdmittedRunAttempt,
   failRun,
   resumeRunDurable,
 } from './runStore.js';
@@ -109,7 +112,7 @@ import {
   inspectConnectedRepositoryState,
   hasManagedVercelDeployment,
 } from '../services/integrations/githubDeploy.js';
-import { clearVercelConnection, getVercelToken } from '../services/integrations/vercelAuth.js';
+import { getVercelToken } from '../services/integrations/vercelAuth.js';
 import {
   getUserSupabaseStatus,
   buildProviderEnvFiles,
@@ -136,7 +139,7 @@ import {
   createSoftwareProject,
 } from '../synthesis/softwareProject.js';
 import {
-  persistSoftwareProjectRevision,
+  persistWorkerSoftwareProjectRevision,
   SupabaseProjectRuntimeStore,
 } from '../synthesis/projectRuntime/store.js';
 import {
@@ -146,7 +149,7 @@ import {
   startOrRefreshLivePreview,
 } from '../synthesis/livePreview/coordinator.js';
 import type { UniversalOutputEnvelope } from './universal/outputEnvelope.js';
-import { projectContextKey } from './universal/projectContext.js';
+import { projectContextKey, requireResumeProjectContext } from './universal/projectContext.js';
 import { routeProject } from '../config/universalAgentFlags.js';
 import { goalContractSchema, type GoalContract } from './universal/goalContract.js';
 import { currentPublicProductTruth } from './universal/productTruth.js';
@@ -476,7 +479,7 @@ function parseClientMeta(raw: unknown): BuildClientMeta | undefined {
     projectRoot:
       typeof m.projectRoot === 'string' && m.projectRoot.startsWith('/')
         ? m.projectRoot
-        : '/',
+        : m.resumeRun === true ? undefined : '/',
     semanticGoalContract: semanticGoal.success ? semanticGoal.data : undefined,
     // Only the exact string "public" grants publication. Anything else — absent, null,
     // "PUBLIC", a truthy object, a client that never learned about this field — is
@@ -1136,6 +1139,7 @@ export async function runChatPipeline(opts: {
 export async function runBuildPipeline(opts: {
   runId?: string;
   userId: string;
+  tenantContext: TenantContext;
   prompt: string;
   history?: Array<{ role: 'user' | 'assistant'; content: string }>;
   projectId?: string;
@@ -1147,6 +1151,9 @@ export async function runBuildPipeline(opts: {
   onCodeReady?: (output: Record<string, unknown>) => void;
   signal?: AbortSignal;
 }): Promise<BuildPipelineResult> {
+  const tenantContext=requireTenantContext(opts.tenantContext);
+  requireResourceOwner(tenantContext,opts.userId);
+  opts={...opts,userId:tenantContext.userId};
   const runId = opts.runId ?? randomUUID();
   const trace = new RunTrace(runId, opts.userId);
   const emit = (ev: PipelineProgress) => {
@@ -1176,10 +1183,24 @@ export async function runBuildPipeline(opts: {
   emit({ ...startupProgress('accepted'), swarmTodos: todosForBuild('route', 'omit') });
 
   const metaRaw = parseClientMeta(opts.clientMeta);
+  let executionStore = process.env.SUPABASE_SERVICE_ROLE_KEY
+    ? new SupabaseExecutionStateStore(opts.userId)
+    : new InMemoryExecutionStateStore();
+  // Check durable lineage before worker admission, repository IO or provider work.
+  const persistedExecutionState = metaRaw?.resumeRun ? await executionStore.load(runId) : null;
+  const resumeContext = metaRaw?.resumeRun ? requireResumeProjectContext(persistedExecutionState, runId, {
+    projectId: opts.projectId, repo: metaRaw.githubTargetRepo, branch: metaRaw.githubTargetBranch, projectRoot: metaRaw.projectRoot,
+  }) : null;
+  if (persistedExecutionState) {
+    opts = { ...opts, projectId: persistedExecutionState.databaseProjectId ??
+      (!persistedExecutionState.repository ? opts.projectId : undefined) };
+  }
+  // Validate restored lineage too, before worker admission or provider IO.
+  opts={...opts,projectId:await requireOptionalOwnedDatabaseProject(tenantContext,opts.projectId)};
   // Sticky default_repo ONLY for explicit updates when the chatbar omitted a target.
   // Greenfield builds must never silently overwrite the last product.
   const stickyDefault =
-    metaRaw?.buildUpdate && !metaRaw?.githubTargetRepo?.includes('/')
+    !metaRaw?.resumeRun && metaRaw?.buildUpdate && !metaRaw?.githubTargetRepo?.includes('/')
       ? await getGithubDefaultRepo(opts.userId).catch(() => null)
       : null;
   const meta: BuildClientMeta | undefined = metaRaw
@@ -1188,9 +1209,13 @@ export async function runBuildPipeline(opts: {
         githubTargetRepo:
           metaRaw.githubTargetRepo ||
           (stickyDefault?.includes('/') ? stickyDefault : undefined),
+        ...(resumeContext ? { githubTargetRepo: resumeContext.repo, githubTargetBranch: resumeContext.branch, projectRoot: resumeContext.projectRoot } : {}),
       }
     : undefined;
   const userFacingPrompt = (meta?.userPrompt || opts.prompt).trim();
+  // Logical workspace/repository IDs are not database project foreign keys.
+  // Carry the verified UUID to the decisive database worker admission boundary.
+  const admittedDatabaseProjectId=opts.projectId&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(opts.projectId)?opts.projectId:undefined;
 
 if (
   meta?.resumeRun
@@ -1199,14 +1224,21 @@ if (
     opts.userId,
     userFacingPrompt,
     runId,
+    admittedDatabaseProjectId,
   );
 } else {
   await createRunDurable(
     opts.userId,
     userFacingPrompt,
     runId,
+    admittedDatabaseProjectId,
   );
-}  emit({ ...startupProgress('quota'), swarmTodos: todosForBuild('route', 'omit') });
+}
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    trace.bindAttempt(captureAdmittedRunAttempt(runId, opts.userId));
+    executionStore = new SupabaseExecutionStateStore(opts.userId, captureAdmittedRunAttempt(runId, opts.userId));
+  }
+  emit({ ...startupProgress('quota'), swarmTodos: todosForBuild('route', 'omit') });
   await assertHasQuota(opts.userId);
   throwIfAborted();
 
@@ -1340,14 +1372,6 @@ if (
 
   await loadRoutingOutcomes();
 
-  const executionStore = process.env.SUPABASE_SERVICE_ROLE_KEY
-    ? new SupabaseExecutionStateStore(opts.userId)
-    : new InMemoryExecutionStateStore();
-
-  const persistedExecutionState = meta?.resumeRun
-    ? await executionStore.load(runId)
-    : null;
-
   const canonicalRecovery = persistedExecutionState
     ? recoverCanonicalExecutionStateForResume(persistedExecutionState)
     : null;
@@ -1417,6 +1441,7 @@ if (
       : await runUniversalSynthesisFoundation({
           prompt: opts.prompt,
           projectId: canonicalProjectId,
+          databaseProjectId: opts.projectId ?? null,
           runId,
           repository: meta?.githubTargetRepo
             ? {
@@ -1437,6 +1462,7 @@ if (
         });
 
   const executionState = synthesis.state;
+  if (!canonicalRecovery) executionState.databaseProjectId = opts.projectId ?? null;
 
   executionState.requiredCapabilities = [
     ...new Set([
@@ -1477,7 +1503,7 @@ if (
     return executionState;
   });
 
-  await executionStore.save(executionState).catch((error) => console.warn('[executionRuntime] initial persistence skipped:', (error as Error).message));
+  await executionStore.save(executionState);
   const route: RouteDecision = {
     ...baseRoute,
     builder: implementationTask?.selectedModel ?? baseRoute.builder,
@@ -1930,7 +1956,7 @@ publicationReason:
     
         const projectRevision =
       softwareProject
-        ? await persistSoftwareProjectRevision(
+        ? await persistWorkerSoftwareProjectRevision(
             opts.userId,
             softwareProject,
           )
@@ -1938,7 +1964,7 @@ publicationReason:
 
     if (
   softwareProject &&
-  projectRevision
+  projectRevision?.saved
 ) {
   const delivery =
     deliveryStateForProject(
@@ -3663,9 +3689,9 @@ publicationReason:
       blocker: qa.ok ? undefined : qa.issues.join('; '),
     });
   }
-  await executionStore.save(executionState).catch((error) => console.warn('[executionRuntime] validation persistence skipped:', (error as Error).message));
+  await executionStore.save(executionState);
 
-  await recordRoutingOutcome({
+  await recordRoutingOutcome(tenantContext, {
     runId,
     userId: opts.userId,
     taskClass: implementationTask?.taskClass ?? route.kind,
@@ -3761,13 +3787,10 @@ publicationReason:
 
   // Auto-provision user's Supabase (schema + AI memory + storage) when connected
   try {
-    const { getUserProviderKey } = await import('../services/integrations/userProviderKeys.js');
+    const { readUserSupabaseBundle } = await import('../services/integrations/userProviderKeys.js');
     const { provisionUserSupabase } = await import('../services/integrations/supabaseProvision.js');
-    const [sbUrl, sbService, sbDb] = await Promise.all([
-      getUserProviderKey(opts.userId, 'supabase_url'),
-      getUserProviderKey(opts.userId, 'supabase'),
-      getUserProviderKey(opts.userId, 'supabase_db_password'),
-    ]);
+    const bundle = await readUserSupabaseBundle(opts.userId);
+    const sbUrl = bundle?.projectUrl, sbService = bundle?.serviceRoleKey, sbDb = bundle?.dbPassword;
     const { getUserSupabaseManagementToken } = await import(
       '../services/integrations/supabaseProvision.js'
     );
@@ -4515,6 +4538,7 @@ publicationReason:
 
           const waited = await waitForEasBuildArtifact({
             userId: opts.userId,
+            projectId: eas.projectId,
             platform: 'android',
             timeoutMs: 8 * 60 * 1000,
             ignoreBuildIds,
@@ -4588,6 +4612,7 @@ publicationReason:
             });
             const waitedIos = await waitForEasBuildArtifact({
               userId: opts.userId,
+              projectId: easIos.projectId,
               platform: 'ios',
               timeoutMs: 6 * 60 * 1000,
               ignoreBuildIds,
@@ -4765,7 +4790,6 @@ publicationReason:
           { githubRepoName },
         );
         const reauth = Boolean(vercelToken) && isVercelAuthFailure(deployed.deployError);
-        if (reauth) await clearVercelConnection(opts.userId).catch(() => {});
         shipBlockers.push(deployFailure);
         emit({
           agent: 'deploy',
@@ -4779,11 +4803,9 @@ publicationReason:
     } catch (err) {
       const raw = redactSecrets((err as Error).message || 'Unknown Vercel error');
       const deployFailure = describeVercelDeployFailure(raw, { githubRepoName });
-      // An `invalidToken` rejection means the stored authorization is dead. Leaving it
-      // in place makes the account look connected, so every later build repeats this
-      // same failure with no way for the user to know why.
+      // This response describes the token used by this attempt, not necessarily
+      // the current connection. A delayed failure must not revoke a reconnect.
       const reauth = Boolean(vercelToken) && isVercelAuthFailure(raw);
-      if (reauth) await clearVercelConnection(opts.userId).catch(() => {});
       shipBlockers.push(deployFailure);
       console.warn('[pipeline] Vercel deploy failed:', deployFailure);
       emit({

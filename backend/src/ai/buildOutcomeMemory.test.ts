@@ -8,6 +8,9 @@ import {
 } from 'node:test';
 
 import assert from 'node:assert/strict';
+import { createClient } from '@supabase/supabase-js';
+import { createTenantContext } from '../security/tenantContext.js';
+import { persistOwnedUniversalRecord } from '../security/ownedRunPersistence.js';
 
 import type {
   RoutingOutcome,
@@ -177,6 +180,10 @@ describe(
                 true,
             },
           ];
+
+        // Keep the foreign private identity as a negative control, and retain
+        // one legitimate owner's observation to exercise telemetry sanitizing.
+        routing.push({ ...routing[0]!, userId: 'user-1' });
 
         const outcome =
           buildOutcomeFromTerminalRun({
@@ -406,8 +413,8 @@ describe(
     );
 
     it(
-      'uses a Supabase primary-key upsert for production idempotence',
-      () => {
+      'uses collision-safe primary-key persistence for production idempotence without owner transfer',
+      async () => {
         const implementation =
           readFileSync(
             new URL(
@@ -431,8 +438,22 @@ describe(
         assert.match(
           implementation,
 
-          /onConflict\s*:\s*['"]run_id['"]/,
+          /persistOwnedUniversalRecord\(supabase,context,'build_outcome'/,
+          'Production learning store must use the canonical owner-bound writer',
         );
+
+        const requests:{url:URL;method:string;headers:Headers}[]=[];
+        const client=createClient('http://127.0.0.1:1','fixture-only',{auth:{persistSession:false,autoRefreshToken:false},global:{fetch:async(input,init)=>{
+          requests.push({url:new URL(String(input)),method:init?.method??'GET',headers:new Headers(init?.headers)});
+          return new Response(JSON.stringify(init?.method==='PATCH'?[{run_id:'fixture-run'}]:[]),{headers:{'Content-Type':'application/json'}});
+        }}});
+        const userId='11111111-1111-4111-8111-111111111111';
+        await persistOwnedUniversalRecord(client,createTenantContext({userId,via:'persisted_owner'}),'build_outcome',{run_id:'fixture-run',user_id:userId});
+        assert.equal(requests[0].url.searchParams.get('on_conflict'),'run_id');
+        assert.match(requests[0].headers.get('Prefer')??'',/ignore-duplicates/);
+        assert.equal(requests[1].method,'PATCH');
+        assert.equal(requests[1].url.searchParams.get('run_id'),'eq.fixture-run');
+        assert.equal(requests[1].url.searchParams.get('user_id'),`eq.${userId}`);
 
         assert.match(
           migration,

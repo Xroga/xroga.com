@@ -3,14 +3,17 @@
  * Client IDs look like cl_… — token endpoint is /login/oauth/token (not /v2/oauth/access_token).
  */
 
-import { createHash, randomBytes } from 'crypto';
+import { createHash, randomBytes, randomUUID } from 'crypto';
+import { requireTenantContext, type TenantContext } from '../../security/tenantContext.js';
 import { getSupabaseAdmin } from '../../config/supabase.js';
-import { ensureGithubSchema, githubSchemaAutoBootstrapEnabled } from '../../db/ensureGithubSchema.js';
-import { isMissingTableError } from './githubTokenStore.js';
+import { getTenantSupabaseAdmin } from '../../security/serviceRoleGuard.js';
 import {
   clearPkceSession,
-  loadPkceSession,
+  consumePkceSession,
   storePkceSession,
+  saveOAuthConnection,
+  saveDirectOAuthConnection,
+  loadProviderToken,
 } from './oauthPkceStore.js';
 
 const PKCE_PROVIDER = 'vercel_oauth_pkce';
@@ -22,7 +25,7 @@ const REFRESH_LEASE_MS = 30_000;
 const REFRESH_WAIT_MS = 20_000;
 
 // A Vercel refresh token is rotated when it is used. Deduplicate refreshes in
-// this process, then claim the stored refresh token atomically before crossing
+// this process, then claim a non-secret database lease atomically before crossing
 // Fly machines. A DB reload remains the recovery path for a waiting machine
 // after the lease owner stores the rotated pair.
 const vercelRefreshInFlight = new Map<string, Promise<string>>();
@@ -30,14 +33,12 @@ const vercelRefreshInFlight = new Map<string, Promise<string>>();
 type VercelRefreshLease = {
   claimId: string;
   expiresAt: number;
-  refreshToken: string;
 };
 
-function encodeVercelRefreshLease(refreshToken: string): string {
+function encodeVercelRefreshLease(): string {
   const lease: VercelRefreshLease = {
     claimId: randomBytes(16).toString('hex'),
     expiresAt: Date.now() + REFRESH_LEASE_MS,
-    refreshToken,
   };
   return `${REFRESH_LEASE_PREFIX}${Buffer.from(JSON.stringify(lease), 'utf8').toString('base64url')}`;
 }
@@ -49,12 +50,11 @@ export function parseVercelRefreshLease(value: string | null | undefined): Verce
       Buffer.from(value.slice(REFRESH_LEASE_PREFIX.length), 'base64url').toString('utf8'),
     ) as Partial<VercelRefreshLease>;
     if (
+      Object.keys(decoded).sort().join(',') !== 'claimId,expiresAt' ||
       typeof decoded.claimId !== 'string' ||
       !decoded.claimId ||
       typeof decoded.expiresAt !== 'number' ||
-      !Number.isFinite(decoded.expiresAt) ||
-      typeof decoded.refreshToken !== 'string' ||
-      !decoded.refreshToken
+      !Number.isFinite(decoded.expiresAt)
     ) {
       return null;
     }
@@ -71,17 +71,6 @@ const ALLOWED_CALLBACK_ORIGINS = [
   'http://127.0.0.1:3000',
 ];
 
-type StoredVercelAuth = {
-  access_token: string;
-  username: string;
-  auth_kind?: VercelAuthKind;
-  provider_user_id?: string;
-  refresh_token?: string;
-  expires_in?: number;
-  expires_at?: string;
-  updated_at: string;
-};
-
 export type VercelAuthKind =
   | 'sign_in_with_vercel'
   | 'personal_token'
@@ -91,61 +80,13 @@ function vercelStoragePath(userId: string): string {
   return `${userId}/vercel.json`;
 }
 
-async function ensureTokenBucket(): Promise<boolean> {
-  const supabase = getSupabaseAdmin();
-  const { data: buckets, error: listErr } = await supabase.storage.listBuckets();
-  if (!listErr && buckets?.some((b) => b.id === TOKEN_BUCKET || b.name === TOKEN_BUCKET)) {
-    return true;
-  }
-  const { error: createErr } = await supabase.storage.createBucket(TOKEN_BUCKET, {
-    public: false,
-    fileSizeLimit: 8192,
-  });
-  if (!createErr) return true;
-  if (/already exists|duplicate/i.test(createErr.message)) return true;
-  console.warn('[vercelAuth] createBucket:', createErr.message);
-  return false;
-}
-
-async function saveVercelTokenToStorage(userId: string, data: StoredVercelAuth): Promise<boolean> {
+async function deleteVercelTokenFromStorage(userId: string): Promise<boolean> {
   try {
-    if (!(await ensureTokenBucket())) return false;
     const supabase = getSupabaseAdmin();
-    const body = JSON.stringify(data);
-    const { error } = await supabase.storage.from(TOKEN_BUCKET).upload(vercelStoragePath(userId), body, {
-      upsert: true,
-      contentType: 'application/json',
-    });
-    if (error) {
-      console.warn('[vercelAuth] storage upload:', error.message);
-      return false;
-    }
-    return true;
-  } catch (err) {
-    console.warn('[vercelAuth] storage save:', (err as Error).message);
+    const { error } = await supabase.storage.from(TOKEN_BUCKET).remove([vercelStoragePath(userId)]);
+    return !error;
+  } catch {
     return false;
-  }
-}
-
-async function getVercelTokenFromStorage(userId: string): Promise<StoredVercelAuth | null> {
-  try {
-    const supabase = getSupabaseAdmin();
-    const { data, error } = await supabase.storage.from(TOKEN_BUCKET).download(vercelStoragePath(userId));
-    if (error || !data) return null;
-    const parsed = JSON.parse(await data.text()) as StoredVercelAuth;
-    if (!parsed?.access_token?.trim()) return null;
-    return parsed;
-  } catch {
-    return null;
-  }
-}
-
-async function deleteVercelTokenFromStorage(userId: string): Promise<void> {
-  try {
-    const supabase = getSupabaseAdmin();
-    await supabase.storage.from(TOKEN_BUCKET).remove([vercelStoragePath(userId)]);
-  } catch {
-    /* ignore */
   }
 }
 
@@ -240,9 +181,10 @@ function makeVerifier(): string {
 }
 
 export async function buildVercelAuthorizeUrl(
-  userId: string,
+  context: TenantContext,
   redirectUri: string,
 ): Promise<{ url: string; state: string } | null> {
+  const { userId } = requireTenantContext(context);
   if (!vercelOAuthConfigured()) return null;
   const verifier = makeVerifier();
   const nonce = randomBytes(16).toString('base64url');
@@ -250,8 +192,8 @@ export async function buildVercelAuthorizeUrl(
     JSON.stringify({ userId, t: Date.now(), n: randomBytes(8).toString('hex') }),
   ).toString('base64url');
 
-  // DB when available; Storage fallback when user_integrations is missing
-  await storePkceSession(userId, PKCE_PROVIDER, {
+  // OAuth session admission is database-only and bound to the issued context.
+  await storePkceSession(context, PKCE_PROVIDER, {
     verifier,
     state,
     redirect_uri: redirectUri,
@@ -276,17 +218,18 @@ export async function buildVercelAuthorizeUrl(
 }
 
 export async function exchangeVercelOAuthCode(opts: {
-  userId: string;
+  tenantContext: TenantContext;
   code: string;
   state: string;
   redirectUri: string;
-}): Promise<{ access_token: string; refresh_token?: string; expires_in?: number }> {
+}): Promise<{ access_token: string; refresh_token?: string; expires_in?: number; authorizationRevision: string }> {
+  const context = requireTenantContext(opts.tenantContext);
   if (!vercelOAuthConfigured()) {
     throw new Error('Vercel OAuth not configured — set VERCEL_CLIENT_ID/SECRET');
   }
 
-  const pkce = await loadPkceSession(opts.userId, PKCE_PROVIDER, opts.state);
-  if (!pkce?.verifier) {
+  const pkce = await consumePkceSession(context, PKCE_PROVIDER, opts.state);
+  if (!pkce?.verifier || !pkce.authorization_revision) {
     throw new Error('Invalid or expired OAuth state — click Authorize Vercel again');
   }
 
@@ -320,8 +263,6 @@ export async function exchangeVercelOAuthCode(opts: {
     error_description?: string;
   };
 
-  await clearPkceSession(opts.userId, PKCE_PROVIDER);
-
   if (!tokenData.access_token) {
     throw new Error(
       tokenData.error_description ||
@@ -334,6 +275,7 @@ export async function exchangeVercelOAuthCode(opts: {
     access_token: tokenData.access_token,
     refresh_token: tokenData.refresh_token,
     expires_in: tokenData.expires_in,
+    authorizationRevision: pkce.authorization_revision,
   };
 }
 
@@ -356,32 +298,40 @@ export function parseVercelOAuthState(state: string): { userId: string } | null 
 
 export async function getVercelToken(userId: string): Promise<string | null> {
   let row = await loadVercelConnection(userId);
+  // A refresh winner can replace the envelope during the first unwrap. Read
+  // the current authority once more, never reuse the rejected plaintext.
+  if (!row) row = await loadVercelConnection(userId);
   if (!row?.access_token?.trim()) return null;
 
   if (!isVercelAccessTokenExpiring(row.expires_at)) return row.access_token.trim();
 
   if (row.refresh_token) {
     try {
-      const activeLease = parseVercelRefreshLease(row.refresh_token);
+      const activeLease = parseVercelRefreshLease(row.refresh_lease_marker);
       if (activeLease && activeLease.expiresAt > Date.now()) {
         const winner = await waitForVercelRefreshWinner(userId, row.access_token);
         if (winner) return winner;
         row = (await loadVercelConnection(userId)) ?? row;
+        const currentLease = parseVercelRefreshLease(row.refresh_lease_marker);
+        if (currentLease && currentLease.expiresAt > Date.now()) {
+          throw new Error('Another Vercel token refresh is still in progress');
+        }
       }
 
-      const observedRefreshToken = row.refresh_token;
-      if (!observedRefreshToken) return null;
-      const lease = parseVercelRefreshLease(observedRefreshToken);
-      const refreshToken = lease?.refreshToken ?? observedRefreshToken;
+      const refreshToken = row.refresh_token;
+      if (!refreshToken) return null;
+      const observedLeaseMarker = row.refresh_lease_marker ?? null;
+      if (!row.credential_revision) return null;
       const refreshed = await refreshVercelOAuthTokenSingleFlight(
         userId,
-        observedRefreshToken,
+        observedLeaseMarker,
         refreshToken,
         row.username,
+        row.credential_revision,
       );
       return refreshed;
     } catch (err) {
-      console.warn('[vercelAuth] refresh failed:', (err as Error).message);
+      console.warn('[vercelAuth] refresh failed');
 
       // Another Fly machine may have won a simultaneous refresh and rotated
       // the token before this request reached Vercel. Re-read authoritative
@@ -409,23 +359,25 @@ export function isVercelAccessTokenExpiring(
 ): boolean {
   if (!expiresAt) return false;
   const parsed = Date.parse(expiresAt);
-  return Number.isFinite(parsed) && parsed < now + TOKEN_REFRESH_SKEW_MS;
+  return !Number.isFinite(parsed) || parsed < now + TOKEN_REFRESH_SKEW_MS;
 }
 
 async function refreshVercelOAuthTokenSingleFlight(
   userId: string,
-  observedRefreshToken: string,
+  observedLeaseMarker: string | null,
   refreshToken: string,
   username?: string,
+  credentialRevision?: string,
 ): Promise<string> {
   const existing = vercelRefreshInFlight.get(userId);
   if (existing) return existing;
 
   const pending = refreshVercelOAuthTokenWithLease(
     userId,
-    observedRefreshToken,
+    observedLeaseMarker,
     refreshToken,
     username,
+    credentialRevision,
   );
   vercelRefreshInFlight.set(userId, pending);
   try {
@@ -452,7 +404,7 @@ async function waitForVercelRefreshWinner(
     ) {
       return latest.access_token.trim();
     }
-    const lease = parseVercelRefreshLease(latest?.refresh_token);
+    const lease = parseVercelRefreshLease(latest?.refresh_lease_marker);
     if (!lease || lease.expiresAt <= Date.now()) return null;
   }
   return null;
@@ -460,22 +412,27 @@ async function waitForVercelRefreshWinner(
 
 async function refreshVercelOAuthTokenWithLease(
   userId: string,
-  observedRefreshToken: string,
+  observedLeaseMarker: string | null,
   refreshToken: string,
   username?: string,
+  credentialRevision?: string,
 ): Promise<string> {
+  if (!credentialRevision) throw new Error('Vercel refresh authority is unavailable. Reconnect.');
   const supabase = getSupabaseAdmin();
-  const marker = encodeVercelRefreshLease(refreshToken);
-  const { data, error } = await supabase
+  const marker = encodeVercelRefreshLease();
+  let claim = supabase
     .from('user_integrations')
     .update({ refresh_token: marker })
     .eq('user_id', userId)
     .eq('provider', 'vercel')
-    .eq('refresh_token', observedRefreshToken)
-    .select('refresh_token');
+    .eq('credential_revision', credentialRevision);
+  claim = observedLeaseMarker === null
+    ? claim.is('refresh_token', null)
+    : claim.eq('refresh_token', observedLeaseMarker);
+  const { data, error } = await claim.select('refresh_token');
 
-  if (error && !isMissingTableError(error.message)) {
-    throw new Error(`Could not claim Vercel refresh lease: ${error.message}`);
+  if (error) {
+    throw new Error('Vercel refresh authority unavailable. Retry shortly.');
   }
 
   if (!error && (!data || data.length === 0)) {
@@ -485,20 +442,13 @@ async function refreshVercelOAuthTokenWithLease(
     throw new Error('Another Vercel token refresh is still in progress');
   }
 
-  // Storage-only legacy installations cannot make an atomic database claim. Keep
-  // the existing in-process single flight there; production uses the DB lease.
-  if (error && isMissingTableError(error.message)) {
-    return refreshVercelOAuthToken(userId, refreshToken, username);
-  }
-
   try {
-    return await refreshVercelOAuthToken(userId, refreshToken, username);
+    return await refreshVercelOAuthToken(userId, refreshToken, username, marker, credentialRevision);
   } catch (refreshError) {
-    // Restore the original refresh token only when this exact lease still owns the
-    // row. A later successful refresh must never be overwritten by cleanup.
+    // Clear only this lease. The refresh token remains inside its vault envelope.
     await supabase
       .from('user_integrations')
-      .update({ refresh_token: refreshToken })
+      .update({ refresh_token: null })
       .eq('user_id', userId)
       .eq('provider', 'vercel')
       .eq('refresh_token', marker);
@@ -512,24 +462,27 @@ async function loadVercelConnection(userId: string): Promise<{
   username?: string;
   expires_at?: string;
   auth_kind?: VercelAuthKind;
+  credential_revision?: string;
+  provider_user_id?: string;
+  refresh_lease_marker?: string;
 } | null> {
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from('user_integrations')
-    .select('access_token, refresh_token, metadata')
-    .eq('user_id', userId)
-    .eq('provider', 'vercel')
-    .maybeSingle();
-
-  if (!error && data?.access_token?.trim()) {
+  let data;
+  try { data = await loadProviderToken(userId, 'vercel', { authoritativeOnly: true }); }
+  catch { return null; }
+  if (data?.access_token?.trim()) {
     const meta = (data.metadata ?? {}) as {
       username?: string;
       expires_at?: string;
       auth_kind?: VercelAuthKind;
+      provider_user_id?: string;
+      refresh_lease_marker?: string;
     };
     return {
       access_token: data.access_token.trim(),
       refresh_token: data.refresh_token,
+      credential_revision: data.credential_revision,
+      provider_user_id: typeof meta.provider_user_id === 'string' ? meta.provider_user_id : undefined,
+      refresh_lease_marker: typeof meta.refresh_lease_marker === 'string' ? meta.refresh_lease_marker : undefined,
       username: meta.username,
       expires_at: meta.expires_at,
       auth_kind:
@@ -537,29 +490,26 @@ async function loadVercelConnection(userId: string): Promise<{
     };
   }
 
-  if (error && !isMissingTableError(error.message)) {
-    console.warn('[vercelAuth] lookup:', error.message);
-  }
-
-  const stored = await getVercelTokenFromStorage(userId);
-  if (!stored?.access_token?.trim()) return null;
-  return {
-    access_token: stored.access_token.trim(),
-    refresh_token: stored.refresh_token,
-    username: stored.username,
-    expires_at: stored.expires_at,
-    auth_kind:
-      stored.auth_kind ?? (stored.refresh_token ? 'sign_in_with_vercel' : 'personal_token'),
-  };
+  // An absent authority row is not permission to revive a legacy mirror.
+  return null;
 }
 
 export async function refreshVercelOAuthToken(
   userId: string,
   refreshToken: string,
   username?: string,
+  expectedRefreshToken: string = refreshToken,
+  admittedRevision?: string,
 ): Promise<string> {
   if (!vercelOAuthConfigured()) {
     throw new Error('Vercel OAuth not configured');
+  }
+  const observed = await loadVercelConnection(userId);
+  if (!observed?.credential_revision || observed.refresh_token !== refreshToken
+    || (admittedRevision !== undefined
+      ? observed.credential_revision !== admittedRevision || observed.refresh_lease_marker !== expectedRefreshToken
+      : observed.refresh_token !== expectedRefreshToken)) {
+    throw new Error('Vercel connection changed before refresh. Reconnect to continue.');
   }
   const body = new URLSearchParams({
     grant_type: 'refresh_token',
@@ -586,9 +536,10 @@ export async function refreshVercelOAuthToken(
   }
   await saveVercelConnection(userId, tokenData.access_token, {
     username: username || 'vercel-user',
+    providerUserId: observed.provider_user_id,
     refreshToken: tokenData.refresh_token || refreshToken,
     expiresIn: tokenData.expires_in,
-  });
+  }, expectedRefreshToken, observed.credential_revision);
   return tokenData.access_token;
 }
 
@@ -719,6 +670,8 @@ export async function saveVercelConnection(
     expiresIn?: number;
     authKind?: VercelAuthKind;
   },
+  expectedRefreshToken?: string,
+  authorizationRevision?: string,
 ): Promise<void> {
   const token = accessToken.trim();
   if (!token) throw new Error('Empty Vercel access token');
@@ -728,23 +681,6 @@ export async function saveVercelConnection(
       ? new Date(Date.now() + meta.expiresIn * 1000).toISOString()
       : undefined;
 
-  const storagePayload: StoredVercelAuth = {
-    access_token: token,
-    username: meta.username ?? 'vercel-user',
-    auth_kind:
-      meta.authKind ?? (meta.refreshToken ? 'sign_in_with_vercel' : 'personal_token'),
-    provider_user_id: meta.providerUserId,
-    refresh_token: meta.refreshToken,
-    expires_in: meta.expiresIn,
-    expires_at: expiresAt,
-    updated_at: new Date().toISOString(),
-  };
-
-  if (githubSchemaAutoBootstrapEnabled()) {
-    await ensureGithubSchema();
-  }
-
-  const supabase = getSupabaseAdmin();
   const row = {
     user_id: userId,
     provider: 'vercel',
@@ -753,6 +689,7 @@ export async function saveVercelConnection(
     provider_user_id: meta.providerUserId ?? null,
     metadata: {
       username: meta.username ?? 'vercel-user',
+      provider_user_id: meta.providerUserId,
       auth_kind:
         meta.authKind ?? (meta.refreshToken ? 'sign_in_with_vercel' : 'personal_token'),
       expires_in: meta.expiresIn,
@@ -761,43 +698,31 @@ export async function saveVercelConnection(
     },
   };
 
-  let { error } = await supabase.from('user_integrations').upsert(row, {
-    onConflict: 'user_id,provider',
-  });
-
-  if (error && isMissingTableError(error.message)) {
-    await ensureGithubSchema();
-    await new Promise((r) => setTimeout(r, 400));
-    ({ error } = await supabase.from('user_integrations').upsert(row, {
-      onConflict: 'user_id,provider',
-    }));
-  }
-
-  if (error && isMissingTableError(error.message)) {
-    const ok = await saveVercelTokenToStorage(userId, storagePayload);
-    if (!ok) {
-      throw new Error(
-        'Could not save Vercel token — user_integrations table missing and storage fallback failed. Apply migration 036 or set DATABASE_URL on the API.',
-      );
-    }
-    console.warn('[vercelAuth] saved via storage fallback (user_integrations missing)');
+  if (authorizationRevision !== undefined || meta.authKind === 'sign_in_with_vercel') {
+    await saveOAuthConnection(userId, 'vercel', row, authorizationRevision, expectedRefreshToken, meta.providerUserId);
     return;
+  } else if (expectedRefreshToken !== undefined) {
+    // Compatibility for direct server-side rotation callers, which perform no
+    // provider I/O here. The external refresh path always carries its earlier revision.
+    const observed = await loadVercelConnection(userId);
+    if (!observed?.credential_revision || observed.refresh_token !== expectedRefreshToken) {
+      throw new Error('Vercel connection changed during refresh. Reconnect or retry.');
+    }
+    await saveOAuthConnection(userId, 'vercel', row, observed.credential_revision, expectedRefreshToken, meta.providerUserId);
+    return;
+  } else {
+    await saveDirectOAuthConnection(userId, 'vercel', row, meta.providerUserId);
   }
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  void saveVercelTokenToStorage(userId, storagePayload).catch(() => {
-    /* DB is primary; storage mirror is best-effort */
-  });
 }
 
-export async function clearVercelConnection(userId: string): Promise<void> {
-  const supabase = getSupabaseAdmin();
-  await supabase.from('user_integrations').delete().eq('user_id', userId).eq('provider', 'vercel');
-  await clearPkceSession(userId, PKCE_PROVIDER);
-  await deleteVercelTokenFromStorage(userId);
+export async function clearVercelConnection(context: TenantContext): Promise<void> {
+  const { userId } = requireTenantContext(context);
+  const supabase = getTenantSupabaseAdmin(context);
+  const { error } = await supabase.from('user_integrations').upsert({ user_id: userId, provider: 'vercel',
+    access_token: '', refresh_token: null, credential_revision: randomUUID(), metadata: { revoked: true } }, { onConflict: 'user_id,provider' });
+  if (error) throw new Error('Vercel revocation could not be recorded. Retry shortly.');
+  await clearPkceSession(context, PKCE_PROVIDER);
+  if (!(await deleteVercelTokenFromStorage(userId))) throw new Error('Vercel disconnected, but legacy copy cleanup is pending. Retry shortly.');
 }
 
 /**

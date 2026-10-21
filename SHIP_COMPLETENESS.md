@@ -1,5 +1,7 @@
 # Honest ship status
 
+> Historical implementation descriptions below are not current independent acceptance evidence. Use `docs/xroga/IMPLEMENTATION_STATUS.md`, the requirements ledger and dated command/journey evidence for current scope. Code present, fixture PASS, provider resource created, store submitted and independently live remain distinct states. Known gaps cannot be promoted to PASS by this document's older “Done” labels.
+
 ## Fully shipped (Xroga’s side complete)
 | Kind | `fullyShipped` when | Still external |
 |------|---------------------|----------------|

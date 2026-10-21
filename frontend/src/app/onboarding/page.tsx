@@ -25,11 +25,8 @@ export default async function OnboardingPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/auth/login');
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('onboarding')
-    .eq('id', user.id)
-    .single();
+  const { data: profile, error } = await supabase.rpc('read_current_profile_setup');
+  if (error || (profile && profile.id !== user.id)) throw new Error('Profile setup unavailable');
 
   const state = profile ? normalizeOnboarding(profile.onboarding) : { ...DEFAULT_ONBOARDING };
 

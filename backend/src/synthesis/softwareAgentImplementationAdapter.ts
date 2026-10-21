@@ -6,6 +6,7 @@ import type {
   ModelId,
 } from '../ai/models.js';
 
+import { captureAdmittedRunAttempt } from '../ai/runStore.js';
 import {
   assertCodingModel,
 } from '../ai/providerPolicy.js';
@@ -52,6 +53,7 @@ import {
 
 import {
   SupabaseSoftwareAgentCheckpointStore,
+  bindSoftwareCheckpointRecovery,
   inMemorySoftwareAgentCheckpointStore,
   type SoftwareAgentCheckpointStore,
 } from '../ai/softwareAgent/softwareAgentCheckpoint.js';
@@ -510,6 +512,7 @@ function checkpointStoreFor(
   ) {
     return new SupabaseSoftwareAgentCheckpointStore(
       input.userId,
+      captureAdmittedRunAttempt(input.runId, input.userId),
     );
   }
 
@@ -685,10 +688,9 @@ export async function runUniversalSoftwareImplementation(
     ),
   ];
 
-  const checkpointStore =
-  checkpointStoreFor(
-    input,
-  );
+  const checkpointStore = bindSoftwareCheckpointRecovery(checkpointStoreFor(input), {
+    runId: input.runId, projectId: input.projectId ?? null, repository: repository ?? null, baseFiles: agentInitialFiles,
+  });
 
 const livePreviewBridge =
   createAgentLivePreviewBridge({
@@ -713,12 +715,14 @@ const livePreviewBridge =
       input.onEvent,
   });
 
+let implementationClosed = false;
 const eventObserver =
   input.onEvent
     ? (
         event:
           SoftwareRunEvent,
       ) => {
+        if (implementationClosed) return;
         input.onEvent?.(
           event,
         );
@@ -891,6 +895,9 @@ signal:
 
 checkpointStore,
       },
+    }).finally(() => {
+      implementationClosed = true;
+      return livePreviewBridge.closeAndDrain();
     });
 
   console.info(

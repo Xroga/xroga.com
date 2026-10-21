@@ -10,6 +10,7 @@ import { SwarmMessageLog } from '@/components/terminal/SwarmMessageLog';
 import { FilePreview } from './FilePreview';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { cn } from '@/lib/utils';
+import { isPrivateFileUrl } from '@/lib/privateFileUrl';
 
 interface ProjectDetailViewProps {
   projectId: string;
@@ -86,14 +87,10 @@ export function ProjectDetailView({ projectId }: ProjectDetailViewProps) {
               View on GitHub
             </a>
           )}
-          <button
-            type="button"
-            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-sm"
-            onClick={() => toast.success('Download started')}
-          >
-            <Download className="w-4 h-4" />
-            Download All
-          </button>
+          {selectedFile&&isPrivateFileUrl(selectedFile.file_url) ? <a
+            href={selectedFile.file_url!} download
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-sm focus-visible:outline focus-visible:outline-2"
+          ><Download className="w-4 h-4" />Download selected file</a> : <span className="text-sm text-[var(--muted)]">Select an available private file to download.</span>}
         </div>
       </div>
 

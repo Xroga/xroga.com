@@ -161,19 +161,22 @@ async function getIntegration(userId: string): Promise<GitHubIntegrationRow | nu
   if (!token) return null;
 
   const supabase = getSupabaseAdmin();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('github_integrations')
-    .select('access_token, repo_strategy, default_repo')
+    .select('repo_strategy, default_repo')
     .eq('user_id', userId)
     .maybeSingle();
 
-  if (data?.access_token) return data as GitHubIntegrationRow;
+  if (error) return null;
 
-  const storageMeta = await getGitHubStorageMeta(userId);
+  const metadata = data ?? await getGitHubStorageMeta(userId);
+  // Metadata lookup must not restore a token disconnected or replaced while we read.
+  // In-flight provider revocation still needs the broader credential lifecycle gate.
+  if (await getGitHubToken(userId) !== token) return null;
   return {
     access_token: token,
-    repo_strategy: storageMeta?.repo_strategy ?? 'auto',
-    default_repo: storageMeta?.default_repo ?? null,
+    repo_strategy: metadata?.repo_strategy ?? 'auto',
+    default_repo: metadata?.default_repo ?? null,
   };
 }
 

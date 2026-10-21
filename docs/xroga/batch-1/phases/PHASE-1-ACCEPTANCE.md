@@ -1,0 +1,33 @@
+# Phase 1 acceptance
+
+Status: VERIFIED_SCOPE at implementation source `8ab6e1dd590ac985fdfba8249ac0051948241963`, integrated `2bea538c4d3f34a29e9982c2b86714006aad672a`. The collector returned B1_P1_VERIFIED for all60 original Phase1 criteria using aggregate39143754722 and disposable39143754730. All11 workflows passed. This document is not Batch1 or actual Command007 acceptance. The terminal handoff additionally requires the final evidence commit's own exact-HEAD collection under `artifacts/phase-1-acceptance/`.
+
+Every repeated branch/integrated baseline passed21 stages without source mutation. Per run:3057 backend tests,36 baseline guards,105 foundation/security fixtures; frontend1043 branch/1080 integrated. All collected tests passed with zero failures/skips. Both builds/typechecks, frontend lint, frozen dependency compatibility, SQL syntax/order, deterministic inventory/converter and operating policy passed. Disposable proof executed115 fresh/upgrade migrations,149 security/concurrency tests and3 authenticated browser tests, including the assignment/exposure durable-winner case. The overlay is accepted at this exact source, not merely prepared or locally simulated.
+
+The original104 criteria are preserved verbatim in `BATCH-1-CRITERION-SCOREBOARD.json`. Commands001–006 own60 Phase1 criteria. Their existing inventory, source/mission mappings, reproducible baseline, runtime truth, golden harness and operating-policy tests are reused. The eight specialty owners now have explicit founder-approved `SUPP-*` planning IDs, exact source row hashes, scopes, tests and dependencies. They remain PLANNED/NOT_IMPLEMENTED, with roadmap placement pending. The72 original missions are unchanged.
+
+`verify-phase-one.mjs` accepts a source only after independently reading all11 successful GitHub workflow categories, downloading/validating four21-stage manifests for branch/integrated source twice, checking actual115-migration fresh/upgrade and149-or-more real security tests with3 browser tests and no failures/skips, and observing the actual experiment assignment/exposure test. It rejects stale implementation bindings, modified original criteria, missing tests, skips or unverified growth state. Final exact-SHA current-state/runtime summaries and criterion results are emitted into `artifacts/phase-1-acceptance/`, without modifying tracked source. A committed generated document cannot contain the SHA of its own enclosing commit. The committed summaries preserve generation-base identity and source hashes; immutable acceptance artifacts identify the exact tested source.
+
+## Command007 evaluator
+
+`scripts/security/tenant-acceptance.mjs` computes statuses, boundary counts and the ten-criterion result. A fully valid synthetic proof yields PASS and a nonzero certified factory count. Missing source reviews, negative tests, current source/hash, exact account binding, narrow registered exemption or original criterion block acceptance. Independent receipt/artifact bindings prevent a positive test being relabeled as a negative. Provider PASS is denied without a trusted provider verifier. Partial obligation closure cannot clear another unresolved obligation.
+
+The real repository retains its unresolved tenant obligations. Legacy narrow semantic closures are preserved, not silently promoted to whole-workflow certification. New machine-linked proof obligations are evidence work, not newly discovered exploits or instructions to rewrite unchanged verified code.
+
+For final Phase2 acceptance, use `node scripts/security/audit-tenant-policies.mjs --require-complete --evidence artifacts/<source-proof>.json --observations artifacts/<independently-collected-observations>.json`. External proof cannot overwrite canonical source. The command re-reads authenticated GitHub metadata/logs at the exact HEAD, verifies hashes and observed passing test names, then evaluates current AST-discovered callers. An unpaired, stale or fabricated proof is rejected. Normal inventory CI remains credential-free and is not a security acceptance claim.
+
+## Preserved overlay
+
+The existing assignment/exposure implementation and its two service-only additive migrations are retained for actual disposable verification. They serialize current actor/project/member and parent/assignment identity, preserve stable cohort retries and return the durable first-exposure winner. Focused tests and31 local SQL assertions passed before Phase1. Only the exact-source real lock races, rollback, browser-role denial and fresh/upgrade CI may accept the overlay. No new growth feature or migration was added during Phase1.
+
+## Remaining scope
+
+Phase2 owns actual007 acceptance and the frozen371 historical record mappings in73 work packets across seven families. Phase3 owns008/009, Phase4 owns010, dependency exposure decisions and original final GO/NO-GO. ActualR2, production schema parity, realKMS and commercial hosting remain explicit external/activation boundaries. None is converted to provider PASS by fixtures. No Phase2 engineering has started.
+
+Cost evidence: repository visibility is public and existing workflows use standard Ubuntu GitHub-hosted runners. [GitHub's runner documentation](https://docs.github.com/en/actions/reference/runners/github-hosted-runners) states those public-repository runners are free. No larger runner, paid model call, cloud provisioning, subscription, deployment, DNS or production operation was introduced.
+
+`PHASE-1-VERIFIED-EVIDENCE.json` freezes the independently collected implementation checkpoint and every original001–006 result with source hashes, test identities and run references. Each command passes10/10. It remains bound to immutable Git blobs at its recorded SHA, not to future edits. The final exact-HEAD receipt, scorecard and current-state/runtime truth maps are emitted under `artifacts/phase-1-acceptance/` after the evidence commit's own CI, without another tracked-source edit or self-SHA loop.
+
+The two evidence-collector defects found before signing are fixed and tested: actual AST registrations exclude quoted negative-test source, and passing TAP identities use canonical log redaction rather than unredacted substring matches. Both fixture stages are collected. Superseded aggregate39142502747 and39142971026 were cancelled by newer source, not counted as acceptance. Their successful disposable runs remain scoped historical evidence. No failed or missing test was waived.
+
+Full private transcript semantic review and the inaccessible historical shared page remain explicitly unverified in the source register. Original119/72 row integrity and available-source ownership/hash gates pass; no full historical narrative review or feature implementation is claimed.

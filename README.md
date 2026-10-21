@@ -152,7 +152,7 @@ xroga.com/
 ### Start the monorepo
 
 ```bash
-npm install
+npm ci
 cp backend/.env.example backend/.env
 cp frontend/.env.local.example frontend/.env.local
 ```

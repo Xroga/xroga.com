@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { canonicalAuthorityValue } from '../security/authority/digest.js';
 import type {
   ActionDefinition, ActionStatus, OperationalResource, PortfolioProduct,
   ProviderResult, RiskLevel, SafeActionRequest, TruthStatus,
@@ -38,15 +39,17 @@ const SENSITIVE = [
   /(?:password|token|secret|api[-_]?key|authorization|cookie)\s*[:=]\s*[^\s,;"']+/gi,
 ];
 
-export function redactOperationsValue(value: unknown): unknown {
+export function redactOperationsValue(value: unknown, profile: 'audit' | 'tool_output' = 'audit'): unknown {
   if (typeof value === 'string') return SENSITIVE.reduce((text, pattern) => text.replace(pattern, '[REDACTED]'), value);
-  if (Array.isArray(value)) return value.map(redactOperationsValue);
+  if (Array.isArray(value)) return value.map(item => redactOperationsValue(item, profile));
   if (value && typeof value === 'object') {
     return Object.fromEntries(Object.entries(value).map(([key, item]) => [
       key,
-      /password|token|secret|key|authorization|cookie|connection|string|url/i.test(key) && typeof item === 'string'
+      (profile === 'tool_output'
+        ? /password|token|secret|api[-_]?key|private[-_]?key|authorization|cookie|credential|connection[-_]?string|^key$/i.test(key)
+        : /password|token|secret|key|authorization|cookie|connection|string|url/i.test(key) && typeof item === 'string')
         ? '[REDACTED]'
-        : redactOperationsValue(item),
+        : redactOperationsValue(item, profile),
     ]));
   }
   return value;
@@ -92,15 +95,7 @@ export function actionPlanDigest(request: SafeActionRequest): string {
  * what the plan says.
  */
 function canonicalParameters(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(canonicalParameters);
-  if (value && typeof value === 'object') {
-    return Object.fromEntries(
-      Object.entries(value as Record<string, unknown>)
-        .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
-        .map(([key, item]) => [key, canonicalParameters(item)]),
-    );
-  }
-  return value;
+  return canonicalAuthorityValue(value);
 }
 
 export function initialActionStatus(definition: ActionDefinition, confirmed: boolean): ActionStatus {
@@ -116,7 +111,8 @@ export function approvalIsValid(input: {
 }): { valid: boolean; reason?: string } {
   if (input.requesterId === input.approverId) return { valid: false, reason: 'requester_cannot_self_approve' };
   if (input.decision !== 'approved') return { valid: false, reason: 'approval_not_granted' };
-  if (new Date(input.expiresAt).getTime() <= Date.now()) return { valid: false, reason: 'approval_expired' };
+  const expiresAt = new Date(input.expiresAt).getTime();
+  if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) return { valid: false, reason: 'approval_expired' };
   if (input.approvedTargetVersion !== input.currentTargetVersion || input.approvedPlanDigest !== input.currentPlanDigest) {
     return { valid: false, reason: 'approved_target_changed' };
   }

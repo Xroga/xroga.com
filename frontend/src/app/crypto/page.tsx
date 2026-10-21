@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { Cormorant_Garamond, Manrope } from 'next/font/google';
+import { editorial, manrope } from './fonts';
 import {
   ArrowRight,
   BarChart3,
@@ -36,20 +36,6 @@ import {
 } from './CryptoExactVisuals';
 import './crypto-uiverse-exact.css';
 import styles from './crypto-seo.module.css';
-
-const manrope = Manrope({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-manrope',
-});
-
-const editorial = Cormorant_Garamond({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  style: ['normal', 'italic'],
-  display: 'swap',
-  variable: '--font-editorial',
-});
 
 export const metadata: Metadata = buildMetadata({
   title: 'Free AI App Builder for Web3 & Blockchain Apps | Xroga',
