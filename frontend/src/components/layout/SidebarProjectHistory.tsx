@@ -231,7 +231,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         loadSidebarMeta(accountId),loadSidebarSections(accountId),loadSidebarProjects(accountId,0,6),loadSidebarChats(accountId,0,200)
       ]);
       setItemMeta(metadata);setSections(sectionList);
-      setAccountProjects(firstProjects.slice(0,5));setProjectsHasMore(firstProjects.length>5);
+      setAccountProjects(prev=>prev.length>5?prev:firstProjects.slice(0,5));setProjectsHasMore(prev=>accountProjects.length>5?prev:firstProjects.length>5);
       setSidebarChats(chats);setMoreSidebarChats(chats.length>=200);setPinnedIds(sortPinned(metadata.filter(item=>item.pin_order!==null&&!item.archived_at)).map(item=>item.item_id));
       const hydrated=await loadPinnedSidebarRecords(accountId,metadata);
       setPinnedProjectRecords(hydrated.projects);
@@ -820,7 +820,9 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     const old=folders.filter(folder=>!known.has(folder.repo)).map(folder=>({
       id:'repo:'+folder.key,label:folder.label,repo:folder.repo,actual:null as SidebarProject|null,
     }));
-    return [...actual,...old];
+    // Show only the requested first five projects; legacy repositories are fallbacks
+    // only when the account does not yet have canonical project records.
+    return actual.length ? [...actual,...old.filter(folder=>accountProjects.length<5).slice(0,Math.max(0,5-accountProjects.length))] : old;
   },[accountProjects,folders]);
   const projectById=(id:string)=>organizedProjects.find(p=>p.id===id)
     ||(pinnedProjectRecords.find(p=>p.id===id)?(()=>{
