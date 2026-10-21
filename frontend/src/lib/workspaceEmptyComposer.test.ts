@@ -259,10 +259,9 @@ test('the real new terminal keeps plugins in the composer footer', () => {
     /WorkspaceConnectionsStrip/,
   );
 
-  assert.match(
-    DOCK,
-    /xv-chatbar-context-strip[\s\S]*?<RepoContextBar[\s\S]*?<WorkspaceConnectionsStrip[\s\S]*?variant="chatbar"/,
-  );
+  assert.doesNotMatch(DOCK, /xv-chatbar-context-strip/);
+  assert.match(CHATBAR, /aria-label="Projects"/);
+  assert.match(CHATBAR, /aria-label="Plugins"/);
 
   assert.match(
     CONNECTIONS,
@@ -332,10 +331,7 @@ test('a conversation exposes one context-aware navigator that follows scroll pos
     /showJumpToLatest\s*\? scrollToLatest\('smooth'\)\s*:\s*scrollToFirst\('smooth'\)/,
   );
 
-  assert.match(
-    DOCK,
-    /<ArrowUp className="xv-conversation-navigator__arrow"/,
-  );
+  assert.match(DOCK, /<SquareChevronUpIcon size=\{19\}/);
 
   assert.match(
     CSS,
@@ -343,7 +339,7 @@ test('a conversation exposes one context-aware navigator that follows scroll pos
   );
 
   assert.match(CSS, /\.xv-conversation-navigator\s*\{[\s\S]*?width:\s*2\.25rem[\s\S]*?border-radius:\s*0\.62rem/);
-  assert.match(DOCK, /data-tooltip=\{showJumpToLatest \? 'Latest' : 'Top'\}/);
+  assert.doesNotMatch(DOCK, /data-tooltip=\{showJumpToLatest/);
   assert.doesNotMatch(DOCK, /xv-conversation-navigator__label/);
 });
 

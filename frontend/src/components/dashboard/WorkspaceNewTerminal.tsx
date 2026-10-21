@@ -41,6 +41,34 @@ const AUTOMATIONS = [
   ] },
 ] as const;
 type Capability = typeof CAPABILITIES[number] | typeof AUTOMATIONS[number];
+const TASK_ACCEPTANCE: Record<string, string> = {
+  Documents: 'Produce a structured, editable document with a clear purpose, audience, logical sections, and a final proofreading pass.',
+  Presentations: 'Create a slide-by-slide narrative with succinct speaker notes, legible visuals, and an editable presentation.',
+  Images: 'Deliver the requested image with coherent composition, appropriate dimensions, and a clear description of the actual output.',
+  'Video concepts': 'Develop a scene-by-scene script, storyboard, narration cues, timings, and production-ready prompts.',
+  'Web research': 'Use relevant primary sources where possible, verify important claims, link the evidence, and distinguish facts from uncertain findings.',
+  'Answers & comparisons': 'Define comparison criteria, explain each option’s tradeoffs, and recommend a choice with evidence and caveats.',
+  'Files & knowledge': 'Use only accessible files, quote or cite the correct passages, and identify missing source information.',
+  Opportunities: 'Identify concrete opportunities, their evidence, market relevance, prioritization, and a practical first action.',
+  Websites: 'Build responsive, accessible pages with working navigation and forms, then test the finished implementation.',
+  Apps: 'Define user journeys, implement the essential flows, protect data, and verify that the application actually works.',
+  'APIs & databases': 'Define a safe data model and API contract, implement authentication and validation, and test core failure paths.',
+  Automations: 'Map triggers, permissions, actions, retries, and postcondition checks; test with non-destructive examples first.',
+  'Test a project': 'Run meaningful tests, capture reproducible failures, and report severity with exact next steps.',
+  'Debug & repair': 'Reproduce the problem, identify the root cause, make a minimal fix, and test against regressions.',
+  'Review readiness': 'Assess security, deployment configuration, performance, accessibility, monitoring, and unverified launch risks.',
+  'Prepare a launch': 'Produce a launch checklist, validate production configuration, and request explicit approval before release.',
+  'Research assistant': 'Define sources, milestones, and output format for the research employee, then require evidence-backed findings.',
+  'Content assistant': 'Define voice, audience, content deliverables, review gates, and measurable editorial quality checks.',
+  'Operations assistant': 'Describe the operational workflow, handoffs, exception handling, permissions, and verified completion criteria.',
+  'Browser testing': 'Navigate permitted pages, exercise actual interactions, collect screenshots and failures, and provide a reproducible report.',
+  'Collect information': 'Gather permitted public information, record source URLs and collection dates, deduplicate and validate findings.',
+  'Repeat a workflow': 'Specify each browser step, expected outcome, recovery conditions, and approval needed for sensitive actions.',
+  'Connect tools': 'Identify required authorized apps and scopes, confirm account access, and test connections without unapproved changes.',
+  'Sync information': 'Identify source and destination systems, mapping rules, privacy protections, conflict resolution and verification.',
+  'App automation': 'Design a secure connected-app flow with triggers, idempotency, retries, approval boundaries and evidence of execution.',
+};
+
 const STARTER_PROMPTS = [...CAPABILITIES, ...AUTOMATIONS].flatMap(card => card.features.map(feature => feature[1]));
 const ROTATING_WORDS = [
   'work', 'automation', 'code', 'apps', 'websites', 'tools',
@@ -94,10 +122,10 @@ function AutomaticIntro() {
     const delay = window.setTimeout(() => setShowDetail(true), 2200);
     return () => window.clearTimeout(delay);
   }, [reducedMotion]);
-  return <div className={styles.automatic} aria-label="Automatic by default. No models or tools to choose. Type or speak what you need, and Xroga routes the work.">
-    <span className={styles.automaticFirst} data-visible={!showDetail} aria-hidden={showDetail}><strong>Automatic by default.</strong></span>
+  return <div className={styles.automatic} aria-label="Automatic intelligence by default. No models or tools to choose. Type or speak your goal. Xroga chooses the tools and handles the work.">
+    <span className={styles.automaticFirst} data-visible={!showDetail} aria-hidden={showDetail}><strong>Automatic intelligence by default.</strong> No models or tools to choose.</span>
     <span className={styles.automaticDetail} data-visible={showDetail} aria-hidden={!showDetail}>
-      No models or tools to choose. Type or speak what you need, and Xroga routes the work.
+      Type or speak your goal. Xroga chooses the right tools and handles the work.
     </span>
   </div>;
 }
@@ -121,11 +149,14 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
       `My goal: ${text.trim()} [Describe your specific goal, content, links, audience, or constraints here.]`,
       '',
       'Please:',
-      '1. Understand the intended outcome and ask only for genuinely missing essential information.',
-      '2. Identify the relevant resources, files, tools, and permissions automatically.',
-      '3. Plan and carry out the appropriate work, with clear progress and checkpoints.',
-      '4. Verify the results against the goal, identify anything incomplete, and provide the finished deliverable.',
-      '5. Ask for approval before publishing, spending money, or taking consequential external actions.',
+      `Acceptance criteria: ${TASK_ACCEPTANCE[label] || 'Deliver an accurate, usable result and demonstrate that it meets the brief.'}`,
+      '',
+      'Execution requirements:',
+      '1. Clarify only essential missing details, then state a concise outcome-focused plan.',
+      '2. Select available tools, files, integrations and permissions automatically; do not make me choose models.',
+      '3. Carry out the work, explain meaningful decisions, and handle errors without concealing them.',
+      '4. Verify the final result through appropriate checks, evidence, or artifacts; report limitations explicitly.',
+      '5. Ask for approval before publishing, making payments, sending messages, or changing external systems.',
       '',
       'Make the result polished and usable. Do not claim successful execution without evidence.',
     ].join('\n');
