@@ -361,7 +361,12 @@ test('compact sidebar keeps utilities and primary destinations in two aligned ro
   await expect(sidebar.getByRole('button', { name: 'New Work', exact: true })).toBeVisible();
   await sidebar.getByRole('button', { name: 'Close sidebar', exact: true }).click();
   await expect(sidebar).toHaveClass(/is-collapsed/);
-  // Expanded Overview becomes the explicitly named Workspace icon in the rail.
+  const overview = sidebar.getByRole('link', { name: 'Overview', exact: true });
+  await expect(overview).toBeVisible();
+  await expect(overview).toHaveAttribute('href', '/dashboard');
+  await expect(sidebar.getByRole('link', { name: 'Projects', exact: true })).toHaveAttribute('href', '/dashboard/projects');
+  await expect(sidebar.getByRole('button', { name: 'New Work', exact: true })).toBeVisible();
+  // Workspace remains a separate shortcut alongside Overview.
   const workspace = sidebar.getByRole('link', { name: 'Workspace', exact: true });
   await expect(workspace).toBeVisible();
   await expect(workspace).toHaveAttribute('href', '/workspace');

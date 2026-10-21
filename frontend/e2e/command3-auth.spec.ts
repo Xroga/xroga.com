@@ -518,8 +518,9 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     rail.getByRole('button', { name: 'Open sidebar' }),
     'the collapsed rail still carries its own open button',
   ).toHaveCount(0);
-  // The two destinations that replaced them.
-  await expect(rail.getByRole('link', { name: 'Dashboard' })).toBeVisible();
+  // Current owning UI names this dashboard destination Overview in both modes.
+  await expect(rail.getByRole('link', { name: 'Overview', exact: true })).toBeVisible();
+  await expect(rail.getByRole('link', { name: 'Overview', exact: true })).toHaveAttribute('href', '/dashboard');
   await expect(rail.getByRole('link', { name: 'Projects' })).toBeVisible();
 
   /*
@@ -691,7 +692,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await collapsedTheme.click();
   await expect(page.getByRole('menu')).toHaveCount(0);
   await expect(desktopSidebar.getByRole('button', { name: 'Search' })).toBeVisible();
-  await expect(desktopSidebar.getByRole('button', { name: 'New Terminal' })).toBeVisible();
+  await expect(desktopSidebar.getByRole('button', { name: 'New Work', exact: true })).toBeVisible();
   await expect(desktopSidebar.locator('nav')).toHaveCount(0);
   /*
    * Reopened by hovering the mark. The toggle does not exist while collapsed — the rail
