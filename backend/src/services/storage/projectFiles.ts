@@ -1,7 +1,8 @@
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { uploadToR2, buildR2Key, buildPlaybackUrl, downloadFromR2, type R2UploadResult } from '../../lib/r2.js';
 import { saveLocalMedia, readLocalMedia } from './localMediaCache.js';
-import { actorFromUserId, getStorageService, storageWriteMode } from '../../storage/runtime.js';
+import { actorFromUserId, getMigrationLedger, getStorageService, storageReadOrder, storageWriteMode } from '../../storage/runtime.js';
+import { readStoredFileOrdered } from '../../storage/migration/readCompat.js';
 import { StorageError, type ObjectClass } from '../../storage/types.js';
 
 export interface StoredFile {
@@ -141,12 +142,20 @@ export async function storeUserFile(
   }
 }
 
-export async function readStoredFile(key: string): Promise<{ buffer: Buffer; contentType: string }> {
-  try {
-    return await downloadFromR2(key);
-  } catch (r2Err) {
-    const local = await readLocalMedia(key);
-    if (local) return local;
-    throw r2Err;
-  }
+export async function readStoredFile(key: string, actor?: { userId: string }): Promise<{ buffer: Buffer; contentType: string }> {
+  const legacy = async () => {
+    try {
+      return await downloadFromR2(key);
+    } catch (r2Err) {
+      const local = await readLocalMedia(key);
+      if (local) return local;
+      throw r2Err;
+    }
+  };
+  const drive = getStorageService();
+  const ledger = getMigrationLedger();
+  // Callers that pass an actor get ownership + ordering enforcement; callers that do not keep the exact legacy behaviour.
+  if (!actor || !drive || !ledger) return legacy();
+  const r = await readStoredFileOrdered(key, actorFromUserId(actor.userId), { ledger, drive, readLegacy: legacy, order: storageReadOrder() });
+  return { buffer: r.buffer, contentType: r.contentType };
 }

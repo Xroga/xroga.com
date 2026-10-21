@@ -440,3 +440,26 @@ describe('multipart', () => {
     await rejects(h.svc.signUploadParts(h.bob, init.objectId, [1]), 'NOT_FOUND');
   });
 });
+
+describe('no signed material in logs, audit trail or errors', () => {
+  it('audit events, console output and error messages never contain signatures, URLs or keys', async () => {
+    const h = harness();
+    const logs: string[] = [];
+    const orig = { log: console.log, warn: console.warn, error: console.error, info: console.info };
+    for (const k of Object.keys(orig) as Array<keyof typeof orig>) console[k] = (...a: unknown[]) => { logs.push(a.map(String).join(' ')); };
+    const messages: string[] = [];
+    try {
+      const { init } = await browserUpload(h, h.alice, Buffer.from('log hygiene'));
+      await h.svc.completeUpload(h.alice, init.objectId);
+      const dl = await h.svc.getDownload(h.alice, init.objectId);
+      for (const f of [() => h.svc.getDownload(h.bob, init.objectId), () => h.svc.completeUpload(h.bob, init.objectId), () => h.svc.initiateUpload(h.alice, { filename: 'x.exe', contentType: 'text/plain', size: 1 })]) {
+        await f().catch((e: Error) => messages.push(e.message));
+      }
+      const blob = JSON.stringify(h.repo.auditLog) + logs.join('\n') + messages.join('\n');
+      assert.ok(!blob.includes('sig='), 'no signature');
+      assert.ok(!blob.includes(new URL(dl.url).search.slice(1, 40)), 'no URL query');
+      assert.ok(!blob.includes('memory.invalid') && !blob.includes('v1/tenants/') && !blob.includes(BUCKET));
+      assert.ok(h.repo.auditLog.length >= 3, 'actions are audited');
+    } finally { Object.assign(console, orig); }
+  });
+});

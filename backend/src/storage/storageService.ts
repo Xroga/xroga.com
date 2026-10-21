@@ -276,6 +276,68 @@ export class StorageService {
     return toPublicObject(await this.#verifyAndAdmit(o, actor));
   }
 
+  /**
+   * Migration ingest. Same pipeline as every other write (key, reservation, provider write, read-back SHA-256, READY) with:
+   *  - a caller-supplied deterministic object id, so replays and concurrent workers converge on one destination row;
+   *  - quota ACCOUNTED but not enforced (legacy data was never metered; refusing migration would strand customer files);
+   *  - a streaming body (never buffered).
+   * Returns `reused: true` when the destination was already READY (idempotent replay).
+   */
+  async ingestLegacy(actor: StorageActor, input: {
+    objectId: string; projectId?: string | null; objectClass: ObjectClass; filename: string; contentType: string; size: number;
+    body: () => Promise<AsyncIterable<Uint8Array>>; migrationJobId: string; legacySource: Record<string, unknown>;
+  }): Promise<{ object: StorageObject; reused: boolean }> {
+    if (!isUuid(input.objectId)) throw new StorageError('INVALID_REQUEST', 'invalid object id');
+    const projectId = input.projectId ?? null;
+    if (projectId) await this.#authorizeProject(actor, projectId);
+    const { contentType } = validateUploadRequest({ objectClass: input.objectClass, contentType: input.contentType, size: input.size, filename: input.filename, serverGenerated: true }, this.#policy);
+    const safeFilename = sanitizeFilename(input.filename);
+    let o = await this.#repo.getObject(input.objectId);
+    if (o) {
+      if (o.tenantId !== actor.tenantId || o.ownerUserId !== actor.userId) throw new StorageError('FORBIDDEN', 'destination belongs to another tenant', 403);
+      if (o.state === 'READY') return { object: o, reused: true };
+      if (['DELETING', 'DELETED', 'CORRUPT', 'QUARANTINED', 'FAILED'].includes(o.state)) throw new StorageError('BAD_STATE', `destination is ${o.state.toLowerCase()}`, 409);
+    } else {
+      const expires = new Date(this.#now().getTime() + MULTIPART_RESERVATION_TTL_SECONDS * 1000);
+      o = await this.#repo.insertObject({
+        id: input.objectId, tenantId: actor.tenantId, ownerUserId: actor.userId, projectId, objectClass: input.objectClass,
+        originalFilename: String(input.filename).slice(0, 255), safeFilename, provider: this.#store.provider, bucket: this.#bucket,
+        objectKey: buildObjectKey({ tenantId: actor.tenantId, projectId, objectClass: input.objectClass, objectId: input.objectId, safeFilename }),
+        contentType, declaredSize: input.size, sha256Declared: null, uploadMode: 'single', uploadExpiresAt: expires,
+        migrationJobId: input.migrationJobId, legacySource: input.legacySource,
+      });
+    }
+    const expires = new Date(this.#now().getTime() + MULTIPART_RESERVATION_TTL_SECONDS * 1000);
+    await this.#repo.reserve(o.id, o.tenantId, o.declaredSize, expires, null);
+    if (o.state === 'PENDING') o = (await this.#repo.updateObject(o.id, ['PENDING'], { state: 'UPLOADING' })) ?? o;
+    try {
+      await this.#store.putStream(o.bucket, o.objectKey, await input.body(), o.declaredSize, o.contentType);
+    } catch (err) {
+      if (err instanceof ProviderUnavailableError) {
+        const h = await this.#store.head(o.bucket, o.objectKey).catch(() => null);
+        if (!h) throw new StorageError('PROVIDER_UNAVAILABLE', 'destination write did not complete', 503);
+      } else {
+        throw err;
+      }
+    }
+    return { object: await this.#verifyAndAdmit(o, actor), reused: false };
+  }
+
+  /** Independent read-back of a stored object (no tenant check: internal verification for migration/reconcile tooling). */
+  async verifyStoredObject(objectId: string): Promise<{ present: boolean; state: ObjectState | null; size?: number; sha256?: string }> {
+    const o = await this.#repo.getObject(objectId);
+    if (!o) return { present: false, state: null };
+    const head = await this.#store.head(o.bucket, o.objectKey);
+    if (!head) return { present: false, state: o.state };
+    const { sha256, size } = await hashStream(await this.#store.openRead(o.bucket, o.objectKey));
+    return { present: true, state: o.state, size, sha256 };
+  }
+
+  /** Mark an admitted object CORRUPT (e.g. a migration verification found it differs from its source). Never deletes. */
+  async markCorrupt(objectId: string, code: string): Promise<void> {
+    await this.#repo.updateObject(objectId, ['READY', 'VERIFYING'], { state: 'CORRUPT', errorCode: code });
+  }
+
   // ---- read --------------------------------------------------------------------------------------
 
   async getDownload(actor: StorageActor, objectId: string, ttlSeconds = DOWNLOAD_URL_TTL_SECONDS) {

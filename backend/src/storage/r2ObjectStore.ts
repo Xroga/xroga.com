@@ -187,7 +187,7 @@ export class R2ObjectStore implements ObjectStore {
   async list(bucket: string, prefix: string, cursor?: string, limit = 1000) {
     const r = await wrap(this.#s3.send(new ListObjectsV2Command({ Bucket: bucket, Prefix: prefix, ContinuationToken: cursor, MaxKeys: limit })));
     return {
-      keys: (r.Contents ?? []).map((o) => ({ key: o.Key ?? '', size: Number(o.Size ?? 0) })),
+      keys: (r.Contents ?? []).map((o) => ({ key: o.Key ?? '', size: Number(o.Size ?? 0), etag: o.ETag })),
       next: r.IsTruncated ? r.NextContinuationToken : undefined,
     };
   }

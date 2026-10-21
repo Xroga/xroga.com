@@ -22,6 +22,8 @@ export class MemoryObjectStore implements ObjectStore {
   /** one-shot fault injection: 'put' | 'head' | 'read' | 'delete' | 'complete' */
   #faults = new Map<string, Array<'throw' | 'after-write'>>();
   calls: string[] = [];
+  /** fault injection: flip a byte in the next streamed write, as a faulty provider or network would */
+  corruptNextStreamWrite = false;
 
   constructor(now: () => number = Date.now) { this.#now = now; }
 
@@ -145,6 +147,7 @@ export class MemoryObjectStore implements ObjectStore {
     for await (const c of body) chunks.push(Buffer.from(c));
     const buf = Buffer.concat(chunks);
     if (buf.length !== size) throw new Error('IncompleteBody');
+    if (this.corruptNextStreamWrite) { this.corruptNextStreamWrite = false; buf[0] = buf[0] ^ 0xff; }
     const s = this.#store(bucket, key, buf, contentType);
     if (f === 'after-write') throw new ProviderUnavailableError('timeout after write');
     return { etag: s.etag, versionId: s.versionId };
@@ -201,7 +204,7 @@ export class MemoryObjectStore implements ObjectStore {
     const all = [...this.objects.entries()]
       .map(([k, v]) => ({ k, v }))
       .filter(({ k }) => k.startsWith(`${bucket}\u0000${prefix}`))
-      .map(({ k, v }) => ({ key: k.slice(bucket.length + 1), size: v.body.length }))
+      .map(({ k, v }) => ({ key: k.slice(bucket.length + 1), size: v.body.length, etag: v.etag }))
       .sort((a, b) => a.key.localeCompare(b.key));
     const start = cursor ? all.findIndex((o) => o.key > cursor) : 0;
     if (start < 0) return { keys: [] };

@@ -179,7 +179,7 @@ describe('Xroga Drive against real PostgreSQL (migration + RLS + atomic quota)',
       await assert.rejects(asRole('anon', null, (c) => c.query('select id from public.storage_objects')), /permission denied/);
     });
     it('forged JWT subject cannot widen what is visible', async () => {
-      const r = await asRole('authenticated', `${alice.userId}' or '1'='1`.slice(0, 0) || randomUUID(), (c) => c.query('select id from public.storage_objects'));
+      const r = await asRole('authenticated', randomUUID(), (c) => c.query('select id from public.storage_objects'));
       assert.equal(r.rowCount, 0);
       assert.ok(pendingId);
     });

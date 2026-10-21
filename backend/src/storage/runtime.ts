@@ -4,6 +4,7 @@ import { defaultPolicyConfig } from './policy.js';
 import { PostgresStorageRepository } from './postgresRepository.js';
 import { R2ObjectStore, r2ConfigFromEnv } from './r2ObjectStore.js';
 import { StorageService } from './storageService.js';
+import { PostgresLedger } from './migration/postgresLedger.js';
 import type { StorageActor } from './types.js';
 
 /**
@@ -59,4 +60,9 @@ export function setStorageServiceForTests(s: StorageService | null | undefined) 
 /** Identity only ever comes from the authenticated request. tenant == user until Batch 1 TenantContext is accepted. */
 export function actorFromUserId(userId: string): StorageActor {
   return { userId, tenantId: userId };
+}
+
+/** Migration ledger on the same pool (only meaningful when Drive itself is configured). */
+export function getMigrationLedger(): PostgresLedger | null {
+  return getStorageService() && pool ? new PostgresLedger(pool) : null;
 }

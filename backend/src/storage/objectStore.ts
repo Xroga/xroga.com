@@ -58,7 +58,7 @@ export interface ObjectStore {
   completeMultipart(bucket: string, key: string, uploadId: string, parts: CompletedPart[]): Promise<{ etag: string | null; versionId: string | null }>;
   abortMultipart(bucket: string, key: string, uploadId: string): Promise<void>;
   /** Keys under a prefix, for reconciliation and orphan discovery. */
-  list(bucket: string, prefix: string, cursor?: string, limit?: number): Promise<{ keys: Array<{ key: string; size: number }>; next?: string }>;
+  list(bucket: string, prefix: string, cursor?: string, limit?: number): Promise<{ keys: Array<{ key: string; size: number; etag?: string }>; next?: string }>;
 }
 
 /** Transient provider errors are retryable; everything else is a definitive answer. */

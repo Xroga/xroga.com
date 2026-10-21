@@ -1,10 +1,19 @@
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { StorageError, type ObjectClass } from './types.js';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 const WINDOWS_RESERVED = /^(con|prn|aux|nul|com[0-9]|lpt[0-9])(\..*)?$/i;
 
 export const MAX_FILENAME_LENGTH = 120;
+
+/** Stable id for a legacy source object: retries and concurrent jobs converge on the same destination row. */
+export function deterministicObjectId(sourceProvider: string, sourceId: string): string {
+  const h = createHash('sha256').update(`xroga-drive-migration-v1|${sourceProvider}|${sourceId}`).digest();
+  h[6] = (h[6] & 0x0f) | 0x50; // version 5-shaped
+  h[8] = (h[8] & 0x3f) | 0x80; // RFC 4122 variant
+  const x = h.subarray(0, 16).toString('hex');
+  return `${x.slice(0, 8)}-${x.slice(8, 12)}-${x.slice(12, 16)}-${x.slice(16, 20)}-${x.slice(20, 32)}`;
+}
 
 export function isUuid(v: unknown): v is string {
   return typeof v === 'string' && UUID_RE.test(v);
