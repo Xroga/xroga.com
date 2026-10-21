@@ -1,5 +1,13 @@
 # Phase 3 execution state
 
+## Exact CI failure correction, 2026-10-21
+
+The 08d36f0900be582ba1e7da9d642bec0ed96e5080 batch completed, with ten workflows successful and two unsuccessful. Unit run39577073203 failed only its integrated frontend contract for the graduated conversation rail. Its authenticated candidate15bbe95a91a218f4a9003abf38b156d5db41ae16 has actual main parent18d264c36bea3250e9f7db3b1d4ac6d860455ba3, despite the older reported base snapshotda76de89. Owning PR829 intentionally replaced fixed marker widths. The corrected test retains navigation, active/hover styling, keyboard focus, reduced motion and bookmark/proximity assertions, without production UI changes.
+
+Authenticated-browser run39577073199 failed full migration replay with SQLSTATE42710 at20261021100000_feedback_founder_authorization.sql. Commitcb3a926a adds transactional DROP IF EXISTS for the same two policies before replacement. The founder predicate and restrictive read guard are unchanged. Real disposable tests now replay the correction and assert both exact policy modes and preserved rows. Focused static tests pass7/7. Real changed-source database and integration verification remains required. Separate review PR824 and PR830 retain these corrections. No production migration was run.
+
+Owner confirmed activation of both approved isolated OCI users. Exact new resource IDs, group membership and stored key-only policy are preserved outside the repository in OCI-APPROVED-RESOURCE-JOURNAL.json with console evidence. Native non-admin runtime sessions, real provider expiry/revocation and final strict acceptance are still pending. No administrator credentials are admitted to the runtime harness, and no production or Phase4 work is authorized.
+
 ## Current reconciliation, 2026-10-21
 
 This section supersedes earlier pending/current engineering descriptions below, not historical receipts. Accepted software d750836bfa44bd6fa668f827a4529ed49dec5269 and OCI source 9d6234afdd0a20e99f584acf7f93e346c5c49164 remain separate immutable sources. Current main is pinned to da76de8947668cc17fd2a99e9d673bc6de24b21e. Main was reconciled into the review branch only, with UI PR825 and feedback PR824 corrections retained as individual commits. Nothing was merged into main or applied to production.

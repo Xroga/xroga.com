@@ -89165,7 +89165,7 @@
       "id": "surface:d7372071c1fa5e9be990",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/feedback-rls.supabase.mjs",
-      "sha256": "3d0b33fc43d16d5ee14a1010cd957373229f03f9741d0415ca01822d6a6c1f86",
+      "sha256": "10e65ee3f286614a032f5991d832f33203c223a898e9adade5fb9d49f9dbd79c",
       "symbols": [
         "a",
         "actor",
@@ -89189,6 +89189,7 @@
         "factor",
         "forged",
         "founder",
+        "founderPolicies",
         "id",
         "identity",
         "key",
@@ -100446,7 +100447,7 @@
       "sourcePath": "supabase/migrations/20261021100000_feedback_founder_authorization.sql",
       "version": "20261021100000",
       "order": 139,
-      "sha256": "634276d81fd1b5b3ac8a0854897dd16710fcb3e0dbee3835c61d0d61ef2356e9"
+      "sha256": "b4298f22c6ac16682b1f5b953adaebcd1b15326bf27e94a7cfe216b3ccf297ec"
     }
   ],
   "workflows": [
