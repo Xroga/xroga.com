@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "5c04d175ae313a27abdb2d7fcd2108529ebc4a359a63e6e35b57c6eba9ff2e6b",
+  "reviewRegistrySha256": "2b774b8383ef0a653ac6e30025471baa29e7082c63e2c9fa0ecfa563e05134b5",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -3524,7 +3524,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "bb919b3cf412267854ba"
+        "id": "f236ae4444d81d62c17c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3541,10 +3541,6 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "ee3a52d31fb1a4645f1c"
-      },
-      {
-        "code": "MISSING_CALLER_REVIEW",
-        "id": "8f3c7995974f0b7357a6"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5760,7 +5756,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "bb919b3cf412267854ba"
+        "id": "f236ae4444d81d62c17c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -5780,7 +5776,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "8f3c7995974f0b7357a6"
+        "id": "6520ef22b7832bcb902c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -21008,15 +21004,15 @@
       }
     },
     {
-      "id": "bb919b3cf412267854ba",
+      "id": "f236ae4444d81d62c17c",
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "line": 156,
+      "line": 187,
       "enclosing": "FeatureCard",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "0bd44ba6492c7c378215a5bc4f84c9bca0074fe82bfd059af018a14c0ce6f35d",
+      "sourceSha256": "7b886fe8c8422b8e530ccf7082934b366483826f46b83562eb73a0d3037e85af",
       "semanticReview": {
         "authority": "Native Array.from materializes locally queried menu buttons for keyboard focus navigation. The subsequent index/focus operations touch the DOM only. No database, storage client, credential or provider write is involved.",
         "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
@@ -21604,7 +21600,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "78ba203dd26396c0c5e888d3b148fb8757ae1728dfb32f71c0960d87a89c156b",
+      "sourceSha256": "a49cae58957810667768e12b253cdf01b1974185364e276c9e8510a93d5d0da6",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -21638,7 +21634,7 @@
       }
     },
     {
-      "id": "8f3c7995974f0b7357a6",
+      "id": "6520ef22b7832bcb902c",
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
       "line": 161,
       "enclosing": "VoiceWave",
@@ -21646,7 +21642,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "38ec3a557142a62cd06d97e4fdecad1a02d3377452356093b413cc041edd08f9",
+      "sourceSha256": "f6ca1c376e8ef4cf690055d67cc2a98168257dafba0074c989d4b81add68d88e",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in VoiceWave, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",

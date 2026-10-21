@@ -3,9 +3,9 @@
   "reviews": [
     {
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sourceSha256": "0bd44ba6492c7c378215a5bc4f84c9bca0074fe82bfd059af018a14c0ce6f35d",
+      "sourceSha256": "7b886fe8c8422b8e530ccf7082934b366483826f46b83562eb73a0d3037e85af",
       "callIds": [
-        "bb919b3cf412267854ba"
+        "f236ae4444d81d62c17c"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Native Array.from materializes locally queried menu buttons for keyboard focus navigation. The subsequent index/focus operations touch the DOM only. No database, storage client, credential or provider write is involved.",
@@ -4670,7 +4670,7 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sourceSha256": "78ba203dd26396c0c5e888d3b148fb8757ae1728dfb32f71c0960d87a89c156b",
+      "sourceSha256": "a49cae58957810667768e12b253cdf01b1974185364e276c9e8510a93d5d0da6",
       "callIds": [
         "ee3a52d31fb1a4645f1c"
       ],
@@ -4702,9 +4702,9 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sourceSha256": "38ec3a557142a62cd06d97e4fdecad1a02d3377452356093b413cc041edd08f9",
+      "sourceSha256": "f6ca1c376e8ef4cf690055d67cc2a98168257dafba0074c989d4b81add68d88e",
       "callIds": [
-        "8f3c7995974f0b7357a6"
+        "6520ef22b7832bcb902c"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in VoiceWave, with no database or Storage client receiver.",

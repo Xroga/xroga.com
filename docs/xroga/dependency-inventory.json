@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "28906f79c128908e80b7001657133927eba269c5",
+  "source_sha": "8fc01fc2833d9b6b1dba215559a1185a73a09938",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -6587,6 +6587,7 @@
         "frontend/src/components/icons/animated/lucide-animated/layers.tsx",
         "frontend/src/components/icons/animated/lucide-animated/workflow.tsx",
         "frontend/src/components/layout/ProcessingLogo.tsx",
+        "frontend/src/components/terminal/AudioLinesIcon.tsx",
         "frontend/src/components/ui/LoadingIcons.tsx",
         "frontend/src/components/ui/Uiverse.tsx",
         "frontend/src/components/ui/UploadAnimButton.tsx",
@@ -6687,6 +6688,7 @@
         "frontend/src/components/icons/animated/lucide-animated/layers.tsx",
         "frontend/src/components/icons/animated/lucide-animated/workflow.tsx",
         "frontend/src/components/layout/ProcessingLogo.tsx",
+        "frontend/src/components/terminal/AudioLinesIcon.tsx",
         "frontend/src/components/ui/LoadingIcons.tsx",
         "frontend/src/components/ui/Uiverse.tsx",
         "frontend/src/components/ui/UploadAnimButton.tsx",
@@ -12244,7 +12246,7 @@
     },
     {
       "path": ".github/workflows/chat-turn-rail-browser.yml",
-      "sha256": "527ff72076a837cad6f23deb0c182591a598e4c6e4d0ae4e1e633fefec802747"
+      "sha256": "3db90a31a49466be172d1c83b56005ac4d1d39e852a912833230cd731d43ffdc"
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
@@ -15384,7 +15386,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sha256": "0bd44ba6492c7c378215a5bc4f84c9bca0074fe82bfd059af018a14c0ce6f35d"
+      "sha256": "7b886fe8c8422b8e530ccf7082934b366483826f46b83562eb73a0d3037e85af"
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceResumeList.tsx",
@@ -16144,7 +16146,7 @@
     },
     {
       "path": "frontend/src/components/icons/animated/lucide-animated/blocks.tsx",
-      "sha256": "30a1b7c2e4cbc4ec0f01497e5c47df29397dc060b11ffed204e3a1768ce484d8"
+      "sha256": "52fcfed3cb6a7d30ca6afec8be6e93f083aa6b78ac11308812c6a5e24f36bc03"
     },
     {
       "path": "frontend/src/components/icons/animated/lucide-animated/book-text.tsx",
@@ -16272,7 +16274,7 @@
     },
     {
       "path": "frontend/src/components/layout/AppShell.tsx",
-      "sha256": "823c46a400c9263c64ce8a5cc41d4175fad36be8e4d370ab78e3ac4c84999865"
+      "sha256": "7b8c923ac18bc5fd7c0f5cfdb334a948b7f74b66f0656b056d6b3659af849af0"
     },
     {
       "path": "frontend/src/components/layout/BetaExpectationBanner.tsx",
@@ -16336,7 +16338,7 @@
     },
     {
       "path": "frontend/src/components/layout/Sidebar.tsx",
-      "sha256": "a56287dbf59f1e2ddf31114133d0f13ec2805f4340e299193aae5413c6d673e8"
+      "sha256": "dfc52ce6b75149d547b21422f6f447df4a4a9dca596cf36cb28f26c5c8317223"
     },
     {
       "path": "frontend/src/components/layout/SidebarNavScroller.tsx",
@@ -16760,11 +16762,11 @@
     },
     {
       "path": "frontend/src/components/terminal/AudioLinesIcon.tsx",
-      "sha256": "f30a740ae48c6bdb67da6b2e139df96964baa0e26d4e40bc7c41e893bfa99ed5"
+      "sha256": "1a07f31158d6ceaa7314a9f2f2464f5870d2455ad00f4e830e731795b6e968a5"
     },
     {
       "path": "frontend/src/components/terminal/BlackHoleVButton.tsx",
-      "sha256": "45e20031df0dea0eb900936fbd0a56cc82a25aa4278d86cde0742e0f2d0fe5ef"
+      "sha256": "ce2f104837e5f88a49059785c823da1501a5a0d5cd60450a349fc705d31f092a"
     },
     {
       "path": "frontend/src/components/terminal/BuildCodeSandbox.tsx",
@@ -16956,11 +16958,11 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "78ba203dd26396c0c5e888d3b148fb8757ae1728dfb32f71c0960d87a89c156b"
+      "sha256": "a49cae58957810667768e12b253cdf01b1974185364e276c9e8510a93d5d0da6"
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
-      "sha256": "4fe0aaa8f1208079d395513c193e4da11b14e447cc788ff83bb13506dfd0b8a9"
+      "sha256": "73b699f08fce401a41f13555db2b800ac9694517d24e30b5824dab22575d5252"
     },
     {
       "path": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
@@ -17008,7 +17010,7 @@
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
-      "sha256": "a7c9278b561aab59d3744e634d7c8e87d4bad629f237eb59fa652c42a967cd26"
+      "sha256": "4eb7515ad9863f66d4615db0e79e8cc456410cd8cb93f1945407c5fe1fef380a"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceLauncher.tsx",
@@ -17056,7 +17058,7 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "38ec3a557142a62cd06d97e4fdecad1a02d3377452356093b413cc041edd08f9"
+      "sha256": "f6ca1c376e8ef4cf690055d67cc2a98168257dafba0074c989d4b81add68d88e"
     },
     {
       "path": "frontend/src/components/ui/AnchoredPortalPopover.tsx",
@@ -17148,7 +17150,7 @@
     },
     {
       "path": "frontend/src/components/ui/ProfileQuickMenu.tsx",
-      "sha256": "9b5616e4946707baeabf15b4e9fcc8abdd40e057b68054bd386f21c38ed735a1"
+      "sha256": "0267e85bd3816521859868f6bb39cb5fc9f152c69700bd57401e5c4b6de4604f"
     },
     {
       "path": "frontend/src/components/ui/Progress.tsx",
@@ -17176,7 +17178,7 @@
     },
     {
       "path": "frontend/src/components/ui/SidebarHoverMenu.tsx",
-      "sha256": "a995f85215b8cc8b6700d76a8fbd9ea73e4c8de5130443dace5a3f43b84ac197"
+      "sha256": "09570658887191ea4c92c714c68d04a95c2d5abbdeac69971c0df01f9b2be7d9"
     },
     {
       "path": "frontend/src/components/ui/SidebarTip.tsx",
@@ -22290,7 +22292,7 @@
       "hostname": "www.w3.org",
       "protocol": "http:",
       "path": "frontend/src/components/icons/animated/lucide-animated/blocks.tsx",
-      "line": 78,
+      "line": 80,
       "credentialsInUrl": false
     },
     {
@@ -22910,6 +22912,13 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "www.w3.org",
+      "protocol": "http:",
+      "path": "frontend/src/components/terminal/AudioLinesIcon.tsx",
+      "line": 56,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/components/terminal/ChatIntegrationsBar.tsx",
@@ -22934,7 +22943,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
-      "line": 122,
+      "line": 121,
       "credentialsInUrl": false
     },
     {
