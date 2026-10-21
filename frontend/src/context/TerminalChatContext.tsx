@@ -560,7 +560,8 @@ interface TerminalChatContextValue {
   /** Continue a stopped build from checkpoint + GitHub (not from scratch) */
   retryStoppedBuild: (assistantMessageId: string) => Promise<void>;
   retryWithFullPower: (assistantMessageId: string) => Promise<void>;
-  startNewChat: () => void;
+  /** Start one fresh conversation and return its stable session ID. */
+  startNewChat: () => string;
   /** Restore session from workspace (e.g. jump from AI Media) */
   hydrateFromSession: () => void;
   /** Restore a saved terminal session exactly where the user left off */
@@ -1949,9 +1950,8 @@ const stopRequestedRunIdRef =
         window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
       });
     }
-    setSessionId(
-      typeof crypto !== 'undefined' ? crypto.randomUUID() : `session-${Date.now()}`
-    );
+    const newId=typeof crypto !== 'undefined' ? crypto.randomUUID() : `session-${Date.now()}`;
+    setSessionId(newId);
     setMessages([]);
     setPrompt('');
     setPromptQueue([]);
@@ -1975,6 +1975,7 @@ const stopRequestedRunIdRef =
     persistReadyRef.current = true;
     // Refresh Repositories sidebar so the prior terminal stays listed (not "lost").
     window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
+    return newId;
   }, [setSwarmRunning, messages, prompt, setSessionId]);
 
   const deleteTurn = useCallback((assistantMessageId: string) => {
