@@ -89,7 +89,7 @@ function transcriptScrollRoot(): HTMLElement {
 }
 
 export function SwarmMessageLog({ compact, incognito = false, chromeless = false }: SwarmMessageLogProps) {
-  const { messages, sessionRestoring, loading, animatingId, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
+  const { messages, sessionId, sessionRestoring, loading, animatingId, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
     useTerminalChat();
   const [rollbackId, setRollbackId] = useState<string | null>(null);
   const workspaceRepo = useProjectWorkspaceStore((s) => s.repo);
@@ -220,7 +220,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
     return prompts;
   }, [visibleMessages]);
 
-  const chatTurns = useMemo(() => buildChatTurns(visibleMessages), [visibleMessages]);
+  const chatTurns = useMemo(() => buildChatTurns(renderedMessages), [renderedMessages]);
   const chatTurnIds = useMemo(() => chatTurns.map((turn) => turn.id), [chatTurns]);
   const chatTurnIdsKey = chatTurnIds.join('|');
   const firstTurnId = chatTurnIds[0] ?? null;
@@ -237,55 +237,54 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
     registerScrollToFirst(scrollToFirst);
   }, [registerScrollToFirst, scrollToFirst]);
 
+  // Read-position selection uses the real rendered anchors. A binary search
+  // avoids expensive per-scroll observer registrations and is stable in both directions.
   useEffect(() => {
-    const stableTurnIds = chatTurnIdsKey ? chatTurnIdsKey.split('|') : [];
-    if (stableTurnIds.length === 0) {
+    const ids = chatTurnIdsKey ? chatTurnIdsKey.split('|') : [];
+    if (!ids.length) {
       setActiveTurnId(null);
       return;
     }
-
     const root = transcriptScrollRoot();
-    // `IntersectionObserver` needs `null` for the viewport; passing the documentElement
-    // is not the same thing and quietly reports nothing.
-    const scrollRoot = root === document.documentElement ? null : root;
-
-    const ratios = new Map<string, number>();
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          const id = entry.target.getAttribute('data-turn-id');
-          if (!id) continue;
-          ratios.set(id, entry.intersectionRatio);
+    let frame = 0;
+    const sync = () => {
+      frame = 0;
+      const bounds = root === document.documentElement
+        ? { top: 0, height: window.innerHeight }
+        : root.getBoundingClientRect();
+      const threshold = bounds.top + Math.min(180, bounds.height * 0.3);
+      let lo = 0;
+      let hi = ids.length - 1;
+      let candidate = 0;
+      // Every id maps to a mounted message div, including assistant replies.
+      while (lo <= hi) {
+        const middle = (lo + hi) >> 1;
+        const element = messageRefs.current[ids[middle]];
+        if (!element) break;
+        if (element.getBoundingClientRect().top <= threshold) {
+          candidate = middle;
+          lo = middle + 1;
+        } else {
+          hi = middle - 1;
         }
-
-        let bestId: string | null = null;
-        let bestRatio = 0;
-        for (const turnId of stableTurnIds) {
-          const ratio = ratios.get(turnId) ?? 0;
-          if (ratio > bestRatio) {
-            bestRatio = ratio;
-            bestId = turnId;
-          }
-        }
-        if (bestId) setActiveTurnId(bestId);
-      },
-      {
-        root: scrollRoot,
-        rootMargin: '-12% 0px -55% 0px',
-        threshold: [0, 0.15, 0.35, 0.55, 0.75, 1],
       }
-    );
-
-    for (const turnId of stableTurnIds) {
-      const el = messageRefs.current[turnId];
-      if (el) observer.observe(el);
-    }
-
-    return () => observer.disconnect();
-  // Prompt IDs are stable while assistant text streams. Rebuilding and re-observing
-  // the complete history for every token made long conversations progressively lag.
-  }, [chatTurnIdsKey]);
+      const next = ids[candidate];
+      setActiveTurnId(previous => previous === next ? previous : next);
+    };
+    const requestSync = () => {
+      if (!frame) frame = requestAnimationFrame(sync);
+    };
+    requestSync();
+    root.addEventListener('scroll', requestSync, { passive: true });
+    window.addEventListener('resize', requestSync);
+    return () => {
+      root.removeEventListener('scroll', requestSync);
+      window.removeEventListener('resize', requestSync);
+      if (frame) cancelAnimationFrame(frame);
+    };
+    // A newly completed message changes ids; token streams update existing
+    // contents but never trigger re-registration or unexpected auto-navigation.
+  }, [chatTurnIdsKey, sessionId]);
 
   function jumpToTurn(turnId: string) {
     messageRefs.current[turnId]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -457,7 +456,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
               <div
                 key={msg.id}
                 ref={(el) => { messageRefs.current[msg.id] = el; }}
-                data-turn-id={msg.role === 'user' ? msg.id : undefined}
+                data-turn-id={msg.role === 'user' || msg.role === 'assistant' ? msg.id : undefined}
                 className={cn(
                   'xv-terminal-turn group flex gap-2',
                   msg.role === 'user' ? 'flex-row-reverse' : 'flex-row',
@@ -677,8 +676,10 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
       </div>
       {!isIncognito && (
         <ChatTurnRail
+          key={sessionId}
+          conversationKey={`${profile?.id ?? 'guest'}:${sessionId}`}
           turns={chatTurns}
-          activeId={activeTurnId ?? chatTurns[chatTurns.length - 1]?.id ?? null}
+          activeId={activeTurnId && chatTurnIds.includes(activeTurnId) ? activeTurnId : null}
           onJump={jumpToTurn}
         />
       )}

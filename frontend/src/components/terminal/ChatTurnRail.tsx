@@ -44,9 +44,16 @@ export function visibleChatTurns(turns: ChatTurn[], bookmarkedIds: readonly stri
       const target = Math.round(((n + 1) * (turns.length - 1)) / (available + 1));
       if (!priority.has(target)) priority.add(target);
     }
-    for (let n = 0; priority.size < limit && n < turns.length; n++) {
-      const index = Math.round((n * (turns.length - 1)) / Math.max(1, turns.length - 1));
-      priority.add(index);
+    while (priority.size < limit) {
+      const indices = [...priority].sort((a, b) => a - b);
+      let gap = 0;
+      let nextIndex = -1;
+      for (let n = 1; n < indices.length; n++) {
+        const distance = indices[n] - indices[n - 1];
+        if (distance > gap) { gap = distance; nextIndex = Math.floor((indices[n] + indices[n - 1]) / 2); }
+      }
+      if (gap <= 1 || nextIndex < 0) break;
+      priority.add(nextIndex);
     }
   }
   return [...priority].sort((a, b) => a - b).map(index => turns[index]);
@@ -141,7 +148,7 @@ export function ChatTurnRail({ turns, activeId, onJump, conversationKey, classNa
     window.addEventListener('resize', place);
     root.addEventListener('scroll', place, { passive: true });
     return () => { observer.disconnect(); window.removeEventListener('resize', place); root.removeEventListener('scroll', place); };
-  }, [conversationKey]);
+  }, [conversationKey, turns.length]);
 
   useEffect(() => {
     let ids: string[] = [];
