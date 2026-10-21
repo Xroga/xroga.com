@@ -17,7 +17,7 @@ One consolidated list. **Do not paste secrets into chat**; set them in the host'
 | B1 | A **new, empty, private** R2 bucket (e.g. `xroga-drive-staging`), no public access, + a token scoped to it. Confirm in the dashboard that the account is inside the free allowance. |
 | B2 | CORS on that bucket as in `runbook-storage.md` §2. |
 | B3 | A disposable Postgres (a Supabase branch or local) to apply the migration. |
-| B4 | Then run: `STORAGE_TEST_DATABASE_URL=… XROGA_DRIVE_R2_*=… npm run test:storage-provider --workspace=backend` (added in Phase 2 if you approve; Phase 1 ships the synthetic suite only). Expected to prove: real presigned-PUT enforcement of content-length/type/checksum, real multipart, CORS, private access. |
+| B4 | Then run `npm run test:storage-provider --workspace=backend` (exists now; refuses to start unless every guard variable is set). Proves: real presigned-PUT enforcement of content-length/type/checksum (observed), real multipart + ListParts, CORS, private access, expiry, pagination, cleanup. |
 
 ## C. Approvals needed before anything touches production
 | Action | Status |
@@ -28,5 +28,8 @@ One consolidated list. **Do not paste secrets into chat**; set them in the host'
 | Approve `copy` / `read_new` / `freeze_old` for a migration job | **not requested** |
 | Legacy deletion / Fly retirement | **not implemented / out of scope** |
 
+## B'. The single R2 request
+See `r2-provider-verification-request.md` (one approval, one bucket, one token, one command).
+
 ## D. GitHub
-`claude/xroga-batch-1-5` could not be pushed from this environment (HTTP 403 `Resource not accessible by integration` on both git and the GitHub API). Grant the Claude GitHub App write (Contents) on `Xroga/xroga.com` or create the branch; the work is committed locally and a bundle is attached in `evidence/`.
+Diagnosed in `github-access-diagnosis.md`: the session token has `push:false` on `Xroga/xroga.com`. Grant the Claude GitHub App Contents + Pull requests write (and Workflows write for `.github/workflows/storage-phase1.yml`) or import the delivered bundle from an authorised environment. **Before opening any PR confirm the `Preview` environment's secrets are not production's** (see that file).
