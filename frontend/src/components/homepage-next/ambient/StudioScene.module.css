@@ -1,0 +1,115 @@
+/* S03 / S04 product-led environments (see StudioScene.tsx). Geometry from the measured product rectangle:
+   --cl/--ct/--cw/--ch = left/top/width/height of everything after the heading. Palette: ground #050607, support field
+   #0c0e12 → #08090c, hairlines in neutral platinum at very low alpha. No texture, no imagery, no colour, no new object. */
+.scene {
+  --cl: 304px;
+  --ct: 350px;
+  --cw: 1312px;
+  --ch: 800px;
+  --inset: 14px;
+  --radius: 34px;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: layout paint;
+  background: #050607;
+}
+.scene > * {
+  position: absolute;
+}
+/* the support field: the product's footprint, a step larger, with the shell's own corner language */
+.field {
+  left: max(0px, calc(var(--cl) - var(--inset)));
+  top: calc(var(--ct) - var(--inset));
+  width: min(100%, calc(var(--cw) + var(--inset) * 2));
+  height: calc(var(--ch) + var(--inset) * 2);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, #0d0f13 0, #0a0c10 46%, #08090c 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(226, 232, 242, 0.075),
+    inset 0 0 0 1px rgba(226, 232, 242, 0.022);
+  /* it dissolves into the ground below the product, so the next section begins on the shared homepage ground */
+  -webkit-mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 200px), transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 200px), transparent 100%);
+}
+/* local contact shading: the shell sits in front of the page, not on it */
+.contact {
+  left: max(0px, calc(var(--cl) - var(--inset) - 30px));
+  top: calc(var(--ct) + 40px);
+  width: min(100%, calc(var(--cw) + var(--inset) * 2 + 60px));
+  height: calc(var(--ch) * 0.92);
+  border-radius: 48px;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 100%);
+  opacity: 0.55;
+  z-index: -1;
+}
+/* the section's lower edge: the ground returns */
+.closure {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 180px;
+  background: linear-gradient(180deg, rgba(5, 6, 7, 0) 0, #050607 100%);
+}
+
+/* the one response: a short neutral emphasis of the field's top edge (S03: on a mode change; S04: on a state change) */
+.emphasis {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(226, 232, 242, 0), rgba(226, 232, 242, 0.5) 50%, rgba(226, 232, 242, 0));
+  opacity: 0;
+}
+.emphasis[data-pulse] {
+  animation: edgePulse 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes edgePulse {
+  0% { opacity: 0; transform: scaleX(0.7); }
+  30% { opacity: 1; transform: scaleX(1); }
+  100% { opacity: 0; transform: scaleX(1); }
+}
+
+/* S04: a one-time stage entrance when the section first comes into view */
+.s04 .field,
+.s04 .contact {
+  opacity: 0;
+  transform: translate3d(0, 10px, 0);
+  transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.s04[data-seen] .field {
+  opacity: 1;
+  transform: none;
+}
+.s04[data-seen] .contact {
+  opacity: 0.55;
+  transform: none;
+}
+.s04 {
+  --inset: 12px;
+  --radius: 38px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .emphasis[data-pulse] {
+    animation: none;
+  }
+  .s04 .field,
+  .s04 .contact {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+  .s04 .contact {
+    opacity: 0.55;
+  }
+}
+@media (max-width: 720px) {
+  .scene {
+    --inset: 8px;
+    --radius: 26px;
+  }
+}
