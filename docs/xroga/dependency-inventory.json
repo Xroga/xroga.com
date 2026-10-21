@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8ce54f2421039d724571bb727ecce234bcc02a03",
+  "source_sha": "14bda8d9a87b5ccd6efc22e0f3ffd1fbbead006d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -13058,7 +13058,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "5a833ae3a75c089dacedc42e4f95c490bff67928aa52031e0a4c0a620c8fa3cd"
+      "sha256": "26fddd3a98340bf938f029080f7efade93664b39bf48f2b9719cacc404a32876"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -13961,6 +13961,10 @@
       "sha256": "3d846cec4c28052cb36f273516ed9173ca9796ead6c2c313b36a4b47ec05271f"
     },
     {
+      "path": "backend/src/services/integrations/credentialVaultStartup.ts",
+      "sha256": "61dbe360b7b20dba31d7af36cfafaa91028dc5c5161423572e56770b14be5631"
+    },
+    {
       "path": "backend/src/services/integrations/cryptoProvider.ts",
       "sha256": "a4fb326b9cf7382a89649bf05552b4222ed5924397cf1b14a268999ffa721fb9"
     },
@@ -14018,7 +14022,7 @@
     },
     {
       "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",
-      "sha256": "7b9124829a81b6638126b9492e79c9cb03691993eae41589ea5aef93376a92e6"
+      "sha256": "1dab15a26ba08c148e4e96f58294229238e276a24bcdb46ca20e1f7b0b9725e4"
     },
     {
       "path": "backend/src/services/integrations/pluginPermissionPolicy.ts",
@@ -19247,34 +19251,6 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 93,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
-      "line": 94,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "www.xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
-      "line": 95,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xrogaaicom.vercel.app",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
-      "line": 96,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga-api.fly.dev",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 97,
       "credentialsInUrl": false
     },
@@ -19282,7 +19258,35 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 185,
+      "line": 98,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "www.xroga.com",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 99,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xrogaaicom.vercel.app",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 100,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 101,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 189,
       "credentialsInUrl": false
     },
     {
