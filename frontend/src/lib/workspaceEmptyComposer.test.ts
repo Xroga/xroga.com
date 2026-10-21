@@ -726,7 +726,8 @@ test('new terminal renders theme-aware readable cards without black-hole artwork
 test('starter cards preserve immediate local drafts and do not auto-submit', () => {
   assert.match(START, /composer\?\.value \?\? prompt/);
   assert.match(START, /setPrompt\(!currentDraft\.trim\(\) \|\| isStarter \? instruction : `\$\{currentDraft\.trimEnd\(\)\}\\n\\n\$\{instruction\}`\)/);
-  assert.match(START, /Ask for approval before publishing, spending money, or taking consequential external actions/);
+  assert.match(START, /Ask for approval before publishing, making payments, sending messages, or changing external systems/);
+  assert.match(START, /Acceptance criteria: \$\{TASK_ACCEPTANCE\[label\]/);
   assert.match(START, /Do not claim successful execution without evidence/);
   assert.match(START, /currentDraft\.trimEnd\(\)/);
   assert.match(START, /6000/);
@@ -736,12 +737,13 @@ test('starter cards preserve immediate local drafts and do not auto-submit', () 
   assert.match(START, /preventScroll: true/);
 });
 
-test('new terminal styling and icons cannot leak into an existing conversation', () => {
+test('new terminal styling stays scoped while approved active composer controls retain parity', () => {
   assert.match(DOCK, /!sessionRestoring &&\s*messages\.length === 0 &&\s*!loading/);
   assert.match(DOCK, /showStarterExperience && !incognito && !chatbarHidden && startStyles.dock/);
   assert.match(DASHBOARD, /showNewTerminal && startStyles.window/);
-  assert.match(CHATBAR, /arrowSend=\{starter\}/);
-  assert.match(CHATBAR, /microphoneIcon=\{starter\}/);
+  assert.match(CHATBAR, /arrowSend=\{!incognito\}/);
+  assert.match(CHATBAR, /plusIcon=\{!incognito\}/);
+  assert.doesNotMatch(CHATBAR, /microphoneIcon=\{starter\}/);
   assert.match(CHATBAR, /setGithubOpen\(true\)/);
   assert.match(CHATBAR, /setIntegrationsOpen\(true\)/);
 });

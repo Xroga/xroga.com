@@ -200,7 +200,7 @@ test('the collapsed rail keeps named workspace, creation, search and project sho
   assert.match(rail, /overviewIconRef\.current\?\.startAnimation\(\)/);
   assert.match(rail, /overviewIconRef\.current\?\.stopAnimation\(\)/);
   assert.match(rail, /icon=\{FolderOpenIcon\}/, 'the rail lost the folder');
-  for (const label of ['Workspace', 'New Terminal', 'Search', 'Overview', 'Projects', 'Integrations']) {
+  for (const label of ['Workspace', 'New Work', 'Search', 'Overview', 'Projects', 'Integrations']) {
     assert.ok(rail.includes(`aria-label="${label}"`), `${label} lost its accessible name`);
   }
   assert.match(rail, /onClick=\{\(\) => setSearchOpen\(true\)\}/);
@@ -249,14 +249,15 @@ test('the send button takes the wheel at rest and keeps the rest of its states',
 
 test('the composer takes the ring, the bars and the wheel', () => {
   assert.match(ACTIONS, /icon=\{CirclePlayIcon\}/, 'the composer menu trigger is not the ring');
-  // Ordinary composer keeps the ring. Only the explicit starter opts into Plus.
+  // The reusable component defaults to the ring. PR834 explicitly opts the
+  // canonical non-private composer into Plus in both empty and active chats.
   assert.match(ACTIONS, /plusIcon\s*=\s*false/, 'ordinary composer defaults to the ring');
   assert.match(ACTIONS, /plusIcon\?:\s*boolean/, 'starter icon is an explicit opt-in');
   assert.match(ACTIONS, /plusIcon\s*\?\s*<Plus\b[^>]*\/?>\s*:\s*<AnimatedIcon icon=\{CirclePlayIcon\}/);
   assert.equal((ACTIONS.match(/<Plus\b/g) ?? []).length, 1, 'no unconditional or duplicate plus');
   const CHATBAR = read('../../terminal/TerminalChatBar.tsx');
   assert.match(CHATBAR, /starter\s*=\s*false/);
-  assert.match(CHATBAR, /plusIcon=\{starter\}/);
+  assert.match(CHATBAR, /plusIcon=\{!incognito\}/);
   /*
    * The mic renders the meter directly rather than through `AnimatedIcon`, because it
    * drives the animation from the recording state rather than from a pointer. What it
@@ -609,8 +610,9 @@ test('the New Terminal label is hidden by name, not by element', () => {
   assert.match(CSS, /\.xv-new-terminal-compact__label \{ display: none; \}/, 'the label is no longer hidden');
   // PR827 replaced the compact text label with named icon-only controls.
   // Both desktop and mobile still need an accessible name and a visible glyph.
-  const buttons = [...SIDEBAR.matchAll(/<button\b[^>]*aria-label="New Terminal"[^>]*>([\s\S]*?)<\/button>/g)];
-  assert.equal(buttons.length, 2, 'desktop and mobile New Terminal controls must remain present');
+  const buttons = [...SIDEBAR.matchAll(/<button\b[^>]*aria-label="New Work"[^>]*>([\s\S]*?)<\/button>/g)];
+  assert.equal(buttons.length, 2, 'expanded and collapsed New Work controls must remain present');
+  assert.match(SIDEBAR, /aria-label="New terminal"[\s\S]*?<AnimatedIcon icon=\{NewTerminalIcon\}/, 'the mobile creation control must retain its accessible name and icon');
   for (const [, content] of buttons) {
     assert.match(content, /<AnimatedIcon icon=\{NewTerminalIcon\}/);
     assert.doesNotMatch(content, /xv-new-terminal-compact__label/, 'the retired hidden label must not wrap the icon');

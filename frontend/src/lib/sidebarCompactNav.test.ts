@@ -49,12 +49,12 @@ test('compact width preserves stored preferences and popover accessibility', () 
   assert.match(FLYOUT, /requestAnimationFrame/);
 });
 
-test('utility hints sit below their icons and the eye names the chatbar', () => {
-  // The expanded toolbar is now Theme/Notifications/Close. The collapsed rail
-  // retains bottom hints, and the workspace header owns the Search action.
-  assert.equal((NAV.match(/<HoverTip label="Search"[^>]*side="bottom"/g) ?? []).length, 1);
-  assert.equal((NAV.match(/<HoverTip label="Theme"[^>]*side="bottom"/g) ?? []).length, 1);
-  assert.equal((NAV.match(/<HoverTip label="Notifications" side="bottom"/g) ?? []).length, 1);
+test('utility controls retain accessible names without the retired global tooltip host', () => {
+  const utilities = NAV.slice(NAV.indexOf('className="xv-sidebar-utilities"'), NAV.indexOf('className="xv-sidebar-collapsed-actions"'));
+  assert.match(utilities, /<ThemeToggle \/>/);
+  assert.match(utilities, /aria-label="Notifications"/);
+  assert.match(utilities, /aria-label="Close sidebar"/);
+  assert.doesNotMatch(read('../components/layout/AppShell.tsx'), /CompactAppTooltip/);
   assert.match(NAV, /className="xv-sidebar-utilities" aria-label="Sidebar utilities"/);
   assert.match(read('../components/terminal/WorkspaceSearchButton.tsx'), /aria-label="Search workspace"/);
   assert.match(LAUNCHER, /data-short-tip=\{chatbarHidden \? 'Show chatbar' : 'Hide chatbar'\}/);

@@ -13,9 +13,11 @@ test('voice uses the supplied AudioLines icon with no pill, circle, settings, or
   const css = source('../../styles/uiverse.css');
 
   assert.match(voice, /<AudioLinesIcon size=\{22\} active=\{mode === 'listening'\}/);
-  assert.match(icon, /motion\.path/);
+  assert.match(icon, /<m\.path/);
   assert.match(icon, /scaleY: \[1, scale, 1\]/);
-  assert.match(icon, /animate=\{active \? 'animate' : controls\}/);
+  assert.match(icon, /controls\.start\(active && canAnimate \? 'animate' : 'normal'\)/);
+  assert.match(icon, /const canAnimate = isAnimated && !reduced/);
+  assert.match(icon, /repeat: active \? Number\.POSITIVE_INFINITY : 0/);
   assert.equal((icon.match(/\{ x: \d+, d:/g) ?? []).length, 6);
   assert.doesNotMatch(voice, /Voice off|Voice settings|Prefer female|Prefer male|Tone/);
   assert.match(css, /VOICE V8 — wake \+ multilingual inline voice/);
