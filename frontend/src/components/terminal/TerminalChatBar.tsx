@@ -688,10 +688,10 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
               <textarea
                 ref={textareaRef}
                 data-terminal-composer=""
-                data-draft-owner={workspaceIdentity.status === 'guest' ? 'guest' : workspaceIdentity.userId ?? ''}
-                data-draft-session={sessionId}
-                data-draft-project={projectId ?? ''}
-                data-draft-restoring={String(sessionRestoring)}
+                data-draft-owner={hydrated ? (workspaceIdentity.status === 'guest' ? 'guest' : workspaceIdentity.userId ?? '') : ''}
+                data-draft-session={hydrated ? sessionId : ''}
+                data-draft-project={hydrated ? projectId ?? '' : ''}
+                data-draft-restoring={String(!hydrated || sessionRestoring)}
                 value={draft}
                 onChange={(e) => {
                   const next = e.target.value;

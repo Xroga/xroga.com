@@ -41,5 +41,7 @@ test('the correction writes only on explicit hide and preserves typing debounce 
   assert.ok(launcher.indexOf('setPrompt(latestDraft)') < launcher.indexOf('setChatbarHidden(!chatbarHidden)'));
   assert.doesNotMatch(launcher, /useEffect|setTimeout|localStorage|sessionStorage/);
   assert.match(bar, /setPrompt\(draft\);[\s\S]*?\}, 300\);\s*return \(\) => window\.clearTimeout\(timer\)/);
+  assert.match(bar, /data-draft-session=\{hydrated \? sessionId : ''\}/);
+  assert.match(bar, /data-draft-restoring=\{String\(!hydrated \|\| sessionRestoring\)\}/);
   assert.doesNotMatch(bar, /return \(\) => \{?\s*setPrompt\(draftRef\.current\)/);
 });
