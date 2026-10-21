@@ -41,6 +41,7 @@ test('canonical public composers preserve the approved Plus controls without a s
   const composer = page.locator('[data-terminal-composer]');
   const actions = page.getByRole('button', { name: 'More composer actions', exact: true });
   await expect(page.getByTestId('workspace-start-header')).toBeVisible();
+  await expect(page.getByTestId('xroga-companion-composer')).toHaveCount(0);
   await expect(actions.locator('svg.lucide-plus')).toHaveCount(1);
   await expect(composer).toHaveCount(1);
   await composer.fill('Local icon-transition fixture');
@@ -48,6 +49,10 @@ test('canonical public composers preserve the approved Plus controls without a s
   await expect(page.getByText('Local UI fixture reply verified.', { exact: false }).first()).toBeVisible();
   await expect(page.getByTestId('workspace-start-header')).toHaveCount(0);
   await expect(page.getByTestId('workspace-start-cards')).toHaveCount(0);
+  const activeCompanion = page.getByTestId('xroga-companion-composer');
+  await expect(activeCompanion).toBeVisible();
+  await expect(activeCompanion.getByRole('button', { name: /show usage/i })).toBeVisible();
+  await expect(activeCompanion.getByRole('button', { name: 'Start voice input' })).toHaveCount(0);
   await expect(actions.locator('svg.lucide-plus')).toHaveCount(1);
   await expect(actions.locator('svg')).toHaveCount(1);
   await expect(page.locator('.xv-chatbar-solid').getByRole('button', { name: 'Projects', exact: true })).toBeVisible();

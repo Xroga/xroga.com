@@ -783,12 +783,11 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   expect(await page.locator('html').getAttribute('data-reduced-motion')).toBe('true');
   await expect(page.locator('body')).toHaveClass(/theme-black/);
 
-  const companion = page.getByTestId('xroga-companion-composer');
-  await expect(companion).toBeVisible();
-  // Scoped to the companion, not the page. The claim this protects is that *Smoky*
-  // does not do voice — the composer's own dictation is intended and always was, and
-  // it now carries this label, so a page-wide locator asserts something nobody meant.
-  await expect(companion.getByRole('button', { name: 'Start voice input' })).toHaveCount(0);
+  // The approved empty-workspace experience owns one composer and omits Smoky's
+  // active-conversation anchor. Its usage/no-voice contract is checked on the
+  // authenticated global surface below, not on an intentionally absent anchor.
+  await expect(page.getByTestId('xroga-companion-composer')).toHaveCount(0);
+  await expect(page.locator('[data-terminal-composer]')).toHaveCount(1);
   const canonicalComposer = page.locator('.xv-terminal-dock');
   // The current voice controls use accessible names from XrogaVoiceControl.
   await expect(canonicalComposer.getByRole('button', { name: 'Start voice typing' })).toBeVisible();
@@ -839,8 +838,6 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // readout, dictation, feed control — stays removed, and so does its speech
   // synthesis. Companion preferences live in Settings → Companion, exercised later.
   // Because it is interactive it is a real button, so it must NOT be aria-hidden.
-  await expect(companion.getByRole('button', { name: /show usage/i })).toBeVisible();
-  await expect(companion.getByRole('button', { name: /Open .*Xroga companion/ })).toHaveCount(0);
   await expect(page.getByRole('region', { name: /companion panel/ })).toHaveCount(0);
 
   const routeChecks = [
@@ -865,6 +862,12 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     expect(shellState.text).not.toContain("We give our best — perfection is Allah's alone. Xroga verifies before publish.");
     expect(shellState.overflow).toBe(false);
   }
+  const companion = page.getByTestId('xroga-companion-floating');
+  await expect(companion).toBeVisible();
+  await expect(companion.getByRole('button', { name: /show usage/i })).toBeVisible();
+  await expect(companion.getByRole('button', { name: 'Start voice input' })).toHaveCount(0);
+  await expect(companion.getByRole('button', { name: /Open .*Xroga companion/ })).toHaveCount(0);
+  await expect(page.getByRole('region', { name: /companion panel/ })).toHaveCount(0);
 
   for (const viewport of [
     { width: 390, height: 844 },
