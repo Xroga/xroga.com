@@ -14527,3 +14527,13 @@ html.xv-home-scroll-lock body {
 .xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--muted) 58%, transparent); border-radius: 999px; }
 .xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--muted) 84%, transparent); }
 .xv-repos-scroll { overflow: visible !important; max-height: none !important; }
+
+/* Unambiguous outside-composer chat navigation: outlined by default, dark-filled when clicked. */
+.xv-conversation-navigator.is-pressed,
+.xv-conversation-navigator:active {
+  background: #111 !important;
+  border-color: #505050 !important;
+  color: #fff !important;
+}
+.xv-conversation-navigator > div { line-height: 0; }
+.xv-conversation-navigator > div svg { display: block; }
