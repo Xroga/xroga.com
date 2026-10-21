@@ -173,3 +173,113 @@
  .carouselShell .card { min-height: 104px; padding-bottom: 32px; }
  .hero { margin-bottom: 12px; }
 }
+
+/*
+ * Classic particle edition — contained exclusively within the idle new-workspace
+ * starter. No fixed layer, remote asset, canvas, or effect on working chats/pages.
+ * Scalable CSS gradients remain crisp on high-density displays.
+ */
+.starters {
+  position: relative;
+  isolation: isolate;
+  --particle-low: .075;
+  --particle-high: .12;
+}
+.dock:global(.terminal-skin-dark) .starters {
+  --particle-low: .16;
+  --particle-high: .25;
+}
+.starters::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  color: var(--foreground);
+  background-image:
+    radial-gradient(circle, currentColor 0 1px, transparent 1.55px),
+    radial-gradient(circle, currentColor 0 .6px, transparent 1.3px);
+  background-size: 22px 22px, 37px 37px;
+  background-position: 0 0, 9px 14px;
+  -webkit-mask-image: radial-gradient(ellipse 77% 90% at 50% 55%, #000 22%, transparent 100%);
+  mask-image: radial-gradient(ellipse 77% 90% at 50% 55%, #000 22%, transparent 100%);
+  animation: classicParticleTravel 22s linear infinite, classicParticleFlicker 5.5s ease-in-out infinite alternate;
+  will-change: background-position, opacity;
+}
+@keyframes classicParticleTravel {
+  from { background-position: 0 0, 9px 14px; }
+  to { background-position: 22px 22px, -28px 51px; }
+}
+@keyframes classicParticleFlicker {
+  from { opacity: var(--particle-low); }
+  to { opacity: var(--particle-high); }
+}
+.automatic, .cards { position: relative; z-index: 1; }
+.automatic { letter-spacing: .035em; }
+.cards { gap: 13px; }
+
+.card {
+  --spot-x: 50%;
+  --spot-y: 50%;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--terminal-ui-raised) 94%, var(--terminal-ui-surface));
+  border-color: color-mix(in srgb, var(--foreground) 11%, transparent);
+  box-shadow: 0 8px 26px #00000008, inset 0 1px 0 color-mix(in srgb, var(--foreground) 5%, transparent);
+  transform: translateY(0);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform .28s cubic-bezier(.22,1,.36,1), background-color .24s ease, border-color .24s ease, box-shadow .28s ease;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(230px circle at var(--spot-x) var(--spot-y),
+    color-mix(in srgb, var(--foreground) 10%, transparent) 0%, transparent 74%);
+  opacity: 0;
+  transition: opacity .28s ease;
+}
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px solid color-mix(in srgb, var(--foreground) 5%, transparent);
+  border-radius: 11px;
+  pointer-events: none;
+}
+.card:hover, .card[aria-expanded='true'] {
+  transform: translateY(-3px);
+  background: color-mix(in srgb, var(--terminal-ui-raised) 86%, var(--terminal-ui-inset));
+  border-color: color-mix(in srgb, var(--foreground) 30%, transparent);
+  box-shadow: 0 18px 38px #00000018, inset 0 1px 0 color-mix(in srgb, var(--foreground) 13%, transparent);
+}
+.card:hover::before, .card[aria-expanded='true']::before { opacity: 1; }
+.card:hover .cardArrow, .card[aria-expanded='true'] .cardArrow { color: var(--foreground); transform: translateX(3px); }
+.cardArrow { transition: transform .26s cubic-bezier(.22,1,.36,1), color .26s; }
+.cardIcon { width: 28px; height: 28px; align-items: center; justify-content: flex-start; }
+.cardIcon svg { width: 21px; height: 21px; stroke-width: 1.55; }
+.cardWords strong { font-weight: 500; letter-spacing: -.035em; }
+.cardWords > span { line-height: 1.55; }
+.visual { opacity: .055; }
+.card:hover .visual, .card[aria-expanded='true'] .visual { opacity: .14; }
+.carouselShell .card .visual { opacity: .10; }
+.carouselShell .card:hover .visual { opacity: .18; }
+@container (max-width: 720px) {
+  .cards { gap: 10px; }
+}
+@container (max-width: 580px) {
+  .cardIcon { width: 18px; height: 18px; }
+  .cardIcon svg { width: 18px; height: 18px; }
+}
+@media (hover: none) {
+  .card { backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .card:hover { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .starters::before { animation: none; opacity: var(--particle-low); will-change: auto; }
+  .card, .card::before, .cardArrow { transition: none; }
+  .card:hover, .card[aria-expanded='true'] { transform: none; }
+}
