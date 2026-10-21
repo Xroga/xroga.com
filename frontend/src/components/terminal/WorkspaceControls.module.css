@@ -26,7 +26,7 @@
 .modelButton { display: flex; align-items: center; gap: 5px; border: 0; background: transparent; color: var(--foreground); font-size: 11px; cursor: pointer; }
 .modelButton:hover { color: var(--foreground); opacity: .8; }
 .modelText { white-space: nowrap; }
-.compactModel { font-size: 11px; }
+.compactModel { font-size: 12px; font-weight: 600; }
 .mobileModelIcon { display: none; }
 .chevron { width: 12px; height: 12px; opacity: .6; }
 .actions.actions { filter: none; }
@@ -54,7 +54,9 @@
 .featureMenu button:hover,.featureMenu button:focus-visible { background: var(--mono-raised); outline: none; }
 .featureMenu button:focus-visible { box-shadow: inset 0 0 0 1px var(--mono-border); }
 @media (max-width: 639px) {
-  .modelText { display: none; }
+  /* Keep readable model name on mobile rather than substituting a decorative icon. */
+  .modelText { display: inline; font-size: 11px; }
+  .mobileModelIcon { display: none !important; }
   .mobileModelIcon { display: block; width: 24px; height: 24px; flex-shrink: 0; }
   .modelButton .chevron { display: none; }
 }
@@ -92,3 +94,14 @@
 :global(body.theme-beige) .actions.actions :global(.xv-cba-item[data-tone='orange']) { --row-accent: #c2410c; }
 :global(body.theme-white) .actions.actions :global(.xv-cba-item[data-tone='red']),
 :global(body.theme-beige) .actions.actions :global(.xv-cba-item[data-tone='red']) { --row-accent: #b91c1c; }
+
+/* Stable two-level starter menu: pointer moves inside without dismissing. */
+.featureMenu.featureMenu { max-height: min(430px,calc(100dvh - 24px)); overflow-x: hidden; overscroll-behavior: contain; }
+.featureOptions { display:grid; gap:2px; }
+.featureOptions [role="menuitem"][aria-current="true"] { background:var(--mono-raised); }
+.featureBack { display:inline-flex!important; justify-content:flex-start!important; align-items:center; gap:4px; width:auto!important; padding-inline:7px; font-size:12px; }
+.featureDetail { margin-top:7px; border-top:1px solid var(--mono-border); padding:10px 7px 4px; }
+.featureDetail strong { font-size:12px; font-weight:700; }
+.featureMenu .featureDetail p { margin:6px 0 9px; line-height:1.5; font-size:11px; }
+.featureChoose.featureChoose { width:100%; display:flex; align-items:center; justify-content:space-between; padding:10px; border-radius:9px; background:var(--mono-raised); font-size:12px; font-weight:650; }
+.featureChoose:hover,.featureChoose:focus-visible { outline:1px solid var(--mono-ink); }

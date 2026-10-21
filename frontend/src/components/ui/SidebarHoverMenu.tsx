@@ -63,7 +63,7 @@ export function SidebarHoverMenu({ trigger, children, className }: SidebarHoverM
       }
       const top = Math.max(
         VIEWPORT_PAD,
-        Math.min(anchor.top, window.innerHeight - menuHeight - VIEWPORT_PAD),
+        Math.min(anchor.top, window.innerHeight - Math.min(menuHeight, window.innerHeight - 2 * VIEWPORT_PAD) - VIEWPORT_PAD),
       );
       setPos({ top, left: Math.max(VIEWPORT_PAD, left) });
     }
@@ -146,7 +146,7 @@ export function SidebarHoverMenu({ trigger, children, className }: SidebarHoverM
               ref={menuRef}
               role="menu"
               className={cn('xv-sidebar-hover-menu fixed z-[320]', className)}
-              style={{ top: pos.top, left: pos.left }}
+              style={{ top: pos.top, left: pos.left, maxWidth: 'calc(100vw - 24px)', maxHeight: 'calc(100dvh - 24px)', overflowY: 'auto', background: 'var(--card)', opacity: 1, overscrollBehavior: 'contain' }}
               onMouseEnter={cancelClose}
               onMouseLeave={scheduleClose}
               onClick={(event) => {

@@ -17,10 +17,15 @@ export function clampAnchoredPosition(
   const start = placement.endsWith('start');
   const below = placement.startsWith('bottom');
   const wantedLeft = start ? anchor.left : anchor.right - popover.width;
-  const wantedTop = below ? anchor.bottom + gap : anchor.top - popover.height - gap;
+  const availableAbove = anchor.top - margin - gap;
+  const availableBelow = viewport.height - anchor.bottom - margin - gap;
+  const shouldBelow = below ? availableBelow >= Math.min(popover.height, 200) || availableBelow >= availableAbove
+    : availableAbove < Math.min(popover.height, 200) && availableBelow > availableAbove;
+  const wantedTop = shouldBelow ? anchor.bottom + gap : anchor.top - popover.height - gap;
+  const maxLeft = Math.max(margin, viewport.width - Math.min(popover.width, viewport.width - 2 * margin) - margin);
   return {
-    left: Math.max(margin, Math.min(wantedLeft, viewport.width - popover.width - margin)),
-    top: Math.max(margin, Math.min(wantedTop, viewport.height - popover.height - margin)),
+    left: Math.max(margin, Math.min(wantedLeft, maxLeft)),
+    top: Math.max(margin, Math.min(wantedTop, viewport.height - Math.min(popover.height, viewport.height - 2 * margin) - margin)),
   };
 }
 
@@ -52,7 +57,7 @@ export function AnchoredPortalPopover({ open, onClose, anchorRef, children, clas
   }, [anchorRef, onClose, open, reposition]);
   if (!open || typeof document === 'undefined') return null;
   return createPortal(
-    <div ref={popoverRef} role="menu" aria-label={ariaLabel} className={className} style={{ position: 'fixed', left: position.left, top: position.top, width: `min(${width}px, calc(100vw - 24px))`, zIndex: 10000 }}>
+    <div ref={popoverRef} role="menu" aria-label={ariaLabel} className={className} style={{ position: 'fixed', left: position.left, top: position.top, width: `min(${width}px, calc(100vw - 24px))`, maxHeight: 'calc(100dvh - 24px)', overflowY: 'auto', overscrollBehavior: 'contain', zIndex: 10000 }}>
       {children}
     </div>, document.body,
   );

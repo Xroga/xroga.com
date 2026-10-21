@@ -78,6 +78,7 @@ export function ProfileQuickMenu({ onLogout, anchorRef, children, triggerClassNa
   const [open, setOpen] = useState(false);
   const [activeGroup, setActiveGroup] = useState<(typeof GROUPS)[number]['key'] | null>(null);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [emailCopied, setEmailCopied] = useState(false);
   const [provider, setProvider] = useState('Xroga');
   const [pos, setPos] = useState({ top: 0, left: 0, submenuSide: 'right' as 'left' | 'right' });
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -190,7 +191,11 @@ export function ProfileQuickMenu({ onLogout, anchorRef, children, triggerClassNa
           <div className="xv-pqm-card" onMouseEnter={cancelSubmenuClose}>
             <div className="xv-pqm-identity">
               <span className="xv-pqm-avatar" aria-hidden="true">{accountName.charAt(0).toUpperCase()}</span>
-              <span className="min-w-0"><strong>{accountName}</strong>{email ? <small>{email}</small> : null}<em>{provider} account</em></span>
+              <span className="min-w-0"><strong>{accountName}</strong>{email ? <button type="button" className="xv-pqm-copy-email"
+                  aria-label="Copy account email" onClick={async () => {
+                    try { await navigator.clipboard.writeText(email); setEmailCopied(true); }
+                    catch { setEmailCopied(false); }
+                  }}><small>{email}</small><span aria-hidden="true">{emailCopied ? '✓' : '⧉'}</span></button> : null}<em>{provider} account</em></span>
             </div>
             <button type="button" data-menu-key="plan" className="xv-pqm-premium" onClick={() => { setOpen(false); router.push('/pricing'); }}>
               <UpgradeActionButton />

@@ -239,8 +239,6 @@ export function TerminalDock() {
                         else scrollToFirst('smooth');
                       }}
                       aria-label={showJumpToLatest ? 'Scroll to latest' : 'Scroll to top'}
-                      data-short-tip={showJumpToLatest ? 'Latest' : 'Top'}
-                      data-tooltip={showJumpToLatest ? 'Latest' : 'Top'}
                     >
                       <SquareChevronUpIcon size={19} direction={showJumpToLatest ? 'down' : 'up'} />
                     </button>
