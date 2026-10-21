@@ -1,0 +1,18 @@
+{
+  "scope": "REVIEWED_CURRENT_MIGRATION_ADDITIONS_NOT_PRODUCTION_SCHEMA_OBSERVATION",
+  "historicalCatalogUnchanged": true,
+  "tables": [
+    {
+      "schema": "public",
+      "table_name": "product_feedback",
+      "migration": "20261018211950_product_feedback_admin.sql",
+      "migrationSha256": "9ddb71e1f0ad5ec8b0f62163b82aa7bf430355584b4b23f009b39d0c9d8169f2",
+      "authorizationMigration": "20261021100000_feedback_founder_authorization.sql",
+      "authorizationSha256": "b4298f22c6ac16682b1f5b953adaebcd1b15326bf27e94a7cfe216b3ccf297ec",
+      "boundary": "RLS enabled. Public INSERT requires signed caller identity or anonymous null identity. Global SELECT requires current confirmed hello@xroga.com, current owner role and signed AAL2, including restrictive policy. Browser mutation is forbidden.",
+      "tests": "scripts/security/feedback-rls.supabase.mjs",
+      "evidence": "Real disposable full-history run39581744698 observed this installed table and passed upgrade/reapply. Separate feedback fresh/upgrade authorization run39581744708 checks actual Auth, MFA, PostgREST and exact persistence. Neither is production parity.",
+      "productionChanges": false
+    }
+  ]
+}

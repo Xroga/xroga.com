@@ -1,4 +1,18 @@
 import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+
+export function validateCurrentMigrationAdditions(additions,files,readMigration){
+  assert.equal(additions.scope,'REVIEWED_CURRENT_MIGRATION_ADDITIONS_NOT_PRODUCTION_SCHEMA_OBSERVATION');
+  assert.equal(additions.historicalCatalogUnchanged,true);
+  assert.deepEqual(additions.tables.map(t=>`${t.schema}.${t.table_name}`),['public.product_feedback']);
+  for(const entry of additions.tables){
+    for(const [file,digest] of [[entry.migration,entry.migrationSha256],[entry.authorizationMigration,entry.authorizationSha256]]){
+      assert.ok(files.includes(file),'Current addition must name an installed original migration');
+      assert.equal(createHash('sha256').update(readMigration(file).replace(/\r\n/g,'\n')).digest('hex'),digest,'Reviewed migration boundary drift');
+    }
+  }
+  return additions.tables;
+}
 
 export function assertDisposableSource(actual,expected){
   assert.match(actual??'',/^[a-f0-9]{40}$/);

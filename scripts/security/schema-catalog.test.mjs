@@ -1,7 +1,21 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {readFileSync} from 'node:fs';
-import {assertDisposableSource,collectSchemaCatalog} from './schema-catalog.mjs';
+import {assertDisposableSource,collectSchemaCatalog,validateCurrentMigrationAdditions} from './schema-catalog.mjs';
+
+test('current feedback schema addition is exact migration-bound evidence, never a broad missing-table waiver',()=>{
+  const additions=JSON.parse(readFileSync(new URL('../../docs/xroga/security/current-migration-additions.json',import.meta.url),'utf8'));
+  const files=additions.tables.flatMap(t=>[t.migration,t.authorizationMigration]);
+  const read=file=>readFileSync(new URL(`../../supabase/migrations/${file}`,import.meta.url),'utf8');
+  assert.equal(validateCurrentMigrationAdditions(additions,files,read).length,1);
+  assert.throws(()=>validateCurrentMigrationAdditions(additions,[],read));
+  assert.throws(()=>validateCurrentMigrationAdditions(additions,files,file=>read(file)+'\n-- source drift'));
+  const extra=structuredClone(additions);extra.tables.push({...extra.tables[0],table_name:'unreviewed'});
+  assert.throws(()=>validateCurrentMigrationAdditions(extra,files,read));
+  const renamed=structuredClone(additions);renamed.tables[0].table_name='foreign';
+  assert.throws(()=>validateCurrentMigrationAdditions(renamed,files,read));
+  assert.throws(()=>validateCurrentMigrationAdditions({...additions,historicalCatalogUnchanged:false},files,read));
+});
 
 test('disposable source attestation rejects missing or substituted merge/head identities',()=>{
   const sha='a'.repeat(40);assert.equal(assertDisposableSource(sha,sha),sha);
