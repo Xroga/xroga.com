@@ -17,7 +17,7 @@ export function SidebarRevealTitle({text}:{text:string}){
   return <span ref={frame} className="xv-so-title" aria-label={text}><span ref={label}
     data-overflow={overflow>2} style={{'--so-slide':`-${overflow}px`,'--so-time':`${Math.min(6,Math.max(1.2,overflow/38))}s`} as CSSProperties}>{text}</span></span>;
 }
-export type SidebarMenuTarget={kind:'conversation'|'project';id:string;label:string;pinned:boolean;projectId?:string|null};
+export type SidebarMenuTarget={kind:'conversation'|'project';id:string;label:string;pinned:boolean;archived?:boolean;projectId?:string|null};
 export type SidebarMenuProps={
   target:SidebarMenuTarget|null;point:{x:number;y:number}|null;trigger:RefObject<HTMLElement|null>;
   projects:Project[];sections:SidebarSection[];close:()=>void;
@@ -83,7 +83,7 @@ export function SidebarOrganizerMenu(p:SidebarMenuProps){
         {item('Move to section',<FolderPlus size={15}/>,()=>setStep('section'))}
       </>:null}
       <hr/>
-      {item('Archive',<Archive size={15}/>,()=>void run(()=>p.archive(target)))}
+      {item(target.archived?'Unarchive':'Archive',<Archive size={15}/>,()=>void run(()=>p.archive(target)))}
       {item('Delete',<Trash2 size={15}/>,()=>void run(()=>p.remove(target)),true)}
     </>:null}
     {['rename','newProject','newSection'].includes(step)?<form onSubmit={e=>{

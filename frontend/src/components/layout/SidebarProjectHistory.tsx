@@ -40,7 +40,7 @@ import { removeTerminalHistoryEntry } from '@/lib/terminalHistory';
 import { SidebarOrganizerMenu, SidebarRevealTitle, type SidebarMenuTarget } from './SidebarOrganizerUI';
 import './SidebarOrganizer.css';
 import { loadSidebarMetadata, saveSidebarMetadata, removeSidebarMetadata,
-  listSidebarProjects, listSidebarSections, createSidebarSection, safeConversationTitle,
+  listSidebarProjects, listSidebarSections, createSidebarSection, renameSidebarSection, removeSidebarSection, safeConversationTitle,
   type SidebarItemMeta, type SidebarSection, type SidebarItemType } from '@/lib/sidebarOrganization';
 import { formatCompactAgo } from '@/lib/safeDates';
 import { cn } from '@/lib/utils';
@@ -868,7 +868,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     const section=await createSidebarSection(userId,projectId,name);
     setSections(items=>[...items,section]);return section;
   };
-  const archive=async(t:SidebarMenuTarget)=>{await patchMeta(t.kind,t.id,{archived_at:new Date().toISOString()});};
+  const archive=async(t:SidebarMenuTarget)=>{await patchMeta(t.kind,t.id,{archived_at:t.archived?null:new Date().toISOString()});};
   const remove=async(t:SidebarMenuTarget)=>{
     const message=t.kind==='project'?'Delete this Xroga project? The connected GitHub repository is NOT deleted.':
       'Permanently delete this conversation and its saved messages?';
@@ -919,7 +919,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const heading=(text:string,extra?:React.ReactNode)=><div className="xv-so-heading"><span>{text}</span>{extra}</div>;
   const row=(kind:SidebarItemType,id:string,label:string,open:()=>void,depth=0,active=false)=>{
     const pinnedNow=Boolean(metaFor(kind,id)?.pinned_at);
-    const target:SidebarMenuTarget={kind,id,label,pinned:pinnedNow,projectId:metaFor(kind,id)?.project_id};
+    const target:SidebarMenuTarget={kind,id,label,pinned:pinnedNow,archived:Boolean(metaFor(kind,id)?.archived_at),
+      projectId:metaFor(kind,id)?.project_id};
     return <div key={`${kind}:${id}`} className={cn('xv-so-row group',active&&'is-active')}
       style={depth?{paddingLeft:depth*10}:undefined}
       onContextMenu={event=>openMenu(event,target,true)}>
@@ -973,7 +974,26 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
             {open?<div className="xv-so-nest">
               {sections.filter(section=>section.project_id===project.id).map(section=>
                 <div key={section.id}>
-                  <div className="px-1 py-1 text-[10px] text-[var(--muted)]">{section.name}</div>
+                  <div className="group flex items-center justify-between px-1 py-1 text-[10px] text-[var(--muted)]">
+                    <span className="min-w-0 truncate">{section.name}</span>
+                    <span className="hidden group-hover:inline-flex group-focus-within:inline-flex gap-1">
+                      <button type="button" aria-label={`Rename section ${section.name}`} onClick={()=>void(async()=>{
+                        if(!userId)return;
+                        const value=window.prompt('Rename section',section.name)?.trim();
+                        if(!value||value===section.name)return;
+                        try{await renameSidebarSection(userId,section.id,value);
+                          setSections(items=>items.map(s=>s.id===section.id?{...s,name:value}:s));}
+                        catch{toast.error('Could not rename section');}
+                      })()}>Rename</button>
+                      <button type="button" aria-label={`Delete section ${section.name}`} onClick={()=>void(async()=>{
+                        if(!userId||!window.confirm('Delete this section? Its conversations remain in the project.'))return;
+                        try{await removeSidebarSection(userId,section.id);
+                          setSections(items=>items.filter(s=>s.id!==section.id));
+                          setMetadata(items=>items.map(m=>m.section_id===section.id?{...m,section_id:null}:m));}
+                        catch{toast.error('Could not delete section');}
+                      })()}>Delete</button>
+                    </span>
+                  </div>
                   {sessions.filter(chat=>metaFor('conversation',chat.id)?.section_id===section.id)
                     .slice(0,fullProjects[project.id]?undefined:3)
                     .map(chat=>row('conversation',chat.id,conversationTitle(chat),()=>void openSession(chat),1,chat.id===activeSessionId))}
