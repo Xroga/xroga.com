@@ -383,6 +383,37 @@ test('compact sidebar keeps utilities and primary destinations in two aligned ro
   await expect(sidebar).toHaveClass(/is-collapsed/);
 });
 
+test('reopened close control resizes the sidebar without collapsing or selecting its text', async ({ page }) => {
+  await page.goto('/workspace');
+  await expect(page.locator('[data-terminal-composer]')).toHaveAttribute('data-draft-restoring', 'false');
+  const rail = page.locator('.xv-sidebar-root');
+  const floating = rail.locator('.xv-sidebar-floating');
+  const close = rail.getByRole('button', { name: 'Close sidebar', exact: true });
+  for (let cycle = 0; cycle < 3; cycle++) {
+    const resize = page.getByRole('separator', { name: 'Resize sidebar' });
+    await resize.press('Home');
+    const width = Number(await resize.getAttribute('aria-valuemin'));
+    await expect(floating).toHaveCSS('width', `${width}px`);
+    await close.click();
+    await expect(rail).toHaveClass(/is-collapsed/);
+    await expect(floating).toHaveCSS('width', '64px');
+    await rail.locator('.xv-sidebar-brand a[aria-label="Xroga"]').click();
+    await expect(rail).not.toHaveClass(/is-collapsed/);
+    await expect(floating).toHaveCSS('width', `${width}px`);
+    await close.hover();
+    const before = (await rail.boundingBox())!;
+    const button = (await close.boundingBox())!;
+    const x = button.x + button.width / 2, y = button.y + button.height / 2;
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await page.mouse.move(x + 130, y, { steps: 14 });
+    await page.mouse.up();
+    await expect.poll(async () => (await rail.boundingBox())!.width - before.width).toBeGreaterThan(50);
+    await expect(rail).not.toHaveClass(/is-collapsed/);
+    expect(await page.evaluate(() => window.getSelection()?.toString() ?? '')).toBe('');
+  }
+});
+
 test('plus menu follows the empty or working composer and model stays uncovered', async ({ page }) => {
   await page.goto('/workspace');
   await expect(page.getByTestId('workspace-start-cards')).toBeVisible();

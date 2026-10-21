@@ -129,6 +129,11 @@ test('the collapsed rail has no width to drag', () => {
 });
 
 test('the behaviour is asserted where the workspace can be reached', () => {
+  const reopening = E2E.indexOf('const configuredSidebarWidth');
+  const coordinateCapture = E2E.indexOf('const toggleBox =');
+  assert.ok(reopening > 0 && coordinateCapture > reopening, 'wait for the transitioning control owner before capturing drag coordinates');
+  assert.match(E2E.slice(reopening, coordinateCapture), /rail\.locator\('\.xv-sidebar-floating'\)\)\.toHaveCSS\('width'/);
+  assert.match(E2E.slice(reopening, coordinateCapture), /await edgeToggle\.hover\(\)/);
   assert.match(E2E, /the collapsed rail still carries a sidebar toggle/);
   assert.match(E2E, /hovering the mark must not reopen the sidebar/);
   assert.match(E2E, /clicking the mark did not reopen the sidebar/);
