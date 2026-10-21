@@ -43,6 +43,7 @@ import {
   cachedTerminalNumber,
   cloudTerminalLabel,
   listCloudTerminalSessions,
+  loadCloudTerminalSession,
   migrateLocalSessionsToCloud,
   onCloudTerminalsChanged,
 } from '@/lib/cloudTerminalSessions';
@@ -185,6 +186,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const [sections,setSections] = useState<SidebarSection[]>([]);
   const [accountProjects,setAccountProjects] = useState<SidebarProject[]>([]);
   const [sidebarChats,setSidebarChats] = useState<SidebarChat[]>([]);
+  const [moreCloudSessions,setMoreCloudSessions]=useState(false);
+  const [moreSidebarChats,setMoreSidebarChats]=useState(false);
   const [pinnedProjectRecords,setPinnedProjectRecords]=useState<SidebarProject[]>([]);
   const [pinnedSessionRecords,setPinnedSessionRecords]=useState<RepoSession[]>([]);
   const [shownProjects,setShownProjects] = useState(5);
@@ -229,7 +232,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       ]);
       setItemMeta(metadata);setSections(sectionList);
       setAccountProjects(firstProjects.slice(0,5));setProjectsHasMore(firstProjects.length>5);
-      setSidebarChats(chats);setPinnedIds(sortPinned(metadata.filter(item=>item.pin_order!==null&&!item.archived_at)).map(item=>item.item_id));
+      setSidebarChats(chats);setMoreSidebarChats(chats.length>=200);setPinnedIds(sortPinned(metadata.filter(item=>item.pin_order!==null&&!item.archived_at)).map(item=>item.item_id));
       const hydrated=await loadPinnedSidebarRecords(accountId,metadata);
       setPinnedProjectRecords(hydrated.projects);
       setPinnedSessionRecords(hydrated.sessions.filter(x=>x.messageCount>0).map(x=>({
@@ -391,7 +394,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     if (cloudRefreshInFlight.current) return;
     cloudRefreshInFlight.current = true;
     try {
-      const list = await listCloudTerminalSessions();
+      const list = await listCloudTerminalSessions(undefined,{limit:100,offset:0});
+      setMoreCloudSessions(list.length>=100);
       setCloudSessions(list);
       const local = loadTerminalHistory().filter(
         (e) => e.messageCount > 0 && e.githubRepoName?.includes('/') && e.messages?.length
@@ -402,7 +406,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       // did before — meant every refresh cost two list calls even when there was
       // nothing to migrate, and each upload's change event started the cycle again.
       const uploaded = await migrateLocalSessionsToCloud(local, list);
-      if (uploaded) setCloudSessions(await listCloudTerminalSessions());
+      if (uploaded) setCloudSessions(await listCloudTerminalSessions(undefined,{limit:100,offset:0}));
     } finally {
       cloudRefreshInFlight.current = false;
     }
@@ -766,6 +770,50 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     return Array.from(map.values()).sort((a, b) => (Date.parse(b.updatedAt) || 0) - (Date.parse(a.updatedAt) || 0));
   }, [allHistory, entries, cloudSessions, sidebarChats, pinnedSessionRecords]);
 
+  useEffect(()=>{
+    if(!accountId||!savedConversations.length)return;
+    const oldKey='xroga_sidebar_pins_v1:'+accountId;
+    const migratedKey='xroga_sidebar_pins_migrated_v1:'+accountId;
+    if(localStorage.getItem(migratedKey)==='yes')return;
+    let old:string[]=[];
+    try{const value=JSON.parse(localStorage.getItem(oldKey)||'[]');
+      old=Array.isArray(value)?value.filter((id):id is string=>typeof id==='string'):[];}catch{old=[];}
+    if(!old.length){localStorage.setItem(migratedKey,'yes');return;}
+    let cancelled=false;
+    void (async()=>{
+      const candidates=old.filter(id=>savedConversations.some(s=>s.id===id)&&
+        !itemMeta.some(item=>item.item_type==='conversation'&&item.item_id===id&&item.pin_order!==null));
+      const highest=Math.max(0,...itemMeta.map(item=>item.pin_order??0));
+      try{
+        for(let i=0;i<candidates.length;i++){
+          if(cancelled)return;
+          await changeSidebarMeta(accountId,'conversation',candidates[i],{pin_order:highest+(i+1)*1000});
+        }
+        if(!cancelled){localStorage.setItem(migratedKey,'yes');await refreshSidebarData();}
+      }catch(e){console.warn('[sidebar] Legacy pin migration can be retried:',e);}
+    })();
+    return()=>{cancelled=true;};
+  },[accountId,savedConversations,itemMeta,refreshSidebarData]);
+
+  async function loadMoreRecents(){
+    if(!accountId)return;
+    try{
+      const [oldCloud,oldChats]=await Promise.all([
+        moreCloudSessions?listCloudTerminalSessions(undefined,{limit:100,offset:cloudSessions.length}):Promise.resolve([]),
+        moreSidebarChats?loadSidebarChats(accountId,sidebarChats.length,200):Promise.resolve([])
+      ]);
+      setMoreCloudSessions(oldCloud.length>=100);
+      setMoreSidebarChats(oldChats.length>=200);
+      if(oldCloud.length)setCloudSessions(prev=>{
+        const byId=new Map([...prev,...oldCloud].map(x=>[x.id,x]));
+        return [...byId.values()];
+      });
+      if(oldChats.length)setSidebarChats(prev=>{
+        const byId=new Map([...prev,...oldChats].map(x=>[x.id,x]));
+        return [...byId.values()];
+      });
+    }catch(e){toast.error((e as Error).message||'Could not load older history');}
+  }
   const organizedProjects = useMemo(()=>{
     const actual=accountProjects.map(p=>({id:p.id,label:p.name,repo:p.github_repo_name||null,actual:p}));
     const known=new Set(actual.map(p=>p.repo).filter(Boolean));
@@ -894,17 +942,21 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   ]:[];
 
   useEffect(()=>{
-    if(typeof window==='undefined'||!savedConversations.length)return;
-    if(window.location.pathname!=='/workspace')return;
+    if(typeof window==='undefined'||window.location.pathname!=='/workspace'||!accountId)return;
     const id=new URLSearchParams(window.location.search).get('conversation');
     if(!id||id===activeSessionId)return;
-    const match=savedConversations.find(s=>s.id===id);
-    if(!match)return;
     window.history.replaceState(window.history.state,'','/workspace');
-    void openSession(match);
-    // The session target is a deep link, not a new chat.
+    const match=savedConversations.find(s=>s.id===id);
+    if(match){void openSession(match);return;}
+    void (async()=>{
+      const restored=await loadSidebarChatById(accountId,id).catch(()=>null)
+        ||await loadCloudTerminalSession(id).catch(()=>null);
+      if(restored?.messages?.length)await applyRestore(restored,'main');
+      else toast.error('That conversation is not available to this account');
+    })();
+    // Deep-link query is consumed once and never starts a blank chat.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[savedConversations,activeSessionId]);
+  },[accountId,savedConversations,activeSessionId]);
 
   async function saveEditor(){
     if(!editor||!accountId||saving)return;
@@ -933,6 +985,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
           if(!conv?.githubRepoName)await deleteSidebarChat(accountId,editor.id);
           removeTerminalHistoryEntry(editor.id);
         }
+        await createClient().from('xroga_sidebar_items').delete().eq('user_id',accountId)
+          .eq('item_type',editor.kind).eq('item_id',editor.id);
       }
       setEditor(null);setEditorText('');await refreshSidebarData();refreshLocal();refreshCloud();
       toast.success('Saved');
@@ -1025,6 +1079,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),false,
           <MessageSquare size={12} className="shrink-0 text-[var(--muted)]"/>))}
       {recentConversations.length===0?<p className="px-2 py-1 text-[10px] text-[var(--muted)]">Your saved conversations will appear here.</p>:null}
+      {moreCloudSessions||moreSidebarChats?<button type="button" className={secondary+' px-2 py-1'}
+        onClick={()=>void loadMoreRecents()}>View more recents</button>:null}
       <button type="button" className={secondary+' px-2 py-1'} onClick={()=>setArchivedOpen(prev=>!prev)}
         aria-expanded={archivedOpen}>{archivedOpen?'Hide archive':'Archived items'}</button>
       {archivedOpen?itemMeta.filter(item=>item.archived_at!==null).map(item=>{
