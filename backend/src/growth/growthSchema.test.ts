@@ -16,6 +16,10 @@ const productionWorkflow = readText('.github/workflows/launch-production-verific
 const browserTest = readText('frontend/e2e/command3-auth.spec.ts');
 const config = readText('frontend/src/lib/supabase/config.ts');
 const sitemap = readText('frontend/src/app/sitemap.ts');
+function jobText(name: string): string {
+  const match=workflow.match(new RegExp(`^  ${name}:\\n([\\s\\S]*?)(?=^  [A-Za-z0-9_-]+:\\n|(?![\\s\\S]))`,'m'));
+  assert.ok(match,`Missing workflow job ${name}`);return match[0];
+}
 
 test('existing analytics_events is evolved instead of replaced', () => {
   assert.match(migration, /ALTER TABLE public\.analytics_events/);
@@ -43,7 +47,11 @@ test('authenticated workflow uses disposable real Supabase, fails closed, and de
   assert.match(workflow, /node scripts\/security\/full-supabase-history\.mjs/);
   assert.match(workflow, /tenantIsolation\.local\.integration\.ts/);
   assert.match(workflow, /stop --no-backup/);
-  assert.doesNotMatch(workflow, /secrets\.|continue-on-error: true|--ignore-health-check/);
+  // The ordinary browser/database job remains credential-free. The separate
+  // owner-approved manual custody job is checked below, never exempted globally.
+  assert.doesNotMatch(jobText('authenticated-browser'), /secrets\.|id-token:|environment:/);
+  assert.doesNotMatch(workflow.slice(0,workflow.indexOf('\njobs:')), /secrets\./);
+  assert.doesNotMatch(workflow, /continue-on-error: true|--ignore-health-check/);
   const bootstrap=readText('scripts/security/disposable-supabase.mjs');
   assert.match(bootstrap,/Forbidden inherited configuration/);
   assert.match(bootstrap,/generateKeyPairSync/);
@@ -53,6 +61,21 @@ test('authenticated workflow uses disposable real Supabase, fails closed, and de
   assert.match(browserTest, /deleteUser/);
   assert.doesNotMatch(workflow, /sb_publishable_[A-Za-z0-9_-]{10,}/);
   assert.doesNotMatch(productionWorkflow, /SUPABASE_SERVICE_ROLE_KEY|command3-auth\.spec\.ts/);
+});
+
+test('approved custody job is manual, exact-branch, least-privilege and separate from browser regression',()=>{
+  const custody=jobText('oci-managed-custody'),browser=jobText('authenticated-browser');
+  assert.match(custody,/if: github\.event_name == 'workflow_dispatch' && github\.repository == 'Xroga\/xroga\.com' && github\.ref == 'refs\/heads\/codex\/xroga-batch-01'/);
+  assert.match(custody,/environment: xroga-phase3-oci-custody/);
+  assert.match(custody,/contents: read\n      id-token: write/);
+  assert.doesNotMatch(custody,/contents: write|pull-requests: write|secrets: inherit/);
+  assert.deepEqual(custody.match(/secrets\.[A-Z_]+/g),['secrets.XROGA_OCI_EXCHANGE_CLIENT_SECRET']);
+  assert.match(custody,/timeout-minutes: 45/);
+  assert.match(custody,/cancel-in-progress: false/);
+  assert.match(browser,/inputs\.oci_custody != 'bootstrap' && inputs\.oci_custody != 'custody'/);
+  assert.match(custody,/verify-oci-federation\.ts bootstrap/);
+  assert.match(custody,/verify-oci-federation\.ts write/);
+  assert.match(custody,/verify-oci-federation\.ts read/);
 });
 
 test('frontend accepts publishable keys, rejects server keys, and private routes stay out of sitemap', () => {

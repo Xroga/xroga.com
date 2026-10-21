@@ -90162,29 +90162,54 @@
       "id": "surface:b0ecb2b4dffc411987ec",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/verify-oci-federation.ts",
-      "sha256": "7f532fcbfbe1590eefb42569f7773bacbecc6e1448a3d4686b9bfccb1c83d291",
+      "sha256": "5424221dd6f6f6dca05a6289bea25526a177e9b5145ecd02238682fc75513dd5",
       "symbols": [
         "bridge",
         "calls",
         "cases",
+        "claims",
+        "client",
+        "common",
         "configuration",
         "created",
         "db",
+        "delay",
+        "details",
+        "encrypted",
         "error",
         "execute",
+        "expired",
+        "id",
+        "invoke",
+        "keyId",
+        "kms",
+        "main",
         "mode",
         "observed",
+        "observedFetch",
+        "opened",
+        "original",
         "out",
         "owner",
+        "parsed",
         "passed",
+        "plain",
+        "privateKey",
         "provider",
         "readiness",
         "receipt",
         "receipts",
+        "record",
+        "recovered",
+        "renewed",
+        "response",
         "result",
         "row",
+        "signingId",
         "state",
         "statePath",
+        "status",
+        "text",
         "value"
       ],
       "imports": [
@@ -90196,7 +90221,9 @@
         "node:assert/strict",
         "node:crypto",
         "node:fs/promises",
-        "node:path"
+        "node:path",
+        "oci-common",
+        "oci-keymanagement"
       ],
       "runtimeImports": [
         "backend/src/services/integrations/credentialVaultStartup.ts",
@@ -90218,11 +90245,13 @@
         "node:assert/strict",
         "node:crypto",
         "node:fs/promises",
-        "node:path"
+        "node:path",
+        "oci-common",
+        "oci-keymanagement"
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "scripts/security/verify-oci-federation.ts:69 (user_id)"
+        "scripts/security/verify-oci-federation.ts:136 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -90327,7 +90356,7 @@
       "id": "surface:afd24cb01b9eca09410e",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/verify-oci-wrong-workflow.ts",
-      "sha256": "690b5de2f15555fa60c1ac344dc920978d1db94fa4e9643360716eb00fe6d36a",
+      "sha256": "844f78630c9fc6ca69b26e773a00eb05bfb5f360876c9f2ee5acdc202f9a2c92",
       "symbols": [
         "audience",
         "body",
@@ -90335,6 +90364,7 @@
         "domain",
         "error",
         "id",
+        "main",
         "receipt",
         "response",
         "source",
@@ -101042,7 +101072,7 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "95be961d64b564ea27bba4b60742e74ad35fb0158ef24afbb9dcbf39231aa502",
+      "sha256": "5b45240a4ad9d340fd7fcbdb4fa398e1552fefc9aa9d6512dbaa1e75fbc6aada",
       "sourceEntrypoints": [
         "scripts/security/collect-local-security-logs.mjs",
         "scripts/security/disposable-supabase.mjs",
@@ -108603,7 +108633,7 @@
     {
       "id": "test-suite:9e2eba688e12cfd50b0e",
       "sourcePath": "backend/src/growth/growthSchema.test.ts",
-      "declaredTests": 5,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },

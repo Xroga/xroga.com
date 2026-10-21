@@ -71,6 +71,11 @@ jobs:
         env:
           NODE_ENV: production
         run: node --import tsx scripts/security/verify-oci-federation.ts read
+      - name: Real short-lived token expiry and unattended renewal
+        if: inputs.oci_custody == 'custody'
+        env:
+          NODE_ENV: production
+        run: node --import tsx scripts/security/verify-oci-federation.ts renewal
       - name: Redacted bounded custody receipts only
         if: always()
         uses: actions/upload-artifact@v5
@@ -80,6 +85,7 @@ jobs:
             ${{ runner.temp }}/oci-federation-bootstrap.json
             ${{ runner.temp }}/oci-federation-write.json
             ${{ runner.temp }}/oci-federation-read.json
+            ${{ runner.temp }}/oci-federation-renewal.json
           retention-days: 1
           if-no-files-found: error
       - name: Dispose local database

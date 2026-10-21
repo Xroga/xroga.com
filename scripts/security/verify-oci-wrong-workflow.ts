@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { generateKeyPairSync } from 'node:crypto';
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
+async function main() {
 assert.equal(process.env.CI,'true');assert.equal(process.env.GITHUB_ACTIONS,'true');
 assert.equal(process.env.GITHUB_REPOSITORY,'Xroga/xroga.com');assert.equal(process.env.GITHUB_REF,'refs/heads/codex/xroga-batch-01');
 const domain=process.env.XROGA_OCI_FEDERATION_DOMAIN!;
@@ -40,3 +41,5 @@ finally {
   await writeFile(join(process.env.RUNNER_TEMP!,'oci-federation-wrong-workflow.json'),JSON.stringify(receipt,null,2),{mode:0o600});
   console.log(JSON.stringify(receipt));
 }
+}
+void main().catch(()=>{console.error('Isolated wrong-workflow admission failed. No provider denial claimed.');process.exitCode=1;});

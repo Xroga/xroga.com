@@ -1,7 +1,7 @@
 /** Opt-in isolated hosted-workload proof. No IAM writes or production database.
  * Receipts contain operation metadata only, never tokens or stored payloads. */
 import assert from 'node:assert/strict';
-import { randomUUID } from 'node:crypto';
+import { randomUUID, randomBytes, timingSafeEqual } from 'node:crypto';
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { createClient } from '@supabase/supabase-js';
@@ -10,8 +10,9 @@ import { managedOciFederationConfiguration, initializeCredentialVaultForServer }
 import { createOciKmsCryptoProvider, OciKmsCryptoProvider, type OciKmsTransport } from '../../backend/src/services/integrations/ociKmsCryptoProvider.js';
 import { saveUserProviderKey, getUserProviderKey } from '../../backend/src/services/integrations/userProviderKeys.js';
 
+async function main() {
 const mode = process.argv[2];
-assert.ok(['bootstrap', 'write', 'read'].includes(mode ?? ''));
+assert.ok(['bootstrap', 'write', 'read', 'renewal'].includes(mode ?? ''));
 assert.equal(process.env.CI, 'true');
 assert.equal(process.env.GITHUB_REPOSITORY, 'Xroga/xroga.com');
 assert.equal(process.env.GITHUB_REF, 'refs/heads/codex/xroga-batch-01');
@@ -26,9 +27,75 @@ try {
     // No key permission is needed to discover the real non-user principal.
     // A separate owner-created exact-principal policy is required afterwards.
     assert.equal(configuration.expectedPrincipalId, undefined);
-    const bridge = createOciWorkloadFederation(configuration, {maxExchanges:2,receipt: r => receipts.push(r)});
+    const observedFetch: typeof fetch = async (url,init) => {
+      const response=await fetch(url,init);
+      if(String(url)===`${configuration.domain}/oauth2/v1/token`) {
+        const record:Record<string,unknown>={exchangeHttpStatus:response.status,requestId:response.headers.get('opc-request-id')};
+        // Only bounded protocol shape and non-secret identity metadata may leave
+        // this process. Never print a token, claim payload, JWK or provider body.
+        const text=await response.clone().text();
+        if(Buffer.byteLength(text)<65536)try {
+          const parsed=JSON.parse(text);
+          if(typeof parsed.error==='string'&&/^[a-z_]{1,60}$/.test(parsed.error))record.errorCode=parsed.error;
+          if(typeof parsed.token==='string'&&parsed.token.length<32768){
+            const value=JSON.parse(Buffer.from(parsed.token.split('.')[1],'base64url').toString());
+            record.claimNames=Object.keys(value).filter(key=>/^[A-Za-z0-9_.-]{1,70}$/.test(key));
+            if(typeof value.sub==='string'&&/^ocid1\.[a-z0-9.-]{1,500}$/.test(value.sub))record.principal=value.sub;
+          }
+        }catch{/* No raw provider parsing error is emitted. */}
+        receipts.push(record);
+      }
+      return response;
+    };
+    const bridge = createOciWorkloadFederation(configuration, {fetch:observedFetch,maxExchanges:2,receipt: r => receipts.push(r)});
     try { await bridge.session(); cases.push('REAL_WORKLOAD_RPST_ISSUED_NO_KMS_GRANT'); }
     finally { bridge.stop(); }
+  } else if (mode === 'renewal') {
+    assert.equal(process.env.NODE_ENV,'production');assert.ok(configuration.expectedPrincipalId);
+    const bridge=createOciWorkloadFederation(configuration,{maxExchanges:4,receipt:r=>receipts.push(r)});
+    const common=await import('oci-common'),kms=await import('oci-keymanagement');
+    const plain=randomBytes(32),keyId=process.env.XROGA_OCI_KMS_KEY_ID!;
+    let calls=0;
+    const invoke=async(auth:Awaited<ReturnType<typeof bridge.session>>,operation:'encrypt'|'decrypt',details:any)=>{
+      assert.ok(++calls<=10);
+      const client=new kms.KmsCryptoClient({authenticationDetailsProvider:auth},{retryConfiguration:common.NoRetryConfigurationDetails,
+        httpOptions:{signal:AbortSignal.timeout(15000),redirect:'error'}});
+      client.endpoint=process.env.XROGA_OCI_KMS_ENDPOINT!;
+      try {
+        const response=operation==='encrypt'?await client.encrypt({encryptDataDetails:details}):await client.decrypt({decryptDataDetails:details});
+        assert.ok(response.opcRequestId);receipts.push({operation,keyId:details.keyId,status:200,requestId:response.opcRequestId});return response;
+      } catch(error:any) {
+        const status=Number.isInteger(error?.statusCode)?error.statusCode:null;
+        const id=typeof error?.opcRequestId==='string'&&/^[A-Za-z0-9._:/-]{1,300}$/.test(error.opcRequestId)?error.opcRequestId:null;
+        receipts.push({operation,keyId:details.keyId,status,requestId:id});
+        // Return only redacted failure metadata, not the SDK request object.
+        return {denied:true,status,requestId:id};
+      }
+    };
+    try {
+      const original=await bridge.session();
+      const signingId=await original.getKeyId(),privateKey=original.getPrivateKey();
+      const claims=JSON.parse(Buffer.from(signingId.slice(3).split('.')[1],'base64url').toString());
+      const encrypted:any=await invoke(original,'encrypt',{keyId,keyVersionId:process.env.XROGA_OCI_KMS_KEY_VERSION!,
+        encryptionAlgorithm:'AES_256_GCM',plaintext:plain.toString('base64')});
+      assert.ok(encrypted.encryptedData?.ciphertext);
+      const details={keyId,keyVersionId:encrypted.encryptedData.keyVersionId,encryptionAlgorithm:'AES_256_GCM',ciphertext:encrypted.encryptedData.ciphertext};
+      const opened:any=await invoke(original,'decrypt',details);
+      assert.ok(timingSafeEqual(Buffer.from(opened.decryptedData.plaintext,'base64'),plain));
+      cases.push('REAL_RESOURCE_PRINCIPAL_KEY_A_ENCRYPT_DECRYPT');
+      // One bounded provider-required expiry wait, not a polling loop. Preserve
+      // the old signed snapshot only in memory to require real OCI expiry denial.
+      const delay=claims.exp*1000-Date.now()+5000;assert.ok(delay>0&&delay<=1205000);
+      await new Promise(resolve=>setTimeout(resolve,delay));
+      await assert.rejects(original.getKeyId());
+      const expired:any=await invoke({getKeyId:async()=>signingId,getPrivateKey:()=>privateKey,getPassphrase:()=>null},'decrypt',details);
+      assert.equal(expired.denied,true);assert.ok([401,403].includes(expired.status)&&expired.requestId);
+      cases.push('REAL_EXPIRED_RPST_DENIED_BY_PROVIDER_AND_LOCAL_SNAPSHOT');
+      const renewed=await bridge.session();assert.notEqual(await renewed.getKeyId(),signingId);
+      const recovered:any=await invoke(renewed,'decrypt',details);
+      assert.ok(timingSafeEqual(Buffer.from(recovered.decryptedData.plaintext,'base64'),plain));
+      cases.push('REAL_UNATTENDED_RENEWAL_AND_EXISTING_CIPHERTEXT_RECOVERY');
+    } finally {plain.fill(0);bridge.stop();}
   } else {
     assert.equal(process.env.NODE_ENV, 'production');
     assert.equal(process.env.XB01_DISPOSABLE_SUPABASE, '1');
@@ -39,7 +106,7 @@ try {
       encryptVersionId:process.env.XROGA_OCI_KMS_KEY_VERSION!,authMode:'workload_federation',expectedPrincipalId:configuration.expectedPrincipalId,federation:configuration});
     let calls = 0;
     const execute = async (operation:'encrypt'|'decrypt', input: Parameters<OciKmsTransport['encrypt']>[0] | Parameters<OciKmsTransport['decrypt']>[0]) => {
-      assert.ok(++calls <= 30, 'Per-process KMS request budget exhausted');
+      assert.ok(++calls <= 25, 'Per-process KMS request budget exhausted');
       try {
         const result = operation === 'encrypt' ? await provider.transport.encrypt(input as Parameters<OciKmsTransport['encrypt']>[0]) : await provider.transport.decrypt(input as Parameters<OciKmsTransport['decrypt']>[0]);
         assert.match(result.requestId ?? '', /^[A-Za-z0-9._:/-]{6,300}$/);
@@ -92,3 +159,5 @@ try {
   await writeFile(out,JSON.stringify(receipt,null,2),{mode:0o600});
   console.log(JSON.stringify(receipt));
 }
+}
+void main().catch(()=>{console.error('Isolated workload probe admission failed. No custody acceptance claimed.');process.exitCode=1;});

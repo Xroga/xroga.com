@@ -10,6 +10,7 @@
   "risk": "high",
   "scope": "Founder-authorized Phase3 only, original Command008 and009, all22 criteria unchanged. Preserve accepted Phase2 source and proof. No Phase4 implementation or production authorization.",
   "changedFiles": [
+    "backend/src/growth/growthSchema.test.ts",
     "backend/src/services/integrations/ociWorkloadFederation.ts",
     "backend/src/services/integrations/ociWorkloadFederation.test.ts",
     "scripts/security/verify-oci-federation.ts",
