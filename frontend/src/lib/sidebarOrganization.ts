@@ -112,3 +112,42 @@ export function scheduleSidebarChatSave(entry:TerminalHistoryEntry):void{
   });
  },1500));
 }
+
+export async function swapSidebarPins(userId:string,first:{item_type:SidebarKind;item_id:string},second:{item_type:SidebarKind;item_id:string}):Promise<void>{
+ if(!userId)throw new Error('Sign in to organize saved work');
+ const {error}=await owned(userId).rpc('xroga_swap_sidebar_pins',{
+  p_first_type:first.item_type,p_first_id:first.item_id,
+  p_second_type:second.item_type,p_second_id:second.item_id,
+ });
+ if(error)throw error;
+}
+export async function loadPinnedSidebarRecords(userId:string,items:SidebarMeta[]):Promise<{
+ projects:SidebarProject[];sessions:Array<{id:string;title:string;preview:string;updatedAt:string;kind:string;status:string;githubRepoName?:string;githubBranch?:string;terminalNumber:number;messageCount:number;}>;
+}>{
+ const pinned=items.filter(x=>x.pin_order!==null&&!x.archived_at);
+ const projects=pinned.filter(x=>x.item_type==='project'&&!x.item_id.startsWith('repo:')).map(x=>x.item_id);
+ const sessions=pinned.filter(x=>x.item_type==='conversation').map(x=>x.item_id);
+ const client=owned(userId);
+ const [pr,repoChats,normalChats]=await Promise.all([
+  projects.length?client.from('projects').select('id,name,github_repo_name,updated_at').eq('user_id',userId).in('id',projects.slice(0,250)):
+    Promise.resolve({data:[] as SidebarProject[],error:null}),
+  sessions.length?client.from('terminal_sessions').select('id,title,preview,updated_at,kind,status,github_repo_name,github_branch,terminal_number,message_count').eq('user_id',userId).in('id',sessions.slice(0,250)):
+    Promise.resolve({data:[],error:null}),
+  sessions.length?client.from('xroga_sidebar_chats').select('id,title,preview,updated_at,kind,status,message_count').eq('user_id',userId).in('id',sessions.slice(0,250)):
+    Promise.resolve({data:[],error:null}),
+ ]);
+ if(pr.error)throw pr.error;if(repoChats.error)throw repoChats.error;if(normalChats.error)throw normalChats.error;
+ const results=new Map<string,{id:string;title:string;preview:string;updatedAt:string;kind:string;status:string;githubRepoName?:string;githubBranch?:string;terminalNumber:number;messageCount:number}>();
+ for(const c of (repoChats.data||[]) as Array<Record<string,unknown>>){
+  const id=String(c.id||'');if(!id)continue;
+  results.set(id,{id,title:String(c.title||''),preview:String(c.preview||''),updatedAt:String(c.updated_at||''),
+    kind:String(c.kind||'chat'),status:String(c.status||'active'),githubRepoName:String(c.github_repo_name||'')||undefined,
+    githubBranch:String(c.github_branch||'main'),terminalNumber:Number(c.terminal_number||0),messageCount:Number(c.message_count||0)});
+ }
+ for(const c of (normalChats.data||[]) as Array<Record<string,unknown>>){
+  const id=String(c.id||'');if(!id||results.has(id))continue;
+  results.set(id,{id,title:String(c.title||''),preview:String(c.preview||''),updatedAt:String(c.updated_at||''),
+    kind:String(c.kind||'chat'),status:String(c.status||'active'),terminalNumber:0,messageCount:Number(c.message_count||0)});
+ }
+ return {projects:(pr.data||[]) as SidebarProject[],sessions:[...results.values()]};
+}

@@ -64,3 +64,27 @@ create policy "sidebar_chats_own" on public.xroga_sidebar_chats for all to authe
 
 grant select, insert, update, delete on public.xroga_sidebar_sections, public.xroga_sidebar_items, public.xroga_sidebar_chats to authenticated,service_role;
 notify pgrst, 'reload schema';
+
+-- Atomic, owner-checked pin reordering. Invoker rights preserve the table's RLS policies.
+create or replace function public.xroga_swap_sidebar_pins(
+ p_first_type text,p_first_id text,p_second_type text,p_second_id text)
+returns void language plpgsql security invoker set search_path=public as $$
+declare a_order bigint; b_order bigint;
+begin
+ if auth.uid() is null then raise exception 'Authentication required'; end if;
+ if p_first_type=p_second_type and p_first_id=p_second_id then return; end if;
+ select pin_order into a_order from public.xroga_sidebar_items
+  where user_id=auth.uid() and item_type=p_first_type and item_id=p_first_id
+  for update;
+ select pin_order into b_order from public.xroga_sidebar_items
+  where user_id=auth.uid() and item_type=p_second_type and item_id=p_second_id
+  for update;
+ if a_order is null or b_order is null then raise exception 'Both items must be pinned'; end if;
+ update public.xroga_sidebar_items set pin_order=b_order,updated_at=now()
+  where user_id=auth.uid() and item_type=p_first_type and item_id=p_first_id;
+ update public.xroga_sidebar_items set pin_order=a_order,updated_at=now()
+  where user_id=auth.uid() and item_type=p_second_type and item_id=p_second_id;
+end;
+$$;
+revoke all on function public.xroga_swap_sidebar_pins(text,text,text,text) from public,anon;
+grant execute on function public.xroga_swap_sidebar_pins(text,text,text,text) to authenticated;
