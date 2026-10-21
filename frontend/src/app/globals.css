@@ -14608,3 +14608,84 @@ html.xv-home-scroll-lock body {
   backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
 }
 .xv-plugins-popover { max-height:calc(100dvh - 32px); overflow-y:auto; overscroll-behavior:contain; }
+
+/* Composer parity: override the older empty-chat and split-chat double-frame rules. */
+.xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"],
+.xv-terminal-dock--idle .xv-kimi-composer-frame[data-composer-frame="single"],
+.xv-terminal-dock--workspace-split .xv-kimi-composer-frame[data-composer-frame="single"] {
+ border:0!important; padding:0!important; outline:0!important; box-shadow:none!important; background:transparent!important;
+ overflow:visible!important; border-radius:17px!important;
+}
+.xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-solid {
+ border:1px solid var(--terminal-ui-border, var(--card-border))!important;
+ outline:0!important; box-shadow:none!important; border-radius:17px!important;
+ background:var(--terminal-ui-raised,var(--surface-raised))!important;
+ min-height:0!important; margin:0!important;
+}
+.xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] :is(.xv-chatbar-solid::before,.xv-chatbar-solid::after) { display:none!important; }
+.xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-input-form { min-height:0!important; padding:10px 12px!important; }
+.xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-composer {
+ font:14px/22px Arial,sans-serif!important; min-height:30px!important; padding:3px 5px!important;
+}
+.xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-composer::placeholder { color:var(--muted)!important; }
+.xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-tools { min-height:32px; margin-top:3px; gap:7px; }
+.xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-send { width:34px!important;min-width:34px!important;height:34px!important;border-radius:10px!important;box-shadow:none!important;background:var(--foreground)!important;color:var(--background)!important; }
+.xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-send svg { color:var(--background)!important;stroke:var(--background)!important; }
+.xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-companion-blackhole>button,
+.xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-primary-tools>button { height:32px; padding:5px 10px; border:1px solid var(--terminal-ui-border,var(--card-border)); border-radius:10px; background:var(--terminal-ui-raised,var(--surface-raised)); color:var(--foreground); }
+.xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] :is(.xv-cba-trigger,.xv-voice-icon-only) { width:32px!important;height:32px!important;min-width:32px!important;border:1px solid var(--terminal-ui-border,var(--card-border))!important;border-radius:10px!important; }
+.xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-primary-tools { gap:7px; }
+@media(max-width:440px){.xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-primary-tools { gap:4px; }}
+/* Solid backgrounds for portalled side flyouts: compositing over scrolling pages must not show through. */
+body.theme-black .xv-sidebar-hover-menu, body.theme-black .xv-plugins-popover, body.theme-black .xv-sidebar-hover-menu__card { background:#171717!important; opacity:1!important; backdrop-filter:none!important; }
+body.theme-gray .xv-sidebar-hover-menu, body.theme-gray .xv-plugins-popover, body.theme-gray .xv-sidebar-hover-menu__card { background:#212121!important; opacity:1!important; backdrop-filter:none!important; }
+body.theme-white .xv-sidebar-hover-menu, body.theme-white .xv-plugins-popover, body.theme-white .xv-sidebar-hover-menu__card,
+body.theme-beige .xv-sidebar-hover-menu, body.theme-beige .xv-plugins-popover, body.theme-beige .xv-sidebar-hover-menu__card { background:#fafafa!important; opacity:1!important; backdrop-filter:none!important; }
+
+.xv-workspace-identity .xv-term-title--button {
+ min-height:29px; max-width:175px; padding:4px 11px!important; display:inline-flex; align-items:center;
+ border:1px solid var(--terminal-ui-border,var(--card-border))!important;
+ border-radius:9px!important; background:var(--terminal-ui-raised,var(--surface-raised))!important;
+ color:var(--foreground)!important; box-shadow:none!important; cursor:pointer;
+}
+.xv-workspace-identity .xv-term-title--button:is(:hover,:focus-visible,[aria-expanded="true"]) {
+ background:var(--terminal-ui-inset,var(--surface-inset))!important; border-color:color-mix(in srgb,var(--foreground) 25%,transparent)!important;
+}
+.xv-workspace-identity .xv-term-title--button h3 { margin:0!important; text-align:left; font:600 12px/1.3 Arial,sans-serif!important; }
+@media(max-width:639px){
+ .xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-primary-tools>button { padding-inline:7px; }
+ .xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-primary-tools { gap:4px; }
+}
+.xv-sidebar-hover-menu,.xv-sidebar-hover-menu__card,.xv-plugins-popover {
+ isolation:isolate; max-width:calc(100vw - 24px)!important; max-height:calc(100dvh - 24px)!important;
+}
+
+/* Hover reveals that the account email can be copied, click performs the clipboard write. */
+.xv-pqm-copy-email { width:100%; min-width:0; border:1px solid transparent; padding:3px 5px; margin-left:-5px; }
+.xv-pqm-copy-email:hover,.xv-pqm-copy-email:focus-visible { background:color-mix(in srgb,var(--foreground) 7%,transparent); border-color:var(--card-border); }
+.xv-pqm-copy-email:focus-visible { outline:2px solid var(--foreground); outline-offset:1px; }
+.xv-pqm-submenu { max-width:min(254px,calc(100vw - 24px)); max-height:calc(100dvh - 24px); overflow-y:auto; overscroll-behavior:contain; }
+@media(max-width:699px){.xv-pqm-submenu { left:auto!important;right:8px!important;top:64px!important;width:min(228px,calc(100vw - 48px)); }}
+
+/* Matching New Work composer width and preventing overlapping control targets on narrow chats. */
+.xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] {
+  width:100%!important; max-width:740px!important; margin-inline:auto!important;
+}
+@media(max-width:639px){
+  .xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-primary-tools > button {
+    width:32px!important; min-width:32px!important; height:32px!important;
+    padding:5px!important; display:inline-flex!important; align-items:center!important; justify-content:center!important;
+  }
+  .xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-primary-tools > button > span {
+    display:none!important;
+  }
+  .xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-primary-tools > button > svg {
+    display:block!important; width:16px!important; height:16px!important;
+  }
+  .xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-primary-tools {
+    gap:4px!important; flex-wrap:nowrap!important; min-width:0;
+  }
+  .xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-tools {
+    gap:4px!important; min-width:0;
+  }
+}

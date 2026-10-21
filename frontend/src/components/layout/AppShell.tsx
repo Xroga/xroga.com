@@ -18,7 +18,6 @@ import { WorkspacePerformanceProbe } from '@/components/layout/WorkspacePerforma
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 import { WorkspaceAuthGateProvider } from '@/components/workspace/WorkspaceAuthGate';
 import { BetaExpectationBanner } from '@/components/layout/BetaExpectationBanner';
-import { CompactAppTooltip } from '@/components/ui/CompactAppTooltip';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -83,7 +82,6 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
       email={email ?? workspaceIdentity.email}
     >
       <WorkspacePerformanceProbe />
-      <CompactAppTooltip enabled={workspaceIdentity.status === 'authenticated'} />
       <WorkspaceAuthGateProvider>
       <TerminalChatProvider>
         <TerminalScrollProvider>

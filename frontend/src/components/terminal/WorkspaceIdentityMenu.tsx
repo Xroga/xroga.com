@@ -5,7 +5,6 @@ import {
   AlertTriangle,
   Archive,
   CheckCircle2,
-  ChevronDown,
   ChevronRight,
   ExternalLink,
   Globe2,
@@ -228,11 +227,8 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
         aria-haspopup="menu"
         aria-expanded={open}
       >
-        <h3 className="max-w-[136px] truncate" title={repoIdentity.fullName || 'No repository selected'}>{repoIdentity.label}</h3>
-        <ChevronDown
-          className={`h-3 w-3 shrink-0 opacity-55 transition-transform ${open ? 'rotate-180' : ''}`}
-          aria-hidden="true"
-        />
+        <h3 className="max-w-[136px] truncate">{repoIdentity.label}</h3>
+
       </button>
 
       <AnchoredPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={rootRef} placement="bottom-start" width={290} ariaLabel="Project actions"

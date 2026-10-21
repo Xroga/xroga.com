@@ -57,15 +57,15 @@ export function SidebarHoverMenu({ trigger, children, className }: SidebarHoverM
       const gap = 8;
       const menuWidth = menu.offsetWidth || 220;
       const menuHeight = menu.offsetHeight || 180;
+      const availableWidth = Math.max(0, window.innerWidth - VIEWPORT_PAD * 2);
       let left = anchor.right + gap;
-      if (left + menuWidth > window.innerWidth - VIEWPORT_PAD) {
-        left = anchor.left - menuWidth - gap;
-      }
+      if (left + menuWidth > window.innerWidth - VIEWPORT_PAD) left = anchor.left - menuWidth - gap;
+      left = Math.max(VIEWPORT_PAD, Math.min(left, window.innerWidth - Math.min(menuWidth, availableWidth) - VIEWPORT_PAD));
       const top = Math.max(
         VIEWPORT_PAD,
         Math.min(anchor.top, window.innerHeight - Math.min(menuHeight, window.innerHeight - 2 * VIEWPORT_PAD) - VIEWPORT_PAD),
       );
-      setPos({ top, left: Math.max(VIEWPORT_PAD, left) });
+      setPos({ top, left });
     }
 
     placeMenu();

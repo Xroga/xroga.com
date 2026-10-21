@@ -180,3 +180,7 @@
 
 /* Starter detail buttons remain visible and fully contained in a small viewport. */
 .dock :global(.featureMenu) { max-height:calc(100dvh - 24px); }
+
+/* Shared between empty and active sessions: the inner ChatbarShell is the only bordered surface. */
+.dock.dock.dock :global(.xv-kimi-composer-frame) { border:0!important; padding:0!important; box-shadow:none!important; background:transparent!important; }
+.dock.dock.dock :global(.xv-chatbar-solid) { border:1px solid var(--terminal-ui-border)!important; border-radius:17px!important; box-shadow:none!important; }
