@@ -224,16 +224,27 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
    * Refs give the same values without making the callback unstable.
    */
   const accountId = !isGuest ? workspaceIdentity.userId ?? '' : '';
+  const activeAccountRef=useRef(accountId);
+  activeAccountRef.current=accountId;
+  useEffect(()=>{
+    // Never leave another signed-in user's projects or pin labels in memory
+    // while a new account's requests are still pending.
+    setAccountProjects([]);setItemMeta([]);setSections([]);setSidebarChats([]);
+    setPinnedProjectRecords([]);setPinnedSessionRecords([]);setPinnedIds([]);
+    setShownProjects(5);setShownPins(10);setProjectsHasMore(false);
+  },[accountId]);
   const refreshSidebarData = useCallback(async()=>{
     if(!accountId){setItemMeta([]);setSections([]);setAccountProjects([]);setSidebarChats([]);setPinnedIds([]);return;}
     try{
       const [metadata,sectionList,firstProjects,chats]=await Promise.all([
         loadSidebarMeta(accountId),loadSidebarSections(accountId),loadSidebarProjects(accountId,0,6),loadSidebarChats(accountId,0,200)
       ]);
+      if(activeAccountRef.current!==accountId)return;
       setItemMeta(metadata);setSections(sectionList);
       setAccountProjects(prev=>prev.length>5?prev:firstProjects.slice(0,5));setProjectsHasMore(prev=>accountProjects.length>5?prev:firstProjects.length>5);
       setSidebarChats(chats);setMoreSidebarChats(chats.length>=200);setPinnedIds(sortPinned(metadata.filter(item=>item.pin_order!==null&&!item.archived_at)).map(item=>item.item_id));
       const hydrated=await loadPinnedSidebarRecords(accountId,metadata);
+      if(activeAccountRef.current!==accountId)return;
       setPinnedProjectRecords(hydrated.projects);
       setPinnedSessionRecords(hydrated.sessions.filter(x=>x.messageCount>0).map(x=>({
         id:x.id,title:meaningfulSidebarTitle(x.title,x.preview),preview:x.preview,updatedAt:x.updatedAt,
@@ -241,7 +252,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         status:x.status as TerminalHistoryStatus,cloudSynced:true,kind:'cloud' as const,
       })));
       setSidebarError('');
-    }catch(error){setSidebarError((error as Error).message||'Could not load your saved work');}
+    }catch(error){if(activeAccountRef.current===accountId)setSidebarError((error as Error).message||'Could not load your saved work');}
   },[accountId]);
   useEffect(()=>{
     void refreshSidebarData();
