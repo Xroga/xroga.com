@@ -3,7 +3,7 @@
 # Real-Postgres tests need a DISPOSABLE server: export STORAGE_TEST_DATABASE_URL (superuser). They create and drop their own database.
 set -u
 cd "$(dirname "$0")/../../../.."
-OUT="docs/infra/batch-1.5/evidence/logs"; mkdir -p "$OUT"
+OUT="$(pwd)/docs/infra/batch-1.5/evidence/logs"; mkdir -p "$OUT"
 SHA=$(git rev-parse HEAD); echo "source_sha=$SHA" | tee "$OUT/00-source.txt"
 git status --porcelain | grep -v '^??' > "$OUT/00-dirty.txt" || true
 node --version >> "$OUT/00-source.txt"; psql --version 2>/dev/null >> "$OUT/00-source.txt" || true
