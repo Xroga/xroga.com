@@ -90162,8 +90162,9 @@
       "id": "surface:b0ecb2b4dffc411987ec",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/verify-oci-federation.ts",
-      "sha256": "5424221dd6f6f6dca05a6289bea25526a177e9b5145ecd02238682fc75513dd5",
+      "sha256": "94a1e64e17f01fc7968f0b2553fb9309ec0e7282e0a378d8f394b43055ac980a",
       "symbols": [
+        "auth",
         "bridge",
         "calls",
         "cases",
@@ -90197,6 +90198,7 @@
         "privateKey",
         "provider",
         "readiness",
+        "reason",
         "receipt",
         "receipts",
         "record",
@@ -90205,7 +90207,9 @@
         "response",
         "result",
         "row",
+        "secret",
         "signingId",
+        "sourceToken",
         "state",
         "statePath",
         "status",
@@ -90249,9 +90253,11 @@
         "oci-common",
         "oci-keymanagement"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "scripts/security/verify-oci-federation.ts#auth"
+      ],
       "tenantBoundary": [
-        "scripts/security/verify-oci-federation.ts:136 (user_id)"
+        "scripts/security/verify-oci-federation.ts:145 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],

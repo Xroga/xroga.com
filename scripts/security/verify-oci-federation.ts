@@ -37,6 +37,15 @@ try {
         if(Buffer.byteLength(text)<65536)try {
           const parsed=JSON.parse(text);
           if(typeof parsed.error==='string'&&/^[a-z_]{1,60}$/.test(parsed.error))record.errorCode=parsed.error;
+          if(typeof parsed.error_description==='string') {
+            let reason=parsed.error_description;
+            const auth=configuration.credentials();
+            const sourceToken=init?.body instanceof URLSearchParams?init.body.get('subject_token'):null;
+            for(const secret of [auth.clientSecret,auth.requestToken,sourceToken].filter(Boolean) as string[])reason=reason.split(secret).join('[REDACTED]');
+            record.redactedReason=reason.replace(/eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g,'[REDACTED_JWT]')
+              .replace(/-----BEGIN [\s\S]*?-----END[^-]*-----/g,'[REDACTED_KEY]')
+              .replace(/[A-Za-z0-9+/=_-]{24,}/g,'[REDACTED_OPAQUE]').replace(/https?:\/\/\S+/g,'[REDACTED_URL]').slice(0,500);
+          }
           if(typeof parsed.token==='string'&&parsed.token.length<32768){
             const value=JSON.parse(Buffer.from(parsed.token.split('.')[1],'base64url').toString());
             record.claimNames=Object.keys(value).filter(key=>/^[A-Za-z0-9_.-]{1,70}$/.test(key));
