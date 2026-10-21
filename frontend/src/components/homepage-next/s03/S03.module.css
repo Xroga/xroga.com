@@ -36,11 +36,10 @@
   color: var(--text);
   font-family: var(--font-inter), system-ui, sans-serif;
 }
-/* The homepage stylesheet clears every section's background image and paints a near-black colour under the black
-   theme. S03's search-signals environment (graphite light, contours and the discovery arc) is painted by its ambient
-   layer (../ambient); the section itself only asserts the shared near-black ground so the seams stay continuous. */
+/* Transparent: S01–S05 share one dot-grid background (../backdrop/SharedDotBackdrop). The doubled class still wins over
+   any homepage-wide section paint. */
 .section.section.section {
-  background-color: #050607 !important;
+  background-color: transparent !important;
 }
 /* the homepage stylesheet adds halos, stacking and position: relative to text and controls; S03 owns its own */
 .section.section :is(h1, h2, h3, h4, h5, h6, p, small, label) {

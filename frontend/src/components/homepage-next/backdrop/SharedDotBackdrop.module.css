@@ -1,0 +1,52 @@
+/* The one background behind S01–S05 (see SharedDotBackdrop.tsx). Neutral only: near-black ground, gray-white dots. */
+.root {
+  --pitch: 25px;
+  --spot-x: -9999px;
+  --spot-y: -9999px;
+  --phase-x: 0px;
+  --phase-y: 0px;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: clip;
+  pointer-events: none;
+  background-color: #050607;
+  /* the resting grid: fixed, even, quiet */
+  background-image: radial-gradient(circle at center, rgba(214, 219, 226, 0.2) 0.9px, rgba(214, 219, 226, 0) 1.5px);
+  background-size: var(--pitch) var(--pitch);
+}
+/* the brighter dots near the pointer: the same grid, phase-locked, fading out from the centre */
+.spot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 440px;
+  height: 440px;
+  opacity: 0;
+  background-image: radial-gradient(circle at center, rgba(240, 243, 247, 0.72) 1.15px, rgba(240, 243, 247, 0) 1.8px);
+  background-size: var(--pitch) var(--pitch);
+  background-position: var(--phase-x) var(--phase-y);
+  -webkit-mask-image: radial-gradient(circle at center, #000 0, rgba(0, 0, 0, 0.7) 26%, rgba(0, 0, 0, 0.22) 46%, transparent 66%);
+  mask-image: radial-gradient(circle at center, #000 0, rgba(0, 0, 0, 0.7) 26%, rgba(0, 0, 0, 0.22) 46%, transparent 66%);
+  transform: translate3d(var(--spot-x), var(--spot-y), 0);
+  transition: opacity 320ms ease;
+  will-change: transform;
+}
+.root[data-active='true'] .spot {
+  opacity: 1;
+}
+
+/* touch and narrow screens: the still grid only, a touch quieter */
+@media (max-width: 768px), (hover: none), (pointer: coarse) {
+  .root {
+    background-image: radial-gradient(circle at center, rgba(214, 219, 226, 0.15) 0.85px, rgba(214, 219, 226, 0) 1.45px);
+  }
+  .spot {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spot {
+    display: none;
+  }
+}

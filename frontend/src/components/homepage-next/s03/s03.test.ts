@@ -502,10 +502,10 @@ test('S03 headline remains concise, its supporting copy stays approved, and it s
   assert.equal(COPY.growth.line, 'Reach the right people. Win more customers.');
   assert.match(CSS, /--ink: #142236;/);
   assert.match(CSS, /\.title\.title::after \{/);
-  // Atmosphere V3: the section asserts only the shared near-black ground; its graphite environment (shaped light, no
-  // drawn motifs) is the ambient layer, and the old teal/violet/apricot section washes are gone
-  assert.match(CSS, /\.section\.section\.section \{\s*background-color: #050607 !important;\s*\}/);
-  assert.match(SHELL, /<Ambient kind="s03" \/>/);
+  // S01–S05 share one dot-grid background: the section paints none of its own and has no per-section ambient layer;
+  // the old teal/violet/apricot section washes are gone
+  assert.match(CSS, /\.section\.section\.section \{\s*background-color: transparent !important;\s*\}/);
+  assert.doesNotMatch(SHELL, /<Ambient /);
   assert.doesNotMatch(CSS, /rgba\(69, 154, 173|rgba\(120, 101, 172|rgba\(196, 118, 90|#182b3d/);
   // no competing full-section effect inside the section itself
   assert.doesNotMatch(CSS + SHELL, /titleMark|titleSweep|data-lit=/);

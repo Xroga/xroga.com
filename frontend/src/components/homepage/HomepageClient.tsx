@@ -15,6 +15,7 @@ import { S02Work } from '@/components/homepage-next/s02/S02Work';
 import { S03Growth } from '@/components/homepage-next/s03/S03Growth';
 import { S04Publish } from '@/components/homepage-next/s04/S04Publish';
 import { S05Capabilities } from '@/components/homepage-next/s05/S05Capabilities';
+import { SharedDotBackdrop } from '@/components/homepage-next/backdrop/SharedDotBackdrop';
 import { Ambient } from '@/components/homepage-next/ambient/Ambient';
 import { useSeen } from '@/components/homepage-next/ambient/useSeen';
 import { AiCodingAgentSquaresTerminal } from '@/components/marketing/AiCodingAgentSquaresTerminal';
@@ -106,12 +107,16 @@ export function HomepageClient() {
     </div>
 
       {/* S01: capability deck (docs/homepage-implementation/XROGA_S01_CAPABILITY_DECK_CLAUDE_BRIEF.md) */}
-      <S01CapabilityDeck />
-      {/* S02: Browser Automation and AI Employees (docs/homepage-implementation/XROGA_S02_FINAL_CLAUDE_IMPLEMENTATION_BRIEF.md) */}
-      <S02Work loggedIn={loggedIn} />
-      <S03Growth loggedIn={loggedIn} />
-      <S04Publish loggedIn={loggedIn} />
-      <S05Capabilities />
+      {/* S01–S05 share one background: a single dot grid behind all five sections (homepage-next/backdrop) */}
+      <div className="xv-unified-sections">
+        <SharedDotBackdrop />
+        <S01CapabilityDeck />
+        {/* S02: Browser Automation and AI Employees (docs/homepage-implementation/XROGA_S02_FINAL_CLAUDE_IMPLEMENTATION_BRIEF.md) */}
+        <S02Work loggedIn={loggedIn} />
+        <S03Growth loggedIn={loggedIn} />
+        <S04Publish loggedIn={loggedIn} />
+        <S05Capabilities />
+      </div>
       {/* Closing: the graphite horizon (homepage-closing-animation.css) frames the closing card and runs into the footer */}
       <div className="xv-horizon" data-seen={closingSeen || undefined}>
       <Ambient kind="horizon" />
