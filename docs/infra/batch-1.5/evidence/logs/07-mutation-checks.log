@@ -1,0 +1,9 @@
+CAUGHT | service: skip declared-checksum comparison | # pass 43 # fail 1 
+CAUGHT | service: no tenant/owner check on object access | # pass 42 # fail 2 
+CAUGHT | service: skip BOTH size verifications | # pass 43 # fail 1 
+CAUGHT | memory repo: commit replay double counts | # pass 43 # fail 1 
+CAUGHT | migration: skip source-vs-destination hash comparison | # pass 22 # fail 1 
+CAUGHT | SQL: drop READY-is-verified CHECK | # pass 13 # fail 1 
+CAUGHT | SQL: remove tenant row lock in storage_reserve | # pass 13 # fail 1 
+CAUGHT | SQL: authenticated can read object_key | # pass 13 # fail 1 
+restored: working tree clean for mutated files
