@@ -327,3 +327,30 @@ test('contextual tools have colored hover states, and selected chips show detail
   await page.getByRole('button', { name: 'Remove Plan before build selection' }).click();
   await expect(chip).toHaveCount(0);
 });
+
+test('classic particles are scoped to idle cards and hover leaves existing actions intact', async ({ page }) => {
+  await page.goto('/workspace');
+  const starter = page.getByTestId('workspace-start-cards');
+  await expect(starter).toBeVisible();
+  const background = await starter.evaluate(el => {
+    const style = getComputedStyle(el, '::before');
+    return { content: style.content, background: style.backgroundImage, animation: style.animationName };
+  });
+  expect(background.content).not.toBe('none');
+  expect(background.background).toContain('radial-gradient');
+  expect(background.animation).toContain('classicParticleTravel');
+  const create = page.locator('[data-capability="create"]');
+  await create.hover();
+  await expect(page.getByRole('menu', { name: 'Create features' })).toHaveCount(0);
+  await expect(create).toHaveCSS('transform', /matrix/);
+  await create.click();
+  await expect(page.getByRole('menu', { name: 'Create features' })).toBeVisible();
+  await page.getByRole('menuitem', { name: 'Documents', exact: true }).click();
+  await expect(page.locator('[data-terminal-composer]')).toHaveValue('Draft a document about: ');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  expect(await starter.evaluate(el => getComputedStyle(el, '::before').animationName)).toBe('none');
+  await page.locator('[data-terminal-composer]').fill('Local visual scope check');
+  await page.getByRole('button', { name: 'Send prompt', exact: true }).click();
+  await expect(page.getByText('Local UI fixture reply verified.', { exact: false }).first()).toBeVisible();
+  await expect(starter).toHaveCount(0);
+});
