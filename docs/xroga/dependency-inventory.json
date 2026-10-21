@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "90f08860ef0dd112ed185744582c3f6eaf75a856",
+  "source_sha": "b6dc9adc08acd51f1f7deb4f2fca9b1372ae3d8d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -30,6 +30,7 @@
         "NEXT_PUBLIC_SUPABASE_ANON_KEY",
         "NEXT_PUBLIC_SUPABASE_URL",
         "NEXT_PUBLIC_SUPPORT_PHONE",
+        "NEXT_PUBLIC_VERCEL_ENV",
         "NEXT_PUBLIC_XROGA_AUTH_BASE_URL",
         "NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF",
         "VERCEL_ENV",
@@ -2309,7 +2310,7 @@
       "config_sources": [
         "frontend/src/components/homepage/TechnologyMarquee.tsx",
         "frontend/src/components/integrations/PluginBrandLogo.tsx",
-        "frontend/src/components/layout/PublicMarketingHeader.tsx",
+        "frontend/src/components/layout/nav/MegaPreviews.tsx",
         "frontend/src/lib/integrationLogos.ts"
       ],
       "hostnames": [
@@ -2333,7 +2334,7 @@
       "observability_source": [
         "frontend/src/components/homepage/TechnologyMarquee.tsx",
         "frontend/src/components/integrations/PluginBrandLogo.tsx",
-        "frontend/src/components/layout/PublicMarketingHeader.tsx",
+        "frontend/src/components/layout/nav/MegaPreviews.tsx",
         "frontend/src/lib/integrationLogos.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -2588,6 +2589,40 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-developer-android-com",
+      "provider": "Source-defined endpoint developer.android.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/components/homepage-next/s04/storeMarks.ts"
+      ],
+      "hostnames": [
+        "developer.android.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/components/homepage-next/s04/storeMarks.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-developer-apple-com",
       "provider": "Source-defined endpoint developer.apple.com",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -2595,7 +2630,8 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "backend/src/services/publish/userOwnedPublish.ts"
+        "backend/src/services/publish/userOwnedPublish.ts",
+        "frontend/src/components/homepage-next/s04/storeMarks.ts"
       ],
       "hostnames": [
         "developer.apple.com"
@@ -2616,7 +2652,42 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "backend/src/services/publish/userOwnedPublish.ts"
+        "backend/src/services/publish/userOwnedPublish.ts",
+        "frontend/src/components/homepage-next/s04/storeMarks.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-developer-chrome-com",
+      "provider": "Source-defined endpoint developer.chrome.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/components/homepage-next/s04/storeMarks.ts"
+      ],
+      "hostnames": [
+        "developer.chrome.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/components/homepage-next/s04/storeMarks.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -3908,7 +3979,6 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "frontend/src/components/auth/AuthShowcase.tsx",
         "frontend/src/components/image/ImageLandingPage.tsx",
         "frontend/src/components/onboarding/artwork.ts",
         "frontend/src/components/seo/XrogaVsBoltPage.tsx",
@@ -3933,7 +4003,6 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "frontend/src/components/auth/AuthShowcase.tsx",
         "frontend/src/components/image/ImageLandingPage.tsx",
         "frontend/src/components/onboarding/artwork.ts",
         "frontend/src/components/seo/XrogaVsBoltPage.tsx",
@@ -5640,7 +5709,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "frontend/src/components/layout/PublicMarketingHeader.tsx",
+        "frontend/src/components/layout/nav/MegaPreviews.tsx",
         "frontend/src/components/terminal/WebSourcesPanel.tsx"
       ],
       "hostnames": [
@@ -5662,7 +5731,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "frontend/src/components/layout/PublicMarketingHeader.tsx",
+        "frontend/src/components/layout/nav/MegaPreviews.tsx",
         "frontend/src/components/terminal/WebSourcesPanel.tsx"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -9343,6 +9412,25 @@
       ]
     },
     {
+      "name": "NEXT_PUBLIC_VERCEL_ENV",
+      "consuming_sources": [
+        "frontend/src/components/homepage-next/s04/useScene.ts"
+      ],
+      "environments": [
+        "frontend build/browser/SSR"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "frontend"
+      ]
+    },
+    {
       "name": "NEXT_PUBLIC_XROGA_AUTH_BASE_URL",
       "consuming_sources": [
         "frontend/src/lib/supabase/config.ts"
@@ -9400,6 +9488,7 @@
         "frontend/src/app/share/[token]/page.tsx",
         "frontend/src/components/dashboard/ApiConnectionBanner.tsx",
         "frontend/src/components/homepage-next/phase1/useOrchestration.ts",
+        "frontend/src/components/homepage-next/s04/useScene.ts",
         "frontend/src/lib/api.ts"
       ],
       "environments": [
@@ -12077,6 +12166,11 @@
       "role": "Existing runtime/build/verification configuration"
     },
     {
+      "path": ".github/workflows/feedback-rls.yml",
+      "presence": "PRESENT",
+      "role": "Existing runtime/build/verification configuration"
+    },
+    {
       "path": ".github/workflows/fly-deploy.yml",
       "presence": "PRESENT",
       "role": "Existing runtime/build/verification configuration"
@@ -12156,6 +12250,10 @@
     {
       "path": ".github/workflows/community-security.yml",
       "sha256": "0e07c0c0297bab03cbc8adf646ff1111ed04a8ec854b337237168d4d5f8e5f79"
+    },
+    {
+      "path": ".github/workflows/feedback-rls.yml",
+      "sha256": "f8e8eb43daa6d0ef6f94960143be6f484822732d825ff44f2830fd8b35b218a6"
     },
     {
       "path": ".github/workflows/fly-deploy.yml",
@@ -14606,6 +14704,10 @@
       "sha256": "8791cb3af7da75e7bd24283460a2893b714ca3fd3ef0dd1b811059491b90e1a2"
     },
     {
+      "path": "frontend/src/app/admin/feedback/page.tsx",
+      "sha256": "58080fc13d8389ee7feb467b7d672489c8ccfa558e2ce6a70f5e3c5cd9281ac8"
+    },
+    {
       "path": "frontend/src/app/ai-app-builder/page.tsx",
       "sha256": "8a1743387dd70dc40b272b7582f0c3bdeea006327a23873cccbb4d5eab59323d"
     },
@@ -15030,24 +15132,28 @@
       "sha256": "0e08d2f3228132aee8c8816dd53f6700b6c13590f4f96bc6abaf05ad37386429"
     },
     {
+      "path": "frontend/src/components/auth/AuthGitHubIcon.tsx",
+      "sha256": "29ffe1636caa137810a45ceed6b7b29a3ae63119409a1a813d7b3a16d5cca763"
+    },
+    {
       "path": "frontend/src/components/auth/AuthModern.tsx",
-      "sha256": "cee6b02d60b93f43825ef9997e3d832520f63aeaabaf8ddc02f174af0a4de6e5"
+      "sha256": "5faa98c0207d46a07adc20e4a3ea3e746a438a4856956a304149bc55c8e4f7a2"
     },
     {
       "path": "frontend/src/components/auth/AuthShell.tsx",
-      "sha256": "3c9ceaea70375bc3189c883777dd3e73bef2bb9ab29971e6e9952acc510c5758"
+      "sha256": "28322caccd56203e6649dd58b526a9c8b8939be927668370d44c93a410b6b01f"
     },
     {
       "path": "frontend/src/components/auth/AuthShowcase.tsx",
-      "sha256": "a27532230713e89cdc154df3843b02aba6db0d153d35912054e703e34191db22"
+      "sha256": "6300761786c809ba5cb0a87573ef3ef9fa4d8072d68581ee775c548ac2c0a42e"
     },
     {
       "path": "frontend/src/components/auth/LoginForm.tsx",
-      "sha256": "6b9a8c2a36cb71f79cd2a896a388d4dfdd6135f2594e5f9ec41a6308407ac723"
+      "sha256": "3b6050ef660ad10386ee56c9c2ee2823f9f410370d391e60bcf6eda992c73a60"
     },
     {
       "path": "frontend/src/components/auth/SignupForm.tsx",
-      "sha256": "9696b2f0f9febe385de8fcd545fec73047a56ffb299e4a5f39276fcda75fad2a"
+      "sha256": "f73e91dd02b7428815f57c3b0d2b38d5379937d8d1c5bf6c785dc3796df6e490"
     },
     {
       "path": "frontend/src/components/billing/BillingPageClient.tsx",
@@ -15199,7 +15305,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "818dd429aa9358d369f507372ed809008bfe25b7e761e45577b894068ac070a7"
+      "sha256": "1c60a772b12ba36882667996424a263084a0ab7949d3a71e7b5cba3196a00729"
     },
     {
       "path": "frontend/src/components/dashboard/DashboardWelcome.tsx",
@@ -15270,6 +15376,10 @@
       "sha256": "e5a72f6af3fa71171f496390ea8cf9aafe61729d05ed2ad4d5fdda12afef8f04"
     },
     {
+      "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
+      "sha256": "44cf6b1bf141b235710aa44d3e24abcfa3c6719b242c4669f2ae0a39f9337db4"
+    },
+    {
       "path": "frontend/src/components/dashboard/WorkspaceResumeList.tsx",
       "sha256": "ea0898d4b800da290967eb6b5d55dc4604c6ee4e7498c011235174ee323c082b"
     },
@@ -15311,7 +15421,7 @@
     },
     {
       "path": "frontend/src/components/feedback/ScheduledFeedbackPrompt.tsx",
-      "sha256": "84abf6f393f21d6cbbcac327dbe6a5fd0aefed8f916f3175a43c32fcddffca0b"
+      "sha256": "63496614e340428599de7a22d2ddf7794a33e894f24e3a3bcd61edce13afa8f8"
     },
     {
       "path": "frontend/src/components/game-builder/AtmosphericBackdrop.tsx",
@@ -15372,6 +15482,18 @@
     {
       "path": "frontend/src/components/game-builder/SceneOutline.tsx",
       "sha256": "5a07361cbd22edb604c65d6a09f303ea1980273cc09a083984207070577c7301"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/ambient/Ambient.tsx",
+      "sha256": "a4e07216808e61920be85f408417a1883b1c00725eab83735ea87a6dced537e7"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/ambient/S02Scene.tsx",
+      "sha256": "9bd5fa092a1fe1ee81ca07b3e5d5323aa01bc766350d05f2cf68f5621385b14d"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/ambient/useSeen.ts",
+      "sha256": "31ff8739de0a1d18734701a7cc89531438e3afbe7ddea931e94571ce7aa6b889"
     },
     {
       "path": "frontend/src/components/homepage-next/phase1/Capability.tsx",
@@ -15455,7 +15577,7 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s01/S01CapabilityDeck.tsx",
-      "sha256": "cb780941706a9a651c7a4aa8684498828429bc8c7b26d43aad2a758bf5252175"
+      "sha256": "f10935057dfc7b225e5b6c1ad9e1cf83c49fa93d3bf2c4638844e47ce2a9758a"
     },
     {
       "path": "frontend/src/components/homepage-next/s01/Vignettes.tsx",
@@ -15483,7 +15605,7 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s02/S02Work.tsx",
-      "sha256": "7830c4155f1ee010005189a71775bba97b53f46b5bb406ab8b7cf3fbfd049db0"
+      "sha256": "da205d37f1facfd3a0fa946cb23353ac81cb00c769252b182adc6ca3211ebd2f"
     },
     {
       "path": "frontend/src/components/homepage-next/s02/Theater.tsx",
@@ -15534,36 +15656,44 @@
       "sha256": "1ab7b0f1f5b87865ba3bb4412c4e397e0328c39bf0760e64e6b747c1e6937622"
     },
     {
-      "path": "frontend/src/components/homepage-next/s03/Artifact.tsx",
-      "sha256": "9e5ab5a633a490de6d075c065923a5077cbd5b7b3cbf5eea305ecdb82e5262a3"
-    },
-    {
-      "path": "frontend/src/components/homepage-next/s03/Campaigns.tsx",
-      "sha256": "9c5bc64886754ed85532c05d0a9dde28fe8667d17592f1791a042f56dee3a49b"
-    },
-    {
-      "path": "frontend/src/components/homepage-next/s03/Discovery.tsx",
-      "sha256": "7273718f1c4cf31969674d3f83d29947dbd63fc40e48a5daeb996adde13eb2fc"
-    },
-    {
-      "path": "frontend/src/components/homepage-next/s03/Launch.tsx",
-      "sha256": "1fb1a136432284e645aa3c2b7d929b276be48265cc16691e6299e01712bbab9f"
-    },
-    {
-      "path": "frontend/src/components/homepage-next/s03/Results.tsx",
-      "sha256": "49c3fcb0b592b63e4678e80cdc241a2a55efffccab570aeefcc3e9fb08b7b121"
+      "path": "frontend/src/components/homepage-next/s03/GrowthStudio.tsx",
+      "sha256": "65c1c3e532496b78fcab588c0ad307cfdee6405ace7a78dcef45204631a405d2"
     },
     {
       "path": "frontend/src/components/homepage-next/s03/S03Growth.tsx",
-      "sha256": "16f87cf19a1aca8e3fbcf9c47241e351263f0415125e6c0035b5c51726730bb3"
+      "sha256": "79ca49465d08f4a606303363687aabe45a934670d13fde39168addaaca2bcb20"
     },
     {
-      "path": "frontend/src/components/homepage-next/s03/Stack.tsx",
-      "sha256": "87e147d26ecb71b1c835d13cd851dbeb14122c0a68196981102bf3ef4fce0c67"
+      "path": "frontend/src/components/homepage-next/s03/SearchStudio.tsx",
+      "sha256": "a4fbfd8c98f61dc0898df4d8df014bf4d03108c506a24a8873146a3b7ce1c655"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s03/Tour.tsx",
+      "sha256": "447b8f456c70f262e1a2bdfedfd5f74ad42deadb974fc4bbb24b850191b587b8"
     },
     {
       "path": "frontend/src/components/homepage-next/s03/data.ts",
-      "sha256": "9f987e32c5cca668d7677da9cce46a307f516bc88f203c9c2163439e46a0b7ac"
+      "sha256": "8d4d8fe7eba4fcdd4550163d56b7ddd6ae520da1660e0bc519147643404690c4"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s03/growth/Art.tsx",
+      "sha256": "a7a4bbafc464b58e315de430cef2503409c087f7a93741108e9ca457cac39f32"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s03/growth/Launch.tsx",
+      "sha256": "cff00aca04ab7c9532c49813ec505b7376a3850bc58cd459964a682aed4b43fe"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s03/growth/Paths.tsx",
+      "sha256": "0360b54f5fee94c8c40d7cf83f25515275bcf5c508c8883d7b1405c2461a220c"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s03/growth/SearchAds.tsx",
+      "sha256": "ec0bbcbab009a2fd2ba71d02eccbd409522ec495589108410e7935666dbcc14b"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s03/growth/Social.tsx",
+      "sha256": "4ceb43f8a328c6d8775cd5b04981ec6be70db6ddb8c4370855f27ecdc7567b90"
     },
     {
       "path": "frontend/src/components/homepage-next/s03/keys.ts",
@@ -15571,11 +15701,107 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s03/marks.tsx",
-      "sha256": "bf64dc46a463f0f9b187fc6cd7348f109878254eb6ba80279ecd344e0e3eb7cc"
+      "sha256": "784532f32c0c8a65a16d995be5486a79f1572f3777a605d9446eb08c2d233935"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s03/search/Ai.tsx",
+      "sha256": "224bb2ef385046b1fa2177ae03bc044365fd24180af5eb1937cb78461f23e5b0"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s03/search/Content.tsx",
+      "sha256": "3c6061b225d317997f1c064387aec17f2f47494f01e354edced1a08bc781cab0"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s03/search/Health.tsx",
+      "sha256": "12c39e04094d1689e49472bf5f96311a0ae287f149b64d09bf8589fee4020304"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s03/search/Links.tsx",
+      "sha256": "5d4231951f665577abbb207db2dd9fd561a7bada5ab51c74a22ef55bed9b38e4"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s03/search/Local.tsx",
+      "sha256": "23026ec35accf02c3d7cf9c3e8777e7958a0755060ecdb7f9dddc6cbb3fd445b"
     },
     {
       "path": "frontend/src/components/homepage-next/s03/state.ts",
-      "sha256": "20148130075fbb024d27890845edce7778121500649b088125edaf670e68fcb0"
+      "sha256": "1e5eeae131290c8b9ddd40cea77a7afa79897e00441660a1f3b7de739db03ede"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s03/tourBeats.ts",
+      "sha256": "ed604f7cc07a11d70d9f8e448bf62448a29f80adea74bd0a68e8e79961b4d409"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s03/ui.tsx",
+      "sha256": "7e0050f53b631012909bf99372f2bb99565d9645307541c54c5c0860671ed483"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s04/S04Publish.tsx",
+      "sha256": "6a2df3a4c580b6d03b0ab38c443b440149fd890307ba8853444c74bf15652da3"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s04/StoreMark.tsx",
+      "sha256": "4cd97a4c90e056639770228de8c6b035183ee87f7dc17ce3212bb26719e32333"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s04/apps/Arcset.tsx",
+      "sha256": "eb36e41bf156a969a1cad1bbcc4997c34ec8c766df8b8d50c0e6732126cf9c2b"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s04/apps/Fernway.tsx",
+      "sha256": "8c3264a221827538a0388e37da5a4cb2d62a28e640b2c108c3bb3c8891f8743f"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s04/apps/MerchantLens.tsx",
+      "sha256": "7aa672b23cd4205d3baff17fd5659ceac019fa63a4fb78435ac267bf3a31c6f9"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s04/publish.ts",
+      "sha256": "3e4355fcf35db42aa81b79f862c1557cff3588c258ac56412d35dc5d5d56bd41"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s04/stage/Handoff.tsx",
+      "sha256": "11726a926c53d2cd81a8f6c900e093442a32d6ed7c514f99880d0c14c4aef99a"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s04/stage/StageAndroid.tsx",
+      "sha256": "310a13d65306426b958d2376dcb0d72eb6b850a0083ec64aa98131bff2e7cd7a"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s04/stage/StageChrome.tsx",
+      "sha256": "2c25c3f89808bc1e22966acdc38e44ae0b46af9b507c19bd8a319aff9bb76c2f"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s04/stage/StageIOS.tsx",
+      "sha256": "d9c224f7e5f4c7cb8827e2575119828a455f72a17cc35e86d84fd3ebb9b6cac2"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s04/stage/Xcard.tsx",
+      "sha256": "39db8056d570d08ae9a0a7ab5fd2cc73786969a00ebbc382ee2c0f5135003aaf"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s04/stage/kit.tsx",
+      "sha256": "b0a40dadd4060041469a535151f3840bf921f420a8124e5fc429ee2695fb703f"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s04/storeMarks.ts",
+      "sha256": "72b7d14ce1af3d7e3b14ec2f32c00aee09d50496337f32688682a339a0029930"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s04/useScene.ts",
+      "sha256": "8908baf8e0797460ae1db924f87210d002bb6f8c8071960d2638681b853418df"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s05/S05Capabilities.tsx",
+      "sha256": "4a37326c0a565ba700e1ecd883e5a7608da255a62d51f8f821c246493bc5d321"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s05/art.ts",
+      "sha256": "416bd7a3d60a8fd770033ac139532f2bbdd7aa243d7aab318976e45546b18f29"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s05/capabilities.ts",
+      "sha256": "145d41b628b597fd6a9afadb6b2a454dfcacb8bc7d2bfbaa673f0879ab59d410"
     },
     {
       "path": "frontend/src/components/homepage/HomepageAllInOne.tsx",
@@ -15595,7 +15821,7 @@
     },
     {
       "path": "frontend/src/components/homepage/HomepageClient.tsx",
-      "sha256": "a4b72e4f186a8591ef4bd195dd9c65fd39281bb2097edaadc7c20662fe848b2a"
+      "sha256": "debd96aae99e9596dfcaf32d9de19c18132d415543816a6f82fec097c1e904b5"
     },
     {
       "path": "frontend/src/components/homepage/HomepageEnterpriseProof.tsx",
@@ -16091,7 +16317,7 @@
     },
     {
       "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
-      "sha256": "e975c68b0642525b5a900f2bb062be17b0d33e346222596a6d05f6ce1cfaa1df"
+      "sha256": "88eb738d8ed6b02124ce502f7a318db500619fd0fd7a15c80bba4a515ac2c525"
     },
     {
       "path": "frontend/src/components/layout/PublicThemeBackground.tsx",
@@ -16103,7 +16329,7 @@
     },
     {
       "path": "frontend/src/components/layout/Sidebar.tsx",
-      "sha256": "38d5011bf1a213884415d34849a7b70f1bbc101685c52f3a328f4c93ccae15ec"
+      "sha256": "47a8270646dd8988864a703f2709b608541659f4fc5f7711e9bf14182df2f7be"
     },
     {
       "path": "frontend/src/components/layout/SidebarNavScroller.tsx",
@@ -16115,7 +16341,7 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarSearchModal.tsx",
-      "sha256": "01008171c4045f8a7c6ca47101e26f99610260e002d67524a70f39267b3c4e35"
+      "sha256": "073a1836872c54348e5892943e3172f2f0c38f72809d2fb44b036f96a4436c46"
     },
     {
       "path": "frontend/src/components/layout/SlideshowToggle.tsx",
@@ -16136,6 +16362,18 @@
     {
       "path": "frontend/src/components/layout/WorkspacePerformanceProbe.tsx",
       "sha256": "7743553b31d4595e5e38238f82a828a371efe78217c33bb3f503fbec13b8b452"
+    },
+    {
+      "path": "frontend/src/components/layout/nav/MegaPreviews.tsx",
+      "sha256": "ef3303c9d61858a28377b2d9c0e3c933503abb6b954182a44ec6d159656214cf"
+    },
+    {
+      "path": "frontend/src/components/layout/nav/lens.ts",
+      "sha256": "667b1d97f8c9349d7ebd049516acaced38322cf955ca2a2824a8e6bf60c8d4cb"
+    },
+    {
+      "path": "frontend/src/components/layout/nav/navData.ts",
+      "sha256": "df93f3b5bb0a15d456a5ebf93c31d7af84ca2952450e609c1eed7cec12fde1e7"
     },
     {
       "path": "frontend/src/components/legal/LegalPageShell.tsx",
@@ -16519,7 +16757,7 @@
     },
     {
       "path": "frontend/src/components/terminal/BlackHoleVButton.tsx",
-      "sha256": "338d743d7ee06ccea84f6d255974745bce2d980f047411f0df1744cc4ba116a3"
+      "sha256": "e8eb1b13d7e0befe3845925e1248c84a56f6335853ae3b983239b3b2006d5650"
     },
     {
       "path": "frontend/src/components/terminal/BuildCodeSandbox.tsx",
@@ -16535,11 +16773,11 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatBarActionsMenu.tsx",
-      "sha256": "10075e12156d7725e11cee26d314b8a26724d6d566d69e919db71681884028b7"
+      "sha256": "caa7e448e518c7b41b2302b1f97414998ad975847bffba857995113934feb4e3"
     },
     {
       "path": "frontend/src/components/terminal/ChatBarButtons.tsx",
-      "sha256": "4a87c2efab03af7804f81a4c2f7dbe53bf03432e612103041f548f5c58cfa21c"
+      "sha256": "4f56cb2cde8876000fa39e4b3e7a7d181098e7a84d6e878ea02eb7938f38a846"
     },
     {
       "path": "frontend/src/components/terminal/ChatBarFileGrid.tsx",
@@ -16547,7 +16785,7 @@
     },
     {
       "path": "frontend/src/components/terminal/ChatBarParts.tsx",
-      "sha256": "bd92370f2643d2a65c61e9fdfaab38d3dee8e8a676f9972bee1be85604ea9919"
+      "sha256": "e63472456ec6d5c7124a7435c7d18e6b2c48a96a8a9d6687724767ae6fdafcda"
     },
     {
       "path": "frontend/src/components/terminal/ChatBarSendIcon.tsx",
@@ -16572,6 +16810,10 @@
     {
       "path": "frontend/src/components/terminal/ChatbarQueueOutside.tsx",
       "sha256": "39b09d141efb37fc27a2eb3813907b33556b2eeb1db20c3c302363bf4e3f8c1a"
+    },
+    {
+      "path": "frontend/src/components/terminal/ComposerToolChip.tsx",
+      "sha256": "7437b634f872b2622575131e7d8efc8bea6404441f263b589f3e44372b85d28e"
     },
     {
       "path": "frontend/src/components/terminal/DevWorkspacePanel.tsx",
@@ -16607,7 +16849,7 @@
     },
     {
       "path": "frontend/src/components/terminal/HomepageChatBar.tsx",
-      "sha256": "d5c8ba946fc241c4ba2f23713c092bdeeb32e5fe81da758afa18a2a5ff117c7f"
+      "sha256": "4af65a1afbd2fc9f664d7a9630ed4b838224a86f1a5614f3d24244958df0148e"
     },
     {
       "path": "frontend/src/components/terminal/ImageEditModal.tsx",
@@ -16623,7 +16865,7 @@
     },
     {
       "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "sha256": "4eb3bd36ea11c8620835c7ce9ac166f33485bf9d58148c0f6b03dd32c3fe5088"
+      "sha256": "d7351508a263086f2ad8ba26279aa3d522226d0e7765a830f5ea58104516cb67"
     },
     {
       "path": "frontend/src/components/terminal/LegacyLandingOutputView.tsx",
@@ -16644,6 +16886,10 @@
     {
       "path": "frontend/src/components/terminal/MessageSuggestionChips.tsx",
       "sha256": "38e461771038a8a5e2b8829948428538034bc25aa8ffbbcbb59338d6a44ca79c"
+    },
+    {
+      "path": "frontend/src/components/terminal/ModelAppPermissions.tsx",
+      "sha256": "c8371dd30298bb8a2a98d94934ecc395ba20b354df6a7f435b3286a6401c093c"
     },
     {
       "path": "frontend/src/components/terminal/ProductStartChips.tsx",
@@ -16703,11 +16949,11 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "c58fb061c167cabb652546b7bfacaf496fc3c81f9aca6b27a957217ef7e0ceee"
+      "sha256": "b360681bded02eaaa0d68b04646aa69f21d71207148927f1230c516c4b2e4f10"
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
-      "sha256": "9a7ee3eb4109ec929ae50e798d22717581193d0b1089d0a2e61f1300cf493468"
+      "sha256": "07a0207ea2620f6eb1cab208d8c304f36d765d47f5ed0b91d94ee9982dbf02ae"
     },
     {
       "path": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
@@ -16751,15 +16997,19 @@
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceConnectionsStrip.tsx",
-      "sha256": "9edb19c56730f7cf85227d3c26d2bf0a8e9ca80e46695f8922c438c085eb2d66"
+      "sha256": "8e0b17b81dcdb750e39ecf274727996fc6a899a2c4eafbd5132b5fa9bf1e49ed"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
-      "sha256": "0bbef5e311061e9c6c159b9ad6c051591bfb1c86807355b1ec765db4bde9a4ae"
+      "sha256": "6fcdf38d1438f0458dcf836e3f902cda2f57ce7cfe52b6bf8938a501faafe59e"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceLauncher.tsx",
       "sha256": "4496c7368076a989415b84bb9a855a21da810c5152ff7ef85da97a65a8f2c403"
+    },
+    {
+      "path": "frontend/src/components/terminal/WorkspaceSearchButton.tsx",
+      "sha256": "d777a92ea87b6f5eaa4bfc293c379846640cda98485bfa0c14ffc4a797de73cb"
     },
     {
       "path": "frontend/src/components/terminal/XrogaArtifactHeader.tsx",
@@ -16799,7 +17049,7 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "fe997b93bc62ba921569d3e31394aa2417ce679b50e22f3503a52351a1b3bc29"
+      "sha256": "88ab1ba8380f32fb30f98e8bd345501ad9d190f1522e6072afd244c1151893a8"
     },
     {
       "path": "frontend/src/components/ui/AnchoredPortalPopover.tsx",
@@ -17187,7 +17437,7 @@
     },
     {
       "path": "frontend/src/lib/feedbackStorage.ts",
-      "sha256": "a9c269bfa61961121687e2b3d1898224877847b02a6c0d8690fe615e1958820c"
+      "sha256": "c9451abb660e977c92a451c65b5984345c49674790013808f0943b4af1b09e86"
     },
     {
       "path": "frontend/src/lib/fonts.ts",
@@ -17435,7 +17685,7 @@
     },
     {
       "path": "frontend/src/lib/profileAvatars.ts",
-      "sha256": "8f6507a834d3ed278b345ddcd8806651736b5d0ee70ddb7148ad347a81d21fa5"
+      "sha256": "4261b64adbcff813f28755f99610dd64b9827ef6b0ad559392c4411d61d3ef50"
     },
     {
       "path": "frontend/src/lib/projectArchive.ts",
@@ -17471,7 +17721,7 @@
     },
     {
       "path": "frontend/src/lib/publicMarketing.ts",
-      "sha256": "e7638776882ebe81dc6ab44df37bb494b08e81c0d681c31204c15da9cb7b7a88"
+      "sha256": "8b28444ec0a5b5c17df53a299fce24b4d6ea4ec9d0e2fdd20dfa370d72851d12"
     },
     {
       "path": "frontend/src/lib/publicUrlInventory.ts",
@@ -21304,55 +21554,6 @@
       "credentialsInUrl": false
     },
     {
-      "hostname": "i.postimg.cc",
-      "protocol": "https:",
-      "path": "frontend/src/components/auth/AuthShowcase.tsx",
-      "line": 18,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "i.postimg.cc",
-      "protocol": "https:",
-      "path": "frontend/src/components/auth/AuthShowcase.tsx",
-      "line": 23,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "i.postimg.cc",
-      "protocol": "https:",
-      "path": "frontend/src/components/auth/AuthShowcase.tsx",
-      "line": 28,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "i.postimg.cc",
-      "protocol": "https:",
-      "path": "frontend/src/components/auth/AuthShowcase.tsx",
-      "line": 33,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "i.postimg.cc",
-      "protocol": "https:",
-      "path": "frontend/src/components/auth/AuthShowcase.tsx",
-      "line": 38,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "i.postimg.cc",
-      "protocol": "https:",
-      "path": "frontend/src/components/auth/AuthShowcase.tsx",
-      "line": 43,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "i.postimg.cc",
-      "protocol": "https:",
-      "path": "frontend/src/components/auth/AuthShowcase.tsx",
-      "line": 48,
-      "credentialsInUrl": false
-    },
-    {
       "hostname": "www.w3.org",
       "protocol": "http:",
       "path": "frontend/src/components/billing/XrogaPricingCard.tsx",
@@ -21630,6 +21831,27 @@
       "protocol": "https:",
       "path": "frontend/src/components/homepage-next/phase1/providerMarks.ts",
       "line": 49,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "developer.apple.com",
+      "protocol": "https:",
+      "path": "frontend/src/components/homepage-next/s04/storeMarks.ts",
+      "line": 21,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "developer.android.com",
+      "protocol": "https:",
+      "path": "frontend/src/components/homepage-next/s04/storeMarks.ts",
+      "line": 22,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "developer.chrome.com",
+      "protocol": "https:",
+      "path": "frontend/src/components/homepage-next/s04/storeMarks.ts",
+      "line": 23,
       "credentialsInUrl": false
     },
     {
@@ -22319,17 +22541,17 @@
       "credentialsInUrl": false
     },
     {
-      "hostname": "cdn.simpleicons.org",
+      "hostname": "www.google.com",
       "protocol": "https:",
-      "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
-      "line": 192,
+      "path": "frontend/src/components/layout/nav/MegaPreviews.tsx",
+      "line": 16,
       "credentialsInUrl": false
     },
     {
-      "hostname": "www.google.com",
+      "hostname": "cdn.simpleicons.org",
       "protocol": "https:",
-      "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
-      "line": 194,
+      "path": "frontend/src/components/layout/nav/MegaPreviews.tsx",
+      "line": 22,
       "credentialsInUrl": false
     },
     {
@@ -28188,28 +28410,28 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s01/S01CapabilityDeck.tsx",
-      "line": 354,
+      "line": 350,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/homepage-next/s01/S01CapabilityDeck.tsx",
-      "line": 355,
+      "line": 351,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/homepage-next/s01/S01CapabilityDeck.tsx",
-      "line": 367,
+      "line": 363,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/homepage-next/s01/S01CapabilityDeck.tsx",
-      "line": 386,
+      "line": 382,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28510,7 +28732,7 @@
     },
     {
       "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
-      "line": 90,
+      "line": 98,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28761,13 +28983,6 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
-      "path": "frontend/src/lib/feedbackStorage.ts",
-      "line": 47,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
       "path": "frontend/src/lib/githubProjectsFromHistory.ts",
       "line": 9,
       "scope": "FUNCTION_LOCAL",
@@ -28937,7 +29152,7 @@
     },
     {
       "path": "frontend/src/lib/publicMarketing.ts",
-      "line": 39,
+      "line": 43,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

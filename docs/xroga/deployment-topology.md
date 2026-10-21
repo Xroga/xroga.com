@@ -1,6 +1,6 @@
 # Deployment topology — read-only truth
 
-Source SHA: `90f08860ef0dd112ed185744582c3f6eaf75a856`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
+Source SHA: `b6dc9adc08acd51f1f7deb4f2fca9b1372ae3d8d`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -65,7 +65,9 @@ Source SHA: `90f08860ef0dd112ed185744582c3f6eaf75a856`; source/config hashes are
 | endpoint-cloudkms-googleapis-com | Source-defined endpoint cloudkms.googleapis.com | CONFIGURED_BUT_UNVERIFIED | cloudkms.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-design-intuit-com | Source-defined endpoint design.intuit.com | CONFIGURED_BUT_UNVERIFIED | design.intuit.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-dev-whop-com | Source-defined endpoint dev.whop.com | CONFIGURED_BUT_UNVERIFIED | dev.whop.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-developer-android-com | Source-defined endpoint developer.android.com | CONFIGURED_BUT_UNVERIFIED | developer.android.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-developer-apple-com | Source-defined endpoint developer.apple.com | CONFIGURED_BUT_UNVERIFIED | developer.apple.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-developer-chrome-com | Source-defined endpoint developer.chrome.com | CONFIGURED_BUT_UNVERIFIED | developer.chrome.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-developer-godaddy-com | Source-defined endpoint developer.godaddy.com | CONFIGURED_BUT_UNVERIFIED | developer.godaddy.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-developers-brevo-com | Source-defined endpoint developers.brevo.com | CONFIGURED_BUT_UNVERIFIED | developers.brevo.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-developers-cloudflare-com | Source-defined endpoint developers.cloudflare.com | CONFIGURED_BUT_UNVERIFIED | developers.cloudflare.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -204,7 +206,7 @@ Frontend release 3b2bad and API release 41665b legitimately differ: the initial 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-713 scoped memory/filesystem candidates are retained for semantic review. Static collections and scratch writes are not automatically unsafe fallbacks; the candidate inventory is not blanket durability certification. All consequential persistence/authority callers require the later security gates. Production/Preview environment protection and main rulesets were inspected as empty; user-mandated release gates still apply. Cloud Run/Jobs/Cloudflare Workers hosting remains proposed; no migration is authorized.
+712 scoped memory/filesystem candidates are retained for semantic review. Static collections and scratch writes are not automatically unsafe fallbacks; the candidate inventory is not blanket durability certification. All consequential persistence/authority callers require the later security gates. Production/Preview environment protection and main rulesets were inspected as empty; user-mandated release gates still apply. Cloud Run/Jobs/Cloudflare Workers hosting remains proposed; no migration is authorized.
 
 ## Boundaries
 

@@ -1,26 +1,26 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "70b9030f44a008b415686538222bdb95c04b5d834244c214b57f4192bee965a7",
+  "reviewRegistrySha256": "2e4d1e50bed68f09f72d55246d0712fc08b0a2337b4d6bb10de118b4332625ec",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 166,
-    "persistenceCandidates": 673,
+    "persistenceCandidates": 678,
     "ownerPredicateCandidates": 150,
     "reviewRequired": 0,
-    "reviewedCandidates": 673,
+    "reviewedCandidates": 678,
     "unresolvedSafetyCandidates": 25,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 18
   },
   "outcomes": {
     "REVIEW_REQUIRED": 0,
-    "SCOPED_BOUNDARY": 450,
+    "SCOPED_BOUNDARY": 453,
     "NARROW_EXCEPTION": 40,
-    "NOT_PERSISTENCE": 158,
+    "NOT_PERSISTENCE": 160,
     "REVIEWED_GAP": 25
   },
   "acceptance": {
@@ -28,8 +28,8 @@
     "result": "BLOCKED",
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
-    "verifiedCandidateBoundaries": 120,
-    "unresolvedCandidateBoundaries": 553,
+    "verifiedCandidateBoundaries": 116,
+    "unresolvedCandidateBoundaries": 562,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -873,6 +873,54 @@
       {
         "code": "STALE_NON_PERSISTENCE_REVIEW",
         "id": "OB-45feee975a86cef8"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-5b08386b5f8f994b"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-5b08386b5f8f994b"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-5b08386b5f8f994b"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-6d9adde51be2ba5d"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-6d9adde51be2ba5d"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-6d9adde51be2ba5d"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-5c2f93d299fae321"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-5c2f93d299fae321"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-5c2f93d299fae321"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-5bb71adfaedc347e"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-5bb71adfaedc347e"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-5bb71adfaedc347e"
       },
       {
         "code": "STALE_CALLER_BINDING",
@@ -3468,6 +3516,42 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "2922acfd42156496680f"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "ff1f5d7bab864cb0babd"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "228970c28a2f4129901c"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "67199a84c29a66c8fc8c"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "e3dc4a21fe9d460a1ee9"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "0c67d986d8bb106cd2e0"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "d3b6981962c32370d75e"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "8f3c7995974f0b7357a6"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "a68e53a94294615ebff8"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "bdf5ffe6c8a34bf8d3af"
       },
       {
@@ -5664,11 +5748,47 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "2922acfd42156496680f"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "ff1f5d7bab864cb0babd"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "40dcc370930a78bd99cd"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "228970c28a2f4129901c"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "67199a84c29a66c8fc8c"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "e3dc4a21fe9d460a1ee9"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "0c67d986d8bb106cd2e0"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "d3b6981962c32370d75e"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "8f3c7995974f0b7357a6"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "3056dc2554f54604f101"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "a68e53a94294615ebff8"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -5685,12 +5805,12 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 673,
-    "structuredVerified": 120,
-    "structuredUnproven": 553,
+    "currentCallers": 678,
+    "structuredVerified": 116,
+    "structuredUnproven": 562,
     "manualUnresolved": 25,
-    "manualUnsupported": 528,
-    "agreedVerified": 120,
+    "manualUnsupported": 537,
+    "agreedVerified": 116,
     "proofAwaitingManualReconciliation": 0
   },
   "callers": [
@@ -20536,6 +20656,56 @@
       }
     },
     {
+      "id": "2922acfd42156496680f",
+      "path": "frontend/src/app/admin/feedback/page.tsx",
+      "line": 43,
+      "enclosing": "FeedbackAdminPage",
+      "kind": "RPC_CANDIDATE",
+      "target": "current_community_role",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "58080fc13d8389ee7feb467b7d672489c8ccfa558e2ce6a70f5e3c5cd9281ac8",
+      "semanticReview": {
+        "authority": "The SSR client retains the authenticated user's cookie identity and public-role RLS, never service-role credentials. The no-argument current_community_role RPC is scoped to auth.uid. Before global reading the canonical guard requires current confirmed founder, server owner role and AAL2. SQL independently enforces the same invariant with a restrictive SELECT policy. Denial precedes the read. This intentional founder-global read is not an arbitrary tenant-admin bypass.",
+        "reason": "Reviewed against exact PR824 source and real disposable Supabase fresh/upgrade receipts in run39502624238 at e4ae5e7cc4bb2709fbe0c32d452546b899eedfcf. Current-source integration still requires independent authenticated proof. Manual disposition is not a security certificate.",
+        "evidence": [
+          {
+            "path": "frontend/src/app/admin/feedback/page.tsx",
+            "marker": "const decision = await authorizeFounderRequest({"
+          },
+          {
+            "path": "scripts/security/feedback-rls.supabase.mjs",
+            "marker": "product_feedback"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ff1f5d7bab864cb0babd",
+      "path": "frontend/src/app/admin/feedback/page.tsx",
+      "line": 64,
+      "enclosing": "FeedbackAdminPage",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "product_feedback",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "58080fc13d8389ee7feb467b7d672489c8ccfa558e2ce6a70f5e3c5cd9281ac8",
+      "semanticReview": {
+        "authority": "The SSR client retains the authenticated user's cookie identity and public-role RLS, never service-role credentials. The no-argument current_community_role RPC is scoped to auth.uid. Before global reading the canonical guard requires current confirmed founder, server owner role and AAL2. SQL independently enforces the same invariant with a restrictive SELECT policy. Denial precedes the read. This intentional founder-global read is not an arbitrary tenant-admin bypass.",
+        "reason": "Reviewed against exact PR824 source and real disposable Supabase fresh/upgrade receipts in run39502624238 at e4ae5e7cc4bb2709fbe0c32d452546b899eedfcf. Current-source integration still requires independent authenticated proof. Manual disposition is not a security certificate.",
+        "evidence": [
+          {
+            "path": "frontend/src/app/admin/feedback/page.tsx",
+            "marker": "const decision = await authorizeFounderRequest({"
+          },
+          {
+            "path": "scripts/security/feedback-rls.supabase.mjs",
+            "marker": "product_feedback"
+          }
+        ]
+      }
+    },
+    {
       "id": "1cf0586f7cd93a578782",
       "path": "frontend/src/app/crypto/page.tsx",
       "line": 213,
@@ -20838,6 +21008,27 @@
       }
     },
     {
+      "id": "228970c28a2f4129901c",
+      "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
+      "line": 140,
+      "enclosing": "FeatureCard",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "44cf6b1bf141b235710aa44d3e24abcfa3c6719b242c4669f2ae0a39f9337db4",
+      "semanticReview": {
+        "authority": "Native Array.from materializes locally queried menu buttons for keyboard focus navigation. The subsequent index/focus operations touch the DOM only. No database, storage client, credential or provider write is involved.",
+        "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
+            "marker": "const items = Array.from(menuRef.current?.querySelectorAll"
+          }
+        ]
+      }
+    },
+    {
       "id": "7ba841a4861cda6a519e",
       "path": "frontend/src/components/game-builder/GamePreview.tsx",
       "line": 126,
@@ -20875,6 +21066,27 @@
           {
             "path": "frontend/src/components/game-builder/GamePreview.tsx",
             "marker": "{Array.from({ length: 8 }, (_, i) => ("
+          }
+        ]
+      }
+    },
+    {
+      "id": "67199a84c29a66c8fc8c",
+      "path": "frontend/src/components/homepage-next/ambient/S02Scene.tsx",
+      "line": 32,
+      "enclosing": "S02Scene",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "9bd5fa092a1fe1ee81ca07b3e5d5323aa01bc766350d05f2cf68f5621385b14d",
+      "semanticReview": {
+        "authority": "Native Array.from materializes the local stage HTMLCollection for rectangle measurement and CSS-variable updates. The receiver is not a persistence client. No customer or provider data is stored by this expression.",
+        "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/homepage-next/ambient/S02Scene.tsx",
+            "marker": "const kids = stage ? Array.from(stage.children) : [];"
           }
         ]
       }
@@ -20938,6 +21150,27 @@
           {
             "path": "frontend/src/components/homepage-next/s02/Missions.tsx",
             "marker": "{Array.from({ length: one ? 7 : 5 }, (_, i) => ("
+          }
+        ]
+      }
+    },
+    {
+      "id": "e3dc4a21fe9d460a1ee9",
+      "path": "frontend/src/components/homepage-next/s04/apps/Arcset.tsx",
+      "line": 125,
+      "enclosing": "ArcsetToday",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "eb36e41bf156a969a1cad1bbcc4997c34ec8c766df8b8d50c0e6732126cf9c2b",
+      "semanticReview": {
+        "authority": "Native Array.from creates twelve decorative JSX progress bars in a fictional preview. React keys and local UI state control appearance, without persistence, credentials, tenancy or external effects.",
+        "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/homepage-next/s04/apps/Arcset.tsx",
+            "marker": "Array.from({ length: 12 }, (_, i) => ("
           }
         ]
       }
@@ -21043,48 +21276,6 @@
           {
             "path": "frontend/src/components/homepage/integrations/LogoLoop.jsx",
             "marker": "Array.from({ length: copyCount }, (_, copyIndex) => ("
-          }
-        ]
-      }
-    },
-    {
-      "id": "2d98522349041018aafe",
-      "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
-      "line": 505,
-      "enclosing": "PublicMarketingHeader",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "NOT_PERSISTENCE",
-      "sourceSha256": "e975c68b0642525b5a900f2bb062be17b0d33e346222596a6d05f6ce1cfaa1df",
-      "semanticReview": {
-        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in PublicMarketingHeader, with no database or Storage client receiver.",
-        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
-        "evidence": [
-          {
-            "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
-            "marker": "{Array.from({ length: 10 }, (_, index) => <i key={index} />)}"
-          }
-        ]
-      }
-    },
-    {
-      "id": "0481d4c53113a3184a8b",
-      "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
-      "line": 516,
-      "enclosing": "PublicMarketingHeader",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "NOT_PERSISTENCE",
-      "sourceSha256": "e975c68b0642525b5a900f2bb062be17b0d33e346222596a6d05f6ce1cfaa1df",
-      "semanticReview": {
-        "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in PublicMarketingHeader, with no database or Storage client receiver.",
-        "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
-        "evidence": [
-          {
-            "path": "frontend/src/components/layout/PublicMarketingHeader.tsx",
-            "marker": "{Array.from({ length: 10 }, (_, index) => <i key={index} />)}"
           }
         ]
       }
@@ -21384,15 +21575,36 @@
       }
     },
     {
-      "id": "ec56e3c528ebf6bc672d",
+      "id": "0c67d986d8bb106cd2e0",
+      "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
+      "line": 104,
+      "enclosing": "IntegrationsModal",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "d7351508a263086f2ad8ba26279aa3d522226d0e7765a830f5ea58104516cb67",
+      "semanticReview": {
+        "authority": "Native Array.from copies a local Map iterator into React state for rendering validated plugin search results. This disposition covers only that conversion, not adjacent connector search or any consequential integration action.",
+        "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
+        "evidence": [
+          {
+            "path": "frontend/src/components/terminal/IntegrationsModal.tsx",
+            "marker": "setApps(Array.from(available.values()));"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d3b6981962c32370d75e",
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 393,
+      "line": 400,
       "enclosing": "TerminalChatBar",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "c58fb061c167cabb652546b7bfacaf496fc3c81f9aca6b27a957217ef7e0ceee",
+      "sourceSha256": "b360681bded02eaaa0d68b04646aa69f21d71207148927f1230c516c4b2e4f10",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -21426,7 +21638,7 @@
       }
     },
     {
-      "id": "6520ef22b7832bcb902c",
+      "id": "8f3c7995974f0b7357a6",
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
       "line": 161,
       "enclosing": "VoiceWave",
@@ -21434,7 +21646,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "fe997b93bc62ba921569d3e31394aa2417ce679b50e22f3503a52351a1b3bc29",
+      "sourceSha256": "88ab1ba8380f32fb30f98e8bd345501ad9d190f1522e6072afd244c1151893a8",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in VoiceWave, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -21568,6 +21780,31 @@
           {
             "path": "frontend/src/lib/emailValidation.ts",
             "marker": "return Array.from(TEMP_EMAIL_DOMAINS).some((d) => domain.endsWith(`.${d}`));"
+          }
+        ]
+      }
+    },
+    {
+      "id": "a68e53a94294615ebff8",
+      "path": "frontend/src/lib/feedbackStorage.ts",
+      "line": 24,
+      "enclosing": "addFeedback",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "product_feedback",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "c9451abb660e977c92a451c65b5984345c49674790013808f0943b4af1b09e86",
+      "semanticReview": {
+        "authority": "The public browser Supabase client supplies no owner/email fields. Database defaults use authenticated auth.uid and signed email claims, with RLS rejecting forged identities and mixed batches atomically. Anonymous insertion is an explicit public product contract, not a service-role exception. No browser reads or mutations are granted.",
+        "reason": "Reviewed against exact PR824 source and real disposable Supabase fresh/upgrade receipts in run39502624238 at e4ae5e7cc4bb2709fbe0c32d452546b899eedfcf. Current-source integration still requires independent authenticated proof. Manual disposition is not a security certificate.",
+        "evidence": [
+          {
+            "path": "frontend/src/lib/feedbackStorage.ts",
+            "marker": "supabase.from('product_feedback').insert({"
+          },
+          {
+            "path": "scripts/security/feedback-rls.supabase.mjs",
+            "marker": "product_feedback"
           }
         ]
       }

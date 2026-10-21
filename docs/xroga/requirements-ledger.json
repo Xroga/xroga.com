@@ -3461,6 +3461,7 @@
         "scripts/security/dependency-advisories.mjs",
         "scripts/security/disposable-supabase.mjs",
         "scripts/security/evaluate-phase-three.mjs",
+        "scripts/security/feedback-rls.supabase.mjs",
         "scripts/security/full-supabase-history.mjs",
         "scripts/security/historical-share-fixture.mjs",
         "scripts/security/r2-private-check.mjs",
