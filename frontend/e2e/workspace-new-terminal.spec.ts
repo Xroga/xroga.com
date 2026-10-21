@@ -250,7 +250,7 @@ test('automation panels rotate every four seconds and dots pause on a selected p
   await expect(page.getByRole('button', { name: 'Resume automation rotation' })).toBeVisible();
 });
 
-test('solid model and plus menus are monochrome and mobile uses only a model symbol', async ({ page }) => {
+test('solid model and plus menus are monochrome and mobile preserves the readable model name', async ({ page }) => {
   await page.goto('/workspace');
   await expect(page.getByTestId('workspace-start-header')).toBeVisible();
   await expect(page.locator('.xv-workspace-shell')).toHaveCSS('background-color', 'rgb(0, 0, 0)');
@@ -267,8 +267,11 @@ test('solid model and plus menus are monochrome and mobile uses only a model sym
   await expect(page.getByRole('dialog', { name: 'Composer actions' })).toHaveCSS('filter', 'none');
   await page.keyboard.press('Escape');
   await page.setViewportSize({ width: 390, height: 844 });
-  await expect(model.locator('span')).toBeHidden();
-  await expect(page.getByTestId('mobile-model-icon')).toBeVisible();
+  // Approved PR833 explicitly keeps the readable name on mobile and hides the
+  // decorative substitute. Preserve routing access and both menu behaviors.
+  await expect(model.locator('span')).toBeVisible();
+  await expect(model.locator('span')).toHaveText('Black Hole V∞');
+  await expect(page.getByTestId('mobile-model-icon')).toBeHidden();
   await page.locator('[data-capability="create"]').click();
   await chooseStarter(page, 'Documents');
   await expect(page.locator('[data-terminal-composer]')).toHaveValue(/My goal: Draft a document about:/);
