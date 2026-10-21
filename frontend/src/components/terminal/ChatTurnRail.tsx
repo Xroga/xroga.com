@@ -82,7 +82,7 @@ export function buildChatTurns(messages: Array<{ id: string; role: string; conte
       id: message.id,
       role: message.role,
       label: clip(lines[0], 200),
-      summary: clip(lines.slice(1).join(' '), 170),
+      summary: message.role === 'user' ? '' : clip(lines.slice(1).join(' '), 170),
     };
     if (message.role === 'user') {
       previousPrompt = turn;
