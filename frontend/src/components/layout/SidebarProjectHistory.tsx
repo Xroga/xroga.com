@@ -792,15 +792,24 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     if(!old.length){localStorage.setItem(migratedKey,'yes');return;}
     let cancelled=false;
     void (async()=>{
-      const candidates=old.filter(id=>savedConversations.some(s=>s.id===id)&&
-        !itemMeta.some(item=>item.item_type==='conversation'&&item.item_id===id&&item.pin_order!==null));
-      const highest=Math.max(0,...itemMeta.map(item=>item.pin_order??0));
       try{
+        // Read older legacy pins directly by account-owned session IDs, even when
+        // those sessions are beyond the first Recents page on this device.
+        const legacy=old.filter(id=>!itemMeta.some(item=>item.item_type==='conversation'&&item.item_id===id));
+        const verified=await loadPinnedSidebarRecords(accountId,legacy.map((id,index)=>({
+          user_id:accountId,item_type:'conversation' as const,item_id:id,
+          title_override:null,pin_order:index+1,archived_at:null,project_id:null,section_id:null,
+        })));
+        const ids=new Set(verified.sessions.map(item=>item.id));
+        const candidates=legacy.filter(id=>ids.has(id));
+        const highest=Math.max(0,...itemMeta.map(item=>item.pin_order??0));
         for(let i=0;i<candidates.length;i++){
-          if(cancelled)return;
+          if(cancelled||activeAccountRef.current!==accountId)return;
           await changeSidebarMeta(accountId,'conversation',candidates[i],{pin_order:highest+(i+1)*1000});
         }
-        if(!cancelled){localStorage.setItem(migratedKey,'yes');await refreshSidebarData();}
+        if(!cancelled&&activeAccountRef.current===accountId){
+          localStorage.setItem(migratedKey,'yes');await refreshSidebarData();
+        }
       }catch(e){console.warn('[sidebar] Legacy pin migration can be retried:',e);}
     })();
     return()=>{cancelled=true;};
