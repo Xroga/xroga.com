@@ -48,6 +48,8 @@ test('dash geometry, proximity hover, actual preview, bookmark and jump', async 
   await dashes.nth(2).hover();
   await expect(rail.locator('.xv-chat-turn-preview')).toContainText('Conversation rail prompt 2');
   await expect(rail.locator('.xv-chat-turn-preview')).toContainText('Answer marker 2');
+  // Wait until the 185 ms proximity interpolation settles before measuring geometry.
+  await page.waitForTimeout(240);
   const widths = await dashes.evaluateAll(elements =>
     elements.slice(0, 7).map(element => parseFloat(getComputedStyle(element.firstElementChild!).width))
   );
