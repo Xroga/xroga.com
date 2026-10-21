@@ -47,6 +47,10 @@ test('feedback SQL independently requires current confirmed identity, owner role
   for (const text of ["auth.jwt() ->> 'aal'", "= 'aal2'", 'auth.users u', 'u.email_confirmed_at is not null', "p.role = 'owner'", "= 'hello@xroga.com'", 'as restrictive for select to authenticated']) assert.ok(sql.includes(text));
   assert.match(sql, /security definer\s+set search_path = pg_catalog/);
   assert.doesNotMatch(sql, /user_metadata|grant.*service_role/i);
+  for (const name of ['Verified founder can review product feedback', 'Feedback founder read guard']) {
+    assert.ok(sql.indexOf(`drop policy if exists "${name}"`) < sql.indexOf(`create policy "${name}"`), 'replay must replace the same policy inside the transaction');
+    assert.ok(sql.includes(`drop policy if exists "${name}"`));
+  }
 });
 
 test('database RLS permits submission but reserves reading for hello@xroga.com', () => {
