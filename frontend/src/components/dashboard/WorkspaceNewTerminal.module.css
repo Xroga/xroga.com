@@ -173,3 +173,7 @@
  .carouselShell .card { min-height: 104px; padding-bottom: 32px; }
  .hero { margin-bottom: 12px; }
 }
+
+/* No second perimeter around the resting New Work composer. */
+.dock.dock.dock :global(.xv-kimi-composer-frame) { padding:0 !important; border:0 !important; background:transparent !important; box-shadow:none !important; }
+.dock.dock.dock :global(.xv-chatbar-solid) { border:1px solid var(--terminal-ui-border) !important; }

@@ -14567,3 +14567,36 @@ html.xv-home-scroll-lock body {
 @media (max-width: 359px) {
   .xv-chat-turn-rail.xv-chat-turn-rail--dock { display: none !important; }
 }
+
+/* One physical composer surface in both new and ongoing work. */
+.xv-terminal-dock .xv-kimi-composer-frame,
+.xv-terminal-dock--idle .xv-kimi-composer-frame {
+  padding: 0 !important; border: none !important; background: transparent !important;
+  box-shadow: none !important; border-radius: 18px !important;
+}
+.xv-terminal-dock .xv-kimi-composer-frame .xv-chatbar-solid {
+  border: 1px solid var(--terminal-ui-border, var(--card-border)) !important;
+  background: var(--terminal-ui-raised, var(--card)) !important;
+  box-shadow: none !important; border-radius: 17px !important;
+}
+.xv-terminal-dock .xv-chatbar-solid::before,
+.xv-terminal-dock .xv-chatbar-solid::after { display: none !important; }
+.xv-terminal-dock .xv-kimi-composer-frame .xv-chatbar-composer {
+  font: 14px/22px Arial, sans-serif !important;
+}
+.xv-terminal-dock .xv-chatbar-primary-tools .xv-companion-blackhole > button { padding: 5px 9px; }
+.xv-terminal-dock .xv-chatbar-primary-tools .xv-companion-blackhole > button span { font-size: 12px !important; font-weight: 600; }
+.xv-animated-blocks-hover { display: inline-flex; }
+.xv-sidebar-primary-row a:hover .xv-animated-blocks-hover,
+.xv-sidebar-primary-row a:focus-visible .xv-animated-blocks-hover,
+.xv-sidebar-collapsed-actions a:hover .xv-animated-blocks-hover { color: var(--foreground); }
+.xv-sidebar-hover-menu,.xv-sidebar-hover-menu__card {
+  background: var(--card) !important; opacity: 1 !important;
+  border-color: var(--card-border) !important; backdrop-filter: none !important;
+  max-width: calc(100vw - 24px); max-height: calc(100dvh - 24px);
+}
+.xv-pqm-copy-email { display:flex; align-items:center; gap:8px; max-width:175px; text-align:left; color:var(--muted); border-radius:5px; }
+.xv-pqm-copy-email small { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; min-width:0; }
+.xv-pqm-copy-email span { opacity:0; flex:none; }
+.xv-pqm-copy-email:hover span,.xv-pqm-copy-email:focus-visible span { opacity:1; }
+.xv-pqm-copy-email:focus-visible { outline: 1px solid var(--foreground); }

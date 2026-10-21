@@ -732,7 +732,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                   onClick={(event) => handleNavEntryClick(event, '/dashboard')}
                   className={cn(isActive('/dashboard') && 'is-active')}
                 >
-                  <LucideBlocksIcon size={16} />
+                  <span className="xv-animated-blocks-hover"><LucideBlocksIcon size={16} /></span>
                 </Link>
                 <Link
                   href="/dashboard/projects"
@@ -762,7 +762,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
 
       {navExpanded ? <div className="xv-sidebar-primary-row">
         <button type="button" onClick={handleNewChat} aria-label="New Work" className="xv-new-work-button"><AnimatedIcon icon={NewTerminalIcon} size={15} /><span>New Work</span></button>
-        <Link href="/dashboard" onClick={event => handleNavEntryClick(event, '/dashboard')} aria-label="Overview"><LucideBlocksIcon size={15} aria-hidden="true" /><span>Overview</span></Link>
+        <Link href="/dashboard" onClick={event => handleNavEntryClick(event, '/dashboard')} aria-label="Overview"><span className="xv-animated-blocks-hover"><LucideBlocksIcon size={15} aria-hidden="true" /></span><span>Overview</span></Link>
       </div> : null}
       {navExpanded && notificationsOpen ? <SidebarNotificationCenter open onClose={() => setNotificationsOpen(false)} /> : navExpanded ? <SidebarNavScroller targetRef={navScrollRef} className="flex-1 min-h-0">
         <nav

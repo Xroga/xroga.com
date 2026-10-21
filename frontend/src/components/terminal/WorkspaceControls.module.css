@@ -26,7 +26,7 @@
 .modelButton { display: flex; align-items: center; gap: 5px; border: 0; background: transparent; color: var(--foreground); font-size: 11px; cursor: pointer; }
 .modelButton:hover { color: var(--foreground); opacity: .8; }
 .modelText { white-space: nowrap; }
-.compactModel { font-size: 11px; }
+.compactModel { font-size: 12px; font-weight: 600; }
 .mobileModelIcon { display: none; }
 .chevron { width: 12px; height: 12px; opacity: .6; }
 .actions.actions { filter: none; }
@@ -54,7 +54,9 @@
 .featureMenu button:hover,.featureMenu button:focus-visible { background: var(--mono-raised); outline: none; }
 .featureMenu button:focus-visible { box-shadow: inset 0 0 0 1px var(--mono-border); }
 @media (max-width: 639px) {
-  .modelText { display: none; }
+  /* Keep readable model name on mobile rather than substituting a decorative icon. */
+  .modelText { display: inline; font-size: 11px; }
+  .mobileModelIcon { display: none !important; }
   .mobileModelIcon { display: block; width: 24px; height: 24px; flex-shrink: 0; }
   .modelButton .chevron { display: none; }
 }
