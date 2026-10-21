@@ -16,6 +16,12 @@ export interface R2Config {
   secretAccessKey: string;
   /** Private canonical bucket. Must NOT be the legacy public assets bucket. */
   bucket: string;
+  /**
+   * Ask the provider to enforce the exact Content-Length through the signature. Cloudflare's examples sign only host and content-type, so
+   * whether R2 accepts a signed content-length is verified by the provider suite; set XROGA_DRIVE_PRESIGN_SIGN_LENGTH=0 if it does not.
+   * Server-side verification before READY is authoritative either way.
+   */
+  signContentLength?: boolean;
 }
 
 /**
@@ -30,16 +36,17 @@ export function r2ConfigFromEnv(env: NodeJS.ProcessEnv = process.env): R2Config 
   if (!accountId || !accessKeyId || !secretAccessKey || !bucket) return null;
   const legacy = env.CLOUDFLARE_R2_BUCKET ?? 'xroga-assets';
   if (bucket === legacy) throw new Error('XROGA_DRIVE_R2_BUCKET must be a dedicated private bucket, not the legacy assets bucket');
-  return { accountId, accessKeyId, secretAccessKey, bucket };
+  return { accountId, accessKeyId, secretAccessKey, bucket, signContentLength: env.XROGA_DRIVE_PRESIGN_SIGN_LENGTH !== '0' };
 }
 
-function isTransient(err: unknown): boolean {
-  const e = err as { name?: string; $metadata?: { httpStatusCode?: number }; code?: string };
+const TRANSIENT_NAMES = new Set(['TimeoutError', 'RequestTimeout', 'NetworkingError', 'ECONNRESET', 'ETIMEDOUT', 'EAI_AGAIN', 'ECONNREFUSED', 'ENOTFOUND', 'EPIPE']);
+
+/** Network failures and 5xx/429/408 are retryable; everything else is a definitive answer from the provider. */
+export function isTransient(err: unknown): boolean {
+  const e = err as { name?: string; code?: string; $metadata?: { httpStatusCode?: number }; cause?: { code?: string; name?: string } };
   const s = e?.$metadata?.httpStatusCode;
-  return (
-    (s !== undefined && (s >= 500 || s === 429 || s === 408)) ||
-    ['TimeoutError', 'RequestTimeout', 'NetworkingError', 'ECONNRESET', 'ETIMEDOUT', 'EAI_AGAIN'].includes(e?.name ?? e?.code ?? '')
-  );
+  if (s !== undefined && (s >= 500 || s === 429 || s === 408)) return true;
+  return [e?.name, e?.code, e?.cause?.code, e?.cause?.name].some((x) => x !== undefined && TRANSIENT_NAMES.has(x));
 }
 
 function wrap<T>(p: Promise<T>): Promise<T> {
@@ -52,6 +59,7 @@ function wrap<T>(p: Promise<T>): Promise<T> {
 export class R2ObjectStore implements ObjectStore {
   readonly provider = 'r2' as const;
   readonly #s3: S3Client;
+  readonly #signLength: boolean;
 
   constructor(cfg: R2Config, client?: S3Client) {
     const opts: S3ClientConfig = {
@@ -63,6 +71,7 @@ export class R2ObjectStore implements ObjectStore {
       maxAttempts: 3,
     };
     this.#s3 = client ?? new S3Client(opts);
+    this.#signLength = cfg.signContentLength !== false;
   }
 
   async presignPut(i: PresignPutInput): Promise<SignedRequest> {
@@ -78,7 +87,7 @@ export class R2ObjectStore implements ObjectStore {
     }
     const url = await getSignedUrl(this.#s3, new PutObjectCommand(input), {
       expiresIn: i.ttlSeconds,
-      signableHeaders: new Set(['content-type', 'content-length']),
+      signableHeaders: new Set(this.#signLength ? ['content-type', 'content-length'] : ['content-type']),
       unhoistableHeaders: unhoistable,
     });
     return { url, method: 'PUT', headers, expiresAt: new Date(Date.now() + i.ttlSeconds * 1000) };
@@ -152,7 +161,7 @@ export class R2ObjectStore implements ObjectStore {
     const url = await getSignedUrl(
       this.#s3,
       new UploadPartCommand({ Bucket: bucket, Key: key, UploadId: uploadId, PartNumber: partNumber, ContentLength: contentLength }),
-      { expiresIn: ttlSeconds, signableHeaders: new Set(['content-length']) },
+      { expiresIn: ttlSeconds, signableHeaders: this.#signLength ? new Set(['content-length']) : undefined },
     );
     return { url, method: 'PUT', headers: {}, expiresAt: new Date(Date.now() + ttlSeconds * 1000) };
   }

@@ -9,7 +9,7 @@ const n = (v: unknown) => (v == null ? null : Number(v));
 const toJob = (r: Row): Job => ({
   id: String(r.id), name: String(r.name), sourceProvider: r.source_provider as SourceProvider, sourceSelector: (r.source_selector ?? {}) as Record<string, unknown>,
   destinationBucket: String(r.destination_bucket), mode: r.mode as Job['mode'], phase: r.phase as Job['phase'], status: r.status as Job['status'],
-  cursor: (r.cursor ?? {}) as Record<string, unknown>, approvals: (r.approvals ?? {}) as Job['approvals'], createdBy: String(r.created_by),
+  cursor: (r.cursor ?? {}) as Record<string, unknown>, approvals: (r.approvals ?? {}) as Job['approvals'], plan: (r.plan ?? null) as Job['plan'], createdBy: String(r.created_by),
 });
 const toItem = (r: Row): Item => ({
   id: String(r.id), jobId: String(r.job_id), sourceProvider: r.source_provider as SourceProvider, sourceId: String(r.source_id),
@@ -47,8 +47,12 @@ export class PostgresLedger implements MigrationLedger {
     const r = await this.db.query(`update public.storage_migration_jobs set ${sets.join(', ')} where id=$1 returning *`, p);
     return toJob(r.rows[0]);
   }
-  async approve(id: string, stage: Stage, by: string, ref: string) {
-    const r = await this.db.query(`update public.storage_migration_jobs set approvals = approvals || jsonb_build_object($2::text, jsonb_build_object('by',$3::text,'ref',$4::text,'at',now()::text)), updated_at=now() where id=$1 returning *`, [id, stage, by, ref]);
+  async approve(id: string, stage: Stage, token: string) {
+    const r = await this.db.query(`update public.storage_migration_jobs set approvals = approvals || jsonb_build_object($2::text, $3::text), updated_at=now() where id=$1 returning *`, [id, stage, token]);
+    return toJob(r.rows[0]);
+  }
+  async setPlan(id: string, plan: Job['plan']) {
+    const r = await this.db.query('update public.storage_migration_jobs set plan = $2, updated_at=now() where id=$1 returning *', [id, plan ? JSON.stringify(plan) : null]);
     return toJob(r.rows[0]);
   }
   async upsertDiscovered(jobId: string, provider: SourceProvider, items: DiscoveredItem[]) {

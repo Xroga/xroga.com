@@ -12,6 +12,7 @@ import { MUTATING, parseArgs, redactDeep, runPhase, toFlags, writeReceipt } from
 import { MigrationEngine } from './engine.js';
 import { MemoryLedger } from './ledger.js';
 import { LegacyR2Source } from './sources.js';
+import { approve, TEST_APPROVAL } from '../testing/approvals.js';
 
 async function world() {
   const legacy = new MemoryObjectStore(); const dest = new MemoryObjectStore();
@@ -19,10 +20,10 @@ async function world() {
   const drive = new StorageService({ repo, store: dest, bucket: 'drive', policy: defaultPolicyConfig({}) });
   const owner = randomUUID();
   legacy.seed('a', `users/${owner}/1700000000000-x.txt`, Buffer.from('x'));
-  const e = new MigrationEngine({ ledger, source: new LegacyR2Source(legacy, 'a', ''), drive, destRepo: repo, worker: 'cli' });
+  const e = new MigrationEngine({ ledger, source: new LegacyR2Source(legacy, 'a', ''), drive, destRepo: repo, worker: 'cli', approval: TEST_APPROVAL });
   const job = await ledger.createJob({ name: 'cli', sourceProvider: 'legacy_r2', destinationBucket: 'drive', mode: 'copy', createdBy: 't' });
-  await ledger.approve(job.id, 'copy', 'o', 'T');
   await runPhase(e, ledger, job.id, 'discover', { execute: false }); await runPhase(e, ledger, job.id, 'dry-run', { execute: false });
+  await approve(ledger, job.id, 'copy');
   return { e, ledger, job, dest, legacy, repo };
 }
 

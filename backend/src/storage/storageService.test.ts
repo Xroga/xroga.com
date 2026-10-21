@@ -479,3 +479,57 @@ describe('memory repository mirrors the SQL ledger semantics (parity with the re
     assert.equal(await h.repo.commit(randomUUID(), 1), 'NO_RESERVATION');
   });
 });
+
+describe('concurrent delete, read and provider loss', () => {
+  it('a download request racing a delete either signs or is refused cleanly; afterwards the object is gone', async () => {
+    const h = harness();
+    const { init } = await browserUpload(h, h.alice, Buffer.from('race'));
+    await h.svc.completeUpload(h.alice, init.objectId);
+    const rs = await Promise.allSettled([h.svc.getDownload(h.alice, init.objectId), h.svc.deleteObject(h.alice, init.objectId), h.svc.getDownload(h.alice, init.objectId)]);
+    for (const r of rs) if (r.status === 'rejected') assert.equal((r.reason as StorageError).code, 'NOT_FOUND');
+    await rejects(h.svc.getDownload(h.alice, init.objectId), 'NOT_FOUND');
+    assert.equal((await h.repo.getObject(init.objectId))!.state, 'DELETED');
+    assert.equal((await h.repo.getUsage(h.alice.tenantId)).committedBytes, 0);
+  });
+  it('server-side read of an object the provider no longer has is NOT_FOUND, not a raw provider error', async () => {
+    const h = harness();
+    const { init } = await browserUpload(h, h.alice, Buffer.from('vanish'));
+    await h.svc.completeUpload(h.alice, init.objectId);
+    h.store.remove(BUCKET, (await h.repo.getObject(init.objectId))!.objectKey);
+    await rejects(h.svc.readObjectBytes(h.alice, init.objectId), 'NOT_FOUND');
+  });
+  it('a transient provider failure on server-side read is retryable (503), not a corruption verdict', async () => {
+    const h = harness();
+    const { init } = await browserUpload(h, h.alice, Buffer.from('flaky read'));
+    await h.svc.completeUpload(h.alice, init.objectId);
+    h.store.failNext('read');
+    await rejects(h.svc.readObjectBytes(h.alice, init.objectId), 'PROVIDER_UNAVAILABLE');
+    assert.equal((await h.repo.getObject(init.objectId))!.state, 'READY');
+    assert.equal((await h.svc.readObjectBytes(h.alice, init.objectId)).bytes.toString(), 'flaky read');
+  });
+  it('crash mid-upload leaves nothing READY; the abandoned object and its reservation are reclaimed, other uploads untouched', async () => {
+    const h = harness({ quota: async () => 1000 });
+    const dead = await h.svc.initiateUpload(h.alice, { filename: 'dead.txt', contentType: 'text/plain', size: 400 });
+    const live = await browserUpload(h, h.alice, Buffer.from('still uploading'));
+    h.clock.t += 30 * 60_000;
+    await h.svc.completeUpload(h.alice, live.init.objectId); // finishes inside its window
+    h.clock.t += 40 * 60_000; // dead upload's window (1 h) has now passed
+    const rep = await h.svc.reconcile();
+    assert.equal(rep.abandonedCleaned, 1);
+    assert.equal((await h.repo.getObject(dead.objectId))!.state, 'DELETED');
+    assert.equal((await h.repo.getObject(live.init.objectId))!.state, 'READY');
+    const u = await h.repo.getUsage(h.alice.tenantId);
+    assert.deepEqual([u.reservedBytes, u.committedBytes], [0, 15]);
+  });
+  it('an oversized body can never pass for a small declared size: provider refuses, and a forced oversize is quarantined', async () => {
+    const h = harness({ quota: async () => 100 });
+    const init = await h.svc.initiateUpload(h.alice, { filename: 'a.txt', contentType: 'text/plain', size: 10 });
+    if (init.mode !== 'single') throw new Error();
+    assert.equal(h.store.clientPut(init.upload.url, init.upload.headers, Buffer.alloc(5000, 1)).status, 403, 'signed content-length');
+    const row = (await h.repo.getObject(init.objectId))!;
+    h.store.seed(BUCKET, row.objectKey, Buffer.alloc(5000, 1)); // a provider that failed to enforce the length
+    await rejects(h.svc.completeUpload(h.alice, init.objectId), 'QUARANTINED');
+    const u = await h.repo.getUsage(h.alice.tenantId);
+    assert.deepEqual([u.reservedBytes, u.committedBytes], [0, 0], 'the 5000 bytes were never charged or admitted');
+  });
+});

@@ -47,6 +47,7 @@ export async function storeProjectFile(
   const key = buildR2Key(userId, filename);
   let r2Result: R2UploadResult;
   // dual: the canonical write runs alongside the legacy one. Its failure is recorded, never hidden, and never upgraded to "durable".
+  if (mode === 'dual' && !getStorageService()) throw new StorageError('PROVIDER_UNAVAILABLE', 'STORAGE_WRITE_MODE=dual but Xroga Drive is not configured', 503);
   const canonical = mode === 'dual'
     ? await writeCanonical(userId, projectId, filename, content, contentType, fileType).then((o) => o, (e) => { console.error('[Storage] canonical write failed in dual mode:', (e as Error).message); return null; })
     : null;

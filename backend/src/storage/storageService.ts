@@ -369,7 +369,14 @@ export class StorageService {
     if (o.state !== 'READY' || o.sizeBytes === null || o.sha256Verified === null) throw new StorageError('NOT_FOUND', 'object is not available', 404);
     if (o.sizeBytes > maxBytes) throw new StorageError('POLICY_REJECTED', 'object too large to read into memory', 413);
     const chunks: Buffer[] = [];
-    for await (const c of await this.#store.openRead(o.bucket, o.objectKey)) chunks.push(Buffer.from(c));
+    try {
+      for await (const c of await this.#store.openRead(o.bucket, o.objectKey)) chunks.push(Buffer.from(c));
+    } catch (err) {
+      if (err instanceof ProviderUnavailableError) throw new StorageError('PROVIDER_UNAVAILABLE', 'storage temporarily unavailable; retry', 503);
+      // the bytes vanished between the metadata read and the provider read (concurrent delete, or provider-side loss)
+      if (/NoSuchKey|NotFound|not found/i.test(`${(err as Error)?.name} ${(err as Error)?.message}`)) throw new StorageError('NOT_FOUND', 'object is not available', 404);
+      throw err;
+    }
     const bytes = Buffer.concat(chunks);
     if (sha256Hex(bytes) !== o.sha256Verified) {
       await this.#repo.updateObject(o.id, ['READY'], { state: 'CORRUPT', errorCode: 'READBACK_MISMATCH' });

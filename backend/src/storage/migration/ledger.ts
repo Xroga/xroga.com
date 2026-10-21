@@ -15,7 +15,9 @@ export interface MigrationLedger {
   createJob(j: NewJob): Promise<Job>;
   getJob(id: string): Promise<Job | null>;
   updateJob(id: string, patch: Partial<Pick<Job, 'phase' | 'status' | 'cursor' | 'mode'>>): Promise<Job>;
-  approve(id: string, stage: Stage, by: string, ref: string): Promise<Job>;
+  /** Stores a signed token. Storing a token does not approve anything by itself. */
+  approve(id: string, stage: Stage, token: string): Promise<Job>;
+  setPlan(id: string, plan: Job['plan']): Promise<Job>;
   /** Idempotent on (source_provider, source_id). */
   upsertDiscovered(jobId: string, provider: SourceProvider, items: DiscoveredItem[]): Promise<{ inserted: number; unchanged: number; changed: number }>;
   claim(jobId: string, worker: string, limit: number, leaseSeconds: number): Promise<Item[]>;
@@ -44,18 +46,22 @@ export class MemoryLedger implements MigrationLedger {
   setClock(now: () => Date) { this.#now = now; }
 
   async createJob(j: NewJob): Promise<Job> {
-    const job: Job = { id: randomUUID(), name: j.name, sourceProvider: j.sourceProvider, sourceSelector: j.sourceSelector ?? {}, destinationBucket: j.destinationBucket, mode: j.mode, phase: 'DISCOVER', status: 'CREATED', cursor: {}, approvals: {}, createdBy: j.createdBy };
+    const job: Job = { id: randomUUID(), name: j.name, sourceProvider: j.sourceProvider, sourceSelector: j.sourceSelector ?? {}, destinationBucket: j.destinationBucket, mode: j.mode, phase: 'DISCOVER', status: 'CREATED', cursor: {}, approvals: {}, plan: null, createdBy: j.createdBy };
     this.jobs.set(job.id, job);
     return { ...job };
   }
-  async getJob(id: string) { const j = this.jobs.get(id); return j ? { ...j, approvals: { ...j.approvals } } : null; }
+  async getJob(id: string) { const j = this.jobs.get(id); return j ? { ...j, approvals: { ...j.approvals }, plan: j.plan ? { ...j.plan } : null } : null; }
   async updateJob(id: string, patch: Partial<Pick<Job, 'phase' | 'status' | 'cursor' | 'mode'>>) {
     const j = this.jobs.get(id); if (!j) throw new Error('job not found');
     Object.assign(j, patch); return { ...j };
   }
-  async approve(id: string, stage: Stage, by: string, ref: string) {
+  async approve(id: string, stage: Stage, token: string) {
     const j = this.jobs.get(id); if (!j) throw new Error('job not found');
-    j.approvals[stage] = { by, ref, at: this.#now().toISOString() }; return { ...j, approvals: { ...j.approvals } };
+    j.approvals[stage] = token; return { ...j, approvals: { ...j.approvals } };
+  }
+  async setPlan(id: string, plan: Job['plan']) {
+    const j = this.jobs.get(id); if (!j) throw new Error('job not found');
+    j.plan = plan; return { ...j, approvals: { ...j.approvals } };
   }
   async upsertDiscovered(jobId: string, provider: SourceProvider, items: DiscoveredItem[]) {
     let inserted = 0, unchanged = 0, changed = 0;

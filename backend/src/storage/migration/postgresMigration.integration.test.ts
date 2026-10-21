@@ -10,6 +10,7 @@ import { StorageService } from '../storageService.js';
 import { createDisposableDb, PG_TEST_URL } from '../testing/pgFixture.js';
 import { MigrationEngine, type ReadLinker } from './engine.js';
 import { PostgresLedger } from './postgresLedger.js';
+import { approve, TEST_APPROVAL } from '../testing/approvals.js';
 import { ProjectFilesInlineSource, SupabaseStorageSource } from './sources.js';
 
 const skip = PG_TEST_URL ? false : 'STORAGE_TEST_DATABASE_URL not set: real-Postgres migration tests not run';
@@ -39,14 +40,15 @@ describe('migration engine against real PostgreSQL ledger + metadata', { skip },
       unlink: async (it) => { await pool.query('update public.project_files set storage_object_id=null where id = replace($1,$2,$3)::uuid', [it.sourceId, 'project_files:', '']); },
     };
     const source = new ProjectFilesInlineSource(pool);
-    const e = new MigrationEngine({ ledger, source, drive, destRepo: repo, worker: 'w1', linker });
+    const e = new MigrationEngine({ ledger, source, drive, destRepo: repo, worker: 'w1', linker, approval: TEST_APPROVAL });
     const job = await ledger.createJob({ name: 'inline', sourceProvider: 'project_files_inline', destinationBucket: 'b', mode: 'copy', createdBy: 't' });
-    await ledger.approve(job.id, 'copy', 'owner', 'T'); await ledger.approve(job.id, 'read_new', 'owner', 'T');
+
 
     // only rows whose bytes are recoverable are even discovered
     assert.equal((await e.discover(job.id)).inserted, 2);
     const plan = await e.dryRun(job.id);
     assert.equal(plan.eligible, 2);
+    await approve(ledger, job.id, 'copy'); await approve(ledger, job.id, 'read_new');
     const before = (await pool.query('select id, content, file_url from public.project_files order by id')).rows;
     assert.equal((await e.copy(job.id)).copied, 2);
     assert.equal((await e.verify(job.id)).verified, 2);
@@ -73,12 +75,12 @@ describe('migration engine against real PostgreSQL ledger + metadata', { skip },
     for (let i = 0; i < 16; i++) await pool.query('insert into public.project_files (project_id,file_name,file_type,content) values ($1,$2,$3,$4)', [project, `c${i}.txt`, 'code', `concurrent ${i}`]);
     const repo = new PostgresStorageRepository(pool); const ledger = new PostgresLedger(pool); const store = new MemoryObjectStore();
     const drive = new StorageService({ repo, store, bucket: 'b', policy: defaultPolicyConfig({}) });
-    const mk = (w: string) => new MigrationEngine({ ledger, source: new ProjectFilesInlineSource(pool), drive, destRepo: repo, worker: w });
+    const mk = (w: string) => new MigrationEngine({ ledger, source: new ProjectFilesInlineSource(pool), drive, destRepo: repo, worker: w, approval: TEST_APPROVAL });
     const job = await ledger.createJob({ name: 'conc', sourceProvider: 'project_files_inline', destinationBucket: 'b', mode: 'copy', createdBy: 't' });
-    await ledger.approve(job.id, 'copy', 'owner', 'T');
     const mine = await mk('x').discover(job.id);
     assert.ok(mine.inserted >= 16);
     await mk('x').dryRun(job.id);
+    await approve(ledger, job.id, 'copy');
     const before = store.objects.size;
     const [a, b, c] = await Promise.all([mk('A').copy(job.id, { concurrency: 4 }), mk('B').copy(job.id, { concurrency: 4 }), mk('C').copy(job.id, { concurrency: 4 })]);
     assert.equal(a.copied + b.copied + c.copied, 16);

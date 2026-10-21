@@ -4,6 +4,8 @@ import { defaultPolicyConfig } from '../policy.js';
 import { PostgresStorageRepository } from '../postgresRepository.js';
 import { R2ObjectStore, r2ConfigFromEnv } from '../r2ObjectStore.js';
 import { StorageService } from '../storageService.js';
+import { readFileSync } from 'node:fs';
+import type { Environment } from './approvals.js';
 import { BlockedError } from './cli.js';
 import { MigrationEngine, type ReadLinker } from './engine.js';
 import { PostgresLedger } from './postgresLedger.js';
@@ -41,6 +43,18 @@ export function supabaseStorageClient(env: NodeJS.ProcessEnv): SupabaseStorageLi
   };
 }
 
+/**
+ * The approver PUBLIC key (PEM text or a path to one) and the environment this process may act in. Both are mandatory:
+ * `STORAGE_MIGRATION_ENV` has no default, so a process can never inherit "production" or "test" by accident.
+ */
+export function approverFromEnv(env: NodeJS.ProcessEnv): { publicKeyPem: string; environment: Environment } | undefined {
+  const raw = env.STORAGE_MIGRATION_APPROVER_PUBKEY?.trim();
+  const e = env.STORAGE_MIGRATION_ENV?.trim().toLowerCase();
+  if (!raw || !e) return undefined; // engine then refuses every stage (NO_APPROVER_KEY_CONFIGURED); read-only phases still work
+  if (e !== 'test' && e !== 'staging' && e !== 'production') throw new BlockedError([`STORAGE_MIGRATION_ENV must be test|staging|production (got "${e.slice(0, 12)}")`]);
+  return { publicKeyPem: raw.includes('BEGIN PUBLIC KEY') ? raw : readFileSync(raw, 'utf8'), environment: e };
+}
+
 export interface BuiltContext { engine: MigrationEngine; ledger: PostgresLedger; drive: StorageService; destBucket: string; source: SourceAdapter; close: () => Promise<void> }
 
 /** Builds the real (Postgres + R2) engine. Anything unconfigured raises BlockedError: the scripts report BLOCKED, never "ok". */
@@ -57,6 +71,6 @@ export function buildContext(provider: SourceProvider, opts: { worker: string; s
   else if (provider === 'supabase_storage') source = new SupabaseStorageSource(supabaseStorageClient(env), opts.supabaseBucket ?? 'avatars');
   else if (provider === 'project_files_inline') source = new ProjectFilesInlineSource(pool);
   else throw new BlockedError([`adapter for ${provider} (use the dedicated script)`]);
-  const engine = new MigrationEngine({ ledger, source, drive, destRepo: repo, worker: opts.worker, linker: projectFilesLinker(pool) });
+  const engine = new MigrationEngine({ ledger, source, drive, destRepo: repo, worker: opts.worker, linker: projectFilesLinker(pool), approval: approverFromEnv(env) });
   return { engine, ledger, drive, destBucket: dest.bucket, source, close: () => pool.end() };
 }

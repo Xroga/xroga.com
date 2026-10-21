@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { deterministicObjectId } from '../keys.js';
+import { planDigest, verifyApproval, type ApprovalClaims, type Environment } from './approvals.js';
 import { ProviderUnavailableError } from '../objectStore.js';
 import type { StorageRepository } from '../repository.js';
 import type { StorageService } from '../storageService.js';
@@ -23,6 +24,11 @@ export interface EngineDeps {
   destRepo: StorageRepository;
   worker: string;
   linker?: ReadLinker;
+  /**
+   * Approver PUBLIC key and the environment this engine instance is allowed to act in. Without it no stage can be approved
+   * (there is no implicit yes). A test engine ('test') rejects production approvals and vice versa.
+   */
+  approval?: { publicKeyPem: string; environment: Environment };
   now?: () => Date;
   maxAttempts?: number;
   leaseSeconds?: number;
@@ -56,8 +62,19 @@ export class MigrationEngine {
     if (j.sourceProvider !== this.#d.source.provider) throw new Error(`job source ${j.sourceProvider} does not match adapter ${this.#d.source.provider}`);
     return j;
   }
-  #require(job: Job, stage: Stage) {
-    if (!job.approvals[stage]) throw new NotApprovedError(stage);
+  /** Verifies the stored token's signature, scope, environment, expiry and plan digest. Re-read from the ledger on every call. */
+  async #require(jobId: string, stage: Stage): Promise<ApprovalClaims> {
+    const job = await this.#d.ledger.getJob(jobId);
+    if (!job) throw new Error('migration job not found');
+    if (!this.#d.approval) throw new NotApprovedError(stage, 'NO_APPROVER_KEY_CONFIGURED');
+    const token = job.approvals[stage];
+    if (!token) throw new NotApprovedError(stage);
+    const v = verifyApproval(this.#d.approval.publicKeyPem, token, {
+      jobId, stage, environment: this.#d.approval.environment, sourceProvider: job.sourceProvider, destinationBucket: job.destinationBucket,
+      planDigest: job.plan?.digest ?? null, now: this.#now().getTime(),
+    });
+    if (!v.ok) throw new NotApprovedError(stage, v.reason);
+    return v.claims;
   }
   async #phase(job: Job, phase: Phase) {
     await this.#d.ledger.updateJob(job.id, { phase, status: 'RUNNING' });
@@ -73,6 +90,8 @@ export class MigrationEngine {
       const page = await this.#d.source.discover(cursor, opts.pageSize ?? 500);
       const r = await this.#d.ledger.upsertDiscovered(jobId, this.#d.source.provider, page.items as DiscoveredItem[]);
       total.inserted += r.inserted; total.unchanged += r.unchanged; total.changed += r.changed; total.pages++;
+      // new or changed objects are outside whatever was approved: void the plan so every earlier approval stops verifying
+      if (r.inserted > 0 || r.changed > 0) await this.#d.ledger.setPlan(jobId, null);
       cursor = page.next;
       await this.#d.ledger.updateJob(jobId, { cursor: cursor ? { next: cursor } : { done: true } });
       if (!cursor) { total.done = true; break; }
@@ -85,12 +104,14 @@ export class MigrationEngine {
     const job = await this.#job(jobId);
     await this.#phase(job, 'DRY_RUN');
     const summary = { eligible: 0, eligibleBytes: 0, skipped: {} as Record<string, number>, blocked: {} as Record<string, number> };
+    let classified = 0;
     let after: string | undefined;
     for (;;) {
       const batch = await this.#d.ledger.listItems(jobId, ['DISCOVERED'], 500, after);
       if (!batch.length) break;
       for (const it of batch) {
         const c = this.#classify(it);
+        classified++;
         await this.#d.ledger.updateItem(it.id, { status: c.status, skipReason: c.reason });
         if (c.status === 'ELIGIBLE') { summary.eligible++; summary.eligibleBytes += it.sourceSize ?? 0; }
         else if (c.status === 'SKIPPED') summary.skipped[c.reason!] = (summary.skipped[c.reason!] ?? 0) + 1;
@@ -98,6 +119,18 @@ export class MigrationEngine {
       }
       after = batch[batch.length - 1].id;
       if (batch.length < 500) break;
+    }
+    // (re)plan only when something was newly classified, so replaying a dry run never invalidates a valid approval
+    if (classified > 0 || !job.plan) {
+      const planned: Item[] = [];
+      let cursor: string | undefined;
+      for (;;) {
+        const b = await this.#d.ledger.listItems(jobId, null, 500, cursor);
+        planned.push(...b.filter((i) => !['DISCOVERED', 'SKIPPED', 'BLOCKED'].includes(i.status)));
+        if (b.length < 500) break;
+        cursor = b[b.length - 1].id;
+      }
+      await this.#d.ledger.setPlan(jobId, { digest: planDigest(planned.map((i) => ({ sourceId: i.sourceId, fingerprint: i.sourceFingerprint, size: i.sourceSize }))), count: planned.length, bytes: planned.reduce((a, i) => a + (i.sourceSize ?? 0), 0), at: this.#now().toISOString() });
     }
     return summary;
   }
@@ -114,17 +147,18 @@ export class MigrationEngine {
   // ---- COPY ---------------------------------------------------------------------------------------
   async copy(jobId: string, opts: { concurrency?: number; limit?: number } = {}): Promise<CopySummary> {
     const job = await this.#job(jobId);
-    if (job.mode !== 'copy') throw new NotApprovedError('copy');
-    this.#require(job, 'copy');
+    if (job.mode !== 'copy') throw new NotApprovedError('copy', 'JOB_IS_DRY_RUN_ONLY');
+    let claims = await this.#require(jobId, 'copy');
     await this.#phase(job, 'COPY');
     const sum: CopySummary = { claimed: 0, copied: 0, reused: 0, failed: 0, blocked: 0, missing: 0, sourceChanged: 0, corrupt: 0, lostLease: 0 };
     const conc = Math.max(1, Math.min(opts.concurrency ?? 4, 16));
     let budget = opts.limit ?? Infinity;
     while (budget > 0) {
+      claims = await this.#require(jobId, 'copy'); // long runs re-check expiry and plan before every batch
       const batch = await this.#d.ledger.claim(jobId, this.#d.worker, Math.min(conc, budget), this.#d.leaseSeconds);
       if (!batch.length) break;
       budget -= batch.length; sum.claimed += batch.length;
-      await Promise.all(batch.map((it) => this.#copyOne(it, job, sum)));
+      await Promise.all(batch.map((it) => this.#copyOne(it, job, sum, claims.tenantScope)));
     }
     return sum;
   }
@@ -135,8 +169,9 @@ export class MigrationEngine {
     return true;
   }
 
-  async #copyOne(it: Item, job: Job, sum: CopySummary): Promise<void> {
+  async #copyOne(it: Item, job: Job, sum: CopySummary, tenantScope?: string[]): Promise<void> {
     try {
+      if (tenantScope && !(it.tenantId && tenantScope.includes(it.tenantId))) { sum.blocked++; await this.#finish(it, { status: 'BLOCKED', skipReason: 'OUT_OF_APPROVAL_SCOPE', lastErrorClass: 'POLICY' }, sum); return; }
       if (it.attempts > this.#d.maxAttempts) { sum.blocked++; await this.#finish(it, { status: 'BLOCKED', skipReason: 'MAX_ATTEMPTS', lastErrorClass: 'EXHAUSTED' }, sum); return; }
       const opened = await this.#d.source.open(it.sourceId);
       if (!opened) { sum.missing++; await this.#finish(it, { status: 'MISSING_SOURCE', lastErrorClass: 'SOURCE' }, sum); return; }
@@ -295,13 +330,14 @@ export class MigrationEngine {
   // ---- READ_NEW / rollback / FREEZE_OLD / RETAIN / APPROVED_DELETE ---------------------------------
   async readNew(jobId: string, opts: { limit?: number } = {}) {
     const job = await this.#job(jobId);
-    this.#require(job, 'read_new');
+    const claims = await this.#require(jobId, 'read_new');
     await this.#phase(job, 'READ_NEW');
     let switched = 0, after: string | undefined;
     for (;;) {
       const batch = await this.#d.ledger.listItems(jobId, ['VERIFIED'], 200, after);
       for (const it of batch) {
         if (it.readMode === 'new') continue;
+        if (claims.tenantScope && !(it.tenantId && claims.tenantScope.includes(it.tenantId))) continue;
         if (opts.limit !== undefined && switched >= opts.limit) return { switched };
         await this.#d.linker?.link(it);
         await this.#d.ledger.updateItem(it.id, { readMode: 'new', rollbackRef: { previous: 'legacy', switchedAt: this.#now().toISOString(), job: jobId } });
@@ -334,7 +370,7 @@ export class MigrationEngine {
 
   async freezeOld(jobId: string) {
     const job = await this.#job(jobId);
-    this.#require(job, 'freeze_old');
+    await this.#require(jobId, 'freeze_old');
     await this.#phase(job, 'FREEZE_OLD');
     let frozen = 0, after: string | undefined;
     for (;;) {

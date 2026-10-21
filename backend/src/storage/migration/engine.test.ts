@@ -10,6 +10,7 @@ import { MigrationEngine } from './engine.js';
 import { MemoryLedger } from './ledger.js';
 import { LegacyR2Source, SupabaseStorageSource, SECRET_BUCKETS, LocalMediaCacheSource } from './sources.js';
 import { NotApprovedError, type Item } from './types.js';
+import { approve, TEST_APPROVAL } from '../testing/approvals.js';
 
 const LEGACY = 'xroga-assets';
 const DEST = 'xroga-drive-test';
@@ -22,6 +23,7 @@ function setup(opts: { files?: Array<{ owner?: string | null; name: string; body
   const repo = new MemoryStorageRepository(now);
   const ledger = new MemoryLedger(now);
   const drive = new StorageService({ repo, store: dest, bucket: DEST, policy: defaultPolicyConfig({}), now });
+  const autoApprove = new Set<string>();
   const alice = randomUUID(), bob = randomUUID();
   const seeded: Array<{ key: string; body: Buffer; owner: string | null }> = [];
   const files = opts.files ?? [
@@ -35,10 +37,16 @@ function setup(opts: { files?: Array<{ owner?: string | null; name: string; body
   }
   const source = new LegacyR2Source(legacy, LEGACY, '');
   const engine = (worker = 'w1', extra: Partial<ConstructorParameters<typeof MigrationEngine>[0]> = {}) =>
-    new MigrationEngine({ ledger, source, drive, destRepo: repo, worker, now, ...extra });
-  const job = async (mode: 'dry_run' | 'copy' = 'copy', approve = true) => {
+    (() => {
+      const eng = new MigrationEngine({ ledger, source, drive, destRepo: repo, worker, now, approval: TEST_APPROVAL, ...extra });
+      const plan = eng.dryRun.bind(eng);
+      // test convenience: an operator approves the copy after reading each fresh dry run (real signatures, real verification)
+      eng.dryRun = async (id: string) => { const r = await plan(id); if (autoApprove.has(id)) await approve(ledger, id, 'copy', { now: clock.t }); return r; };
+      return eng;
+    })();
+  const job = async (mode: 'dry_run' | 'copy' = 'copy', approveCopy = true) => {
     const j = await ledger.createJob({ name: 't', sourceProvider: 'legacy_r2', destinationBucket: DEST, mode, createdBy: 'test' });
-    if (approve) await ledger.approve(j.id, 'copy', 'owner', 'TEST-APPROVAL');
+    if (approveCopy) autoApprove.add(j.id);
     return j;
   };
   const snapshotLegacy = () => new Map([...legacy.objects].map(([k, v]) => [k, sha256Hex(v.body)]));
@@ -77,7 +85,7 @@ describe('migration: safety gates', () => {
     await e.discover(j.id); await e.dryRun(j.id); await e.copy(j.id); await e.verify(j.id);
     await assert.rejects(e.readNew(j.id), (x: NotApprovedError) => x.stage === 'read_new');
     await assert.rejects(e.freezeOld(j.id), (x: NotApprovedError) => x.stage === 'freeze_old');
-    await s.ledger.approve(j.id, 'delete', 'owner', 'TEST');
+    await approve(s.ledger, j.id, 'delete', { now: s.clock.t });
     await assert.rejects(e.deleteLegacy(j.id), (x: NotApprovedError) => x.stage === 'delete-not-implemented');
     const m = await e.deletionManifest(j.id);
     assert.equal(m.deletesAnything, false);
@@ -166,12 +174,12 @@ describe('migration: end to end', () => {
     await writeFile(path.join(root, 'users', owner, '1-video.mp4.meta'), 'video/mp4');
     const s = setup({ files: [] });
     const src = new LocalMediaCacheSource(root);
-    const mk = (includeEphemeral: boolean) => new MigrationEngine({ ledger: s.ledger, source: src, drive: s.drive, destRepo: s.repo, worker: 'w', includeEphemeral });
+    const mk = (includeEphemeral: boolean) => new MigrationEngine({ ledger: s.ledger, source: src, drive: s.drive, destRepo: s.repo, worker: 'w', includeEphemeral, approval: TEST_APPROVAL });
     const j = await s.ledger.createJob({ name: 'c', sourceProvider: 'local_media_cache', destinationBucket: DEST, mode: 'copy', createdBy: 't' });
-    await s.ledger.approve(j.id, 'copy', 'o', 'T');
     await mk(false).discover(j.id);
     const plan = await mk(false).dryRun(j.id);
     assert.deepEqual(plan.skipped, { EPHEMERAL_CACHE: 1 });
+    await approve(s.ledger, j.id, 'copy');
     await mk(false).copy(j.id);
     assert.equal(s.dest.objects.size, 0);
   });
@@ -342,7 +350,7 @@ describe('migration: read mode switch and rollback', () => {
   async function ready() {
     const s = setup(); const j = await s.job(); const e = s.engine();
     await e.discover(j.id); await e.dryRun(j.id); await e.copy(j.id); await e.verify(j.id);
-    await s.ledger.approve(j.id, 'read_new', 'owner', 'TEST'); await s.ledger.approve(j.id, 'freeze_old', 'owner', 'TEST');
+    await approve(s.ledger, j.id, 'read_new', { now: s.clock.t }); await approve(s.ledger, j.id, 'freeze_old', { now: s.clock.t });
     return { s, j, e };
   }
   it('switches only VERIFIED items, rolls back idempotently, and never touches objects or newer writes', async () => {

@@ -8,18 +8,67 @@ import { PostgresLedger } from './migration/postgresLedger.js';
 import type { StorageActor } from './types.js';
 
 /**
- * Where new durable writes go. `legacy` keeps today's behaviour exactly (default). `dual` and `r2` are opt-in and
+ * Where new durable writes go. `legacy` keeps today's behaviour exactly (the default when unset). `dual` and `r2` are opt-in and
  * are only switched on by an operator after the Phase 1 cutover approval; see docs/infra/batch-1.5/runbook-storage.md.
+ * A value that is set but not understood is a configuration ERROR, never silently treated as `legacy`.
  */
 export type StorageWriteMode = 'legacy' | 'dual' | 'r2';
-export function storageWriteMode(env: NodeJS.ProcessEnv = process.env): StorageWriteMode {
-  const v = (env.STORAGE_WRITE_MODE ?? 'legacy').toLowerCase();
-  return v === 'dual' || v === 'r2' ? v : 'legacy';
-}
 export type StorageReadSource = 'legacy' | 'r2';
+
+export class StorageConfigError extends Error {
+  constructor(readonly problems: string[]) {
+    super(`invalid storage configuration: ${problems.join('; ')}`);
+    this.name = 'StorageConfigError';
+  }
+}
+
+export interface ResolvedStorageConfig {
+  writeMode: StorageWriteMode;
+  readOrder: StorageReadSource[];
+  problems: string[];
+}
+
+/** Pure: validates the combination of switches and credentials without touching the network. */
+export function resolveStorageConfig(env: NodeJS.ProcessEnv = process.env): ResolvedStorageConfig {
+  const problems: string[] = [];
+  const rawMode = env.STORAGE_WRITE_MODE?.trim().toLowerCase();
+  let writeMode: StorageWriteMode = 'legacy';
+  if (rawMode) {
+    if (rawMode === 'legacy' || rawMode === 'dual' || rawMode === 'r2') writeMode = rawMode;
+    else problems.push(`STORAGE_WRITE_MODE="${rawMode.slice(0, 20)}" is not one of legacy|dual|r2`);
+  }
+  const rawOrder = env.STORAGE_READ_ORDER?.trim().toLowerCase();
+  let readOrder: StorageReadSource[] = ['legacy', 'r2'];
+  if (rawOrder) {
+    const parts = rawOrder.split(',').map((x) => x.trim());
+    const bad = parts.filter((x) => x !== 'legacy' && x !== 'r2');
+    if (bad.length || !parts.length) problems.push(`STORAGE_READ_ORDER contains unsupported source(s): ${bad.map((b) => `"${b.slice(0, 12)}"`).join(',') || '(empty)'}`);
+    else if (new Set(parts).size !== parts.length) problems.push('STORAGE_READ_ORDER lists a source twice');
+    else readOrder = parts as StorageReadSource[];
+  }
+  const needsDrive = writeMode !== 'legacy' || rawOrder === 'r2';
+  if (needsDrive) {
+    if (!(env.XROGA_DRIVE_R2_ACCESS_KEY_ID && env.XROGA_DRIVE_R2_SECRET_ACCESS_KEY && env.XROGA_DRIVE_R2_BUCKET && (env.XROGA_DRIVE_R2_ACCOUNT_ID ?? env.CLOUDFLARE_R2_ACCOUNT_ID ?? env.CLOUDFLARE_ACCOUNT_ID))) {
+      problems.push(`${writeMode !== 'legacy' ? `STORAGE_WRITE_MODE=${writeMode}` : 'STORAGE_READ_ORDER=r2'} requires XROGA_DRIVE_R2_* credentials and bucket`);
+    }
+    if (env.XROGA_DRIVE_R2_BUCKET && env.XROGA_DRIVE_R2_BUCKET === (env.CLOUDFLARE_R2_BUCKET ?? 'xroga-assets')) {
+      problems.push('XROGA_DRIVE_R2_BUCKET must be a dedicated private bucket, not the legacy assets bucket');
+    }
+    if (!(env.DATABASE_URL || env.SUPABASE_DB_URL || env.SUPABASE_DB_PASSWORD)) problems.push('canonical storage requires a database URL');
+  }
+  return { writeMode, readOrder, problems };
+}
+
+/** Throws StorageConfigError for an invalid combination: callers fail closed instead of picking a default. */
+export function storageWriteMode(env: NodeJS.ProcessEnv = process.env): StorageWriteMode {
+  const c = resolveStorageConfig(env);
+  if (c.problems.length) throw new StorageConfigError(c.problems);
+  return c.writeMode;
+}
 export function storageReadOrder(env: NodeJS.ProcessEnv = process.env): StorageReadSource[] {
-  const order = (env.STORAGE_READ_ORDER ?? 'legacy,r2').split(',').map((s) => s.trim().toLowerCase()).filter((s): s is StorageReadSource => s === 'legacy' || s === 'r2');
-  return order.length ? [...new Set(order)] : ['legacy', 'r2'];
+  const c = resolveStorageConfig(env);
+  if (c.problems.length) throw new StorageConfigError(c.problems);
+  return c.readOrder;
 }
 
 let pool: pg.Pool | null = null;

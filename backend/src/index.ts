@@ -41,6 +41,7 @@ import { getSupabaseCounterText } from './lib/supabaseCallCounters.js';
 import { phase1AuthMiddleware } from './middleware/phase1Auth.js';
 import mediaRouter from './routes/media.js';
 import driveRouter from './routes/drive.js';
+import { resolveStorageConfig } from './storage/runtime.js';
 import capabilitiesRouter from './routes/capabilities.js';
 import { adminMiddleware } from './middleware/admin.js';
 import { ensureGithubSchema } from './db/ensureGithubSchema.js';
@@ -283,6 +284,10 @@ server.listen(port, '0.0.0.0', () => {
   console.log('[AI] Routes:', JSON.stringify(modelTransportStatus()));
   if (!process.env.SUPABASE_URL) {
     console.warn('WARNING: SUPABASE_URL is not set — authenticated routes will fail');
+  }
+  { // an invalid storage switch must be loud at boot; writes then fail closed (see storage/runtime.ts)
+    const storageCfg = resolveStorageConfig();
+    if (storageCfg.problems.length) console.error('[storage] INVALID CONFIGURATION:', storageCfg.problems.join('; '));
   }
   void ensurePhase1Schema().catch((err) => {
     console.warn('[phase1Schema] Startup ensure skipped:', (err as Error).message);

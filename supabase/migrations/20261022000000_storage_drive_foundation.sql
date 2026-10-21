@@ -60,7 +60,7 @@ create index if not exists idx_storage_objects_upload_expiry on public.storage_o
   where state in ('PENDING','UPLOADING');
 
 create or replace function public.storage_objects_guard() returns trigger
-language plpgsql as $$
+language plpgsql set search_path = public, pg_temp as $$
 declare
   ok boolean;
 begin
@@ -125,7 +125,7 @@ create index if not exists idx_storage_reservations_tenant on public.storage_res
 -- Reserve: serialised per tenant by locking the usage row. Idempotent per object.
 create or replace function public.storage_reserve(
   p_object_id uuid, p_tenant uuid, p_bytes bigint, p_expires timestamptz, p_quota bigint
-) returns text language plpgsql as $$
+) returns text language plpgsql set search_path = public, pg_temp as $$
 declare
   u public.storage_usage%rowtype;
   existing public.storage_reservations%rowtype;
@@ -161,7 +161,7 @@ end $$;
 
 -- Commit: ACTIVE -> COMMITTED with the authoritative size. Replays are no-ops.
 create or replace function public.storage_commit(p_object_id uuid, p_actual bigint) returns text
-language plpgsql as $$
+language plpgsql set search_path = public, pg_temp as $$
 declare
   r public.storage_reservations%rowtype;
 begin
@@ -184,7 +184,7 @@ end $$;
 
 -- Release an ACTIVE reservation (failed / cancelled / expired upload).
 create or replace function public.storage_release(p_object_id uuid, p_final_state text default 'RELEASED') returns text
-language plpgsql as $$
+language plpgsql set search_path = public, pg_temp as $$
 declare
   r public.storage_reservations%rowtype;
 begin
@@ -202,7 +202,7 @@ end $$;
 
 -- Free committed bytes when an object reaches DELETED. Idempotent.
 create or replace function public.storage_free(p_object_id uuid) returns text
-language plpgsql as $$
+language plpgsql set search_path = public, pg_temp as $$
 declare
   r public.storage_reservations%rowtype;
 begin
@@ -219,7 +219,7 @@ end $$;
 
 -- Expire stale ACTIVE reservations. Returns the number expired.
 create or replace function public.storage_expire_reservations(p_now timestamptz) returns integer
-language plpgsql as $$
+language plpgsql set search_path = public, pg_temp as $$
 declare
   rid uuid;
   n integer := 0;
@@ -236,7 +236,7 @@ end $$;
 -- Recompute a tenant's counters from the reservation rows (drift repair).
 create or replace function public.storage_reconcile_usage(p_tenant uuid)
 returns table (old_reserved bigint, old_committed bigint, new_reserved bigint, new_committed bigint)
-language plpgsql as $$
+language plpgsql set search_path = public, pg_temp as $$
 declare
   u public.storage_usage%rowtype;
   nr bigint;
@@ -281,8 +281,11 @@ create table if not exists public.storage_migration_jobs (
   status             text not null default 'CREATED'
                      check (status in ('CREATED','RUNNING','PAUSED','COMPLETED','FAILED','CANCELLED')),
   cursor             jsonb not null default '{}'::jsonb,
-  -- Explicit release controls. Absent key = not authorised. The engine refuses the matching phase.
+  -- stage -> Ed25519-signed approval token. A token stored here authorises nothing until the engine verifies its signature
+  -- against the approver PUBLIC key (STORAGE_MIGRATION_APPROVER_PUBKEY); a database row alone cannot approve a stage.
   approvals          jsonb not null default '{}'::jsonb,
+  -- digest of the exact object set the last dry-run planned (cleared when discovery adds or changes objects)
+  plan               jsonb,
   created_by         text not null,
   created_at         timestamptz not null default now(),
   updated_at         timestamptz not null default now()
@@ -330,7 +333,7 @@ create index if not exists idx_storage_migration_items_job_status on public.stor
 -- Claim eligible items for a worker with a lease (no transaction is held during the transfer).
 create or replace function public.storage_migration_claim(
   p_job uuid, p_worker text, p_limit integer, p_lease_seconds integer
-) returns setof public.storage_migration_items language plpgsql as $$
+) returns setof public.storage_migration_items language plpgsql set search_path = public, pg_temp as $$
 begin
   return query
   with picked as (
@@ -367,6 +370,13 @@ alter table public.storage_reservations     enable row level security;
 alter table public.storage_audit_events     enable row level security;
 alter table public.storage_migration_jobs   enable row level security;
 alter table public.storage_migration_items  enable row level security;
+-- FORCE: the table owner is subject to the policies too (service_role still bypasses by design; it is the only writer)
+alter table public.storage_objects          force row level security;
+alter table public.storage_usage            force row level security;
+alter table public.storage_reservations     force row level security;
+alter table public.storage_audit_events     force row level security;
+alter table public.storage_migration_jobs   force row level security;
+alter table public.storage_migration_items  force row level security;
 
 revoke all on public.storage_objects, public.storage_usage, public.storage_reservations,
               public.storage_audit_events, public.storage_migration_jobs, public.storage_migration_items

@@ -49,3 +49,17 @@ describe('R2ObjectStore presigned requests (SDK-generated, offline)', () => {
     assert.equal(r2ConfigFromEnv({ ...base, XROGA_DRIVE_R2_BUCKET: 'xroga-drive' } as never)?.bucket, 'xroga-drive');
   });
 });
+
+describe('transient error classification', () => {
+  it('network errors are transient whether the code is on the error or its cause; definitive answers are not', async () => {
+    const { isTransient } = await import('./r2ObjectStore.js');
+    assert.equal(isTransient(Object.assign(new Error('x'), { code: 'ECONNREFUSED' })), true);
+    assert.equal(isTransient(Object.assign(new Error('x'), { cause: { code: 'ETIMEDOUT' } })), true);
+    assert.equal(isTransient(Object.assign(new Error('x'), { name: 'TimeoutError' })), true);
+    assert.equal(isTransient(Object.assign(new Error('x'), { $metadata: { httpStatusCode: 503 } })), true);
+    assert.equal(isTransient(Object.assign(new Error('x'), { $metadata: { httpStatusCode: 429 } })), true);
+    assert.equal(isTransient(Object.assign(new Error('x'), { name: 'AccessDenied', $metadata: { httpStatusCode: 403 } })), false);
+    assert.equal(isTransient(Object.assign(new Error('x'), { name: 'NoSuchKey', $metadata: { httpStatusCode: 404 } })), false);
+    assert.equal(isTransient(new Error('plain')), false);
+  });
+});

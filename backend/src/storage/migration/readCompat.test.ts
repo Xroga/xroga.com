@@ -9,6 +9,7 @@ import { MigrationEngine } from './engine.js';
 import { MemoryLedger } from './ledger.js';
 import { readStoredFileOrdered, type ReadSource } from './readCompat.js';
 import { LegacyR2Source } from './sources.js';
+import { approve, TEST_APPROVAL } from '../testing/approvals.js';
 
 async function world() {
   const legacy = new MemoryObjectStore(); const dest = new MemoryObjectStore();
@@ -17,10 +18,11 @@ async function world() {
   const alice = randomUUID(), bob = randomUUID();
   const aliceKey = `users/${alice}/1700000000000-a.txt`;
   legacy.seed('assets', aliceKey, Buffer.from('legacy alice'));
-  const e = new MigrationEngine({ ledger, source: new LegacyR2Source(legacy, 'assets', ''), drive, destRepo: repo, worker: 'w' });
+  const e = new MigrationEngine({ ledger, source: new LegacyR2Source(legacy, 'assets', ''), drive, destRepo: repo, worker: 'w', approval: TEST_APPROVAL });
   const job = await ledger.createJob({ name: 'r', sourceProvider: 'legacy_r2', destinationBucket: 'drive', mode: 'copy', createdBy: 't' });
-  await ledger.approve(job.id, 'copy', 'o', 'T'); await ledger.approve(job.id, 'read_new', 'o', 'T');
-  await e.discover(job.id); await e.dryRun(job.id); await e.copy(job.id); await e.verify(job.id);
+  await e.discover(job.id); await e.dryRun(job.id);
+  await approve(ledger, job.id, 'copy'); await approve(ledger, job.id, 'read_new');
+  await e.copy(job.id); await e.verify(job.id);
   const deps = (order: ReadSource[]) => ({
     ledger, drive, order,
     readLegacy: async (k: string) => { const o = legacy.objects.get(`assets\u0000${k}`); if (!o) throw new Error('NoSuchKey'); return { buffer: o.body, contentType: o.contentType }; },

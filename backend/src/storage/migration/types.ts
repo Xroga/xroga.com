@@ -20,8 +20,10 @@ export interface Job {
   phase: Phase;
   status: 'CREATED' | 'RUNNING' | 'PAUSED' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
   cursor: Record<string, unknown>;
-  /** stage -> { by, ref, at }. A stage is authorised only if its key is present. */
-  approvals: Partial<Record<Stage, { by: string; ref: string; at: string }>>;
+  /** stage -> signed approval token (see approvals.ts). Presence alone authorises nothing: the engine verifies the signature. */
+  approvals: Partial<Record<Stage, string>>;
+  /** digest of the exact object set the last dry-run planned; cleared whenever discovery adds or changes objects */
+  plan: { digest: string; count: number; bytes: number; at: string } | null;
   createdBy: string;
 }
 
@@ -88,10 +90,10 @@ export interface SourceAdapter {
 }
 
 export class NotApprovedError extends Error {
-  constructor(readonly stage: Stage | 'delete-not-implemented') {
+  constructor(readonly stage: Stage | 'delete-not-implemented', readonly reason = 'NO_APPROVAL') {
     super(stage === 'delete-not-implemented'
       ? 'legacy deletion is not implemented in Phase 1: retirement is a separately approved cutover'
-      : `stage "${stage}" is not approved for this job`);
+      : `stage "${stage}" is not approved for this job (${reason})`);
     this.name = 'NotApprovedError';
   }
 }
