@@ -147,7 +147,7 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
       </span>
       <CapabilityVisual id={card.id} />
     </button>
-    <AnchoredPortalPopover open={open} onClose={close} anchorRef={anchorRef} placement="top-start" width={292} ariaLabel={`${card.title} features`} className={controls.featureMenu}>
+    <AnchoredPortalPopover open={open} onClose={close} anchorRef={anchorRef} placement="top-start" width={264} ariaLabel={`${card.title} features`} className={controls.featureMenu}>
       <div ref={menuRef}
         onKeyDown={event => {
           if (event.key === 'Escape') { close(); anchorRef.current?.focus(); }
@@ -168,15 +168,15 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
           <button type="button" onClick={() => { close(); anchorRef.current?.focus(); }} aria-label="Close features"><X size={14} /></button>
         </div>
         <p>{card.description}</p>
-        <div className={controls.featureOptions} role="group" aria-label={`${card.title} categories`}>
+        {selectedFeature === null ? <div className={controls.featureOptions} role="group" aria-label={`${card.title} categories`}>
           {card.features.map((feature, index) => <button type="button" role="menuitem"
-            key={feature[0]} aria-current={selectedFeature === index ? 'true' : undefined}
+            key={feature[0]}
             onMouseEnter={() => setSelectedFeature(index)}
             onFocus={() => setSelectedFeature(index)}
             onClick={() => setSelectedFeature(index)}>
             <span>{feature[0]}</span><ChevronRight size={14} aria-hidden="true" />
           </button>)}
-        </div>
+        </div> : null}
         {selectedFeature !== null ? <div className={controls.featureDetail} role="region" aria-label={`${card.features[selectedFeature][0]} action`}>
           <strong>{card.features[selectedFeature][0]}</strong>
           <p>Describe your objective and Xroga will prepare the steps, discover the tools, carry out authorized work, and verify the deliverable.</p>
