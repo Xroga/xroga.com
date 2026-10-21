@@ -259,10 +259,9 @@ test('the real new terminal keeps plugins in the composer footer', () => {
     /WorkspaceConnectionsStrip/,
   );
 
-  assert.match(
-    DOCK,
-    /xv-chatbar-context-strip[\s\S]*?<RepoContextBar[\s\S]*?<WorkspaceConnectionsStrip[\s\S]*?variant="chatbar"/,
-  );
+  assert.doesNotMatch(DOCK, /xv-chatbar-context-strip/);
+  assert.match(CHATBAR, /aria-label="Projects"/);
+  assert.match(CHATBAR, /aria-label="Plugins"/);
 
   assert.match(
     CONNECTIONS,

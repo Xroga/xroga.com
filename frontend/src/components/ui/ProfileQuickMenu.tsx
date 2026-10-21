@@ -133,11 +133,12 @@ export function ProfileQuickMenu({ onLogout, anchorRef, children, triggerClassNa
         submenuSide = 'left';
       }
       const top = Math.max(VIEWPORT_PAD, Math.min(trigger.bottom - menuH, window.innerHeight - menuH - VIEWPORT_PAD));
-      setPos({ top, left: Math.max(VIEWPORT_PAD, left), submenuSide });
+      setPos({ top, left: Math.max(VIEWPORT_PAD, Math.min(left, window.innerWidth - Math.min(menuW, window.innerWidth - VIEWPORT_PAD * 2) - VIEWPORT_PAD)), submenuSide });
     }
     placeMenu();
     window.addEventListener('resize', placeMenu);
-    return () => window.removeEventListener('resize', placeMenu);
+    window.addEventListener('scroll', placeMenu, true);
+    return () => { window.removeEventListener('resize', placeMenu); window.removeEventListener('scroll', placeMenu, true); };
   }, [open, anchorRef]);
 
   useEffect(() => {
@@ -187,8 +188,9 @@ export function ProfileQuickMenu({ onLogout, anchorRef, children, triggerClassNa
       </button>
 
       {open && typeof document !== 'undefined' ? createPortal(
-        <div ref={menuRef} id="xv-profile-quick-menu" className="xv-pqm-shell fixed z-[330]" style={{ top: pos.top, left: pos.left }} onMouseLeave={scheduleSubmenuClose}>
-          <div className="xv-pqm-card" onMouseEnter={cancelSubmenuClose}>
+        <div ref={menuRef} id="xv-profile-quick-menu" className="xv-pqm-shell fixed z-[330]" style={{ top: pos.top, left: pos.left, maxWidth: 'calc(100vw - 24px)', maxHeight: 'calc(100dvh - 24px)', overflow: 'visible' }} onMouseLeave={scheduleSubmenuClose}>
+          <div className="xv-pqm-card" onMouseEnter={cancelSubmenuClose}
+            style={{ maxHeight: 'calc(100dvh - 24px)', overflowY: 'auto', overscrollBehavior: 'contain' }}>
             <div className="xv-pqm-identity">
               <span className="xv-pqm-avatar" aria-hidden="true">{accountName.charAt(0).toUpperCase()}</span>
               <span className="min-w-0"><strong>{accountName}</strong>{email ? <button type="button" className="xv-pqm-copy-email"

@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowUp, ChevronDown, Mic, MicOff, Pause, PhoneOff, Play, Square, VolumeX, X } from 'lucide-react';
+import { ArrowUp, ChevronDown, MicOff, Pause, PhoneOff, Play, Square, VolumeX, X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -173,12 +173,10 @@ function VoiceWave({ level, paused }: { level: number; paused: boolean }) {
 }
 
 export function XrogaVoiceControl({
-  microphoneIcon = false,
   composerText,
   onVoiceDraft,
   onVoiceSend,
 }: {
-  microphoneIcon?: boolean;
   composerText: string;
   onVoiceDraft: (transcript: string) => void;
   onVoiceSend: (transcript: string) => void | Promise<void>;

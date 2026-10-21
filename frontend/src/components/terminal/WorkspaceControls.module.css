@@ -105,3 +105,9 @@
 .featureMenu .featureDetail p { margin:6px 0 9px; line-height:1.5; font-size:11px; }
 .featureChoose.featureChoose { width:100%; display:flex; align-items:center; justify-content:space-between; padding:10px; border-radius:9px; background:var(--mono-raised); font-size:12px; font-weight:650; }
 .featureChoose:hover,.featureChoose:focus-visible { outline:1px solid var(--mono-ink); }
+
+/* The task router is always a legible button; no chevron or model-choice illusion. */
+.modelButton.modelButton { min-height:32px; min-width:113px; padding:6px 11px; border-radius:10px; border:1px solid var(--mono-border,#525252); background:var(--terminal-ui-raised,#202020); font-size:12px; font-weight:650; color:var(--foreground); }
+.modelButton.modelButton:hover,.modelButton.modelButton:focus-visible { opacity:1; background:var(--terminal-ui-inset,var(--surface-inset)); border-color:color-mix(in srgb,var(--foreground) 32%,transparent); }
+.modelText.modelText { display:inline!important; font-size:12px!important; letter-spacing:0; white-space:nowrap; }
+.mobileModelIcon.mobileModelIcon,.chevron.chevron { display:none!important; }

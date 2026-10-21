@@ -599,7 +599,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
 
           <form ref={formRef} onSubmit={handleSubmit} className="px-2 sm:px-2.5 py-0.5 sm:py-1 xv-chatbar-input-form">
             <ChatBarInputRow
-              arrowSend={starter}
+              arrowSend={!incognito}
               uploading={uploading}
               onUploadClick={requestFilePicker}
               hideUpload
@@ -607,7 +607,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
                 !incognito ? (
                   <div className="xv-chatbar-primary-tools">
                     <ChatBarActionsMenu
-                      plusIcon={starter}
+                      plusIcon={!incognito}
                       className="shrink-0"
                       disabled={loading}
                       onAddFiles={requestFilePicker}
@@ -642,16 +642,14 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
                       }}
                     />
                     <BlackHoleVButton compact className="xv-companion-blackhole" />
-                    {starter ? <>
-                      <button type="button" className={startStyles.tool} aria-label="Projects" onClick={() => {
-                        if (isGuest) { requestAuthGate('integration'); return; }
-                        setGithubOpen(true);
-                      }}><Folder aria-hidden="true" /><span>Projects</span></button>
-                      <button ref={pluginsButtonRef} type="button" className={startStyles.tool} aria-label="Plugins" onClick={() => {
-                        if (isGuest) { requestAuthGate('integration'); return; }
-                        setIntegrationsOpen(true);
-                      }}><Puzzle aria-hidden="true" /><span>Plugins</span></button>
-                    </> : <button ref={pluginsButtonRef} type="button" className={startStyles.tool} aria-label="Plugins" onClick={() => { if (isGuest) { requestAuthGate('integration'); return; } setIntegrationsOpen(true); }}><Puzzle aria-hidden="true" /><span>Plugins</span></button>}
+                    <button type="button" className={startStyles.tool} aria-label="Projects" onClick={() => {
+                      if (isGuest) { requestAuthGate('integration'); return; }
+                      setGithubOpen(true);
+                    }}><Folder aria-hidden="true" /><span>Projects</span></button>
+                    <button ref={pluginsButtonRef} type="button" className={startStyles.tool} aria-label="Plugins" onClick={() => {
+                      if (isGuest) { requestAuthGate('integration'); return; }
+                      setIntegrationsOpen(true);
+                    }}><Puzzle aria-hidden="true" /><span>Plugins</span></button>
                   </div>
                 ) : null
               }
@@ -659,7 +657,6 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
               trailingExtras={
                 !incognito ? (
                   <XrogaVoiceControl
-                    microphoneIcon={starter}
                     composerText={draft}
                     onVoiceDraft={handleVoiceDraft}
                     onVoiceSend={handleVoiceSend}
@@ -724,7 +721,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
                     void handleSubmit(e, false);
                   }
                 }}
-                placeholder={incognito ? 'Type a private message…' : starter ? 'Ask anything…' : 'Describe what you want to build or change…'}
+                placeholder={incognito ? 'Type a private message…' : 'Ask anything…'}
                 aria-label="Message Xroga"
                 rows={1}
                 spellCheck={false}

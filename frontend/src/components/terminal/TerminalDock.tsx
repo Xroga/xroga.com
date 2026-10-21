@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import { SquareChevronUpIcon } from '@/components/ui/square-chevron-up-icon';
 
 import { TerminalChatBar } from './TerminalChatBar';
-import { RepoContextBar } from './RepoContextBar';
 import { ChatbarQueueOutside } from './ChatbarQueueOutside';
 
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
@@ -19,7 +18,6 @@ import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { WorkspaceStartHeader, WorkspaceStartCards } from '@/components/dashboard/WorkspaceNewTerminal';
 import startStyles from '@/components/dashboard/WorkspaceNewTerminal.module.css';
-import { WorkspaceConnectionsStrip } from './WorkspaceConnectionsStrip';
 import { CompanionComposerAnchor } from '@/components/companion/CompanionSurfaces';
 
 export function TerminalDock() {
@@ -218,7 +216,7 @@ export function TerminalDock() {
                   KIMI-STYLE COMPOSER FRAME
                   ========================================= */}
 
-              <div className="xv-kimi-composer-frame">
+              <div className="xv-kimi-composer-frame" data-composer-frame="single">
 
                 <div className="xv-chatbar-stack relative">
 
@@ -248,19 +246,6 @@ export function TerminalDock() {
 
 </div>
 
-{!incognito && !showStarterExperience ? (
-  <div className="xv-chatbar-context-strip">
-    <RepoContextBar
-      compact
-    />
-
-    <WorkspaceConnectionsStrip
-      href="/dashboard/integrations"
-      interactive
-      variant="chatbar"
-    />
-  </div>
-) : null}
 
 </div>
 
