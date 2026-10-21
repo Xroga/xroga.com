@@ -37,6 +37,7 @@ test('the correction writes only on explicit hide and preserves typing debounce 
   const bar = read('../components/terminal/TerminalChatBar.tsx');
   assert.match(launcher, /if \(!chatbarHidden\)/);
   assert.match(launcher, /draftForExplicitHide/);
+  assert.match(launcher, /flushSync\(\(\) => setPrompt\(latestDraft\)\)/);
   assert.ok(launcher.indexOf('setPrompt(latestDraft)') < launcher.indexOf('setChatbarHidden(!chatbarHidden)'));
   assert.doesNotMatch(launcher, /useEffect|setTimeout|localStorage|sessionStorage/);
   assert.match(bar, /setPrompt\(draft\);[\s\S]*?\}, 300\);\s*return \(\) => window\.clearTimeout\(timer\)/);
