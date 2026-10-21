@@ -1,0 +1,173 @@
+{
+  "phase": "B1.5-PHASE-1",
+  "scope": [
+    "INFRA-001",
+    "INFRA-002",
+    "INFRA-003"
+  ],
+  "verdict": "B15_PHASE1_ENGINEERING_COMPLETE_EXTERNAL_VERIFICATION_PENDING",
+  "branch": "claude/xroga-batch-1-5",
+  "pushed": false,
+  "pushBlocker": "HTTP 403 Resource not accessible by integration (git + GitHub API)",
+  "startingMainSha": "80d1f417338b4c5b95a07fc956604a1652cef7c7",
+  "evidenceSourceSha": "bc0c6fd67bb0787aa9622c0cd43739f9081b50b3",
+  "mainModified": false,
+  "productionModified": false,
+  "codexBranchModified": false,
+  "additionalSpendUsd": 0,
+  "gates": [
+    {
+      "gate": "A",
+      "result": "PASS",
+      "scope": "source baseline",
+      "evidence": [
+        "current-state.md",
+        "data-location-inventory.json",
+        "dependency-inventory.md",
+        "product-capability-baseline.md"
+      ],
+      "blockedSubitems": [
+        "live Cloudflare/Supabase/Fly inventory"
+      ]
+    },
+    {
+      "gate": "B",
+      "result": "BLOCKED",
+      "localPass": [
+        "private-by-default",
+        "server-derived identity",
+        "cross-tenant refusal",
+        "no key/bucket exposure",
+        "no browser credentials"
+      ],
+      "blockedBecause": "real bucket public/CORS state not inspected",
+      "evidence": [
+        "evidence/logs/02-storage-unit.log",
+        "evidence/logs/04-routes-and-adapter.log",
+        "evidence/logs/05-postgres-integration.log"
+      ]
+    },
+    {
+      "gate": "C",
+      "result": "PASS",
+      "classification": "LOCAL_TESTED",
+      "evidence": [
+        "evidence/logs/02-storage-unit.log",
+        "evidence/logs/05-postgres-integration.log",
+        "evidence/logs/05b-s3-wire-emulator.log"
+      ],
+      "providerUnverified": [
+        "multipart on R2",
+        "signed-header enforcement on R2"
+      ]
+    },
+    {
+      "gate": "D",
+      "result": "BLOCKED",
+      "localPass": [
+        "sha256 read-back",
+        "tamper detection",
+        "no false READY (DB constraint)",
+        "retrieval after process exit",
+        "provider timeout handling"
+      ],
+      "blockedBecause": "R2 durability is a provider property",
+      "evidence": [
+        "evidence/logs/02-storage-unit.log",
+        "evidence/logs/07-mutation-checks.log"
+      ]
+    },
+    {
+      "gate": "E",
+      "result": "PASS",
+      "classification": "LOCAL_TESTED",
+      "evidence": [
+        "evidence/logs/05-postgres-integration.log",
+        "evidence/logs/02-storage-unit.log"
+      ],
+      "notes": "entitlements untouched; STORAGE_QUOTA_BYTES unset = tracked not enforced"
+    },
+    {
+      "gate": "F",
+      "result": "PASS",
+      "classification": "LOCAL_TESTED",
+      "evidence": [
+        "evidence/logs/03-migration-unit.log",
+        "evidence/logs/05-postgres-integration.log"
+      ],
+      "liveMigrationPerformed": false
+    },
+    {
+      "gate": "G",
+      "result": "PASS",
+      "evidence": [
+        "current-state.md",
+        "dependency-inventory.md",
+        "evidence/logs/04-routes-and-adapter.log"
+      ],
+      "waiting": "WAITING_FOR_BATCH1_ACCEPTED_INTERFACE:TenantContext"
+    },
+    {
+      "gate": "H",
+      "result": "BLOCKED",
+      "localPass": [
+        "attributable commits",
+        "targeted tests",
+        "security negative tests",
+        "mutation checks 8/8"
+      ],
+      "blockedBecause": "GitHub Actions did not run (branch not pushed, HTTP 403)",
+      "evidence": [
+        "evidence/logs/06-full-backend-suite.log",
+        "evidence/logs/08-main-baseline-organicIntelligence.log"
+      ]
+    }
+  ],
+  "tests": {
+    "typecheck": "exit 0",
+    "storageUnit": "51/51",
+    "migrationUnit": "32/32",
+    "routesAndAdapter": "9/9",
+    "postgresIntegration": "17/17 (PostgreSQL 16.15)",
+    "s3WireEmulator": "4/4 (SYNTHETIC s3rver)",
+    "fullBackendSuite": "2827 pass, 3 fail, 0 skip",
+    "preexistingFailuresIdenticalOnMain": true,
+    "mutationChecks": "8/8 caught"
+  },
+  "evidenceClass": {
+    "sql": "LOCAL_TESTED",
+    "serviceLogic": "LOCAL_TESTED",
+    "r2WireBehaviour": "LOCAL_TESTED_SYNTHETIC",
+    "cloudflareR2": "BLOCKED",
+    "supabaseProduction": "BLOCKED",
+    "githubActions": "BLOCKED",
+    "production": "NOT_STARTED"
+  },
+  "blockers": [
+    {
+      "id": 1,
+      "what": "GitHub write access (403)",
+      "unblock": "grant Claude GitHub App Contents:write on Xroga/xroga.com or create the branch"
+    },
+    {
+      "id": 2,
+      "what": "Cloudflare credentials",
+      "unblock": "read-only token + isolated private test bucket (operator-checklist A1,B1,B2)"
+    },
+    {
+      "id": 3,
+      "what": "Supabase/Fly/Redis facts",
+      "unblock": "operator-checklist A2-A5"
+    },
+    {
+      "id": 4,
+      "what": "Batch 1 TenantContext not in main",
+      "unblock": "accepted interface from Codex"
+    },
+    {
+      "id": 5,
+      "what": "owner approvals for live stages",
+      "unblock": "create-migration-job.mts approve"
+    }
+  ]
+}

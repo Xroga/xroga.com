@@ -1,0 +1,43 @@
+# cmd: npx tsx --test src/storage/r2ObjectStore.wire.integration.test.ts
+TAP version 13
+# Subtest: R2ObjectStore over the AWS SDK wire protocol (S3 emulator, SYNTHETIC)
+    # Subtest: presigned PUT → complete (head, range, stream, SHA-256) → presigned GET → delete, over real HTTP
+    ok 1 - presigned PUT → complete (head, range, stream, SHA-256) → presigned GET → delete, over real HTTP
+      ---
+      duration_ms: 120.641762
+      type: 'test'
+      ...
+    # Subtest: server-side put with checksum, list and delete (pagination is NOT exercised: s3rver returns 500 for truncated listings)
+    ok 2 - server-side put with checksum, list and delete (pagination is NOT exercised: s3rver returns 500 for truncated listings)
+      ---
+      duration_ms: 66.12653
+      type: 'test'
+      ...
+    # Subtest: multipart: create, upload parts, complete, whole-object SHA-256 (parts sent with SDK commands: s3rver rejects presigned part URLs, whose shape is verified offline in r2ObjectStore.test.ts)
+    ok 3 - multipart: create, upload parts, complete, whole-object SHA-256 (parts sent with SDK commands: s3rver rejects presigned part URLs, whose shape is verified offline in r2ObjectStore.test.ts)
+      ---
+      duration_ms: 232.255916
+      type: 'test'
+      ...
+    # Subtest: abort multipart is idempotent and a missing object reads as null
+    ok 4 - abort multipart is idempotent and a missing object reads as null
+      ---
+      duration_ms: 13.808179
+      type: 'test'
+      ...
+    1..4
+ok 1 - R2ObjectStore over the AWS SDK wire protocol (S3 emulator, SYNTHETIC)
+  ---
+  duration_ms: 434.110862
+  type: 'suite'
+  ...
+1..1
+# tests 4
+# suites 1
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 876.15115
+# exit: 0

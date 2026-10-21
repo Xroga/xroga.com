@@ -4,31 +4,31 @@ TAP version 13
     # Subtest: end to end over HTTP: initiate, upload to the synthetic provider, complete, sign, download, delete
     ok 1 - end to end over HTTP: initiate, upload to the synthetic provider, complete, sign, download, delete
       ---
-      duration_ms: 86.260705
+      duration_ms: 82.610033
       type: 'test'
       ...
     # Subtest: identity cannot be supplied by the client: owner/tenant fields are rejected, other users get 404
     ok 2 - identity cannot be supplied by the client: owner/tenant fields are rejected, other users get 404
       ---
-      duration_ms: 17.469018
+      duration_ms: 22.902356
       type: 'test'
       ...
     # Subtest: refuses unauthenticated calls, malformed ids and bad bodies without leaking internals
     ok 3 - refuses unauthenticated calls, malformed ids and bad bodies without leaking internals
       ---
-      duration_ms: 9.070991
+      duration_ms: 10.6895
       type: 'test'
       ...
     # Subtest: quota exhaustion is a 413; unconfigured storage is a 503, never a silent local fallback
     ok 4 - quota exhaustion is a 413; unconfigured storage is a 503, never a silent local fallback
       ---
-      duration_ms: 9.795003
+      duration_ms: 13.448517
       type: 'test'
       ...
     1..4
 ok 1 - /api/drive routes
   ---
-  duration_ms: 139.263108
+  duration_ms: 140.482428
   type: 'suite'
   ...
 # [Storage] R2 upload failed, using data URL fallback: Cloudflare R2 credentials not configured
@@ -36,26 +36,26 @@ ok 1 - /api/drive routes
     # Subtest: legacy mode (default) is unchanged and never claims canonical durability
     ok 1 - legacy mode (default) is unchanged and never claims canonical durability
       ---
-      duration_ms: 27.784098
+      duration_ms: 30.467096
       type: 'test'
       ...
 # [Storage] R2 upload failed, using data URL fallback: Cloudflare R2 credentials not configured
     # Subtest: r2 mode writes a verified private object and records only a drive:// reference
     ok 2 - r2 mode writes a verified private object and records only a drive:// reference
       ---
-      duration_ms: 12.210382
+      duration_ms: 11.123458
       type: 'test'
       ...
     # Subtest: r2 mode fails closed: provider outage means an error, no data URL, no cache, no project_files row
     ok 3 - r2 mode fails closed: provider outage means an error, no data URL, no cache, no project_files row
       ---
-      duration_ms: 1.385224
+      duration_ms: 1.32327
       type: 'test'
       ...
     # Subtest: r2 mode with Drive unconfigured fails closed too
     ok 4 - r2 mode with Drive unconfigured fails closed too
       ---
-      duration_ms: 0.521655
+      duration_ms: 0.538855
       type: 'test'
       ...
 # [Storage] canonical write failed in dual mode: artifact write did not complete
@@ -63,13 +63,13 @@ ok 1 - /api/drive routes
     # Subtest: dual mode records canonical success, and records (not hides) a canonical failure
     ok 5 - dual mode records canonical success, and records (not hides) a canonical failure
       ---
-      duration_ms: 16.32798
+      duration_ms: 13.90532
       type: 'test'
       ...
     1..5
 ok 2 - storeProjectFile compatibility modes
   ---
-  duration_ms: 172.295441
+  duration_ms: 175.105229
   type: 'suite'
   ...
 1..2
@@ -80,5 +80,5 @@ ok 2 - storeProjectFile compatibility modes
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 702.645395
+# duration_ms 757.955508
 # exit: 0

@@ -4,130 +4,130 @@ TAP version 13
     # Subtest: project_files inline content (data URL + text) migrates, links on READ_NEW, unlinks on rollback; sources untouched
     ok 1 - project_files inline content (data URL + text) migrates, links on READ_NEW, unlinks on rollback; sources untouched
       ---
-      duration_ms: 108.425495
+      duration_ms: 103.336593
       type: 'test'
       ...
     # Subtest: two workers on real SKIP LOCKED claims copy every item once; replaying changes nothing
     ok 2 - two workers on real SKIP LOCKED claims copy every item once; replaying changes nothing
       ---
-      duration_ms: 245.986827
+      duration_ms: 276.267116
       type: 'test'
       ...
     # Subtest: SupabaseStorageSource: owner from a UUID folder, unknown owner BLOCKED, secret bucket refused
     ok 3 - SupabaseStorageSource: owner from a UUID folder, unknown owner BLOCKED, secret bucket refused
       ---
-      duration_ms: 0.997302
+      duration_ms: 0.715342
       type: 'test'
       ...
     1..3
 ok 1 - migration engine against real PostgreSQL ledger + metadata
   ---
-  duration_ms: 598.612317
+  duration_ms: 632.176439
   type: 'suite'
   ...
 # Subtest: Xroga Drive against real PostgreSQL (migration + RLS + atomic quota)
     # Subtest: full lifecycle through real SQL: reach READY with verified hash, usage exact
     ok 1 - full lifecycle through real SQL: reach READY with verified hash, usage exact
       ---
-      duration_ms: 33.503095
+      duration_ms: 39.806793
       type: 'test'
       ...
     # Subtest: the database itself refuses PENDING->READY, READY without a verified hash, and identity edits
     ok 2 - the database itself refuses PENDING->READY, READY without a verified hash, and identity edits
       ---
-      duration_ms: 22.721064
+      duration_ms: 32.688921
       type: 'test'
       ...
     # Subtest: DELETED is terminal in the database
     ok 3 - DELETED is terminal in the database
       ---
-      duration_ms: 18.873378
+      duration_ms: 23.635954
       type: 'test'
       ...
     # Subtest: 50 truly concurrent reservations against a 1000-byte quota admit exactly 10
     ok 4 - 50 truly concurrent reservations against a 1000-byte quota admit exactly 10
       ---
-      duration_ms: 129.70139
+      duration_ms: 162.192128
       type: 'test'
       ...
     # Subtest: concurrent completions of the same object commit the bytes exactly once
     ok 5 - concurrent completions of the same object commit the bytes exactly once
       ---
-      duration_ms: 24.125104
+      duration_ms: 58.979997
       type: 'test'
       ...
     # Subtest: commit/release/free are idempotent and never go negative
     ok 6 - commit/release/free are idempotent and never go negative
       ---
-      duration_ms: 18.579309
+      duration_ms: 16.792577
       type: 'test'
       ...
     # Subtest: reconcile_usage repairs drift injected with a superuser UPDATE
     ok 7 - reconcile_usage repairs drift injected with a superuser UPDATE
       ---
-      duration_ms: 35.053609
+      duration_ms: 17.48311
       type: 'test'
       ...
     # Subtest: RLS and grants
         # Subtest: an owner sees only their own READY objects
         ok 1 - an owner sees only their own READY objects
           ---
-          duration_ms: 4.25522
+          duration_ms: 3.312747
           type: 'test'
           ...
         # Subtest: authenticated cannot read bucket/object_key/upload id columns
         ok 2 - authenticated cannot read bucket/object_key/upload id columns
           ---
-          duration_ms: 7.180153
+          duration_ms: 5.004392
           type: 'test'
           ...
         # Subtest: authenticated cannot insert, update, delete, or call quota/migration functions
         ok 3 - authenticated cannot insert, update, delete, or call quota/migration functions
           ---
-          duration_ms: 9.968774
+          duration_ms: 13.197632
           type: 'test'
           ...
         # Subtest: anon sees and does nothing
         ok 4 - anon sees and does nothing
           ---
-          duration_ms: 2.719507
+          duration_ms: 1.951858
           type: 'test'
           ...
         # Subtest: forged JWT subject cannot widen what is visible
         ok 5 - forged JWT subject cannot widen what is visible
           ---
-          duration_ms: 1.763854
+          duration_ms: 1.072679
           type: 'test'
           ...
         1..5
     ok 8 - RLS and grants
       ---
-      duration_ms: 58.796601
+      duration_ms: 39.73542
       type: 'suite'
       ...
     # Subtest: migration ledger
         # Subtest: one destination per source: duplicate source rows are refused at the database
         ok 1 - one destination per source: duplicate source rows are refused at the database
           ---
-          duration_ms: 3.890432
+          duration_ms: 2.546164
           type: 'test'
           ...
         # Subtest: concurrent workers claim disjoint items (SKIP LOCKED) and leases block re-claims until expiry
         ok 2 - concurrent workers claim disjoint items (SKIP LOCKED) and leases block re-claims until expiry
           ---
-          duration_ms: 40.902332
+          duration_ms: 27.554111
           type: 'test'
           ...
         1..2
     ok 9 - migration ledger
       ---
-      duration_ms: 45.029616
+      duration_ms: 30.297051
       type: 'suite'
       ...
     1..9
 ok 2 - Xroga Drive against real PostgreSQL (migration + RLS + atomic quota)
   ---
-  duration_ms: 635.469194
+  duration_ms: 661.969687
   type: 'suite'
   ...
 1..2
@@ -138,5 +138,5 @@ ok 2 - Xroga Drive against real PostgreSQL (migration + RLS + atomic quota)
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 926.414201
+# duration_ms 1060.261573
 # exit: 0

@@ -1,0 +1,9 @@
+ M docs/infra/batch-1.5/evidence/logs/00-source.txt
+ D docs/infra/batch-1.5/evidence/logs/01-typecheck.log
+ D docs/infra/batch-1.5/evidence/logs/02-storage-unit.log
+ D docs/infra/batch-1.5/evidence/logs/03-migration-unit.log
+ D docs/infra/batch-1.5/evidence/logs/04-routes-and-adapter.log
+ D docs/infra/batch-1.5/evidence/logs/05-postgres-integration.log
+ D docs/infra/batch-1.5/evidence/logs/06-full-backend-suite.log
+ D docs/infra/batch-1.5/evidence/logs/07-mutation-checks.log
+ D docs/infra/batch-1.5/evidence/logs/08-main-baseline-organicIntelligence.log
