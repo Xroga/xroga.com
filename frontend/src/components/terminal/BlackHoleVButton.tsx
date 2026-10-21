@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { ChevronDown, ShieldCheck } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ChatBarPortalPopover } from '@/components/ui/ChatBarPortalPopover';
 import styles from './WorkspaceControls.module.css';
@@ -23,14 +23,14 @@ export function BlackHoleVButton({ className, compact = false }: { className?: s
       </ChatBarPortalPopover>
       <button ref={btnRef} type="button" onClick={() => setOpen(value => !value)}
         className={cn(styles.modelButton, compact && styles.compactModel)}
-        title="Auto · Xroga task routing" aria-label="Automatic model and tool routing" aria-haspopup="menu" aria-expanded={open}>
+        aria-label="Automatic model and tool routing" aria-haspopup="menu" aria-expanded={open}>
         <span className={styles.modelText}>Black Hole V∞</span>
         <svg className={styles.mobileModelIcon} viewBox="0 0 32 32" aria-hidden="true" data-testid="mobile-model-icon">
           <circle cx="16" cy="16" r="8" fill="none" stroke="currentColor" strokeWidth="1.5" />
           <ellipse cx="16" cy="16" rx="14" ry="4.5" transform="rotate(-24 16 16)" fill="none" stroke="currentColor" strokeWidth="1.5" />
           <path d="M11 10a8 8 0 0 1 12 6" fill="none" stroke="currentColor" strokeWidth="3" opacity=".35" />
         </svg>
-        <ChevronDown className={styles.chevron} />
+
       </button>
     </div>
   );
