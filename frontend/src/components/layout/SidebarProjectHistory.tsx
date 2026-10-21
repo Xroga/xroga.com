@@ -290,6 +290,14 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       setShownProjects(prev=>prev+5);setProjectsHasMore(next.length>5);
     }catch(e){toast.error((e as Error).message);}
   }
+  // Refs keep the refresh event subscriptions stable while reading verified
+  // account-scoped histories from the latest completed cloud queries.
+  const verifiedCloudRef=useRef(cloudSessions);
+  const verifiedSidebarChatsRef=useRef(sidebarChats);
+  const verifiedPinnedRef=useRef(pinnedSessionRecords);
+  verifiedCloudRef.current=cloudSessions;
+  verifiedSidebarChatsRef.current=sidebarChats;
+  verifiedPinnedRef.current=pinnedSessionRecords;
   const messagesRef = useRef(messages);
   const sessionIdRef = useRef(sessionId);
   const promptRef = useRef(prompt);
@@ -319,13 +327,13 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         flushCloud: true,
       });
     }
-    const verifiedIdsForHistory=new Set([...cloudSessions.map(c=>c.id),...sidebarChats.map(c=>c.id),...pinnedSessionRecords.map(c=>c.id)]);
+    const verifiedIdsForHistory=new Set([...verifiedCloudRef.current.map(c=>c.id),...verifiedSidebarChatsRef.current.map(c=>c.id),...verifiedPinnedRef.current.map(c=>c.id)]);
     setAllHistory(loadTerminalHistory().filter((e)=>e.id&&e.messageCount>0&&verifiedIdsForHistory.has(e.id)));
     const synced = syncRepoTerminalSessions();
     // The legacy local history store has no owner ID. It must not be trusted
     // as a history source after account switches; only authenticated cloud IDs
     // are eligible to appear in the account sidebar.
-    const verifiedIds=new Set([...cloudSessions.map(c=>c.id),...sidebarChats.map(c=>c.id),...pinnedSessionRecords.map(c=>c.id)]);
+    const verifiedIds=new Set([...verifiedCloudRef.current.map(c=>c.id),...verifiedSidebarChatsRef.current.map(c=>c.id),...verifiedPinnedRef.current.map(c=>c.id)]);
     let nextEntries =
       (synced.length
         ? synced
@@ -751,7 +759,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   /** A single deduplicated history across local caches and account cloud sessions. */
   const savedConversations = useMemo((): RepoSession[] => {
     const map = new Map<string, RepoSession>();
-    const verifiedIds=new Set([...cloudSessions.map(c=>c.id),...sidebarChats.map(c=>c.id),...pinnedSessionRecords.map(c=>c.id)]);
+    const verifiedIds=new Set([...verifiedCloudRef.current.map(c=>c.id),...verifiedSidebarChatsRef.current.map(c=>c.id),...verifiedPinnedRef.current.map(c=>c.id)]);
     for (const e of [...allHistory, ...entries]) {
       if (!e.id || e.messageCount <= 0 || !verifiedIds.has(e.id)) continue;
       const repo = e.githubRepoName?.includes('/') ? e.githubRepoName : undefined;
