@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "d5f5f6bf1cbdf3f5f5d37be3411c3c1034bae1c560b84ba16f020bba2c9abf81",
+  "reviewRegistrySha256": "2449172f39bc8da071cc73030df31c2ffc8b010a71ed2f6681de55da01a9cbc7",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -3524,7 +3524,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "2ed3a7f48977d8096eb2"
+        "id": "bb919b3cf412267854ba"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5760,7 +5760,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "2ed3a7f48977d8096eb2"
+        "id": "bb919b3cf412267854ba"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -21008,15 +21008,15 @@
       }
     },
     {
-      "id": "2ed3a7f48977d8096eb2",
+      "id": "bb919b3cf412267854ba",
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "line": 140,
+      "line": 156,
       "enclosing": "FeatureCard",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "51c8408ad81f809eb1968a0b4d64eb30570f2f279d94ca94826a054ae1916a06",
+      "sourceSha256": "0bd44ba6492c7c378215a5bc4f84c9bca0074fe82bfd059af018a14c0ce6f35d",
       "semanticReview": {
         "authority": "Native Array.from materializes locally queried menu buttons for keyboard focus navigation. The subsequent index/focus operations touch the DOM only. No database, storage client, credential or provider write is involved.",
         "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
@@ -21646,7 +21646,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "88ab1ba8380f32fb30f98e8bd345501ad9d190f1522e6072afd244c1151893a8",
+      "sourceSha256": "38ec3a557142a62cd06d97e4fdecad1a02d3377452356093b413cc041edd08f9",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in VoiceWave, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",

@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "90f08860ef0dd112ed185744582c3f6eaf75a856",
-    "sourceTimestampUtc": "2026-10-21T01:27:34+05:00",
-    "auditStartedUtc": "2026-10-20T20:29:02.984Z",
+    "sha": "5656525d87c076163361e62fdcdfdaeebd3f4555",
+    "sourceTimestampUtc": "2026-10-21T16:09:47+05:00",
+    "auditStartedUtc": "2026-10-21T11:09:52.156Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -19,9 +19,11 @@
       ".github/workflows/agent-v2-dependency-lock.yml",
       ".github/workflows/api-build-check.yml",
       ".github/workflows/backend-health-verification.yml",
+      ".github/workflows/chat-turn-rail-browser.yml",
       ".github/workflows/command3-auth-browser.yml",
       ".github/workflows/command4-authority.yml",
       ".github/workflows/community-security.yml",
+      ".github/workflows/feedback-rls.yml",
       ".github/workflows/fly-deploy.yml",
       ".github/workflows/fly-sandbox-browser-verification.yml",
       ".github/workflows/growth-technical-publishing.yml",
@@ -44438,7 +44440,7 @@
       "id": "surface:6ce17d2762e1020b6c38",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sha256": "51c8408ad81f809eb1968a0b4d64eb30570f2f279d94ca94826a054ae1916a06",
+      "sha256": "0bd44ba6492c7c378215a5bc4f84c9bca0074fe82bfd059af018a14c0ce6f35d",
       "symbols": [
         "AUTOMATIONS",
         "AutomaticIntro",
@@ -44459,6 +44461,7 @@
         "current",
         "currentDraft",
         "delay",
+        "instruction",
         "isStarter",
         "items",
         "media",
@@ -58432,7 +58435,7 @@
       "id": "surface:7da6f201c8b9c4811bef",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "sha256": "7086809adcf528e0eca019ff09c7bba828cb41136444db72ae8a4d179bcf712e",
+      "sha256": "a56287dbf59f1e2ddf31114133d0f13ec2805f4340e299193aae5413c6d673e8",
       "symbols": [
         "EDGE_DRAG_THRESHOLD_PX",
         "HOVER_OPEN_DELAY_MS",
@@ -58475,6 +58478,7 @@
         "onMove",
         "onUp",
         "openSidebarOnHover",
+        "overviewIconRef",
         "pathname",
         "pendingWidth",
         "planLabel",
@@ -65310,11 +65314,12 @@
       "id": "surface:6a8645dc324d87d4f4ea",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/AudioLinesIcon.tsx",
-      "sha256": "795a95d2d466a906081813e346613b488ab3f18848f707a4e5ad8a7158f99b19",
+      "sha256": "f30a740ae48c6bdb67da6b2e139df96964baa0e26d4e40bc7c41e893bfa99ed5",
       "symbols": [
         "AudioLinesIcon",
         "AudioLinesIconHandle",
         "AudioLinesIconProps",
+        "barVariants",
         "controls",
         "handleMouseEnter",
         "handleMouseLeave",
@@ -65338,7 +65343,6 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
-        "declared-host:www.w3.org",
         "motion/react",
         "react"
       ],
@@ -65359,7 +65363,7 @@
       "id": "surface:2b798fdec54f6dbe2e24",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/BlackHoleVButton.tsx",
-      "sha256": "e8eb1b13d7e0befe3845925e1248c84a56f6335853ae3b983239b3b2006d5650",
+      "sha256": "45e20031df0dea0eb900936fbd0a56cc82a25aa4278d86cde0742e0f2d0fe5ef",
       "symbols": [
         "BlackHoleVButton",
         "btnRef"
@@ -66110,7 +66114,7 @@
       "callers": [
         "frontend/src/components/terminal/SwarmMessageLog.tsx:37",
         "frontend/src/lib/chatTurnRail.test.ts:4",
-        "frontend/src/lib/workspaceRouteIsolation20261021.test.ts:45"
+        "frontend/src/lib/workspaceRouteIsolation20261021.test.ts:47"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -68534,7 +68538,7 @@
       "id": "surface:96c636bdc082da399e4c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/TerminalDock.tsx",
-      "sha256": "74520585dd345b93dde28faab763a26e5c7f157c6ed422bca93be4142fbbfc64",
+      "sha256": "4fe0aaa8f1208079d395513c193e4da11b14e447cc788ff83bb13506dfd0b8a9",
       "symbols": [
         "TerminalDock",
         "chatbarHidden",
@@ -70127,7 +70131,7 @@
       "id": "surface:41e3e1a7bd535ee1f059",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sha256": "88ab1ba8380f32fb30f98e8bd345501ad9d190f1522e6072afd244c1151893a8",
+      "sha256": "38ec3a557142a62cd06d97e4fdecad1a02d3377452356093b413cc041edd08f9",
       "symbols": [
         "AudioContextCtor",
         "BrowserSpeechRecognition",
@@ -70301,20 +70305,24 @@
       "id": "surface:c8ff52357b76eb8bcf96",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/ui/AnchoredPortalPopover.tsx",
-      "sha256": "d27b3b05b4527de7ea5aba9c0593f59a1f867800b9d9d34a045b8f007a0e7a83",
+      "sha256": "bbf912e427695bb228ed93f236710a94ea7bda6ac66172b5197cdb85941f7ab3",
       "symbols": [
         "AnchoredPlacement",
         "AnchoredPortalPopover",
         "ViewportPoint",
         "anchor",
+        "availableAbove",
+        "availableBelow",
         "below",
         "clampAnchoredPosition",
         "escape",
+        "maxLeft",
         "observer",
         "outside",
         "popover",
         "popoverRef",
         "reposition",
+        "shouldBelow",
         "start",
         "target",
         "wantedLeft",
@@ -71357,7 +71365,7 @@
       "id": "surface:9ee116467c76a8e6dea8",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/ui/ProfileQuickMenu.tsx",
-      "sha256": "e0ca63771ffec4e29f86d1cb4073b5a61200bc014815f4262febff6fc9f5a227",
+      "sha256": "9b5616e4946707baeabf15b4e9fcc8abdd40e057b68054bd386f21c38ed735a1",
       "symbols": [
         "GROUPS",
         "GroupIcon",
@@ -71712,7 +71720,7 @@
       "id": "surface:f66b156dcf3423668f32",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/ui/SidebarHoverMenu.tsx",
-      "sha256": "e9d26689307e3967a42551ae09593a204da8266892516e88adadf3ddc1dae42f",
+      "sha256": "a995f85215b8cc8b6700d76a8fbd9ea73e4c8de5130443dace5a3f43b84ac197",
       "symbols": [
         "POINTER_BRIDGE_MS",
         "SidebarHoverMenu",
@@ -100630,7 +100638,7 @@
     {
       "id": "workflow:192b8e3de52f74275313",
       "sourcePath": ".github/workflows/chat-turn-rail-browser.yml",
-      "sha256": "55a3208c89bc8aab2dcfd7a582630a89ade2238d14d33f79bc67954d2f9a8493",
+      "sha256": "527ff72076a837cad6f23deb0c182591a598e4c6e4d0ae4e1e633fefec802747",
       "sourceEntrypoints": [],
       "hasSchedule": false
     },
@@ -102239,7 +102247,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:61a40cc48af594cb9fbf",
+      "id": "finding:6fa10877a8ef16aa0184",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 165,
       "kind": "COMING_SOON",
@@ -102249,7 +102257,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:16a4bc5b8bcb25299a4f",
+      "id": "finding:a73ff55c017e1a0b790e",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 167,
       "kind": "COMING_SOON",
@@ -102259,7 +102267,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:502b822dbe053843c148",
+      "id": "finding:e3d0ac70fb3b239ddd17",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 168,
       "kind": "COMING_SOON",
@@ -102269,7 +102277,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:4bdf52ba2ebde6daa2f7",
+      "id": "finding:777d0f514483a9ff9520",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 169,
       "kind": "COMING_SOON",
@@ -102279,7 +102287,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:d866bf1ba25c0d27c2f4",
+      "id": "finding:8413c2c4da9deca6a89c",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 170,
       "kind": "COMING_SOON",
@@ -102289,7 +102297,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:b5bef43f86802a4a2e96",
+      "id": "finding:4038a06dbfe2f507831c",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 171,
       "kind": "COMING_SOON",
@@ -102299,7 +102307,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:ba9c689ddaf2d1e11662",
+      "id": "finding:029822761904355b231f",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 178,
       "kind": "COMING_SOON",
@@ -102309,7 +102317,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:0eb3bdc050ad91664c01",
+      "id": "finding:cc39e5512e213f3dac3d",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 179,
       "kind": "COMING_SOON",
@@ -102319,7 +102327,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:e65d157d558c516bfd41",
+      "id": "finding:8c341209bc965949ede7",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 181,
       "kind": "COMING_SOON",
@@ -102329,7 +102337,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:4fdddf12f7c0704b6a77",
+      "id": "finding:a748b8a06bc74d273dc7",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
       "line": 182,
       "kind": "COMING_SOON",
@@ -102339,9 +102347,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:bbeb758dabd66d52bf10",
+      "id": "finding:5f12f583dc1e80e990e3",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "line": 478,
+      "line": 479,
       "kind": "SIMULATED",
       "reachable": true,
       "state": "PARTIAL",
@@ -102349,9 +102357,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:534159105d061cfd1212",
+      "id": "finding:d803b45a403726fe3043",
       "sourcePath": "frontend/src/components/layout/Sidebar.tsx",
-      "line": 807,
+      "line": 815,
       "kind": "COMING_SOON",
       "reachable": true,
       "state": "PARTIAL",
@@ -104392,72 +104400,72 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:bce80a6653965b947192",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 817,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:4f5a1072cc0f9493fd8c",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 818,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:7096632dfb607fc04145",
+      "id": "frontend-call:03ade25ac7c9af67ccca",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 823,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:e49fd832b4ab18b13447",
+      "id": "frontend-call:98f00ea8fb808abcbf0f",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 824,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:caa46e199f3d3ac0c59d",
+      "id": "frontend-call:20d8d28cd2f8120e6989",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 829,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:b9f13ca58435bd119f3d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 830,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:b516108562b4cd48acaa",
+      "id": "frontend-call:31c0099984b2ab807ffa",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 835,
+      "line": 836,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:412d3c27880ff3386b16",
+      "id": "frontend-call:c38430f06daf1a19856f",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 848,
+      "line": 841,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:c2ec36f010aa571194f2",
+      "id": "frontend-call:e222fc28f7bdbc5ef14e",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 849,
+      "line": 854,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:c8801f5d2fc73b6b5e44",
+      "id": "frontend-call:fc810b2399066532d048",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 856,
+      "line": 855,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:cb3bdd6d9b9864b3db3b",
+      "id": "frontend-call:be5625b23f49931b04ea",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 870,
+      "line": 862,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:52c789f72af8efd1769a",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 876,
       "callee": "fetch",
       "reachable": false
     },
@@ -110444,6 +110452,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:54038800c2d8eb8020a7",
+      "sourcePath": "frontend/e2e/composer-polish.spec.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:e68781cde96d0efb68a3",
       "sourcePath": "frontend/e2e/crypto-builder-page.spec.ts",
       "declaredTests": 12,
@@ -110581,7 +110596,7 @@
     {
       "id": "test-suite:fe480b4d0f729d8b130d",
       "sourcePath": "frontend/e2e/workspace-new-terminal.spec.ts",
-      "declaredTests": 17,
+      "declaredTests": 18,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -110714,7 +110729,7 @@
     {
       "id": "test-suite:504089ecce72eabfcc81",
       "sourcePath": "frontend/src/lib/anchoredPortalPopover.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -111625,6 +111640,13 @@
       "id": "test-suite:d85500b1398ce8914793",
       "sourcePath": "frontend/src/lib/workspaceCompactControls.test.ts",
       "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:99d86b50236029001c00",
+      "sourcePath": "frontend/src/lib/workspaceComposerPolish20261021.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
