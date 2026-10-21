@@ -83,6 +83,51 @@ test.afterAll(async () => {
   if (outsiderId) await admin.auth.admin.deleteUser(outsiderId);
 });
 
+test('explicit hide preserves drafts without crossing real account and conversation boundaries', async ({ page }) => {
+  async function login(email: string) {
+    await page.goto('/auth/login', { waitUntil: 'domcontentloaded' });
+    const form = page.locator('form', { has: page.locator('#login-email') });
+    await form.locator('#login-email').fill(email);
+    await form.locator('#login-password').fill(password);
+    await form.getByRole('button', { name: 'Sign in' }).click();
+    await expect(page).toHaveURL(/\/(workspace|dashboard)/, { timeout: AUTH_TRANSITION_TIMEOUT_MS });
+    await page.goto('/workspace');
+  }
+  await login(ownerEmail);
+  const composer = page.locator('[data-terminal-composer]');
+  const header = page.getByTestId('terminal-identity-header');
+  await expect(composer).toHaveAttribute('data-draft-owner', ownerId);
+  await expect(composer).toHaveAttribute('data-draft-restoring', 'false');
+  const firstConversation = await composer.getAttribute('data-draft-session');
+  const canary = `OWNER_DRAFT_${run}`;
+  await composer.fill(canary);
+  await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
+  await header.getByRole('button', { name: 'Show the chatbar', exact: true }).click();
+  await expect(composer).toHaveValue(canary);
+  await page.getByRole('button', { name: 'New Work', exact: true }).click();
+  await expect(composer).toHaveValue('');
+  await expect(composer).not.toHaveAttribute('data-draft-session', firstConversation!);
+  await composer.fill('');
+  await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
+  await header.getByRole('button', { name: 'Show the chatbar', exact: true }).click();
+  await expect(composer).toHaveValue('');
+  await composer.fill(canary);
+  await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
+  await header.getByRole('button', { name: 'Show the chatbar', exact: true }).click();
+  await expect(composer).toHaveValue(canary);
+  await page.goto('/settings');
+  await page.getByRole('tab', { name: 'Security' }).click();
+  await page.getByRole('button', { name: 'Sign out' }).first().click();
+  await expect.poll(() => new URL(page.url()).pathname).toMatch(/^\/(auth\/login)?$/);
+  expect(await browserSession(page)).toEqual({ status: 401, authenticated: false });
+  await login(outsiderEmail);
+  await expect(composer).toHaveAttribute('data-draft-owner', outsiderId);
+  await expect(composer).toHaveValue('');
+  await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
+  await header.getByRole('button', { name: 'Show the chatbar', exact: true }).click();
+  await expect(composer).toHaveValue('');
+});
+
 test('real Supabase login persists, Operations works, cross-tenant access is denied, and logout clears the session', async ({ page }) => {
   let browserBearer = '';
   page.on('request', (request) => {

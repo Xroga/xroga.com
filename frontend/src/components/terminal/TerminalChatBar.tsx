@@ -60,6 +60,9 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
   const {
     prompt,
     setPrompt,
+    sessionId,
+    projectId,
+    sessionRestoring,
     loading,
     submit,
     stop,
@@ -685,6 +688,10 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
               <textarea
                 ref={textareaRef}
                 data-terminal-composer=""
+                data-draft-owner={workspaceIdentity.status === 'guest' ? 'guest' : workspaceIdentity.userId ?? ''}
+                data-draft-session={sessionId}
+                data-draft-project={projectId ?? ''}
+                data-draft-restoring={String(sessionRestoring)}
                 value={draft}
                 onChange={(e) => {
                   const next = e.target.value;
