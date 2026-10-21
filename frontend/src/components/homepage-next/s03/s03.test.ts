@@ -54,11 +54,14 @@ const words = (s: string) => s.trim().split(/\s+/).filter(Boolean).length;
 const run = (s: State, ...as: Action[]) => as.reduce(reducer, s);
 
 /* ------------------------------------------------------------------------------------------------ placement */
-test('S03 sits directly after S02 and before the existing power stories, which stay intact', () => {
+test('S03 stays directly between S02 and the approved S04 publishing section', () => {
   const s02 = PAGE.indexOf('<S02Work');
   const s03 = PAGE.indexOf('<S03Growth');
-  const next = PAGE.indexOf('<HomepagePowerStories');
+  // The owning homepage changes introduced S04, then removed legacy stories
+  // in 0ff3f2a8. Preserve the real section ordering, not retired markup.
+  const next = PAGE.indexOf('<S04Publish');
   assert.ok(s02 > 0 && s03 > s02 && next > s03);
+  assert.match(PAGE, /<S02Work[^>]*\/>\s*<S03Growth[^>]*\/>\s*<S04Publish[^>]*\/>/);
 });
 
 test('S03 is independent of S02: no S02 imports or components', () => {
