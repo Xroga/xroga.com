@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import { Cloud, FolderOpen, GitBranch, ChevronDown, ChevronRight, Pin, PinOff, MoreHorizontal, Plus, ArrowUp, ArrowDown } from 'lucide-react';
+import { Cloud, FolderOpen, GitBranch, ChevronDown, ChevronRight, Pin, PinOff, MoreHorizontal, Plus, ArrowUp, ArrowDown, MessageSquare } from 'lucide-react';
 import { SidebarActionMenu, type SidebarActionId, type SidebarMenuAction } from './SidebarActionMenu';
 import { SidebarMovingTitle } from './SidebarMovingTitle';
 import './SidebarOrganize.css';
@@ -186,6 +186,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const [sidebarChats,setSidebarChats] = useState<SidebarChat[]>([]);
   const [shownProjects,setShownProjects] = useState(5);
   const [shownPins,setShownPins] = useState(10);
+  const [allProjectChats,setAllProjectChats] = useState<Record<string,boolean>>({});
   const [archivedOpen,setArchivedOpen] = useState(false);
   const [projectsHasMore,setProjectsHasMore] = useState(false);
   const [menu,setMenu] = useState<{kind:SidebarKind;id:string;x:number;y:number}|null>(null);
@@ -923,168 +924,149 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     }catch(e){toast.error((e as Error).message||'Could not save');}
     finally{setSaving(false);}
   }
-  if (!expanded) return null;
 
-  return (
-    <div className="mt-2 mb-1 px-1.5">
-      <div className="relative flex items-center justify-between gap-1 px-1.5 mb-1.5">
-        <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
-          Repositories
-        </span>
-        <div className="relative">
-          <button
-            ref={filterAnchorRef}
-            type="button"
-            title="Filter repositories"
-            aria-label="Filter repositories"
-            aria-haspopup="menu"
-            aria-expanded={filterOpen}
-            onClick={() => setFilterOpen((value) => !value)}
-            className={cn('xv-repo-filter-trigger', repoFilter !== 'latest' && 'is-active')}
-          >
-            {/* The funnel settles as if something just passed through it. */}
-            <AnimatedIcon icon={FilterIcon} size={12} />
-          </button>
-          <RepositoryFilterPopover
-            open={filterOpen}
-            anchorRef={filterAnchorRef}
-            value={repoFilter}
-            onClose={closeFilter}
-            onChange={changeFilter}
-          />
+  if (!expanded) return null;
+  const sectionTitle = 'px-2 pb-1 text-[9px] font-bold uppercase tracking-[0.1em] text-[var(--muted)]';
+  const secondary = 'text-[10px] text-[var(--muted)] hover:text-[var(--foreground)] transition-colors focus-visible:outline-2 focus-visible:outline-[var(--accent)]';
+  const getProjectChats = (p:(typeof organizedProjects)[number]) =>
+    recentConversations.filter(session => {
+      const data=metaOf('conversation',session.id);
+      if(data?.project_id)return data.project_id===p.id;
+      return Boolean(p.repo&&session.githubRepoName===p.repo);
+    });
+  const openedMenu=menu?menuActions:[];
+  return <div className="mt-2 mb-1 px-1.5" data-sidebar-work-organizer>
+    <section aria-label="Projects" className="space-y-1">
+      <div className="flex items-center justify-between gap-2">
+        <h2 className={sectionTitle}>Projects</h2>
+        <div className="flex items-center gap-2">
+          <button type="button" onClick={()=>router.push('/dashboard/projects')} className={secondary}>All projects</button>
+          <button type="button" onClick={()=>{setEditor({mode:'new-project',kind:'project',id:'',title:'New project'});setEditorText('');}}
+            className={secondary} aria-label="Create project"><Plus size={13} aria-hidden="true"/></button>
         </div>
       </div>
+      {sidebarError ? <p role="alert" className="px-2 text-[10px] text-[var(--muted)]">{sidebarError}
+        <button type="button" className="underline ml-1" onClick={()=>void refreshSidebarData()}>Retry</button></p>:null}
+      {visiblePage(organizedProjects.filter(p=>!metaOf('project',p.id)?.archived_at),shownProjects).map(p=>{
+        const related=getProjectChats(p);
+        const expandedProject=openFolders[p.id]??Boolean(p.repo&&folders.some(f=>f.repo===p.repo&&f.key===selectedContextKey));
+        const children=allProjectChats[p.id]?related:related.slice(0,3);
+        const childSections=sections.filter(section=>section.project_id===p.id);
+        return <div key={p.id} className="space-y-0.5">
+          <div className="flex items-center gap-0.5">
+            <button type="button" aria-label={expandedProject?'Collapse '+p.label:'Expand '+p.label}
+              onClick={()=>setOpenFolders(prev=>({...prev,[p.id]:!expandedProject}))}
+              className="p-1 rounded-md text-[var(--muted)] hover:bg-[var(--foreground)]/5">
+              {expandedProject?<ChevronDown size={13}/>:<ChevronRight size={13}/>}
+            </button>
+            <div className="min-w-0 flex-1">
+              {renderRow('project',p.id,projectTitle(p.id,p.label),()=>openProject(p.id),false,<FolderOpen size={13} className="shrink-0 text-[var(--muted)]"/>)}
+            </div>
+          </div>
+          {expandedProject ? <div className="pl-4 space-y-0.5" aria-label={p.label+' conversations'}>
+            {childSections.map(section=>{
+              const grouped=related.filter(item=>metaOf('conversation',item.id)?.section_id===section.id);
+              if(!grouped.length)return null;
+              return <div key={section.id}>
+                <p className="px-2 py-0.5 text-[9px] font-medium text-[var(--muted)]">{section.title}</p>
+                {(allProjectChats[p.id]?grouped:grouped.slice(0,3)).map(session=>
+                  renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),false,<MessageSquare size={12} className="shrink-0 opacity-60"/>))}
+              </div>;
+            })}
+            {children.filter(session=>!metaOf('conversation',session.id)?.section_id).map(session=>
+              renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),false,<MessageSquare size={12} className="shrink-0 opacity-60"/>))}
+            {related.length>3&&!allProjectChats[p.id]?
+              <button type="button" className={secondary+' px-2 py-1'} onClick={()=>setAllProjectChats(prev=>({...prev,[p.id]:true}))}>View all chats</button>:null}
+            {allProjectChats[p.id]&&related.length>3?
+              <button type="button" className={secondary+' px-2 py-1'} onClick={()=>setAllProjectChats(prev=>({...prev,[p.id]:false}))}>Show fewer chats</button>:null}
+            {related.length===0?<p className="px-2 py-1 text-[10px] text-[var(--muted)]">No saved conversations</p>:null}
+          </div>:null}
+        </div>;
+      })}
+      {projectsHasMore?
+        <button type="button" className={secondary+' px-2 py-1'} onClick={()=>void moreProjects()}>View more projects</button>:null}
+      {accountProjects.length>5?
+        <button type="button" className={secondary+' px-2 py-1'} onClick={()=>{setAccountProjects(prev=>prev.slice(0,5));setShownProjects(5);setProjectsHasMore(true);}}>Show less</button>:null}
+      {organizedProjects.length===0&&!sidebarError?<p className="px-2 py-1 text-[10px] text-[var(--muted)]">Projects you create will appear here.</p>:null}
+    </section>
 
-      {folders.length === 0 ? (
-        isGuest ? (
-          <button
-            type="button"
-            onClick={() => requestAuthGate('history')}
-            className="w-full rounded-lg px-2 py-2 text-left text-[10px] leading-relaxed text-[var(--muted)] transition hover:bg-[var(--foreground)]/5 hover:text-[var(--foreground)]"
-          >
-            This guest chat is temporary. Create a free account to save terminals and repository history →
-          </button>
-        ) : (
-          <p className="px-2 py-2 text-[10px] text-[var(--muted)] leading-relaxed">
-            Click New Terminal, select a GitHub repo, then chat — #1 terminal appears here and is saved to your account.
-          </p>
-        )
-      ) : (
-        <div className="xv-repos-scroll space-y-0.5 pr-1">
-          {folders.map((folder) => {
-            const isOpen = openFolders[folder.key] !== false;
-            // A repository under the filter is a fork point, not a folder: the glyph
-            // assembles from the child commit up to its two parents. The open state
-            // keeps a folder, because that one is saying "expanded", not "repository".
-            const FolderIcon = isOpen ? FolderOpen : null;
-            const isActiveRepo = selectedContextKey === folder.key;
-            return (
-              <div key={folder.key} className="space-y-0.5">
-                <div className="flex items-center gap-0.5">
-                  <button
-                    type="button"
-                    aria-label={isOpen ? 'Collapse' : 'Expand'}
-                    onClick={() =>
-                      setOpenFolders((prev) => ({ ...prev, [folder.key]: !isOpen }))
-                    }
-                    className="p-1 rounded-md text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5"
-                  >
-                    {isOpen ? (
-                      <ChevronDown className="h-3 w-3 shrink-0 opacity-70" />
-                    ) : (
-                      <ChevronRight className="h-3 w-3 shrink-0 opacity-70" />
-                    )}
-                  </button>
-                  <button
-                    type="button"
-                    disabled={busyId === folder.key}
-                    title="Open latest terminal for this repo"
-                    onClick={() => void openRepoFolder(folder)}
-                    className={cn(
-                      'flex-1 min-w-0 flex items-center gap-1 px-1 py-1 rounded-md text-[10px] hover:bg-[var(--foreground)]/5',
-                      isActiveRepo
-                        ? 'text-[var(--foreground)] font-semibold'
-                        : 'text-[var(--muted)] hover:text-[var(--foreground)]'
-                    )}
-                  >
-                    {FolderIcon ? (
-                      <FolderIcon className="h-3 w-3 shrink-0" />
-                    ) : (
-                      <AnimatedIcon icon={GitForkIcon} size={12} intro={false} className="shrink-0" />
-                    )}
-                    <span className="truncate font-medium" title={`${folder.repo} · ${folder.branch}`}>
-                      {folder.label}
-                    </span>
-                    <span className="max-w-16 truncate font-mono text-[8px] opacity-60">{folder.branch}</span>
-                    <span className="text-[9px] text-[var(--muted)] tabular-nums ml-auto">
-                      {folder.sessions.length}
-                    </span>
-                  </button>
-                </div>
-                {isOpen ? (
-                  folder.sessions.length === 0 ? (
-                    <p className="pl-6 pr-2 py-1.5 text-[10px] text-[var(--muted)] leading-snug">
-                      {isActiveRepo && messages.length > 0
-                        ? 'Saving #1 terminal to your account…'
-                        : (
-                          <>
-                            Chat below to create{' '}
-                            <span className="font-semibold text-[var(--foreground)]/80">#1 terminal</span>
-                          </>
-                        )}
-                    </p>
-                  ) : (
-                    folder.sessions.map((session) => {
-                      const isActiveSession = session.id === activeSessionId;
-                      return (
-                        <button
-                          key={session.id}
-                          type="button"
-                          disabled={busyId === session.id}
-                          onClick={() => void openSession(session)}
-                          className={cn(
-                            'w-full flex items-center gap-1.5 rounded-md pl-6 pr-2 py-1.5 transition-colors',
-                            'hover:bg-[var(--foreground)]/8',
-                            (isActiveRepo || isActiveSession) && 'bg-[var(--foreground)]/[0.04]',
-                            isActiveSession && 'ring-1 ring-[var(--accent)]/25'
-                          )}
-                        >
-                          <p className="flex-1 min-w-0 text-left text-[11px] font-semibold text-[var(--foreground)]/90 truncate leading-snug">
-                            {session.title}
-                          </p>
-                          <GitBranch className="h-2.5 w-2.5 text-violet-400 shrink-0" />
-                          {session.cloudSynced ? (
-                            <Cloud className="h-2.5 w-2.5 text-[var(--muted)] shrink-0 opacity-70" />
-                          ) : null}
-                          <span className="text-[9px] text-[var(--muted)] shrink-0 tabular-nums min-w-[1.5rem] text-right">
-                            {formatCompactAgo(session.updatedAt)}
-                          </span>
-                        </button>
-                      );
-                    })
-                  )
-                ) : null}
+    {pinnedItems.length>0?<section className="mt-3" aria-label="Pinned items">
+      <h2 className={sectionTitle}>Pinned</h2>
+      {pinnedItems.slice(0,shownPins).map(item=>{
+        if(item.item_type==='project'){
+          const p=projectById(item.item_id);if(!p)return null;
+          return renderRow('project',p.id,projectTitle(p.id,p.label),()=>openProject(p.id),true,<FolderOpen size={12} className="shrink-0 opacity-65"/>);
+        }
+        const session=savedConversations.find(s=>s.id===item.item_id);if(!session)return null;
+        return renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),true,<MessageSquare size={12} className="shrink-0 opacity-65"/>);
+      })}
+      {pinnedItems.length>shownPins?<button type="button" className={secondary+' px-2 py-1'} onClick={()=>setShownPins(prev=>prev+10)}>View more pins</button>:null}
+      {shownPins>10?<button type="button" className={secondary+' px-2 py-1'} onClick={()=>setShownPins(10)}>Show less</button>:null}
+    </section>:null}
+
+    {!isGuest?<section className="mt-3" aria-label="Recent conversations">
+      <h2 className={sectionTitle}>Recents</h2>
+      {recentConversations.map(session=>
+        renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),false,
+          <MessageSquare size={12} className="shrink-0 text-[var(--muted)]"/>))}
+      {recentConversations.length===0?<p className="px-2 py-1 text-[10px] text-[var(--muted)]">Your saved conversations will appear here.</p>:null}
+      <button type="button" className={secondary+' px-2 py-1'} onClick={()=>setArchivedOpen(prev=>!prev)}
+        aria-expanded={archivedOpen}>{archivedOpen?'Hide archive':'Archived items'}</button>
+      {archivedOpen?itemMeta.filter(item=>item.archived_at!==null).map(item=>{
+        const label=item.item_type==='project'
+          ?projectTitle(item.item_id,projectById(item.item_id)?.label||'Archived project')
+          :conversationTitle(savedConversations.find(s=>s.id===item.item_id)||{id:item.item_id,title:'Archived conversation',preview:'',updatedAt:'',cloudSynced:false,kind:'local',terminalNumber:0});
+        return <div key={item.item_type+item.item_id} className="flex gap-2 items-center text-[10px] px-2 py-1">
+          <span className="min-w-0 truncate flex-1">{label}</span>
+          <button type="button" className={secondary} onClick={()=>void updateItem(item.item_type,item.item_id,{archived_at:null})}>Restore</button>
+        </div>;
+      }):null}
+    </section>:null}
+
+    <SidebarActionMenu point={menu?{x:menu.x,y:menu.y}:null} actions={openedMenu}
+      onClose={()=>setMenu(null)} onSelect={id=>void handleMenuAction(id)}/>
+
+    {editor&&typeof document!=='undefined'?createPortal(
+      <div className="fixed inset-0 z-[10040] flex items-center justify-center bg-black/50 p-3"
+        onPointerDown={event=>{if(event.target===event.currentTarget&&!saving)setEditor(null);}}>
+        <div role="dialog" aria-modal="true" aria-label={editor.mode+' saved work'} className="w-full max-w-[350px] rounded-xl border border-[var(--card-border)] bg-[var(--card)] text-[var(--foreground)] shadow-2xl p-4 space-y-3">
+          <h3 className="text-sm font-semibold capitalize">{editor.mode.replace(/-/g,' ')}</h3>
+          {editor.mode==='move-project'?<>
+            <input autoFocus value={editorText} onChange={e=>setEditorText(e.target.value)} placeholder="Search projects" aria-label="Search destination projects"
+              className="w-full rounded-lg border border-[var(--card-border)] bg-transparent p-2 text-xs"/>
+            <div className="max-h-[220px] overflow-y-auto space-y-1">
+              {allProjectOptions.filter(p=>p.name.toLowerCase().includes(editorText.toLowerCase())).map(project=>
+                <button key={project.id} type="button" className="w-full rounded-md px-2 py-2 text-left text-xs hover:bg-[var(--foreground)]/10"
+                  onClick={()=>{void updateItem('conversation',editor.id,{project_id:project.id,section_id:null});setEditor(null);}}>
+                  {project.name}</button>)}
+            </div>
+            <button type="button" className="text-xs underline" onClick={()=>{setEditor({...editor,mode:'new-project'});setEditorText('');}}>New project</button>
+          </>:editor.mode==='move-section'?<>
+            {!editor.projectId?<p className="text-xs text-[var(--muted)]">Move this conversation into a project before creating a section.</p>:<>
+              <div className="max-h-[200px] overflow-y-auto">
+                {sections.filter(x=>x.project_id===editor.projectId).map(sec=>
+                  <button type="button" className="w-full text-xs rounded-md px-2 py-2 text-left hover:bg-[var(--foreground)]/10" key={sec.id}
+                    onClick={()=>{void updateItem('conversation',editor.id,{project_id:editor.projectId,section_id:sec.id});setEditor(null);}}>{sec.title}</button>)}
               </div>
-            );
-          })}
+              <button type="button" className="text-xs underline" onClick={()=>{setEditor({...editor,mode:'new-section'});setEditorText('');}}>New section</button>
+            </>}
+            {!editor.projectId?<button type="button" className="text-xs underline" onClick={()=>{setEditor({...editor,mode:'move-project'});setEditorText('');void loadSidebarProjects(accountId,0,100).then(setAllProjectOptions);}}>Choose a project</button>:null}
+          </>:editor.mode==='delete'?<p className="text-xs leading-relaxed text-[var(--muted)]">
+            {editor.kind==='project'?'Deleting this Xroga project may also delete linked files and project data. It will not delete the remote GitHub repository.':'This permanently deletes the selected saved conversation where you have permission. This cannot be undone.'}
+          </p>:<>
+            <input autoFocus value={editorText} maxLength={120} onChange={e=>setEditorText(e.target.value)}
+              placeholder={editor.mode==='rename'?'New title':editor.mode==='new-section'?'Section name':'Project name'}
+              aria-label="Title" className="w-full rounded-lg border border-[var(--card-border)] bg-transparent p-2 text-xs"
+              onKeyDown={e=>{if(e.key==='Escape')setEditor(null);if(e.key==='Enter'){e.preventDefault();void saveEditor();}}}/>
+          </>}
+          <div className="flex justify-end gap-2">
+            <button type="button" className="rounded-md px-3 py-2 text-xs hover:bg-[var(--foreground)]/10" onClick={()=>setEditor(null)}>Cancel</button>
+            {editor.mode!=='move-project'&&editor.mode!=='move-section'?
+              <button type="button" disabled={saving||(!editorText.trim()&&editor.mode!=='delete')}
+                className="rounded-md px-3 py-2 text-xs font-semibold bg-[var(--foreground)] text-[var(--background)] disabled:opacity-50"
+                onClick={()=>void saveEditor()}>{saving?'Saving…':editor.mode==='delete'?'Delete':'Save'}</button>:null}
+          </div>
         </div>
-      )}
-      {!isGuest ? (
-        <>
-          <section className="mt-3" aria-label="Pinned conversations">
-            <h2 className="px-1.5 pb-1 text-[9px] font-bold uppercase tracking-[0.1em] text-[var(--muted)]">Pinned</h2>
-            {pinnedConversations.length
-              ? pinnedConversations.map(s => renderConversationRow(s, true))
-              : <p className="px-2 py-1 text-[10px] text-[var(--muted)]">Pin chats from Recents for quick access.</p>}
-          </section>
-          <section className="mt-3" aria-label="Recent conversations">
-            <h2 className="px-1.5 pb-1 text-[9px] font-bold uppercase tracking-[0.1em] text-[var(--muted)]">Recents</h2>
-            {recentConversations.length
-              ? recentConversations.map(s => renderConversationRow(s, false))
-              : <p className="px-2 py-1 text-[10px] text-[var(--muted)]">Your conversations will appear here.</p>}
-          </section>
-        </>
-      ) : null}
-    </div>
-  );
+      </div>,document.body):null}
+  </div>;
 }
