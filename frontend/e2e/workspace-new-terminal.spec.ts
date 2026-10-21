@@ -414,6 +414,32 @@ test('reopened close control resizes the sidebar without collapsing or selecting
   }
 });
 
+test('theme menu retains its owner and dismisses after explicit sidebar reopening', async ({ page }) => {
+  await page.goto('/workspace');
+  await expect(page.locator('[data-terminal-composer]')).toHaveAttribute('data-draft-restoring', 'false');
+  const rail = page.locator('.xv-sidebar-root');
+  for (let cycle = 0; cycle < 3; cycle++) {
+    await rail.getByRole('button', { name: 'Close sidebar', exact: true }).click();
+    await expect(rail.locator('.xv-sidebar-floating')).toHaveCSS('width', '64px');
+    await expect(rail.getByRole('button', { name: 'Change theme', exact: true })).toBeVisible();
+    const mark = rail.locator('.xv-sidebar-brand a[aria-label="Xroga"]');
+    await mark.hover();
+    await expect(rail).toHaveClass(/is-collapsed/);
+    await mark.click();
+    const width = Number(await page.getByRole('separator', { name: 'Resize sidebar' }).getAttribute('aria-valuenow'));
+    await expect(rail.locator('.xv-sidebar-floating')).toHaveCSS('width', `${width}px`);
+    const theme = rail.getByRole('button', { name: 'Change theme', exact: true });
+    await theme.click();
+    await expect(theme).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.getByRole('menu')).toBeVisible();
+    await expect(page.getByRole('menuitemradio')).toHaveCount(4);
+    await theme.click();
+    await expect(theme).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.getByRole('menu')).toHaveCount(0);
+    await expect(rail).not.toHaveClass(/is-collapsed/);
+  }
+});
+
 test('plus menu follows the empty or working composer and model stays uncovered', async ({ page }) => {
   await page.goto('/workspace');
   await expect(page.getByTestId('workspace-start-cards')).toBeVisible();

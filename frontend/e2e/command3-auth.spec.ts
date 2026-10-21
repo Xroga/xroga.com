@@ -692,15 +692,11 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(desktopSidebar.locator('.xv-sidebar-floating')).toHaveCSS('border-top-width', '0px');
   const collapsedTheme = desktopSidebar.getByRole('button', { name: 'Change theme' });
   await expect(collapsedTheme).toBeVisible();
-  await collapsedTheme.click();
-  await expect(page.getByRole('menu')).toBeVisible();
-  await collapsedTheme.click();
-  await expect(page.getByRole('menu')).toHaveCount(0);
   await expect(desktopSidebar.getByRole('button', { name: 'Search' })).toBeVisible();
   await expect(desktopSidebar.getByRole('button', { name: 'New Work', exact: true })).toBeVisible();
   await expect(desktopSidebar.locator('nav')).toHaveCount(0);
   /*
-   * Reopened by hovering the mark. The toggle does not exist while collapsed — the rail
+   * Reopened by clicking the mark. The toggle does not exist while collapsed — the rail
    * used to carry it alongside its own PanelLeft button, two controls a few pixels
    * apart for one job — so clicking it here waited for an element that never appears
    * and took the whole spec to its timeout.
@@ -710,6 +706,19 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(desktopSidebar).toHaveClass(/is-collapsed/);
   await desktopSidebar.locator('.xv-sidebar-brand a[aria-label="Xroga"]').click();
   await expect(desktopSidebar).not.toHaveCSS('width', '64px');
+  // The owning rail capture handler opens a collapsed rail before utility actions.
+  // Exercise theme toggling on the explicitly reopened, stable control instead of
+  // treating a collapsed child as a second independent open/close menu owner.
+  const themeWidth = Number(await page.getByRole('separator', { name: 'Resize sidebar' }).getAttribute('aria-valuenow'));
+  await expect(desktopSidebar.locator('.xv-sidebar-floating')).toHaveCSS('width', `${themeWidth}px`);
+  const expandedTheme = desktopSidebar.getByRole('button', { name: 'Change theme', exact: true });
+  await expandedTheme.click();
+  await expect(expandedTheme).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByRole('menu')).toBeVisible();
+  await expect(page.getByRole('menuitemradio')).toHaveCount(4);
+  await expandedTheme.click();
+  await expect(expandedTheme).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByRole('menu')).toHaveCount(0);
 
   // Internal navigation must retain the shared shell and the mounted composer.
   const shellSentinel = randomUUID();
