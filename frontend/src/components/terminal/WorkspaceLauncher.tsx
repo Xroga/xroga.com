@@ -23,10 +23,12 @@ export function WorkspaceLauncher({ className }: { className?: string }) {
   const setWorkspaceOpen = useProjectWorkspaceStore((s) => s.setWorkspaceOpen);
   const chatbarHidden = useThemeStore((s) => s.chatbarHidden);
   const setChatbarHidden = useThemeStore((s) => s.setChatbarHidden);
-  const { setPrompt, sessionId, projectId, sessionRestoring } = useTerminalChat();
+  const { setPrompt, sessionId, projectId, sessionRestoring, messages, loading } = useTerminalChat();
+  const emptyWorkspace = messages.length === 0 && !loading && !sessionRestoring;
   const identity = useWorkspaceIdentity();
 
   function toggleChatbar() {
+    if (emptyWorkspace) return;
     if (!chatbarHidden) {
       const snapshots = [...document.querySelectorAll<HTMLTextAreaElement>('[data-terminal-composer]')].map(input => ({
         owner: input.dataset.draftOwner ?? '', session: input.dataset.draftSession ?? '',
@@ -49,9 +51,11 @@ export function WorkspaceLauncher({ className }: { className?: string }) {
       <button
         type="button"
         onClick={toggleChatbar}
+        disabled={emptyWorkspace}
+        title={emptyWorkspace ? 'Composer stays visible in a new workspace' : chatbarHidden ? 'Show chatbar' : 'Hide chatbar'}
         className="xv-ws-launch xv-ws-launch--icon"
-        aria-pressed={chatbarHidden}
-        aria-label={chatbarHidden ? 'Show the chatbar' : 'Hide the chatbar'}
+        aria-pressed={!emptyWorkspace && chatbarHidden}
+        aria-label={emptyWorkspace ? 'Composer stays visible in a new workspace' : chatbarHidden ? 'Show the chatbar' : 'Hide the chatbar'}
         data-short-tip={chatbarHidden ? 'Show chatbar' : 'Hide chatbar'}
       >
         {/* A closing eye rather than a pair of panel-slide glyphs. Those said a
