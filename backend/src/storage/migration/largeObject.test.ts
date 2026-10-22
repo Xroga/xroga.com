@@ -203,7 +203,18 @@ describe('large-object migration (multipart copy)', () => {
     const c = await e.copy(j.id);
     assert.equal(c.copied, 0);
     assert.equal(s.dest.objects.size, 0);
+    assert.ok(!s.dest.calls.includes('complete'), 'a short stream must never reach completeMultipart');
     assert.ok([...s.repo.objects.values()].every((o) => o.state !== 'READY'));
+  });
+
+  it('a part corrupted in transit (provider ETag describes the corrupted bytes) is rejected before the object is ever completed', async () => {
+    const s = setup(); const { j, e } = await s.prepared();
+    const orig = s.dest.uploadPart.bind(s.dest);
+    s.dest.uploadPart = async (b, k, u, num, body) => { if (num === 2) { const bad = Buffer.from(body); bad[7] ^= 0xff; return orig(b, k, u, num, bad); } return orig(b, k, u, num, body); };
+    const c = await e.copy(j.id);
+    assert.equal(c.copied, 0);
+    assert.ok(!s.dest.calls.includes('complete'), 'completion must not run after a part failed verification');
+    assert.equal(s.dest.objects.size, 0);
   });
 
   it('objects above maxObjectBytes remain BLOCKED with an explicit reason', async () => {

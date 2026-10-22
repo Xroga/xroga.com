@@ -21,8 +21,7 @@ const LO = 'src/storage/migration/largeObject.test.ts', RO = 'src/storage/migrat
 const mutants = [
   { name: 'multipart: stored parts trusted without comparing MD5 to the source', file: S, old: "have.etag.replace(/\"/g, '') === md5.replace(/\"/g, '')", neu: 'true', tests: [LO] },
   { name: 'multipart: provider part ETag not compared to the MD5 of what was sent', file: S, old: "if (hex.test(etag) && etag.replace(/\"/g, '').toLowerCase() !== md5.replace(/\"/g, '')) throw", neu: 'if (false) throw', tests: [LO] },
-  { name: 'multipart: stream length vs measured size not checked', file: S, old: 'if (total !== input.size) throw', neu: 'if (false) throw', tests: [LO] },
-  { name: 'multipart: part-count check removed', file: S, old: 'if (ordered.length !== parts) throw', neu: 'if (false) throw', tests: [LO] },
+  { name: 'multipart: stream-length AND part-count checks both removed (mutually redundant guards)', file: S, edits: [{ old: 'if (total !== input.size) throw', neu: 'if (false) throw' }, { old: 'if (ordered.length !== parts) throw', neu: 'if (false) throw' }], tests: [LO] },
   { name: 'engine: large objects no longer routed to multipart', file: E, old: 'opened.size > this.#d.maxStreamCopyBytes', neu: 'false', tests: [LO] },
   { name: 'engine: source not re-checked after the copy (changed-source acceptance)', file: E, old: 'if (!again || again.fingerprint !== opened.fingerprint) {', neu: 'if (false) {', tests: [LO] },
   { name: 'engine: adapter block reason flattened', file: E, old: "if (it.sourceFingerprint?.startsWith('unrecoverable:'))", neu: 'if (false)', tests: [RO], pg: true },
@@ -40,10 +39,13 @@ for (const m of mutants) {
   const original = readFileSync(file);
   let text = original.toString('utf8');
   const crlf = text.includes('\r\n');
-  const old = crlf ? m.old.replace(/\n/g, '\r\n') : m.old;
-  if (!text.includes(old)) { results.push({ name: m.name, verdict: 'ERROR: mutation target not found' }); continue; }
+  const edits = m.edits ?? [{ old: m.old, neu: m.neu }];
+  const nl = (x) => (crlf ? x.replace(/\n/g, '\r\n') : x);
+  if (!edits.every((x) => text.includes(nl(x.old)))) { results.push({ name: m.name, verdict: 'ERROR: mutation target not found' }); continue; }
   try {
-    writeFileSync(file, text.replace(old, () => (crlf ? m.neu.replace(/\n/g, '\r\n') : m.neu)));
+    let mutated = text;
+    for (const x of edits) mutated = mutated.replace(nl(x.old), () => nl(x.neu));
+    writeFileSync(file, mutated);
     const p = spawnSync('npx', ['tsx', '--test', ...m.tests], { cwd: backend, encoding: 'utf8', shell: process.platform === 'win32', maxBuffer: 1 << 26 });
     const t = `${p.stdout}\n${p.stderr}`;
     const fail = Number((t.match(/^# fail (\d+)/m) ?? [])[1] ?? 0), pass = Number((t.match(/^# pass (\d+)/m) ?? [])[1] ?? 0);
