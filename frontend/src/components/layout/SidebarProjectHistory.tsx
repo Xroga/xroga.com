@@ -677,6 +677,9 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         projectRoot: entry.projectRoot || '/',
       });
       notifyGithubRepoContext(entry.githubRepoName, entry.githubBranch || branch);
+    } else {
+      // A repository-free conversation must not inherit the last GitHub workspace.
+      clearSelectedRepoContext();
     }
     const n =
       cachedTerminalNumber(entry.id) ??
@@ -938,7 +941,9 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       saveSelectedRepoContext({repo:p.repo,branch:selected?.repo===p.repo?selected.branch:'main',projectRoot:'/'});
       notifyGithubRepoContext(p.repo,selected?.repo===p.repo?selected.branch:'main');
     }else clearSelectedRepoContext();
-    activateSidebarProject(accountId,p.id);
+    // Legacy repo-only folders are not canonical project IDs. Keep them navigable
+    // without persisting a synthetic "repo:" key into the UUID project relation.
+    if(!p.id.startsWith('repo:')) activateSidebarProject(accountId,p.id);
     // An explicit project task supersedes a leftover generic New Product intent.
     consumeFreshTerminalIntent();
     setOpenFolders(prev=>({...prev,[p.id]:true}));
@@ -948,8 +953,14 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   }
   function openProject(id:string){
     const p=projectById(id);
-    if(p){beginProjectTask(p);return;}
-    toast.error('This project is not available');
+    if(!p){toast.error('This project is not available');return;}
+    setOpenFolders(prev=>({...prev,[p.id]:true}));
+    // Clicking the project title resumes its workspace. Only the adjacent +
+    // explicitly starts another task; never discard an active draft on a title click.
+    if(activeSidebarProjectId===p.id){router.push('/workspace');return;}
+    const latest=getProjectChats(p)[0];
+    if(latest){void openSession(latest);return;}
+    beginProjectTask(p);
   }
   useEffect(()=>{
     if(!accountId||pathname!=='/workspace')return;
