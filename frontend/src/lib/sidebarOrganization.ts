@@ -2,7 +2,7 @@
 import { createClient } from '@/lib/supabase/client';
 import { messagesForStorage } from '@/lib/storageSafe';
 import type { TerminalHistoryEntry } from '@/lib/terminalHistory';
-import { getActiveSidebarProject } from '@/lib/sidebarProjectTask';
+import { getActiveSidebarProject, type ActiveSidebarProject } from '@/lib/sidebarProjectTask';
 
 export type SidebarKind = 'conversation' | 'project';
 export type SidebarMeta = {
@@ -157,9 +157,9 @@ export async function loadPinnedSidebarRecords(userId:string,items:SidebarMeta[]
  * Serialized per task so streaming saves do not generate repeated metadata writes. */
 const projectLinks=new Map<string,Promise<void>>();
 const completedLinks=new Set<string>();
-export function scheduleProjectConversationLink(entry:TerminalHistoryEntry):void{
+export function scheduleProjectConversationLink(entry:TerminalHistoryEntry,projectAtSave?:ActiveSidebarProject|null):void{
  if(typeof window==='undefined'||!entry.messages?.some(m=>m.role==='user'))return;
- const active=getActiveSidebarProject();
+ const active=projectAtSave===undefined?getActiveSidebarProject():projectAtSave;
  if(!active)return;
  const key=active.userId+':'+active.projectId+':'+entry.id;
  if(completedLinks.has(key)||projectLinks.has(key))return;
