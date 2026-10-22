@@ -17,7 +17,7 @@
 
 /* Workspace project-task hierarchy: clear, compact, left-aligned titles. */
 [data-sidebar-work-organizer] .xv-sidebar-work-row > button:first-child{
-  font-size:12px;font-weight:500;line-height:1.4;text-align:left;justify-content:flex-start;
+  font-size:13px;font-weight:500;line-height:1.45;text-align:left;justify-content:flex-start;
   min-height:30px;
 }
 [data-sidebar-work-organizer] .xv-sidebar-long-title{
