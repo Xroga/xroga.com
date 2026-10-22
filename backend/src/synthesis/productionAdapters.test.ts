@@ -183,6 +183,10 @@ describe('adapters delegate rather than reimplement', () => {
         command: 'cargo', args: ['fetch'], networkPolicy: 'registry-only',
         source: 'manifest', purpose: 'install',
       }),/verified restricted-network/);
+      await assert.rejects(adapters.runValidation({
+        command:'node',args:['test.js'],networkPolicy:'none',source:'manifest',purpose:'test',
+      },{files:[],setupCommands:[{command:'npm',args:['ci'],networkPolicy:'registry-only',source:'manifest',purpose:'install'}]}),/verified restricted-network/);
+      assert.equal(seen.length,0,'Online setup cannot bypass refusal by wrapping an offline test');
       await adapters.runValidation({
         command: 'cargo', args: ['test'], networkPolicy: 'none',
         source: 'manifest', purpose: 'test',

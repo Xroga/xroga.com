@@ -12,6 +12,19 @@
   ],
   "verification":{"focusedTests":106,"passed":106,"realContainerTests":1,"realContainerPassed":1,"image":"node:22-bookworm","imageDigest":"sha256:63538dfe497cc29dfafdda25ada09b46db68a3f4cc205abf1f5d6bf0913f3384","offlineInstall":"Synthetic local file dependency installed with npm --offline --ignore-scripts in actual existing ContainerSandboxRuntime using network none","kernelEvidence":"No non-loopback interfaces, no default IPv4 route. TCP probes to public, RFC1918, link-local/metadata and IPv6-private targets all denied.","onlineRegistryVerified":false,"liveProviderEffects":false},
   "remainingRequirement":"An independently verified existing worker or transport must enforce registry allowlists at kernel/network boundary, including direct IP, DNS, IPv6, redirects, CONNECT and metadata bypasses, before online registry-only installs can be enabled. No operator boolean or arbitrary Docker bridge is accepted as that proof.",
+  "persistentRuntimeContinuation":{"manager":"Registry-only exec and startProcess refuse before loading session or resolving secrets","directFlyProvider":"executableLine refuses registry-only before execRaw can send a command or process script","focusedRegressionTests":62,"passed":62,"includes":"Project runtime, browser adapter, existing P0 and zero-effect direct execution negatives","ordinaryPreviewCertified":false},
+  "persistentNativeReviewReconciliation":{
+    "path":"backend/src/synthesis/projectRuntime/flyProvider.ts",
+    "originalRecord":"f040165e69222990ea3d03d90057dcbec1d501d7:docs/xroga/security/caller-reviews.json",
+    "originalSourceSha256":"9474dbe5e7b780c55d291fdd2d5e51f21e893a9d13cfbafbd70f601bc3ad2d63",
+    "currentSourceSha256":"3d00cb93082c119cedc9884f7945b0ce6cc360120432931eb04a1b6f4f421b1e",
+    "nativeConversions":[
+      {"method":"create","originalId":"b60d7d17a4b3923a0093","currentId":"8c2d8f9c4601ee2f4d97","unchangedMethodSha256":"b55f25611987a84056286e005496e5ea855c114bdffd1df18853af41d49a4bb1"},
+      {"method":"writeFiles","originalId":"7e77a9e9c61c1c49cb12","currentId":"74ddacc15175556234db","unchangedMethodSha256":"89f155397404d9fb22322f99ff794d003efa1ea089432bd7bc86ae5ace4acd1a"},
+      {"method":"readFile","originalId":"f783b8237adeb061973a","currentId":"96441ee181360879c0db","unchangedMethodSha256":"d7fd27753d36b887b1f03c8904bae3062383db2cd9b7aa0d142d9f0ff9ec050e"}
+    ],
+    "disposition":"NOT_PERSISTENCE applies only to these built-in Buffer conversions. Provider/storage/authority obligations stay open. Entire containing methods are identical before and after the policy change."
+  },
   "nativeConversionReviewReconciliation":{
     "path":"backend/src/sandbox/flyMachineSandbox.ts",
     "originalSourceSha256":"3bdef3facc61c0c324b73d3fd06d93cac3b764e9b3dcd0309874ed4bc7e86ca6",

@@ -8,6 +8,7 @@ import type {
 
 import {
   DEFAULT_SANDBOX_LIMITS,
+  requireEnforcedSandboxNetworkPolicy,
 } from '../../sandbox/sandboxTypes.js';
 
 import {
@@ -195,6 +196,7 @@ export function executableLine(
     | 'restricted'
     | 'preview',
 ): string {
+  requireEnforcedSandboxNetworkPolicy(networkPolicy,'fly-project-runtime');
   const argv =
     [
       command,
@@ -214,12 +216,10 @@ export function executableLine(
    * Until a host/domain-aware egress gateway is added, restricted
    * receives the same denied-egress boundary as none.
    *
-   * registry-only is the one explicit networked mode used for
-   * dependency resolution.
+   * registry-only was refused above because no verified registry
+   * egress gateway exists. Preview is a separate, unverified policy.
    */
     return (
-    networkPolicy ===
-      'registry-only' ||
     networkPolicy ===
       'preview'
   )

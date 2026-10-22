@@ -2,6 +2,7 @@ import {
   randomUUID,
 } from 'node:crypto';
 import { redactSecrets } from '../../lib/truthfulExecution.js';
+import {requireEnforcedSandboxNetworkPolicy} from '../../sandbox/sandboxTypes.js';
 
 import type {
   ProjectFile,
@@ -628,6 +629,7 @@ export class ProjectRuntimeManager {
     input:
       ProjectRuntimeCommand,
   ): Promise<ProjectRuntimeCommandResult> {
+    requireEnforcedSandboxNetworkPolicy(input.networkPolicy ?? 'restricted','project-runtime');
     const session =
       await this.session(
         sessionId,
@@ -733,6 +735,7 @@ export class ProjectRuntimeManager {
     input:
       RuntimeProcessStartInput,
   ): Promise<ProjectRuntimeProcessRecord> {
+    requireEnforcedSandboxNetworkPolicy(input.networkPolicy ?? 'restricted','project-runtime');
     const session =
       await this.session(
         sessionId,
