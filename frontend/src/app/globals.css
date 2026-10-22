@@ -14543,6 +14543,35 @@ html.xv-home-scroll-lock body {
 .xv-conversation-navigator > div { line-height: 0; }
 .xv-conversation-navigator > div svg { display: block; }
 
+/* Plain, context-aware jump arrow: no stacked square outlines. */
+.xv-conversation-navigator,
+.xv-conversation-navigator:hover,
+.xv-conversation-navigator:active {
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  color: var(--foreground) !important;
+}
+.xv-conversation-navigator:hover { color: var(--accent, #fff) !important; }
+.xv-conversation-navigator:focus-visible { outline: 2px solid var(--foreground); outline-offset: 2px; }
+
+.xv-response-meta { display:flex; flex-wrap:wrap; align-items:center; gap:6px 14px; margin:4px 0 10px; color:var(--muted); font-size:10px; line-height:1.45; }
+.xv-response-meta a { color:inherit; text-decoration:underline; text-underline-offset:2px; }
+.xv-response-meta a:hover { color:var(--foreground); }
+.xv-response-meta time { opacity:0; transition:opacity .15s ease; }
+.group:hover .xv-response-meta time,.xv-response-meta:focus-within time { opacity:.8; }
+@media (hover:none) { .xv-response-meta time { opacity:.8; } }
+.xv-thinking-history { margin:8px 0 12px; padding:9px 12px; border:1px solid color-mix(in srgb,var(--foreground) 12%,transparent); border-radius:10px; background:color-mix(in srgb,var(--foreground) 3%,transparent); color:var(--muted); font-size:11px; }
+.xv-thinking-history summary { display:flex; align-items:center; gap:7px; width:fit-content; cursor:pointer; color:var(--foreground); list-style:none; }
+.xv-thinking-history summary::-webkit-details-marker { display:none; }
+.xv-thinking-history summary::after { content:'⌄'; margin-left:3px; color:var(--muted); }
+.xv-thinking-history[open] summary::after { transform:rotate(180deg); }
+.xv-thinking-history summary > span { width:16px; height:16px; }
+.xv-thinking-history ol { list-style:decimal; margin:10px 0 5px 20px; padding:0; line-height:1.6; }
+.xv-thinking-history small { display:block; color:var(--muted); opacity:.8; font-size:10px; }
+
 /* Bounded, theme-aware, unobtrusive conversation index. */
 .xv-chat-turn-rail.xv-chat-turn-rail--dock {
   display: block; background: transparent !important; border: 0 !important;
@@ -14660,6 +14689,8 @@ body.theme-beige .xv-plugins-popover, body.theme-beige .xv-sidebar-hover-menu__c
  background:var(--terminal-ui-inset,var(--surface-inset))!important; border-color:color-mix(in srgb,var(--foreground) 25%,transparent)!important;
 }
 .xv-workspace-identity .xv-term-title--button h3 { margin:0!important; text-align:left; font:600 12px/1.3 Arial,sans-serif!important; }
+.xv-workspace-identity .xv-term-title--button,
+.xv-workspace-identity .xv-term-title--button:is(:hover,:focus-visible,[aria-expanded="true"]) { background:transparent!important; border:0!important; box-shadow:none!important; padding-inline:2px!important; }
 @media(max-width:639px){
  .xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-primary-tools>button { padding-inline:7px; }
  .xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-primary-tools { gap:4px; }

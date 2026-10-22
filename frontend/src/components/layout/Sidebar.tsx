@@ -709,6 +709,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
           {navExpanded ? (
             <div className="xv-sidebar-utilities" aria-label="Sidebar utilities">
               <ThemeToggle />
+              <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search workspace" title="Search workspace"><LocateIcon size={16} duration={1} /></button>
               {!incognito ? isGuest ? <button type="button" aria-label="Notifications" onClick={() => requestAuthGate('history')}><Bell size={14} /></button> : <SidebarNotificationButton open={notificationsOpen} onToggle={() => setNotificationsOpen(value => !value)} /> : null}
               <button type="button" aria-label="Close sidebar" onPointerDown={isMobile ? undefined : startEdgeToggleDrag} onClick={() => { if (edgeToggleDraggedRef.current) { edgeToggleDraggedRef.current = false; return; } if (isMobile) closeMobile(); else toggleSidebar(); }}><PanelLeftClose size={14} /></button>
             </div>
@@ -716,9 +717,6 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             <div className="xv-sidebar-collapsed-actions" aria-label="Workspace shortcuts">
               <button type="button" onClick={handleNewChat} aria-label="New Work">
                 <AnimatedIcon icon={NewTerminalIcon} />
-              </button>
-              <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
-                <LocateIcon size={16} duration={1} />
               </button>
                 <Link
                   href="/dashboard"
@@ -743,6 +741,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
               <HoverTip label="Theme" description="Choose the workspace theme." side="bottom">
                 <ThemeToggle placement="right-start" />
               </HoverTip>
+              <HoverTip label="Search workspace" side="bottom"><button type="button" onClick={() => setSearchOpen(true)} aria-label="Search workspace"><LocateIcon size={16} duration={1} /></button></HoverTip>
               {!isGuest && !incognito && <HoverTip label="Notifications" side="bottom"><SidebarNotificationButton open={notificationsOpen} onToggle={() => { if (!effectiveSidebarOpen) toggleSidebar(); setNotificationsOpen((value) => !value); }} compact /></HoverTip>}
             </div>
           )}
@@ -858,6 +857,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             <PanelLeft className="h-4 w-4" aria-hidden="true" />
           </button>
           <button type="button" onClick={() => { if (isGuest) requestAuthGate('history'); else { setMobileOpen(true); setNotificationsOpen(true); } }} aria-label="Notifications"><Bell size={16} /></button>
+          <button type="button" onClick={() => { if (isGuest) requestAuthGate('history'); else setSearchOpen(true); }} aria-label="Search workspace"><LocateIcon size={16} duration={1} /></button>
           <button type="button" onClick={handleNewChat} aria-label="New Terminal">
             <AnimatedIcon icon={NewTerminalIcon} size={16} intro={false} />
           </button>

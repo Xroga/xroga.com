@@ -51,13 +51,20 @@ const editorial = Cormorant_Garamond({
   variable: '--font-editorial',
 });
 
-export const metadata: Metadata = buildMetadata({
-  title: 'Free AI App Builder for Web3 & Blockchain Apps | Xroga',
+const baseMetadata = buildMetadata({
+  title: 'Free Blockchain App Builder | AI Crypto & Web3 Apps | Xroga',
   description:
-    'Build Web3 apps, dApps, crypto SaaS and DeFi dashboards with Xroga. A blockchain app builder for Web3 app development in real repositories. Start free.',
+    'Build blockchain apps, crypto products and Web3 dApps with AI in a real repository. Describe your idea, review the code and start free with Xroga.',
   path: '/crypto',
   keywords: [
-    'free ai app builder',
+    'free blockchain app builder',
+    'crypto builder',
+    'ai crypto builder',
+    'build web3 apps',
+    'ai web3 app builder',
+    'crypto app builder',
+    'dapp builder ai',
+    'build blockchain app with ai',
     'web3 app',
     'web3 apps',
     'web3 app development',
@@ -69,6 +76,11 @@ export const metadata: Metadata = buildMetadata({
     'ai crypto builder',
   ],
 });
+export const metadata: Metadata = {
+  ...baseMetadata,
+  openGraph: { type: 'website', url: 'https://xroga.com/crypto', title: 'Free Blockchain App Builder | AI Crypto & Web3 Apps | Xroga', description: baseMetadata.description ?? '', images: [{ url: 'https://xroga.com/images/crypto-guides/build-blockchain-app.png', alt: 'Editorial illustration of planning a blockchain application' }] },
+  twitter: { card: 'summary_large_image', title: 'Free Blockchain App Builder | Xroga', description: baseMetadata.description ?? '', images: ['https://xroga.com/images/crypto-guides/build-blockchain-app.png'] },
+};
 
 const PRODUCT_TYPES = [
   {
@@ -165,6 +177,18 @@ const FAQS = [
     a: 'A Web3 app builder helps create software that uses blockchain data, wallets, decentralized protocols or other Web3 technologies. Xroga uses AI to help build those products while keeping the resulting work connected to an inspectable repository.',
   },
   {
+    q: 'Can I build a blockchain app with AI for free?',
+    a: 'You can start a supported blockchain app project on Xroga’s free plan without a card. Real deployments, network transactions, provider APIs and third-party services may have separate costs. Review the generated code and test any contract or payment flow before launch.',
+  },
+  {
+    q: 'What can an AI crypto app builder make?',
+    a: 'An AI crypto builder can help create wallet-facing interfaces, read-only dashboards, stablecoin checkout prototypes, governance tools and other supported applications. Live payments, signing and external data need authorised providers and independent verification.',
+  },
+  {
+    q: 'Do I need to choose a model or tools before I describe my dApp?',
+    a: 'No. Describe the outcome in plain language or by voice. Xroga routes supported work within the workspace; you still review permission requests, connected accounts, financial actions and the completed result.',
+  },
+  {
     q: 'Can I build a Web3 app with AI?',
     a: 'Yes. Describe the product you want to create and Xroga can help implement supported interfaces, application logic, APIs, data workflows and integrations inside the project.',
   },
@@ -256,9 +280,8 @@ export default function CryptoPage() {
         '@type': 'WebPage',
         '@id': 'https://xroga.com/crypto#webpage',
         url: 'https://xroga.com/crypto',
-        name: 'Free AI App Builder for Web3 & Blockchain Apps | Xroga',
-        description:
-          'Build Web3 apps, dApps, crypto SaaS and DeFi dashboards with Xroga. A blockchain app builder for Web3 app development in real repositories.',
+        name: 'Free Blockchain App Builder | AI Crypto & Web3 Apps | Xroga',
+        description: baseMetadata.description,
         isPartOf: { '@id': 'https://xroga.com/#website' },
       },
       {
@@ -310,6 +333,11 @@ export default function CryptoPage() {
           },
         ],
       },
+      {
+        '@type': 'FAQPage',
+        '@id': 'https://xroga.com/crypto#faq',
+        mainEntity: FAQS.map((item) => ({ '@type': 'Question', name: item.q, acceptedAnswer: { '@type': 'Answer', text: item.a } })),
+      },
     ],
   };
 
@@ -333,7 +361,7 @@ export default function CryptoPage() {
           </div>
 
           <h1 className={styles.heroTitle}>
-            <span className={styles.heroSansLine}>Build Web3 &amp; Blockchain</span>
+            <span className={styles.heroSansLine}>Build Blockchain &amp; Web3</span>
             <br />
             <span className={styles.heroSerifLine}>
               <span className={styles.heroMutedText}>Apps with</span>{' '}
@@ -342,8 +370,8 @@ export default function CryptoPage() {
           </h1>
 
           <p className={styles.heroSub}>
-            Build Web3 apps, dApps, DeFi dashboards, crypto SaaS, wallet tools and
-            on-chain products with AI — inside a real repository you control.
+            Describe a crypto app, Web3 dApp, DeFi dashboard or wallet tool. Xroga
+            helps build it with AI inside a real repository you control.
           </p>
 
           <div className={styles.heroConsole} id="builder">
@@ -687,6 +715,21 @@ export default function CryptoPage() {
               <li><Check /> Vercel workflow</li>
             </ul>
           </article>
+        </div>
+      </section>
+
+      <section className={`${styles.section} ${styles.guideSection}`} aria-labelledby="crypto-guides-heading">
+        <span className={styles.kicker}>PRACTICAL CRYPTO BUILD GUIDES</span>
+        <h2 id="crypto-guides-heading">Build with a better brief.</h2>
+        <p>Five field guides to planning, building and checking a crypto product. Each covers a different real-world question and links to its primary sources.</p>
+        <div className={styles.guideGrid}>
+          {[
+            ['How to build a blockchain app with AI', '/blog/how-to-build-blockchain-app-with-ai'],
+            ['Design a wallet experience people trust', '/blog/smart-wallet-ux-account-abstraction'],
+            ['Build a stablecoin payment app', '/blog/stablecoin-payment-app-guide'],
+            ['Review smart contract security', '/blog/smart-contract-security-checklist'],
+            ['Build a trustworthy crypto dashboard', '/blog/crypto-dashboard-data-guide'],
+          ].map(([label, href]) => <Link href={href} key={href}>{label}<ArrowRight aria-hidden="true" /></Link>)}
         </div>
       </section>
 

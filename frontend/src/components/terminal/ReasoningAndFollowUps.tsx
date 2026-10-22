@@ -2,7 +2,7 @@
 
 import { memo, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
-import { BlackHoleMark } from './BlackHoleMark';
+import { BlackHoleWordmark } from './BlackHoleMark';
 import {
   extractImagesFromContent,
   stripImageMarkdown,
@@ -17,7 +17,7 @@ import { ImageStudioCard } from './ImageStudioCard';
 
 function ResponseBody({ children, streaming }: { children: ReactNode; streaming?: boolean }) {
   return <div className={cn('xv-response-text min-w-0', streaming && 'xv-streaming')}>
-    <div className="xv-response-identity"><BlackHoleMark active={streaming} /><span>Xroga</span><span className="xv-response-model">Black Hole</span></div>
+    <div className="xv-response-identity"><BlackHoleWordmark active /></div>
     <div className="min-w-0">{children}</div>
   </div>;
 }

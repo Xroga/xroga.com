@@ -111,3 +111,6 @@
 .modelButton.modelButton:hover,.modelButton.modelButton:focus-visible { opacity:1; background:var(--terminal-ui-inset,var(--surface-inset)); border-color:color-mix(in srgb,var(--foreground) 32%,transparent); }
 .modelText.modelText { display:inline!important; font-size:12px!important; letter-spacing:0; white-space:nowrap; }
 .mobileModelIcon.mobileModelIcon,.chevron.chevron { display:none!important; }
+.modelButton.modelButton { width:32px; min-width:32px; height:32px; min-height:32px; padding:2px; justify-content:center; border:0; background:transparent; box-shadow:none; }
+.modelButton.modelButton:hover,.modelButton.modelButton:focus-visible { background:color-mix(in srgb,var(--foreground) 8%,transparent); border:0; }
+.modelButton.modelButton > span { width:25px; height:25px; }

@@ -41,7 +41,7 @@ import {
   ExecutionShimmerText,
   StalledDots,
 } from './ExecutionMotion';
-import { BlackHoleMark } from './BlackHoleMark';
+import { BlackHoleMark, BlackHoleWordmark } from './BlackHoleMark';
 
 const DEFAULT_VISIBLE_ROWS = 5;
 const STALLED_AFTER_MS = 9_000;
@@ -317,6 +317,7 @@ interface TerminalLiveActivityProps {
   pendingIntent?: PendingExecutionIntent;
   pendingLabel?: string;
   requestText?: string;
+  thinkingSteps?: readonly string[];
 }
 
 export function TerminalLiveActivity({
@@ -326,6 +327,7 @@ export function TerminalLiveActivity({
   pendingIntent = 'chat',
   pendingLabel,
   requestText,
+  thinkingSteps = [],
 }: TerminalLiveActivityProps) {
   const [expanded, setExpanded] = useState(false);
   const [now, setNow] = useState(() => Date.now());
@@ -352,7 +354,7 @@ export function TerminalLiveActivity({
   const stalled = active && silentForMs >= STALLED_AFTER_MS;
 
   if (rows.length === 0) {
-    if (!pending) return null;
+    if (!pending) return thinkingSteps.length ? <details className="xv-thinking-history"><summary><BlackHoleMark /> Thinking &amp; processing · {thinkingSteps.length} updates</summary><ol>{thinkingSteps.map((step, index) => <li key={`${index}-${step}`}>{step}</li>)}</ol><small>Recorded activity only · private model reasoning is not shown</small></details> : null;
 
     const label = pendingLabel ?? 'Responding';
     const capabilities = capabilitiesForIntent(pendingIntent);
@@ -361,7 +363,7 @@ export function TerminalLiveActivity({
     if (plainChat && !request) {
       return (
         <div className="xv-exec-inline xv-exec-inline--chat my-2" data-state="pending">
-          <BlackHoleMark active /><span className="xv-exec-brand">Xroga · Black Hole</span><ExecutionShimmerText>{label}</ExecutionShimmerText>
+          <BlackHoleWordmark active /><ExecutionShimmerText>{label}</ExecutionShimmerText>
         </div>
       );
     }
@@ -382,9 +384,8 @@ export function TerminalLiveActivity({
         ) : null}
 
         <div className="xv-exec-header">
-          <BlackHoleMark active />
+          <BlackHoleWordmark active />
           <span className="min-w-0 flex-1">
-            <span className="xv-exec-brand">Xroga · Black Hole</span>
             <ExecutionShimmerText className="xv-exec-header__state">{label}</ExecutionShimmerText>
             {capabilities.length ? (
               <span className="xv-exec-capability-line">
@@ -448,7 +449,7 @@ export function TerminalLiveActivity({
             {active ? (
               <ExecutionShimmerText className="xv-exec-header__state">{state}</ExecutionShimmerText>
             ) : (
-              <span className="xv-exec-header__state text-[var(--foreground)]">{state}</span>
+              <span className="xv-exec-header__state text-[var(--foreground)]">Thinking &amp; processing · {state}</span>
             )}
             <span className="xv-exec-header__latest min-w-0 truncate text-[var(--muted)]">{latest.label}</span>
           </span>
@@ -479,18 +480,18 @@ export function TerminalLiveActivity({
         />
       </button>
 
-      <ol className="mt-2 space-y-0.5">
-        {visible.map((row, index) => (
+      {active || expanded ? <ol className="mt-2 space-y-0.5">
+        {(active && !expanded ? visible : rows).map((row, index) => (
           <ActivityRow
             key={row.id}
             row={row}
             current={active && row.id === latest.id}
-            last={index === visible.length - 1}
+            last={index === (active && !expanded ? visible : rows).length - 1}
           />
         ))}
-      </ol>
+      </ol> : null}
 
-      {!expanded && rows.length > DEFAULT_VISIBLE_ROWS ? (
+      {active && !expanded && rows.length > DEFAULT_VISIBLE_ROWS ? (
         <button
           type="button"
           onClick={() => setExpanded(true)}

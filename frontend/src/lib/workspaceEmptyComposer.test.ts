@@ -339,17 +339,18 @@ test('a conversation exposes one context-aware navigator that follows scroll pos
 
   assert.match(
     DOCK,
-    /showJumpToLatest\s*\? scrollToLatest\('smooth'\)\s*:\s*scrollToFirst\('smooth'\)/,
+    /if \(showJumpToLatest\) scrollToLatest\('smooth'\);\s*else scrollToFirst\('smooth'\);/,
   );
 
-  assert.match(DOCK, /<SquareChevronUpIcon size=\{19\}/);
+  assert.match(DOCK, /<ArrowDown size=\{19\}/);
+  assert.match(DOCK, /<ArrowUp size=\{19\}/);
 
   assert.match(
     CSS,
     /\.xv-conversation-navigator\.is-direction-down\s*\{[^}]*--xv-navigator-rotation:\s*180deg/,
   );
 
-  assert.match(CSS, /\.xv-conversation-navigator\s*\{[\s\S]*?width:\s*2\.25rem[\s\S]*?border-radius:\s*0\.62rem/);
+  assert.match(CSS, /\.xv-conversation-navigator,\s*\.xv-conversation-navigator:hover,\s*\.xv-conversation-navigator:active\s*\{[\s\S]*?border:\s*0\s*!important/);
   assert.doesNotMatch(DOCK, /data-tooltip=\{showJumpToLatest/);
   assert.doesNotMatch(DOCK, /xv-conversation-navigator__label/);
 });

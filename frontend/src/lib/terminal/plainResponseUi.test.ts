@@ -19,7 +19,7 @@ test('AI responses use cardless task-aware transient feedback before real activi
   assert.match(messageLog, /requestText=\{messagePrompt\}/);
   assert.match(messageLog, /isQuickConversationPrompt\(messagePrompt\)/);
   assert.match(liveActivity, /coalesceActivity\(run\.events\)/);
-  assert.match(liveActivity, /if \(!pending\) return null/);
+  assert.match(liveActivity, /if \(!pending\) return thinkingSteps\.length/);
   assert.match(liveActivity, /requestText/);
   assert.match(liveActivity, /Your request/);
   assert.match(liveActivity, /ExecutionShimmerText/);
@@ -34,7 +34,7 @@ test('AI responses use cardless task-aware transient feedback before real activi
   assert.doesNotMatch(liveActivity, /Connected · awaiting first update/);
   assert.doesNotMatch(liveActivity, /rounded-2xl border border-\[var\(--card-border\)\]/);
   assert.match(liveActivity, /aria-label="Execution activity"/);
-  assert.match(liveActivity, /private model reasoning is never shown/i);
+  assert.match(liveActivity, /private model reasoning is not shown/i);
   assert.doesNotMatch(liveActivity, /chain-of-thought is being generated|generating private model reasoning/i);
 });
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import {
   MessageCircleHeart,
   Check,
@@ -10,7 +11,6 @@ import { UpvoteIcon } from '@/components/icons/animated/UpvoteIcon';
 import { DownvoteIcon } from '@/components/icons/animated/DownvoteIcon';
 import { CopyIcon } from '@/components/icons/animated/CopyIcon';
 import { ShareIcon } from '@/components/icons/animated/ShareIcon';
-import { Trash2Icon } from '@/components/icons/animated/Trash2Icon';
 import { MessageShareModal } from './MessageShareModal';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
@@ -22,7 +22,7 @@ interface MessageBubbleActionsProps {
   messageId: string;
   prompt?: string;
   onFeedback?: () => void;
-  onDelete?: () => void;
+  createdAt?: number;
 }
 
 export function MessageBubbleActions({
@@ -31,7 +31,7 @@ export function MessageBubbleActions({
   messageId,
   prompt,
   onFeedback,
-  onDelete,
+  createdAt,
 }: MessageBubbleActionsProps) {
   const [reaction, setReaction] = useState<'up' | 'down' | null>(null);
   const [copied, setCopied] = useState(false);
@@ -91,11 +91,6 @@ export function MessageBubbleActions({
               <MessageCircleHeart className="w-3.5 h-3.5" />
             </button>
           )}
-          {onDelete && (
-            <button type="button" onClick={onDelete} className={cn(btnClass, 'hover:text-red-400 hover:bg-red-500/10')} aria-label="Delete message">
-              <AnimatedIcon icon={Trash2Icon} size={14} intro={false} />
-            </button>
-          )}
         </>
       )}
       {role === 'user' && (
@@ -108,6 +103,7 @@ export function MessageBubbleActions({
       )}
       <span className="sr-only" data-message-id={messageId} />
     </div>
+    {role === 'assistant' ? <div className="xv-response-meta"><span>Xroga is still improving. Found an issue? <Link href="/community?compose=1&category=bug">Report a bug</Link></span>{createdAt ? <time dateTime={new Date(createdAt).toISOString()}>{new Intl.DateTimeFormat('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit', timeZone:'UTC', timeZoneName:'short' }).format(new Date(createdAt))}</time> : null}</div> : null}
     {content.trim() && (
       <MessageShareModal
         open={shareOpen}

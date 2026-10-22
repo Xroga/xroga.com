@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
-import { SquareChevronUpIcon } from '@/components/ui/square-chevron-up-icon';
+import { ArrowDown, ArrowUp } from 'lucide-react';
 
 import { TerminalChatBar } from './TerminalChatBar';
 import { ChatbarQueueOutside } from './ChatbarQueueOutside';
@@ -22,7 +22,6 @@ import { CompanionComposerAnchor } from '@/components/companion/CompanionSurface
 
 export function TerminalDock() {
   const dockRef = useRef<HTMLDivElement>(null);
-  const [navigationPressed, setNavigationPressed] = useState(false);
 
   const pathname = usePathname();
 
@@ -236,17 +235,15 @@ export function TerminalDock() {
                       type="button"
                       className={cn(
                         'xv-conversation-navigator',
-                        navigationPressed && 'is-pressed',
                         showJumpToLatest ? 'is-direction-down' : 'is-direction-up'
                       )}
                       onClick={() => {
-                        setNavigationPressed(true);
                         if (showJumpToLatest) scrollToLatest('smooth');
                         else scrollToFirst('smooth');
                       }}
                       aria-label={showJumpToLatest ? 'Scroll to latest' : 'Scroll to top'}
                     >
-                      <SquareChevronUpIcon size={19} direction={showJumpToLatest ? 'down' : 'up'} />
+                      {showJumpToLatest ? <ArrowDown size={19} strokeWidth={2.2} aria-hidden="true" /> : <ArrowUp size={19} strokeWidth={2.2} aria-hidden="true" />}
                     </button>
                   ) : null}
 

@@ -2,13 +2,11 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import Link from 'next/link';
-import { Share2, X } from 'lucide-react';
+import { Share2, UsersRound, ExternalLink, X } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 import { useWorkspaceAuthGate } from '@/components/workspace/WorkspaceAuthGate';
-import { UserProfileBox } from '@/components/profile/UserProfileBox';
-import { useAppStore } from '@/store/useAppStore';
+import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { MessageShareModal } from './MessageShareModal';
 import styles from './WorkspacePeopleControls.module.css';
 
@@ -16,7 +14,7 @@ export function WorkspacePeopleControls() {
   const { messages } = useTerminalChat();
   const identity = useWorkspaceIdentity();
   const { requestAuthGate } = useWorkspaceAuthGate();
-  const profile = useAppStore(state => state.profile);
+  const activeProject = useProjectWorkspaceStore(state => state.activeProjectContext);
   const [open, setOpen] = useState(false);
   const [share, setShare] = useState(false);
   const drawerRef = useRef<HTMLElement>(null);
@@ -39,15 +37,15 @@ export function WorkspacePeopleControls() {
   }, [open]);
   return <>
     <button type="button" className={styles.control} aria-label="Share conversation" title="Share a read-only conversation snapshot" disabled={!transcript.trim()} onClick={() => { if (identity.status === 'guest') { requestAuthGate('integration'); return; } setShare(true); }}><Share2 size={14} /><span>Share</span></button>
-    <button type="button" className={styles.control} aria-label="Profile" onClick={() => setOpen(true)}><UserProfileBox url={profile?.avatar_url} initial={identity.displayName.charAt(0).toUpperCase()} size="terminalCompact" /><span>Profile</span></button>
+    <button type="button" className={styles.control} aria-label="Team" onClick={() => setOpen(true)}><UsersRound size={15} /><span>Team</span></button>
     <MessageShareModal open={share} onClose={() => setShare(false)} response={transcript} contentLabel="conversation snapshot" />
     {open ? createPortal(<div className={styles.overlay} onClick={() => setOpen(false)}>
-      <aside ref={drawerRef} className={styles.drawer} role="dialog" aria-label="Workspace profile" aria-modal="true" onClick={event => event.stopPropagation()}>
-        <header><strong>Profile</strong><button autoFocus type="button" aria-label="Close profile" onClick={() => setOpen(false)}><X size={18} /></button></header>
-        <UserProfileBox url={profile?.avatar_url} initial={identity.displayName.charAt(0).toUpperCase()} size="terminalCompact" />
-        <h2>{profile?.display_name || identity.displayName}</h2><p>{identity.email || 'Guest workspace'}</p>
-        {identity.status === 'guest' ? <Link href="/auth/signup?next=%2Fworkspace">Create an account</Link> : <><Link href="/settings?tab=profile">Profile settings</Link><Link href="/dashboard">Plan and usage</Link><Link href="/settings?tab=notifications">Notifications</Link></>}
-        <p>Sharing creates a read-only snapshot of this conversation. It does not grant access to files, connected accounts or project editing.</p>
+      <aside ref={drawerRef} className={styles.drawer} role="dialog" aria-label="Team workspace" aria-modal="true" onClick={event => event.stopPropagation()}>
+        <header><strong>Team</strong><button autoFocus type="button" aria-label="Close team panel" onClick={() => setOpen(false)}><X size={18} /></button></header>
+        <div className={styles.teamIntro}><UsersRound size={22} /><h2>Work together, with clear access.</h2><p>{activeProject?.repo || 'This workspace'} · {identity.displayName}</p></div>
+        <section className={styles.teamSection}><h3>Conversation sharing</h3><p>Share a read-only snapshot of this conversation. It does not grant access to files, connected accounts or project editing.</p><button type="button" disabled={!transcript.trim()} onClick={() => { setOpen(false); setShare(true); }}><Share2 size={15} /> Share conversation</button></section>
+        <section className={styles.teamSection}><h3>Project collaborators</h3><p>Repository collaborators are managed by GitHub. Inviting someone there does not give them Xroga workspace access or charge your plan.</p>{activeProject?.repo ? <a href={`https://github.com/${activeProject.repo}/settings/access`} target="_blank" rel="noreferrer">Manage GitHub access <ExternalLink size={14} /></a> : <p>Connect a GitHub repository to manage its collaborators.</p>}</section>
+        <section className={styles.teamSection}><h3>Xroga workspace roles</h3><p>Viewer, client, worker and owner invitations are not backed by workspace membership yet. No invite or owner-funded usage can be granted from this panel.</p></section>
       </aside>
     </div>, document.body) : null}
   </>;

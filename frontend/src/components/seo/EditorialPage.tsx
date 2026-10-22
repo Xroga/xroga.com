@@ -25,9 +25,12 @@ export function EditorialPage({
   const pageSchema = article
     ? {
         '@context': 'https://schema.org', '@type': 'Article', '@id': `${url}#article`,
-        headline: title, description, url, datePublished: '2026-09-09', dateModified: updated ?? '2026-09-09',
+        headline: title, description, url, datePublished: updated ?? '2026-09-09', dateModified: updated ?? '2026-09-09',
         author: { '@type': 'Person', name: 'Muhammad Ibrahim', url: `${SITE_URL}/about` },
         publisher: { '@id': ORGANIZATION_ID }, mainEntityOfPage: { '@id': `${url}#webpage` },
+        ...(visuals.find((visual) => visual.type === 'EDITORIAL_IMAGE' && visual.src)?.src
+          ? { image: `${SITE_URL}${visuals.find((visual) => visual.type === 'EDITORIAL_IMAGE' && visual.src)?.src}` }
+          : {}),
       }
     : buildWebPageJsonLd({ path, name: title, description });
   const breadcrumbSchema = {

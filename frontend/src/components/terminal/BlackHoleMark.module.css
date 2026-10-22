@@ -1,50 +1,22 @@
-.mark {
-  position: relative;
-  display: inline-block;
-  width: 1.85rem;
-  height: 1.85rem;
-  flex: none;
-  color: currentColor;
-  isolation: isolate;
-}
-.corona, .ring, .void, .disk, .spark { position: absolute; display: block; }
-.corona {
-  inset: 9%; border-radius: 50%;
-  background: radial-gradient(circle, transparent 48%, color-mix(in srgb, currentColor 14%, transparent) 61%, transparent 77%);
-}
-.ring {
-  inset: 18%; border: .22rem solid currentColor; border-radius: 50%;
-  box-shadow: 0 0 .13rem color-mix(in srgb, currentColor 35%, transparent);
-}
-.void {
-  inset: 34%; z-index: 1; border-radius: 50%;
-  background: var(--terminal-ui-surface, var(--background, #090909));
-  box-shadow: 0 0 0 1px color-mix(in srgb, currentColor 24%, transparent);
-}
-.disk {
-  z-index: 2; top: 47%; left: -3%; width: 106%; height: 13%;
-  border-radius: 100% 0 100% 0;
-  background: currentColor;
-  transform: rotate(-23deg) skewX(-26deg);
-  box-shadow: 0 0 .16rem color-mix(in srgb, currentColor 55%, transparent);
-}
-.spark {
-  z-index: 3; top: 19%; left: 71%; width: 9%; height: 9%; border-radius: 50%;
-  background: currentColor; opacity: .5;
-}
-.active .ring { animation: black-hole-lens 3.4s linear infinite; }
-.active .disk { animation: black-hole-orbit 2.6s ease-in-out infinite; }
-.active .corona { animation: black-hole-corona 3.4s ease-in-out infinite; }
-.active .spark { animation: black-hole-spark 2.6s linear infinite; }
-@keyframes black-hole-lens { to { transform: rotate(360deg); } }
-@keyframes black-hole-orbit {
-  0%, 100% { transform: rotate(-23deg) skewX(-26deg) scaleX(1); }
-  25% { transform: rotate(-18deg) skewX(-20deg) scaleX(.86); }
-  50% { transform: rotate(-23deg) skewX(-26deg) scaleX(1.08); }
-  75% { transform: rotate(-28deg) skewX(-32deg) scaleX(.88); }
-}
-@keyframes black-hole-corona { 50% { opacity: .55; transform: scale(1.13); } }
-@keyframes black-hole-spark { to { transform: rotate(360deg) translateX(.17rem); } }
-@media (prefers-reduced-motion: reduce) {
-  .active .ring, .active .disk, .active .corona, .active .spark { animation: none; }
-}
+.mark { position:relative; display:inline-block; width:1.9rem; height:1.9rem; flex:none; isolation:isolate; }
+.art { position:absolute; inset:0; background:url('/images/black-hole-reference.png') center/contain no-repeat; mix-blend-mode:screen; }
+.orbit { position:absolute; inset:16%; border-radius:50%; border:1px solid transparent; box-shadow:0 1px 1px #fff inset,0 3px 5px #ffffff55 inset,0 4px 4px #ffffff22 inset; opacity:.5; }
+.particleOne,.particleTwo,.particleThree { position:absolute; width:2px; height:2px; border-radius:50%; background:#fff; box-shadow:0 0 5px #fff; opacity:.7; }
+.particleOne { top:8%; left:76%; } .particleTwo { top:76%; left:13%; width:1.5px; height:1.5px; } .particleThree { top:22%; left:4%; width:1px; height:1px; }
+.active .orbit { animation:loader-rotate 1.5s linear infinite; }
+.active .particleOne { animation:particle-one 2.4s linear infinite; }
+.active .particleTwo { animation:particle-two 3.1s linear infinite; }
+.active .particleThree { animation:particle-three 2.8s linear infinite; }
+.wordmark { display:inline-flex; align-items:center; gap:.35rem; color:var(--foreground); white-space:nowrap; user-select:none; font-size:11px; font-weight:650; }
+.brand { margin-left:.05rem; }
+.letters { display:inline-flex; gap:1px; color:var(--muted); font-weight:500; }
+.letter { display:inline-block; }
+.active .letter { animation:loader-letter-anim 2s infinite; animation-delay:calc(var(--letter-index) * .1s); }
+@keyframes loader-rotate { 0% { transform:rotate(90deg); opacity:.28; } 50% { transform:rotate(270deg); opacity:.7; } 100% { transform:rotate(450deg); opacity:.28; } }
+@keyframes loader-letter-anim { 0%,100% { opacity:.45; transform:translateY(0); } 20% { opacity:1; transform:scale(1.15); } 40% { opacity:.7; transform:translateY(0); } }
+@keyframes particle-one { to { transform:rotate(360deg) translateX(3px); } }
+@keyframes particle-two { to { transform:rotate(-360deg) translateX(4px); } }
+@keyframes particle-three { to { transform:rotate(360deg) translateY(3px); } }
+:global(body.theme-white) .art,:global(body.theme-beige) .art { filter:invert(1); mix-blend-mode:multiply; }
+:global(body.theme-white) .particleOne,:global(body.theme-white) .particleTwo,:global(body.theme-white) .particleThree,:global(body.theme-beige) .particleOne,:global(body.theme-beige) .particleTwo,:global(body.theme-beige) .particleThree { background:#111; box-shadow:0 0 5px #111; }
+@media (prefers-reduced-motion: reduce) { .active .orbit,.active .particleOne,.active .particleTwo,.active .particleThree,.active .letter { animation:none; } }
