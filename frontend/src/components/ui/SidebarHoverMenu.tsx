@@ -146,7 +146,7 @@ export function SidebarHoverMenu({ trigger, children, className }: SidebarHoverM
               ref={menuRef}
               role="menu"
               className={cn('xv-sidebar-hover-menu fixed z-[320]', className)}
-              style={{ top: pos.top, left: pos.left, maxWidth: 'calc(100vw - 24px)', maxHeight: 'calc(100dvh - 24px)', overflowY: 'auto', background: 'var(--card)', opacity: 1, overscrollBehavior: 'contain' }}
+              style={{ top: pos.top, left: pos.left, maxWidth: 'calc(100vw - 24px)', maxHeight: 'calc(100dvh - 24px)', overflowY: 'auto', background: 'transparent', border: 0, boxShadow: 'none', padding: 0, opacity: 1, overscrollBehavior: 'contain' }}
               onMouseEnter={cancelClose}
               onMouseLeave={scheduleClose}
               onClick={(event) => {

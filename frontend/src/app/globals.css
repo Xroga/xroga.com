@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+.xv-user-avatar-reveal { opacity: 0; transition: opacity 150ms ease; }
+.xv-repo-name { container-type: inline-size; width: min(136px,18vw); }
+.xv-repo-name span { display:inline-block; min-width:100%; white-space:nowrap; }
+@media (prefers-reduced-motion: no-preference) { .xv-term-title--button:hover .xv-repo-name span { animation:xv-repo-scroll 9s linear infinite alternate; } }
+@keyframes xv-repo-scroll { 0%,12% { transform:translateX(0); } 88%,100% { transform:translateX(min(0px,calc(100cqw - 100%))); } }
+.xv-terminal-turn:hover .xv-user-avatar-reveal,
+.xv-terminal-turn:focus-within .xv-user-avatar-reveal { opacity: 1; }
+@media (hover: none) { .xv-user-avatar-reveal { opacity: 1; } }
+
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
 /*
  * KaTeX's stylesheet is imported by `mathRenderImpl` instead, so it travels with the

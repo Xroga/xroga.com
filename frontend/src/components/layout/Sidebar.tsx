@@ -157,9 +157,7 @@ function NavIcon({ entry }: { entry: NavEntry }) {
 }
 
 const navItems: NavEntry[] = [
-  { href: '/workspace', motion: 'blink' as const, label: 'Workspace', icon: Terminal, animated: TerminalIcon, tip: 'Main workspace — build and chat with Xroga AI.' },
   { href: '/dashboard', motion: 'pulse' as const, label: 'Dashboard', icon: LayoutDashboard, animated: LayoutGridIcon, tip: 'Recent activity, billing, plan, and usage.' },
-  { href: '/dashboard/projects', motion: 'flip' as const, label: 'Projects', icon: FolderGit2, animated: FolderOpenIcon, tip: 'Open connected repositories and their workspaces.' },
   { href: '/dashboard/integrations', motion: 'pulse' as const, label: 'Plugins', icon: Link2, animated: ConnectIcon, tip: 'Connect GitHub, Slack, databases, and tools.' },
   {
     id: 'automations', href: '/dashboard/automations', label: 'Automations', icon: Workflow, animated: LucideWorkflowIcon, newSection: true,
@@ -236,6 +234,12 @@ export function Sidebar({ displayName, email }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const workspaceIdentity = useWorkspaceIdentity();
+  const [automationLabelIndex, setAutomationLabelIndex] = useState(0);
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const timer = window.setInterval(() => { if (document.visibilityState === 'visible') setAutomationLabelIndex(index => (index + 1) % 3); }, 5000);
+    return () => window.clearInterval(timer);
+  }, []);
   const isGuest = workspaceIdentity.status === 'guest';
   const { requestAuthGate } = useWorkspaceAuthGate();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -803,7 +807,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                       <Link href={entry.href ?? '/workspace'} onClick={(event) => handleNavEntryClick(event, entry.href ?? '/workspace')}
                         className={cn('xv-nav-group__trigger', groupHasActive(entry) && 'xv-active')} aria-label={entry.label}>
                         <NavIcon entry={entry} />
-                        <span>{entry.label}</span>
+                        <span>{entry.id === 'automations' ? ['Automations', 'AI Employees', 'Browser automation'][automationLabelIndex] : entry.label}</span>
                         {entry.newSection ? <span className="xv-sidebar-new-badge">NEW</span> : null}
                       </Link>
                     }

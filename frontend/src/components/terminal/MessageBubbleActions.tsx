@@ -61,6 +61,7 @@ export function MessageBubbleActions({
   return (
     <>
     <div
+      style={role === 'user' ? { background: 'transparent', borderColor: 'transparent', boxShadow: 'none', backdropFilter: 'none' } : undefined}
       className={cn(
         'mt-1.5 flex w-fit flex-wrap items-center gap-0.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-raised)]/85 p-0.5 opacity-100 shadow-sm backdrop-blur sm:opacity-0 sm:group-hover:opacity-100 focus-within:opacity-100 transition-opacity',
         role === 'user' ? 'ml-auto justify-end' : 'justify-start'
@@ -102,26 +103,18 @@ export function MessageBubbleActions({
           <button type="button" onClick={handleCopy} className={btnClass} aria-label="Copy">
             {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <AnimatedIcon icon={CopyIcon} size={14} intro={false} />}
           </button>
-          {onDelete && (
-            <button
-              type="button"
-              onClick={onDelete}
-              className={cn(btnClass, 'hover:text-red-400 hover:bg-red-500/10')}
-              aria-label="Delete message"
-            >
-              <AnimatedIcon icon={Trash2Icon} size={14} intro={false} />
-            </button>
-          )}
+          {content.trim() ? <button type="button" onClick={() => setShareOpen(true)} className={btnClass} aria-label="Share prompt"><AnimatedIcon icon={ShareIcon} size={14} intro={false} /></button> : null}
         </>
       )}
       <span className="sr-only" data-message-id={messageId} />
     </div>
-    {role === 'assistant' && content.trim() && (
+    {content.trim() && (
       <MessageShareModal
         open={shareOpen}
         onClose={() => setShareOpen(false)}
-        prompt={prompt}
+        prompt={role === 'assistant' ? prompt : undefined}
         response={content}
+        contentLabel={role === 'user' ? 'prompt' : 'answer'}
       />
     )}
     </>

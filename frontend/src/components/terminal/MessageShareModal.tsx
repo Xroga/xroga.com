@@ -49,9 +49,10 @@ interface MessageShareModalProps {
   onClose: () => void;
   prompt?: string;
   response: string;
+  contentLabel?: string;
 }
 
-export function MessageShareModal({ open, onClose, prompt = '', response }: MessageShareModalProps) {
+export function MessageShareModal({ open, onClose, prompt = '', response, contentLabel = 'answer' }: MessageShareModalProps) {
   const hasPrompt = Boolean(cleanShareText(prompt));
   const [scope, setScope] = useState<MessageShareScope>(hasPrompt ? 'exchange' : 'response');
   const [visibility, setVisibility] = useState<MessageShareVisibility>('private');
@@ -161,7 +162,7 @@ export function MessageShareModal({ open, onClose, prompt = '', response }: Mess
             <ShareIcon size={18} />
           </span>
           <div className="min-w-0 flex-1">
-            <h2 id="message-share-title" className="text-sm font-semibold text-[var(--text-primary)]">Share this answer</h2>
+            <h2 id="message-share-title" className="text-sm font-semibold text-[var(--text-primary)]">Share this {contentLabel}</h2>
             <p className="truncate text-[11px] text-[var(--text-muted)]">Create a real link with exactly the content you choose.</p>
           </div>
           <button type="button" onClick={onClose} aria-label="Close share dialog" className="grid h-8 w-8 place-items-center rounded-full text-[var(--text-muted)] hover:bg-[var(--surface-inset)] hover:text-[var(--text-primary)]">

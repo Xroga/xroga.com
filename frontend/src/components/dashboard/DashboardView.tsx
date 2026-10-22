@@ -4,6 +4,7 @@ import { SwarmMessageLog } from '@/components/terminal/SwarmMessageLog';
 import { DevWorkspacePanel } from '@/components/terminal/DevWorkspacePanel';
 import { TerminalSkinPicker } from '@/components/terminal/TerminalSkinPicker';
 import { WorkspaceLauncher } from '@/components/terminal/WorkspaceLauncher';
+import { WorkspacePeopleControls } from '@/components/terminal/WorkspacePeopleControls';
 import { WorkspaceSearchButton } from '@/components/terminal/WorkspaceSearchButton';
 import {
   useThemeStore,
@@ -244,6 +245,7 @@ export function DashboardView() {
           ) : (
             <div className="xv-workspace-header-tools">
               <WorkspaceSearchButton />
+              <WorkspacePeopleControls />
               <WorkspaceLauncher />
               <span className="xv-header-sep" aria-hidden="true" />
               <TerminalSkinPicker />

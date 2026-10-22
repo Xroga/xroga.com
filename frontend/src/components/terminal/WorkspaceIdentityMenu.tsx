@@ -227,7 +227,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
         aria-haspopup="menu"
         aria-expanded={open}
       >
-        <h3 className="max-w-[136px] truncate">{repoIdentity.label}</h3>
+        <h3 className="xv-repo-name max-w-[136px] truncate" title={repoIdentity.fullName}><span>{repoIdentity.label}</span></h3>
 
       </button>
 
@@ -237,8 +237,8 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
           <div className="px-2.5 pb-2 pt-2">
             <div className="flex items-start gap-2.5">
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold">{repoIdentity.label}</p>
-                <p className="mt-0.5 truncate font-mono text-[10px] text-[var(--muted)]">
+                <button type="button" className="block w-full break-all text-left text-sm font-semibold" title="Copy full repository name" onClick={() => { if (repoIdentity.fullName) void navigator.clipboard.writeText(repoIdentity.fullName).then(() => toast.success('Repository name copied')).catch(() => toast.error('Could not copy repository name')); }}>{repoIdentity.fullName || repoIdentity.label}</button>
+                <p className="mt-0.5 break-all font-mono text-[10px] text-[var(--muted)]">
                   {repoIdentity.fullName || 'No GitHub repository'} · {repoIdentity.branch}
                 </p>
               </div>

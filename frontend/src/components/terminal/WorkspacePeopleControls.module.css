@@ -1,0 +1,11 @@
+.control { display:flex; align-items:center; gap:5px; height:27px; border:1px solid var(--terminal-ui-border); border-radius:8px; padding:0 7px; font:11px Arial,sans-serif; color:var(--foreground); background:var(--terminal-ui-raised); }
+.control:disabled { opacity:.4; cursor:not-allowed; }
+.control>div { max-width:19px; max-height:19px; overflow:hidden; border-radius:50%; }
+.overlay { position:fixed; inset:0; z-index:2147483000; }
+.drawer { position:absolute; right:0; top:0; bottom:0; width:min(360px,100vw); padding:20px; overflow:auto; background:var(--surface-raised,#181818); color:var(--foreground); border-left:1px solid var(--card-border); box-shadow:-12px 0 40px #0003; }
+.drawer header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+.drawer h2 { margin:12px 0 4px; font-size:18px; }
+.drawer p { font-size:12px; line-height:1.6; margin-bottom:20px; color:var(--muted); overflow-wrap:anywhere; }
+.drawer a { display:block; padding:12px 0; border-bottom:1px solid var(--card-border); font-size:13px; }
+.drawer a:last-of-type { margin-bottom:24px; }
+@media(max-width:1023px) { .control { width:27px; padding:0; justify-content:center; flex-shrink:0; } .control>span { display:none; } }

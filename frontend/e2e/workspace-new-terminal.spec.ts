@@ -45,6 +45,25 @@ test('compact visual starter fits desktop, tablet and phones without overflowing
   }
 });
 
+test('profile drawer and prompt share controls remain accessible without destructive user actions', async ({ page }) => {
+  await page.goto('/workspace');
+  await page.getByRole('button', { name: 'Profile', exact: true }).click();
+  const drawer = page.getByRole('dialog', { name: 'Workspace profile' });
+  await expect(drawer).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(drawer).toHaveCount(0);
+  await page.locator('[data-terminal-composer]').fill('Local prompt sharing test');
+  await page.getByRole('button', { name: 'Send prompt', exact: true }).click();
+  await expect(page.getByText('Local UI fixture reply verified.', { exact: false }).first()).toBeVisible();
+  const userTurn = page.locator('[data-turn-id]').filter({ hasText: 'Local prompt sharing test' }).first();
+  await userTurn.hover();
+  await expect(userTurn.getByRole('button', { name: 'Delete message' })).toHaveCount(0);
+  await userTurn.getByRole('button', { name: 'Share prompt', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Share this prompt' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Create owner-only link' })).toBeVisible();
+  await expect(page.getByRole('complementary', { name: 'Xroga early access notice' })).toHaveCount(0);
+});
+
 test('theme picker updates the workspace, cards and composer and survives reload', async ({ page }) => {
   await page.goto('/workspace');
   await expect(page.getByTestId('workspace-start-cards')).toBeVisible();

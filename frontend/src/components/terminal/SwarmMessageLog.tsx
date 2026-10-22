@@ -28,6 +28,7 @@ import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions } from '@/lib/messageHelpers';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
 import { UserProfileBox } from '@/components/profile/UserProfileBox';
+import { WorkspacePeopleControls } from './WorkspacePeopleControls';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
 import { loadWorkspaceSession } from '@/lib/workspacePersistence';
@@ -374,6 +375,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
             <span className="xv-term-badge">Private · not saved</span>
           ) : (
             <div className="xv-terminal-header-tools flex items-center gap-1 shrink-0">
+              <WorkspacePeopleControls />
               <WorkspaceLauncher />
               <TerminalSkinPicker />
               <button
@@ -465,7 +467,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                 )}
               >
                 {msg.role === 'user' && (
-                  isIncognito ? (
+                  <div className="xv-user-avatar-reveal">{isIncognito ? (
                     <IncognitoProfileBox size="terminal" />
                   ) : (
                     <UserProfileBox
@@ -473,7 +475,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                       initial={displayInitial}
                       size="terminalCompact"
                     />
-                  )
+                  )}</div>
                 )}
                 <div
                   className={cn(
