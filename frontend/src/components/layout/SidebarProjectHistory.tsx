@@ -975,7 +975,9 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   },[accountId,pathname]);
   function renderRow(kind:SidebarKind,id:string,label:string,open:()=>void,pinned:boolean){
     const saved=metaOf(kind,id)?.pin_order!=null;
-    return <div key={kind+':'+id} className="xv-sidebar-work-row group flex items-center gap-1 min-w-0 rounded-md hover:bg-[var(--foreground)]/[0.05]"
+    return <div key={kind+':'+id} className={cn('xv-sidebar-work-row group flex items-center gap-1 min-w-0 rounded-md hover:bg-[var(--foreground)]/[0.05]',
+        (kind==='project'&&activeSidebarProjectId===id)||(kind==='conversation'&&activeSessionId===id)
+          ? 'bg-[var(--foreground)]/[0.075]' : '')}
       onContextMenu={event=>openMenu(event,kind,id)} draggable={pinned}
       onDragStart={event=>event.dataTransfer.setData('text/plain',kind+':'+id)}
       onDragOver={event=>{if(pinned)event.preventDefault();}}
@@ -1154,10 +1156,14 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
               onClick={()=>beginProjectTask(p)}><Plus size={14} aria-hidden="true"/></button>
           </div>
           {expandedProject ? <div className="pl-3 space-y-0.5" aria-label={p.label+' conversations'}>
-            {activeSidebarProjectId===p.id&&sessionId&&messages.length===0?
-              <button type="button" className="w-full text-left px-2 py-1.5 text-xs font-medium rounded-md bg-[var(--foreground)]/[0.055]"
-                aria-label={'Start conversation in '+projectTitle(p.id,p.label)}
-                onClick={()=>router.push('/workspace')}>Start conversation</button>:null}
+            {activeSidebarProjectId===p.id&&sessionId&&!related.some(item=>item.id===sessionId)?
+              <button type="button" className="w-full text-left px-2 py-1.5 text-xs font-medium rounded-md bg-[var(--foreground)]/[0.055] truncate"
+                aria-label={'Active new task in '+projectTitle(p.id,p.label)}
+                onClick={()=>router.push('/workspace')}>
+                {messages.find(message=>message.role==='user')?.content
+                  ? meaningfulSidebarTitle('',messages.find(message=>message.role==='user')?.content).slice(0,64)
+                  : 'Start conversation'}
+              </button>:null}
             {childSections.map(section=>{
               const grouped=related.filter(item=>metaOf('conversation',item.id)?.section_id===section.id);
               if(!grouped.length)return null;
