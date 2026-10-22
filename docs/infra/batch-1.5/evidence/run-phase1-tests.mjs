@@ -69,6 +69,7 @@ const steps = [
 ];
 
 const baseline = JSON.parse(readFileSync(path.join(here, 'baseline-failures.json'), 'utf8')).tests;
+if (process.platform === 'win32') baseline.push(...JSON.parse(readFileSync(path.join(here, 'baseline-failures-windows.json'), 'utf8')).tests); // proven identical on pristine main under this toolchain; never read on Linux CI
 const results = [];
 for (const s of steps) {
   const need = s.needs ?? 'READY';

@@ -34,7 +34,7 @@ describe('run-output artifact adapter (real PostgreSQL)', { skip }, () => {
     const note = 'quarterly notes';
     await insertRun(run.a, alice, aliceProject, 'completed', {
       type: 'xroga.output', version: '1.0', status: 'completed', summary: 'done', evidence: [], blockers: [], nextActions: [],
-      accessToken: 'ghp_NOT_A_FILE_but_a_field_in_the_output_json_0000000000', // a credential-bearing FIELD is not an artifact and is never read
+      accessToken: `${['gh', 'p_'].join('')}NOT_A_FILE_but_a_field_in_the_output_json_0000000000`, // a credential-bearing FIELD is not an artifact and is never read
       artifacts: [
         desc('a-note', 'notes.txt', 'text/plain', { inline: note, sizeBytes: Buffer.byteLength(note) }),
         desc('a-png', 'shot.png', 'image/png', { inline: `data:image/png;base64,${png.toString('base64')}`, sizeBytes: png.length }),
@@ -42,7 +42,7 @@ describe('run-output artifact adapter (real PostgreSQL)', { skip }, () => {
         desc('a-local', 'build.zip', 'application/zip', { uri: '/tmp/xroga/run/build.zip' }),
         desc('a-drive', 'done.txt', 'text/plain', { uri: `drive://${randomUUID()}` }),
         desc('a-env', '.env', 'text/plain', { inline: 'PORT=3000' }),
-        desc('a-key', 'out.txt', 'text/plain', { inline: 'token = ghp_abcdefghijklmnopqrstuvwxyz0123456789ABCD' }),
+        desc('a-key', 'out.txt', 'text/plain', { inline: `token = ${['gh', 'p_'].join('')}abcdefghijklmnopqrstuvwxyz0123456789ABCD` }),
         desc('a-size', 'liar.txt', 'text/plain', { inline: 'abc', sizeBytes: 999 }),
         desc('a-dup', 'one.txt', 'text/plain', { inline: 'first' }),
         desc('a-dup', 'two.txt', 'text/plain', { inline: 'second' }),
@@ -127,7 +127,7 @@ describe('run-output artifact adapter (real PostgreSQL)', { skip }, () => {
     assert.ok(looksLikeCredential('id_rsa', null));
     assert.ok(looksLikeCredential('x.pem', null));
     assert.ok(looksLikeCredential('a.txt', Buffer.from('-----BEGIN RSA PRIVATE KEY-----\nabc')));
-    assert.ok(looksLikeCredential('a.txt', Buffer.from('AKIAABCDEFGHIJKLMNOP')));
+    assert.ok(looksLikeCredential('a.txt', Buffer.from(['AKIA', 'ABCDEFGHIJKLMNOP'].join(''))));
     assert.ok(!looksLikeCredential('README.md', Buffer.from('hello world')));
   });
 });

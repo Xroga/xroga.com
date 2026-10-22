@@ -28,10 +28,10 @@ Migration (operator CLI / worker): LegacyR2 | Supabase Storage | project_files i
 | `STORAGE_WRITE_MODE=legacy` default; `dual`/`r2` opt-in; `r2` fails closed | zero behaviour change until an owner flips it |
 
 ## Out of scope in Phase 1 (interfaces only)
-CredentialVault/OCI KMS (INFRA-004) · Oracle API/workers (INFRA-005/006) · BullMQ/Redis changes · Browser Run and Sandbox providers (INFRA-007) · public/CDN delivery of any object · lifecycle/retention rules in R2 (R2-side config, needs operator).
+CredentialVault/OCI KMS (INFRA-004) · Oracle API/workers (INFRA-005/006) · BullMQ/Redis changes · the Oracle-hosted Chromium + Playwright + Stagehand BrowserWorker and the coding-sandbox provider (INFRA-007; see `browser-architecture-decision.md`: Cloudflare Browser Run/Rendering and Browserbase are excluded as browser hosts) · public/CDN delivery of any object · lifecycle/retention rules in R2 (R2-side config, needs operator).
 
 ## Residual risks (documented, not hidden)
 1. A presigned GET stays valid until expiry even if access is revoked meanwhile. Mitigation: ≤ 300 s cap, default 60 s, revocation checked on each *new* signature.
 2. Presigned-PUT `content-length`/checksum enforcement by **Cloudflare R2 is unproven** (SDK output verified offline only). Mitigation: mandatory server-side verification before READY; unverified bytes are never served.
 3. `reconcile()` examines READY objects in batches of `limit` per run, not a full scan each run.
-4. Objects > 1 GiB in migration are `BLOCKED(NEEDS_MULTIPART_COPY)`: server-side multipart *copy* is not implemented.
+4. Objects above the single-PUT threshold (default 1 GiB) migrate through the bounded multipart path; only objects above `maxObjectBytes` (default 5 GiB) remain `BLOCKED(EXCEEDS_MAX_OBJECT_BYTES)`. Not yet observed against real R2.

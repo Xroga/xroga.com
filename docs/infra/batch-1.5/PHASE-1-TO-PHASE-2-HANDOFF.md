@@ -43,7 +43,7 @@ Phase 2 (INFRA-004/005/006) is **not started**. This lists the exact seams that 
 1. Signed-constraint enforcement at R2 unknown → server read-back is the only integrity control until observed.
 2. Already-issued presigned URLs outlive revocation until expiry (≤ 5 min GET / 15 min PUT).
 3. `Preview` environment secrets in `supabase-migrate.yml` may be production's — check before any PR.
-4. Objects > 1 GiB cannot be migrated yet (server-side multipart copy not built).
+4. (closed in the 2026-10-22 closure) Objects > 1 GiB migrate through the bounded multipart path; proven on synthetic data only, not on real R2.
 5. `reconcile()` is batch-limited per run.
 6. Full backend suite has 3 pre-existing failures (`organicIntelligence`, STALE_FACT) that will keep CI red until fixed upstream.
 
@@ -56,3 +56,22 @@ Phase 2 (INFRA-004/005/006) is **not started**. This lists the exact seams that 
 ## Warnings carried forward
 - Opening a PR runs `supabase-migrate.yml` in the `Preview` environment against this branch's migration; merging to `main` applies it to production. Neither has happened.
 - The migration is additive and reversible by not using it; nothing depends on it until `STORAGE_WRITE_MODE` is changed.
+
+
+## Browser hosting decision carried into Phase 2 and Phase 3 (founder, 2026-10-22)
+Final stack: **Oracle OCI Compute + self-hosted Chromium + Playwright + local-mode Stagehand + Xroga BrowserWorker** (full text: `browser-architecture-decision.md`). Cloudflare stays edge + private R2; Cloudflare Browser Run / Rendering and hosted Browserbase are **not** browser targets; the coding-sandbox decision is unchanged. Not started in Phase 1.
+
+| Phase | Item | What it must deliver for the browser |
+|---|---|---|
+| 2 | INFRA-005 | separate trusted-API and restricted browser-worker images; pinned Chromium/Playwright/Stagehand; non-root, sandbox ON (else BLOCKED), seccomp, dropped caps, CPU/RAM/process limits, private CDP, egress policy incl. metadata/RFC1918/rebinding; AMD64/ARM64 proof before choosing a shape |
+| 2 | INFRA-006 | browser-job payload (tenant/user/project/run/attempt/allowed URLs/limits), lease fencing, cancellation of Chromium process trees, checkpoints, budget, tenant fairness, durable progress — on the existing scheduler, no competing orchestrator |
+| 3 | INFRA-007 | the real Chromium + Playwright + local Stagehand path behind the existing BrowserWorker interface; 15 functional/adversarial workflows from the amendment; evidence to Drive (R2) + Supabase metadata |
+| 3 | INFRA-008 | PRODUCT-001/-009 (with -010/-012), telemetry, measured cost per verified outcome, rollback, Fly/Browserbase-browser exit checklist |
+
+Phase 1 contracts these rely on (all LOCAL_TESTED): `StorageService.putServerObject` for screenshots/recordings (READY only after read-back SHA-256), `drive://` descriptors, tenant-bound object ids, quota reservation, and the injected `ObjectStore` seam. Browser page text and Stagehand output are untrusted and can never create authorisation grants.
+
+## Gap closures (2026-10-22 closure pass)
+- **Objects > 1 GiB:** `StorageService.ingestLegacyMultipart` + engine routing. Memory bounded by the part window (measured +130 MiB RSS for a 1 GiB+5 B object, 65 parts); upload id persisted; resume verifies stored parts by MD5 against the bytes the source produces now; completion always followed by the unchanged read-back SHA-256. Synthetic only.
+- **Artifacts embedded in run output:** `RunOutputArtifactsSource` — only `xroga.output` descriptors with inline bytes are eligible. Finding: today's production envelope writer emits metadata-only descriptors, so little or nothing is migratable; the adapter is ready for when inline bytes exist and classifies everything else with a reason.
+- **Permanent destination refusals** (`NOT_FOUND`/`INVALID_REQUEST`, e.g. a run pointing at another user's project) are now BLOCKED rather than retried.
+- **DB TLS:** `STORAGE_DB_SSL_CA` enables certificate verification for the storage pool; without it behaviour matches the rest of the backend (encrypted, not verified) — residual risk recorded in `security-review.md`.

@@ -1,181 +1,206 @@
-# cmd: npx tsx --test src/storage/migration/postgresMigration.integration.test.ts src/storage/postgresRepository.integration.test.ts src/storage/schemaUpgrade.integration.test.ts
+# cmd: npx tsx --test src\storage\migration\postgresMigration.integration.test.ts src\storage\migration\runOutputArtifacts.integration.test.ts src\storage\postgresRepository.integration.test.ts src\storage\schemaUpgrade.integration.test.ts
 TAP version 13
 # Subtest: migration engine against real PostgreSQL ledger + metadata
     # Subtest: project_files inline content (data URL + text) migrates, links on READ_NEW, unlinks on rollback; sources untouched
     ok 1 - project_files inline content (data URL + text) migrates, links on READ_NEW, unlinks on rollback; sources untouched
       ---
-      duration_ms: 206.016449
+      duration_ms: 473.891
       type: 'test'
       ...
     # Subtest: two workers on real SKIP LOCKED claims copy every item once; replaying changes nothing
     ok 2 - two workers on real SKIP LOCKED claims copy every item once; replaying changes nothing
       ---
-      duration_ms: 287.785828
+      duration_ms: 1033.5925
       type: 'test'
       ...
     # Subtest: SupabaseStorageSource: owner from a UUID folder, unknown owner BLOCKED, secret bucket refused
     ok 3 - SupabaseStorageSource: owner from a UUID folder, unknown owner BLOCKED, secret bucket refused
       ---
-      duration_ms: 1.149597
+      duration_ms: 1.4218
       type: 'test'
       ...
     1..3
 ok 1 - migration engine against real PostgreSQL ledger + metadata
   ---
-  duration_ms: 1142.447183
+  duration_ms: 2960.566
+  type: 'suite'
+  ...
+# Subtest: run-output artifact adapter (real PostgreSQL)
+    # Subtest: only genuine inline artifacts are eligible; metadata, credentials, duplicates and non-terminal runs are classified, never copied
+    ok 1 - only genuine inline artifacts are eligible; metadata, credentials, duplicates and non-terminal runs are classified, never copied
+      ---
+      duration_ms: 790.3748
+      type: 'test'
+      ...
+    # Subtest: open() refuses credentials and ambiguous ids, and returns null for runs that vanished
+    ok 2 - open() refuses credentials and ambiguous ids, and returns null for runs that vanished
+      ---
+      duration_ms: 12.343
+      type: 'test'
+      ...
+    # Subtest: credential heuristics catch keys and tokens by name and by content
+    ok 3 - credential heuristics catch keys and tokens by name and by content
+      ---
+      duration_ms: 0.5577
+      type: 'test'
+      ...
+    1..3
+ok 2 - run-output artifact adapter (real PostgreSQL)
+  ---
+  duration_ms: 2574.3282
   type: 'suite'
   ...
 # Subtest: Xroga Drive against real PostgreSQL (migration + RLS + atomic quota)
     # Subtest: full lifecycle through real SQL: reach READY with verified hash, usage exact
     ok 1 - full lifecycle through real SQL: reach READY with verified hash, usage exact
       ---
-      duration_ms: 40.526557
+      duration_ms: 110.5079
       type: 'test'
       ...
     # Subtest: the database itself refuses PENDING->READY, READY without a verified hash, and identity edits
     ok 2 - the database itself refuses PENDING->READY, READY without a verified hash, and identity edits
       ---
-      duration_ms: 37.287646
+      duration_ms: 123.2758
       type: 'test'
       ...
     # Subtest: DELETED is terminal in the database
     ok 3 - DELETED is terminal in the database
       ---
-      duration_ms: 27.923703
+      duration_ms: 93.8823
       type: 'test'
       ...
     # Subtest: 50 truly concurrent reservations against a 1000-byte quota admit exactly 10
     ok 4 - 50 truly concurrent reservations against a 1000-byte quota admit exactly 10
       ---
-      duration_ms: 172.482288
+      duration_ms: 474.4203
       type: 'test'
       ...
     # Subtest: concurrent completions of the same object commit the bytes exactly once
     ok 5 - concurrent completions of the same object commit the bytes exactly once
       ---
-      duration_ms: 33.903991
+      duration_ms: 126.6473
       type: 'test'
       ...
     # Subtest: commit/release/free are idempotent and never go negative
     ok 6 - commit/release/free are idempotent and never go negative
       ---
-      duration_ms: 17.908563
+      duration_ms: 147.7706
       type: 'test'
       ...
     # Subtest: reconcile_usage repairs drift injected with a superuser UPDATE
     ok 7 - reconcile_usage repairs drift injected with a superuser UPDATE
       ---
-      duration_ms: 26.388069
+      duration_ms: 123.4193
       type: 'test'
       ...
     # Subtest: RLS and grants
         # Subtest: an owner sees only their own READY objects
         ok 1 - an owner sees only their own READY objects
           ---
-          duration_ms: 5.255069
+          duration_ms: 28.1491
           type: 'test'
           ...
         # Subtest: authenticated cannot read bucket/object_key/upload id columns
         ok 2 - authenticated cannot read bucket/object_key/upload id columns
           ---
-          duration_ms: 14.508407
+          duration_ms: 51.6643
           type: 'test'
           ...
         # Subtest: authenticated cannot insert, update, delete, or call quota/migration functions
         ok 3 - authenticated cannot insert, update, delete, or call quota/migration functions
           ---
-          duration_ms: 19.560652
+          duration_ms: 76.2356
           type: 'test'
           ...
         # Subtest: anon sees and does nothing
         ok 4 - anon sees and does nothing
           ---
-          duration_ms: 1.101546
+          duration_ms: 8.9059
           type: 'test'
           ...
         # Subtest: forged JWT subject cannot widen what is visible
         ok 5 - forged JWT subject cannot widen what is visible
           ---
-          duration_ms: 1.189656
+          duration_ms: 8.0628
           type: 'test'
           ...
         1..5
     ok 8 - RLS and grants
       ---
-      duration_ms: 59.847614
+      duration_ms: 266.3714
       type: 'suite'
       ...
     # Subtest: migration ledger
         # Subtest: one destination per source: duplicate source rows are refused at the database
         ok 1 - one destination per source: duplicate source rows are refused at the database
           ---
-          duration_ms: 4.86688
+          duration_ms: 14.0908
           type: 'test'
           ...
         # Subtest: concurrent workers claim disjoint items (SKIP LOCKED) and leases block re-claims until expiry
         ok 2 - concurrent workers claim disjoint items (SKIP LOCKED) and leases block re-claims until expiry
           ---
-          duration_ms: 119.353596
+          duration_ms: 217.7605
           type: 'test'
           ...
         1..2
     ok 9 - migration ledger
       ---
-      duration_ms: 124.580492
+      duration_ms: 232.4816
       type: 'suite'
       ...
     1..9
-ok 2 - Xroga Drive against real PostgreSQL (migration + RLS + atomic quota)
+ok 3 - Xroga Drive against real PostgreSQL (migration + RLS + atomic quota)
   ---
-  duration_ms: 1093.696246
+  duration_ms: 2927.2395
   type: 'suite'
   ...
 # Subtest: migration upgrade, idempotency, hardening and rollback on real PostgreSQL
     # Subtest: upgrade of a populated schema keeps every existing row byte-identical; the new column is null
     ok 1 - upgrade of a populated schema keeps every existing row byte-identical; the new column is null
       ---
-      duration_ms: 185.697886
+      duration_ms: 573.927
       type: 'test'
       ...
     # Subtest: is idempotent: applying the migration a second and third time changes nothing and raises nothing
     ok 2 - is idempotent: applying the migration a second and third time changes nothing and raises nothing
       ---
-      duration_ms: 341.897294
+      duration_ms: 625.0741
       type: 'test'
       ...
     # Subtest: privileged-function and table hardening is in place: pinned search_path, RLS forced, no PUBLIC execute
     ok 3 - privileged-function and table hardening is in place: pinned search_path, RLS forced, no PUBLIC execute
       ---
-      duration_ms: 263.907028
+      duration_ms: 598.552
       type: 'test'
       ...
     # Subtest: wrong-tenant use of the quota functions is refused by the database itself
     ok 4 - wrong-tenant use of the quota functions is refused by the database itself
       ---
-      duration_ms: 225.836464
+      duration_ms: 379.29
       type: 'test'
       ...
     # Subtest: the documented rollback restores the original shape and leaves existing rows untouched
     ok 5 - the documented rollback restores the original shape and leaves existing rows untouched
       ---
-      duration_ms: 179.53653
+      duration_ms: 584.7133
       type: 'test'
       ...
     1..5
-ok 3 - migration upgrade, idempotency, hardening and rollback on real PostgreSQL
+ok 4 - migration upgrade, idempotency, hardening and rollback on real PostgreSQL
   ---
-  duration_ms: 1450.458076
+  duration_ms: 3224.1989
   type: 'suite'
   ...
-1..3
-# tests 22
-# suites 5
-# pass 22
+1..4
+# tests 25
+# suites 6
+# pass 25
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 1827.838073
+# duration_ms 3873.1348
 
 
 # exit: 0

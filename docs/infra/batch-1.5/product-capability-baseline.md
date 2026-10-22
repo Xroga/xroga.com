@@ -10,7 +10,7 @@ Statuses: `PRODUCTION_VERIFIED` · `IMPLEMENTED_UNVERIFIED` · `PARTIALLY_IMPLEM
 | File uploads (user → storage) | **NOT_IMPLEMENTED** | no multipart/upload endpoint in `routes/` | **gap closed in this branch: `/api/drive/uploads` (not deployed)** |
 | Project file reads | IMPLEMENTED_UNVERIFIED | `routes/projects.ts:186-234` | returns public/data URLs |
 | AI-generated artifacts (durable) | **PARTIALLY_IMPLEMENTED** | contract in `ai/universal/outputEnvelope.ts`; `ArtifactWorkspace` is local-FS and unused in production | results persist as JSON in `swarm_runs.output`; no object storage |
-| Browser screenshots / downloads | NOT_IMPLEMENTED (as stored artifacts) | `lib/browserbase.ts` creates sessions only; no capture→storage code found | needs INFRA-007 |
+| Browser screenshots / downloads | NOT_IMPLEMENTED (as stored artifacts) | `lib/browserbase.ts` creates sessions only; no capture→storage code found | needs INFRA-007 (Oracle-hosted browser worker; evidence through Drive) |
 | Coding-worker outputs | PARTIALLY_IMPLEMENTED | `synthesis/*`, `sandbox/*` return results inline; code ships to GitHub | no object persistence |
 | Repository archives | NOT_IMPLEMENTED | none found | |
 | AI Employee outputs | **NOT_IMPLEMENTED in backend** | the only matches for "employee" are `ai/intentReasoning.ts` and `composioClient.ts` strings; the frontend S02 work is homepage *marketing* UI (`SIMULATED_OR_UI_ONLY`) | do not treat the homepage demo as a capability |

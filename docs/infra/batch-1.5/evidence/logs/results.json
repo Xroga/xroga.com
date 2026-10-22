@@ -1,5 +1,5 @@
 {
-  "sourceSha": "f3de2b5597a26658ab452151b19911e9bfccca8b",
+  "sourceSha": "931b7c8c46d77ebe373c077382221a8a73ed1746",
   "dirtyTrackedFiles": 0,
   "requireFixtures": true,
   "fixtures": {
@@ -25,12 +25,26 @@
     {
       "id": "02-unit-and-adapters",
       "required": true,
-      "command": "npx tsx --test src/routes/drive.test.ts src/routes/driveRegistration.test.ts src/services/storage/projectFiles.canonical.test.ts src/storage/artifactSink.test.ts src/storage/config.matrix.test.ts src/storage/migration/approvals.test.ts src/storage/migration/cli.test.ts src/storage/migration/engine.t",
+      "command": "npx tsx --test src/routes/drive.test.ts src/routes/driveRegistration.test.ts src/services/storage/projectFiles.canonical.test.ts src\\storage\\artifactSink.test.ts src\\storage\\config.matrix.test.ts src\\storage\\migration\\approvals.test.ts src\\storage\\migration\\cli.test.ts src\\storage\\migration\\engine.t",
       "fixture": null,
       "fixtureState": null,
       "exit": 0,
-      "tests": 135,
-      "pass": 135,
+      "tests": 152,
+      "pass": 152,
+      "fail": 0,
+      "skipped": 0,
+      "suiteSkips": 0,
+      "status": "PASS"
+    },
+    {
+      "id": "02b-large-object-1GiB-SYNTHETIC",
+      "required": true,
+      "command": "npx tsx --test src/storage/migration/largeObject.stream.test.ts",
+      "fixture": null,
+      "fixtureState": null,
+      "exit": 0,
+      "tests": 1,
+      "pass": 1,
       "fail": 0,
       "skipped": 0,
       "suiteSkips": 0,
@@ -39,12 +53,12 @@
     {
       "id": "03-postgres-real-sql",
       "required": true,
-      "command": "npx tsx --test src/storage/migration/postgresMigration.integration.test.ts src/storage/postgresRepository.integration.test.ts src/storage/schemaUpgrade.integration.test.ts",
+      "command": "npx tsx --test src\\storage\\migration\\postgresMigration.integration.test.ts src\\storage\\migration\\runOutputArtifacts.integration.test.ts src\\storage\\postgresRepository.integration.test.ts src\\storage\\schemaUpgrade.integration.test.ts",
       "fixture": "postgres",
       "fixtureState": "READY",
       "exit": 0,
-      "tests": 22,
-      "pass": 22,
+      "tests": 25,
+      "pass": 25,
       "fail": 0,
       "skipped": 0,
       "suiteSkips": 0,
@@ -53,7 +67,7 @@
     {
       "id": "04-s3-wire-emulator-SYNTHETIC",
       "required": true,
-      "command": "npx tsx --test src/storage/r2ObjectStore.wire.integration.test.ts",
+      "command": "npx tsx --test src\\storage\\r2ObjectStore.wire.integration.test.ts",
       "fixture": "s3Emulator",
       "fixtureState": "READY",
       "exit": 0,
@@ -67,7 +81,7 @@
     {
       "id": "05-r2-provider-REAL",
       "required": false,
-      "command": "npx tsx --test src/storage/r2.provider.integration.test.ts",
+      "command": "npx tsx --test src\\storage\\r2.provider.integration.test.ts",
       "fixture": "r2Provider",
       "fixtureState": "NOT_AUTHORISED",
       "status": "NOT_RUN"
@@ -79,20 +93,30 @@
       "fixture": null,
       "fixtureState": null,
       "exit": 1,
-      "tests": 2881,
-      "pass": 2878,
-      "fail": 3,
-      "skipped": 0,
-      "suiteSkips": 1,
+      "tests": 2901,
+      "pass": 2883,
+      "fail": 5,
+      "skipped": 13,
+      "suiteSkips": 15,
       "baselineFailures": [
         "intelligence and report expose product opportunities and missing data honestly",
         "CLI validation and report commands execute as non-destructive dry runs",
         "every CLI command performs a real dry-run and supports JSON and verbose output"
       ],
-      "regressions": [],
-      "status": "PASS_WITH_BASELINE_FAILURES"
+      "regressions": [
+        "actual repository snapshot reuses Command 1, keeps missing data explicit, and produces two valid FIX briefs",
+        "validated demand evidence flows into the matching content brief without duplicates"
+      ],
+      "status": "FAIL",
+      "failedTests": [
+        "actual repository snapshot reuses Command 1, keeps missing data explicit, and produces two valid FIX briefs",
+        "validated demand evidence flows into the matching content brief without duplicates",
+        "intelligence and report expose product opportunities and missing data honestly",
+        "CLI validation and report commands execute as non-destructive dry runs",
+        "every CLI command performs a real dry-run and supports JSON and verbose output"
+      ]
     }
   ],
-  "overall": "PASS",
+  "overall": "FAIL",
   "note": "SYNTHETIC steps are not provider evidence. NOT_RUN/NOT_AUTHORISED means no real-R2 claim can be made from this run."
 }

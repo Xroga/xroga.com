@@ -1,0 +1,30 @@
+# cmd: npx tsx --test src/storage/migration/largeObject.stream.test.ts
+TAP version 13
+# [large] +14.8s copy done
+# [large] +20.1s expected hash computed
+# LARGE_OBJECT_EVIDENCE size=1073741829 parts=65 seconds=14.8 rss_growth_mib=130
+# Subtest: large-object migration: real 1 GiB+ crossing
+    # Subtest: copies a 1 GiB + 5 byte object with bounded memory and verifies the end-to-end SHA-256
+    ok 1 - copies a 1 GiB + 5 byte object with bounded memory and verifies the end-to-end SHA-256
+      ---
+      duration_ms: 20340.9117
+      type: 'test'
+      ...
+    1..1
+ok 1 - large-object migration: real 1 GiB+ crossing
+  ---
+  duration_ms: 20342.8967
+  type: 'suite'
+  ...
+1..1
+# tests 1
+# suites 1
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 20651.4486
+
+
+# exit: 0

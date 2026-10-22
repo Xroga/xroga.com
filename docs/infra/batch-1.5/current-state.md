@@ -55,7 +55,7 @@ Trace format: ENTRYPOINT → AUTHENTICATED OWNER → ADAPTER → DURABLE BACKEND
 | R2 | `readStoredFile(key)` | no auth, R2 then `/tmp` cache | No caller | key-only read, no ownership check (this branch adds an optional actor + ordering) |
 | S1 | GitHub/Vercel OAuth tokens | `githubAuth.ts#saveGitHubConnection` → plaintext DB columns (`github_integrations`, `user_integrations`) **and** a best-effort plaintext JSON mirror in private bucket `xroga-github-tokens` (`githubTokenStore.ts`, `vercelAuth.ts`) | Yes (callback path) | **Plaintext secrets at rest — see `oauth-token-finding.md`**; must never enter the object pipeline |
 | A1 | Avatars | browser → Supabase Storage `avatars` (public bucket) | Yes | Frontend uploads `avatars/<ts>-<name>` (`frontend/src/hooks/useAvatarUpdate.ts:28`) while the insert policy requires the first folder to equal `auth.uid()` (`003_production_setup.sql:52`): **UNKNOWN whether uploads currently succeed** |
-| P1 | Browser sessions | Browserbase (external) | If configured | no artifact capture to storage found |
+| P1 | Browser sessions | Browserbase (external, transitional; approved target is Oracle-hosted Chromium + Playwright + local Stagehand, see `browser-architecture-decision.md`) | If configured | no artifact capture to storage found |
 | P2 | Sandbox runs | Fly machine in `xroga-sandbox` | Yes | outputs are returned inline; no object persistence found |
 
 There is **no user file-upload endpoint** (no `multer`/multipart handler). Chat "attachments" are request payload fields (`routes/phase1.ts`, `frontend/src/lib/api.ts` `ChatAttachment`), not stored objects.

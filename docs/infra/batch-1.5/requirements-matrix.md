@@ -46,5 +46,5 @@ Legend: ✔ implemented + tested locally · ◐ implemented, provider/live proof
 | Rollback | ✔ | `engine.ts#rollbackReadMode` (ledger + link only) | idempotent, preserves post-cutover writes |
 | Source retention | ✔ | `FREEZE_OLD` marker; `deleteLegacy` always refuses; manifest lists only | "deletion is not implemented" |
 | Operator scripts | ✔ | `scripts/storage/*.mts` (dry-run default, receipts, BLOCKED exit 3, NOT_APPROVED exit 4) | `cli.test` |
-| Server-side multipart **copy** for objects > 1 GiB | ✖ | classified `BLOCKED(NEEDS_MULTIPART_COPY)` — honest, not silent | `engine.test` |
+| Server-side multipart **copy** for objects > 1 GiB | ✔ LOCAL_TESTED (synthetic) | `StorageService.ingestLegacyMultipart` + engine routing: bounded memory, resume, per-part MD5 verification, end-to-end read-back SHA-256 | `largeObject.test` (17), `largeObject.stream.test` (real 1 GiB+5 B, 65 parts, +130 MiB RSS) |
 | Adapter for `swarm_runs.output` inline artifacts | ✖ | out of Phase 1 (needs artifact-extraction design) | — |

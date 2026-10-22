@@ -1,53 +1,53 @@
-# cmd: npx tsx --test src/routes/drive.test.ts src/routes/driveRegistration.test.ts src/services/storage/projectFiles.canonical.test.ts src/storage/artifactSink.test.ts src/storage/config.matrix.test.ts src/storage/migration/approvals.test.ts src/storage/migration/cli.test.ts src/storage/migration/engine.test.ts src/storage/migration/readCompat.test.ts src/storage/r2ObjectStore.test.ts src/storage/storageService.test.ts
+# cmd: npx tsx --test src/routes/drive.test.ts src/routes/driveRegistration.test.ts src/services/storage/projectFiles.canonical.test.ts src\storage\artifactSink.test.ts src\storage\config.matrix.test.ts src\storage\migration\approvals.test.ts src\storage\migration\cli.test.ts src\storage\migration\engine.test.ts src\storage\migration\largeObject.test.ts src\storage\migration\readCompat.test.ts src\storage\r2ObjectStore.test.ts src\storage\storageService.test.ts
 TAP version 13
 # Subtest: /api/drive routes
     # Subtest: end to end over HTTP: initiate, upload to the synthetic provider, complete, sign, download, delete
     ok 1 - end to end over HTTP: initiate, upload to the synthetic provider, complete, sign, download, delete
       ---
-      duration_ms: 79.944129
+      duration_ms: 108.8458
       type: 'test'
       ...
     # Subtest: identity cannot be supplied by the client: owner/tenant fields are rejected, other users get 404
     ok 2 - identity cannot be supplied by the client: owner/tenant fields are rejected, other users get 404
       ---
-      duration_ms: 21.239861
+      duration_ms: 34.5006
       type: 'test'
       ...
     # Subtest: refuses unauthenticated calls, malformed ids and bad bodies without leaking internals
     ok 3 - refuses unauthenticated calls, malformed ids and bad bodies without leaking internals
       ---
-      duration_ms: 10.559991
+      duration_ms: 15.6147
       type: 'test'
       ...
     # Subtest: quota exhaustion is a 413; unconfigured storage is a 503, never a silent local fallback
     ok 4 - quota exhaustion is a 413; unconfigured storage is a 503, never a silent local fallback
       ---
-      duration_ms: 12.725133
+      duration_ms: 19.3703
       type: 'test'
       ...
     1..4
 ok 1 - /api/drive routes
   ---
-  duration_ms: 133.896603
+  duration_ms: 195.5269
   type: 'suite'
   ...
 # Subtest: /api/drive registration
     # Subtest: is mounted exactly once, behind authMiddleware, and not under any public/guest prefix
     ok 1 - is mounted exactly once, behind authMiddleware, and not under any public/guest prefix
       ---
-      duration_ms: 1.510351
+      duration_ms: 54.556
       type: 'test'
       ...
     # Subtest: the legacy public-asset media surface remains retired and unrelated to Drive
     ok 2 - the legacy public-asset media surface remains retired and unrelated to Drive
       ---
-      duration_ms: 0.303807
+      duration_ms: 0.9642
       type: 'test'
       ...
     1..2
 ok 2 - /api/drive registration
   ---
-  duration_ms: 2.89929
+  duration_ms: 58.8061
   type: 'suite'
   ...
 # [Storage] R2 upload failed, using data URL fallback: Cloudflare R2 credentials not configured
@@ -55,26 +55,26 @@ ok 2 - /api/drive registration
     # Subtest: legacy mode (default) is unchanged and never claims canonical durability
     ok 1 - legacy mode (default) is unchanged and never claims canonical durability
       ---
-      duration_ms: 29.912166
+      duration_ms: 76.3059
       type: 'test'
       ...
 # [Storage] R2 upload failed, using data URL fallback: Cloudflare R2 credentials not configured
     # Subtest: r2 mode writes a verified private object and records only a drive:// reference
     ok 2 - r2 mode writes a verified private object and records only a drive:// reference
       ---
-      duration_ms: 12.969884
+      duration_ms: 19.9453
       type: 'test'
       ...
     # Subtest: r2 mode fails closed: provider outage means an error, no data URL, no cache, no project_files row
     ok 3 - r2 mode fails closed: provider outage means an error, no data URL, no cache, no project_files row
       ---
-      duration_ms: 1.27435
+      duration_ms: 4.223
       type: 'test'
       ...
     # Subtest: r2 mode with Drive unconfigured fails closed too
     ok 4 - r2 mode with Drive unconfigured fails closed too
       ---
-      duration_ms: 0.67466
+      duration_ms: 2.5006
       type: 'test'
       ...
 # [Storage] canonical write failed in dual mode: artifact write did not complete
@@ -82,929 +82,1038 @@ ok 2 - /api/drive registration
     # Subtest: dual mode records canonical success, and records (not hides) a canonical failure
     ok 5 - dual mode records canonical success, and records (not hides) a canonical failure
       ---
-      duration_ms: 16.222869
+      duration_ms: 23.8955
       type: 'test'
       ...
     # Subtest: an invalid STORAGE_WRITE_MODE fails closed: nothing is written anywhere
     ok 6 - an invalid STORAGE_WRITE_MODE fails closed: nothing is written anywhere
       ---
-      duration_ms: 0.484081
+      duration_ms: 1.8359
       type: 'test'
       ...
     # Subtest: dual mode with Drive unconfigured is a configuration error, not a quiet legacy write
     ok 7 - dual mode with Drive unconfigured is a configuration error, not a quiet legacy write
       ---
-      duration_ms: 0.265691
+      duration_ms: 1.2482
       type: 'test'
       ...
     # Subtest: flags never override tenant authorization: another user's project is refused in r2 mode and nothing is written
     ok 8 - flags never override tenant authorization: another user's project is refused in r2 mode and nothing is written
       ---
-      duration_ms: 4.661695
+      duration_ms: 1.7176
       type: 'test'
       ...
     # Subtest: r2 mode with valid configuration still requires the verified private write (no data URL, no cache, no public URL)
     ok 9 - r2 mode with valid configuration still requires the verified private write (no data URL, no cache, no public URL)
       ---
-      duration_ms: 16.661286
+      duration_ms: 13.0301
       type: 'test'
       ...
     1..9
 ok 3 - storeProjectFile compatibility modes
   ---
-  duration_ms: 198.693242
+  duration_ms: 488.101
   type: 'suite'
   ...
 # Subtest: artifact sink
     # Subtest: returns a drive:// descriptor only after verified storage, and the bytes survive the producing process
     ok 1 - returns a drive:// descriptor only after verified storage, and the bytes survive the producing process
       ---
-      duration_ms: 7.138867
+      duration_ms: 19.7176
       type: 'test'
       ...
     # Subtest: never returns a descriptor when storage failed
     ok 2 - never returns a descriptor when storage failed
       ---
-      duration_ms: 0.921207
+      duration_ms: 2.584
       type: 'test'
       ...
     1..2
 ok 4 - artifact sink
   ---
-  duration_ms: 8.93072
+  duration_ms: 24.8287
   type: 'suite'
   ...
 # Subtest: storage configuration matrix (expected vs actual)
     # Subtest: nothing set (production default)
     ok 1 - nothing set (production default)
       ---
-      duration_ms: 1.41873
+      duration_ms: 2.9007
       type: 'test'
       ...
     # Subtest: write=legacy explicit
     ok 2 - write=legacy explicit
       ---
-      duration_ms: 0.203673
+      duration_ms: 0.3255
       type: 'test'
       ...
     # Subtest: write empty string
     ok 3 - write empty string
       ---
-      duration_ms: 3.364057
+      duration_ms: 0.4111
       type: 'test'
       ...
     # Subtest: write=dual, no Drive credentials
     ok 4 - write=dual, no Drive credentials
       ---
-      duration_ms: 0.605608
+      duration_ms: 1.2481
       type: 'test'
       ...
     # Subtest: write=r2, no Drive credentials
     ok 5 - write=r2, no Drive credentials
       ---
-      duration_ms: 0.145462
+      duration_ms: 0.2772
       type: 'test'
       ...
     # Subtest: write=r2, credentials, no database
     ok 6 - write=r2, credentials, no database
       ---
-      duration_ms: 0.107749
+      duration_ms: 0.4199
       type: 'test'
       ...
     # Subtest: write=r2, credentials + database
     ok 7 - write=r2, credentials + database
       ---
-      duration_ms: 0.07911
+      duration_ms: 0.2848
       type: 'test'
       ...
     # Subtest: write=dual, credentials + database (mixed case)
     ok 8 - write=dual, credentials + database (mixed case)
       ---
-      duration_ms: 0.137942
+      duration_ms: 0.4071
       type: 'test'
       ...
     # Subtest: write=banana (invalid value is NOT treated as legacy)
     ok 9 - write=banana (invalid value is NOT treated as legacy)
       ---
-      duration_ms: 0.23091
+      duration_ms: 1.8436
       type: 'test'
       ...
     # Subtest: write=r2, Drive bucket = legacy public bucket
     ok 10 - write=r2, Drive bucket = legacy public bucket
       ---
-      duration_ms: 0.270907
+      duration_ms: 0.8772
       type: 'test'
       ...
     # Subtest: write=r2, Drive bucket = custom legacy bucket
     ok 11 - write=r2, Drive bucket = custom legacy bucket
       ---
-      duration_ms: 0.094458
+      duration_ms: 0.365
       type: 'test'
       ...
     # Subtest: read=r2,legacy without credentials (r2 step reports not-migrated, legacy serves)
     ok 12 - read=r2,legacy without credentials (r2 step reports not-migrated, legacy serves)
       ---
-      duration_ms: 0.123487
+      duration_ms: 0.3584
       type: 'test'
       ...
     # Subtest: read=r2 only without credentials
     ok 13 - read=r2 only without credentials
       ---
-      duration_ms: 0.073071
+      duration_ms: 0.2656
       type: 'test'
       ...
     # Subtest: read=legacy only
     ok 14 - read=legacy only
       ---
-      duration_ms: 0.044858
+      duration_ms: 0.1782
       type: 'test'
       ...
     # Subtest: read lists a source twice
     ok 15 - read lists a source twice
       ---
-      duration_ms: 0.069239
+      duration_ms: 0.3196
       type: 'test'
       ...
     # Subtest: read has an unknown source
     ok 16 - read has an unknown source
       ---
-      duration_ms: 0.162306
+      duration_ms: 0.6369
       type: 'test'
       ...
     # Subtest: read empty entries
     ok 17 - read empty entries
       ---
-      duration_ms: 0.17936
+      duration_ms: 0.2946
       type: 'test'
       ...
     # Subtest: secret values never appear in configuration errors
     ok 18 - secret values never appear in configuration errors
       ---
-      duration_ms: 0.147413
+      duration_ms: 0.4344
       type: 'test'
       ...
     # Subtest: writes the matrix evidence when asked
     ok 19 - writes the matrix evidence when asked
       ---
-      duration_ms: 0.065184
+      duration_ms: 0.3032
       type: 'test'
       ...
     1..19
 ok 5 - storage configuration matrix (expected vs actual)
   ---
-  duration_ms: 8.92063
+  duration_ms: 16.0693
   type: 'suite'
   ...
 # Subtest: migration approvals are cryptographic, scoped and fail closed
     # Subtest: no approver key configured → nothing can be approved; no token → refused
     ok 1 - no approver key configured → nothing can be approved; no token → refused
       ---
-      duration_ms: 13.577199
+      duration_ms: 50.2665
       type: 'test'
       ...
     # Subtest: forged approvals are refused: wrong key, tampered payload, hand-written JSON, legacy object format
     ok 2 - forged approvals are refused: wrong key, tampered payload, hand-written JSON, legacy object format
       ---
-      duration_ms: 3.558915
+      duration_ms: 8.4531
       type: 'test'
       ...
     # Subtest: wrong job: a valid approval for job A cannot run job B (replay across jobs)
     ok 3 - wrong job: a valid approval for job A cannot run job B (replay across jobs)
       ---
-      duration_ms: 1.501615
+      duration_ms: 4.0764
       type: 'test'
       ...
     # Subtest: wrong stage: a copy approval cannot authorise read_new or freeze_old
     ok 4 - wrong stage: a copy approval cannot authorise read_new or freeze_old
       ---
-      duration_ms: 6.550209
+      duration_ms: 24.591
       type: 'test'
       ...
     # Subtest: environment separation: test approvals cannot run in production and production approvals cannot run in a test engine
     ok 5 - environment separation: test approvals cannot run in production and production approvals cannot run in a test engine
       ---
-      duration_ms: 4.955417
+      duration_ms: 11.8993
       type: 'test'
       ...
     # Subtest: stale approval: expires, and is re-checked before every batch of a long run
     ok 6 - stale approval: expires, and is re-checked before every batch of a long run
       ---
-      duration_ms: 2.13811
+      duration_ms: 6.6383
       type: 'test'
       ...
     # Subtest: source changed after approval: new or changed objects void the plan and the approval
     ok 7 - source changed after approval: new or changed objects void the plan and the approval
       ---
-      duration_ms: 5.761157
+      duration_ms: 11.3904
       type: 'test'
       ...
     # Subtest: an existing object edited after approval is never copied under the old approval
     ok 8 - an existing object edited after approval is never copied under the old approval
       ---
-      duration_ms: 1.024462
+      duration_ms: 3.373
       type: 'test'
       ...
     # Subtest: replaying a completed job copies nothing and creates nothing
     ok 9 - replaying a completed job copies nothing and creates nothing
       ---
-      duration_ms: 3.743574
+      duration_ms: 11.3487
       type: 'test'
       ...
     # Subtest: a dry-run replay does not invalidate a valid approval, but re-planning after copy started does require a fresh one
     ok 10 - a dry-run replay does not invalidate a valid approval, but re-planning after copy started does require a fresh one
       ---
-      duration_ms: 9.303942
+      duration_ms: 6.463
       type: 'test'
       ...
     # Subtest: tenant scope: objects of other tenants are BLOCKED(OUT_OF_APPROVAL_SCOPE), never copied
     ok 11 - tenant scope: objects of other tenants are BLOCKED(OUT_OF_APPROVAL_SCOPE), never copied
       ---
-      duration_ms: 8.575498
+      duration_ms: 4.43
       type: 'test'
       ...
     # Subtest: signing helper output verifies only with the matching public key
     ok 12 - signing helper output verifies only with the matching public key
       ---
-      duration_ms: 0.301098
+      duration_ms: 0.7433
       type: 'test'
       ...
     1..12
 ok 6 - migration approvals are cryptographic, scoped and fail closed
   ---
-  duration_ms: 62.392679
+  duration_ms: 148.3176
   type: 'suite'
   ...
 # Subtest: operator scripts: safe by default
     # Subtest: every mutating phase is a no-op report without --execute, even for an approved job
     ok 1 - every mutating phase is a no-op report without --execute, even for an approved job
       ---
-      duration_ms: 4.874226
+      duration_ms: 29.1043
       type: 'test'
       ...
     # Subtest: --execute performs the phase, and the receipt records that it did
     ok 2 - --execute performs the phase, and the receipt records that it did
       ---
-      duration_ms: 28.527444
+      duration_ms: 169.8882
       type: 'test'
       ...
     # Subtest: read-only phases run without --execute
     ok 3 - read-only phases run without --execute
       ---
-      duration_ms: 3.465168
+      duration_ms: 9.714
       type: 'test'
       ...
     # Subtest: redacts signatures, keys and secret-named fields from logs and receipts
     ok 4 - redacts signatures, keys and secret-named fields from logs and receipts
       ---
-      duration_ms: 0.274027
+      duration_ms: 0.7569
       type: 'test'
       ...
     # Subtest: parses flags without mistaking values for commands
     ok 5 - parses flags without mistaking values for commands
       ---
-      duration_ms: 1.464622
+      duration_ms: 2.1646
       type: 'test'
       ...
     1..5
 ok 7 - operator scripts: safe by default
   ---
-  duration_ms: 39.524002
+  duration_ms: 214.6798
   type: 'suite'
   ...
 # Subtest: migration: safety gates
     # Subtest: discover and dry-run read the source and classify but write nothing to the destination
     ok 1 - discover and dry-run read the source and classify but write nothing to the destination
       ---
-      duration_ms: 12.896639
+      duration_ms: 39.3918
       type: 'test'
       ...
     # Subtest: copy is refused for a dry-run job and for an unapproved job
     ok 2 - copy is refused for a dry-run job and for an unapproved job
       ---
-      duration_ms: 2.745949
+      duration_ms: 7.2256
       type: 'test'
       ...
     # Subtest: read-new and freeze-old need their own approvals; legacy deletion is not implemented at all
     ok 3 - read-new and freeze-old need their own approvals; legacy deletion is not implemented at all
       ---
-      duration_ms: 9.040138
+      duration_ms: 23.7933
       type: 'test'
       ...
     # Subtest: the secret OAuth-token bucket can never be a migration source
     ok 4 - the secret OAuth-token bucket can never be a migration source
       ---
-      duration_ms: 0.43044
+      duration_ms: 1.086
       type: 'test'
       ...
     1..4
 ok 8 - migration: safety gates
   ---
-  duration_ms: 26.166519
+  duration_ms: 74.3068
   type: 'suite'
   ...
 # Subtest: migration: end to end
     # Subtest: copies, verifies SHA-256, reconciles honest counts, and leaves every source object byte-identical
     ok 1 - copies, verifies SHA-256, reconciles honest counts, and leaves every source object byte-identical
       ---
-      duration_ms: 8.825778
+      duration_ms: 13.6548
       type: 'test'
       ...
     # Subtest: is idempotent: replaying every phase creates no duplicates and changes nothing
     ok 2 - is idempotent: replaying every phase creates no duplicates and changes nothing
       ---
-      duration_ms: 4.61119
+      duration_ms: 13.5165
       type: 'test'
       ...
     # Subtest: resumes discovery from the persisted cursor after a restart
     ok 3 - resumes discovery from the persisted cursor after a restart
       ---
-      duration_ms: 3.674895
+      duration_ms: 2.8711
       type: 'test'
       ...
     # Subtest: classifies unknown owners, unparseable keys and oversize objects as BLOCKED with a reason, not as success
     ok 4 - classifies unknown owners, unparseable keys and oversize objects as BLOCKED with a reason, not as success
       ---
-      duration_ms: 1.805907
+      duration_ms: 3.9211
       type: 'test'
       ...
     # Subtest: ephemeral cache files are skipped unless the operator opts in, and are counted honestly
     ok 5 - ephemeral cache files are skipped unless the operator opts in, and are counted honestly
       ---
-      duration_ms: 20.613014
+      duration_ms: 141.6141
       type: 'test'
       ...
     1..5
 ok 9 - migration: end to end
   ---
-  duration_ms: 40.185198
+  duration_ms: 177.916
   type: 'suite'
   ...
 # Subtest: migration: fault injection
     # Subtest: destination temporarily unavailable: item FAILED with backoff, then succeeds on retry; nothing is half-READY
     ok 1 - destination temporarily unavailable: item FAILED with backoff, then succeeds on retry; nothing is half-READY
       ---
-      duration_ms: 10.858825
+      duration_ms: 15.2005
       type: 'test'
       ...
     # Subtest: timeout AFTER a successful destination write is not trusted until read-back verifies it
     ok 2 - timeout AFTER a successful destination write is not trusted until read-back verifies it
       ---
-      duration_ms: 2.548109
+      duration_ms: 10.0842
       type: 'test'
       ...
     # Subtest: process killed after the destination upload but before the ledger commit: a second worker finishes without re-uploading
     ok 3 - process killed after the destination upload but before the ledger commit: a second worker finishes without re-uploading
       ---
-      duration_ms: 3.574833
+      duration_ms: 7.5501
       type: 'test'
       ...
     # Subtest: DB commit failure while recording COPIED is retried and converges on one destination
     ok 4 - DB commit failure while recording COPIED is retried and converges on one destination
       ---
-      duration_ms: 3.16038
+      duration_ms: 9.3762
       type: 'test'
       ...
     # Subtest: destination written with corrupted bytes: detected against the SOURCE hash, destination marked CORRUPT, never READY, source preserved
     ok 5 - destination written with corrupted bytes: detected against the SOURCE hash, destination marked CORRUPT, never READY, source preserved
       ---
-      duration_ms: 2.423629
+      duration_ms: 5.6338
       type: 'test'
       ...
     # Subtest: destination corrupted after copy is caught by VERIFY
     ok 6 - destination corrupted after copy is caught by VERIFY
       ---
-      duration_ms: 2.341841
+      duration_ms: 4.7599
       type: 'test'
       ...
     # Subtest: destination object deleted after copy: VERIFY reports it missing, never VERIFIED
     ok 7 - destination object deleted after copy: VERIFY reports it missing, never VERIFIED
       ---
-      duration_ms: 3.027324
+      duration_ms: 4.9201
       type: 'test'
       ...
     # Subtest: source missing or changed mid-migration is reported, never counted as migrated; re-discovery recopies the new bytes
     ok 8 - source missing or changed mid-migration is reported, never counted as migrated; re-discovery recopies the new bytes
       ---
-      duration_ms: 4.780241
+      duration_ms: 9.5004
       type: 'test'
       ...
     # Subtest: two workers running at once copy each source exactly once
     ok 9 - two workers running at once copy each source exactly once
       ---
-      duration_ms: 4.353003
+      duration_ms: 9.1252
       type: 'test'
       ...
     # Subtest: a worker that lost its lease cannot overwrite the ledger
     ok 10 - a worker that lost its lease cannot overwrite the ledger
       ---
-      duration_ms: 0.589468
+      duration_ms: 1.2606
       type: 'test'
       ...
     # Subtest: retries are bounded: a persistently failing item ends BLOCKED(MAX_ATTEMPTS), not an infinite loop
     ok 11 - retries are bounded: a persistently failing item ends BLOCKED(MAX_ATTEMPTS), not an infinite loop
       ---
-      duration_ms: 4.280911
+      duration_ms: 7.5227
       type: 'test'
       ...
     1..11
 ok 10 - migration: fault injection
   ---
-  duration_ms: 42.446884
+  duration_ms: 85.8933
   type: 'suite'
   ...
 # Subtest: migration: read mode switch and rollback
     # Subtest: switches only VERIFIED items, rolls back idempotently, and never touches objects or newer writes
     ok 1 - switches only VERIFIED items, rolls back idempotently, and never touches objects or newer writes
       ---
-      duration_ms: 4.471905
+      duration_ms: 9.6946
       type: 'test'
       ...
     # Subtest: FREEZE_OLD is a ledger marker only and the deletion manifest deletes nothing
     ok 2 - FREEZE_OLD is a ledger marker only and the deletion manifest deletes nothing
       ---
-      duration_ms: 3.018246
+      duration_ms: 7.3498
       type: 'test'
       ...
     # Subtest: the migrated object stays tenant-bound: another tenant cannot read it
     ok 3 - the migrated object stays tenant-bound: another tenant cannot read it
       ---
-      duration_ms: 3.456837
+      duration_ms: 8.553
       type: 'test'
       ...
     1..3
 ok 11 - migration: read mode switch and rollback
   ---
-  duration_ms: 11.102348
+  duration_ms: 25.9703
+  type: 'suite'
+  ...
+# Subtest: large-object migration (multipart copy)
+    # Subtest: routes objects above the single-PUT threshold through bounded multipart and verifies the full SHA-256
+    ok 1 - routes objects above the single-PUT threshold through bounded multipart and verifies the full SHA-256
+      ---
+      duration_ms: 411.5292
+      type: 'test'
+      ...
+    # Subtest: single-PUT objects below the threshold still use the streaming PUT (no behaviour change)
+    ok 2 - single-PUT objects below the threshold still use the streaming PUT (no behaviour change)
+      ---
+      duration_ms: 22.879
+      type: 'test'
+      ...
+    # Subtest: an interrupted copy resumes the SAME upload and re-uploads only what is missing
+    ok 3 - an interrupted copy resumes the SAME upload and re-uploads only what is missing
+      ---
+      duration_ms: 529.6739
+      type: 'test'
+      ...
+    # Subtest: a timeout AFTER a part was written is not trusted blindly: the retry verifies it by MD5 and reuses it
+    ok 4 - a timeout AFTER a part was written is not trusted blindly: the retry verifies it by MD5 and reuses it
+      ---
+      duration_ms: 234.2634
+      type: 'test'
+      ...
+    # Subtest: a stored part whose bytes differ from the source is rewritten, not stitched into the object
+    ok 5 - a stored part whose bytes differ from the source is rewritten, not stitched into the object
+      ---
+      duration_ms: 314.4255
+      type: 'test'
+      ...
+    # Subtest: a provider that lies (tampered bytes under the old ETag) is still caught by the final read-back: CORRUPT_DESTINATION, never VERIFIED
+    ok 6 - a provider that lies (tampered bytes under the old ETag) is still caught by the final read-back: CORRUPT_DESTINATION, never VERIFIED
+      ---
+      duration_ms: 220.969
+      type: 'test'
+      ...
+    # Subtest: wrong part: a provider that acknowledges different bytes is caught as corruption, never COPIED
+    ok 7 - wrong part: a provider that acknowledges different bytes is caught as corruption, never COPIED
+      ---
+      duration_ms: 67.9848
+      type: 'test'
+      ...
+    # Subtest: source that changes during the copy is SOURCE_CHANGED, not copied
+    ok 8 - source that changes during the copy is SOURCE_CHANGED, not copied
+      ---
+      duration_ms: 160.7495
+      type: 'test'
+      ...
+    # Subtest: completion succeeded but the response was lost: the next attempt adopts the completed object and re-verifies it
+    ok 9 - completion succeeded but the response was lost: the next attempt adopts the completed object and re-verifies it
+      ---
+      duration_ms: 255.4624
+      type: 'test'
+      ...
+    # Subtest: completion that really failed leaves the upload resumable and nothing READY
+    ok 10 - completion that really failed leaves the upload resumable and nothing READY
+      ---
+      duration_ms: 464.8353
+      type: 'test'
+      ...
+    # Subtest: duplicate workers converge on one destination object
+    ok 11 - duplicate workers converge on one destination object
+      ---
+      duration_ms: 288.4362
+      type: 'test'
+      ...
+    # Subtest: idempotent replay uploads nothing and creates nothing
+    ok 12 - idempotent replay uploads nothing and creates nothing
+      ---
+      duration_ms: 301.9025
+      type: 'test'
+      ...
+    # Subtest: the source is never modified or deleted by a multipart copy
+    ok 13 - the source is never modified or deleted by a multipart copy
+      ---
+      duration_ms: 625.5059
+      type: 'test'
+      ...
+    # Subtest: a source stream shorter than its measured size is rejected: nothing is completed, nothing becomes READY
+    ok 14 - a source stream shorter than its measured size is rejected: nothing is completed, nothing becomes READY
+      ---
+      duration_ms: 172.2074
+      type: 'test'
+      ...
+    # Subtest: a part corrupted in transit (provider ETag describes the corrupted bytes) is rejected before the object is ever completed
+    ok 15 - a part corrupted in transit (provider ETag describes the corrupted bytes) is rejected before the object is ever completed
+      ---
+      duration_ms: 133.2033
+      type: 'test'
+      ...
+    # Subtest: objects above maxObjectBytes remain BLOCKED with an explicit reason
+    ok 16 - objects above maxObjectBytes remain BLOCKED with an explicit reason
+      ---
+      duration_ms: 1.9612
+      type: 'test'
+      ...
+    # Subtest: abandoned multipart uploads are aborted by reconciliation after the reservation expires
+    ok 17 - abandoned multipart uploads are aborted by reconciliation after the reservation expires
+      ---
+      duration_ms: 232.8173
+      type: 'test'
+      ...
+    1..17
+ok 12 - large-object migration (multipart copy)
+  ---
+  duration_ms: 4442.8429
   type: 'suite'
   ...
 # Subtest: STORAGE_READ_ORDER compatibility
     # Subtest: legacy,r2 serves legacy; r2,legacy serves canonical only after READ_NEW; rollback flips it back
     ok 1 - legacy,r2 serves legacy; r2,legacy serves canonical only after READ_NEW; rollback flips it back
       ---
-      duration_ms: 20.877772
+      duration_ms: 35.9309
       type: 'test'
       ...
     # Subtest: ownership is enforced on BOTH paths: another user is refused, not served from the fallback
     ok 2 - ownership is enforced on BOTH paths: another user is refused, not served from the fallback
       ---
-      duration_ms: 8.19014
+      duration_ms: 13.8958
       type: 'test'
       ...
     # Subtest: a corrupt canonical copy is an error, not a silent fallback to the other copy
     ok 3 - a corrupt canonical copy is an error, not a silent fallback to the other copy
       ---
-      duration_ms: 7.532255
+      duration_ms: 8.1534
       type: 'test'
       ...
     # Subtest: a missing legacy object falls through to the verified canonical copy (and vice versa)
     ok 4 - a missing legacy object falls through to the verified canonical copy (and vice versa)
       ---
-      duration_ms: 5.155189
+      duration_ms: 12.3667
       type: 'test'
       ...
     1..4
-ok 12 - STORAGE_READ_ORDER compatibility
+ok 13 - STORAGE_READ_ORDER compatibility
   ---
-  duration_ms: 43.018286
+  duration_ms: 73.1917
   type: 'suite'
   ...
 # Subtest: R2ObjectStore presigned requests (SDK-generated, offline)
     # Subtest: presigned PUT signs host, content-type, content-length and the SHA-256 checksum header, and expires
     ok 1 - presigned PUT signs host, content-type, content-length and the SHA-256 checksum header, and expires
       ---
-      duration_ms: 44.662368
+      duration_ms: 50.2473
       type: 'test'
       ...
     # Subtest: without a declared SHA-256 the checksum header is not required
     ok 2 - without a declared SHA-256 the checksum header is not required
       ---
-      duration_ms: 3.015515
+      duration_ms: 9.3009
       type: 'test'
       ...
     # Subtest: presigned GET carries a forced content type/disposition and a no-store cache header, and a short expiry
     ok 3 - presigned GET carries a forced content type/disposition and a no-store cache header, and a short expiry
       ---
-      duration_ms: 3.250202
+      duration_ms: 14.0517
       type: 'test'
       ...
     # Subtest: multipart part URLs sign the content length
     ok 4 - multipart part URLs sign the content length
       ---
-      duration_ms: 3.068436
+      duration_ms: 6.1043
       type: 'test'
       ...
     # Subtest: the canonical bucket may never be the legacy public assets bucket, and secrets are never in the config object
     ok 5 - the canonical bucket may never be the legacy public assets bucket, and secrets are never in the config object
       ---
-      duration_ms: 0.503176
+      duration_ms: 2.0464
       type: 'test'
       ...
     1..5
-ok 13 - R2ObjectStore presigned requests (SDK-generated, offline)
+ok 14 - R2ObjectStore presigned requests (SDK-generated, offline)
   ---
-  duration_ms: 55.665754
+  duration_ms: 84.5735
   type: 'suite'
   ...
 # Subtest: transient error classification
     # Subtest: network errors are transient whether the code is on the error or its cause; definitive answers are not
     ok 1 - network errors are transient whether the code is on the error or its cause; definitive answers are not
       ---
-      duration_ms: 1.052786
+      duration_ms: 7.4811
       type: 'test'
       ...
     1..1
-ok 14 - transient error classification
+ok 15 - transient error classification
   ---
-  duration_ms: 1.173773
+  duration_ms: 8.0487
   type: 'suite'
   ...
 # Subtest: keys and filenames
     # Subtest: sanitizes traversal, control characters, reserved and hidden names
     ok 1 - sanitizes traversal, control characters, reserved and hidden names
       ---
-      duration_ms: 2.918732
+      duration_ms: 8.493
       type: 'test'
       ...
     # Subtest: builds and parses the canonical key and rejects ambiguous ones
     ok 2 - builds and parses the canonical key and rejects ambiguous ones
       ---
-      duration_ms: 2.441706
+      duration_ms: 2.9152
       type: 'test'
       ...
     1..2
-ok 15 - keys and filenames
+ok 16 - keys and filenames
   ---
-  duration_ms: 6.519847
+  duration_ms: 16.5018
   type: 'suite'
   ...
 # Subtest: policy
     # Subtest: rejects executables, bad types and oversize; accepts normal files
     ok 1 - rejects executables, bad types and oversize; accepts normal files
       ---
-      duration_ms: 0.848708
+      duration_ms: 1.5498
       type: 'test'
       ...
     # Subtest: detects content/type mismatch and executables
     ok 2 - detects content/type mismatch and executables
       ---
-      duration_ms: 0.690176
+      duration_ms: 1.4141
       type: 'test'
       ...
     # Subtest: serves active content as an attachment, never inline
     ok 3 - serves active content as an attachment, never inline
       ---
-      duration_ms: 0.593338
+      duration_ms: 1.9796
       type: 'test'
       ...
     1..3
-ok 16 - policy
+ok 17 - policy
   ---
-  duration_ms: 2.606211
+  duration_ms: 5.9535
   type: 'suite'
   ...
 # Subtest: state machine
     # Subtest: only allows the documented transitions; DELETED is terminal; READY cannot go back
     ok 1 - only allows the documented transitions; DELETED is terminal; READY cannot go back
       ---
-      duration_ms: 0.438761
+      duration_ms: 1.5655
       type: 'test'
       ...
     # Subtest: repository refuses READY without verification and refuses PENDING->READY
     ok 2 - repository refuses READY without verification and refuses PENDING->READY
       ---
-      duration_ms: 3.669094
+      duration_ms: 11.5094
       type: 'test'
       ...
     1..2
-ok 17 - state machine
+ok 18 - state machine
   ---
-  duration_ms: 4.433905
+  duration_ms: 14.027
   type: 'suite'
   ...
 # Subtest: upload lifecycle
     # Subtest: uploads, verifies SHA-256, reaches READY, and the stored bytes are retrievable
     ok 1 - uploads, verifies SHA-256, reaches READY, and the stored bytes are retrievable
       ---
-      duration_ms: 5.064554
+      duration_ms: 9.1371
       type: 'test'
       ...
     # Subtest: completion is idempotent
     ok 2 - completion is idempotent
       ---
-      duration_ms: 1.668658
+      duration_ms: 3.0511
       type: 'test'
       ...
     # Subtest: never returns READY when the browser claims success but nothing was uploaded
     ok 3 - never returns READY when the browser claims success but nothing was uploaded
       ---
-      duration_ms: 1.162084
+      duration_ms: 2.2028
       type: 'test'
       ...
     # Subtest: quarantines a size mismatch and releases the reservation
     ok 4 - quarantines a size mismatch and releases the reservation
       ---
-      duration_ms: 1.67169
+      duration_ms: 2.9341
       type: 'test'
       ...
     # Subtest: marks CORRUPT on checksum mismatch (provider-side tampering after upload)
     ok 5 - marks CORRUPT on checksum mismatch (provider-side tampering after upload)
       ---
-      duration_ms: 1.733906
+      duration_ms: 2.6823
       type: 'test'
       ...
     # Subtest: quarantines content whose bytes contradict the declared type
     ok 6 - quarantines content whose bytes contradict the declared type
       ---
-      duration_ms: 1.182992
+      duration_ms: 2.4352
       type: 'test'
       ...
     # Subtest: quarantines an executable disguised as plain text
     ok 7 - quarantines an executable disguised as plain text
       ---
-      duration_ms: 2.916927
+      duration_ms: 6.2022
       type: 'test'
       ...
     # Subtest: the provider refuses a body that differs from the signed size, type or checksum
     ok 8 - the provider refuses a body that differs from the signed size, type or checksum
       ---
-      duration_ms: 1.55973
+      duration_ms: 2.9241
       type: 'test'
       ...
     # Subtest: an expired upload capability is refused by the provider
     ok 9 - an expired upload capability is refused by the provider
       ---
-      duration_ms: 0.890253
+      duration_ms: 1.889
       type: 'test'
       ...
     # Subtest: rejects client-supplied project ownership spoofing
     ok 10 - rejects client-supplied project ownership spoofing
       ---
-      duration_ms: 0.5905
+      duration_ms: 1.2355
       type: 'test'
       ...
     # Subtest: the object key and bucket never leave the service
     ok 11 - the object key and bucket never leave the service
       ---
-      duration_ms: 0.78305
+      duration_ms: 2.0622
       type: 'test'
       ...
     1..11
-ok 18 - upload lifecycle
+ok 19 - upload lifecycle
   ---
-  duration_ms: 19.912701
+  duration_ms: 37.8899
   type: 'suite'
   ...
 # Subtest: tenant isolation
     # Subtest: another tenant cannot read, sign, complete, delete, list or even detect an object
     ok 1 - another tenant cannot read, sign, complete, delete, list or even detect an object
       ---
-      duration_ms: 2.270637
+      duration_ms: 6.5713
       type: 'test'
       ...
     # Subtest: project revocation takes effect on the next download request
     ok 2 - project revocation takes effect on the next download request
       ---
-      duration_ms: 1.35139
+      duration_ms: 3.3004
       type: 'test'
       ...
     # Subtest: a row whose key disagrees with its identity is refused (metadata tampering)
     ok 3 - a row whose key disagrees with its identity is refused (metadata tampering)
       ---
-      duration_ms: 1.265555
+      duration_ms: 2.742
       type: 'test'
       ...
     1..3
-ok 19 - tenant isolation
+ok 20 - tenant isolation
   ---
-  duration_ms: 5.088012
+  duration_ms: 13.0724
   type: 'suite'
   ...
 # Subtest: download capabilities
     # Subtest: are short-lived, clamped, and expire
     ok 1 - are short-lived, clamped, and expire
       ---
-      duration_ms: 1.035689
+      duration_ms: 2.872
       type: 'test'
       ...
     # Subtest: a signed URL for one object cannot be re-pointed at another
     ok 2 - a signed URL for one object cannot be re-pointed at another
       ---
-      duration_ms: 1.679526
+      duration_ms: 3.7467
       type: 'test'
       ...
     # Subtest: are refused for deleted, quarantined, corrupt and unfinished objects
     ok 3 - are refused for deleted, quarantined, corrupt and unfinished objects
       ---
-      duration_ms: 1.436045
+      duration_ms: 2.721
       type: 'test'
       ...
     # Subtest: detects a stored object that no longer matches its verified hash on server-side read
     ok 4 - detects a stored object that no longer matches its verified hash on server-side read
       ---
-      duration_ms: 0.803521
+      duration_ms: 1.9253
       type: 'test'
       ...
     1..4
-ok 20 - download capabilities
+ok 21 - download capabilities
   ---
-  duration_ms: 5.199039
+  duration_ms: 11.7923
   type: 'suite'
   ...
 # Subtest: quota
     # Subtest: rejects uploads that exceed the allowance and accounts exactly
     ok 1 - rejects uploads that exceed the allowance and accounts exactly
       ---
-      duration_ms: 0.948926
+      duration_ms: 1.6341
       type: 'test'
       ...
     # Subtest: concurrent reservations cannot overcommit
     ok 2 - concurrent reservations cannot overcommit
       ---
-      duration_ms: 3.771831
+      duration_ms: 4.6015
       type: 'test'
       ...
     # Subtest: failed and cancelled uploads release; expiry releases; double release/commit never double-counts
     ok 3 - failed and cancelled uploads release; expiry releases; double release/commit never double-counts
       ---
-      duration_ms: 1.3706
+      duration_ms: 2.6099
       type: 'test'
       ...
     # Subtest: a slow upload whose reservation expired re-reserves (quota re-checked) instead of failing or double counting
     ok 4 - a slow upload whose reservation expired re-reserves (quota re-checked) instead of failing or double counting
       ---
-      duration_ms: 0.957825
+      duration_ms: 1.6133
       type: 'test'
       ...
     # Subtest: deleting frees committed bytes exactly once
     ok 5 - deleting frees committed bytes exactly once
       ---
-      duration_ms: 1.109027
+      duration_ms: 1.695
       type: 'test'
       ...
     # Subtest: reconcile repairs counter drift from the reservation ledger
     ok 6 - reconcile repairs counter drift from the reservation ledger
       ---
-      duration_ms: 1.632952
+      duration_ms: 2.6788
       type: 'test'
       ...
     1..6
-ok 21 - quota
+ok 22 - quota
   ---
-  duration_ms: 10.213935
+  duration_ms: 15.357
   type: 'suite'
   ...
 # Subtest: partial failures
     # Subtest: provider timeout after a successful server write does not claim durability until verified
     ok 1 - provider timeout after a successful server write does not claim durability until verified
       ---
-      duration_ms: 1.159784
+      duration_ms: 3.2476
       type: 'test'
       ...
     # Subtest: provider failure before write leaves nothing READY and releases the reservation
     ok 2 - provider failure before write leaves nothing READY and releases the reservation
       ---
-      duration_ms: 0.606961
+      duration_ms: 1.1993
       type: 'test'
       ...
     # Subtest: R2 upload succeeded but the DB commit failed: replay completes it exactly once
     ok 3 - R2 upload succeeded but the DB commit failed: replay completes it exactly once
       ---
-      duration_ms: 1.015308
+      duration_ms: 2.6057
       type: 'test'
       ...
     # Subtest: transient provider errors during completion are retryable and leave state unchanged
     ok 4 - transient provider errors during completion are retryable and leave state unchanged
       ---
-      duration_ms: 0.887137
+      duration_ms: 1.8967
       type: 'test'
       ...
     # Subtest: failed provider delete keeps the object DELETING (never DELETED) and reconcile finishes it
     ok 5 - failed provider delete keeps the object DELETING (never DELETED) and reconcile finishes it
       ---
-      duration_ms: 1.006264
+      duration_ms: 2.0606
       type: 'test'
       ...
     # Subtest: reconcile: abandoned uploads are cleaned, missing objects flagged, orphans reported (never deleted)
     ok 6 - reconcile: abandoned uploads are cleaned, missing objects flagged, orphans reported (never deleted)
       ---
-      duration_ms: 2.043304
+      duration_ms: 8.3561
       type: 'test'
       ...
     1..6
-ok 22 - partial failures
+ok 23 - partial failures
   ---
-  duration_ms: 7.013452
+  duration_ms: 19.9072
   type: 'suite'
   ...
 # Subtest: multipart
     # Subtest: completes, verifies the whole-object SHA-256 and is retry-safe
     ok 1 - completes, verifies the whole-object SHA-256 and is retry-safe
       ---
-      duration_ms: 69.389617
+      duration_ms: 94.7021
       type: 'test'
       ...
     # Subtest: rejects wrong part counts, forged etags, out-of-order and missing parts
     ok 2 - rejects wrong part counts, forged etags, out-of-order and missing parts
       ---
-      duration_ms: 23.816555
+      duration_ms: 37.2935
       type: 'test'
       ...
     # Subtest: crash after provider-side completion is recovered without re-completing
     ok 3 - crash after provider-side completion is recovered without re-completing
       ---
-      duration_ms: 61.373275
+      duration_ms: 61.7713
       type: 'test'
       ...
     # Subtest: an abandoned multipart upload is aborted and its reservation released
     ok 4 - an abandoned multipart upload is aborted and its reservation released
       ---
-      duration_ms: 0.918833
+      duration_ms: 1.4764
       type: 'test'
       ...
     # Subtest: another tenant cannot sign parts
     ok 5 - another tenant cannot sign parts
       ---
-      duration_ms: 28.090026
+      duration_ms: 25.4824
       type: 'test'
       ...
     1..5
-ok 23 - multipart
+ok 24 - multipart
   ---
-  duration_ms: 183.938741
+  duration_ms: 221.1202
   type: 'suite'
   ...
 # Subtest: no signed material in logs, audit trail or errors
     # Subtest: audit events, console output and error messages never contain signatures, URLs or keys
     ok 1 - audit events, console output and error messages never contain signatures, URLs or keys
       ---
-      duration_ms: 1.078036
+      duration_ms: 1.992
       type: 'test'
       ...
     1..1
-ok 24 - no signed material in logs, audit trail or errors
+ok 25 - no signed material in logs, audit trail or errors
   ---
-  duration_ms: 1.173246
+  duration_ms: 2.1631
   type: 'suite'
   ...
 # Subtest: memory repository mirrors the SQL ledger semantics (parity with the real-Postgres suite)
     # Subtest: commit/release/free are idempotent and never go negative
     ok 1 - commit/release/free are idempotent and never go negative
       ---
-      duration_ms: 0.391094
+      duration_ms: 0.9003
       type: 'test'
       ...
     1..1
-ok 25 - memory repository mirrors the SQL ledger semantics (parity with the real-Postgres suite)
+ok 26 - memory repository mirrors the SQL ledger semantics (parity with the real-Postgres suite)
   ---
-  duration_ms: 0.450963
+  duration_ms: 1.0385
   type: 'suite'
   ...
 # Subtest: concurrent delete, read and provider loss
     # Subtest: a download request racing a delete either signs or is refused cleanly; afterwards the object is gone
     ok 1 - a download request racing a delete either signs or is refused cleanly; afterwards the object is gone
       ---
-      duration_ms: 0.708616
+      duration_ms: 1.8901
       type: 'test'
       ...
     # Subtest: server-side read of an object the provider no longer has is NOT_FOUND, not a raw provider error
     ok 2 - server-side read of an object the provider no longer has is NOT_FOUND, not a raw provider error
       ---
-      duration_ms: 0.812467
+      duration_ms: 1.676
       type: 'test'
       ...
     # Subtest: a transient provider failure on server-side read is retryable (503), not a corruption verdict
     ok 3 - a transient provider failure on server-side read is retryable (503), not a corruption verdict
       ---
-      duration_ms: 0.631384
+      duration_ms: 1.8131
       type: 'test'
       ...
     # Subtest: crash mid-upload leaves nothing READY; the abandoned object and its reservation are reclaimed, other uploads untouched
     ok 4 - crash mid-upload leaves nothing READY; the abandoned object and its reservation are reclaimed, other uploads untouched
       ---
-      duration_ms: 0.769846
+      duration_ms: 2.1823
       type: 'test'
       ...
     # Subtest: an oversized body can never pass for a small declared size: provider refuses, and a forced oversize is quarantined
     ok 5 - an oversized body can never pass for a small declared size: provider refuses, and a forced oversize is quarantined
       ---
-      duration_ms: 0.615202
+      duration_ms: 1.6635
       type: 'test'
       ...
     1..5
-ok 26 - concurrent delete, read and provider loss
+ok 27 - concurrent delete, read and provider loss
   ---
-  duration_ms: 3.721443
+  duration_ms: 9.7266
   type: 'suite'
   ...
-1..26
-# tests 135
-# suites 26
-# pass 135
+1..27
+# tests 152
+# suites 27
+# pass 152
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 2274.02443
+# duration_ms 5620.3948
 
 
 # exit: 0

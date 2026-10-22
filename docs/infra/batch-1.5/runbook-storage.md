@@ -76,3 +76,9 @@ Note: read order affects *legacy-keyed* reads only. Objects created directly in 
 ## 7. Incident notes
 - Suspected leaked presigned URL: it expires on its own (≤ 5 min GET, 15 min PUT). Rotate the R2 token to invalidate all outstanding signatures at once.
 - `CORRUPT` objects are never served. Do not delete them until the cause is known.
+
+## Large objects and run-output artifacts (2026-10-22)
+- Objects above the single-PUT threshold (default 1 GiB, `maxStreamCopyBytes`) are copied by the bounded multipart path automatically; there is no extra flag. Part size follows `STORAGE_MULTIPART_PART_BYTES` (default 16 MiB, minimum 5 MiB, at most 10,000 parts), two parts are held in memory at a time, each part has a 120 s timeout. A failed attempt keeps its multipart upload id on the destination row and the retry resumes it; stored parts are reused only when their ETag equals the MD5 of what the source produces now.
+- Abandoned multipart uploads are aborted by `reconcile-storage.mts --drive --execute` once the 24 h reservation has expired.
+- Run-output artifacts: `tsx scripts/storage/create-migration-job.mts create --source run_output_artifacts --name runs --copy-mode`, then `tsx scripts/storage/migrate-run-output-artifacts.mts --job J --phase discover|dry-run|copy|verify` with the same signed-approval flow as above. Start with the read-only count: `tsx scripts/storage/inventory-storage.mts` (`run_output_artifacts` block). Expect few or no eligible items: today the production writer stores metadata-only descriptors. Source rows are never modified; rollback of read mode is `rollback-storage-read-mode.mts --source run_output_artifacts --job J`.
+- `STORAGE_DB_SSL_CA` (PEM or file path) makes the storage pool verify the database certificate.

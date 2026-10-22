@@ -14,6 +14,6 @@
 | Postgres access | `lib/postgresConnect.ts` (`DATABASE_URL`/pooler) | Supabase | yes | `storage/runtime.ts#createPool` reuses `resolveDatabaseUrls()` |
 | Queues | `config/redis.ts`, `jobQueues.ts` | `REDIS_URL` | yes | not touched (INFRA-006) |
 | New deps added | `@aws-sdk/s3-request-presigner@3.1075.0` (matches `client-s3` 3.1075.0) | — | build-time | pinned to the same SDK minor to avoid type skew |
-| Hosting | Fly `xroga-api`, `xroga-sandbox`; Vercel; Supabase; Cloudflare R2; Whop; Composio; Browserbase | — | yes | no change |
+| Hosting | Fly `xroga-api`, `xroga-sandbox`; Vercel; Supabase; Cloudflare R2; Whop; Composio; Browserbase (transitional browser sessions; **not** a target — see `browser-architecture-decision.md`) | — | yes | no change |
 
 Open dependency questions (kept as questions, not guesses): Redis provider and persistence; whether avatar uploads succeed; row counts in `project_files`; size of `swarm_runs.output`.
