@@ -160,9 +160,10 @@ export function sandboxValidationRunner(): ValidationRunner {
       [candidate.command, ...candidate.args].map(shellQuote).join(' ');
     const cwd = command.cwd?.trim();
     const setupCommands = context?.setupCommands ?? [];
+    const setupNeedsNetwork = setupCommands.some(candidate=>candidate.networkPolicy!=='none');
     const needsWrapper = setupCommands.length > 0 || Boolean(cwd);
     const setupScript = setupCommands.map((candidate) => argv(candidate)).join('\n');
-    const phaseCommand = command.networkPolicy === 'none' && setupCommands.length > 0
+    const phaseCommand = command.networkPolicy === 'none' && setupNeedsNetwork
       ? `exec unshare -n ${argv(command)}`
       : `exec ${argv(command)}`;
     const script = [
@@ -180,7 +181,7 @@ export function sandboxValidationRunner(): ValidationRunner {
       command: needsWrapper ? '/bin/sh' : command.command,
       args: needsWrapper ? ['-c', script] : [...command.args],
       timeoutMs: 600_000,
-      networkPolicy: setupCommands.length > 0 ? 'registry-only' : command.networkPolicy,
+      networkPolicy: setupNeedsNetwork ? 'registry-only' : command.networkPolicy,
       environment: buildSandboxEnvironment(),
       ...(context?.image ? { image: context.image } : {}),
     });

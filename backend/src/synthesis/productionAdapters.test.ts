@@ -136,7 +136,7 @@ describe('adapters delegate rather than reimplement', () => {
           files: [f('normalize.py', 'def normalize_whitespace(text: str) -> str:\n    return " ".join(text.split())\n')],
           image: 'registry-1.docker.io/library/python:3.12-alpine',
           setupCommands: [
-            { command: 'pip', args: ['install', '-r', 'requirements.txt'], networkPolicy: 'registry-only', source: 'manifest', purpose: 'install' },
+            { command: 'pip', args: ['install', '--no-index', '-r', 'requirements.txt'], networkPolicy: 'none', source: 'manifest', purpose: 'install' },
           ],
         },
       );
@@ -145,7 +145,8 @@ describe('adapters delegate rather than reimplement', () => {
       assert.equal(seen[0]?.image, 'registry-1.docker.io/library/python:3.12-alpine');
       assert.equal(seen[0]?.command, '/bin/sh');
       assert.match(seen[0]?.args[1] ?? '', /pip.*install.*requirements\.txt/);
-      assert.match(seen[0]?.args[1] ?? '', /unshare -n.*pytest.*-q/);
+      assert.match(seen[0]?.args[1] ?? '', /exec.*pytest.*-q/);
+      assert.doesNotMatch(seen[0]?.args[1] ?? '', /unshare/,'The entire offline setup and test already run without a network');
     } finally {
       setSandboxProvidersForTesting(null);
     }
@@ -178,17 +179,16 @@ describe('adapters delegate rather than reimplement', () => {
         commit: async () => ({ commitSha: 'x' }),
       });
 
-      await adapters.runValidation({
+      await assert.rejects(adapters.runValidation({
         command: 'cargo', args: ['fetch'], networkPolicy: 'registry-only',
         source: 'manifest', purpose: 'install',
-      });
+      }),/verified restricted-network/);
       await adapters.runValidation({
         command: 'cargo', args: ['test'], networkPolicy: 'none',
         source: 'manifest', purpose: 'test',
       });
 
       assert.deepEqual(seen, [
-        { command: 'cargo', networkPolicy: 'registry-only' },
         { command: 'cargo', networkPolicy: 'none' },
       ]);
     } finally {

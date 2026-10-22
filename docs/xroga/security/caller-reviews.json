@@ -3668,12 +3668,13 @@
     },
     {
       "path": "backend/src/sandbox/flyMachineSandbox.ts",
-      "sourceSha256": "3bdef3facc61c0c324b73d3fd06d93cac3b764e9b3dcd0309874ed4bc7e86ca6",
+      "sourceSha256": "3317c592f7c0a68ad945ff4dc654360f3a0621e1ed9f5dd65e6ec7d57953af3e",
       "callIds": [
-        "0d4114d4eca28b97f4cf"
+        "6e872b93785f20224da7"
       ],
       "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected the receiver and surrounding expression in buildMachineConfig. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "authority": "Inspected the native Buffer.from(file.content, utf8).toString(base64) conversion in buildMachineConfig. That entire method has the same AST-text SHA256 before and after registry-only refusal. This is not the adjacent provider transport or persistence.",
+      "priorReviewReference": "docs/xroga/evidence/command-010/REGISTRY-NETWORK-PROOF.json",
       "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
       "evidence": [
         {

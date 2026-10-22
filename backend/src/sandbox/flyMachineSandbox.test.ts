@@ -269,16 +269,15 @@ describe('egress is denied for the steps that should not have it', () => {
     assert.match(argv[2], /unshare -n/, 'this is what replaces --network none');
   });
 
-  it('leaves the network alone for registry-only, since npm install needs it', () => {
-    const argv = buildExecCommand('npm', ['install'], 'registry-only');
-    assert.ok(!argv[2].includes('unshare'), 'denying egress here would break installs');
+  it('refuses registry-only rather than launching an unrestricted install', () => {
+    assert.throws(()=>buildExecCommand('npm', ['install'], 'registry-only'),/verified restricted-network/);
   });
 
   it('creates /work before entering it, for both policies', () => {
     // Regression. /work only exists if a request file was written into it, so a bare `cd`
     // made a request with no relative-path files fail with exit 2 for a build that never
     // ran. Caught against a real Fly machine; a stub cannot see this.
-    for (const policy of ['none', 'registry-only', 'restricted'] as const) {
+    for (const policy of ['none', 'restricted'] as const) {
       assert.match(
         buildExecCommand('npm', ['run', 'build'], policy)[2],
         /^mkdir -p \/work && cd \/work/,
