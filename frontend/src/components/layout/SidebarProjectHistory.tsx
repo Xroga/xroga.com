@@ -991,7 +991,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     const saved=metaOf(kind,id)?.pin_order!=null;
     return <div key={kind+':'+id} className={cn('xv-sidebar-work-row group flex items-center gap-1 min-w-0 rounded-md hover:bg-[var(--foreground)]/[0.05]',
         (kind==='project'&&activeSidebarProjectId===id)||(kind==='conversation'&&activeSessionId===id)
-          ? 'bg-[var(--foreground)]/[0.075]' : '')}
+          ? 'bg-[var(--foreground)]/[0.13] text-[var(--foreground)]' : '')}
       onContextMenu={event=>openMenu(event,kind,id)} draggable={pinned}
       onDragStart={event=>event.dataTransfer.setData('text/plain',kind+':'+id)}
       onDragOver={event=>{if(pinned)event.preventDefault();}}
