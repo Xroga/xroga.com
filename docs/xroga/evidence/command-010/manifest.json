@@ -4,7 +4,7 @@
   "status": "PARTIALLY_VERIFIED_PREPARATION_ONLY",
   "baseSha": "fb95f76bafc1b544b6655d435cddede260d9cd99",
   "implementationCommit": "00151e6d2dd93d2477970b7337126fcab883862c",
-  "sourceIdentityNote": "Runtime and regression changes in 00151e6d, provenance repair in 930c1d65. Later documentation commits do not certify CI or Phase4 acceptance.",
+  "sourceIdentityNote": "Runtime and regression changes began in 00151e6d, provenance repair in 930c1d65. The current continuation adds the third SDK floor, deterministic budget/health handling and correct database-test placement. Each CI receipt below applies only to its explicit source.",
   "formalPhase4Admission": false,
   "phase3Status": "BLOCKED_MANAGED_KMS_RUNTIME_CUSTODY_AND_APPLICABLE_CUTOVER",
   "releaseState": "BLOCKED",
@@ -190,11 +190,14 @@
       "dependenciesAdded": 0
     },
     "currentFocused": {
-      "tests": 69,
-      "pass": 69,
+      "tests": 71,
+      "pass": 71,
       "fail": 0,
       "skipped": 0,
-      "scope": "Current call-site model guards, egress, golden journeys, URL transport and provenance/scanner tests"
+      "scope": "Current three SDK call-site guards, provider health, egress, golden journeys, business action, URL transport and provenance/scanner tests",
+      "command": "NODE_ENV=test node --import tsx --test backend/src/security/egress/*.test.ts backend/src/security/boundedPublicGet.test.ts backend/src/ai/openaiCompat.egress.test.ts backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts backend/src/ai/providerRuntime.test.ts backend/src/e2e/xrogaGoldenJourneys.test.ts backend/src/services/integrations/businessAction.digest.test.ts scripts/security/audit-egress-callers.test.mjs scripts/ci/prepare-pr-integration.test.mjs",
+      "runtimeAndProjectionRegressions": {"tests":25,"pass":25,"fail":0},
+      "backendTypecheck": "PASS"
     },
     "realPostgresReceipt": {
       "tests": 3,
@@ -284,7 +287,16 @@
       }
     ],
     "corrections": "Current advisory source manifest and exact native conversion reviews reconciled. Original validators and historical hashes preserved.",
-    "currentSourceStatus": "PENDING_FINAL_SOURCE_GITHUB_VERIFICATION",
+    "verifiedPriorCheckpoint": {
+      "featureSha": "57e1c1bdd7af87f5ac0bf0784bb9ce7dac38c376",
+      "integratedSha": "a61df63a19adb4c851d10c3fe3f176e2a0479eca",
+      "baseSha": "fb95f76bafc1b544b6655d435cddede260d9cd99",
+      "tenantSecurity": {"run":39864120844,"conclusion":"success","realPostgresTests":3},
+      "otherSuccessfulRuns": [39864120849,39864120964,39864120892,39864120879],
+      "unit": {"run":39864120832,"conclusion":"failure","branchAndIntegratedFailure":"runtime-config-integrity: test-only dynamic environment cleanup was discovered as production runtime source","originalProvenanceFailuresResolved":true,"backendDeclaredTests":3161,"frontendDeclaredTests":1155,"buildsAndTypechecks":"PASS"},
+      "correction": "Move the standalone, explicitly invoked DB test out of backend/src to backend/tests and regenerate runtime facts. No discovery, binding or acceptance validator changed. All three moved real PostgreSQL tests pass locally."
+    },
+    "currentSourceStatus": "PENDING_CHANGED_SOURCE_GITHUB_VERIFICATION",
     "previousPhase3ReceiptsReusedAsCurrent": false
   },
   "realDatabasePersistenceVerified": "LOCAL_POSTGRES_ONLY_WITH_PROTOCOL_BRIDGE",

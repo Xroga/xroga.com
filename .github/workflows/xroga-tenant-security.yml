@@ -55,7 +55,7 @@ jobs:
         env:
           XB01_DISPOSABLE_DATABASE: '1'
           XB01_EGRESS_TEST_DATABASE_URL: postgres://postgres:disposable-fixture-only@127.0.0.1:5432/xb01_tenant_test
-        run: node node_modules/tsx/dist/cli.mjs --test backend/src/security/egress/securityReceipt.local.integration.ts
+        run: node node_modules/tsx/dist/cli.mjs --test backend/tests/securityReceipt.local.integration.ts
       - name: Preserve exact integrated audit provenance
         if: always() && github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4

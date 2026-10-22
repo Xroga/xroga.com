@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e883f4f339caf370564806fe6b37f104adf62a34",
+  "source_sha": "57e1c1bdd7af87f5ac0bf0784bb9ce7dac38c376",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12340,7 +12340,7 @@
     },
     {
       "path": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "48b77618e63bb78afbc744d3a467d0dcf02758f13f0aec8e3628a6e322539ce1"
+      "sha256": "5de60d2ee18132c825ab85d8c337e5095ad13a197605b51b6111f78bc1ce735e"
     },
     {
       "path": "Dockerfile.api",
@@ -12352,7 +12352,7 @@
     },
     {
       "path": "backend/src/ai/attachments.ts",
-      "sha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5"
+      "sha256": "c50dc741653646df6b6dddc6ec1ba4337fa3b3a48a94b5d9a66afe52b81cbd46"
     },
     {
       "path": "backend/src/ai/benchmarkExecutor.ts",
@@ -12576,7 +12576,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "41ef0899e797d9813bdbdee6f86a27c0739bcc92f1df49da5a9285a52b8a8fbb"
+      "sha256": "11bfe89d2c0b93c169fbb66bc0f26b317648380639ca812930fb44a1b2c4509a"
     },
     {
       "path": "backend/src/ai/parallelWeb.ts",
@@ -12632,7 +12632,7 @@
     },
     {
       "path": "backend/src/ai/providerRuntime.ts",
-      "sha256": "5adc2426b03c4b2626a20b18c72b3a1f6ff17a04bed513aa443746dbfc789fb8"
+      "sha256": "293fa500379170142ce75f1c5e1389af05ec71f210572e771bbcb8708d0707e0"
     },
     {
       "path": "backend/src/ai/qa.ts",
@@ -12800,7 +12800,7 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "sha256": "96a7c930b828b49332d3eb5e6fd8304452ca59bad007cc3319cba771ca72202e"
+      "sha256": "ebe35abec3c42c7c8c569a14ff5b5bc1551964b1deef617a40be2b92a836db98"
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaProductionAdapters.ts",
@@ -13140,7 +13140,7 @@
     },
     {
       "path": "backend/src/lib/deployVerify.ts",
-      "sha256": "abcf85356420eda9b29ae5c3aae5a29aa70fb174ab73cb4d9ffb708823b2125e"
+      "sha256": "6d61d603fb3585e28e8fd6ccfbc0077d21ccd55452439a819e4b0f621a28c7da"
     },
     {
       "path": "backend/src/lib/exa.ts",
@@ -13248,7 +13248,7 @@
     },
     {
       "path": "backend/src/lib/shipVerify.ts",
-      "sha256": "f20629c081ef80bea2164d8ee879820ec0dc4a7577de8c931a74c6667f2bc654"
+      "sha256": "4fb72f464e770db5da19b4bd6f9351113eb94d0df9de64513245ccfd7c30f018"
     },
     {
       "path": "backend/src/lib/slimOutputForSse.ts",
@@ -13404,7 +13404,7 @@
     },
     {
       "path": "backend/src/operations/providerAdapters.ts",
-      "sha256": "58f92ebf5556be31c7e225057fede5d9e91d3204dd53a8b53c9699c39a87dbde"
+      "sha256": "70af3217e8620ae65efcdc418f775c8c36feff10d4d81d8e204cf645284fc625"
     },
     {
       "path": "backend/src/operations/readMatrix.local.integration.ts",
@@ -13704,7 +13704,7 @@
     },
     {
       "path": "backend/src/security/boundedPublicGet.ts",
-      "sha256": "9a20c8cc0e496f893a18d79dba79b4beac820b9001bc1b06d2fc2772c70eee44"
+      "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
     },
     {
       "path": "backend/src/security/budgetOwner.local.integration.ts",
@@ -13753,6 +13753,38 @@
     {
       "path": "backend/src/security/deliveryEvidenceRead.local.integration.ts",
       "sha256": "379184e2e75a8002df7e9e84525e2aa4603f4c65fd38f2befebddeb5bd182d5e"
+    },
+    {
+      "path": "backend/src/security/egress/dataClassification.ts",
+      "sha256": "f9954c04057b0d513ccf889c406dc51bc57b4d097ffa445fb7d3ec66ad5ebe22"
+    },
+    {
+      "path": "backend/src/security/egress/egressPolicy.ts",
+      "sha256": "599dc837cd2b3fdefc0e3abc189c7d5e3ee9f38763f1f3ee2964ac18b49e8125"
+    },
+    {
+      "path": "backend/src/security/egress/fileEgress.ts",
+      "sha256": "a41f6fa55c00275359176456e6c0fa175f2ad7a5209b4d529cc465494725e565"
+    },
+    {
+      "path": "backend/src/security/egress/securityDecision.ts",
+      "sha256": "961cd8cbefb5a179538c9f23b59a62d0162ce8f32db8737c6d020a237f7609cb"
+    },
+    {
+      "path": "backend/src/security/egress/toolTrust.ts",
+      "sha256": "a0b180fb8f43e4bff77688a0c2f6005c1b60690216adc2fd8cd0332244ee751c"
+    },
+    {
+      "path": "backend/src/security/egress/types.ts",
+      "sha256": "65b96a70630b02c22bbc67ece994d401058afd03392f2eafa5ac81c1bc6d7224"
+    },
+    {
+      "path": "backend/src/security/egress/untrustedInput.ts",
+      "sha256": "7cc0441a6b8c11792797a9c2e27712f5dc026137aebed6c0dae9a60693311e92"
+    },
+    {
+      "path": "backend/src/security/egress/urlPolicy.ts",
+      "sha256": "029047096756212afb39fb30f5cdd4522e15ff825f819d7ea0f8efcab735f580"
     },
     {
       "path": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
@@ -13972,7 +14004,7 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "927ae82aefde6fc54744c0c076b94cf2e2a5a2f661bd36308ae704ddabd1bb56"
+      "sha256": "e4b6d2f34ee0ce9ccfcc69d33848483395ff8830cd127152d704214bdd2f65d4"
     },
     {
       "path": "backend/src/services/integrations/composioNamespace.ts",
@@ -14780,7 +14812,7 @@
     },
     {
       "path": "frontend/src/app/api/browser-view/route.ts",
-      "sha256": "fde077374fd308e3322ee3cfcca5a7c7eb26e0c58284caa1485d2544b4fb77bd"
+      "sha256": "32a340e8c942c965f0ec08179234ee7431efb32f77dceb6a809ee7b1b9451293"
     },
     {
       "path": "frontend/src/app/api/geo/route.ts",
@@ -14788,7 +14820,7 @@
     },
     {
       "path": "frontend/src/app/api/image-fetch/route.ts",
-      "sha256": "4d77a9db680dcc7bd30d4cff26398c2e0c50058a4b28439dd92016b4e7dc0f25"
+      "sha256": "51467588b07c73bb6b06bd1434fe2d126388635b053cecc681587a3c11588be1"
     },
     {
       "path": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
@@ -17903,6 +17935,10 @@
       "sha256": "46bc7cde5cc8d4450f72b57c159442393a3829562f644296539d750cceb81620"
     },
     {
+      "path": "frontend/src/lib/server/publicEgress.ts",
+      "sha256": "99a9c2078e855c5d147e1a8109e5380b0024cd770f3466efc8bb493a572e9179"
+    },
+    {
       "path": "frontend/src/lib/setProfileFromImage.ts",
       "sha256": "5815d4ace7692c8b88a10810ca72cbfe4ed6e23c8c3574cda6c4dd138fc42d45"
     },
@@ -18604,7 +18640,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 177,
+      "line": 179,
       "expression": "def.secretKey",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -19141,7 +19177,7 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 106,
+      "line": 108,
       "credentialsInUrl": false
     },
     {
@@ -20723,7 +20759,7 @@
       "hostname": "backend.composio.dev",
       "protocol": "https:",
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 9,
+      "line": 13,
       "credentialsInUrl": false
     },
     {
@@ -24971,6 +25007,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/ai/openaiCompat.ts",
+      "line": 207,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/ai/parallelWeb.ts",
       "line": 329,
       "scope": "FUNCTION_LOCAL",
@@ -25245,7 +25288,7 @@
     },
     {
       "path": "backend/src/ai/providerRuntime.ts",
-      "line": 271,
+      "line": 275,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -25539,14 +25582,14 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "line": 847,
+      "line": 845,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "line": 1191,
+      "line": 1189,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26148,7 +26191,7 @@
     },
     {
       "path": "backend/src/operations/providerAdapters.ts",
-      "line": 111,
+      "line": 101,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -27016,28 +27059,28 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 677,
+      "line": 681,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1213,
+      "line": 1217,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1242,
+      "line": 1246,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1849,
+      "line": 1853,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

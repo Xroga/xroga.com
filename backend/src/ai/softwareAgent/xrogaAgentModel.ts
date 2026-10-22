@@ -2,7 +2,9 @@ import OpenAI from 'openai';
 
 import {
   resolveEndpoint,
+  snapshotModelEgressPayload,
 } from '../openaiCompat.js';
+import {publicHttpsUrl} from '../../security/egress/urlPolicy.js';
 
 import {
   executeWithProviderFallback,
@@ -752,6 +754,7 @@ async function runSingleModelTurn(
               credentialOverride,
             );
 
+          publicHttpsUrl(endpoint.baseUrl);
           const client =
             new OpenAI({
               apiKey:
@@ -770,15 +773,10 @@ async function runSingleModelTurn(
                 endpoint.defaultHeaders,
             });
 
-          const messages =
-            toOpenAiMessages(
-              input.request,
-            );
-
-          const tools =
-            toOpenAiTools(
-              input.request.tools,
-            );
+          const {messages,tools}=snapshotModelEgressPayload({
+            messages:toOpenAiMessages(input.request),
+            tools:toOpenAiTools(input.request.tools),
+          },endpoint.apiKey);
 
           const stream =
             await client.chat.completions.create(

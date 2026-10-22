@@ -4418,7 +4418,7 @@
         "backend/src/ai/quota.test.ts:4",
         "backend/src/ai/quota.ts:3",
         "backend/src/ai/routerConfig.ts:1",
-        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:24",
+        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:26",
         "backend/src/ai/universal/semanticRequestPlanner.ts:7",
         "backend/src/config/plans.ts:2",
         "backend/src/hardening/launchHardening.test.ts:18",
@@ -4474,7 +4474,7 @@
       "id": "surface:29a1af5a79330a300ab2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/openaiCompat.ts",
-      "sha256": "ef1ffc1b4913fc958f8b689ad0f4bb40be2ece8790e46f4eedb52cbc50b3a354",
+      "sha256": "11bfe89d2c0b93c169fbb66bc0f26b317648380639ca812930fb44a1b2c4509a",
       "symbols": [
         "ChatMessage",
         "ChatResult",
@@ -4482,13 +4482,14 @@
         "ModelNotConfiguredError",
         "ReasoningMode",
         "ResolvedEndpoint",
+        "active",
         "answer",
         "apiKey",
         "apiModel",
         "buildVisionUserContent",
         "chatCompletion",
         "chatCompletionStream",
-        "checkedModelMessages",
+        "child",
         "choice",
         "chunk",
         "client",
@@ -4507,11 +4508,13 @@
         "finishReason",
         "id",
         "inputTokens",
+        "invalid",
         "issues",
-        "message",
+        "item",
         "modelKeyStatus",
         "modelTransportStatus",
         "n",
+        "nodes",
         "normalized",
         "openRouterHeaders",
         "orKey",
@@ -4519,6 +4522,7 @@
         "outputTokens",
         "part",
         "parts",
+        "pending",
         "providerReasoningControls",
         "providerRequestId",
         "reasoning",
@@ -4528,13 +4532,13 @@
         "requiredTransport",
         "resolveEndpoint",
         "snapshot",
+        "snapshotModelEgressPayload",
         "spec",
         "started",
+        "step",
         "stream",
         "text",
-        "url",
-        "value",
-        "values"
+        "url"
       ],
       "imports": [
         "../config/envSecrets.js",
@@ -5970,7 +5974,7 @@
         "backend/src/ai/providerBudget.settlement.test.ts:4",
         "backend/src/ai/providerBudget.test.ts:4",
         "backend/src/ai/repoSummarize.ts:18",
-        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:14",
+        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:16",
         "backend/src/ai/universal/semanticRequestPlanner.ts:12",
         "backend/src/operations/benchmarkAdapter.ts:36",
         "backend/src/operations/operationsProviderBudget.local.integration.ts:6",
@@ -6246,7 +6250,7 @@
       "id": "surface:3e9fb9a001d600489a5a",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/providerRuntime.ts",
-      "sha256": "5adc2426b03c4b2626a20b18c72b3a1f6ff17a04bed513aa443746dbfc789fb8",
+      "sha256": "293fa500379170142ce75f1c5e1389af05ec71f210572e771bbcb8708d0707e0",
       "symbols": [
         "ModelRuntimeHealth",
         "MutableHealth",
@@ -6280,6 +6284,7 @@
         "numberField",
         "onlyTimeouts",
         "persistHealth",
+        "policyCode",
         "recompute",
         "record",
         "recordModelExecution",
@@ -6323,7 +6328,8 @@
         "backend/src/ai/providerHealthStore.test.ts:9",
         "backend/src/ai/providerRuntime.test.ts:3",
         "backend/src/ai/research.ts:2",
-        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:7",
+        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:9",
+        "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts:6",
         "backend/src/ai/universal/semanticRequestPlanner.ts:16",
         "backend/src/index.ts:50",
         "backend/src/lib/resilience/callWithFallback.ts:4",
@@ -6347,6 +6353,7 @@
         "backend/src/ai/providerBudget.settlement.test.ts",
         "backend/src/ai/providerHealthStore.test.ts",
         "backend/src/ai/providerRuntime.test.ts",
+        "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
         "backend/src/lib/resilience/retry.test.ts",
         "backend/src/security/platformHealth.local.integration.ts"
       ],
@@ -6548,7 +6555,7 @@
         "backend/src/ai/postCompletionAccounting.ts:2",
         "backend/src/ai/quota.failure.test.ts:3",
         "backend/src/ai/quota.test.ts:18",
-        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:19",
+        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:21",
         "backend/src/ai/universal/semanticRequestPlanner.ts:23",
         "backend/src/routes/phase1.ts:18",
         "backend/src/routes/phase1BusinessPreflight.ts:3",
@@ -9213,7 +9220,7 @@
       "id": "surface:6b3219ea2bb7bf7d7c7c",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "sha256": "96a7c930b828b49332d3eb5e6fd8304452ca59bad007cc3319cba771ca72202e",
+      "sha256": "ebe35abec3c42c7c8c569a14ff5b5bc1551964b1deef617a40be2b92a836db98",
       "symbols": [
         "AgentMessage",
         "AgentMessagePart",
@@ -9283,11 +9290,11 @@
         "toolCallIds",
         "toolCalls",
         "toolResultMessages",
-        "tools",
         "turn",
         "userId"
       ],
       "imports": [
+        "../../security/egress/urlPolicy.js",
         "../models.js",
         "../openaiCompat.js",
         "../providerBudget.js",
@@ -9301,13 +9308,15 @@
         "backend/src/ai/openaiCompat.ts",
         "backend/src/ai/providerBudget.ts",
         "backend/src/ai/providerRuntime.ts",
-        "backend/src/ai/quota.ts"
+        "backend/src/ai/quota.ts",
+        "backend/src/security/egress/urlPolicy.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/index.ts:25",
+        "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts:4",
         "backend/src/ai/softwareAgent/xrogaAgentModelTelemetry.test.ts:7",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:34"
       ],
@@ -9329,6 +9338,7 @@
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts#events"
       ],
       "testCoverage": [
+        "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
         "backend/src/ai/softwareAgent/xrogaAgentModelTelemetry.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -21075,11 +21085,11 @@
         "backend/src/security/egress/egress.integration.test.ts:7",
         "backend/src/security/egress/egressPolicy.ts:4",
         "backend/src/security/egress/fileEgress.test.ts:5",
-        "backend/src/security/egress/securityReceipt.local.integration.ts:9",
         "backend/src/services/integrations/businessAction.ts:5",
         "backend/src/services/integrations/businessActionConfirmations.ts:5",
         "backend/src/services/integrations/composioClient.ts:5",
-        "backend/src/services/integrations/credentialVault.ts:3"
+        "backend/src/services/integrations/credentialVault.ts:3",
+        "backend/tests/securityReceipt.local.integration.ts:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -21103,7 +21113,7 @@
         "backend/src/security/authority/enforce.test.ts",
         "backend/src/security/egress/egress.integration.test.ts",
         "backend/src/security/egress/fileEgress.test.ts",
-        "backend/src/security/egress/securityReceipt.local.integration.ts"
+        "backend/tests/securityReceipt.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -21160,10 +21170,10 @@
         "backend/src/security/egress/egressPolicy.ts:2",
         "backend/src/security/egress/fileEgress.test.ts:6",
         "backend/src/security/egress/fileEgress.ts:5",
-        "backend/src/security/egress/securityReceipt.local.integration.ts:13",
         "backend/src/services/integrations/businessAction.ts:7",
         "backend/src/services/integrations/businessActionConfirmations.ts:4",
-        "backend/src/services/integrations/composioClient.ts:6"
+        "backend/src/services/integrations/composioClient.ts:6",
+        "backend/tests/securityReceipt.local.integration.ts:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -21195,7 +21205,7 @@
         "backend/src/security/authority/enforce.test.ts",
         "backend/src/security/egress/egress.integration.test.ts",
         "backend/src/security/egress/fileEgress.test.ts",
-        "backend/src/security/egress/securityReceipt.local.integration.ts"
+        "backend/tests/securityReceipt.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -21287,7 +21297,7 @@
         "backend/src/security/authority/enforce.test.ts",
         "backend/src/security/egress/egress.integration.test.ts",
         "backend/src/security/egress/fileEgress.test.ts",
-        "backend/src/security/egress/securityReceipt.local.integration.ts"
+        "backend/tests/securityReceipt.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -21500,8 +21510,8 @@
         "backend/src/security/egress/egress.integration.test.ts:9",
         "backend/src/security/egress/fileEgress.ts:6",
         "backend/src/security/egress/securityDecision.ts:5",
-        "backend/src/security/egress/securityReceipt.local.integration.ts:10",
-        "backend/src/services/integrations/composioClient.ts:10"
+        "backend/src/services/integrations/composioClient.ts:10",
+        "backend/tests/securityReceipt.local.integration.ts:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -21522,7 +21532,7 @@
       ],
       "testCoverage": [
         "backend/src/security/egress/egress.integration.test.ts",
-        "backend/src/security/egress/securityReceipt.local.integration.ts"
+        "backend/tests/securityReceipt.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -21568,7 +21578,7 @@
       "entryPoints": [],
       "callers": [
         "backend/src/security/egress/fileEgress.test.ts:9",
-        "backend/src/security/egress/securityReceipt.local.integration.ts:12"
+        "backend/tests/securityReceipt.local.integration.ts:12"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -21587,7 +21597,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/security/egress/fileEgress.test.ts",
-        "backend/src/security/egress/securityReceipt.local.integration.ts"
+        "backend/tests/securityReceipt.local.integration.ts"
       ],
       "state": "DEAD_OR_UNREACHABLE",
       "confidence": "LOW",
@@ -21624,8 +21634,8 @@
       ],
       "callers": [
         "backend/src/security/egress/egress.integration.test.ts:10",
-        "backend/src/security/egress/securityReceipt.local.integration.ts:11",
-        "backend/src/services/integrations/composioClient.ts:11"
+        "backend/src/services/integrations/composioClient.ts:11",
+        "backend/tests/securityReceipt.local.integration.ts:11"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -21641,7 +21651,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/security/egress/egress.integration.test.ts",
-        "backend/src/security/egress/securityReceipt.local.integration.ts"
+        "backend/tests/securityReceipt.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -21781,6 +21791,7 @@
       "callers": [
         "backend/src/ai/attachments.ts:7",
         "backend/src/ai/openaiCompat.ts:14",
+        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:7",
         "backend/src/lib/deployVerify.ts:1",
         "backend/src/lib/shipVerify.ts:6",
         "backend/src/operations/providerAdapters.ts:1",
@@ -22209,7 +22220,6 @@
         "backend/src/security/egress/egressPolicy.ts:5",
         "backend/src/security/egress/fileEgress.test.ts:4",
         "backend/src/security/egress/securityDecision.ts:2",
-        "backend/src/security/egress/securityReceipt.local.integration.ts:8",
         "backend/src/security/legacyBuildHistory.local.integration.ts:9",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:6",
         "backend/src/security/ownedRunHeartbeat.test.ts:4",
@@ -22286,6 +22296,7 @@
         "backend/src/synthesis/universalPersistence.owner.test.ts:7",
         "backend/src/synthesis/universalPersistence.snapshot.test.ts:6",
         "backend/src/synthesis/universalPersistence.ts:23",
+        "backend/tests/securityReceipt.local.integration.ts:8",
         "scripts/security/verify-oci-kms.ts:8"
       ],
       "reachable": true,
@@ -22330,7 +22341,6 @@
         "backend/src/security/connectedMemoryConsumer.local.integration.ts",
         "backend/src/security/egress/egress.integration.test.ts",
         "backend/src/security/egress/fileEgress.test.ts",
-        "backend/src/security/egress/securityReceipt.local.integration.ts",
         "backend/src/security/legacyBuildHistory.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/ownedRunHeartbeat.test.ts",
@@ -22378,7 +22388,8 @@
         "backend/src/services/storage/projectFiles.receipt.test.ts",
         "backend/src/synthesis/projectRuntime/secretRead.test.ts",
         "backend/src/synthesis/universalPersistence.owner.test.ts",
-        "backend/src/synthesis/universalPersistence.snapshot.test.ts"
+        "backend/src/synthesis/universalPersistence.snapshot.test.ts",
+        "backend/tests/securityReceipt.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -102242,7 +102253,7 @@
     {
       "id": "workflow:78c19ecd7c4e5844f961",
       "sourcePath": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "05dbbf28d1ed902df8099786a58564c6396ef3608109dd1496c42a634d774405",
+      "sha256": "5de60d2ee18132c825ab85d8c337e5095ad13a197605b51b6111f78bc1ce735e",
       "sourceEntrypoints": [
         "scripts/ci/prepare-pr-integration.mjs",
         "scripts/security/audit-credential-usage.mjs",
@@ -102346,9 +102357,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:fe56b432e9c483115797",
+      "id": "finding:d51ab038b693bcdcc5de",
       "sourcePath": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "line": 553,
+      "line": 555,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -108963,7 +108974,7 @@
     {
       "id": "test-suite:e560f40fdd60bae650a7",
       "sourcePath": "backend/src/ai/openaiCompat.egress.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -109391,6 +109402,13 @@
       "id": "test-suite:ae9739edca13f8baf00a",
       "sourcePath": "backend/src/ai/softwareAgent/verificationContinuationPolicy.test.ts",
       "declaredTests": 9,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:baf85469acddb6d3b726",
+      "sourcePath": "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -110513,13 +110531,6 @@
       "id": "test-suite:95c27fb9ddccda8396aa",
       "sourcePath": "backend/src/security/egress/publicPost.test.ts",
       "declaredTests": 4,
-      "skipLocations": [],
-      "focusLocations": []
-    },
-    {
-      "id": "test-suite:33987a37674ccf7476d7",
-      "sourcePath": "backend/src/security/egress/securityReceipt.local.integration.ts",
-      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -111948,6 +111959,13 @@
       "id": "test-suite:1e0727e5508d20e20b91",
       "sourcePath": "backend/src/synthesis/webVerificationWiring.test.ts",
       "declaredTests": 20,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:a9695fabb4bddb2cebf0",
+      "sourcePath": "backend/tests/securityReceipt.local.integration.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

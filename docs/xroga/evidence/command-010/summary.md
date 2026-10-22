@@ -148,3 +148,32 @@ groups. A separate branch codex/xroga-phase4-ui-integration-20261023 at
 control with scoped draft flushing. All five focused draft/control tests pass.
 It is not merged into PR844. Other UI conflicts are left intact, so complete main
 integration is not claimed. Phase3 and formal Phase4 admission remain blocked.
+
+## Third SDK and exact CI continuation
+
+The grouped provider packet contains a third actual SDK call in
+softwareAgent/xrogaAgentModel.ts. It now shares the payload snapshot and secret
+floor, including structured tools, while retaining its canonical quota,
+reservation, settlement and usage path. Deterministic pre-dispatch policy errors
+release the reservation as invalid requests and do not poison shared provider
+health. The real factory is tested with controlled budget HTTP fixtures and SDK
+dispatch interception. These fixtures are not provider or database budget proof.
+All three SDK dispositions remain open for complete tenant/account, authority,
+DNS and egressPolicy admission proof. They are not automatically certified.
+
+Current focused verification passes 71 tests. Runtime-discovery, configuration
+and projection regressions pass 25 tests. Backend typecheck passes. The three
+disposable PostgreSQL tests also pass after moving the standalone test into
+backend/tests, and the dedicated container was removed.
+
+At checkpoint 57e1c1bd, GitHub tenant security 39864120844 passed all three real
+database tests. Four other workflows passed. Unit 39864120832 failed in both
+branch and integrated jobs only after passing builds, typechecks, 3161 backend
+declared tests, 1155 frontend tests, migrations, inventory and requirements.
+The failure was an unresolved runtime binding from the test-only environment
+cleanup loop in the standalone database test, which had been under backend/src.
+Moving this explicitly invoked test into backend/tests fixes its classification
+without weakening discovery or allowing an unreviewed production binding.
+Runtime regeneration now reports zero unresolved bindings. The exact integrated
+receipt is a61df63a19adb4c851d10c3fe3f176e2a0479eca against fb95f76b, not main.
+Those receipts are preserved and are not relabeled as later-source success.

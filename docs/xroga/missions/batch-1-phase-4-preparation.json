@@ -130,7 +130,7 @@
       "command": "XB01_DISPOSABLE_DATABASE=1 XB01_EGRESS_TEST_DATABASE_URL=<dedicated-loopback> node --import tsx --test backend/src/security/egress/securityReceipt.local.integration.ts",
       "scope": "3 actual PostgreSQL receipt/ownership tests, controlled PostgREST bridge, no live provider or full Supabase parity",
       "negative": true,
-      "reference": "backend/src/security/egress/securityReceipt.local.integration.ts"
+      "reference": "backend/tests/securityReceipt.local.integration.ts"
     },
     {
       "command": "node --import tsx --test backend/src/ai/openaiCompat.egress.test.ts",
@@ -155,7 +155,7 @@
   ],
   "placeholderClaimsRemaining": [
     "No all-caller security certification",
-    "No real database or provider proof for new egress receipt adapter",
+    "Real PostgreSQL receipt proof is available. Live Supabase/PostgREST provider and full migration-history parity remain unverified",
     "No Phase3 or Phase4 acceptance"
   ],
   "evidenceRefs": [

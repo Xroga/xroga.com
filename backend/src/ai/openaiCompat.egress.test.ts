@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import OpenAI from 'openai';
-import {chatCompletion,chatCompletionStream} from './openaiCompat.js';
+import {chatCompletion,chatCompletionStream,snapshotModelEgressPayload} from './openaiCompat.js';
 import {MODELS} from './models.js';
 
 test('both actual model SDK paths allow ordinary work and deny secret prompts before SDK dispatch',async t=>{
@@ -20,6 +20,14 @@ test('both actual model SDK paths allow ordinary work and deny secret prompts be
       await assert.rejects(invoke('glm_5_3_flash',[{role:'user',content}],opts),/credential egress policy/);
     }
   }assert.equal(calls,2);
+});
+
+test('model payload snapshots support tool records and aliases but reject cycles and unsupported values safely',()=>{
+  const shared={text:'ordinary source'},payload={messages:[shared,shared,{role:'assistant',content:null}],tools:[]};
+  const snapshot=snapshotModelEgressPayload(payload,'synthetic-private-key');shared.text='changed later';
+  assert.deepEqual(snapshot.messages[0],{text:'ordinary source'});
+  const cycle:Record<string,unknown>={};cycle.self=cycle;
+  for(const value of [cycle,{callback:()=>{}},Array.from({length:100_001},()=>null)])assert.throws(()=>snapshotModelEgressPayload(value,'synthetic-private-key'),{code:'MODEL_PAYLOAD_INVALID',status:400});
 });
 
 test('model endpoint admission rejects a private registry destination in both execution paths',async t=>{

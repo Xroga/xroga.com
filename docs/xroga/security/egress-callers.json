@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "852174f6156b4a3c698a25af51a88a6427bc5a2accf96f41ba5a1c9256852ade",
+  "sourceTreeDigest": "fc27e0e0ada1913245a9f698fb537c0fc927b36d48ee9d3294a1359d25d1b6b7",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -54,7 +54,7 @@
     {
       "id": "31380a8d5b9454a98a98",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 242,
+      "line": 253,
       "entryPoint": "chatCompletion",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -70,7 +70,7 @@
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 337,
+      "line": 348,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -134,7 +134,7 @@
     {
       "id": "ce74641b44b3d7805f49",
       "file": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "line": 784,
+      "line": 782,
       "entryPoint": "runSingleModelTurn",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",

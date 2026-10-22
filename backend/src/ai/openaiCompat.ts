@@ -199,11 +199,22 @@ function clientFor(endpoint: ResolvedEndpoint): OpenAI {
   });
 }
 
-function checkedModelMessages(messages:ChatMessage[],credential:string):ChatMessage[]{
-  const snapshot=structuredClone(messages);
-  for(const message of snapshot){
-    const values=typeof message.content==='string'?[message.content]:message.content.map(part=>part.type==='text'?part.text:part.image_url.url);
-    for(const value of values)if(containsCredentialSecretText(value)||(credential.length>=8&&value.includes(credential)))throw Error('Model payload denied by credential egress policy.');
+/** Shared by ordinary completion and the canonical SoftwareAgent SDK boundary.
+ * Tool arguments/descriptions are data too. This issues no authority or budget. */
+export function snapshotModelEgressPayload<T>(value:T,credential:string):T{
+  const invalid=()=>Object.assign(Error('Model payload structure limit exceeded.'),{status:400,code:'MODEL_PAYLOAD_INVALID'});
+  let snapshot:T;try{snapshot=structuredClone(value);}catch{throw invalid();}
+  const pending:Array<{value:unknown;exit:boolean}>=[{value:snapshot,exit:false}],active=new Set<object>();let nodes=0;
+  while(pending.length){
+    const step=pending.pop()!,item=step.value;
+    if(step.exit){active.delete(item as object);continue;}
+    if(++nodes>100_000)throw invalid();
+    if(typeof item==='string'){
+      if(containsCredentialSecretText(item)||(credential.length>=8&&item.includes(credential)))throw Object.assign(Error('Model payload denied by credential egress policy.'),{status:400,code:'MODEL_CREDENTIAL_EGRESS_DENIED'});
+    }else if(item&&typeof item==='object'){
+      if(active.has(item))throw invalid();active.add(item);pending.push({value:item,exit:true});
+      for(const child of Object.values(item)){if(pending.length>=100_000)throw invalid();pending.push({value:child,exit:false});}
+    }
   }
   return snapshot;
 }
@@ -236,7 +247,7 @@ export async function chatCompletion(
   opts={...opts};
   try {
     const endpoint = resolveEndpoint(modelId, opts.credentialOverride);
-    messages=checkedModelMessages(messages,endpoint.apiKey);
+    messages=snapshotModelEgressPayload(messages,endpoint.apiKey);
     const client = clientFor(endpoint);
     const completion = await withTemperatureFallback(opts.temperature ?? 0.4, (temperature) =>
       client.chat.completions.create(
@@ -324,7 +335,7 @@ export async function chatCompletionStream(
   opts={...opts};
   try {
     const endpoint = resolveEndpoint(modelId, opts.credentialOverride);
-    messages=checkedModelMessages(messages,endpoint.apiKey);
+    messages=snapshotModelEgressPayload(messages,endpoint.apiKey);
     const client = clientFor(endpoint);
     if (opts.signal?.aborted) {
       const err = new Error('Build cancelled') as Error & { code?: string };

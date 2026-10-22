@@ -1,12 +1,14 @@
 {
   "version": 1,
   "scope": "PARTIAL_MODEL_BOUNDARY_TRACE_NOT_TENANT_OR_SPEND_CERTIFICATION",
-  "sourceSha256": "ef1ffc1b4913fc958f8b689ad0f4bb40be2ece8790e46f4eedb52cbc50b3a354",
+  "sourceSha256": "11bfe89d2c0b93c169fbb66bc0f26b317648380639ca812930fb44a1b2c4509a",
+  "priorTrace": "57e1c1bdd7af87f5ac0bf0784bb9ce7dac38c376:docs/xroga/evidence/command-010/MODEL-BOUNDARY-TRACE.json",
+  "softwareAgentSourceSha256": "ebe35abec3c42c7c8c569a14ff5b5bc1551964b1deef617a40be2b92a836db98",
   "callers": [
     {
       "id": "31380a8d5b9454a98a98",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 242,
+      "line": 253,
       "entryPoint": "chatCompletion",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -22,7 +24,7 @@
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 337,
+      "line": 348,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -34,6 +36,17 @@
       "risk": "HIGH_RISK_PENDING_REVIEW",
       "disposition": "PENDING_SOURCE_TRACE",
       "evidence": null
+    },
+    {
+      "id": "ce74641b44b3d7805f49",
+      "file": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
+      "line": 782,
+      "entryPoint": "runSingleModelTurn",
+      "transport": "provider-sdk",
+      "callee": "client.chat.completions.create",
+      "callSha256": "1ba7ccd42498525ef3a4c149f12d7db2bddb245ea2c228dd11ec75a14011d9a6",
+      "disposition": "PENDING_SOURCE_TRACE_WITH_LOCAL_CREDENTIAL_FLOOR_PROOF",
+      "evidence": "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts"
     }
   ],
   "reachability": [
@@ -41,7 +54,8 @@
     "converter.convertUserRequest -> withProviderReservation -> chatCompletion",
     "pipeline builder -> runBuilderAttempt -> chatCompletionStream, selected user provider key via getUserProviderKey",
     "black-hole/providerAdapter.complete and completeStream forward to the same functions",
-    "benchmarkExecutor callback has optional authorize hook, direct execution when absent remains explicit upstream admission obligation"
+    "benchmarkExecutor callback has optional authorize hook, direct execution when absent remains explicit upstream admission obligation",
+    "createXrogaAgentModel.stream -> runSingleModelTurn -> existing assertCanUseModel and withProviderReservation -> actual SDK. The shared payload floor also covers tool descriptions and arguments. Fixed server endpoint syntax is admitted before dispatch."
   ],
   "dataOwnership": "Model transport receives message arrays and an optional credentialOverride string, not an issued tenant context, project proof or reservation handle. Ownership and provider credential provenance remain upstream proof obligations.",
   "classification": "Prompts may contain USER_PRIVATE, BUSINESS_CONFIDENTIAL and PERSONAL_DATA. The new shared credential floor rejects recognized secret values or the selected provider credential in outgoing text before either SDK call. This is not universal DLP, image-content inspection or complete egressPolicy admission.",
@@ -50,9 +64,12 @@
   "budget": "Known architect/converter wrappers reserve and settle through existing withProviderReservation. No lower-layer universal reservation proof is inferred. Optional benchmark authority and guest/black-hole paths need separate bounded tracing.",
   "authority": "No tool/model text can mint a permit. This patch does not introduce a second authority or budget ledger and does not claim canonical egressPolicy coverage for every model caller.",
   "tests": [
-    "backend/src/ai/openaiCompat.egress.test.ts"
+    "backend/src/ai/openaiCompat.egress.test.ts",
+    "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
+    "backend/src/ai/providerRuntime.test.ts"
   ],
   "providerEffects": false,
+  "predispatchAccounting": "Known policy rejections are status 400 invalid_request and release the existing budget reservation without an uncertain-provider hold. They do not increment shared provider failures or open the shared circuit. Positive SDK dispatch and ordinary provider error regressions are retained. Controlled protocol fixtures are not real database budget receipts.",
   "disposition": "PENDING_SOURCE_TRACE_WITH_LOCAL_CREDENTIAL_FLOOR_PROOF",
   "next": "Carry existing issued tenant, actual account/vault and reservation identity to this canonical boundary without breaking legitimate guest or benchmark admission. Prove at the actual upstream call sites before final disposition.",
   "grouping": [
