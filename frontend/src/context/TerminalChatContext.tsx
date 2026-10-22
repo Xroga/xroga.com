@@ -37,6 +37,7 @@ import { addMediaItem, removeMediaByUrl, removeMediaByMessageId, purgeMediaUrls 
 import { collectVariantUrlsFromOutput } from '@/lib/mediaHelpers';
 import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
 import { attachCloudProjectId, saveTerminalHistorySession } from '@/lib/terminalHistory';
+import { clearActiveSidebarProject, getActiveSidebarProject } from '@/lib/sidebarProjectTask';
 import { registerRepoSession } from '@/lib/repoSessionsIndex';
 import { tokenUsageFromSummary } from '@/lib/tokenUsageFromSummary';
 import { buildPromptWithMemory, isBuildThreadContinuation, isGeneralAdviceOrKnowledgePrompt, isPhase1BuildQuestion, isWebsiteBuildPrompt, isWebsiteBuildUpdate, isWebsiteUpdateRequest, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
@@ -1949,6 +1950,9 @@ const stopRequestedRunIdRef =
         window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
       });
     }
+    // Ordinary New Work is not implicitly assigned to the previously selected sidebar project.
+    // Explicit project New Task selects its project immediately after this reset.
+    clearActiveSidebarProject();
     setSessionId(
       typeof crypto !== 'undefined' ? crypto.randomUUID() : `session-${Date.now()}`
     );
@@ -2984,7 +2988,8 @@ if (
 
   projectId:
     projectIdForRequest(
-      useProjectWorkspaceStore.getState().projectId,
+      getActiveSidebarProject(workspaceIdentity.userId)?.projectId ||
+        useProjectWorkspaceStore.getState().projectId,
       projectId,
       freshProductIntent,
     ),
