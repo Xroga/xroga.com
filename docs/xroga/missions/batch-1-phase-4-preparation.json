@@ -28,7 +28,7 @@
     "backend/src/security/egress/internalDependency.test.ts",
     "backend/src/security/egress/publicPost.test.ts",
     "backend/src/security/egress/securityDecision.ts",
-    "backend/src/security/egress/securityReceipt.local.integration.ts",
+    "backend/tests/securityReceipt.local.integration.ts",
     "backend/src/security/egress/toolTrust.ts",
     "backend/src/security/egress/types.ts",
     "backend/src/security/egress/untrustedInput.ts",
@@ -127,7 +127,7 @@
       "reference": "docs/xroga/security/egress-callers.json"
     },
     {
-      "command": "XB01_DISPOSABLE_DATABASE=1 XB01_EGRESS_TEST_DATABASE_URL=<dedicated-loopback> node --import tsx --test backend/src/security/egress/securityReceipt.local.integration.ts",
+      "command": "XB01_DISPOSABLE_DATABASE=1 XB01_EGRESS_TEST_DATABASE_URL=<dedicated-loopback> node --import tsx --test backend/tests/securityReceipt.local.integration.ts",
       "scope": "3 actual PostgreSQL receipt/ownership tests, controlled PostgREST bridge, no live provider or full Supabase parity",
       "negative": true,
       "reference": "backend/tests/securityReceipt.local.integration.ts"
