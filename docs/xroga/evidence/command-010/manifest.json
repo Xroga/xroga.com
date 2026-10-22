@@ -3,8 +3,8 @@
   "command": "010",
   "status": "PARTIALLY_VERIFIED_PREPARATION_ONLY",
   "baseSha": "fb95f76bafc1b544b6655d435cddede260d9cd99",
-  "implementationCommit": "81075701f660d51b5f157596c4c7a7c4a85eaea2",
-  "sourceIdentityNote": "Runtime implementation remains 81075701f660d51b5f157596c4c7a7c4a85eaea2. Subsequent commits contain test-harness, AST coverage/stability, current-source inventory and evidence changes. Final source SHA is reported in the draft PR.",
+  "implementationCommit": "00151e6d2dd93d2477970b7337126fcab883862c",
+  "sourceIdentityNote": "Runtime and regression changes in 00151e6d, provenance repair in 930c1d65. Later documentation commits do not certify CI or Phase4 acceptance.",
   "formalPhase4Admission": false,
   "phase3Status": "BLOCKED_MANAGED_KMS_RUNTIME_CUSTODY_AND_APPLICABLE_CUTOVER",
   "releaseState": "BLOCKED",
@@ -83,7 +83,7 @@
     {
       "id": "XB01-C010-AC11",
       "originalText": "Security decision evidence contains no raw credential.",
-      "status": "PARTIALLY_VERIFIED",
+      "status": "VERIFIED_LOCAL",
       "evidence": "docs/xroga/evidence/command-010/summary.md",
       "liveProviderVerified": false
     },
@@ -104,6 +104,8 @@
       "transport": "CONTROLLED_DNS_HTTP_AND_DATABASE_FIXTURES"
     },
     "frontendUnit": {
+      "testedSha": "9d5e0213b5a4af7a79f8ed160f023cb960cbdaa2",
+      "reuseScope": "No frontend runtime source changed in this continuation",
       "tests": 1155,
       "pass": 1155,
       "fail": 0,
@@ -137,6 +139,8 @@
       "frontendBuild": "PASS_WITH_WARNINGS"
     },
     "fullBackend": {
+      "testedSha": "9d5e0213b5a4af7a79f8ed160f023cb960cbdaa2",
+      "currentSourceVerifiedByThisHistoricalRun": false,
       "status": "PASS_WITH_REGISTERED_SKIPS",
       "tests": 3158,
       "pass": 3145,
@@ -184,22 +188,106 @@
     "backendCompatibility": {
       "status": "PASS_PINNED_CLINE_GIT_AND_DOWNSTREAM_FIX_CHECKS",
       "dependenciesAdded": 0
+    },
+    "currentFocused": {
+      "tests": 69,
+      "pass": 69,
+      "fail": 0,
+      "skipped": 0,
+      "scope": "Current call-site model guards, egress, golden journeys, URL transport and provenance/scanner tests"
+    },
+    "realPostgresReceipt": {
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "skipped": 0,
+      "database": "DEDICATED_LOOPBACK_POSTGRESQL",
+      "containerImage": "postgres:16-alpine",
+      "imageId": "sha256:deb28ee471183cb0c303113dac9b2433c51eeeeb678def7af9a9ec5820367815",
+      "httpLayer": "CONTROLLED_POSTGREST_PROTOCOL_BRIDGE_TO_REAL_SQL_NOT_LIVE_SUPABASE",
+      "ddl": "Actual audit table/alter/immutable trigger fragments and complete immutable lifecycle migration",
+      "coverage": [
+        "persistence/readback",
+        "rollback",
+        "duplicate error",
+        "context/tenant mismatch",
+        "credential redaction",
+        "browser role denial",
+        "immutable update/delete/truncate",
+        "missing subjects",
+        "owned-file positive and committed ownership change during DNS wait"
+      ],
+      "cleanup": "TEMPORARY_CONTAINER_REMOVED",
+      "fullMigrationHistoryVerified": false
+    },
+    "fileAuthorityWaitRegression": {
+      "status": "PASS",
+      "effectCountOnRevocation": 0,
+      "scope": "Owner re-read after asynchronous permit consumption, no cross-system atomicity claim"
+    },
+    "provenanceRegression": {
+      "tests": 8,
+      "pass": 8,
+      "fail": 0,
+      "validatorWeakened": false,
+      "originalRecords": "docs/xroga/evidence/command-010/PROVENANCE-REPAIR.json"
     }
   },
   "integration": {
-    "observedMain": "33b49da563528f110c4a139a90cb257e0bcc26df",
+    "observedMain": "326c16a7939b1153d48611a2ebd810370d64e4a8",
     "method": "git merge-tree --write-tree HEAD FETCH_HEAD",
     "status": "CONFLICT_NOT_INTEGRATION_VERIFIED",
     "conflicts": [
-      "frontend/src/components/terminal/WorkspaceLauncher.tsx"
+      "frontend/src/components/homepage-next/s02/Theater.tsx",
+      "frontend/src/components/homepage-next/s02/Workforce rename/rename",
+      "frontend/src/components/homepage-next/s02/s02.test.ts",
+      "frontend/src/components/terminal/WorkspaceLauncher.tsx",
+      "frontend/src/lib/sidebarAccountFlyouts.test.ts",
+      "frontend/src/lib/sidebarCompactNav.test.ts"
     ],
-    "conflictResolutionAuthorized": false
+    "conflictResolutionAuthorized": false,
+    "separateLauncherReconciliation": {
+      "branch": "codex/xroga-phase4-ui-integration-20261023",
+      "sha": "54774d9b3e679eac03c248047978271f829a3aae",
+      "tests": 5,
+      "pass": 5,
+      "scope": "Preserves main empty workspace controls and existing scoped explicit-hide draft flush. Not merged into PR844 and not a complete main integration."
+    }
   },
   "ci": {
-    "status": "NOT_YET_SUBMITTED_CURRENT_SOURCE",
+    "previousHead": "9d5e0213b5a4af7a79f8ed160f023cb960cbdaa2",
+    "previousRuns": [
+      {
+        "id": "39849347975",
+        "name": "Growth technical publishing",
+        "conclusion": "success"
+      },
+      {
+        "id": "39849348001",
+        "name": "Xroga golden acceptance harness",
+        "conclusion": "success"
+      },
+      {
+        "id": "39849347978",
+        "name": "Xroga mission operating policy",
+        "conclusion": "success"
+      },
+      {
+        "id": "39849348079",
+        "name": "Unit tests",
+        "conclusion": "failure"
+      },
+      {
+        "id": "39849348072",
+        "name": "Xroga tenant security fixtures",
+        "conclusion": "failure"
+      }
+    ],
+    "corrections": "Current advisory source manifest and exact native conversion reviews reconciled. Original validators and historical hashes preserved.",
+    "currentSourceStatus": "PENDING_FINAL_SOURCE_GITHUB_VERIFICATION",
     "previousPhase3ReceiptsReusedAsCurrent": false
   },
-  "realDatabasePersistenceVerified": false,
+  "realDatabasePersistenceVerified": "LOCAL_POSTGRES_ONLY_WITH_PROTOCOL_BRIDGE",
   "cloudResourcesCreated": false,
   "providerEffects": false,
   "productionChanges": false,
@@ -209,8 +297,8 @@
   "knownGaps": [
     "123 unclosed AST caller candidates, including 69 dynamic/SDK high-risk candidates, not asserted as 69 demonstrated vulnerabilities",
     "Remaining consequential adapters and upload caller migration",
-    "Real disposable database receipt/ownership/concurrency proof and source-bound provenance",
-    "Main integration conflict outside preparatory egress scope",
+    "Full deployed Supabase/PostgREST and full migration/production parity remain unverified. Local PostgreSQL receipt and ownership race proof is now available.",
+    "Current main has six UI conflict groups. WorkspaceLauncher behavior reconciliation is separately committed, remaining main-history integration is not verified.",
     "Phase 3 actual managed-KMS runtime custody and applicable cutover"
   ]
 }

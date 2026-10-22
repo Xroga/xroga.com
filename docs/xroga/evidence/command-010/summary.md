@@ -38,7 +38,7 @@ Exact original texts are copied from the unchanged frozen worklist into
 | AC08 | VERIFIED_LOCAL | Redirect/rebinding to private target denied before private connection |
 | AC09 | PARTIALLY_VERIFIED | Actual owned-file boundary with controlled DB fixtures, all uploads not migrated |
 | AC10 | VERIFIED_LOCAL | Secret field/query/value and synthetic file canaries denied |
-| AC11 | PARTIALLY_VERIFIED | Safe DTO and actual Supabase HTTP fixture, real DB durability pending |
+| AC11 | VERIFIED_LOCAL | Canonical safe DAO against real disposable PostgreSQL through controlled PostgREST protocol bridge. Live Supabase parity not claimed |
 | AC12 | NOT_VERIFIED | Strict completeness must reject unresolved candidates |
 
 ## Verification discipline
@@ -80,7 +80,7 @@ source and validated, without rewriting frozen security evidence. A read-only
 merge-tree check against observed main found a WorkspaceLauncher.tsx conflict
 outside this egress patch, so main integration is not verified.
 
-Final local results: 52 focused security tests passed without skips. All 1,155
+Previous head 9d5e0213 local results: 52 focused security tests passed without skips. All 1,155
 frontend tests passed. Backend collected 3,158 tests: 3,145 passed, zero failed
 and 13 were skipped in the clean harness. Skip governance passed. An independent
 run of the actual local Chromium driver completed all six tests without skips.
@@ -107,3 +107,44 @@ dependency was added. These results are local, not a current-main CI receipt.
 No cloud resources, IAM grants, provider effects, production credentials, schema,
 DNS or spending were changed. Optional scanners were not used to transmit private
 code or execute untrusted MCP commands. Rollback is a branch revert before release.
+
+## Targeted continuation after PR844 failures
+
+Original head 9d5e0213 had three successful GitHub workflows and failed Unit
+39849348079 and Tenant Security 39849348072. Exact records, expected/actual hashes
+and preserved original reviews are in PROVENANCE-REPAIR.json. The advisory
+current-state source binding was stale after generation. Five Buffer-conversion
+reviews retained old complete-file hashes, including a removed conversion. Their
+current counterparts were manually re-traced, with no network/security waiver.
+The unchanged projection rejects corrupted reviews. Eight projection tests pass.
+
+MODEL-BOUNDARY-TRACE.json traces both real SDK paths and their known upstream
+budget/vault interfaces. Both paths now reject recognized secret text and the
+selected credential before SDK dispatch, snapshot the messages, and refuse an
+unsafe endpoint. This is a credential floor, not universal DLP or proof of tenant,
+reservation or remote-image DNS admission. Both candidate obligations stay open.
+
+The inventory groups every candidate into shared transport/consequence packets.
+132 candidates remain, 9 URL boundaries are reviewed, 123 traces are unresolved
+including 69 dynamic/SDK candidates. Grouping does not create security acceptance.
+The combined current focused suite passed 69 tests without failures or skips.
+
+The canonical receipt DAO passed three real PostgreSQL tests using actual audit
+DDL/trigger code and a controlled PostgREST protocol bridge. Positive persistence,
+readback, rollback, safe errors, redaction, tenant-context mismatch, browser denial,
+immutable mutation rejection and a real committed file-ownership race are covered.
+These are real SQL results, not live Supabase or full migration-history proof.
+The temporary local database container was removed. A new CI step runs the same
+tests against its existing disposable PostgreSQL service.
+
+The owned-file adapter now rechecks ownership after asynchronous authority
+consumption. Its new negative test denies revocation during that wait. This is
+not an atomic transaction between an external provider and PostgreSQL, and no
+such guarantee is asserted.
+
+Main advanced to 326c16a7939b1153d48611a2ebd810370d64e4a8 with six UI conflict
+groups. A separate branch codex/xroga-phase4-ui-integration-20261023 at
+54774d9b3e679eac03c248047978271f829a3aae reconciles the main empty-workspace
+control with scoped draft flushing. All five focused draft/control tests pass.
+It is not merged into PR844. Other UI conflicts are left intact, so complete main
+integration is not claimed. Phase3 and formal Phase4 admission remain blocked.

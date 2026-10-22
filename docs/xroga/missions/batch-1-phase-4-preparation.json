@@ -9,12 +9,16 @@
   "risk": "high",
   "scope": "Founder-authorized isolated nonproduction Command010 preparatory engineering only, not Phase4 admission or Batch1 release",
   "changedFiles": [
+    ".github/workflows/xroga-tenant-security.yml",
     "backend/src/ai/attachments.ts",
+    "backend/src/ai/openaiCompat.egress.test.ts",
+    "backend/src/ai/openaiCompat.ts",
     "backend/src/e2e/xrogaGoldenJourneys.test.ts",
     "backend/src/lib/deployVerify.ts",
     "backend/src/lib/shipVerify.ts",
     "backend/src/operations/providerAdapters.test.ts",
     "backend/src/operations/providerAdapters.ts",
+    "backend/src/organicIntelligence/content/engine.test.ts",
     "backend/src/security/boundedPublicGet.ts",
     "backend/src/security/egress/dataClassification.ts",
     "backend/src/security/egress/egress.integration.test.ts",
@@ -24,29 +28,42 @@
     "backend/src/security/egress/internalDependency.test.ts",
     "backend/src/security/egress/publicPost.test.ts",
     "backend/src/security/egress/securityDecision.ts",
+    "backend/src/security/egress/securityReceipt.local.integration.ts",
     "backend/src/security/egress/toolTrust.ts",
     "backend/src/security/egress/types.ts",
     "backend/src/security/egress/untrustedInput.ts",
     "backend/src/security/egress/urlPolicy.ts",
     "backend/src/services/integrations/composioClient.ts",
+    "backend/src/services/integrations/managedVercelDeployment.test.ts",
     "docs/xroga/batch-1/phases/phase-4/PREPARATORY-READINESS.md",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/evidence/command-010/MODEL-BOUNDARY-TRACE.json",
+    "docs/xroga/evidence/command-010/PROVENANCE-REPAIR.json",
+    "docs/xroga/evidence/command-010/PR_DESCRIPTION.md",
+    "docs/xroga/evidence/command-010/manifest.json",
     "docs/xroga/evidence/command-010/summary.md",
+    "docs/xroga/feature-coverage.csv",
+    "docs/xroga/missions/batch-1-phase-4-preparation.json",
+    "docs/xroga/requirements-ledger.json",
+    "docs/xroga/requirements-ledger.md",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/research/source-reconciliation.md",
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/credential-usage-audit.json",
     "docs/xroga/security/egress-caller-reviews.json",
     "docs/xroga/security/egress-callers.json",
     "docs/xroga/security/egress-policy.md",
+    "docs/xroga/security/privileged-callers.json",
+    "docs/xroga/security/rls-audit.md",
     "docs/xroga/security/untrusted-input-model.md",
     "frontend/src/app/api/browser-view/route.ts",
     "frontend/src/app/api/image-fetch/route.ts",
     "frontend/src/lib/server/publicEgress.ts",
     "frontend/src/lib/untrustedProxyRoutes.test.ts",
+    "scripts/ci/prepare-pr-integration.test.mjs",
     "scripts/security/audit-egress-callers.mjs",
-    "scripts/security/audit-egress-callers.test.mjs",
-    "docs/xroga/evidence/command-010/manifest.json",
-    "docs/xroga/missions/batch-1-phase-4-preparation.json",
-    "backend/src/organicIntelligence/content/engine.test.ts",
-    "backend/src/services/integrations/managedVercelDeployment.test.ts",
-    "docs/xroga/current-state.json",
-    "docs/xroga/current-state.md"
+    "scripts/security/audit-egress-callers.test.mjs"
   ],
   "decisions": {
     "keep": [
@@ -108,6 +125,18 @@
       "scope": "Expected failure while 123 caller traces remain unresolved",
       "negative": true,
       "reference": "docs/xroga/security/egress-callers.json"
+    },
+    {
+      "command": "XB01_DISPOSABLE_DATABASE=1 XB01_EGRESS_TEST_DATABASE_URL=<dedicated-loopback> node --import tsx --test backend/src/security/egress/securityReceipt.local.integration.ts",
+      "scope": "3 actual PostgreSQL receipt/ownership tests, controlled PostgREST bridge, no live provider or full Supabase parity",
+      "negative": true,
+      "reference": "backend/src/security/egress/securityReceipt.local.integration.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/ai/openaiCompat.egress.test.ts",
+      "scope": "Actual SDK call-site completion/stream tests with dispatch intercepted before network",
+      "negative": true,
+      "reference": "docs/xroga/evidence/command-010/MODEL-BOUNDARY-TRACE.json"
     }
   ],
   "architecture": {
@@ -120,8 +149,8 @@
   "knownGaps": [
     "123 unclosed AST caller candidates, including 69 dynamic/SDK high-risk candidates, not asserted as 69 demonstrated vulnerabilities",
     "Remaining consequential adapters and upload caller migration",
-    "Real disposable database receipt/ownership/concurrency proof and source-bound provenance",
-    "Main integration conflict outside preparatory egress scope",
+    "Full deployed Supabase/PostgREST and full migration/production parity remain unverified. Local PostgreSQL receipt and ownership race proof is now available.",
+    "Current main has six UI conflict groups. WorkspaceLauncher behavior reconciliation is separately committed, remaining main-history integration is not verified.",
     "Phase 3 actual managed-KMS runtime custody and applicable cutover"
   ],
   "placeholderClaimsRemaining": [
@@ -134,7 +163,9 @@
     "docs/xroga/evidence/command-010/manifest.json",
     "docs/xroga/security/egress-policy.md",
     "docs/xroga/security/untrusted-input-model.md",
-    "docs/xroga/batch-1/phases/phase-4/PREPARATORY-READINESS.md"
+    "docs/xroga/batch-1/phases/phase-4/PREPARATORY-READINESS.md",
+    "docs/xroga/evidence/command-010/PROVENANCE-REPAIR.json",
+    "docs/xroga/evidence/command-010/MODEL-BOUNDARY-TRACE.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
@@ -143,8 +174,8 @@
     "blockers": [
       "123 unclosed AST caller candidates, including 69 dynamic/SDK high-risk candidates, not asserted as 69 demonstrated vulnerabilities",
       "Remaining consequential adapters and upload caller migration",
-      "Real disposable database receipt/ownership/concurrency proof and source-bound provenance",
-      "Main integration conflict outside preparatory egress scope",
+      "Full deployed Supabase/PostgREST and full migration/production parity remain unverified. Local PostgreSQL receipt and ownership race proof is now available.",
+      "Current main has six UI conflict groups. WorkspaceLauncher behavior reconciliation is separately committed, remaining main-history integration is not verified.",
       "Phase 3 actual managed-KMS runtime custody and applicable cutover"
     ],
     "authenticatedE2e": "BLOCKED",
