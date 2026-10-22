@@ -1,3 +1,5 @@
+> **STATUS (2026-10-22): RESOLVED.** The desktop session pushes through the signed-in GitHub CLI account (repo permission push: true, scopes repo + workflow) — a different authorization path from the old read-only token. Only `claude/xroga-batch-1-5` was pushed; no PR was opened; `main` was not touched. A push to this branch triggers only `storage-phase1` (checked against all 16 workflows). Source-bound CI: https://github.com/Xroga/xroga.com/actions/runs/39772935026.
+
 # GitHub 403 — one bounded diagnosis (no retries of the failing operation)
 
 All commands were read-only or the single refused write; no credentials were printed.

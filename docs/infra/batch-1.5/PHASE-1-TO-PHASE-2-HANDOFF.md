@@ -45,11 +45,12 @@ Phase 2 (INFRA-004/005/006) is **not started**. This lists the exact seams that 
 3. `Preview` environment secrets in `supabase-migrate.yml` may be production's — check before any PR.
 4. (closed in the 2026-10-22 closure) Objects > 1 GiB migrate through the bounded multipart path; proven on synthetic data only, not on real R2.
 5. `reconcile()` is batch-limited per run.
-6. Full backend suite has 3 pre-existing failures (`organicIntelligence`, STALE_FACT) that will keep CI red until fixed upstream.
+6. Full backend suite has 5 pre-existing failures in CI (3 `organicIntelligence` STALE_FACT + 2 content-engine), identical on pristine `main`; the strict runner allow-lists them by name with causes (`evidence/baseline-failures.json`). A 6th (`compileCommand`, POSIX-only) appears in a container with npm `.bin` on PATH.
+7. **Database TLS must be fixed before deploying Drive against the real Supabase database:** the storage pool does not verify the server certificate unless `STORAGE_DB_SSL_CA` is set (backend-wide convention; default unchanged). Supply the Supabase CA and make verification the default in Phase 2.
 
 ## Preconditions before Phase 2 can be verified
-1. GitHub write access restored and this branch pushed; first remote CI run recorded.
-2. R2 test bucket + CORS (checklist B) → run the provider suite, upgrade Gates B/D if they pass.
+1. ~~GitHub write access and first remote CI~~ — done: branch pushed, `storage-phase1` passed (run 39772935026, `ci-evidence/`).
+2. ~~R2 provider suite~~ — done: 9/9 on a private test bucket. Open: revoke the temporary token, delete the local secrets file, delete the empty test bucket; the production Drive bucket, its CORS and token are still to be created separately (owner approval).
 3. Batch 1 `TenantContext` accepted into `main` → one controlled integration checkpoint.
 4. Read-only cloud facts (checklist A) → replace the `UNKNOWN` counts.
 

@@ -1,18 +1,14 @@
 {
   "phase": "B1.5-PHASE-1-CLOSURE",
-  "verdict": "B15_PHASE1_ENGINEERING_COMPLETE_EXTERNAL_VERIFICATION_PENDING",
+  "verdict": "B15_PHASE1_VERIFIED",
   "branch": "claude/xroga-batch-1-5",
-  "evidenceSourceSha": "f3de2b5597a26658ab452151b19911e9bfccca8b",
-  "startingMainSha": "80d1f417338b4c5b95a07fc956604a1652cef7c7",
-  "pushed": false,
-  "pushBlocker": {
-    "permissions": {
-      "pull": true,
-      "push": false
-    },
-    "proxyDenial": false,
-    "doc": "github-access-diagnosis.md"
+  "evidenceSourceSha": {
+    "localStrictRunner": "cb9196678bad037e2e2fc3f763477cee2151c15c",
+    "githubActionsRun": "cb9196678bad037e2e2fc3f763477cee2151c15c",
+    "provider": "cb9196678bad037e2e2fc3f763477cee2151c15c"
   },
+  "startingMainSha": "80d1f417338b4c5b95a07fc956604a1652cef7c7",
+  "pushed": true,
   "mainModified": false,
   "codexBranchModified": false,
   "productionModified": false,
@@ -21,51 +17,55 @@
     {
       "gate": "A",
       "result": "PASS",
-      "scope": "source baseline",
+      "scope": "source baseline + browser architecture decision",
       "externalUnknowns": [
-        "live Cloudflare/Supabase/Fly counts"
+        "live Fly/Supabase/Redis counts"
       ]
     },
     {
       "gate": "B",
-      "result": "BLOCKED",
-      "localPass": [
+      "result": "PASS",
+      "classification": "PROVIDER_VERIFIED + LOCAL_TESTED",
+      "provider": "real R2 bucket xroga-drive-test: private (no custom domain, public dev URL disabled), unsigned GET refused (400 InvalidArgument), tampered signature 403, expired URL 403, r2.dev not served, CORS allows only the configured origin, signed content-type/length/checksum enforced (object never created by tampering)",
+      "local": [
         "forced RLS",
         "column grants",
         "tenant isolation",
         "no secret/URL leakage"
       ],
-      "blockedBy": "real bucket public/CORS state; r2.provider suite never run"
+      "caveats": [
+        "RLS proven on disposable PostgreSQL 16, not on the live Supabase project",
+        "CORS observed through real preflight requests, not a browser engine"
+      ]
     },
     {
       "gate": "C",
       "result": "PASS",
-      "classification": "LOCAL_TESTED",
-      "emulatorLimitations": [
-        "ListParts 405",
-        "truncated ListObjectsV2 500",
-        "presigned UploadPart 405"
-      ]
+      "classification": "LOCAL_TESTED + PROVIDER_VERIFIED (multipart, listing/pagination)"
     },
     {
       "gate": "D",
-      "result": "BLOCKED",
-      "localPass": [
-        "sha256 read-back",
-        "tamper detection",
-        "no false READY"
-      ],
-      "blockedBy": "R2 durability and signed-constraint enforcement unobserved"
+      "result": "PASS",
+      "classification": "PROVIDER_VERIFIED",
+      "provider": "read-back SHA-256 on real R2 for single and multipart objects, re-read from a fresh client, tamper attempts never produce READY, abandoned multipart aborted, cleanup left 0 objects and 0 in-flight uploads",
+      "caveats": [
+        "one bucket, one region (APAC), tiny volumes; no long-term durability claim"
+      ]
     },
     {
       "gate": "E",
       "result": "PASS",
-      "classification": "LOCAL_TESTED_REAL_POSTGRES"
+      "classification": "LOCAL_TESTED_REAL_POSTGRES",
+      "caveat": "behaviour behind a transaction pooler not run"
     },
     {
       "gate": "F",
       "result": "PASS",
-      "classification": "LOCAL_TESTED",
+      "classification": "LOCAL_TESTED (+ server-side multipart copy proven on real R2)",
+      "closedGaps": [
+        "objects > 1 GiB (real 1 GiB+5 B crossing, 65 parts, +130 MiB RSS)",
+        "run-output artifacts (adapter; production writer currently emits metadata-only descriptors)"
+      ],
       "approvals": "Ed25519 signed, scoped, expiring",
       "liveMigration": false
     },
@@ -76,16 +76,17 @@
     },
     {
       "gate": "H",
-      "result": "BLOCKED",
-      "localPass": [
-        "strict runner PASS",
-        "15/15 mutations caught"
-      ],
-      "blockedBy": "branch not on GitHub; no Actions run"
+      "result": "PASS",
+      "classification": "GITHUB_ACTIONS",
+      "run": "https://github.com/Xroga/xroga.com/actions/runs/39772935026",
+      "runConclusion": "success",
+      "sha": "cb9196678bad037e2e2fc3f763477cee2151c15c",
+      "note": "only the storage-phase1 workflow triggers on a push to this branch; no PR opened; earlier runs were cancelled (two) or failed (one) for CI-infrastructure reasons, each reproduced first and fixed: (1) the runner collected test output through pipes so a lingering grandchild blocked spawnSync (now a file plus a 15-minute step timeout); (2) a cluster-wide role-creation race in the Supabase test stand-in under parallel test files on an empty database (old fixture failed 3 of 3, new passed 3 of 3)"
     }
   ],
   "tests": {
     "runnerOverall": "PASS",
+    "runnerPlatform": "GitHub Actions ubuntu-latest, Node 22, PostgreSQL 16 service container + s3rver (also reproduced in a 2-CPU Linux container and on Windows 11)",
     "fixtures": {
       "postgres": "READY",
       "s3Emulator": "READY",
@@ -102,15 +103,22 @@
       {
         "id": "02-unit-and-adapters",
         "status": "PASS",
-        "tests": 135,
-        "pass": 135,
+        "tests": 154,
+        "pass": 154,
+        "fail": 0
+      },
+      {
+        "id": "02b-large-object-1GiB-SYNTHETIC",
+        "status": "PASS",
+        "tests": 1,
+        "pass": 1,
         "fail": 0
       },
       {
         "id": "03-postgres-real-sql",
         "status": "PASS",
-        "tests": 22,
-        "pass": 22,
+        "tests": 25,
+        "pass": 25,
         "fail": 0
       },
       {
@@ -130,25 +138,21 @@
       {
         "id": "06-full-backend-suite",
         "status": "PASS_WITH_BASELINE_FAILURES",
-        "tests": 2881,
-        "pass": 2878,
-        "fail": 3
+        "tests": 2903,
+        "pass": 2888,
+        "fail": 5
       }
     ],
-    "baselineFailures": [
-      "intelligence and report expose product opportunities and missing data honestly",
-      "CLI validation and report commands execute as non-destructive dry runs",
-      "every CLI command performs a real dry-run and supports JSON and verbose output"
-    ],
-    "regressions": [],
-    "mutationChecks": "15/15 caught"
+    "injectedDefects": "15/15 (original) + 11/11 (gap closures)",
+    "realR2": "9/9 provider tests PASS (17 observations, report 09-r2-provider-report.json)",
+    "baselineFailures": "5 in CI: organicIntelligence x3 + content-engine x2, all identical on pristine main (Windows and Linux); a 6th (compileCommand, POSIX-only) fails on pristine main in a container with npm .bin on PATH and is allow-listed with its cause; the branch changes 0 files under backend/src/ai or backend/src/organicIntelligence"
   },
   "evidenceClass": {
     "sql": "LOCAL_TESTED",
     "logic": "LOCAL_TESTED",
     "s3Wire": "SYNTHETIC",
-    "cloudflareR2": "NOT_RUN",
-    "githubActions": "BLOCKED",
+    "cloudflareR2": "PROVIDER_VERIFIED",
+    "githubActions": "SUCCESS",
     "production": "NOT_STARTED"
   },
   "defectsFixedInClosure": [
@@ -175,5 +179,20 @@
     "confirm Preview env secrets before any PR",
     "Batch 1 TenantContext in main",
     "owner signed approvals for live stages"
-  ]
+  ],
+  "closure": "2026-10-22 (desktop session)",
+  "remote": {
+    "url": "https://github.com/Xroga/xroga.com",
+    "branch": "claude/xroga-batch-1-5",
+    "ciSha": "cb9196678bad037e2e2fc3f763477cee2151c15c",
+    "ciRun": "https://github.com/Xroga/xroga.com/actions/runs/39772935026",
+    "ciConclusion": "success"
+  },
+  "measuredSpend": {
+    "cloudflareBillableUsage": "$0.00 (dashboard, Oct 8 - Nov 8 period)",
+    "r2ClassAOps": 115,
+    "r2ClassBOps": 108,
+    "r2StorageAfterCleanup": "0 B",
+    "githubActions": "public repository"
+  }
 }

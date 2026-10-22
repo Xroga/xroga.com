@@ -1,3 +1,5 @@
+> **STATUS (2026-10-22): DONE.** Approved and executed against bucket `xroga-drive-test`: 9/9 provider tests passed (`evidence/logs/09-r2-provider-report.json`). The bucket was left empty (0 objects, 0 in-flight multipart uploads). Revoke the temporary token and delete the local secrets file; the bucket may be deleted.
+
 # One consolidated request: real Cloudflare R2 verification
 
 **Everything code-side is done.** `backend/src/storage/r2.provider.integration.test.ts` implements the 12-step matrix against the real endpoint and has **never run**. It needs exactly this, once:
