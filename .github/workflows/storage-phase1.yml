@@ -29,7 +29,7 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 45
     services:
       postgres:
         image: postgres:16
@@ -45,6 +45,7 @@ jobs:
       STORAGE_TEST_DATABASE_URL: postgresql://postgres:ci-disposable@127.0.0.1:5432/postgres
       STORAGE_TEST_S3_ENDPOINT: http://127.0.0.1:4569
       REQUIRE_PHASE1_FIXTURES: '1'
+      PHASE1_STEP_TIMEOUT_MS: '900000'
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v6

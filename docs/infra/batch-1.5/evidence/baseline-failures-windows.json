@@ -1,9 +1,0 @@
-{
-  "note": "Applied ONLY when the runner executes on Windows (process.platform === 'win32'). These two organicIntelligence content-engine tests also fail on pristine origin/main 80d1f417 under the same Windows + Node 22.21.1 toolchain (verified in a detached pristine worktree, 2026-10-22: 30 pass / 2 fail, identical names). They read the repository snapshot with POSIX path assumptions, are unrelated to storage, and pass on Linux CI, where this file is not read.",
-  "main_sha": "80d1f417338b4c5b95a07fc956604a1652cef7c7",
-  "file": "backend/src/organicIntelligence/content/engine.test.ts",
-  "tests": [
-    "actual repository snapshot reuses Command 1, keeps missing data explicit, and produces two valid FIX briefs",
-    "validated demand evidence flows into the matching content brief without duplicates"
-  ]
-}

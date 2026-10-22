@@ -11,7 +11,7 @@
  * A step that skipped is never counted as passed. Failures that also fail on pristine main are BASELINE_FAILURE (baseline-failures.json).
  */
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import { closeSync, mkdirSync, openSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import net from 'node:net';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -69,7 +69,6 @@ const steps = [
 ];
 
 const baseline = JSON.parse(readFileSync(path.join(here, 'baseline-failures.json'), 'utf8')).tests;
-if (process.platform === 'win32') baseline.push(...JSON.parse(readFileSync(path.join(here, 'baseline-failures-windows.json'), 'utf8')).tests); // proven identical on pristine main under this toolchain; never read on Linux CI
 const results = [];
 for (const s of steps) {
   const need = s.needs ?? 'READY';
@@ -79,13 +78,21 @@ for (const s of steps) {
     r.status = s.required ? (REQUIRE ? 'FAIL_MISSING_FIXTURE' : 'SKIPPED_MISSING_FIXTURE') : 'NOT_RUN';
     results.push(r); writeFileSync(path.join(out, `${s.id}.log`), `${r.status}: ${s.fixture}=${fixtures[s.fixture]}\n`); continue;
   }
-  const p = sh(s.cmd[0], s.cmd.slice(1), { cwd: path.join(root, s.cwd), maxBuffer: 1 << 28, env: { ...process.env, ...(s.env ?? {}) } });
+  // Output goes to a file, not a pipe. With pipes, spawnSync also waits for every grandchild that inherited them, so a test that leaves a
+  // background process behind stalls the job after all tests have finished (proven in a Linux container: pipes 6.0 s vs file 0.0 s).
+  const rawPath = path.join(out, `${s.id}.raw`);
+  const fd = openSync(rawPath, 'w');
+  const p = sh(s.cmd[0], s.cmd.slice(1), { cwd: path.join(root, s.cwd), stdio: ['ignore', fd, fd], timeout: Number(env.PHASE1_STEP_TIMEOUT_MS) || 15 * 60_000, killSignal: 'SIGKILL', env: { ...process.env, ...(s.env ?? {}) } });
+  closeSync(fd);
+  p.stdout = readFileSync(rawPath, 'utf8'); p.stderr = ''; rmSync(rawPath, { force: true });
+  const timedOut = p.error?.code === 'ETIMEDOUT'; // a hung step fails with its partial output instead of stalling the whole job
   const text = `# cmd: ${s.cmd.join(' ')}\n${p.stdout}\n${p.stderr}\n# exit: ${p.status}\n`;
   writeFileSync(path.join(out, `${s.id}.log`), text);
   const n = (k) => Number((text.match(new RegExp(`^# ${k} (\\d+)`, 'm')) ?? [])[1] ?? 0);
   Object.assign(r, { exit: p.status, tests: n('tests'), pass: n('pass'), fail: n('fail'), skipped: n('skipped'), suiteSkips: (text.match(/# SKIP/g) ?? []).length });
   const failed = [...text.matchAll(/^\s*not ok \d+ - (.+)$/gm)].map((m) => m[1].trim()).filter((v, i, a) => a.indexOf(v) === i);
-  if (s.kind === 'tsc') r.status = p.status === 0 ? 'PASS' : 'FAIL';
+  if (timedOut) { r.status = 'FAIL'; r.timedOut = true; r.failedTests = ['STEP TIMED OUT after ' + (Number(env.PHASE1_STEP_TIMEOUT_MS) || 15 * 60_000) / 1000 + 's (see log tail)']; }
+  else if (s.kind === 'tsc') r.status = p.status === 0 ? 'PASS' : 'FAIL';
   else if (s.kind === 'full') {
     const topLevel = [...text.matchAll(/^not ok \d+ - (.+)$/gm)].map((m) => m[1].trim());
     r.baselineFailures = topLevel.filter((t) => baseline.includes(t)); r.regressions = topLevel.filter((t) => !baseline.includes(t));
