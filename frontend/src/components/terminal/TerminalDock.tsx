@@ -79,9 +79,6 @@ export function TerminalDock() {
   const workspaceOpen =
     hydrated && workspaceOpenRaw;
 
-  const dockSuppressed =
-    chatbarHidden;
-
   const dashboardFullscreen =
     isDashboard && terminalFullscreen;
 
@@ -97,9 +94,20 @@ export function TerminalDock() {
     messages.length === 0 &&
     !loading;
 
+  // An empty workspace must never be a black shell with no way to compose.
+  // Older saved preferences may keep the chatbar hidden after navigating away
+  // from a conversation; automatically restore it for a fresh task.
+  const dockSuppressed = chatbarHidden && !emptyWorkspace;
+
   const showStarterExperience =
     emptyWorkspace &&
     !workspaceOpen;
+
+  useEffect(() => {
+    if (isDashboard && emptyWorkspace && chatbarHidden) {
+      useThemeStore.getState().setChatbarHidden(false);
+    }
+  }, [isDashboard, emptyWorkspace, chatbarHidden]);
 
   useEffect(() => {
     if (!isDashboard) return;
@@ -153,10 +161,10 @@ export function TerminalDock() {
 
         showStarterExperience &&
           !incognito &&
-          !chatbarHidden &&
+          !dockSuppressed &&
           'xv-terminal-dock--idle',
 
-        showStarterExperience && !incognito && !chatbarHidden && startStyles.dock,
+        showStarterExperience && !incognito && !dockSuppressed && startStyles.dock,
 
         `terminal-skin-${
           incognito

@@ -5,6 +5,7 @@ import { FilePenIcon } from '@/components/icons/animated/FilePenIcon';
 import { EyeClosedIcon } from '@/components/icons/animated/EyeClosedIcon';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useThemeStore } from '@/store/useThemeStore';
+import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
 
 /**
@@ -19,6 +20,8 @@ export function WorkspaceLauncher({ className }: { className?: string }) {
   const setWorkspaceOpen = useProjectWorkspaceStore((s) => s.setWorkspaceOpen);
   const chatbarHidden = useThemeStore((s) => s.chatbarHidden);
   const setChatbarHidden = useThemeStore((s) => s.setChatbarHidden);
+  const { messages, loading, sessionRestoring } = useTerminalChat();
+  const emptyWorkspace = messages.length === 0 && !loading && !sessionRestoring;
 
   return (
     <div className={cn('flex items-center justify-end gap-1.5', className)}>
@@ -27,10 +30,12 @@ export function WorkspaceLauncher({ className }: { className?: string }) {
           still reaches assistive technology and hover. */}
       <button
         type="button"
-        onClick={() => setChatbarHidden(!chatbarHidden)}
+        onClick={() => { if (!emptyWorkspace) setChatbarHidden(!chatbarHidden); }}
+        disabled={emptyWorkspace}
+        title={emptyWorkspace ? 'Composer stays visible in a new workspace' : chatbarHidden ? 'Show chatbar' : 'Hide chatbar'}
         className="xv-ws-launch xv-ws-launch--icon"
-        aria-pressed={chatbarHidden}
-        aria-label={chatbarHidden ? 'Show the chatbar' : 'Hide the chatbar'}
+        aria-pressed={!emptyWorkspace && chatbarHidden}
+        aria-label={emptyWorkspace ? 'Composer stays visible in a new workspace' : chatbarHidden ? 'Show the chatbar' : 'Hide the chatbar'}
         data-short-tip={chatbarHidden ? 'Show chatbar' : 'Hide chatbar'}
       >
         {/* A closing eye rather than a pair of panel-slide glyphs. Those said a
