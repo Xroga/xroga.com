@@ -244,6 +244,8 @@ export function saveTerminalHistorySession(opts: {
   const rest = loadTerminalHistory().filter((e) => e.id !== opts.sessionId);
   save([entry, ...rest]);
   void saveTerminalSessionToIndexedDB(entry);
+  // Project membership is durable sidebar metadata, not a GitHub or model-routing side effect.
+  void import('@/lib/sidebarOrganization').then(({scheduleProjectConversationLink})=>scheduleProjectConversationLink(entry));
   // Non-GitHub chats need the same cross-device restoration capability.
   if (!entry.githubRepoName?.includes('/')) {
     void import('@/lib/sidebarOrganization').then(({scheduleSidebarChatSave}) => scheduleSidebarChatSave(entry));

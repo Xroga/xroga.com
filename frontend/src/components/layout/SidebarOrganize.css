@@ -14,3 +14,20 @@
 /* Dense reading rhythm without overlapping hit areas on touch devices. */
 .xv-sidebar-work-row { min-height:24px; }
 @media (pointer:coarse){ .xv-sidebar-work-row { min-height:32px; } }
+
+/* Workspace project-task hierarchy: clear, compact, left-aligned titles. */
+[data-sidebar-work-organizer] .xv-sidebar-work-row > button:first-child{
+  font-size:12px;font-weight:500;line-height:1.4;text-align:left;justify-content:flex-start;
+  min-height:30px;
+}
+[data-sidebar-work-organizer] .xv-sidebar-long-title{
+  font-size:inherit;text-align:left;
+}
+[data-sidebar-work-organizer] .xv-sidebar-project-task{
+  opacity:.7;transition:opacity 150ms ease;
+}
+[data-sidebar-work-organizer] .group:hover .xv-sidebar-project-task,
+[data-sidebar-work-organizer] .group:focus-within .xv-sidebar-project-task{
+  opacity:1;
+}
+@media (max-width:767px){[data-sidebar-work-organizer] .xv-sidebar-project-task{opacity:1}}

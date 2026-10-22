@@ -2,6 +2,7 @@
 import { createClient } from '@/lib/supabase/client';
 import { messagesForStorage } from '@/lib/storageSafe';
 import type { TerminalHistoryEntry } from '@/lib/terminalHistory';
+import { getActiveSidebarProject } from '@/lib/sidebarProjectTask';
 
 export type SidebarKind = 'conversation' | 'project';
 export type SidebarMeta = {
@@ -150,4 +151,27 @@ export async function loadPinnedSidebarRecords(userId:string,items:SidebarMeta[]
     kind:String(c.kind||'chat'),status:String(c.status||'active'),terminalNumber:0,messageCount:Number(c.message_count||0)});
  }
  return {projects:(pr.data||[]) as SidebarProject[],sessions:[...results.values()]};
+}
+
+/** Bind a real saved task to its selected project; never create a phantom conversation.
+ * Serialized per task so streaming saves do not generate repeated metadata writes. */
+const projectLinks=new Map<string,Promise<void>>();
+const completedLinks=new Set<string>();
+export function scheduleProjectConversationLink(entry:TerminalHistoryEntry):void{
+ if(typeof window==='undefined'||!entry.messages?.some(m=>m.role==='user'))return;
+ const active=getActiveSidebarProject();
+ if(!active)return;
+ const key=active.userId+':'+active.projectId+':'+entry.id;
+ if(completedLinks.has(key)||projectLinks.has(key))return;
+ const operation=(async()=>{
+  try{
+   const {data}=await createClient().auth.getUser();
+   if(!data.user||data.user.id!==active.userId)return;
+   await changeSidebarMeta(active.userId,'conversation',entry.id,{project_id:active.projectId});
+   completedLinks.add(key);
+   window.dispatchEvent(new Event('xroga-sidebar-chats-changed'));
+  }catch(error){console.warn('[sidebar] project task association will retry:',error);}
+  finally{projectLinks.delete(key);}
+ })();
+ projectLinks.set(key,operation);
 }
