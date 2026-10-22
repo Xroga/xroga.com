@@ -193,6 +193,19 @@ describe('large-object migration (multipart copy)', () => {
     assert.equal((await e.reconcile(j.id)).retainedForRollback, 1);
   });
 
+  it('a source stream shorter than its measured size is rejected: nothing is completed, nothing becomes READY', async () => {
+    const s = setup(); const { j, e } = await s.prepared();
+    const realOpen = s.src.open.bind(s.src);
+    s.src.open = async (id: string) => {
+      const o = await realOpen(id); if (!o) return o;
+      return { ...o, body: async () => (async function* () { let n = 0; for await (const c of await o.body()) { n += c.length; if (n > 11 * MiB) return; yield c; } })() };
+    };
+    const c = await e.copy(j.id);
+    assert.equal(c.copied, 0);
+    assert.equal(s.dest.objects.size, 0);
+    assert.ok([...s.repo.objects.values()].every((o) => o.state !== 'READY'));
+  });
+
   it('objects above maxObjectBytes remain BLOCKED with an explicit reason', async () => {
     const s = setup(); const j = await s.ledger.createJob({ name: 'x', sourceProvider: 'legacy_r2', destinationBucket: DEST, mode: 'copy', createdBy: 't' });
     const e = new MigrationEngine({ ledger: s.ledger, source: s.src, drive: s.drive, destRepo: s.repo, worker: 'w', approval: TEST_APPROVAL, maxObjectBytes: 10 * MiB });
