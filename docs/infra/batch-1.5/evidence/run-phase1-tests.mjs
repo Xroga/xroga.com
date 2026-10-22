@@ -22,7 +22,7 @@ const out = path.join(here, 'logs');
 mkdirSync(out, { recursive: true });
 const env = process.env;
 const REQUIRE = env.REQUIRE_PHASE1_FIXTURES === '1';
-const sh = (cmd, args, opts = {}) => spawnSync(cmd, args, { cwd: root, encoding: 'utf8', ...opts });
+const sh = (cmd, args, opts = {}) => spawnSync(cmd, args, { cwd: root, encoding: 'utf8', shell: process.platform === 'win32', ...opts });
 
 const sha = sh('git', ['rev-parse', 'HEAD']).stdout.trim();
 const dirty = sh('git', ['status', '--porcelain', '--untracked-files=no']).stdout.trim().split('\n').filter(Boolean).filter((l) => !l.includes('evidence/logs'));
@@ -52,7 +52,8 @@ const walk = (d) => readdirSync(d).flatMap((f) => { const p = path.join(d, f); r
 const rel = (p) => path.relative(path.join(root, 'backend'), p);
 const tests = walk(path.join(root, 'backend/src/storage')).filter((f) => f.endsWith('.test.ts')).map(rel);
 const extra = ['src/routes/drive.test.ts', 'src/routes/driveRegistration.test.ts', 'src/services/storage/projectFiles.canonical.test.ts'];
-const unit = [...tests.filter((f) => !f.includes('.integration.')), ...extra].sort();
+const LARGE = 'src/storage/migration/largeObject.stream.test.ts'; // real 1 GiB+ crossing: its own required step (needs ~1.2 GiB temp disk)
+const unit = [...tests.filter((f) => !f.includes('.integration.') && f.split(path.sep).join('/') !== LARGE), ...extra].sort();
 const pgTests = tests.filter((f) => f.includes('.integration.') && !f.includes('wire') && !f.includes('provider')).sort();
 const wireTests = tests.filter((f) => f.includes('wire.integration')).sort();
 const providerTests = tests.filter((f) => f.includes('provider.integration')).sort();
@@ -60,6 +61,7 @@ const providerTests = tests.filter((f) => f.includes('provider.integration')).so
 const steps = [
   { id: '01-typecheck', cmd: ['npx', 'tsc', '--noEmit', '-p', '.'], cwd: 'backend', required: true, kind: 'tsc' },
   { id: '02-unit-and-adapters', cmd: ['npx', 'tsx', '--test', ...unit], cwd: 'backend', required: true },
+  { id: '02b-large-object-1GiB-SYNTHETIC', cmd: ['npx', 'tsx', '--test', LARGE], cwd: 'backend', required: true, env: { XROGA_LARGE_TEST: '1' } },
   { id: '03-postgres-real-sql', cmd: ['npx', 'tsx', '--test', ...pgTests], cwd: 'backend', required: true, fixture: 'postgres' },
   { id: '04-s3-wire-emulator-SYNTHETIC', cmd: ['npx', 'tsx', '--test', ...wireTests], cwd: 'backend', required: true, fixture: 's3Emulator' },
   { id: '05-r2-provider-REAL', cmd: ['npx', 'tsx', '--test', ...providerTests], cwd: 'backend', required: false, fixture: 'r2Provider', needs: 'AUTHORISED' },
@@ -76,7 +78,7 @@ for (const s of steps) {
     r.status = s.required ? (REQUIRE ? 'FAIL_MISSING_FIXTURE' : 'SKIPPED_MISSING_FIXTURE') : 'NOT_RUN';
     results.push(r); writeFileSync(path.join(out, `${s.id}.log`), `${r.status}: ${s.fixture}=${fixtures[s.fixture]}\n`); continue;
   }
-  const p = sh(s.cmd[0], s.cmd.slice(1), { cwd: path.join(root, s.cwd), maxBuffer: 1 << 28 });
+  const p = sh(s.cmd[0], s.cmd.slice(1), { cwd: path.join(root, s.cwd), maxBuffer: 1 << 28, env: { ...process.env, ...(s.env ?? {}) } });
   const text = `# cmd: ${s.cmd.join(' ')}\n${p.stdout}\n${p.stderr}\n# exit: ${p.status}\n`;
   writeFileSync(path.join(out, `${s.id}.log`), text);
   const n = (k) => Number((text.match(new RegExp(`^# ${k} (\\d+)`, 'm')) ?? [])[1] ?? 0);
