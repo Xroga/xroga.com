@@ -4,7 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { createPortal } from 'react-dom';
 import { useRouter, usePathname } from 'next/navigation';
 import { activateSidebarProject, clearActiveSidebarProject, getActiveSidebarProject, SIDEBAR_PROJECT_ACTIVE_EVENT } from '@/lib/sidebarProjectTask';
-import { clearSelectedRepoContext } from '@/lib/repoContext';
+import { clearSelectedRepoContext, consumeFreshTerminalIntent } from '@/lib/repoContext';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { Cloud, FolderOpen, GitBranch, ChevronDown, ChevronRight, Pin, PinOff, MoreHorizontal, Plus, ArrowUp, ArrowDown } from 'lucide-react';
 import { SidebarActionMenu, type SidebarActionId, type SidebarMenuAction } from './SidebarActionMenu';
@@ -939,6 +939,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       notifyGithubRepoContext(p.repo,selected?.repo===p.repo?selected.branch:'main');
     }else clearSelectedRepoContext();
     activateSidebarProject(accountId,p.id);
+    // An explicit project task supersedes a leftover generic New Product intent.
+    consumeFreshTerminalIntent();
     setOpenFolders(prev=>({...prev,[p.id]:true}));
     useProjectWorkspaceStore.getState().setWorkspaceOpen(false);
     router.push('/workspace');

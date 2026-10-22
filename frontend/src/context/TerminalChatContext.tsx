@@ -37,7 +37,7 @@ import { addMediaItem, removeMediaByUrl, removeMediaByMessageId, purgeMediaUrls 
 import { collectVariantUrlsFromOutput } from '@/lib/mediaHelpers';
 import { archiveChatTurn, removeChatArchiveEntry } from '@/lib/chatArchive';
 import { attachCloudProjectId, saveTerminalHistorySession } from '@/lib/terminalHistory';
-import { clearActiveSidebarProject } from '@/lib/sidebarProjectTask';
+import { clearActiveSidebarProject, getActiveSidebarProject } from '@/lib/sidebarProjectTask';
 import { registerRepoSession } from '@/lib/repoSessionsIndex';
 import { tokenUsageFromSummary } from '@/lib/tokenUsageFromSummary';
 import { buildPromptWithMemory, isBuildThreadContinuation, isGeneralAdviceOrKnowledgePrompt, isPhase1BuildQuestion, isWebsiteBuildPrompt, isWebsiteBuildUpdate, isWebsiteUpdateRequest, looksLikeBuildClarificationAnswer, threadHasCompletedWebsite } from '@/lib/chatMemory';
@@ -2988,7 +2988,8 @@ if (
 
   projectId:
     projectIdForRequest(
-      useProjectWorkspaceStore.getState().projectId,
+      getActiveSidebarProject(workspaceIdentity.userId)?.projectId ||
+        useProjectWorkspaceStore.getState().projectId,
       projectId,
       freshProductIntent,
     ),
