@@ -22,6 +22,7 @@ interface SidebarHoverMenuProps {
 
 const VIEWPORT_PAD = 12;
 const POINTER_BRIDGE_MS = 180;
+const FLYOUT_OPEN_EVENT = 'xroga-sidebar-flyout-open';
 
 /** A portalled sidebar flyout that remains open while the pointer crosses to it. */
 export function SidebarHoverMenu({ trigger, children, className }: SidebarHoverMenuProps) {
@@ -40,6 +41,23 @@ export function SidebarHoverMenu({ trigger, children, className }: SidebarHoverM
     cancelClose();
     closeTimer.current = setTimeout(() => setOpen(false), POINTER_BRIDGE_MS);
   }
+
+  function openMenu() {
+    cancelClose();
+    window.dispatchEvent(new CustomEvent(FLYOUT_OPEN_EVENT, { detail: anchorRef.current }));
+    setOpen(true);
+  }
+
+  useEffect(() => {
+    const closeOther = (event: Event) => {
+      if ((event as CustomEvent).detail !== anchorRef.current) {
+        cancelClose();
+        setOpen(false);
+      }
+    };
+    window.addEventListener(FLYOUT_OPEN_EVENT, closeOther);
+    return () => window.removeEventListener(FLYOUT_OPEN_EVENT, closeOther);
+  }, []);
 
   useEffect(() => () => cancelClose(), []);
 
@@ -87,7 +105,7 @@ export function SidebarHoverMenu({ trigger, children, className }: SidebarHoverM
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
         setOpen(false);
-        anchorRef.current?.querySelector<HTMLElement>('button')?.focus();
+        anchorRef.current?.querySelector<HTMLElement>('button,a[href]')?.focus();
       }
     }
     function onFocusIn(event: FocusEvent) {
@@ -106,7 +124,7 @@ export function SidebarHoverMenu({ trigger, children, className }: SidebarHoverM
   }, [open]);
 
   function focusMenu() {
-    setOpen(true);
+    openMenu();
     window.requestAnimationFrame(() => menuRef.current?.querySelector<HTMLElement>('a[href], button:not([disabled])')?.focus());
   }
 
@@ -118,9 +136,8 @@ export function SidebarHoverMenu({ trigger, children, className }: SidebarHoverM
         // opened on focus and immediately closed again for mouse and touch users.
         onClick: (event: React.MouseEvent<HTMLElement>) => {
           (trigger.props as { onClick?: (event: React.MouseEvent<HTMLElement>) => void }).onClick?.(event);
-          if (!event.defaultPrevented) setOpen(true);
+          if (!event.defaultPrevented) openMenu();
         },
-        onFocus: () => setOpen(true),
         onKeyDown: (event: React.KeyboardEvent) => {
           if (event.key === 'ArrowRight' || event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
@@ -135,7 +152,7 @@ export function SidebarHoverMenu({ trigger, children, className }: SidebarHoverM
       <span
         ref={anchorRef}
         className="block w-full"
-        onMouseEnter={() => { cancelClose(); setOpen(true); }}
+        onMouseEnter={openMenu}
         onMouseLeave={scheduleClose}
       >
         {triggerWithState}

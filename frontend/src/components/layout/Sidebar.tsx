@@ -714,14 +714,6 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             </div>
           ) : (
             <div className="xv-sidebar-collapsed-actions" aria-label="Workspace shortcuts">
-                <Link
-                  href="/workspace"
-                  aria-label="Workspace"
-                  onClick={handleNavClick}
-                  className={cn(isActive('/workspace') && 'is-active')}
-                >
-                  <AnimatedIcon icon={TerminalIcon} />
-                </Link>
               <button type="button" onClick={handleNewChat} aria-label="New Work">
                 <AnimatedIcon icon={NewTerminalIcon} />
               </button>
@@ -739,14 +731,6 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                   className={cn(isActive('/dashboard') && 'is-active')}
                 >
                   <span className="xv-animated-blocks-hover"><LucideBlocksIcon ref={overviewIconRef} size={16} /></span>
-                </Link>
-                <Link
-                  href="/dashboard/projects"
-                  aria-label="Projects"
-                  onClick={(event) => handleNavEntryClick(event, '/dashboard/projects')}
-                  className={cn(isActive('/dashboard/projects') && 'is-active')}
-                >
-                  <AnimatedIcon icon={FolderOpenIcon} />
                 </Link>
                 <Link
                   href="/dashboard/integrations"

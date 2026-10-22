@@ -60,8 +60,31 @@ test('profile drawer and prompt share controls remain accessible without destruc
   await expect(userTurn.getByRole('button', { name: 'Delete message' })).toHaveCount(0);
   await userTurn.getByRole('button', { name: 'Share prompt', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Share this prompt' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Response only', exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Create owner-only link' })).toBeVisible();
   await expect(page.getByRole('complementary', { name: 'Xroga early access notice' })).toHaveCount(0);
+});
+
+test('sidebar flyouts paint one solid rounded surface without a backing rectangle', async ({ page }) => {
+  await page.setViewportSize({ width: 1366, height: 900 });
+  await page.goto('/workspace');
+  for (const theme of ['White', 'Beige', 'Gray', 'Black']) {
+    await page.getByRole('button', { name: 'Change theme', exact: true }).first().click();
+    await page.getByRole('menuitemradio', { name: new RegExp(`^${theme}`) }).click();
+    await page.getByRole('link', { name: 'Library', exact: true }).hover();
+    const popup = page.locator('.xv-sidebar-hover-menu');
+    await expect(popup).toBeVisible();
+    await expect(popup).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    const card = popup.locator('.xv-sidebar-hover-menu__card');
+    await expect(card).toBeVisible();
+    expect(await card.evaluate(el => getComputedStyle(el).backgroundColor)).not.toBe('rgba(0, 0, 0, 0)');
+    await page.keyboard.press('Escape');
+    await expect(popup).toHaveCount(0);
+  }
+  await page.getByRole('button', { name: 'Close sidebar', exact: true }).click();
+  const shortcuts = page.locator('.xv-sidebar-collapsed-actions');
+  await expect(shortcuts.getByRole('link', { name: 'Workspace', exact: true })).toHaveCount(0);
+  await expect(shortcuts.getByRole('link', { name: 'Projects', exact: true })).toHaveCount(0);
 });
 
 test('theme picker updates the workspace, cards and composer and survives reload', async ({ page }) => {

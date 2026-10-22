@@ -11,7 +11,7 @@ const NOTIFICATIONS = read('../components/notifications/SidebarNotificationCente
 
 test('primary navigation retains the requested order and does not duplicate old groups', () => {
   const table = NAV.slice(NAV.indexOf('const navItems: NavEntry[] = ['), NAV.indexOf('interface SidebarProps'));
-  const markers = ["label: 'Workspace'", "label: 'Dashboard'", "label: 'Projects'", "label: 'Plugins'",
+  const markers = ["label: 'Plugins'",
     "id: 'automations'", "id: 'library'", "label: 'Publish'", "id: 'more'"];
   let last = -1;
   for (const marker of markers) {
@@ -21,6 +21,8 @@ test('primary navigation retains the requested order and does not duplicate old 
   }
   assert.doesNotMatch(table, /id: 'launch'|id: 'explore'/);
   assert.doesNotMatch(table, /href: '\/os-preview'/);
+  assert.doesNotMatch(table, /label: 'Workspace'|label: 'Projects'/);
+  assert.match(NAV, /<SidebarProjectHistory expanded=\{navExpanded\}/);
 });
 test('planned capabilities stay clickable as informative sections', () => {
   assert.doesNotMatch(NAV, /aria-disabled="true"/);
@@ -49,10 +51,10 @@ test('compact width preserves stored preferences and popover accessibility', () 
   assert.match(FLYOUT, /requestAnimationFrame/);
 });
 
-test('utility hints sit below their icons and the eye names the chatbar', () => {
-  assert.equal((NAV.match(/<HoverTip label="Search"[^>]*side="bottom"/g) ?? []).length, 2);
-  assert.equal((NAV.match(/<HoverTip label="Theme"[^>]*side="bottom"/g) ?? []).length, 2);
-  assert.equal((NAV.match(/<HoverTip label="Notifications" side="bottom"/g) ?? []).length, 3);
+test('sidebar utilities remain accessible and the eye names the chatbar', () => {
+  assert.match(NAV, /aria-label="Close sidebar"/);
+  assert.match(NAV, /<ThemeToggle/);
+  assert.match(NAV, /<SidebarNotificationButton/);
   assert.match(LAUNCHER, /data-short-tip=\{chatbarHidden \? 'Show chatbar' : 'Hide chatbar'\}/);
   assert.doesNotMatch(NOTIFICATIONS, /title="Notifications"/);
 });

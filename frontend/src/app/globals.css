@@ -3,6 +3,8 @@
 @tailwind utilities;
 
 .xv-user-avatar-reveal { opacity: 0; transition: opacity 150ms ease; }
+.xv-message-share { --accent: var(--foreground); --accent-dim: color-mix(in srgb, var(--foreground) 9%, transparent); }
+.xv-message-share .text-white { color: var(--background); }
 .xv-repo-name { container-type: inline-size; width: min(136px,18vw); }
 .xv-repo-name span { display:inline-block; min-width:100%; white-space:nowrap; }
 @media (prefers-reduced-motion: no-preference) { .xv-term-title--button:hover .xv-repo-name span { animation:xv-repo-scroll 9s linear infinite alternate; } }
@@ -14599,7 +14601,7 @@ html.xv-home-scroll-lock body {
 .xv-sidebar-primary-row a:hover .xv-animated-blocks-hover,
 .xv-sidebar-primary-row a:focus-visible .xv-animated-blocks-hover,
 .xv-sidebar-collapsed-actions a:hover .xv-animated-blocks-hover { color: var(--foreground); }
-.xv-sidebar-hover-menu,.xv-sidebar-hover-menu__card {
+.xv-sidebar-hover-menu__card {
   background: var(--card) !important; opacity: 1 !important;
   border-color: var(--card-border) !important; backdrop-filter: none !important;
   max-width: calc(100vw - 24px); max-height: calc(100dvh - 24px);
@@ -14611,7 +14613,7 @@ html.xv-home-scroll-lock body {
 .xv-pqm-copy-email:focus-visible { outline: 1px solid var(--foreground); }
 
 /* Opaque, constrained surface for every sidebar automation and plugin flyout. */
-.xv-sidebar-hover-menu,.xv-sidebar-hover-menu__card,.xv-plugins-popover {
+.xv-sidebar-hover-menu__card,.xv-plugins-popover {
   background:var(--card) !important; opacity:1 !important;
   border-color:var(--card-border) !important;
   backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
@@ -14646,10 +14648,13 @@ html.xv-home-scroll-lock body {
 .xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-primary-tools { gap:7px; }
 @media(max-width:440px){.xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-chatbar-primary-tools { gap:4px; }}
 /* Solid backgrounds for portalled side flyouts: compositing over scrolling pages must not show through. */
-body.theme-black .xv-sidebar-hover-menu, body.theme-black .xv-plugins-popover, body.theme-black .xv-sidebar-hover-menu__card { background:#171717!important; opacity:1!important; backdrop-filter:none!important; }
-body.theme-gray .xv-sidebar-hover-menu, body.theme-gray .xv-plugins-popover, body.theme-gray .xv-sidebar-hover-menu__card { background:#212121!important; opacity:1!important; backdrop-filter:none!important; }
-body.theme-white .xv-sidebar-hover-menu, body.theme-white .xv-plugins-popover, body.theme-white .xv-sidebar-hover-menu__card,
-body.theme-beige .xv-sidebar-hover-menu, body.theme-beige .xv-plugins-popover, body.theme-beige .xv-sidebar-hover-menu__card { background:#fafafa!important; opacity:1!important; backdrop-filter:none!important; }
+body.theme-black .xv-plugins-popover, body.theme-black .xv-sidebar-hover-menu__card { background:#171717!important; opacity:1!important; backdrop-filter:none!important; }
+body.theme-gray .xv-plugins-popover, body.theme-gray .xv-sidebar-hover-menu__card { background:#212121!important; opacity:1!important; backdrop-filter:none!important; }
+body.theme-white .xv-plugins-popover, body.theme-white .xv-sidebar-hover-menu__card,
+body.theme-beige .xv-plugins-popover, body.theme-beige .xv-sidebar-hover-menu__card { background:#fafafa!important; opacity:1!important; backdrop-filter:none!important; }
+/* Only the rounded card paints a surface; the positioning wrapper must not
+   paint a second square behind its corners. */
+.xv-sidebar-hover-menu { background:transparent!important; border:0!important; box-shadow:none!important; padding:0!important; backdrop-filter:none!important; }
 
 .xv-workspace-identity .xv-term-title--button {
  min-height:29px; max-width:175px; padding:4px 11px!important; display:inline-flex; align-items:center;

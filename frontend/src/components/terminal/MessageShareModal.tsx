@@ -155,7 +155,7 @@ export function MessageShareModal({ open, onClose, prompt = '', response, conten
   if (!open || typeof document === 'undefined') return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[10000] flex items-end justify-center bg-black/45 p-0 backdrop-blur-[2px] sm:items-center sm:p-4" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+    <div className="xv-message-share fixed inset-0 z-[10000] flex items-end justify-center bg-black/45 p-0 backdrop-blur-[2px] sm:items-center sm:p-4" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
       <section role="dialog" aria-modal="true" aria-labelledby="message-share-title" className="w-full max-w-[560px] overflow-hidden rounded-t-[24px] border border-[var(--border-subtle)] bg-[var(--surface-raised)] shadow-2xl sm:rounded-[22px]">
         <header className="flex items-center gap-3 border-b border-[var(--border-subtle)] px-4 py-3 sm:px-5">
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-[var(--accent-dim)] text-[var(--accent)]">
@@ -171,10 +171,10 @@ export function MessageShareModal({ open, onClose, prompt = '', response, conten
         </header>
 
         <div className="space-y-3 p-4 sm:p-5">
-          <div className="grid grid-cols-2 gap-1 rounded-xl bg-[var(--surface-inset)] p-1" aria-label="Content to share">
+          {hasPrompt && <div className="grid grid-cols-2 gap-1 rounded-xl bg-[var(--surface-inset)] p-1" aria-label="Content to share">
             <button type="button" aria-pressed={scope === 'response'} onClick={() => chooseScope('response')} className={cn('rounded-[9px] px-3 py-2 text-xs font-medium transition', scope === 'response' ? 'bg-[var(--surface-raised)] text-[var(--text-primary)] shadow-sm' : 'text-[var(--text-secondary)]')}>Response only</button>
             <button type="button" aria-pressed={scope === 'exchange'} disabled={!hasPrompt} onClick={() => chooseScope('exchange')} className={cn('rounded-[9px] px-3 py-2 text-xs font-medium transition disabled:cursor-not-allowed disabled:opacity-40', scope === 'exchange' ? 'bg-[var(--surface-raised)] text-[var(--text-primary)] shadow-sm' : 'text-[var(--text-secondary)]')}>Prompt + response</button>
-          </div>
+          </div>}
 
           <div className="grid grid-cols-2 gap-2">
             <button type="button" aria-pressed={visibility === 'private'} onClick={() => chooseVisibility('private')} className={cn('flex items-center gap-2.5 rounded-xl p-2.5 text-left transition', visibility === 'private' ? 'bg-[var(--accent-dim)] text-[var(--text-primary)] shadow-sm' : 'bg-[var(--surface-inset)] text-[var(--text-secondary)] hover:bg-[var(--surface-base)]')}>
@@ -191,7 +191,7 @@ export function MessageShareModal({ open, onClose, prompt = '', response, conten
 
           <div className="max-h-32 overflow-y-auto rounded-xl bg-[var(--surface-inset)] px-3 py-2.5 text-[11px] leading-relaxed text-[var(--text-secondary)]">
             {scope === 'exchange' && <><span className="mb-1 block text-[9px] font-semibold uppercase tracking-[.14em] text-[var(--text-muted)]">Prompt</span><p className="whitespace-pre-wrap">{cleanPrompt}</p><div className="my-2 h-px bg-[var(--border-subtle)]" /></>}
-            <span className="mb-1 block text-[9px] font-semibold uppercase tracking-[.14em] text-[var(--text-muted)]">Response</span>
+            <span className="mb-1 block text-[9px] font-semibold uppercase tracking-[.14em] text-[var(--text-muted)]">{contentLabel === 'answer' ? 'Response' : contentLabel}</span>
             <p className="whitespace-pre-wrap">{cleanResponse}</p>
           </div>
 
