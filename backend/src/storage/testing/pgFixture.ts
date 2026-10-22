@@ -24,15 +24,20 @@ export async function createDisposableDb(opts: { beforeMigration?: (pool: pg.Poo
   u.pathname = `/${name}`;
   const pool = new pg.Pool({ connectionString: u.toString(), max: 24 });
   pool.on('error', () => undefined); // idle-client errors during teardown are not test failures
-  await pool.query(readFileSync(path.join(here, 'supabaseStub.sql'), 'utf8'));
-  await opts.beforeMigration?.(pool);
-  await pool.query(readFileSync(MIGRATION, 'utf8'));
+  const drop = async () => {
+    await pool.end().catch(() => undefined);
+    await admin.query(`drop database if exists ${name} with (force)`).catch(() => undefined);
+    await admin.end().catch(() => undefined);
+  };
+  try {
+    await pool.query(readFileSync(path.join(here, 'supabaseStub.sql'), 'utf8'));
+    await opts.beforeMigration?.(pool);
+    await pool.query(readFileSync(MIGRATION, 'utf8'));
+  } catch (err) {
+    await drop(); // never leave the pool (and the process) hanging after a failed setup
+    throw err;
+  }
   return {
-    pool, url: u.toString(),
-    drop: async () => {
-      await pool.end();
-      await admin.query(`drop database if exists ${name} with (force)`);
-      await admin.end();
-    },
+    pool, url: u.toString(), drop,
   };
 }

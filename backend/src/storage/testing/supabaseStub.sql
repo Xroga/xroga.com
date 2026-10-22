@@ -1,9 +1,12 @@
 -- Minimal stand-in for the Supabase objects the storage migration depends on.
 -- Used ONLY by tests against a disposable local Postgres. It is not a migration.
+-- Roles are cluster-wide and test files run in parallel against one server: "if not exists" alone races (two sessions both pass the check, the
+-- second fails with a duplicate pg_authid key). Each create therefore swallows the duplicate and a transaction-level advisory lock serialises them.
 do $$ begin
-  if not exists (select 1 from pg_roles where rolname = 'anon') then create role anon nologin; end if;
-  if not exists (select 1 from pg_roles where rolname = 'authenticated') then create role authenticated nologin; end if;
-  if not exists (select 1 from pg_roles where rolname = 'service_role') then create role service_role nologin bypassrls; end if;
+  perform pg_advisory_xact_lock(727274);
+  begin create role anon nologin; exception when duplicate_object or unique_violation then null; end;
+  begin create role authenticated nologin; exception when duplicate_object or unique_violation then null; end;
+  begin create role service_role nologin bypassrls; exception when duplicate_object or unique_violation then null; end;
 end $$;
 create schema if not exists auth;
 create table if not exists auth.users (id uuid primary key default gen_random_uuid());
