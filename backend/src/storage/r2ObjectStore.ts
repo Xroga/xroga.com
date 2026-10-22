@@ -166,6 +166,14 @@ export class R2ObjectStore implements ObjectStore {
     return { url, method: 'PUT', headers: {}, expiresAt: new Date(Date.now() + ttlSeconds * 1000) };
   }
 
+  async uploadPart(bucket: string, key: string, uploadId: string, partNumber: number, body: Buffer) {
+    const r = await wrap(this.#s3.send(new UploadPartCommand({
+      Bucket: bucket, Key: key, UploadId: uploadId, PartNumber: partNumber, Body: body, ContentLength: body.length,
+    })));
+    if (!r.ETag) throw new Error('provider returned no part ETag');
+    return { etag: r.ETag };
+  }
+
   async listParts(bucket: string, key: string, uploadId: string) {
     const out: Array<{ partNumber: number; size: number; etag: string }> = [];
     let marker: string | undefined;

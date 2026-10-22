@@ -153,10 +153,10 @@ describe('migration: end to end', () => {
 
   it('classifies unknown owners, unparseable keys and oversize objects as BLOCKED with a reason, not as success', async () => {
     const s = setup({ files: [{ owner: randomUUID(), name: '1700000000000-ok.txt', body: Buffer.from('ok') }, { owner: null, name: 'stray.txt', body: Buffer.from('stray') }] });
-    const j = await s.job(); const e = s.engine('w', { maxStreamCopyBytes: 1 });
+    const j = await s.job(); const e = s.engine('w', { maxObjectBytes: 1 });
     await e.discover(j.id); const plan = await e.dryRun(j.id);
     assert.equal(plan.eligible, 0);
-    assert.deepEqual(plan.blocked, { NEEDS_MULTIPART_COPY: 1, UNKNOWN_OWNER: 1 });
+    assert.deepEqual(plan.blocked, { EXCEEDS_MAX_OBJECT_BYTES: 1, UNKNOWN_OWNER: 1 });
     await e.copy(j.id);
     assert.equal(s.dest.objects.size, 0);
     const r = await e.reconcile(j.id);

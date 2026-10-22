@@ -54,6 +54,8 @@ export interface ObjectStore {
   delete(bucket: string, key: string): Promise<void>;
   createMultipart(bucket: string, key: string, contentType: string): Promise<{ uploadId: string }>;
   presignPart(bucket: string, key: string, uploadId: string, partNumber: number, ttlSeconds: number, contentLength: number): Promise<SignedRequest>;
+  /** Server-side bounded part write (migration of large objects). `body` is at most one part; the provider returns the part's ETag (MD5 of the part on S3/R2). */
+  uploadPart(bucket: string, key: string, uploadId: string, partNumber: number, body: Buffer): Promise<{ etag: string }>;
   listParts(bucket: string, key: string, uploadId: string): Promise<Array<{ partNumber: number; size: number; etag: string }>>;
   completeMultipart(bucket: string, key: string, uploadId: string, parts: CompletedPart[]): Promise<{ etag: string | null; versionId: string | null }>;
   abortMultipart(bucket: string, key: string, uploadId: string): Promise<void>;

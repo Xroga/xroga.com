@@ -19,3 +19,14 @@ create table if not exists public.project_files (
   version integer default 1, created_at timestamptz default now()
 );
 grant all on public.projects, public.project_files to service_role;
+-- minimal swarm_runs (production: 002a_reconcile_foundation.sql) for the run-output artifact adapter tests
+create table if not exists public.swarm_runs (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null,
+  project_id uuid references public.projects(id) on delete set null,
+  prompt text not null default '',
+  status text default 'pending',
+  output jsonb,
+  created_at timestamptz default now()
+);
+grant all on public.swarm_runs to service_role;

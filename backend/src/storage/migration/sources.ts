@@ -171,3 +171,85 @@ export class LocalMediaCacheSource implements SourceAdapter {
     return { size: st.size, fingerprint: `${st.size}:${st.mtimeMs}`, contentType: ct, body: async () => createReadStream(f) };
   }
 }
+
+// ---- artifacts embedded in swarm_runs.output ---------------------------------------------------------------------------
+
+/** Names and content that mark a credential. Such "artifacts" are never copied into the ordinary object pipeline. */
+const SECRET_NAME = /(^|[\/._-])(\.env|id_rsa|id_ed25519|credentials?|secrets?|tokens?|private[-_]?key|service[-_]?account)([\/._-]|$)|\.(pem|key|p12|pfx|kdbx)$/i;
+const SECRET_CONTENT = /-----BEGIN [A-Z ]*PRIVATE KEY-----|\bgh[pousr]_[A-Za-z0-9]{30,}|\bgithub_pat_[A-Za-z0-9_]{30,}|\bsk-[A-Za-z0-9_-]{24,}|\bAKIA[0-9A-Z]{16}\b|\bxox[abprs]-[A-Za-z0-9-]{10,}|\bvercel_[A-Za-z0-9]{20,}|\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/;
+export const looksLikeCredential = (name: string, bytes: Buffer | null): boolean =>
+  SECRET_NAME.test(name) || (bytes !== null && SECRET_CONTENT.test(bytes.subarray(0, 1024 * 1024).toString('latin1')));
+
+type RunRow = { id: string; user_id: string; project_id: string | null; status: string; output: unknown };
+interface EnvelopeArtifact { id?: unknown; name?: unknown; mediaType?: unknown; sizeBytes?: unknown; inline?: unknown; uri?: unknown }
+
+/** Decodes a descriptor's `inline` payload: a `data:` URL (base64 or percent-encoded) or UTF-8 text. */
+function inlineArtifactBytes(a: EnvelopeArtifact): Buffer | null {
+  if (typeof a.inline !== 'string') return null;
+  const m = /^data:[^;,]*(;base64)?,(.*)$/s.exec(a.inline);
+  if (m) {
+    try { return m[1] ? Buffer.from(m[2], 'base64') : Buffer.from(decodeURIComponent(m[2])); } catch { return null; }
+  }
+  return Buffer.from(a.inline, 'utf8');
+}
+
+/**
+ * Durable files that exist ONLY inside a finished run's JSON output: UniversalOutputEnvelope (`type: 'xroga.output'`) artifacts
+ * whose descriptor carries `inline` bytes. Everything else in `swarm_runs.output` is metadata, not a file, and is classified, never copied:
+ *  - EngineeringArtifact (`engineering_artifact`) is a manifest by design ("never file contents");
+ *  - descriptors with only a local-path `uri`, or no payload at all, have no recoverable bytes (NO_RECOVERABLE_BYTES);
+ *  - `drive://` descriptors are already canonical; http(s) descriptors are external.
+ * Ownership comes from `swarm_runs.user_id` (never from the JSON); a run whose project belongs to someone else is refused at ingest.
+ * The source row is only ever read.
+ */
+export class RunOutputArtifactsSource implements SourceAdapter {
+  readonly provider = 'run_output_artifacts' as const;
+  constructor(private readonly db: SqlClient) {}
+
+  async discover(cursor: string | undefined, limit: number) {
+    const r = await this.db.query<RunRow>(
+      `select id, user_id, project_id, status, output from public.swarm_runs
+        where output is not null and status in ('completed','failed') and ($1::uuid is null or id > $1::uuid)
+        order by id limit $2`, [cursor ?? null, limit]);
+    const items: DiscoveredItem[] = [];
+    for (const run of r.rows) {
+      const out = run.output as { type?: unknown; artifacts?: unknown } | null;
+      if (!out || out.type !== 'xroga.output' || !Array.isArray(out.artifacts)) continue; // engineering_artifact etc.: metadata only
+      const counts = new Map<string, number>();
+      for (const a of out.artifacts as EnvelopeArtifact[]) if (a && typeof a.id === 'string') counts.set(a.id, (counts.get(a.id) ?? 0) + 1);
+      const emitted = new Set<string>();
+      for (const raw of out.artifacts as EnvelopeArtifact[]) {
+        if (!raw || typeof raw !== 'object' || typeof raw.id !== 'string' || typeof raw.name !== 'string') continue;
+        if (emitted.has(raw.id)) continue; // one ledger row per (run, artifact id); ambiguity is reported once, on that row
+        emitted.add(raw.id);
+        const sourceId = `swarm_runs:${run.id}#${raw.id}`;
+        const name = raw.name.slice(0, 255);
+        const mediaType = typeof raw.mediaType === 'string' ? raw.mediaType : 'application/octet-stream';
+        const base = { sourceId, filename: name, contentType: mediaType, ownerUserId: run.user_id, projectId: run.project_id, objectClass: 'artifact' as ObjectClass };
+        const bytes = inlineArtifactBytes(raw);
+        let blockedReason: string | undefined;
+        if ((counts.get(raw.id) ?? 0) > 1) blockedReason = 'DUPLICATE_ARTIFACT_ID';
+        else if (typeof raw.uri === 'string' && /^drive:\/\//.test(raw.uri)) blockedReason = 'ALREADY_CANONICAL';
+        else if (typeof raw.uri === 'string' && /^https?:\/\//.test(raw.uri) && !bytes) blockedReason = 'EXTERNAL_URI';
+        else if (!bytes) blockedReason = 'NO_RECOVERABLE_BYTES';
+        else if (looksLikeCredential(name, bytes)) blockedReason = 'CREDENTIAL_LIKE_CONTENT';
+        else if (typeof raw.sizeBytes === 'number' && raw.sizeBytes !== bytes.length) blockedReason = 'DECLARED_SIZE_MISMATCH';
+        items.push({ ...base, size: bytes ? bytes.length : null, fingerprint: bytes && !blockedReason ? `${bytes.length}:${sha(bytes)}` : `unrecoverable:${blockedReason}`, blockedReason });
+      }
+    }
+    return { items, next: r.rows.length === limit ? r.rows[r.rows.length - 1].id : undefined };
+  }
+
+  async open(sourceId: string): Promise<OpenedSource | null> {
+    const m = /^swarm_runs:([0-9a-f-]{36})#(.+)$/.exec(sourceId);
+    if (!m) return null;
+    const r = await this.db.query<RunRow>(`select id, user_id, project_id, status, output from public.swarm_runs where id = $1`, [m[1]]);
+    const out = r.rows[0]?.output as { type?: unknown; artifacts?: unknown } | undefined;
+    if (!out || out.type !== 'xroga.output' || !Array.isArray(out.artifacts)) return null;
+    const matches = (out.artifacts as EnvelopeArtifact[]).filter((a) => a && a.id === m[2]);
+    if (matches.length !== 1) return null; // gone, or ambiguous: never guess which duplicate is meant
+    const bytes = inlineArtifactBytes(matches[0]);
+    if (!bytes || looksLikeCredential(String(matches[0].name ?? ''), bytes)) return null;
+    return { size: bytes.length, fingerprint: `${bytes.length}:${sha(bytes)}`, contentType: typeof matches[0].mediaType === 'string' ? matches[0].mediaType : null, body: async () => (async function* () { yield bytes; })() };
+  }
+}

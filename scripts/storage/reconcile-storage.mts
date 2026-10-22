@@ -10,5 +10,5 @@ if (flags.drive === true) {
   try { console.log(JSON.stringify(redactDeep(await ctx.drive.reconcile({ scanOrphans: flags['scan-orphans'] === true })), null, 2)); } finally { await ctx.close(); }
 } else {
   const src = typeof flags.source === 'string' ? flags.source : 'legacy_r2';
-  await main(src as 'legacy_r2' | 'supabase_storage' | 'project_files_inline', process.argv.slice(2), 'reconcile');
+  await main(src as 'legacy_r2' | 'supabase_storage' | 'project_files_inline' | 'run_output_artifacts', process.argv.slice(2), 'reconcile');
 }

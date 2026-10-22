@@ -1,9 +1,10 @@
+import { createHash } from 'node:crypto';
 import { hashStream, isSha256Hex, sha256Hex } from './integrity.js';
 import { assertKeyMatchesIdentity, buildObjectKey, isUuid, newObjectId, sanitizeFilename } from './keys.js';
 import { ProviderUnavailableError, type CompletedPart, type ObjectStore } from './objectStore.js';
 import {
   checkContentMatchesDeclaration, DOWNLOAD_URL_TTL_SECONDS, MAX_DOWNLOAD_URL_TTL_SECONDS, MULTIPART_RESERVATION_TTL_SECONDS,
-  multipartPlan, RESERVATION_TTL_SECONDS, safeDownloadHeaders, UPLOAD_URL_TTL_SECONDS, validateUploadRequest,
+  MULTIPART_MAX_PARTS, MULTIPART_MIN_PART_BYTES, multipartPlan, RESERVATION_TTL_SECONDS, safeDownloadHeaders, UPLOAD_URL_TTL_SECONDS, validateUploadRequest,
   type StoragePolicyConfig,
 } from './policy.js';
 import type { StorageRepository } from './repository.js';
@@ -318,6 +319,124 @@ export class StorageService {
         if (!h) throw new StorageError('PROVIDER_UNAVAILABLE', 'destination write did not complete', 503);
       } else {
         throw err;
+      }
+    }
+    return { object: await this.#verifyAndAdmit(o, actor), reused: false };
+  }
+
+  /**
+   * Migration ingest for objects too large for one streaming PUT. Same identity, quota and verification pipeline as ingestLegacy, but the
+   * provider write is a server-driven multipart upload:
+   *  - memory is bounded by (concurrency + 1) parts, never by object size;
+   *  - the upload id is persisted on the destination row, so a restarted worker resumes the SAME upload;
+   *  - on resume the source is re-streamed from byte 0 and every already-stored part is trusted only if its size and ETag (MD5 on S3/R2)
+   *    equal the MD5 of the bytes the source produces NOW; any other part is rewritten, so a changed source cannot be stitched together;
+   *  - completion is followed by the usual read-back SHA-256 (multipart ETags are never treated as a content hash).
+   */
+  async ingestLegacyMultipart(actor: StorageActor, input: {
+    objectId: string; projectId?: string | null; objectClass: ObjectClass; filename: string; contentType: string; size: number;
+    body: () => Promise<AsyncIterable<Uint8Array>>; migrationJobId: string; legacySource: Record<string, unknown>;
+    partBytes?: number; concurrency?: number; partTimeoutMs?: number; signal?: AbortSignal;
+  }): Promise<{ object: StorageObject; reused: boolean }> {
+    if (!isUuid(input.objectId)) throw new StorageError('INVALID_REQUEST', 'invalid object id');
+    const projectId = input.projectId ?? null;
+    if (projectId) await this.#authorizeProject(actor, projectId);
+    const { contentType } = validateUploadRequest({ objectClass: input.objectClass, contentType: input.contentType, size: input.size, filename: input.filename, serverGenerated: true }, this.#policy);
+    const safeFilename = sanitizeFilename(input.filename);
+    const partBytes = Math.max(input.partBytes ?? this.#policy.multipartPartBytes, MULTIPART_MIN_PART_BYTES);
+    const parts = Math.max(1, Math.ceil(input.size / partBytes));
+    if (parts > MULTIPART_MAX_PARTS) throw new StorageError('POLICY_REJECTED', 'object is too large for the configured part size', 413);
+    const concurrency = Math.max(1, Math.min(input.concurrency ?? 2, 8));
+    const partTimeoutMs = input.partTimeoutMs ?? 120_000;
+
+    let o = await this.#repo.getObject(input.objectId);
+    if (o) {
+      if (o.tenantId !== actor.tenantId || o.ownerUserId !== actor.userId) throw new StorageError('FORBIDDEN', 'destination belongs to another tenant', 403);
+      if (o.state === 'READY') return { object: o, reused: true };
+      if (['DELETING', 'DELETED', 'CORRUPT', 'QUARANTINED', 'FAILED'].includes(o.state)) throw new StorageError('BAD_STATE', `destination is ${o.state.toLowerCase()}`, 409);
+    } else {
+      const expires = new Date(this.#now().getTime() + MULTIPART_RESERVATION_TTL_SECONDS * 1000);
+      o = await this.#repo.insertObject({
+        id: input.objectId, tenantId: actor.tenantId, ownerUserId: actor.userId, projectId, objectClass: input.objectClass,
+        originalFilename: String(input.filename).slice(0, 255), safeFilename, provider: this.#store.provider, bucket: this.#bucket,
+        objectKey: buildObjectKey({ tenantId: actor.tenantId, projectId, objectClass: input.objectClass, objectId: input.objectId, safeFilename }),
+        contentType, declaredSize: input.size, sha256Declared: null, uploadMode: 'multipart', uploadExpiresAt: expires,
+        migrationJobId: input.migrationJobId, legacySource: input.legacySource,
+      });
+    }
+    if (o.declaredSize !== input.size) throw new StorageError('CONFLICT', 'source size differs from the size admitted for this destination', 409);
+    await this.#repo.reserve(o.id, o.tenantId, o.declaredSize, new Date(this.#now().getTime() + MULTIPART_RESERVATION_TTL_SECONDS * 1000), null);
+    if (o.state === 'PENDING') o = (await this.#repo.updateObject(o.id, ['PENDING'], { state: 'UPLOADING' })) ?? o;
+
+    // A previous attempt may already have completed the provider object (then crashed before admitting it).
+    const alreadyComplete = await this.#store.head(o.bucket, o.objectKey);
+    if (!alreadyComplete) {
+      // resume the persisted upload when the provider still knows it; otherwise start a fresh one
+      let uploadId = o.multipartUploadId;
+      let stored = new Map<number, { size: number; etag: string }>();
+      if (uploadId) {
+        try { stored = new Map((await this.#store.listParts(o.bucket, o.objectKey, uploadId)).map((p) => [p.partNumber, p])); } catch { uploadId = null; }
+      }
+      if (!uploadId) {
+        uploadId = (await this.#store.createMultipart(o.bucket, o.objectKey, o.contentType)).uploadId;
+        const saved = await this.#repo.updateObject(o.id, ['UPLOADING'], { multipartUploadId: uploadId });
+        if (saved && saved.multipartUploadId !== uploadId) { await this.#store.abortMultipart(o.bucket, o.objectKey, uploadId).catch(() => null); uploadId = saved.multipartUploadId; }
+      }
+      const done: CompletedPart[] = [];
+      const inflight = new Set<Promise<void>>();
+      let firstError: unknown = null;
+      let total = 0;
+      let n = 0;
+      const withTimeout = <T>(p: Promise<T>): Promise<T> => new Promise<T>((resolve, reject) => {
+        const t = setTimeout(() => reject(new ProviderUnavailableError('part upload timed out')), partTimeoutMs);
+        p.then((v) => { clearTimeout(t); resolve(v); }, (e) => { clearTimeout(t); reject(e); });
+      });
+      const sendPart = async (partNumber: number, buf: Buffer) => {
+        const md5 = `"${createHash('md5').update(buf).digest('hex')}"`;
+        const have = stored.get(partNumber);
+        let etag: string;
+        if (have && have.size === buf.length && have.etag.replace(/"/g, '') === md5.replace(/"/g, '')) {
+          etag = have.etag; // checkpoint verified against the bytes the source produced now
+        } else {
+          etag = (await withTimeout(this.#store.uploadPart(o!.bucket, o!.objectKey, uploadId as string, partNumber, buf))).etag;
+          const hex = /^"?[0-9a-f]{32}"?$/i;
+          if (hex.test(etag) && etag.replace(/"/g, '').toLowerCase() !== md5.replace(/"/g, '')) throw new StorageError('CORRUPT', `part ${partNumber} was altered in transit`, 502);
+        }
+        done.push({ partNumber, etag });
+      };
+      const launch = async (buf: Buffer) => {
+        n++;
+        const num = n;
+        total += buf.length;
+        while (inflight.size >= concurrency) await Promise.race(inflight);
+        if (firstError) throw firstError;
+        const p: Promise<void> = sendPart(num, buf).catch((e) => { firstError ??= e; }).finally(() => { inflight.delete(p); });
+        inflight.add(p);
+      };
+      let acc: Buffer[] = [];
+      let accLen = 0;
+      for await (const chunk of await input.body()) {
+        if (input.signal?.aborted) throw new StorageError('CONFLICT', 'migration cancelled', 409);
+        if (firstError) break;
+        let c = Buffer.from(chunk.buffer, chunk.byteOffset, chunk.byteLength);
+        while (c.length) {
+          const take = Math.min(partBytes - accLen, c.length);
+          acc.push(c.subarray(0, take)); accLen += take; c = c.subarray(take);
+          if (accLen === partBytes) { const buf = Buffer.concat(acc, accLen); acc = []; accLen = 0; await launch(buf); }
+        }
+      }
+      if (accLen > 0 && !firstError) await launch(Buffer.concat(acc, accLen));
+      await Promise.all(inflight);
+      if (firstError) throw firstError;
+      if (total !== input.size) throw new StorageError('CONFLICT', 'source stream length differs from the measured size', 409);
+      const ordered = done.sort((a, b) => a.partNumber - b.partNumber);
+      if (ordered.length !== parts) throw new StorageError('CONFLICT', 'unexpected number of parts', 409);
+      try {
+        await this.#store.completeMultipart(o.bucket, o.objectKey, uploadId as string, ordered);
+      } catch (err) {
+        if (!(err instanceof ProviderUnavailableError)) throw err;
+        const h = await this.#store.head(o.bucket, o.objectKey).catch(() => null);
+        if (!h) throw new StorageError('PROVIDER_UNAVAILABLE', 'multipart completion did not complete', 503);
       }
     }
     return { object: await this.#verifyAndAdmit(o, actor), reused: false };

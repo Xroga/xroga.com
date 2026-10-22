@@ -32,10 +32,12 @@ export interface EngineDeps {
   now?: () => Date;
   maxAttempts?: number;
   leaseSeconds?: number;
-  /** largest object the single streaming PUT will carry; bigger ones are BLOCKED(NEEDS_MULTIPART_COPY), never silently skipped */
+  /** largest object the single streaming PUT will carry; bigger ones take the bounded-memory multipart path (ingestLegacyMultipart) */
   maxStreamCopyBytes?: number;
   maxObjectBytes?: number;
   includeEphemeral?: boolean;
+  /** multipart copy tuning: part size (>= 5 MiB), parallel parts held in memory, per-part timeout */
+  multipart?: { partBytes?: number; concurrency?: number; partTimeoutMs?: number };
 }
 
 export interface CopySummary { claimed: number; copied: number; reused: number; failed: number; blocked: number; missing: number; sourceChanged: number; corrupt: number; lostLease: number }
@@ -137,9 +139,10 @@ export class MigrationEngine {
 
   #classify(it: Item): { status: 'ELIGIBLE' | 'SKIPPED' | 'BLOCKED'; reason: string | null } {
     if (!it.ownerUserId) return { status: 'BLOCKED', reason: 'UNKNOWN_OWNER' };
+    // adapters mark objects that must not enter the pipeline as 'unrecoverable' or 'unrecoverable:<REASON>' (the reason is reported, not flattened)
     if (it.sourceFingerprint === 'unrecoverable') return { status: 'BLOCKED', reason: 'INLINE_CONTENT_NOT_RECOVERABLE' };
+    if (it.sourceFingerprint?.startsWith('unrecoverable:')) return { status: 'BLOCKED', reason: it.sourceFingerprint.slice('unrecoverable:'.length).slice(0, 64) || 'INLINE_CONTENT_NOT_RECOVERABLE' };
     if (it.sourceSize !== null && it.sourceSize > this.#d.maxObjectBytes) return { status: 'BLOCKED', reason: 'EXCEEDS_MAX_OBJECT_BYTES' };
-    if (it.sourceSize !== null && it.sourceSize > this.#d.maxStreamCopyBytes) return { status: 'BLOCKED', reason: 'NEEDS_MULTIPART_COPY' };
     if (this.#d.source.provider === 'local_media_cache' && !this.#d.includeEphemeral) return { status: 'SKIPPED', reason: 'EPHEMERAL_CACHE' };
     return { status: 'ELIGIBLE', reason: null };
   }
@@ -186,7 +189,10 @@ export class MigrationEngine {
         for await (const c of src) { hash.update(c); consumed += c.byteLength; yield c; }
       })(await opened.body());
 
-      const { object, reused } = await this.#d.drive.ingestLegacy(actor, {
+      const ingest = opened.size > this.#d.maxStreamCopyBytes
+        ? (a: typeof actor, i: Parameters<StorageService['ingestLegacy']>[1]) => this.#d.drive.ingestLegacyMultipart(a, { ...i, ...this.#d.multipart })
+        : (a: typeof actor, i: Parameters<StorageService['ingestLegacy']>[1]) => this.#d.drive.ingestLegacy(a, i);
+      const { object, reused } = await ingest(actor, {
         objectId, projectId: it.projectId, objectClass: it.objectClass ?? 'artifact', filename: it.sourceFilename ?? 'file',
         contentType: opened.contentType ?? it.sourceContentType ?? 'application/octet-stream', size: opened.size, body: tee,
         migrationJobId: job.id, legacySource: { provider: it.sourceProvider, id: it.sourceId, fingerprint: opened.fingerprint },
@@ -223,7 +229,7 @@ export class MigrationEngine {
       if (ok) { reused ? sum.reused++ : sum.copied++; }
     } catch (err) {
       const msg = redact(String((err as Error)?.message ?? err));
-      if (err instanceof StorageError && ['QUARANTINED', 'CORRUPT', 'POLICY_REJECTED', 'FORBIDDEN', 'BAD_STATE'].includes(err.code)) {
+      if (err instanceof StorageError && ['QUARANTINED', 'CORRUPT', 'POLICY_REJECTED', 'FORBIDDEN', 'BAD_STATE', 'NOT_FOUND', 'INVALID_REQUEST'].includes(err.code)) {
         sum.blocked++;
         await this.#finish(it, { status: 'BLOCKED', skipReason: `DESTINATION_${err.code}`, lastErrorClass: 'POLICY', lastError: msg }, sum);
       } else if (it.attempts > this.#d.maxAttempts) {

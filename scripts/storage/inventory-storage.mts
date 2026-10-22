@@ -2,7 +2,7 @@
  * Read-only inventory of where customer bytes live today. Lists and counts only; never downloads, writes or deletes.
  * Each source that cannot be reached is reported BLOCKED with the missing configuration, not omitted.
  */
-import { LegacyR2Source, ProjectFilesInlineSource } from '../../backend/src/storage/migration/sources.js';
+import { LegacyR2Source, ProjectFilesInlineSource, RunOutputArtifactsSource } from '../../backend/src/storage/migration/sources.js';
 import { R2ObjectStore } from '../../backend/src/storage/r2ObjectStore.js';
 import { createPool } from '../../backend/src/storage/runtime.js';
 
@@ -33,6 +33,16 @@ if (env.DATABASE_URL || env.SUPABASE_DB_URL || env.SUPABASE_DB_PASSWORD) {
     out.project_files = t.rows[0];
   } finally { await pool.end(); }
 } else out.project_files_inline = { status: 'BLOCKED', missing: ['DATABASE_URL'] };
+
+if (env.DATABASE_URL || env.SUPABASE_DB_URL || env.SUPABASE_DB_PASSWORD) {
+  const pool = createPool();
+  try {
+    const src = new RunOutputArtifactsSource(pool);
+    let cursor: string | undefined; const byReason: Record<string, number> = {}; let eligible = 0, bytes = 0;
+    do { const page = await src.discover(cursor, 500); for (const x of page.items) { if (x.blockedReason) byReason[x.blockedReason] = (byReason[x.blockedReason] ?? 0) + 1; else { eligible++; bytes += x.size ?? 0; } } cursor = page.next; } while (cursor);
+    out.run_output_artifacts = { eligible, eligibleBytes: bytes, blocked: byReason, note: 'read-only: only xroga.output descriptors carrying inline bytes are ever eligible; metadata-only descriptors are NO_RECOVERABLE_BYTES' };
+  } finally { await pool.end(); }
+} else out.run_output_artifacts = { status: 'BLOCKED', missing: ['DATABASE_URL'] };
 
 out.not_inventoried = { local_media_cache: 'EPHEMERAL: lives on the API machine; run on that machine with LocalMediaCacheSource', fly_volumes: 'no repository code persists to a Fly volume; confirm with `fly volumes list` (not run here)', token_buckets: 'xroga-github-tokens holds OAuth tokens: intentionally never inventoried or migrated as objects' };
 console.log(JSON.stringify(out, null, 2));

@@ -7,7 +7,7 @@ export type ItemStatus =
   | 'DISCOVERED' | 'ELIGIBLE' | 'SKIPPED' | 'BLOCKED' | 'COPYING' | 'COPIED' | 'VERIFIED'
   | 'FAILED' | 'MISSING_SOURCE' | 'SOURCE_CHANGED' | 'CORRUPT_DESTINATION';
 
-export type SourceProvider = 'legacy_r2' | 'supabase_storage' | 'project_files_inline' | 'local_media_cache';
+export type SourceProvider = 'legacy_r2' | 'supabase_storage' | 'project_files_inline' | 'local_media_cache' | 'run_output_artifacts';
 export type Stage = 'copy' | 'read_new' | 'freeze_old' | 'delete';
 
 export interface Job {

@@ -1,6 +1,6 @@
 /**
  * keygen  --out-dir DIR                      generate an Ed25519 approver key pair (run on the OPERATOR's machine; keep private.pem there)
- * create  --source legacy_r2|supabase_storage|project_files_inline --name N [--copy-mode]
+ * create  --source legacy_r2|supabase_storage|project_files_inline|run_output_artifacts --name N [--copy-mode]
  * approve --job ID --stage copy|read_new|freeze_old --operator WHO --environment test|staging|production
  *         --private-key-file PATH [--ttl-hours 24] [--tenants uuid,uuid]     signs a token bound to the job's CURRENT dry-run plan
  * show    --job ID

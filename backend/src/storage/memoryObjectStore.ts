@@ -1,4 +1,4 @@
-import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
+import { createHash, createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { hexToBase64, sha256Hex } from './integrity.js';
 import {
   ProviderUnavailableError, type CompletedPart, type HeadResult, type ObjectStore,
@@ -171,6 +171,19 @@ export class MemoryObjectStore implements ObjectStore {
     const u = new URL('https://memory.invalid/p');
     u.search = new URLSearchParams({ b: bucket, k: key, u: uploadId, n: String(partNumber), exp: String(exp), len: String(contentLength), sig }).toString();
     return { url: u.toString(), method: 'PUT', headers: {}, expiresAt: new Date(exp) };
+  }
+
+  /** Mirrors S3/R2: a part's ETag is the quoted MD5 of its bytes. Fault op: 'part'. */
+  async uploadPart(_b: string, _k: string, uploadId: string, partNumber: number, body: Buffer) {
+    this.calls.push('uploadPart');
+    const f = this.#fault('part');
+    if (f === 'throw') throw new ProviderUnavailableError('injected part failure');
+    const up = this.uploads.get(uploadId);
+    if (!up) throw Object.assign(new Error('NoSuchUpload'), { name: 'NoSuchUpload' });
+    const etag = `"${createHash('md5').update(body).digest('hex')}"`;
+    up.parts.set(partNumber, { body: Buffer.from(body), etag });
+    if (f === 'after-write') throw new ProviderUnavailableError('timeout after part write');
+    return { etag };
   }
 
   async listParts(_b: string, _k: string, uploadId: string) {

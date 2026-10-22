@@ -9,7 +9,7 @@ import type { Environment } from './approvals.js';
 import { BlockedError } from './cli.js';
 import { MigrationEngine, type ReadLinker } from './engine.js';
 import { PostgresLedger } from './postgresLedger.js';
-import { LegacyR2Source, ProjectFilesInlineSource, SupabaseStorageSource, type SupabaseStorageLike } from './sources.js';
+import { LegacyR2Source, ProjectFilesInlineSource, RunOutputArtifactsSource, SupabaseStorageSource, type SupabaseStorageLike } from './sources.js';
 import type { SourceAdapter, SourceProvider } from './types.js';
 
 /** project_files link/unlink used by READ_NEW and its rollback. Touches only the additive storage_object_id column. */
@@ -70,6 +70,7 @@ export function buildContext(provider: SourceProvider, opts: { worker: string; s
   if (provider === 'legacy_r2') { const l = legacyR2Config(env); source = new LegacyR2Source(new R2ObjectStore(l), l.bucket, env.LEGACY_R2_PREFIX ?? 'users/'); }
   else if (provider === 'supabase_storage') source = new SupabaseStorageSource(supabaseStorageClient(env), opts.supabaseBucket ?? 'avatars');
   else if (provider === 'project_files_inline') source = new ProjectFilesInlineSource(pool);
+  else if (provider === 'run_output_artifacts') source = new RunOutputArtifactsSource(pool);
   else throw new BlockedError([`adapter for ${provider} (use the dedicated script)`]);
   const engine = new MigrationEngine({ ledger, source, drive, destRepo: repo, worker: opts.worker, linker: projectFilesLinker(pool), approval: approverFromEnv(env) });
   return { engine, ledger, drive, destBucket: dest.bucket, source, close: () => pool.end() };
