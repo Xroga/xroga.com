@@ -6,6 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { activateSidebarProject, clearActiveSidebarProject, getActiveSidebarProject, SIDEBAR_PROJECT_ACTIVE_EVENT } from '@/lib/sidebarProjectTask';
 import { clearSelectedRepoContext, consumeFreshTerminalIntent } from '@/lib/repoContext';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
+import { useThemeStore } from '@/store/useThemeStore';
 import { Cloud, FolderOpen, GitBranch, ChevronDown, ChevronRight, Pin, PinOff, MoreHorizontal, Plus, ArrowUp, ArrowDown } from 'lucide-react';
 import { SidebarActionMenu, type SidebarActionId, type SidebarMenuAction } from './SidebarActionMenu';
 import { SidebarMovingTitle } from './SidebarMovingTitle';
@@ -948,6 +949,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     consumeFreshTerminalIntent();
     setOpenFolders(prev=>({...prev,[p.id]:true}));
     useProjectWorkspaceStore.getState().setWorkspaceOpen(false);
+    // Always reveal the existing composer and starter view for a new project task.
+    useThemeStore.getState().setChatbarHidden(false);
     router.push('/workspace');
     window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
   }
