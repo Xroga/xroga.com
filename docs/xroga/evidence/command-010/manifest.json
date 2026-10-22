@@ -1,0 +1,216 @@
+{
+  "version": 1,
+  "command": "010",
+  "status": "PARTIALLY_VERIFIED_PREPARATION_ONLY",
+  "baseSha": "fb95f76bafc1b544b6655d435cddede260d9cd99",
+  "implementationCommit": "81075701f660d51b5f157596c4c7a7c4a85eaea2",
+  "sourceIdentityNote": "Runtime implementation remains 81075701f660d51b5f157596c4c7a7c4a85eaea2. Subsequent commits contain test-harness, AST coverage/stability, current-source inventory and evidence changes. Final source SHA is reported in the draft PR.",
+  "formalPhase4Admission": false,
+  "phase3Status": "BLOCKED_MANAGED_KMS_RUNTIME_CUSTODY_AND_APPLICABLE_CUTOVER",
+  "releaseState": "BLOCKED",
+  "frozenCriteriaSource": "docs/xroga/batch-1/phases/phase-4/PHASE-4-FROZEN-WORKLIST.json",
+  "criteria": [
+    {
+      "id": "XB01-C010-AC01",
+      "originalText": "All arbitrary outbound URL callers are inventoried.",
+      "status": "PARTIALLY_VERIFIED",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC02",
+      "originalText": "High-risk URL callers use central URL policy.",
+      "status": "PARTIALLY_VERIFIED",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC03",
+      "originalText": "All consequential external data egress passes egressPolicy.",
+      "status": "PARTIALLY_VERIFIED",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC04",
+      "originalText": "businessAction integrates authority + egress before provider execution.",
+      "status": "VERIFIED_LOCAL",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC05",
+      "originalText": "Tool descriptions cannot create authority.",
+      "status": "VERIFIED_LOCAL",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC06",
+      "originalText": "Malicious document/web/tool-output tests cannot override policy.",
+      "status": "VERIFIED_LOCAL",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC07",
+      "originalText": "Loopback/private/link-local/metadata SSRF tests pass.",
+      "status": "VERIFIED_LOCAL",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC08",
+      "originalText": "Redirect-to-private test passes.",
+      "status": "VERIFIED_LOCAL",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC09",
+      "originalText": "Cross-tenant external upload test passes.",
+      "status": "PARTIALLY_VERIFIED",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC10",
+      "originalText": "Credential-secret egress test passes.",
+      "status": "VERIFIED_LOCAL",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC11",
+      "originalText": "Security decision evidence contains no raw credential.",
+      "status": "PARTIALLY_VERIFIED",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC12",
+      "originalText": "audit-egress-callers reports zero unexplained high-risk bypasses.",
+      "status": "NOT_VERIFIED",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    }
+  ],
+  "tests": {
+    "focusedSecurity": {
+      "tests": 52,
+      "pass": 52,
+      "fail": 0,
+      "skipped": 0,
+      "transport": "CONTROLLED_DNS_HTTP_AND_DATABASE_FIXTURES"
+    },
+    "frontendUnit": {
+      "tests": 1155,
+      "pass": 1155,
+      "fail": 0,
+      "skipped": 0,
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test --test-concurrency=4 --test-reporter=spec frontend/src/**/*.test.ts"
+    },
+    "actualProxyRoutes": {
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "transport": "ACTUAL_HANDLERS_AND_POLICY_WITH_DNS_SOCKET_FIXTURES"
+    },
+    "frontendBuild": {
+      "status": "PASS_WITH_WARNINGS",
+      "node": "22.21.1",
+      "next": "15.5.27",
+      "authRealm": "local-disposable",
+      "providerCalls": false,
+      "warnings": [
+        "Existing lint warnings",
+        "Supabase Edge Runtime process.version warning",
+        "Multiple lockfile/root inference and Tailwind content warning"
+      ]
+    },
+    "focusedFrontendLint": {
+      "status": "PASS"
+    },
+    "finalTypechecks": {
+      "status": "PASS_BACKEND_AND_FRONTEND",
+      "backendBuild": "PASS_TSC_EMIT",
+      "frontendBuild": "PASS_WITH_WARNINGS"
+    },
+    "fullBackend": {
+      "status": "PASS_WITH_REGISTERED_SKIPS",
+      "tests": 3158,
+      "pass": 3145,
+      "fail": 0,
+      "skipped": 13,
+      "durationMs": 222212,
+      "environment": "Existing runSteps/safeTestEnvironment harness, Node22.21.1",
+      "skipsNotCertified": true
+    },
+    "callerInventory": {
+      "total": 132,
+      "reviewedUrlBoundariesOnly": 9,
+      "pending": 123,
+      "highRiskPendingCandidates": 69,
+      "strictCompleteness": "FAIL_EXPECTED_NOT_ACCEPTED"
+    },
+    "missionPolicy": {
+      "status": "PASS_MISSION_POLICY_NOT_RELEASE_AUTHORIZATION"
+    },
+    "browserDriver": {
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "skipped": 0,
+      "command": "NODE_ENV=test node --import tsx --test backend/src/synthesis/playwrightDriver.integration.test.ts",
+      "scope": "REAL_LOCAL_CHROMIUM_AGAINST_LOOPBACK_FIXTURES_NOT_PROVIDER_OR_DATABASE_PROOF"
+    },
+    "preservedPhase2Register": {
+      "status": "PASS_FINITE_PHASE_2_REGISTER",
+      "packets": 73,
+      "historicalRecords": 371,
+      "certifiedByGeneration": 0
+    },
+    "frozenPhase4Handoff": {
+      "status": "PASS_12_ORIGINAL_CRITERIA_UNCHANGED"
+    },
+    "currentStateInventory": {
+      "status": "PASS_REGENERATED_CURRENT_SOURCE_NOT_HISTORICAL_SECURITY_EVIDENCE"
+    },
+    "skipGovernance": {
+      "status": "PASS_SKIP_GOVERNANCE",
+      "registeredSkips": 20,
+      "focusedTests": 0
+    },
+    "backendCompatibility": {
+      "status": "PASS_PINNED_CLINE_GIT_AND_DOWNSTREAM_FIX_CHECKS",
+      "dependenciesAdded": 0
+    }
+  },
+  "integration": {
+    "observedMain": "33b49da563528f110c4a139a90cb257e0bcc26df",
+    "method": "git merge-tree --write-tree HEAD FETCH_HEAD",
+    "status": "CONFLICT_NOT_INTEGRATION_VERIFIED",
+    "conflicts": [
+      "frontend/src/components/terminal/WorkspaceLauncher.tsx"
+    ],
+    "conflictResolutionAuthorized": false
+  },
+  "ci": {
+    "status": "NOT_YET_SUBMITTED_CURRENT_SOURCE",
+    "previousPhase3ReceiptsReusedAsCurrent": false
+  },
+  "realDatabasePersistenceVerified": false,
+  "cloudResourcesCreated": false,
+  "providerEffects": false,
+  "productionChanges": false,
+  "spend": 0,
+  "merge": false,
+  "deploy": false,
+  "knownGaps": [
+    "123 unclosed AST caller candidates, including 69 dynamic/SDK high-risk candidates, not asserted as 69 demonstrated vulnerabilities",
+    "Remaining consequential adapters and upload caller migration",
+    "Real disposable database receipt/ownership/concurrency proof and source-bound provenance",
+    "Main integration conflict outside preparatory egress scope",
+    "Phase 3 actual managed-KMS runtime custody and applicable cutover"
+  ]
+}

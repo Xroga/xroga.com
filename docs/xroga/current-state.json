@@ -302,13 +302,12 @@
       "id": "surface:230ed9a8d98f95d4fb7c",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/attachments.ts",
-      "sha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
+      "sha256": "c50dc741653646df6b6dddc6ec1ba4337fa3b3a48a94b5d9a66afe52b81cbd46",
       "symbols": [
         "ALLOWED_ATTACHMENT_HOSTS",
         "ChatAttachment",
         "IMAGE_MIME",
         "PreparedAttachments",
-        "ab",
         "asUtf8",
         "assertSafeAttachmentUrl",
         "att",
@@ -351,17 +350,19 @@
         "pickAttachmentModel",
         "prepareAttachments",
         "require",
-        "res",
         "target",
         "text",
         "xml"
       ],
       "imports": [
+        "../security/egress/urlPolicy.js",
         "./models.js",
         "module",
         "zlib"
       ],
-      "runtimeImports": [],
+      "runtimeImports": [
+        "backend/src/security/egress/urlPolicy.ts"
+      ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
@@ -13081,7 +13082,9 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [],
-      "callers": [],
+      "callers": [
+        "backend/src/security/egress/internalDependency.test.ts:3"
+      ],
       "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
@@ -13090,7 +13093,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/security/egress/internalDependency.test.ts"
+      ],
       "state": "DEAD_OR_UNREACHABLE",
       "confidence": "LOW",
       "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
@@ -13173,7 +13178,7 @@
       "id": "surface:00c614f4b3448bf5f3f6",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/lib/deployVerify.ts",
-      "sha256": "abcf85356420eda9b29ae5c3aae5a29aa70fb174ab73cb4d9ffb708823b2125e",
+      "sha256": "6d61d603fb3585e28e8fd6ccfbc0077d21ccd55452439a819e4b0f621a28c7da",
       "symbols": [
         "GENERIC_NOT_FOUND",
         "NETLIFY_NOT_FOUND",
@@ -13183,8 +13188,12 @@
         "text",
         "verifyLivePreviewUrl"
       ],
-      "imports": [],
-      "runtimeImports": [],
+      "imports": [
+        "../security/egress/urlPolicy.js"
+      ],
+      "runtimeImports": [
+        "backend/src/security/egress/urlPolicy.ts"
+      ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
@@ -14385,7 +14394,7 @@
       "id": "surface:b2fea12283daf2508ce4",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/lib/shipVerify.ts",
-      "sha256": "f20629c081ef80bea2164d8ee879820ec0dc4a7577de8c931a74c6667f2bc654",
+      "sha256": "4fb72f464e770db5da19b4bd6f9351113eb94d0df9de64513245ccfd7c30f018",
       "symbols": [
         "ShipVerifyResult",
         "base",
@@ -14410,10 +14419,12 @@
         "verifyShippedProduct"
       ],
       "imports": [
+        "../security/egress/urlPolicy.js",
         "./deployVerify.js"
       ],
       "runtimeImports": [
-        "backend/src/lib/deployVerify.ts"
+        "backend/src/lib/deployVerify.ts",
+        "backend/src/security/egress/urlPolicy.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -16210,35 +16221,36 @@
       "id": "surface:9d6d03489cbead1dad46",
       "subsystem": "operations_approvals",
       "sourcePath": "backend/src/operations/providerAdapters.ts",
-      "sha256": "58f92ebf5556be31c7e225057fede5d9e91d3204dd53a8b53c9699c39a87dbde",
+      "sha256": "70af3217e8620ae65efcdc418f775c8c36feff10d4d81d8e204cf645284fc625",
       "symbols": [
         "ProviderAdapterRegistry",
         "attempt",
         "body",
-        "controller",
+        "createHttpVerificationAdapter",
         "createInternalAdapter",
         "delay",
         "error",
         "expectedMarker",
-        "host",
         "httpVerificationAdapter",
         "markerMatches",
         "message",
         "normalizeProviderError",
         "normalized",
+        "ok",
         "response",
         "retryAfter",
         "retryable",
         "safeHttpsUrl",
-        "timer",
         "url",
         "verified"
       ],
       "imports": [
-        "./types.js",
-        "node:net"
+        "../security/egress/urlPolicy.js",
+        "./types.js"
       ],
-      "runtimeImports": [],
+      "runtimeImports": [
+        "backend/src/security/egress/urlPolicy.ts"
+      ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
@@ -16251,14 +16263,13 @@
       ],
       "reachable": true,
       "persistenceDependencies": [],
-      "externalProviderDependencies": [
-        "node:net"
-      ],
+      "externalProviderDependencies": [],
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [
+        "backend/src/operations/providerAdapters.ts#createHttpVerificationAdapter",
         "backend/src/operations/providerAdapters.ts#httpVerificationAdapter",
         "backend/src/operations/providerAdapters.ts#verified"
       ],
@@ -21047,6 +21058,10 @@
         "backend/src/security/authority/digest.test.ts:4",
         "backend/src/security/authority/enforce.test.ts:4",
         "backend/src/security/authority/enforce.ts:2",
+        "backend/src/security/egress/dataClassification.ts:2",
+        "backend/src/security/egress/egress.integration.test.ts:7",
+        "backend/src/security/egress/egressPolicy.ts:4",
+        "backend/src/security/egress/fileEgress.test.ts:5",
         "backend/src/services/integrations/businessAction.ts:5",
         "backend/src/services/integrations/businessActionConfirmations.ts:5",
         "backend/src/services/integrations/composioClient.ts:5",
@@ -21071,7 +21086,9 @@
       "testCoverage": [
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/security/authority/digest.test.ts",
-        "backend/src/security/authority/enforce.test.ts"
+        "backend/src/security/authority/enforce.test.ts",
+        "backend/src/security/egress/egress.integration.test.ts",
+        "backend/src/security/egress/fileEgress.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -21124,6 +21141,10 @@
       "callers": [
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:11",
         "backend/src/security/authority/enforce.test.ts:5",
+        "backend/src/security/egress/egress.integration.test.ts:6",
+        "backend/src/security/egress/egressPolicy.ts:2",
+        "backend/src/security/egress/fileEgress.test.ts:6",
+        "backend/src/security/egress/fileEgress.ts:5",
         "backend/src/services/integrations/businessAction.ts:7",
         "backend/src/services/integrations/businessActionConfirmations.ts:4",
         "backend/src/services/integrations/composioClient.ts:6"
@@ -21155,7 +21176,9 @@
       ],
       "testCoverage": [
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
-        "backend/src/security/authority/enforce.test.ts"
+        "backend/src/security/authority/enforce.test.ts",
+        "backend/src/security/egress/egress.integration.test.ts",
+        "backend/src/security/egress/fileEgress.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -21186,7 +21209,8 @@
       "callers": [
         "backend/src/security/authority/enforce.test.ts:7",
         "backend/src/security/authority/enforce.ts:3",
-        "backend/src/services/integrations/businessAction.ts:6"
+        "backend/src/services/integrations/businessAction.ts:6",
+        "backend/src/services/integrations/composioClient.ts:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -21226,7 +21250,8 @@
       ],
       "callers": [
         "backend/src/security/authority/enforce.test.ts:6",
-        "backend/src/security/authority/risk.ts:1"
+        "backend/src/security/authority/risk.ts:1",
+        "backend/src/security/egress/egressPolicy.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -21242,7 +21267,9 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/security/authority/enforce.test.ts"
+        "backend/src/security/authority/enforce.test.ts",
+        "backend/src/security/egress/egress.integration.test.ts",
+        "backend/src/security/egress/fileEgress.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -21255,19 +21282,23 @@
       "id": "surface:a4155784ae7c0ed40bf5",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/boundedPublicGet.ts",
-      "sha256": "9a20c8cc0e496f893a18d79dba79b4beac820b9001bc1b06d2fc2772c70eee44",
+      "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472",
       "symbols": [
         "EgressPolicyError",
         "PublicAddress",
         "PublicGetOptions",
         "PublicGetResult",
         "PublicGetTransport",
+        "PublicPostTransport",
         "PublicResolver",
         "aborted",
         "addresses",
         "admitPublicTarget",
+        "authority",
         "beforeAbort",
         "boundedPublicGet",
+        "boundedPublicPost",
+        "bytes",
         "cancellation",
         "checked",
         "chosen",
@@ -21278,6 +21309,7 @@
         "declared",
         "encoding",
         "error",
+        "hash",
         "host",
         "hostname",
         "isPublicAddress",
@@ -21289,37 +21321,52 @@
         "next",
         "normalized",
         "onAbort",
+        "part",
+        "pinned",
         "pinnedLookup",
+        "postTransport",
         "prefix",
         "publicHttpsUrl",
         "redirects",
         "req",
         "response",
+        "retry",
+        "snapshot",
         "status",
         "timer",
         "transport",
         "url"
       ],
       "imports": [
+        "node:crypto",
         "node:dns/promises",
         "node:http",
         "node:https",
         "node:net"
       ],
       "runtimeImports": [],
-      "entryPoints": [],
-      "callers": [
-        "backend/src/security/boundedPublicGet.test.ts:6"
+      "entryPoints": [
+        "backend/src/index.ts",
+        "frontend/src/app/api/browser-view/route.ts",
+        "frontend/src/app/api/image-fetch/route.ts"
       ],
-      "reachable": false,
+      "callers": [
+        "backend/src/security/boundedPublicGet.test.ts:6",
+        "backend/src/security/egress/urlPolicy.ts:2",
+        "frontend/src/lib/server/publicEgress.ts:3"
+      ],
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
+        "node:crypto",
         "node:dns/promises",
         "node:http",
         "node:https",
         "node:net"
       ],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/security/boundedPublicGet.ts#authority"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -21327,11 +21374,411 @@
       "testCoverage": [
         "backend/src/security/boundedPublicGet.test.ts"
       ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:a3e59c8210ad713cad2a",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/security/egress/dataClassification.ts",
+      "sha256": "0b184e32a0324af93c8f9b373de40e3b5b986d8dd986caa0452eb9f8d46f0314",
+      "symbols": [
+        "classifyOutboundData",
+        "key",
+        "nodes",
+        "secret",
+        "secretField",
+        "secretValue",
+        "serialized",
+        "visit"
+      ],
+      "imports": [
+        "../authority/digest.js",
+        "./types.js",
+        "node:crypto"
+      ],
+      "runtimeImports": [
+        "backend/src/security/authority/digest.ts",
+        "backend/src/security/egress/types.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/security/egress/egressPolicy.ts:7",
+        "backend/src/security/egress/fileEgress.ts:7"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [
+        "backend/src/security/egress/dataClassification.ts#canonicalAuthorityJson"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:0abd22fcc7f37df79eb1",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/security/egress/egressPolicy.ts",
+      "sha256": "599dc837cd2b3fdefc0e3abc189c7d5e3ee9f38763f1f3ee2964ac18b49e8125",
+      "symbols": [
+        "EgressDenied",
+        "actor",
+        "base",
+        "binding",
+        "data",
+        "decideEgress",
+        "enforceEgress",
+        "hash",
+        "issued",
+        "payload",
+        "receipt",
+        "requireIssuedSecurityDecision",
+        "result",
+        "timer",
+        "urls"
+      ],
+      "imports": [
+        "../authority/digest.js",
+        "../authority/enforce.js",
+        "../authority/types.js",
+        "../tenantContext.js",
+        "./dataClassification.js",
+        "./types.js",
+        "./urlPolicy.js",
+        "node:crypto"
+      ],
+      "runtimeImports": [
+        "backend/src/security/authority/digest.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/authority/types.ts",
+        "backend/src/security/egress/dataClassification.ts",
+        "backend/src/security/egress/types.ts",
+        "backend/src/security/egress/urlPolicy.ts",
+        "backend/src/security/tenantContext.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/security/egress/egress.integration.test.ts:9",
+        "backend/src/security/egress/fileEgress.ts:6",
+        "backend/src/security/egress/securityDecision.ts:5",
+        "backend/src/services/integrations/composioClient.ts:10"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [
+        "backend/src/security/egress/egressPolicy.ts#assertAuthorityPermit",
+        "backend/src/security/egress/egressPolicy.ts#canonicalAuthorityJson"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "backend/src/security/egress/egressPolicy.ts#preparedActionDigest"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/security/egress/egressPolicy.ts#receipt"
+      ],
+      "testCoverage": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:20c6daedb6643625a93b",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/security/egress/fileEgress.ts",
+      "sha256": "4407a4191556aaddd0b2baf977141df75234268334aa8ccc925c82bc687e3a1d",
+      "symbols": [
+        "classification",
+        "content",
+        "current",
+        "executeOwnedFileEgress",
+        "file",
+        "original",
+        "payload"
+      ],
+      "imports": [
+        "../../services/storage/fileDeliveryPolicy.js",
+        "../../services/storage/privateFileDelivery.js",
+        "../authority/enforce.js",
+        "./dataClassification.js",
+        "./egressPolicy.js",
+        "./types.js",
+        "./urlPolicy.js",
+        "@supabase/supabase-js",
+        "node:util"
+      ],
+      "runtimeImports": [
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/egress/dataClassification.ts",
+        "backend/src/security/egress/egressPolicy.ts",
+        "backend/src/security/egress/urlPolicy.ts",
+        "backend/src/services/storage/fileDeliveryPolicy.ts",
+        "backend/src/services/storage/privateFileDelivery.ts"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/security/egress/fileEgress.test.ts:9"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "@supabase/supabase-js",
+        "node:util"
+      ],
+      "authBoundary": [
+        "backend/src/security/egress/fileEgress.ts#consumeAuthorityPermit"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "backend/src/security/egress/fileEgress.ts#digestBytes"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/security/egress/fileEgress.test.ts"
+      ],
       "state": "DEAD_OR_UNREACHABLE",
       "confidence": "LOW",
       "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:9b1b63ad6c74daedb60f",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/security/egress/securityDecision.ts",
+      "sha256": "961cd8cbefb5a179538c9f23b59a62d0162ce8f32db8737c6d020a237f7609cb",
+      "symbols": [
+        "actor",
+        "key",
+        "persistSecurityDecision",
+        "row"
+      ],
+      "imports": [
+        "../serviceRoleGuard.js",
+        "../tenantContext.js",
+        "./egressPolicy.js",
+        "./types.js",
+        "node:util"
+      ],
+      "runtimeImports": [
+        "backend/src/security/egress/egressPolicy.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/security/egress/egress.integration.test.ts:10",
+        "backend/src/services/integrations/composioClient.ts:11"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "production_audit_log"
+      ],
+      "externalProviderDependencies": [
+        "node:util"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:4870b8173f8823bf4bd1",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/security/egress/toolTrust.ts",
+      "sha256": "a0b180fb8f43e4bff77688a0c2f6005c1b60690216adc2fd8cd0332244ee751c",
+      "symbols": [
+        "toolMetadataTrust"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/security/egress/egress.integration.test.ts:12"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:8313efe2bbb4d1d82ce0",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/security/egress/types.ts",
+      "sha256": "65b96a70630b02c22bbc67ece994d401058afd03392f2eafa5ac81c1bc6d7224",
+      "symbols": [
+        "DATA_CLASSES",
+        "DataClass",
+        "EgressDecision",
+        "EgressInput",
+        "EgressReason",
+        "POLICY_VERSION",
+        "SecurityDecision"
+      ],
+      "imports": [
+        "../authority/types.js",
+        "../tenantContext.js"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/security/egress/dataClassification.ts:3",
+        "backend/src/security/egress/egressPolicy.ts:8"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [
+        "backend/src/security/egress/types.ts#AuthorityDispatchBinding",
+        "backend/src/security/egress/types.ts#AuthorityPermit"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:2cec69ce4170d8cc4f89",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/security/egress/untrustedInput.ts",
+      "sha256": "7cc0441a6b8c11792797a9c2e27712f5dc026137aebed6c0dae9a60693311e92",
+      "symbols": [
+        "UNTRUSTED_PROVENANCE",
+        "UntrustedProvenance",
+        "untrustedInput"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/security/egress/egress.integration.test.ts:13"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/security/egress/egress.integration.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:942b03c374e830d6307a",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/security/egress/urlPolicy.ts",
+      "sha256": "029047096756212afb39fb30f5cdd4522e15ff825f819d7ea0f8efcab735f580",
+      "symbols": [],
+      "imports": [
+        "../boundedPublicGet.js"
+      ],
+      "runtimeImports": [
+        "backend/src/security/boundedPublicGet.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/ai/attachments.ts:7",
+        "backend/src/lib/deployVerify.ts:1",
+        "backend/src/lib/shipVerify.ts:6",
+        "backend/src/operations/providerAdapters.ts:1",
+        "backend/src/security/egress/egress.integration.test.ts:11",
+        "backend/src/security/egress/egressPolicy.ts:6",
+        "backend/src/security/egress/fileEgress.ts:9",
+        "backend/src/security/egress/publicPost.test.ts:6"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/security/egress/egress.integration.test.ts",
+        "backend/src/security/egress/fileEgress.test.ts",
+        "backend/src/security/egress/publicPost.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -21612,6 +22059,7 @@
         "backend/src/routes/projects.ts:3",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts:11",
         "backend/src/security/communityPublicException.test.ts:5",
+        "backend/src/security/egress/securityDecision.ts:3",
         "backend/src/security/frontendScope.local.integration.ts:6",
         "backend/src/security/ownership.ts:2",
         "backend/src/security/platformHealth.local.integration.ts:7",
@@ -21729,6 +22177,10 @@
         "backend/src/security/businessAuthority.local.integration.ts:7",
         "backend/src/security/confirmationMetadata.local.integration.ts:4",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:9",
+        "backend/src/security/egress/egress.integration.test.ts:5",
+        "backend/src/security/egress/egressPolicy.ts:5",
+        "backend/src/security/egress/fileEgress.test.ts:4",
+        "backend/src/security/egress/securityDecision.ts:2",
         "backend/src/security/legacyBuildHistory.local.integration.ts:9",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:6",
         "backend/src/security/ownedRunHeartbeat.test.ts:4",
@@ -21755,6 +22207,7 @@
         "backend/src/services/ensureUserRecords.ts:4",
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts:5",
         "backend/src/services/integrations/businessActionConfirmations.ts:3",
+        "backend/src/services/integrations/composioClient.ts:9",
         "backend/src/services/integrations/credentialVault.test.ts:4",
         "backend/src/services/integrations/credentialVault.ts:2",
         "backend/src/services/integrations/credentialVaultRuntime.ts:5",
@@ -21846,6 +22299,8 @@
         "backend/src/security/businessAuthority.local.integration.ts",
         "backend/src/security/confirmationMetadata.local.integration.ts",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts",
+        "backend/src/security/egress/egress.integration.test.ts",
+        "backend/src/security/egress/fileEgress.test.ts",
         "backend/src/security/legacyBuildHistory.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/ownedRunHeartbeat.test.ts",
@@ -22633,7 +23088,7 @@
       "id": "surface:8c25c7e0b5b0dd66676d",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "927ae82aefde6fc54744c0c076b94cf2e2a5a2f661bd36308ae704ddabd1bb56",
+      "sha256": "e4b6d2f34ee0ce9ccfcc69d33848483395ff8830cd127152d704214bdd2f65d4",
       "symbols": [
         "COMPOSIO_API_BASE",
         "COMPOSIO_CACHE_TTL_MS",
@@ -22718,6 +23173,7 @@
         "collected",
         "composioRequest",
         "composioUserId",
+        "context",
         "controller",
         "createActionComposioSession",
         "createComposioConnectionLink",
@@ -22821,7 +23277,11 @@
         "../../operations/operationsEngine.js",
         "../../security/authority/digest.js",
         "../../security/authority/enforce.js",
+        "../../security/authority/risk.js",
         "../../security/authority/types.js",
+        "../../security/egress/egressPolicy.js",
+        "../../security/egress/securityDecision.js",
+        "../../security/tenantContext.js",
         "./composioNamespace.js",
         "node:crypto"
       ],
@@ -22829,6 +23289,10 @@
         "backend/src/operations/operationsEngine.ts",
         "backend/src/security/authority/digest.ts",
         "backend/src/security/authority/enforce.ts",
+        "backend/src/security/authority/risk.ts",
+        "backend/src/security/egress/egressPolicy.ts",
+        "backend/src/security/egress/securityDecision.ts",
+        "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/composioNamespace.ts"
       ],
       "entryPoints": [
@@ -24002,7 +24466,7 @@
         "backend/src/services/integrations/githubAnalysis.test.ts:3",
         "backend/src/services/integrations/githubDeploy.credential.test.ts:4",
         "backend/src/services/integrations/githubRepositoryState.test.ts:3",
-        "backend/src/services/integrations/managedVercelDeployment.test.ts:3",
+        "backend/src/services/integrations/managedVercelDeployment.test.ts:10",
         "backend/src/services/integrations/universalRepositoryHydration.test.ts:4",
         "backend/src/services/integrations/vercelGitProject.test.ts:3",
         "backend/src/services/publish/userOwnedPublish.ts:8",
@@ -27355,6 +27819,8 @@
       "callers": [
         "backend/src/lib/r2.ts:3",
         "backend/src/routes/projects.ts:7",
+        "backend/src/security/egress/fileEgress.test.ts:8",
+        "backend/src/security/egress/fileEgress.ts:4",
         "backend/src/security/tenantIsolation.local.integration.ts:47",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:4",
         "backend/src/services/storage/privateFileDelivery.ts:6",
@@ -27379,6 +27845,7 @@
         "backend/src/services/storage/fileDeliveryPolicy.ts#verifyFileLink"
       ],
       "testCoverage": [
+        "backend/src/security/egress/fileEgress.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts",
         "backend/src/services/storage/projectFiles.receipt.test.ts"
@@ -27469,6 +27936,7 @@
       ],
       "callers": [
         "backend/src/routes/projects.ts:6",
+        "backend/src/security/egress/fileEgress.ts:3",
         "backend/src/security/tenantIsolation.local.integration.ts:46",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:5"
       ],
@@ -37075,28 +37543,32 @@
       "id": "surface:2f7b75fe3c4934823f4a",
       "subsystem": "browser_sandbox",
       "sourcePath": "frontend/src/app/api/browser-view/route.ts",
-      "sha256": "fde077374fd308e3322ee3cfcca5a7c7eb26e0c58284caa1485d2544b4fb77bd",
+      "sha256": "32a340e8c942c965f0ec08179234ee7431efb32f77dceb6a809ee7b1b9451293",
       "symbols": [
         "GET",
+        "base",
         "browserHtml",
         "contentType",
         "html",
         "injectedBase",
         "response",
+        "runtime",
         "target"
       ],
       "imports": [
+        "@/lib/server/publicEgress",
         "@/lib/untrustedProxyResponse",
         "next/server"
       ],
       "runtimeImports": [
+        "frontend/src/lib/server/publicEgress.ts",
         "frontend/src/lib/untrustedProxyResponse.ts"
       ],
       "entryPoints": [
         "frontend/src/app/api/browser-view/route.ts"
       ],
       "callers": [
-        "frontend/src/lib/untrustedProxyRoutes.test.ts:4"
+        "frontend/src/lib/untrustedProxyRoutes.test.ts:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -37161,26 +37633,29 @@
       "id": "surface:9c3c483b59f00d2a3438",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/api/image-fetch/route.ts",
-      "sha256": "4d77a9db680dcc7bd30d4cff26398c2e0c50058a4b28439dd92016b4e7dc0f25",
+      "sha256": "51467588b07c73bb6b06bd1434fe2d126388635b053cecc681587a3c11588be1",
       "symbols": [
         "GET",
         "blob",
         "contentType",
         "res",
+        "runtime",
         "url"
       ],
       "imports": [
+        "@/lib/server/publicEgress",
         "@/lib/untrustedProxyResponse",
         "next/server"
       ],
       "runtimeImports": [
+        "frontend/src/lib/server/publicEgress.ts",
         "frontend/src/lib/untrustedProxyResponse.ts"
       ],
       "entryPoints": [
         "frontend/src/app/api/image-fetch/route.ts"
       ],
       "callers": [
-        "frontend/src/lib/untrustedProxyRoutes.test.ts:5"
+        "frontend/src/lib/untrustedProxyRoutes.test.ts:12"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82109,6 +82584,42 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:7ce8b2be2ea5e1221b38",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/server/publicEgress.ts",
+      "sha256": "99a9c2078e855c5d147e1a8109e5380b0024cd770f3466efc8bb493a572e9179",
+      "symbols": [],
+      "imports": [
+        "../../../../backend/src/security/boundedPublicGet"
+      ],
+      "runtimeImports": [
+        "backend/src/security/boundedPublicGet.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/api/browser-view/route.ts",
+        "frontend/src/app/api/image-fetch/route.ts"
+      ],
+      "callers": [
+        "frontend/src/app/api/browser-view/route.ts:3",
+        "frontend/src/app/api/image-fetch/route.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:0116bd6c5c714c7ea81e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/setProfileFromImage.ts",
@@ -89490,6 +90001,95 @@
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:bcc916e098428737b6fb",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/audit-egress-callers.mjs",
+      "sha256": "f17ba82313fdb43a893aa74f43462bba7c849f0e1088b3480f7755f826d2c6e7",
+      "symbols": [
+        "aliases",
+        "arg",
+        "call",
+        "callers",
+        "clause",
+        "collect",
+        "constants",
+        "e",
+        "gather",
+        "guarded",
+        "hash",
+        "id",
+        "inspectEgress",
+        "jsonPath",
+        "key",
+        "main",
+        "mod",
+        "name",
+        "names",
+        "namespaces",
+        "normalized",
+        "ordinal",
+        "ordinals",
+        "origin",
+        "original",
+        "owner",
+        "p",
+        "paths",
+        "pending",
+        "prefix",
+        "processNamespaces",
+        "result",
+        "review",
+        "reviewMap",
+        "reviewPath",
+        "reviews",
+        "root",
+        "row",
+        "rows",
+        "scope",
+        "serialized",
+        "source",
+        "transport",
+        "visit"
+      ],
+      "imports": [
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:path",
+        "node:url",
+        "typescript"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "scripts/security/audit-egress-callers.test.mjs:3"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:path",
+        "node:url",
+        "typescript"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/security/audit-egress-callers.test.mjs"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -101754,9 +102354,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:2d3ea98d617d9caa23da",
+      "id": "finding:53a1c627f022cf65c325",
       "sourcePath": "backend/src/lib/deployVerify.ts",
-      "line": 8,
+      "line": 9,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -105419,20 +106019,6 @@
       "sourcePath": "frontend/src/app/(shell)/dashboard/publish/cws/callback/page.tsx",
       "line": 60,
       "callee": "api.publish.completeCwsOAuth",
-      "reachable": true
-    },
-    {
-      "id": "frontend-call:51594e1a109e7f2ca982",
-      "sourcePath": "frontend/src/app/api/browser-view/route.ts",
-      "line": 44,
-      "callee": "fetch",
-      "reachable": true
-    },
-    {
-      "id": "frontend-call:dc3de805fc759a21fc3b",
-      "sourcePath": "frontend/src/app/api/image-fetch/route.ts",
-      "line": 16,
-      "callee": "fetch",
       "reachable": true
     },
     {
@@ -109523,7 +110109,7 @@
       "sourcePath": "backend/src/organicIntelligence/content/engine.test.ts",
       "declaredTests": 32,
       "skipLocations": [
-        "backend/src/organicIntelligence/content/engine.test.ts:367"
+        "backend/src/organicIntelligence/content/engine.test.ts:371"
       ],
       "focusLocations": []
     },
@@ -109860,6 +110446,34 @@
       "id": "test-suite:b1a296f9108f2cdc854c",
       "sourcePath": "backend/src/security/deliveryEvidenceRead.local.integration.ts",
       "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:b6ee0ffbb82ac5d76211",
+      "sourcePath": "backend/src/security/egress/egress.integration.test.ts",
+      "declaredTests": 6,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:90e81dfb26a7e7129e9d",
+      "sourcePath": "backend/src/security/egress/fileEgress.test.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:d8b4fa877441a3be0c23",
+      "sourcePath": "backend/src/security/egress/internalDependency.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:95c27fb9ddccda8396aa",
+      "sourcePath": "backend/src/security/egress/publicPost.test.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -112486,7 +113100,7 @@
     {
       "id": "test-suite:d899f2d70a1a5ceb7be0",
       "sourcePath": "frontend/src/lib/untrustedProxyRoutes.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -112767,6 +113381,13 @@
       "id": "test-suite:5ab7f69119cda9cac386",
       "sourcePath": "scripts/security/audit-credential-usage.test.mjs",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:bb6576c0014dfb71098d",
+      "sourcePath": "scripts/security/audit-egress-callers.test.mjs",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

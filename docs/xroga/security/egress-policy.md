@@ -50,6 +50,11 @@ does not become a server-reviewed tool. Public URL literals inside arguments are
 syntactically checked, but the remote provider's DNS resolution is not controlled
 by this transport. Such remote execution remains a review obligation.
 
+Proxy HTML keeps its existing opaque-origin sandbox headers. Server-side DNS
+pinning does not constrain subresource requests made later by a user's browser,
+nor does it certify an external browser worker or remote MCP server's network.
+Those paths remain separate inventory and isolation obligations.
+
 `executeOwnedFileEgress` reuses actual ownedFile/readPrivateFile checks, verifies
 the exact project/file/recipient/content digest and rechecks the row immediately
 before permit consumption and sending. It supports inspected UTF-8 text/JSON
@@ -76,7 +81,9 @@ verification and current-source tenant/provenance reconciliation remain pending.
 ## Inventory and rollout limits
 
 `scripts/security/audit-egress-callers.mjs` produces AST candidates, including
-HTTP clients, provider SDKs, browser/MCP transports and subprocess sinks. Generated
+HTTP clients, provider SDKs, browser/MCP transports and subprocess sinks across
+backend, all frontend source and workers. Frontend/shared candidates are labelled
+separately from server candidates. Generated
 strings and server response sends are excluded. Candidate inclusion is not a
 claim of reachability or a demonstrated vulnerability. SDK internals, reflection
 and deployed generated code need semantic tracing. A fixed host is not proof of

@@ -57,6 +57,39 @@ build/lint outcomes and final source identity are recorded separately in the
 manifest after commands finish. No previous Phase 3 CI receipt is relabelled as
 verification of this changed source.
 
+The final inventory includes backend, all frontend source and workers: 132
+candidates, 9 narrowly verified URL boundaries and 123 unresolved traces, including
+69 dynamic/SDK candidates. These counts are obligations, not invented exploits.
+The audit checks complete caller-file hashes and exact proof-file hashes, and
+sorts paths so staging a new source file cannot silently reorder the register.
+
+Test-harness corrections were bounded. The first direct frontend command omitted
+its path-alias configuration. The corrected canonical command passed 1,155 tests.
+The first direct backend attempt omitted NODE_ENV=test, so production-vault
+refusal correctly stopped test credential operations. Its waiting local test
+process was stopped. The canonical clean-environment run is recorded separately.
+The managed Vercel fixture now mocks the DNS/socket boundary for preview checks,
+while preserving provider and publishing assertions. Two explicitly September 22
+growth snapshots freeze their nested Date checks to that same historical date.
+Production freshness rules and stale-evidence negative tests are unchanged.
+
+The preserved finite Phase 2 register check passed with 73 packets and 371
+historical records. No security certification is inferred from that check. The
+existing current-state inventory was mechanically regenerated for the changed
+source and validated, without rewriting frozen security evidence. A read-only
+merge-tree check against observed main found a WorkspaceLauncher.tsx conflict
+outside this egress patch, so main integration is not verified.
+
+Final local results: 52 focused security tests passed without skips. All 1,155
+frontend tests passed. Backend collected 3,158 tests: 3,145 passed, zero failed
+and 13 were skipped in the clean harness. Skip governance passed. An independent
+run of the actual local Chromium driver completed all six tests without skips.
+The full-suite skip count remains recorded, not silently counted as execution.
+Backend/frontend type checks and backend TypeScript build passed. Frontend
+production build passed with warnings, and the final focused route/test lint
+passed. Existing capability/Cline/Git/downstream dependency checks passed. No
+dependency was added. These results are local, not a current-main CI receipt.
+
 ## Finite remaining work
 
 1. Resolve the recorded caller obligations by shared boundary, with actual caller

@@ -1,5 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import dns from 'node:dns/promises';
+import https from 'node:https';
+import type {RequestOptions} from 'node:https';
+import {EventEmitter} from 'node:events';
+import {Readable} from 'node:stream';
+import {syncBuiltinESMExports} from 'node:module';
+import type {IncomingMessage} from 'node:http';
 import {
   deployToAllPlatforms,
   hasManagedVercelDeployment,
@@ -36,6 +43,16 @@ test('managed Vercel uses the existing Xroga project instead of creating user pr
 });
 
 test('a user without a Vercel token deploys through Xroga managed Vercel', async (t) => {
+  let previewOpens=0;
+  t.mock.method(dns,'lookup',async(host:string)=>{assert.equal(host,'orbit-test.vercel.app');return [{address:'8.8.8.8',family:4}];});
+  t.mock.method(https,'request',((url:URL,options:RequestOptions,callback:(response:IncomingMessage)=>void)=>{
+    assert.equal(url.href,'https://orbit-test.vercel.app/');assert.equal(options.agent,false);assert.equal(typeof options.lookup,'function');previewOpens++;
+    const request=new EventEmitter() as EventEmitter & {end:()=>void};
+    request.end=()=>callback(Object.assign(Readable.from([Buffer.from(STATIC_SITE[0]!.content)]),{statusCode:200,headers:{'content-type':'text/html'}}) as IncomingMessage);
+    return request;
+  }) as typeof https.request);
+  syncBuiltinESMExports();
+  t.after(()=>{t.mock.restoreAll();syncBuiltinESMExports();});
   const originalFetch = globalThis.fetch;
   const originalVercel = process.env.VERCEL_API_KEY;
   const originalTeam = process.env.VERCEL_TEAM_ID;
@@ -75,12 +92,6 @@ test('a user without a Vercel token deploys through Xroga managed Vercel', async
         { status: 200 },
       );
     }
-    if (url === 'https://orbit-test.vercel.app') {
-      return new Response(STATIC_SITE[0]!.content, {
-        status: 200,
-        headers: { 'content-type': 'text/html' },
-      });
-    }
     throw new Error(`Unexpected request: ${method} ${url}`);
   }) as typeof fetch;
 
@@ -88,6 +99,7 @@ test('a user without a Vercel token deploys through Xroga managed Vercel', async
   const result = await deployToAllPlatforms('Orbit Coffee', STATIC_SITE, undefined);
   assert.equal(result.deployPlatform, 'vercel');
   assert.equal(result.deployVerified, true);
+  assert.equal(previewOpens,1,'Preview verification must exercise the pinned public transport exactly once');
   assert.equal(result.vercel?.authority, 'managed');
   assert.equal(result.deployUrl, 'https://orbit-test.vercel.app');
   const create = calls.find((call) => call.method === 'POST');

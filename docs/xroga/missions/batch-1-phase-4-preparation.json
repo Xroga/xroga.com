@@ -1,0 +1,155 @@
+{
+  "version": "1.0",
+  "missionId": "batch-1-phase-4-preparation",
+  "baseSha": "fb95f76bafc1b544b6655d435cddede260d9cd99",
+  "requirementIds": [
+    "XB01-C010"
+  ],
+  "state": "BLOCKED",
+  "risk": "high",
+  "scope": "Founder-authorized isolated nonproduction Command010 preparatory engineering only, not Phase4 admission or Batch1 release",
+  "changedFiles": [
+    "backend/src/ai/attachments.ts",
+    "backend/src/e2e/xrogaGoldenJourneys.test.ts",
+    "backend/src/lib/deployVerify.ts",
+    "backend/src/lib/shipVerify.ts",
+    "backend/src/operations/providerAdapters.test.ts",
+    "backend/src/operations/providerAdapters.ts",
+    "backend/src/security/boundedPublicGet.ts",
+    "backend/src/security/egress/dataClassification.ts",
+    "backend/src/security/egress/egress.integration.test.ts",
+    "backend/src/security/egress/egressPolicy.ts",
+    "backend/src/security/egress/fileEgress.test.ts",
+    "backend/src/security/egress/fileEgress.ts",
+    "backend/src/security/egress/internalDependency.test.ts",
+    "backend/src/security/egress/publicPost.test.ts",
+    "backend/src/security/egress/securityDecision.ts",
+    "backend/src/security/egress/toolTrust.ts",
+    "backend/src/security/egress/types.ts",
+    "backend/src/security/egress/untrustedInput.ts",
+    "backend/src/security/egress/urlPolicy.ts",
+    "backend/src/services/integrations/composioClient.ts",
+    "docs/xroga/batch-1/phases/phase-4/PREPARATORY-READINESS.md",
+    "docs/xroga/evidence/command-010/summary.md",
+    "docs/xroga/security/egress-caller-reviews.json",
+    "docs/xroga/security/egress-callers.json",
+    "docs/xroga/security/egress-policy.md",
+    "docs/xroga/security/untrusted-input-model.md",
+    "frontend/src/app/api/browser-view/route.ts",
+    "frontend/src/app/api/image-fetch/route.ts",
+    "frontend/src/lib/server/publicEgress.ts",
+    "frontend/src/lib/untrustedProxyRoutes.test.ts",
+    "scripts/security/audit-egress-callers.mjs",
+    "scripts/security/audit-egress-callers.test.mjs",
+    "docs/xroga/evidence/command-010/manifest.json",
+    "docs/xroga/missions/batch-1-phase-4-preparation.json",
+    "backend/src/organicIntelligence/content/engine.test.ts",
+    "backend/src/services/integrations/managedVercelDeployment.test.ts",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md"
+  ],
+  "decisions": {
+    "keep": [
+      "Original 12 Command010 criteria, Phase3 evaluator and accepted Phase2/3 evidence",
+      "Canonical authority, budget, CredentialVault and audit store"
+    ],
+    "extend": [
+      "Existing boundedPublicGet transport with pinned one-attempt upload",
+      "Actual Composio dispatch and selected public GET callers"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No database migration or deployment",
+    "rollback": "Revert preparatory commits before any release. Existing audit schema remains unchanged."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "Existing issued context and permits reused"
+    },
+    "tenant": {
+      "changed": true,
+      "description": "Owned-file lookup and immediate parent/owner recheck in new shared adapter"
+    },
+    "approval": {
+      "changed": true,
+      "description": "Existing exact permit asserted before egress and consumed after receipt"
+    },
+    "credentials": {
+      "changed": true,
+      "description": "Deterministic secret denial, raw adapter credentials excluded from policy DTO"
+    },
+    "egress": {
+      "changed": true,
+      "description": "Pinned URL/DNS/redirect/body controls and exact consequential policy boundary"
+    },
+    "cost": {
+      "changed": false,
+      "description": "No infrastructure or paid provider use"
+    },
+    "billing": {
+      "changed": false,
+      "description": "No billing or subscription changes"
+    }
+  },
+  "tests": [
+    {
+      "command": "node --import tsx --test backend/src/security/egress/*.test.ts backend/src/security/boundedPublicGet.test.ts backend/src/operations/providerAdapters.test.ts backend/src/e2e/xrogaGoldenJourneys.test.ts scripts/security/audit-egress-callers.test.mjs",
+      "scope": "52 focused tests passed using local fixtures, not real provider/database evidence",
+      "negative": true,
+      "reference": "docs/xroga/evidence/command-010/manifest.json"
+    },
+    {
+      "command": "node scripts/security/audit-egress-callers.mjs --require-complete",
+      "scope": "Expected failure while 123 caller traces remain unresolved",
+      "negative": true,
+      "reference": "docs/xroga/security/egress-callers.json"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Reuse existing transport, tenant context, one-use authority, private-file ownership and immutable audit table. No competing control plane.",
+    "rfc": null
+  },
+  "rollout": "Review-only stacked draft PR. Phase3 admission, complete Command010 proof and separate release authorization required.",
+  "rollback": "Revert this isolated review branch before release, no schema or live credential rollback needed.",
+  "knownGaps": [
+    "123 unclosed AST caller candidates, including 69 dynamic/SDK high-risk candidates, not asserted as 69 demonstrated vulnerabilities",
+    "Remaining consequential adapters and upload caller migration",
+    "Real disposable database receipt/ownership/concurrency proof and source-bound provenance",
+    "Main integration conflict outside preparatory egress scope",
+    "Phase 3 actual managed-KMS runtime custody and applicable cutover"
+  ],
+  "placeholderClaimsRemaining": [
+    "No all-caller security certification",
+    "No real database or provider proof for new egress receipt adapter",
+    "No Phase3 or Phase4 acceptance"
+  ],
+  "evidenceRefs": [
+    "docs/xroga/evidence/command-010/summary.md",
+    "docs/xroga/evidence/command-010/manifest.json",
+    "docs/xroga/security/egress-policy.md",
+    "docs/xroga/security/untrusted-input-model.md",
+    "docs/xroga/batch-1/phases/phase-4/PREPARATORY-READINESS.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "123 unclosed AST caller candidates, including 69 dynamic/SDK high-risk candidates, not asserted as 69 demonstrated vulnerabilities",
+      "Remaining consequential adapters and upload caller migration",
+      "Real disposable database receipt/ownership/concurrency proof and source-bound provenance",
+      "Main integration conflict outside preparatory egress scope",
+      "Phase 3 actual managed-KMS runtime custody and applicable cutover"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

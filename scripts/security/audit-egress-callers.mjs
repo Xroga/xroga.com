@@ -75,7 +75,7 @@ export function inspectEgress(path,text) {
         rows.push({id,file:path,line:source.getLineAndCharacterOfPosition(node.getStart(source)).line+1,
           entryPoint:scope,transport,callee:normalized,callSha256:hash(node.getText(source)),
           destination:origin&&origin!=='null'?origin:'DYNAMIC_OR_SDK_INTERNAL',
-          trust:'UNREVIEWED_SERVER_CALLER',tenantAuthority:'REQUIRES_SOURCE_TRACE',
+          trust:path.startsWith('frontend/src/')&&!path.startsWith('frontend/src/app/api/')?'UNREVIEWED_FRONTEND_OR_SHARED_CALLER':'UNREVIEWED_SERVER_CALLER',tenantAuthority:'REQUIRES_SOURCE_TRACE',
           currentProtection:guarded?'CENTRAL_PUBLIC_GET_CANDIDATE_NOT_SEMANTIC_CERTIFICATION':'NOT_CERTIFIED',
           risk:origin&&origin!=='null'?'FIXED_ORIGIN_REVIEW':'HIGH_RISK_PENDING_REVIEW',
           disposition:'PENDING_SOURCE_TRACE',evidence:null});
@@ -86,8 +86,8 @@ export function inspectEgress(path,text) {
 
 export function collect() {
   const paths=execFileSync('git',['ls-files','--cached','--others','--exclude-standard'],{cwd:root,encoding:'utf8'}).trim().split(/\r?\n/)
-    .filter(p=>/^(backend\/src\/|frontend\/src\/app\/api\/|workers\/)/.test(p)&&/\.[cm]?[jt]sx?$/.test(p)
-      &&!/(?:\.test\.|\.integration\.|\/__tests__\/|\/fixtures\/)/.test(p));
+    .filter(p=>/^(backend\/src\/|frontend\/src\/|workers\/)/.test(p)&&/\.[cm]?[jt]sx?$/.test(p)
+      &&!/(?:\.test\.|\.integration\.|\/__tests__\/|\/fixtures\/)/.test(p)).sort();
   const reviews=existsSync(resolve(root,reviewPath))?JSON.parse(readFileSync(resolve(root,reviewPath),'utf8')).reviews:[];
   const reviewMap=new Map(reviews.map(r=>[r.id,r]));
   if(reviewMap.size!==reviews.length)throw Error('Duplicate egress review');

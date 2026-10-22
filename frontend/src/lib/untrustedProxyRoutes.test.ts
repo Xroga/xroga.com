@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test, {type TestContext} from 'node:test';
 import dns from 'node:dns/promises';
 import https from 'node:https';
+import type {RequestOptions} from 'node:https';
 import {EventEmitter} from 'node:events';
 import {Readable} from 'node:stream';
 import {syncBuiltinESMExports} from 'node:module';
@@ -14,8 +15,8 @@ import {GET as imageFetch} from '../app/api/image-fetch/route';
 // is replaced, rather than bypassing URL policy by mocking global fetch.
 function transport(t:TestContext,upstream:()=>Promise<Response>){
   t.mock.method(dns,'lookup',async()=>[{address:'8.8.8.8',family:4}]);
-  t.mock.method(https,'request',((_url:unknown,options:any,callback:(response:IncomingMessage)=>void)=>{
-    assert.equal(options.agent,false);assert.equal(options.headers['Accept-Encoding'],'identity');assert.equal(typeof options.lookup,'function');
+  t.mock.method(https,'request',((_url:unknown,options:RequestOptions,callback:(response:IncomingMessage)=>void)=>{
+    assert.equal(options.agent,false);assert.equal(Object.entries(options.headers??{}).find(([key])=>key==='Accept-Encoding')?.[1],'identity');assert.equal(typeof options.lookup,'function');
     const request=new EventEmitter() as EventEmitter & {end:()=>void};
     request.end=()=>{void upstream().then(async response=>{
       const headers=Object.fromEntries(response.headers.entries());
