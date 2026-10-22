@@ -4419,6 +4419,7 @@
         "backend/src/ai/quota.ts:3",
         "backend/src/ai/routerConfig.ts:1",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:26",
+        "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts:7",
         "backend/src/ai/universal/semanticRequestPlanner.ts:7",
         "backend/src/config/plans.ts:2",
         "backend/src/hardening/launchHardening.test.ts:18",
@@ -4460,6 +4461,7 @@
         "backend/src/ai/openaiCompat.egress.test.ts",
         "backend/src/ai/providerPolicy.test.ts",
         "backend/src/ai/quota.test.ts",
+        "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
         "backend/src/hardening/launchHardening.test.ts",
         "backend/src/operations/benchmarkAdapter.test.ts"
       ],
@@ -4474,7 +4476,7 @@
       "id": "surface:29a1af5a79330a300ab2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/openaiCompat.ts",
-      "sha256": "ddfacff68050ab7f8631aa50aaab2cbecb6893a4d1cafa5214eeeeb8d4cc088b",
+      "sha256": "a3d2f3a5a47be63f1ccf6839035fca53957cc800f5f9caebbf05973983a91ff8",
       "symbols": [
         "ChatMessage",
         "ChatResult",
@@ -4492,10 +4494,10 @@
         "choice",
         "chunk",
         "client",
-        "clientFor",
         "completion",
         "configuredApiModel",
         "contentTokenEstimate",
+        "createModelProviderClient",
         "def",
         "delta",
         "endpoint",
@@ -4530,6 +4532,7 @@
         "requireNonEmptyModelText",
         "requiredTransport",
         "resolveEndpoint",
+        "response",
         "snapshot",
         "snapshotModelEgressPayload",
         "spec",
@@ -6179,7 +6182,7 @@
       "id": "surface:88fb20b981ce5f4e1903",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/providerPolicy.ts",
-      "sha256": "cc8813f2aa654dc180ad120690603f4cf742d03d8141bf44f6803b7cf79e3066",
+      "sha256": "c496870604060d04ede920af1a8b06e67ad0749c8330788568f96f4a0d6dea9f",
       "symbols": [
         "CODING_IDS",
         "CODING_MODEL_TRANSPORT",
@@ -6189,8 +6192,11 @@
         "RESEARCH_IDS",
         "RESEARCH_MODEL_TRANSPORT",
         "ResearchModelId",
+        "allowed",
         "assertCodingModel",
+        "assertModelProviderDestination",
         "codingModelsOnly",
+        "expected",
         "isCodingModel",
         "isResearchModel",
         "requiredCodingTransport"
@@ -6224,7 +6230,11 @@
       ],
       "reachable": true,
       "persistenceDependencies": [],
-      "externalProviderDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:api.moonshot.ai",
+        "declared-host:open.bigmodel.cn",
+        "declared-host:openrouter.ai"
+      ],
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
@@ -6249,7 +6259,7 @@
       "id": "surface:3e9fb9a001d600489a5a",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/providerRuntime.ts",
-      "sha256": "293fa500379170142ce75f1c5e1389af05ec71f210572e771bbcb8708d0707e0",
+      "sha256": "31738c7af71910005bdb8ab4e7dfb38db37254553781d6a60fdba395c973e302",
       "symbols": [
         "ModelRuntimeHealth",
         "MutableHealth",
@@ -9219,7 +9229,7 @@
       "id": "surface:6b3219ea2bb7bf7d7c7c",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "sha256": "ebe35abec3c42c7c8c569a14ff5b5bc1551964b1deef617a40be2b92a836db98",
+      "sha256": "27e921936027f5e02773900eb33a8ed8e4fee1d5553d4243083bc45ff64c0b37",
       "symbols": [
         "AgentMessage",
         "AgentMessagePart",
@@ -9293,7 +9303,6 @@
         "userId"
       ],
       "imports": [
-        "../../security/egress/urlPolicy.js",
         "../models.js",
         "../openaiCompat.js",
         "../providerBudget.js",
@@ -9307,8 +9316,7 @@
         "backend/src/ai/openaiCompat.ts",
         "backend/src/ai/providerBudget.ts",
         "backend/src/ai/providerRuntime.ts",
-        "backend/src/ai/quota.ts",
-        "backend/src/security/egress/urlPolicy.ts"
+        "backend/src/ai/quota.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -20563,7 +20571,7 @@
       "id": "surface:ecef515ca5b8a6a386d3",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/sandbox/flyMachineSandbox.ts",
-      "sha256": "3bdef3facc61c0c324b73d3fd06d93cac3b764e9b3dcd0309874ed4bc7e86ca6",
+      "sha256": "3317c592f7c0a68ad945ff4dc654360f3a0621e1ed9f5dd65e6ec7d57953af3e",
       "symbols": [
         "ALLOWED_CPUS",
         "DEFAULT_API_HOST",
@@ -20618,8 +20626,9 @@
       ],
       "callers": [
         "backend/src/sandbox/flyMachineSandbox.test.ts:42",
+        "backend/src/sandbox/registryNetwork.test.ts:5",
         "backend/src/sandbox/sandboxProviders.ts:25",
-        "backend/src/synthesis/projectRuntime/flyProvider.ts:13"
+        "backend/src/synthesis/projectRuntime/flyProvider.ts:14"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -20632,7 +20641,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/sandbox/flyMachineSandbox.test.ts"
+        "backend/src/sandbox/flyMachineSandbox.test.ts",
+        "backend/src/sandbox/registryNetwork.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -20645,7 +20655,7 @@
       "id": "surface:4b085564b5e45cf0c04b",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/sandbox/remoteSandbox.ts",
-      "sha256": "6b53af8e7dd32c04c7fada22a07683ec904a53dbc0611f91fc99430d9435b4ee",
+      "sha256": "a97ed5a5320436ba360e384b95a9bdd6232a19f021a6e551b378cc6969f475a2",
       "symbols": [
         "MAX_CAPTURE_BYTES",
         "MAX_DETAIL_CHARS",
@@ -20683,9 +20693,10 @@
         "backend/src/scripts/verifyFlySandboxBrowser.ts"
       ],
       "callers": [
+        "backend/src/sandbox/registryNetwork.test.ts:4",
         "backend/src/sandbox/remoteSandbox.test.ts:14",
         "backend/src/sandbox/sandboxProviders.ts:24",
-        "backend/src/sandbox/sandboxRuntime.ts:43"
+        "backend/src/sandbox/sandboxRuntime.ts:44"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -20696,6 +20707,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/sandbox/registryNetwork.test.ts",
         "backend/src/sandbox/remoteSandbox.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -20741,7 +20753,7 @@
         "backend/src/sandbox/sandboxProviders.ts:23",
         "backend/src/synthesis/browserVerificationAdapter.ts:34",
         "backend/src/synthesis/productionAdapters.ts:25",
-        "backend/src/synthesis/projectRuntime/manager.ts:10"
+        "backend/src/synthesis/projectRuntime/manager.ts:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -20770,7 +20782,7 @@
       "id": "surface:8dc40f55e5fa8f92691b",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/sandbox/sandboxProviders.ts",
-      "sha256": "a2408c76adf38200f7b22868c52233a0893d57b2cc78115581fc9d40e699c5aa",
+      "sha256": "998cbd6efbdb066f493234d2d6960539151f43e33dbfe2baed81183fbb68578a",
       "symbols": [
         "ContainerSandboxRuntime",
         "MAX_CAPTURE_BYTES",
@@ -20829,12 +20841,14 @@
       "callers": [
         "backend/src/ai/p0Regressions.test.ts:31",
         "backend/src/sandbox/flyMachineSandbox.test.ts:50",
+        "backend/src/sandbox/registryNetwork.test.ts:3",
         "backend/src/sandbox/remoteSandbox.test.ts:21",
         "backend/src/sandbox/sandboxProviders.test.ts:12",
-        "backend/src/sandbox/sandboxRuntime.ts:26",
-        "backend/src/sandbox/sandboxRuntime.ts:32",
+        "backend/src/sandbox/sandboxRuntime.ts:27",
+        "backend/src/sandbox/sandboxRuntime.ts:33",
         "backend/src/scripts/verifyFlySandboxBrowser.ts:28",
-        "backend/src/synthesis/productionAdapters.test.ts:16"
+        "backend/src/synthesis/productionAdapters.test.ts:16",
+        "backend/tests/sandboxNetwork.local.integration.ts:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -20849,9 +20863,11 @@
       "testCoverage": [
         "backend/src/ai/p0Regressions.test.ts",
         "backend/src/sandbox/flyMachineSandbox.test.ts",
+        "backend/src/sandbox/registryNetwork.test.ts",
         "backend/src/sandbox/remoteSandbox.test.ts",
         "backend/src/sandbox/sandboxProviders.test.ts",
-        "backend/src/synthesis/productionAdapters.test.ts"
+        "backend/src/synthesis/productionAdapters.test.ts",
+        "backend/tests/sandboxNetwork.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -20864,7 +20880,7 @@
       "id": "surface:233b38baac5d5deb70a6",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/sandbox/sandboxRuntime.ts",
-      "sha256": "670289bf6032d26a6835832903d72f1c179a51bd751b4b260b7451cedc3bab3a",
+      "sha256": "50c6fb0616c3dec6ef615a20367e19b8882063690fc15a06ea34931415ea5a5b",
       "symbols": [
         "DockerSandboxRuntime",
         "PROBE_TTL_MS",
@@ -20895,6 +20911,7 @@
         "backend/src/ai/p0Regressions.test.ts:32",
         "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts:20",
         "backend/src/index.ts:56",
+        "backend/src/sandbox/registryNetwork.test.ts:6",
         "backend/src/sandbox/sandboxIsolation.test.ts:5",
         "backend/src/sandbox/sandboxProviders.test.ts:20",
         "backend/src/scripts/verifyFlySandboxBrowser.ts:27",
@@ -20911,6 +20928,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/p0Regressions.test.ts",
+        "backend/src/sandbox/registryNetwork.test.ts",
         "backend/src/sandbox/sandboxIsolation.test.ts",
         "backend/src/sandbox/sandboxProviders.test.ts"
       ],
@@ -20925,7 +20943,7 @@
       "id": "surface:0196aab9f14aa5f58e39",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/sandbox/sandboxTypes.ts",
-      "sha256": "eaa3593e3296fc0e5aa3c67e363616af6b5296874239f24f1f15dec6183e1a80",
+      "sha256": "3cac3a3b7f5ecd2f7c79742adb08f3fec48494764b502e5ba4fbd45fd49f86ca",
       "symbols": [
         "DEFAULT_SANDBOX_LIMITS",
         "SandboxAvailability",
@@ -20935,7 +20953,8 @@
         "SandboxNetworkPolicy",
         "SandboxRuntime",
         "SandboxUnavailableError",
-        "SandboxUnavailableReason"
+        "SandboxUnavailableReason",
+        "requireEnforcedSandboxNetworkPolicy"
       ],
       "imports": [
         "../ai/patches.js"
@@ -20950,13 +20969,16 @@
         "backend/src/ai/p0Regressions.test.ts:33",
         "backend/src/sandbox/flyMachineSandbox.test.ts:56",
         "backend/src/sandbox/flyMachineSandbox.ts:88",
+        "backend/src/sandbox/registryNetwork.test.ts:7",
         "backend/src/sandbox/remoteSandbox.test.ts:28",
         "backend/src/sandbox/remoteSandbox.ts:32",
         "backend/src/sandbox/sandboxIsolation.test.ts:10",
         "backend/src/sandbox/sandboxProviders.test.ts:25",
         "backend/src/sandbox/sandboxProviders.ts:26",
         "backend/src/sandbox/sandboxRuntime.ts:18",
-        "backend/src/synthesis/projectRuntime/flyProvider.ts:9"
+        "backend/src/synthesis/projectRuntime/flyProvider.ts:9",
+        "backend/src/synthesis/projectRuntime/manager.ts:5",
+        "backend/tests/sandboxNetwork.local.integration.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -20969,9 +20991,11 @@
       "testCoverage": [
         "backend/src/ai/p0Regressions.test.ts",
         "backend/src/sandbox/flyMachineSandbox.test.ts",
+        "backend/src/sandbox/registryNetwork.test.ts",
         "backend/src/sandbox/remoteSandbox.test.ts",
         "backend/src/sandbox/sandboxIsolation.test.ts",
-        "backend/src/sandbox/sandboxProviders.test.ts"
+        "backend/src/sandbox/sandboxProviders.test.ts",
+        "backend/tests/sandboxNetwork.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -21790,7 +21814,6 @@
       "callers": [
         "backend/src/ai/attachments.ts:7",
         "backend/src/ai/openaiCompat.ts:14",
-        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:7",
         "backend/src/lib/deployVerify.ts:1",
         "backend/src/lib/shipVerify.ts:6",
         "backend/src/operations/providerAdapters.ts:1",
@@ -31547,7 +31570,7 @@
       "id": "surface:0ca88ffcab221091a596",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/productionAdapters.ts",
-      "sha256": "0243060876196a038d2cf44b99f56ff093edda89132ac92cf2e8d80113428b70",
+      "sha256": "dae61a9d0ddba322182abf69c40fc5acf116e7e58b129d3910e18c049ff2653e",
       "symbols": [
         "CommitFn",
         "ImplementFn",
@@ -31575,6 +31598,7 @@
         "sandboxValidationRunner",
         "script",
         "setupCommands",
+        "setupNeedsNetwork",
         "setupScript",
         "shellQuote"
       ],
@@ -31808,7 +31832,7 @@
       "id": "surface:c20e920591c9c750bb59",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "sha256": "9474dbe5e7b780c55d291fdd2d5e51f21e893a9d13cfbafbd70f601bc3ad2d63",
+      "sha256": "3d00cb93082c119cedc9884f7945b0ce6cc360120432931eb04a1b6f4f421b1e",
       "symbols": [
         "DEFAULT_API_HOST",
         "DEFAULT_IMAGE",
@@ -31877,13 +31901,14 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/sandbox/registryNetwork.test.ts:10",
         "backend/src/security/runtimeSecretRead.local.integration.ts:8",
         "backend/src/synthesis/projectRuntime/capabilities.ts:5",
         "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts:3",
         "backend/src/synthesis/projectRuntime/flyProvider.destroy.test.ts:3",
         "backend/src/synthesis/projectRuntime/flyProvider.restore.test.ts:3",
         "backend/src/synthesis/projectRuntime/index.ts:9",
-        "backend/src/synthesis/projectRuntime/manager.ts:14",
+        "backend/src/synthesis/projectRuntime/manager.ts:15",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:32",
         "backend/src/synthesis/projectRuntime/sessionTerminal.test.ts:3"
       ],
@@ -31899,6 +31924,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/sandbox/registryNetwork.test.ts",
         "backend/src/security/runtimeSecretRead.local.integration.ts",
         "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.destroy.test.ts",
@@ -31972,7 +31998,7 @@
       "id": "surface:ca5b423e9d8cf5e5167b",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/manager.ts",
-      "sha256": "9d6d1fb373b181d391acd4492dea36fa7d381314fbe69aa5e438e28fcb618d86",
+      "sha256": "2d0f354780b139c7c3b172c8c112887d4945b2e6c5da9ae077aba45df977b611",
       "symbols": [
         "ProjectRuntimeManager",
         "ProjectRuntimeUnavailableError",
@@ -32007,6 +32033,7 @@
         "../../ai/patches.js",
         "../../lib/truthfulExecution.js",
         "../../sandbox/sandboxEnvironment.js",
+        "../../sandbox/sandboxTypes.js",
         "./flyProvider.js",
         "./secretManager.js",
         "./store.js",
@@ -32016,6 +32043,7 @@
       "runtimeImports": [
         "backend/src/lib/truthfulExecution.ts",
         "backend/src/sandbox/sandboxEnvironment.ts",
+        "backend/src/sandbox/sandboxTypes.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.ts",
         "backend/src/synthesis/projectRuntime/secretManager.ts",
         "backend/src/synthesis/projectRuntime/store.ts"
@@ -32024,6 +32052,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/sandbox/registryNetwork.test.ts:8",
         "backend/src/security/runtimeProjectBinding.test.ts:7",
         "backend/src/security/runtimeSecretRead.local.integration.ts:7",
         "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts:4",
@@ -32044,6 +32073,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/sandbox/registryNetwork.test.ts",
         "backend/src/security/runtimeProjectBinding.test.ts",
         "backend/src/security/runtimeSecretRead.local.integration.ts",
         "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts",
@@ -32219,7 +32249,7 @@
       "callers": [
         "backend/src/security/runtimeSecretRead.local.integration.ts:6",
         "backend/src/synthesis/projectRuntime/index.ts:7",
-        "backend/src/synthesis/projectRuntime/manager.ts:18",
+        "backend/src/synthesis/projectRuntime/manager.ts:19",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:52",
         "backend/src/synthesis/projectRuntime/secretRead.test.ts:4"
       ],
@@ -32316,6 +32346,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:141",
+        "backend/src/sandbox/registryNetwork.test.ts:9",
         "backend/src/security/deliveryEvidenceRead.local.integration.ts:9",
         "backend/src/security/previewConsumer.local.integration.ts:6",
         "backend/src/security/previewGrantAdmission.local.integration.ts:7",
@@ -32334,7 +32365,7 @@
         "backend/src/synthesis/projectRuntime/flyProvider.destroy.test.ts:5",
         "backend/src/synthesis/projectRuntime/flyProvider.restore.test.ts:5",
         "backend/src/synthesis/projectRuntime/index.ts:3",
-        "backend/src/synthesis/projectRuntime/manager.ts:23",
+        "backend/src/synthesis/projectRuntime/manager.ts:24",
         "backend/src/synthesis/projectRuntime/projectHistory.ts:10",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:48",
         "backend/src/synthesis/projectRuntime/secretRead.test.ts:3",
@@ -32371,6 +32402,7 @@
         "backend/src/synthesis/projectRuntime/store.ts#event"
       ],
       "testCoverage": [
+        "backend/src/sandbox/registryNetwork.test.ts",
         "backend/src/security/deliveryEvidenceRead.local.integration.ts",
         "backend/src/security/previewConsumer.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
@@ -32453,6 +32485,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/sandbox/registryNetwork.test.ts",
         "backend/src/security/previewConsumer.local.integration.ts",
         "backend/src/security/previewGrantAdmission.local.integration.ts",
         "backend/src/security/runtimeIdentity.local.integration.ts",
@@ -102252,7 +102285,7 @@
     {
       "id": "workflow:78c19ecd7c4e5844f961",
       "sourcePath": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "5de60d2ee18132c825ab85d8c337e5095ad13a197605b51b6111f78bc1ce735e",
+      "sha256": "a8001c358c302a60ce19a6dbd5e7fea7fa273cc80f6f89081b3ee83a43dc68f1",
       "sourceEntrypoints": [
         "scripts/ci/prepare-pr-integration.mjs",
         "scripts/security/audit-credential-usage.mjs",
@@ -102356,7 +102389,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:d51ab038b693bcdcc5de",
+      "id": "finding:f9993d1e864007e46483",
       "sourcePath": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
       "line": 555,
       "kind": "PLACEHOLDER",
@@ -102546,9 +102579,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:0f5f620a9ea18d6c70b6",
+      "id": "finding:f9ad3fe7f508579895d3",
       "sourcePath": "backend/src/sandbox/flyMachineSandbox.ts",
-      "line": 118,
+      "line": 119,
       "kind": "STUB",
       "reachable": true,
       "state": "PARTIAL",
@@ -102556,9 +102589,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:cc0040acdeb1e405bbce",
+      "id": "finding:9c54fbe72c2a49f78533",
       "sourcePath": "backend/src/sandbox/flyMachineSandbox.ts",
-      "line": 221,
+      "line": 223,
       "kind": "STUB",
       "reachable": true,
       "state": "PARTIAL",
@@ -108973,7 +109006,7 @@
     {
       "id": "test-suite:e560f40fdd60bae650a7",
       "sourcePath": "backend/src/ai/openaiCompat.egress.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -110341,6 +110374,13 @@
       "id": "test-suite:86c641acef10bb310c89",
       "sourcePath": "backend/src/sandbox/flyMachineSandbox.test.ts",
       "declaredTests": 38,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:43342e58abd65dc95e55",
+      "sourcePath": "backend/src/sandbox/registryNetwork.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -111958,6 +111998,13 @@
       "id": "test-suite:1e0727e5508d20e20b91",
       "sourcePath": "backend/src/synthesis/webVerificationWiring.test.ts",
       "declaredTests": 20,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:9e08328918e25691fba1",
+      "sourcePath": "backend/tests/sandboxNetwork.local.integration.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

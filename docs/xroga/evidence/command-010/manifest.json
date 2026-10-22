@@ -151,8 +151,10 @@
       "skipsNotCertified": true
     },
     "callerInventory": {
-      "total": 132,
-      "reviewedUrlBoundariesOnly": 9,
+      "total": 133,
+      "reviewedTransportScopesOnly": 10,
+      "reviewedUrlGuards": 9,
+      "reviewedFixedProviderTransport": 1,
       "pending": 123,
       "highRiskPendingCandidates": 69,
       "strictCompleteness": "FAIL_EXPECTED_NOT_ACCEPTED"
@@ -190,14 +192,16 @@
       "dependenciesAdded": 0
     },
     "currentFocused": {
-      "tests": 71,
-      "pass": 71,
+      "tests": 217,
+      "pass": 217,
       "fail": 0,
       "skipped": 0,
-      "scope": "Current three SDK call-site guards, provider health, egress, golden journeys, business action, URL transport and provenance/scanner tests",
-      "command": "NODE_ENV=test node --import tsx --test backend/src/security/egress/*.test.ts backend/src/security/boundedPublicGet.test.ts backend/src/ai/openaiCompat.egress.test.ts backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts backend/src/ai/providerRuntime.test.ts backend/src/e2e/xrogaGoldenJourneys.test.ts backend/src/services/integrations/businessAction.digest.test.ts scripts/security/audit-egress-callers.test.mjs scripts/ci/prepare-pr-integration.test.mjs",
-      "runtimeAndProjectionRegressions": {"tests":25,"pass":25,"fail":0},
-      "backendTypecheck": "PASS"
+      "scope": "Current sandbox, adapters, egress and three SDK call-site tests, provider policy/health and telemetry, with controlled transports",
+      "command": "NODE_ENV=test node --import tsx --test backend/src/sandbox/*.test.ts backend/src/synthesis/productionAdapters.test.ts backend/src/synthesis/projectRuntime/projectRuntime.test.ts backend/src/synthesis/browserVerificationAdapter.test.ts backend/src/ai/p0Regressions.test.ts backend/src/security/egress/*.test.ts backend/src/ai/openaiCompat.egress.test.ts backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts backend/src/ai/providerRuntime.test.ts backend/src/ai/providerPolicy.test.ts backend/src/ai/softwareAgent/xrogaAgentModelTelemetry.test.ts",
+      "priorRuntimeAndProjectionRegressions": {"tests":25,"pass":25,"fail":0,"scope":"Preserved earlier checkpoint, not rerun and relabeled as current"},
+      "currentScannerAndProjectionRegressions": {"tests":11,"pass":11,"fail":0},
+      "backendTypecheck": "PASS",
+      "backendBuild": "PASS"
     },
     "realPostgresReceipt": {
       "tests": 3,
@@ -234,6 +238,17 @@
       "fail": 0,
       "validatorWeakened": false,
       "originalRecords": "docs/xroga/evidence/command-010/PROVENANCE-REPAIR.json"
+    },
+    "registryNetworking": {
+      "status":"FAIL_CLOSED_ONLINE_REGISTRY_INFRASTRUCTURE_REQUIRED",
+      "focusedTests":106,"pass":106,"fail":0,
+      "realLocalContainerTests":1,"realLocalContainerPass":1,
+      "offlineInstallVerified":true,"onlineRegistryVerified":false,
+      "evidence":"docs/xroga/evidence/command-010/REGISTRY-NETWORK-PROOF.json"
+    },
+    "modelDestinationRegression": {
+      "tests":35,"pass":35,"fail":0,
+      "scope":"Three actual SDK call sites, actual SDK JSON/SSE parsing with controlled fetch, exact provider URL and credential namespace, no redirects, budget release and health handling. Not tenant/project, DNS pinning, DLP or universal spend certification."
     }
   },
   "integration": {
@@ -296,6 +311,14 @@
       "unit": {"run":39864120832,"conclusion":"failure","branchAndIntegratedFailure":"runtime-config-integrity: test-only dynamic environment cleanup was discovered as production runtime source","originalProvenanceFailuresResolved":true,"backendDeclaredTests":3161,"frontendDeclaredTests":1155,"buildsAndTypechecks":"PASS"},
       "correction": "Move the standalone, explicitly invoked DB test out of backend/src to backend/tests and regenerate runtime facts. No discovery, binding or acceptance validator changed. All three moved real PostgreSQL tests pass locally."
     },
+    "acceptedStartingCheckpointCi": {
+      "featureSha":"f040165e69222990ea3d03d90057dcbec1d501d7",
+      "mergeSha":"f482cd0c54a54ad7a7ddf2db30d1efd0079f9c24",
+      "baseSha":"fb95f76bafc1b544b6655d435cddede260d9cd99",
+      "golden":{"run":39867159524,"conclusion":"success"},
+      "unit":{"run":39867159485,"conclusion":"success","branchAndRepeatedIntegrated":true},
+      "scope":"These requested existing runs were authenticated without duplicate dispatch. They do not certify this later registry/model source."
+    },
     "currentSourceStatus": "PENDING_CHANGED_SOURCE_GITHUB_VERIFICATION",
     "previousPhase3ReceiptsReusedAsCurrent": false
   },
@@ -309,6 +332,8 @@
   "knownGaps": [
     "123 unclosed AST caller candidates, including 69 dynamic/SDK high-risk candidates, not asserted as 69 demonstrated vulnerabilities",
     "Remaining consequential adapters and upload caller migration",
+    "Online registry-only execution is fail closed until a restricted worker is independently verified. Offline install under kernel network none is proven.",
+    "Model tenant/account/project/reservation identity and complete egressPolicy binding remain open despite fixed provider destinations and tested credential floors.",
     "Full deployed Supabase/PostgREST and full migration/production parity remain unverified. Local PostgreSQL receipt and ownership race proof is now available.",
     "Current main has six UI conflict groups. WorkspaceLauncher behavior reconciliation is separately committed, remaining main-history integration is not verified.",
     "Phase 3 actual managed-KMS runtime custody and applicable cutover"

@@ -128,7 +128,7 @@ export function recordModelExecution(
   // A deterministic pre-dispatch rejection says nothing about provider health.
   // Untrusted prompt content must not open a shared provider circuit.
   const policyCode=(result.error as {code?:unknown}|undefined)?.code;
-  if(!result.ok&&(policyCode==='MODEL_CREDENTIAL_EGRESS_DENIED'||policyCode==='MODEL_PAYLOAD_INVALID'))return {...(health.get(modelId)??initial(modelId))};
+  if(!result.ok&&(policyCode==='MODEL_CREDENTIAL_EGRESS_DENIED'||policyCode==='MODEL_PAYLOAD_INVALID'||policyCode==='MODEL_DESTINATION_DENIED'))return {...(health.get(modelId)??initial(modelId))};
   const entry = health.get(modelId) ?? initial(modelId);
   // Captured before mutation so `worthPersisting` can compare states rather than guess.
   const before: ModelRuntimeHealth | undefined = health.has(modelId) ? { ...entry } : undefined;

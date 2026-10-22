@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "3a890ca68924bee644a28190d33930c3d0be093a94320b2bd3c2e04d62f34af1",
+  "sourceTreeDigest": "08a688abed9e51ee3f697311f64090f088e1d0d68fd6d186d7e9ea9c926cb452",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -52,9 +52,36 @@
       "evidence": null
     },
     {
+      "id": "038ced12b0f74e8d5e0f",
+      "file": "backend/src/ai/openaiCompat.ts",
+      "line": 205,
+      "entryPoint": "createModelProviderClient",
+      "transport": "fetch",
+      "callee": "globalThis.fetch",
+      "callSha256": "2246d32bbb9462be893f84093c1be641b5ade15f2b11515899e2594063873708",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "FIXED_PROVIDER_ENDPOINT_AND_NO_REDIRECT_ONLY_NOT_DNS_OR_FULL_EGRESS_CERTIFICATION",
+      "tenantAuthority": "THREE_UPSTREAM_SDK_TENANT_ACCOUNT_AUTHORITY_AND_DATA_OBLIGATIONS_REMAIN_PENDING",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "backend/src/ai/providerPolicy.ts",
+          "marker": "assertModelProviderDestination",
+          "sha256": "c496870604060d04ede920af1a8b06e67ad0749c8330788568f96f4a0d6dea9f"
+        },
+        {
+          "path": "backend/src/ai/openaiCompat.egress.test.ts",
+          "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
+          "sha256": "8c94de6b687e9f709217f09a58ccc5f148094a3125e2b74af85e73c42dc1b859"
+        }
+      ]
+    },
+    {
       "id": "31380a8d5b9454a98a98",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 256,
+      "line": 271,
       "entryPoint": "chatCompletion",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -70,7 +97,7 @@
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 351,
+      "line": 366,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -134,7 +161,7 @@
     {
       "id": "ce74641b44b3d7805f49",
       "file": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "line": 782,
+      "line": 766,
       "entryPoint": "runSingleModelTurn",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -1122,7 +1149,7 @@
     {
       "id": "f0eab43244d6d3c88de8",
       "file": "backend/src/sandbox/sandboxProviders.ts",
-      "line": 108,
+      "line": 110,
       "entryPoint": "canRun",
       "transport": "subprocess-or-dynamic-execution",
       "callee": "spawn",
@@ -1138,7 +1165,7 @@
     {
       "id": "151aa103d929fb10c020",
       "file": "backend/src/sandbox/sandboxProviders.ts",
-      "line": 183,
+      "line": 187,
       "entryPoint": "runIsolated",
       "transport": "subprocess-or-dynamic-execution",
       "callee": "spawn",
@@ -2243,6 +2270,7 @@
       "scope": "GROUPING_NOT_SEMANTIC_CERTIFICATION",
       "callerIds": [
         "c0bca58cc5345c0837e1",
+        "038ced12b0f74e8d5e0f",
         "4d93886d8bbc12e799b8",
         "fd9175e145496514f183",
         "e90690f71131f4612afa",
@@ -2435,8 +2463,8 @@
     }
   ],
   "counts": {
-    "total": 132,
-    "reviewed": 9,
+    "total": 133,
+    "reviewed": 10,
     "pending": 123,
     "unresolvedHighRiskBypasses": 69
   }

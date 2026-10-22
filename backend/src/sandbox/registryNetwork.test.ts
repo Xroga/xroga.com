@@ -30,11 +30,12 @@ test('persistent runtime registry-only commands and processes refuse before stat
   let reads=0,effects=0;const store=new InMemoryProjectRuntimeStore();
   t.mock.method(store,'loadSession',async()=>{reads++;throw Error('must not resolve state or secrets');});
   const manager=new ProjectRuntimeManager('owner',store,[]);
-  const command={command:'npm',args:['ci'],networkPolicy:'registry-only' as const};
+  const command={command:'npm',args:['ci'],networkPolicy:'registry-only' as const,environment:{},secretEnvironment:{},secretScopes:[]};
   await assert.rejects(manager.exec('synthetic-session',command),/verified restricted-network/);
   await assert.rejects(manager.startProcess('synthetic-session',command),/verified restricted-network/);
   const provider=new FlyProjectRuntimeProvider({app:'xroga-synthetic-runtime',token:'synthetic-only',fetchImpl:(async()=>{effects++;throw Error('must not dispatch');}) as typeof fetch});
-  const session={sessionId:'synthetic-session',userId:'owner',projectId:'synthetic-project',providerState:{machineId:'synthetic'}} as ProjectRuntimeSession;
+  const now=new Date().toISOString();
+  const session:ProjectRuntimeSession={schemaVersion:'1.0.0',sessionId:'synthetic-session',userId:'owner',projectId:'synthetic-project',providerId:'fly',runtimeClass:'interactive',status:'running',image:null,workspaceRevision:1,knownFiles:[],processes:[],ports:[],createdAt:now,updatedAt:now,expiresAt:null,providerState:{machineId:'synthetic'}};
   await assert.rejects(provider.exec(session,command),/verified restricted-network/);
   await assert.rejects(provider.startProcess(session,command),/verified restricted-network/);
   assert.throws(()=>executableLine('npm',['ci'],'registry-only'),/verified restricted-network/);

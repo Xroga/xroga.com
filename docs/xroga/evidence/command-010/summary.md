@@ -180,3 +180,52 @@ without weakening discovery or allowing an unreviewed production binding.
 Runtime regeneration now reports zero unresolved bindings. The exact integrated
 receipt is a61df63a19adb4c851d10c3fe3f176e2a0479eca against fb95f76b, not main.
 Those receipts are preserved and are not relabeled as later-source success.
+
+## Registry-only and model-provider continuation from f040165e
+
+Both requested existing workflows completed successfully: Golden39867159524
+and Unit39867159485, including branch and repeated integrated baseline. No
+duplicate run was dispatched. They certify starting sourcef040165e and merge
+f482cd0c against Phase3 branchfb95f76b, not this later source or current main.
+
+Registry-only is now refused at canonical selection and direct container,
+remote-worker and Fly execution boundaries before any source dispatch or cloud
+allocation. An ordinary bridge or worker health flag cannot enable that mode.
+The persistent project-runtime manager also refuses registry-only before state
+or secret reads, and its direct Fly command/process builder refuses before
+provider dispatch. Tests cover both paths, so they cannot bypass the sandbox.
+The network/adapters focused suite passes106 tests. The actual existing Docker
+runtime passes one kernel-boundary test using a digest-pinned existing Node22
+image: a synthetic local dependency installs with npm --offline under network
+none, no external interface/default route exists, and public/private/metadata
+and IPv6-private connections fail. No online registry install is claimed.
+Offline setup no longer gets widened to registry-only merely because it has
+setup commands. Online npm/pip/cargo/browser dependency setup remains blocked
+until a genuinely restricted worker is available. Full record and native Buffer
+review lineage are in REGISTRY-NETWORK-PROOF.json. Existing validators stay strict.
+The final combined focused suite passes 217 tests without skips, including the
+persistent project-runtime and browser adapter regressions.
+
+The three model SDK calls now share the same actual client constructor and fetch
+boundary. Approved provider identity binds exact API base and secret namespace,
+including public-host substitution denial. Only selected POST chat/completions
+is admitted, redirects are refused. Real SDK JSON and SSE parser tests pass with
+controlled HTTP responses and no live provider call. The35 focused model tests
+also preserve budget settlement/release, quota and health behavior. This is not
+DNS pinning, universal DLP or proof that arbitrary caller data belongs to an actor.
+
+The shared model source review distinguishes actual production paths from generic
+exports. In particular, Operations supplies the admitted-action benchmark budget
+callback, while generic coherent/incremental default transport and exported Black
+Hole gateway entry points were not found directly used by production importers.
+Pipeline issued identity, vault owner/revision reads, guest lease/buckets and
+SoftwareAgent quota/reservation paths are recorded individually in the trace.
+Raw SDK credential/message signatures still do not carry an issued tenant,
+account, project-data or reservation proof. Those three obligations remain open.
+
+Inventory is now133 candidates:10 narrow transport guards,123 pending including
+69 high-risk candidates. The added actual fetch is narrowly reviewed for exact
+destination and no redirects, without closing any of its three upstream SDK
+obligations. AC01/02/03/09 remain partial, AC04/05/06/07/08/10/11 are local proof
+only, AC12 is unverified. Strict completeness still fails. Phase3 and formal
+Phase4 admission remain blocked. No production, paid resource or UI merge occurred.

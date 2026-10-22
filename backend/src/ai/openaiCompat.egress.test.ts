@@ -35,6 +35,35 @@ test('model endpoint admission rejects a private registry destination in both ex
   t.after(()=>{MODELS.glm_5_3_flash.baseUrl=old;});
   t.mock.method(OpenAI.prototype,'post',async()=>{calls++;throw Error('must not dispatch');});
   MODELS.glm_5_3_flash.baseUrl='https://169.254.169.254';
-  for(const invoke of [chatCompletion,chatCompletionStream])await assert.rejects(invoke('glm_5_3_flash',[{role:'user',content:'ordinary source'}],{credentialOverride:'synthetic-provider-key'}),/target denied/);
+  for(const invoke of [chatCompletion,chatCompletionStream])await assert.rejects(invoke('glm_5_3_flash',[{role:'user',content:'ordinary source'}],{credentialOverride:'synthetic-provider-key'}),{code:'MODEL_DESTINATION_DENIED'});
+  assert.equal(calls,0);
+});
+
+test('real SDK completion and streaming use only the approved endpoint and refuse redirects',async t=>{
+  const sent:string[]=[];let redirect=false;
+  t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:Parameters<typeof fetch>[1])=>{
+    const url=String(input);sent.push(url);
+    assert.equal(url,'https://open.bigmodel.cn/api/paas/v4/chat/completions');
+    assert.equal(init?.redirect,'error');assert.equal(init?.method,'POST');
+    if(redirect)return new Response('',{status:307,headers:{location:'https://unapproved.example/collect'}});
+    const body=JSON.parse(String(init?.body));
+    if(body.stream)return new Response('data: '+JSON.stringify({id:'synthetic-stream',choices:[{delta:{content:'safe stream'},finish_reason:'stop'}]})+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream'}});
+    return Response.json({id:'synthetic-only',choices:[{message:{content:'safe result'},finish_reason:'stop'}],usage:{prompt_tokens:2,completion_tokens:2}});
+  });
+  const messages=[{role:'user' as const,content:'ordinary source'}],opts={credentialOverride:'synthetic-provider-key',maxTokens:8};
+  assert.equal((await chatCompletion('glm_5_3_flash',messages,opts)).text,'safe result');
+  assert.equal((await chatCompletionStream('glm_5_3_flash',messages,opts)).text,'safe stream');
+  redirect=true;
+  for(const invoke of [chatCompletion,chatCompletionStream])await assert.rejects(invoke('glm_5_3_flash',messages,opts));
+  assert.ok(sent.length>=4);assert.ok(sent.every(url=>url==='https://open.bigmodel.cn/api/paas/v4/chat/completions'));
+});
+
+test('public destination substitution and cross-provider credential namespace fail before either SDK call',async t=>{
+  const def=MODELS.glm_5_3_flash,old={baseUrl:def.baseUrl,secretKey:def.secretKey};let calls=0;
+  t.after(()=>Object.assign(def,old));t.mock.method(OpenAI.prototype,'post',async()=>{calls++;throw Error('must not dispatch');});
+  for(const change of [{baseUrl:'https://unapproved.example/v1'}, {...old,secretKey:'KIMI_API_KEY' as const}]){
+    Object.assign(def,change);
+    for(const invoke of [chatCompletion,chatCompletionStream])await assert.rejects(invoke('glm_5_3_flash',[{role:'user',content:'ordinary source'}],{credentialOverride:'synthetic-provider-key'}),{code:'MODEL_DESTINATION_DENIED'});
+  }
   assert.equal(calls,0);
 });

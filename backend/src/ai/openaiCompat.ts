@@ -1,4 +1,4 @@
-import OpenAI from 'openai';
+import OpenAI, {type ClientOptions} from 'openai';
 import { getSecret } from '../config/envSecrets.js';
 import {
   MODELS,
@@ -8,7 +8,7 @@ import {
   type ModelId,
 } from './models.js';
 import { recordModelExecution } from './providerRuntime.js';
-import { ProviderPolicyError, requiredCodingTransport } from './providerPolicy.js';
+import { ProviderPolicyError, requiredCodingTransport, assertModelProviderDestination } from './providerPolicy.js';
 import { withTemperatureFallback } from './temperatureCompat.js';
 import {containsCredentialSecretText} from '../security/egress/dataClassification.js';
 import {publicHttpsUrl} from '../security/egress/urlPolicy.js';
@@ -142,6 +142,8 @@ export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): 
     );
   }
 
+  assertModelProviderDestination(def.provider,def.baseUrl,def.secretKey);
+
   // Configuration is checked *after* the transport policy, deliberately.
   //
   // A model can be both misconfigured and mis-transported. If the configuration guard ran
@@ -188,14 +190,27 @@ export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): 
   };
 }
 
-function clientFor(endpoint: ResolvedEndpoint): OpenAI {
+export function createModelProviderClient(endpoint: ResolvedEndpoint): OpenAI {
   publicHttpsUrl(endpoint.baseUrl);
+  assertModelProviderDestination(endpoint.provider,endpoint.baseUrl);
   return new OpenAI({
     apiKey: endpoint.apiKey,
     baseURL: endpoint.baseUrl,
     timeout: 180_000,
     maxRetries: 1,
     defaultHeaders: endpoint.defaultHeaders,
+    fetch:async (input,init)=>{
+      const url=new URL(typeof input==='string'?input:'url' in input?input.url:input.href);
+      if(url.href!==endpoint.baseUrl+'/chat/completions'||init?.method?.toUpperCase()!=='POST'||typeof init.body!=='string')throw Object.assign(Error('Model SDK destination denied.'),{code:'MODEL_DESTINATION_DENIED',status:400});
+      const response=await globalThis.fetch(url,{method:'POST',body:init.body,
+        headers:init.headers as NonNullable<Parameters<typeof fetch>[1]>['headers'],signal:init.signal as AbortSignal|undefined,redirect:'error'});
+      if(response.redirected||(response.status>=300&&response.status<400))throw Object.assign(Error('Model SDK redirect denied.'),{code:'MODEL_DESTINATION_DENIED',status:400});
+      // SDK v4's Node typings require node-fetch-only convenience methods, but
+      // its chat JSON/SSE parser consumes the standard Response surface. Keep
+      // this Node22 interoperability cast at the transport boundary and test
+      // both actual SDK parsers, rather than invent those methods or metadata.
+      return response as unknown as Awaited<ReturnType<NonNullable<ClientOptions['fetch']>>>;
+    },
   });
 }
 
@@ -251,7 +266,7 @@ export async function chatCompletion(
   try {
     const endpoint = resolveEndpoint(modelId, opts.credentialOverride);
     messages=snapshotModelEgressPayload(messages,endpoint.apiKey);
-    const client = clientFor(endpoint);
+    const client = createModelProviderClient(endpoint);
     const completion = await withTemperatureFallback(opts.temperature ?? 0.4, (temperature) =>
       client.chat.completions.create(
         {
@@ -339,7 +354,7 @@ export async function chatCompletionStream(
   try {
     const endpoint = resolveEndpoint(modelId, opts.credentialOverride);
     messages=snapshotModelEgressPayload(messages,endpoint.apiKey);
-    const client = clientFor(endpoint);
+    const client = createModelProviderClient(endpoint);
     if (opts.signal?.aborted) {
       const err = new Error('Build cancelled') as Error & { code?: string };
       err.code = 'BUILD_CANCELLED';

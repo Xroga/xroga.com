@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "5c1babb1c0f12c8008448faa3f45b5864626148f",
+  "source_sha": "be0e4bd3dccfb0e16fc9eafe4d3871f9b8d14155",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -1563,7 +1563,8 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "backend/src/ai/models.ts"
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerPolicy.ts"
       ],
       "hostnames": [
         "api.moonshot.ai"
@@ -1584,7 +1585,8 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "backend/src/ai/models.ts"
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerPolicy.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -4505,7 +4507,8 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "backend/src/ai/models.ts"
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerPolicy.ts"
       ],
       "hostnames": [
         "open.bigmodel.cn"
@@ -4526,7 +4529,8 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "backend/src/ai/models.ts"
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerPolicy.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -4539,7 +4543,8 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "backend/src/ai/models.ts"
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerPolicy.ts"
       ],
       "hostnames": [
         "openrouter.ai"
@@ -4560,7 +4565,8 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "backend/src/ai/models.ts"
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerPolicy.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -12340,7 +12346,7 @@
     },
     {
       "path": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "5de60d2ee18132c825ab85d8c337e5095ad13a197605b51b6111f78bc1ce735e"
+      "sha256": "a8001c358c302a60ce19a6dbd5e7fea7fa273cc80f6f89081b3ee83a43dc68f1"
     },
     {
       "path": "Dockerfile.api",
@@ -12576,7 +12582,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "ddfacff68050ab7f8631aa50aaab2cbecb6893a4d1cafa5214eeeeb8d4cc088b"
+      "sha256": "a3d2f3a5a47be63f1ccf6839035fca53957cc800f5f9caebbf05973983a91ff8"
     },
     {
       "path": "backend/src/ai/parallelWeb.ts",
@@ -12628,11 +12634,11 @@
     },
     {
       "path": "backend/src/ai/providerPolicy.ts",
-      "sha256": "cc8813f2aa654dc180ad120690603f4cf742d03d8141bf44f6803b7cf79e3066"
+      "sha256": "c496870604060d04ede920af1a8b06e67ad0749c8330788568f96f4a0d6dea9f"
     },
     {
       "path": "backend/src/ai/providerRuntime.ts",
-      "sha256": "293fa500379170142ce75f1c5e1389af05ec71f210572e771bbcb8708d0707e0"
+      "sha256": "31738c7af71910005bdb8ab4e7dfb38db37254553781d6a60fdba395c973e302"
     },
     {
       "path": "backend/src/ai/qa.ts",
@@ -12800,7 +12806,7 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "sha256": "ebe35abec3c42c7c8c569a14ff5b5bc1551964b1deef617a40be2b92a836db98"
+      "sha256": "27e921936027f5e02773900eb33a8ed8e4fee1d5553d4243083bc45ff64c0b37"
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaProductionAdapters.ts",
@@ -13656,11 +13662,11 @@
     },
     {
       "path": "backend/src/sandbox/flyMachineSandbox.ts",
-      "sha256": "3bdef3facc61c0c324b73d3fd06d93cac3b764e9b3dcd0309874ed4bc7e86ca6"
+      "sha256": "3317c592f7c0a68ad945ff4dc654360f3a0621e1ed9f5dd65e6ec7d57953af3e"
     },
     {
       "path": "backend/src/sandbox/remoteSandbox.ts",
-      "sha256": "6b53af8e7dd32c04c7fada22a07683ec904a53dbc0611f91fc99430d9435b4ee"
+      "sha256": "a97ed5a5320436ba360e384b95a9bdd6232a19f021a6e551b378cc6969f475a2"
     },
     {
       "path": "backend/src/sandbox/sandboxEnvironment.ts",
@@ -13668,15 +13674,15 @@
     },
     {
       "path": "backend/src/sandbox/sandboxProviders.ts",
-      "sha256": "a2408c76adf38200f7b22868c52233a0893d57b2cc78115581fc9d40e699c5aa"
+      "sha256": "998cbd6efbdb066f493234d2d6960539151f43e33dbfe2baed81183fbb68578a"
     },
     {
       "path": "backend/src/sandbox/sandboxRuntime.ts",
-      "sha256": "670289bf6032d26a6835832903d72f1c179a51bd751b4b260b7451cedc3bab3a"
+      "sha256": "50c6fb0616c3dec6ef615a20367e19b8882063690fc15a06ea34931415ea5a5b"
     },
     {
       "path": "backend/src/sandbox/sandboxTypes.ts",
-      "sha256": "eaa3593e3296fc0e5aa3c67e363616af6b5296874239f24f1f15dec6183e1a80"
+      "sha256": "3cac3a3b7f5ecd2f7c79742adb08f3fec48494764b502e5ba4fbd45fd49f86ca"
     },
     {
       "path": "backend/src/scripts/verifyFlySandboxBrowser.ts",
@@ -14424,7 +14430,7 @@
     },
     {
       "path": "backend/src/synthesis/productionAdapters.ts",
-      "sha256": "0243060876196a038d2cf44b99f56ff093edda89132ac92cf2e8d80113428b70"
+      "sha256": "dae61a9d0ddba322182abf69c40fc5acf116e7e58b129d3910e18c049ff2653e"
     },
     {
       "path": "backend/src/synthesis/projectRunState.ts",
@@ -14440,7 +14446,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "sha256": "9474dbe5e7b780c55d291fdd2d5e51f21e893a9d13cfbafbd70f601bc3ad2d63"
+      "sha256": "3d00cb93082c119cedc9884f7945b0ce6cc360120432931eb04a1b6f4f421b1e"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/index.ts",
@@ -14448,7 +14454,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/manager.ts",
-      "sha256": "9d6d1fb373b181d391acd4492dea36fa7d381314fbe69aa5e438e28fcb618d86"
+      "sha256": "2d0f354780b139c7c3b172c8c112887d4945b2e6c5da9ae077aba45df977b611"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/processManager.ts",
@@ -18640,7 +18646,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 179,
+      "line": 181,
       "expression": "def.secretKey",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -19192,6 +19198,27 @@
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
       "line": 4010,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.moonshot.ai",
+      "protocol": "https:",
+      "path": "backend/src/ai/providerPolicy.ts",
+      "line": 97,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "open.bigmodel.cn",
+      "protocol": "https:",
+      "path": "backend/src/ai/providerPolicy.ts",
+      "line": 98,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "openrouter.ai",
+      "protocol": "https:",
+      "path": "backend/src/ai/providerPolicy.ts",
+      "line": 99,
       "credentialsInUrl": false
     },
     {
@@ -19933,7 +19960,7 @@
       "hostname": "api.machines.dev",
       "protocol": "https:",
       "path": "backend/src/sandbox/flyMachineSandbox.ts",
-      "line": 99,
+      "line": 100,
       "credentialsInUrl": false
     },
     {
@@ -21403,7 +21430,7 @@
       "hostname": "api.machines.dev",
       "protocol": "https:",
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "line": 34,
+      "line": 35,
       "credentialsInUrl": false
     },
     {
@@ -25008,7 +25035,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 207,
+      "line": 222,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -25582,14 +25609,14 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "line": 845,
+      "line": 829,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "line": 1189,
+      "line": 1173,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -27962,14 +27989,14 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/manager.ts",
-      "line": 460,
+      "line": 461,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/manager.ts",
-      "line": 551,
+      "line": 552,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

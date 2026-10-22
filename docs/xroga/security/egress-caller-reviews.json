@@ -3,6 +3,18 @@
   "scope": "PREPARATORY_URL_BOUNDARY_REVIEW_NOT_COMMAND010_ACCEPTANCE",
   "reviews": [
     {
+      "id":"038ced12b0f74e8d5e0f",
+      "callSha256":"2246d32bbb9462be893f84093c1be641b5ade15f2b11515899e2594063873708",
+      "sourceFileSha256":"a3d2f3a5a47be63f1ccf6839035fca53957cc800f5f9caebbf05973983a91ff8",
+      "disposition":"REVIEWED_FIXED_DEPENDENCY",
+      "trust":"FIXED_PROVIDER_ENDPOINT_AND_NO_REDIRECT_ONLY_NOT_DNS_OR_FULL_EGRESS_CERTIFICATION",
+      "tenantAuthority":"THREE_UPSTREAM_SDK_TENANT_ACCOUNT_AUTHORITY_AND_DATA_OBLIGATIONS_REMAIN_PENDING",
+      "evidence":[
+        {"path":"backend/src/ai/providerPolicy.ts","marker":"assertModelProviderDestination","sha256":"c496870604060d04ede920af1a8b06e67ad0749c8330788568f96f4a0d6dea9f"},
+        {"path":"backend/src/ai/openaiCompat.egress.test.ts","marker":"real SDK completion and streaming use only the approved endpoint and refuse redirects","sha256":"8c94de6b687e9f709217f09a58ccc5f148094a3125e2b74af85e73c42dc1b859"}
+      ]
+    },
+    {
       "id": "0e0e3527ad05d7405c68",
       "callSha256": "e3c3def0a39603c733ecb26163e672be02388db71ca7cd804feb8390d9b4afc1",
       "sourceFileSha256": "c50dc741653646df6b6dddc6ec1ba4337fa3b3a48a94b5d9a66afe52b81cbd46",

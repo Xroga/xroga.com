@@ -12,6 +12,13 @@
   ],
   "verification":{"focusedTests":106,"passed":106,"realContainerTests":1,"realContainerPassed":1,"image":"node:22-bookworm","imageDigest":"sha256:63538dfe497cc29dfafdda25ada09b46db68a3f4cc205abf1f5d6bf0913f3384","offlineInstall":"Synthetic local file dependency installed with npm --offline --ignore-scripts in actual existing ContainerSandboxRuntime using network none","kernelEvidence":"No non-loopback interfaces, no default IPv4 route. TCP probes to public, RFC1918, link-local/metadata and IPv6-private targets all denied.","onlineRegistryVerified":false,"liveProviderEffects":false},
   "remainingRequirement":"An independently verified existing worker or transport must enforce registry allowlists at kernel/network boundary, including direct IP, DNS, IPv6, redirects, CONNECT and metadata bypasses, before online registry-only installs can be enabled. No operator boolean or arbitrary Docker bridge is accepted as that proof.",
+  "observedPackageRequirements":{
+    "node":"npm/pnpm/yarn metadata and artifact downloads. Arbitrary git/http dependencies and package scripts cannot inherit unrestricted access from an install label.",
+    "python":"pip index plus wheel/source-artifact hosts. Offline no-index installation must use already-present artifacts.",
+    "rust":"cargo index and crate artifacts. Git dependencies are separate destination obligations.",
+    "additionalAdapters":"Go proxy/checksum service, Maven/Gradle repositories, NuGet, Dart Pub, Composer, Conan/vcpkg and Solidity toolchains have their own configured dependency sources. Their existing server-generated install plans request registry-only and are refused rather than silently widened.",
+    "boundary":"An application URL check, HTTPS_PROXY variable or package-manager registry option cannot constrain malicious build code or direct sockets. The missing online mechanism must enforce restrictions outside that code."
+  },
   "persistentRuntimeContinuation":{"manager":"Registry-only exec and startProcess refuse before loading session or resolving secrets","directFlyProvider":"executableLine refuses registry-only before execRaw can send a command or process script","focusedRegressionTests":62,"passed":62,"includes":"Project runtime, browser adapter, existing P0 and zero-effect direct execution negatives","ordinaryPreviewCertified":false},
   "persistentNativeReviewReconciliation":{
     "path":"backend/src/synthesis/projectRuntime/flyProvider.ts",

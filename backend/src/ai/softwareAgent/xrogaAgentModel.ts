@@ -3,8 +3,8 @@ import OpenAI from 'openai';
 import {
   resolveEndpoint,
   snapshotModelEgressPayload,
+  createModelProviderClient,
 } from '../openaiCompat.js';
-import {publicHttpsUrl} from '../../security/egress/urlPolicy.js';
 
 import {
   executeWithProviderFallback,
@@ -754,24 +754,8 @@ async function runSingleModelTurn(
               credentialOverride,
             );
 
-          publicHttpsUrl(endpoint.baseUrl);
           const client =
-            new OpenAI({
-              apiKey:
-                endpoint.apiKey,
-
-              baseURL:
-                endpoint.baseUrl,
-
-              timeout:
-                180_000,
-
-              maxRetries:
-                1,
-
-              defaultHeaders:
-                endpoint.defaultHeaders,
-            });
+            createModelProviderClient(endpoint);
 
           const {messages,tools}=snapshotModelEgressPayload({
             messages:toOpenAiMessages(input.request),

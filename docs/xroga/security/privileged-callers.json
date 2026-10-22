@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "9e69cda82d51215f9307a4ffd937ebf6d042c5ec30a7bd2a8501498dd9b23535",
+  "reviewRegistrySha256": "9d4d8a4602ef16ce6a2aec061ff5ab358a91900c0186ba1b7b69d050bfcf6b3f",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -28,8 +28,8 @@
     "result": "BLOCKED",
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
-    "verifiedCandidateBoundaries": 109,
-    "unresolvedCandidateBoundaries": 595,
+    "verifiedCandidateBoundaries": 105,
+    "unresolvedCandidateBoundaries": 599,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -852,6 +852,18 @@
       },
       {
         "code": "STALE_CALLER_BINDING",
+        "id": "OB-9d8e90327516e9de"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-9d8e90327516e9de"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-9d8e90327516e9de"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
         "id": "OB-9c46b57341133d5b"
       },
       {
@@ -897,6 +909,42 @@
       {
         "code": "STALE_NON_PERSISTENCE_REVIEW",
         "id": "OB-ef318e8bf2e5db98"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-5aa5d9441f6285e6"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-5aa5d9441f6285e6"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-5aa5d9441f6285e6"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-5fd94977d4b37d4f"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-5fd94977d4b37d4f"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-5fd94977d4b37d4f"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-bda17b5d0d94c2a0"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-bda17b5d0d94c2a0"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-bda17b5d0d94c2a0"
       },
       {
         "code": "STALE_CALLER_BINDING",
@@ -2976,6 +3024,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "6e872b93785f20224da7"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "001a7a58713675bbbba0"
       },
       {
@@ -3561,6 +3613,18 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "eba320f0c59bba39be70"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "8c2d8f9c4601ee2f4d97"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "74ddacc15175556234db"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "96441ee181360879c0db"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5088,6 +5152,10 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "6e872b93785f20224da7"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "001a7a58713675bbbba0"
       },
       {
@@ -5944,6 +6012,18 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "8c2d8f9c4601ee2f4d97"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "74ddacc15175556234db"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "96441ee181360879c0db"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "949efba83cbbfbfc99ca"
       },
       {
@@ -6150,11 +6230,11 @@
   },
   "reviewAgreement": {
     "currentCallers": 704,
-    "structuredVerified": 109,
-    "structuredUnproven": 595,
+    "structuredVerified": 105,
+    "structuredUnproven": 599,
     "manualUnresolved": 48,
-    "manualUnsupported": 547,
-    "agreedVerified": 109,
+    "manualUnsupported": 551,
+    "agreedVerified": 105,
     "proofAwaitingManualReconciliation": 0
   },
   "callers": [
@@ -13745,17 +13825,17 @@
       }
     },
     {
-      "id": "0d4114d4eca28b97f4cf",
+      "id": "6e872b93785f20224da7",
       "path": "backend/src/sandbox/flyMachineSandbox.ts",
-      "line": 363,
+      "line": 365,
       "enclosing": "buildMachineConfig",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "3bdef3facc61c0c324b73d3fd06d93cac3b764e9b3dcd0309874ed4bc7e86ca6",
+      "sourceSha256": "3317c592f7c0a68ad945ff4dc654360f3a0621e1ed9f5dd65e6ec7d57953af3e",
       "semanticReview": {
-        "authority": "Inspected the receiver and surrounding expression in buildMachineConfig. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "authority": "Inspected the native Buffer.from(file.content, utf8).toString(base64) conversion in buildMachineConfig. That entire method has the same AST-text SHA256 before and after registry-only refusal. This is not the adjacent provider transport or persistence.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
         "evidence": [
           {
@@ -20061,7 +20141,7 @@
       }
     },
     {
-      "id": "b60d7d17a4b3923a0093",
+      "id": "8c2d8f9c4601ee2f4d97",
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
       "line": 766,
       "enclosing": "create",
@@ -20069,7 +20149,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "9474dbe5e7b780c55d291fdd2d5e51f21e893a9d13cfbafbd70f601bc3ad2d63",
+      "sourceSha256": "3d00cb93082c119cedc9884f7945b0ce6cc360120432931eb04a1b6f4f421b1e",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in create. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -20082,7 +20162,7 @@
       }
     },
     {
-      "id": "7e77a9e9c61c1c49cb12",
+      "id": "74ddacc15175556234db",
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
       "line": 1044,
       "enclosing": "writeFiles",
@@ -20090,7 +20170,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "9474dbe5e7b780c55d291fdd2d5e51f21e893a9d13cfbafbd70f601bc3ad2d63",
+      "sourceSha256": "3d00cb93082c119cedc9884f7945b0ce6cc360120432931eb04a1b6f4f421b1e",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in writeFiles. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -20103,7 +20183,7 @@
       }
     },
     {
-      "id": "f783b8237adeb061973a",
+      "id": "96441ee181360879c0db",
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
       "line": 1148,
       "enclosing": "readFile",
@@ -20111,7 +20191,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "9474dbe5e7b780c55d291fdd2d5e51f21e893a9d13cfbafbd70f601bc3ad2d63",
+      "sourceSha256": "3d00cb93082c119cedc9884f7945b0ce6cc360120432931eb04a1b6f4f421b1e",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in readFile. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",

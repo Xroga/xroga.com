@@ -1,14 +1,14 @@
 {
   "version": 1,
   "scope": "PARTIAL_MODEL_BOUNDARY_TRACE_NOT_TENANT_OR_SPEND_CERTIFICATION",
-  "sourceSha256": "ddfacff68050ab7f8631aa50aaab2cbecb6893a4d1cafa5214eeeeb8d4cc088b",
+  "sourceSha256": "a3d2f3a5a47be63f1ccf6839035fca53957cc800f5f9caebbf05973983a91ff8",
   "priorTrace": "57e1c1bdd7af87f5ac0bf0784bb9ce7dac38c376:docs/xroga/evidence/command-010/MODEL-BOUNDARY-TRACE.json",
-  "softwareAgentSourceSha256": "ebe35abec3c42c7c8c569a14ff5b5bc1551964b1deef617a40be2b92a836db98",
+  "softwareAgentSourceSha256": "27e921936027f5e02773900eb33a8ed8e4fee1d5553d4243083bc45ff64c0b37",
   "callers": [
     {
       "id": "31380a8d5b9454a98a98",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 256,
+      "line": 271,
       "entryPoint": "chatCompletion",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -24,7 +24,7 @@
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 351,
+      "line": 366,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -40,7 +40,7 @@
     {
       "id": "ce74641b44b3d7805f49",
       "file": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "line": 782,
+      "line": 766,
       "entryPoint": "runSingleModelTurn",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -54,14 +54,33 @@
     "converter.convertUserRequest -> withProviderReservation -> chatCompletion",
     "pipeline builder -> runBuilderAttempt -> chatCompletionStream, selected user provider key via getUserProviderKey",
     "black-hole/providerAdapter.complete and completeStream forward to the same functions",
-    "benchmarkExecutor callback has optional authorize hook, direct execution when absent remains explicit upstream admission obligation",
+    "benchmarkExecutor optional callback was traced to its actual production owner operations/benchmarkAdapter.ts. That caller requires a current running admitted run_model_benchmark action and binds ownerId, actorId, action and idempotent reservation key through withOperationsProviderReservation. The generic optional helper is not itself an issued approval.",
     "createXrogaAgentModel.stream -> runSingleModelTurn -> existing assertCanUseModel and withProviderReservation -> actual SDK. The shared payload floor also covers tool descriptions and arguments. Fixed server endpoint syntax is admitted before dispatch."
   ],
   "dataOwnership": "Model transport receives message arrays and an optional credentialOverride string, not an issued tenant context, project proof or reservation handle. Ownership and provider credential provenance remain upstream proof obligations.",
   "classification": "Prompts may contain USER_PRIVATE, BUSINESS_CONFIDENTIAL and PERSONAL_DATA. The new shared credential floor rejects recognized secret values or the selected provider credential in outgoing text before either SDK call. This is not universal DLP, image-content inspection or complete egressPolicy admission.",
-  "destinationControl": "resolveEndpoint chooses fixed server registry endpoints and enforces coding transport policy. clientFor now admits public HTTPS syntax. It does not pin SDK DNS or control provider-internal image fetching. No request body supplies a base URL.",
+  "destinationControl": "All three SDK calls share createModelProviderClient. resolveEndpoint now binds the exact official provider API base and canonical secret namespace before reading credentials. The SDK fetch permits only POST to that selected chat/completions endpoint and refuses redirects. Actual SDK JSON and SSE parsers pass controlled fetch tests, including foreign public endpoint, secret-namespace substitution and redirect denial. SDK DNS is not pinned and provider-internal image fetching is not certified. No request body supplies a base URL.",
   "accountSelection": "credentialOverride or getSecret selects actual provider credential. Lower layer cannot prove caller's vault identity from a raw string, so it remains unresolved rather than automatically safe.",
-  "budget": "Known architect/converter wrappers reserve and settle through existing withProviderReservation. No lower-layer universal reservation proof is inferred. Optional benchmark authority and guest/black-hole paths need separate bounded tracing.",
+  "budget": "Architect, converter, repository summary, semantic planner, research, business interpretation, pipeline and SoftwareAgent use the existing reservation path for their attributed production operations. Operations benchmark uses its admitted action reservation. Anonymous guest chat instead has existing guest buckets/lease controls. The lower SDK signature still carries no issued reservation handle or tenant identity, so no universal accounting or ownership certification is inferred.",
+  "upstreamReviewSource": "f040165e69222990ea3d03d90057dcbec1d501d7, upstream files unchanged by this transport patch",
+  "upstreamReview": [
+    {"path":"backend/src/ai/pipeline.ts","boundary":"runPipeline requires issued TenantContext and matching opts.userId, then snapshots authoritative userId. Builder attempts check model access, select BYOK by that user and provider and reserve spend. The optional-user internal helper still needs exact reachability/admission proof, not a blanket exemption."},
+    {"path":"backend/src/ai/architect.ts","boundary":"runArchitectPlan reserves with opts.userId and fixed deepseek model. Private brief/request are caller-owned input obligations, not proven by model text."},
+    {"path":"backend/src/ai/converter.ts","boundary":"convertUserRequest reserves with its server userId and fixed deepseek model. Its raw userId signature is not an identity issuer."},
+    {"path":"backend/src/ai/repoSummarize.ts","boundary":"Repository sample prompt is private project data, uses withProviderReservation for opts.userId. Exact project-file ownership remains upstream."},
+    {"path":"backend/src/ai/universal/semanticRequestPlanner.ts","boundary":"Completion attempts reserve input.userId and selected model before dispatch and record actual usage. Reservation is not proof that all caller-supplied files belong to that user."},
+    {"path":"backend/src/ai/black-hole/webIntelligence.ts","boundary":"Research completion uses existing user-scoped reservation. Retrieved web data remains untrusted and cannot issue consequential action authority."},
+    {"path":"backend/src/services/integrations/businessRead.ts","boundary":"Interpretation completion reserves input.userId. Connection/account/resource ownership and provider execution remain canonical business-service boundaries, not inferred from this LLM response."},
+    {"path":"backend/src/services/integrations/businessAction.ts","boundary":"Interpretation completion reserves input.userId. Actual consequential execution retains exact businessAction approval and account binding. LLM interpretation cannot issue that authority."},
+    {"path":"backend/src/operations/benchmarkAdapter.ts","boundary":"Current admitted running run_model_benchmark action binds ownerId, requested_by actor and action ID. Production passes withOperationsProviderReservation to singleModelImplementation."},
+    {"path":"backend/src/ai/benchmarkExecutor.ts","boundary":"The only found production singleModelImplementation caller supplies that authority callback. Absence in the generic helper is not evidence of a reachable unauthenticated production benchmark."},
+    {"path":"backend/src/synthesis/coherentImplementation.ts","boundary":"The only found production importer is benchmarkExecutor, which supplies its bounded completion override. Do not treat the generic default transport as a demonstrated live unbudgeted route."},
+    {"path":"backend/src/synthesis/incrementalImplementation.ts","boundary":"Only its non-network preservesRequiredSymbols helper was found imported by coherentImplementation. No production importer of implementIncrementally or repairIncrementally was found. Keep future/dynamic reachability distinct from a current vulnerability."},
+    {"path":"backend/src/ai/black-hole/gateway.ts","boundary":"generate forwards through providerAdapter, while generateWith requires a nonblank userId but does not issue tenant identity. No production importer of generate was found. productionBridge supplies routing decisions to pipeline, not this gateway's provider execution."},
+    {"path":"backend/src/routes/guestChat.ts","boundary":"Intentional anonymous text-only completion uses existing guest session/claimed-session, bucket and lease controls, fixed server-selected candidates and platform credential. It is not authority to retrieve tenant project files or perform external actions. Do not replace its guest contract with fabricated authenticated scope."},
+    {"path":"backend/src/services/integrations/userProviderKeys.ts","boundary":"getUserProviderKey selects exact user_id/provider. openCanonicalProviderRow checks row owner, vault identity and rereads token, revision, metadata and revocation after decrypt. A raw credentialOverride below this boundary still contains no verifiable vault identity."},
+    {"path":"backend/src/synthesis/softwareAgentImplementationAdapter.ts","boundary":"Actual production factory receives server userId/runId, checks coding primary/fallback models and uses existing checkpoint/admitted-run architecture. createXrogaAgentModel adds quota, reservation and usage. Its raw string userId API does not independently certify project-data ownership."}
+  ],
   "authority": "No tool/model text can mint a permit. This patch does not introduce a second authority or budget ledger and does not claim canonical egressPolicy coverage for every model caller.",
   "tests": [
     "backend/src/ai/openaiCompat.egress.test.ts",
@@ -83,7 +102,7 @@
       "id": "EGRESS-PACKET-f85e227272791fb2",
       "transport": "fetch",
       "consequence": "HTTP_TRANSPORT",
-      "count": 99
+      "count": 100
     },
     {
       "id": "EGRESS-PACKET-d5b0a8f62bc32b4e",

@@ -4,6 +4,7 @@ import OpenAI from 'openai';
 import {createXrogaAgentModel} from './xrogaAgentModel.js';
 import {randomUUID} from 'node:crypto';
 import {getModelRuntimeHealth} from '../providerRuntime.js';
+import {MODELS} from '../models.js';
 
 test('real SoftwareAgent factory preserves budgeted positive execution and rejects secret data before SDK dispatch',async t=>{
   const names=['SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','DATABASE_URL','NODE_ENV'];const previous=names.map(n=>process.env[n]);
@@ -46,7 +47,14 @@ test('real SoftwareAgent factory preserves budgeted positive execution and rejec
     await assert.rejects(collect(content),(error:unknown)=>(error as {details?:{failures?:Array<{code?:string}>}}).details?.failures?.[0]?.code==='MODEL_CREDENTIAL_EGRESS_DENIED');
   }
   await assert.rejects(collect('ordinary source','synthetic-provider-key'),(error:unknown)=>(error as {details?:{failures?:Array<{code?:string}>}}).details?.failures?.[0]?.code==='MODEL_CREDENTIAL_EGRESS_DENIED');
-  assert.equal(calls,2);assert.equal(releases.length,3);
+  const def=MODELS.glm_5_3_flash,old={baseUrl:def.baseUrl,secretKey:def.secretKey};
+  try{
+    for(const change of [{baseUrl:'https://unapproved.example/v1'}, {...old,secretKey:'KIMI_API_KEY' as const}]){
+      Object.assign(def,change);
+      await assert.rejects(collect('ordinary source'),(error:unknown)=>(error as {details?:{failures?:Array<{code?:string}>}}).details?.failures?.[0]?.code==='MODEL_DESTINATION_DENIED');
+    }
+  }finally{Object.assign(def,old);}
+  assert.equal(calls,2);assert.equal(releases.length,5);
   assert.equal(getModelRuntimeHealth('glm_5_3_flash').status,'healthy');assert.equal(getModelRuntimeHealth('glm_5_3_flash').failures,0);
   assert.ok(releases.every(row=>row.p_pending_reconciliation===false&&row.p_error_category==='invalid_request'),'A known pre-dispatch denial must release its budget, not retain an uncertain-provider hold');
 });
