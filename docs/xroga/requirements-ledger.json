@@ -600,8 +600,10 @@
       ],
       "feature_category": "batch-command-010",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
-      "current_paths": [],
+      "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "current_paths": [
+        "docs/xroga/evidence/command-010/manifest.json"
+      ],
       "implementation_owner_command": "010",
       "priority": "P1",
       "dependencies": [
@@ -637,7 +639,7 @@
         "Original mission acceptance (not current proof): Simulated exfiltration attempt, poisoned tool description and cross-account data flow are blocked with auditable reason."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted; original missions 01–10 are explicit semantic aliases of the stricter Batch One specifications; neither source overrides unpassed gates",
       "confidence": "MEDIUM",
       "unresolved_questions": [],
@@ -1159,8 +1161,17 @@
       ],
       "feature_category": "egress security",
       "classification": "security",
-      "current_state": "PROPOSED_ONLY",
-      "current_paths": [],
+      "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "current_paths": [
+        "backend/src/security/egress/dataClassification.ts",
+        "backend/src/security/egress/egressPolicy.ts",
+        "backend/src/security/egress/fileEgress.ts",
+        "backend/src/security/egress/securityDecision.ts",
+        "backend/src/security/egress/toolTrust.ts",
+        "backend/src/security/egress/types.ts",
+        "backend/src/security/egress/untrustedInput.ts",
+        "backend/src/security/egress/urlPolicy.ts"
+      ],
       "implementation_owner_command": "010",
       "priority": "P0",
       "dependencies": [
@@ -1189,7 +1200,7 @@
         "Snyk Agent Scan",
         "Trivy"
       ],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted; matched paths are inspection candidates, not keyword-based proof of functional completion",
       "confidence": "MEDIUM",
       "unresolved_questions": [],
@@ -3442,6 +3453,14 @@
         "backend/src/security/authority/risk.ts",
         "backend/src/security/authority/types.ts",
         "backend/src/security/boundedPublicGet.ts",
+        "backend/src/security/egress/dataClassification.ts",
+        "backend/src/security/egress/egressPolicy.ts",
+        "backend/src/security/egress/fileEgress.ts",
+        "backend/src/security/egress/securityDecision.ts",
+        "backend/src/security/egress/toolTrust.ts",
+        "backend/src/security/egress/types.ts",
+        "backend/src/security/egress/untrustedInput.ts",
+        "backend/src/security/egress/urlPolicy.ts",
         "backend/src/security/ownedRunPersistence.ts",
         "backend/src/security/ownedTerminalPersistence.ts",
         "backend/src/security/ownership.ts",
@@ -3455,6 +3474,7 @@
         "frontend/src/app/security/page.tsx",
         "scripts/security/attest-business-authority-receipt.mjs",
         "scripts/security/audit-credential-usage.mjs",
+        "scripts/security/audit-egress-callers.mjs",
         "scripts/security/audit-tenant-policies.mjs",
         "scripts/security/caller-reviews.mjs",
         "scripts/security/collect-local-security-logs.mjs",

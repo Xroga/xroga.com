@@ -1,26 +1,26 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "3354c9c376e71977ef85b3537f9d69dff6dbf0d68bc110aba128e676da96c5f9",
+  "reviewRegistrySha256": "9e69cda82d51215f9307a4ffd937ebf6d042c5ec30a7bd2a8501498dd9b23535",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 166,
-    "persistenceCandidates": 700,
+    "privilegedFactorySites": 167,
+    "persistenceCandidates": 704,
     "ownerPredicateCandidates": 165,
-    "reviewRequired": 20,
-    "reviewedCandidates": 680,
-    "unresolvedSafetyCandidates": 45,
+    "reviewRequired": 23,
+    "reviewedCandidates": 681,
+    "unresolvedSafetyCandidates": 48,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 18
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 20,
+    "REVIEW_REQUIRED": 23,
     "SCOPED_BOUNDARY": 453,
     "NARROW_EXCEPTION": 40,
-    "NOT_PERSISTENCE": 162,
+    "NOT_PERSISTENCE": 163,
     "REVIEWED_GAP": 25
   },
   "acceptance": {
@@ -28,8 +28,8 @@
     "result": "BLOCKED",
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
-    "verifiedCandidateBoundaries": 114,
-    "unresolvedCandidateBoundaries": 586,
+    "verifiedCandidateBoundaries": 109,
+    "unresolvedCandidateBoundaries": 595,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -209,6 +209,18 @@
       {
         "code": "STALE_NON_PERSISTENCE_REVIEW",
         "id": "OB-d0b4623166d38a36"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-f7b6692b59432ef0"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-f7b6692b59432ef0"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-f7b6692b59432ef0"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -777,6 +789,54 @@
       {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-83d8bf9008a76d71"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-a220de334a6a3387"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a220de334a6a3387"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-a220de334a6a3387"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-4f43d20d27ac2889"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-4f43d20d27ac2889"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-4f43d20d27ac2889"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-947ce0b2925e9d2c"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-947ce0b2925e9d2c"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-947ce0b2925e9d2c"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-0f4c2d59371b5bb9"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-0f4c2d59371b5bb9"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-0f4c2d59371b5bb9"
       },
       {
         "code": "STALE_CALLER_BINDING",
@@ -2568,6 +2628,18 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "097f3b056977288927ab"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "a014c3fc158d8544965e"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "6dad3dd6bb66b6180fa5"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "1169e490665cdec7b3a3"
       },
       {
@@ -2913,6 +2985,30 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "20a3c823cda2eea8179c"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "397bc5f68faa782a225a"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4666625d956886af8791"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "35dad2a7210ffe5b9e49"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "36ef0db9c4789780fc7e"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "b00bf62e77f7f1d7cc7f"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "6f5b4dd162285b19bdb0"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3688,6 +3784,18 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "36ef0db9c4789780fc7e"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "b00bf62e77f7f1d7cc7f"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "6f5b4dd162285b19bdb0"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "9ad5f0d15e0e54d3d953"
       },
       {
@@ -3849,6 +3957,18 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "eefa4a560bf7efb58fbf"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "097f3b056977288927ab"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "a014c3fc158d8544965e"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "6dad3dd6bb66b6180fa5"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -4980,6 +5100,18 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "397bc5f68faa782a225a"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "4666625d956886af8791"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "35dad2a7210ffe5b9e49"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "563c55ccb99efaf6f69b"
       },
       {
@@ -6017,38 +6149,17 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 700,
-    "structuredVerified": 114,
-    "structuredUnproven": 586,
-    "manualUnresolved": 45,
-    "manualUnsupported": 541,
-    "agreedVerified": 114,
+    "currentCallers": 704,
+    "structuredVerified": 109,
+    "structuredUnproven": 595,
+    "manualUnresolved": 48,
+    "manualUnsupported": 547,
+    "agreedVerified": 109,
     "proofAwaitingManualReconciliation": 0
   },
   "callers": [
     {
-      "id": "cd2b486a9d7f060cd3bc",
-      "path": "backend/src/ai/attachments.ts",
-      "line": 102,
-      "enclosing": "fetchAsBuffer",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "NOT_PERSISTENCE",
-      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
-      "semanticReview": {
-        "authority": "Inspected the receiver and surrounding expression in fetchAsBuffer. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
-        "evidence": [
-          {
-            "path": "backend/src/ai/attachments.ts",
-            "marker": "    if (/;base64/i.test(meta)) return Buffer.from(data, 'base64');\n    return Buffer.from(decodeURIComponent(data), 'utf8');\n  }"
-          }
-        ]
-      }
-    },
-    {
-      "id": "e21e7f85f2e0a5a7982f",
+      "id": "097f3b056977288927ab",
       "path": "backend/src/ai/attachments.ts",
       "line": 103,
       "enclosing": "fetchAsBuffer",
@@ -6056,56 +6167,56 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
+      "sourceSha256": "c50dc741653646df6b6dddc6ec1ba4337fa3b3a48a94b5d9a66afe52b81cbd46",
       "semanticReview": {
-        "authority": "Inspected the receiver and surrounding expression in fetchAsBuffer. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
+        "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",
         "evidence": [
           {
             "path": "backend/src/ai/attachments.ts",
-            "marker": "    return Buffer.from(decodeURIComponent(data), 'utf8');\n  }\n  assertSafeAttachmentUrl(url);"
+            "marker": "if (/;base64/i.test(meta)) return Buffer.from(data, 'base64');"
           }
         ]
       }
     },
     {
-      "id": "5584ba3ed9e6d2fa054a",
+      "id": "a014c3fc158d8544965e",
       "path": "backend/src/ai/attachments.ts",
-      "line": 109,
+      "line": 104,
       "enclosing": "fetchAsBuffer",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
+      "sourceSha256": "c50dc741653646df6b6dddc6ec1ba4337fa3b3a48a94b5d9a66afe52b81cbd46",
       "semanticReview": {
-        "authority": "Inspected the receiver and surrounding expression in fetchAsBuffer. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
+        "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",
         "evidence": [
           {
             "path": "backend/src/ai/attachments.ts",
-            "marker": "  return Buffer.from(ab);\n}\n"
+            "marker": "if (/;base64/i.test(meta)) return Buffer.from(data, 'base64');"
           }
         ]
       }
     },
     {
-      "id": "a60c96422aaa959a471d",
+      "id": "6dad3dd6bb66b6180fa5",
       "path": "backend/src/ai/attachments.ts",
-      "line": 155,
+      "line": 154,
       "enclosing": "extractDocxText",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
+      "sourceSha256": "c50dc741653646df6b6dddc6ec1ba4337fa3b3a48a94b5d9a66afe52b81cbd46",
       "semanticReview": {
-        "authority": "Inspected the receiver and surrounding expression in extractDocxText. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
+        "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",
         "evidence": [
           {
             "path": "backend/src/ai/attachments.ts",
-            "marker": "      if (method === 0) xml = Buffer.from(data);\n      else if (method === 8) xml = inflateRawSync(data);\n      else continue;"
+            "marker": "if (/;base64/i.test(meta)) return Buffer.from(data, 'base64');"
           }
         ]
       }
@@ -13718,18 +13829,18 @@
       }
     },
     {
-      "id": "5383a9cea2b6b4c93a63",
+      "id": "397bc5f68faa782a225a",
       "path": "backend/src/security/boundedPublicGet.ts",
-      "line": 130,
+      "line": 139,
       "enclosing": "boundedPublicGet",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "9a20c8cc0e496f893a18d79dba79b4beac820b9001bc1b06d2fc2772c70eee44",
+      "sourceSha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472",
       "semanticReview": {
-        "authority": "This candidate is Node Buffer.from converting an already received stream chunk before byte accounting. No database, storage bucket, identity or service-role client is accessed at this expression.",
-        "reason": "Source tracing proves a byte conversion rather than persistence. The enclosing inactive GET helper has separate SSRF and byte/time fixtures, but this disposition certifies neither future callers nor complete egress policy.",
+        "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
+        "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",
         "evidence": [
           {
             "path": "backend/src/security/boundedPublicGet.ts",
@@ -13737,6 +13848,81 @@
           }
         ]
       }
+    },
+    {
+      "id": "4666625d956886af8791",
+      "path": "backend/src/security/boundedPublicGet.ts",
+      "line": 169,
+      "enclosing": "boundedPublicPost",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472",
+      "semanticReview": {
+        "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
+        "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/security/boundedPublicGet.ts",
+            "marker": "const chunk = Buffer.isBuffer(item.value) ? item.value : Buffer.from(item.value);"
+          }
+        ]
+      }
+    },
+    {
+      "id": "35dad2a7210ffe5b9e49",
+      "path": "backend/src/security/boundedPublicGet.ts",
+      "line": 180,
+      "enclosing": "boundedPublicPost",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472",
+      "semanticReview": {
+        "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
+        "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/security/boundedPublicGet.ts",
+            "marker": "const chunk = Buffer.isBuffer(item.value) ? item.value : Buffer.from(item.value);"
+          }
+        ]
+      }
+    },
+    {
+      "id": "36ef0db9c4789780fc7e",
+      "path": "backend/src/security/egress/fileEgress.ts",
+      "line": 25,
+      "enclosing": "executeOwnedFileEgress",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "4407a4191556aaddd0b2baf977141df75234268334aa8ccc925c82bc687e3a1d"
+    },
+    {
+      "id": "b00bf62e77f7f1d7cc7f",
+      "path": "backend/src/security/egress/securityDecision.ts",
+      "line": 21,
+      "enclosing": "persistSecurityDecision",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "production_audit_log",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "961cd8cbefb5a179538c9f23b59a62d0162ce8f32db8737c6d020a237f7609cb"
+    },
+    {
+      "id": "6f5b4dd162285b19bdb0",
+      "path": "backend/src/security/egress/securityDecision.ts",
+      "line": 21,
+      "enclosing": "persistSecurityDecision",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "961cd8cbefb5a179538c9f23b59a62d0162ce8f32db8737c6d020a237f7609cb"
     },
     {
       "id": "563c55ccb99efaf6f69b",

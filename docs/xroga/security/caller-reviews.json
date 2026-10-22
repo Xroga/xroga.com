@@ -209,19 +209,22 @@
     },
     {
       "path": "backend/src/security/boundedPublicGet.ts",
-      "sourceSha256": "9a20c8cc0e496f893a18d79dba79b4beac820b9001bc1b06d2fc2772c70eee44",
+      "sourceSha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472",
       "callIds": [
-        "5383a9cea2b6b4c93a63"
+        "397bc5f68faa782a225a",
+        "4666625d956886af8791",
+        "35dad2a7210ffe5b9e49"
       ],
       "disposition": "NOT_PERSISTENCE",
-      "authority": "This candidate is Node Buffer.from converting an already received stream chunk before byte accounting. No database, storage bucket, identity or service-role client is accessed at this expression.",
-      "reason": "Source tracing proves a byte conversion rather than persistence. The enclosing inactive GET helper has separate SSRF and byte/time fixtures, but this disposition certifies neither future callers nor complete egress policy.",
+      "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
+      "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",
       "evidence": [
         {
           "path": "backend/src/security/boundedPublicGet.ts",
           "marker": "const chunk = Buffer.isBuffer(item.value) ? item.value : Buffer.from(item.value);"
         }
-      ]
+      ],
+      "priorReviewReference": "docs/xroga/evidence/command-010/PROVENANCE-REPAIR.json"
     },
     {
       "path": "backend/src/ai/benchmarkRunner.ts",
@@ -3335,67 +3338,22 @@
     },
     {
       "path": "backend/src/ai/attachments.ts",
-      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
+      "sourceSha256": "c50dc741653646df6b6dddc6ec1ba4337fa3b3a48a94b5d9a66afe52b81cbd46",
       "callIds": [
-        "cd2b486a9d7f060cd3bc"
+        "097f3b056977288927ab",
+        "a014c3fc158d8544965e",
+        "6dad3dd6bb66b6180fa5"
       ],
       "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected the receiver and surrounding expression in fetchAsBuffer. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
+      "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",
       "evidence": [
         {
           "path": "backend/src/ai/attachments.ts",
-          "marker": "    if (/;base64/i.test(meta)) return Buffer.from(data, 'base64');\n    return Buffer.from(decodeURIComponent(data), 'utf8');\n  }"
+          "marker": "if (/;base64/i.test(meta)) return Buffer.from(data, 'base64');"
         }
-      ]
-    },
-    {
-      "path": "backend/src/ai/attachments.ts",
-      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
-      "callIds": [
-        "e21e7f85f2e0a5a7982f"
       ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected the receiver and surrounding expression in fetchAsBuffer. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
-      "evidence": [
-        {
-          "path": "backend/src/ai/attachments.ts",
-          "marker": "    return Buffer.from(decodeURIComponent(data), 'utf8');\n  }\n  assertSafeAttachmentUrl(url);"
-        }
-      ]
-    },
-    {
-      "path": "backend/src/ai/attachments.ts",
-      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
-      "callIds": [
-        "5584ba3ed9e6d2fa054a"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected the receiver and surrounding expression in fetchAsBuffer. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
-      "evidence": [
-        {
-          "path": "backend/src/ai/attachments.ts",
-          "marker": "  return Buffer.from(ab);\n}\n"
-        }
-      ]
-    },
-    {
-      "path": "backend/src/ai/attachments.ts",
-      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
-      "callIds": [
-        "a60c96422aaa959a471d"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected the receiver and surrounding expression in extractDocxText. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
-      "evidence": [
-        {
-          "path": "backend/src/ai/attachments.ts",
-          "marker": "      if (method === 0) xml = Buffer.from(data);\n      else if (method === 8) xml = inflateRawSync(data);\n      else continue;"
-        }
-      ]
+      "priorReviewReference": "docs/xroga/evidence/command-010/PROVENANCE-REPAIR.json"
     },
     {
       "path": "backend/src/ai/black-hole/toolRegistry.ts",
