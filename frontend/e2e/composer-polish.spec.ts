@@ -2,6 +2,13 @@ import { test, expect } from '@playwright/test';
 
 test.use({ viewport: { width: 1280, height: 800 } });
 
+test.beforeEach(async ({ page, baseURL }) => {
+  if (!baseURL || !['localhost', '127.0.0.1'].includes(new URL(baseURL).hostname)) {
+    throw new Error('Composer UI verification requires an isolated local preview.');
+  }
+  await page.route('https://*.supabase.co/**', route => route.abort());
+});
+
 test('New Work composer is a single surface and model and voice actions remain usable', async ({ page }) => {
   await page.goto('/workspace');
   const frame = page.locator('.xv-terminal-dock--idle .xv-kimi-composer-frame');

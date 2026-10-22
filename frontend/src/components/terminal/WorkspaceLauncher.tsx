@@ -6,6 +6,10 @@ import { EyeClosedIcon } from '@/components/icons/animated/EyeClosedIcon';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useThemeStore } from '@/store/useThemeStore';
 import { cn } from '@/lib/utils';
+import { useTerminalChat } from '@/context/TerminalChatContext';
+import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
+import { draftForExplicitHide } from '@/lib/composerDraft';
+import { flushSync } from 'react-dom';
 
 /**
  * Compact workspace and composer controls owned by the terminal title bar.
@@ -19,6 +23,23 @@ export function WorkspaceLauncher({ className }: { className?: string }) {
   const setWorkspaceOpen = useProjectWorkspaceStore((s) => s.setWorkspaceOpen);
   const chatbarHidden = useThemeStore((s) => s.chatbarHidden);
   const setChatbarHidden = useThemeStore((s) => s.setChatbarHidden);
+  const { setPrompt, sessionId, projectId, sessionRestoring } = useTerminalChat();
+  const identity = useWorkspaceIdentity();
+
+  function toggleChatbar() {
+    if (!chatbarHidden) {
+      const snapshots = [...document.querySelectorAll<HTMLTextAreaElement>('[data-terminal-composer]')].map(input => ({
+        owner: input.dataset.draftOwner ?? '', session: input.dataset.draftSession ?? '',
+        project: input.dataset.draftProject ?? '', restoring: input.dataset.draftRestoring !== 'false', value: input.value,
+      }));
+      const latestDraft = draftForExplicitHide(snapshots, {
+        owner: identity.status === 'guest' ? 'guest' : identity.userId ?? '',
+        session: sessionId, project: projectId ?? '',
+      }, sessionRestoring);
+      if (latestDraft !== undefined) flushSync(() => setPrompt(latestDraft));
+    }
+    setChatbarHidden(!chatbarHidden);
+  }
 
   return (
     <div className={cn('flex items-center justify-end gap-1.5', className)}>
@@ -27,7 +48,7 @@ export function WorkspaceLauncher({ className }: { className?: string }) {
           still reaches assistive technology and hover. */}
       <button
         type="button"
-        onClick={() => setChatbarHidden(!chatbarHidden)}
+        onClick={toggleChatbar}
         className="xv-ws-launch xv-ws-launch--icon"
         aria-pressed={chatbarHidden}
         aria-label={chatbarHidden ? 'Show the chatbar' : 'Hide the chatbar'}

@@ -73,7 +73,7 @@ test('the rail carries workspace and the destinations people actually go to', ()
   const rail = code.slice(code.indexOf('xv-sidebar-collapsed-actions'));
   const block = rail.slice(0, rail.indexOf('</div>'));
   assert.match(block, /href="\/workspace"[\s\S]{0,100}aria-label="Workspace"/, 'Workspace should be first on the rail');
-  assert.match(block, /href="\/dashboard"[\s\S]{0,80}aria-label="Dashboard"/, 'Dashboard should be on the rail');
+  assert.match(block, /href="\/dashboard"[\s\S]{0,80}aria-label="Overview"/, 'Overview should link to the dashboard on the rail');
   assert.match(block, /href="\/dashboard\/projects"[\s\S]{0,80}aria-label="Projects"/, 'Projects should be on the rail');
 });
 
@@ -139,6 +139,11 @@ test('the collapsed rail has no width to drag', () => {
 });
 
 test('the behaviour is asserted where the workspace can be reached', () => {
+  const reopening = E2E.indexOf('const configuredSidebarWidth');
+  const coordinateCapture = E2E.indexOf('const toggleBox =');
+  assert.ok(reopening > 0 && coordinateCapture > reopening, 'wait for the transitioning control owner before capturing drag coordinates');
+  assert.match(E2E.slice(reopening, coordinateCapture), /rail\.locator\('\.xv-sidebar-floating'\)\)\.toHaveCSS\('width'/);
+  assert.match(E2E.slice(reopening, coordinateCapture), /await edgeToggle\.hover\(\)/);
   assert.match(E2E, /the collapsed rail still carries a sidebar toggle/);
   assert.match(E2E, /hovering the mark did not reopen the sidebar/);
   assert.match(E2E, /dragging from the toggle did not widen the sidebar/);

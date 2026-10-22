@@ -63,7 +63,9 @@ test('account popup groups destinations and displays authenticated identity', ()
   assert.match(PROFILE_MENU, /<UpgradeActionButton \/>/);
   assert.doesNotMatch(PROFILE_MENU, /<strong>Premium<\/strong>/);
   assert.match(PROFILE_MENU, /data\.user\?\.app_metadata\?\.provider/);
-  assert.match(PROFILE_MENU, /\{email \? <small>\{email\}<\/small> : null\}/);
+  assert.match(PROFILE_MENU, /\{email \? <button[\s\S]*?aria-label="Copy account email"[\s\S]*?<small>\{email\}<\/small>[\s\S]*?<\/button> : null\}/);
+  assert.match(PROFILE_MENU, /await navigator\.clipboard\.writeText\(email\); setEmailCopied\(true\)/);
+  assert.match(PROFILE_MENU, /emailCopied \?/);
   assert.match(PROFILE_MENU, /xv-pqm-submenu/);
   assert.match(PROFILE_MENU, /trigger\.right \+ gap/);
   assert.match(PROFILE_MENU, /event\.key !== 'Escape'/);

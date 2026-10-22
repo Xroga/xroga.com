@@ -189,15 +189,23 @@ test('the sidebar nav rows carry their animated icons', () => {
   }
 });
 
-test('the collapsed rail names each of its four shortcuts', () => {
+test('the collapsed rail keeps named workspace, creation, search and project shortcuts', () => {
   // Searched forward from the rail, not from the top of the file: `SidebarNavScroller`
   // is imported above it, so an unanchored lookup ends the slice before it starts.
   const start = SIDEBAR.indexOf('xv-sidebar-collapsed-actions');
   const rail = SIDEBAR.slice(start, SIDEBAR.indexOf('<SidebarNavScroller', start));
   assert.ok(rail.length > 0, 'the collapsed rail could not be located');
-  assert.match(rail, /icon=\{LocateFixedIcon\}/, 'the rail lost the search glyph');
-  assert.match(rail, /icon=\{LayoutGridIcon\}/, 'the rail lost the dashboard glyph');
+  assert.match(rail, /<LocateIcon size=\{16\} duration=\{1\}/, 'the rail lost the animated search glyph');
+  assert.match(rail, /<LucideBlocksIcon ref=\{overviewIconRef\} size=\{16\}/, 'the rail lost the animated overview glyph');
+  assert.match(rail, /overviewIconRef\.current\?\.startAnimation\(\)/);
+  assert.match(rail, /overviewIconRef\.current\?\.stopAnimation\(\)/);
   assert.match(rail, /icon=\{FolderOpenIcon\}/, 'the rail lost the folder');
+  for (const label of ['Workspace', 'New Work', 'Search', 'Overview', 'Projects', 'Integrations']) {
+    assert.ok(rail.includes(`aria-label="${label}"`), `${label} lost its accessible name`);
+  }
+  assert.match(rail, /onClick=\{\(\) => setSearchOpen\(true\)\}/);
+  assert.match(rail, /icon=\{TerminalIcon\}/);
+  assert.match(rail, /icon=\{ConnectIcon\}/);
   /*
    * The rail's second button carries the new-terminal window, not the code brackets.
    *
@@ -241,7 +249,15 @@ test('the send button takes the wheel at rest and keeps the rest of its states',
 
 test('the composer takes the ring, the bars and the wheel', () => {
   assert.match(ACTIONS, /icon=\{CirclePlayIcon\}/, 'the composer menu trigger is not the ring');
-  assert.ok(!/<Plus\b/.test(ACTIONS), 'the static plus is back');
+  // The reusable component defaults to the ring. PR834 explicitly opts the
+  // canonical non-private composer into Plus in both empty and active chats.
+  assert.match(ACTIONS, /plusIcon\s*=\s*false/, 'ordinary composer defaults to the ring');
+  assert.match(ACTIONS, /plusIcon\?:\s*boolean/, 'starter icon is an explicit opt-in');
+  assert.match(ACTIONS, /plusIcon\s*\?\s*<Plus\b[^>]*\/?>\s*:\s*<AnimatedIcon icon=\{CirclePlayIcon\}/);
+  assert.equal((ACTIONS.match(/<Plus\b/g) ?? []).length, 1, 'no unconditional or duplicate plus');
+  const CHATBAR = read('../../terminal/TerminalChatBar.tsx');
+  assert.match(CHATBAR, /starter\s*=\s*false/);
+  assert.match(CHATBAR, /plusIcon=\{!incognito\}/);
   /*
    * The mic renders the meter directly rather than through `AnimatedIcon`, because it
    * drives the animation from the recording state rather than from a pointer. What it
@@ -592,7 +608,15 @@ test('the New Terminal label is hidden by name, not by element', () => {
     'a bare span rule is back, which hides the icon along with the label',
   );
   assert.match(CSS, /\.xv-new-terminal-compact__label \{ display: none; \}/, 'the label is no longer hidden');
-  assert.match(SIDEBAR, /className="xv-new-terminal-compact__label"/, 'the label lost the class the rule targets');
+  // PR827 replaced the compact text label with named icon-only controls.
+  // Both desktop and mobile still need an accessible name and a visible glyph.
+  const buttons = [...SIDEBAR.matchAll(/<button\b[^>]*aria-label="New Work"[^>]*>([\s\S]*?)<\/button>/g)];
+  assert.equal(buttons.length, 2, 'expanded and collapsed New Work controls must remain present');
+  assert.match(SIDEBAR, /aria-label="New Terminal"[\s\S]*?<AnimatedIcon icon=\{NewTerminalIcon\}/, 'the mobile creation control must retain its accessible name and icon');
+  for (const [, content] of buttons) {
+    assert.match(content, /<AnimatedIcon icon=\{NewTerminalIcon\}/);
+    assert.doesNotMatch(content, /xv-new-terminal-compact__label/, 'the retired hidden label must not wrap the icon');
+  }
 
   // The icon's own wrapper is a span, which is the whole reason the rule had to change.
   assert.match(HOST, /<span ref=\{hostRef\}/, 'the host is no longer a span, so this guard is checking the wrong thing');

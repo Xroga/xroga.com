@@ -1,4 +1,19 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
+
+async function chooseStarter(page: Page, feature: string) {
+  const input = page.locator('[data-terminal-composer]');
+  const previous = await input.inputValue();
+  await page.getByRole('menuitem', { name: feature, exact: true }).hover();
+  const detail = page.getByRole('region', { name: `${feature} action`, exact: true });
+  await expect(detail).toBeVisible();
+  await detail.getByRole('button', { name: 'Use this in chat' }).click();
+  await expect.poll(() => input.inputValue()).toContain('My goal:');
+  const next = await input.inputValue();
+  expect(next.startsWith(`${previous ? `${previous.trimEnd()}\n\n` : ''}I want Xroga to help with ${feature.toLowerCase()}`)).toBe(true);
+  expect(next).toContain('Ask for approval before publishing, making payments, sending messages, or changing external systems.');
+  expect(next).toContain('Acceptance criteria:');
+  expect(next).toContain('Do not claim successful execution without evidence.');
+}
 
 // Local UI fixtures only: no authentication bypass or real model requests.
 test.use({ bypassCSP: true });
@@ -7,6 +22,8 @@ test.beforeEach(async ({ page, baseURL }) => {
   if (!baseURL || !['localhost', '127.0.0.1'].includes(new URL(baseURL).hostname)) {
     throw new Error('Run this mocked interaction test against a local preview only.');
   }
+  // This UI fixture must never send authentication traffic to a live project.
+  await page.route('https://*.supabase.co/**', route => route.abort());
   await page.route('**/api/guest/chat', route => route.fulfill({
     status: 200,
     contentType: 'application/json',
@@ -19,7 +36,101 @@ test.beforeEach(async ({ page, baseURL }) => {
   }));
 });
 
-test('compact visual starter fits desktop, tablet and phones without overflowing', async ({ page }) => {
+test('canonical public composers preserve the approved Plus controls without a second composer', async ({ page }) => {
+  await page.goto('/workspace');
+  const composer = page.locator('[data-terminal-composer]');
+  const actions = page.getByRole('button', { name: 'More composer actions', exact: true });
+  await expect(page.getByTestId('workspace-start-header')).toBeVisible();
+  await expect(page.getByTestId('xroga-companion-composer')).toHaveCount(0);
+  await expect(actions.locator('svg.lucide-plus')).toHaveCount(1);
+  await expect(composer).toHaveCount(1);
+  await composer.fill('Local icon-transition fixture');
+  await page.getByRole('button', { name: 'Send prompt', exact: true }).click();
+  await expect(page.getByText('Local UI fixture reply verified.', { exact: false }).first()).toBeVisible();
+  await expect(page.getByTestId('workspace-start-header')).toHaveCount(0);
+  await expect(page.getByTestId('workspace-start-cards')).toHaveCount(0);
+  const activeCompanion = page.getByTestId('xroga-companion-composer');
+  await expect(activeCompanion).toBeVisible();
+  await expect(activeCompanion.getByRole('button', { name: /show usage/i })).toBeVisible();
+  await expect(activeCompanion.getByRole('button', { name: 'Start voice input' })).toHaveCount(0);
+  await expect(actions.locator('svg.lucide-plus')).toHaveCount(1);
+  await expect(actions.locator('svg')).toHaveCount(1);
+  await expect(page.locator('.xv-chatbar-solid').getByRole('button', { name: 'Projects', exact: true })).toBeVisible();
+  await expect(page.locator('.xv-chatbar-solid').getByRole('button', { name: 'Plugins', exact: true })).toBeVisible();
+  await expect(composer).toHaveCount(1);
+});
+
+test('fullscreen preserves the current starter, draft and one composer on entry and exit', async ({ page }) => {
+  await page.goto('/workspace');
+  const composer = page.locator('[data-terminal-composer]');
+  await expect(page.getByTestId('workspace-start-header')).toBeVisible();
+  await composer.fill('Draft retained through fullscreen');
+  const header = page.getByTestId('terminal-identity-header');
+  await header.getByRole('button', { name: 'Fullscreen terminal', exact: true }).click();
+  await expect(page.locator('body')).toHaveClass(/xv-terminal-fullscreen-active/);
+  await expect(page.getByTestId('workspace-start-header')).toBeVisible();
+  await expect(page.getByTestId('workspace-start-cards')).toBeVisible();
+  await expect(composer).toHaveCount(1);
+  await expect(composer).toHaveValue('Draft retained through fullscreen');
+  await header.getByRole('button', { name: 'Exit fullscreen', exact: true }).click();
+  await expect(page.locator('body')).not.toHaveClass(/xv-terminal-fullscreen-active/);
+  await expect(composer).toHaveValue('Draft retained through fullscreen');
+});
+
+test('the title-bar toggle hides the single composer and restores its draft without a floating duplicate', async ({ page }) => {
+  await page.goto('/workspace');
+  const composer = page.locator('[data-terminal-composer]');
+  const header = page.getByTestId('terminal-identity-header');
+  await expect(composer).toHaveAttribute('data-draft-restoring', 'false');
+  await page.clock.install();
+  await page.clock.pauseAt(new Date(Date.now() + 1_000));
+  for (const draft of ['Retained local hide/restore draft', 'rapid second edit\n日本語', '', 'final draft']) {
+  await composer.fill(draft);
+  await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
+  await expect(composer).toHaveCount(0);
+  await expect(page.getByTestId('persistent-terminal-dock').getByRole('button', { name: 'Show the chatbar' })).toHaveCount(0);
+  const restore = header.getByRole('button', { name: 'Show the chatbar', exact: true });
+  await expect(restore).toHaveAttribute('aria-pressed', 'true');
+  await restore.click();
+  await expect(composer).toHaveCount(1);
+  await expect(composer).toHaveValue(draft);
+  await expect(header.getByRole('button', { name: 'Hide the chatbar', exact: true })).toHaveAttribute('aria-pressed', 'false');
+  }
+});
+
+test('explicit hide refuses a stale account, conversation or project snapshot', async ({ page }) => {
+  await page.goto('/workspace');
+  const composer = page.locator('[data-terminal-composer]');
+  const header = page.getByTestId('terminal-identity-header');
+  await expect(composer).toBeVisible();
+  await page.clock.install();
+  await page.clock.pauseAt(new Date(Date.now() + 1_000));
+  // Local defensive UI guard, not a substitute for real authenticated tests.
+  for (const attribute of ['data-draft-owner', 'data-draft-session', 'data-draft-project']) {
+    await composer.fill(`STALE_UI_${attribute}`);
+    await composer.evaluate((element, name) => element.setAttribute(name, 'foreign-scope'), attribute);
+    await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
+    await header.getByRole('button', { name: 'Show the chatbar', exact: true }).click();
+    await expect(composer).toHaveValue('');
+  }
+});
+
+test('private empty workspace never exposes starter cards or starter plus', async ({ page }) => {
+  await page.addInitScript(() => {
+    // Persist a preference belonging to this guest, not an authenticated session.
+    // Missing cache ownership correctly purges legacy cross-account preferences.
+    localStorage.setItem('xroga-cache-owner', 'v2:guest');
+    localStorage.setItem('xroga-privacy-v1', JSON.stringify({ state: { incognito: true }, version: 0 }));
+  });
+  await page.goto('/workspace');
+  await expect(page.locator('[data-terminal-composer]')).toHaveCount(1);
+  await expect(page.locator('[data-terminal-composer]')).toHaveAttribute('placeholder', 'Type a private message…');
+  await expect(page.getByTestId('workspace-start-header')).toHaveCount(0);
+  await expect(page.getByTestId('workspace-start-cards')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'More composer actions', exact: true })).toHaveCount(0);
+});
+
+test('visual starter stays within the pane and every control remains reachable at each viewport', async ({ page }) => {
   await page.goto('/workspace');
   const header = page.getByTestId('workspace-start-header');
   await expect(header).toBeVisible();
@@ -29,6 +140,10 @@ test('compact visual starter fits desktop, tablet and phones without overflowing
   await expect(page.getByText('DESCRIBE IT.', { exact: false })).toHaveCount(0);
   await expect(page.getByRole('complementary', { name: 'Xroga early access notice' })).toHaveCount(0);
   await expect(page.getByTestId('workspace-start-cards').locator('img')).toHaveCount(0);
+  // Measure a stable panel through its public pause control. Rotation itself
+  // is covered independently below, including its four-second interval.
+  await page.getByRole('button', { name: 'Show AI Employees', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Resume automation rotation' })).toBeVisible();
   for (const viewport of [{ width: 1366, height: 768 }, { width: 1280, height: 650 }, { width: 768, height: 1024 }, { width: 390, height: 844 }, { width: 320, height: 740 }]) {
     await page.setViewportSize(viewport);
     // Wait for the existing workspace's animated sidebar/pane measurement.
@@ -36,7 +151,23 @@ test('compact visual starter fits desktop, tablet and phones without overflowing
     const dock = page.getByTestId('persistent-terminal-dock');
     const sizes = await dock.evaluate(el => ({ width: el.clientWidth, scrollWidth: el.scrollWidth, height: el.clientHeight, scrollHeight: el.scrollHeight }));
     expect(sizes.scrollWidth, JSON.stringify(viewport)).toBeLessThanOrEqual(sizes.width + 1);
-    expect(sizes.scrollHeight, JSON.stringify(viewport)).toBeLessThanOrEqual(sizes.height + 1);
+    // The current idle dock explicitly permits vertical scrolling. Verify
+    // containment and actual reachability instead of requiring a retired fit.
+    expect(sizes.height, JSON.stringify(viewport)).toBeLessThanOrEqual(viewport.height);
+    expect(await dock.evaluate(el => getComputedStyle(el).overflowY)).toBe('auto');
+    const lastCard = page.locator('[data-capability]').last();
+    await lastCard.scrollIntoViewIfNeeded();
+    await expect(lastCard).toBeInViewport();
+    if (sizes.scrollHeight > sizes.height + 1) {
+      // Overflow can be only bottom padding, so scrollIntoView needn't move.
+      // Exercise the actual scroll range explicitly before asserting it.
+      await dock.evaluate(el => { el.scrollTop = el.scrollHeight; });
+      expect(await dock.evaluate(el => el.scrollTop)).toBeGreaterThan(0);
+    }
+    const input = page.locator('[data-terminal-composer]');
+    await input.scrollIntoViewIfNeeded();
+    await expect(input).toBeInViewport();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport.width);
     await expect(page.locator('[data-capability]')).toHaveCount(5);
     await expect(page.locator('[data-terminal-composer]')).toHaveCount(1);
     await expect(header.locator('img')).toHaveCount(0);
@@ -77,12 +208,12 @@ test('cards preserve drafts and conversation removes all starter styling', async
   const input = page.locator('[data-terminal-composer]');
   await expect(cards).toBeVisible();
   await cards.getByRole('button', { name: 'Create', exact: true }).click();
-  await page.getByRole('menuitem', { name: 'Documents', exact: true }).click();
-  await expect(input).toHaveValue('Draft a document about: ');
+  await chooseStarter(page, 'Documents');
+  await expect(input).toHaveValue(/My goal: Draft a document about:/);
   await input.fill('My exact written brief');
   await cards.getByRole('button', { name: 'Find', exact: true }).click();
-  await page.getByRole('menuitem', { name: 'Web research', exact: true }).click();
-  await expect(input).toHaveValue('My exact written brief\n\nResearch this topic on the web and cite sources: ');
+  await chooseStarter(page, 'Web research');
+  await expect(input).toHaveValue(/^My exact written brief\n\nI want Xroga[\s\S]*My goal: Research this topic on the web and cite sources:/);
   await input.fill('Hello, local UI fixture test');
   await page.getByRole('button', { name: 'Send prompt', exact: true }).click();
   await expect(page.getByText('Local UI fixture reply verified.', { exact: false }).first()).toBeVisible();
@@ -105,12 +236,16 @@ test('feature menus open only on click, support keyboard and never send', async 
   await expect(page.getByRole('menu', { name: 'Create features' })).toHaveCount(0);
   await page.locator('[data-capability="create"]').click();
   await expect(page.getByRole('menu', { name: 'Create features' })).toBeVisible();
-  await page.getByRole('menuitem', { name: 'Images', exact: true }).click();
-  await expect(input).toHaveValue('Create an image of: ');
+  await chooseStarter(page, 'Images');
+  await expect(input).toHaveValue(/My goal: Create an image of:/);
   await page.locator('[data-capability="build"]').click();
-  await expect(page.getByRole('menuitem', { name: 'Websites', exact: true })).toBeFocused();
-  await page.keyboard.press('ArrowDown');
-  await expect(page.getByRole('menuitem', { name: 'Apps', exact: true })).toBeFocused();
+  // PR833 makes focus reveal the category detail. Both the detail action and
+  // Back remain keyboard reachable, with Escape dismissing the whole portal.
+  await page.getByRole('menuitem', { name: 'Apps', exact: true }).focus();
+  await expect(page.getByRole('region', { name: 'Apps action', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Back to categories', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('group', { name: 'Build categories', exact: true })).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('menu', { name: 'Build features' })).toHaveCount(0);
   for (const [id, feature, expected] of [
@@ -118,8 +253,8 @@ test('feature menus open only on click, support keyboard and never send', async 
     ['ship', 'Test a project', 'Test this project'],
   ]) {
     await page.locator(`[data-capability="${id}"]`).click();
-    await page.getByRole('menuitem', { name: feature, exact: true }).click();
-    await expect(input).toHaveValue(new RegExp(`^${expected}`));
+    await chooseStarter(page, feature);
+    await expect(input).toHaveValue(new RegExp(`My goal: ${expected}`));
   }
   for (const [title, id, feature, expected] of [
     ['AI Employees', 'employees', 'Research assistant', 'Help me delegate'],
@@ -128,8 +263,8 @@ test('feature menus open only on click, support keyboard and never send', async 
   ]) {
     await page.getByRole('button', { name: `Show ${title}`, exact: true }).click();
     await page.locator(`[data-capability="${id}"]`).click();
-    await page.getByRole('menuitem', { name: feature, exact: true }).click();
-    await expect(input).toHaveValue(new RegExp(`^${expected}`));
+    await chooseStarter(page, feature);
+    await expect(input).toHaveValue(new RegExp(`My goal: ${expected}`));
   }
   expect(requests).toBe(0);
 });
@@ -149,7 +284,7 @@ test('automation panels rotate every four seconds and dots pause on a selected p
   await expect(page.getByRole('button', { name: 'Resume automation rotation' })).toBeVisible();
 });
 
-test('solid model and plus menus are monochrome and mobile uses only a model symbol', async ({ page }) => {
+test('solid model and plus menus are monochrome and mobile preserves the readable model name', async ({ page }) => {
   await page.goto('/workspace');
   await expect(page.getByTestId('workspace-start-header')).toBeVisible();
   await expect(page.locator('.xv-workspace-shell')).toHaveCSS('background-color', 'rgb(0, 0, 0)');
@@ -166,11 +301,14 @@ test('solid model and plus menus are monochrome and mobile uses only a model sym
   await expect(page.getByRole('dialog', { name: 'Composer actions' })).toHaveCSS('filter', 'none');
   await page.keyboard.press('Escape');
   await page.setViewportSize({ width: 390, height: 844 });
-  await expect(model.locator('span')).toBeHidden();
-  await expect(page.getByTestId('mobile-model-icon')).toBeVisible();
+  // Approved PR833 explicitly keeps the readable name on mobile and hides the
+  // decorative substitute. Preserve routing access and both menu behaviors.
+  await expect(model.locator('span')).toBeVisible();
+  await expect(model.locator('span')).toHaveText('Black Hole V∞');
+  await expect(page.getByTestId('mobile-model-icon')).toBeHidden();
   await page.locator('[data-capability="create"]').click();
-  await page.getByRole('menuitem', { name: 'Documents', exact: true }).click();
-  await expect(page.locator('[data-terminal-composer]')).toHaveValue('Draft a document about: ');
+  await chooseStarter(page, 'Documents');
+  await expect(page.locator('[data-terminal-composer]')).toHaveValue(/My goal: Draft a document about:/);
 });
 
 test('mobile header joins the workspace and five cards reveal descriptions on tap', async ({ page }) => {
@@ -228,7 +366,15 @@ test('compact sidebar keeps utilities and primary destinations in two aligned ro
   await expect(sidebar.getByRole('button', { name: 'New Work', exact: true })).toBeVisible();
   await sidebar.getByRole('button', { name: 'Close sidebar', exact: true }).click();
   await expect(sidebar).toHaveClass(/is-collapsed/);
-  await expect(sidebar.getByRole('link', { name: 'Overview', exact: true })).toBeVisible();
+  const overview = sidebar.getByRole('link', { name: 'Overview', exact: true });
+  await expect(overview).toBeVisible();
+  await expect(overview).toHaveAttribute('href', '/dashboard');
+  await expect(sidebar.getByRole('link', { name: 'Projects', exact: true })).toHaveAttribute('href', '/dashboard/projects');
+  await expect(sidebar.getByRole('button', { name: 'New Work', exact: true })).toBeVisible();
+  // Workspace remains a separate shortcut alongside Overview.
+  const workspace = sidebar.getByRole('link', { name: 'Workspace', exact: true });
+  await expect(workspace).toBeVisible();
+  await expect(workspace).toHaveAttribute('href', '/workspace');
   await sidebar.locator('img').first().hover();
   await page.waitForTimeout(500);
   await expect(sidebar).toHaveClass(/is-collapsed/);
@@ -240,6 +386,63 @@ test('compact sidebar keeps utilities and primary destinations in two aligned ro
   await page.mouse.move(80, handle!.y + 100, { steps: 12 });
   await page.mouse.up();
   await expect(sidebar).toHaveClass(/is-collapsed/);
+});
+
+test('reopened close control resizes the sidebar without collapsing or selecting its text', async ({ page }) => {
+  await page.goto('/workspace');
+  await expect(page.locator('[data-terminal-composer]')).toHaveAttribute('data-draft-restoring', 'false');
+  const rail = page.locator('.xv-sidebar-root');
+  const floating = rail.locator('.xv-sidebar-floating');
+  const close = rail.getByRole('button', { name: 'Close sidebar', exact: true });
+  for (let cycle = 0; cycle < 3; cycle++) {
+    const resize = page.getByRole('separator', { name: 'Resize sidebar' });
+    await resize.press('Home');
+    const width = Number(await resize.getAttribute('aria-valuemin'));
+    await expect(floating).toHaveCSS('width', `${width}px`);
+    await close.click();
+    await expect(rail).toHaveClass(/is-collapsed/);
+    await expect(floating).toHaveCSS('width', '64px');
+    await rail.locator('.xv-sidebar-brand a[aria-label="Xroga"]').click();
+    await expect(rail).not.toHaveClass(/is-collapsed/);
+    await expect(floating).toHaveCSS('width', `${width}px`);
+    await close.hover();
+    const before = (await rail.boundingBox())!;
+    const button = (await close.boundingBox())!;
+    const x = button.x + button.width / 2, y = button.y + button.height / 2;
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await page.mouse.move(x + 130, y, { steps: 14 });
+    await page.mouse.up();
+    await expect.poll(async () => (await rail.boundingBox())!.width - before.width).toBeGreaterThan(50);
+    await expect(rail).not.toHaveClass(/is-collapsed/);
+    expect(await page.evaluate(() => window.getSelection()?.toString() ?? '')).toBe('');
+  }
+});
+
+test('theme menu retains its owner and dismisses after explicit sidebar reopening', async ({ page }) => {
+  await page.goto('/workspace');
+  await expect(page.locator('[data-terminal-composer]')).toHaveAttribute('data-draft-restoring', 'false');
+  const rail = page.locator('.xv-sidebar-root');
+  for (let cycle = 0; cycle < 3; cycle++) {
+    await rail.getByRole('button', { name: 'Close sidebar', exact: true }).click();
+    await expect(rail.locator('.xv-sidebar-floating')).toHaveCSS('width', '64px');
+    await expect(rail.getByRole('button', { name: 'Change theme', exact: true })).toBeVisible();
+    const mark = rail.locator('.xv-sidebar-brand a[aria-label="Xroga"]');
+    await mark.hover();
+    await expect(rail).toHaveClass(/is-collapsed/);
+    await mark.click();
+    const width = Number(await page.getByRole('separator', { name: 'Resize sidebar' }).getAttribute('aria-valuenow'));
+    await expect(rail.locator('.xv-sidebar-floating')).toHaveCSS('width', `${width}px`);
+    const theme = rail.getByRole('button', { name: 'Change theme', exact: true });
+    await theme.click();
+    await expect(theme).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.getByRole('menu')).toBeVisible();
+    await expect(page.getByRole('menuitemradio')).toHaveCount(4);
+    await theme.click();
+    await expect(theme).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.getByRole('menu')).toHaveCount(0);
+    await expect(rail).not.toHaveClass(/is-collapsed/);
+  }
 });
 
 test('plus menu follows the empty or working composer and model stays uncovered', async ({ page }) => {
@@ -291,7 +494,7 @@ test('mobile tagline stays on one line and tool picks are editable, removable an
 
 test('search dialog escapes workspace stacking context and has an opaque foreground', async ({ page }) => {
   await page.goto('/workspace');
-  const search = page.getByRole('button', { name: 'Search', exact: true }).first();
+  const search = page.getByRole('button', { name: 'Search workspace', exact: true });
   await search.click();
   const dialog = page.getByRole('dialog', { name: 'Search projects and chats' });
   await expect(dialog).toBeVisible();
@@ -302,11 +505,23 @@ test('search dialog escapes workspace stacking context and has an opaque foregro
 });
 
 test('automatic intro reveals its second line after delay without a model picker', async ({ page }) => {
+  await page.clock.install();
+  await page.clock.pauseAt(new Date(Date.now() + 1000));
   await page.goto('/workspace');
-  const detail = page.locator('[data-visible]').filter({ hasText: 'No models or tools to choose.' });
+  const first = page.locator('[data-visible]').filter({ hasText: 'No models or tools to choose.' });
+  const detail = page.locator('[data-visible]').filter({ hasText: 'Type or speak your goal. Xroga chooses the right tools and handles the work.' });
+  await expect(first).toHaveAttribute('data-visible', 'true');
+  await expect(first).toHaveAttribute('aria-hidden', 'false');
   await expect(detail).toHaveAttribute('data-visible', 'false');
-  await page.waitForTimeout(2400);
+  await expect(detail).toHaveAttribute('aria-hidden', 'true');
+  await page.clock.fastForward(2100);
+  await expect(detail).toHaveAttribute('data-visible', 'false');
+  await page.clock.fastForward(200);
+  await expect(first).toHaveAttribute('data-visible', 'false');
+  await expect(first).toHaveAttribute('aria-hidden', 'true');
   await expect(detail).toHaveAttribute('data-visible', 'true');
+  await expect(detail).toHaveAttribute('aria-hidden', 'false');
+  await expect(page.getByRole('button', { name: 'Choose model', exact: true })).toHaveCount(0);
   await expect(page.getByTestId('workspace-start-header').locator('p')).toContainText('One AI workspace for every kind of ');
 });
 

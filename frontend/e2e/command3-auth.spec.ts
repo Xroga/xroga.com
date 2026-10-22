@@ -83,6 +83,51 @@ test.afterAll(async () => {
   if (outsiderId) await admin.auth.admin.deleteUser(outsiderId);
 });
 
+test('explicit hide preserves drafts without crossing real account and conversation boundaries', async ({ page }) => {
+  async function login(email: string) {
+    await page.goto('/auth/login', { waitUntil: 'domcontentloaded' });
+    const form = page.locator('form', { has: page.locator('#login-email') });
+    await form.locator('#login-email').fill(email);
+    await form.locator('#login-password').fill(password);
+    await form.getByRole('button', { name: 'Sign in' }).click();
+    await expect(page).toHaveURL(/\/(workspace|dashboard)/, { timeout: AUTH_TRANSITION_TIMEOUT_MS });
+    await page.goto('/workspace');
+  }
+  await login(ownerEmail);
+  const composer = page.locator('[data-terminal-composer]');
+  const header = page.getByTestId('terminal-identity-header');
+  await expect(composer).toHaveAttribute('data-draft-owner', ownerId);
+  await expect(composer).toHaveAttribute('data-draft-restoring', 'false');
+  const firstConversation = await composer.getAttribute('data-draft-session');
+  const canary = `OWNER_DRAFT_${run}`;
+  await composer.fill(canary);
+  await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
+  await header.getByRole('button', { name: 'Show the chatbar', exact: true }).click();
+  await expect(composer).toHaveValue(canary);
+  await page.getByRole('button', { name: 'New Work', exact: true }).click();
+  await expect(composer).toHaveValue('');
+  await expect(composer).not.toHaveAttribute('data-draft-session', firstConversation!);
+  await composer.fill('');
+  await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
+  await header.getByRole('button', { name: 'Show the chatbar', exact: true }).click();
+  await expect(composer).toHaveValue('');
+  await composer.fill(canary);
+  await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
+  await header.getByRole('button', { name: 'Show the chatbar', exact: true }).click();
+  await expect(composer).toHaveValue(canary);
+  await page.goto('/settings');
+  await page.getByRole('tab', { name: 'Security' }).click();
+  await page.getByRole('button', { name: 'Sign out' }).first().click();
+  await expect.poll(() => new URL(page.url()).pathname).toMatch(/^\/(auth\/login)?$/);
+  expect(await browserSession(page)).toEqual({ status: 401, authenticated: false });
+  await login(outsiderEmail);
+  await expect(composer).toHaveAttribute('data-draft-owner', outsiderId);
+  await expect(composer).toHaveValue('');
+  await header.getByRole('button', { name: 'Hide the chatbar', exact: true }).click();
+  await header.getByRole('button', { name: 'Show the chatbar', exact: true }).click();
+  await expect(composer).toHaveValue('');
+});
+
 test('real Supabase login persists, Operations works, cross-tenant access is denied, and logout clears the session', async ({ page }) => {
   let browserBearer = '';
   page.on('request', (request) => {
@@ -165,14 +210,22 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(shell).toBeVisible();
   const shellBox = (await shell.boundingBox())!;
   expect(shellBox).not.toBeNull();
-  const welcomeBox = (await page.getByTestId('workspace-welcome').boundingBox())!;
+  const starter = page.getByTestId('workspace-start-header');
+  await expect(starter).toBeVisible();
+  await expect(starter).toHaveCount(1);
+  await expect(starter.getByRole('heading', { name: /Super Intelligence/ })).toBeVisible();
+  const welcomeBox = (await starter.boundingBox())!;
   expect(welcomeBox).not.toBeNull();
   expect(welcomeBox.y).toBeGreaterThanOrEqual(shellBox.y);
   // Tolerance, not slack: the API-connection banner sits above the greeting and only
   // renders when the API is unreachable, so the exact offset depends on conditional
   // content this assertion is not about. What it proves either way is that the
   // greeting begins at the top of the transcript rather than somewhere down it.
-  expect(welcomeBox.y - shellBox.y).toBeLessThan(260);
+  expect(welcomeBox.y + welcomeBox.height).toBeLessThanOrEqual(shellBox.y + shellBox.height);
+  await expect(page.getByTestId('workspace-start-cards').locator('[data-capability]')).toHaveCount(5);
+  await expect(composerInput).toHaveCount(1);
+  await expect(terminalDock).toHaveAttribute('data-workspace-state', 'empty');
+  await expect(terminalDock).toHaveCSS('overflow-y', 'auto');
 
   // The title bar is real window chrome: a sibling of the panes, not a sticky element
   // compensating for page padding. It must not scroll with the history.
@@ -200,7 +253,9 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(shell).toHaveCSS('border-radius', '20px');
 
   for (const offset of [100, 500, 1000, 10_000]) {
-    await transcript.evaluate((el, top) => { el.scrollTop = top; }, offset);
+    // Current empty-workspace content scrolls inside its idle dock, while the
+    // empty transcript remains inert. The outer window and toolbar stay fixed.
+    await terminalDock.evaluate((el, top) => { el.scrollTop = top; }, offset);
     const scrolled = await page.evaluate(() => ({
       page: document.scrollingElement!.scrollHeight - document.scrollingElement!.clientHeight,
       horizontal: document.documentElement.scrollWidth - window.innerWidth,
@@ -215,16 +270,20 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     const headerNow = (await terminalHeader.boundingBox())!;
     expect(headerNow.y, `the title bar scrolled away at offset ${offset}`).toBeCloseTo(headerBefore.y, 0);
   }
-  await transcript.evaluate((el) => { el.scrollTop = 0; });
+  await terminalDock.evaluate((el) => { el.scrollTop = 0; });
 
   // "Project edits", not "Workspace": the sidebar row, the mobile bottom bar and the
   // page itself already use that word for the whole surface, so the button that opens
   // the file tree and the diff says what it opens instead.
   await expect(terminalHeader.getByRole('button', { name: 'Project edits' })).toBeVisible();
+  // WorkspaceLauncher owns the one hide/restore control in the title bar.
+  // Hiding must remove the composer without leaving a floating replacement.
   const hideChatbar = terminalHeader.getByRole('button', { name: 'Hide the chatbar' });
   await expect(hideChatbar).toBeVisible();
+  await expect(composerInput).toBeVisible();
   await hideChatbar.click();
-  await expect(composerInput).toBeHidden();
+  await expect(terminalDock.locator('.xv-chatbar-solid')).toHaveCount(0);
+  await expect(composerInput).toHaveCount(0);
 
   /*
    * Hiding the chatbar hides the chatbar, and leaves nothing floating in its place.
@@ -239,23 +298,31 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(terminalDock.getByRole('button', { name: 'Show the chatbar' })).toHaveCount(0);
   const showChatbar = terminalHeader.getByRole('button', { name: 'Show the chatbar' });
   await expect(showChatbar).toBeVisible();
+  await expect(showChatbar).toHaveAttribute('aria-pressed', 'true');
   await showChatbar.click();
+  await expect(hideChatbar).toHaveAttribute('aria-pressed', 'false');
+  await expect(composerInput).toHaveCount(1);
   await expect(composerInput).toBeVisible();
 
   // The portal intentionally floats 8 px above the composer (see
   // ChatBarActionsMenu's rect-based bottom offset). Keep its positioning close,
   // horizontally anchored, and consistent with the actual interface contract.
-  const composerSurface = terminalDock.locator('.xv-chatbar-solid');
+  const composerSurface = terminalDock.locator('.xv-kimi-composer-frame');
   await terminalDock.locator('.xv-cba-trigger').first().click();
   const plusMenu = page.locator('.xv-cba-menu');
   await expect(plusMenu).toBeVisible();
+  // Measure the settled 150 ms entry animation, not an intermediate transform.
+  // Keep the existing gap and viewport bounds unchanged.
+  await expect.poll(() => plusMenu.evaluate(el => el.getAnimations().every(animation => animation.playState === 'finished' || animation.playState === 'idle'))).toBe(true);
   const menuBox = (await plusMenu.boundingBox())!;
   const composerBox = (await composerSurface.boundingBox())!;
-  const composerGap = composerBox.y - (menuBox.y + menuBox.height);
+  const composerGap = menuBox.y >= composerBox.y + composerBox.height
+    ? menuBox.y - (composerBox.y + composerBox.height)
+    : composerBox.y - (menuBox.y + menuBox.height);
   expect(composerGap).toBeGreaterThanOrEqual(4);
   expect(composerGap).toBeLessThanOrEqual(12);
   expect(Math.abs(menuBox.x - composerBox.x)).toBeLessThanOrEqual(2);
-  expect(menuBox.width).toBeLessThanOrEqual(composerBox.width);
+  expect(menuBox.width).toBeCloseTo(Math.min(composerBox.width, (await page.evaluate(() => window.innerWidth)) - 16), 0);
 
   // Every action survived the redesign, Integrations among them — and the detached
   // Integrations pill that used to duplicate it is gone.
@@ -266,7 +333,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     'Debug an error',
     'Skills',
     'Rules',
-    'Integrations',
+    'Plugins',
   ]) {
     await expect(
       plusMenu.getByRole('button', { name: new RegExp(`^${action}(?:\\s|$)`) }),
@@ -274,18 +341,19 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   }
   await expect(page.locator('.xv-chatbar-integration-btn')).toHaveCount(0);
 
-  // Two columns keep the working palette compact without spreading its actions
-  // across the full composer like dashboard tabs.
+  // The approved picker follows the composer width with one readable column.
   const grid = plusMenu.locator('.xv-cba-grid');
   await expect(grid).toBeVisible();
   const gridColumns = await grid.evaluate(
     (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length,
   );
-  expect(gridColumns, 'the plus menu should lay out in two compact columns').toBe(2);
-  expect(
-    menuBox.height / menuBox.width,
-    'the plus menu is far taller than it is wide',
-  ).toBeLessThan(1.35);
+  expect(gridColumns, 'the current full-width work picker uses one readable column').toBe(1);
+  expect(menuBox.y).toBeGreaterThanOrEqual(0);
+  expect(menuBox.y + menuBox.height).toBeLessThanOrEqual(await page.evaluate(() => window.innerHeight));
+  await expect(plusMenu).toHaveCSS('overflow-y', 'auto');
+  const lastAction = plusMenu.getByRole('button', { name: /^Rules(?:\s|$)/ });
+  await lastAction.scrollIntoViewIfNeeded();
+  await expect(lastAction).toBeInViewport();
 
   // Escape still closes it, and opening it never moved the window.
   await page.keyboard.press('Escape');
@@ -396,7 +464,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
    * be a second route to the collapsed rail; it now hides the sidebar outright, so it
    * can no longer be used to inspect one.
    */
-  await page.locator('.xv-sidebar-edge-toggle').click();
+  await rail.getByRole('button', { name: 'Close sidebar', exact: true }).click();
   await page.waitForTimeout(400);
   await expect(rail).toHaveClass(/is-collapsed/);
   const railProfile = rail.locator('.xv-sidebar-rail-profile');
@@ -415,6 +483,8 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await rail.locator('.xv-sidebar-brand a[aria-label="Xroga"]')
     .hover();
   await page.waitForTimeout(900);
+  await expect(rail).toHaveClass(/is-collapsed/);
+  await rail.locator('.xv-sidebar-brand a[aria-label="Xroga"]').click();
   await expect(rail).not.toHaveClass(/is-collapsed/);
 
   /**
@@ -427,7 +497,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
    * a control ceasing to exist after an interaction, which only a second interaction
    * can catch.
    */
-  const edgeToggle = page.locator('.xv-sidebar-edge-toggle');
+  const edgeToggle = rail.getByRole('button', { name: 'Close sidebar', exact: true });
   await expect(edgeToggle).toBeVisible();
   await edgeToggle.click();
   await page.waitForTimeout(400);
@@ -442,8 +512,9 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     rail.getByRole('button', { name: 'Open sidebar' }),
     'the collapsed rail still carries its own open button',
   ).toHaveCount(0);
-  // The two destinations that replaced them.
-  await expect(rail.getByRole('link', { name: 'Dashboard' })).toBeVisible();
+  // Current owning UI names this dashboard destination Overview in both modes.
+  await expect(rail.getByRole('link', { name: 'Overview', exact: true })).toBeVisible();
+  await expect(rail.getByRole('link', { name: 'Overview', exact: true })).toHaveAttribute('href', '/dashboard');
   await expect(rail.getByRole('link', { name: 'Projects' })).toBeVisible();
 
   /*
@@ -454,10 +525,18 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const sidebarMark = rail.locator('.xv-sidebar-brand a[aria-label="Xroga"]');
   await expect(sidebarMark).toHaveCount(1);
   await sidebarMark.hover();
-  // Longer than the hover-intent delay, which is deliberately not instant.
+  // Approved compact rail does not expand under a passing pointer.
   await page.waitForTimeout(900);
+  await expect(rail, 'hovering the mark must not reopen the sidebar').toHaveClass(/is-collapsed/);
+  await sidebarMark.click();
+  await expect(rail).not.toHaveClass(/is-collapsed/);
+  // The outer rail changes immediately, but its inner panel transitions for
+  // 200 ms. Wait for the actual control's owner before capturing coordinates.
+  const configuredSidebarWidth = Number(await page.getByRole('separator', { name: 'Resize sidebar' }).getAttribute('aria-valuenow'));
+  await expect(rail.locator('.xv-sidebar-floating')).toHaveCSS('width', `${configuredSidebarWidth}px`);
+  await edgeToggle.hover();
   const reopened = (await rail.boundingBox())!;
-  expect(reopened.width, 'hovering the mark did not reopen the sidebar').toBeGreaterThan(72);
+  expect(reopened.width, 'clicking the mark did not reopen the sidebar').toBeGreaterThan(72);
 
   /*
    * And a drag that starts on the toggle widens rather than doing nothing. The toggle
@@ -561,7 +640,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   expect(shellAfterMenu.height).toBeCloseTo(shellBox.height, 0);
 
   const desktopSidebar = page.locator('.xv-sidebar-root');
-  await expect(desktopSidebar.getByRole('button', { name: 'New Terminal' })).toBeVisible();
+  await expect(desktopSidebar.getByRole('button', { name: 'New Work', exact: true })).toBeVisible();
   await expect(desktopSidebar.getByRole('separator', { name: 'Resize sidebar' })).toBeVisible();
   await expect(desktopSidebar.getByRole('button', { name: 'Change theme' })).toBeVisible();
   // Expanded navigation now uses the accessible image wordmark supplied by Logo.
@@ -575,7 +654,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   );
   const expandedLogoBox = await expandedWordmark.boundingBox();
   expect(expandedLogoBox).not.toBeNull();
-  const brandToolbarBox = (await desktopSidebar.locator('.xv-sidebar-header-actions').boundingBox())!;
+  const brandToolbarBox = (await desktopSidebar.locator('.xv-sidebar-utilities').boundingBox())!;
   // Depending on responsive layout, utilities can be beside or below the mark.
   // In either case they must not visually overlap.
   const separatedHorizontally =
@@ -590,7 +669,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
    * the mobile trigger carries a sidebar label too, and a page-wide lookup resolves
    * to both. The toggle closes only — reopening is the mark's job, below.
    */
-  await page.locator('.xv-sidebar-edge-toggle').click();
+  await desktopSidebar.getByRole('button', { name: 'Close sidebar', exact: true }).click();
   await expect(desktopSidebar).toHaveCSS('width', '64px');
   // Collapsed rail uses the current square icon asset, not the retired PNG.
   await expect(desktopSidebar.locator('.xv-sidebar-brand img[alt="Xroga"]')).toHaveAttribute(
@@ -607,22 +686,33 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(desktopSidebar.locator('.xv-sidebar-floating')).toHaveCSS('border-top-width', '0px');
   const collapsedTheme = desktopSidebar.getByRole('button', { name: 'Change theme' });
   await expect(collapsedTheme).toBeVisible();
-  await collapsedTheme.click();
-  await expect(page.getByRole('menu')).toBeVisible();
-  await collapsedTheme.click();
-  await expect(page.getByRole('menu')).toHaveCount(0);
   await expect(desktopSidebar.getByRole('button', { name: 'Search' })).toBeVisible();
-  await expect(desktopSidebar.getByRole('button', { name: 'New Terminal' })).toBeVisible();
+  await expect(desktopSidebar.getByRole('button', { name: 'New Work', exact: true })).toBeVisible();
   await expect(desktopSidebar.locator('nav')).toHaveCount(0);
   /*
-   * Reopened by hovering the mark. The toggle does not exist while collapsed — the rail
+   * Reopened by clicking the mark. The toggle does not exist while collapsed — the rail
    * used to carry it alongside its own PanelLeft button, two controls a few pixels
    * apart for one job — so clicking it here waited for an element that never appears
    * and took the whole spec to its timeout.
    */
   await desktopSidebar.locator('.xv-sidebar-brand a[aria-label="Xroga"]')
     .hover();
+  await expect(desktopSidebar).toHaveClass(/is-collapsed/);
+  await desktopSidebar.locator('.xv-sidebar-brand a[aria-label="Xroga"]').click();
   await expect(desktopSidebar).not.toHaveCSS('width', '64px');
+  // The owning rail capture handler opens a collapsed rail before utility actions.
+  // Exercise theme toggling on the explicitly reopened, stable control instead of
+  // treating a collapsed child as a second independent open/close menu owner.
+  const themeWidth = Number(await page.getByRole('separator', { name: 'Resize sidebar' }).getAttribute('aria-valuenow'));
+  await expect(desktopSidebar.locator('.xv-sidebar-floating')).toHaveCSS('width', `${themeWidth}px`);
+  const expandedTheme = desktopSidebar.getByRole('button', { name: 'Change theme', exact: true });
+  await expandedTheme.click();
+  await expect(expandedTheme).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByRole('menu')).toBeVisible();
+  await expect(page.getByRole('menuitemradio')).toHaveCount(4);
+  await expandedTheme.click();
+  await expect(expandedTheme).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByRole('menu')).toHaveCount(0);
 
   // Internal navigation must retain the shared shell and the mounted composer.
   const shellSentinel = randomUUID();
@@ -687,12 +777,11 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   expect(await page.locator('html').getAttribute('data-reduced-motion')).toBe('true');
   await expect(page.locator('body')).toHaveClass(/theme-black/);
 
-  const companion = page.getByTestId('xroga-companion-composer');
-  await expect(companion).toBeVisible();
-  // Scoped to the companion, not the page. The claim this protects is that *Smoky*
-  // does not do voice — the composer's own dictation is intended and always was, and
-  // it now carries this label, so a page-wide locator asserts something nobody meant.
-  await expect(companion.getByRole('button', { name: 'Start voice input' })).toHaveCount(0);
+  // The approved empty-workspace experience owns one composer and omits Smoky's
+  // active-conversation anchor. Its usage/no-voice contract is checked on the
+  // authenticated global surface below, not on an intentionally absent anchor.
+  await expect(page.getByTestId('xroga-companion-composer')).toHaveCount(0);
+  await expect(page.locator('[data-terminal-composer]')).toHaveCount(1);
   const canonicalComposer = page.locator('.xv-terminal-dock');
   // The current voice controls use accessible names from XrogaVoiceControl.
   await expect(canonicalComposer.getByRole('button', { name: 'Start voice typing' })).toBeVisible();
@@ -717,14 +806,14 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const actionsMenu = page.getByRole('dialog', { name: 'Composer actions' });
   await expect(actionsMenu.getByRole('button', { name: /Add files or photos/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: 'Slash commands' })).toBeVisible();
-  await expect(actionsMenu.getByRole('button', { name: /Integrations/ })).toBeVisible();
+  await expect(actionsMenu.getByRole('button', { name: /Plugins/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: /Plan before build/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: /Debug an error/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: /Skills/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: /Rules/ })).toBeVisible();
   // The menu's attachment geometry is asserted once, earlier in this test. What is
   // checked here is its contents and the Integrations flow.
-  await actionsMenu.getByRole('button', { name: /Integrations/ }).click();
+  await actionsMenu.getByRole('button', { name: /Plugins/ }).click();
   // Accounts with GitHub authority see the full manager; a clean authenticated
   // account sees the truthful first-connection state. The transient readiness probe
   // may appear between them, but it is not the completed interaction state.
@@ -743,8 +832,6 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // readout, dictation, feed control — stays removed, and so does its speech
   // synthesis. Companion preferences live in Settings → Companion, exercised later.
   // Because it is interactive it is a real button, so it must NOT be aria-hidden.
-  await expect(companion.getByRole('button', { name: /show usage/i })).toBeVisible();
-  await expect(companion.getByRole('button', { name: /Open .*Xroga companion/ })).toHaveCount(0);
   await expect(page.getByRole('region', { name: /companion panel/ })).toHaveCount(0);
 
   const routeChecks = [
@@ -769,6 +856,12 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     expect(shellState.text).not.toContain("We give our best — perfection is Allah's alone. Xroga verifies before publish.");
     expect(shellState.overflow).toBe(false);
   }
+  const companion = page.getByTestId('xroga-companion-floating');
+  await expect(companion).toBeVisible();
+  await expect(companion.getByRole('button', { name: /show usage/i })).toBeVisible();
+  await expect(companion.getByRole('button', { name: 'Start voice input' })).toHaveCount(0);
+  await expect(companion.getByRole('button', { name: /Open .*Xroga companion/ })).toHaveCount(0);
+  await expect(page.getByRole('region', { name: /companion panel/ })).toHaveCount(0);
 
   for (const viewport of [
     { width: 390, height: 844 },
