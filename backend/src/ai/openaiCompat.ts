@@ -213,7 +213,10 @@ export function snapshotModelEgressPayload<T>(value:T,credential:string):T{
       if(containsCredentialSecretText(item)||(credential.length>=8&&item.includes(credential)))throw Object.assign(Error('Model payload denied by credential egress policy.'),{status:400,code:'MODEL_CREDENTIAL_EGRESS_DENIED'});
     }else if(item&&typeof item==='object'){
       if(active.has(item))throw invalid();active.add(item);pending.push({value:item,exit:true});
-      for(const child of Object.values(item)){if(pending.length>=100_000)throw invalid();pending.push({value:child,exit:false});}
+      for(const [key,child] of Object.entries(item)){
+        if(pending.length>=99_999)throw invalid();
+        pending.push({value:key,exit:false},{value:child,exit:false});
+      }
     }
   }
   return snapshot;

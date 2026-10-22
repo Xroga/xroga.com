@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "57e1c1bdd7af87f5ac0bf0784bb9ce7dac38c376",
+  "source_sha": "5c1babb1c0f12c8008448faa3f45b5864626148f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12576,7 +12576,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "11bfe89d2c0b93c169fbb66bc0f26b317648380639ca812930fb44a1b2c4509a"
+      "sha256": "ddfacff68050ab7f8631aa50aaab2cbecb6893a4d1cafa5214eeeeb8d4cc088b"
     },
     {
       "path": "backend/src/ai/parallelWeb.ts",

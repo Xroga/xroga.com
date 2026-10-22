@@ -1,14 +1,14 @@
 {
   "version": 1,
   "scope": "PARTIAL_MODEL_BOUNDARY_TRACE_NOT_TENANT_OR_SPEND_CERTIFICATION",
-  "sourceSha256": "11bfe89d2c0b93c169fbb66bc0f26b317648380639ca812930fb44a1b2c4509a",
+  "sourceSha256": "ddfacff68050ab7f8631aa50aaab2cbecb6893a4d1cafa5214eeeeb8d4cc088b",
   "priorTrace": "57e1c1bdd7af87f5ac0bf0784bb9ce7dac38c376:docs/xroga/evidence/command-010/MODEL-BOUNDARY-TRACE.json",
   "softwareAgentSourceSha256": "ebe35abec3c42c7c8c569a14ff5b5bc1551964b1deef617a40be2b92a836db98",
   "callers": [
     {
       "id": "31380a8d5b9454a98a98",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 253,
+      "line": 256,
       "entryPoint": "chatCompletion",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -24,7 +24,7 @@
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 348,
+      "line": 351,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -69,7 +69,7 @@
     "backend/src/ai/providerRuntime.test.ts"
   ],
   "providerEffects": false,
-  "predispatchAccounting": "Known policy rejections are status 400 invalid_request and release the existing budget reservation without an uncertain-provider hold. They do not increment shared provider failures or open the shared circuit. Positive SDK dispatch and ordinary provider error regressions are retained. Controlled protocol fixtures are not real database budget receipts.",
+  "predispatchAccounting": "Known policy rejections are status 400 invalid_request and release the existing budget reservation without an uncertain-provider hold. They do not increment shared provider failures or open the shared circuit. Positive plain/tool SDK dispatch and negative secret text, selected credential and credential-bearing schema-property names are tested. Ordinary provider error regressions are retained. Controlled protocol fixtures are not real database budget receipts.",
   "disposition": "PENDING_SOURCE_TRACE_WITH_LOCAL_CREDENTIAL_FLOOR_PROOF",
   "next": "Carry existing issued tenant, actual account/vault and reservation identity to this canonical boundary without breaking legitimate guest or benchmark admission. Prove at the actual upstream call sites before final disposition.",
   "grouping": [

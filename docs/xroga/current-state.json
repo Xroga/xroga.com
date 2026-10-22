@@ -4474,7 +4474,7 @@
       "id": "surface:29a1af5a79330a300ab2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/openaiCompat.ts",
-      "sha256": "11bfe89d2c0b93c169fbb66bc0f26b317648380639ca812930fb44a1b2c4509a",
+      "sha256": "ddfacff68050ab7f8631aa50aaab2cbecb6893a4d1cafa5214eeeeb8d4cc088b",
       "symbols": [
         "ChatMessage",
         "ChatResult",
@@ -4489,7 +4489,6 @@
         "buildVisionUserContent",
         "chatCompletion",
         "chatCompletionStream",
-        "child",
         "choice",
         "chunk",
         "client",

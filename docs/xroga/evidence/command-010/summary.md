@@ -160,6 +160,9 @@ health. The real factory is tested with controlled budget HTTP fixtures and SDK
 dispatch interception. These fixtures are not provider or database budget proof.
 All three SDK dispositions remain open for complete tenant/account, authority,
 DNS and egressPolicy admission proof. They are not automatically certified.
+The real SoftwareAgent regression also denies a credential placed in a schema
+property name, while ordinary tool schemas continue to dispatch. Both object
+keys and values are checked before the SDK receives the payload.
 
 Current focused verification passes 71 tests. Runtime-discovery, configuration
 and projection regressions pass 25 tests. Backend typecheck passes. The three
