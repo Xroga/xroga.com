@@ -10,6 +10,8 @@ import {
 import { recordModelExecution } from './providerRuntime.js';
 import { ProviderPolicyError, requiredCodingTransport } from './providerPolicy.js';
 import { withTemperatureFallback } from './temperatureCompat.js';
+import {containsCredentialSecretText} from '../security/egress/dataClassification.js';
+import {publicHttpsUrl} from '../security/egress/urlPolicy.js';
 
 export type ContentPart =
   | { type: 'text'; text: string }
@@ -187,6 +189,7 @@ export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): 
 }
 
 function clientFor(endpoint: ResolvedEndpoint): OpenAI {
+  publicHttpsUrl(endpoint.baseUrl);
   return new OpenAI({
     apiKey: endpoint.apiKey,
     baseURL: endpoint.baseUrl,
@@ -194,6 +197,15 @@ function clientFor(endpoint: ResolvedEndpoint): OpenAI {
     maxRetries: 1,
     defaultHeaders: endpoint.defaultHeaders,
   });
+}
+
+function checkedModelMessages(messages:ChatMessage[],credential:string):ChatMessage[]{
+  const snapshot=structuredClone(messages);
+  for(const message of snapshot){
+    const values=typeof message.content==='string'?[message.content]:message.content.map(part=>part.type==='text'?part.text:part.image_url.url);
+    for(const value of values)if(containsCredentialSecretText(value)||(credential.length>=8&&value.includes(credential)))throw Error('Model payload denied by credential egress policy.');
+  }
+  return snapshot;
 }
 
 function contentTokenEstimate(content: string | ContentPart[]): number {
@@ -221,8 +233,10 @@ export async function chatCompletion(
   } = {},
 ): Promise<ChatResult> {
   const started = Date.now();
+  opts={...opts};
   try {
     const endpoint = resolveEndpoint(modelId, opts.credentialOverride);
+    messages=checkedModelMessages(messages,endpoint.apiKey);
     const client = clientFor(endpoint);
     const completion = await withTemperatureFallback(opts.temperature ?? 0.4, (temperature) =>
       client.chat.completions.create(
@@ -307,8 +321,10 @@ export async function chatCompletionStream(
   } = {},
 ): Promise<ChatResult> {
   const started = Date.now();
+  opts={...opts};
   try {
     const endpoint = resolveEndpoint(modelId, opts.credentialOverride);
+    messages=checkedModelMessages(messages,endpoint.apiKey);
     const client = clientFor(endpoint);
     if (opts.signal?.aborted) {
       const err = new Error('Build cancelled') as Error & { code?: string };

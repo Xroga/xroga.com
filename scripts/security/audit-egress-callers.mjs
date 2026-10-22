@@ -100,9 +100,16 @@ export function collect() {
   }
   for(const id of reviewMap.keys())if(!callers.some(r=>r.id===id))throw Error(`Orphan egress review:${id}`);
   const pending=callers.filter(r=>r.disposition==='PENDING_SOURCE_TRACE');
+  const packets=new Map();
+  for(const row of callers){
+    const consequence=/upload/i.test(row.transport)?'FILE_UPLOAD':/provider-sdk/.test(row.transport)?'PROVIDER_SDK_DATA_EGRESS':/goto|connectOverCDP/.test(row.transport)?'BROWSER_NAVIGATION':/callTool|executeTool|network-or-dynamic/.test(row.transport)?'REMOTE_TOOL_OR_DYNAMIC_CLIENT':/subprocess/.test(row.transport)?'PROCESS_EXECUTION':row.transport==='send'?'MESSAGE_OR_WEBSOCKET':'HTTP_TRANSPORT';
+    const key=consequence+':'+row.transport;
+    if(!packets.has(key))packets.set(key,{id:'EGRESS-PACKET-'+hash(key).slice(0,16),transport:row.transport,consequenceCandidate:consequence,scope:'GROUPING_NOT_SEMANTIC_CERTIFICATION',callerIds:[]});
+    packets.get(key).callerIds.push(row.id);
+  }
   return {version:1,scope:'AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION',sourceTreeDigest:hash(paths.map(p=>`${p}:${hash(readFileSync(resolve(root,p),'utf8'))}`).join('\n')),
     limitations:['SDK internals, generated/deployed code and reflection require semantic review','Static inclusion is not proof of route reachability','A fixed hostname is not proof of tenant, data or action safety'],
-    callers,counts:{total:callers.length,reviewed:callers.length-pending.length,pending:pending.length,
+    callers,reviewPackets:[...packets.values()],counts:{total:callers.length,reviewed:callers.length-pending.length,pending:pending.length,
       unresolvedHighRiskBypasses:pending.filter(r=>r.risk==='HIGH_RISK_PENDING_REVIEW').length}};
 }
 export function main(args=process.argv.slice(2)){

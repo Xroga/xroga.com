@@ -30,6 +30,10 @@ export async function executeOwnedFileEgress(input: Omit<EgressInput,'payload'|'
       const current=await ownedFile(input.context,input.projectId,input.fileId,db);
       if(!isDeepStrictEqual(current,original))throw Error('File changed before external upload.');
       await consumeAuthorityPermit(input.authorityPermit,input.binding);
+      // Durable approval revalidation may itself wait on database locks. Do not
+      // reuse the ownership snapshot taken before that asynchronous boundary.
+      const final=await ownedFile(input.context,input.projectId,input.fileId,db);
+      if(!isDeepStrictEqual(final,original))throw Error('File changed during authority revalidation.');
     },io);
   } finally {file.buffer.fill(0);}
 }

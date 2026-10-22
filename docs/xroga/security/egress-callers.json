@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "fd372096e8701105004003424b8fb8e8d4e43d722411e8ad9c3cadddd33c3fad",
+  "sourceTreeDigest": "852174f6156b4a3c698a25af51a88a6427bc5a2accf96f41ba5a1c9256852ade",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -54,7 +54,7 @@
     {
       "id": "31380a8d5b9454a98a98",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 228,
+      "line": 242,
       "entryPoint": "chatCompletion",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -70,7 +70,7 @@
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 321,
+      "line": 337,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -1212,7 +1212,7 @@
       "entryPoint": "executeOwnedFileEgress",
       "transport": "boundedPublicPost",
       "callee": "boundedPublicPost",
-      "callSha256": "9275ebc5e239e4cd8cc0ccc66c829778a5aa5bf6225bc4ea85cf44ff14388549",
+      "callSha256": "e2d2bde2675e08b6f28f22840fe41137544037b1fe6ef85de69c7e15db91d066",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "UNREVIEWED_SERVER_CALLER",
       "tenantAuthority": "REQUIRES_SOURCE_TRACE",
@@ -2218,6 +2218,220 @@
       "risk": "HIGH_RISK_PENDING_REVIEW",
       "disposition": "PENDING_SOURCE_TRACE",
       "evidence": null
+    }
+  ],
+  "reviewPackets": [
+    {
+      "id": "EGRESS-PACKET-e2629613b42444f3",
+      "transport": "boundedPublicGet",
+      "consequenceCandidate": "HTTP_TRANSPORT",
+      "scope": "GROUPING_NOT_SEMANTIC_CERTIFICATION",
+      "callerIds": [
+        "0e0e3527ad05d7405c68",
+        "eae67182cbfc4c6f9091",
+        "cd9013aa3fb869fdac91",
+        "83834d34bdcfc0b016bb",
+        "7415b9c13ced3db60b0a",
+        "be1e785f2ee1037bb1c0",
+        "651ba21f8a976701efbf"
+      ]
+    },
+    {
+      "id": "EGRESS-PACKET-f85e227272791fb2",
+      "transport": "fetch",
+      "consequenceCandidate": "HTTP_TRANSPORT",
+      "scope": "GROUPING_NOT_SEMANTIC_CERTIFICATION",
+      "callerIds": [
+        "c0bca58cc5345c0837e1",
+        "4d93886d8bbc12e799b8",
+        "fd9175e145496514f183",
+        "e90690f71131f4612afa",
+        "176750c88ee667a2d5f8",
+        "80fae4b604b9d9b5fa55",
+        "3e5ba31676d5e5da80fb",
+        "74b0e180358c36df8c42",
+        "5054ec0f719be61dc2ec",
+        "175fba77feea7132d8a5",
+        "2a5c726393fdb280bf65",
+        "e9dc57ffb85d97538903",
+        "106b94d3512761440fc9",
+        "58bda0b6092997792af2",
+        "a1701f06f690596fd2c0",
+        "b2ed8e79cb82506d4aca",
+        "049adafdb79c93d85166",
+        "f03cf7691ce072b34cea",
+        "a5e73984a9c33257f782",
+        "7e4752b5c0bc6bcc4090",
+        "4fcaba4cec2a4aedc966",
+        "33548b252c1dbad869cc",
+        "82eff89a4fd63eebbe78",
+        "0d8500d82282dd3f4a53",
+        "3aff4bdd4c202b77c1ba",
+        "070d93e290588232cf16",
+        "258abf65c43a04c704a9",
+        "591d7b98b10cd9a63e53",
+        "e79a9f948bce169ec83a",
+        "7c3e6bcb3300ea4ab6a6",
+        "ad134883eaba8c4c7be1",
+        "a6f65c7f0c198a6ab9aa",
+        "dede8f3022025df5f24c",
+        "079f0855d96c9a73d7df",
+        "fef60d164163d324a7db",
+        "2a84b7de8d20c21b5df3",
+        "fed574c91a57418df745",
+        "8f1dd7f3b8ac27f83181",
+        "263e1a0fbf52023499b0",
+        "62b34a66b572747e7265",
+        "8cfcdcc583571e83a617",
+        "eb84fe6311c5e8af520e",
+        "807c2948cdfa16e19b84",
+        "96fbfea42a399a233486",
+        "a44111062d8e6f009a5e",
+        "ad9de0e5a10d320ae449",
+        "036393b9554a97e5e610",
+        "a53fd89d24831308ac58",
+        "fcbe4c75dea0e59bcb3a",
+        "a7a8d74128349a90e3e8",
+        "fcad57247cfb79779f95",
+        "7b6e1f490ce974fc3971",
+        "90eeada0337da120131f",
+        "75cf57fdf79541363007",
+        "b7dadd6888e72320edc7",
+        "9f962d39a30e2e289376",
+        "b401421d17d621333330",
+        "15dcdf4bce3cfa3abf94",
+        "b77b116764a1ac673686",
+        "11ed0a20cc0b90f42ccf",
+        "7916cadb1c3f78be9d4d",
+        "852b30dae0b41bb55c6c",
+        "430d045edc63ccb7aad9",
+        "428611b47ef88816fea8",
+        "567c0d364c059cb94cea",
+        "d9708e60456bb2d7e538",
+        "42cc7885da84d7295699",
+        "602637659fcacb16c1ef",
+        "cf71505267ebcf357a5c",
+        "7cd9f7585381cfe94c57",
+        "99ec2dc4769b5eced6a5",
+        "094a251245ce9b6ab659",
+        "07ca232e98dcc1720801",
+        "af32a0c4970ae3e8f71e",
+        "9982cf8a2b469fc90070",
+        "fea472b3a4bb6eb5babd",
+        "d486083aa57ff293af6f",
+        "9187c5480b950d1fad4d",
+        "5dbf407454e7bfcc241a",
+        "4d6615378bab39e757f0",
+        "fe9ce5d32d8c52cdd3c3",
+        "52851686fc818e0e4c5f",
+        "d836bcd400bd13ddac6c",
+        "594c4c06e1eb42babe1f",
+        "d662166dec7cf609667f",
+        "b2c3a4c3942f15272501",
+        "f0a6db0f8e8ede2098a2",
+        "4411ebbe68c6e8ba24f8",
+        "5c6a31a60bdfe573ba0f",
+        "c13ab0d785effcabf422",
+        "08afb35f3ce6baa20271",
+        "603effc7da2a5dddb8aa",
+        "32301aa73e76e947953b",
+        "3b185c5710e3409a8052",
+        "20618341b2f95ca0ba5e",
+        "805931ff0dc022677403",
+        "68df836263d1eff0010b",
+        "dce82d37d6c2a0911667",
+        "e1ddea7115498d92341b"
+      ]
+    },
+    {
+      "id": "EGRESS-PACKET-d5b0a8f62bc32b4e",
+      "transport": "provider-sdk",
+      "consequenceCandidate": "PROVIDER_SDK_DATA_EGRESS",
+      "scope": "GROUPING_NOT_SEMANTIC_CERTIFICATION",
+      "callerIds": [
+        "31380a8d5b9454a98a98",
+        "9c345e07b723c086440e",
+        "ce74641b44b3d7805f49"
+      ]
+    },
+    {
+      "id": "EGRESS-PACKET-955ac478354641db",
+      "transport": "send",
+      "consequenceCandidate": "MESSAGE_OR_WEBSOCKET",
+      "scope": "GROUPING_NOT_SEMANTIC_CERTIFICATION",
+      "callerIds": [
+        "4c398e61442e0e188cef",
+        "46ef206b2d43bf7d4d7a",
+        "be024131e70fac48283e",
+        "165aca6677bb45e4a237",
+        "716a373b546de2ebcbd5",
+        "44f081144b3e1b3d20cb",
+        "09c93cfa5ff3fbb6deb9",
+        "b4a0034cbbfd151a9e6c",
+        "1a7f8f3101c3651c023b"
+      ]
+    },
+    {
+      "id": "EGRESS-PACKET-a8cf44a5693c27d5",
+      "transport": "transport:request",
+      "consequenceCandidate": "HTTP_TRANSPORT",
+      "scope": "GROUPING_NOT_SEMANTIC_CERTIFICATION",
+      "callerIds": [
+        "7359a41f4a615f5b0a81",
+        "d5061137673f9bba1398",
+        "73bf2c76c1358dacf6a0"
+      ]
+    },
+    {
+      "id": "EGRESS-PACKET-5c7709db59fe944a",
+      "transport": "network-or-dynamic-client",
+      "consequenceCandidate": "REMOTE_TOOL_OR_DYNAMIC_CLIENT",
+      "scope": "GROUPING_NOT_SEMANTIC_CERTIFICATION",
+      "callerIds": [
+        "a0ba7209a0695a62227d",
+        "7b7f1f842cfadda3dff0"
+      ]
+    },
+    {
+      "id": "EGRESS-PACKET-0e4564e7339efd79",
+      "transport": "subprocess-or-dynamic-execution",
+      "consequenceCandidate": "PROCESS_EXECUTION",
+      "scope": "GROUPING_NOT_SEMANTIC_CERTIFICATION",
+      "callerIds": [
+        "f0eab43244d6d3c88de8",
+        "151aa103d929fb10c020"
+      ]
+    },
+    {
+      "id": "EGRESS-PACKET-266a5168364268ec",
+      "transport": "boundedPublicPost",
+      "consequenceCandidate": "HTTP_TRANSPORT",
+      "scope": "GROUPING_NOT_SEMANTIC_CERTIFICATION",
+      "callerIds": [
+        "5fdd141576170dfae26b"
+      ]
+    },
+    {
+      "id": "EGRESS-PACKET-71f77a6115457e9f",
+      "transport": "upload",
+      "consequenceCandidate": "FILE_UPLOAD",
+      "scope": "GROUPING_NOT_SEMANTIC_CERTIFICATION",
+      "callerIds": [
+        "46ad38b463b0beb61ba5",
+        "e2ad9aec1c5cd1e3ab27",
+        "c7711580844b520345cf",
+        "2ca37ae73a723e2b988c",
+        "333b8a4c447a6b53b794"
+      ]
+    },
+    {
+      "id": "EGRESS-PACKET-598814d75020ca32",
+      "transport": "goto",
+      "consequenceCandidate": "BROWSER_NAVIGATION",
+      "scope": "GROUPING_NOT_SEMANTIC_CERTIFICATION",
+      "callerIds": [
+        "b43397505cfcf3799292"
+      ]
     }
   ],
   "counts": {

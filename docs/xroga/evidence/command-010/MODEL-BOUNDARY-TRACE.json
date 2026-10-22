@@ -1,0 +1,120 @@
+{
+  "version": 1,
+  "scope": "PARTIAL_MODEL_BOUNDARY_TRACE_NOT_TENANT_OR_SPEND_CERTIFICATION",
+  "sourceSha256": "ef1ffc1b4913fc958f8b689ad0f4bb40be2ece8790e46f4eedb52cbc50b3a354",
+  "callers": [
+    {
+      "id": "31380a8d5b9454a98a98",
+      "file": "backend/src/ai/openaiCompat.ts",
+      "line": 242,
+      "entryPoint": "chatCompletion",
+      "transport": "provider-sdk",
+      "callee": "client.chat.completions.create",
+      "callSha256": "fedd059e41f3487339705716fdb7a912b28962fccd7daa038b5fa87580cc0eca",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "9c345e07b723c086440e",
+      "file": "backend/src/ai/openaiCompat.ts",
+      "line": 337,
+      "entryPoint": "chatCompletionStream",
+      "transport": "provider-sdk",
+      "callee": "client.chat.completions.create",
+      "callSha256": "947695aec368f03b9176f97c4a6f418234ba9b7a641099d4efcad35b0b4d5c30",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    }
+  ],
+  "reachability": [
+    "architect.runArchitectPlan -> withProviderReservation -> chatCompletion",
+    "converter.convertUserRequest -> withProviderReservation -> chatCompletion",
+    "pipeline builder -> runBuilderAttempt -> chatCompletionStream, selected user provider key via getUserProviderKey",
+    "black-hole/providerAdapter.complete and completeStream forward to the same functions",
+    "benchmarkExecutor callback has optional authorize hook, direct execution when absent remains explicit upstream admission obligation"
+  ],
+  "dataOwnership": "Model transport receives message arrays and an optional credentialOverride string, not an issued tenant context, project proof or reservation handle. Ownership and provider credential provenance remain upstream proof obligations.",
+  "classification": "Prompts may contain USER_PRIVATE, BUSINESS_CONFIDENTIAL and PERSONAL_DATA. The new shared credential floor rejects recognized secret values or the selected provider credential in outgoing text before either SDK call. This is not universal DLP, image-content inspection or complete egressPolicy admission.",
+  "destinationControl": "resolveEndpoint chooses fixed server registry endpoints and enforces coding transport policy. clientFor now admits public HTTPS syntax. It does not pin SDK DNS or control provider-internal image fetching. No request body supplies a base URL.",
+  "accountSelection": "credentialOverride or getSecret selects actual provider credential. Lower layer cannot prove caller's vault identity from a raw string, so it remains unresolved rather than automatically safe.",
+  "budget": "Known architect/converter wrappers reserve and settle through existing withProviderReservation. No lower-layer universal reservation proof is inferred. Optional benchmark authority and guest/black-hole paths need separate bounded tracing.",
+  "authority": "No tool/model text can mint a permit. This patch does not introduce a second authority or budget ledger and does not claim canonical egressPolicy coverage for every model caller.",
+  "tests": [
+    "backend/src/ai/openaiCompat.egress.test.ts"
+  ],
+  "providerEffects": false,
+  "disposition": "PENDING_SOURCE_TRACE_WITH_LOCAL_CREDENTIAL_FLOOR_PROOF",
+  "next": "Carry existing issued tenant, actual account/vault and reservation identity to this canonical boundary without breaking legitimate guest or benchmark admission. Prove at the actual upstream call sites before final disposition.",
+  "grouping": [
+    {
+      "id": "EGRESS-PACKET-e2629613b42444f3",
+      "transport": "boundedPublicGet",
+      "consequence": "HTTP_TRANSPORT",
+      "count": 7
+    },
+    {
+      "id": "EGRESS-PACKET-f85e227272791fb2",
+      "transport": "fetch",
+      "consequence": "HTTP_TRANSPORT",
+      "count": 99
+    },
+    {
+      "id": "EGRESS-PACKET-d5b0a8f62bc32b4e",
+      "transport": "provider-sdk",
+      "consequence": "PROVIDER_SDK_DATA_EGRESS",
+      "count": 3
+    },
+    {
+      "id": "EGRESS-PACKET-955ac478354641db",
+      "transport": "send",
+      "consequence": "MESSAGE_OR_WEBSOCKET",
+      "count": 9
+    },
+    {
+      "id": "EGRESS-PACKET-a8cf44a5693c27d5",
+      "transport": "transport:request",
+      "consequence": "HTTP_TRANSPORT",
+      "count": 3
+    },
+    {
+      "id": "EGRESS-PACKET-5c7709db59fe944a",
+      "transport": "network-or-dynamic-client",
+      "consequence": "REMOTE_TOOL_OR_DYNAMIC_CLIENT",
+      "count": 2
+    },
+    {
+      "id": "EGRESS-PACKET-0e4564e7339efd79",
+      "transport": "subprocess-or-dynamic-execution",
+      "consequence": "PROCESS_EXECUTION",
+      "count": 2
+    },
+    {
+      "id": "EGRESS-PACKET-266a5168364268ec",
+      "transport": "boundedPublicPost",
+      "consequence": "HTTP_TRANSPORT",
+      "count": 1
+    },
+    {
+      "id": "EGRESS-PACKET-71f77a6115457e9f",
+      "transport": "upload",
+      "consequence": "FILE_UPLOAD",
+      "count": 5
+    },
+    {
+      "id": "EGRESS-PACKET-598814d75020ca32",
+      "transport": "goto",
+      "consequence": "BROWSER_NAVIGATION",
+      "count": 1
+    }
+  ]
+}

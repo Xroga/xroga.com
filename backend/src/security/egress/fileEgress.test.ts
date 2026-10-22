@@ -62,3 +62,10 @@ test('uninspected binary documents cannot bypass the text credential boundary',a
     await assert.rejects(executeOwnedFileEgress({...f.input,authorityPermit:permit},async()=>{},f.db,network(()=>{effects++;})),/Unsupported external file inspection/);
   });assert.equal(effects,0);
 });
+
+test('ownership revocation during durable authority revalidation prevents dispatch',async()=>{
+  const f=fixture();let effects=0;
+  await executeAuthorizedAction({...f,revalidateBeforeEffect:async()=>{f.changeOwner();return f.claim;}},async permit=>{
+    await assert.rejects(executeOwnedFileEgress({...f.input,authorityPermit:permit},async()=>{},f.db,network(()=>{effects++;})),/outcome unavailable/);
+  });assert.equal(effects,0);
+});

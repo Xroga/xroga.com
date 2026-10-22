@@ -4409,6 +4409,7 @@
         "backend/src/ai/black-hole/registryDrift.test.ts:5",
         "backend/src/ai/executionRuntime.ts:10",
         "backend/src/ai/modelCapabilityRegistry.ts:3",
+        "backend/src/ai/openaiCompat.egress.test.ts:5",
         "backend/src/ai/openaiCompat.ts:3",
         "backend/src/ai/pipeline.ts:19",
         "backend/src/ai/postCompletionAccounting.ts:3",
@@ -4456,6 +4457,7 @@
         "backend/src/ai/black-hole/registryDrift.test.ts",
         "backend/src/ai/black-hole/router.test.ts",
         "backend/src/ai/capabilityRouting.test.ts",
+        "backend/src/ai/openaiCompat.egress.test.ts",
         "backend/src/ai/providerPolicy.test.ts",
         "backend/src/ai/quota.test.ts",
         "backend/src/hardening/launchHardening.test.ts",
@@ -4472,7 +4474,7 @@
       "id": "surface:29a1af5a79330a300ab2",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/openaiCompat.ts",
-      "sha256": "41ef0899e797d9813bdbdee6f86a27c0739bcc92f1df49da5a9285a52b8a8fbb",
+      "sha256": "ef1ffc1b4913fc958f8b689ad0f4bb40be2ece8790e46f4eedb52cbc50b3a354",
       "symbols": [
         "ChatMessage",
         "ChatResult",
@@ -4486,6 +4488,7 @@
         "buildVisionUserContent",
         "chatCompletion",
         "chatCompletionStream",
+        "checkedModelMessages",
         "choice",
         "chunk",
         "client",
@@ -4505,6 +4508,7 @@
         "id",
         "inputTokens",
         "issues",
+        "message",
         "modelKeyStatus",
         "modelTransportStatus",
         "n",
@@ -4523,14 +4527,19 @@
         "requireNonEmptyModelText",
         "requiredTransport",
         "resolveEndpoint",
+        "snapshot",
         "spec",
         "started",
         "stream",
         "text",
-        "url"
+        "url",
+        "value",
+        "values"
       ],
       "imports": [
         "../config/envSecrets.js",
+        "../security/egress/dataClassification.js",
+        "../security/egress/urlPolicy.js",
         "./models.js",
         "./providerPolicy.js",
         "./providerRuntime.js",
@@ -4542,7 +4551,9 @@
         "backend/src/ai/providerPolicy.ts",
         "backend/src/ai/providerRuntime.ts",
         "backend/src/ai/temperatureCompat.ts",
-        "backend/src/config/envSecrets.ts"
+        "backend/src/config/envSecrets.ts",
+        "backend/src/security/egress/dataClassification.ts",
+        "backend/src/security/egress/urlPolicy.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -4556,6 +4567,7 @@
         "backend/src/ai/black-hole/webIntelligence.ts:9",
         "backend/src/ai/converter.ts:1",
         "backend/src/ai/modelCapabilityRegistry.ts:6",
+        "backend/src/ai/openaiCompat.egress.test.ts:4",
         "backend/src/ai/openaiCompat.test.ts:3",
         "backend/src/ai/pipeline.ts:20",
         "backend/src/ai/qa.ts:1",
@@ -4584,6 +4596,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/black-hole/providerAdapter.test.ts",
+        "backend/src/ai/openaiCompat.egress.test.ts",
         "backend/src/ai/openaiCompat.test.ts",
         "backend/src/ai/qa.test.ts",
         "backend/src/hardening/launchHardening.test.ts",
@@ -21062,6 +21075,7 @@
         "backend/src/security/egress/egress.integration.test.ts:7",
         "backend/src/security/egress/egressPolicy.ts:4",
         "backend/src/security/egress/fileEgress.test.ts:5",
+        "backend/src/security/egress/securityReceipt.local.integration.ts:9",
         "backend/src/services/integrations/businessAction.ts:5",
         "backend/src/services/integrations/businessActionConfirmations.ts:5",
         "backend/src/services/integrations/composioClient.ts:5",
@@ -21088,7 +21102,8 @@
         "backend/src/security/authority/digest.test.ts",
         "backend/src/security/authority/enforce.test.ts",
         "backend/src/security/egress/egress.integration.test.ts",
-        "backend/src/security/egress/fileEgress.test.ts"
+        "backend/src/security/egress/fileEgress.test.ts",
+        "backend/src/security/egress/securityReceipt.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -21145,6 +21160,7 @@
         "backend/src/security/egress/egressPolicy.ts:2",
         "backend/src/security/egress/fileEgress.test.ts:6",
         "backend/src/security/egress/fileEgress.ts:5",
+        "backend/src/security/egress/securityReceipt.local.integration.ts:13",
         "backend/src/services/integrations/businessAction.ts:7",
         "backend/src/services/integrations/businessActionConfirmations.ts:4",
         "backend/src/services/integrations/composioClient.ts:6"
@@ -21178,7 +21194,8 @@
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/security/authority/enforce.test.ts",
         "backend/src/security/egress/egress.integration.test.ts",
-        "backend/src/security/egress/fileEgress.test.ts"
+        "backend/src/security/egress/fileEgress.test.ts",
+        "backend/src/security/egress/securityReceipt.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -21269,7 +21286,8 @@
       "testCoverage": [
         "backend/src/security/authority/enforce.test.ts",
         "backend/src/security/egress/egress.integration.test.ts",
-        "backend/src/security/egress/fileEgress.test.ts"
+        "backend/src/security/egress/fileEgress.test.ts",
+        "backend/src/security/egress/securityReceipt.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -21385,9 +21403,10 @@
       "id": "surface:a3e59c8210ad713cad2a",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/egress/dataClassification.ts",
-      "sha256": "0b184e32a0324af93c8f9b373de40e3b5b986d8dd986caa0452eb9f8d46f0314",
+      "sha256": "f9954c04057b0d513ccf889c406dc51bc57b4d097ffa445fb7d3ec66ad5ebe22",
       "symbols": [
         "classifyOutboundData",
+        "containsCredentialSecretText",
         "key",
         "nodes",
         "secret",
@@ -21409,6 +21428,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/ai/openaiCompat.ts:13",
         "backend/src/security/egress/egressPolicy.ts:7",
         "backend/src/security/egress/fileEgress.ts:7"
       ],
@@ -21480,6 +21500,7 @@
         "backend/src/security/egress/egress.integration.test.ts:9",
         "backend/src/security/egress/fileEgress.ts:6",
         "backend/src/security/egress/securityDecision.ts:5",
+        "backend/src/security/egress/securityReceipt.local.integration.ts:10",
         "backend/src/services/integrations/composioClient.ts:10"
       ],
       "reachable": true,
@@ -21500,7 +21521,8 @@
         "backend/src/security/egress/egressPolicy.ts#receipt"
       ],
       "testCoverage": [
-        "backend/src/security/egress/egress.integration.test.ts"
+        "backend/src/security/egress/egress.integration.test.ts",
+        "backend/src/security/egress/securityReceipt.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -21513,13 +21535,14 @@
       "id": "surface:20c6daedb6643625a93b",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/egress/fileEgress.ts",
-      "sha256": "4407a4191556aaddd0b2baf977141df75234268334aa8ccc925c82bc687e3a1d",
+      "sha256": "a41f6fa55c00275359176456e6c0fa175f2ad7a5209b4d529cc465494725e565",
       "symbols": [
         "classification",
         "content",
         "current",
         "executeOwnedFileEgress",
         "file",
+        "final",
         "original",
         "payload"
       ],
@@ -21544,7 +21567,8 @@
       ],
       "entryPoints": [],
       "callers": [
-        "backend/src/security/egress/fileEgress.test.ts:9"
+        "backend/src/security/egress/fileEgress.test.ts:9",
+        "backend/src/security/egress/securityReceipt.local.integration.ts:12"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -21562,7 +21586,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/security/egress/fileEgress.test.ts"
+        "backend/src/security/egress/fileEgress.test.ts",
+        "backend/src/security/egress/securityReceipt.local.integration.ts"
       ],
       "state": "DEAD_OR_UNREACHABLE",
       "confidence": "LOW",
@@ -21599,6 +21624,7 @@
       ],
       "callers": [
         "backend/src/security/egress/egress.integration.test.ts:10",
+        "backend/src/security/egress/securityReceipt.local.integration.ts:11",
         "backend/src/services/integrations/composioClient.ts:11"
       ],
       "reachable": true,
@@ -21614,7 +21640,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/security/egress/egress.integration.test.ts"
+        "backend/src/security/egress/egress.integration.test.ts",
+        "backend/src/security/egress/securityReceipt.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -21753,6 +21780,7 @@
       ],
       "callers": [
         "backend/src/ai/attachments.ts:7",
+        "backend/src/ai/openaiCompat.ts:14",
         "backend/src/lib/deployVerify.ts:1",
         "backend/src/lib/shipVerify.ts:6",
         "backend/src/operations/providerAdapters.ts:1",
@@ -22181,6 +22209,7 @@
         "backend/src/security/egress/egressPolicy.ts:5",
         "backend/src/security/egress/fileEgress.test.ts:4",
         "backend/src/security/egress/securityDecision.ts:2",
+        "backend/src/security/egress/securityReceipt.local.integration.ts:8",
         "backend/src/security/legacyBuildHistory.local.integration.ts:9",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:6",
         "backend/src/security/ownedRunHeartbeat.test.ts:4",
@@ -22301,6 +22330,7 @@
         "backend/src/security/connectedMemoryConsumer.local.integration.ts",
         "backend/src/security/egress/egress.integration.test.ts",
         "backend/src/security/egress/fileEgress.test.ts",
+        "backend/src/security/egress/securityReceipt.local.integration.ts",
         "backend/src/security/legacyBuildHistory.local.integration.ts",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts",
         "backend/src/security/ownedRunHeartbeat.test.ts",
@@ -90007,7 +90037,7 @@
       "id": "surface:bcc916e098428737b6fb",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/audit-egress-callers.mjs",
-      "sha256": "f17ba82313fdb43a893aa74f43462bba7c849f0e1088b3480f7755f826d2c6e7",
+      "sha256": "62df456ab6da9d4b43bce44d6edcd6d0b4c438b490cc567c38e125b8f46ca7bb",
       "symbols": [
         "aliases",
         "arg",
@@ -90015,6 +90045,7 @@
         "callers",
         "clause",
         "collect",
+        "consequence",
         "constants",
         "e",
         "gather",
@@ -90036,6 +90067,7 @@
         "original",
         "owner",
         "p",
+        "packets",
         "paths",
         "pending",
         "prefix",
@@ -102210,7 +102242,7 @@
     {
       "id": "workflow:78c19ecd7c4e5844f961",
       "sourcePath": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "48b77618e63bb78afbc744d3a467d0dcf02758f13f0aec8e3628a6e322539ce1",
+      "sha256": "05dbbf28d1ed902df8099786a58564c6396ef3608109dd1496c42a634d774405",
       "sourceEntrypoints": [
         "scripts/ci/prepare-pr-integration.mjs",
         "scripts/security/audit-credential-usage.mjs",
@@ -108929,6 +108961,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:e560f40fdd60bae650a7",
+      "sourcePath": "backend/src/ai/openaiCompat.egress.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:b503f274bf7d50e96317",
       "sourcePath": "backend/src/ai/openaiCompat.test.ts",
       "declaredTests": 8,
@@ -110459,7 +110498,7 @@
     {
       "id": "test-suite:90e81dfb26a7e7129e9d",
       "sourcePath": "backend/src/security/egress/fileEgress.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -110474,6 +110513,13 @@
       "id": "test-suite:95c27fb9ddccda8396aa",
       "sourcePath": "backend/src/security/egress/publicPost.test.ts",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:33987a37674ccf7476d7",
+      "sourcePath": "backend/src/security/egress/securityReceipt.local.integration.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
