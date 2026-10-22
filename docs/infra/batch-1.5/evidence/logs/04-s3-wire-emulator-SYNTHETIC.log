@@ -4,49 +4,49 @@ TAP version 13
     # Subtest: presigned PUT → complete (head, range, stream, SHA-256) → presigned GET → delete, over real HTTP
     ok 1 - presigned PUT → complete (head, range, stream, SHA-256) → presigned GET → delete, over real HTTP
       ---
-      duration_ms: 203.4521
+      duration_ms: 152.0045
       type: 'test'
       ...
     # Subtest: server-side put with checksum, list and delete (pagination is NOT exercised: s3rver returns 500 for truncated listings)
     ok 2 - server-side put with checksum, list and delete (pagination is NOT exercised: s3rver returns 500 for truncated listings)
       ---
-      duration_ms: 132.3883
+      duration_ms: 96.7118
       type: 'test'
       ...
     # Subtest: multipart: create, upload parts, complete, whole-object SHA-256 (parts sent with SDK commands: s3rver rejects presigned part URLs, whose shape is verified offline in r2ObjectStore.test.ts)
     ok 3 - multipart: create, upload parts, complete, whole-object SHA-256 (parts sent with SDK commands: s3rver rejects presigned part URLs, whose shape is verified offline in r2ObjectStore.test.ts)
       ---
-      duration_ms: 486.5378
+      duration_ms: 311.6939
       type: 'test'
       ...
     # Subtest: abort multipart is idempotent and a missing object reads as null
     ok 4 - abort multipart is idempotent and a missing object reads as null
       ---
-      duration_ms: 37.3013
+      duration_ms: 21.3897
       type: 'test'
       ...
     # Subtest: [APPLICATION] duplicate multipart completion is idempotent and a stale upload id is harmless
     ok 5 - [APPLICATION] duplicate multipart completion is idempotent and a stale upload id is harmless
       ---
-      duration_ms: 431.8137
+      duration_ms: 208.2822
       type: 'test'
       ...
     # Subtest: [APPLICATION] wrong ETag, missing part and extra part are refused before the provider is asked to assemble anything
     ok 6 - [APPLICATION] wrong ETag, missing part and extra part are refused before the provider is asked to assemble anything
       ---
-      duration_ms: 173.6445
+      duration_ms: 92.0738
       type: 'test'
       ...
     # Subtest: [APPLICATION] an unreachable provider is translated to a retryable 503 and leaves the object state unchanged
     ok 7 - [APPLICATION] an unreachable provider is translated to a retryable 503 and leaves the object state unchanged
       ---
-      duration_ms: 8.5047
+      duration_ms: 8.8386
       type: 'test'
       ...
     1..7
 ok 1 - R2ObjectStore over the AWS SDK wire protocol (S3 emulator, SYNTHETIC)
   ---
-  duration_ms: 1475.8989
+  duration_ms: 892.6148
   type: 'suite'
   ...
 1..1
@@ -57,7 +57,7 @@ ok 1 - R2ObjectStore over the AWS SDK wire protocol (S3 emulator, SYNTHETIC)
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 2053.9736
+# duration_ms 1497.3611
 
 
 # exit: 0

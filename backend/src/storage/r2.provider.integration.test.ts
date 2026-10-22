@@ -78,7 +78,9 @@ describe('Cloudflare R2 provider verification (REAL endpoint)', { skip }, () => 
     const dl = await svc.getDownload(me, init.objectId);
     const bare = dl.url.split('?')[0];
     const noSig = await fetch(bare); note({ step: 'get-without-signature', ...ids(noSig) });
-    assert.ok([401, 403].includes(noSig.status));
+    // OBSERVED on real R2: an unsigned request is refused with 400 InvalidArgument (Authorization), not 401/403. What matters is denial and no bytes.
+    assert.ok([400, 401, 403].includes(noSig.status), `unsigned GET must be refused (got ${noSig.status})`);
+    assert.notEqual(sha256Hex(Buffer.from(await noSig.arrayBuffer())), sha256Hex(body), 'no object bytes without a signature');
     const tampered = await fetch(dl.url.replace(/X-Amz-Signature=[0-9a-f]+/, 'X-Amz-Signature=' + '0'.repeat(64))); note({ step: 'get-tampered-signature', ...ids(tampered) });
     assert.equal(tampered.status, 403);
     await assert.rejects(svc.getDownload(other, init.objectId), (e: { code: string }) => e.code === 'NOT_FOUND');
@@ -147,6 +149,30 @@ describe('Cloudflare R2 provider verification (REAL endpoint)', { skip }, () => 
     assert.equal(done.state, 'READY'); assert.equal(done.sha256, sha256Hex(body));
     const fresh = new StorageService({ repo, store: new R2ObjectStore(cfg as NonNullable<typeof cfg>), bucket, policy });
     assert.equal((await fresh.readObjectBytes(me, init.objectId, 20 * 1024 * 1024)).bytes.length, body.length, 'a different process/client reads what the writer stored');
+  });
+
+  it('13. server-side multipart migration copy (uploadPart): interrupted attempt resumes the same upload, whole-object SHA-256, idempotent replay', async () => {
+    const mig: StorageActor = (() => { const id = randomUUID(); return { userId: id, tenantId: id }; })(); // own tenant: keeps the listing step's per-tenant count exact
+    const MiB = 1024 * 1024; const size = 11 * MiB + 7;
+    const data = Buffer.alloc(size); for (let i = 0; i < size; i++) data[i] = (Math.imul(i, 2654435761) >>> 13) & 0xff;
+    const expected = sha256Hex(data);
+    const objectId = randomUUID();
+    const input = { objectId, objectClass: 'artifact' as const, filename: 'migrated.bin', contentType: 'application/octet-stream', size, migrationJobId: randomUUID(), legacySource: { provider: 'synthetic', id: 'r2-step-13' }, partBytes: 5 * MiB, concurrency: 2 };
+    const full = async () => (async function* () { for (let o = 0; o < size; o += MiB) yield data.subarray(o, Math.min(o + MiB, size)); })();
+    const dies = async () => (async function* () { for (let o = 0; o < 7 * MiB; o += MiB) yield data.subarray(o, o + MiB); throw new Error('connection reset'); })();
+    await assert.rejects(svc.ingestLegacyMultipart(mig, { ...input, body: dies }), /connection reset/);
+    const mid = (await repo.getObject(objectId))!; created.push(mid.objectKey);
+    assert.ok(mid.multipartUploadId, 'upload id persisted after the interruption'); assert.notEqual(mid.state, 'READY');
+    const stored = await store.listParts(bucket, mid.objectKey, mid.multipartUploadId as string);
+    note({ step: 'migration-multipart-partial', partsOnProvider: stored.length });
+    const done = await svc.ingestLegacyMultipart(mig, { ...input, body: full });
+    assert.equal(done.object.state, 'READY'); assert.equal(done.object.sha256Verified, expected); assert.equal(done.object.sizeBytes, size);
+    assert.equal((await repo.getObject(objectId))!.multipartUploadId, mid.multipartUploadId, 'resumed the same provider upload');
+    const again = await svc.ingestLegacyMultipart(mig, { ...input, body: full });
+    assert.equal(again.reused, true);
+    const fresh = new StorageService({ repo, store: new R2ObjectStore(cfg as NonNullable<typeof cfg>), bucket, policy });
+    assert.equal((await fresh.verifyStoredObject(objectId)).sha256, expected, 'persisted and re-read from a fresh client');
+    note({ step: 'migration-multipart-complete', size, resumedParts: stored.length, readyAfterResume: true });
   });
 
   it('11. listing: prefix filtering and pagination return every created object exactly once', async () => {
