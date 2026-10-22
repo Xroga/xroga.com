@@ -19,27 +19,30 @@ export interface MessageSuggestions {
 
 export function generateMessageSuggestions(userText: string, aiText: string): MessageSuggestions {
   const analysis = analyzeCreation(userText, aiText);
-
-  if (isTrivialConversation(userText, aiText)) {
-    return {
-      creationType: 'chat',
-      creationLabel: 'Chat',
-      followUps: [
-        'Build a website',
-        'Build a Chrome extension',
-        'Build an Electron desktop app',
-        'Build an Expo mobile app',
-      ],
-      refine: [],
-      deploy: [],
-    };
-  }
-
+  const trivial = isTrivialConversation(userText, aiText);
+  const type = trivial ? 'chat' : analysis.creationType;
+  const response = aiText.toLowerCase();
+  const request = userText.toLowerCase();
+  const codeWork = ['website', 'webapp', 'mobile_app', 'chrome_extension', 'game', 'software', 'api'].includes(type);
+  const researchWork = type === 'research' || /\b(source|citation|study|research|news)\b/.test(response);
+  const automationWork = type === 'automation' || /\b(automate|workflow|schedule|browser task)\b/.test(request);
+  const followUps = codeWork
+    ? ['Review this result against my original request.', 'What should I improve next in this project?']
+    : researchWork
+      ? ['Which claims in your answer need stronger evidence?', 'Summarize the most useful findings from your answer.']
+      : ['Explain the key point in your answer in more detail.', 'Give me a practical example based on your answer.'];
+  const refine = codeWork
+    ? ['Inspect this project for issues and explain what you find.', 'Run the available tests and explain any failures.']
+    : automationWork
+      ? ['Help me design a workflow for this task.', 'Show me how to schedule this work in Xroga.']
+      : researchWork
+        ? ['Search the web for current sources on this topic.', 'Turn these findings into a cited report.']
+        : ['Help me brainstorm a related project idea.', 'Search the web for current information on this topic.'];
   return {
-    creationType: analysis.creationType,
-    creationLabel: analysis.creationLabel,
-    followUps: analysis.followUps,
-    refine: analysis.refine,
+    creationType: type,
+    creationLabel: trivial ? 'Chat' : analysis.creationLabel,
+    followUps,
+    refine,
     deploy: analysis.deploy,
   };
 }

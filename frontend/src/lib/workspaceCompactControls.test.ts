@@ -32,20 +32,28 @@ test('the compact repo control hugs its content on desktop and uses a solid them
   assert.match(rule(GLOBALS, '.xv-chatbar-context-strip > :first-child'), /flex:\s*0 1 auto/);
   assert.match(rule(GLOBALS, '.xv-repo-chip--compact .xv-repo-identity'), /flex:\s*0 1 auto/);
   const compact = rule(GLOBALS, '.xv-repo-chip--compact {');
-  assert.match(compact, /width:\s*auto/);
+  assert.match(compact, /width:\s*max-content/);
   assert.match(compact, /background:\s*var\(--terminal-ui-inset, var\(--surface-inset\)\)/, 'the compact row is transparent again');
   assert.match(compact, /border:\s*0/, 'the repo strip regained an outline');
   assert.match(compact, /box-shadow:\s*none/, 'the repo strip regained a floating edge');
 });
 
-test('mobile keeps clear short actions, repository, and branch in one compact row', () => {
-  assert.match(REPO, /xv-repo-intent-label-short/);
-  assert.match(REPO, /aria-label=\{selectedRepo \? 'Update current' : 'Pick to update'\}/);
+test('mobile keeps the repo and branch compact while the menu owns new repository actions', () => {
+  assert.doesNotMatch(REPO, /Pick to update|New product<\/span>/);
+  assert.match(REPO, /\+ New repository/);
+  assert.match(REPO, /selectRepo\(r\.fullName\)/);
+  assert.match(REPO, /selectBranch\(b\)/);
   const mobile = GLOBALS.slice(GLOBALS.indexOf('@media (max-width: 560px)'));
-  assert.match(mobile, /\.xv-repo-chip--compact\s*\{[^}]*width:\s*100%/);
-  assert.match(mobile, /\.xv-repo-intent-label-full\s*\{\s*display:\s*none/);
-  assert.match(mobile, /\.xv-repo-intent-label-short\s*\{\s*display:\s*inline/);
+  assert.match(mobile, /\.xv-repo-chip--compact\s*\{[^}]*width:\s*max-content/);
   assert.match(mobile, /\.xv-repo-chip--compact \.xv-repo-branch\s*\{[^}]*display:\s*block/);
+});
+
+test('switching a connected repository during a conversation starts a fresh task', () => {
+  assert.match(REPO, /if \(messages\.length > 0 \|\| \(previousKey && previousKey !== targetKey\)\)\s*\{\s*startNewChat\(\)/);
+  assert.match(REPO, /saveSelectedRepoContext\(\{ repo: fullName, branch \}\)/);
+  assert.match(REPO, /notifyGithubRepoContext\(fullName, branch\)/);
+  assert.match(REPO, /if \(changesContext\) startNewChat\(\)/);
+  assert.match(REPO, /markFreshTerminalIntent\(\);[\s\S]*clearSelectedRepoContext\(\)/);
 });
 
 test('the external companion and compact Black Hole control stay readable', () => {

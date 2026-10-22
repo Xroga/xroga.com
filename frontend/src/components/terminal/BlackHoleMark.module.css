@@ -1,0 +1,50 @@
+.mark {
+  position: relative;
+  display: inline-block;
+  width: 1.85rem;
+  height: 1.85rem;
+  flex: none;
+  color: currentColor;
+  isolation: isolate;
+}
+.corona, .ring, .void, .disk, .spark { position: absolute; display: block; }
+.corona {
+  inset: 9%; border-radius: 50%;
+  background: radial-gradient(circle, transparent 48%, color-mix(in srgb, currentColor 14%, transparent) 61%, transparent 77%);
+}
+.ring {
+  inset: 18%; border: .22rem solid currentColor; border-radius: 50%;
+  box-shadow: 0 0 .13rem color-mix(in srgb, currentColor 35%, transparent);
+}
+.void {
+  inset: 34%; z-index: 1; border-radius: 50%;
+  background: var(--terminal-ui-surface, var(--background, #090909));
+  box-shadow: 0 0 0 1px color-mix(in srgb, currentColor 24%, transparent);
+}
+.disk {
+  z-index: 2; top: 47%; left: -3%; width: 106%; height: 13%;
+  border-radius: 100% 0 100% 0;
+  background: currentColor;
+  transform: rotate(-23deg) skewX(-26deg);
+  box-shadow: 0 0 .16rem color-mix(in srgb, currentColor 55%, transparent);
+}
+.spark {
+  z-index: 3; top: 19%; left: 71%; width: 9%; height: 9%; border-radius: 50%;
+  background: currentColor; opacity: .5;
+}
+.active .ring { animation: black-hole-lens 3.4s linear infinite; }
+.active .disk { animation: black-hole-orbit 2.6s ease-in-out infinite; }
+.active .corona { animation: black-hole-corona 3.4s ease-in-out infinite; }
+.active .spark { animation: black-hole-spark 2.6s linear infinite; }
+@keyframes black-hole-lens { to { transform: rotate(360deg); } }
+@keyframes black-hole-orbit {
+  0%, 100% { transform: rotate(-23deg) skewX(-26deg) scaleX(1); }
+  25% { transform: rotate(-18deg) skewX(-20deg) scaleX(.86); }
+  50% { transform: rotate(-23deg) skewX(-26deg) scaleX(1.08); }
+  75% { transform: rotate(-28deg) skewX(-32deg) scaleX(.88); }
+}
+@keyframes black-hole-corona { 50% { opacity: .55; transform: scale(1.13); } }
+@keyframes black-hole-spark { to { transform: rotate(360deg) translateX(.17rem); } }
+@media (prefers-reduced-motion: reduce) {
+  .active .ring, .active .disk, .active .corona, .active .spark { animation: none; }
+}

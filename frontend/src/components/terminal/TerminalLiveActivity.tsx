@@ -14,7 +14,6 @@ import {
   FilePen,
   FileText,
   FlaskConical,
-  Globe2,
   Link2,
   MonitorSmartphone,
   Plug,
@@ -40,10 +39,9 @@ import {
   ExecutionBranch,
   ExecutionPulse,
   ExecutionShimmerText,
-  SearchScanner,
   StalledDots,
-  UniversalExecutionOrb,
 } from './ExecutionMotion';
+import { BlackHoleMark } from './BlackHoleMark';
 
 const DEFAULT_VISIBLE_ROWS = 5;
 const STALLED_AFTER_MS = 9_000;
@@ -52,8 +50,8 @@ const ICONS: Record<XrogaActivityKind, LucideIcon> = {
   respond: CheckCircle2,
   understand: Brain,
   search: Search,
-  'open-source': Globe2,
-  'read-source': Globe2,
+  'open-source': Search,
+  'read-source': FileText,
   compare: Search,
   summarize: FileText,
   'read-file': FileText,
@@ -86,16 +84,6 @@ function familyForKind(kind: XrogaActivityKind): TaskFamily {
   if (['write-file', 'code', 'command', 'test', 'browser', 'deploy', 'verify'].includes(kind)) return 'build';
   if (['connected-app-read', 'connected-app-write', 'automation', 'database', 'approval', 'connection'].includes(kind)) return 'app';
   if (kind === 'understand') return 'analysis';
-  return 'general';
-}
-
-function familyForIntent(intent: PendingExecutionIntent): TaskFamily {
-  if (intent === 'research') return 'research';
-  if (intent === 'document') return 'document';
-  if (intent === 'code') return 'build';
-  if (intent === 'data') return 'app';
-  if (intent === 'business') return 'app';
-  if (intent === 'analysis') return 'analysis';
   return 'general';
 }
 
@@ -199,21 +187,6 @@ function evidenceSummary(rows: readonly XrogaActivityPresentation[]): string[] {
   return output;
 }
 
-function PendingIntentGlyph({ intent }: { intent: PendingExecutionIntent }) {
-  if (intent === 'research') return <Search className="h-5 w-5 shrink-0 text-[var(--accent)]" aria-hidden />;
-  const Icon =
-    intent === 'document'
-      ? FileText
-      : intent === 'code'
-        ? Code2
-        : intent === 'data'
-          ? Database
-          : intent === 'business'
-            ? PlugZap
-            : Brain;
-  return <Icon className="h-5 w-5 shrink-0 text-[var(--accent)]" aria-hidden />;
-}
-
 function ActivityRow({
   row,
   current,
@@ -252,7 +225,7 @@ function ActivityRow({
         <span
           className={cn(
             'xv-exec-row-icon mt-0.5 grid shrink-0 place-items-center text-[var(--muted)]',
-            current && 'text-[var(--accent)]',
+            current && 'text-[var(--foreground)]',
           )}
         >
           <Icon aria-hidden />
@@ -382,14 +355,13 @@ export function TerminalLiveActivity({
     if (!pending) return null;
 
     const label = pendingLabel ?? 'Responding';
-    const family = familyForIntent(pendingIntent);
     const capabilities = capabilitiesForIntent(pendingIntent);
     const plainChat = pendingIntent === 'chat';
 
     if (plainChat && !request) {
       return (
         <div className="xv-exec-inline xv-exec-inline--chat my-2" data-state="pending">
-          <ExecutionShimmerText>{label}</ExecutionShimmerText>
+          <BlackHoleMark active /><span className="xv-exec-brand">Xroga · Black Hole</span><ExecutionShimmerText>{label}</ExecutionShimmerText>
         </div>
       );
     }
@@ -410,9 +382,9 @@ export function TerminalLiveActivity({
         ) : null}
 
         <div className="xv-exec-header">
-          <UniversalExecutionOrb />
-          <PendingIntentGlyph intent={pendingIntent} />
+          <BlackHoleMark active />
           <span className="min-w-0 flex-1">
+            <span className="xv-exec-brand">Xroga · Black Hole</span>
             <ExecutionShimmerText className="xv-exec-header__state">{label}</ExecutionShimmerText>
             {capabilities.length ? (
               <span className="xv-exec-capability-line">
@@ -427,7 +399,6 @@ export function TerminalLiveActivity({
               </span>
             ) : null}
           </span>
-          {family === 'research' ? <SearchScanner /> : null}
         </div>
       </section>
     );
@@ -469,17 +440,10 @@ export function TerminalLiveActivity({
         className="xv-exec-header focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]/45"
         aria-expanded={expanded}
       >
-        {active ? (
-          <UniversalExecutionOrb />
-        ) : errors > 0 ? (
-          <CircleX className="h-7 w-7 shrink-0 text-[var(--muted)]" aria-hidden />
-        ) : stopped ? (
-          <CirclePause className="h-7 w-7 shrink-0 text-[var(--muted)]" aria-hidden />
-        ) : (
-          <CheckCircle2 className="h-7 w-7 shrink-0 text-[var(--muted)]" aria-hidden />
-        )}
+        <BlackHoleMark active={active} />
 
         <span className="min-w-0 flex-1">
+          <span className="xv-exec-brand">Xroga · Black Hole</span>
           <span className="flex min-w-0 items-center gap-2">
             {active ? (
               <ExecutionShimmerText className="xv-exec-header__state">{state}</ExecutionShimmerText>
@@ -509,7 +473,6 @@ export function TerminalLiveActivity({
           ) : null}
         </span>
 
-        {active && family === 'research' ? <SearchScanner /> : null}
         <ChevronDown
           className={cn('h-6 w-6 shrink-0 text-[var(--muted)] transition-transform', expanded && 'rotate-180')}
           aria-hidden

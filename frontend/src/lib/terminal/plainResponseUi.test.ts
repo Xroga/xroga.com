@@ -23,8 +23,8 @@ test('AI responses use cardless task-aware transient feedback before real activi
   assert.match(liveActivity, /requestText/);
   assert.match(liveActivity, /Your request/);
   assert.match(liveActivity, /ExecutionShimmerText/);
-  assert.match(liveActivity, /SearchScanner/);
-  assert.match(liveActivity, /UniversalExecutionOrb/);
+  assert.match(liveActivity, /BlackHoleMark/);
+  assert.doesNotMatch(liveActivity, /SearchScanner|UniversalExecutionOrb|Globe2/);
   assert.match(liveActivity, /StalledDots/);
   assert.match(liveActivity, /STALLED_AFTER_MS/);
   assert.match(motion, /ExecutionPulse/);
