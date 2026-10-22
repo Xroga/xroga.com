@@ -1,0 +1,186 @@
+{
+  "version": 1,
+  "scope": "PREPARATORY_URL_BOUNDARY_REVIEW_NOT_COMMAND010_ACCEPTANCE",
+  "reviews": [
+    {
+      "id": "0e0e3527ad05d7405c68",
+      "callSha256": "e3c3def0a39603c733ecb26163e672be02388db71ca7cd804feb8390d9b4afc1",
+      "sourceFileSha256": "c50dc741653646df6b6dddc6ec1ba4337fa3b3a48a94b5d9a66afe52b81cbd46",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "DNS admits no mixed private answers",
+          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+        }
+      ]
+    },
+    {
+      "id": "eae67182cbfc4c6f9091",
+      "callSha256": "8dd30df44a4f89a7f1a994404d767095242ebbcc37d5db91115c26657a33b28c",
+      "sourceFileSha256": "6d61d603fb3585e28e8fd6ccfbc0077d21ccd55452439a819e4b0f621a28c7da",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "DNS admits no mixed private answers",
+          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+        }
+      ]
+    },
+    {
+      "id": "cd9013aa3fb869fdac91",
+      "callSha256": "8c5affa940c508ab14fa41eb3fc9d6b23970e1ece00ac92872d60e44d46a9fd3",
+      "sourceFileSha256": "4fb72f464e770db5da19b4bd6f9351113eb94d0df9de64513245ccfd7c30f018",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "DNS admits no mixed private answers",
+          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+        }
+      ]
+    },
+    {
+      "id": "83834d34bdcfc0b016bb",
+      "callSha256": "f4ced48fe2f39d5c35d205cc89077b6d655b3d9454979506464e39904bfe6535",
+      "sourceFileSha256": "4fb72f464e770db5da19b4bd6f9351113eb94d0df9de64513245ccfd7c30f018",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "DNS admits no mixed private answers",
+          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+        }
+      ]
+    },
+    {
+      "id": "7415b9c13ced3db60b0a",
+      "callSha256": "5bd3f992f97bfd084657a2b98e941258e3963c0ecc7ff011f5b917baff0a25c3",
+      "sourceFileSha256": "70af3217e8620ae65efcdc418f775c8c36feff10d4d81d8e204cf645284fc625",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "DNS admits no mixed private answers",
+          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+        }
+      ]
+    },
+    {
+      "id": "d5061137673f9bba1398",
+      "callSha256": "92cbd751d9f7418596a52898fe4f7afc4532e6d2a82678650962cd461c406822",
+      "sourceFileSha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "DNS admits no mixed private answers",
+          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+        }
+      ]
+    },
+    {
+      "id": "73bf2c76c1358dacf6a0",
+      "callSha256": "e0582bb3493b1402c331c06ae96b729e681215194f1129938e5edc8bc6b52f4e",
+      "sourceFileSha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+        },
+        {
+          "path": "backend/src/security/egress/publicPost.test.ts",
+          "marker": "upload pins the admitted address",
+          "sha256": "ad473aabd5f6df2b4eb0732949f09215e92e584a9a19b8b900755c6cbf479d18"
+        }
+      ]
+    },
+    {
+      "id": "be1e785f2ee1037bb1c0",
+      "callSha256": "b749cc0e9a861b7fc060b881bbab4985fdb9c9db13ff4f487fb6775dfd7ff283",
+      "sourceFileSha256": "32a340e8c942c965f0ec08179234ee7431efb32f77dceb6a809ee7b1b9451293",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "DNS admits no mixed private answers",
+          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+        }
+      ]
+    },
+    {
+      "id": "651ba21f8a976701efbf",
+      "callSha256": "a8f19669cd8ca23be192dfe9b090eb42e168b12aba3a041c4d7cd6d59380a658",
+      "sourceFileSha256": "51467588b07c73bb6b06bd1434fe2d126388635b053cecc681587a3c11588be1",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "DNS admits no mixed private answers",
+          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+        }
+      ]
+    }
+  ]
+}

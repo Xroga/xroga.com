@@ -2,8 +2,10 @@ import { lookup } from 'node:dns/promises';
 import { request } from 'node:https';
 import { isIP, type LookupFunction } from 'node:net';
 import type { IncomingMessage } from 'node:http';
+import { createHash } from 'node:crypto';
 
-// Command 010 preparation only. No runtime caller uses this module yet.
+// Canonical credential-free public HTTPS retrieval. Provider credentials must
+// remain in separately reviewed fixed-origin adapters, never in this transport.
 // Network admission does not confer user/action authority or provider budget.
 export interface PublicAddress { address: string; family: number }
 export type PublicResolver = (hostname: string) => Promise<PublicAddress[]>;
@@ -32,9 +34,15 @@ export function isPublicAddress(address: string): boolean {
 }
 
 export function publicHttpsUrl(raw: string, base?: URL): URL {
+  if(typeof raw!=='string'||!raw||raw.length>8192||raw.trim()!==raw||/[\u0000-\u0020\u007f\\]/.test(raw)) throw new EgressPolicyError('Invalid egress URL');
   let url: URL;
   try { url = new URL(raw, base); } catch { throw new EgressPolicyError('Invalid egress URL'); }
   const host = url.hostname.replace(/^\[|\]$/g, '').replace(/\.$/, '').toLowerCase();
+  // WHATWG parsing normalizes integer, octal and hexadecimal IPv4 notation.
+  // Reject ambiguous input even when it normalizes to a public address.
+  const authority=raw.match(/^https:\/\/([^/?#]+)/i)?.[1];
+  if(authority && isIP(host)===4 && authority.replace(/:443$/,'').replace(/\.$/,'')!==host)
+    throw new EgressPolicyError('Ambiguous egress address');
   if (url.protocol !== 'https:' || url.username || url.password || url.port
     || !host.includes('.') && !isIP(host)
     || /(?:^|\.)(?:localhost|local|internal|test|invalid)$/.test(host)
@@ -74,8 +82,8 @@ export async function admitPublicTarget(url: URL, resolve: PublicResolver, signa
   }) as LookupFunction;
 }
 
-export interface PublicGetOptions { maxBytes: number; timeoutMs: number; maxRedirects?: number }
-export interface PublicGetResult { bytes: Buffer; contentType: string; finalUrl: string }
+export interface PublicGetOptions { maxBytes: number; timeoutMs: number; maxRedirects?: number; allowHttpErrors?: boolean }
+export interface PublicGetResult { bytes: Buffer; contentType: string; finalUrl: string; statusCode: number; retryAfterSeconds?: number }
 export interface PublicGetTransport {
   resolve: PublicResolver;
   open(url: URL, pinnedLookup: LookupFunction, signal: AbortSignal): Promise<IncomingMessage>;
@@ -99,7 +107,8 @@ export async function boundedPublicGet(raw: string, options: PublicGetOptions,
   const maxRedirects = options.maxRedirects ?? 3;
   if (!Number.isSafeInteger(options.maxBytes) || options.maxBytes < 1 || options.maxBytes > 32 * 1024 * 1024
     || !Number.isSafeInteger(options.timeoutMs) || options.timeoutMs < 1 || options.timeoutMs > 60_000
-    || !Number.isSafeInteger(maxRedirects) || maxRedirects < 0 || maxRedirects > 5) throw new EgressPolicyError('Invalid egress limits');
+    || !Number.isSafeInteger(maxRedirects) || maxRedirects < 0 || maxRedirects > 5
+    || (options.allowHttpErrors!==undefined&&typeof options.allowHttpErrors!=='boolean')) throw new EgressPolicyError('Invalid egress limits');
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), options.timeoutMs);
   let response: IncomingMessage | undefined;
@@ -116,7 +125,7 @@ export async function boundedPublicGet(raw: string, options: PublicGetOptions,
         url = publicHttpsUrl(location, url);
         continue;
       }
-      if (status < 200 || status >= 300) throw new EgressPolicyError('Egress response failed');
+      if ((status < 200 || status >= 300) && !options.allowHttpErrors) throw new EgressPolicyError('Egress response failed');
       const encoding = response.headers['content-encoding'];
       if (encoding && encoding !== 'identity') throw new EgressPolicyError('Egress encoded response denied');
       const declared = response.headers['content-length'];
@@ -132,11 +141,44 @@ export async function boundedPublicGet(raw: string, options: PublicGetOptions,
         if (count > options.maxBytes) throw new EgressPolicyError('Egress byte limit exceeded');
         chunks.push(chunk);
       }
-      return { bytes: Buffer.concat(chunks, count), contentType: response.headers['content-type'] ?? '', finalUrl: url.href };
+      const retry=Number(response.headers['retry-after']);
+      return { bytes: Buffer.concat(chunks, count), contentType: response.headers['content-type'] ?? '', finalUrl: url.href, statusCode: status,
+        ...(Number.isFinite(retry)&&retry>=0?{retryAfterSeconds:retry}:{}) };
     }
   } catch (error) {
     // Errors never contain URLs, signed query parameters, response content or DNS diagnostics.
     if (error instanceof EgressPolicyError) throw error;
+    if (controller.signal.aborted || (error instanceof Error && error.name==='AbortError')) throw aborted();
     throw new Error('Egress request unavailable');
   } finally { clearTimeout(timer); response?.destroy(); controller.abort(); }
+}
+
+export interface PublicPostTransport {
+  resolve:PublicResolver;
+  open(url:URL,pinnedLookup:LookupFunction,signal:AbortSignal,body:Buffer,contentType:string):Promise<IncomingMessage>;
+}
+const postTransport:PublicPostTransport={resolve:transport.resolve,open:(url,pinnedLookup,signal,body,contentType)=>new Promise((resolve,reject)=>{
+  const req=request(url,{method:'POST',agent:false,lookup:pinnedLookup,signal,headers:{'Content-Type':contentType,'Content-Length':String(body.length),'Accept-Encoding':'identity'}},resolve);
+  req.on('error',reject);req.end(body);
+})};
+/** Credential-free, one-attempt upload with pinned DNS. Redirects are never
+ * followed or retried after a possible effect. Only safe receipt fields return. */
+export async function boundedPublicPost(raw:string,body:Buffer,contentType:string,beforeSend:()=>Promise<void>,io:PublicPostTransport=postTransport):Promise<{statusCode:number;bodyDigest:string}> {
+  const url=publicHttpsUrl(raw);
+  if(!Buffer.isBuffer(body)||body.length>128_000||!body.length||!/^[a-z0-9!#$&^_.+-]+\/[a-z0-9!#$&^_.+-]+$/i.test(contentType))throw new EgressPolicyError('Invalid upload limits or type');
+  const snapshot=Buffer.from(body);
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);let response:IncomingMessage|undefined;
+  try {
+    const pinned=await admitPublicTarget(url,io.resolve,controller.signal);
+    await beforeAbort(beforeSend(),controller.signal);
+    if(controller.signal.aborted)throw aborted();
+    response=await beforeAbort(io.open(url,pinned,controller.signal,snapshot,contentType),controller.signal);
+    if(!response.statusCode||response.statusCode<200||response.statusCode>=300)throw new EgressPolicyError('External upload outcome unverified; do not retry blindly');
+    if(response.headers['content-encoding']&&response.headers['content-encoding']!=='identity')throw new EgressPolicyError('Upload response encoding denied');
+    let count=0;const hash=createHash('sha256'),iterator=response[Symbol.asyncIterator]();
+    for(;;){const part=await beforeAbort(iterator.next(),controller.signal);if(part.done)break;
+      const bytes=Buffer.from(part.value);count+=bytes.length;if(count>8192)throw new EgressPolicyError('Upload response limit exceeded');hash.update(bytes);}
+    return {statusCode:response.statusCode,bodyDigest:hash.digest('hex')};
+  } catch(error){if(error instanceof EgressPolicyError)throw error;throw new Error('External upload outcome unavailable; do not retry blindly');}
+  finally{clearTimeout(timer);response?.destroy();controller.abort();snapshot.fill(0);}
 }

@@ -3,6 +3,7 @@
  */
 
 import { verifyLivePreviewUrl } from './deployVerify.js';
+import { boundedPublicGet } from '../security/egress/urlPolicy.js';
 
 export interface ShipVerifyResult {
   liveOk: boolean;
@@ -58,17 +59,13 @@ export async function verifyShippedProduct(opts: {
   if (liveUrl && (opts.expectApiHealth || liveOk)) {
     const healthUrl = `${liveUrl.replace(/\/$/, '')}/api/health`;
     try {
-      const res = await fetch(healthUrl, {
-        method: 'GET',
-        redirect: 'follow',
-        headers: { 'User-Agent': 'XROGA-Ship-Verify/1.0' },
-        signal: AbortSignal.timeout(12_000),
-      });
-      if (res.ok) {
-        const json = (await res.json().catch(() => null)) as Record<string, unknown> | null;
+      const res = await boundedPublicGet(healthUrl,{maxBytes:32_000,timeoutMs:12_000,maxRedirects:3,allowHttpErrors:true});
+      const ok=res.statusCode>=200&&res.statusCode<300;
+      if (ok) {
+        let json:Record<string,unknown>|null=null;try{json=JSON.parse(res.bytes.toString('utf8'));}catch{/* Non-JSON health remains explicit below. */}
         if (json && typeof json === 'object') {
-          healthOk = json.ok === true || json.status === 'ok' || res.ok;
-          healthBody = json;
+          healthOk = json.ok === true || json.status === 'ok' || ok;
+          healthBody = {ok:healthOk,hasOpenAI:Boolean(json.hasOpenAI),hasSupabase:Boolean(json.hasSupabase),hasStripe:Boolean(json.hasStripe)};
           keysProof.checked = true;
           keysProof.hasOpenAI = Boolean(json.hasOpenAI);
           keysProof.hasSupabase = Boolean(json.hasSupabase);
@@ -86,14 +83,14 @@ export async function verifyShippedProduct(opts: {
           keysProof.message = '✅ /api/health responded (non-JSON)';
           lines.push(keysProof.message);
         }
-      } else if (res.status === 404) {
+      } else if (res.statusCode === 404) {
         healthOk = null;
         keysProof.message = 'ℹ️ No /api/health (static site) — skipped keys proof';
         lines.push(keysProof.message);
       } else {
         healthOk = false;
         keysProof.checked = true;
-        keysProof.message = `❌ /api/health HTTP ${res.status}`;
+        keysProof.message = `❌ /api/health HTTP ${res.statusCode}`;
         lines.push(keysProof.message);
       }
     } catch {
@@ -113,15 +110,10 @@ export async function verifyShippedProduct(opts: {
     const paths = ['/', ...(opts.expectApiHealth ? ['/api/health'] : [])];
     for (const path of paths) {
       try {
-        const res = await fetch(`${base}${path}`, {
-          method: 'GET',
-          redirect: 'follow',
-          headers: { 'User-Agent': 'XROGA-Ship-Smoke/1.0' },
-          signal: AbortSignal.timeout(10_000),
-        });
-        const ok = res.status > 0 && res.status < 500;
-        smoke.push({ path, ok, status: res.status });
-        if (!ok) lines.push(`❌ Smoke ${path} → HTTP ${res.status}`);
+        const res = await boundedPublicGet(`${base}${path}`,{maxBytes:1024*1024,timeoutMs:10_000,maxRedirects:3,allowHttpErrors:true});
+        const ok = res.statusCode > 0 && res.statusCode < 500;
+        smoke.push({ path, ok, status: res.statusCode });
+        if (!ok) lines.push(`❌ Smoke ${path} → HTTP ${res.statusCode}`);
         else if (path !== '/' && path !== '/api/health') lines.push(`✅ Smoke ${path}`);
       } catch {
         smoke.push({ path, ok: false });
