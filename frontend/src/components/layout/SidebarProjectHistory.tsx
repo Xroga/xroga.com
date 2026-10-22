@@ -2,7 +2,10 @@
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import { activateSidebarProject, clearActiveSidebarProject, getActiveSidebarProject, SIDEBAR_PROJECT_ACTIVE_EVENT } from '@/lib/sidebarProjectTask';
+import { clearSelectedRepoContext } from '@/lib/repoContext';
+import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { Cloud, FolderOpen, GitBranch, ChevronDown, ChevronRight, Pin, PinOff, MoreHorizontal, Plus, ArrowUp, ArrowDown } from 'lucide-react';
 import { SidebarActionMenu, type SidebarActionId, type SidebarMenuAction } from './SidebarActionMenu';
 import { SidebarMovingTitle } from './SidebarMovingTitle';
@@ -176,6 +179,7 @@ function repoLabel(full: string): string {
  */
 export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const router = useRouter();
+  const pathname = usePathname();
   const workspaceIdentity = useWorkspaceIdentity();
   const isGuest = workspaceIdentity.status === 'guest';
   const { requestAuthGate } = useWorkspaceAuthGate();
@@ -211,6 +215,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
   const [busyId, setBusyId] = useState<string | null>(null);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  const [activeSidebarProjectId, setActiveSidebarProjectId] = useState<string | null>(null);
 
   /**
    * Live chat state is read through refs, not closed over.
@@ -225,6 +230,12 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
    * Refs give the same values without making the callback unstable.
    */
   const accountId = !isGuest ? workspaceIdentity.userId ?? '' : '';
+  useEffect(()=>{
+    const sync=()=>setActiveSidebarProjectId(getActiveSidebarProject(accountId)?.projectId||null);
+    sync();
+    window.addEventListener(SIDEBAR_PROJECT_ACTIVE_EVENT,sync);
+    return()=>window.removeEventListener(SIDEBAR_PROJECT_ACTIVE_EVENT,sync);
+  },[accountId]);
   const lastSidebarFetchRef = useRef(0);
   const refreshTimerRef = useRef<number | null>(null);
   const activeAccountRef=useRef(accountId);
@@ -690,6 +701,12 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     if (busyId) return;
     setBusyId(session.id);
     try {
+      // Restore membership alongside the actual saved conversation, not the previous task.
+      const explicitProjectId=metaOf('conversation',session.id)?.project_id;
+      const inferredProject=accountProjects.find(p=>p.github_repo_name&&p.github_repo_name===session.githubRepoName);
+      const restoredProject=explicitProjectId||inferredProject?.id;
+      if(accountId&&restoredProject)activateSidebarProject(accountId,restoredProject);
+      else clearActiveSidebarProject();
       const branch = session.githubBranch || 'main';
       const repo = session.githubRepoName;
       if (!repo?.includes('/')) {
@@ -907,16 +924,53 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   };
   function contextLink(kind:SidebarKind,id:string){
     if(kind==='project') return projectById(id)?.actual
-      ? `${window.location.origin}/dashboard/projects/${encodeURIComponent(id)}`
+      ? `${window.location.origin}/workspace?project=${encodeURIComponent(id)}`
       : `${window.location.origin}/dashboard/projects`;
     return `${window.location.origin}/workspace?conversation=${encodeURIComponent(id)}`;
   }
+
+  /** Creating a task starts a new real conversation; the project itself remains reusable. */
+  function beginProjectTask(p:{id:string;label:string;repo:string|null}){
+    if(!accountId){requestAuthGate('history');return;}
+    startNewChat(); // flush the prior conversation BEFORE switching its project/repository.
+    if(p.repo?.includes('/')){
+      const selected=getSelectedRepoContext();
+      saveSelectedRepoContext({repo:p.repo,branch:selected?.repo===p.repo?selected.branch:'main',projectRoot:'/'});
+      notifyGithubRepoContext(p.repo,selected?.repo===p.repo?selected.branch:'main');
+    }else clearSelectedRepoContext();
+    activateSidebarProject(accountId,p.id);
+    setOpenFolders(prev=>({...prev,[p.id]:true}));
+    useProjectWorkspaceStore.getState().setWorkspaceOpen(false);
+    router.push('/workspace');
+    window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
+  }
   function openProject(id:string){
     const p=projectById(id);
-    if(p?.actual){router.push(`/dashboard/projects/${encodeURIComponent(p.actual.id)}`);return;}
-    const f=folders.find(folder=>'repo:'+folder.key===id);
-    if(f)void openRepoFolder(f);
+    if(p){beginProjectTask(p);return;}
+    toast.error('This project is not available');
   }
+  useEffect(()=>{
+    if(!accountId||pathname!=='/workspace')return;
+    const target=new URLSearchParams(window.location.search).get('project');
+    if(!target)return;
+    let cancelled=false;
+    void (async()=>{
+      try{
+        // Validate ownership before turning an external URL into project state.
+        const actual=await api.projects.get(target);
+        if(cancelled)return;
+        window.history.replaceState(window.history.state,'','/workspace');
+        beginProjectTask({id:actual.id,label:actual.name,repo:actual.github_repo_name||null});
+      }catch(e){
+        if(cancelled)return;
+        window.history.replaceState(window.history.state,'','/workspace');
+        toast.error('Project is not available to your account');
+      }
+    })();
+    return()=>{cancelled=true;};
+    // The route/query is consumed once; do not re-create a task on a sidebar data refresh.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[accountId,pathname]);
   function renderRow(kind:SidebarKind,id:string,label:string,open:()=>void,pinned:boolean){
     const saved=metaOf(kind,id)?.pin_order!=null;
     return <div key={kind+':'+id} className="xv-sidebar-work-row group flex items-center gap-1 min-w-0 rounded-md hover:bg-[var(--foreground)]/[0.05]"
@@ -1034,6 +1088,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         const value=editorText.trim();if(!value)throw new Error('Enter a project name');
         const p=await api.projects.create({name:value,type:'app'});
         if(editor.kind==='conversation')await changeSidebarMeta(accountId,'conversation',editor.id,{project_id:p.id,section_id:null});
+        else beginProjectTask({id:p.id,label:p.name,repo:p.github_repo_name||null});
       }else if(editor.mode==='new-section'){
         const value=editorText.trim();if(!value||!editor.projectId)throw new Error('Select a project and section name');
         const sec=await createSidebarSection(accountId,editor.projectId,value);
@@ -1092,8 +1147,15 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
             <div className="min-w-0 flex-1">
               {renderRow('project',p.id,projectTitle(p.id,p.label),()=>openProject(p.id),false)}
             </div>
+            <button type="button" aria-label={'New task in '+projectTitle(p.id,p.label)} title={'New task in '+projectTitle(p.id,p.label)}
+              className="xv-sidebar-project-task shrink-0 rounded-md p-1 text-[var(--muted)] hover:bg-[var(--foreground)]/10 hover:text-[var(--foreground)] focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
+              onClick={()=>beginProjectTask(p)}><Plus size={14} aria-hidden="true"/></button>
           </div>
-          {expandedProject ? <div className="pl-4 space-y-0.5" aria-label={p.label+' conversations'}>
+          {expandedProject ? <div className="pl-3 space-y-0.5" aria-label={p.label+' conversations'}>
+            {activeSidebarProjectId===p.id&&sessionId&&messages.length===0?
+              <button type="button" className="w-full text-left px-2 py-1.5 text-xs font-medium rounded-md bg-[var(--foreground)]/[0.055]"
+                aria-label={'Start conversation in '+projectTitle(p.id,p.label)}
+                onClick={()=>router.push('/workspace')}>Start conversation</button>:null}
             {childSections.map(section=>{
               const grouped=related.filter(item=>metaOf('conversation',item.id)?.section_id===section.id);
               if(!grouped.length)return null;
