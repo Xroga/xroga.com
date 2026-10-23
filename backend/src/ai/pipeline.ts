@@ -672,7 +672,7 @@ export async function hydratePriorFiles(
 
   // Client priorSite is valid only for a local product. A selected repository must
   // never be shadowed by browser state.
-  if(scope.projectId&&!meta?.priorSite?.html?.trim()&&(await getProjectMemoryAsync(userId,null,branch))?.files?.length){
+  if(scope.projectId&&(meta?.buildUpdate||meta?.resumeRun)&&!meta?.priorSite?.html?.trim()&&(await getProjectMemoryAsync(userId,null,branch))?.files?.length){
     throw new SafeRepositoryReadError('Legacy local context has no verified project binding. Reload the selected project before building.');
   }
   if (meta?.priorSite?.html?.trim()) {

@@ -62,7 +62,8 @@ test('actual hydration and history isolate database projects, selected repositor
   mode='foreignHistory';assert.deepEqual(await loadSessionHistory(owner,modelContextNamespace(a,null)),[]);mode='ok';
   await setProjectMemoryDurable({userId:owner,repo:null,files:files('UNBOUND_LOCAL_CANARY')});
   const fresh=randomUUID();projects.set(fresh,{id:fresh,user_id:owner,github_repo_name:null});
-  await assert.rejects(hydratePriorFiles(owner,undefined,scope(fresh)),/no verified project binding/);
+  await assert.rejects(hydratePriorFiles(owner,{buildUpdate:true},scope(fresh)),/no verified project binding/);
+  assert.deepEqual((await hydratePriorFiles(owner,{buildUpdate:false},scope(fresh))).files,[],'An explicit new build stays usable and cannot inherit legacy workspace files');
   assert.equal(getProjectMemory(owner,null)?.files[0].content,'UNBOUND_LOCAL_CANARY','Unsafe legacy namespace is retained, not guessed or deleted');
   await setProjectMemoryDurable({userId:owner,repo:modelContextNamespace(github,repo),files:files('owned repository source'),commitSha:head});
   const meta={githubTargetRepo:repo,githubTargetBranch:'main',priorSite:{html:'UNTRUSTED_BROWSER_CANARY'}};
