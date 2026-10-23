@@ -79,7 +79,7 @@ function TextRenderer({ block, sources, afterIntro }: { block: XrogaBlock; sourc
       <div>
         {block.title ? <h3 className="font-medium">{block.title}</h3> : null}
         {block.type === 'narrative' ? (
-          <div className="xv-response-text"><FormattedAiMarkdown content={block.text} sources={sources} afterIntro={afterIntro} /></div>
+          <div className="xv-response-text"><FormattedAiMarkdown content={block.text.replace(/[—–]/g, '-')} sources={sources} afterIntro={afterIntro} /></div>
         ) : (
           <p className="whitespace-pre-wrap leading-6">{'text' in block ? block.text : ''}</p>
         )}

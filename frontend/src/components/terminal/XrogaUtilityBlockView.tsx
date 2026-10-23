@@ -31,7 +31,7 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 function text(value: unknown): string {
-  if (value === null || value === undefined) return '—';
+  if (value === null || value === undefined) return '-';
   if (typeof value === 'boolean') return value ? 'Yes' : 'No';
   return String(value);
 }
@@ -72,7 +72,7 @@ function ProgressRow({ item }: { item: ProgressItem }) {
   const percent = item.max > 0 ? clamp((item.value / item.max) * 100, 0, 100) : 0;
   const color = item.color ?? (item.status === 'failed' ? '#dc2626' : item.status === 'completed' ? '#16a34a' : '#2563eb');
   return (
-    <div className="space-y-2">
+    <div className="space-y-3 rounded-2xl bg-[var(--background)] p-5 shadow-[0_8px_24px_rgba(18,45,90,.08)]">
       <div className="flex items-start justify-between gap-3 text-sm">
         <div className="min-w-0">
           <p className="font-medium text-[var(--foreground)]">{item.label}</p>
@@ -84,14 +84,14 @@ function ProgressRow({ item }: { item: ProgressItem }) {
         </span>
       </div>
       <div
-        className="h-2.5 overflow-hidden rounded-full bg-black/10 dark:bg-white/10"
+        className="h-4 overflow-hidden rounded-full bg-black/10 dark:bg-white/10"
         role="progressbar"
         aria-label={item.label}
         aria-valuemin={0}
         aria-valuemax={item.max}
         aria-valuenow={clamp(item.value, 0, item.max)}
       >
-        <div className="h-full rounded-full transition-[width] duration-500 motion-reduce:transition-none" style={{ width: `${percent}%`, backgroundColor: color }} />
+        <div className="h-full rounded-full transition-[width] duration-500 motion-reduce:transition-none" style={{ width: `${percent}%`, background: `linear-gradient(90deg, ${color}, #59b8f5)` }} />
       </div>
     </div>
   );
@@ -99,7 +99,7 @@ function ProgressRow({ item }: { item: ProgressItem }) {
 
 function ProgressRenderer({ block }: { block: Extract<UtilityBlock, { type: 'progress' | 'progress-group' }> }) {
   const items = block.type === 'progress' ? [block.progress] : block.items;
-  return <Surface title={block.title ?? 'Progress'} description={block.description} state={block.state}><div className="space-y-5 p-4">{items.map((item) => <ProgressRow key={item.id} item={item} />)}</div></Surface>;
+  return <Surface title={block.title ?? 'Progress'} description={block.description} state={block.state}><div className="grid gap-3 p-4 sm:grid-cols-2">{items.map((item) => <ProgressRow key={item.id} item={item} />)}</div></Surface>;
 }
 
 function CalculatorRenderer({ block }: { block: Extract<UtilityBlock, { type: 'calculator' }> }) {
@@ -186,7 +186,7 @@ function StepsRenderer({ block }: { block: Extract<UtilityBlock, { type: 'steps'
 }
 
 function ScorecardRenderer({ block }: { block: Extract<UtilityBlock, { type: 'scorecard' }> }) {
-  return <Surface title={block.title ?? 'Scorecard'} description={block.description} state={block.state}><div className="grid gap-3 p-4 sm:grid-cols-2">{block.scores.map((score) => { const percent = clamp((score.score / score.max) * 100, 0, 100); return <article key={score.id} className="rounded-xl border border-[var(--border)] p-4"><div className="flex items-baseline justify-between gap-3"><h4 className="text-sm font-medium">{score.label}</h4><strong className="text-lg">{formatNumber(score.score)}<span className="text-xs font-normal text-[var(--muted)]">/{formatNumber(score.max)}</span></strong></div><div className="mt-3 h-1.5 overflow-hidden rounded-full bg-black/10 dark:bg-white/10"><div className="h-full rounded-full bg-blue-600" style={{ width: `${percent}%` }} /></div>{score.detail ? <p className="mt-2 text-xs text-[var(--muted)]">{score.detail}</p> : null}</article>; })}</div></Surface>;
+  return <Surface title={block.title ?? 'Scorecard'} description={block.description} state={block.state}><div className="grid gap-3 p-4 sm:grid-cols-2">{block.scores.map((score) => { const percent = score.max > 0 ? clamp((score.score / score.max) * 100, 0, 100) : 0; return <article key={score.id} className="rounded-2xl bg-[var(--background)] p-5 shadow-[0_8px_24px_rgba(18,45,90,.08)]"><h4 className="text-xs font-medium text-[var(--muted)]">{score.label}</h4><strong className="mt-2 block text-4xl font-semibold tracking-tight">{formatNumber(score.score)}<span className="ml-1 text-sm font-normal text-[var(--muted)]">/{formatNumber(score.max)}</span></strong><div className="mt-4 h-3 overflow-hidden rounded-full bg-black/10 dark:bg-white/10" role="meter" aria-label={score.label} aria-valuemin={0} aria-valuemax={score.max} aria-valuenow={score.score}><div className="h-full rounded-full bg-gradient-to-r from-[#1854e8] to-[#59b8f5]" style={{ width: `${percent}%` }} /></div>{score.detail ? <p className="mt-3 text-xs text-[var(--muted)]">{score.detail}</p> : null}</article>; })}</div></Surface>;
 }
 
 function RankingRenderer({ block }: { block: Extract<UtilityBlock, { type: 'ranking' }> }) {

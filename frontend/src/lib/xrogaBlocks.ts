@@ -289,7 +289,7 @@ const apiRequestBlock = richBase.extend({
 });
 const tableBlock = richBase.extend({ type: z.literal('table'), ...tableShape });
 const chartBlock = richBase.extend({
-  type: z.literal('chart'), chartType: z.enum(['line', 'area', 'bar', 'pie', 'donut', 'scatter', 'radar', 'funnel']), data: z.array(dataRow), xKey: z.string().min(1),
+  type: z.literal('chart'), chartType: z.enum(['line', 'area', 'bar', 'grouped-bar', 'stacked-bar', 'stacked-area', 'histogram', 'waterfall', 'bubble', 'heatmap', 'treemap', 'pie', 'donut', 'scatter', 'radar', 'funnel']), data: z.array(dataRow), xKey: z.string().min(1),
   series: z.array(z.object({ key: z.string().min(1), label: z.string().min(1), color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional() })).min(1),
   datasetId: z.string().optional(), summary: z.string().min(1),
 });
@@ -306,7 +306,7 @@ const galleryBlock = richBase.extend({ type: z.literal('gallery'), items: z.arra
 const imageBlock = richBase.extend({ type: z.literal('image'), image: mediaItem });
 const audioBlock = richBase.extend({ type: z.literal('audio'), audio: mediaItem });
 const videoBlock = richBase.extend({ type: z.literal('video'), video: mediaItem });
-const dashboardBlock = richBase.extend({ type: z.literal('dashboard'), metrics: z.array(metricItem).optional(), charts: z.array(z.object({ id: z.string().min(1), title: z.string().optional(), chartType: z.enum(['line', 'area', 'bar', 'pie', 'donut', 'scatter', 'radar', 'funnel']), data: z.array(dataRow), xKey: z.string().min(1), series: z.array(z.object({ key: z.string().min(1), label: z.string().min(1), color: z.string().optional() })).min(1), summary: z.string().min(1) })).optional(), tables: z.array(z.object({ id: z.string().min(1), title: z.string().optional(), ...tableShape })).optional() });
+const dashboardBlock = richBase.extend({ type: z.literal('dashboard'), metrics: z.array(metricItem).optional(), charts: z.array(z.object({ id: z.string().min(1), title: z.string().optional(), chartType: z.enum(['line', 'area', 'bar', 'grouped-bar', 'stacked-bar', 'stacked-area', 'histogram', 'waterfall', 'bubble', 'heatmap', 'treemap', 'pie', 'donut', 'scatter', 'radar', 'funnel']), data: z.array(dataRow), xKey: z.string().min(1), series: z.array(z.object({ key: z.string().min(1), label: z.string().min(1), color: z.string().optional() })).min(1), summary: z.string().min(1) })).optional(), tables: z.array(z.object({ id: z.string().min(1), title: z.string().optional(), ...tableShape })).optional() });
 const documentBlock = richBase.extend({
   type: z.literal('document'),
   content: z.string(),

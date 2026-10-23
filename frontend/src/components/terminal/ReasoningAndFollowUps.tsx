@@ -34,7 +34,7 @@ export const ModernResponseText = memo(function ModernResponseText({
   sources?: CitationSource[];
   afterIntro?: ReactNode;
 }) {
-  const safeContent = typeof content === 'string' ? content : '';
+  const safeContent = typeof content === 'string' ? content.replace(/[—–]/g, '-') : '';
 
   if (!safeContent && streaming) {
     return null;

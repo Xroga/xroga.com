@@ -14629,6 +14629,10 @@ html.xv-home-scroll-lock body {
 .xv-response-meta a:hover { color:var(--foreground); }
 .xv-response-meta time { opacity:0; transition:opacity .15s ease; }
 .group:hover .xv-response-meta time,.xv-response-meta:focus-within time { opacity:.8; }
+@media (hover:hover) {
+  .xv-response-meta { opacity:0; pointer-events:none; transform:translateY(-3px); transition:opacity .16s ease,transform .16s ease; }
+  .group:hover .xv-response-meta,.group:focus-within .xv-response-meta,.xv-response-meta:focus-within { opacity:1; pointer-events:auto; transform:none; }
+}
 @media (hover:none) { .xv-response-meta time { opacity:.8; } }
 .xv-thinking-history { margin:8px 0 12px; padding:9px 12px; border:1px solid color-mix(in srgb,var(--foreground) 12%,transparent); border-radius:10px; background:color-mix(in srgb,var(--foreground) 3%,transparent); color:var(--muted); font-size:11px; }
 .xv-thinking-history summary { display:flex; align-items:center; gap:7px; width:fit-content; cursor:pointer; color:var(--foreground); list-style:none; }

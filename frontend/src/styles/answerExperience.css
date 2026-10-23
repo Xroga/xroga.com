@@ -118,7 +118,7 @@
 .xv-market-card .xv-market-action:hover { filter:brightness(1.08); transform:translateY(-1px); }
 @media(max-width:639px){.xv-market-card{padding:17px}}
 
-[data-xroga-surface="data-table"],[data-xroga-surface="chart"] { border:2px solid transparent; border-radius:22px; background:color-mix(in srgb,var(--card) 91%,var(--foreground) 9%); box-shadow:0 12px 30px #0003; }
+[data-xroga-surface="data-table"],[data-xroga-surface="chart"] { border:0; border-radius:22px; background:var(--card); box-shadow:0 14px 38px #0002; }
 [data-xroga-surface="data-table"] > header,[data-xroga-surface="chart"] > header { padding:19px 20px 14px; border:0; }
 [data-xroga-surface="data-table"] > header h3,[data-xroga-surface="chart"] > header h3 { font-size:17px; font-weight:730; letter-spacing:-.02em; }
 [data-xroga-surface="data-table"] > header p,[data-xroga-surface="chart"] > header p { font-size:13px; line-height:1.55; }
@@ -126,10 +126,10 @@
 [data-xroga-surface="data-table"] > div:first-of-type :is(input,button),[data-xroga-surface="data-table"] footer button { border:2px solid transparent; border-radius:10px; background:color-mix(in srgb,var(--background) 76%,var(--foreground) 24%); box-shadow:0 3px 12px #0002; }
 [data-xroga-surface="data-table"] > div:first-of-type input { padding-left:36px; }
 [data-xroga-surface="data-table"] > div:first-of-type :is(input,button):focus-visible,[data-xroga-surface="data-table"] footer button:focus-visible { border-color:#316fe8; outline:0; box-shadow:0 0 0 3px #316fe84d; }
-[data-xroga-surface="data-table"] table thead { background:color-mix(in srgb,var(--card) 75%,#316fe8 25%); }
+[data-xroga-surface="data-table"] table thead { background:color-mix(in srgb,var(--card) 91%,#1854e8 9%); }
 [data-xroga-surface="data-table"] table th { color:var(--foreground); font-size:12px; font-weight:740; }
 [data-xroga-surface="data-table"] table :is(th,td) { border-color:color-mix(in srgb,var(--foreground) 10%,transparent); padding:13px 14px; }
 [data-xroga-surface="data-table"] table tbody tr:nth-child(even) { background:color-mix(in srgb,var(--foreground) 4%,transparent); }
-[data-xroga-surface="data-table"] table tbody tr:hover { background:color-mix(in srgb,#316fe8 9%,transparent); }
+[data-xroga-surface="data-table"] table tbody tr:hover { background:color-mix(in srgb,#1854e8 9%,transparent); }
 [data-xroga-surface="data-table"] footer { border-top:1px solid color-mix(in srgb,var(--foreground) 10%,transparent); padding:12px 17px; }
 [data-xroga-surface="chart"] .xv-response-chart { padding:18px; }

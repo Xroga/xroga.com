@@ -31,3 +31,4 @@
   opacity:1;
 }
 @media (max-width:767px){[data-sidebar-work-organizer] .xv-sidebar-project-task{opacity:1}}
+.xv-sidebar-recents-section{margin-top:14px;padding-top:12px;border-top:1px solid color-mix(in srgb,var(--foreground) 12%,transparent)}
