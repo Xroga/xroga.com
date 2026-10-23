@@ -71001,8 +71001,7 @@
       "callers": [
         "frontend/src/app/os-preview/rich-results/RichResultsGallery.tsx:5",
         "frontend/src/components/terminal/FeatureOutputView.tsx:3",
-        "frontend/src/components/terminal/UniversalOutputView.tsx:5",
-        "frontend/src/lib/xrogaBlocks.test.ts:5"
+        "frontend/src/components/terminal/UniversalOutputView.tsx:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -71020,9 +71019,7 @@
         "frontend/src/components/terminal/XrogaBlockView.tsx#EvidenceRenderer",
         "frontend/src/components/terminal/XrogaBlockView.tsx#ReceiptRenderer"
       ],
-      "testCoverage": [
-        "frontend/src/lib/xrogaBlocks.test.ts"
-      ],
+      "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
