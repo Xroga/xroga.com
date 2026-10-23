@@ -215,7 +215,7 @@ function safeConfirmation(
 
     expiresAt:
       row.expires_at,
-    ...(plan ? { request: plan.useCase } : {}),
+    ...(plan ? { request: redactOperationsValue(plan.useCase) as string } : {}),
     ...(plan ? { approval: { preparedActionId: row.id, actionDigest: row.plan_digest,
       accountReference: plan.authority!.connectedAccountId, operation: plan.toolSlug,
       actionClass: plan.authority!.actionClass,

@@ -921,8 +921,11 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(page.getByRole('button', { name: 'Start voice input', exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: /Open .*Xroga companion/ })).toHaveCount(0);
   await expect(page.getByRole('region', { name: /companion panel/ })).toHaveCount(0);
-  await modelUsage.click();
+  // The viewport-clamped menu can cover its anchor. Use its supported keyboard
+  // dismissal rather than forcing a pointer through the app-permissions select.
+  await page.keyboard.press('Escape');
   await expect(modelPanel).toHaveCount(0);
+  await expect(modelUsage).toHaveAttribute('aria-expanded', 'false');
 
   for (const viewport of [
     { width: 390, height: 844 },

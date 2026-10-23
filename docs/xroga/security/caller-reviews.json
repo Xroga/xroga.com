@@ -9391,18 +9391,18 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "3d7f496e9f641bc51f6f8d0ee77c869aa7ee535b1c34777c8ca45aecb7fb4102",
+      "sourceSha256": "6367add6bd41dc2683e35693276e5be33ba6dabdd11fd57501aa9ddc88686d0f",
       "callIds": [
-        "4cd9782a6548ede0a7bc",
-        "538cd73260c45c073ef9",
-        "70c4dc032235742de46f",
-        "a276ba766951b9e9cd17",
-        "d92b8f2d7db3da176eb9",
-        "529e8604e8bd907c2a0b",
-        "6b9d84aed7df492ce55d",
-        "be1a1dd064c6fe74ebce",
-        "4520e5652464dd22361b",
-        "4eacea9886448bd774c2"
+        "bc1b1e147cebbd6366f0",
+        "45b5c3fc4d40bba6fa2b",
+        "291386bd727275995fd2",
+        "bc58f82c7f7e2845c1f2",
+        "f4bc3b2f0ff69fdf1cd7",
+        "225429dd5a6aaf987f63",
+        "c9d53e8b321a8eca7bb6",
+        "495566fa0852f3aef30f",
+        "de3d23efab5d7a3e8980",
+        "fdb08e6a79fda69e2cbe"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
@@ -12148,9 +12148,9 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "3d7f496e9f641bc51f6f8d0ee77c869aa7ee535b1c34777c8ca45aecb7fb4102",
+      "sourceSha256": "6367add6bd41dc2683e35693276e5be33ba6dabdd11fd57501aa9ddc88686d0f",
       "callIds": [
-        "6123d209887a129ab589"
+        "6c808730862474ef4948"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Authenticated phase1 confirmation route passes requireUserId and explicit confirmation UUID. The service reads owner-filtered plan and validates displayed metadata. Service-only claim locks the same owner/ID and compares full plan, digest, expiry, display metadata and pending state, then checks clock_timestamp after lock acquisition before marking executing.",
@@ -12440,9 +12440,9 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "3d7f496e9f641bc51f6f8d0ee77c869aa7ee535b1c34777c8ca45aecb7fb4102",
+      "sourceSha256": "6367add6bd41dc2683e35693276e5be33ba6dabdd11fd57501aa9ddc88686d0f",
       "callIds": [
-        "6b82f55405c5c92fa293"
+        "9548ef68bd08e1c7ebcb"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Only the existing confirmed-action executor passes its original admin client, verified server owner and exact claimed row. Service-only terminal transaction locks owner/ID and compares full plan, display metadata, original expiry/creation and claimed_at before consumed/failed status, with immutable exact replay. No provider execution, lease extension or confirmation reuse.",
@@ -14957,9 +14957,9 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "3d7f496e9f641bc51f6f8d0ee77c869aa7ee535b1c34777c8ca45aecb7fb4102",
+      "sourceSha256": "6367add6bd41dc2683e35693276e5be33ba6dabdd11fd57501aa9ddc88686d0f",
       "callIds": [
-        "0a190538261293eb37ab"
+        "926fc795645f2f0bc36d"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
@@ -14977,9 +14977,9 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "3d7f496e9f641bc51f6f8d0ee77c869aa7ee535b1c34777c8ca45aecb7fb4102",
+      "sourceSha256": "6367add6bd41dc2683e35693276e5be33ba6dabdd11fd57501aa9ddc88686d0f",
       "callIds": [
-        "18ea593b1154cdeeb2d4"
+        "727627f9887ab81f288b"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
@@ -14997,9 +14997,9 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "3d7f496e9f641bc51f6f8d0ee77c869aa7ee535b1c34777c8ca45aecb7fb4102",
+      "sourceSha256": "6367add6bd41dc2683e35693276e5be33ba6dabdd11fd57501aa9ddc88686d0f",
       "callIds": [
-        "e9cf624ca483e1aa3bf3"
+        "d40fe91b6a6c8b94ab3f"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",

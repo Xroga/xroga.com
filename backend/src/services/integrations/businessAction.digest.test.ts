@@ -24,7 +24,7 @@ test('original request display requires a digest-verified scoped plan and preser
   process.env.SUPABASE_SERVICE_ROLE_KEY = 'SYNTHETIC_NO_DATABASE_CALL';
   t.after(() => { for (const [key, value] of previous) value === undefined ? delete process.env[key] : process.env[key] = value; });
   const { planDigest: _digest, ...base } = fixture();
-  const unsigned = { ...base, arguments: { ...base.arguments, access_token: 'synthetic-private-canary' }, authority: {
+  const unsigned = { ...base, useCase: 'Delete selected message using Bearer SYNTHETIC_REQUEST_CANARY', arguments: { ...base.arguments, access_token: 'synthetic-private-canary' }, authority: {
     version: '1' as const, userId: owner, tenantId: owner, connectedAccountId: 'fixture-account',
     actionClass: 'DELETE' as const, projectId: null, runId: null, issuedAt: new Date().toISOString(),
     expiresAt: new Date(Date.now() + 60_000).toISOString(), nonce: 'fixture-nonce', maxSpendMicroUsd: null, currency: null,
@@ -44,7 +44,8 @@ test('original request display requires a digest-verified scoped plan and preser
     }), { status: 200, headers: { 'Content-Type': 'application/json' } });
   });
   const displayed = await getBusinessActionConfirmation(owner, id);
-  assert.equal(displayed.request, plan.useCase);
+  assert.equal(displayed.request, 'Delete selected message using [REDACTED]');
+  assert.ok(!JSON.stringify(displayed).includes('SYNTHETIC_REQUEST_CANARY'));
   assert.equal(displayed.approval?.actionDigest, plan.planDigest);
   assert.equal(displayed.approval?.accountReference, 'fixture-account');
   assert.ok(!JSON.stringify(displayed).includes('synthetic-private-canary'));
