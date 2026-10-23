@@ -28,7 +28,10 @@ test('actual no-network container installs an offline package and cannot reach p
       console.log('OFFLINE_INSTALL_AND_KERNEL_NETWORK_DENIAL_VERIFIED');
     })().catch(()=>process.exitCode=1);
   `;
-  const result=await new ContainerSandboxRuntime({binary:'docker',image}).execute({files:[],command:'node',args:['-e',script],timeoutMs:30000,networkPolicy:'none',environment:{HOME:'/work'},limits:DEFAULT_SANDBOX_LIMITS});
+  // This disposable proof needs one CPU. Production defaults request five CPUs,
+  // which Docker correctly rejects on the four-CPU GitHub runner.
+  const limits={...DEFAULT_SANDBOX_LIMITS,cpuSeconds:60};
+  const result=await new ContainerSandboxRuntime({binary:'docker',image}).execute({files:[],command:'node',args:['-e',script],timeoutMs:30000,networkPolicy:'none',environment:{HOME:'/work'},limits});
   assert.equal(result.exitCode,0,JSON.stringify(result));
   assert.match(result.stdout,/OFFLINE_INSTALL_AND_KERNEL_NETWORK_DENIAL_VERIFIED/);
   assert.equal(result.timedOut,false);
