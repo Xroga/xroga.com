@@ -89,7 +89,21 @@
     "frontend/src/lib/untrustedProxyRoutes.test.ts",
     "scripts/ci/prepare-pr-integration.test.mjs",
     "scripts/security/audit-egress-callers.mjs",
-    "scripts/security/audit-egress-callers.test.mjs"
+    "scripts/security/audit-egress-callers.test.mjs",
+    "backend/src/ai/architect.ts",
+    "backend/src/ai/converter.ts",
+    "backend/src/ai/pipeline.ts",
+    "backend/src/ai/tenantModelDispatch.ts",
+    "backend/src/ai/tenantModelDispatch.test.ts",
+    "backend/src/routes/guestChat.ts",
+    "backend/src/routes/guestChat.egress.test.ts",
+    "backend/src/routes/phase1.ts",
+    "backend/src/sandbox/sandboxProbeBoundary.test.ts",
+    "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
+    "backend/src/synthesis/universalEntrypoint.ts",
+    "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
+    "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
+    "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json"
   ],
   "decisions": {
     "keep": [
@@ -148,7 +162,7 @@
     },
     {
       "command": "node scripts/security/audit-egress-callers.mjs --require-complete",
-      "scope": "Expected failure while 122 caller traces remain unresolved",
+      "scope": "Expected failure while 121 caller traces remain unresolved",
       "negative": true,
       "reference": "docs/xroga/security/egress-callers.json"
     },
@@ -163,6 +177,12 @@
       "scope": "Actual SDK call-site completion/stream tests with dispatch intercepted before network",
       "negative": true,
       "reference": "docs/xroga/evidence/command-010/MODEL-BOUNDARY-TRACE.json"
+    },
+    {
+      "command": "node --import tsx --test backend/src/ai/tenantModelDispatch.test.ts backend/src/routes/guestChat.egress.test.ts backend/src/sandbox/sandboxProbeBoundary.test.ts backend/src/ai/executionRuntime.attempt.test.ts",
+      "scope": "6 actual-call-site/HTTP/child/attempt tests passed, controlled provider/database protocols, not live database/provider proof",
+      "negative": true,
+      "reference": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json"
     }
   ],
   "architecture": {

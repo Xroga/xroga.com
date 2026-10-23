@@ -265,3 +265,42 @@ pending,68 high-risk candidates. All three SDK final dispositions remain open.
 The original12 criterion states and Phase3 block are unchanged. Later CI receipts
 must identify their own exact feature and integrated source, never inherit a
 success label from49978f11 or earlier runs.
+
+## Model dispatch continuation from 2a797dc1
+
+Scoped pipeline completion, streaming and SoftwareAgent calls now carry the
+existing issued tenant, selected canonical account/revision, owned database
+project, admitted worker attempt and canonical reservation to the actual SDK
+fetch boundary. Current credential, parent and worker checks run again after
+reservation and immediately before provider dispatch. Architect and converter
+check the actual caller owner too. Payload snapshots prevent replacement during
+quota waits. Canonical permit expiry is checked when that permit is applicable.
+
+A demonstrated fallback gap is fixed in both the common runtime and actual
+guest HTTP route. A local credential/payload policy rejection terminates all
+fallback routes, releases known zero-effect spend and cannot forward the same
+rejected data to another provider. Normal transient fallback, guest text-only
+usage, streaming and existing accounting remain covered by regression tests.
+41 focused tests pass with zero skips, including actual SDK serialization,
+loopback HTTP and child-process tests. Database/provider transports in the new
+model tests are controlled fixtures. They aren't real concurrency, provider or
+full data-provenance certification.
+
+The only newly closed outbound obligation is the fixed local container CLI
+version probe, verified through a real child process with no user payload or
+credential environment. Registry-only stays fail closed. Current totals are133
+candidates,12 narrowly reviewed boundaries,121 pending and67 high-risk review
+candidates. All three SDK final dispositions remain pending. Generic completion
+callers, full upstream file/history ownership and Operations data provenance
+remain mandatory work. Private credential uploads and paired runtime WebSockets
+remain explicitly open in MODEL-DISPATCH-PROOF.json.
+
+Two current-source Phase2 mapping records change because the real model guard
+propagation changed pipeline/universal source. Their prior bindings are retained,
+the historical current ledger is identified by Git source and exact hash, and an
+executable AST check proves both local conversions and the persistence constructor
+are unchanged. The current finite mapping is reconciled without changing frozen
+73-packet input, accepted Phase2 Git evidence, nested historical receipts, any
+criterion, validator or acceptance status. Newly added privileged calls remain
+visible and unverified in the current audit. Prior six passing CI receipts apply
+only to2a797dc1, not these new edits. The12 criterion states remain unchanged.

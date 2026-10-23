@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "fd2dac2788fa602cf0c174444669ef4ef4bbfd31c4c32a4f8a9ff4e27a12e0c3",
+  "sourceTreeDigest": "7a161cb7123bd8bea87a052d4dbece46838d65ee6a1fb72a9018d8ff096a9aae",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -54,7 +54,7 @@
     {
       "id": "038ced12b0f74e8d5e0f",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 205,
+      "line": 212,
       "entryPoint": "createModelProviderClient",
       "transport": "fetch",
       "callee": "globalThis.fetch",
@@ -81,7 +81,7 @@
     {
       "id": "31380a8d5b9454a98a98",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 271,
+      "line": 279,
       "entryPoint": "chatCompletion",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -97,7 +97,7 @@
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 366,
+      "line": 375,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -159,10 +159,10 @@
       "evidence": null
     },
     {
-      "id": "ce74641b44b3d7805f49",
+      "id": "4c899876b9e3850af11b",
       "file": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "line": 766,
-      "entryPoint": "runSingleModelTurn",
+      "line": 754,
+      "entryPoint": "execute",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
       "callSha256": "1ba7ccd42498525ef3a4c149f12d7db2bddb245ea2c228dd11ec75a14011d9a6",
@@ -1155,12 +1155,18 @@
       "callee": "spawn",
       "callSha256": "8a2096fa7242a30e44a83faf4b81e3998b2107f080574f87fe9905f4658a425f",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FIXED_LOCAL_CONTAINER_CLI_VERSION_HEALTH_PROBE_ONLY_NOT_SANDBOX_EXECUTION_OR_NETWORK_CERTIFICATION",
+      "tenantAuthority": "ONLY_CONTAINER_RUNTIME_PROBE_CALLS_FIXED_VERSION_ARGUMENT_WITH_SCRUBBED_ENVIRONMENT_NO_TENANT_PAYLOAD_OR_CREDENTIALS",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "backend/src/sandbox/sandboxProbeBoundary.test.ts",
+          "marker": "actual sandbox probe child receives only fixed version argument and a scrubbed environment",
+          "sha256": "0facd9f9ac6c0ebb27b0b2d5f42368f16b38606235f5a886762049712c1f6a73"
+        }
+      ]
     },
     {
       "id": "151aa103d929fb10c020",
@@ -2390,7 +2396,7 @@
       "callerIds": [
         "31380a8d5b9454a98a98",
         "9c345e07b723c086440e",
-        "ce74641b44b3d7805f49"
+        "4c899876b9e3850af11b"
       ]
     },
     {
@@ -2475,8 +2481,8 @@
   ],
   "counts": {
     "total": 133,
-    "reviewed": 11,
-    "pending": 122,
-    "unresolvedHighRiskBypasses": 68
+    "reviewed": 12,
+    "pending": 121,
+    "unresolvedHighRiskBypasses": 67
   }
 }

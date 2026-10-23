@@ -1,16 +1,16 @@
 {
   "version": 1,
   "scope": "PARTIAL_MODEL_BOUNDARY_TRACE_NOT_TENANT_OR_SPEND_CERTIFICATION",
-  "sourceSha256": "a3d2f3a5a47be63f1ccf6839035fca53957cc800f5f9caebbf05973983a91ff8",
-  "priorTrace": "57e1c1bdd7af87f5ac0bf0784bb9ce7dac38c376:docs/xroga/evidence/command-010/MODEL-BOUNDARY-TRACE.json",
-  "softwareAgentSourceSha256": "dd4e9d62ad02be181db1baca1648a8fbb270fd9b7e223c788035412e8a415dda",
+  "sourceSha256": "a558327133bf32c58403390f5bac2ab9411c26db42cd7fc99055bf2a3c91ac0a",
+  "priorTrace": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b:docs/xroga/evidence/command-010/MODEL-BOUNDARY-TRACE.json",
+  "softwareAgentSourceSha256": "fcfee3d38cf89192e61d679501feab221246c0757d7c530cba65d551d9cb6ae6",
   "mutableInputCorrection": {
     "reproduction": "The real SoftwareAgent factory regression failed before correction when the original input model changed after factory creation. The captured credential could be paired with the changed route. Request data could also change during the controlled quota response.",
     "fix": "Snapshot the factory model/run/fallback selection together with the credential. Snapshot messages, tools and scalar request fields before quota/reservation waits, retaining the actual cancellation signal.",
     "evidence": "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
     "sha256": "8ce151e8382d43710a99f0246cc8afb9110752acd15583d0bf67ae704d50fd01",
     "verification": "Actual factory, quota/reservation/settlement protocol fixtures and SDK interception preserve original owner, selected provider, key and project text despite route and in-wait payload mutations. No live provider request or real database accounting is claimed.",
-    "remaining": "An immutable caller snapshot is not issued actor provenance, a vault credential receipt, project ownership or reservation capability. All three SDK final dispositions remain pending."
+    "remaining": "New scoped callers carry issued context, current project/account/vault revision, wire payload and canonical budget/run binding. Unmigrated generic callers and complete upstream file/history provenance remain pending. Controlled protocol fixtures are not real database concurrency or provider acceptance."
   },
   "callers": [
     {
@@ -72,33 +72,83 @@
   "budget": "Architect, converter, repository summary, semantic planner, research, business interpretation, pipeline and SoftwareAgent use the existing reservation path for their attributed production operations. Operations benchmark uses its admitted action reservation. Anonymous guest chat instead has existing guest buckets/lease controls. The lower SDK signature still carries no issued reservation handle or tenant identity, so no universal accounting or ownership certification is inferred.",
   "upstreamReviewSource": "f040165e69222990ea3d03d90057dcbec1d501d7, upstream files unchanged by this transport patch",
   "upstreamReview": [
-    {"path":"backend/src/ai/pipeline.ts","boundary":"runPipeline requires issued TenantContext and matching opts.userId, then snapshots authoritative userId. Builder attempts check model access, select BYOK by that user and provider and reserve spend. The optional-user internal helper still needs exact reachability/admission proof, not a blanket exemption."},
-    {"path":"backend/src/ai/architect.ts","boundary":"runArchitectPlan reserves with opts.userId and fixed deepseek model. Private brief/request are caller-owned input obligations, not proven by model text."},
-    {"path":"backend/src/ai/converter.ts","boundary":"convertUserRequest reserves with its server userId and fixed deepseek model. Its raw userId signature is not an identity issuer."},
-    {"path":"backend/src/ai/repoSummarize.ts","boundary":"Repository sample prompt is private project data, uses withProviderReservation for opts.userId. Exact project-file ownership remains upstream."},
-    {"path":"backend/src/ai/universal/semanticRequestPlanner.ts","boundary":"Completion attempts reserve input.userId and selected model before dispatch and record actual usage. Reservation is not proof that all caller-supplied files belong to that user."},
-    {"path":"backend/src/ai/black-hole/webIntelligence.ts","boundary":"Research completion uses existing user-scoped reservation. Retrieved web data remains untrusted and cannot issue consequential action authority."},
-    {"path":"backend/src/services/integrations/businessRead.ts","boundary":"Interpretation completion reserves input.userId. Connection/account/resource ownership and provider execution remain canonical business-service boundaries, not inferred from this LLM response."},
-    {"path":"backend/src/services/integrations/businessAction.ts","boundary":"Interpretation completion reserves input.userId. Actual consequential execution retains exact businessAction approval and account binding. LLM interpretation cannot issue that authority."},
-    {"path":"backend/src/operations/benchmarkAdapter.ts","boundary":"Current admitted running run_model_benchmark action binds ownerId, requested_by actor and action ID. Production passes withOperationsProviderReservation to singleModelImplementation."},
-    {"path":"backend/src/ai/benchmarkExecutor.ts","boundary":"The only found production singleModelImplementation caller supplies that authority callback. Absence in the generic helper is not evidence of a reachable unauthenticated production benchmark."},
-    {"path":"backend/src/synthesis/coherentImplementation.ts","boundary":"The only found production importer is benchmarkExecutor, which supplies its bounded completion override. Do not treat the generic default transport as a demonstrated live unbudgeted route."},
-    {"path":"backend/src/synthesis/incrementalImplementation.ts","boundary":"Only its non-network preservesRequiredSymbols helper was found imported by coherentImplementation. No production importer of implementIncrementally or repairIncrementally was found. Keep future/dynamic reachability distinct from a current vulnerability."},
-    {"path":"backend/src/ai/black-hole/gateway.ts","boundary":"generate forwards through providerAdapter, while generateWith requires a nonblank userId but does not issue tenant identity. No production importer of generate was found. productionBridge supplies routing decisions to pipeline, not this gateway's provider execution."},
-    {"path":"backend/src/routes/guestChat.ts","boundary":"Intentional anonymous text-only completion uses existing guest session/claimed-session, bucket and lease controls, fixed server-selected candidates and platform credential. It is not authority to retrieve tenant project files or perform external actions. Do not replace its guest contract with fabricated authenticated scope."},
-    {"path":"backend/src/services/integrations/userProviderKeys.ts","boundary":"getUserProviderKey selects exact user_id/provider. openCanonicalProviderRow checks row owner, vault identity and rereads token, revision, metadata and revocation after decrypt. A raw credentialOverride below this boundary still contains no verifiable vault identity."},
-    {"path":"backend/src/synthesis/softwareAgentImplementationAdapter.ts","boundary":"Actual production factory receives server userId/runId, checks coding primary/fallback models and uses existing checkpoint/admitted-run architecture. createXrogaAgentModel adds quota, reservation and usage. Its raw string userId API does not independently certify project-data ownership."}
+    {
+      "path": "backend/src/ai/pipeline.ts",
+      "boundary": "runPipeline requires issued TenantContext and matching opts.userId, then snapshots authoritative userId. Builder attempts check model access, select BYOK by that user and provider and reserve spend. The optional-user internal helper still needs exact reachability/admission proof, not a blanket exemption."
+    },
+    {
+      "path": "backend/src/ai/architect.ts",
+      "boundary": "runArchitectPlan reserves with opts.userId and fixed deepseek model. Private brief/request are caller-owned input obligations, not proven by model text."
+    },
+    {
+      "path": "backend/src/ai/converter.ts",
+      "boundary": "convertUserRequest reserves with its server userId and fixed deepseek model. Its raw userId signature is not an identity issuer."
+    },
+    {
+      "path": "backend/src/ai/repoSummarize.ts",
+      "boundary": "Repository sample prompt is private project data, uses withProviderReservation for opts.userId. Exact project-file ownership remains upstream."
+    },
+    {
+      "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+      "boundary": "Completion attempts reserve input.userId and selected model before dispatch and record actual usage. Reservation is not proof that all caller-supplied files belong to that user."
+    },
+    {
+      "path": "backend/src/ai/black-hole/webIntelligence.ts",
+      "boundary": "Research completion uses existing user-scoped reservation. Retrieved web data remains untrusted and cannot issue consequential action authority."
+    },
+    {
+      "path": "backend/src/services/integrations/businessRead.ts",
+      "boundary": "Interpretation completion reserves input.userId. Connection/account/resource ownership and provider execution remain canonical business-service boundaries, not inferred from this LLM response."
+    },
+    {
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "boundary": "Interpretation completion reserves input.userId. Actual consequential execution retains exact businessAction approval and account binding. LLM interpretation cannot issue that authority."
+    },
+    {
+      "path": "backend/src/operations/benchmarkAdapter.ts",
+      "boundary": "Current admitted running run_model_benchmark action binds ownerId, requested_by actor and action ID. Production passes withOperationsProviderReservation to singleModelImplementation."
+    },
+    {
+      "path": "backend/src/ai/benchmarkExecutor.ts",
+      "boundary": "The only found production singleModelImplementation caller supplies that authority callback. Absence in the generic helper is not evidence of a reachable unauthenticated production benchmark."
+    },
+    {
+      "path": "backend/src/synthesis/coherentImplementation.ts",
+      "boundary": "The only found production importer is benchmarkExecutor, which supplies its bounded completion override. Do not treat the generic default transport as a demonstrated live unbudgeted route."
+    },
+    {
+      "path": "backend/src/synthesis/incrementalImplementation.ts",
+      "boundary": "Only its non-network preservesRequiredSymbols helper was found imported by coherentImplementation. No production importer of implementIncrementally or repairIncrementally was found. Keep future/dynamic reachability distinct from a current vulnerability."
+    },
+    {
+      "path": "backend/src/ai/black-hole/gateway.ts",
+      "boundary": "generate forwards through providerAdapter, while generateWith requires a nonblank userId but does not issue tenant identity. No production importer of generate was found. productionBridge supplies routing decisions to pipeline, not this gateway's provider execution."
+    },
+    {
+      "path": "backend/src/routes/guestChat.ts",
+      "boundary": "Intentional anonymous text-only completion uses existing guest session/claimed-session, bucket and lease controls, fixed server-selected candidates and platform credential. It is not authority to retrieve tenant project files or perform external actions. Do not replace its guest contract with fabricated authenticated scope."
+    },
+    {
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "boundary": "getUserProviderKey selects exact user_id/provider. openCanonicalProviderRow checks row owner, vault identity and rereads token, revision, metadata and revocation after decrypt. A raw credentialOverride below this boundary still contains no verifiable vault identity."
+    },
+    {
+      "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
+      "boundary": "Actual production factory receives server userId/runId, checks coding primary/fallback models and uses existing checkpoint/admitted-run architecture. createXrogaAgentModel adds quota, reservation and usage. Its raw string userId API does not independently certify project-data ownership."
+    }
   ],
   "authority": "No tool/model text can mint a permit. This patch does not introduce a second authority or budget ledger and does not claim canonical egressPolicy coverage for every model caller.",
   "tests": [
     "backend/src/ai/openaiCompat.egress.test.ts",
     "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
-    "backend/src/ai/providerRuntime.test.ts"
+    "backend/src/ai/providerRuntime.test.ts",
+    "backend/src/ai/tenantModelDispatch.test.ts",
+    "backend/src/routes/guestChat.egress.test.ts"
   ],
   "providerEffects": false,
   "predispatchAccounting": "Known policy rejections are status 400 invalid_request and release the existing budget reservation without an uncertain-provider hold. They do not increment shared provider failures or open the shared circuit. Positive plain/tool SDK dispatch and negative secret text, selected credential and credential-bearing schema-property names are tested. Ordinary provider error regressions are retained. Controlled protocol fixtures are not real database budget receipts.",
-  "disposition": "PENDING_SOURCE_TRACE_WITH_LOCAL_CREDENTIAL_FLOOR_PROOF",
-  "next": "Carry existing issued tenant, actual account/vault and reservation identity to this canonical boundary without breaking legitimate guest or benchmark admission. Prove at the actual upstream call sites before final disposition.",
+  "disposition": "PENDING_SOURCE_TRACE_WITH_SCOPED_CANONICAL_CALL_SITE_PROOF",
+  "next": "Keep all three SDK records open until every actual upstream source of private files/history and each remaining generic completion caller has exact admission evidence. Scoped pipeline, architect, converter and SoftwareAgent paths now carry issued context, current project, canonical account/revision, existing budget and worker attempt. Do not infer all Operations payload ownership from the reservation callback.",
   "grouping": [
     {
       "id": "EGRESS-PACKET-e2629613b42444f3",
@@ -159,6 +209,21 @@
       "transport": "goto",
       "consequence": "BROWSER_NAVIGATION",
       "count": 1
+    }
+  ],
+  "currentDispatchProof": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
+  "currentDispatchBindings": [
+    {
+      "path": "backend/src/ai/tenantModelDispatch.ts",
+      "sha256": "8c4db96aee2794b6e2787e3b723a43cc4f41343c90d60f36a9c9342e543eb2a4"
+    },
+    {
+      "path": "backend/src/ai/tenantModelDispatch.test.ts",
+      "sha256": "26f399ceaf70c8523c0f7e60f86c0e75cdac60c5dd3a676a97aac38466f32206"
+    },
+    {
+      "path": "backend/src/routes/guestChat.egress.test.ts",
+      "sha256": "00d9f380943af35171af86e21694dfdd03c34aee3373ce2a3d6a6ee9020d92f0"
     }
   ]
 }

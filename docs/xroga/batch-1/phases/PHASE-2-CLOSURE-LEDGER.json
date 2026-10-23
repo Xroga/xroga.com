@@ -918,18 +918,18 @@
       "id": "B1-P2-4a588dd074761414",
       "family": "projects-files-runtime",
       "sourcePath": "backend/src/synthesis/universalEntrypoint.ts",
-      "sourceSha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4",
+      "sourceSha256": "2112e8b8cc0b1634eeb9e9c68b9a46ead0a2224761e015b2ead9f83f8064baa2",
       "baselineCallerIds": [
         "10b5e279dd241e2f40ec"
       ],
       "currentCallerIds": [
-        "10b5e279dd241e2f40ec"
+        "1271489516ef5d2c31c2"
       ],
       "mapping": [
         {
           "baselineCallerId": "10b5e279dd241e2f40ec",
           "currentCallerIds": [
-            "10b5e279dd241e2f40ec"
+            "1271489516ef5d2c31c2"
           ],
           "change": "RETAINED"
         }
@@ -939,7 +939,12 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-4a588dd074761414",
-        "sourceSha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4",
+        "sourceSha256": "2112e8b8cc0b1634eeb9e9c68b9a46ead0a2224761e015b2ead9f83f8064baa2",
+        "historicalBinding": {
+          "reference": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
+          "sha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4"
+        },
+        "currentSourceDelta": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
         "executionStatus": "IN_PROGRESS",
         "finding": "EXISTING_ISSUED_PIPELINE_TO_REQUEST_SCOPED_STORE_CONSTRUCTION_PROOF_PREPARED",
         "originalCriteria": [
@@ -982,7 +987,7 @@
         {
           "path": "backend/src/synthesis/universalEntrypoint.ts",
           "marker": "createTenantContext({userId:input.userId",
-          "sourceSha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4",
+          "sourceSha256": "2112e8b8cc0b1634eeb9e9c68b9a46ead0a2224761e015b2ead9f83f8064baa2",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6617,7 +6622,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "loadSessionHistory(opts.userId",
-          "sourceSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+          "sourceSha256": "d35a6351c41e27cecc313df0e7ee134a0e51fe4c5351649a7dfadf62bcca05e6",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6744,7 +6749,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "const saved = await setProjectMemoryDurable({",
-          "sourceSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+          "sourceSha256": "d35a6351c41e27cecc313df0e7ee134a0e51fe4c5351649a7dfadf62bcca05e6",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -8264,7 +8269,12 @@
         "relatedSourceBindings": [
           {
             "path": "backend/src/ai/pipeline.ts",
-            "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
+            "sha256": "d35a6351c41e27cecc313df0e7ee134a0e51fe4c5351649a7dfadf62bcca05e6",
+            "historicalBinding": {
+              "reference": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
+              "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
+            },
+            "currentSourceDelta": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json"
           },
           {
             "path": "backend/src/routes/swarm.ts",

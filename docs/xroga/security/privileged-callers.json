@@ -1,23 +1,23 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "9d4d8a4602ef16ce6a2aec061ff5ab358a91900c0186ba1b7b69d050bfcf6b3f",
+  "reviewRegistrySha256": "106e0bd0adb89b48a4096a374f78eb9cf6e80ce3242a039c81445dd6e7b2737d",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 167,
-    "persistenceCandidates": 704,
-    "ownerPredicateCandidates": 165,
-    "reviewRequired": 23,
+    "privilegedFactorySites": 168,
+    "persistenceCandidates": 707,
+    "ownerPredicateCandidates": 167,
+    "reviewRequired": 26,
     "reviewedCandidates": 681,
-    "unresolvedSafetyCandidates": 48,
+    "unresolvedSafetyCandidates": 51,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 18
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 23,
+    "REVIEW_REQUIRED": 26,
     "SCOPED_BOUNDARY": 453,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 163,
@@ -28,8 +28,8 @@
     "result": "BLOCKED",
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
-    "verifiedCandidateBoundaries": 105,
-    "unresolvedCandidateBoundaries": 599,
+    "verifiedCandidateBoundaries": 103,
+    "unresolvedCandidateBoundaries": 604,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -257,6 +257,14 @@
       {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-47ed76ce09cbb18f"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-4a588dd074761414"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-4a588dd074761414"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -837,6 +845,30 @@
       {
         "code": "STALE_NON_PERSISTENCE_REVIEW",
         "id": "OB-0f4c2d59371b5bb9"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-5c8c1624c93a6551"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-5c8c1624c93a6551"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-5c8c1624c93a6551"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-2896537a30c1276a"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-2896537a30c1276a"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-2896537a30c1276a"
       },
       {
         "code": "STALE_CALLER_BINDING",
@@ -2688,6 +2720,14 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "fbccd562d15a2401fc3f"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "55ed6e1f948491b895a0"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "1169e490665cdec7b3a3"
       },
       {
@@ -2765,6 +2805,18 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "60a088c3f2c03ec9402c"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "bb86ba5b64a37bae3a0b"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "f4e4b443d660ce14aab4"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "a8e2ad5ed5f11b5a2d8e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3712,6 +3764,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "1271489516ef5d2c31c2"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "2922acfd42156496680f"
       },
       {
@@ -3845,6 +3901,18 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "10d24b0a58511aa77d5a"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "bb86ba5b64a37bae3a0b"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "f4e4b443d660ce14aab4"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "a8e2ad5ed5f11b5a2d8e"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -4097,6 +4165,14 @@
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "fd966b75f6a38bb90f05"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "fbccd562d15a2401fc3f"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "55ed6e1f948491b895a0"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -6120,7 +6196,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "10b5e279dd241e2f40ec"
+        "id": "1271489516ef5d2c31c2"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -6229,12 +6305,12 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 704,
-    "structuredVerified": 105,
-    "structuredUnproven": 599,
-    "manualUnresolved": 48,
-    "manualUnsupported": 551,
-    "agreedVerified": 105,
+    "currentCallers": 707,
+    "structuredVerified": 103,
+    "structuredUnproven": 604,
+    "manualUnresolved": 51,
+    "manualUnsupported": 553,
+    "agreedVerified": 103,
     "proofAwaitingManualReconciliation": 0
   },
   "callers": [
@@ -6680,15 +6756,15 @@
       }
     },
     {
-      "id": "01d5efe9b761bc670212",
+      "id": "fbccd562d15a2401fc3f",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3782,
+      "line": 3810,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+      "sourceSha256": "d35a6351c41e27cecc313df0e7ee134a0e51fe4c5351649a7dfadf62bcca05e6",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -6701,15 +6777,15 @@
       }
     },
     {
-      "id": "944a58bb15dca85b3ddd",
+      "id": "55ed6e1f948491b895a0",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3962,
+      "line": 3990,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+      "sourceSha256": "d35a6351c41e27cecc313df0e7ee134a0e51fe4c5351649a7dfadf62bcca05e6",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -8666,6 +8742,39 @@
           }
         ]
       }
+    },
+    {
+      "id": "bb86ba5b64a37bae3a0b",
+      "path": "backend/src/ai/tenantModelDispatch.ts",
+      "line": 60,
+      "enclosing": "withTenantModelReservation",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "8c4db96aee2794b6e2787e3b723a43cc4f41343c90d60f36a9c9342e543eb2a4"
+    },
+    {
+      "id": "f4e4b443d660ce14aab4",
+      "path": "backend/src/ai/tenantModelDispatch.ts",
+      "line": 63,
+      "enclosing": "withTenantModelReservation",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "swarm_runs",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "8c4db96aee2794b6e2787e3b723a43cc4f41343c90d60f36a9c9342e543eb2a4"
+    },
+    {
+      "id": "a8e2ad5ed5f11b5a2d8e",
+      "path": "backend/src/ai/tenantModelDispatch.ts",
+      "line": 76,
+      "enclosing": "withTenantModelReservation",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "user_integrations",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "8c4db96aee2794b6e2787e3b723a43cc4f41343c90d60f36a9c9342e543eb2a4"
     },
     {
       "id": "3fba7dbe0551574fe56b",
@@ -13092,7 +13201,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
+      "sourceSha256": "3f6a017db3e3a620f9559ae4f9b0c1c4048f0906e4d4fb632762a0435442ac3d",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -20860,15 +20969,15 @@
       }
     },
     {
-      "id": "10b5e279dd241e2f40ec",
+      "id": "1271489516ef5d2c31c2",
       "path": "backend/src/synthesis/universalEntrypoint.ts",
-      "line": 1068,
+      "line": 1072,
       "enclosing": "tryUniversalBuild",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4",
+      "sourceSha256": "2112e8b8cc0b1634eeb9e9c68b9a46ead0a2224761e015b2ead9f83f8064baa2",
       "semanticReview": {
         "authority": "Only the admitted runBuildPipeline invokes this production default. Its original issued context and owner are checked before opts are copied, and the actual universal call allocates a fresh owner/run/project literal. The unchanged entrypoint passes its only private SDK result directly into universalStore with an internal issued context for that server-admitted subject. Privileged stores are per invocation, never the global memory singleton. All seven actual direct receiving store operations and their owned-write subchain independently verify. Real default factory use constructs different owner instances, rejects primitive/cloned issuance and preserves all existing owned/foreign project/run/spec/index and contention assertions. No injected arbitrary client, model output or public body grants this default subject.",
         "reason": "Exact original007 scope verified at 0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0. Authenticated disposable source, all ten structured criteria and all636 receiving/caller boundaries pass with four full21-stage branch/integrated baselines. Routing uses original issued context and exact persistence receipt; private global history is a fixed500-row17th named exception with owner/run terminal filtering. Three constructor proofs require every other633 boundary independently verified and do not claim SDK RLS. Endpoint proof reconciles222 registrations/29 unchanged modules with actual API/database high-risk matrices. Manual kind matches the actual structured scope: SCOPED_BOUNDARY. No new provider, Phase3 grant/custody or Phase4 egress acceptance is inferred.",
