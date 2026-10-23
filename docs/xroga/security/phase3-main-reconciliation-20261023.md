@@ -33,4 +33,12 @@ Main advanced during verification to `5abcf57a1c54290c9e486f5ed3dc1f68435666e2`.
 
 ## Rollback
 
+## Exact-source review reconciliation
+
+Complete frontend suite on `4864717b8260de40a231fc2a40848785ca03a800`: 1,170 passed, zero failed, skipped or cancelled. Original thirteen failures are reconciled. PR 845 is draft and mergeable. Its virtual-merge CI failed before the baseline on `Unbound original conversion review`, not on a credential test. Six existing NOT_PERSISTENCE records referenced obsolete whole-file hashes. Re-inspect their exact receivers: menu DOM NodeList conversion, crypto decorative points, community loading placeholders, two local native Maps in sidebar history, and a FileList filter. No Array binding is shadowed or reassigned. Refresh only these six current review identities. Two new sidebar DML calls remain separate REVIEW_REQUIRED candidates, with owner predicates observed but no inherited certification. Preserve all original historical reviews at their source commits.
+
+Regenerate only the current derived audit and runtime inventories required by the baseline. The audit explicitly retains 24 review-required and 49 unresolved safety candidates and a blocked release gate. It does not re-certify Phase 2 or waive new main callers. Add regression coverage binding all six native records to exact source while asserting the new DML is not excluded. Thirty-two projection, audit and closure tests passed with zero skips. No evaluator logic, frozen requirement, historical receipt or application security implementation changed.
+
+Guest browser run 40008180458 passed six of eight cases. Both failures use the old accessible model-button name. Main commit 3e343287 renamed the existing button to `Black Hole model and usage` without updating this spec. Reconcile those four locators only, retain the real panel/voice/responsive checks, and add the visible sensitive-action approval assertion. No application UI replacement.
+
 This branch is isolated from both preserved PR branches. Reject the candidate or revert its reconciliation on a new review branch if required. Do not reset or force-push either preserved branch, remove Phase 4 work, reverse accepted historical migrations in a live database, or touch the existing release.

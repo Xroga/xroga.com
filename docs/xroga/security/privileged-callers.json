@@ -1,23 +1,23 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "3354c9c376e71977ef85b3537f9d69dff6dbf0d68bc110aba128e676da96c5f9",
+  "reviewRegistrySha256": "7e10994c8b02e4b3cede14d614d5a22ddc775d7e28b161f64a43282552eb689c",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 166,
-    "persistenceCandidates": 700,
+    "persistenceCandidates": 704,
     "ownerPredicateCandidates": 165,
-    "reviewRequired": 20,
+    "reviewRequired": 24,
     "reviewedCandidates": 680,
-    "unresolvedSafetyCandidates": 45,
+    "unresolvedSafetyCandidates": 49,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 18
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 20,
+    "REVIEW_REQUIRED": 24,
     "SCOPED_BOUNDARY": 453,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 162,
@@ -28,8 +28,8 @@
     "result": "BLOCKED",
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
-    "verifiedCandidateBoundaries": 114,
-    "unresolvedCandidateBoundaries": 586,
+    "verifiedCandidateBoundaries": 112,
+    "unresolvedCandidateBoundaries": 592,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -873,6 +873,30 @@
       {
         "code": "STALE_NON_PERSISTENCE_REVIEW",
         "id": "OB-45feee975a86cef8"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-9abc24b825d3f46d"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-9abc24b825d3f46d"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-9abc24b825d3f46d"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-400ca65d1f3600c8"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-400ca65d1f3600c8"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-400ca65d1f3600c8"
       },
       {
         "code": "STALE_CALLER_BINDING",
@@ -3560,7 +3584,27 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "f236ae4444d81d62c17c"
+        "id": "0e668b8fcff900d8b16e"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "3ad8e86821c6c844e666"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "7ce6b1267db04f6f7e53"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "b9b11a00d54e8314dcf1"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "d28d6e2b0cc260eb3aa7"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "37347768912b9e614cea"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3572,19 +3616,19 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "b8ef33bd57715ef2cbbe"
+        "id": "a291f26c3c5001de01f9"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "5f13844b2f1b712e7919"
+        "id": "f8d5eaf0193282882763"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "235b80f169ea530375fa"
+        "id": "c69649332dd15eb3afbf"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "42f9140d414e6ce0e634"
+        "id": "32729ec8f9c1a51af983"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3592,7 +3636,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ee3a52d31fb1a4645f1c"
+        "id": "18f7c2043f2ceb0ebac3"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3604,71 +3648,71 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "fea306f8201c2c42b996"
+        "id": "ddc1e732f1738562a7d8"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "5e277cb7849c4aa4b977"
+        "id": "bd0cc046439923e989ba"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "b47a400e20cab2aceacd"
+        "id": "acc8432821b9b5b26c10"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6f5e46135797e8f7d94d"
+        "id": "d93b375d98daf8c8146e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "e495b6b2fb9675399da8"
+        "id": "1435d5679d9cfc68eda8"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c59c63e9b028492dc1ad"
+        "id": "c86a835c30be0bcf1251"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "da8b8d3cb0f462ab774d"
+        "id": "1b5ad169706fb2285a23"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c04a10adf73365a736c6"
+        "id": "c51d95ae33aa4d5dae44"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a2be09de3fa232fd6702"
+        "id": "7de702fbc2b7b261b051"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a394e8ac8fd4a2ed6240"
+        "id": "02bb0163278413bfc4d4"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "66200111ab106ce35d3b"
+        "id": "c16200354fe78e5df55b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "36076dfa43fe8d8cc136"
+        "id": "db4a5917ca14f418b42b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "644ecb7e9c350ae7b985"
+        "id": "2d4d10ceeaf02fe42f70"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "e6c7bdafb141204c5322"
+        "id": "50a0f49e57786f999e73"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "f870b583eaac658bf488"
+        "id": "eebad1f4e73b01bd9e5d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "59a28037f8ff865560dc"
+        "id": "27942300e7daaadc06fe"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "eefa4a560bf7efb58fbf"
+        "id": "19a37b099336607193eb"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -3772,83 +3816,99 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "3ad8e86821c6c844e666"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "7ce6b1267db04f6f7e53"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "b9b11a00d54e8314dcf1"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "d28d6e2b0cc260eb3aa7"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "8c71dcb20bf264df90bc"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "235b80f169ea530375fa"
+        "id": "c69649332dd15eb3afbf"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "42f9140d414e6ce0e634"
+        "id": "32729ec8f9c1a51af983"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "fea306f8201c2c42b996"
+        "id": "ddc1e732f1738562a7d8"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "5e277cb7849c4aa4b977"
+        "id": "bd0cc046439923e989ba"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "b47a400e20cab2aceacd"
+        "id": "acc8432821b9b5b26c10"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "6f5e46135797e8f7d94d"
+        "id": "d93b375d98daf8c8146e"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "e495b6b2fb9675399da8"
+        "id": "1435d5679d9cfc68eda8"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "c59c63e9b028492dc1ad"
+        "id": "c86a835c30be0bcf1251"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "da8b8d3cb0f462ab774d"
+        "id": "1b5ad169706fb2285a23"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "c04a10adf73365a736c6"
+        "id": "c51d95ae33aa4d5dae44"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "a2be09de3fa232fd6702"
+        "id": "7de702fbc2b7b261b051"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "a394e8ac8fd4a2ed6240"
+        "id": "02bb0163278413bfc4d4"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "66200111ab106ce35d3b"
+        "id": "c16200354fe78e5df55b"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "36076dfa43fe8d8cc136"
+        "id": "db4a5917ca14f418b42b"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "644ecb7e9c350ae7b985"
+        "id": "2d4d10ceeaf02fe42f70"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "e6c7bdafb141204c5322"
+        "id": "50a0f49e57786f999e73"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "f870b583eaac658bf488"
+        "id": "eebad1f4e73b01bd9e5d"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "59a28037f8ff865560dc"
+        "id": "27942300e7daaadc06fe"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "eefa4a560bf7efb58fbf"
+        "id": "19a37b099336607193eb"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -5964,11 +6024,19 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "0e668b8fcff900d8b16e"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "40dcc370930a78bd99cd"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "f236ae4444d81d62c17c"
+        "id": "229f69845215b3f79181"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "37347768912b9e614cea"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -5976,11 +6044,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "b8ef33bd57715ef2cbbe"
+        "id": "a291f26c3c5001de01f9"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "5f13844b2f1b712e7919"
+        "id": "f8d5eaf0193282882763"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -5988,7 +6056,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "ee3a52d31fb1a4645f1c"
+        "id": "18f7c2043f2ceb0ebac3"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -6017,12 +6085,12 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 700,
-    "structuredVerified": 114,
-    "structuredUnproven": 586,
-    "manualUnresolved": 45,
-    "manualUnsupported": 541,
-    "agreedVerified": 114,
+    "currentCallers": 704,
+    "structuredVerified": 112,
+    "structuredUnproven": 592,
+    "manualUnresolved": 49,
+    "manualUnsupported": 543,
+    "agreedVerified": 112,
     "proofAwaitingManualReconciliation": 0
   },
   "callers": [
@@ -20981,15 +21049,15 @@
       }
     },
     {
-      "id": "1cf0586f7cd93a578782",
+      "id": "0e668b8fcff900d8b16e",
       "path": "frontend/src/app/crypto/page.tsx",
-      "line": 213,
+      "line": 236,
       "enclosing": "GlowButton",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "203327cd15585e63c043071fd5b8bdebf3a6c7aeb8178649bde583799e2b4ff3",
+      "sourceSha256": "aec3bdac94132cb85629ab0eb886f360df98f23a04a0945f1557cf8271ef4548",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in GlowButton, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -21157,6 +21225,50 @@
       }
     },
     {
+      "id": "3ad8e86821c6c844e666",
+      "path": "frontend/src/components/automations/PeopleAndPacks.tsx",
+      "line": 84,
+      "enclosing": "People",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "5e411f754a17fbf2108b7aa1331a89530061f030b989473ddc1f97bbee17a64d"
+    },
+    {
+      "id": "7ce6b1267db04f6f7e53",
+      "path": "frontend/src/components/automations/PeopleAndPacks.tsx",
+      "line": 412,
+      "enclosing": "WorkPacks",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "5e411f754a17fbf2108b7aa1331a89530061f030b989473ddc1f97bbee17a64d"
+    },
+    {
+      "id": "b9b11a00d54e8314dcf1",
+      "path": "frontend/src/components/automations/Schedules.tsx",
+      "line": 131,
+      "enclosing": "Schedules",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d11fd3c7525ef9b027d81523e6174a1747c6a236bdcf34100d8f89d4ee9a26df"
+    },
+    {
+      "id": "d28d6e2b0cc260eb3aa7",
+      "path": "frontend/src/components/automations/Schedules.tsx",
+      "line": 134,
+      "enclosing": "Schedules",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d11fd3c7525ef9b027d81523e6174a1747c6a236bdcf34100d8f89d4ee9a26df"
+    },
+    {
       "id": "97646ee69b3d1bf3e714",
       "path": "frontend/src/components/billing/BillingSuccessExperience.tsx",
       "line": 67,
@@ -21186,7 +21298,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "2e4465a70ed9f9e9c20ccc287cc2329ede24a937948b5a684bc2ace878590672",
+      "sourceSha256": "95ca80699a63df7fc757896b76ad7e30c8b0b9b9ee5ee507430a782689f13775",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in CommunityFeed, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -21283,15 +21395,15 @@
       }
     },
     {
-      "id": "f236ae4444d81d62c17c",
+      "id": "37347768912b9e614cea",
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "line": 187,
+      "line": 203,
       "enclosing": "FeatureCard",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "7b886fe8c8422b8e530ccf7082934b366483826f46b83562eb73a0d3037e85af",
+      "sourceSha256": "769ac7c78bd7c9b624bd0e69fa4b2eaa4df3bb13b943baf7d5019873915b29c7",
       "semanticReview": {
         "authority": "Native Array.from materializes locally queried menu buttons for keyboard focus navigation. The subsequent index/focus operations touch the DOM only. No database, storage client, credential or provider write is involved.",
         "reason": "Exact current-source receiver and surrounding data flow were inspected. Only the native in-memory conversion is excluded. No adjacent authority, persistence or provider boundary is certified.",
@@ -21546,15 +21658,15 @@
       "sourceSha256": "017f18809ddcdcd868d74ad5b3e2f82ac2ced4b25a89c6bea904ace8b79204e8"
     },
     {
-      "id": "b8ef33bd57715ef2cbbe",
+      "id": "a291f26c3c5001de01f9",
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 593,
+      "line": 605,
       "enclosing": "SidebarProjectHistory",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "c48a9cee91f8cb1e90bb52fcc2aab9d3f2ed72d3d1c4ef11025355f873932e85",
+      "sourceSha256": "54536d9c340fcb8b6238cf892f6da73c1544f6eaf88104308f0f8a1ab90cc5f4",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -21567,15 +21679,15 @@
       }
     },
     {
-      "id": "5f13844b2f1b712e7919",
+      "id": "f8d5eaf0193282882763",
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 821,
+      "line": 842,
       "enclosing": "SidebarProjectHistory",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "c48a9cee91f8cb1e90bb52fcc2aab9d3f2ed72d3d1c4ef11025355f873932e85",
+      "sourceSha256": "54536d9c340fcb8b6238cf892f6da73c1544f6eaf88104308f0f8a1ab90cc5f4",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -21588,26 +21700,26 @@
       }
     },
     {
-      "id": "235b80f169ea530375fa",
+      "id": "c69649332dd15eb3afbf",
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 1030,
+      "line": 1102,
       "enclosing": "saveEditor",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c48a9cee91f8cb1e90bb52fcc2aab9d3f2ed72d3d1c4ef11025355f873932e85"
+      "sourceSha256": "54536d9c340fcb8b6238cf892f6da73c1544f6eaf88104308f0f8a1ab90cc5f4"
     },
     {
-      "id": "42f9140d414e6ce0e634",
+      "id": "32729ec8f9c1a51af983",
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 1049,
+      "line": 1122,
       "enclosing": "saveEditor",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c48a9cee91f8cb1e90bb52fcc2aab9d3f2ed72d3d1c4ef11025355f873932e85"
+      "sourceSha256": "54536d9c340fcb8b6238cf892f6da73c1544f6eaf88104308f0f8a1ab90cc5f4"
     },
     {
       "id": "92e2f9e84b8b9d7515b1",
@@ -21883,15 +21995,15 @@
       }
     },
     {
-      "id": "ee3a52d31fb1a4645f1c",
+      "id": "18f7c2043f2ceb0ebac3",
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "line": 403,
+      "line": 426,
       "enclosing": "TerminalChatBar",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "a49cae58957810667768e12b253cdf01b1974185364e276c9e8510a93d5d0da6",
+      "sourceSha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior.",
@@ -22311,191 +22423,191 @@
       }
     },
     {
-      "id": "fea306f8201c2c42b996",
+      "id": "ddc1e732f1738562a7d8",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 30,
+      "line": 31,
       "enclosing": "loadSidebarMeta",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "61fe6f15651f09c31eece5ebee61505290569b1d6a48c078fe1140c5cda21da4"
+      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
     },
     {
-      "id": "5e277cb7849c4aa4b977",
+      "id": "bd0cc046439923e989ba",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 34,
+      "line": 35,
       "enclosing": "loadSidebarSections",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_sections",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "61fe6f15651f09c31eece5ebee61505290569b1d6a48c078fe1140c5cda21da4"
+      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
     },
     {
-      "id": "b47a400e20cab2aceacd",
+      "id": "acc8432821b9b5b26c10",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 38,
+      "line": 39,
       "enclosing": "loadSidebarProjects",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "61fe6f15651f09c31eece5ebee61505290569b1d6a48c078fe1140c5cda21da4"
+      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
     },
     {
-      "id": "6f5e46135797e8f7d94d",
+      "id": "d93b375d98daf8c8146e",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 42,
+      "line": 43,
       "enclosing": "loadSidebarChats",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "61fe6f15651f09c31eece5ebee61505290569b1d6a48c078fe1140c5cda21da4"
+      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
     },
     {
-      "id": "e495b6b2fb9675399da8",
+      "id": "1435d5679d9cfc68eda8",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 46,
+      "line": 47,
       "enclosing": "loadSidebarChatById",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "61fe6f15651f09c31eece5ebee61505290569b1d6a48c078fe1140c5cda21da4"
+      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
     },
     {
-      "id": "c59c63e9b028492dc1ad",
+      "id": "c86a835c30be0bcf1251",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 53,
+      "line": 54,
       "enclosing": "saveSidebarChat",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "61fe6f15651f09c31eece5ebee61505290569b1d6a48c078fe1140c5cda21da4"
+      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
     },
     {
-      "id": "da8b8d3cb0f462ab774d",
+      "id": "1b5ad169706fb2285a23",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 64,
+      "line": 65,
       "enclosing": "changeSidebarMeta",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "61fe6f15651f09c31eece5ebee61505290569b1d6a48c078fe1140c5cda21da4"
+      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
     },
     {
-      "id": "c04a10adf73365a736c6",
+      "id": "c51d95ae33aa4d5dae44",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 68,
+      "line": 69,
       "enclosing": "changeSidebarMeta",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "61fe6f15651f09c31eece5ebee61505290569b1d6a48c078fe1140c5cda21da4"
+      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
     },
     {
-      "id": "a2be09de3fa232fd6702",
+      "id": "7de702fbc2b7b261b051",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 72,
+      "line": 73,
       "enclosing": "changeSidebarMeta",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "61fe6f15651f09c31eece5ebee61505290569b1d6a48c078fe1140c5cda21da4"
+      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
     },
     {
-      "id": "a394e8ac8fd4a2ed6240",
+      "id": "02bb0163278413bfc4d4",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 84,
+      "line": 85,
       "enclosing": "deleteSidebarMeta",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_items",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "61fe6f15651f09c31eece5ebee61505290569b1d6a48c078fe1140c5cda21da4"
+      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
     },
     {
-      "id": "66200111ab106ce35d3b",
+      "id": "c16200354fe78e5df55b",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 88,
+      "line": 89,
       "enclosing": "createSidebarSection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_sections",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "61fe6f15651f09c31eece5ebee61505290569b1d6a48c078fe1140c5cda21da4"
+      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
     },
     {
-      "id": "36076dfa43fe8d8cc136",
+      "id": "db4a5917ca14f418b42b",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 92,
+      "line": 93,
       "enclosing": "removeSidebarSection",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_sections",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "61fe6f15651f09c31eece5ebee61505290569b1d6a48c078fe1140c5cda21da4"
+      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
     },
     {
-      "id": "644ecb7e9c350ae7b985",
+      "id": "2d4d10ceeaf02fe42f70",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 96,
+      "line": 97,
       "enclosing": "deleteSidebarChat",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "61fe6f15651f09c31eece5ebee61505290569b1d6a48c078fe1140c5cda21da4"
+      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
     },
     {
-      "id": "e6c7bdafb141204c5322",
+      "id": "50a0f49e57786f999e73",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 118,
+      "line": 119,
       "enclosing": "swapSidebarPins",
       "kind": "RPC_CANDIDATE",
       "target": "xroga_swap_sidebar_pins",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "61fe6f15651f09c31eece5ebee61505290569b1d6a48c078fe1140c5cda21da4"
+      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
     },
     {
-      "id": "f870b583eaac658bf488",
+      "id": "eebad1f4e73b01bd9e5d",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 132,
+      "line": 133,
       "enclosing": "loadPinnedSidebarRecords",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "61fe6f15651f09c31eece5ebee61505290569b1d6a48c078fe1140c5cda21da4"
+      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
     },
     {
-      "id": "59a28037f8ff865560dc",
+      "id": "27942300e7daaadc06fe",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 134,
+      "line": 135,
       "enclosing": "loadPinnedSidebarRecords",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "terminal_sessions",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "61fe6f15651f09c31eece5ebee61505290569b1d6a48c078fe1140c5cda21da4"
+      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
     },
     {
-      "id": "eefa4a560bf7efb58fbf",
+      "id": "19a37b099336607193eb",
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 136,
+      "line": 137,
       "enclosing": "loadPinnedSidebarRecords",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_sidebar_chats",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "61fe6f15651f09c31eece5ebee61505290569b1d6a48c078fe1140c5cda21da4"
+      "sourceSha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
     },
     {
       "id": "66603d4f9153d6ce36e1",

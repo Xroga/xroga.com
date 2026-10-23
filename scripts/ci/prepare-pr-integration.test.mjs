@@ -1,9 +1,38 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { validateIntegrationIdentity,projectVanishedNonPersistenceReviews,projectStableArrayConversionReviews,integrationAdmissionProjection } from './prepare-pr-integration.mjs';
 import { discoverPersistenceCalls } from '../security/audit-tenant-policies.mjs';
 const fixture={ci:'true',event:'pull_request',head:'a'.repeat(40),parents:['b'.repeat(40),'c'.repeat(40)],expectedBase:'b'.repeat(40),expectedHead:'c'.repeat(40)};
+
+test('current-main native conversion reviews bind source without waiving adjacent sidebar DML',()=>{
+  const read=path=>readFileSync(new URL(`../../${path}`,import.meta.url),'utf8').replace(/\r\n/g,'\n');
+  const registry=JSON.parse(read('docs/xroga/security/caller-reviews.json'));
+  const paths=['frontend/src/components/dashboard/WorkspaceNewTerminal.tsx','frontend/src/app/crypto/page.tsx',
+    'frontend/src/components/community/CommunityFeed.tsx','frontend/src/components/layout/SidebarProjectHistory.tsx',
+    'frontend/src/components/terminal/TerminalChatBar.tsx'];
+  let reviewed=0;
+  for(const path of paths){
+    const source=read(path),hash=createHash('sha256').update(source).digest('hex');
+    const candidates=discoverPersistenceCalls(path,source);
+    for(const record of registry.reviews.filter(row=>row.path===path)){
+      assert.equal(record.disposition,'NOT_PERSISTENCE');
+      assert.equal(record.sourceSha256,hash);
+      for(const id of record.callIds){
+        const candidate=candidates.find(row=>row.id===id);
+        assert.ok(candidate);
+        assert.match(source.split('\n')[candidate.line-1],/Array\.from\(/);
+        reviewed++;
+      }
+    }
+    for(const candidate of candidates.filter(row=>['projects','xroga_sidebar_items'].includes(row.target))){
+      assert.ok(!registry.reviews.some(row=>row.callIds.includes(candidate.id)), 'New DML remains an unreviewed obligation');
+      assert.equal(candidate.ownerPredicateCandidate,true);
+    }
+  }
+  assert.equal(reviewed,6);
+});
 test('candidate evidence binds exact virtual merge, base and feature identities without release approval',()=>{
   const result=validateIntegrationIdentity(fixture);
   assert.equal(result.featureSha,fixture.expectedHead);assert.equal(result.baseSha,fixture.expectedBase);

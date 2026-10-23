@@ -73,6 +73,7 @@ flowchart LR
   endpoint_docs_anthropic_com["Source-defined endpoint docs.anthropic.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_docs_aws_amazon_com["Source-defined endpoint docs.aws.amazon.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_docs_base44_com["Source-defined endpoint docs.base44.com — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_docs_chain_link["Source-defined endpoint docs.chain.link — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_docs_cursor_com["Source-defined endpoint docs.cursor.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_docs_github_com["Source-defined endpoint docs.github.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_docs_lovable_dev["Source-defined endpoint docs.lovable.dev — CONFIGURED_BUT_UNVERIFIED"]
@@ -82,7 +83,9 @@ flowchart LR
   endpoint_docs_windsurf_com["Source-defined endpoint docs.windsurf.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_dorahacks_io["Source-defined endpoint dorahacks.io — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_duckduckgo_com["Source-defined endpoint duckduckgo.com — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_ethereum_org["Source-defined endpoint ethereum.org — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_ethglobal_com["Source-defined endpoint ethglobal.com — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_example_com["Source-defined endpoint example.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_example_invalid["Source-defined endpoint example.invalid — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_exp_host["Source-defined endpoint exp.host — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_expo_dev["Source-defined endpoint expo.dev — CONFIGURED_BUT_UNVERIFIED"]
@@ -123,6 +126,7 @@ flowchart LR
   endpoint_railway_app["Source-defined endpoint railway.app — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_react_dev["Source-defined endpoint react.dev — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_schema_org["Source-defined endpoint schema.org — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_scs_owasp_org["Source-defined endpoint scs.owasp.org — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_sentry_io["Source-defined endpoint sentry.io — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_solana_com["Source-defined endpoint solana.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_stripe_com["Source-defined endpoint stripe.com — CONFIGURED_BUT_UNVERIFIED"]
@@ -175,6 +179,7 @@ flowchart LR
   endpoint_x_com["Source-defined endpoint x.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_xroga_local["Source-defined endpoint xroga.local — LOCAL_ONLY"]
   endpoint_xrogaaicom_vercel_app["Source-defined endpoint xrogaaicom.vercel.app — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_your_website_com["Source-defined endpoint your-website.com — CONFIGURED_BUT_UNVERIFIED"]
   runtime_controls_and_conditional_aliases["Existing operator/system configuration — CONFIGURED_BUT_UNVERIFIED"]
   frontend --> api
   frontend --> supabase
@@ -245,6 +250,7 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_docs_anthropic_com
   api -. "source host/reference; unverified" .-> endpoint_docs_aws_amazon_com
   frontend -. "source host/reference; unverified" .-> endpoint_docs_base44_com
+  frontend -. "source host/reference; unverified" .-> endpoint_docs_chain_link
   frontend -. "source host/reference; unverified" .-> endpoint_docs_cursor_com
   frontend -. "source host/reference; unverified" .-> endpoint_docs_github_com
   frontend -. "source host/reference; unverified" .-> endpoint_docs_lovable_dev
@@ -254,7 +260,9 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_docs_windsurf_com
   frontend -. "source host/reference; unverified" .-> endpoint_dorahacks_io
   frontend -. "source host/reference; unverified" .-> endpoint_duckduckgo_com
+  frontend -. "source host/reference; unverified" .-> endpoint_ethereum_org
   frontend -. "source host/reference; unverified" .-> endpoint_ethglobal_com
+  frontend -. "source host/reference; unverified" .-> endpoint_example_com
   api -. "source host/reference; unverified" .-> endpoint_example_invalid
   api -. "source host/reference; unverified" .-> endpoint_exp_host
   api -. "source host/reference; unverified" .-> endpoint_expo_dev
@@ -295,6 +303,7 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_railway_app
   frontend -. "source host/reference; unverified" .-> endpoint_react_dev
   frontend -. "source host/reference; unverified" .-> endpoint_schema_org
+  frontend -. "source host/reference; unverified" .-> endpoint_scs_owasp_org
   frontend -. "source host/reference; unverified" .-> endpoint_sentry_io
   api -. "source host/reference; unverified" .-> endpoint_solana_com
   frontend -. "source host/reference; unverified" .-> endpoint_stripe_com
@@ -347,3 +356,4 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_x_com
   frontend -. "source host/reference; unverified" .-> endpoint_xroga_local
   api -. "source host/reference; unverified" .-> endpoint_xrogaaicom_vercel_app
+  frontend -. "source host/reference; unverified" .-> endpoint_your_website_com

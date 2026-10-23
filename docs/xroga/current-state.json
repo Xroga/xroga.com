@@ -89250,7 +89250,7 @@
         "scripts/ci/prepare-pr-integration.mjs"
       ],
       "callers": [
-        "scripts/ci/prepare-pr-integration.test.mjs:4"
+        "scripts/ci/prepare-pr-integration.test.mjs:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -90488,7 +90488,7 @@
       ],
       "callers": [
         "scripts/ci/prepare-pr-integration.mjs:7",
-        "scripts/ci/prepare-pr-integration.test.mjs:5",
+        "scripts/ci/prepare-pr-integration.test.mjs:6",
         "scripts/security/audit-tenant-policies.test.mjs:3",
         "scripts/security/refresh-phase-three-authority-delta.mjs:7"
       ],
@@ -113963,7 +113963,7 @@
     {
       "id": "test-suite:29dc8a9e57d60e0e7b24",
       "sourcePath": "scripts/ci/prepare-pr-integration.test.mjs",
-      "declaredTests": 7,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },

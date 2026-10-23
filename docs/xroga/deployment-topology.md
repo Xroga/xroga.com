@@ -1,6 +1,6 @@
 # Deployment topology — read-only truth
 
-Source SHA: `e883f4f339caf370564806fe6b37f104adf62a34`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
+Source SHA: `4864717b8260de40a231fc2a40848785ca03a800`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -77,6 +77,7 @@ Source SHA: `e883f4f339caf370564806fe6b37f104adf62a34`; source/config hashes are
 | endpoint-docs-anthropic-com | Source-defined endpoint docs.anthropic.com | CONFIGURED_BUT_UNVERIFIED | docs.anthropic.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-docs-aws-amazon-com | Source-defined endpoint docs.aws.amazon.com | CONFIGURED_BUT_UNVERIFIED | docs.aws.amazon.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-docs-base44-com | Source-defined endpoint docs.base44.com | CONFIGURED_BUT_UNVERIFIED | docs.base44.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-docs-chain-link | Source-defined endpoint docs.chain.link | CONFIGURED_BUT_UNVERIFIED | docs.chain.link | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-docs-cursor-com | Source-defined endpoint docs.cursor.com | CONFIGURED_BUT_UNVERIFIED | docs.cursor.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-docs-github-com | Source-defined endpoint docs.github.com | CONFIGURED_BUT_UNVERIFIED | docs.github.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-docs-lovable-dev | Source-defined endpoint docs.lovable.dev | CONFIGURED_BUT_UNVERIFIED | docs.lovable.dev | NOT_INDEPENDENTLY_VERIFIED |
@@ -86,7 +87,9 @@ Source SHA: `e883f4f339caf370564806fe6b37f104adf62a34`; source/config hashes are
 | endpoint-docs-windsurf-com | Source-defined endpoint docs.windsurf.com | CONFIGURED_BUT_UNVERIFIED | docs.windsurf.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-dorahacks-io | Source-defined endpoint dorahacks.io | CONFIGURED_BUT_UNVERIFIED | dorahacks.io | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-duckduckgo-com | Source-defined endpoint duckduckgo.com | CONFIGURED_BUT_UNVERIFIED | duckduckgo.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-ethereum-org | Source-defined endpoint ethereum.org | CONFIGURED_BUT_UNVERIFIED | ethereum.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-ethglobal-com | Source-defined endpoint ethglobal.com | CONFIGURED_BUT_UNVERIFIED | ethglobal.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-example-com | Source-defined endpoint example.com | CONFIGURED_BUT_UNVERIFIED | example.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-example-invalid | Source-defined endpoint example.invalid | CONFIGURED_BUT_UNVERIFIED | example.invalid | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-exp-host | Source-defined endpoint exp.host | CONFIGURED_BUT_UNVERIFIED | exp.host | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-expo-dev | Source-defined endpoint expo.dev | CONFIGURED_BUT_UNVERIFIED | expo.dev | NOT_INDEPENDENTLY_VERIFIED |
@@ -127,6 +130,7 @@ Source SHA: `e883f4f339caf370564806fe6b37f104adf62a34`; source/config hashes are
 | endpoint-railway-app | Source-defined endpoint railway.app | CONFIGURED_BUT_UNVERIFIED | railway.app | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-react-dev | Source-defined endpoint react.dev | CONFIGURED_BUT_UNVERIFIED | react.dev | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-schema-org | Source-defined endpoint schema.org | CONFIGURED_BUT_UNVERIFIED | schema.org | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-scs-owasp-org | Source-defined endpoint scs.owasp.org | CONFIGURED_BUT_UNVERIFIED | scs.owasp.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-sentry-io | Source-defined endpoint sentry.io | CONFIGURED_BUT_UNVERIFIED | sentry.io | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-solana-com | Source-defined endpoint solana.com | CONFIGURED_BUT_UNVERIFIED | solana.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-stripe-com | Source-defined endpoint stripe.com | CONFIGURED_BUT_UNVERIFIED | stripe.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -179,6 +183,7 @@ Source SHA: `e883f4f339caf370564806fe6b37f104adf62a34`; source/config hashes are
 | endpoint-x-com | Source-defined endpoint x.com | CONFIGURED_BUT_UNVERIFIED | x.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-xroga-local | Source-defined endpoint xroga.local | LOCAL_ONLY | xroga.local | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-xrogaaicom-vercel-app | Source-defined endpoint xrogaaicom.vercel.app | CONFIGURED_BUT_UNVERIFIED | xrogaaicom.vercel.app | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-your-website-com | Source-defined endpoint your-website.com | CONFIGURED_BUT_UNVERIFIED | your-website.com | NOT_INDEPENDENTLY_VERIFIED |
 | runtime-controls-and-conditional-aliases | Existing operator/system configuration | CONFIGURED_BUT_UNVERIFIED | Unknown/not applicable | NOT_INDEPENDENTLY_VERIFIED |
 
 ## Evidence
@@ -207,7 +212,7 @@ Frontend release 3b2bad and API release 41665b legitimately differ: the initial 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-726 scoped memory/filesystem candidates are retained for semantic review. Static collections and scratch writes are not automatically unsafe fallbacks; the candidate inventory is not blanket durability certification. All consequential persistence/authority callers require the later security gates. Production/Preview environment protection and main rulesets were inspected as empty; user-mandated release gates still apply. Cloud Run/Jobs/Cloudflare Workers hosting remains proposed; no migration is authorized.
+731 scoped memory/filesystem candidates are retained for semantic review. Static collections and scratch writes are not automatically unsafe fallbacks; the candidate inventory is not blanket durability certification. All consequential persistence/authority callers require the later security gates. Production/Preview environment protection and main rulesets were inspected as empty; user-mandated release gates still apply. Cloud Run/Jobs/Cloudflare Workers hosting remains proposed; no migration is authorized.
 
 ## Boundaries
 

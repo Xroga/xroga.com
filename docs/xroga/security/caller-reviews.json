@@ -3,9 +3,9 @@
   "reviews": [
     {
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sourceSha256": "7b886fe8c8422b8e530ccf7082934b366483826f46b83562eb73a0d3037e85af",
+      "sourceSha256": "769ac7c78bd7c9b624bd0e69fa4b2eaa4df3bb13b943baf7d5019873915b29c7",
       "callIds": [
-        "f236ae4444d81d62c17c"
+        "37347768912b9e614cea"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Native Array.from materializes locally queried menu buttons for keyboard focus navigation. The subsequent index/focus operations touch the DOM only. No database, storage client, credential or provider write is involved.",
@@ -4062,9 +4062,9 @@
     },
     {
       "path": "frontend/src/app/crypto/page.tsx",
-      "sourceSha256": "203327cd15585e63c043071fd5b8bdebf3a6c7aeb8178649bde583799e2b4ff3",
+      "sourceSha256": "aec3bdac94132cb85629ab0eb886f360df98f23a04a0945f1557cf8271ef4548",
       "callIds": [
-        "1cf0586f7cd93a578782"
+        "0e668b8fcff900d8b16e"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in GlowButton, with no database or Storage client receiver.",
@@ -4190,7 +4190,7 @@
     },
     {
       "path": "frontend/src/components/community/CommunityFeed.tsx",
-      "sourceSha256": "2e4465a70ed9f9e9c20ccc287cc2329ede24a937948b5a684bc2ace878590672",
+      "sourceSha256": "95ca80699a63df7fc757896b76ad7e30c8b0b9b9ee5ee507430a782689f13775",
       "callIds": [
         "229f69845215b3f79181"
       ],
@@ -4430,9 +4430,9 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "c48a9cee91f8cb1e90bb52fcc2aab9d3f2ed72d3d1c4ef11025355f873932e85",
+      "sourceSha256": "54536d9c340fcb8b6238cf892f6da73c1544f6eaf88104308f0f8a1ab90cc5f4",
       "callIds": [
-        "b8ef33bd57715ef2cbbe"
+        "a291f26c3c5001de01f9"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
@@ -4446,9 +4446,9 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "c48a9cee91f8cb1e90bb52fcc2aab9d3f2ed72d3d1c4ef11025355f873932e85",
+      "sourceSha256": "54536d9c340fcb8b6238cf892f6da73c1544f6eaf88104308f0f8a1ab90cc5f4",
       "callIds": [
-        "5f13844b2f1b712e7919"
+        "f8d5eaf0193282882763"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in SidebarProjectHistory, with no database or Storage client receiver.",
@@ -4654,9 +4654,9 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sourceSha256": "a49cae58957810667768e12b253cdf01b1974185364e276c9e8510a93d5d0da6",
+      "sourceSha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860",
       "callIds": [
-        "ee3a52d31fb1a4645f1c"
+        "18f7c2043f2ceb0ebac3"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in TerminalChatBar, with no database or Storage client receiver.",

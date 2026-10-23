@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e883f4f339caf370564806fe6b37f104adf62a34",
+  "source_sha": "4864717b8260de40a231fc2a40848785ca03a800",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -3001,6 +3001,40 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-docs-chain-link",
+      "provider": "Source-defined endpoint docs.chain.link",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/lib/cryptoEditorialContent.ts"
+      ],
+      "hostnames": [
+        "docs.chain.link"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/lib/cryptoEditorialContent.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-docs-cursor-com",
       "provider": "Source-defined endpoint docs.cursor.com",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -3323,6 +3357,40 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-ethereum-org",
+      "provider": "Source-defined endpoint ethereum.org",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/lib/cryptoEditorialContent.ts"
+      ],
+      "hostnames": [
+        "ethereum.org"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/lib/cryptoEditorialContent.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-ethglobal-com",
       "provider": "Source-defined endpoint ethglobal.com",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -3352,6 +3420,40 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "frontend/src/lib/hackathonResearch.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-example-com",
+      "provider": "Source-defined endpoint example.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/components/automations/BrowserStudio.tsx"
+      ],
+      "hostnames": [
+        "example.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/components/automations/BrowserStudio.tsx"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -3833,6 +3935,7 @@
         "frontend/src/components/terminal/ChatIntegrationsBar.tsx",
         "frontend/src/components/terminal/GithubRepoModal.tsx",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
+        "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
         "frontend/src/context/TerminalChatContext.tsx",
         "frontend/src/lib/aboutContent.ts",
         "frontend/src/lib/chatArchive.ts",
@@ -3890,6 +3993,7 @@
         "frontend/src/components/terminal/ChatIntegrationsBar.tsx",
         "frontend/src/components/terminal/GithubRepoModal.tsx",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
+        "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
         "frontend/src/context/TerminalChatContext.tsx",
         "frontend/src/lib/aboutContent.ts",
         "frontend/src/lib/chatArchive.ts",
@@ -4908,6 +5012,40 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-scs-owasp-org",
+      "provider": "Source-defined endpoint scs.owasp.org",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/lib/cryptoEditorialContent.ts"
+      ],
+      "hostnames": [
+        "scs.owasp.org"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/lib/cryptoEditorialContent.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-sentry-io",
       "provider": "Source-defined endpoint sentry.io",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -4950,6 +5088,7 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "backend/src/synthesis/chain/chainRuntime.ts",
+        "frontend/src/lib/cryptoEditorialContent.ts",
         "frontend/src/lib/hackathonResearch.ts"
       ],
       "hostnames": [
@@ -4972,6 +5111,7 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/synthesis/chain/chainRuntime.ts",
+        "frontend/src/lib/cryptoEditorialContent.ts",
         "frontend/src/lib/hackathonResearch.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -6919,6 +7059,40 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/index.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-your-website-com",
+      "provider": "Source-defined endpoint your-website.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/components/automations/BrowserStudio.tsx"
+      ],
+      "hostnames": [
+        "your-website.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/components/automations/BrowserStudio.tsx"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -14596,7 +14770,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/automations/page.tsx",
-      "sha256": "ed5d9c0eb92feb732e33691bd6f3ef15bff296290bf02efcfe3c75bb81cd3fd9"
+      "sha256": "8e847ea229e04e7cf315b31465bba325d81a2f1f8c37514fbcb55d96ee910cde"
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/billing/page.tsx",
@@ -14668,7 +14842,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/library/page.tsx",
-      "sha256": "e965f2ecbb0c76416c25ce7ba88933510f6c497e6f2895fcfc07f3140c892036"
+      "sha256": "80b7366a9280c440cdee38b68b12a55cd47bb8e9918fd03bee6063ee6cab9f67"
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/media/page.tsx",
@@ -14684,7 +14858,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/projects/[id]/page.tsx",
-      "sha256": "d2c08b76d1df6d3eb444f9221ad9bee9797d51444bc76a332ed8c88ce335b910"
+      "sha256": "bfe7e5184122f6cd0e7a5189cf22a66f098d2d3c90c97f305510b84c9f221eda"
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/projects/layout.tsx",
@@ -14692,7 +14866,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/projects/page.tsx",
-      "sha256": "545d8884402a3167cc59816c1ade3281eaf06a4ddd5455806eea5ceccf4da708"
+      "sha256": "e643e1733f69d23c8811043a9ecdde59f91039259112213f1629308d707f8291"
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/publish/cws/callback/page.tsx",
@@ -14832,7 +15006,7 @@
     },
     {
       "path": "frontend/src/app/blog/[slug]/page.tsx",
-      "sha256": "bd8c196923c11cd3cc5ecdd7cf6d9de58220741c0d9907685f708bf5d04551d6"
+      "sha256": "453b970c967e139cf466cafb2f5b162e95df7b6b92b8da225e0abbc94c1b7707"
     },
     {
       "path": "frontend/src/app/blog/feed.xml/route.ts",
@@ -14840,7 +15014,7 @@
     },
     {
       "path": "frontend/src/app/blog/page.tsx",
-      "sha256": "8d5ca36c85859614ca3fec7b14b3fc52af6bb40ae3787dce7042052fb8a1a373"
+      "sha256": "1ac92bdca080405b4ec7c9132b09dbd3b3dca3f5ae34626ea2418229bb8ad107"
     },
     {
       "path": "frontend/src/app/build-saas-with-ai/page.tsx",
@@ -14908,7 +15082,7 @@
     },
     {
       "path": "frontend/src/app/crypto/page.tsx",
-      "sha256": "203327cd15585e63c043071fd5b8bdebf3a6c7aeb8178649bde583799e2b4ff3"
+      "sha256": "aec3bdac94132cb85629ab0eb886f360df98f23a04a0945f1557cf8271ef4548"
     },
     {
       "path": "frontend/src/app/cybersecurity/CybersecurityLanding.tsx",
@@ -15207,6 +15381,50 @@
       "sha256": "f73e91dd02b7428815f57c3b0d2b38d5379937d8d1c5bf6c785dc3796df6e490"
     },
     {
+      "path": "frontend/src/components/automations/Activity.tsx",
+      "sha256": "9d1aa2587a137c8be8dd7fd4c65a5507a5b4d120df7f9c189b1f53182104d1fb"
+    },
+    {
+      "path": "frontend/src/components/automations/AutomationsWorkspace.tsx",
+      "sha256": "46a03580d4f90ae00b2ae47c12e8faa1f0568b7db93cb74a5bc1e690e0d77f47"
+    },
+    {
+      "path": "frontend/src/components/automations/BrowserStudio.tsx",
+      "sha256": "58e2e086808843a05aba558ef02bd6ecb543ed862cdd5b9e7561007a4221ebe9"
+    },
+    {
+      "path": "frontend/src/components/automations/Connections.tsx",
+      "sha256": "8568c83e70ae2e0999212d8abcdeda323c9eda1c043974230489916603d0b706"
+    },
+    {
+      "path": "frontend/src/components/automations/DraftSummary.tsx",
+      "sha256": "684bf16e748da1c6220a7ef9fee8142058ca487b872de5f9e0a7b5a1a6861b92"
+    },
+    {
+      "path": "frontend/src/components/automations/PeopleAndPacks.tsx",
+      "sha256": "5e411f754a17fbf2108b7aa1331a89530061f030b989473ddc1f97bbee17a64d"
+    },
+    {
+      "path": "frontend/src/components/automations/Schedules.tsx",
+      "sha256": "d11fd3c7525ef9b027d81523e6174a1747c6a236bdcf34100d8f89d4ee9a26df"
+    },
+    {
+      "path": "frontend/src/components/automations/WorkflowEditor.tsx",
+      "sha256": "1cca1b1bf37f9412276642161a36347fb6b38a20f368dca35cb8b42fa933b959"
+    },
+    {
+      "path": "frontend/src/components/automations/catalog.ts",
+      "sha256": "3474b4af8753333dba3fd35277a3e2a27d872c60553293d3f760071395a01340"
+    },
+    {
+      "path": "frontend/src/components/automations/evidence.ts",
+      "sha256": "76b8a3634367c17992571808f569973ac48e4ca23c30f0f5b8afcdab275b0ffd"
+    },
+    {
+      "path": "frontend/src/components/automations/useDrafts.ts",
+      "sha256": "035de9b22ebb0bde61e753c72080c74d316dbd25ce8c2f5b3626426f59cc5a62"
+    },
+    {
       "path": "frontend/src/components/billing/BillingPageClient.tsx",
       "sha256": "8ae3afa4c20b3c29d71c791f8659e3f562aff71782862298b1f8b70fe788b411"
     },
@@ -15248,7 +15466,7 @@
     },
     {
       "path": "frontend/src/components/community/CommunityFeed.tsx",
-      "sha256": "2e4465a70ed9f9e9c20ccc287cc2329ede24a937948b5a684bc2ace878590672"
+      "sha256": "95ca80699a63df7fc757896b76ad7e30c8b0b9b9ee5ee507430a782689f13775"
     },
     {
       "path": "frontend/src/components/community/CommunityPostCard.tsx",
@@ -15356,7 +15574,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/DashboardView.tsx",
-      "sha256": "0ccfb78bcbf6f1a09ee48a1752d8f7891662a5dc64f7fa83b91ebd3fffb85f52"
+      "sha256": "31218793ba7eadbcb863556c8df57565775f8ac23ba9007a4463dcf783d5ec6e"
     },
     {
       "path": "frontend/src/components/dashboard/DashboardWelcome.tsx",
@@ -15428,7 +15646,7 @@
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
-      "sha256": "7b886fe8c8422b8e530ccf7082934b366483826f46b83562eb73a0d3037e85af"
+      "sha256": "769ac7c78bd7c9b624bd0e69fa4b2eaa4df3bb13b943baf7d5019873915b29c7"
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceResumeList.tsx",
@@ -15468,7 +15686,7 @@
     },
     {
       "path": "frontend/src/components/feedback/FeedbackModal.tsx",
-      "sha256": "00d4bfa4d795c71f950f04741e386a6a87405a9957a6b3be97d067584dc11111"
+      "sha256": "8c09e645b6050c01a70d9e752fd8788d5c342787f03f33f488a9f1f1265db383"
     },
     {
       "path": "frontend/src/components/feedback/ScheduledFeedbackPrompt.tsx",
@@ -15660,10 +15878,10 @@
     },
     {
       "path": "frontend/src/components/homepage-next/s02/Theater.tsx",
-      "sha256": "58667edf998ed1afcf9e051247e91ef227bd12ca2ea5ec722222df113dd840a8"
+      "sha256": "45b24ff2c66452568b90969781b91ad29bd3009fe04bb48965f2636908dd832e"
     },
     {
-      "path": "frontend/src/components/homepage-next/s02/WorkforceSurface.tsx",
+      "path": "frontend/src/components/homepage-next/s02/WorkforceStage.tsx",
       "sha256": "a23268b21ee451dcbab111d271b0213b2cf6d8473f00f98fd98779ff4f28bdf5"
     },
     {
@@ -16320,11 +16538,11 @@
     },
     {
       "path": "frontend/src/components/layout/AppShell.tsx",
-      "sha256": "7b8c923ac18bc5fd7c0f5cfdb334a948b7f74b66f0656b056d6b3659af849af0"
+      "sha256": "9f1e4e747595fb5eb215a6a186f30fa44bd4661885d59b9e7b0894258bb34616"
     },
     {
       "path": "frontend/src/components/layout/BetaExpectationBanner.tsx",
-      "sha256": "ce65b05e56baf99b263b55886ae86c9b79d47e7acc6755de29bbdd77f43ecad6"
+      "sha256": "54f68f0e74c11cc00db371b95d2ff66d1f1c4166f263e763f787815768c4d5b2"
     },
     {
       "path": "frontend/src/components/layout/DesktopBackgroundSlideshow.tsx",
@@ -16384,7 +16602,7 @@
     },
     {
       "path": "frontend/src/components/layout/Sidebar.tsx",
-      "sha256": "61d961dc9f406b49f6d3ac887f1befcebfdf8b255b5ed3dea2b981b0d1e843aa"
+      "sha256": "c103d88e76e8b001be9ed2c5d32e09dda591faa69497d1e7a32b3729162320cb"
     },
     {
       "path": "frontend/src/components/layout/SidebarActionMenu.tsx",
@@ -16396,15 +16614,15 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarMovingTitle.tsx",
-      "sha256": "befac66f051f5f452b00e8b8088f6f1b3c916e32aec791ee4ddd10de79ac9aa1"
+      "sha256": "1abff744bd82506c8b18132613e20702dcee683185066b2eb41dcfa6a73064a7"
     },
     {
       "path": "frontend/src/components/layout/SidebarNavScroller.tsx",
-      "sha256": "b3c684bebb14083c7aac7107684e8c2b7c814b0b4b2ad71160d5e368f11c62b1"
+      "sha256": "876418c9c2555c51d31cb25549bb84d0526df9a8fdda429c5e6b0b15c6f5fc01"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sha256": "c48a9cee91f8cb1e90bb52fcc2aab9d3f2ed72d3d1c4ef11025355f873932e85"
+      "sha256": "54536d9c340fcb8b6238cf892f6da73c1544f6eaf88104308f0f8a1ab90cc5f4"
     },
     {
       "path": "frontend/src/components/layout/SidebarSearchModal.tsx",
@@ -16445,6 +16663,10 @@
     {
       "path": "frontend/src/components/legal/LegalPageShell.tsx",
       "sha256": "74cd59f0a156b168c3f531f11a39000cb303f67b64adb94fdd069a90de80159f"
+    },
+    {
+      "path": "frontend/src/components/library/LibraryWorkspace.tsx",
+      "sha256": "3d5e584a8551992dd7d9a1200df94f9836173ed7f99f00f3408c30d7a88e1fcd"
     },
     {
       "path": "frontend/src/components/magicui/globe.tsx",
@@ -16532,7 +16754,7 @@
     },
     {
       "path": "frontend/src/components/notifications/SidebarNotificationCenter.tsx",
-      "sha256": "13b23b6a1b607ed3d1c8fc8ca2b2e73982cd577c563fbd703a59286cb9f3c0d0"
+      "sha256": "38aa69cc8a0a675213cf5b4992dbea826147bd669b9cc7aaf9d79d9fe88b13a3"
     },
     {
       "path": "frontend/src/components/onboarding/BuildTypeCard.tsx",
@@ -16596,7 +16818,7 @@
     },
     {
       "path": "frontend/src/components/profile/UserProfileBox.tsx",
-      "sha256": "bf4a23f75e3ec541faf1641a36b137b107077f44697bd6c02dd6e897a69d8042"
+      "sha256": "aad58f97b5b20ef9fe2f3194de87444823dc71e4cb5cde0ec0866392e1d0f42c"
     },
     {
       "path": "frontend/src/components/projects/FilePreview.tsx",
@@ -16624,7 +16846,7 @@
     },
     {
       "path": "frontend/src/components/providers/RootProviders.tsx",
-      "sha256": "68aad96d8877017af7826da88694cb254c6d4b1193e910d4743076459132f29f"
+      "sha256": "cfc3f13497e9d71930008f45d07f4b8cd2413dcabe6aeeeecf92d4f1c7bbda01"
     },
     {
       "path": "frontend/src/components/providers/SlideshowIndexContext.tsx",
@@ -16672,7 +16894,7 @@
     },
     {
       "path": "frontend/src/components/seo/EditorialPage.tsx",
-      "sha256": "c5da4d979ec62d7b9b2c30424ca4c6593180c25164fa100906f00d894eae83aa"
+      "sha256": "5cc7eb6549990d8055097856495dcda4359283264a3edbf92f33d86f32517bbd"
     },
     {
       "path": "frontend/src/components/seo/FeatureJsonLd.tsx",
@@ -16684,7 +16906,7 @@
     },
     {
       "path": "frontend/src/components/seo/GrowthEvidence.tsx",
-      "sha256": "842da9a9557184315181b1788aed7b5532609157c5e6b85bbf151d1f69f6e6f6"
+      "sha256": "463367b2325376bf57f6236a20bf884651f8f89dcfeb36dcc38113b364eeea38"
     },
     {
       "path": "frontend/src/components/seo/PageJsonLd.tsx",
@@ -16823,8 +17045,12 @@
       "sha256": "1a07f31158d6ceaa7314a9f2f2464f5870d2455ad00f4e830e731795b6e968a5"
     },
     {
+      "path": "frontend/src/components/terminal/BlackHoleMark.tsx",
+      "sha256": "2dc79630eba572ebf939db6a79c22683250276d21d99d7147f79a0b99cbfcd51"
+    },
+    {
       "path": "frontend/src/components/terminal/BlackHoleVButton.tsx",
-      "sha256": "ce2f104837e5f88a49059785c823da1501a5a0d5cd60450a349fc705d31f092a"
+      "sha256": "fdc49818f067ad6fb65666437409407b18f27e0e1bc2ed6567aaad86fa65a298"
     },
     {
       "path": "frontend/src/components/terminal/BuildCodeSandbox.tsx",
@@ -16944,15 +17170,15 @@
     },
     {
       "path": "frontend/src/components/terminal/MessageBubbleActions.tsx",
-      "sha256": "c3191b4e3c62e1af533dd7c656780359a051188ccc99119afe61352f10a57691"
+      "sha256": "164be07d1359346d4b937e8e5281905fc4c26e944e3e987ef2f6985a36bd48a4"
     },
     {
       "path": "frontend/src/components/terminal/MessageShareModal.tsx",
-      "sha256": "98aba9fa484dd7e03b7db00eb6d8ca84a4cd80d617531e56a2dc3e1e7ed0d314"
+      "sha256": "30426f1c7a03f12681f9662a62ca71e40ab73ba530da027d44e9e82e67fac6c5"
     },
     {
       "path": "frontend/src/components/terminal/MessageSuggestionChips.tsx",
-      "sha256": "38e461771038a8a5e2b8829948428538034bc25aa8ffbbcbb59338d6a44ca79c"
+      "sha256": "6a657f97a16245fe2c5b5b7e0fe85152561efec8cff1e8463f3057bf93fea5d6"
     },
     {
       "path": "frontend/src/components/terminal/ModelAppPermissions.tsx",
@@ -16976,11 +17202,11 @@
     },
     {
       "path": "frontend/src/components/terminal/ReasoningAndFollowUps.tsx",
-      "sha256": "d7e0d092883b3b1b9af8839bea127e5d3450528901755cbbb32431b58c57077d"
+      "sha256": "0e440c11861cfe6798fcedfacf9db8e7c0b131b4d7fe0e799a40710db2d1a40e"
     },
     {
       "path": "frontend/src/components/terminal/RepoContextBar.tsx",
-      "sha256": "7862b25161ea243678bb40721ec278178a85b782fad4d37f8f703c763d9c93bc"
+      "sha256": "e628582e2369abb853b7edaef87a6f8daab08baed1407a286dc7926bf18d34f2"
     },
     {
       "path": "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx",
@@ -17008,7 +17234,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "9b34ae0b8881295ac7f1baae0f7dd73652272201d2c749836b158894e14dd542"
+      "sha256": "d02abee0af410a01e0a3fc23e290aae95d58abffa2d53f4cb970fb20ae801662"
     },
     {
       "path": "frontend/src/components/terminal/TerminalBuildReport.tsx",
@@ -17016,15 +17242,15 @@
     },
     {
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
-      "sha256": "a49cae58957810667768e12b253cdf01b1974185364e276c9e8510a93d5d0da6"
+      "sha256": "cb1ec7ba1923bc8b22029963c44f7a0b67435edf9615d0a9426ae3694a184860"
     },
     {
       "path": "frontend/src/components/terminal/TerminalDock.tsx",
-      "sha256": "73b699f08fce401a41f13555db2b800ac9694517d24e30b5824dab22575d5252"
+      "sha256": "85e2df0510c7e881f9ee0c72c0ead13c8b380bfb5ae67c8eb92468ff26b455a7"
     },
     {
       "path": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
-      "sha256": "c7daaae9967692571fd3199befcc0c1847b2d794b859c491cc77f8db58c7ede4"
+      "sha256": "9f4de56f0500862d10bd10dbc389825643fa73563002a8ca5bd9e1cbf28ec2aa"
     },
     {
       "path": "frontend/src/components/terminal/TerminalSearchBar.tsx",
@@ -17068,11 +17294,15 @@
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
-      "sha256": "4eb7515ad9863f66d4615db0e79e8cc456410cd8cb93f1945407c5fe1fef380a"
+      "sha256": "267574d0f4175c1b1075d14c1a5c8e39de4a9c315101479d8edd8c3c8c894dd7"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceLauncher.tsx",
-      "sha256": "4c58360131b9e9a5bc17631fb5dfaa67661399c264a7c7898f05ec98c71b8063"
+      "sha256": "88725edfafa78eeb8e50129641166281becee1d7e81b99a86d7d10c2f0e9c867"
+    },
+    {
+      "path": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
+      "sha256": "a1919f56653e80ff61698e1a16b9e8dcb4f83936931e1af827b061a0ad4c0726"
     },
     {
       "path": "frontend/src/components/terminal/WorkspaceSearchButton.tsx",
@@ -17236,7 +17466,7 @@
     },
     {
       "path": "frontend/src/components/ui/SidebarHoverMenu.tsx",
-      "sha256": "09570658887191ea4c92c714c68d04a95c2d5abbdeac69971c0df01f9b2be7d9"
+      "sha256": "23affd2d9e44a9233f9bc05fb431dff34bd342f44c94a71e123f90b51d43e3dc"
     },
     {
       "path": "frontend/src/components/ui/SidebarTip.tsx",
@@ -17300,7 +17530,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "0f1404dd37fc1dcafdaa0bcef7898b15c85529043f835655d5972990b384bd0d"
+      "sha256": "f47f5e34bccb821eddbf94b687e5da95307534ce29e01bb7dfc64f85ddae9bfe"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -17473,6 +17703,10 @@
     {
       "path": "frontend/src/lib/cryptoBuilderContent.ts",
       "sha256": "1677331edce7aa052ed285701b4a702d39234d8bbc1ddbdf1f2fffb73e09b0de"
+    },
+    {
+      "path": "frontend/src/lib/cryptoEditorialContent.ts",
+      "sha256": "1ed3c1e40fe677fa11a27d998581e1f73f552b5ee4d4fd843593e14d2e2df57a"
     },
     {
       "path": "frontend/src/lib/currency.ts",
@@ -17664,7 +17898,7 @@
     },
     {
       "path": "frontend/src/lib/messageHelpers.ts",
-      "sha256": "6e278fc71601ae292c9a6dc23e1464a06d7f578f4b2f335808e6b87e64c5b82d"
+      "sha256": "e13ba4eaca4d720c3c3bdd195ae60e2a5d97965198ca53c745078a5112197bf5"
     },
     {
       "path": "frontend/src/lib/messageRehydration.ts",
@@ -17804,7 +18038,7 @@
     },
     {
       "path": "frontend/src/lib/publicUrlInventory.ts",
-      "sha256": "5e2e1ec2d52615e1ac21938cc152839567eca03d1872398cfd34307a87c77cb3"
+      "sha256": "10045f980419f86f278c95232fed472957d28ddf618274956506e57ab3528d7b"
     },
     {
       "path": "frontend/src/lib/publish/types.ts",
@@ -17896,7 +18130,7 @@
     },
     {
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "sha256": "d860693b75701ba0edb307057200246fd939d8e0ed293440497d81f9631b8cb0"
+      "sha256": "09a9e105197a70a3efae67019239245dd78ffc1c245cc0caeec4d74c641919e3"
     },
     {
       "path": "frontend/src/lib/seoPhase2Content.ts",
@@ -17932,7 +18166,11 @@
     },
     {
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "sha256": "61fe6f15651f09c31eece5ebee61505290569b1d6a48c078fe1140c5cda21da4"
+      "sha256": "4126ec733881661a0ec2a8cdc5678e4c4d177f01dd3e3533d5fa1a67ff463072"
+    },
+    {
+      "path": "frontend/src/lib/sidebarProjectTask.ts",
+      "sha256": "52e59ee594e8526257feef14c5eb8884ccad53f5cdded44dc4b839c0fe1458b6"
     },
     {
       "path": "frontend/src/lib/siteHealthAudit.ts",
@@ -18040,7 +18278,7 @@
     },
     {
       "path": "frontend/src/lib/terminalHistory.ts",
-      "sha256": "beaf0d9ff332f4165d46355fdd3afa2ec6cd364a15ce25172c885753eb0c437b"
+      "sha256": "81058bf811fa1043fad7294bacd36f1e0aa1098a5f00c07e14e87ff82988a80b"
     },
     {
       "path": "frontend/src/lib/terminalSearch.ts",
@@ -21441,63 +21679,35 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "frontend/src/app/crypto/page.tsx",
+      "line": 66,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "frontend/src/app/crypto/page.tsx",
+      "line": 66,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "frontend/src/app/crypto/page.tsx",
+      "line": 67,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "www.w3.org",
       "protocol": "http:",
       "path": "frontend/src/app/crypto/page.tsx",
-      "line": 223,
+      "line": 246,
       "credentialsInUrl": false
     },
     {
       "hostname": "schema.org",
-      "protocol": "https:",
-      "path": "frontend/src/app/crypto/page.tsx",
-      "line": 239,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "frontend/src/app/crypto/page.tsx",
-      "line": 243,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "frontend/src/app/crypto/page.tsx",
-      "line": 244,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "frontend/src/app/crypto/page.tsx",
-      "line": 248,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "frontend/src/app/crypto/page.tsx",
-      "line": 252,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "frontend/src/app/crypto/page.tsx",
-      "line": 253,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "frontend/src/app/crypto/page.tsx",
-      "line": 258,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
       "protocol": "https:",
       "path": "frontend/src/app/crypto/page.tsx",
       "line": 262,
@@ -21507,28 +21717,84 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "frontend/src/app/crypto/page.tsx",
-      "line": 271,
+      "line": 266,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "frontend/src/app/crypto/page.tsx",
-      "line": 278,
+      "line": 267,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "frontend/src/app/crypto/page.tsx",
-      "line": 289,
+      "line": 270,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "frontend/src/app/crypto/page.tsx",
-      "line": 295,
+      "line": 274,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "frontend/src/app/crypto/page.tsx",
+      "line": 275,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "frontend/src/app/crypto/page.tsx",
+      "line": 280,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "frontend/src/app/crypto/page.tsx",
+      "line": 284,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "frontend/src/app/crypto/page.tsx",
+      "line": 293,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "frontend/src/app/crypto/page.tsx",
+      "line": 300,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "frontend/src/app/crypto/page.tsx",
+      "line": 311,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "frontend/src/app/crypto/page.tsx",
+      "line": 317,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "frontend/src/app/crypto/page.tsx",
+      "line": 323,
       "credentialsInUrl": false
     },
     {
@@ -21641,6 +21907,20 @@
       "protocol": "https:",
       "path": "frontend/src/components/analytics/GoogleTag.tsx",
       "line": 10,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "your-website.com",
+      "protocol": "https:",
+      "path": "frontend/src/components/automations/BrowserStudio.tsx",
+      "line": 94,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "example.com",
+      "protocol": "https:",
+      "path": "frontend/src/components/automations/BrowserStudio.tsx",
+      "line": 119,
       "credentialsInUrl": false
     },
     {
@@ -22753,7 +23033,7 @@
       "hostname": "schema.org",
       "protocol": "https:",
       "path": "frontend/src/components/seo/EditorialPage.tsx",
-      "line": 34,
+      "line": 37,
       "credentialsInUrl": false
     },
     {
@@ -23016,6 +23296,13 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
+      "line": 50,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "www.openstreetmap.org",
       "protocol": "https:",
       "path": "frontend/src/components/terminal/XrogaRichBlockView.tsx",
@@ -23096,7 +23383,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3935,
+      "line": 3940,
       "credentialsInUrl": false
     },
     {
@@ -23188,6 +23475,97 @@
       "protocol": "https:",
       "path": "frontend/src/lib/cloudTerminalSessions.ts",
       "line": 222,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "ethereum.org",
+      "protocol": "https:",
+      "path": "frontend/src/lib/cryptoEditorialContent.ts",
+      "line": 38,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "ethereum.org",
+      "protocol": "https:",
+      "path": "frontend/src/lib/cryptoEditorialContent.ts",
+      "line": 39,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "ethereum.org",
+      "protocol": "https:",
+      "path": "frontend/src/lib/cryptoEditorialContent.ts",
+      "line": 40,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "ethereum.org",
+      "protocol": "https:",
+      "path": "frontend/src/lib/cryptoEditorialContent.ts",
+      "line": 78,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "ethereum.org",
+      "protocol": "https:",
+      "path": "frontend/src/lib/cryptoEditorialContent.ts",
+      "line": 79,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "solana.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/cryptoEditorialContent.ts",
+      "line": 117,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "solana.com",
+      "protocol": "https:",
+      "path": "frontend/src/lib/cryptoEditorialContent.ts",
+      "line": 118,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "ethereum.org",
+      "protocol": "https:",
+      "path": "frontend/src/lib/cryptoEditorialContent.ts",
+      "line": 156,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "scs.owasp.org",
+      "protocol": "https:",
+      "path": "frontend/src/lib/cryptoEditorialContent.ts",
+      "line": 157,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "docs.chain.link",
+      "protocol": "https:",
+      "path": "frontend/src/lib/cryptoEditorialContent.ts",
+      "line": 158,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "ethereum.org",
+      "protocol": "https:",
+      "path": "frontend/src/lib/cryptoEditorialContent.ts",
+      "line": 196,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "ethereum.org",
+      "protocol": "https:",
+      "path": "frontend/src/lib/cryptoEditorialContent.ts",
+      "line": 197,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "docs.chain.link",
+      "protocol": "https:",
+      "path": "frontend/src/lib/cryptoEditorialContent.ts",
+      "line": 198,
       "credentialsInUrl": false
     },
     {
@@ -24013,154 +24391,154 @@
       "hostname": "docs.lovable.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 74,
+      "line": 75,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.lovable.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 78,
+      "line": 79,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.lovable.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 82,
+      "line": 83,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.lovable.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 86,
+      "line": 87,
       "credentialsInUrl": false
     },
     {
       "hostname": "lovable.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 90,
+      "line": 91,
       "credentialsInUrl": false
     },
     {
       "hostname": "bolt.new",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 121,
+      "line": 122,
       "credentialsInUrl": false
     },
     {
       "hostname": "bolt.new",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 125,
+      "line": 126,
       "credentialsInUrl": false
     },
     {
       "hostname": "bolt.new",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 129,
+      "line": 130,
       "credentialsInUrl": false
     },
     {
       "hostname": "bolt.new",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 133,
+      "line": 134,
       "credentialsInUrl": false
     },
     {
       "hostname": "support.bolt.new",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 137,
+      "line": 138,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.replit.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 151,
+      "line": 152,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.replit.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 151,
+      "line": 152,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.replit.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 151,
+      "line": 152,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.cursor.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 162,
+      "line": 163,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.cursor.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 162,
+      "line": 163,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.cursor.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 162,
+      "line": 163,
       "credentialsInUrl": false
     },
     {
       "hostname": "v0.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 173,
+      "line": 174,
       "credentialsInUrl": false
     },
     {
       "hostname": "v0.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 173,
+      "line": 174,
       "credentialsInUrl": false
     },
     {
       "hostname": "v0.dev",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 173,
+      "line": 174,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.windsurf.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 184,
+      "line": 185,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.windsurf.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 184,
+      "line": 185,
       "credentialsInUrl": false
     },
     {
       "hostname": "docs.windsurf.com",
       "protocol": "https:",
       "path": "frontend/src/lib/seoGrowthContent.ts",
-      "line": 184,
+      "line": 185,
       "credentialsInUrl": false
     },
     {
@@ -24510,21 +24888,21 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/lib/terminalHistory.ts",
-      "line": 98,
+      "line": 99,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/lib/terminalHistory.ts",
-      "line": 107,
+      "line": 108,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/lib/terminalHistory.ts",
-      "line": 232,
+      "line": 233,
       "credentialsInUrl": false
     }
   ],
@@ -28360,7 +28738,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/projects/page.tsx",
-      "line": 138,
+      "line": 133,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28396,6 +28774,27 @@
     {
       "path": "frontend/src/components/about/AboutFaq.tsx",
       "line": 44,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/automations/PeopleAndPacks.tsx",
+      "line": 84,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/automations/PeopleAndPacks.tsx",
+      "line": 412,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/automations/evidence.ts",
+      "line": 3,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28724,84 +29123,84 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 284,
+      "line": 296,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 351,
+      "line": 363,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 352,
+      "line": 364,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 358,
+      "line": 370,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 451,
+      "line": 463,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 525,
+      "line": 537,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 783,
+      "line": 804,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 784,
+      "line": 805,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 843,
+      "line": 864,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 868,
+      "line": 889,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 872,
+      "line": 893,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "line": 879,
+      "line": 900,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28920,14 +29319,14 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 214,
+      "line": 215,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/terminal/TerminalLiveActivity.tsx",
-      "line": 189,
+      "line": 177,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -29032,14 +29431,14 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1989,
+      "line": 1993,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2022,
+      "line": 2026,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -29403,15 +29802,29 @@
     },
     {
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 101,
+      "line": 102,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/sidebarOrganization.ts",
-      "line": 140,
+      "line": 141,
       "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/sidebarOrganization.ts",
+      "line": 158,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/sidebarOrganization.ts",
+      "line": 159,
+      "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
