@@ -20,9 +20,9 @@ const closedWithin = (ws: WebSocket) => Promise.race([
 ]);
 
 test('real local HTTP and WebSocket preview transports enforce scoped targets, header separation and lifetime revocation', async t => {
-  const keys = ['NODE_ENV','SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','XROGA_PREVIEW_SIGNING_SECRET'];
+  const keys = ['NODE_ENV','SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','XROGA_PREVIEW_SIGNING_SECRET','XROGA_SANDBOX_FLY_APP','XROGA_SANDBOX_FLY_TOKEN','FLY_APP_NAME'];
   const old = keys.map(k => process.env[k]);
-  Object.assign(process.env, { NODE_ENV:'test', SUPABASE_URL:'http://127.0.0.1:55441', SUPABASE_SERVICE_ROLE_KEY:'synthetic-only', XROGA_PREVIEW_SIGNING_SECRET:'synthetic-signing-only' });
+  Object.assign(process.env, { NODE_ENV:'test', SUPABASE_URL:'http://127.0.0.1:55441', SUPABASE_SERVICE_ROLE_KEY:'synthetic-only', XROGA_PREVIEW_SIGNING_SECRET:'synthetic-signing-only',XROGA_SANDBOX_FLY_APP:'xroga-isolated-runtime',XROGA_SANDBOX_FLY_TOKEN:'synthetic-provider-only',FLY_APP_NAME:'xroga-api' });
   t.after(() => keys.forEach((k,i) => { if (old[i] === undefined) delete process.env[k]; else process.env[k] = old[i]; }));
   const owner = randomUUID(), project = randomUUID(), session = randomUUID(), now = new Date().toISOString();
   let hits = 0, headers: IncomingHttpHeaders = {}, wsHeaders: IncomingHttpHeaders = {}, received: string[] = [];
@@ -44,7 +44,7 @@ test('real local HTTP and WebSocket preview transports enforce scoped targets, h
   const port = await listen(upstream);
   const grant: LivePreviewGrant = {previewId:randomUUID(),userId:owner,projectId:project,sessionId:session,runId:randomUUID(),kind:'browser',port,expiresAt:new Date(Date.now()+60_000).toISOString(),createdAt:now,revokedAt:null};
   const original = {preview_id:grant.previewId,user_id:owner,project_id:project,session_id:session,run_id:grant.runId,preview_kind:grant.kind,port,expires_at:grant.expiresAt,created_at:now,revoked_at:null};
-  const state = {schemaVersion:'1.0.0',userId:owner,projectId:project,sessionId:session,status:'running',runtimeClass:'interactive',ports:[{port,protocol:'http',status:'listening'}],expiresAt:null,providerState:{machineId:'abc123',app:'xroga-isolated-runtime'}};
+  const state = {schemaVersion:'1.0.0',providerId:'fly-project-runtime',userId:owner,projectId:project,sessionId:session,status:'running',runtimeClass:'interactive',ports:[{port,protocol:'http',status:'listening'}],expiresAt:null,providerState:{machineId:'abc123',app:'xroga-isolated-runtime'}};
   let grantRow: Record<string, unknown> = {...original};
   let row: Record<string, unknown> = {user_id:owner,project_id:project,session_id:session,state};
   t.mock.method(globalThis, 'fetch', async (input: Parameters<typeof fetch>[0]) => {
@@ -97,6 +97,18 @@ test('real local HTTP and WebSocket preview transports enforce scoped targets, h
   }
   grantRow={...original}; row={user_id:randomUUID(),project_id:project,session_id:session,state};
   assert.equal((await http()).status,410); row={user_id:owner,project_id:project,session_id:session,state};
+  for (const change of [{providerId:undefined},{providerId:'unknown-provider'},{providerState:{machineId:'abc123',app:'other-valid-app'}}]) {
+    row={user_id:owner,project_id:project,session_id:session,state:{...state,...change}};
+    const before=hits;
+    assert.equal((await http()).status,410);
+    await new Promise<void>((resolve,reject) => {
+      const denied=new WebSocket(`ws://127.0.0.1:${gatewayPort}/hmr`,{headers:{host}});clients.push(denied);denied.on('error',()=>{});
+      denied.once('open',()=>reject(Error('Unregistered provider upgraded')));
+      denied.once('unexpected-response',(_req,res)=>{assert.equal(res.statusCode,410);res.resume();denied.terminate();resolve();});
+    });
+    assert.equal(hits,before,'Unregistered or misbound provider must send zero HTTP/WS bytes');
+  }
+  row={user_id:owner,project_id:project,session_id:session,state};
   for (const change of [{revoked_at:now},{expires_at:new Date(Date.now()-1).toISOString()},{session_id:randomUUID()},{port:port+1}]) {
     grantRow={...original,...change}; const before=hits;
     await new Promise<void>((resolve,reject) => {

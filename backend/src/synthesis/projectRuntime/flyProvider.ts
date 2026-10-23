@@ -458,6 +458,15 @@ export class FlyProjectRuntimeProvider
     );
   }
 
+  resolvePreviewTarget(session: ProjectRuntimeSession, port: number): { host: string; port: number } | null {
+    const machineId = session.providerState?.machineId;
+    if (this.selfTargeting() || session.providerId !== this.id || session.providerState?.app !== this.app
+      || typeof machineId !== 'string' || !/^[a-z0-9]{1,64}$/.test(machineId)
+      || !/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(this.app)
+      || !Number.isInteger(port) || port < 1 || port > 65535) return null;
+    return { host: `${machineId}.vm.${this.app}.internal`, port };
+  }
+
   private machineId(
     session:
       ProjectRuntimeSession,

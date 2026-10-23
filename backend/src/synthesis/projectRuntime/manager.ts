@@ -59,7 +59,7 @@ export class ProjectRuntimeUnavailableError
   }
 }
 
-function defaultProviders():
+export function configuredProjectRuntimeProviders():
   ProjectRuntimeProvider[] {
   const fly =
     flyProjectRuntimeProviderFromEnvironment();
@@ -84,7 +84,7 @@ export class ProjectRuntimeManager {
 
     private readonly providers:
       readonly ProjectRuntimeProvider[] =
-      defaultProviders(),
+      configuredProjectRuntimeProviders(),
   ) {
     this.secrets =
       new ProjectSecretManager(

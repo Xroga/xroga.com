@@ -10,6 +10,9 @@ import { createLivePreviewGrant } from '../synthesis/livePreview/store.js';
 
 export function registerPreviewGrantAdmissionTests(admin:SupabaseClient,getUsers:()=>readonly {id:string;token:string}[]):void{
   test('real preview admission rejects changed sessions and expiry during an observed grant-write lock wait',async t=>{
+    const providerKeys=['XROGA_SANDBOX_FLY_APP','XROGA_SANDBOX_FLY_TOKEN','FLY_APP_NAME'],providerEnv=providerKeys.map(key=>process.env[key]);
+    Object.assign(process.env,{XROGA_SANDBOX_FLY_APP:'fixture-app',XROGA_SANDBOX_FLY_TOKEN:'synthetic-provider-only',FLY_APP_NAME:'xroga-api'});
+    t.after(()=>providerKeys.forEach((key,index)=>{if(providerEnv[index]===undefined)delete process.env[key];else process.env[key]=providerEnv[index];}));
     assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');
     assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');
     const url=new URL(process.env.XB01_LOCAL_DATABASE_URL!);
@@ -22,7 +25,7 @@ export function registerPreviewGrantAdmissionTests(admin:SupabaseClient,getUsers
     const db=new pg.Client({connectionString:url.href,ssl:false});await db.connect();let pending:Promise<any>|undefined;
     const seed=async(short=false):Promise<ProjectRuntimeSession>=>{
       const now=new Date().toISOString(),session:ProjectRuntimeSession={schemaVersion:'1.0.0',sessionId,userId:owner.id,projectId:project,
-        providerId:'fixture-no-execution',runtimeClass:'interactive',status:'running',image:null,workspaceRevision:1,knownFiles:[],processes:[],
+        providerId:'fly-project-runtime',runtimeClass:'interactive',status:'running',image:null,workspaceRevision:1,knownFiles:[],processes:[],
         ports:[{port:3000,protocol:'http',processId:'fixture',status:'declared'}],providerState:{machineId:'abc123',app:'fixture-app'},
         createdAt:now,updatedAt:now,expiresAt:new Date(Date.now()+(short?1500:60_000)).toISOString()};
       await store.saveSession(session);return session;

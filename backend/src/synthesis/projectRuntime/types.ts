@@ -448,6 +448,9 @@ export interface ProjectRuntimeProviderProbe {
 }
 
 export interface ProjectRuntimeProvider {
+  /** Resolve only configured provider-owned addresses, never request hosts. */
+  resolvePreviewTarget?(session: ProjectRuntimeSession, port: number): { host: string; port: number } | null;
+
   readonly id:
     string;
 

@@ -10811,6 +10811,7 @@
         "backend/src/ai/pipeline.ts:159",
         "backend/src/ai/postCompletionAccounting.test.ts:5",
         "backend/src/ai/universal/capabilityReadiness.test.ts:5",
+        "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts:5",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:4",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:15",
         "backend/src/routes/phase1.ts:32",
@@ -10837,6 +10838,7 @@
       "testCoverage": [
         "backend/src/ai/postCompletionAccounting.test.ts",
         "backend/src/ai/universal/capabilityReadiness.test.ts",
+        "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts"
       ],
@@ -22444,6 +22446,7 @@
         "backend/src/ai/tenantModelDispatch.test.ts:4",
         "backend/src/ai/tenantModelDispatch.ts:2",
         "backend/src/ai/universal/resumeProjectContext.test.ts:6",
+        "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts:4",
         "backend/src/ai/universal/semanticRequestPlanner.ts:15",
         "backend/src/ai/usageAccounting.test.ts:4",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:10",
@@ -22587,6 +22590,7 @@
         "backend/src/ai/routingOutcomes.receipt.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts",
         "backend/src/ai/universal/resumeProjectContext.test.ts",
+        "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts",
         "backend/src/ai/usageAccounting.test.ts",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/middleware/admin.test.ts",
@@ -25626,7 +25630,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:910",
+        "backend/src/security/tenantIsolation.local.integration.ts:913",
         "backend/src/services/integrations/businessAction.ts:44",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -30767,16 +30771,20 @@
       "id": "surface:f3fdc77942588fe53f5f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/livePreview/access.ts",
-      "sha256": "c01a9bdbac40ebe84699b83bcb815b27a41d1644322ff36396a29074ba23b74f",
+      "sha256": "6b51567c0ceee8eaffc184431c14dcba969845c0b7566744e1a50190b41ae55c",
       "symbols": [
         "authorizedPreviewTarget",
-        "expiry"
+        "expiry",
+        "provider"
       ],
       "imports": [
+        "../projectRuntime/manager.js",
         "../projectRuntime/types.js",
         "./types.js"
       ],
-      "runtimeImports": [],
+      "runtimeImports": [
+        "backend/src/synthesis/projectRuntime/manager.ts"
+      ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
@@ -32170,7 +32178,7 @@
       "id": "surface:c20e920591c9c750bb59",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "sha256": "3d00cb93082c119cedc9884f7945b0ce6cc360120432931eb04a1b6f4f421b1e",
+      "sha256": "a1fe5bf2ab884ad9c0b1b9784418644af5585cd8012b3e7c623757d6f0692d41",
       "symbols": [
         "DEFAULT_API_HOST",
         "DEFAULT_IMAGE",
@@ -32336,12 +32344,12 @@
       "id": "surface:ca5b423e9d8cf5e5167b",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/manager.ts",
-      "sha256": "2d0f354780b139c7c3b172c8c112887d4945b2e6c5da9ae077aba45df977b611",
+      "sha256": "cdee96fe5ceb6319f9d720315f90c26b5aa705b1ac154ddf17315597b5661e04",
       "symbols": [
         "ProjectRuntimeManager",
         "ProjectRuntimeUnavailableError",
+        "configuredProjectRuntimeProviders",
         "createProjectRuntimeManager",
-        "defaultProviders",
         "environment",
         "fly",
         "logs",
@@ -32393,6 +32401,7 @@
         "backend/src/sandbox/registryNetwork.test.ts:8",
         "backend/src/security/runtimeProjectBinding.test.ts:7",
         "backend/src/security/runtimeSecretRead.local.integration.ts:7",
+        "backend/src/synthesis/livePreview/access.ts:3",
         "backend/src/synthesis/projectRuntime/diagnosticCommands.test.ts:4",
         "backend/src/synthesis/projectRuntime/flyProvider.destroy.test.ts:4",
         "backend/src/synthesis/projectRuntime/flyProvider.restore.test.ts:4",
@@ -32777,7 +32786,7 @@
       "id": "surface:f32bc6f66d06656f548d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/types.ts",
-      "sha256": "c0b716c3b8392d45b15cb52ebde868349538e1f404246bf1cbb85807ac665a89",
+      "sha256": "c920d23646a2c62472dceea4ee35e04aac7792e9a487e6d970ded00e923cefaf",
       "symbols": [
         "PROJECT_RUNTIME_SCHEMA_VERSION",
         "ProjectRuntimeBinding",
@@ -109962,6 +109971,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:8725c5de9fcd325ad743",
+      "sourcePath": "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:4c7f0731a324fb7d047d",
       "sourcePath": "backend/src/ai/universal/semanticRequestPlanner.test.ts",
       "declaredTests": 35,
@@ -112136,7 +112152,7 @@
     {
       "id": "test-suite:9fbc9b8ad5bd05aa21ce",
       "sourcePath": "backend/src/synthesis/livePreview/access.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -3941,9 +3941,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "sourceSha256": "3d00cb93082c119cedc9884f7945b0ce6cc360120432931eb04a1b6f4f421b1e",
+      "sourceSha256": "a1fe5bf2ab884ad9c0b1b9784418644af5585cd8012b3e7c623757d6f0692d41",
       "callIds": [
-        "8c2d8f9c4601ee2f4d97"
+        "22f13665d50eefc35d52"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in create. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3957,9 +3957,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "sourceSha256": "3d00cb93082c119cedc9884f7945b0ce6cc360120432931eb04a1b6f4f421b1e",
+      "sourceSha256": "a1fe5bf2ab884ad9c0b1b9784418644af5585cd8012b3e7c623757d6f0692d41",
       "callIds": [
-        "74ddacc15175556234db"
+        "7d5759807b07e44830bb"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in writeFiles. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3973,9 +3973,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "sourceSha256": "3d00cb93082c119cedc9884f7945b0ce6cc360120432931eb04a1b6f4f421b1e",
+      "sourceSha256": "a1fe5bf2ab884ad9c0b1b9784418644af5585cd8012b3e7c623757d6f0692d41",
       "callIds": [
-        "96441ee181360879c0db"
+        "ab91c7c3506f3c3dc16d"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in readFile. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -9441,7 +9441,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+      "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
       "callIds": [
         "1169e490665cdec7b3a3",
         "2fbd469f16851f3b71ab"
@@ -9757,7 +9757,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sourceSha256": "3f6a017db3e3a620f9559ae4f9b0c1c4048f0906e4d4fb632762a0435442ac3d",
+      "sourceSha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5",
       "callIds": [
         "ebede146c851a085d2b8"
       ],
@@ -12778,7 +12778,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+      "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
       "callIds": [
         "6f058d1957df9ddef58e",
         "263d64635be54643daaf",
@@ -14138,7 +14138,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+      "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
       "callIds": [
         "495469d5a798cf52f829",
         "4ac1c2be7bfccf034c8e",
@@ -14976,7 +14976,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+      "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
       "callIds": [
         "8aa7e4818165f80a2954"
       ],
@@ -14997,7 +14997,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+      "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
       "callIds": [
         "0dc96ad35c877b5c6b81"
       ],
@@ -15018,7 +15018,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+      "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
       "callIds": [
         "1e296c319fef476f484e"
       ],
@@ -15039,7 +15039,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+      "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
       "callIds": [
         "10d24b0a58511aa77d5a"
       ],

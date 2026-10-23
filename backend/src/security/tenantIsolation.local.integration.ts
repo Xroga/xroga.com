@@ -458,12 +458,15 @@ test('real revision restore rejects mismatched snapshot identities before restor
 });
 
 test('real durable preview session cannot resolve a misbound owner/project or stale capability', async t => {
+  const providerKeys=['XROGA_SANDBOX_FLY_APP','XROGA_SANDBOX_FLY_TOKEN','FLY_APP_NAME'],providerEnv=providerKeys.map(key=>process.env[key]);
+  Object.assign(process.env,{XROGA_SANDBOX_FLY_APP:'xroga-synthetic-runtime',XROGA_SANDBOX_FLY_TOKEN:'synthetic-provider-only',FLY_APP_NAME:'xroga-api'});
+  t.after(()=>providerKeys.forEach((key,index)=>{if(providerEnv[index]===undefined)delete process.env[key];else process.env[key]=providerEnv[index];}));
   const [owner, other] = users;
   const now = Date.now(), sessionId = randomUUID();
   const store = new SupabaseProjectRuntimeStore();
   const session: ProjectRuntimeSession = {
     schemaVersion: '1.0.0', sessionId, userId: owner.id, projectId: owner.project,
-    providerId: 'fixture-no-execution', runtimeClass: 'interactive', status: 'running', image: null,
+    providerId: 'fly-project-runtime', runtimeClass: 'interactive', status: 'running', image: null,
     workspaceRevision: 1, knownFiles: [], processes: [],
     ports: [{ port: 3000, protocol: 'http', processId: 'fixture', status: 'declared' }],
     providerState: { machineId: 'abc123', app: 'xroga-synthetic-runtime' },

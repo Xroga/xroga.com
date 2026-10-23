@@ -2301,7 +2301,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real growth event replay cannot disclose a different project event",
-          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
+          "sourceSha256": "9c16e3cd1eb34550096f5830c82aaef2b9ecc1177b10ae3d636227c6015d3ecb",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -3837,7 +3837,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real durable database file delivery is owner-only",
-          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
+          "sourceSha256": "9c16e3cd1eb34550096f5830c82aaef2b9ecc1177b10ae3d636227c6015d3ecb",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -3991,7 +3991,7 @@
         {
           "path": "backend/src/synthesis/livePreview/access.ts",
           "marker": "session.userId !== grant.userId",
-          "sourceSha256": "c01a9bdbac40ebe84699b83bcb815b27a41d1644322ff36396a29074ba23b74f",
+          "sourceSha256": "6b51567c0ceee8eaffc184431c14dcba969845c0b7566744e1a50190b41ae55c",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4005,7 +4005,7 @@
         {
           "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
           "marker": "preview grant input and returned capability stay bound",
-          "sourceSha256": "2e8aadb9aee19712c92fda66ef95e114f07ef9b678f46a46e3214d9b7647be5b",
+          "sourceSha256": "afa8e4905725a4b10e30e47baa836f02eb16f9c703f5e3c707ec258ed8b925cc",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -4829,7 +4829,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes",
-          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
+          "sourceSha256": "9c16e3cd1eb34550096f5830c82aaef2b9ecc1177b10ae3d636227c6015d3ecb",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5077,7 +5077,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
+          "sourceSha256": "9c16e3cd1eb34550096f5830c82aaef2b9ecc1177b10ae3d636227c6015d3ecb",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -5190,7 +5190,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
+          "sourceSha256": "9c16e3cd1eb34550096f5830c82aaef2b9ecc1177b10ae3d636227c6015d3ecb",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -5507,7 +5507,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real failed-build notification cannot disclose raw backend diagnostic text",
-          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
+          "sourceSha256": "9c16e3cd1eb34550096f5830c82aaef2b9ecc1177b10ae3d636227c6015d3ecb",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5699,7 +5699,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real profile column grants reject self-promotion",
-          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
+          "sourceSha256": "9c16e3cd1eb34550096f5830c82aaef2b9ecc1177b10ae3d636227c6015d3ecb",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6133,7 +6133,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "Legitimate membership must remain visible",
-          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
+          "sourceSha256": "9c16e3cd1eb34550096f5830c82aaef2b9ecc1177b10ae3d636227c6015d3ecb",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6422,7 +6422,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant",
-          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
+          "sourceSha256": "9c16e3cd1eb34550096f5830c82aaef2b9ecc1177b10ae3d636227c6015d3ecb",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6514,7 +6514,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "generated external-project memory SQL denies browser roles",
-          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
+          "sourceSha256": "9c16e3cd1eb34550096f5830c82aaef2b9ecc1177b10ae3d636227c6015d3ecb",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6989,7 +6989,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real Whop fulfillment rolls back foreign membership collisions",
-          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
+          "sourceSha256": "9c16e3cd1eb34550096f5830c82aaef2b9ecc1177b10ae3d636227c6015d3ecb",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -7699,7 +7699,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
+          "sourceSha256": "9c16e3cd1eb34550096f5830c82aaef2b9ecc1177b10ae3d636227c6015d3ecb",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -7806,7 +7806,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338",
+          "sourceSha256": "9c16e3cd1eb34550096f5830c82aaef2b9ecc1177b10ae3d636227c6015d3ecb",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
