@@ -30,6 +30,7 @@ import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
 import { projectContextKey } from '@/lib/projectContext';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
+import { SidebarMovingTitle } from '@/components/layout/SidebarMovingTitle';
 
 const STORAGE_KEY = 'xroga-repo-context';
 const REPO_LIST_CACHE_KEY = 'xroga-repo-list-cache';
@@ -459,7 +460,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
               className={textTriggerClass}
             >
               <span className="xv-repo-name" title={selectedRepo ?? undefined}>
-                {selectedRepo?.split('/').at(-1) ?? 'New repository'}
+                <SidebarMovingTitle text={selectedRepo?.split('/').at(-1) ?? 'New repository'} />
               </span>
               <ChevronDown className={cn('w-3 h-3 opacity-50 transition-transform', open === 'repo' && 'rotate-180')} />
             </button>

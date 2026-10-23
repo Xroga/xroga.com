@@ -354,7 +354,7 @@ export function TerminalLiveActivity({
   const stalled = active && silentForMs >= STALLED_AFTER_MS;
 
   if (rows.length === 0) {
-    if (!pending) return thinkingSteps.length ? <details className="xv-thinking-history"><summary><BlackHoleMark /> Thinking &amp; processing · {thinkingSteps.length} updates</summary><ol>{thinkingSteps.map((step, index) => <li key={`${index}-${step}`}>{step}</li>)}</ol><small>Recorded activity only · private model reasoning is not shown</small></details> : null;
+    if (!pending) return thinkingSteps.length ? <details className="xv-thinking-history"><summary>Thinking &amp; processing · {thinkingSteps.length} updates</summary><ol>{thinkingSteps.map((step, index) => <li key={`${index}-${step}`}>{step}</li>)}</ol><small>Recorded activity only · private model reasoning is not shown</small></details> : null;
 
     const label = pendingLabel ?? 'Responding';
     const capabilities = capabilitiesForIntent(pendingIntent);
@@ -441,10 +441,10 @@ export function TerminalLiveActivity({
         className="xv-exec-header focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]/45"
         aria-expanded={expanded}
       >
-        <BlackHoleMark active={active} />
+        {active ? <BlackHoleMark active /> : null}
 
         <span className="min-w-0 flex-1">
-          <span className="xv-exec-brand">Xroga · Black Hole</span>
+          <span className="xv-exec-brand">{active ? 'Xroga · Black Hole' : 'Xroga'}</span>
           <span className="flex min-w-0 items-center gap-2">
             {active ? (
               <ExecutionShimmerText className="xv-exec-header__state">{state}</ExecutionShimmerText>

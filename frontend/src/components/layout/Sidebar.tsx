@@ -29,6 +29,7 @@ import {
   Library,
   CalendarClock,
   Bot,
+  Globe,
   Package,
   History,
   Files,
@@ -158,18 +159,9 @@ function NavIcon({ entry }: { entry: NavEntry }) {
 
 const navItems: NavEntry[] = [
   { href: '/dashboard', motion: 'pulse' as const, label: 'Dashboard', icon: LayoutDashboard, animated: LayoutGridIcon, tip: 'Recent activity, billing, plan, and usage.' },
+  { href: '/dashboard/automations#browser-automation', motion: 'pulse' as const, label: 'Browser Automation', icon: Globe, tip: 'Plan and review browser work.' },
+  { href: '/dashboard/automations#ai-employees', motion: 'pulse' as const, label: 'AI Employees', icon: Bot, animated: LucideBotIcon, tip: 'Delegate work to specialized employees.' },
   { href: '/dashboard/integrations', motion: 'pulse' as const, label: 'Plugins', icon: Link2, animated: ConnectIcon, tip: 'Connect GitHub, Slack, databases, and tools.' },
-  {
-    id: 'automations', href: '/dashboard/automations', label: 'Automations', icon: Workflow, animated: LucideWorkflowIcon, newSection: true,
-    tip: 'Workflows, scheduling, AI Employees, and work packs are coming soon.',
-    children: [
-      { href: '/dashboard/automations#workflows', label: 'Workflows', icon: Workflow, animated: LucideWorkflowIcon, tip: 'Coming soon · Connected workflows', planned: true },
-      { href: '/dashboard/automations#scheduled-tasks', label: 'Scheduled Tasks', icon: CalendarClock, animated: LucideClockIcon, tip: 'Coming soon · Repeated work', planned: true },
-      { href: '/dashboard/automations#ai-employees', label: 'AI Employees', icon: Bot, animated: LucideBotIcon, tip: 'Coming soon · Specialist workers', planned: true },
-      { href: '/dashboard/automations#work-packs', label: 'Work Packs', icon: Package, animated: LucideBlocksIcon, tip: 'Coming soon · Reusable work', planned: true },
-      { href: '/dashboard/automations#run-history', label: 'Run History', icon: History, animated: LucideHistoryIcon, tip: 'Coming soon · Unified automation history', planned: true },
-    ],
-  },
   {
     id: 'library', href: '/dashboard/library', label: 'Library', icon: Library, animated: LucideFoldersIcon, newSection: true,
     tip: 'Files, artifacts, skills and Xroga Drive will arrive here.',
@@ -234,12 +226,6 @@ export function Sidebar({ displayName, email }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const workspaceIdentity = useWorkspaceIdentity();
-  const [automationLabelIndex, setAutomationLabelIndex] = useState(0);
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const timer = window.setInterval(() => { if (document.visibilityState === 'visible') setAutomationLabelIndex(index => (index + 1) % 3); }, 5000);
-    return () => window.clearInterval(timer);
-  }, []);
   const isGuest = workspaceIdentity.status === 'guest';
   const { requestAuthGate } = useWorkspaceAuthGate();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -790,7 +776,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                       <Link href={entry.href ?? '/workspace'} onClick={(event) => handleNavEntryClick(event, entry.href ?? '/workspace')}
                         className={cn('xv-nav-group__trigger', groupHasActive(entry) && 'xv-active')} aria-label={entry.label}>
                         <NavIcon entry={entry} />
-                        <span>{entry.id === 'automations' ? ['Automations', 'AI Employees', 'Browser automation'][automationLabelIndex] : entry.label}</span>
+                        <span>{entry.label}</span>
                         {entry.newSection ? <span className="xv-sidebar-new-badge">NEW</span> : null}
                       </Link>
                     }

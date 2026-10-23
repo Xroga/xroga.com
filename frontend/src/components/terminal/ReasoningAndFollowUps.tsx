@@ -17,7 +17,7 @@ import { ImageStudioCard } from './ImageStudioCard';
 
 function ResponseBody({ children, streaming }: { children: ReactNode; streaming?: boolean }) {
   return <div className={cn('xv-response-text min-w-0', streaming && 'xv-streaming')}>
-    <div className="xv-response-identity"><BlackHoleWordmark active /></div>
+    {streaming ? <div className="xv-response-identity"><BlackHoleWordmark active /></div> : null}
     <div className="min-w-0">{children}</div>
   </div>;
 }

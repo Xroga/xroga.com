@@ -54,7 +54,7 @@ const editorial = Cormorant_Garamond({
 const baseMetadata = buildMetadata({
   title: 'Free Blockchain App Builder | AI Crypto & Web3 Apps | Xroga',
   description:
-    'Build blockchain apps, crypto products and Web3 dApps with AI in a real repository. Describe your idea, review the code and start free with Xroga.',
+    'Start free with Xroga’s AI blockchain app builder. Build Web3 apps, crypto dashboards and dApp interfaces in a real repository, review the code, and verify the result.',
   path: '/crypto',
   keywords: [
     'free blockchain app builder',
@@ -73,7 +73,6 @@ const baseMetadata = buildMetadata({
     'ai dashboard builder',
     'ai saas builder',
     'dapp builder',
-    'ai crypto builder',
   ],
 });
 export const metadata: Metadata = {
@@ -356,7 +355,7 @@ export default function CryptoPage() {
           <div className={styles.seoEyebrow}>
             <div className={styles.seoEyebrowInner}>
               <Bitcoin aria-hidden="true" />
-              <span>FREE AI APP BUILDER · WEB3 · BLOCKCHAIN APPS · CRYPTO</span>
+              <span>FREE BLOCKCHAIN APP BUILDER · AI WEB3 APP BUILDER · CRYPTO</span>
             </div>
           </div>
 

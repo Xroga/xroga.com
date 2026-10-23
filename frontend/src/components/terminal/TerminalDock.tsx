@@ -18,7 +18,6 @@ import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { WorkspaceStartHeader, WorkspaceStartCards } from '@/components/dashboard/WorkspaceNewTerminal';
 import startStyles from '@/components/dashboard/WorkspaceNewTerminal.module.css';
-import { CompanionComposerAnchor } from '@/components/companion/CompanionSurfaces';
 
 export function TerminalDock() {
   const dockRef = useRef<HTMLDivElement>(null);
@@ -227,7 +226,6 @@ export function TerminalDock() {
 
                 <div className="xv-chatbar-stack relative">
 
-                  {!incognito && !showStarterExperience ? <CompanionComposerAnchor /> : null}
 
                   {messages.length > 0 &&
                   !incognito ? (

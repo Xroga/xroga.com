@@ -60,7 +60,7 @@ const staticIndexable = [
   ['/integrations', 'COLLECTION', 'frontend/src/app/integrations/page.tsx', .88, 'monthly'],
   ['/community', 'COMMUNITY', 'frontend/src/app/community/page.tsx', .9, 'daily'],
   ['/docs', 'COLLECTION', 'frontend/src/app/docs/page.tsx', .92, 'weekly'],
-  ['/crypto', 'PRODUCT', 'frontend/src/app/crypto/page.tsx', .94, 'weekly'],
+  ['/crypto', 'PRODUCT', 'frontend/src/app/crypto/page.tsx', .94, 'weekly', '2026-10-23'],
   ['/game-builder', 'PRODUCT', 'frontend/src/app/game-builder/page.tsx', .94, 'weekly'],
   ['/software', 'PRODUCT', 'frontend/src/app/software/page.tsx', .82, 'monthly'],
   ['/research', 'COLLECTION', 'frontend/src/app/research/page.tsx', .82, 'monthly', '2026-08-30'],

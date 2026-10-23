@@ -1151,17 +1151,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       {sidebarError ? <p role="alert" className="px-2 text-[10px] text-[var(--muted)]">{sidebarError}
         <button type="button" className="underline ml-1" onClick={()=>void refreshSidebarData()}>Retry</button></p>:null}
       {visiblePage(organizedProjects.filter(p=>!metaOf('project',p.id)?.archived_at),shownProjects).map(p=>{
-        const related=getProjectChats(p);
-        const expandedProject=openFolders[p.id]??Boolean(p.repo&&folders.some(f=>f.repo===p.repo&&f.key===selectedContextKey));
-        const children=allProjectChats[p.id]?related:related.slice(0,3);
-        const childSections=sections.filter(section=>section.project_id===p.id);
         return <div key={p.id} className="space-y-0.5">
           <div className="flex items-center gap-0.5">
-            <button type="button" aria-label={expandedProject?'Collapse '+p.label:'Expand '+p.label}
-              onClick={()=>setOpenFolders(prev=>({...prev,[p.id]:!expandedProject}))}
-              className="p-1 rounded-md text-[var(--muted)] hover:bg-[var(--foreground)]/5">
-              {expandedProject?<ChevronDown size={13}/>:<ChevronRight size={13}/>}
-            </button>
             <div className="min-w-0 flex-1">
               {renderRow('project',p.id,projectTitle(p.id,p.label),()=>openProject(p.id),false)}
             </div>
@@ -1169,32 +1160,6 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
               className="xv-sidebar-project-task shrink-0 rounded-md p-1 text-[var(--muted)] hover:bg-[var(--foreground)]/10 hover:text-[var(--foreground)] focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
               onClick={()=>beginProjectTask(p)}><Plus size={14} aria-hidden="true"/></button>
           </div>
-          {expandedProject ? <div className="pl-3 space-y-0.5" aria-label={p.label+' conversations'}>
-            {activeSidebarProjectId===p.id&&sessionId&&!related.some(item=>item.id===sessionId)?
-              <button type="button" className="w-full text-left px-2 py-1.5 text-xs font-medium rounded-md bg-[var(--foreground)]/[0.055] truncate"
-                aria-label={'Active new task in '+projectTitle(p.id,p.label)}
-                onClick={()=>router.push('/workspace')}>
-                {messages.find(message=>message.role==='user')?.content
-                  ? meaningfulSidebarTitle('',messages.find(message=>message.role==='user')?.content).slice(0,64)
-                  : 'Start conversation'}
-              </button>:null}
-            {childSections.map(section=>{
-              const grouped=related.filter(item=>metaOf('conversation',item.id)?.section_id===section.id);
-              if(!grouped.length)return null;
-              return <div key={section.id}>
-                <p className="px-2 py-0.5 text-[9px] font-medium text-[var(--muted)]">{section.title}</p>
-                {(allProjectChats[p.id]?grouped:grouped.slice(0,3)).map(session=>
-                  renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),false))}
-              </div>;
-            })}
-            {children.filter(session=>!metaOf('conversation',session.id)?.section_id).map(session=>
-              renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),false))}
-            {related.length>3&&!allProjectChats[p.id]?
-              <button type="button" className={secondary+' px-2 py-1'} onClick={()=>setAllProjectChats(prev=>({...prev,[p.id]:true}))}>View all chats</button>:null}
-            {allProjectChats[p.id]&&related.length>3?
-              <button type="button" className={secondary+' px-2 py-1'} onClick={()=>setAllProjectChats(prev=>({...prev,[p.id]:false}))}>Show fewer chats</button>:null}
-            {related.length===0?<p className="px-2 py-1 text-[10px] text-[var(--muted)]">No saved conversations</p>:null}
-          </div>:null}
         </div>;
       })}
       {projectsHasMore?
@@ -1203,44 +1168,6 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         <button type="button" className={secondary+' px-2 py-1'} onClick={()=>{setAccountProjects(prev=>prev.slice(0,5));setShownProjects(5);setProjectsHasMore(true);}}>Show less</button>:null}
       {organizedProjects.length===0&&!sidebarError?<p className="px-2 py-1 text-[10px] text-[var(--muted)]">Projects you create will appear here.</p>:null}
     </section>
-
-    {pinnedItems.length>0?<section className="mt-3" aria-label="Pinned items">
-      <h2 className={sectionTitle}>Pinned</h2>
-      {pinnedItems.slice(0,shownPins).map(item=>{
-        if(item.item_type==='project'){
-          const p=projectById(item.item_id);if(!p)return null;
-          return renderRow('project',p.id,projectTitle(p.id,p.label),()=>openProject(p.id),true);
-        }
-        const session=savedConversations.find(s=>s.id===item.item_id);if(!session)return null;
-        return renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),true);
-      })}
-      {pinnedItems.length>shownPins?<button type="button" className={secondary+' px-2 py-1'} onClick={()=>setShownPins(prev=>prev+10)}>View more pins</button>:null}
-      {shownPins>10?<button type="button" className={secondary+' px-2 py-1'} onClick={()=>setShownPins(10)}>Show less</button>:null}
-    </section>:null}
-
-    {!isGuest?<section className="mt-3" aria-label="Recent conversations">
-      <h2 className={sectionTitle}>Recents</h2>
-      {recentConversations.slice(0,shownRecents).map(session=>
-        renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),false))}
-      {recentConversations.length===0?<p className="px-2 py-1 text-[10px] text-[var(--muted)]">Your saved conversations will appear here.</p>:null}
-      {recentConversations.length>shownRecents?
-        <button type="button" className={secondary+' px-2 py-1'} onClick={()=>setShownRecents(prev=>prev+12)}>View more recents</button>
-        :moreCloudSessions||moreSidebarChats?<button type="button" className={secondary+' px-2 py-1'}
-          onClick={()=>void loadMoreRecents()}>Load older recents</button>:null}
-      {shownRecents>12?<button type="button" className={secondary+' px-2 py-1'}
-        onClick={()=>setShownRecents(12)}>Show fewer</button>:null}
-      <button type="button" className={secondary+' px-2 py-1'} onClick={()=>setArchivedOpen(prev=>!prev)}
-        aria-expanded={archivedOpen}>{archivedOpen?'Hide archive':'Archived items'}</button>
-      {archivedOpen?itemMeta.filter(item=>item.archived_at!==null).map(item=>{
-        const label=item.item_type==='project'
-          ?projectTitle(item.item_id,projectById(item.item_id)?.label||'Archived project')
-          :conversationTitle(savedConversations.find(s=>s.id===item.item_id)||{id:item.item_id,title:'Archived conversation',preview:'',updatedAt:'',cloudSynced:false,kind:'local',terminalNumber:0});
-        return <div key={item.item_type+item.item_id} className="flex gap-2 items-center text-[10px] px-2 py-1">
-          <span className="min-w-0 truncate flex-1">{label}</span>
-          <button type="button" className={secondary} onClick={()=>void updateItem(item.item_type,item.item_id,{archived_at:null})}>Restore</button>
-        </div>;
-      }):null}
-    </section>:null}
 
     <SidebarActionMenu point={menu?{x:menu.x,y:menu.y}:null} actions={openedMenu}
       onClose={()=>setMenu(null)} onSelect={id=>void handleMenuAction(id)}/>

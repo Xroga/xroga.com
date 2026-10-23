@@ -28,8 +28,8 @@
 .window.window::after { display: none !important; }
 .window :global(.xv-workspace-header) { background: var(--terminal-ui-surface); border-bottom-color: var(--terminal-ui-border); color: var(--foreground); }
 .window :global(.xv-workspace-header button) { color: var(--foreground); }
-.repoStatus { min-width: 0; margin-right: auto; }
-.repoStatus :global(.xv-repo-chip--compact) { max-width: 200px; color: var(--muted) !important; background: var(--terminal-ui-raised) !important; border-color: var(--terminal-ui-border) !important; }
+.repoStatus { min-width: 0; width: fit-content; flex: none; }
+.repoStatus :global(.xv-repo-chip--compact) { width:fit-content; max-width: 200px; color: var(--muted) !important; background: var(--terminal-ui-raised) !important; border-color: var(--terminal-ui-border) !important; }
 .hero { text-align: center; margin: 0 auto 28px; }
 .superIntelligence { margin: 0; font: 500 clamp(30px,4cqw,43px)/1.13 Georgia,'Times New Roman',serif; letter-spacing: -.035em; color: var(--foreground); background: linear-gradient(180deg,var(--foreground) 15%,color-mix(in srgb,var(--foreground) 65%,var(--terminal-ui-surface)) 48%,var(--foreground) 62%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .taglineRow { position: relative; display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 12px; }
@@ -158,7 +158,7 @@
   .dock.dock.dock :global(.xv-chatbar-primary-tools) { gap: 3px; }
 }
 @media (prefers-reduced-motion: reduce) { .card,.tool,.visual { transition: none; } .dynamicWord,.automaticDetail[data-visible='true'] { animation: none; filter: none; opacity: 1; transform: none; } }
-.window :global(.xv-workspace-header),.dock :global(.xv-chatbar-tools) { --accent: var(--foreground); filter: grayscale(1); }
+.window :global(.xv-workspace-header),.dock :global(.xv-chatbar-tools) { --accent: var(--foreground); }
 .dock :global(.xv-companion-blackhole) svg[data-testid='mobile-model-icon'] { width: 22px; height: 22px; color: var(--foreground) !important; }
 @media (max-height: 700px) and (min-width: 640px) {
   .hero { margin-bottom: 18px; }
