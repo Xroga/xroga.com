@@ -3,6 +3,10 @@ name: Isolated Supabase authenticated browser verification
 on:
   workflow_dispatch:
     inputs:
+      phase3_library_focus:
+        description: 'Run the failing Library scenario first, then the unchanged complete browser suite'
+        type: boolean
+        default: false
       oci_custody:
         description: 'Approved isolated OCI proof, skips normal browser suite'
         type: choice
@@ -199,6 +203,15 @@ jobs:
             sleep 2
           done
           echo "application_start_failed; raw application logs withheld"; exit 1
+      - name: Focused Library authentication and private-file scenario
+        id: focused-library
+        if: github.event_name == 'workflow_dispatch' && inputs.phase3_library_focus
+        working-directory: frontend
+        run: node ../node_modules/@playwright/test/cli.js test e2e/command3-auth.spec.ts --grep 'real Supabase login persists, Operations works, cross-tenant access is denied, and logout clears the session$'
+      - name: Affected Library components
+        if: github.event_name == 'workflow_dispatch' && inputs.phase3_library_focus
+        working-directory: frontend
+        run: node --import tsx --test src/components/library/libraryFilePreview.test.ts
       - name: Authenticated browser and tenant isolation
         working-directory: frontend
         # Invoke the test package's own CLI so npm's nested workspace install
@@ -207,7 +220,7 @@ jobs:
       - name: Real tenant authorization and concurrency integration
         # Independent evidence still runs after a browser assertion fails, but
         # never against an app that failed readiness; failures remain fatal.
-        if: ${{ !cancelled() && steps.start-application.outcome == 'success' }}
+        if: ${{ !cancelled() && steps.start-application.outcome == 'success' && steps.focused-library.outcome != 'failure' }}
         working-directory: backend
         run: node --import tsx --test src/security/tenantIsolation.local.integration.ts
       - name: Collect bounded redacted local application logs
@@ -220,6 +233,7 @@ jobs:
           name: command3-auth-browser-evidence
           path: |
             frontend/test-results/command3-auth-evidence.json
+            frontend/test-results/library-selector-evidence.json
             frontend/test-results/batch01-founder-evidence.json
             frontend/test-results/batch01-private-delivery-evidence.json
             frontend/test-results/proxy-origin-evidence.json

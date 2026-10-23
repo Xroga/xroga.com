@@ -970,8 +970,35 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(page).toHaveURL(new RegExp(`/workspace\\?project=${ownerProjectId}`));
   // Keep main's unified Workspace navigation. Private saved-file delivery now
   // lives in Library, using the same owner-only download/copy/revoke controls.
+  const projectsLoaded = page.waitForResponse(response => new URL(response.url()).pathname === '/api/projects' && response.request().method() === 'GET');
   await page.goto('/dashboard/library#my-files');
-  const libraryProject = page.getByLabel('Choose project', { exact: true });
+  const projectsResponse = await projectsLoaded;
+  const libraryProjects = await projectsResponse.json() as Array<{ id: string }>;
+  expect(projectsResponse.status()).toBe(200);
+  expect(libraryProjects.some(project => project.id === ownerProjectId)).toBe(true);
+  expect(libraryProjects.some(project => project.id === outsiderProjectId)).toBe(false);
+  await expect(page).toHaveURL(/\/dashboard\/library#my-files$/);
+  await expect(page.getByRole('heading', { name: 'Everything worth keeping.', exact: true })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Library sections' }).getByRole('link', { name: 'My Files', exact: true })).toHaveAttribute('aria-current', 'page');
+  const librarySession = await browserSession(page);
+  expect(librarySession).toEqual({ status: 200, authenticated: true });
+  // Native label text includes its nested option text for getByLabel. The
+  // combobox's computed accessible name excludes those options.
+  const libraryProject = page.getByRole('combobox', { name: 'Choose project', exact: true });
+  await expect(libraryProject).toBeEnabled();
+  await mkdir('test-results', { recursive: true });
+  await writeFile('test-results/library-selector-evidence.json', JSON.stringify({
+    sourceSha: expectedRelease,
+    path: new URL(page.url()).pathname + new URL(page.url()).hash,
+    session: librarySession,
+    projectsStatus: projectsResponse.status(),
+    ownerProjectAvailable: libraryProjects.some(project => project.id === ownerProjectId),
+    foreignProjectAvailable: libraryProjects.some(project => project.id === outsiderProjectId),
+    exactTextLabelMatches: await page.getByLabel('Choose project', { exact: true }).count(),
+    comboboxMatches: await libraryProject.count(),
+    selector: await libraryProject.evaluate(element => ({ tag: element.tagName, labelText: (element as HTMLSelectElement).labels?.[0]?.textContent, disabled: (element as HTMLSelectElement).disabled })),
+    accessibility: await libraryProject.ariaSnapshot(),
+  }, null, 2));
   await libraryProject.selectOption(ownerProjectId);
   await expect(libraryProject.locator(`option[value="${outsiderProjectId}"]`)).toHaveCount(0);
   await page.getByRole('button', { name: 'private-browser-fixture.txt' }).click();

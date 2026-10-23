@@ -102627,7 +102627,7 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "5b45240a4ad9d340fd7fcbdb4fa398e1552fefc9aa9d6512dbaa1e75fbc6aada",
+      "sha256": "e33d87fbaef6fcedfffc241602a149f14a797f24f4b5df3cde512a5b6ca2a74d",
       "sourceEntrypoints": [
         "scripts/security/collect-local-security-logs.mjs",
         "scripts/security/disposable-supabase.mjs",
@@ -106555,30 +106555,30 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:9fd4c7d80186505f1952",
+      "id": "frontend-call:0de83f183b54977b685d",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 988,
+      "line": 1015,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:48423649ec9e94bd3201",
+      "id": "frontend-call:d9d66fa9a152caaafbd3",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 989,
+      "line": 1016,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:544cf995a39bfa49eb7e",
+      "id": "frontend-call:ada8f5e6241e1218ccc0",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 996,
+      "line": 1023,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:c7cff9f6f58572932a79",
+      "id": "frontend-call:9538dda1ebaf33a33392",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1010,
+      "line": 1037,
       "callee": "fetch",
       "reachable": false
     },
