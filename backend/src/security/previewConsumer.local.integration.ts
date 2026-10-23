@@ -11,9 +11,15 @@ import {livePreviewUrl} from '../synthesis/livePreview/signing.js';
 /** Exercise the actual HTTP/WebSocket resolver without opening an upstream socket. */
 export function registerPreviewConsumerTests(admin:SupabaseClient,getUsers:()=>readonly {id:string}[]):void{
  test('real signed preview consumer rechecks current private grant and session before selecting any upstream target',async t=>{
-  const providerKeys=['XROGA_SANDBOX_FLY_APP','XROGA_SANDBOX_FLY_TOKEN','FLY_APP_NAME'],providerEnv=providerKeys.map(key=>process.env[key]);
+  const priorProviderApp=process.env.XROGA_SANDBOX_FLY_APP;
+  const priorProviderToken=process.env.XROGA_SANDBOX_FLY_TOKEN;
+  const priorControlApp=process.env.FLY_APP_NAME;
   Object.assign(process.env,{XROGA_SANDBOX_FLY_APP:'fixture-private',XROGA_SANDBOX_FLY_TOKEN:'synthetic-provider-only',FLY_APP_NAME:'xroga-api'});
-  t.after(()=>providerKeys.forEach((key,index)=>{if(providerEnv[index]===undefined)delete process.env[key];else process.env[key]=providerEnv[index];}));
+  t.after(()=>{
+    if(priorProviderApp===undefined)delete process.env.XROGA_SANDBOX_FLY_APP;else process.env.XROGA_SANDBOX_FLY_APP=priorProviderApp;
+    if(priorProviderToken===undefined)delete process.env.XROGA_SANDBOX_FLY_TOKEN;else process.env.XROGA_SANDBOX_FLY_TOKEN=priorProviderToken;
+    if(priorControlApp===undefined)delete process.env.FLY_APP_NAME;else process.env.FLY_APP_NAME=priorControlApp;
+  });
   assert.equal(process.env.CI,'true');assert.equal(process.env.XB01_DISPOSABLE_SUPABASE,'1');assert.equal(process.env.SUPABASE_URL,'http://127.0.0.1:54321');
   const [owner,other]=getUsers(),store=new SupabaseProjectRuntimeStore(),sessionIds:string[]=[],original=globalThis.fetch,prior=process.env.XROGA_PREVIEW_SIGNING_SECRET;
   process.env.XROGA_PREVIEW_SIGNING_SECRET=`SYNTHETIC_LOCAL_${randomUUID()}`;

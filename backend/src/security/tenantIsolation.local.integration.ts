@@ -458,9 +458,15 @@ test('real revision restore rejects mismatched snapshot identities before restor
 });
 
 test('real durable preview session cannot resolve a misbound owner/project or stale capability', async t => {
-  const providerKeys=['XROGA_SANDBOX_FLY_APP','XROGA_SANDBOX_FLY_TOKEN','FLY_APP_NAME'],providerEnv=providerKeys.map(key=>process.env[key]);
+  const priorProviderApp=process.env.XROGA_SANDBOX_FLY_APP;
+  const priorProviderToken=process.env.XROGA_SANDBOX_FLY_TOKEN;
+  const priorControlApp=process.env.FLY_APP_NAME;
   Object.assign(process.env,{XROGA_SANDBOX_FLY_APP:'xroga-synthetic-runtime',XROGA_SANDBOX_FLY_TOKEN:'synthetic-provider-only',FLY_APP_NAME:'xroga-api'});
-  t.after(()=>providerKeys.forEach((key,index)=>{if(providerEnv[index]===undefined)delete process.env[key];else process.env[key]=providerEnv[index];}));
+  t.after(()=>{
+    if(priorProviderApp===undefined)delete process.env.XROGA_SANDBOX_FLY_APP;else process.env.XROGA_SANDBOX_FLY_APP=priorProviderApp;
+    if(priorProviderToken===undefined)delete process.env.XROGA_SANDBOX_FLY_TOKEN;else process.env.XROGA_SANDBOX_FLY_TOKEN=priorProviderToken;
+    if(priorControlApp===undefined)delete process.env.FLY_APP_NAME;else process.env.FLY_APP_NAME=priorControlApp;
+  });
   const [owner, other] = users;
   const now = Date.now(), sessionId = randomUUID();
   const store = new SupabaseProjectRuntimeStore();

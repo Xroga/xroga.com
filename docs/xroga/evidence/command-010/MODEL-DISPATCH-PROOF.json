@@ -27,7 +27,12 @@
     {
       "path": "backend/src/routes/phase1.ts",
       "historicalSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
-      "currentSha256": "3f6a017db3e3a620f9559ae4f9b0c1c4048f0906e4d4fb632762a0435442ac3d",
+      "currentSha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5",
+      "previousCurrentBinding": {
+        "reference": "01fa0c340800345790f96b274b00d78a9a97369a",
+        "sha256": "3f6a017db3e3a620f9559ae4f9b0c1c4048f0906e4d4fb632762a0435442ac3d",
+        "scope": "HISTORICAL_PREPARATION_NOT_NEW_SOURCE_ACCEPTANCE"
+      },
       "beforeIds": [
         "ebede146c851a085d2b8"
       ],
@@ -37,7 +42,7 @@
       "unchangedNearestBlockSha256": [
         "c2096dbdee542d663ba05ee31829f741533e7ae3a6bd6aae397ced85681a4286"
       ],
-      "semanticScope": "Only toolUiLink's local Buffer conversion remains NOT_PERSISTENCE. The separate route change passes its existing authenticated request context into runChatPipeline. No route or actor issuer is added."
+      "semanticScope": "Only toolUiLink's local Buffer conversion remains NOT_PERSISTENCE. Its enclosing block is still checked byte-identical against the original reference by phase-two-proof-bindings.test.mjs. The separate routes pass existing authenticated request context into runChatPipeline and now planSemanticRequest. No route or actor issuer is added. New-source planner protocol tests and full integration remain separate from this narrow conversion proof."
     },
     {
       "path": "backend/src/synthesis/universalEntrypoint.ts",

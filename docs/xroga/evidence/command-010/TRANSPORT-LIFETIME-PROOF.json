@@ -144,7 +144,13 @@
     },
     {
       "path": "backend/src/middleware/runtimePreviewGateway.transport.test.ts",
-      "sha256": "f75d3441434e63ed52abe74b20a777e622b616228e4da6262f3d996c6d640151"
+      "sha256": "047188b564c14ec810549fa29eccb74404432646c4d21cf13e352ce0948e8b5e",
+      "previousCurrentBinding": {
+        "reference": "01fa0c340800345790f96b274b00d78a9a97369a",
+        "sha256": "f75d3441434e63ed52abe74b20a777e622b616228e4da6262f3d996c6d640151",
+        "scope": "HISTORICAL_TEST_SOURCE_NOT_CURRENT_CI_PROOF"
+      },
+      "continuation": "Existing positive/header/redirect/revocation/bounds assertions remain. The configured synthetic provider and exact persisted providerId are now explicit, with added zero-HTTP/WS-byte missing/unknown/misbound-provider cases. See PREVIEW-PROVIDER-CONTINUATION.md for scoped new-source test results. Historical localVerification above is not relabelled current."
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",

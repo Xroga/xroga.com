@@ -123,6 +123,13 @@ export function isModelSecurityDenial(error:unknown):boolean{
     .includes((error as {code?:string})?.code??'');
 }
 
+/** Local admission and uncertain accounting cannot be repaired by another model. */
+export function isTerminalModelFailure(error: unknown): boolean {
+  return isModelSecurityDenial(error) || isPostCompletionAccountingError(error)
+    || (error as { code?: string })?.code === 'PAID_PROVIDER_CAPACITY_UNAVAILABLE'
+    || (error instanceof RuntimeFailure && error.code === 'CAPABILITY_TEMPORARILY_UNAVAILABLE');
+}
+
 function recompute(entry: MutableHealth): void {
   const executions = entry.successes + entry.failures;
   const validations = entry.validationSuccesses + entry.validationFailures;

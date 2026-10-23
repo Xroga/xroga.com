@@ -996,7 +996,7 @@
       "id": "surface:83eb70dbc6e3fb8f7622",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/black-hole/gateway.ts",
-      "sha256": "95f0eeb65f2ddeeba02f6596b404bc1b7143e7dca9a2ffee9eeac4785bd202ee",
+      "sha256": "29d52b00493f5aebb26b8ac71b8ef4ed38f69ee242ddb8c94a098d4cfc2e84d4",
       "symbols": [
         "BlackHoleCancelledError",
         "BlackHoleExhaustedError",
@@ -1040,6 +1040,7 @@
         "../modelCapabilityRegistry.js",
         "../models.js",
         "../openaiCompat.js",
+        "../providerRuntime.js",
         "./complexity.js",
         "./contextPlan.js",
         "./providerAdapter.js",
@@ -1054,7 +1055,8 @@
         "backend/src/ai/black-hole/router.ts",
         "backend/src/ai/black-hole/taskClass.ts",
         "backend/src/ai/models.ts",
-        "backend/src/ai/openaiCompat.ts"
+        "backend/src/ai/openaiCompat.ts",
+        "backend/src/ai/providerRuntime.ts"
       ],
       "entryPoints": [],
       "callers": [
@@ -5649,6 +5651,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/ai/black-hole/gateway.test.ts:15",
         "backend/src/ai/postCompletionAccounting.persistence.test.ts:4",
         "backend/src/ai/postCompletionAccounting.test.ts:3",
         "backend/src/ai/providerBudget.ts:7",
@@ -5673,6 +5676,7 @@
       ],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/ai/black-hole/gateway.test.ts",
         "backend/src/ai/postCompletionAccounting.persistence.test.ts",
         "backend/src/ai/postCompletionAccounting.test.ts",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts",
@@ -6292,7 +6296,7 @@
       "id": "surface:3e9fb9a001d600489a5a",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/providerRuntime.ts",
-      "sha256": "5f6ec786ca4d0a076195c19ae6a16e43dca34257d2f7893f149a78d53d9d4b65",
+      "sha256": "fa19e1279e5de496bd6484a376f89230254624887c57f93b6b7df09c542e02e1",
       "symbols": [
         "ModelRuntimeHealth",
         "MutableHealth",
@@ -6317,6 +6321,7 @@
         "hydrated",
         "initial",
         "isModelSecurityDenial",
+        "isTerminalModelFailure",
         "kind",
         "lower",
         "message",
@@ -6366,6 +6371,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/ai/black-hole/gateway.ts:54",
         "backend/src/ai/blackBoxExecution.test.ts:7",
         "backend/src/ai/modelCapabilityRegistry.ts:4",
         "backend/src/ai/openaiCompat.ts:10",
@@ -10557,6 +10563,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/ai/black-hole/gateway.test.ts:16",
         "backend/src/ai/pipeline.ts:158",
         "backend/src/ai/providerRuntime.ts:12",
         "backend/src/ai/universal/runtimeFailure.test.ts:3",
@@ -10574,6 +10581,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/ai/black-hole/gateway.test.ts",
         "backend/src/ai/universal/runtimeFailure.test.ts",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts"
@@ -25630,7 +25638,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:913",
+        "backend/src/security/tenantIsolation.local.integration.ts:919",
         "backend/src/services/integrations/businessAction.ts:44",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -109056,7 +109064,7 @@
     {
       "id": "test-suite:e0e0e98241239dd87f7e",
       "sourcePath": "backend/src/ai/black-hole/gateway.test.ts",
-      "declaredTests": 13,
+      "declaredTests": 14,
       "skipLocations": [],
       "focusLocations": []
     },

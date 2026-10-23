@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "28eaf2f003f996db68b0e4bda134374ad00d5584",
+  "source_sha": "3540d3c23fd2f51ac57775b30785d680bf118150",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -631,6 +631,7 @@
         "E2E_BACKEND_URL",
         "E2E_ISOLATED_PROJECT_REF",
         "EXPECTED_RELEASE_SHA",
+        "FLY_APP_NAME",
         "FRONTEND_URL",
         "GITHUB_CLIENT_ID",
         "GITHUB_CLIENT_SECRET",
@@ -671,6 +672,8 @@
         "XROGA_PREVIEW_SIGNING_SECRET",
         "XROGA_RELEASE_SHA",
         "XROGA_SANDBOX_BROWSER_IMAGE",
+        "XROGA_SANDBOX_FLY_APP",
+        "XROGA_SANDBOX_FLY_TOKEN",
         "XROGA_STAGING_AUTH_BUILD"
       ],
       "inbound_callers": [
@@ -1911,6 +1914,7 @@
         "CI",
         "CLOUDFLARE_R2_PRIVATE_BUCKET",
         "E2E_BACKEND_URL",
+        "FLY_APP_NAME",
         "SUPABASE_ANON_KEY",
         "SUPABASE_SERVICE_ROLE_KEY",
         "SUPABASE_URL",
@@ -1920,7 +1924,9 @@
         "WHOP_REDIRECT_URL",
         "WHOP_WEBHOOK_SECRET",
         "XB01_DISPOSABLE_SUPABASE",
-        "XB01_LOCAL_DATABASE_URL"
+        "XB01_LOCAL_DATABASE_URL",
+        "XROGA_SANDBOX_FLY_APP",
+        "XROGA_SANDBOX_FLY_TOKEN"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -3382,6 +3388,7 @@
         "CI",
         "CLOUDFLARE_R2_PRIVATE_BUCKET",
         "E2E_BACKEND_URL",
+        "FLY_APP_NAME",
         "SUPABASE_ANON_KEY",
         "SUPABASE_SERVICE_ROLE_KEY",
         "SUPABASE_URL",
@@ -3391,7 +3398,9 @@
         "WHOP_REDIRECT_URL",
         "WHOP_WEBHOOK_SECRET",
         "XB01_DISPOSABLE_SUPABASE",
-        "XB01_LOCAL_DATABASE_URL"
+        "XB01_LOCAL_DATABASE_URL",
+        "XROGA_SANDBOX_FLY_APP",
+        "XROGA_SANDBOX_FLY_TOKEN"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -4765,6 +4774,7 @@
         "CI",
         "CLOUDFLARE_R2_PRIVATE_BUCKET",
         "E2E_BACKEND_URL",
+        "FLY_APP_NAME",
         "SUPABASE_ANON_KEY",
         "SUPABASE_SERVICE_ROLE_KEY",
         "SUPABASE_URL",
@@ -4774,7 +4784,9 @@
         "WHOP_REDIRECT_URL",
         "WHOP_WEBHOOK_SECRET",
         "XB01_DISPOSABLE_SUPABASE",
-        "XB01_LOCAL_DATABASE_URL"
+        "XB01_LOCAL_DATABASE_URL",
+        "XROGA_SANDBOX_FLY_APP",
+        "XROGA_SANDBOX_FLY_TOKEN"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -8093,6 +8105,9 @@
       "consuming_sources": [
         "backend/src/sandbox/flyMachineSandbox.ts",
         "backend/src/scripts/verifyFlySandboxBrowser.ts",
+        "backend/src/security/previewConsumer.local.integration.ts",
+        "backend/src/security/previewGrantAdmission.local.integration.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/services/integrations/cryptoProvider.ts",
         "backend/src/services/integrations/ociKmsCryptoProvider.ts",
@@ -8109,7 +8124,11 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "api"
+        "api",
+        "endpoint-127-0-0-1",
+        "endpoint-api-whop-com",
+        "endpoint-example-invalid",
+        "endpoint-public-example-invalid"
       ]
     },
     {
@@ -11880,6 +11899,9 @@
       "consuming_sources": [
         "backend/src/sandbox/flyMachineSandbox.ts",
         "backend/src/scripts/verifyFlySandboxBrowser.ts",
+        "backend/src/security/previewConsumer.local.integration.ts",
+        "backend/src/security/previewGrantAdmission.local.integration.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.ts"
       ],
       "environments": [
@@ -11893,7 +11915,11 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "fly-sandbox"
+        "fly-sandbox",
+        "endpoint-127-0-0-1",
+        "endpoint-api-whop-com",
+        "endpoint-example-invalid",
+        "endpoint-public-example-invalid"
       ]
     },
     {
@@ -11941,6 +11967,9 @@
       "consuming_sources": [
         "backend/src/sandbox/flyMachineSandbox.ts",
         "backend/src/scripts/verifyFlySandboxBrowser.ts",
+        "backend/src/security/previewConsumer.local.integration.ts",
+        "backend/src/security/previewGrantAdmission.local.integration.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.ts"
       ],
       "environments": [
@@ -11954,7 +11983,11 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "fly-sandbox"
+        "fly-sandbox",
+        "endpoint-127-0-0-1",
+        "endpoint-api-whop-com",
+        "endpoint-example-invalid",
+        "endpoint-public-example-invalid"
       ]
     },
     {
@@ -12396,7 +12429,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/gateway.ts",
-      "sha256": "95f0eeb65f2ddeeba02f6596b404bc1b7143e7dca9a2ffee9eeac4785bd202ee"
+      "sha256": "29d52b00493f5aebb26b8ac71b8ef4ed38f69ee242ddb8c94a098d4cfc2e84d4"
     },
     {
       "path": "backend/src/ai/black-hole/productionBridge.ts",
@@ -12624,7 +12657,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876"
+      "sha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd"
     },
     {
       "path": "backend/src/ai/providerCostTiers.ts",
@@ -12640,7 +12673,7 @@
     },
     {
       "path": "backend/src/ai/providerRuntime.ts",
-      "sha256": "0ad04307675bc9bcd183eac63965239b0b4c091616851b82313f02bb57237a97"
+      "sha256": "fa19e1279e5de496bd6484a376f89230254624887c57f93b6b7df09c542e02e1"
     },
     {
       "path": "backend/src/ai/qa.ts",
@@ -12896,7 +12929,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "eecb884929902fb45c9e63c2389c4729b4f8135803c0c475100c1c2483de293c"
+      "sha256": "b1a888eb0db93a96debf883c6383c525f4c7d8fe6813487230febd93cda3f34e"
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
@@ -13592,7 +13625,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sha256": "3f6a017db3e3a620f9559ae4f9b0c1c4048f0906e4d4fb632762a0435442ac3d"
+      "sha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5"
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
@@ -13852,11 +13885,11 @@
     },
     {
       "path": "backend/src/security/previewConsumer.local.integration.ts",
-      "sha256": "be9d96528dc945a4158975f76bb15b2eb3681b989c2002902f4f026765b7ec59"
+      "sha256": "900df49e8e0ae9c336790ba3b72e969cf83a3eb4ef79bb1af1ca3e1f383acb7a"
     },
     {
       "path": "backend/src/security/previewGrantAdmission.local.integration.ts",
-      "sha256": "2ed8be81fb77731af5adde7da3f9c528ef9fc90677be559b9837d36b45f48c73"
+      "sha256": "79ed27adfdbd455d2be0583101ac46adc666006c364b5438b1f3cc60647acc30"
     },
     {
       "path": "backend/src/security/profileDeletion.local.integration.ts",
@@ -13948,7 +13981,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338"
+      "sha256": "7cf52ba275eead56ab05160e615db38f7d85765bb8e099f1ca2a584aad9d2422"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -14372,7 +14405,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/access.ts",
-      "sha256": "c01a9bdbac40ebe84699b83bcb815b27a41d1644322ff36396a29074ba23b74f"
+      "sha256": "6b51567c0ceee8eaffc184431c14dcba969845c0b7566744e1a50190b41ae55c"
     },
     {
       "path": "backend/src/synthesis/livePreview/agentBridge.ts",
@@ -14456,7 +14489,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "sha256": "3d00cb93082c119cedc9884f7945b0ce6cc360120432931eb04a1b6f4f421b1e"
+      "sha256": "a1fe5bf2ab884ad9c0b1b9784418644af5585cd8012b3e7c623757d6f0692d41"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/index.ts",
@@ -14464,7 +14497,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/manager.ts",
-      "sha256": "2d0f354780b139c7c3b172c8c112887d4945b2e6c5da9ae077aba45df977b611"
+      "sha256": "cdee96fe5ceb6319f9d720315f90c26b5aa705b1ac154ddf17315597b5661e04"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/processManager.ts",
@@ -14484,7 +14517,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/types.ts",
-      "sha256": "c0b716c3b8392d45b15cb52ebde868349538e1f404246bf1cbb85807ac665a89"
+      "sha256": "c920d23646a2c62472dceea4ee35e04aac7792e9a487e6d970ded00e923cefaf"
     },
     {
       "path": "backend/src/synthesis/reliability/canonicalResume.ts",
@@ -20327,21 +20360,21 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/previewConsumer.local.integration.ts",
-      "line": 14,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "127.0.0.1",
-      "protocol": "http:",
-      "path": "backend/src/security/previewConsumer.local.integration.ts",
       "line": 23,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
+      "path": "backend/src/security/previewConsumer.local.integration.ts",
+      "line": 32,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
       "path": "backend/src/security/previewGrantAdmission.local.integration.ts",
-      "line": 14,
+      "line": 23,
       "credentialsInUrl": false
     },
     {
@@ -20558,63 +20591,63 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 546,
+      "line": 555,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 596,
+      "line": 605,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 685,
+      "line": 694,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 854,
+      "line": 863,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 912,
+      "line": 921,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1599,
+      "line": 1608,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1617,
+      "line": 1626,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1625,
+      "line": 1634,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1629,
+      "line": 1638,
       "credentialsInUrl": false
     },
     {
@@ -25325,14 +25358,14 @@
     },
     {
       "path": "backend/src/ai/providerRuntime.ts",
-      "line": 54,
+      "line": 57,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/providerRuntime.ts",
-      "line": 280,
+      "line": 292,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -25815,49 +25848,49 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 123,
+      "line": 125,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 145,
+      "line": 147,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 270,
+      "line": 272,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 289,
+      "line": 291,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1377,
+      "line": 1389,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1475,
+      "line": 1492,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1768,
+      "line": 1784,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -27019,14 +27052,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1098,
+      "line": 1107,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1435,
+      "line": 1444,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
