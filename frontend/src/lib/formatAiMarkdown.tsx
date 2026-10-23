@@ -7,6 +7,8 @@ import React, {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { ArrowUpRight, Check, Copy } from 'lucide-react';
+import { SourceLogo } from '@/components/terminal/SourceLogo';
 
 import ReactMarkdown, {
   type Components,
@@ -1553,19 +1555,25 @@ const components:
 
 function CitationChip({ number, source, label }: { number?: number; source: CitationSource; label?: React.ReactNode }) {
   const [visible, setVisible] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const linkRef = useRef<HTMLAnchorElement>(null);
+  const dismissRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (dismissRef.current) clearTimeout(dismissRef.current); }, []);
   const url = safeSourceUrl(source.url);
   if (!url) return <span>{label ?? `[${number}]`}</span>;
   const domain = new URL(url).hostname.replace(/^www\./i, '');
   const snippet = source.snippet.replace(/\s+/g, ' ').replace(/^[\s*•-]+/, '').trim();
   const excerpt = snippet.length > 175 ? `${snippet.slice(0, 172).trimEnd()}…` : snippet;
+  const keepOpen = () => { if (dismissRef.current) clearTimeout(dismissRef.current); };
+  const scheduleClose = () => { keepOpen(); dismissRef.current = setTimeout(() => setVisible(false), 180); };
   const placePreview = () => {
+    keepOpen();
     const rect = linkRef.current?.getBoundingClientRect();
     if (!rect) return;
     const width = Math.min(344, window.innerWidth - 24);
     const left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
-    const top = rect.bottom + 12 + 190 < window.innerHeight ? rect.bottom + 9 : Math.max(12, rect.top - 190);
+    const top = rect.bottom + 12 + 260 < window.innerHeight ? rect.bottom + 9 : Math.max(12, rect.top - 260);
     setPosition({ top, left });
     setVisible(true);
   };
@@ -1578,18 +1586,19 @@ function CitationChip({ number, source, label }: { number?: number; source: Cita
         rel="noopener noreferrer"
         aria-label={number ? `Open source ${number}: ${source.title}` : `Open link: ${source.title}`}
         onMouseEnter={placePreview}
-        onMouseLeave={() => setVisible(false)}
+        onMouseLeave={scheduleClose}
         onFocus={placePreview}
-        onBlur={() => setVisible(false)}
+        onBlur={scheduleClose}
         onKeyDown={(event) => { if (event.key === 'Escape') setVisible(false); }}
         className={label ? 'xv-resource-link' : 'xv-citation-chip'}
-      >{label ?? number}</a>
+      >{label ?? <><SourceLogo domain={domain} size={15} /><span>{domain}</span></>}</a>
       {visible && typeof document !== 'undefined' ? createPortal(
-        <span className="xv-citation-preview" style={{ top: position.top, left: position.left }} role="tooltip">
-          <span className="xv-citation-preview__top"><span className="xv-citation-preview__icon">{domain.charAt(0).toUpperCase()}</span><span className="min-w-0"><span className="xv-citation-preview__domain">{domain}</span><span className="xv-citation-preview__eyebrow">{number ? `Source ${number}` : 'Web link'} · Opens in a new tab</span></span></span>
+        <div className="xv-citation-preview" style={{ top: position.top, left: position.left }} onMouseEnter={keepOpen} onMouseLeave={scheduleClose} onFocus={keepOpen} onBlur={scheduleClose}>
+          <span className="xv-citation-preview__top"><span className="xv-citation-preview__icon"><SourceLogo domain={domain} size={27} /></span><span className="min-w-0"><span className="xv-citation-preview__domain">{domain}</span><span className="xv-citation-preview__eyebrow">Source page · verify on original site</span></span></span>
           <span className="xv-citation-preview__title">{source.title}</span>
           {excerpt ? <span className="xv-citation-preview__excerpt">{excerpt}</span> : null}
-        </span>, document.body,
+          <span className="xv-citation-preview__actions"><button type="button" onClick={async () => { try { await navigator.clipboard.writeText(snippet || source.title); setCopied(true); } catch { setCopied(false); } }}>{copied ? <Check size={13} /> : <Copy size={13} />}{copied ? 'Copied' : 'Copy excerpt'}</button><a href={url} target="_blank" rel="noopener noreferrer">Visit source <ArrowUpRight size={13} /></a></span>
+        </div>, document.body,
       ) : null}
     </span>
   );
@@ -1625,6 +1634,7 @@ export function FormattedAiMarkdown({
   className,
   sources,
   streaming,
+  afterIntro,
 }: {
   content:
     string;
@@ -1633,11 +1643,15 @@ export function FormattedAiMarkdown({
   className?:
     string;
   sources?: CitationSource[];
+  afterIntro?: React.ReactNode;
 }) {
   const normalized = streaming ? content.replace(/\r\n/g, '\n') : structureLongProse(content.replace(/\r\n/g, '\n'));
   const opening = normalized.match(/^([^\n]+(?:\n(?!\n)[^\n]+)*)\n\s*\n/);
-  const lead = !streaming && normalized.length > 500 && opening && opening[1].length >= 45 && opening[1].length <= 400 && !/^\s*(?:[#>*`\-|\d+\.]|!\[)/.test(opening[1]) ? opening[1] : null;
-  const remaining = lead ? normalized.slice(opening![0].length) : normalized;
+  const lead = !streaming && (normalized.length > 500 || afterIntro) && opening && opening[1].length >= 25 && opening[1].length <= 500 && !/^\s*(?:[#>*`\-|\d+\.]|!\[)/.test(opening[1]) ? opening[1] : null;
+  const introParts = afterIntro && !lead && !streaming ? normalized.split(/\n\s*\n/) : [];
+  const introCount = introParts.length > 1 && /^#{1,2}\s/.test(introParts[0]) && !/^(?:[#>*`\-|\d+\.]|!\[)/.test(introParts[1]) ? 2 : introParts.length > 1 && !/^(?:[#>*`\-|\d+\.]|!\[)/.test(introParts[0]) ? 1 : 0;
+  const introMarkdown = introCount ? introParts.slice(0, introCount).join('\n\n') : null;
+  const remaining = lead ? normalized.slice(opening![0].length) : introMarkdown ? introParts.slice(introCount).join('\n\n') : normalized;
   const availableSources = sources ?? [];
   const sourceComponents: Components = {
     ...components,
@@ -1664,6 +1678,9 @@ export function FormattedAiMarkdown({
       )}
     >
       {lead ? <div className="xv-answer-lead"><span className="xv-answer-lead__label">The short answer</span><ReactMarkdown remarkPlugins={[remarkGfm, ...(sources?.length ? [remarkSourceCitations(sources)] : [])]} skipHtml urlTransform={safeMarkdownUrl} components={sourceComponents}>{lead}</ReactMarkdown></div> : null}
+      {introMarkdown ? <ReactMarkdown remarkPlugins={[remarkGfm, ...(sources?.length ? [remarkSourceCitations(sources)] : [])]} skipHtml urlTransform={safeMarkdownUrl} components={sourceComponents}>{introMarkdown}</ReactMarkdown> : null}
+      {afterIntro && lead ? afterIntro : null}
+      {afterIntro && !lead ? <div className="xv-answer-intro-card">{afterIntro}</div> : null}
       <ReactMarkdown
         remarkPlugins={[
           remarkGfm,

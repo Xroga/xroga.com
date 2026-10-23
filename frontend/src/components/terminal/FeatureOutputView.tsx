@@ -3,6 +3,7 @@
 import { XrogaOutputView } from './XrogaBlockView';
 import { adaptOutputToXrogaDocument } from '@/lib/xrogaOutputAdapters';
 import type { CitationSource } from '@/lib/xrogaCitations';
+import type { XrogaBlock } from '@/lib/xrogaBlocks';
 
 /**
  * Compatibility boundary for persisted and current task outputs.
@@ -17,12 +18,14 @@ export function FeatureOutputView({
   messageId,
   onPreviewUpdate,
   sources,
+  discoveryBlock,
 }: {
   output: unknown;
   onDelete?: () => void;
   messageId?: string;
   onPreviewUpdate?: (messageId: string, output: unknown) => void;
   sources?: CitationSource[];
+  discoveryBlock?: XrogaBlock | null;
 }) {
   void _onDelete;
 
@@ -31,7 +34,12 @@ export function FeatureOutputView({
   if (row.type === 'chat' && typeof row.content === 'string') return null;
 
   const canonical = adaptOutputToXrogaDocument(output);
-  if (canonical) return <XrogaOutputView output={canonical} sources={sources} onChange={messageId && onPreviewUpdate ? (next) => onPreviewUpdate(messageId, next) : undefined} />;
+  if (canonical) {
+    const documentWithDiscovery = discoveryBlock && !canonical.blocks.some((block) => block.type === 'rich-results')
+      ? { ...canonical, blocks: [...canonical.blocks, discoveryBlock] }
+      : canonical;
+    return <XrogaOutputView output={documentWithDiscovery} sources={sources} onChange={messageId && onPreviewUpdate ? (next) => onPreviewUpdate(messageId, next) : undefined} />;
+  }
 
   return (
     <p className="max-w-[820px] py-1 text-sm text-[var(--muted)]" role="status">

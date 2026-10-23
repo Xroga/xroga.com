@@ -1,6 +1,6 @@
 'use client';
 
-import { useDeferredValue, useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { useDeferredValue, useEffect, useRef, useState, useMemo, useCallback, lazy, Suspense } from 'react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -14,6 +14,8 @@ import { StoppedBuildResumeCard } from './StoppedBuildResumeCard';
 import { CapacityUnavailableCard } from './CapacityUnavailableCard';
 import { UpdateFileTrail } from './UpdateFileTrail';
 import { ResponseSources } from './ResponseSources';
+import { webSourcesToRichResults } from '@/lib/xrogaWebResultAdapter';
+const XrogaRichResultsView = lazy(() => import('./XrogaRichResultsView').then((module) => ({ default: module.XrogaRichResultsView })));
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
 import { promptWantsLiveResearch } from '@/lib/researchWait';
 import { shareableDocumentText } from '@/lib/xrogaShareableOutput';
@@ -445,12 +447,16 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
             const isImageOutput =
               msg.featureOutput != null &&
               (msg.featureOutput as { type?: string }).type === 'image';
+            const featureType = (msg.featureOutput as { type?: string } | undefined)?.type;
+            const isRenderedFeature = Boolean(msg.featureOutput && featureType !== 'image' && featureType !== 'chat');
             const suggestions =
               !isIncognito && showSuggestions && !isImageOutput
                 ? generateMessageSuggestions(lastUserText, msg.content)
                 : null;
             const messagePrompt = promptByAssistantId.get(msg.id) || lastUserText;
             const suppressGreetingActivity = isQuickConversationPrompt(messagePrompt);
+            const discoveryBlock = msg.role === 'assistant' && (!isRenderedFeature || featureType === 'xroga.output') && !(msg.id === animatingId && loading)
+              ? webSourcesToRichResults(msg.webSources, msg.id, messagePrompt) : null;
 
             return (
               <div
@@ -586,12 +592,12 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                             }
                           />
                         ) : null}
-                        {msg.featureOutput &&
-                        (msg.featureOutput as { type?: string }).type !== 'image' ? (
+                        {isRenderedFeature ? (
                           <ChatErrorBoundary>
                             <FeatureOutputView
                               output={msg.featureOutput}
                               sources={msg.webSources}
+                              discoveryBlock={discoveryBlock}
                               messageId={msg.id}
                               onDelete={() => deleteTurn(msg.id)}
                               onPreviewUpdate={updateFeatureOutput}
@@ -607,9 +613,12 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           !msg.content?.trim() ? null : (
                           <ModernResponseText
                             sources={msg.webSources}
+                            afterIntro={discoveryBlock ? <Suspense fallback={null}><XrogaRichResultsView block={discoveryBlock} sourcePreviews={msg.webSources} /></Suspense> : undefined}
                             content={
                               msg.content?.trim()
                                 ? msg.content
+                                : featureType === 'chat' && typeof (msg.featureOutput as { content?: unknown }).content === 'string'
+                                  ? (msg.featureOutput as { content: string }).content
                                 : !loading && !msg.featureOutput && !msg.buildStopped && !msg.updateTrail
                                   ? (() => {
                                       if (!(codeBuildActive || heavyBuildActive)) {

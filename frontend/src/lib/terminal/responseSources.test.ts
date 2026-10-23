@@ -17,7 +17,8 @@ test('source strip shows at most four verified links and offers a full drawer', 
   assert.match(html, /View all/);
   assert.match(html, /Evidence 4/);
   assert.doesNotMatch(html, /Evidence 5/);
-  assert.equal((html.match(/aria-label="Open source \d:/g) ?? []).length, 4);
+  assert.equal((html.match(/aria-label="Visit source:/g) ?? []).length, 4);
+  assert.doesNotMatch(html, /sourceNumber|>1<|>2</);
 });
 
 test('unsafe source URLs never become clickable tiles', () => {

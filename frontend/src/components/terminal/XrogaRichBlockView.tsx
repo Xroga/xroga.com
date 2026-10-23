@@ -24,7 +24,7 @@ type TableBlock = Extract<XrogaBlock, { type: 'table' | 'spreadsheet' | 'databas
 type ChartBlock = Extract<XrogaBlock, { type: 'chart' }>;
 type Metric = Extract<XrogaBlock, { type: 'metric' }>['metric'];
 
-const CHART_COLORS = ['#83cfff', '#b79aff', '#59d5b4', '#ffd07a', '#ff8491'];
+const CHART_COLORS = ['#316fe8', '#b79aff', '#59d5b4', '#ffd07a', '#ff8491'];
 
 function ExportButton({ label, create }: { label: string; create: () => Promise<XrogaExportFile> }) {
   const [busy, setBusy] = useState(false);

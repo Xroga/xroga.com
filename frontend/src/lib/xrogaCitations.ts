@@ -2,6 +2,8 @@ export interface CitationSource {
   title: string;
   url: string;
   snippet: string;
+  thumbnailUrl?: string;
+  siteDomain?: string;
 }
 
 type MarkdownNode = {

@@ -2,9 +2,13 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { createRequire } from 'node:module';
 import { FormattedAiMarkdown } from './formatAiMarkdown';
 import { remarkSourceCitations, safeSourceUrl } from './xrogaCitations';
-import { renderBlock } from '@/components/terminal/XrogaBlockView';
+
+const nodeRequire = createRequire(__filename);
+nodeRequire.extensions['.css'] = (module) => { module.exports = { __esModule: true, default: new Proxy({}, { get: (_target, key) => String(key) }) }; };
+const { renderBlock } = nodeRequire('../components/terminal/XrogaBlockView.tsx') as typeof import('@/components/terminal/XrogaBlockView');
 
 const sources = [
   { title: 'Official report', url: 'https://example.com/report', snippet: 'Evidence.' },

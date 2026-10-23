@@ -4,16 +4,12 @@ import { useMemo, useState } from 'react';
 import {
   AlertCircle,
   Calculator,
-  Check,
-  CheckCircle2,
-  Circle,
-  LoaderCircle,
   Trophy,
-  XCircle,
 } from 'lucide-react';
 
 import type { XrogaBlock } from '@/lib/xrogaBlocks';
 import { calculateValues } from '@/lib/xrogaCalculations';
+import { XrogaStatusBadge } from './XrogaStatusBadge';
 
 type UtilityType =
   | 'progress'
@@ -56,11 +52,11 @@ function Surface({
   description?: string;
   state?: UtilityBlock['state'];
 }) {
-  if (state === 'loading') return <section className="xv-response-surface max-w-[960px] rounded-2xl border border-[var(--border)] p-5" aria-busy="true"><LoaderCircle className="h-5 w-5 animate-spin motion-reduce:animate-none" aria-hidden="true" /><span className="sr-only">Loading output</span></section>;
-  if (state === 'empty') return <section className="xv-response-surface max-w-[960px] rounded-2xl border border-dashed border-[var(--border)] p-5 text-sm text-[var(--muted)]">No data is available for this output.</section>;
-  if (state === 'error' || state === 'unsupported') return <section className="xv-response-surface max-w-[960px] rounded-2xl border border-amber-500/35 p-5 text-sm" role="status"><AlertCircle className="mr-2 inline h-4 w-4" aria-hidden="true" />{state === 'unsupported' ? 'This output cannot be previewed in this workspace yet.' : 'This output could not be rendered.'}</section>;
+  if (state === 'loading') return <section className="xv-response-surface max-w-[960px] rounded-2xl bg-[var(--card)] p-5 shadow-sm" aria-busy="true"><XrogaStatusBadge status="running" /><span className="sr-only">Loading output</span></section>;
+  if (state === 'empty') return <section className="xv-response-surface max-w-[960px] rounded-2xl bg-[var(--card)] p-5 text-sm text-[var(--muted)] shadow-sm">No data is available for this output.</section>;
+  if (state === 'error' || state === 'unsupported') return <section className="xv-response-surface max-w-[960px] rounded-2xl bg-[var(--card)] p-5 text-sm shadow-sm" role="status"><AlertCircle className="mr-2 inline h-4 w-4" aria-hidden="true" />{state === 'unsupported' ? 'This output cannot be previewed in this workspace yet.' : 'This output could not be rendered.'}</section>;
   return (
-    <section className="xv-response-surface max-w-[960px] overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--background)]/70 shadow-sm">
+    <section className="xv-response-surface max-w-[960px] overflow-hidden rounded-2xl bg-[var(--card)] shadow-md">
       {title || description ? (
         <header className="border-b border-[var(--border)] px-4 py-3">
           {title ? <h3 className="text-sm font-semibold text-[var(--foreground)]">{title}</h3> : null}
@@ -81,6 +77,7 @@ function ProgressRow({ item }: { item: ProgressItem }) {
         <div className="min-w-0">
           <p className="font-medium text-[var(--foreground)]">{item.label}</p>
           {item.detail ? <p className="text-xs text-[var(--muted)]">{item.detail}</p> : null}
+          {item.status ? <span className="mt-2 inline-flex"><XrogaStatusBadge status={item.status} /></span> : null}
         </div>
         <span className="shrink-0 font-mono text-xs text-[var(--muted)]">
           {formatNumber(item.value)}{item.unit ? ` ${item.unit}` : ''} · {Math.round(percent)}%
@@ -180,13 +177,12 @@ function KeyValueRenderer({ block }: { block: Extract<UtilityBlock, { type: 'key
   return <Surface title={block.title ?? 'Summary'} description={block.description} state={block.state}><dl className="grid gap-px bg-[var(--border)] sm:grid-cols-2">{block.items.map((item) => <div key={item.id} className="bg-[var(--background)] p-4"><dt className="text-xs text-[var(--muted)]">{item.label}</dt><dd className="mt-1 break-words text-sm font-medium">{text(item.value)}</dd>{item.detail ? <p className="mt-1 text-xs text-[var(--muted)]">{item.detail}</p> : null}</div>)}</dl></Surface>;
 }
 
-const CHECKLIST_ICONS = { pending: Circle, running: LoaderCircle, completed: CheckCircle2, failed: XCircle, blocked: AlertCircle } as const;
 function ChecklistRenderer({ block }: { block: Extract<UtilityBlock, { type: 'checklist' }> }) {
-  return <Surface title={block.title ?? 'Checklist'} description={block.description} state={block.state}><ul className="divide-y divide-[var(--border)]">{block.items.map((item) => { const Icon = CHECKLIST_ICONS[item.status]; return <li key={item.id} className="flex gap-3 p-4"><Icon className={`mt-0.5 h-4 w-4 shrink-0 ${item.status === 'running' ? 'animate-spin text-blue-500 motion-reduce:animate-none' : item.status === 'completed' ? 'text-green-500' : item.status === 'failed' || item.status === 'blocked' ? 'text-red-500' : 'text-[var(--muted)]'}`} aria-hidden="true" /><div><p className="text-sm font-medium">{item.label}</p>{item.detail ? <p className="mt-0.5 text-xs text-[var(--muted)]">{item.detail}</p> : null}</div></li>; })}</ul></Surface>;
+  return <Surface title={block.title ?? 'Checklist'} description={block.description} state={block.state}><ul className="grid gap-2 p-4">{block.items.map((item) => <li key={item.id} className="flex items-center justify-between gap-3 rounded-xl bg-[var(--background)]/60 p-3 shadow-sm"><div><p className="text-sm font-medium">{item.label}</p>{item.detail ? <p className="mt-0.5 text-xs text-[var(--muted)]">{item.detail}</p> : null}</div><XrogaStatusBadge status={item.status} /></li>)}</ul></Surface>;
 }
 
 function StepsRenderer({ block }: { block: Extract<UtilityBlock, { type: 'steps' }> }) {
-  return <Surface title={block.title ?? 'Steps'} description={block.description} state={block.state}><ol className="grid gap-0 p-4 md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">{block.steps.map((step, index) => { const active = step.id === block.currentStepId || step.status === 'current'; const done = step.status === 'completed'; const failed = step.status === 'failed'; return <li key={step.id} className="relative flex gap-3 pb-5 last:pb-0 md:block md:pb-0 md:pr-4"><div className="relative z-[1] flex h-8 w-8 shrink-0 items-center justify-center rounded-full border bg-[var(--background)] text-xs font-semibold" style={{ borderColor: done ? '#16a34a' : failed ? '#dc2626' : active ? '#2563eb' : 'var(--border)' }}>{done ? <Check className="h-4 w-4 text-green-500" /> : failed ? <XCircle className="h-4 w-4 text-red-500" /> : index + 1}</div>{index < block.steps.length - 1 ? <span className="absolute left-4 top-8 h-[calc(100%-2rem)] w-px bg-[var(--border)] md:left-8 md:top-4 md:h-px md:w-[calc(100%-2rem)]" aria-hidden="true" /> : null}<div className="pt-1 md:mt-3 md:pt-0"><p className={`text-sm font-medium ${active ? 'text-blue-500' : ''}`}>{step.title}</p>{step.description ? <p className="mt-1 text-xs text-[var(--muted)]">{step.description}</p> : null}</div></li>; })}</ol></Surface>;
+  return <Surface title={block.title ?? 'Steps'} description={block.description} state={block.state}><ol className="grid gap-2 p-4 md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">{block.steps.map((step) => <li key={step.id} className="rounded-xl bg-[var(--background)]/60 p-3 shadow-sm"><XrogaStatusBadge status={step.id === block.currentStepId ? 'current' : step.status ?? 'pending'} /><p className="mt-3 text-sm font-semibold">{step.title}</p>{step.description ? <p className="mt-1 text-xs text-[var(--muted)]">{step.description}</p> : null}</li>)}</ol></Surface>;
 }
 
 function ScorecardRenderer({ block }: { block: Extract<UtilityBlock, { type: 'scorecard' }> }) {
