@@ -2,6 +2,7 @@
 
 import { XrogaOutputView } from './XrogaBlockView';
 import { adaptOutputToXrogaDocument } from '@/lib/xrogaOutputAdapters';
+import type { CitationSource } from '@/lib/xrogaCitations';
 
 /**
  * Compatibility boundary for persisted and current task outputs.
@@ -15,11 +16,13 @@ export function FeatureOutputView({
   onDelete: _onDelete,
   messageId,
   onPreviewUpdate,
+  sources,
 }: {
   output: unknown;
   onDelete?: () => void;
   messageId?: string;
   onPreviewUpdate?: (messageId: string, output: unknown) => void;
+  sources?: CitationSource[];
 }) {
   void _onDelete;
 
@@ -28,7 +31,7 @@ export function FeatureOutputView({
   if (row.type === 'chat' && typeof row.content === 'string') return null;
 
   const canonical = adaptOutputToXrogaDocument(output);
-  if (canonical) return <XrogaOutputView output={canonical} onChange={messageId && onPreviewUpdate ? (next) => onPreviewUpdate(messageId, next) : undefined} />;
+  if (canonical) return <XrogaOutputView output={canonical} sources={sources} onChange={messageId && onPreviewUpdate ? (next) => onPreviewUpdate(messageId, next) : undefined} />;
 
   return (
     <p className="max-w-[820px] py-1 text-sm text-[var(--muted)]" role="status">

@@ -1,6 +1,6 @@
 'use client';
 
-import { lazy, Suspense, type ComponentType, type LazyExoticComponent, type ReactNode } from 'react';
+import React, { lazy, Suspense, type ComponentType, type LazyExoticComponent, type ReactNode } from 'react';
 import { Activity, AlertCircle, AudioLines, BarChart3, Braces, Calculator, CalendarDays, Check, CircleHelp, Clock3, Code2, ExternalLink, FileCheck2, FileText, FolderTree, Gauge, Globe2, Image, LayoutDashboard, ListChecks, LoaderCircle, MapPin, MessageSquareText, PlugZap, Search, SlidersHorizontal, Sparkles, Table2, TriangleAlert, Video, type LucideIcon } from 'lucide-react';
 
 import { EngineeringArtifactView } from './EngineeringArtifactView';
@@ -12,6 +12,7 @@ import { parseXrogaBlock, type XrogaBlock, type XrogaOutputDocument } from '@/li
 import { applyDocumentEdit } from '@/lib/xrogaDocumentEdits';
 import { XrogaArtifactHeader } from './XrogaArtifactHeader';
 import { FormattedAiMarkdown } from '@/lib/formatAiMarkdown';
+import type { CitationSource } from '@/lib/xrogaCitations';
 
 type BlockRenderer = ComponentType<{ block: XrogaBlock }> | LazyExoticComponent<ComponentType<{ block: XrogaBlock }>>;
 
@@ -29,7 +30,8 @@ export function getRenderer(type: string): BlockRenderer {
   return renderers.get(type) ?? UnknownBlockRenderer;
 }
 
-export function renderBlock(block: XrogaBlock, onDocumentSave?: (content: string) => void): ReactNode {
+export function renderBlock(block: XrogaBlock, onDocumentSave?: (content: string) => void, sources?: CitationSource[]): ReactNode {
+  if (block.type === 'narrative') return React.createElement(TextRenderer, { block, sources });
   if (block.type === 'document') return <RichBlockRenderer block={block} onDocumentSave={onDocumentSave} />;
   const Renderer = getRenderer(block.type);
   return <Renderer block={block} />;
@@ -65,7 +67,7 @@ function ResponseBlockIcon({ block }: { block: XrogaBlock }) {
   </span>;
 }
 
-function TextRenderer({ block }: { block: XrogaBlock }) {
+function TextRenderer({ block, sources }: { block: XrogaBlock; sources?: CitationSource[] }) {
   if (!['narrative', 'notice', 'status', 'error', 'empty-state'].includes(block.type)) return null;
   const tone = 'tone' in block ? block.tone : undefined;
   const Icon = block.type === 'error' || tone === 'danger' ? AlertCircle : tone === 'warning' ? TriangleAlert : tone === 'success' ? Check : null;
@@ -75,7 +77,7 @@ function TextRenderer({ block }: { block: XrogaBlock }) {
       <div>
         {block.title ? <h3 className="font-medium">{block.title}</h3> : null}
         {block.type === 'narrative' ? (
-          <div className="xv-response-text"><FormattedAiMarkdown content={block.text} /></div>
+          <div className="xv-response-text"><FormattedAiMarkdown content={block.text} sources={sources} /></div>
         ) : (
           <p className="whitespace-pre-wrap leading-6">{'text' in block ? block.text : ''}</p>
         )}
@@ -172,13 +174,13 @@ registerRenderer('market-quote', MarketRenderer);
 registerRenderer('conversion', MarketRenderer);
 for (const type of ['metric', 'metric-group', 'progress', 'progress-group', 'calculator', 'calculation', 'gauge', 'comparison', 'key-value', 'checklist', 'steps', 'scorecard', 'ranking', 'tabs', 'accordion', 'file-tree', 'calendar', 'source-list', 'card-grid', 'tree', 'json', 'api-request', 'table', 'chart', 'timeline', 'graph', 'map', 'form', 'choice', 'gallery', 'image', 'audio', 'video', 'dashboard', 'document', 'spreadsheet', 'presentation', 'board', 'database', 'pdf'] as const) registerRenderer(type, RichBlockRenderer);
 
-export function XrogaOutputView({ output, onChange }: { output: XrogaOutputDocument; onChange?: (next: XrogaOutputDocument) => void }) {
+export function XrogaOutputView({ output, onChange, sources }: { output: XrogaOutputDocument; onChange?: (next: XrogaOutputDocument) => void; sources?: CitationSource[] }) {
   return <section className="xv-ai-output-block space-y-4 py-3" aria-label="Xroga output">{output.artifact ? <XrogaArtifactHeader artifact={output.artifact} status={output.status} /> : null}{output.blocks.map((candidate) => {
     const block = parseXrogaBlock(candidate);
     const saveDocument = onChange && block?.type === 'document' ? (content: string) => {
       const next = applyDocumentEdit(output, block.id, content);
       if (next) onChange(next);
     } : undefined;
-    return <div key={candidate.id} className="flex min-w-0 items-start gap-2.5">{block && block.type !== 'rich-results' ? <ResponseBlockIcon block={block} /> : null}<div className="min-w-0 flex-1">{block ? <Suspense fallback={<div className="h-24 max-w-[960px] animate-pulse rounded-2xl border border-[var(--border)] bg-black/5 dark:bg-white/5" />}>{renderBlock(block, saveDocument)}</Suspense> : <UnknownBlockRenderer block={candidate} />}</div></div>;
+    return <div key={candidate.id} className="flex min-w-0 items-start gap-2.5">{block && block.type !== 'rich-results' && block.type !== 'narrative' ? <ResponseBlockIcon block={block} /> : null}<div className="min-w-0 flex-1">{block ? <Suspense fallback={<div className="h-24 max-w-[960px] animate-pulse rounded-2xl border border-[var(--border)] bg-black/5 dark:bg-white/5" />}>{renderBlock(block, saveDocument, sources)}</Suspense> : <UnknownBlockRenderer block={candidate} />}</div></div>;
   })}</section>;
 }

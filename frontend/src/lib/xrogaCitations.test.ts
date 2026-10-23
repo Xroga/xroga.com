@@ -4,6 +4,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { FormattedAiMarkdown } from './formatAiMarkdown';
 import { remarkSourceCitations, safeSourceUrl } from './xrogaCitations';
+import { renderBlock } from '@/components/terminal/XrogaBlockView';
 
 const sources = [
   { title: 'Official report', url: 'https://example.com/report', snippet: 'Evidence.' },
@@ -41,7 +42,14 @@ test('the answer renderer shows an accessible source preview and exact source li
     content: 'The finding is sourced [1].',
     sources,
   }));
-  assert.match(html, /Preview source 1: Official report/);
-  assert.match(html, /Open source 1/);
+  assert.match(html, /Open source 1: Official report/);
+  assert.match(html, /xv-citation-chip/);
   assert.match(html, /https:\/\/example\.com\/report/);
+  assert.doesNotMatch(html, /More evidence/, 'unrelated source snippets must not flood the answer');
+});
+
+test('structured-output narrative retains the same inline citations as plain answers', () => {
+  const html = renderToStaticMarkup(renderBlock({ schemaVersion: 1, id: 'answer', type: 'narrative', text: 'A verified claim [2].' }, undefined, sources));
+  assert.match(html, /Open source 2: Second report/);
+  assert.match(html, /href="https:\/\/example\.org\/two"/);
 });

@@ -591,6 +591,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           <ChatErrorBoundary>
                             <FeatureOutputView
                               output={msg.featureOutput}
+                              sources={msg.webSources}
                               messageId={msg.id}
                               onDelete={() => deleteTurn(msg.id)}
                               onPreviewUpdate={updateFeatureOutput}

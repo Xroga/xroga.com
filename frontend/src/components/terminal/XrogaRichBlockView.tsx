@@ -24,7 +24,7 @@ type TableBlock = Extract<XrogaBlock, { type: 'table' | 'spreadsheet' | 'databas
 type ChartBlock = Extract<XrogaBlock, { type: 'chart' }>;
 type Metric = Extract<XrogaBlock, { type: 'metric' }>['metric'];
 
-const CHART_COLORS = ['#2563eb', '#7c3aed', '#059669', '#d97706', '#dc2626'];
+const CHART_COLORS = ['#83cfff', '#b79aff', '#59d5b4', '#ffd07a', '#ff8491'];
 
 function ExportButton({ label, create }: { label: string; create: () => Promise<XrogaExportFile> }) {
   const [busy, setBusy] = useState(false);
@@ -39,11 +39,11 @@ function ExportButton({ label, create }: { label: string; create: () => Promise<
   return <span className="inline-flex flex-col items-start gap-1"><button type="button" disabled={busy} onClick={() => void handleDownload()} className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 text-xs font-medium hover:bg-black/5 disabled:opacity-50 dark:hover:bg-white/5"><Download className="h-3.5 w-3.5" aria-hidden="true" />{busy ? 'Preparing…' : label}</button>{error ? <span role="alert" className="max-w-64 text-xs text-red-500">{error}</span> : null}</span>;
 }
 
-function Surface({ children, title, description, state = 'ready' }: { children: React.ReactNode; title?: string; description?: string; state?: RichBlock['state'] }) {
+function Surface({ children, title, description, state = 'ready', variant }: { children: React.ReactNode; title?: string; description?: string; state?: RichBlock['state']; variant?: 'data-table' | 'chart' }) {
   if (state === 'loading') return <section className="xv-response-surface max-w-[960px] rounded-2xl border border-[var(--border)] p-5" aria-busy="true"><LoaderCircle className="h-5 w-5 animate-spin" aria-hidden="true" /><span className="sr-only">Loading output</span></section>;
   if (state === 'empty') return <section className="xv-response-surface max-w-[960px] rounded-2xl border border-dashed border-[var(--border)] p-5 text-sm text-[var(--muted)]">No data is available for this output.</section>;
   if (state === 'error' || state === 'unsupported') return <section className="xv-response-surface max-w-[960px] rounded-2xl border border-amber-500/35 p-5 text-sm" role="status"><TriangleAlert className="mr-2 inline h-4 w-4" aria-hidden="true" />{state === 'unsupported' ? 'This output cannot be previewed in this workspace yet.' : 'This output could not be rendered.'}</section>;
-  return <section className="xv-response-surface max-w-[960px] overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--background)]/65 shadow-sm">{title || description ? <header className="border-b border-[var(--border)] px-4 py-3">{title ? <h3 className="text-sm font-semibold text-[var(--foreground)]">{title}</h3> : null}{description ? <p className="mt-0.5 text-xs text-[var(--muted)]">{description}</p> : null}</header> : null}{children}</section>;
+  return <section data-xroga-surface={variant} className="xv-response-surface max-w-[960px] overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--background)]/65 shadow-sm">{title || description ? <header className="border-b border-[var(--border)] px-4 py-3">{title ? <h3 className="text-sm font-semibold text-[var(--foreground)]">{title}</h3> : null}{description ? <p className="mt-0.5 text-xs text-[var(--muted)]">{description}</p> : null}</header> : null}{children}</section>;
 }
 
 function MetricCard({ metric }: { metric: Metric }) {
@@ -86,7 +86,7 @@ function TableRenderer({ block }: { block: TableBlock }) {
     anchor.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
-  return <Surface title={block.title ?? (block.type === 'spreadsheet' ? 'Spreadsheet' : block.type === 'database' ? 'Database' : 'Table')} description={block.description} state={block.state}>
+  return <Surface title={block.title ?? (block.type === 'spreadsheet' ? 'Spreadsheet' : block.type === 'database' ? 'Database' : 'Table')} description={block.description} state={block.state} variant="data-table">
     <div className="flex flex-wrap items-center gap-2 border-b border-[var(--border)] p-3">
       {block.searchable !== false ? <label className="relative min-w-44 flex-1"><Search className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-[var(--muted)]" aria-hidden="true" /><span className="sr-only">Search table</span><input value={filter} onChange={(event) => setFilter(event.target.value)} placeholder="Search rows" className="h-9 w-full rounded-lg border border-[var(--border)] bg-transparent pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-blue-500" /></label> : null}
       {selectedIds.length ? <button type="button" onClick={useSelection} className="h-9 rounded-lg border border-[var(--border)] px-3 text-xs font-medium hover:bg-black/5 dark:hover:bg-white/5">Use {selectedIds.length} as context</button> : null}
@@ -117,7 +117,7 @@ function ChartRenderer({ block }: { block: ChartBlock }) {
         : block.chartType === 'scatter'
       ? <ScatterChart {...common}><CartesianGrid strokeDasharray="3 3" opacity={0.22} /><XAxis dataKey={block.xKey} tick={{ fontSize: 11 }} /><YAxis dataKey={primary?.key} tick={{ fontSize: 11 }} /><Tooltip cursor={{ strokeDasharray: '3 3' }} /><Legend />{block.series.map((series, index) => <Scatter key={series.key} name={series.label} data={block.data} fill={series.color ?? CHART_COLORS[index % CHART_COLORS.length]} />)}</ScatterChart>
       : block.chartType === 'bar' ? <BarChart {...common}>{children}</BarChart> : block.chartType === 'area' ? <AreaChart {...common}>{children}</AreaChart> : <LineChart {...common}>{children}</LineChart>;
-  return <Surface title={block.title ?? 'Chart'} description={block.description} state={block.state}><div className="xv-response-chart h-72 w-full p-3" role="img" aria-label={block.summary}><ResponsiveContainer width="100%" height="100%">{chart}</ResponsiveContainer></div><p className="border-t border-[var(--border)] px-4 py-3 text-xs text-[var(--muted)]">{block.summary}. Select a chart point to use it as context.</p></Surface>;
+  return <Surface title={block.title ?? 'Chart'} description={block.description} state={block.state} variant="chart"><div className="xv-response-chart h-72 w-full p-3" role="img" aria-label={block.summary}><ResponsiveContainer width="100%" height="100%">{chart}</ResponsiveContainer></div><p className="border-t border-[var(--border)] px-4 py-3 text-xs text-[var(--muted)]">{block.summary}. Select a chart point to use it as context.</p></Surface>;
 }
 
 function TimelineRenderer({ block }: { block: Extract<RichBlock, { type: 'timeline' }> }) { return <Surface title={block.title ?? 'Timeline'} description={block.description} state={block.state}><ol className="space-y-0 p-4">{block.events.map((event) => <li key={event.id} className="relative grid grid-cols-[20px_1fr] gap-3 pb-5 last:pb-0"><div className="flex flex-col items-center"><Circle className="h-4 w-4 fill-current" aria-hidden="true" /><span className="h-full w-px bg-[var(--border)] last:hidden" /></div><div><p className="text-xs text-[var(--muted)]">{event.date}</p><h4 className="text-sm font-medium">{event.title}</h4>{event.detail ? <p className="mt-1 text-sm text-[var(--muted)]">{event.detail}</p> : null}</div></li>)}</ol></Surface>; }

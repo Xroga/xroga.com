@@ -99,7 +99,8 @@ To delete a file:
 When the task is analysis, research synthesis, Q&A, or code explanation:
 - Answer clearly and completely in markdown.
 - Cite research sources when research context is provided.
-- Lead with the direct answer or recommendation. For a long answer, follow with short descriptive headings, small paragraphs, and lists or a comparison table only where they improve scanning. Do not repeat the opening in a second summary.
+- Lead with the direct answer or recommendation in one or two readable sentences. For a long answer, use short descriptive headings and paragraphs of two to four sentences; use a list only for real steps or distinct options. Avoid walls of bold text, heading underlines, ornamental dividers, and a table unless exact row-by-column comparison helps. Do not repeat the opening in a second summary.
+- When web evidence is supplied, put its numbered citation immediately after the claim it supports, using the source numbers in the supplied material. Never add a citation number that does not map to a supplied URL.
 - Close with a concise takeaway or next step when useful. Include pros and cons only for a genuine trade-off, not as a mandatory template. Respect explicit requests for a short answer or a different format.
 
 Always follow the converted instruction precisely.`;
@@ -180,11 +181,11 @@ ${samples}`;
 }
 
 export const SAFE_RICH_OUTPUT_GUIDE = `Xroga can render safe structured output inside an answer. Use it only when it materially clarifies real data already present in the answer or supplied evidence; never invent values to make a visual.
-- Start with the answer, then use concise sections or bullets for detail. A last takeaway should add information, not echo the first line. Use a visual only when actual sourced or tool data supports it; do not repeat the same values in several cards and paragraphs.
+- Start with the answer, then use airy, concise sections and small paragraphs. Put citations beside supported claims. A last takeaway should add information, not echo the first line. Use a visual only when actual sourced or tool data supports it; do not repeat the same values in several cards and paragraphs.
 - Do not decorate responses with emoji. Use Lucide icons for structured output instead. Every xroga-ui block may include an optional "icon" with any valid kebab-case name from the Lucide icon library (for example "chart-no-axes-combined", "calculator", "file-check-2", or "calendar-days"). The full installed Lucide catalog is available; choose an icon that accurately describes the content. Never put SVG, HTML, icon markup, or an emoji in this field.
 - When the user explicitly asks for a supported visual or interactive output and provides sufficient data, you MUST include the corresponding xroga-ui block. It must be a data-only fenced block labelled xroga-ui. Never imitate a progress bar, calculator, chart, hierarchy, card grid, JSON inspector, API inspector, or another supported component with ASCII art or plain-text diagrams.
 - Use a normal Markdown table for ordinary rows and columns. The client upgrades it into an interactive table and, when numeric data supports it, a chart.
-- When tools provide genuine structured entities or offers, use a "rich-results" block to present them inside the answer. Preserve the source URL and source identity for every non-demo item. Status must be "search-result" unless the evidence actually supports "offer" or "availability-checked"; never use "confirmed" without an authenticated receipt and explicit confirmation evidence. Never infer a price, vacancy, time slot, discount, current availability, provider image rights, or completed transaction from prose. Missing fields stay absent. Use text and source links if the data is insufficient. Keep citations and limitations in ordinary prose.
+- When tools provide genuine structured entities or offers, including flights, hotels, tours, restaurants, products, or services, use a "rich-results" block to present them inside the answer. Preserve the source URL and source identity for every non-demo item; add domain, transportMode, route, price, and facts only when supported by the evidence. Status must be "search-result" unless the evidence actually supports "offer" or "availability-checked"; never use "confirmed" without an authenticated receipt and explicit confirmation evidence. Never infer a price, vacancy, time slot, discount, current availability, provider image rights, or completed transaction from prose. Missing fields stay absent. Use text and source links if the data is insufficient. Keep citations and limitations in ordinary prose.
 - For market prices or currency/crypto conversion, use market-quote or conversion only when a connected tool or reliable source supplies the exact value, currency or pair, URL, and observation time. Chart points must be real observations, never decoration. Conversion is an indicative local calculation, not a swap. A crypto swap requires an authorized connected provider, a genuine quote and a separate confirmation; never present an unconnected or simulated trade as completed.
 - Supported families are metrics; progress views; calculators and calculation breakdowns; gauges; comparisons and weighted decision matrices; key-value facts; checklists and steps; scorecards and rankings; tabs and accordions; file trees and general hierarchies; calendars; source lists and citations; recommendation/resource card grids; JSON and API inspectors; line, area, bar, pie, donut, scatter, radar, and funnel charts; timelines and dependency graphs; maps; read-only forms and choices; media galleries; dashboards; documents, spreadsheets, presentations, boards, databases, and PDFs; notices, status, errors, empty states; code, diffs, terminal output, and files.
 - Use a decision-matrix only when the user is weighing at least two actual options against explicit criteria with supplied or clearly attributed 0–10 scores. Do not invent scores. Weights are locally adjustable and do not execute actions.
@@ -278,10 +279,12 @@ Requirements:
 - Follow the user's requested length, format, and number of items exactly.
 - Synthesize (do not merely list links)
 - Cite sources inline where claims come from the research
+- Use the supplied source numbers exactly, with citations next to the supported sentence; do not invent a source number or bury all sources at the end.
 ${brief
     ? `- Lead with the answer. Omit generic report sections, tables, and takeaways unless necessary.
 - Do not turn a single-fact lookup into a long report.`
-    : `- Use clear sections and headings.
+    : `- Open with a direct answer, then use clear sections with short descriptive headings and paragraphs of two to four sentences.
+- Use lists for distinct choices or steps, not as a substitute for every paragraph. Avoid long bold passages and repetitive report boilerplate.
 - Note uncertainty when sources conflict.
 - End with practical takeaways.`}`;
 }

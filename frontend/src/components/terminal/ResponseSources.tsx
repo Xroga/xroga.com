@@ -1,21 +1,35 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import Image from 'next/image';
 import { ArrowUpRight, BookOpenText, ChevronRight, X } from 'lucide-react';
 import { safeSourceUrl } from '@/lib/xrogaCitations';
 import type { WebSourceItem } from './WebSourcesPanel';
+import styles from './ResponseSources.module.css';
 
 type NumberedSource = { item: WebSourceItem; number: number; url: string; domain: string };
 
+const externalImageLoader = ({ src }: { src: string }) => src;
+
+function cleanExcerpt(value: string): string {
+  const compact = value.replace(/\s+/g, ' ').replace(/^[\s*•-]+/, '').trim();
+  return compact.length > 175 ? `${compact.slice(0, 172).trimEnd()}…` : compact;
+}
+
 function SourceTile({ source, compact = false }: { source: NumberedSource; compact?: boolean }) {
-  return <div className="xv-source-tile group/source relative min-w-0">
-    <a href={source.url} target="_blank" rel="noopener noreferrer" className="flex min-h-16 items-center gap-3 rounded-xl border border-[var(--card-border)]/75 bg-[var(--card)]/75 px-3.5 py-3 text-left transition-colors hover:border-blue-500/60 hover:bg-blue-500/[0.07] focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500">
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-xs font-bold text-blue-500">{source.number}</span>
-      <span className="min-w-0 flex-1"><span className="block truncate text-[11px] font-medium text-[var(--muted)]">{source.domain}</span><span className={`${compact ? 'line-clamp-1' : 'line-clamp-2'} block text-sm font-semibold leading-snug text-[var(--foreground)] group-hover/source:text-blue-500`}>{source.item.title}</span></span>
-      <ArrowUpRight className="h-4 w-4 shrink-0 text-[var(--muted)] group-hover/source:text-blue-500" aria-hidden="true" />
-    </a>
-    {source.item.snippet ? <div role="tooltip" className="pointer-events-none invisible absolute bottom-[calc(100%+8px)] left-0 z-30 w-[min(21rem,calc(100vw-2rem))] rounded-xl border border-blue-500/30 bg-[var(--card)] p-3.5 text-left opacity-0 shadow-xl transition-opacity group-hover/source:visible group-hover/source:opacity-100 group-focus-within/source:visible group-focus-within/source:opacity-100"><span className="block text-[11px] font-semibold uppercase tracking-wider text-blue-500">Source {source.number} · {source.domain}</span><span className="mt-1 block line-clamp-4 text-xs leading-relaxed text-[var(--foreground)]/80">{source.item.snippet}</span></div> : null}
-  </div>;
+  const [iconBroken, setIconBroken] = useState(false);
+  const thumbnail = source.item.thumbnailUrl ? safeSourceUrl(source.item.thumbnailUrl) : null;
+  return <a href={source.url} target="_blank" rel="noopener noreferrer" className={styles.tile} aria-label={`Open source ${source.number}: ${source.item.title}`}>
+    {thumbnail ? <span className={styles.thumbnail}><Image src={thumbnail} alt="" width={84} height={72} loader={externalImageLoader} unoptimized /></span>
+      : <span className={styles.monogram} aria-hidden="true">{iconBroken ? source.domain.charAt(0).toUpperCase() : <Image src={`https://www.google.com/s2/favicons?domain=${encodeURIComponent(source.domain)}&sz=64`} alt="" width={27} height={27} loader={externalImageLoader} unoptimized onError={() => setIconBroken(true)} />}</span>}
+    <span className={styles.tileContent}>
+      <span className={styles.kicker}><span className={styles.sourceNumber}>{source.number}</span>{source.domain}</span>
+      <span className={styles.title}>{source.item.title}</span>
+      {!compact && source.item.snippet ? <span className={styles.excerpt}>{cleanExcerpt(source.item.snippet)}</span> : null}
+    </span>
+    <ArrowUpRight className={styles.arrow} size={17} aria-hidden="true" />
+  </a>;
 }
 
 export function ResponseSources({ sources }: { sources: WebSourceItem[] }) {
@@ -35,9 +49,10 @@ export function ResponseSources({ sources }: { sources: WebSourceItem[] }) {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false);
+      if (event.key === 'Escape') { setOpen(false); return; }
       if (event.key !== 'Tab') return;
-      const focusables = Array.from(document.querySelectorAll<HTMLElement>('[data-response-sources-dialog] a, [data-response-sources-dialog] button'));
+      const dialog = document.querySelector<HTMLElement>('[data-response-sources-dialog]');
+      const focusables = Array.from(dialog?.querySelectorAll<HTMLElement>('a, button') ?? []);
       if (!focusables.length) return;
       const first = focusables[0];
       const last = focusables[focusables.length - 1];
@@ -49,9 +64,18 @@ export function ResponseSources({ sources }: { sources: WebSourceItem[] }) {
   }, [open]);
 
   if (!numbered.length) return null;
-  return <section className="xv-response-sources mt-5 max-w-[920px]" aria-label="Sources">
-    <div className="mb-2.5 flex items-center justify-between gap-3"><h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)]"><BookOpenText className="h-4 w-4 text-blue-500" aria-hidden="true" /> Sources <span className="rounded-full bg-blue-500/10 px-1.5 py-0.5 text-blue-500">{numbered.length}</span></h3>{numbered.length > 4 ? <button ref={triggerRef} type="button" onClick={() => setOpen(true)} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-blue-500 hover:bg-blue-500/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500">View all <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" /></button> : null}</div>
-    <div className="grid gap-2 sm:grid-cols-2">{numbered.slice(0, 4).map((source) => <SourceTile key={`${source.number}-${source.url}`} source={source} compact />)}</div>
-    {open ? <div className="fixed inset-0 z-[100]" role="presentation"><button type="button" tabIndex={-1} aria-label="Close sources" onClick={() => setOpen(false)} className="absolute inset-0 h-full w-full bg-black/60" /><aside data-response-sources-dialog role="dialog" aria-modal="true" aria-label="All response sources" className="absolute inset-y-0 right-0 flex w-full max-w-[430px] flex-col border-l border-[var(--card-border)] bg-[var(--background)] shadow-2xl"><header className="flex items-center justify-between border-b border-[var(--card-border)] p-5"><div><p className="text-[11px] font-semibold uppercase tracking-widest text-blue-500">Evidence</p><h2 className="mt-1 text-lg font-semibold">All sources <span className="text-sm font-normal text-[var(--muted)]">({numbered.length})</span></h2></div><button ref={closeRef} type="button" onClick={() => setOpen(false)} aria-label="Close sources panel" className="rounded-lg border border-[var(--card-border)] p-2 hover:bg-blue-500/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"><X className="h-4 w-4" /></button></header><div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-4">{numbered.map((source) => <SourceTile key={`${source.number}-${source.url}`} source={source} />)}</div></aside></div> : null}
+  return <section className={styles.root} aria-label="Sources">
+    <div className={styles.header}>
+      <div className={styles.headerTitle}><BookOpenText size={17} aria-hidden="true" /><span>Sources</span><span className={styles.count}>{numbered.length}</span></div>
+      {numbered.length > 4 ? <button ref={triggerRef} type="button" onClick={() => setOpen(true)} className={styles.viewAll}>View all sources <ChevronRight size={16} aria-hidden="true" /></button> : null}
+    </div>
+    <div className={styles.grid}>{numbered.slice(0, 4).map((source) => <SourceTile key={`${source.number}-${source.url}`} source={source} compact />)}</div>
+    {open && typeof document !== 'undefined' ? createPortal(<div className={styles.overlay} role="presentation">
+      <button type="button" tabIndex={-1} aria-label="Close sources" onClick={() => setOpen(false)} className={styles.scrim} />
+      <aside data-response-sources-dialog role="dialog" aria-modal="true" aria-label="All response sources" className={styles.drawer}>
+        <header className={styles.drawerHeader}><div><span className={styles.drawerEyebrow}>Research & evidence</span><h2>All sources <span>({numbered.length})</span></h2><p>Open the original pages behind this answer.</p></div><button ref={closeRef} type="button" onClick={() => setOpen(false)} aria-label="Close sources panel" className={styles.close}><X size={20} /></button></header>
+        <div className={styles.drawerList}>{numbered.map((source) => <SourceTile key={`${source.number}-${source.url}`} source={source} />)}</div>
+      </aside>
+    </div>, document.body) : null}
   </section>;
 }

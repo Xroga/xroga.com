@@ -52,9 +52,9 @@ function RouteLine({ item }: { item: XrogaRichResult }) {
   const last = item.route[item.route.length - 1];
   const Icon = item.transportMode ? TRANSPORT_ICONS[item.transportMode] : Plane;
   const shortZone = (value?: string) => value?.split('/').at(-1)?.replaceAll('_', ' ');
-  return <div className={styles.route} aria-label={`Route from ${first.from} to ${last.to}`}>
+  return <div className={styles.route} data-rr-route aria-label={`Route from ${first.from} to ${last.to}`}>
     <div><strong>{first.from}</strong><small>{first.departureLocal ?? 'Time not supplied'}{first.departureTimeZone ? ` · ${shortZone(first.departureTimeZone)}` : ''}</small></div>
-    <div className={styles.routeTrack}><span /><Icon size={16} aria-hidden="true" /><span /></div>
+    <div className={styles.routeTrack} data-rr-route-track><span /><Icon size={16} aria-hidden="true" /><span /></div>
     <div><strong>{last.to}</strong><small>{last.arrivalLocal ?? 'Time not supplied'}{last.arrivalTimeZone ? ` · ${shortZone(last.arrivalTimeZone)}` : ''}</small></div>
   </div>;
 }
@@ -64,18 +64,19 @@ function ResultCard({ item, presentation, hideImages, selected, onCompare }: {
 }) {
   const sourceUrl = safeRichSourceUrl(item.source?.url);
   const price = formatRichPrice(item.price);
-  const showMedia = !['compact', 'ticket'].includes(presentation ?? '');
-  return <article className={`${styles.card} ${presentation === 'ticket' ? styles.ticket : ''}`} data-testid="rich-result-card">
+  const isDemo = item.demo === true || item.status === 'demo';
+  const showMedia = !['compact', 'ticket'].includes(presentation ?? '') && Boolean(item.images?.some((image) => safeRichImageUrl(image.url, image.rights, isDemo)));
+  return <article className={`${styles.card} ${presentation === 'ticket' || item.transportMode ? styles.ticket : ''} ${item.route?.length ? styles.routeCard : ''}`} data-testid="rich-result-card" data-rr-domain={item.domain}>
     {showMedia ? <RichMedia item={item} hidden={hideImages} /> : null}
-    <div className={styles.cardBody}>
+    <div className={styles.cardBody} data-rr-body>
       <div className={styles.cardTop}><span className={styles.kind}>{item.kind}</span><span className={`${styles.status} ${styles[`status_${item.status.replace('-', '_')}`]}`}>{item.demo ? 'Demo · ' : ''}{STATUS[item.status]}</span></div>
       <h3>{item.title}</h3>
       {item.provider ? <p className={styles.provider}>By {item.provider}</p> : null}
       {item.summary ? <p className={styles.summary}>{item.summary}</p> : null}
       <RouteLine item={item} />
       {item.facts?.length ? <dl className={styles.facts}>{item.facts.slice(0, 4).map((fact, i) => <div key={`${fact.label}-${i}`}><dt>{fact.label}</dt><dd>{fact.value}</dd></div>)}</dl> : null}
-      {price ? <div className={styles.price}><strong>{price}</strong><span>{BASIS[item.price!.basis]}</span>{item.price?.taxesIncluded === false ? <small>Taxes extra or unknown</small> : null}</div> : null}
-      <div className={styles.actions}>
+      {price ? <div className={styles.price} data-rr-price><strong>{price}</strong><span>{BASIS[item.price!.basis]}</span>{item.price?.taxesIncluded === false ? <small>Taxes extra or unknown</small> : null}</div> : null}
+      <div className={styles.actions} data-rr-actions>
         {sourceUrl ? <a href={sourceUrl} target="_blank" rel="noopener noreferrer" aria-label={`Open source for ${item.title} in a new tab`}>View source <ExternalLink size={14} /></a> : null}
         {(item.facts?.length || item.route?.length || item.coupon || item.limitations || item.source) ? <details className={styles.details}><summary>Details <ArrowRight size={13} /></summary>
           {item.route?.length ? <ol className={styles.legs}>{item.route.map((leg, i) => <li key={`${leg.from}-${i}`}><strong>{leg.from} → {leg.to}</strong>{leg.service ? ` · ${leg.service}` : ''}{leg.duration ? ` · ${leg.duration}` : ''}<br /><small>{leg.departureLocal ?? 'Departure unknown'}{leg.departureTimeZone ? ` (${leg.departureTimeZone})` : ''} → {leg.arrivalLocal ?? 'Arrival unknown'}{leg.arrivalTimeZone ? ` (${leg.arrivalTimeZone})` : ''}</small></li>)}</ol> : null}
@@ -103,7 +104,7 @@ function Coupon({ item }: { item: XrogaRichResult }) {
 function Comparison({ items }: { items: XrogaRichResult[] }) {
   if (items.length < 2) return null;
   const factLabels = [...new Set(items.flatMap((item) => item.facts?.map((fact) => fact.label) ?? []))].slice(0, 8);
-  return <div className={styles.comparison} role="region" aria-label="Selected result comparison"><h3>Side-by-side comparison</h3><div className={styles.tableScroll}><table><thead><tr><th scope="col">Detail</th>{items.map((item) => <th scope="col" key={item.id}>{item.title}</th>)}</tr></thead><tbody><tr><th scope="row">Status</th>{items.map((item) => <td key={item.id}>{STATUS[item.status]}</td>)}</tr><tr><th scope="row">Price</th>{items.map((item) => <td key={item.id}>{formatRichPrice(item.price) ?? 'Not supplied'}{item.price ? ` · ${BASIS[item.price.basis]}` : ''}</td>)}</tr>{factLabels.map((label) => <tr key={label}><th scope="row">{label}</th>{items.map((item) => <td key={item.id}>{item.facts?.find((fact) => fact.label === label)?.value ?? 'Not supplied'}</td>)}</tr>)}</tbody></table></div></div>;
+  return <div className={styles.comparison} role="region" aria-label="Selected result comparison" data-rr-comparison><h3>Compare your picks</h3><div className={styles.compareGrid} data-rr-compare-grid>{items.map((item) => <article key={item.id} className={styles.compareCard} data-rr-compare-card><span className={styles.kind}>{item.kind}</span><h4>{item.title}</h4><strong className={styles.comparePrice}>{formatRichPrice(item.price) ?? 'Price not supplied'}</strong><span className={styles.compareBasis}>{item.price ? BASIS[item.price.basis] : STATUS[item.status]}</span><dl>{factLabels.map((label) => <div key={label}><dt>{label}</dt><dd>{item.facts?.find((fact) => fact.label === label)?.value ?? '—'}</dd></div>)}</dl></article>)}</div></div>;
 }
 
 export function XrogaRichResultsView({ block, hideImages }: { block: XrogaBlock; hideImages?: boolean }) {
