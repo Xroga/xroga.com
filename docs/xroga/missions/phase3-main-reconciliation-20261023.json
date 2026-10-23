@@ -7,6 +7,11 @@
   "risk": "medium",
   "scope": "Separate current-main merge candidate preserving both Phase 3 and Phase 4 source history. Reconcile source conflicts, current UI regression contracts and the existing frontend dependency declaration. No production or Phase 4 admission.",
   "changedFiles": [
+    "backend/src/services/integrations/businessAction.ts",
+    "backend/src/services/integrations/businessActionRisk.test.ts",
+    "backend/src/services/integrations/businessAction.digest.test.ts",
+    "backend/src/services/integrations/businessActionConfirmations.ts",
+    "frontend/src/app/(shell)/dashboard/actions/confirm/[id]/page.tsx",
     "frontend/src/app/crypto/page.tsx",
     "frontend/src/components/terminal/WorkspaceLauncher.tsx",
     "frontend/src/components/homepage-next/s02/Theater.tsx",
@@ -55,19 +60,21 @@
   "securityImpact": {
     "auth": {"changed": false, "description": "No authentication implementation or role grant in this code candidate."},
     "tenant": {"changed": false, "description": "Retain existing owner/session/project draft identity checks. RLS test excludes comments but retains executable ownership predicates."},
-    "approval": {"changed": false, "description": "No authority or approval boundary changed. Original Phase 3 remains blocked."},
-    "credentials": {"changed": false, "description": "Backend and credential implementation unchanged. Separate synthetic Google receipts do not authorize production cutover."},
+    "approval": {"changed": true, "description": "Reconcile main's financial-action policy and original-request display with canonical durable permits. Preserve read-only denial, exact scoped approval, receipts and full-access non-bypass. Request display requires a digest-verified scoped plan. No new permission is granted."},
+    "credentials": {"changed": false, "description": "Vault and credential consumers unchanged. Confirmation response retains existing redacted parameters. Separate synthetic Google receipts do not authorize production cutover."},
     "egress": {"changed": false, "description": "No egress policy change. Phase 4 remains separate."},
     "cost": {"changed": false, "description": "No new application runtime resource or provider call introduced by reconciliation."},
     "billing": {"changed": false, "description": "No billing feature or paid upgrade. External synthetic verification has separate bounded founder approval and cleanup receipts."}
   },
   "tests": [
+    {"command": "tsx --test businessAction.digest.test.ts businessActionConfirmations.claim.test.ts businessActionRisk.test.ts authority/enforce.test.ts authority/digest.test.ts", "scope": "Pinned 268f31b5 reconciliation: 17 passed, zero failed/skipped. Includes original-request digest substitution refusal, scoped redacted approval metadata and full-access consequential-write non-bypass.", "negative": true, "reference": "backend/src/services/integrations/businessAction.digest.test.ts"},
+    {"command": "npm run test:frontend", "scope": "Pinned 268f31b5 reconciliation: all 1,174 tests passed, zero failed/skipped. Backend TypeScript compilation also passed. Mandatory source and virtual-merge CI remain separate.", "negative": true, "reference": "frontend/src/lib/workspaceEmptyComposer.test.ts"},
     {"command": "Focused tsx frontend test run across nine reconciliation files", "scope": "131 passed, zero failed. Positive and negative source contracts, project resume, composer preservation and ownership assertions.", "negative": true, "reference": "frontend/src/lib/workspaceEmptyComposer.test.ts"},
     {"command": "TypeScript no emit, frontend lint and canonical credential-free production build", "scope": "Local candidate compile/build, warnings retained. Not deployed UI or authenticated production proof.", "negative": false, "reference": "frontend/src/components/terminal/WorkspaceLauncher.tsx"},
     {"command": "npm ci --dry-run --ignore-scripts --workspaces=false --no-audit --no-fund", "scope": "Standalone frontend manifest/lock consistency only. Root actual frozen install and production build are separate local checks.", "negative": false, "reference": "frontend/package-lock.json"}
   ],
   "architecture": {"change": "none", "reason": "Existing components and canonical mechanisms only. No new vault, orchestrator, scheduler, policy engine or provider migration.", "rfc": null},
-  "rollout": "Review branch and source-bound CI only. No merge, production deployment, database migration, customer credential migration, DNS change or Phase 4 implementation.",
+  "rollout": "Review branch and source-bound CI against pinned main 268f31b5. Concurrent frontend development continues. Founder permits controlled main integration after required checks, but the existing main push triggers Fly production deployment, which requires specific approval before this backend candidate can merge. No production deployment, database or customer credential migration, DNS change or Phase 4 admission is authorized here.",
   "rollback": "Reject the isolated candidate or revert reconciliation in a new review commit. Preserve both original PR branches and parent evidence. No live state changed by the code candidate.",
   "knownGaps": ["Exact candidate CI pending", "Existing main unit baseline has five growth-suite failures", "Original production custody/caller cutover and applicable full isolated Supabase/staged verification remain blocked", "No founder Phase 3 acceptance or Phase 4 admission"],
   "placeholderClaimsRemaining": ["No final-source CI or production acceptance claim"],

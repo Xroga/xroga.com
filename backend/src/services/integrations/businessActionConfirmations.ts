@@ -61,6 +61,7 @@ export interface SafeBusinessActionConfirmation {
   risk: XrogaConnectToolRisk;
   createdAt: string;
   expiresAt: string;
+  request?: string;
   approval?: {
     preparedActionId: string; actionDigest: string; accountReference: string; operation: string;
     actionClass: string; destination: unknown; criticalParameters: unknown; spendMaximumMicroUsd: string | null; currency: string | null;
@@ -214,6 +215,7 @@ function safeConfirmation(
 
     expiresAt:
       row.expires_at,
+    ...(plan ? { request: plan.useCase } : {}),
     ...(plan ? { approval: { preparedActionId: row.id, actionDigest: row.plan_digest,
       accountReference: plan.authority!.connectedAccountId, operation: plan.toolSlug,
       actionClass: plan.authority!.actionClass,

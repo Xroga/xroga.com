@@ -27,10 +27,19 @@ export function XrogaMarketBlockView({ block }: { block: XrogaBlock }) {
   if (block.type === 'conversion') {
     const numericAmount = Number(amount);
     const result = Number.isFinite(numericAmount) && numericAmount >= 0 ? numericAmount * block.rate : null;
+    const canPrepare = Number.isFinite(numericAmount) && numericAmount > 0 && block.from !== block.to;
+    const prepareWithConnectedApp = () => {
+      if (!canPrepare) return;
+      window.dispatchEvent(new CustomEvent('xroga:companion-ask', {
+        detail: { text: `Swap ${numericAmount} ${block.from} for ${block.to} using my connected crypto provider. Prepare the exact provider action for my separate confirmation; do not execute before I review it. If no supported provider is connected, show the connection or provider choice.` },
+      }));
+    };
     return <section className="xv-response-surface max-w-[900px] rounded-2xl border border-blue-500/25 bg-[var(--background)]/80 p-4 shadow-sm sm:p-5" aria-label={block.title ?? 'Currency conversion'}>
       <div className="mb-4 flex items-center gap-2"><span className="rounded-lg bg-blue-500/10 p-2 text-blue-500"><ArrowRightLeft className="h-4 w-4" aria-hidden="true" /></span><div><p className="text-xs font-bold uppercase tracking-[0.12em] text-blue-500">Indicative conversion</p><h3 className="text-base font-semibold">{block.title ?? `${block.from} to ${block.to}`}</h3></div></div>
       <div className="grid items-center gap-2 sm:grid-cols-[1fr_auto_1fr]"><label className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-3"><span className="block text-xs text-[var(--muted)]">From · {block.from}</span><input type="number" min="0" step="any" value={amount} onChange={(event) => setAmount(event.target.value)} className="mt-1 w-full bg-transparent text-2xl font-semibold outline-none" aria-label={`Amount in ${block.from}`} /></label><ArrowRightLeft className="mx-auto h-4 w-4 text-blue-500" aria-hidden="true" /><div className="rounded-xl border border-blue-500/25 bg-blue-500/[0.07] p-3"><span className="block text-xs text-[var(--muted)]">Estimated · {block.to}</span><output className="mt-1 block break-words text-2xl font-semibold">{result === null ? '—' : new Intl.NumberFormat('en-US', { maximumFractionDigits: 8 }).format(result)}</output></div></div>
-      <p className="my-3 text-xs text-[var(--muted)]">1 {block.from} = {new Intl.NumberFormat('en-US', { maximumFractionDigits: 8 }).format(block.rate)} {block.to}. {block.feeNote ?? 'Displayed rate is a snapshot; a provider may use a different rate and charge fees.'} This does not execute a trade.</p><Evidence source={block.source} />
+      <p className="my-3 text-xs text-[var(--muted)]">1 {block.from} = {new Intl.NumberFormat('en-US', { maximumFractionDigits: 8 }).format(block.rate)} {block.to}. {block.feeNote ?? 'Displayed rate is a snapshot; a provider may use a different rate and charge fees.'} This does not execute a trade.</p>
+      <button type="button" disabled={!canPrepare} onClick={prepareWithConnectedApp} className="mb-3 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"><ArrowRightLeft className="h-4 w-4" aria-hidden="true" />Prepare with connected app</button>
+      <p className="mb-3 text-xs text-[var(--muted)]">This fills your composer for review. A supported connected provider and separate transaction confirmation are required.</p><Evidence source={block.source} />
     </section>;
   }
 

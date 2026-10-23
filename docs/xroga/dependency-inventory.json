@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "c9afec4353f867d2407dcf612572f3ea10dbebda",
+  "source_sha": "dc322b409fe50b7ffa3af1b1515fd504e28611b4",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -14134,11 +14134,11 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "ffd706b8deeab7d04891ad77c1e5890ff816829f1c0ee73f31ff206c7aaf325b"
+      "sha256": "7fd8dae721b3593b8583e29371cc9264ef47fbe2714bc22bc068d9ef4ea81697"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b"
+      "sha256": "3d7f496e9f641bc51f6f8d0ee77c869aa7ee535b1c34777c8ca45aecb7fb4102"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
@@ -14754,7 +14754,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/actions/confirm/[id]/page.tsx",
-      "sha256": "332493252cd03e355b5465a7344b7116272656c2ad12adfd114d06c556d5da80"
+      "sha256": "777c535cc4bd57c83f36c69bc4f32384717bbff72f680e798c4ab41b79d91919"
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/analytics/page.tsx",
@@ -15082,7 +15082,7 @@
     },
     {
       "path": "frontend/src/app/crypto/page.tsx",
-      "sha256": "aec3bdac94132cb85629ab0eb886f360df98f23a04a0945f1557cf8271ef4548"
+      "sha256": "4265371512e9c8ed4f554f651979db3cbd451cbfca5d05bedd830ca04e5700ba"
     },
     {
       "path": "frontend/src/app/cybersecurity/CybersecurityLanding.tsx",
@@ -17330,7 +17330,7 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaMarketBlockView.tsx",
-      "sha256": "f95cfa03b999cf175b052086f7eef3ae690c6c121c97e3dc280021e7cbd3d5ea"
+      "sha256": "f4def90f9a61fecf6361680d9895856da6157ed5462eced45ed2b70fe278a718"
     },
     {
       "path": "frontend/src/components/terminal/XrogaOrganizerBlockView.tsx",
@@ -27346,21 +27346,21 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 619,
+      "line": 640,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1108,
+      "line": 1129,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1134,
+      "line": 1155,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

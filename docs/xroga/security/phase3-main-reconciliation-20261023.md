@@ -2,6 +2,18 @@
 
 This is a review candidate, not Phase 3 acceptance or release authorization.
 
+## Concurrent development and pinned financial-action reconciliation
+
+Founder authorization permits concurrent main development and controlled integration after required checks. No main freeze is requested. Pin main `268f31b5ce1d954a77ae8359779be8e58175ab0c` for this reconciliation. Completed prior CI remains evidence for its exact tested source, not this new source. Reconcile again only at the actual integration boundary, using changed-file and dependency scope.
+
+The three conflicts are businessAction.ts, businessActionConfirmations.ts and the confirmation page. Preserve main's financial-action classification and original-request display together with Phase 3's durable scoped authority, read-only denial, immutable plan, redacted critical parameters, effect receipts and final dispatch admission. Financial actions always require confirmation. Nonfinancial consequential writes also retain canonical approval, including under full-access preferences. The helper's inherited full-access bypass assertion is changed because it conflicts with that frozen security requirement. Pure reads remain separately classified. Original-request display is available only from the same digest-verified scoped plan used for approval metadata, with no raw provider response or credential projection.
+
+The confirmation service differs from the previous candidate only by its optional request field and that verified-plan display projection. All 15 persistence/factory/RPC candidates retain their original functions, operations, owner filters and SQL calls. Rebind their current whole-file hash and source positions without changing any disposition or historical accepted review. Crypto's existing native Array.from false positive moves after a FAQ text change. Rebind that one native identity only. Historical Phase 1/2/3 evidence, frozen requirements and the canonical evaluator remain unchanged. Current-source integration and real disposable database tests are still required.
+
+Main push paths trigger the existing Fly Production deployment for this backend change. GitHub currently reports no repository rulesets and no main branch protection. This does not waive founder-required gates or authorize production effects. Finish and validate the protected-by-process review candidate, then request specific production deployment approval before a main merge. No workflow is disabled, no production deployment or migration is run, and Phase 4 PR 844 remains separate.
+
+Local reconciliation checks passed using the canonical toolchain: 17 authority/digest/claim/policy tests, 17 audit/projection tests, all 1,174 frontend tests with zero skips, and backend TypeScript compilation. The new response test verifies owner/ID predicates, original request and exact approval digest/account, credential-canary redaction, and refusal to display substituted unverified request/approval metadata. Current audit remains 705 candidates, 25 review-required and 50 unresolved, with zero current-scope security certifications. Inventory, runtime configuration, requirement integrity and mission policy checks pass without granting release acceptance. Mandatory CI and authenticated disposable verification remain pending for this exact commit.
+
 Parents are preserved Phase 3 `fb95f76bafc1b544b6655d435cddede260d9cd99` and independently fetched current main `3e343287c8f95f9d9e83fd282c6f58153ff3625b`. PR 803 and stacked PR 844 are not rewritten or merged. Phase 4 remains separate.
 
 ## Resolution decisions

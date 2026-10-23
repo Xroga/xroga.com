@@ -43,6 +43,7 @@ import {
 
 import {
   getUserPluginPermissionMode,
+  type PluginPermissionMode,
 } from './pluginPermissionPolicy.js';
 
 const MAX_USE_CASE_LENGTH = 500;
@@ -50,6 +51,26 @@ const MAX_TOOL_CANDIDATES = 10;
 const MAX_SCHEMA_CHARS = 7_500;
 const MAX_ARGUMENT_CHARS = 24_000;
 const MAX_RESULT_CHARS = 60_000;
+
+/** Financial mutations always need a separate, exact-action confirmation. */
+export function isFinancialAction(useCase: string, toolSlug: string): boolean {
+  const action = `${useCase} ${toolSlug}`;
+  return /\b(swap|trade|buy|sell|purchase|payment|pay|charge|refund|withdraw|deposit|transfer|bridge|stake)\b/i.test(action)
+    || /(?:^|_)(?:SWAP|TRADE|BUY|SELL|PAYMENT|CHARGE|REFUND|WITHDRAW|DEPOSIT|TRANSFER|BRIDGE|STAKE)(?:_|$)/i.test(toolSlug);
+}
+
+export function requiresBusinessActionConfirmation(input: {
+  permissionMode: PluginPermissionMode;
+  plan: Pick<BusinessActionPlan, 'useCase' | 'toolSlug' | 'requiresConfirmation'>;
+  currentRisk: XrogaConnectToolRisk;
+}): boolean {
+  if (isFinancialAction(input.plan.useCase, input.plan.toolSlug)) return true;
+  // Plugin preferences never waive canonical approval for consequential writes.
+  return input.plan.requiresConfirmation
+    || input.currentRisk === 'destructive'
+    || input.currentRisk === 'unknown'
+    || input.currentRisk === 'write';
+}
 
 interface ActionToolChoice {
   toolSlug: string;
