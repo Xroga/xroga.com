@@ -2321,7 +2321,7 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "195794c3453d6320fc522b7c68305016d9f9ec9f3b2cd345d02582f001084be2",
+          "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
           "historicalBinding": {"reference":"2a797dc1b9a932350d4882bffc2fea5aa6f8282b","sha256":"cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"},
           "currentSourceDelta":"docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json"
         },
