@@ -1,5 +1,40 @@
 # Command 010 preparatory engineering
 
+## Current transport-lifetime continuation
+
+Starting feature `944bd5e3078be7d3c4d536baefd50c42eb83b32e` has six successful
+GitHub workflows. Unit run `39964229777` authenticated branch and virtual-merge
+baselines, each repeated twice with21 stages and no source mutation. Integrated
+source `1b3a61bcbc1fb042d4d905cddea80d7b7314159b` has exact parents
+`fb95f76bafc1b544b6655d435cddede260d9cd99` and `944bd5e3`. Golden run
+`39964229836` passed its guest-fixture scope on that merge. These are starting-source
+receipts and do not certify the subsequent changes or current-main integration.
+
+The current changes revalidate canonical GitHub credentials across source-read
+lifetimes, reject preview credential/header leakage and foreign redirects, bound
+WebSocket data and revalidate active HTTP/WebSocket streams. Real loopback transport
+tests are distinct from the controlled Supabase/GitHub protocols and from live Fly
+or provider/database verification. BYOK mirror writes remain encrypted and are
+rechecked across bucket waits. Storage and database revocation are not atomic.
+
+Two exact legacy GitHub upload candidates, `46ad38b463b0beb61ba5` and
+`e2ad9aec1c5cd1e3ab27`, are narrowly disabled with proof of no production importer
+and the closed production migration window. Future migration callers remain
+uncertified. One new source transport is registered. Current totals are134
+candidates,14 narrowly reviewed,120 pending and65 dynamic/SDK high-risk review
+candidates. This count is not a count of demonstrated vulnerabilities.
+
+All three shared SDK dispositions and all six preview transport dispositions stay
+open. The12 criterion states are unchanged. Strict complete audit still fails.
+Phase3 remains blocked, Phase4 remains preparatory, and Batch1 is not GO.
+See `TRANSPORT-LIFETIME-PROOF.json` for source/test bindings, scope limits,
+rollback and the exact next ready model-caller group. `SOURCE-LIFETIME-PROOF.json`
+and its executable regression preserve historical nested proof during current-source
+position reconciliation. No historical accepted commit or frozen criterion changed.
+
+The sections below retain earlier, source-specific checkpoints. Their counts and
+test results must not be reused as current-source acceptance.
+
 Status: PARTIALLY_VERIFIED_PREPARATION_ONLY. Phase 4 is not formally admitted and
 Batch 1 is not GO. Phase 3 managed-KMS runtime custody/cutover remains blocked.
 

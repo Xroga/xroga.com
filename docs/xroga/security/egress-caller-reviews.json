@@ -3,6 +3,46 @@
   "scope": "PREPARATORY_URL_BOUNDARY_REVIEW_NOT_COMMAND010_ACCEPTANCE",
   "reviews": [
     {
+      "id": "46ad38b463b0beb61ba5",
+      "callSha256": "4b303195d0968754dfb611ec02a4d78c8bbf88442db79ef84c6d6b339b831074",
+      "sourceFileSha256": "f06715ebdce2f87406ba021e872f191d93460bc9e07f4e3b961c14a291bed719",
+      "disposition": "DISABLED_WITH_PROOF",
+      "trust": "NO_REACHABLE_PRODUCTION_IMPORTER_AND_CLOSED_PRODUCTION_LEGACY_WINDOW_ONLY_NOT_APPROVAL_OF_FUTURE_MIGRATION_CALLERS",
+      "tenantAuthority": "CURRENT_KNOWN_SOURCE_GRAPH_HAS_ONLY_TEST_CALLERS._EXPLICIT_LEGACY_WRITES_REMAIN_UNCERTIFIED_IF_REINTRODUCED",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/legacyGitHubUploadReachability.test.ts",
+          "marker": "legacy GitHub mirror writer has no production importer or invocation in the tracked source graph",
+          "sha256": "2d5082e73c3f8c0aca20a002eb53c960dca073ea9c4dd531eb1a07efb044e910"
+        },
+        {
+          "path": "backend/src/services/integrations/credentialUploadBoundary.test.ts",
+          "marker": "actual legacy credential upload refuses public/unknown buckets and binds both upload attempts to original owner",
+          "sha256": "6562354400b3c747a1efb8257b28f70489a445e13401824699aca8836eb99cc8"
+        }
+      ]
+    },
+    {
+      "id": "e2ad9aec1c5cd1e3ab27",
+      "callSha256": "9ed3fbe253284de0c824dd74feff9ecb99040484501a69e6b59246c9e9f44037",
+      "sourceFileSha256": "f06715ebdce2f87406ba021e872f191d93460bc9e07f4e3b961c14a291bed719",
+      "disposition": "DISABLED_WITH_PROOF",
+      "trust": "NO_REACHABLE_PRODUCTION_IMPORTER_AND_CLOSED_PRODUCTION_LEGACY_WINDOW_ONLY_NOT_APPROVAL_OF_FUTURE_MIGRATION_CALLERS",
+      "tenantAuthority": "CURRENT_KNOWN_SOURCE_GRAPH_HAS_ONLY_TEST_CALLERS._EXPLICIT_LEGACY_WRITES_REMAIN_UNCERTIFIED_IF_REINTRODUCED",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/legacyGitHubUploadReachability.test.ts",
+          "marker": "legacy GitHub mirror writer has no production importer or invocation in the tracked source graph",
+          "sha256": "2d5082e73c3f8c0aca20a002eb53c960dca073ea9c4dd531eb1a07efb044e910"
+        },
+        {
+          "path": "backend/src/services/integrations/credentialUploadBoundary.test.ts",
+          "marker": "actual legacy credential upload refuses public/unknown buckets and binds both upload attempts to original owner",
+          "sha256": "6562354400b3c747a1efb8257b28f70489a445e13401824699aca8836eb99cc8"
+        }
+      ]
+    },
+    {
       "id":"f0eab43244d6d3c88de8",
       "callSha256":"8a2096fa7242a30e44a83faf4b81e3998b2107f080574f87fe9905f4658a425f",
       "sourceFileSha256":"998cbd6efbdb066f493234d2d6960539151f43e33dbfe2baed81183fbb68578a",

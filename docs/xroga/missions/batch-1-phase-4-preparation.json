@@ -109,7 +109,18 @@
     "backend/src/ai/modelContext.security.test.ts",
     "backend/src/middleware/runtimePreviewGateway.security.test.ts",
     "backend/src/services/integrations/credentialUploadBoundary.test.ts",
-    "docs/xroga/evidence/command-010/REPO-CONTEXT-PROOF.json"
+    "docs/xroga/evidence/command-010/REPO-CONTEXT-PROOF.json",
+    "backend/src/middleware/runtimePreviewGateway.ts",
+    "backend/src/middleware/runtimePreviewGateway.transport.test.ts",
+    "backend/src/services/integrations/githubDeploy.ts",
+    "backend/src/services/integrations/githubSourceRead.ts",
+    "backend/src/services/integrations/githubSourceRead.test.ts",
+    "backend/src/services/integrations/userProviderKeys.ts",
+    "backend/src/services/integrations/credentialUploadLifecycle.test.ts",
+    "backend/src/services/integrations/legacyGitHubUploadReachability.test.ts",
+    "scripts/security/source-lifetime-bindings.test.mjs",
+    "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
+    "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json"
   ],
   "decisions": {
     "keep": [
@@ -131,8 +142,8 @@
   },
   "securityImpact": {
     "auth": {
-      "changed": false,
-      "description": "Existing issued context and permits reused"
+      "changed": true,
+      "description": "Existing signed preview-grant identity unchanged, active HTTP/WebSocket lifetimes now revalidate ownership/revocation. GitHub reads reuse canonical credential authority across dispatch and body waits."
     },
     "tenant": {
       "changed": true,
@@ -144,7 +155,7 @@
     },
     "credentials": {
       "changed": true,
-      "description": "Deterministic secret denial, raw adapter credentials excluded from policy DTO"
+      "description": "Deterministic secret denial, raw adapter credentials excluded from policy DTO; preview header separation and current-revision private mirror admission with fixed safe diagnostics"
     },
     "egress": {
       "changed": true,
@@ -162,13 +173,13 @@
   "tests": [
     {
       "command": "node --import tsx --test backend/src/security/egress/*.test.ts backend/src/security/boundedPublicGet.test.ts backend/src/operations/providerAdapters.test.ts backend/src/e2e/xrogaGoldenJourneys.test.ts scripts/security/audit-egress-callers.test.mjs",
-      "scope": "52 focused tests passed using local fixtures, not real provider/database evidence",
+      "scope": "Expected strict failure while120 caller traces remain unresolved",
       "negative": true,
       "reference": "docs/xroga/evidence/command-010/manifest.json"
     },
     {
       "command": "node scripts/security/audit-egress-callers.mjs --require-complete",
-      "scope": "Expected failure while 121 caller traces remain unresolved",
+      "scope": "Expected strict failure while120 caller traces remain unresolved",
       "negative": true,
       "reference": "docs/xroga/security/egress-callers.json"
     },
@@ -195,6 +206,12 @@
       "scope": "40 focused tests pass, controlled provider/database protocols, real SDK serialization and guest HTTP; no live-provider or complete transport certification",
       "negative": true,
       "reference": "docs/xroga/evidence/command-010/REPO-CONTEXT-PROOF.json"
+    },
+    {
+      "command": "NODE_ENV=test node --import tsx --test backend/src/services/integrations/githubSourceRead.test.ts backend/src/services/integrations/credentialUploadLifecycle.test.ts backend/src/services/integrations/legacyGitHubUploadReachability.test.ts backend/src/middleware/runtimePreviewGateway.transport.test.ts",
+      "scope": "Real local HTTP/WebSocket plus controlled database/provider protocol tests, not live Fly, RLS or provider acceptance",
+      "negative": true,
+      "reference": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json"
     }
   ],
   "architecture": {
@@ -205,7 +222,7 @@
   "rollout": "Review-only stacked draft PR. Phase3 admission, complete Command010 proof and separate release authorization required.",
   "rollback": "Revert this isolated review branch before release, no schema or live credential rollback needed.",
   "knownGaps": [
-    "122 unclosed AST caller candidates, including 68 dynamic/SDK high-risk candidates, not asserted as 68 demonstrated vulnerabilities",
+    "120 unclosed AST caller candidates, including65 dynamic/SDK high-risk review candidates, not asserted as demonstrated vulnerabilities",
     "Remaining consequential adapters and upload caller migration",
     "Full deployed Supabase/PostgREST and full migration/production parity remain unverified. Local PostgreSQL receipt and ownership race proof is now available.",
     "Current main has six UI conflict groups. WorkspaceLauncher behavior reconciliation is separately committed, remaining main-history integration is not verified.",
@@ -223,14 +240,16 @@
     "docs/xroga/security/untrusted-input-model.md",
     "docs/xroga/batch-1/phases/phase-4/PREPARATORY-READINESS.md",
     "docs/xroga/evidence/command-010/PROVENANCE-REPAIR.json",
-    "docs/xroga/evidence/command-010/MODEL-BOUNDARY-TRACE.json"
+    "docs/xroga/evidence/command-010/MODEL-BOUNDARY-TRACE.json",
+    "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
+    "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "122 unclosed AST caller candidates, including 68 dynamic/SDK high-risk candidates, not asserted as 68 demonstrated vulnerabilities",
+      "120 unclosed AST caller candidates, including65 dynamic/SDK high-risk review candidates, not asserted as demonstrated vulnerabilities",
       "Remaining consequential adapters and upload caller migration",
       "Full deployed Supabase/PostgREST and full migration/production parity remain unverified. Local PostgreSQL receipt and ownership race proof is now available.",
       "Current main has six UI conflict groups. WorkspaceLauncher behavior reconciliation is separately committed, remaining main-history integration is not verified.",

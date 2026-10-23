@@ -1,5 +1,15 @@
 {
   "version": 1,
+  "transportLifetimeContinuation": {
+    "proof": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
+    "startingSource": "944bd5e3078be7d3c4d536baefd50c42eb83b32e",
+    "authenticatedStartingWorkflows": "6_SUCCESS_NOT_CURRENT_EDIT_ACCEPTANCE",
+    "callerCounts": { "total": 134, "reviewed": 14, "pending": 120, "highRiskReviewCandidates": 65 },
+    "newNarrowDisabledCallers": ["46ad38b463b0beb61ba5", "e2ad9aec1c5cd1e3ab27"],
+    "completeAudit": "BLOCKED_120_PENDING",
+    "allThreeSdkFinalDispositions": "PENDING_SOURCE_TRACE",
+    "currentSourceCi": "REQUIRED_ON_STABLE_FINAL_SOURCE"
+  },
   "command": "010",
   "status": "PARTIALLY_VERIFIED_PREPARATION_ONLY",
   "baseSha": "fb95f76bafc1b544b6655d435cddede260d9cd99",

@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "subsequentSourceContinuation": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
   "scope": "PREPARATORY_REPOSITORY_CONTEXT_AND_MEMO_CALL_SITE_NOT_COMPLETE_EGRESS_ACCEPTANCE",
   "startingSource": "9379a2f105bb59b787f164836de563655657bc6d",
   "authenticatedStartingCi": {

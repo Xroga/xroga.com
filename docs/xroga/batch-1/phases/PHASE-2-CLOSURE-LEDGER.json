@@ -756,27 +756,27 @@
       "id": "B1-P2-812abbd1d9e8178e",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/githubDeploy.ts",
-      "sourceSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
+      "sourceSha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
       "baselineCallerIds": [
         "b4b2b91f3280a140691a",
         "48c115e3fcc79a824240"
       ],
       "currentCallerIds": [
-        "b4b2b91f3280a140691a",
-        "48c115e3fcc79a824240"
+        "55ac9b0f3f9ba972ca8c",
+        "2360912af68a9536c836"
       ],
       "mapping": [
         {
           "baselineCallerId": "b4b2b91f3280a140691a",
           "currentCallerIds": [
-            "b4b2b91f3280a140691a"
+            "55ac9b0f3f9ba972ca8c"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "48c115e3fcc79a824240",
           "currentCallerIds": [
-            "48c115e3fcc79a824240"
+            "2360912af68a9536c836"
           ],
           "change": "RETAINED"
         }
@@ -801,7 +801,7 @@
         {
           "path": "backend/src/services/integrations/githubDeploy.ts",
           "marker": "async function getIntegration",
-          "sourceSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
+          "sourceSha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -3981,7 +3981,7 @@
         {
           "path": "backend/src/middleware/runtimePreviewGateway.ts",
           "marker": "const target = authorizedPreviewTarget(grant, session);",
-          "sourceSha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106",
+          "sourceSha256": "2f42e628938cf4bee850bea66c8d7c44de087422dd14f7dec67765c80de9ce57",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -8401,7 +8401,7 @@
       "id": "B1-P2-8c13793907db3388",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "baselineCallerIds": [
         "c3f2ca136ccab92884f3",
         "8466decbcb9ca41d5da8",
@@ -8423,149 +8423,149 @@
         "219ebcffd2df24f5d96c"
       ],
       "currentCallerIds": [
-        "a6063fe099976dc970f7",
-        "67a6738bb98de6ea35e6",
-        "fa8edcff0bd9d41187f5",
-        "1e079f47b68cfa4b0ee1",
-        "7ce8a829e7682246c531",
-        "877306d453c374d2e0b5",
-        "60641ebebf916f3f47ab",
-        "2604632d4df816296c98",
-        "90411ad954f04510350e",
-        "4d24d57fe7012dc5dd75",
-        "c14b11328e9369fa6e7f",
-        "8716b1816d340d8ef220",
-        "1ba202fc5a6dd57faf27",
-        "22b15fbd9a04f1c32cb6",
-        "c10dcb70902c0260de04",
-        "d402557729d7b229c33f",
-        "14b09354c0efcdc2fdbf",
-        "88d220a299b3576a5c37"
+        "feecde5ebb7ae5f4ad78",
+        "5e37205582073bfc30c9",
+        "018c071575ceb3f8516a",
+        "c0cad7450906cef3fce8",
+        "125d1fa1b446def91170",
+        "56f1365c1095ea75af85",
+        "8784feaf266f3ae5d72e",
+        "5f84595697b6399ed442",
+        "30d93bb175651c6091b1",
+        "6021c31eedb4e0085d2b",
+        "c36354753e5d659f1133",
+        "36190833aa1b3b96e8ee",
+        "cac7d32579dae1ccf84c",
+        "a497ca44a05b78d07e6c",
+        "977606a7b1f57d55adb2",
+        "4c3d52cdd8d4da245c3a",
+        "fa50fc7afb1cc2af0bfe",
+        "aa227a13e3f851a147cb"
       ],
       "mapping": [
         {
           "baselineCallerId": "c3f2ca136ccab92884f3",
           "currentCallerIds": [
-            "a6063fe099976dc970f7"
+            "feecde5ebb7ae5f4ad78"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "8466decbcb9ca41d5da8",
           "currentCallerIds": [
-            "67a6738bb98de6ea35e6"
+            "5e37205582073bfc30c9"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "945c1743c499e90155c7",
           "currentCallerIds": [
-            "fa8edcff0bd9d41187f5"
+            "018c071575ceb3f8516a"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "30c947b4c1a108a17b92",
           "currentCallerIds": [
-            "1e079f47b68cfa4b0ee1"
+            "c0cad7450906cef3fce8"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "9dee422de25d294a7357",
           "currentCallerIds": [
-            "7ce8a829e7682246c531"
+            "125d1fa1b446def91170"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "c5490d9431dfdae9ca6a",
           "currentCallerIds": [
-            "877306d453c374d2e0b5"
+            "56f1365c1095ea75af85"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "aad6224f275c7da17b55",
           "currentCallerIds": [
-            "60641ebebf916f3f47ab"
+            "8784feaf266f3ae5d72e"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "c8806caee1b6dcf5dffe",
           "currentCallerIds": [
-            "2604632d4df816296c98"
+            "5f84595697b6399ed442"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "8a0eb63ebffa141243f3",
           "currentCallerIds": [
-            "90411ad954f04510350e"
+            "30d93bb175651c6091b1"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e6d9a5693ccddad6699b",
           "currentCallerIds": [
-            "4d24d57fe7012dc5dd75"
+            "6021c31eedb4e0085d2b"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "6de4d56764f41d3a11bc",
           "currentCallerIds": [
-            "c14b11328e9369fa6e7f"
+            "c36354753e5d659f1133"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "57c1b65d21f7ad3e10e9",
           "currentCallerIds": [
-            "8716b1816d340d8ef220"
+            "36190833aa1b3b96e8ee"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "dceb9a28d0e6cf3e0163",
           "currentCallerIds": [
-            "1ba202fc5a6dd57faf27"
+            "cac7d32579dae1ccf84c"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "66faab8392a58be8ebaa",
           "currentCallerIds": [
-            "22b15fbd9a04f1c32cb6"
+            "a497ca44a05b78d07e6c"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "4fd45320f2922de4093b",
           "currentCallerIds": [
-            "c10dcb70902c0260de04"
+            "977606a7b1f57d55adb2"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e24569ab9a41af1806a7",
           "currentCallerIds": [
-            "d402557729d7b229c33f"
+            "4c3d52cdd8d4da245c3a"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "daa98fe8de4afd945ac5",
           "currentCallerIds": [
-            "14b09354c0efcdc2fdbf"
+            "fa50fc7afb1cc2af0bfe"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "219ebcffd2df24f5d96c",
           "currentCallerIds": [
-            "88d220a299b3576a5c37"
+            "aa227a13e3f851a147cb"
           ],
           "change": "RETAINED"
         }
@@ -8575,7 +8575,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-8c13793907db3388",
-        "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
         "executionStatus": "IN_PROGRESS",
         "finding": "DEMONSTRATED_PROVISIONING_BUNDLE_ORPHAN_AUTHORITY_FIXED_PENDING_REAL_PRIVATE_OBJECT_PROOF",
         "actualVerification": {
@@ -8727,18 +8727,18 @@
       "id": "B1-P2-d3895e94f03fa522",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "baselineCallerIds": [
         "00329f071464b8e43b18"
       ],
       "currentCallerIds": [
-        "2d2e0b1518dc39fd144c"
+        "b101c0c287c875bae159"
       ],
       "mapping": [
         {
           "baselineCallerId": "00329f071464b8e43b18",
           "currentCallerIds": [
-            "2d2e0b1518dc39fd144c"
+            "b101c0c287c875bae159"
           ],
           "change": "RETAINED"
         }
@@ -8748,7 +8748,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-d3895e94f03fa522",
-        "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+        "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
         "executionStatus": "IN_PROGRESS",
         "finding": "DEMONSTRATED_ABSENT_BYOK_AUTHORITY_MIRROR_RESURRECTION_FIXED_VERIFIED_AT_7BE44030",
         "actorTrace": "Owner/provider-scoped database lookup must contain an active canonical credential. The legacy private download previously returned its encrypted payload when the post-download authority query found no row. It now denies that absence, while active canonical legacy envelopes and valid database-backed connections retain existing behavior.",
@@ -8865,18 +8865,18 @@
       "id": "B1-P2-bee64099846891d0",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "baselineCallerIds": [
         "3fd4baa9d381d8e8ebdb"
       ],
       "currentCallerIds": [
-        "ee7bb2f7b51795d5885a"
+        "37cfa6ca45abf19a23eb"
       ],
       "mapping": [
         {
           "baselineCallerId": "3fd4baa9d381d8e8ebdb",
           "currentCallerIds": [
-            "ee7bb2f7b51795d5885a"
+            "37cfa6ca45abf19a23eb"
           ],
           "change": "RETAINED"
         }
@@ -8947,27 +8947,27 @@
       "id": "B1-P2-ee04e35f1fc33a98",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "baselineCallerIds": [
         "bffd24f4371afe0068ce",
         "c0a660520b23bcf21065"
       ],
       "currentCallerIds": [
-        "c06d3f691fef0e9a9320",
-        "d235d34aeef6e920a127"
+        "fe37d49899df3732b5cc",
+        "ef2d01aaa4ae1572ad53"
       ],
       "mapping": [
         {
           "baselineCallerId": "bffd24f4371afe0068ce",
           "currentCallerIds": [
-            "c06d3f691fef0e9a9320"
+            "fe37d49899df3732b5cc"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "c0a660520b23bcf21065",
           "currentCallerIds": [
-            "d235d34aeef6e920a127"
+            "ef2d01aaa4ae1572ad53"
           ],
           "change": "RETAINED"
         }
@@ -9039,18 +9039,18 @@
       "id": "B1-P2-0814a4d254cfad84",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "baselineCallerIds": [
         "616340b0d7522ddd6992"
       ],
       "currentCallerIds": [
-        "8d454ae0583ff0b8a697"
+        "b8a2f76b780dc05a1342"
       ],
       "mapping": [
         {
           "baselineCallerId": "616340b0d7522ddd6992",
           "currentCallerIds": [
-            "8d454ae0583ff0b8a697"
+            "b8a2f76b780dc05a1342"
           ],
           "change": "RETAINED"
         }
@@ -9121,18 +9121,18 @@
       "id": "B1-P2-4f31a2595f724ac7",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "baselineCallerIds": [
         "20831c35d677b0bb0980"
       ],
       "currentCallerIds": [
-        "e4b3729dbce70a455196"
+        "bf70a476decc73712608"
       ],
       "mapping": [
         {
           "baselineCallerId": "20831c35d677b0bb0980",
           "currentCallerIds": [
-            "e4b3729dbce70a455196"
+            "bf70a476decc73712608"
           ],
           "change": "RETAINED"
         }
@@ -9203,18 +9203,18 @@
       "id": "B1-P2-2114492823658128",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "baselineCallerIds": [
         "f18023f7a692ccdd61fe"
       ],
       "currentCallerIds": [
-        "e17cae98899a7ed70612"
+        "fc6a606bde6698305460"
       ],
       "mapping": [
         {
           "baselineCallerId": "f18023f7a692ccdd61fe",
           "currentCallerIds": [
-            "e17cae98899a7ed70612"
+            "fc6a606bde6698305460"
           ],
           "change": "RETAINED"
         }

@@ -1715,7 +1715,7 @@
     },
     {
       "packetId": "B1-P2-8c13793907db3388",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "executionStatus": "IN_PROGRESS",
       "finding": "DEMONSTRATED_PROVISIONING_BUNDLE_ORPHAN_AUTHORITY_FIXED_PENDING_REAL_PRIVATE_OBJECT_PROOF",
       "actualVerification": {
@@ -2174,7 +2174,7 @@
     },
     {
       "packetId": "B1-P2-d3895e94f03fa522",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "executionStatus": "IN_PROGRESS",
       "finding": "DEMONSTRATED_ABSENT_BYOK_AUTHORITY_MIRROR_RESURRECTION_FIXED_VERIFIED_AT_7BE44030",
       "actorTrace": "Owner/provider-scoped database lookup must contain an active canonical credential. The legacy private download previously returned its encrypted payload when the post-download authority query found no row. It now denies that absence, while active canonical legacy envelopes and valid database-backed connections retain existing behavior.",
@@ -2322,8 +2322,11 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
-          "historicalBinding": {"reference":"2a797dc1b9a932350d4882bffc2fea5aa6f8282b","sha256":"cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"},
-          "currentSourceDelta":"docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json"
+          "historicalBinding": {
+            "reference": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
+            "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
+          },
+          "currentSourceDelta": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json"
         },
         {
           "path": "backend/src/routes/swarm.ts",
@@ -3216,8 +3219,11 @@
     {
       "packetId": "B1-P2-4a588dd074761414",
       "sourceSha256": "91c22bc5ac1fd79eeeaafab69134d17009c7cc0d2bfba101411dde88625b46a2",
-      "historicalBinding": {"reference":"2a797dc1b9a932350d4882bffc2fea5aa6f8282b","sha256":"650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4"},
-      "currentSourceDelta":"docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
+      "historicalBinding": {
+        "reference": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
+        "sha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4"
+      },
+      "currentSourceDelta": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
       "executionStatus": "IN_PROGRESS",
       "finding": "EXISTING_ISSUED_PIPELINE_TO_REQUEST_SCOPED_STORE_CONSTRUCTION_PROOF_PREPARED",
       "originalCriteria": [

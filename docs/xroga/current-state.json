@@ -12175,6 +12175,7 @@
         "backend/src/services/integrations/businessActionConfirmations.ts:7",
         "backend/src/services/integrations/githubAuth.ts:1",
         "backend/src/services/integrations/githubDeploy.ts:1",
+        "backend/src/services/integrations/githubSourceRead.ts:1",
         "backend/src/services/integrations/githubTokenStore.ts:1",
         "backend/src/services/integrations/oauthPkceStore.ts:6",
         "backend/src/services/integrations/userProviderKeys.ts:10",
@@ -15693,32 +15694,47 @@
       "id": "surface:bd41a7e2f60985200cff",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/middleware/runtimePreviewGateway.ts",
-      "sha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106",
+      "sha256": "2f42e628938cf4bee850bea66c8d7c44de087422dd14f7dec67765c80de9ce57",
       "symbols": [
         "HOP_BY_HOP",
+        "PREVIEW_REQUEST_HEADERS",
         "PreviewTarget",
         "attachRuntimePreviewWebSocketGateway",
         "buffer",
+        "checking",
+        "clientQueue",
         "closeBoth",
+        "current",
+        "deadline",
         "grant",
         "headers",
         "hostname",
+        "isPreviewRequestPath",
+        "length",
+        "location",
         "message",
         "parsed",
         "pending",
         "previewWebSocketServer",
         "protocols",
         "proxyHttp",
+        "queuedBytes",
         "rejectUpgrade",
         "requestHostname",
         "resolveTarget",
         "rewriteLocation",
         "runtimePreviewGateway",
         "session",
+        "stopWatching",
+        "stopped",
         "target",
+        "targetStillCurrent",
         "targetUrl",
+        "timer",
         "upstream",
-        "upstreamHeaders"
+        "upstreamHeaders",
+        "upstreamQueue",
+        "watchPreviewTarget"
       ],
       "imports": [
         "../synthesis/livePreview/access.js",
@@ -15742,6 +15758,7 @@
       "callers": [
         "backend/src/index.ts:64",
         "backend/src/middleware/runtimePreviewGateway.security.test.ts:4",
+        "backend/src/middleware/runtimePreviewGateway.transport.test.ts:9",
         "backend/src/security/previewConsumer.local.integration.ts:5"
       ],
       "reachable": true,
@@ -15765,6 +15782,7 @@
       ],
       "testCoverage": [
         "backend/src/middleware/runtimePreviewGateway.security.test.ts",
+        "backend/src/middleware/runtimePreviewGateway.transport.test.ts",
         "backend/src/security/previewConsumer.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -23900,6 +23918,7 @@
         "backend/src/services/integrations/credentialVaultRuntime.test.ts:6",
         "backend/src/services/integrations/credentialVaultStartup.ts:7",
         "backend/src/services/integrations/githubAuth.ts:6",
+        "backend/src/services/integrations/githubSourceRead.test.ts:4",
         "backend/src/services/integrations/githubTokenStore.ts:5",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:9",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:9",
@@ -23931,6 +23950,7 @@
         "backend/src/security/oauthSession.local.integration.ts",
         "backend/src/security/vercelRefreshAccount.local.integration.ts",
         "backend/src/services/integrations/credentialVaultRuntime.test.ts",
+        "backend/src/services/integrations/githubSourceRead.test.ts",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
         "backend/src/services/integrations/oauthPkceStore.vaultLeaseRead.test.ts",
@@ -24289,6 +24309,7 @@
         "backend/src/security/tenantIsolation.local.integration.ts:39",
         "backend/src/services/integrations/githubAuth.revocation.test.ts:4",
         "backend/src/services/integrations/githubDeploy.ts:15",
+        "backend/src/services/integrations/githubSourceRead.ts:2",
         "backend/src/services/publish/easPublish.ts:12",
         "backend/src/services/publish/electronSecrets.ts:6",
         "backend/src/services/publish/nonWebShip.ts:9",
@@ -24453,7 +24474,7 @@
       "id": "surface:c1b2ae43de1ceeb5e7f3",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/githubDeploy.ts",
-      "sha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
+      "sha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
       "symbols": [
         "AtomicPushOptions",
         "ConnectedRepositoryPushOptions",
@@ -24643,6 +24664,7 @@
         "selectedRepo",
         "slug",
         "snapshot",
+        "source",
         "sourcePaths",
         "stack",
         "staticFiles",
@@ -24690,6 +24712,7 @@
         "./githubMutationPlan.js",
         "./githubRepoCreation.js",
         "./githubRunBranch.js",
+        "./githubSourceRead.js",
         "./githubTreeSnapshot.js",
         "./userProviderKeys.js",
         "./vercelAuth.js"
@@ -24714,6 +24737,7 @@
         "backend/src/services/integrations/githubMutationPlan.ts",
         "backend/src/services/integrations/githubRepoCreation.ts",
         "backend/src/services/integrations/githubRunBranch.ts",
+        "backend/src/services/integrations/githubSourceRead.ts",
         "backend/src/services/integrations/githubTreeSnapshot.ts",
         "backend/src/services/integrations/userProviderKeys.ts",
         "backend/src/services/integrations/vercelAuth.ts"
@@ -24739,6 +24763,7 @@
         "backend/src/services/integrations/githubAnalysis.test.ts:3",
         "backend/src/services/integrations/githubDeploy.credential.test.ts:4",
         "backend/src/services/integrations/githubRepositoryState.test.ts:3",
+        "backend/src/services/integrations/githubSourceRead.test.ts:5",
         "backend/src/services/integrations/managedVercelDeployment.test.ts:10",
         "backend/src/services/integrations/universalRepositoryHydration.test.ts:4",
         "backend/src/services/integrations/vercelGitProject.test.ts:3",
@@ -24765,7 +24790,7 @@
         "backend/src/services/integrations/githubDeploy.ts#xrogaBotIdentity"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/githubDeploy.ts:164 (user_id)"
+        "backend/src/services/integrations/githubDeploy.ts:165 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/services/integrations/githubDeploy.ts#BranchAuthorizationError",
@@ -24788,6 +24813,7 @@
         "backend/src/services/integrations/githubAnalysis.test.ts",
         "backend/src/services/integrations/githubDeploy.credential.test.ts",
         "backend/src/services/integrations/githubRepositoryState.test.ts",
+        "backend/src/services/integrations/githubSourceRead.test.ts",
         "backend/src/services/integrations/managedVercelDeployment.test.ts",
         "backend/src/services/integrations/universalRepositoryHydration.test.ts",
         "backend/src/services/integrations/vercelGitProject.test.ts"
@@ -24997,6 +25023,64 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/services/integrations/githubRunBranch.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:9fbb11b49420622e2fcd",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/githubSourceRead.ts",
+      "sha256": "ee3ae54b30581b8f230c4c15fab27c298ca8f674a307b28b5c8a95f86786520c",
+      "symbols": [
+        "assertCurrent",
+        "authority",
+        "chunks",
+        "createGitHubSourceReader",
+        "denied",
+        "error",
+        "invalidated",
+        "lifetime",
+        "reader",
+        "request",
+        "response",
+        "selected",
+        "size"
+      ],
+      "imports": [
+        "../../config/supabase.js",
+        "./githubAuth.js"
+      ],
+      "runtimeImports": [
+        "backend/src/config/supabase.ts",
+        "backend/src/services/integrations/githubAuth.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/services/integrations/githubDeploy.ts:65"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "user_integrations"
+      ],
+      "externalProviderDependencies": [],
+      "authBoundary": [
+        "backend/src/services/integrations/githubSourceRead.ts#authority"
+      ],
+      "tenantBoundary": [
+        "backend/src/services/integrations/githubSourceRead.ts:17 (user_id)"
+      ],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/services/integrations/githubSourceRead.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -25619,7 +25703,7 @@
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:7",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:7",
         "backend/src/services/integrations/supabaseProvision.ts:540",
-        "backend/src/services/integrations/userProviderKeys.ts:1048"
+        "backend/src/services/integrations/userProviderKeys.ts:1064"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -25808,8 +25892,8 @@
         "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts:4",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:6",
-        "backend/src/services/integrations/userProviderKeys.ts:1287",
-        "backend/src/services/integrations/userProviderKeys.ts:1296"
+        "backend/src/services/integrations/userProviderKeys.ts:1303",
+        "backend/src/services/integrations/userProviderKeys.ts:1312"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -25846,7 +25930,7 @@
       "id": "surface:584468c24245c4925465",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "symbols": [
         "ALLOWED_PROVIDERS",
         "ALLOWED_SET",
@@ -25871,6 +25955,7 @@
         "accessToken",
         "active",
         "admission",
+        "after",
         "anon",
         "assertPrivateCredentialEnv",
         "associated",
@@ -25937,6 +26022,7 @@
         "loadKeyFromStorage",
         "loaded",
         "maskKey",
+        "matches",
         "meta",
         "metadata",
         "migrateLegacyProviderKey",
@@ -25972,6 +26058,7 @@
         "query",
         "raw",
         "read",
+        "readCurrent",
         "readUserSupabaseBundle",
         "ready",
         "ref",
@@ -25994,6 +26081,7 @@
         "seenNames",
         "selected",
         "service",
+        "snapshot",
         "snapshotSupabaseRows",
         "status",
         "statuses",
@@ -26058,6 +26146,7 @@
         "backend/src/security/tenantIsolation.local.integration.ts:22",
         "backend/src/services/integrations/absentCredentialAuthority.test.ts:4",
         "backend/src/services/integrations/credentialMirrorRace.test.ts:4",
+        "backend/src/services/integrations/credentialUploadLifecycle.test.ts:4",
         "backend/src/services/integrations/githubDeploy.ts:58",
         "backend/src/services/integrations/supabaseBundle.authority.test.ts:4",
         "backend/src/services/integrations/supabaseBundle.test.ts:5",
@@ -26091,16 +26180,17 @@
         "backend/src/services/integrations/userProviderKeys.ts#oauthConnected"
       ],
       "tenantBoundary": [
-        "backend/src/services/integrations/userProviderKeys.ts:67 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:319 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:500 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:541 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:553 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:608 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:770 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:793 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:818 (user_id)",
-        "backend/src/services/integrations/userProviderKeys.ts:1094 (user_id)"
+        "backend/src/services/integrations/userProviderKeys.ts:36 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:83 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:335 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:516 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:557 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:569 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:624 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:786 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:809 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:834 (user_id)",
+        "backend/src/services/integrations/userProviderKeys.ts:1110 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -26114,6 +26204,7 @@
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/absentCredentialAuthority.test.ts",
         "backend/src/services/integrations/credentialMirrorRace.test.ts",
+        "backend/src/services/integrations/credentialUploadLifecycle.test.ts",
         "backend/src/services/integrations/supabaseBundle.authority.test.ts",
         "backend/src/services/integrations/supabaseBundle.test.ts",
         "backend/src/services/integrations/userProviderKeys.connect.test.ts",
@@ -31076,6 +31167,7 @@
       ],
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.security.test.ts:5",
+        "backend/src/middleware/runtimePreviewGateway.transport.test.ts:10",
         "backend/src/middleware/runtimePreviewGateway.ts:31",
         "backend/src/routes/projectRuntime.ts:26",
         "backend/src/security/previewConsumer.local.integration.ts:9",
@@ -31097,6 +31189,7 @@
       ],
       "testCoverage": [
         "backend/src/middleware/runtimePreviewGateway.security.test.ts",
+        "backend/src/middleware/runtimePreviewGateway.transport.test.ts",
         "backend/src/security/previewConsumer.local.integration.ts",
         "backend/src/synthesis/livePreview/livePreview.test.ts"
       ],
@@ -31262,6 +31355,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/middleware/runtimePreviewGateway.security.test.ts",
+        "backend/src/middleware/runtimePreviewGateway.transport.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/livePreview/access.test.ts",
         "backend/src/synthesis/livePreview/livePreview.test.ts"
@@ -89241,7 +89335,7 @@
       "id": "surface:c4f135aa7dcb9cdc3800",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/run-baseline.mjs",
-      "sha256": "a6e8be36b7999ebe115d2e7ac162356adf3cbe7e23d697fd1b786f355a768ca8",
+      "sha256": "f009aa893cdb7677c595084ab940d1d66222675b7a20e94ce5c9737e8de11b42",
       "symbols": [
         "after",
         "append",
@@ -90490,6 +90584,7 @@
         "scripts/ci/prepare-pr-integration.test.mjs:5",
         "scripts/security/audit-tenant-policies.test.mjs:3",
         "scripts/security/refresh-phase-three-authority-delta.mjs:7",
+        "scripts/security/source-lifetime-bindings.test.mjs:7",
         "scripts/xroga/phase-two-proof-bindings.test.mjs:8"
       ],
       "reachable": true,
@@ -90516,6 +90611,7 @@
       "testCoverage": [
         "scripts/ci/prepare-pr-integration.test.mjs",
         "scripts/security/audit-tenant-policies.test.mjs",
+        "scripts/security/source-lifetime-bindings.test.mjs",
         "scripts/xroga/phase-two-proof-bindings.test.mjs"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -101237,6 +101333,15 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
+      "id": "schedule:ec6b90438003246dd532",
+      "sourcePath": "backend/src/middleware/runtimePreviewGateway.ts",
+      "line": 155,
+      "kind": "setInterval",
+      "symbol": "watchPreviewTarget",
+      "reachable": true,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED"
+    },
+    {
       "id": "schedule:e54c7d403fc8e5bb1a0b",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 133,
@@ -110277,6 +110382,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:a4a6a9ac1e210c50f703",
+      "sourcePath": "backend/src/middleware/runtimePreviewGateway.transport.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:d97140d5c125cfc4bc30",
       "sourcePath": "backend/src/operations/actionAdmission.local.integration.ts",
       "declaredTests": 1,
@@ -111336,6 +111448,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:4fcdb5e0a2a5a29c302a",
+      "sourcePath": "backend/src/services/integrations/credentialUploadLifecycle.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:a342e35601775d045167",
       "sourcePath": "backend/src/services/integrations/credentialVault.test.ts",
       "declaredTests": 5,
@@ -111434,6 +111553,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:ca702115dd787d6e2012",
+      "sourcePath": "backend/src/services/integrations/githubSourceRead.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:359a248180556c13c8e1",
       "sourcePath": "backend/src/services/integrations/githubTokenStore.writerContext.test.ts",
       "declaredTests": 1,
@@ -111451,6 +111577,13 @@
       "id": "test-suite:23fa95ee762dda3d6ae1",
       "sourcePath": "backend/src/services/integrations/googleCloudKmsCryptoProvider.test.ts",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:2bb0aa459341fb7f5186",
+      "sourcePath": "backend/src/services/integrations/legacyGitHubUploadReachability.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -113875,6 +114008,13 @@
       "id": "test-suite:7880f7d68bf575b7b99a",
       "sourcePath": "scripts/security/schema-catalog.test.mjs",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:2af826e7fdbe8ac0fda2",
+      "sourcePath": "scripts/security/source-lifetime-bindings.test.mjs",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

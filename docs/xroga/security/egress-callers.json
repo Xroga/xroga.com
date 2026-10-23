@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "39e318cd04d1a3ae600bb70f3fa379b057b59702f346d64db6d5975a527d7c71",
+  "sourceTreeDigest": "385580a5afafbbba191700fb9c7673b59cc61b7313b762ab14fd49aaa400be8d",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -866,11 +866,11 @@
     {
       "id": "7359a41f4a615f5b0a81",
       "file": "backend/src/middleware/runtimePreviewGateway.ts",
-      "line": 230,
+      "line": 268,
       "entryPoint": "proxyHttp",
       "transport": "transport:request",
       "callee": "httpRequest",
-      "callSha256": "88a7557de6e5648f463713c091e69c0ccd64cce181262cc3a9666c4b182c5368",
+      "callSha256": "1134932cbe38fa8f37b787e832c53884095ed4986da9028502aa6cb54470c497",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "UNREVIEWED_SERVER_CALLER",
       "tenantAuthority": "REQUIRES_SOURCE_TRACE",
@@ -882,11 +882,11 @@
     {
       "id": "a0ba7209a0695a62227d",
       "file": "backend/src/middleware/runtimePreviewGateway.ts",
-      "line": 522,
+      "line": 581,
       "entryPoint": "attachRuntimePreviewWebSocketGateway",
       "transport": "network-or-dynamic-client",
       "callee": "WebSocket",
-      "callSha256": "2153f010a6579348b6c4f542b232aedfd99437c85016e175e61f85b0cb74c210",
+      "callSha256": "9e4955a3395208a6831c323448dfc8b534461274e36c2deb81e0220a5df5d6a1",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "UNREVIEWED_SERVER_CALLER",
       "tenantAuthority": "REQUIRES_SOURCE_TRACE",
@@ -898,11 +898,11 @@
     {
       "id": "7b7f1f842cfadda3dff0",
       "file": "backend/src/middleware/runtimePreviewGateway.ts",
-      "line": 544,
+      "line": 605,
       "entryPoint": "attachRuntimePreviewWebSocketGateway",
       "transport": "network-or-dynamic-client",
       "callee": "WebSocket",
-      "callSha256": "1d916843aa4f64c971a0858d0c597ed1665f2be833c82cea26405716a9ede000",
+      "callSha256": "ccca84d5508a71f8da2aa96ab3a3755855e3a8b0097cfa74bfb7aa1a8ac2d0f8",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "UNREVIEWED_SERVER_CALLER",
       "tenantAuthority": "REQUIRES_SOURCE_TRACE",
@@ -914,11 +914,11 @@
     {
       "id": "165aca6677bb45e4a237",
       "file": "backend/src/middleware/runtimePreviewGateway.ts",
-      "line": 597,
+      "line": 667,
       "entryPoint": "attachRuntimePreviewWebSocketGateway",
       "transport": "send",
       "callee": "upstream.send",
-      "callSha256": "d7b817f482c8822e4d2f1b0fc02d989497a80d8cdb5a326db9611475e0ad4a8d",
+      "callSha256": "8c824695d70b06775816e7c1e27fe63b6f95398bc8f2e94cf0926be11c1817e7",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "UNREVIEWED_SERVER_CALLER",
       "tenantAuthority": "REQUIRES_SOURCE_TRACE",
@@ -930,7 +930,7 @@
     {
       "id": "716a373b546de2ebcbd5",
       "file": "backend/src/middleware/runtimePreviewGateway.ts",
-      "line": 624,
+      "line": 686,
       "entryPoint": "attachRuntimePreviewWebSocketGateway",
       "transport": "send",
       "callee": "upstream.send",
@@ -946,11 +946,11 @@
     {
       "id": "44f081144b3e1b3d20cb",
       "file": "backend/src/middleware/runtimePreviewGateway.ts",
-      "line": 646,
+      "line": 713,
       "entryPoint": "attachRuntimePreviewWebSocketGateway",
       "transport": "send",
       "callee": "client.send",
-      "callSha256": "8dae35c1993b96643e502feb7e5c092efa6b67d51a813028d4684647ecc31c25",
+      "callSha256": "d3ea6de8669bb78bf36f4227fde1a5199f9cb0398afaf6c03f37c362ae6d8c74",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "UNREVIEWED_SERVER_CALLER",
       "tenantAuthority": "REQUIRES_SOURCE_TRACE",
@@ -1316,7 +1316,7 @@
     {
       "id": "90eeada0337da120131f",
       "file": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 277,
+      "line": 280,
       "entryPoint": "ghFetch",
       "transport": "fetch",
       "callee": "fetch",
@@ -1332,7 +1332,7 @@
     {
       "id": "75cf57fdf79541363007",
       "file": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 833,
+      "line": 836,
       "entryPoint": "ensureVercelGitProject",
       "transport": "fetch",
       "callee": "fetch",
@@ -1348,12 +1348,28 @@
     {
       "id": "b7dadd6888e72320edc7",
       "file": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 867,
+      "line": 870,
       "entryPoint": "ensureVercelGitProject",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "549ecbb62dd927d5dccce78d48e1a6870f8734cdcf47a65e7c05fd581ef79221",
       "destination": "https://api.vercel.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "07a46a7b451eaf4dc307",
+      "file": "backend/src/services/integrations/githubSourceRead.ts",
+      "line": 34,
+      "entryPoint": "request",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "7ca8ed394aa64e606952ccefa811a12b96760cfa04124030b9bac07a941e746a",
+      "destination": "https://api.github.com",
       "trust": "UNREVIEWED_SERVER_CALLER",
       "tenantAuthority": "REQUIRES_SOURCE_TRACE",
       "currentProtection": "NOT_CERTIFIED",
@@ -1370,12 +1386,23 @@
       "callee": "supabase.storage.from(BUCKET).upload",
       "callSha256": "4b303195d0968754dfb611ec02a4d78c8bbf88442db79ef84c6d6b339b831074",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "NO_REACHABLE_PRODUCTION_IMPORTER_AND_CLOSED_PRODUCTION_LEGACY_WINDOW_ONLY_NOT_APPROVAL_OF_FUTURE_MIGRATION_CALLERS",
+      "tenantAuthority": "CURRENT_KNOWN_SOURCE_GRAPH_HAS_ONLY_TEST_CALLERS._EXPLICIT_LEGACY_WRITES_REMAIN_UNCERTIFIED_IF_REINTRODUCED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "DISABLED_WITH_PROOF",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/legacyGitHubUploadReachability.test.ts",
+          "marker": "legacy GitHub mirror writer has no production importer or invocation in the tracked source graph",
+          "sha256": "2d5082e73c3f8c0aca20a002eb53c960dca073ea9c4dd531eb1a07efb044e910"
+        },
+        {
+          "path": "backend/src/services/integrations/credentialUploadBoundary.test.ts",
+          "marker": "actual legacy credential upload refuses public/unknown buckets and binds both upload attempts to original owner",
+          "sha256": "6562354400b3c747a1efb8257b28f70489a445e13401824699aca8836eb99cc8"
+        }
+      ]
     },
     {
       "id": "e2ad9aec1c5cd1e3ab27",
@@ -1386,12 +1413,23 @@
       "callee": "supabase.storage.from(BUCKET).upload",
       "callSha256": "9ed3fbe253284de0c824dd74feff9ecb99040484501a69e6b59246c9e9f44037",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "NO_REACHABLE_PRODUCTION_IMPORTER_AND_CLOSED_PRODUCTION_LEGACY_WINDOW_ONLY_NOT_APPROVAL_OF_FUTURE_MIGRATION_CALLERS",
+      "tenantAuthority": "CURRENT_KNOWN_SOURCE_GRAPH_HAS_ONLY_TEST_CALLERS._EXPLICIT_LEGACY_WRITES_REMAIN_UNCERTIFIED_IF_REINTRODUCED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "DISABLED_WITH_PROOF",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/legacyGitHubUploadReachability.test.ts",
+          "marker": "legacy GitHub mirror writer has no production importer or invocation in the tracked source graph",
+          "sha256": "2d5082e73c3f8c0aca20a002eb53c960dca073ea9c4dd531eb1a07efb044e910"
+        },
+        {
+          "path": "backend/src/services/integrations/credentialUploadBoundary.test.ts",
+          "marker": "actual legacy credential upload refuses public/unknown buckets and binds both upload attempts to original owner",
+          "sha256": "6562354400b3c747a1efb8257b28f70489a445e13401824699aca8836eb99cc8"
+        }
+      ]
     },
     {
       "id": "9f962d39a30e2e289376",
@@ -1444,11 +1482,11 @@
     {
       "id": "c7711580844b520345cf",
       "file": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 33,
+      "line": 48,
       "entryPoint": "saveKeyToStorage",
       "transport": "upload",
       "callee": "supabase.storage.from(KEY_BUCKET).upload",
-      "callSha256": "4e8c66a9742d255ae1b45d5122050738a69a0daec49659a5036efdaa75358604",
+      "callSha256": "89ee36190deb9acd207e31b721521ab1ee9173c7baab3e9621d74b8472dfe8a2",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "UNREVIEWED_SERVER_CALLER",
       "tenantAuthority": "REQUIRES_SOURCE_TRACE",
@@ -2342,6 +2380,7 @@
         "90eeada0337da120131f",
         "75cf57fdf79541363007",
         "b7dadd6888e72320edc7",
+        "07a46a7b451eaf4dc307",
         "9f962d39a30e2e289376",
         "b401421d17d621333330",
         "15dcdf4bce3cfa3abf94",
@@ -2480,9 +2519,9 @@
     }
   ],
   "counts": {
-    "total": 133,
-    "reviewed": 12,
-    "pending": 121,
-    "unresolvedHighRiskBypasses": 67
+    "total": 134,
+    "reviewed": 14,
+    "pending": 120,
+    "unresolvedHighRiskBypasses": 65
   }
 }
