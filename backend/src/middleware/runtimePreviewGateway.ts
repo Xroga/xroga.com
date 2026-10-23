@@ -44,6 +44,13 @@ interface PreviewTarget {
     string;
 }
 
+function isPreviewRequestPath(value: string | undefined): value is string {
+  // Only origin-form paths may be appended to the fixed runtime authority.
+  // In particular, @host, absolute URLs and network-path references must never
+  // become URL authority/userinfo when constructing a WebSocket destination.
+  return typeof value === 'string' && /^\/(?!\/)/.test(value) && !/[\\\u0000-\u0020#]/.test(value);
+}
+
 function requestHostname(
   value:
     string | undefined,
@@ -128,6 +135,35 @@ const HOP_BY_HOP =
     'host',
   ]);
 
+// Preview targets are untrusted application code. Never forward API/SSO cookies,
+// bearer credentials, proxy credentials or arbitrary user-supplied headers.
+const PREVIEW_REQUEST_HEADERS = new Set([
+  'accept', 'accept-encoding', 'accept-language', 'content-type', 'content-length',
+  'range', 'if-range', 'if-none-match', 'if-modified-since', 'cache-control',
+]);
+
+async function targetStillCurrent(target: PreviewTarget): Promise<boolean> {
+  const current = await resolveTarget(target.publicHost);
+  return current?.host === target.host && current?.port === target.port;
+}
+
+/** Idle streams must not retain access indefinitely after revocation. Recheck
+ * once per second, with one in-flight read and a bounded fail-closed deadline. */
+function watchPreviewTarget(target: PreviewTarget, invalidate: () => void): () => void {
+  let stopped = false;
+  let checking = false;
+  const timer = setInterval(() => {
+    if (stopped || checking) return;
+    checking = true;
+    const deadline = setTimeout(() => { if (!stopped) invalidate(); }, 5_000);
+    void targetStillCurrent(target).then(valid => { if (!valid && !stopped) invalidate(); })
+      .catch(() => { if (!stopped) invalidate(); })
+      .finally(() => { clearTimeout(deadline); checking = false; });
+  }, 1_000);
+  timer.unref();
+  return () => { stopped = true; clearInterval(timer); };
+}
+
 function upstreamHeaders(
   input:
     IncomingHttpHeaders,
@@ -155,7 +191,7 @@ function upstreamHeaders(
     if (
       value ==
         null ||
-      HOP_BY_HOP.has(
+      !PREVIEW_REQUEST_HEADERS.has(
         key.toLowerCase(),
       )
     ) {
@@ -190,7 +226,7 @@ function rewriteLocation(
 
   target:
     PreviewTarget,
-): string {
+): string | null {
   try {
     const parsed =
       new URL(
@@ -198,9 +234,10 @@ function rewriteLocation(
       );
 
     if (
-      parsed.hostname ===
-      target.host
+      (parsed.hostname === target.host && (!parsed.port || Number(parsed.port) === target.port)) ||
+      parsed.host === target.publicHost
     ) {
+      if (!['http:', 'https:'].includes(parsed.protocol) || parsed.username || parsed.password) return null;
       parsed.protocol =
         'https:';
 
@@ -210,10 +247,11 @@ function rewriteLocation(
       return parsed.toString();
     }
   } catch {
-    // Relative redirects are already correct.
+    // Network-path references and backslash-normalized authorities are not local.
+    if (!/^[\u0000-\u0020]*[\\/]{2}/.test(value) && !value.includes('\\') && !/[\r\n]/.test(value)) return value;
   }
 
-  return value;
+  return null;
 }
 
 function proxyHttp(
@@ -281,12 +319,16 @@ function proxyHttp(
             typeof value ===
               'string'
           ) {
+            const location = rewriteLocation(value, target);
+            if (location === null) {
+              upstreamResponse.destroy();
+              res.statusCode = 502;
+              res.end('Preview redirect destination is not permitted.');
+              return;
+            }
             res.setHeader(
               key,
-              rewriteLocation(
-                value,
-                target,
-              ),
+              location,
             );
 
             continue;
@@ -321,6 +363,13 @@ function proxyHttp(
       );
     },
   );
+
+  const stopWatching = watchPreviewTarget(target, () => {
+    upstream.destroy();
+    res.destroy();
+  });
+  res.once('close', () => { stopWatching(); upstream.destroy(); });
+  req.once('aborted', () => { stopWatching(); upstream.destroy(); });
 
   upstream.on(
     'error',
@@ -381,6 +430,11 @@ export async function runtimePreviewGateway(
     return;
   }
 
+  if (!isPreviewRequestPath(req.originalUrl)) {
+    res.status(400).send('Invalid preview request path.');
+    return;
+  }
+
   const target =
     await resolveTarget(
       hostname,
@@ -414,6 +468,7 @@ const previewWebSocketServer =
 
     perMessageDeflate:
       false,
+    maxPayload: 1024 * 1024,
   });
 
 function rejectUpgrade(
@@ -468,6 +523,10 @@ export function attachRuntimePreviewWebSocketGateway(
 
       void (
         async () => {
+          if (!isPreviewRequestPath(req.url)) {
+            rejectUpgrade(socket, 400, 'Invalid preview request path');
+            return;
+          }
           const target =
             await resolveTarget(
               hostname,
@@ -525,6 +584,8 @@ export function attachRuntimePreviewWebSocketGateway(
                         {
                           perMessageDeflate:
                             false,
+                          maxPayload: 1024 * 1024,
+                          handshakeTimeout: 10_000,
 
                           headers: {
                             host:
@@ -546,6 +607,8 @@ export function attachRuntimePreviewWebSocketGateway(
                         {
                           perMessageDeflate:
                             false,
+                          maxPayload: 1024 * 1024,
+                          handshakeTimeout: 10_000,
 
                           headers: {
                             host:
@@ -573,6 +636,10 @@ export function attachRuntimePreviewWebSocketGateway(
                   }> =
                   [];
 
+                let queuedBytes = 0;
+                let clientQueue = Promise.resolve();
+                let upstreamQueue = Promise.resolve();
+
                 client.on(
                   'message',
 
@@ -590,37 +657,32 @@ export function attachRuntimePreviewWebSocketGateway(
                               ArrayBuffer,
                           );
 
-                    if (
-                      upstream.readyState ===
-                      WebSocket.OPEN
-                    ) {
-                      upstream.send(
-                        buffer,
-                        {
-                          binary,
-                        },
-                      );
-                    } else {
-                      pending.push({
-                        data:
-                          buffer,
-
-                        binary,
-                      });
-                    }
+                    queuedBytes += buffer.byteLength;
+                    if (queuedBytes > 1024 * 1024) { closeBoth(); return; }
+                    clientQueue = clientQueue.then(async () => {
+                      if (!await targetStillCurrent(target)) { closeBoth(); return; }
+                      if (upstream.readyState === WebSocket.OPEN) {
+                        queuedBytes -= buffer.byteLength;
+                        if (upstream.bufferedAmount + buffer.byteLength > 1024 * 1024) { closeBoth(); return; }
+                        upstream.send(buffer, { binary });
+                      } else if (upstream.readyState === WebSocket.CONNECTING) pending.push({data: buffer, binary});
+                    }).catch(closeBoth);
                   },
                 );
 
                 upstream.on(
                   'open',
 
-                  () => {
+                  () => { void clientQueue.then(async () => {
+                    if (!await targetStillCurrent(target)) { closeBoth(); return; }
                     for (
                       const message of
                       pending.splice(
                         0,
                       )
                     ) {
+                      queuedBytes -= message.data.byteLength;
+                      if (upstream.bufferedAmount + message.data.byteLength > 1024 * 1024) { closeBoth(); return; }
                       upstream.send(
                         message.data,
                         {
@@ -629,6 +691,7 @@ export function attachRuntimePreviewWebSocketGateway(
                         },
                       );
                     }
+                  }).catch(closeBoth);
                   },
                 );
 
@@ -639,22 +702,25 @@ export function attachRuntimePreviewWebSocketGateway(
                     data,
                     binary,
                   ) => {
-                    if (
-                      client.readyState ===
-                      WebSocket.OPEN
-                    ) {
-                      client.send(
-                        data,
-                        {
-                          binary,
-                        },
-                      );
-                    }
+                    const length = Array.isArray(data) ? data.reduce((n, chunk) => n + chunk.length, 0) : data.byteLength;
+                    queuedBytes += length;
+                    if (queuedBytes > 1024 * 1024) { closeBoth(); return; }
+                    upstreamQueue = upstreamQueue.then(async () => {
+                      if (!await targetStillCurrent(target)) { closeBoth(); return; }
+                      queuedBytes -= length;
+                      if (client.readyState === WebSocket.OPEN) {
+                        if (client.bufferedAmount + length > 1024 * 1024) { closeBoth(); return; }
+                        client.send(data, { binary });
+                      }
+                    }).catch(closeBoth);
                   },
                 );
 
+                let stopWatching = () => {};
                 const closeBoth =
                   () => {
+                    stopWatching();
+                    pending.length = 0;
                     if (
                       client.readyState ===
                         WebSocket.OPEN ||
@@ -673,6 +739,7 @@ export function attachRuntimePreviewWebSocketGateway(
                       upstream.close();
                     }
                   };
+                stopWatching = watchPreviewTarget(target, closeBoth);
 
                 client.on(
                   'close',
