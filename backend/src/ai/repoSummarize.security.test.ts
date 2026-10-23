@@ -92,6 +92,6 @@ test('actual repository memo binds platform scope, worker, JSON payload and comp
   for(const dispatchScope of [{...scope,userId:foreign},{...scope,context:createTenantContext({userId:foreign,via:'remote_getuser'})},{...scope,connectedAccountId:'foreign-account'},{...scope,runAttempt:{...attempt}},{...scope,projectId:randomUUID()}]){
     reset();run={...current};await assert.rejects(summarizeRepoForUpdates({...options(),dispatchScope}));assert.equal(effects,4);
   }
-  reset('wrongReservation');run={...current};assert.equal(await summarizeRepoForUpdates(options()),null);assert.equal(effects,4);
+  reset('wrongReservation');run={...current};await assert.rejects(summarizeRepoForUpdates(options()),{code:'PROVIDER_RESERVATION_DENIED',retryable:false});assert.equal(effects,4);
   reset('providerFailure');run={...current};assert.equal(await summarizeRepoForUpdates(options()),null);assert.equal(effects,5,'Availability failure preserves optional memo behavior without unsafe logging');
 });
