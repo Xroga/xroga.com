@@ -39,8 +39,8 @@ export function WorkspacePeopleControls() {
     return () => { document.removeEventListener('keydown', escape); previous?.focus(); };
   }, [open]);
   return <>
-    <button type="button" className={styles.control} aria-label="Team" onClick={() => setOpen(true)}><AnimatedIcon icon={UsersRoundIcon} size={15} intro={false} /><span>Team</span></button>
     <button type="button" className={styles.control} aria-label="Share conversation" title="Share a read-only conversation snapshot" disabled={!transcript.trim()} onClick={() => { if (identity.status === 'guest') { requestAuthGate('integration'); return; } setShare(true); }}><AnimatedIcon icon={ShareIcon} size={14} intro={false} /><span>Share</span></button>
+    <button type="button" className={styles.control} aria-label="Team" onClick={() => setOpen(true)}><AnimatedIcon icon={UsersRoundIcon} size={15} intro={false} /><span>Team</span></button>
     <MessageShareModal open={share} onClose={() => setShare(false)} response={transcript} contentLabel="conversation snapshot" />
     {open ? createPortal(<div className={styles.overlay} onClick={() => setOpen(false)}>
       <aside ref={drawerRef} className={styles.drawer} role="dialog" aria-label="Team workspace" aria-modal="true" onClick={event => event.stopPropagation()}>

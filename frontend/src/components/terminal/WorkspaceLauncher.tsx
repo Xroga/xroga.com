@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils';
  * the workspace content and the terminal window. The chat control stays icon-only;
  * Workspace remains labelled wherever the title bar has room.
  */
-export function WorkspaceLauncher({ className }: { className?: string }) {
+export function WorkspaceLauncher({ className, control = 'all' }: { className?: string; control?: 'all' | 'project' | 'visibility' }) {
   const workspaceOpen = useProjectWorkspaceStore((s) => s.workspaceOpen);
   const setWorkspaceOpen = useProjectWorkspaceStore((s) => s.setWorkspaceOpen);
   const chatbarHidden = useThemeStore((s) => s.chatbarHidden);
@@ -28,7 +28,7 @@ export function WorkspaceLauncher({ className }: { className?: string }) {
       {/* Deliberately icon-only and small: this is a get-out-of-the-way control, and
           a full label would compete with the workspace button next to it. The label
           still reaches assistive technology and hover. */}
-      <button
+      {control !== 'project' && <button
         type="button"
         onClick={() => { if (!emptyWorkspace) setChatbarHidden(!chatbarHidden); }}
         disabled={emptyWorkspace}
@@ -43,9 +43,9 @@ export function WorkspaceLauncher({ className }: { className?: string }) {
             what the control does, and it is now the only way back, since hiding the
             chatbar no longer leaves a floating restore button behind. */}
         <AnimatedIcon icon={EyeClosedIcon} size={14} intro={false} />
-      </button>
+      </button>}
 
-      <button
+      {control !== 'visibility' && <button
         type="button"
         onClick={() => setWorkspaceOpen(!workspaceOpen)}
         className="xv-ws-launch"
@@ -59,7 +59,7 @@ export function WorkspaceLauncher({ className }: { className?: string }) {
             panel-slide glyphs said only that a panel would move. */}
         <AnimatedIcon icon={FilePenIcon} size={14} intro={false} />
         <span>Project edits</span>
-      </button>
+      </button>}
     </div>
   );
 }

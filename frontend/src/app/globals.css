@@ -14536,16 +14536,21 @@ html.xv-home-scroll-lock body {
 }
 
 
-/* One native draggable thumb for sidebar nav, repo terminals, pins and recents. */
+/* Short in-sidebar progress control; the nav keeps wheel and keyboard scrolling. */
 .xv-sidebar-nav-scroll.xv-sidebar-scroll-track {
-  scrollbar-width: thin !important;
-  scrollbar-color: color-mix(in srgb, var(--muted) 60%, transparent) transparent !important;
+  scrollbar-width: none !important;
+  padding-right: 22px !important;
   overscroll-behavior-y: contain;
 }
-.xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar { display: block !important; width: 6px !important; height: 0 !important; }
-.xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar-track { background: color-mix(in srgb, var(--muted) 8%, transparent); border-radius: 999px; }
-.xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--muted) 58%, transparent); border-radius: 999px; }
-.xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--muted) 84%, transparent); }
+.xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar { display:none !important; width:0 !important; }
+.xv-nav-scroll-controls { position:absolute; right:3px; top:50%; transform:translateY(-50%); width:18px; display:flex; flex-direction:column; align-items:center; gap:3px; padding:4px 2px; border:1px solid var(--card-border); border-radius:999px; background:var(--sidebar-bg,var(--background)); box-shadow:0 4px 16px #0003; z-index:4; }
+.xv-nav-scroll-controls button { width:14px; height:14px; display:grid; place-items:center; border:0; background:transparent; color:var(--foreground); border-radius:50%; }
+.xv-nav-scroll-controls button:disabled { opacity:.25; }
+.xv-nav-scroll-controls button:not(:disabled):hover,.xv-nav-scroll-controls button:focus-visible { background:var(--surface-inset); }
+.xv-nav-scroll-progress { position:relative; width:10px; height:42px; border-radius:999px; background:color-mix(in srgb,var(--muted) 20%,transparent); cursor:ns-resize; touch-action:none; }
+.xv-nav-scroll-progress span { position:absolute; left:2px; width:6px; height:12px; border-radius:999px; background:var(--foreground); box-shadow:0 0 6px color-mix(in srgb,var(--foreground) 20%,transparent); }
+.xv-nav-scroll-progress:focus-visible { outline:2px solid var(--foreground); outline-offset:2px; }
+.xv-page-scroll-controls { right:calc(var(--xv-content-gutter-inline) + 5px); }
 .xv-repos-scroll { overflow: visible !important; max-height: none !important; }
 
 /* Unambiguous outside-composer chat navigation: outlined by default, dark-filled when clicked. */
@@ -14760,7 +14765,9 @@ body.theme-beige .xv-plugins-popover, body.theme-beige .xv-sidebar-hover-menu__c
 .xv-composer-shortcuts button { display:flex; width:100%; justify-content:space-between; align-items:center; gap:12px; min-height:36px; padding:7px 9px; border-radius:8px; text-align:left; color:var(--foreground); font-size:11px; }
 .xv-composer-shortcuts button span { color:var(--muted); }
 .xv-composer-shortcuts button:is(:hover,[aria-selected="true"]) { background:var(--terminal-ui-inset,var(--surface-inset)); }
-.xv-sidebar-bottom { margin-top:auto; margin-bottom:0; padding-bottom:max(4px,env(safe-area-inset-bottom)); }
+.xv-sidebar-bottom { margin-top:auto; margin-bottom:0; padding:3px 8px max(4px,env(safe-area-inset-bottom)) !important; background:transparent; border-top:1px solid color-mix(in srgb,var(--card-border) 55%,transparent); }
+.xv-sidebar-bottom .xv-sidebar-profile-row { min-height:37px; padding:3px 4px !important; }
+.xv-sidebar-bottom .xv-sidebar-profile-row img { width:28px; height:28px; }
 .xv-sidebar-profile-row { gap:5px!important; }
 .xv-sidebar-profile-row .xv-upgrade-action { margin-top:1px; }
 .xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-companion-blackhole > button {
