@@ -27,4 +27,8 @@ Formal status remains B1_P3_BLOCKED. Production credential migration, release, D
 
 ## Rollback
 
+## CI preflight reconciliation
+
+Candidate `38bee46f74e9ec6080405011d5aa9ea0b87f2c1e` passed standalone frozen install, lint and build in GitHub run 40006528570. Unit run 40006524198 stopped before baseline execution on generated inventory drift. The canonical inventory generator, without `--refresh`, and source-manifest reconciler updated only derived inventory and source checksums. Historical generation identity, frozen criteria, accepted receipts and requirement dispositions remain unchanged. Inventory and requirement-integrity checks then passed. This fixes preflight metadata, not an application or acceptance failure.
+
 This branch is isolated from both preserved PR branches. Reject the candidate or revert its reconciliation on a new review branch if required. Do not reset or force-push either preserved branch, remove Phase 4 work, reverse accepted historical migrations in a live database, or touch the existing release.
