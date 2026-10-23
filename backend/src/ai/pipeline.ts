@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
 import {requireTenantContext,requireResourceOwner,type TenantContext} from '../security/tenantContext.js';
 import {requireOptionalOwnedDatabaseProject} from '../security/ownership.js';
-import {withTenantModelReservation,type BoundModelDispatch} from './tenantModelDispatch.js';
+import {withTenantModelReservation,requireModelProjectBinding,modelContextNamespace,type TenantModelScope,type BoundModelDispatch} from './tenantModelDispatch.js';
 import type {AdmittedRunAttempt} from './runStore.js';
 import { convertUserRequest } from './converter.js';
 import { BLACK_HOLE_PUBLIC_NAME } from './black-hole/publicIdentity.js';
@@ -582,9 +582,10 @@ export function describeRepositoryReadFailure(error: unknown): string {
   return normalizeProviderError(error).safeMessage;
 }
 
-async function hydratePriorFiles(
+export async function hydratePriorFiles(
   userId: string,
-  meta?: BuildClientMeta,
+  meta: BuildClientMeta|undefined,
+  scope:TenantModelScope,
 ): Promise<{
   files: ProjectFile[];
   projectName?: string;
@@ -598,8 +599,11 @@ async function hydratePriorFiles(
     | 'local-browser'
     | 'none';
 }> {
+  requireResourceOwner(scope.context,userId);
   const branch = meta?.githubTargetBranch || 'main';
   const repo = meta?.githubTargetRepo ?? null;
+  await requireModelProjectBinding({...scope,repository:repo});
+  const memoryRepo=modelContextNamespace(scope.projectId,repo);
 
   // A selected GitHub repository is the authority for its own source tree. Project
   // memory can contain a validated snapshot from a run that stopped before push;
@@ -607,7 +611,7 @@ async function hydratePriorFiles(
   // appear to contain six files on the next terminal. Always reconcile the remote
   // first. A read failure stops the build instead of turning an unknown repository
   // into an empty one and risking a destructive "new" build.
-  const mem = await getProjectMemoryAsync(userId, repo, branch);
+  const mem = await getProjectMemoryAsync(userId, memoryRepo, branch);
   if (repo?.includes('/')) {
     try {
       const remote = await inspectConnectedRepositoryState(userId, repo, branch);
@@ -633,7 +637,7 @@ async function hydratePriorFiles(
       const files = await fetchRepositoryTextFilesFromGitHub(userId, repo, branch);
       setProjectMemory({
         userId,
-        repo,
+        repo:memoryRepo,
         branch,
         projectName: mem?.projectName || meta?.priorSite?.projectName,
         files,
@@ -668,6 +672,9 @@ async function hydratePriorFiles(
 
   // Client priorSite is valid only for a local product. A selected repository must
   // never be shadowed by browser state.
+  if(scope.projectId&&!meta?.priorSite?.html?.trim()&&(await getProjectMemoryAsync(userId,null,branch))?.files?.length){
+    throw new SafeRepositoryReadError('Legacy local context has no verified project binding. Reload the selected project before building.');
+  }
   if (meta?.priorSite?.html?.trim()) {
     const files = landingFilesFromOutput(
       meta.priorSite.html,
@@ -676,7 +683,7 @@ async function hydratePriorFiles(
     );
     setProjectMemory({
       userId,
-      repo,
+      repo:memoryRepo,
       branch,
       projectName: meta.priorSite.projectName,
       files,
@@ -704,6 +711,7 @@ export async function callBuilderStream(
     tenantContext?: TenantContext;
     databaseProjectId?: string;
     modelRunAttempt?:AdmittedRunAttempt;
+    modelRepository?:string|null;
     signal?: AbortSignal;
     onModelFallback?: (from: ModelId, to: ModelId) => void;
     credentialOverrides?: Partial<Record<ModelId, string>>;
@@ -797,7 +805,7 @@ export async function callBuilderStream(
       };
       const runAttempt = () =>
         opts.tenantContext
-          ? withTenantModelReservation({scope:{context:opts.tenantContext,userId:opts.userId!,projectId:opts.databaseProjectId,runAttempt:opts.modelRunAttempt,
+          ? withTenantModelReservation({scope:{context:opts.tenantContext,userId:opts.userId!,projectId:opts.databaseProjectId,runAttempt:opts.modelRunAttempt,repository:opts.modelRepository,
               connectedAccountId:opts.credentialOverrides?(opts.credentialOverrides[modelId]?`apikey_${provider}`:'platform'):undefined},
               modelId,payload:{messages},estimatedInputTokens:estimateMessageTokens(messages),maximumOutputTokens:opts.maxTokens??8192,execute})
           : opts.userId
@@ -961,6 +969,7 @@ function finalizeBuildTodos(
 export async function runChatPipeline(opts: {
   userId: string;
   tenantContext?: TenantContext;
+  modelScope?:TenantModelScope;
   prompt: string;
   history?: Array<{ role: 'user' | 'assistant'; content: string }>;
   attachments?: ChatAttachment[];
@@ -1007,6 +1016,7 @@ export async function runChatPipeline(opts: {
         userId: opts.userId,
         maxTokens: 6144,
         tenantContext:opts.tenantContext,
+        databaseProjectId:opts.modelScope?.projectId,modelRunAttempt:opts.modelScope?.runAttempt,modelRepository:opts.modelScope?.repository,
         temperature: 0.35,
         onDelta: opts.onDelta,
       },
@@ -1134,6 +1144,7 @@ export async function runChatPipeline(opts: {
       userId: opts.userId,
       maxTokens: route.kind === 'research' ? researchAnswerMaxTokens(opts.prompt) : 4096,
       tenantContext:opts.tenantContext,
+      databaseProjectId:opts.modelScope?.projectId,modelRunAttempt:opts.modelScope?.runAttempt,modelRepository:opts.modelScope?.repository,
       temperature: 0.5,
       onDelta: opts.onDelta,
     },
@@ -1257,13 +1268,16 @@ if (
     executionStore = new SupabaseExecutionStateStore(opts.userId, captureAdmittedRunAttempt(runId, opts.userId));
   }
   const admittedModelAttempt=process.env.SUPABASE_SERVICE_ROLE_KEY?captureAdmittedRunAttempt(runId,opts.userId):undefined;
+  const modelScope:TenantModelScope={context:tenantContext,userId:opts.userId,projectId:admittedDatabaseProjectId,runAttempt:admittedModelAttempt,repository:meta?.githubTargetRepo??null};
+  const memoryRepo=modelContextNamespace(admittedDatabaseProjectId,meta?.githubTargetRepo);
   emit({ ...startupProgress('quota'), swarmTodos: todosForBuild('route', 'omit') });
   await assertHasQuota(opts.userId);
   throwIfAborted();
 
   // Durable chat memory across sessions (DB + client history)
   emit({ ...startupProgress('history'), swarmTodos: todosForBuild('route', 'omit') });
-  const dbHistory = await loadSessionHistory(opts.userId, meta?.githubTargetRepo, 12);
+  await requireModelProjectBinding(modelScope);
+  const dbHistory = await loadSessionHistory(opts.userId, memoryRepo, 12);
   const history = mergeHistories(dbHistory, opts.history ?? []);
 
   // Attachments without a build intent → vision/doc analyze (not a site rebuild)
@@ -1287,6 +1301,7 @@ if (
     const chat = await runChatPipeline({
       userId: opts.userId,
       tenantContext:opts.tenantContext,
+      modelScope,
       prompt: opts.prompt,
       history: opts.history,
       attachments: opts.attachments,
@@ -1356,7 +1371,7 @@ if (
           swarmTodos: todosForBuild('route', 'omit'),
         }),
     },
-    () => hydratePriorFiles(opts.userId, meta),
+    () => hydratePriorFiles(opts.userId, meta, modelScope),
   );
   emit({
     ...startupProgress('hydrated', { fileCount: prior.files.length }),
@@ -1672,7 +1687,7 @@ const universalRequestPrompt =
       )
     : userFacingPrompt;
     const universal = await tryUniversalBuild({
-    tenantContext,databaseProjectId:admittedDatabaseProjectId,modelRunAttempt:admittedModelAttempt,
+    tenantContext,databaseProjectId:admittedDatabaseProjectId,modelRunAttempt:admittedModelAttempt,modelRepository:modelScope.repository,
     runId,
 
     userId:
@@ -1737,7 +1752,7 @@ const universalRequestPrompt =
           ? [...messages, { role: 'user', content: `Correct the previous planning output. ${repairHint}` }]
           : messages;
         const completion = await withTenantModelReservation({
-          scope:{context:tenantContext,userId:opts.userId,projectId:admittedDatabaseProjectId,runAttempt:admittedModelAttempt,connectedAccountId:'platform'},
+          scope:{...modelScope,connectedAccountId:'platform'},
           payload:{messages:attemptMessages},
           purpose:'complexity',
           modelId,
@@ -2482,7 +2497,7 @@ publicationReason:
     isUpdate &&
     shouldGenerateAiSummary(
       userFacingPrompt,
-      getProjectMemory(opts.userId, meta?.githubTargetRepo, meta?.githubTargetBranch),
+      getProjectMemory(opts.userId, memoryRepo, meta?.githubTargetBranch),
       prior.files.length,
     )
   ) {
@@ -2502,6 +2517,7 @@ publicationReason:
     );
     const memo = await summarizeRepoForUpdates({
       userId: opts.userId,
+      dispatchScope:{...modelScope,connectedAccountId:'platform'},
       prompt: userFacingPrompt,
       projectName: prior.projectName,
       paths: prior.files.map((f) => f.path),
@@ -2513,7 +2529,7 @@ publicationReason:
       usage = await recordUsage(opts.userId, memo.modelId, memo.inputTokens, memo.outputTokens);
       setProjectMemory({
         userId: opts.userId,
-        repo: meta?.githubTargetRepo,
+        repo: memoryRepo,
         branch: meta?.githubTargetBranch,
         projectName: prior.projectName,
         files: prior.files,
@@ -2662,7 +2678,7 @@ publicationReason:
             ),
           },
         ],
-        { userId: opts.userId, tenantContext, databaseProjectId:admittedDatabaseProjectId, modelRunAttempt:admittedModelAttempt, maxTokens: 2048, temperature: 0.3, signal: opts.signal, onModelFallback: emitModelSwitch },
+        { userId: opts.userId, tenantContext, databaseProjectId:admittedDatabaseProjectId, modelRunAttempt:admittedModelAttempt,modelRepository:modelScope.repository, maxTokens: 2048, temperature: 0.3, signal: opts.signal, onModelFallback: emitModelSwitch },
       );
       usage = await recordUsage(
         opts.userId,
@@ -2763,7 +2779,7 @@ publicationReason:
       opts.userId,
       converterRequest,
       researchBlock || undefined,
-      {context:tenantContext,userId:opts.userId,projectId:admittedDatabaseProjectId,runAttempt:admittedModelAttempt,connectedAccountId:'platform'},
+      {...modelScope,connectedAccountId:'platform'},
     );
     usage = await recordUsage(
       opts.userId,
@@ -2835,7 +2851,7 @@ publicationReason:
       const plan = await Promise.race([
         runArchitectPlan({
           userId: opts.userId,
-          dispatchScope:{context:tenantContext,userId:opts.userId,projectId:admittedDatabaseProjectId,runAttempt:admittedModelAttempt,connectedAccountId:'platform'},
+          dispatchScope:{...modelScope,connectedAccountId:'platform'},
           brief: converted.instruction,
           userPrompt: userFacingPrompt,
           isUpdate,
@@ -2984,7 +3000,7 @@ publicationReason:
       {
         userId: opts.userId,
         maxTokens: resilientStaticPath ? 8192 : 16384,
-        tenantContext,databaseProjectId:admittedDatabaseProjectId,modelRunAttempt:admittedModelAttempt,
+        tenantContext,databaseProjectId:admittedDatabaseProjectId,modelRunAttempt:admittedModelAttempt,modelRepository:modelScope.repository,
         temperature: isUpdate ? 0.3 : 0.45,
         onDelta: opts.onDelta,
         onStreamDelta: (delta) => {
@@ -3141,7 +3157,7 @@ publicationReason:
           {
             userId: opts.userId,
             maxTokens: 8192,
-            tenantContext,databaseProjectId:admittedDatabaseProjectId,modelRunAttempt:admittedModelAttempt,
+            tenantContext,databaseProjectId:admittedDatabaseProjectId,modelRunAttempt:admittedModelAttempt,modelRepository:modelScope.repository,
             temperature: 0.2,
             onDelta: opts.onDelta,
             signal: opts.signal,
@@ -3410,7 +3426,7 @@ publicationReason:
   // the honest value is the base the changes were made against, not the commit they become.
   const baseCommitSha = getProjectMemory(
     opts.userId,
-    meta?.githubTargetRepo,
+    memoryRepo,
     meta?.githubTargetBranch,
   )?.commitSha;
   let qa = await reviewBuildOutput({
@@ -3591,7 +3607,7 @@ publicationReason:
         {
           userId: opts.userId,
           maxTokens: 12288,
-          tenantContext,databaseProjectId:admittedDatabaseProjectId,modelRunAttempt:admittedModelAttempt,
+          tenantContext,databaseProjectId:admittedDatabaseProjectId,modelRunAttempt:admittedModelAttempt,modelRepository:modelScope.repository,
           temperature: 0.25,
           onDelta: opts.onDelta,
           signal: opts.signal,
@@ -4004,7 +4020,7 @@ publicationReason:
     try {
       const saved = await setProjectMemoryDurable({
         userId: opts.userId,
-        repo: meta?.githubTargetRepo,
+        repo: memoryRepo,
         branch: githubBranch,
         projectName,
         files: nextFiles,
@@ -4703,7 +4719,7 @@ publicationReason:
     try {
       const saved = await setProjectMemoryDurable({
         userId: opts.userId,
-        repo: githubRepoName || meta?.githubTargetRepo,
+        repo: admittedDatabaseProjectId?memoryRepo:githubRepoName || memoryRepo,
         branch: githubBranch,
         projectName,
         files: nextFiles,
@@ -5240,7 +5256,7 @@ publicationReason:
     success: overallSuccess,
   });
   void trace.persist();
-  void saveSessionHistory(opts.userId, githubRepoName || meta?.githubTargetRepo, [
+  void saveSessionHistory(opts.userId, admittedDatabaseProjectId?memoryRepo:githubRepoName || memoryRepo, [
     ...history,
     { role: 'user', content: userFacingPrompt },
     {

@@ -371,6 +371,7 @@ export async function tryUniversalBuild(
     tenantContext?:TenantContext;
     databaseProjectId?:string;
     modelRunAttempt?:AdmittedRunAttempt;
+    modelRepository?:string|null;
 
     projectId?:
       | string
@@ -1084,7 +1085,7 @@ const measuredEvidence =
             }) =>
               runUniversalSoftwareImplementation(
                 {
-                  tenantContext:input.tenantContext,databaseProjectId:input.databaseProjectId,modelRunAttempt:input.modelRunAttempt,
+                  tenantContext:input.tenantContext,databaseProjectId:input.databaseProjectId,modelRunAttempt:input.modelRunAttempt,modelRepository:input.modelRepository,
                   userId:
                     input.userId,
 
@@ -1170,7 +1171,7 @@ repair:
 
     return runUniversalSoftwareImplementation(
       {
-        tenantContext:input.tenantContext,databaseProjectId:input.databaseProjectId,modelRunAttempt:input.modelRunAttempt,
+        tenantContext:input.tenantContext,databaseProjectId:input.databaseProjectId,modelRunAttempt:input.modelRunAttempt,modelRepository:input.modelRepository,
         userId:
           input.userId,
 

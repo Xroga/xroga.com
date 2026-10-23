@@ -17,6 +17,8 @@ export interface TenantModelScope {
   userId:string;
   /** A real database project UUID, never a logical workspace/repository key. */
   projectId?:string;
+  /** Expected canonical projects.github_repo_name, null for a local project. */
+  repository?:string|null;
   runAttempt?:AdmittedRunAttempt;
   /** Omit to select the current canonical user key, otherwise platform. */
   connectedAccountId?:string;
@@ -28,6 +30,21 @@ export interface BoundModelDispatch {
   readonly beforeDispatch:(wireBody:string)=>Promise<void>;
 }
 type CredentialRow={user_id:string;provider:string;access_token:string;metadata:Record<string,unknown>;credential_revision:string};
+
+/** Namespace only, never an identity issuer or a second context store. */
+export function modelContextNamespace(projectId:string|undefined,repository:string|null|undefined):string|null{
+  return projectId?`_project/${projectId}/${repository?.includes('/')?repository:'_local'}`:repository??null;
+}
+
+export async function requireModelProjectBinding(scope:TenantModelScope):Promise<void>{
+  const context=requireTenantContext(scope.context);requireResourceOwner(context,scope.userId);
+  if(scope.projectId===undefined)return;
+  if(!/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(scope.projectId))denied();
+  const db=getTenantSupabaseAdmin(context);
+  if(scope.repository===undefined){try{await requireOwnedProject(context,scope.projectId,db);}catch{denied();}return;}
+  const {data,error}=await db.from('projects').select('id,user_id,github_repo_name').eq('id',scope.projectId).eq('user_id',context.userId).maybeSingle();
+  if(error||!data||data.id!==scope.projectId||data.user_id!==context.userId||data.github_repo_name!==scope.repository)denied();
+}
 
 /** Carries existing tenant, credential-revision and budget authority through one
  * model request. No new grants, ledger, vault or model-selected authority.
@@ -66,12 +83,7 @@ export async function withTenantModelReservation<T extends ProviderUsageResult>(
       ||data.worker_id!==attempt.workerId||data.lease_generation!==attempt.generation
       ||data.project_id!==(scope.projectId??null))denied();
   };
-  const project=async()=>{
-    if(scope.projectId!==undefined){
-      if(!/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(scope.projectId))denied();
-      try{await requireOwnedProject(context,scope.projectId,db);}catch{denied();}
-    }
-  };
+  const project=()=>requireModelProjectBinding(scope);
   const read=async():Promise<CredentialRow|null>=>{
     const {data,error}=await db.from('user_integrations').select('user_id,provider,access_token,metadata,credential_revision')
       .eq('user_id',context.userId).eq('provider',expectedAccount).maybeSingle();

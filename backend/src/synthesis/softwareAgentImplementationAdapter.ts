@@ -76,6 +76,7 @@ export interface UniversalSoftwareImplementationInput {
   tenantContext?:TenantContext;
   databaseProjectId?:string;
   modelRunAttempt?:AdmittedRunAttempt;
+  modelRepository?:string|null;
   userId:
     string;
 
@@ -581,7 +582,7 @@ export async function runUniversalSoftwareImplementation(
 
   const model =
     createXrogaAgentModelRoute({
-      dispatchScope:input.tenantContext?{context:input.tenantContext,userId:input.userId,projectId:input.databaseProjectId,runAttempt:input.modelRunAttempt,connectedAccountId:'platform'}:undefined,
+      dispatchScope:input.tenantContext?{context:input.tenantContext,userId:input.userId,projectId:input.databaseProjectId,runAttempt:input.modelRunAttempt,repository:input.modelRepository,connectedAccountId:'platform'}:undefined,
       userId:
         input.userId,
 
