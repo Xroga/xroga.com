@@ -15,6 +15,7 @@ import {
 
 import {
   executeWithProviderFallback,
+  isModelSecurityDenial,
   getModelRuntimeHealth,
   recordModelValidation,
   type ModelRuntimeHealth,
@@ -291,6 +292,14 @@ export async function executeHedgedPlannerFallback<T>(
       AbortController
     >();
 
+  const isTerminalDenial = (error: unknown) =>
+    isModelSecurityDenial(error) || isPostCompletionAccountingError(error)
+    || (error instanceof RuntimeFailure && error.code === 'CAPABILITY_TEMPORARILY_UNAVAILABLE');
+  let terminalDenial: { error: unknown } | undefined;
+  const requireNoTerminalDenial = () => {
+    if (terminalDenial) throw terminalDenial.error;
+  };
+
   const run =
     async (
       modelId: ModelId,
@@ -354,7 +363,8 @@ export async function executeHedgedPlannerFallback<T>(
             result.modelId,
         };
       } catch (error) {
-        if (isPostCompletionAccountingError(error)) {
+        if (isTerminalDenial(error)) {
+          terminalDenial ??= { error };
           for (const active of controllers.values()) active.abort();
         }
         return {
@@ -383,6 +393,7 @@ export async function executeHedgedPlannerFallback<T>(
           }
         >,
     ) => {
+      requireNoTerminalDenial();
       for (
         const [
           modelId,
@@ -483,7 +494,7 @@ export async function executeHedgedPlannerFallback<T>(
     );
   }
 
-  if (beforeHedge !== 'hedge' && !beforeHedge.ok && isPostCompletionAccountingError(beforeHedge.error)) {
+  if (beforeHedge !== 'hedge' && !beforeHedge.ok && isTerminalDenial(beforeHedge.error)) {
     if (hedgeTimer) clearTimeout(hedgeTimer);
     throw beforeHedge.error;
   }
@@ -510,7 +521,7 @@ export async function executeHedgedPlannerFallback<T>(
     const fallbackOutcome =
       await fallback;
 
-    if (!fallbackOutcome.ok && isPostCompletionAccountingError(fallbackOutcome.error)) throw fallbackOutcome.error;
+    requireNoTerminalDenial();
 
     if (
       fallbackOutcome.ok
@@ -552,7 +563,7 @@ export async function executeHedgedPlannerFallback<T>(
       ],
     );
 
-  if (!first.ok && isPostCompletionAccountingError(first.error)) throw first.error;
+  requireNoTerminalDenial();
 
   if (
     first.ok
@@ -568,7 +579,7 @@ export async function executeHedgedPlannerFallback<T>(
       ? await fallback
       : await primary;
 
-  if (!other.ok && isPostCompletionAccountingError(other.error)) throw other.error;
+  requireNoTerminalDenial();
 
   if (
     other.ok
@@ -1876,7 +1887,7 @@ export async function planSemanticRequest(
         ),
     };
   } catch (error) {
-    if (isPostCompletionAccountingError(error)) throw error;
+    if (isPostCompletionAccountingError(error) || isModelSecurityDenial(error)) throw error;
     if (
       totalController
         .signal

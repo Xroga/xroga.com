@@ -1,5 +1,8 @@
 import type { ModelId } from './models.js';
 import { isPostCompletionAccountingError } from './postCompletionAccounting.js';
+import { TenantAccessError } from '../security/tenantErrors.js';
+import { AuthorityError } from '../security/authority/enforce.js';
+import { EgressDenied } from '../security/egress/egressPolicy.js';
 import {
   providerHealthStore,
   stillConstraining,
@@ -114,7 +117,9 @@ export function normalizeProviderError(error: unknown): NormalizedProviderError 
 
 /** A different provider cannot authorize the same locally rejected request. */
 export function isModelSecurityDenial(error:unknown):boolean{
-  return ['MODEL_DISPATCH_BINDING_DENIED','MODEL_CREDENTIAL_EGRESS_DENIED','MODEL_PAYLOAD_INVALID','MODEL_DESTINATION_DENIED']
+  return error instanceof TenantAccessError || error instanceof AuthorityError || error instanceof EgressDenied
+    || ['MODEL_DISPATCH_BINDING_DENIED','MODEL_CREDENTIAL_EGRESS_DENIED','MODEL_PAYLOAD_INVALID','MODEL_DESTINATION_DENIED','RUN_STATE_CONFLICT',
+      'SAFETY_BLOCKED','CAPABILITY_AUTH_REQUIRED','PROJECT_CONTEXT_MISMATCH']
     .includes((error as {code?:string})?.code??'');
 }
 
@@ -295,6 +300,7 @@ export async function executeWithProviderFallback<T>(input: {
         return { value, modelId, failures };
       } catch (error) {
         if (isPostCompletionAccountingError(error)) throw error;
+        if (error instanceof RuntimeFailure && error.code === 'CAPABILITY_TEMPORARILY_UNAVAILABLE') throw error;
         const normalized = controller.signal.aborted && !input.signal?.aborted
           ? normalizeProviderError(Object.assign(new Error('Provider request timed out'), { code: 'ETIMEDOUT' }))
           : normalizeProviderError(error);
@@ -303,9 +309,9 @@ export async function executeWithProviderFallback<T>(input: {
         // one provider. Another route must never launder a rejected credential
         // or payload through a different transport.
         if(isModelSecurityDenial(error)) {
-          throw new RuntimeFailure('PROVIDER_UNAVAILABLE','Model dispatch was denied by local security policy.',{
-            details:{failures:failures.map(({kind,retryable,status,code})=>({kind,retryable,status,code}))},
-          });
+          // Preserve the denial across outer planners and fallback wrappers.
+          // Reclassifying it as provider availability authorizes another route.
+          throw error;
         }
 
         /* Account capacity is shared by every model route. Walking fallbacks cannot
