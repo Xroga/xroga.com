@@ -23,7 +23,7 @@ export function MessageSuggestionChips({ suggestions, onSelect, className }: Mes
   return (
     <div className={cn('mt-2 xv-suggestions-enter', className)}>
       <p className="xv-suggest-label">
-        <BlackHoleMark />
+        <span className="xv-suggest-mark"><BlackHoleMark /></span>
         Suggested next steps
       </p>
       <div className="xv-suggest-row">

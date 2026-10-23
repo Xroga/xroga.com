@@ -32,8 +32,16 @@ export function BlackHoleVButton({ className, compact = false }: { className?: s
           <div className={styles.modelHeading}><strong>Xroga · Black Hole</strong><span>Auto</span></div>
           <p>Super Intelligence for your work. Describe what you need; Xroga chooses the available capabilities automatically.</p>
           <div className={styles.modelSafety}><ShieldCheck size={14} /><span>Sensitive actions require approval.</span></div>
-          <div className={styles.modelSafety} aria-live="polite">
-            {usageError ? 'Usage is unavailable right now.' : usage ? `Capacity remaining: ${usage.capacityRemainingPercent == null ? 'unavailable' : `${Math.round(usage.capacityRemainingPercent)}%`} · Available now: ${usage.availableNowPercent == null ? 'unavailable' : `${Math.round(usage.availableNowPercent)}%`}` : 'Checking usage…'}
+          <div className={styles.usageMeters} aria-live="polite">
+            {usageError ? <span>Usage is unavailable right now.</span> : ([
+              ['Capacity remaining', usage?.capacityRemainingPercent],
+              ['Available now', usage?.availableNowPercent],
+            ] as const).map(([label, value]) => <div className={styles.usageMeter} key={label}>
+              <div><span>{label}</span><strong>{usage ? value == null ? 'Unavailable' : `${Math.round(value)}%` : 'Checking…'}</strong></div>
+              <div className={styles.usageTrack} role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={value == null ? undefined : Math.round(value)}>
+                <span className={usage ? undefined : styles.usageLoading} style={usage ? { width: `${Math.max(0, Math.min(100, value ?? 0))}%` } : undefined} />
+              </div>
+            </div>)}
           </div>
           <a href="/dashboard#plan-usage" className={styles.modelSafety}>View plan and usage</a>
           {open ? <ModelAppPermissions /> : null}

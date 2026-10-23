@@ -22,6 +22,14 @@
 .permissionChoice select:disabled { opacity: .65; }
 .permissionChoice p { margin: 0; }
 .modelSafety { display: flex; align-items: center; gap: 7px; font-size: 11px; margin-bottom: 6px; }
+.usageMeters { display:grid; gap:8px; margin:10px 0; font-size:10px; }
+.usageMeter > div:first-child { display:flex; justify-content:space-between; gap:8px; margin-bottom:4px; color:var(--mono-muted); }
+.usageMeter strong { color:var(--mono-ink); font-weight:600; }
+.usageTrack { height:5px; overflow:hidden; border-radius:999px; background:var(--mono-border); }
+.usageTrack > span { display:block; height:100%; border-radius:inherit; background:#38bdf8; transition:width .3s ease; }
+.usageLoading { width:32%; animation:usage-pulse 1.1s ease-in-out infinite alternate; }
+@keyframes usage-pulse { to { width:76%; opacity:.55; } }
+@media (prefers-reduced-motion:reduce) { .usageLoading { animation:none; } }
 .modelFoot { display: flex; justify-content: space-between; font-size: 11px; padding-top: 10px; border-top: 1px solid var(--mono-border); }
 .modelButton { display: flex; align-items: center; gap: 5px; border: 0; background: transparent; color: var(--foreground); font-size: 11px; cursor: pointer; }
 .modelButton:hover { color: var(--foreground); opacity: .8; }

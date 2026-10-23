@@ -24,7 +24,6 @@ import { rollbackProjectUpdate } from '@/lib/rollbackProjectUpdate';
 import { useProjectWorkspaceStore, type ProjectWorkspaceStatus } from '@/store/useProjectWorkspaceStore';
 import { AnchoredPortalPopover } from '@/components/ui/AnchoredPortalPopover';
 import { SidebarMovingTitle } from '@/components/layout/SidebarMovingTitle';
-import { BlackHoleMark } from './BlackHoleMark';
 
 const PROJECT_REVIEW_PROMPT =
   'Inspect this project and tell me its current health, biggest risk, unfinished work, and the highest-value next step. Do not change code unless I explicitly ask.';
@@ -229,7 +228,6 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
         aria-haspopup="menu"
         aria-expanded={open}
       >
-        <BlackHoleMark />
         <h3 className="xv-repo-name" title={repoIdentity.fullName}><SidebarMovingTitle text={repoIdentity.label} /></h3>
 
       </button>

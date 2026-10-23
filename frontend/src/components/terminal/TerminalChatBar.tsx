@@ -5,7 +5,7 @@ import { useTerminalChat } from '@/context/TerminalChatContext';
 import { ChatBarActionsMenu } from './ChatBarActionsMenu';
 import { ComposerToolChip } from './ComposerToolChip';
 import type { ComposerInsertOptions } from './ChatBarActionsMenu';
-import { buildComposerPreamble, COMPOSER_SKILLS, useComposerToolsStore } from '@/store/useComposerToolsStore';
+import { buildComposerPreamble, COMPOSER_COMMANDS, COMPOSER_SKILLS, useComposerToolsStore } from '@/store/useComposerToolsStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
 import { uploadChatImage, type ChatAttachment } from '@/lib/api';
@@ -52,6 +52,8 @@ const SLASH_ACTIONS = [
   { key: 'build', label: 'Build an app', text: 'Build a working app for this outcome, then test it: ' },
   { key: 'workflow', label: 'Plan a workflow', text: 'Plan a workflow with steps, permissions, approvals, and verified outputs for: ' },
   { key: 'browser', label: 'Browser automation', text: 'Use the browser to test these interactions and report evidence: ' },
+  { key: 'employee', label: 'AI employee', text: 'Plan an AI employee for this outcome, showing permissions and approval steps: ' },
+  { key: 'work-pack', label: 'Work pack', text: 'Plan a work pack with the required employees, tools, approvals, and outputs for: ' },
 ] as const;
 
 function composerMaxHeight() {
@@ -508,24 +510,49 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
   const shortcutQuery = shortcutMatch?.[2].toLowerCase() ?? '';
   const shortcutActions = shortcutMatch?.[1] === '@'
     ? [
-        { key: 'project', label: 'Current project', description: 'Insert the selected repository and branch' },
-        { key: 'files', label: 'Attach files', description: 'Open the real file picker' },
-        { key: 'plugins', label: 'Connected apps', description: 'Choose an available integration' },
-      ].filter(action => action.key.includes(shortcutQuery) || action.label.toLowerCase().includes(shortcutQuery))
+        { key: 'files', label: 'Files and folders', description: 'Attach from your device', group: 'Add' },
+        { key: 'project', label: 'Current project', description: 'Insert selected repository and branch', group: 'Add' },
+        { key: 'browser', label: 'Browser automation', description: 'Prepare an editable browser task', group: 'Xroga workspace' },
+        { key: 'goal', label: 'Goal', description: 'Describe an outcome for Xroga to pursue', group: 'Xroga workspace' },
+        { key: 'plan', label: 'Plan mode', description: 'Ask for a plan before changes', group: 'Xroga workspace' },
+        { key: 'sketch', label: 'Sketch', description: 'Describe a visual concept in your prompt', group: 'Xroga workspace' },
+        { key: 'employees', label: 'AI Employees', description: 'Prepare a specialist delegation request', group: 'Xroga workspace' },
+        { key: 'plugins', label: 'Connected apps', description: 'Choose an available integration', group: 'Plugins' },
+      ].filter(action => action.key.includes(shortcutQuery) || action.label.toLowerCase().includes(shortcutQuery) || action.group.toLowerCase().includes(shortcutQuery))
     : shortcutMatch?.[1] === '/'
-      ? SLASH_ACTIONS.map(action => ({ ...action, description: 'Insert an editable work request' })).filter(action => action.key.includes(shortcutQuery) || action.label.toLowerCase().includes(shortcutQuery))
+      ? [
+          ...COMPOSER_COMMANDS.map(action => ({ key: action.id, label: action.label, description: action.description, group: 'Commands' })),
+          ...SLASH_ACTIONS.filter(action => !COMPOSER_COMMANDS.some(command => command.id === action.key)).map(action => ({ key: action.key, label: action.label, description: 'Insert an editable work request', group: 'Tools' })),
+          ...COMPOSER_SKILLS.map(action => ({ key: `skill-${action.id}`, label: action.label, description: enabledSkills.includes(action.id) ? 'Enabled · select to disable' : action.description, group: 'Skills' })),
+          { key: 'tool-files', label: 'Attach files', description: 'Open the file picker', group: 'Tools' },
+          { key: 'tool-apps', label: 'Connected apps', description: 'Choose an available integration', group: 'Tools' },
+          { key: 'agent-research', label: 'Research employee', description: 'Prepare a specialist research request', group: 'Agents' },
+          { key: 'agent-content', label: 'Content employee', description: 'Prepare a specialist content request', group: 'Agents' },
+          { key: 'usage', label: 'Usage and billing', description: 'Open your plan and usage', group: 'Account' },
+        ].filter(action => action.key.includes(shortcutQuery) || action.label.toLowerCase().includes(shortcutQuery) || action.group.toLowerCase().includes(shortcutQuery))
       : [];
   function chooseShortcut(key: string) {
     if (!shortcutMatch) return;
     const prefix = draft.slice(0, draft.length - shortcutMatch[0].trimStart().length);
-    if (key === 'files') { setDraft(prefix); draftRef.current = prefix; requestFilePicker(); return; }
-    if (key === 'plugins') { setDraft(prefix); draftRef.current = prefix; setIntegrationsOpen(true); return; }
+    if (key === 'files' || key === 'tool-files') { setDraft(prefix); draftRef.current = prefix; requestFilePicker(); return; }
+    if (key === 'plugins' || key === 'tool-apps') { setDraft(prefix); draftRef.current = prefix; setIntegrationsOpen(true); return; }
+    if (key.startsWith('skill-')) { setDraft(prefix); draftRef.current = prefix; useComposerToolsStore.getState().toggleSkill(key.slice(6)); window.requestAnimationFrame(() => textareaRef.current?.focus()); return; }
+    if (key === 'usage') { window.location.assign('/dashboard#plan-usage'); return; }
     let insertion = '';
     if (key === 'project') {
       const selected = getSelectedRepoContext();
       if (!selected?.repo) { toast('Choose a project first.'); setGithubOpen(true); return; }
       insertion = `${selected.repo}${selected.branch ? ` (${selected.branch})` : ''} `;
-    } else insertion = SLASH_ACTIONS.find(action => action.key === key)?.text ?? '';
+    } else if (shortcutMatch[1] === '/') insertion = COMPOSER_COMMANDS.find(action => action.id === key)?.prompt ?? SLASH_ACTIONS.find(action => action.key === key)?.text ?? '';
+    else insertion = ({
+      browser: 'Use browser automation to inspect or test this site, and report verified evidence: ',
+      goal: 'My goal is: ',
+      plan: 'Plan this work and ask for approval before changing anything: ',
+      sketch: 'Help me turn this visual concept into a clear design brief: ',
+      employees: 'Which AI employee capabilities are needed for this outcome, and what can be done with my available tools: ',
+    } as Record<string,string>)[key] ?? '';
+    if (key === 'agent-research') insertion = 'Prepare a research employee to investigate this topic, cite evidence, and ask before sensitive actions: ';
+    if (key === 'agent-content') insertion = 'Prepare a content employee to write and review this deliverable: ';
     const next = `${prefix}${insertion}`;
     setDraft(next);
     draftRef.current = next;
@@ -594,11 +621,13 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
         >
           <ChatBarDragOverlay active={!incognito && dragOver} />
 
-          {shortcutMatch && shortcutActions.length > 0 ? <div className="xv-composer-shortcuts" role="listbox" aria-label={shortcutMatch[1] === '@' ? 'Project and attachment mentions' : 'Task shortcuts'}>
-            {shortcutActions.map((action, index) => <button key={action.key} type="button" role="option" aria-selected={index === shortcutIndex % shortcutActions.length}
+          {shortcutMatch && shortcutActions.length > 0 ? <div className="xv-composer-shortcuts" role="listbox" aria-label={shortcutMatch[1] === '@' ? 'Workspace mentions' : 'Commands, skills, tools and agents'}>
+            {shortcutActions.map((action, index) => <div key={action.key}>
+              {(index === 0 || shortcutActions[index - 1].group !== action.group) ? <div className="xv-composer-shortcuts-heading">{action.group}</div> : null}
+              <button type="button" role="option" aria-selected={index === shortcutIndex % shortcutActions.length}
               onMouseDown={event => event.preventDefault()} onClick={() => chooseShortcut(action.key)}>
               <strong>{shortcutMatch[1]}{action.key}</strong><span>{action.description}</span>
-            </button>)}
+              </button></div>)}
           </div> : null}
 
           {hydrated && !incognito && (activeArtifactId || artifactSelections.length > 0) ? <div className="flex max-w-full gap-1.5 overflow-x-auto px-3 pt-2" aria-label="Attached artifact context">

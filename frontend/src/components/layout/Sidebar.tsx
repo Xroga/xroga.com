@@ -159,7 +159,18 @@ function NavIcon({ entry }: { entry: NavEntry }) {
 
 const navItems: NavEntry[] = [
   { href: '/dashboard', motion: 'pulse' as const, label: 'Dashboard', icon: LayoutDashboard, animated: LayoutGridIcon, tip: 'Recent activity, billing, plan, and usage.' },
-  { href: '/dashboard/automations#browser-automation', motion: 'pulse' as const, label: 'Browser Automation', icon: Globe, tip: 'Plan and review browser work.' },
+  {
+    id: 'automations', href: '/dashboard/automations#browser-automation', label: 'Automations', icon: Workflow, animated: LucideWorkflowIcon,
+    tip: 'Browser automation, workflows, scheduling, work packs and run history.',
+    children: [
+      { href: '/dashboard/automations#browser-automation', label: 'Browser Automation', icon: Globe, tip: 'Plan and review browser work.' },
+      { href: '/dashboard/automations#workflows', label: 'Workflows', icon: Workflow, animated: LucideWorkflowIcon, tip: 'Design and review workflows.' },
+      { href: '/dashboard/automations#scheduled-tasks', label: 'Scheduled Tasks', icon: CalendarClock, animated: LucideClockIcon, tip: 'Plan recurring work.' },
+      { href: '/dashboard/automations#ai-employees', label: 'AI Employees', icon: Bot, animated: LucideBotIcon, tip: 'Explore specialist workers.' },
+      { href: '/dashboard/automations#work-packs', label: 'Work Packs', icon: Package, animated: LucideBlocksIcon, tip: 'Explore reusable work packs.' },
+      { href: '/dashboard/automations#run-history', label: 'Run History', icon: History, animated: LucideHistoryIcon, tip: 'Review automation runs.' },
+    ],
+  },
   { href: '/dashboard/automations#ai-employees', motion: 'pulse' as const, label: 'AI Employees', icon: Bot, animated: LucideBotIcon, tip: 'Delegate work to specialized employees.' },
   { href: '/dashboard/integrations', motion: 'pulse' as const, label: 'Plugins', icon: Link2, animated: ConnectIcon, tip: 'Connect GitHub, Slack, databases, and tools.' },
   {
@@ -226,6 +237,12 @@ export function Sidebar({ displayName, email }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const workspaceIdentity = useWorkspaceIdentity();
+  const [automationLabelIndex, setAutomationLabelIndex] = useState(0);
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const timer = window.setInterval(() => { if (document.visibilityState === 'visible') setAutomationLabelIndex(index => (index + 1) % 2); }, 5000);
+    return () => window.clearInterval(timer);
+  }, []);
   const isGuest = workspaceIdentity.status === 'guest';
   const { requestAuthGate } = useWorkspaceAuthGate();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -776,7 +793,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                       <Link href={entry.href ?? '/workspace'} onClick={(event) => handleNavEntryClick(event, entry.href ?? '/workspace')}
                         className={cn('xv-nav-group__trigger', groupHasActive(entry) && 'xv-active')} aria-label={entry.label}>
                         <NavIcon entry={entry} />
-                        <span>{entry.label}</span>
+                        <span>{entry.id === 'automations' ? ['Automations', 'Browser Automations'][automationLabelIndex] : entry.label}</span>
                         {entry.newSection ? <span className="xv-sidebar-new-badge">NEW</span> : null}
                       </Link>
                     }

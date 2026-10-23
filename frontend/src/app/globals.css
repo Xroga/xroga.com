@@ -14745,16 +14745,19 @@ body.theme-beige .xv-plugins-popover, body.theme-beige .xv-sidebar-hover-menu__c
 }
 
 /* The dock must mask transcript text at its left, right, and bottom edges. */
-.xv-terminal-dock:not(.xv-terminal-dock--idle) {
-  background:var(--terminal-ui-surface,var(--background));
+.xv-terminal-dock[class*='terminal-skin-'][data-workspace-state='conversation'] {
+  background:var(--terminal-ui-surface,var(--background)) !important;
   padding-bottom:max(4px,env(safe-area-inset-bottom));
 }
+.xv-suggest-label .xv-suggest-mark { display:inline-flex; width:27px; height:27px; align-items:center; justify-content:center; flex:none; }
+.xv-suggest-label .xv-suggest-mark > span { width:27px; height:27px; }
 .xv-composer-shortcuts {
   position:absolute; z-index:120; left:8px; right:8px; bottom:calc(100% + 7px);
-  display:grid; gap:2px; padding:5px; border:1px solid var(--terminal-ui-border,var(--card-border));
+  display:grid; gap:2px; padding:5px; max-height:min(350px,48dvh); overflow-y:auto; overscroll-behavior:contain; border:1px solid var(--terminal-ui-border,var(--card-border));
   border-radius:12px; background:var(--terminal-ui-raised,var(--card)); box-shadow:0 12px 32px #0006;
 }
-.xv-composer-shortcuts button { display:flex; justify-content:space-between; align-items:center; gap:12px; min-height:36px; padding:7px 9px; border-radius:8px; text-align:left; color:var(--foreground); font-size:11px; }
+.xv-composer-shortcuts-heading { padding:8px 9px 3px; color:var(--muted); font-size:10px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; }
+.xv-composer-shortcuts button { display:flex; width:100%; justify-content:space-between; align-items:center; gap:12px; min-height:36px; padding:7px 9px; border-radius:8px; text-align:left; color:var(--foreground); font-size:11px; }
 .xv-composer-shortcuts button span { color:var(--muted); }
 .xv-composer-shortcuts button:is(:hover,[aria-selected="true"]) { background:var(--terminal-ui-inset,var(--surface-inset)); }
 .xv-sidebar-bottom { margin-top:auto; margin-bottom:0; padding-bottom:max(4px,env(safe-area-inset-bottom)); }
