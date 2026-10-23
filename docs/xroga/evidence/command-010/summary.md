@@ -229,3 +229,39 @@ destination and no redirects, without closing any of its three upstream SDK
 obligations. AC01/02/03/09 remain partial, AC04/05/06/07/08/10/11 are local proof
 only, AC12 is unverified. Strict completeness still fails. Phase3 and formal
 Phase4 admission remain blocked. No production, paid resource or UI merge occurred.
+
+## Correction and bounded review after 49978f11
+
+The six existing runs completed with four successes and two failures. Unit run
+39871551443 failed on both branch and virtual merge because one historical proof
+candidate referenced the complete projectRuntime test file. Its fork-isolation
+test stayed byte-identical, while a different test correctly changed obsolete
+registry bridge expectations to fail-closed behavior. The frozen ledger is
+unchanged. A separate exact old/current source and full-test-call binding now
+preserves its historical candidate hash. Changed assertions, missing/duplicate
+tests and forged hashes are rejected. No candidate becomes accepted proof.
+The exact hashes and merge parents are in CI-REPAIR-49978.json.
+
+Tenant run39871551410 passed all three real PostgreSQL receipt/ownership tests,
+then Docker refused the network fixture's five-CPU production default on its
+four-CPU runner. Only the disposable request now uses one CPU. Production limits,
+network denial and offline-install assertions are unchanged. The real pinned
+container passes locally with that request. Registry-only remains fail closed.
+
+Actual factory testing reproduced SoftwareAgent route/account retargeting from
+mutable input, plus request replacement during quota wait. The factory now fixes
+the route/run/fallback and credential together, and snapshots request data before
+the wait while retaining cancellation. The ten SDK/telemetry tests and21 focused
+budget, vault-revision/revocation and owned-file tests pass without skips. These
+use controlled provider/accounting transports, not paid APIs or live Supabase.
+Backend type checking passes. Existing accounting and authority APIs are retained.
+
+The owned-file dispatch candidate5fdd141576170dfae26b is narrowly reviewed using
+its actual positive/negative tests and unchanged real PostgreSQL ownership-race
+proof. It rechecks owner/parent after DNS and after consuming the exact permit,
+rejects changed/private-secret/binary bytes, and does not certify unmigrated file
+upload callers. Current totals are133 candidates,11 reviewed boundaries,122
+pending,68 high-risk candidates. All three SDK final dispositions remain open.
+The original12 criterion states and Phase3 block are unchanged. Later CI receipts
+must identify their own exact feature and integrated source, never inherit a
+success label from49978f11 or earlier runs.

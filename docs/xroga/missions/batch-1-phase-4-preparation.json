@@ -9,6 +9,12 @@
   "risk": "high",
   "scope": "Founder-authorized isolated nonproduction Command010 preparatory engineering only, not Phase4 admission or Batch1 release",
   "changedFiles": [
+    "scripts/ci/run-baseline.mjs",
+    "scripts/xroga/phase-two.mjs",
+    "scripts/xroga/phase-two-proof-bindings.mjs",
+    "scripts/xroga/phase-two-proof-bindings.test.mjs",
+    "docs/xroga/security/phase-four-proof-bindings.json",
+    "docs/xroga/evidence/command-010/CI-REPAIR-49978.json",
     ".github/workflows/xroga-tenant-security.yml",
     "backend/src/ai/attachments.ts",
     "backend/src/ai/openaiCompat.egress.test.ts",
@@ -142,7 +148,7 @@
     },
     {
       "command": "node scripts/security/audit-egress-callers.mjs --require-complete",
-      "scope": "Expected failure while 123 caller traces remain unresolved",
+      "scope": "Expected failure while 122 caller traces remain unresolved",
       "negative": true,
       "reference": "docs/xroga/security/egress-callers.json"
     },
@@ -167,7 +173,7 @@
   "rollout": "Review-only stacked draft PR. Phase3 admission, complete Command010 proof and separate release authorization required.",
   "rollback": "Revert this isolated review branch before release, no schema or live credential rollback needed.",
   "knownGaps": [
-    "123 unclosed AST caller candidates, including 69 dynamic/SDK high-risk candidates, not asserted as 69 demonstrated vulnerabilities",
+    "122 unclosed AST caller candidates, including 68 dynamic/SDK high-risk candidates, not asserted as 68 demonstrated vulnerabilities",
     "Remaining consequential adapters and upload caller migration",
     "Full deployed Supabase/PostgREST and full migration/production parity remain unverified. Local PostgreSQL receipt and ownership race proof is now available.",
     "Current main has six UI conflict groups. WorkspaceLauncher behavior reconciliation is separately committed, remaining main-history integration is not verified.",
@@ -192,7 +198,7 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "123 unclosed AST caller candidates, including 69 dynamic/SDK high-risk candidates, not asserted as 69 demonstrated vulnerabilities",
+      "122 unclosed AST caller candidates, including 68 dynamic/SDK high-risk candidates, not asserted as 68 demonstrated vulnerabilities",
       "Remaining consequential adapters and upload caller migration",
       "Full deployed Supabase/PostgREST and full migration/production parity remain unverified. Local PostgreSQL receipt and ownership race proof is now available.",
       "Current main has six UI conflict groups. WorkspaceLauncher behavior reconciliation is separately committed, remaining main-history integration is not verified.",

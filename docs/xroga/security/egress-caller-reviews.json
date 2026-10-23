@@ -3,6 +3,18 @@
   "scope": "PREPARATORY_URL_BOUNDARY_REVIEW_NOT_COMMAND010_ACCEPTANCE",
   "reviews": [
     {
+      "id":"5fdd141576170dfae26b",
+      "callSha256":"e2d2bde2675e08b6f28f22840fe41137544037b1fe6ef85de69c7e15db91d066",
+      "sourceFileSha256":"a41f6fa55c00275359176456e6c0fa175f2ad7a5209b4d529cc465494725e565",
+      "disposition":"VERIFIED_GUARD",
+      "trust":"OWNED_TEXT_FILE_ADAPTER_ONLY_NOT_UNMIGRATED_UPLOAD_OR_LIVE_PROVIDER_CERTIFICATION",
+      "tenantAuthority":"ISSUED_CONTEXT_PARENT_FILE_OWNER_READBACK_AND_CONSUMED_EXACT_AUTHORITY_PERMIT_AT_DISPATCH",
+      "evidence":[
+        {"path":"backend/src/security/egress/fileEgress.test.ts","marker":"executeOwnedFileEgress","sha256":"57cd5c48604400c9a94d8d6b29a891ab6566d4141a831365582420873f6d657b"},
+        {"path":"backend/tests/securityReceipt.local.integration.ts","marker":"executeOwnedFileEgress","sha256":"5ac2b201b759b261d5ddeaf223bf0ecd296a795257017f0ba73bdeaacd01de53"}
+      ]
+    },
+    {
       "id":"038ced12b0f74e8d5e0f",
       "callSha256":"2246d32bbb9462be893f84093c1be641b5ade15f2b11515899e2594063873708",
       "sourceFileSha256":"a3d2f3a5a47be63f1ccf6839035fca53957cc800f5f9caebbf05973983a91ff8",

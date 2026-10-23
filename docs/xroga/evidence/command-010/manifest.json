@@ -152,11 +152,11 @@
     },
     "callerInventory": {
       "total": 133,
-      "reviewedTransportScopesOnly": 10,
-      "reviewedUrlGuards": 9,
+      "reviewedTransportScopesOnly": 11,
+      "reviewedUrlGuards": 10,
       "reviewedFixedProviderTransport": 1,
-      "pending": 123,
-      "highRiskPendingCandidates": 69,
+      "pending": 122,
+      "highRiskPendingCandidates": 68,
       "strictCompleteness": "FAIL_EXPECTED_NOT_ACCEPTED"
     },
     "missionPolicy": {
@@ -330,7 +330,7 @@
   "merge": false,
   "deploy": false,
   "knownGaps": [
-    "123 unclosed AST caller candidates, including 69 dynamic/SDK high-risk candidates, not asserted as 69 demonstrated vulnerabilities",
+    "122 unclosed AST caller candidates, including 68 dynamic/SDK high-risk candidates, not asserted as 68 demonstrated vulnerabilities",
     "Remaining consequential adapters and upload caller migration",
     "Online registry-only execution is fail closed until a restricted worker is independently verified. Offline install under kernel network none is proven.",
     "Model tenant/account/project/reservation identity and complete egressPolicy binding remain open despite fixed provider destinations and tested credential floors.",

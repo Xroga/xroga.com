@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "be0e4bd3dccfb0e16fc9eafe4d3871f9b8d14155",
+  "source_sha": "47ddc3c389cedb9e9cbed7140d2b1e46ae34beb0",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12806,7 +12806,7 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "sha256": "27e921936027f5e02773900eb33a8ed8e4fee1d5553d4243083bc45ff64c0b37"
+      "sha256": "dd4e9d62ad02be181db1baca1648a8fbb270fd9b7e223c788035412e8a415dda"
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaProductionAdapters.ts",
@@ -25616,7 +25616,7 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "line": 1173,
+      "line": 1176,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

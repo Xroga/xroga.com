@@ -3,7 +3,15 @@
   "scope": "PARTIAL_MODEL_BOUNDARY_TRACE_NOT_TENANT_OR_SPEND_CERTIFICATION",
   "sourceSha256": "a3d2f3a5a47be63f1ccf6839035fca53957cc800f5f9caebbf05973983a91ff8",
   "priorTrace": "57e1c1bdd7af87f5ac0bf0784bb9ce7dac38c376:docs/xroga/evidence/command-010/MODEL-BOUNDARY-TRACE.json",
-  "softwareAgentSourceSha256": "27e921936027f5e02773900eb33a8ed8e4fee1d5553d4243083bc45ff64c0b37",
+  "softwareAgentSourceSha256": "dd4e9d62ad02be181db1baca1648a8fbb270fd9b7e223c788035412e8a415dda",
+  "mutableInputCorrection": {
+    "reproduction": "The real SoftwareAgent factory regression failed before correction when the original input model changed after factory creation. The captured credential could be paired with the changed route. Request data could also change during the controlled quota response.",
+    "fix": "Snapshot the factory model/run/fallback selection together with the credential. Snapshot messages, tools and scalar request fields before quota/reservation waits, retaining the actual cancellation signal.",
+    "evidence": "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
+    "sha256": "8ce151e8382d43710a99f0246cc8afb9110752acd15583d0bf67ae704d50fd01",
+    "verification": "Actual factory, quota/reservation/settlement protocol fixtures and SDK interception preserve original owner, selected provider, key and project text despite route and in-wait payload mutations. No live provider request or real database accounting is claimed.",
+    "remaining": "An immutable caller snapshot is not issued actor provenance, a vault credential receipt, project ownership or reservation capability. All three SDK final dispositions remain pending."
+  },
   "callers": [
     {
       "id": "31380a8d5b9454a98a98",

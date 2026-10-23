@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "08a688abed9e51ee3f697311f64090f088e1d0d68fd6d186d7e9ea9c926cb452",
+  "sourceTreeDigest": "fd2dac2788fa602cf0c174444669ef4ef4bbfd31c4c32a4f8a9ff4e27a12e0c3",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -1241,12 +1241,23 @@
       "callee": "boundedPublicPost",
       "callSha256": "e2d2bde2675e08b6f28f22840fe41137544037b1fe6ef85de69c7e15db91d066",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "OWNED_TEXT_FILE_ADAPTER_ONLY_NOT_UNMIGRATED_UPLOAD_OR_LIVE_PROVIDER_CERTIFICATION",
+      "tenantAuthority": "ISSUED_CONTEXT_PARENT_FILE_OWNER_READBACK_AND_CONSUMED_EXACT_AUTHORITY_PERMIT_AT_DISPATCH",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "backend/src/security/egress/fileEgress.test.ts",
+          "marker": "executeOwnedFileEgress",
+          "sha256": "57cd5c48604400c9a94d8d6b29a891ab6566d4141a831365582420873f6d657b"
+        },
+        {
+          "path": "backend/tests/securityReceipt.local.integration.ts",
+          "marker": "executeOwnedFileEgress",
+          "sha256": "5ac2b201b759b261d5ddeaf223bf0ecd296a795257017f0ba73bdeaacd01de53"
+        }
+      ]
     },
     {
       "id": "a7a8d74128349a90e3e8",
@@ -2464,8 +2475,8 @@
   ],
   "counts": {
     "total": 133,
-    "reviewed": 10,
-    "pending": 123,
-    "unresolvedHighRiskBypasses": 69
+    "reviewed": 11,
+    "pending": 122,
+    "unresolvedHighRiskBypasses": 68
   }
 }
