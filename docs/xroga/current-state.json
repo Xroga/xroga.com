@@ -16883,7 +16883,7 @@
       "id": "surface:740d362abd633f233607",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/organicIntelligence/content/engine.ts",
-      "sha256": "44944652801adc4ab68405b7863cd11e1f7ebb5a7a8eaf1091dccf90e22cf7a2",
+      "sha256": "64a220a88d1ceff5303e9013bd7544848a38cf4417bd508fbb3ff99b56991419",
       "symbols": [
         "BidResult",
         "CONTENT_FAMILY_CONTRACTS",
@@ -17123,7 +17123,7 @@
       "id": "surface:7702380a73fd9cc12660",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/organicIntelligence/content/pipeline.ts",
-      "sha256": "98db959e0f21f66e0415f4f81439e95e47ea2fc35a0e95ee3273fc5361d86807",
+      "sha256": "6193e438e9f954ab078b3fdba5f08cd1ba304c4a7e41b901e0a77f5ef537b17f",
       "symbols": [
         "GrowthContentSnapshot",
         "assetResolutions",
@@ -102802,7 +102802,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:4517fc46fb99b0b4b6be",
+      "id": "finding:dfc2e94bdd94e5b5cca6",
       "sourcePath": "backend/src/organicIntelligence/content/engine.ts",
       "line": 427,
       "kind": "TODO",
@@ -102812,7 +102812,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:603d0fa00d3e97cba415",
+      "id": "finding:6f875ac49268e4be367a",
       "sourcePath": "backend/src/organicIntelligence/content/engine.ts",
       "line": 427,
       "kind": "PLACEHOLDER",
@@ -102822,7 +102822,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:038d4205c1a4a96e3203",
+      "id": "finding:dd3cadefeead0d6860c3",
       "sourcePath": "backend/src/organicIntelligence/content/engine.ts",
       "line": 427,
       "kind": "PLACEHOLDER",
@@ -110704,9 +110704,9 @@
     {
       "id": "test-suite:7615a81dae36ebaa2444",
       "sourcePath": "backend/src/organicIntelligence/content/engine.test.ts",
-      "declaredTests": 32,
+      "declaredTests": 33,
       "skipLocations": [
-        "backend/src/organicIntelligence/content/engine.test.ts:367"
+        "backend/src/organicIntelligence/content/engine.test.ts:378"
       ],
       "focusLocations": []
     },

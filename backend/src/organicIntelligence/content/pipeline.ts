@@ -90,7 +90,7 @@ export async function buildGrowthContentSnapshot(input?: {
     if (!manifest) return false;
     const sources = growth.sources.filter((record) => manifest.sourceIds.includes(record.sourceId));
     const claims = growth.claims.filter((record) => manifest.claimIds.includes(record.claimId));
-    return validateCitationReadyManifest(manifest, sources, claims).length === 0;
+    return validateCitationReadyManifest(manifest, sources, claims, now).length === 0;
   });
   const selected = selectControlledBatch(command1.opportunities, eligibleInventory, 8, preferredOpportunityByUrl);
   const briefs = selected.flatMap(({ opportunity, asset }) => {
@@ -132,6 +132,7 @@ export async function buildGrowthContentSnapshot(input?: {
         manifest,
         growth.sources.filter((record) => manifest.sourceIds.includes(record.sourceId)),
         growth.claims.filter((record) => manifest.claimIds.includes(record.claimId)),
+        now,
       ),
     })),
     sourceClaimIssues: validateSourcesAndClaims(growth.sources, growth.claims, now),

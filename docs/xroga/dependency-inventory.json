@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "4864717b8260de40a231fc2a40848785ca03a800",
+  "source_sha": "b3ec3e6687a4b5c15763881fd6d86fce34cbb884",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -13626,7 +13626,7 @@
     },
     {
       "path": "backend/src/organicIntelligence/content/engine.ts",
-      "sha256": "44944652801adc4ab68405b7863cd11e1f7ebb5a7a8eaf1091dccf90e22cf7a2"
+      "sha256": "64a220a88d1ceff5303e9013bd7544848a38cf4417bd508fbb3ff99b56991419"
     },
     {
       "path": "backend/src/organicIntelligence/content/model.ts",
@@ -13634,7 +13634,7 @@
     },
     {
       "path": "backend/src/organicIntelligence/content/pipeline.ts",
-      "sha256": "98db959e0f21f66e0415f4f81439e95e47ea2fc35a0e95ee3273fc5361d86807"
+      "sha256": "6193e438e9f954ab078b3fdba5f08cd1ba304c4a7e41b901e0a77f5ef537b17f"
     },
     {
       "path": "backend/src/organicIntelligence/content/providers.ts",

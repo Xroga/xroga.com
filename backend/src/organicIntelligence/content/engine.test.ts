@@ -283,6 +283,17 @@ test('actual repository snapshot reuses Command 1, keeps missing data explicit, 
   assert.ok(snapshot.contentValidation.every((item) => item.issues.length === 0));
 });
 
+test('snapshot citation eligibility and reporting share the injected clock and reject expired claims', async () => {
+  const historical = await buildGrowthContentSnapshot({ now: new Date('2026-09-22T00:00:00.000Z') });
+  assert.equal(historical.briefs.length, 2);
+  assert.ok(historical.contentValidation.every(item => item.issues.length === 0));
+  const expired = await buildGrowthContentSnapshot({ now: new Date('2026-10-24T00:00:00.000Z') });
+  assert.deepEqual(expired.firstBatch, []);
+  assert.deepEqual(expired.briefs, []);
+  assert.equal(expired.contentValidation.length, historical.contentValidation.length);
+  assert.ok(expired.contentValidation.every(item => item.issues.some(issue => /Claim .* is stale\./.test(issue))));
+});
+
 test('validated demand evidence flows into the matching content brief without duplicates', async () => {
   const [command1Source, growthSource] = await Promise.all([loadSource(), loadGrowthContentSource()]);
   growthSource.keywordMetrics = [metric({
