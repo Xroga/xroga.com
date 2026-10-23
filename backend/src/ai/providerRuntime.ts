@@ -112,6 +112,12 @@ export function normalizeProviderError(error: unknown): NormalizedProviderError 
   };
 }
 
+/** A different provider cannot authorize the same locally rejected request. */
+export function isModelSecurityDenial(error:unknown):boolean{
+  return ['MODEL_DISPATCH_BINDING_DENIED','MODEL_CREDENTIAL_EGRESS_DENIED','MODEL_PAYLOAD_INVALID','MODEL_DESTINATION_DENIED']
+    .includes((error as {code?:string})?.code??'');
+}
+
 function recompute(entry: MutableHealth): void {
   const executions = entry.successes + entry.failures;
   const validations = entry.validationSuccesses + entry.validationFailures;
@@ -127,8 +133,7 @@ export function recordModelExecution(
 ): ModelRuntimeHealth {
   // A deterministic pre-dispatch rejection says nothing about provider health.
   // Untrusted prompt content must not open a shared provider circuit.
-  const policyCode=(result.error as {code?:unknown}|undefined)?.code;
-  if(!result.ok&&(policyCode==='MODEL_CREDENTIAL_EGRESS_DENIED'||policyCode==='MODEL_PAYLOAD_INVALID'||policyCode==='MODEL_DESTINATION_DENIED'))return {...(health.get(modelId)??initial(modelId))};
+  if(!result.ok&&isModelSecurityDenial(result.error))return {...(health.get(modelId)??initial(modelId))};
   const entry = health.get(modelId) ?? initial(modelId);
   // Captured before mutation so `worthPersisting` can compare states rather than guess.
   const before: ModelRuntimeHealth | undefined = health.has(modelId) ? { ...entry } : undefined;
@@ -294,6 +299,14 @@ export async function executeWithProviderFallback<T>(input: {
           ? normalizeProviderError(Object.assign(new Error('Provider request timed out'), { code: 'ETIMEDOUT' }))
           : normalizeProviderError(error);
         failures.push(normalized);
+        // Local security denials apply to the request/account, not the health of
+        // one provider. Another route must never launder a rejected credential
+        // or payload through a different transport.
+        if(isModelSecurityDenial(error)) {
+          throw new RuntimeFailure('PROVIDER_UNAVAILABLE','Model dispatch was denied by local security policy.',{
+            details:{failures:failures.map(({kind,retryable,status,code})=>({kind,retryable,status,code}))},
+          });
+        }
 
         /* Account capacity is shared by every model route. Walking fallbacks cannot
          * make capacity appear and only hides the actionable reason. */

@@ -190,7 +190,7 @@ export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): 
   };
 }
 
-export function createModelProviderClient(endpoint: ResolvedEndpoint): OpenAI {
+export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispatch?:(wireBody:string)=>Promise<void>): OpenAI {
   publicHttpsUrl(endpoint.baseUrl);
   assertModelProviderDestination(endpoint.provider,endpoint.baseUrl);
   return new OpenAI({
@@ -202,6 +202,13 @@ export function createModelProviderClient(endpoint: ResolvedEndpoint): OpenAI {
     fetch:async (input,init)=>{
       const url=new URL(typeof input==='string'?input:'url' in input?input.url:input.href);
       if(url.href!==endpoint.baseUrl+'/chat/completions'||init?.method?.toUpperCase()!=='POST'||typeof init.body!=='string')throw Object.assign(Error('Model SDK destination denied.'),{code:'MODEL_DESTINATION_DENIED',status:400});
+      try { await beforeDispatch?.(init.body); }
+      catch {
+        // Let the SDK preserve the local policy code, rather than wrapping a
+        // thrown fetch error as a retryable/uncertain provider connection error.
+        return Response.json({error:{message:'Local model dispatch denied before provider request.',code:'MODEL_DISPATCH_BINDING_DENIED'}},
+          {status:400,headers:{'x-should-retry':'false'}}) as unknown as Awaited<ReturnType<NonNullable<ClientOptions['fetch']>>>;
+      }
       const response=await globalThis.fetch(url,{method:'POST',body:init.body,
         headers:init.headers as NonNullable<Parameters<typeof fetch>[1]>['headers'],signal:init.signal as AbortSignal|undefined,redirect:'error'});
       if(response.redirected||(response.status>=300&&response.status<400))throw Object.assign(Error('Model SDK redirect denied.'),{code:'MODEL_DESTINATION_DENIED',status:400});
@@ -259,6 +266,7 @@ export async function chatCompletion(
     reasoningMode?: ReasoningMode;
     signal?: AbortSignal;
     credentialOverride?: string;
+    beforeDispatch?: (wireBody:string)=>Promise<void>;
   } = {},
 ): Promise<ChatResult> {
   const started = Date.now();
@@ -266,7 +274,7 @@ export async function chatCompletion(
   try {
     const endpoint = resolveEndpoint(modelId, opts.credentialOverride);
     messages=snapshotModelEgressPayload(messages,endpoint.apiKey);
-    const client = createModelProviderClient(endpoint);
+    const client = createModelProviderClient(endpoint,opts.beforeDispatch);
     const completion = await withTemperatureFallback(opts.temperature ?? 0.4, (temperature) =>
       client.chat.completions.create(
         {
@@ -347,6 +355,7 @@ export async function chatCompletionStream(
     json?: boolean;
     signal?: AbortSignal;
     credentialOverride?: string;
+    beforeDispatch?: (wireBody:string)=>Promise<void>;
   } = {},
 ): Promise<ChatResult> {
   const started = Date.now();
@@ -354,7 +363,7 @@ export async function chatCompletionStream(
   try {
     const endpoint = resolveEndpoint(modelId, opts.credentialOverride);
     messages=snapshotModelEgressPayload(messages,endpoint.apiKey);
-    const client = createModelProviderClient(endpoint);
+    const client = createModelProviderClient(endpoint,opts.beforeDispatch);
     if (opts.signal?.aborted) {
       const err = new Error('Build cancelled') as Error & { code?: string };
       err.code = 'BUILD_CANCELLED';

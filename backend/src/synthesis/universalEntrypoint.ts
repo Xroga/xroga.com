@@ -52,7 +52,8 @@ import {
 import {
   getSupabaseAdmin,
 } from '../config/supabase.js';
-import { createTenantContext } from '../security/tenantContext.js';
+import { createTenantContext,type TenantContext } from '../security/tenantContext.js';
+import type {AdmittedRunAttempt} from '../ai/runStore.js';
 
 import {
   routeByCapability,
@@ -367,6 +368,9 @@ export async function tryUniversalBuild(
     runId?: string;
 
     userId: string;
+    tenantContext?:TenantContext;
+    databaseProjectId?:string;
+    modelRunAttempt?:AdmittedRunAttempt;
 
     projectId?:
       | string
@@ -1080,6 +1084,7 @@ const measuredEvidence =
             }) =>
               runUniversalSoftwareImplementation(
                 {
+                  tenantContext:input.tenantContext,databaseProjectId:input.databaseProjectId,modelRunAttempt:input.modelRunAttempt,
                   userId:
                     input.userId,
 
@@ -1165,6 +1170,7 @@ repair:
 
     return runUniversalSoftwareImplementation(
       {
+        tenantContext:input.tenantContext,databaseProjectId:input.databaseProjectId,modelRunAttempt:input.modelRunAttempt,
         userId:
           input.userId,
 

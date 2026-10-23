@@ -1,4 +1,6 @@
 import OpenAI from 'openai';
+import {withTenantModelReservation,type TenantModelScope,type BoundModelDispatch} from '../tenantModelDispatch.js';
+import {requireResourceOwner} from '../../security/tenantContext.js';
 
 import {
   resolveEndpoint,
@@ -149,6 +151,7 @@ export interface SoftwareAgentModelTelemetry {
 
 export interface XrogaAgentModelInput {
   userId: string;
+  dispatchScope?:TenantModelScope;
 
   /**
    * Canonical Xroga build run.
@@ -695,6 +698,7 @@ function assertModelAvailable(
 async function runSingleModelTurn(
   input: {
     userId: string;
+    dispatchScope?:TenantModelScope;
     modelId: ModelId;
     primaryModelId: ModelId;
     credentialOverride?: string;
@@ -727,23 +731,7 @@ async function runSingleModelTurn(
       ? input.credentialOverride
       : undefined;
 
-  return withProviderReservation({
-    userId:
-      input.userId,
-
-    modelId:
-      input.modelId,
-
-    estimatedInputTokens,
-
-    maximumOutputTokens:
-      input.maximumOutputTokens,
-
-    purpose:
-      'daily_work',
-
-    execute:
-      async () => {
+  const execute = async (dispatch?:BoundModelDispatch) => {
         const startedAt =
           Date.now();
 
@@ -751,16 +739,16 @@ async function runSingleModelTurn(
           const endpoint =
             resolveEndpoint(
               input.modelId,
-              credentialOverride,
+              dispatch?dispatch.credentialOverride:credentialOverride,
             );
 
           const client =
-            createModelProviderClient(endpoint);
+            createModelProviderClient(endpoint,dispatch?.beforeDispatch);
 
-          const {messages,tools}=snapshotModelEgressPayload({
+          const {messages,tools}=snapshotModelEgressPayload((dispatch?.payload??{
             messages:toOpenAiMessages(input.request),
             tools:toOpenAiTools(input.request.tools),
-          },endpoint.apiKey);
+          }) as {messages:ReturnType<typeof toOpenAiMessages>;tools:ReturnType<typeof toOpenAiTools>},endpoint.apiKey);
 
           const stream =
             await client.chat.completions.create(
@@ -1012,13 +1000,19 @@ async function runSingleModelTurn(
 
           throw error;
         }
-      },
-  });
+      };
+  return input.dispatchScope
+    ? withTenantModelReservation({scope:input.dispatchScope,modelId:input.modelId,
+        payload:{messages:toOpenAiMessages(input.request),tools:toOpenAiTools(input.request.tools)},
+        estimatedInputTokens,maximumOutputTokens:input.maximumOutputTokens,execute})
+    : withProviderReservation({userId:input.userId,modelId:input.modelId,estimatedInputTokens,
+        maximumOutputTokens:input.maximumOutputTokens,purpose:'daily_work',execute});
 }
 
 async function runBufferedTurn(
   input: {
     userId: string;
+    dispatchScope?:TenantModelScope;
 
     runId?: string;
 
@@ -1080,6 +1074,7 @@ async function runBufferedTurn(
           signal,
         ) =>
           runSingleModelTurn({
+            dispatchScope:input.dispatchScope,
             userId:
               input.userId,
 
@@ -1153,9 +1148,10 @@ async function runBufferedTurn(
 export function createXrogaAgentModel(
   input: XrogaAgentModelInput,
 ): SoftwareAgentPrebuiltModel {
+  if(input.dispatchScope)requireResourceOwner(input.dispatchScope.context,input.userId);
   // Bind the selected route and credential together. Upstream mutation after
   // factory creation must not retarget a captured account credential.
-  input={...input,fallbackModelIds:input.fallbackModelIds?[...input.fallbackModelIds]:undefined};
+  input={...input,dispatchScope:input.dispatchScope?{...input.dispatchScope}:undefined,fallbackModelIds:input.fallbackModelIds?[...input.fallbackModelIds]:undefined};
   const userId =
     requireUserId(
       input.userId,
@@ -1194,6 +1190,7 @@ export function createXrogaAgentModel(
         request={...request,messages:structuredClone(request.messages),tools:structuredClone(request.tools)};
         const turn =
           await runBufferedTurn({
+            dispatchScope:input.dispatchScope,
             userId,
 
             runId:

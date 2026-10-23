@@ -1,6 +1,8 @@
 import { randomUUID } from 'crypto';
 import {requireTenantContext,requireResourceOwner,type TenantContext} from '../security/tenantContext.js';
 import {requireOptionalOwnedDatabaseProject} from '../security/ownership.js';
+import {withTenantModelReservation,type BoundModelDispatch} from './tenantModelDispatch.js';
+import type {AdmittedRunAttempt} from './runStore.js';
 import { convertUserRequest } from './converter.js';
 import { BLACK_HOLE_PUBLIC_NAME } from './black-hole/publicIdentity.js';
 import { readCutoverPlan } from './black-hole/cutover.js';
@@ -225,7 +227,7 @@ import {
   createIntelligentRoutePlan,
   selectRepairModel as legacySelectRepairModel,
 } from './intelligentRouter.js';
-import { normalizeProviderError, recordModelValidation } from './providerRuntime.js';
+import { normalizeProviderError, recordModelValidation,isModelSecurityDenial } from './providerRuntime.js';
 import { classifyFailure } from '../lib/recoveryPlanner.js';
 import { explicitlyDisablesResearch } from '../lib/taskClassifier.js';
 import { loadRoutingOutcomes, recordRoutingOutcome } from './routingOutcomes.js';
@@ -691,7 +693,7 @@ async function hydratePriorFiles(
   return { files: [], fromMemory: false, source: 'none' };
 }
 
-async function callBuilderStream(
+export async function callBuilderStream(
   preferred: ModelId,
   messages: ChatMessage[],
   opts: {
@@ -699,6 +701,9 @@ async function callBuilderStream(
     temperature?: number;
     onDelta?: DeltaFn;
     userId?: string;
+    tenantContext?: TenantContext;
+    databaseProjectId?: string;
+    modelRunAttempt?:AdmittedRunAttempt;
     signal?: AbortSignal;
     onModelFallback?: (from: ModelId, to: ModelId) => void;
     credentialOverrides?: Partial<Record<ModelId, string>>;
@@ -726,6 +731,9 @@ async function callBuilderStream(
     onStreamDelta?: (delta: string) => void;
   },
 ): Promise<Awaited<ReturnType<typeof chatCompletionStream>>> {
+  if(opts.tenantContext)requireResourceOwner(opts.tenantContext,opts.userId);
+  messages=structuredClone(messages);
+  opts={...opts,credentialOverrides:opts.credentialOverrides?{...opts.credentialOverrides}:undefined};
   const healthAwareOrder = fallbackOrderForModel(preferred);
   const candidates = healthAwareOrder.length
     ? healthAwareOrder
@@ -749,7 +757,7 @@ async function callBuilderStream(
         opts.onModelFallback?.(preferred, modelId);
       }
       const provider = MODELS[modelId].provider;
-      const userCredential =
+      const userCredential = opts.tenantContext?null:
         opts.credentialOverrides?.[modelId] ??
         (opts.userId
           ? await getUserProviderKey(
@@ -758,7 +766,7 @@ async function callBuilderStream(
             ).catch(() => null)
           : null);
       const bufferedDeltas: string[] = [];
-      const execute = async () => {
+      const execute = async (dispatch?:BoundModelDispatch) => {
         // Every attempt runs under a first-token and generation deadline. Without
         // them a provider that accepts the connection and then goes silent held the
         // whole run open until the socket timeout, once per model in the fallback
@@ -766,7 +774,7 @@ async function callBuilderStream(
         // deliver nothing.
         const attempt = await runBuilderAttempt(
           async ({ signal, onToken }) => {
-            const completion = await chatCompletionStream(modelId, messages, {
+            const completion = await chatCompletionStream(modelId, (dispatch?.payload.messages??messages) as ChatMessage[], {
               maxTokens: opts.maxTokens,
               temperature: opts.temperature,
               onDelta: (delta) => {
@@ -776,7 +784,8 @@ async function callBuilderStream(
                 else opts.onDelta?.(delta);
               },
               signal,
-              credentialOverride: userCredential || undefined,
+              credentialOverride: dispatch?dispatch.credentialOverride:userCredential || undefined,
+              beforeDispatch:dispatch?.beforeDispatch,
             });
             opts.validateResponse?.(completion);
             return completion;
@@ -787,7 +796,11 @@ async function callBuilderStream(
         return attempt.value;
       };
       const runAttempt = () =>
-        opts.userId
+        opts.tenantContext
+          ? withTenantModelReservation({scope:{context:opts.tenantContext,userId:opts.userId!,projectId:opts.databaseProjectId,runAttempt:opts.modelRunAttempt,
+              connectedAccountId:opts.credentialOverrides?(opts.credentialOverrides[modelId]?`apikey_${provider}`:'platform'):undefined},
+              modelId,payload:{messages},estimatedInputTokens:estimateMessageTokens(messages),maximumOutputTokens:opts.maxTokens??8192,execute})
+          : opts.userId
           ? withProviderReservation({
               userId: opts.userId,
               modelId,
@@ -808,6 +821,7 @@ async function callBuilderStream(
     } catch (err) {
       lastErr = err as Error;
       const code = (lastErr as Error & { code?: string }).code;
+      if(isModelSecurityDenial(lastErr))throw lastErr;
       const failure = classifyBuilderFailure(lastErr);
       opts.onAttemptFailure?.({
         // §30/§31: this field reached the client. Which model failed is recorded in the
@@ -946,6 +960,7 @@ function finalizeBuildTodos(
  */
 export async function runChatPipeline(opts: {
   userId: string;
+  tenantContext?: TenantContext;
   prompt: string;
   history?: Array<{ role: 'user' | 'assistant'; content: string }>;
   attachments?: ChatAttachment[];
@@ -953,6 +968,7 @@ export async function runChatPipeline(opts: {
   goalContract?: GoalContract;
   projectEvidence?: string;
 }): Promise<ChatPipelineResult> {
+  if(opts.tenantContext)requireResourceOwner(opts.tenantContext,opts.userId);
   const initialUsage = await assertHasQuota(opts.userId);
 
   const prepared = await prepareAttachments(opts.attachments);
@@ -990,6 +1006,7 @@ export async function runChatPipeline(opts: {
       {
         userId: opts.userId,
         maxTokens: 6144,
+        tenantContext:opts.tenantContext,
         temperature: 0.35,
         onDelta: opts.onDelta,
       },
@@ -1116,6 +1133,7 @@ export async function runChatPipeline(opts: {
     {
       userId: opts.userId,
       maxTokens: route.kind === 'research' ? researchAnswerMaxTokens(opts.prompt) : 4096,
+      tenantContext:opts.tenantContext,
       temperature: 0.5,
       onDelta: opts.onDelta,
     },
@@ -1238,6 +1256,7 @@ if (
     trace.bindAttempt(captureAdmittedRunAttempt(runId, opts.userId));
     executionStore = new SupabaseExecutionStateStore(opts.userId, captureAdmittedRunAttempt(runId, opts.userId));
   }
+  const admittedModelAttempt=process.env.SUPABASE_SERVICE_ROLE_KEY?captureAdmittedRunAttempt(runId,opts.userId):undefined;
   emit({ ...startupProgress('quota'), swarmTodos: todosForBuild('route', 'omit') });
   await assertHasQuota(opts.userId);
   throwIfAborted();
@@ -1267,6 +1286,7 @@ if (
     });
     const chat = await runChatPipeline({
       userId: opts.userId,
+      tenantContext:opts.tenantContext,
       prompt: opts.prompt,
       history: opts.history,
       attachments: opts.attachments,
@@ -1652,6 +1672,7 @@ const universalRequestPrompt =
       )
     : userFacingPrompt;
     const universal = await tryUniversalBuild({
+    tenantContext,databaseProjectId:admittedDatabaseProjectId,modelRunAttempt:admittedModelAttempt,
     runId,
 
     userId:
@@ -1715,13 +1736,15 @@ const universalRequestPrompt =
         const attemptMessages: ChatMessage[] = repairHint
           ? [...messages, { role: 'user', content: `Correct the previous planning output. ${repairHint}` }]
           : messages;
-        const completion = await withProviderReservation({
-          userId: opts.userId,
+        const completion = await withTenantModelReservation({
+          scope:{context:tenantContext,userId:opts.userId,projectId:admittedDatabaseProjectId,runAttempt:admittedModelAttempt,connectedAccountId:'platform'},
+          payload:{messages:attemptMessages},
+          purpose:'complexity',
           modelId,
           estimatedInputTokens: estimateMessageTokens(attemptMessages),
           maximumOutputTokens,
-          purpose: 'complexity',
-          execute: () => chatCompletion(modelId, attemptMessages, {
+          execute: dispatch => chatCompletion(modelId, dispatch.payload.messages as ChatMessage[], {
+            beforeDispatch:dispatch.beforeDispatch,
             maxTokens: maximumOutputTokens,
             temperature: 0,
             json: true,
@@ -2639,7 +2662,7 @@ publicationReason:
             ),
           },
         ],
-        { userId: opts.userId, maxTokens: 2048, temperature: 0.3, signal: opts.signal, onModelFallback: emitModelSwitch },
+        { userId: opts.userId, tenantContext, databaseProjectId:admittedDatabaseProjectId, modelRunAttempt:admittedModelAttempt, maxTokens: 2048, temperature: 0.3, signal: opts.signal, onModelFallback: emitModelSwitch },
       );
       usage = await recordUsage(
         opts.userId,
@@ -2740,6 +2763,7 @@ publicationReason:
       opts.userId,
       converterRequest,
       researchBlock || undefined,
+      {context:tenantContext,userId:opts.userId,projectId:admittedDatabaseProjectId,runAttempt:admittedModelAttempt,connectedAccountId:'platform'},
     );
     usage = await recordUsage(
       opts.userId,
@@ -2811,6 +2835,7 @@ publicationReason:
       const plan = await Promise.race([
         runArchitectPlan({
           userId: opts.userId,
+          dispatchScope:{context:tenantContext,userId:opts.userId,projectId:admittedDatabaseProjectId,runAttempt:admittedModelAttempt,connectedAccountId:'platform'},
           brief: converted.instruction,
           userPrompt: userFacingPrompt,
           isUpdate,
@@ -2959,6 +2984,7 @@ publicationReason:
       {
         userId: opts.userId,
         maxTokens: resilientStaticPath ? 8192 : 16384,
+        tenantContext,databaseProjectId:admittedDatabaseProjectId,modelRunAttempt:admittedModelAttempt,
         temperature: isUpdate ? 0.3 : 0.45,
         onDelta: opts.onDelta,
         onStreamDelta: (delta) => {
@@ -3115,6 +3141,7 @@ publicationReason:
           {
             userId: opts.userId,
             maxTokens: 8192,
+            tenantContext,databaseProjectId:admittedDatabaseProjectId,modelRunAttempt:admittedModelAttempt,
             temperature: 0.2,
             onDelta: opts.onDelta,
             signal: opts.signal,
@@ -3564,6 +3591,7 @@ publicationReason:
         {
           userId: opts.userId,
           maxTokens: 12288,
+          tenantContext,databaseProjectId:admittedDatabaseProjectId,modelRunAttempt:admittedModelAttempt,
           temperature: 0.25,
           onDelta: opts.onDelta,
           signal: opts.signal,

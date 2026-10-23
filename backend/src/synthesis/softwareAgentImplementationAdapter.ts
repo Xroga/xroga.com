@@ -6,7 +6,8 @@ import type {
   ModelId,
 } from '../ai/models.js';
 
-import { captureAdmittedRunAttempt } from '../ai/runStore.js';
+import { captureAdmittedRunAttempt,type AdmittedRunAttempt } from '../ai/runStore.js';
+import type {TenantContext} from '../security/tenantContext.js';
 import {
   assertCodingModel,
 } from '../ai/providerPolicy.js';
@@ -72,6 +73,9 @@ import {
 } from './staticWebBootstrap.js';
 
 export interface UniversalSoftwareImplementationInput {
+  tenantContext?:TenantContext;
+  databaseProjectId?:string;
+  modelRunAttempt?:AdmittedRunAttempt;
   userId:
     string;
 
@@ -577,6 +581,7 @@ export async function runUniversalSoftwareImplementation(
 
   const model =
     createXrogaAgentModelRoute({
+      dispatchScope:input.tenantContext?{context:input.tenantContext,userId:input.userId,projectId:input.databaseProjectId,runAttempt:input.modelRunAttempt,connectedAccountId:'platform'}:undefined,
       userId:
         input.userId,
 

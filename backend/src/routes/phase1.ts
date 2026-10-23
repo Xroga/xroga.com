@@ -1502,6 +1502,7 @@ router.post(
         await runChatPipeline(
           {
             userId,
+            tenantContext:requireTenantContext(req.tenantContext),
 
             prompt:
               promptForChat,

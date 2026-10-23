@@ -11,7 +11,7 @@ import {
   callableModelIds,
   type ModelId,
 } from '../ai/models.js';
-import { normalizeProviderError } from '../ai/providerRuntime.js';
+import { normalizeProviderError,isModelSecurityDenial } from '../ai/providerRuntime.js';
 import { SAFE_RICH_OUTPUT_GUIDE } from '../ai/prompts.js';
 import { getRedis } from '../config/redis.js';
 import {
@@ -447,6 +447,7 @@ async function guestCompletion(messages: ChatMessage[]) {
       });
     } catch (error) {
       lastError = error;
+      if(isModelSecurityDenial(error))throw error;
     }
   }
 

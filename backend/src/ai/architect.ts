@@ -4,6 +4,8 @@
 
 import { chatCompletion, estimateMessageTokens, type ChatMessage } from './openaiCompat.js';
 import { withProviderReservation } from './providerBudget.js';
+import {withTenantModelReservation,type TenantModelScope,type BoundModelDispatch} from './tenantModelDispatch.js';
+import {requireResourceOwner} from '../security/tenantContext.js';
 
 export interface ArchitectPlan {
   stack: string;
@@ -67,10 +69,12 @@ function parsePlan(text: string): Pick<ArchitectPlan, 'stack' | 'files' | 'notes
 
 export async function runArchitectPlan(opts: {
   userId: string;
+  dispatchScope?:TenantModelScope;
   brief: string;
   userPrompt: string;
   isUpdate?: boolean;
 }): Promise<ArchitectPlan> {
+  if(opts.dispatchScope)requireResourceOwner(opts.dispatchScope.context,opts.userId);
   const messages: ChatMessage[] = [
       { role: 'system', content: ARCHITECT_SYSTEM },
       {
@@ -78,15 +82,16 @@ export async function runArchitectPlan(opts: {
         content: `${opts.isUpdate ? 'INCREMENTAL UPDATE — plan only files that must change.\n' : ''}Builder brief:\n${opts.brief.slice(0, 6000)}\n\nUser request:\n${opts.userPrompt.slice(0, 2000)}`,
       },
     ];
-  const result = await withProviderReservation({
+  const execute=(dispatch?:BoundModelDispatch)=>chatCompletion('deepseek_v4_flash',
+    (dispatch?.payload.messages??messages) as ChatMessage[],{maxTokens:1200,temperature:0.2,json:true,credentialOverride:dispatch?.credentialOverride,beforeDispatch:dispatch?.beforeDispatch});
+  const result = opts.dispatchScope?await withTenantModelReservation({scope:opts.dispatchScope,modelId:'deepseek_v4_flash',payload:{messages},
+    estimatedInputTokens:estimateMessageTokens(messages),maximumOutputTokens:1200,purpose:'complexity',execute}):await withProviderReservation({
     userId: opts.userId,
     modelId: 'deepseek_v4_flash',
     estimatedInputTokens: estimateMessageTokens(messages),
     maximumOutputTokens: 1200,
     purpose: 'complexity',
-    execute: () => chatCompletion(
-      'deepseek_v4_flash', messages, { maxTokens: 1200, temperature: 0.2, json: true },
-    ),
+    execute,
   });
   const parsed = parsePlan(result.text);
   return {
