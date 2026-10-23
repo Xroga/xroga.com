@@ -826,9 +826,9 @@
     },
     {
       "path": "backend/src/synthesis/universalEntrypoint.ts",
-    "sourceSha256": "2112e8b8cc0b1634eeb9e9c68b9a46ead0a2224761e015b2ead9f83f8064baa2",
+    "sourceSha256": "91c22bc5ac1fd79eeeaafab69134d17009c7cc0d2bfba101411dde88625b46a2",
       "callIds": [
-      "1271489516ef5d2c31c2"
+      "cfba5e514ab70426438c"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Only the admitted runBuildPipeline invokes this production default. Its original issued context and owner are checked before opts are copied, and the actual universal call allocates a fresh owner/run/project literal. The unchanged entrypoint passes its only private SDK result directly into universalStore with an internal issued context for that server-admitted subject. Privileged stores are per invocation, never the global memory singleton. All seven actual direct receiving store operations and their owned-write subchain independently verify. Real default factory use constructs different owner instances, rejects primitive/cloned issuance and preserves all existing owned/foreign project/run/spec/index and contention assertions. No injected arbitrary client, model output or public body grants this default subject.",
@@ -3389,9 +3389,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-    "sourceSha256": "d35a6351c41e27cecc313df0e7ee134a0e51fe4c5351649a7dfadf62bcca05e6",
+    "sourceSha256": "195794c3453d6320fc522b7c68305016d9f9ec9f3b2cd345d02582f001084be2",
       "callIds": [
-      "fbccd562d15a2401fc3f"
+      "1ddc9f7f0484a570301f"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3421,9 +3421,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-    "sourceSha256": "d35a6351c41e27cecc313df0e7ee134a0e51fe4c5351649a7dfadf62bcca05e6",
+    "sourceSha256": "195794c3453d6320fc522b7c68305016d9f9ec9f3b2cd345d02582f001084be2",
       "callIds": [
-      "55ed6e1f948491b895a0"
+      "8427f2f0f1f62353de9c"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",

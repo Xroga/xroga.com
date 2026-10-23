@@ -4996,7 +4996,7 @@
       "id": "surface:90932fa247bf4ae28450",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/pipeline.ts",
-      "sha256": "d35a6351c41e27cecc313df0e7ee134a0e51fe4c5351649a7dfadf62bcca05e6",
+      "sha256": "195794c3453d6320fc522b7c68305016d9f9ec9f3b2cd345d02582f001084be2",
       "symbols": [
         "ARCHITECT_MS",
         "BUILDER_FALLBACKS",
@@ -5178,6 +5178,7 @@
         "maximumOutputTokens",
         "mem",
         "memo",
+        "memoryRepo",
         "mergeFileMaps",
         "message",
         "messages",
@@ -5185,6 +5186,7 @@
         "metaRaw",
         "modelDeletes",
         "modelId",
+        "modelScope",
         "modelSwitches",
         "narrate",
         "narrator",
@@ -5554,6 +5556,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/ai/modelContext.security.test.ts:4",
         "backend/src/ai/pipelineResearchFailure.test.ts:4",
         "backend/src/ai/projectName.test.ts:3",
         "backend/src/ai/repositoryHydrationAuthority.test.ts:3",
@@ -5603,6 +5606,7 @@
         "backend/src/ai/pipeline.ts#verifyShippedProduct"
       ],
       "testCoverage": [
+        "backend/src/ai/modelContext.security.test.ts",
         "backend/src/ai/pipelineResearchFailure.test.ts",
         "backend/src/ai/projectName.test.ts",
         "backend/src/ai/repositoryHydrationAuthority.test.ts",
@@ -5795,6 +5799,7 @@
       ],
       "callers": [
         "backend/src/ai/memoryReadAuthority.test.ts:4",
+        "backend/src/ai/modelContext.security.test.ts:6",
         "backend/src/ai/pipeline.ts:190",
         "backend/src/ai/projectMemoryCommit.test.ts:4",
         "backend/src/ai/repoSummarize.ts:26",
@@ -5816,6 +5821,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/memoryReadAuthority.test.ts",
+        "backend/src/ai/modelContext.security.test.ts",
         "backend/src/ai/projectMemoryCommit.test.ts",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts",
         "backend/src/security/recoveryMemoryRead.local.integration.ts"
@@ -6001,7 +6007,6 @@
         "backend/src/ai/providerBudget.evidence.test.ts:4",
         "backend/src/ai/providerBudget.settlement.test.ts:4",
         "backend/src/ai/providerBudget.test.ts:4",
-        "backend/src/ai/repoSummarize.ts:18",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:18",
         "backend/src/ai/tenantModelDispatch.ts:10",
         "backend/src/ai/universal/semanticRequestPlanner.ts:12",
@@ -6363,6 +6368,8 @@
         "backend/src/ai/providerBudget.ts:5",
         "backend/src/ai/providerHealthStore.test.ts:9",
         "backend/src/ai/providerRuntime.test.ts:3",
+        "backend/src/ai/repoSummarize.security.test.ts:9",
+        "backend/src/ai/repoSummarize.ts:20",
         "backend/src/ai/research.ts:2",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:11",
         "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts:6",
@@ -6390,6 +6397,7 @@
         "backend/src/ai/providerBudget.settlement.test.ts",
         "backend/src/ai/providerHealthStore.test.ts",
         "backend/src/ai/providerRuntime.test.ts",
+        "backend/src/ai/repoSummarize.security.test.ts",
         "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts",
         "backend/src/lib/resilience/retry.test.ts",
@@ -6644,7 +6652,7 @@
       "id": "surface:c1ec6ad36569187af364",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/repoSummarize.ts",
-      "sha256": "1c0b0e74c11817a0778354e2210a5ed718d48d9ceb3aa8208d0d7e3c666288d5",
+      "sha256": "01bd2ccb2a40df36e762abada8700f041196c137c61947802175427a3ea825d0",
       "symbols": [
         "error",
         "listing",
@@ -6657,22 +6665,27 @@
         "summary"
       ],
       "imports": [
+        "../security/tenantContext.js",
         "./models.js",
         "./openaiCompat.js",
         "./patches.js",
         "./projectMemory.js",
-        "./providerBudget.js"
+        "./providerRuntime.js",
+        "./tenantModelDispatch.js"
       ],
       "runtimeImports": [
         "backend/src/ai/openaiCompat.ts",
         "backend/src/ai/projectMemory.ts",
-        "backend/src/ai/providerBudget.ts"
+        "backend/src/ai/providerRuntime.ts",
+        "backend/src/ai/tenantModelDispatch.ts",
+        "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:197"
+        "backend/src/ai/pipeline.ts:197",
+        "backend/src/ai/repoSummarize.security.test.ts:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -6681,10 +6694,12 @@
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [
-        "backend/src/ai/repoSummarize.ts#withProviderReservation"
+        "backend/src/ai/repoSummarize.ts#withTenantModelReservation"
       ],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/ai/repoSummarize.security.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -7275,6 +7290,7 @@
         "backend/src/ai/executionRuntime.ts:8",
         "backend/src/ai/failRun.test.ts:4",
         "backend/src/ai/pipeline.ts:85",
+        "backend/src/ai/repoSummarize.security.test.ts:8",
         "backend/src/ai/runReconciler.test.ts:12",
         "backend/src/ai/runStore.authority.test.ts:5",
         "backend/src/ai/runStore.cancellationRace.test.ts:5",
@@ -7346,6 +7362,7 @@
         "backend/src/ai/conversationPersist.test.ts",
         "backend/src/ai/executionRuntime.attempt.test.ts",
         "backend/src/ai/failRun.test.ts",
+        "backend/src/ai/repoSummarize.security.test.ts",
         "backend/src/ai/runReconciler.test.ts",
         "backend/src/ai/runStore.authority.test.ts",
         "backend/src/ai/runStore.cancellationRace.test.ts",
@@ -7525,6 +7542,7 @@
       ],
       "callers": [
         "backend/src/ai/memoryReadAuthority.test.ts:5",
+        "backend/src/ai/modelContext.security.test.ts:7",
         "backend/src/ai/pipeline.ts:210",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:8",
         "backend/src/security/recoveryMemoryRead.local.integration.ts:8"
@@ -7544,6 +7562,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/memoryReadAuthority.test.ts",
+        "backend/src/ai/modelContext.security.test.ts",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts",
         "backend/src/security/recoveryMemoryRead.local.integration.ts"
       ],
@@ -9834,7 +9853,7 @@
       "id": "surface:8655984f8d3c51472c8c",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/tenantModelDispatch.ts",
-      "sha256": "8c4db96aee2794b6e2787e3b723a43cc4f41343c90d60f36a9c9342e543eb2a4",
+      "sha256": "81cc2437661afed59731ad77b5e7bca10237c7d13221a49be06836cfd9e9e069",
       "symbols": [
         "BoundModelDispatch",
         "CredentialRow",
@@ -9859,12 +9878,14 @@
         "expectedPayload",
         "maximumOutputTokens",
         "model",
+        "modelContextNamespace",
         "modelId",
         "payload",
         "project",
         "provider",
         "purpose",
         "read",
+        "requireModelProjectBinding",
         "scope",
         "selected",
         "wire",
@@ -9900,12 +9921,15 @@
       "callers": [
         "backend/src/ai/architect.ts:7",
         "backend/src/ai/converter.ts:3",
+        "backend/src/ai/modelContext.security.test.ts:5",
         "backend/src/ai/pipeline.ts:4",
+        "backend/src/ai/repoSummarize.ts:18",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:2",
         "backend/src/ai/tenantModelDispatch.test.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [
+        "projects",
         "swarm_runs",
         "user_integrations"
       ],
@@ -9919,8 +9943,9 @@
         "backend/src/ai/tenantModelDispatch.ts#checkAuthority"
       ],
       "tenantBoundary": [
-        "backend/src/ai/tenantModelDispatch.ts:63 (user_id)",
-        "backend/src/ai/tenantModelDispatch.ts:76 (user_id)"
+        "backend/src/ai/tenantModelDispatch.ts:45 (user_id)",
+        "backend/src/ai/tenantModelDispatch.ts:80 (user_id)",
+        "backend/src/ai/tenantModelDispatch.ts:88 (user_id)"
       ],
       "approvalBoundary": [
         "backend/src/ai/tenantModelDispatch.ts#preparedActionDigest"
@@ -9931,6 +9956,7 @@
       ],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/ai/modelContext.security.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -15715,6 +15741,7 @@
       ],
       "callers": [
         "backend/src/index.ts:64",
+        "backend/src/middleware/runtimePreviewGateway.security.test.ts:4",
         "backend/src/security/previewConsumer.local.integration.ts:5"
       ],
       "reachable": true,
@@ -15737,6 +15764,7 @@
         "backend/src/middleware/runtimePreviewGateway.ts#verifyLivePreviewSignature"
       ],
       "testCoverage": [
+        "backend/src/middleware/runtimePreviewGateway.security.test.ts",
         "backend/src/security/previewConsumer.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -22358,12 +22386,15 @@
         "backend/src/ai/buildOutcomeMemory.ts:2",
         "backend/src/ai/converter.ts:4",
         "backend/src/ai/executionRuntime.ts:6",
+        "backend/src/ai/modelContext.security.test.ts:8",
         "backend/src/ai/pipeline.ts:2",
         "backend/src/ai/postCompletionAccounting.ts:5",
         "backend/src/ai/providerBudget.test.ts:3",
         "backend/src/ai/providerBudget.ts:3",
         "backend/src/ai/quota.failure.test.ts:4",
         "backend/src/ai/quota.ts:2",
+        "backend/src/ai/repoSummarize.security.test.ts:6",
+        "backend/src/ai/repoSummarize.ts:19",
         "backend/src/ai/routingOutcomes.receipt.test.ts:4",
         "backend/src/ai/routingOutcomes.ts:3",
         "backend/src/ai/runStore.ts:11",
@@ -22437,6 +22468,7 @@
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts:5",
         "backend/src/services/integrations/businessActionConfirmations.ts:3",
         "backend/src/services/integrations/composioClient.ts:9",
+        "backend/src/services/integrations/credentialUploadBoundary.test.ts:3",
         "backend/src/services/integrations/credentialVault.test.ts:4",
         "backend/src/services/integrations/credentialVault.ts:2",
         "backend/src/services/integrations/credentialVaultRuntime.ts:5",
@@ -22505,8 +22537,10 @@
       "testCoverage": [
         "backend/src/ai/budgetOwnerBoundary.test.ts",
         "backend/src/ai/buildOutcomeMemory.test.ts",
+        "backend/src/ai/modelContext.security.test.ts",
         "backend/src/ai/providerBudget.test.ts",
         "backend/src/ai/quota.failure.test.ts",
+        "backend/src/ai/repoSummarize.security.test.ts",
         "backend/src/ai/routingOutcomes.receipt.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts",
         "backend/src/ai/universal/resumeProjectContext.test.ts",
@@ -22553,6 +22587,7 @@
         "backend/src/services/BillingService.budget.test.ts",
         "backend/src/services/ensureUserRecords.receipt.test.ts",
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
+        "backend/src/services/integrations/credentialUploadBoundary.test.ts",
         "backend/src/services/integrations/credentialVault.test.ts",
         "backend/src/services/integrations/githubTokenStore.writerContext.test.ts",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts",
@@ -23855,6 +23890,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
+        "backend/src/ai/modelContext.security.test.ts:9",
+        "backend/src/ai/repoSummarize.security.test.ts:7",
         "backend/src/ai/tenantModelDispatch.test.ts:5",
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts:9",
         "backend/src/security/githubConsumer.local.integration.ts:11",
@@ -23886,6 +23923,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/ai/modelContext.security.test.ts",
+        "backend/src/ai/repoSummarize.security.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts",
         "backend/src/routes/supabaseOAuth.callbackRace.test.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
@@ -25012,6 +25051,7 @@
         "backend/src/security/tenantIsolation.local.integration.ts:37",
         "backend/src/services/integrations/absentCredentialAuthority.test.ts:3",
         "backend/src/services/integrations/credentialMirrorRace.test.ts:5",
+        "backend/src/services/integrations/credentialUploadBoundary.test.ts:4",
         "backend/src/services/integrations/githubAuth.ts:2",
         "backend/src/services/integrations/githubTokenStore.writerContext.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.ts:13"
@@ -25039,6 +25079,7 @@
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/absentCredentialAuthority.test.ts",
         "backend/src/services/integrations/credentialMirrorRace.test.ts",
+        "backend/src/services/integrations/credentialUploadBoundary.test.ts",
         "backend/src/services/integrations/githubTokenStore.writerContext.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -25752,8 +25793,8 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/ai/pipeline.ts:3819",
-        "backend/src/ai/pipeline.ts:3822",
+        "backend/src/ai/pipeline.ts:3835",
+        "backend/src/ai/pipeline.ts:3838",
         "backend/src/ai/projectMemory.ts:7",
         "backend/src/ai/sessionMemory.ts:7",
         "backend/src/routes/integrations.ts:226",
@@ -26003,7 +26044,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:118",
-        "backend/src/ai/pipeline.ts:3818",
+        "backend/src/ai/pipeline.ts:3834",
         "backend/src/ai/tenantModelDispatch.ts:5",
         "backend/src/routes/integrations.ts:16",
         "backend/src/routes/integrations.ts:638",
@@ -31034,6 +31075,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/middleware/runtimePreviewGateway.security.test.ts:5",
         "backend/src/middleware/runtimePreviewGateway.ts:31",
         "backend/src/routes/projectRuntime.ts:26",
         "backend/src/security/previewConsumer.local.integration.ts:9",
@@ -31054,6 +31096,7 @@
         "backend/src/synthesis/livePreview/signing.ts#verifyLivePreviewSignature"
       ],
       "testCoverage": [
+        "backend/src/middleware/runtimePreviewGateway.security.test.ts",
         "backend/src/security/previewConsumer.local.integration.ts",
         "backend/src/synthesis/livePreview/livePreview.test.ts"
       ],
@@ -31218,6 +31261,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/middleware/runtimePreviewGateway.security.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/livePreview/access.test.ts",
         "backend/src/synthesis/livePreview/livePreview.test.ts"
@@ -33985,7 +34029,7 @@
       "id": "surface:427e719ea1910d933449",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "sha256": "381aee0e7f694b666144f3c4c4fdb1de80a2d65dbe769c4d0cd702ed2e983412",
+      "sha256": "d78c0ca611d1e7b70b351bdb917bc791bf86e9d3eef8dc65d22f31755d8c0af5",
       "symbols": [
         "DEFINITELY_NON_BROWSER_SURFACES",
         "UniversalSoftwareImplementationInput",
@@ -34377,7 +34421,7 @@
       "id": "surface:ba88158d592a18f99ff9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/universalEntrypoint.ts",
-      "sha256": "2112e8b8cc0b1634eeb9e9c68b9a46ead0a2224761e015b2ead9f83f8064baa2",
+      "sha256": "91c22bc5ac1fd79eeeaafab69134d17009c7cc0d2bfba101411dde88625b46a2",
       "symbols": [
         "IMPLEMENT_SYSTEM",
         "UniversalBuildOutcome",
@@ -109239,6 +109283,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:a6ff04ca03863b7cf8f1",
+      "sourcePath": "backend/src/ai/modelContext.security.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:e560f40fdd60bae650a7",
       "sourcePath": "backend/src/ai/openaiCompat.egress.test.ts",
       "declaredTests": 5,
@@ -109410,6 +109461,13 @@
       "id": "test-suite:d43c5da35b596963efda",
       "sourcePath": "backend/src/ai/quota.test.ts",
       "declaredTests": 18,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:0fe49606c90ceab105a8",
+      "sourcePath": "backend/src/ai/repoSummarize.security.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -110208,6 +110266,13 @@
       "id": "test-suite:c947ec396bf7a93fba06",
       "sourcePath": "backend/src/middleware/admin.test.ts",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:dfd22b7dfd1df92be318",
+      "sourcePath": "backend/src/middleware/runtimePreviewGateway.security.test.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -111259,6 +111324,13 @@
     {
       "id": "test-suite:680a8589cceccd6a91cf",
       "sourcePath": "backend/src/services/integrations/credentialMirrorRace.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:81ee05bc0cd8c37dfcc1",
+      "sourcePath": "backend/src/services/integrations/credentialUploadBoundary.test.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []

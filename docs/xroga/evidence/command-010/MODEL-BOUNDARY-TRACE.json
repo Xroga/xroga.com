@@ -2,7 +2,7 @@
   "version": 1,
   "scope": "PARTIAL_MODEL_BOUNDARY_TRACE_NOT_TENANT_OR_SPEND_CERTIFICATION",
   "sourceSha256": "a558327133bf32c58403390f5bac2ab9411c26db42cd7fc99055bf2a3c91ac0a",
-  "priorTrace": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b:docs/xroga/evidence/command-010/MODEL-BOUNDARY-TRACE.json",
+  "priorTrace": "9379a2f105bb59b787f164836de563655657bc6d:docs/xroga/evidence/command-010/MODEL-BOUNDARY-TRACE.json",
   "softwareAgentSourceSha256": "fcfee3d38cf89192e61d679501feab221246c0757d7c530cba65d551d9cb6ae6",
   "mutableInputCorrection": {
     "reproduction": "The real SoftwareAgent factory regression failed before correction when the original input model changed after factory creation. The captured credential could be paired with the changed route. Request data could also change during the controlled quota response.",
@@ -148,7 +148,7 @@
   "providerEffects": false,
   "predispatchAccounting": "Known policy rejections are status 400 invalid_request and release the existing budget reservation without an uncertain-provider hold. They do not increment shared provider failures or open the shared circuit. Positive plain/tool SDK dispatch and negative secret text, selected credential and credential-bearing schema-property names are tested. Ordinary provider error regressions are retained. Controlled protocol fixtures are not real database budget receipts.",
   "disposition": "PENDING_SOURCE_TRACE_WITH_SCOPED_CANONICAL_CALL_SITE_PROOF",
-  "next": "Keep all three SDK records open until every actual upstream source of private files/history and each remaining generic completion caller has exact admission evidence. Scoped pipeline, architect, converter and SoftwareAgent paths now carry issued context, current project, canonical account/revision, existing budget and worker attempt. Do not infer all Operations payload ownership from the reservation callback.",
+  "next": "Repository memo now requires canonical TenantModelScope, keeps platform Zhipu and complexity accounting, and stops on security denial. Existing memory/history namespaces now include the admitted database project and repository. Verify remaining generic completion callers, full upstream GitHub credential lifecycle and actual upload/preview transports before closing the three SDK records.",
   "grouping": [
     {
       "id": "EGRESS-PACKET-e2629613b42444f3",
@@ -215,7 +215,7 @@
   "currentDispatchBindings": [
     {
       "path": "backend/src/ai/tenantModelDispatch.ts",
-      "sha256": "8c4db96aee2794b6e2787e3b723a43cc4f41343c90d60f36a9c9342e543eb2a4"
+      "sha256": "81cc2437661afed59731ad77b5e7bca10237c7d13221a49be06836cfd9e9e069"
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.test.ts",
@@ -225,5 +225,6 @@
       "path": "backend/src/routes/guestChat.egress.test.ts",
       "sha256": "00d9f380943af35171af86e21694dfdd03c34aee3373ce2a3d6a6ee9020d92f0"
     }
-  ]
+  ],
+  "repositoryContextContinuation": "docs/xroga/evidence/command-010/REPO-CONTEXT-PROOF.json"
 }

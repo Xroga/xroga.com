@@ -2321,7 +2321,7 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "d35a6351c41e27cecc313df0e7ee134a0e51fe4c5351649a7dfadf62bcca05e6",
+          "sha256": "195794c3453d6320fc522b7c68305016d9f9ec9f3b2cd345d02582f001084be2",
           "historicalBinding": {"reference":"2a797dc1b9a932350d4882bffc2fea5aa6f8282b","sha256":"cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"},
           "currentSourceDelta":"docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json"
         },
@@ -3215,7 +3215,7 @@
     },
     {
       "packetId": "B1-P2-4a588dd074761414",
-      "sourceSha256": "2112e8b8cc0b1634eeb9e9c68b9a46ead0a2224761e015b2ead9f83f8064baa2",
+      "sourceSha256": "91c22bc5ac1fd79eeeaafab69134d17009c7cc0d2bfba101411dde88625b46a2",
       "historicalBinding": {"reference":"2a797dc1b9a932350d4882bffc2fea5aa6f8282b","sha256":"650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4"},
       "currentSourceDelta":"docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
       "executionStatus": "IN_PROGRESS",

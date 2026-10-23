@@ -266,6 +266,39 @@ The original12 criterion states and Phase3 block are unchanged. Later CI receipt
 must identify their own exact feature and integrated source, never inherit a
 success label from49978f11 or earlier runs.
 
+## Repository context continuation from 9379a2f1
+
+Existing unit run39954786890 genuinely passed both jobs. Downloaded branch and
+integrated manifests authenticate9379a2f1 andbef80900, with four complete21-stage
+baselines and no source mutation. No duplicate run or old-source relabeling.
+
+The sole production repository-summary caller now supplies required issued model
+scope. It preserves platform Zhipu, the complexity purpose,700-token output limit
+and canonical settlement. Foreign scope/account/project, stale attempt, changed
+repository and altered SDK payload fail before provider IO. Availability failures
+still skip the optional memo, while security failures stop and raw errors aren't
+logged. Unsupported Zhipu BYOK is not invented to manufacture a vault test.
+
+Actual upstream inspection found unbound per-user local context namespaces. The
+existing stores now use admitted database project/repository namespaces. Current
+project/repository binding is checked before history/hydration and propagated to
+model dispatch. Ambiguous legacy local data remains intact and fails closed with
+an actionable reload message. Owner-filtered memory/history receivers, snapshots,
+canonical GitHub credentials and exact remote head/path reconciliation are reused.
+
+40 focused model, context, guest, Operations, actual legacy-upload and shared
+preview-resolver tests pass with controlled provider/database protocols. These
+aren't live Supabase/GitHub or full HTTP/WebSocket transport proof. The new upload
+tests exercise both exact owned attempts and refuse unsafe bucket admission. The
+preview tests exercise the actual shared resolver's grant and persisted parent
+binding, with expiry/revocation and unsafe-target rejection. Remaining payload,
+header and transport lifetime obligations are explicit in REPO-CONTEXT-PROOF.json.
+
+No new complete caller disposition is issued:133 total,12 narrowly reviewed,121
+pending,67 high-risk review candidates. All three SDK final dispositions remain
+open. The original12 criterion states, historical proof and strict audit remain
+unchanged. New-source CI is required separately from the accepted9379a2f1 receipts.
+
 ## Model dispatch continuation from 2a797dc1
 
 Scoped pipeline completion, streaming and SoftwareAgent calls now carry the

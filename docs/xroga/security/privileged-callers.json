@@ -1,23 +1,23 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "106e0bd0adb89b48a4096a374f78eb9cf6e80ce3242a039c81445dd6e7b2737d",
+  "reviewRegistrySha256": "fd4fe3e86940416e2191f73da5beaeaea7527115b2c6f799b78e4d2287dc8f04",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 168,
-    "persistenceCandidates": 707,
-    "ownerPredicateCandidates": 167,
-    "reviewRequired": 26,
+    "privilegedFactorySites": 169,
+    "persistenceCandidates": 709,
+    "ownerPredicateCandidates": 168,
+    "reviewRequired": 28,
     "reviewedCandidates": 681,
-    "unresolvedSafetyCandidates": 51,
+    "unresolvedSafetyCandidates": 53,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 18
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 26,
+    "REVIEW_REQUIRED": 28,
     "SCOPED_BOUNDARY": 453,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 163,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 103,
-    "unresolvedCandidateBoundaries": 604,
+    "unresolvedCandidateBoundaries": 606,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -2720,11 +2720,11 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "fbccd562d15a2401fc3f"
+        "id": "1ddc9f7f0484a570301f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "55ed6e1f948491b895a0"
+        "id": "8427f2f0f1f62353de9c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -2808,15 +2808,23 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "bb86ba5b64a37bae3a0b"
+        "id": "d01dc6f3c6d91572391b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "f4e4b443d660ce14aab4"
+        "id": "f40135edc20d3ae848b4"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a8e2ad5ed5f11b5a2d8e"
+        "id": "d386dec3a54306a79e08"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "ee9fc3efbc65a5d3d51d"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "9d257c11875abc02b77d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3764,7 +3772,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "1271489516ef5d2c31c2"
+        "id": "cfba5e514ab70426438c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3904,15 +3912,23 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "bb86ba5b64a37bae3a0b"
+        "id": "d01dc6f3c6d91572391b"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "f4e4b443d660ce14aab4"
+        "id": "f40135edc20d3ae848b4"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "a8e2ad5ed5f11b5a2d8e"
+        "id": "d386dec3a54306a79e08"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "ee9fc3efbc65a5d3d51d"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "9d257c11875abc02b77d"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -4168,11 +4184,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "fbccd562d15a2401fc3f"
+        "id": "1ddc9f7f0484a570301f"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "55ed6e1f948491b895a0"
+        "id": "8427f2f0f1f62353de9c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -6196,7 +6212,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "1271489516ef5d2c31c2"
+        "id": "cfba5e514ab70426438c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -6305,10 +6321,10 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 707,
+    "currentCallers": 709,
     "structuredVerified": 103,
-    "structuredUnproven": 604,
-    "manualUnresolved": 51,
+    "structuredUnproven": 606,
+    "manualUnresolved": 53,
     "manualUnsupported": 553,
     "agreedVerified": 103,
     "proofAwaitingManualReconciliation": 0
@@ -6756,15 +6772,15 @@
       }
     },
     {
-      "id": "fbccd562d15a2401fc3f",
+      "id": "1ddc9f7f0484a570301f",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3810,
+      "line": 3826,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "d35a6351c41e27cecc313df0e7ee134a0e51fe4c5351649a7dfadf62bcca05e6",
+      "sourceSha256": "195794c3453d6320fc522b7c68305016d9f9ec9f3b2cd345d02582f001084be2",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -6777,15 +6793,15 @@
       }
     },
     {
-      "id": "55ed6e1f948491b895a0",
+      "id": "8427f2f0f1f62353de9c",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3990,
+      "line": 4006,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "d35a6351c41e27cecc313df0e7ee134a0e51fe4c5351649a7dfadf62bcca05e6",
+      "sourceSha256": "195794c3453d6320fc522b7c68305016d9f9ec9f3b2cd345d02582f001084be2",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -8744,37 +8760,59 @@
       }
     },
     {
-      "id": "bb86ba5b64a37bae3a0b",
+      "id": "d01dc6f3c6d91572391b",
       "path": "backend/src/ai/tenantModelDispatch.ts",
-      "line": 60,
+      "line": 43,
+      "enclosing": "requireModelProjectBinding",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "81cc2437661afed59731ad77b5e7bca10237c7d13221a49be06836cfd9e9e069"
+    },
+    {
+      "id": "f40135edc20d3ae848b4",
+      "path": "backend/src/ai/tenantModelDispatch.ts",
+      "line": 45,
+      "enclosing": "requireModelProjectBinding",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "projects",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "81cc2437661afed59731ad77b5e7bca10237c7d13221a49be06836cfd9e9e069"
+    },
+    {
+      "id": "d386dec3a54306a79e08",
+      "path": "backend/src/ai/tenantModelDispatch.ts",
+      "line": 77,
       "enclosing": "withTenantModelReservation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "8c4db96aee2794b6e2787e3b723a43cc4f41343c90d60f36a9c9342e543eb2a4"
+      "sourceSha256": "81cc2437661afed59731ad77b5e7bca10237c7d13221a49be06836cfd9e9e069"
     },
     {
-      "id": "f4e4b443d660ce14aab4",
+      "id": "ee9fc3efbc65a5d3d51d",
       "path": "backend/src/ai/tenantModelDispatch.ts",
-      "line": 63,
+      "line": 80,
       "enclosing": "withTenantModelReservation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "8c4db96aee2794b6e2787e3b723a43cc4f41343c90d60f36a9c9342e543eb2a4"
+      "sourceSha256": "81cc2437661afed59731ad77b5e7bca10237c7d13221a49be06836cfd9e9e069"
     },
     {
-      "id": "a8e2ad5ed5f11b5a2d8e",
+      "id": "9d257c11875abc02b77d",
       "path": "backend/src/ai/tenantModelDispatch.ts",
-      "line": 76,
+      "line": 88,
       "enclosing": "withTenantModelReservation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "user_integrations",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "8c4db96aee2794b6e2787e3b723a43cc4f41343c90d60f36a9c9342e543eb2a4"
+      "sourceSha256": "81cc2437661afed59731ad77b5e7bca10237c7d13221a49be06836cfd9e9e069"
     },
     {
       "id": "3fba7dbe0551574fe56b",
@@ -20969,15 +21007,15 @@
       }
     },
     {
-      "id": "1271489516ef5d2c31c2",
+      "id": "cfba5e514ab70426438c",
       "path": "backend/src/synthesis/universalEntrypoint.ts",
-      "line": 1072,
+      "line": 1073,
       "enclosing": "tryUniversalBuild",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "2112e8b8cc0b1634eeb9e9c68b9a46ead0a2224761e015b2ead9f83f8064baa2",
+      "sourceSha256": "91c22bc5ac1fd79eeeaafab69134d17009c7cc0d2bfba101411dde88625b46a2",
       "semanticReview": {
         "authority": "Only the admitted runBuildPipeline invokes this production default. Its original issued context and owner are checked before opts are copied, and the actual universal call allocates a fresh owner/run/project literal. The unchanged entrypoint passes its only private SDK result directly into universalStore with an internal issued context for that server-admitted subject. Privileged stores are per invocation, never the global memory singleton. All seven actual direct receiving store operations and their owned-write subchain independently verify. Real default factory use constructs different owner instances, rejects primitive/cloned issuance and preserves all existing owned/foreign project/run/spec/index and contention assertions. No injected arbitrary client, model output or public body grants this default subject.",
         "reason": "Exact original007 scope verified at 0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0. Authenticated disposable source, all ten structured criteria and all636 receiving/caller boundaries pass with four full21-stage branch/integrated baselines. Routing uses original issued context and exact persistence receipt; private global history is a fixed500-row17th named exception with owner/run terminal filtering. Three constructor proofs require every other633 boundary independently verified and do not claim SDK RLS. Endpoint proof reconciles222 registrations/29 unchanged modules with actual API/database high-risk matrices. Manual kind matches the actual structured scope: SCOPED_BOUNDARY. No new provider, Phase3 grant/custody or Phase4 egress acceptance is inferred.",

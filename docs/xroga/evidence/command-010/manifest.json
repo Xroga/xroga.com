@@ -415,6 +415,32 @@
         39940487838
       ],
       "scope": "Prior-source authenticated evidence only, not certification of this continuation"
+    },
+    "authenticated9379a2f1": {
+      "sourceSha": "9379a2f105bb59b787f164836de563655657bc6d",
+      "integratedSha": "bef80900004e13ca3c2043f2edb1eddcaf004e40",
+      "baseSha": "fb95f76bafc1b544b6655d435cddede260d9cd99",
+      "unitRun": 39954786890,
+      "unitConclusion": "success",
+      "integratedConclusion": "success",
+      "fullBaselines": 4,
+      "stagesEach": 21,
+      "sourceTreeMutated": false,
+      "scope": "Authenticated prior source only, no duplicate workflows and no new-source claim"
     }
+  },
+  "repoContextContinuation": {
+    "proof": "docs/xroga/evidence/command-010/REPO-CONTEXT-PROOF.json",
+    "focusedTests": 40,
+    "failures": 0,
+    "skips": 0,
+    "callerCounts": {
+      "total": 133,
+      "reviewed": 12,
+      "pending": 121,
+      "highRiskReviewCandidates": 67
+    },
+    "currentSourceCi": "PENDING_CHANGED_SOURCE_VERIFICATION",
+    "allThreeSdkFinalDispositions": "PENDING_SOURCE_TRACE"
   }
 }

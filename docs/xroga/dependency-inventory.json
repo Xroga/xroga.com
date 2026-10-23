@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
+  "source_sha": "4218e1261455b45303f04dd0bc3182d63185cfce",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12602,7 +12602,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "d35a6351c41e27cecc313df0e7ee134a0e51fe4c5351649a7dfadf62bcca05e6"
+      "sha256": "195794c3453d6320fc522b7c68305016d9f9ec9f3b2cd345d02582f001084be2"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -12650,7 +12650,7 @@
     },
     {
       "path": "backend/src/ai/repoSummarize.ts",
-      "sha256": "1c0b0e74c11817a0778354e2210a5ed718d48d9ceb3aa8208d0d7e3c666288d5"
+      "sha256": "01bd2ccb2a40df36e762abada8700f041196c137c61947802175427a3ea825d0"
     },
     {
       "path": "backend/src/ai/repositoryTools.ts",
@@ -12838,7 +12838,7 @@
     },
     {
       "path": "backend/src/ai/tenantModelDispatch.ts",
-      "sha256": "8c4db96aee2794b6e2787e3b723a43cc4f41343c90d60f36a9c9342e543eb2a4"
+      "sha256": "81cc2437661afed59731ad77b5e7bca10237c7d13221a49be06836cfd9e9e069"
     },
     {
       "path": "backend/src/ai/universal/artifactWorkspace.ts",
@@ -14550,7 +14550,7 @@
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "sha256": "381aee0e7f694b666144f3c4c4fdb1de80a2d65dbe769c4d0cd702ed2e983412"
+      "sha256": "d78c0ca611d1e7b70b351bdb917bc791bf86e9d3eef8dc65d22f31755d8c0af5"
     },
     {
       "path": "backend/src/synthesis/softwareProject.ts",
@@ -14570,7 +14570,7 @@
     },
     {
       "path": "backend/src/synthesis/universalEntrypoint.ts",
-      "sha256": "2112e8b8cc0b1634eeb9e9c68b9a46ead0a2224761e015b2ead9f83f8064baa2"
+      "sha256": "91c22bc5ac1fd79eeeaafab69134d17009c7cc0d2bfba101411dde88625b46a2"
     },
     {
       "path": "backend/src/synthesis/universalExecution.ts",
@@ -19201,7 +19201,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4038,
+      "line": 4054,
       "credentialsInUrl": false
     },
     {
@@ -25214,42 +25214,42 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1127,
+      "line": 1137,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1488,
+      "line": 1503,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2226,
+      "line": 2241,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3808,
+      "line": 3824,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3988,
+      "line": 4004,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4952,
+      "line": 4968,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28266,35 +28266,35 @@
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "line": 139,
+      "line": 140,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "line": 254,
+      "line": 255,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "line": 558,
+      "line": 559,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "line": 563,
+      "line": 564,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "line": 571,
+      "line": 572,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28315,7 +28315,7 @@
     },
     {
       "path": "backend/src/synthesis/universalEntrypoint.ts",
-      "line": 711,
+      "line": 712,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

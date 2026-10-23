@@ -103,7 +103,13 @@
     "backend/src/synthesis/universalEntrypoint.ts",
     "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
     "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
-    "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json"
+    "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
+    "backend/src/ai/repoSummarize.ts",
+    "backend/src/ai/repoSummarize.security.test.ts",
+    "backend/src/ai/modelContext.security.test.ts",
+    "backend/src/middleware/runtimePreviewGateway.security.test.ts",
+    "backend/src/services/integrations/credentialUploadBoundary.test.ts",
+    "docs/xroga/evidence/command-010/REPO-CONTEXT-PROOF.json"
   ],
   "decisions": {
     "keep": [
@@ -183,6 +189,12 @@
       "scope": "6 actual-call-site/HTTP/child/attempt tests passed, controlled provider/database protocols, not live database/provider proof",
       "negative": true,
       "reference": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json"
+    },
+    {
+      "command": "node --import tsx --test backend/src/ai/repoSummarize.security.test.ts backend/src/ai/modelContext.security.test.ts backend/src/ai/tenantModelDispatch.test.ts backend/src/middleware/runtimePreviewGateway.security.test.ts backend/src/services/integrations/credentialUploadBoundary.test.ts backend/src/routes/guestChat.egress.test.ts backend/src/operations/benchmarkAdapter.test.ts backend/src/ai/benchmarkExecutor.test.ts",
+      "scope": "40 focused tests pass, controlled provider/database protocols, real SDK serialization and guest HTTP; no live-provider or complete transport certification",
+      "negative": true,
+      "reference": "docs/xroga/evidence/command-010/REPO-CONTEXT-PROOF.json"
     }
   ],
   "architecture": {
