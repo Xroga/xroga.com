@@ -26,19 +26,40 @@ const TRANSPORT_ICONS: Record<NonNullable<XrogaRichResult['transportMode']>, Luc
   flight: Plane, train: TrainFront, bus: Bus, ferry: Ship, transfer: CarFront,
 };
 
+function categoryIllustration(item: XrogaRichResult): { url: string; alt: string; label: string } | null {
+  if (item.domain === 'transport' && (!item.transportMode || item.transportMode === 'flight')) return {
+    url: '/os-preview/rich-results/airplane-window.webp',
+    alt: 'Illustrative view from an airplane, not the listed flight',
+    label: 'Flight illustration · not this service',
+  };
+  if (item.domain === 'accommodation') return {
+    url: '/os-preview/rich-results/coastal-suite.webp',
+    alt: 'Illustrative hotel room, not the listed property',
+    label: 'Stay illustration · not this property',
+  };
+  if (item.domain === 'travel') return {
+    url: '/os-preview/rich-results/alpine-lake.webp',
+    alt: 'Illustrative landscape, not the listed tour or destination',
+    label: 'Travel illustration · not this tour',
+  };
+  return null;
+}
+
 function RichMedia({ item, hidden }: { item: XrogaRichResult; hidden?: boolean }) {
   const [index, setIndex] = useState(0);
   const [broken, setBroken] = useState(false);
   const isDemo = item.demo === true || item.status === 'demo';
   const images = hidden ? [] : (item.images ?? []).filter((image) => safeRichImageUrl(image.url, image.rights, isDemo));
   const current = images[index] ?? images[0];
-  const url = current && !broken ? safeRichImageUrl(current.url, current.rights, isDemo) : null;
+  const verifiedUrl = current && !broken ? safeRichImageUrl(current.url, current.rights, isDemo) : null;
+  const illustration = hidden ? null : categoryIllustration(item);
+  const url = verifiedUrl ?? illustration?.url;
   const Icon = item.transportMode ? TRANSPORT_ICONS[item.transportMode] : ICONS[item.domain];
   return <div className={styles.media}>
-    {url ? <Image src={url} alt={current.alt} fill sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 360px" loading="lazy" onError={() => setBroken(true)} className={styles.photo} />
+    {url ? <Image src={url} alt={verifiedUrl ? current.alt : illustration?.alt ?? ''} fill sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 360px" loading="lazy" onError={() => setBroken(true)} className={styles.photo} />
       : <div className={styles.fallback}><Icon size={34} strokeWidth={1.35} aria-hidden="true" /><span>{item.kind}</span></div>}
-    {isDemo && url ? <span className={styles.imageLabel}>Illustrative demo image</span> : null}
-    {url && images.length > 1 ? <div className={styles.imageControls}>
+    {url && !verifiedUrl && illustration ? <span className={styles.imageLabel}>{illustration.label}</span> : isDemo && verifiedUrl ? <span className={styles.imageLabel}>Illustrative demo image</span> : null}
+    {verifiedUrl && images.length > 1 ? <div className={styles.imageControls}>
       <button type="button" aria-label={`Previous image for ${item.title}`} onClick={() => { setBroken(false); setIndex((index - 1 + images.length) % images.length); }}><ChevronLeft size={16} /></button>
       <span>{index + 1} / {images.length}</span>
       <button type="button" aria-label={`Next image for ${item.title}`} onClick={() => { setBroken(false); setIndex((index + 1) % images.length); }}><ChevronRight size={16} /></button>
@@ -65,7 +86,7 @@ function ResultCard({ item, presentation, hideImages, selected, onCompare }: {
   const sourceUrl = safeRichSourceUrl(item.source?.url);
   const price = formatRichPrice(item.price);
   const isDemo = item.demo === true || item.status === 'demo';
-  const showMedia = !['compact', 'ticket'].includes(presentation ?? '') && Boolean(item.images?.some((image) => safeRichImageUrl(image.url, image.rights, isDemo)));
+  const showMedia = !hideImages && presentation !== 'compact' && Boolean(item.images?.some((image) => safeRichImageUrl(image.url, image.rights, isDemo)) || categoryIllustration(item));
   return <article className={`${styles.card} ${presentation === 'ticket' || item.transportMode ? styles.ticket : ''} ${item.route?.length ? styles.routeCard : ''}`} data-testid="rich-result-card" data-rr-domain={item.domain}>
     {showMedia ? <RichMedia item={item} hidden={hideImages} /> : null}
     <div className={styles.cardBody} data-rr-body>
