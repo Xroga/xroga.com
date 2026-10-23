@@ -21,9 +21,10 @@ test('real source callers reject revocation, same-token rotation and disconnect 
       if(url.pathname.endsWith('/branches/main')) data={commit:{commit:{tree:{sha:tree}}}};
       if(url.pathname.endsWith('/git/ref/heads/main')) data={object:{sha:head}};
       if(url.pathname.endsWith('/git/commits/'+head)) data={tree:{sha:tree}};
-      if(url.pathname.endsWith('/git/trees/'+tree)) data={sha:tree,truncated:false,tree:[{path:'src/main.ts',type:'blob',mode:'100644',sha:blob,size:20}]};
+      if(url.pathname.endsWith('/git/trees/'+tree)) data={sha:tree,truncated:false,tree:[{path:'src/main.ts',type:'blob',mode:'100644',sha:blob,size:20},...(mode==='providerDeniedAtBlob'?[{path:'src/other.ts',type:'blob',mode:'100644',sha:'4'.repeat(40),size:20}]:[])]};
       if(url.pathname.includes('/git/blobs/')||url.pathname.includes('/contents/')) data={encoding:'base64',content:Buffer.from('owned source').toString('base64')};
-      if(mode!=='ok' && (mode!=='rotateAtBlob'||url.pathname.includes('/git/blobs/'))) return new Response(new ReadableStream({pull(controller){changed=true;controller.enqueue(new TextEncoder().encode(JSON.stringify(data)));controller.close();}}));
+      if(mode==='providerDeniedAtBlob'&&url.pathname.endsWith('/git/blobs/'+blob))return Response.json({message:'SYNTHETIC_PROVIDER_DENIAL'},{status:403});
+      if(mode!=='ok'&&mode!=='providerDeniedAtBlob' && (mode!=='rotateAtBlob'||url.pathname.includes('/git/blobs/'))) return new Response(new ReadableStream({pull(controller){changed=true;controller.enqueue(new TextEncoder().encode(JSON.stringify(data)));controller.close();}}));
       return Response.json(data);
     }
     assert.equal(url.origin,process.env.SUPABASE_URL);
@@ -45,4 +46,6 @@ test('real source callers reject revocation, same-token rotation and disconnect 
   mode='rotateAtBlob';changed=false;const before=externalReads;
   await assert.rejects(fetchRepositoryTextFilesFromGitHub(owner,repo,'main'),/authorization changed/);
   assert.equal(externalReads,before+3,'A rotation after successful branch/tree reads invalidates the whole hydration snapshot');
+  mode='providerDeniedAtBlob';changed=false;
+  await assert.rejects(fetchRepositoryTextFilesFromGitHub(owner,repo,'main'),/authorization changed/,'Provider authorization denial must not return a partial snapshot from other successful blob reads');
 });
