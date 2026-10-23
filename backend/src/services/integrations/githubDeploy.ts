@@ -62,6 +62,7 @@ import {
   invalidateRepoAnalysis,
 } from '../../lib/repoAnalysisCache.js';
 import { HACKATHON_REPO_TREE_SAMPLE } from '../../config/modelRegistry.js';
+import { createGitHubSourceReader } from './githubSourceRead.js';
 
 export interface ProjectFile {
   path: string;
@@ -210,7 +211,8 @@ export async function inspectConnectedRepositoryState(
     return { status: 'unavailable', branch, reason: 'Invalid GitHub repository target' };
   }
 
-  const repoResponse = await ghFetch(integration.access_token, `/repos/${owner}/${repo}`);
+  const source = await createGitHubSourceReader(userId, integration.access_token, `${owner}/${repo}`);
+  const repoResponse = await source.request(integration.access_token, `/repos/${owner}/${repo}`);
   if (!repoResponse.ok) {
     const reason =
       repoResponse.status === 404
@@ -221,7 +223,7 @@ export async function inspectConnectedRepositoryState(
 
   const repository = (await repoResponse.json()) as { size?: number };
 
-  const refResponse = await ghFetch(
+  const refResponse = await source.request(
     integration.access_token,
     `/repos/${owner}/${repo}/git/ref/heads/${encodeURIComponent(branch)}`,
   );
@@ -245,7 +247,7 @@ export async function inspectConnectedRepositoryState(
   let sourcePaths: string[];
   try {
     const api = makeAtomicWriteApi(
-      ghFetch,
+      source.request,
       integration.access_token,
       owner,
       repo,
@@ -265,6 +267,7 @@ export async function inspectConnectedRepositoryState(
         : 'GitHub could not verify the repository tree';
     return { status: 'unavailable', branch, reason };
   }
+  await source.assertCurrent();
   return {
     status: 'head',
     branch,
@@ -1277,10 +1280,11 @@ async function fetchRepoTextFile(
   owner: string,
   repo: string,
   path: string,
-  branch?: string
+  branch?: string,
+  read: typeof ghFetch = ghFetch,
 ): Promise<string | null> {
   const ref = branch ? `?ref=${encodeURIComponent(branch)}` : '';
-  const res = await ghFetch(token, `/repos/${owner}/${repo}/contents/${path}${ref}`);
+  const res = await read(token, `/repos/${owner}/${repo}/contents/${path}${ref}`);
   if (!res.ok) return null;
   const data = (await res.json()) as { content?: string; encoding?: string };
   if (data.encoding !== 'base64' || !data.content) return null;
@@ -1325,10 +1329,11 @@ export async function fetchBuildFilesFromGitHub(
 
   const { owner, repo } = parseRepoName(repoName);
   const token = integration.access_token;
+  const source = await createGitHubSourceReader(userId, token, `${owner}/${repo}`);
 
   const out: ProjectFile[] = [];
   for (const path of UPDATE_HYDRATE_PATHS) {
-    const text = await fetchRepoTextFile(token, owner, repo, path, branch);
+    const text = await fetchRepoTextFile(token, owner, repo, path, branch, source.request);
     if (text != null) out.push({ path, content: text });
   }
 
@@ -1336,6 +1341,7 @@ export async function fetchBuildFilesFromGitHub(
     throw new Error('No buildable files found in GitHub repo');
   }
 
+  await source.assertCurrent();
   return out;
 }
 
@@ -1370,14 +1376,15 @@ export async function fetchRepositoryTextFilesFromGitHub(
   if (!integration?.access_token) throw new Error('GitHub not connected');
   const { owner, repo } = parseRepoName(repoName);
   const token = integration.access_token;
+  const source = await createGitHubSourceReader(userId, token, `${owner}/${repo}`);
 
-  const branchRes = await ghFetch(token, `/repos/${owner}/${repo}/branches/${encodeURIComponent(branch)}`);
+  const branchRes = await source.request(token, `/repos/${owner}/${repo}/branches/${encodeURIComponent(branch)}`);
   if (!branchRes.ok) throw new Error(`GitHub branch lookup failed: ${branchRes.status}`);
   const branchData = (await branchRes.json()) as { commit?: { commit?: { tree?: { sha?: string } } } };
   const treeSha = branchData.commit?.commit?.tree?.sha;
   if (!treeSha) throw new Error('GitHub branch did not expose a source tree');
 
-  const treeRes = await ghFetch(token, `/repos/${owner}/${repo}/git/trees/${encodeURIComponent(treeSha)}?recursive=1`);
+  const treeRes = await source.request(token, `/repos/${owner}/${repo}/git/trees/${encodeURIComponent(treeSha)}?recursive=1`);
   if (!treeRes.ok) throw new Error(`GitHub tree lookup failed: ${treeRes.status}`);
   const tree = (await treeRes.json()) as {
     truncated?: boolean;
@@ -1400,7 +1407,7 @@ export async function fetchRepositoryTextFilesFromGitHub(
   for (let offset = 0; offset < candidates.length && totalBytes < UNIVERSAL_REPOSITORY_TOTAL_BYTES; offset += 8) {
     const batch = candidates.slice(offset, offset + 8);
     const decoded = await Promise.all(batch.map(async (entry) => {
-      const response = await ghFetch(token, `/repos/${owner}/${repo}/git/blobs/${encodeURIComponent(entry.sha)}`);
+      const response = await source.request(token, `/repos/${owner}/${repo}/git/blobs/${encodeURIComponent(entry.sha)}`);
       if (!response.ok) return null;
       const blob = (await response.json()) as { content?: string; encoding?: string };
       const content = decodeRepositoryTextBlob(blob.content ?? '', blob.encoding);
@@ -1415,6 +1422,7 @@ export async function fetchRepositoryTextFilesFromGitHub(
     }
   }
   if (!files.length) throw new Error('No readable text files found in GitHub repository');
+  await source.assertCurrent();
   return files;
 }
 
@@ -1429,17 +1437,20 @@ export async function fetchGitHubFilesByPaths(
 
   const { owner, repo } = parseRepoName(repoName);
   const token = integration.access_token;
+  const source = await createGitHubSourceReader(userId, token, `${owner}/${repo}`);
   const unique = [...new Set(paths.map((p) => p.replace(/^\//, '')))].slice(0, 40);
 
   const out: ProjectFile[] = [];
   for (const path of unique) {
-    const text = await fetchRepoTextFile(token, owner, repo, path, branch);
+    const text = await fetchRepoTextFile(token, owner, repo, path, branch, source.request);
     if (text != null) out.push({ path, content: text });
   }
 
   if (!out.length) {
+    await source.assertCurrent();
     return fetchBuildFilesFromGitHub(userId, repoName, branch);
   }
+  await source.assertCurrent();
   return out;
 }
 

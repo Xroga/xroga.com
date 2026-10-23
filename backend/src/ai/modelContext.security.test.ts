@@ -13,15 +13,16 @@ test('actual hydration and history isolate database projects, selected repositor
   Object.assign(process.env,{NODE_ENV:'test',SUPABASE_URL:'http://127.0.0.1:55439',SUPABASE_SERVICE_ROLE_KEY:'synthetic-only'});
   t.after(()=>keys.forEach((k,i)=>{if(old[i]===undefined)delete process.env[k];else process.env[k]=old[i];}));
   const owner=randomUUID(),foreign=randomUUID(),a=randomUUID(),b=randomUUID(),github=randomUUID(),repo='owned/repository';
-  const context=createTenantContext({userId:owner,via:'remote_getuser'}),revision=randomUUID();
+  const context=createTenantContext({userId:owner,via:'remote_getuser'}),revision=randomUUID(),rotatedRevision=randomUUID();
   const token=await sealRuntimeCredential(owner,{provider:'github',account:'github',credentialType:'oauth-token',recordId:'github',revision,scope:'github-connection'},'synthetic-owned-github');
   const projects=new Map<string,{id:string;user_id:string;github_repo_name:string|null}>([[a,{id:a,user_id:owner,github_repo_name:null}],[b,{id:b,user_id:owner,github_repo_name:null}],[github,{id:github,user_id:owner,github_repo_name:repo}]]);
-  let mode='ok',remoteReads=0;
+  let mode='ok',remoteReads=0,accessInvalidated=false;
   const head='1'.repeat(40),tree='2'.repeat(40),memory=new Map<string,Record<string,unknown>>();
   t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
     const url=new URL(String(input)),body=init?.body?JSON.parse(String(init.body)):{};
     if(url.origin==='https://api.github.com'){
       remoteReads++;assert.equal(new Headers(init?.headers).get('authorization'),'Bearer synthetic-owned-github');
+      if(mode==='githubRevoked'||mode==='githubRotated')accessInvalidated=true;
       assert.ok(url.pathname.startsWith('/repos/'+repo));
       if(mode==='githubDenied')return Response.json({message:'Unavailable'},{status:404});
       if(url.pathname.endsWith('/git/ref/heads/main'))return Response.json({object:{sha:head}});
@@ -36,7 +37,7 @@ test('actual hydration and history isolate database projects, selected repositor
       return Response.json(row?(mode==='foreignParent'?{...row,user_id:foreign}:row):null);
     }
     if(url.pathname==='/rest/v1/user_integrations')return Response.json(actor===owner&&url.searchParams.get('provider')==='eq.github'
-      ?{user_id:owner,provider:'github',access_token:token,credential_revision:revision,metadata:{vault_revision:revision,vault_format:'github-oauth-v1'}}:[]);
+      ?{user_id:owner,provider:'github',access_token:token,credential_revision:accessInvalidated&&mode==='githubRotated'?rotatedRevision:revision,metadata:{vault_revision:revision,vault_format:'github-oauth-v1',revoked:accessInvalidated&&mode==='githubRevoked'}}:[]);
     if(url.pathname==='/rest/v1/github_integrations')return Response.json({user_id:owner,access_token:token,repo_strategy:'auto',default_repo:repo});
     if(url.pathname==='/rest/v1/project_memory'){
       if(init?.method==='POST'){memory.set(String(body.repo),body);return Response.json(body);}
@@ -71,4 +72,9 @@ test('actual hydration and history isolate database projects, selected repositor
   const result=await hydratePriorFiles(owner,meta,scope(github));assert.equal(result.source,'github-cache');assert.deepEqual(result.files,files('owned repository source'));assert.ok(remoteReads>=4);
   const before=remoteReads;await assert.rejects(hydratePriorFiles(owner,{...meta,githubTargetRepo:'foreign/repository'},scope(github)));assert.equal(remoteReads,before,'Wrong project repository fails before credentials or GitHub dispatch');
   mode='githubDenied';await assert.rejects(hydratePriorFiles(owner,meta,scope(github)),/not found or is not authorized/);
+  for(const scenario of ['githubRevoked','githubRotated']){
+    mode=scenario;accessInvalidated=false;const before=remoteReads;
+    await assert.rejects(hydratePriorFiles(owner,meta,scope(github)),{name:'Error',message:'Could not read the selected GitHub repository: unknown provider failure'});
+    assert.equal(remoteReads,before+1,'Invalid in-flight access cannot continue or fall back to owned cache or browser source');
+  }
 });
