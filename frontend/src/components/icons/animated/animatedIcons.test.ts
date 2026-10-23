@@ -175,7 +175,6 @@ test('reduced motion leaves every icon still', () => {
 
 test('the sidebar nav rows carry their animated icons', () => {
   for (const [label, icon] of [
-    ["'Workspace'", 'TerminalIcon'],
     ["'Dashboard'", 'LayoutGridIcon'],
     ["'Plugins'", 'ConnectIcon'],
     ["'Publish'", 'RocketIcon'],
@@ -189,7 +188,7 @@ test('the sidebar nav rows carry their animated icons', () => {
   }
 });
 
-test('the collapsed rail keeps named workspace, creation, search and project shortcuts', () => {
+test('the collapsed rail keeps the current named creation, overview, integration and search controls', () => {
   // Searched forward from the rail, not from the top of the file: `SidebarNavScroller`
   // is imported above it, so an unanchored lookup ends the slice before it starts.
   const start = SIDEBAR.indexOf('xv-sidebar-collapsed-actions');
@@ -199,13 +198,12 @@ test('the collapsed rail keeps named workspace, creation, search and project sho
   assert.match(rail, /<LucideBlocksIcon ref=\{overviewIconRef\} size=\{16\}/, 'the rail lost the animated overview glyph');
   assert.match(rail, /overviewIconRef\.current\?\.startAnimation\(\)/);
   assert.match(rail, /overviewIconRef\.current\?\.stopAnimation\(\)/);
-  assert.match(rail, /icon=\{FolderOpenIcon\}/, 'the rail lost the folder');
-  for (const label of ['Workspace', 'New Work', 'Search', 'Overview', 'Projects', 'Integrations']) {
+  for (const label of ['New Work', 'Search workspace', 'Overview', 'Integrations']) {
     assert.ok(rail.includes(`aria-label="${label}"`), `${label} lost its accessible name`);
   }
   assert.match(rail, /onClick=\{\(\) => setSearchOpen\(true\)\}/);
-  assert.match(rail, /icon=\{TerminalIcon\}/);
   assert.match(rail, /icon=\{ConnectIcon\}/);
+  assert.doesNotMatch(rail, /aria-label="Projects"|aria-label="Workspace"/);
   /*
    * The rail's second button carries the new-terminal window, not the code brackets.
    *
@@ -313,13 +311,12 @@ test('every fullscreen and minimize control animates its corners', () => {
   }
 });
 
-test('Projects opens its folder, in the row and in the rail', () => {
-  const at = SIDEBAR.indexOf("label: 'Projects',");
-  assert.ok(at > 0, 'the Projects row is gone');
-  assert.match(SIDEBAR.slice(at, at + 260), /animated: FolderOpenIcon,/, 'the row lost the folder');
-  const start = SIDEBAR.indexOf('xv-sidebar-collapsed-actions');
-  const rail = SIDEBAR.slice(start, SIDEBAR.indexOf('<SidebarNavScroller', start));
-  assert.match(rail, /icon=\{FolderOpenIcon\}/, 'the rail lost the folder');
+test('Projects belongs to the current organizer instead of duplicate navigation rows', () => {
+  const organizer = HISTORY.slice(HISTORY.indexOf('data-sidebar-work-organizer'));
+  assert.match(organizer, /<section aria-label="Projects"/);
+  assert.match(organizer, /aria-label="Create project"/);
+  assert.match(SIDEBAR, /<SidebarProjectHistory expanded=\{navExpanded\}/);
+  assert.doesNotMatch(SIDEBAR, /label: 'Projects',/);
 });
 
 test('the merged Personalization settings tab wears the palette', () => {
@@ -487,12 +484,13 @@ test('the composer, the skin picker and the repo area take their icons', () => {
   assert.match(PROJECTS, /icon=\{TerminalIcon\}/, 'New Terminal lost the chevron');
 
   const BUBBLE = read('../../terminal/MessageBubbleActions.tsx');
-  for (const icon of ['UpvoteIcon', 'DownvoteIcon', 'CopyIcon', 'ShareIcon', 'Trash2Icon']) {
+  for (const icon of ['UpvoteIcon', 'DownvoteIcon', 'CopyIcon', 'ShareIcon']) {
     assert.match(BUBBLE, new RegExp(`icon=\\{${icon}\\}`), `the message actions lost ${icon}`);
   }
   assert.ok(!/ThumbsUp|ThumbsDown/.test(BUBBLE), 'the static thumbs are back');
   assert.ok(!/<Share2\b|<Trash2\b/.test(BUBBLE), 'static share/delete glyphs are back');
   assert.match(BUBBLE, /<MessageShareModal/, 'share fell back to clipboard-only output');
+  assert.doesNotMatch(BUBBLE, /aria-label="Delete"|onDelete/, 'message actions must not restore the retired delete control');
 });
 
 /**

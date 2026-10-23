@@ -4,7 +4,7 @@ import { SwarmMessageLog } from '@/components/terminal/SwarmMessageLog';
 import { DevWorkspacePanel } from '@/components/terminal/DevWorkspacePanel';
 import { TerminalSkinPicker } from '@/components/terminal/TerminalSkinPicker';
 import { WorkspaceLauncher } from '@/components/terminal/WorkspaceLauncher';
-import { WorkspaceSearchButton } from '@/components/terminal/WorkspaceSearchButton';
+import { WorkspacePeopleControls } from '@/components/terminal/WorkspacePeopleControls';
 import {
   useThemeStore,
   WORKSPACE_MAX_WIDTH,
@@ -243,10 +243,6 @@ export function DashboardView() {
             <span className="xv-term-badge">Private · not saved</span>
           ) : (
             <div className="xv-workspace-header-tools">
-              <WorkspaceSearchButton />
-              <WorkspaceLauncher />
-              <span className="xv-header-sep" aria-hidden="true" />
-              <TerminalSkinPicker />
               <button
                 type="button"
                 onClick={() => setTerminalFullscreen(!fullscreen)}
@@ -260,6 +256,9 @@ export function DashboardView() {
                   <AnimatedIcon icon={ExpandIcon} size={14} />
                 )}
               </button>
+              <TerminalSkinPicker />
+              <WorkspaceLauncher />
+              <WorkspacePeopleControls />
             </div>
           )}
         </header>

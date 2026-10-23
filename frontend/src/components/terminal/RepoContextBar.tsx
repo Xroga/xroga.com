@@ -24,13 +24,13 @@ import {
   OPEN_REPO_PICKER_EVENT,
   REPO_CONTEXT_CLEARED_EVENT,
   notifyGithubRepoContext,
-  notifyOpenRepoPicker,
   notifyRepoContextCleared,
 } from '@/lib/githubProjectEvents';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
 import { projectContextKey } from '@/lib/projectContext';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
+import { SidebarMovingTitle } from '@/components/layout/SidebarMovingTitle';
 
 const STORAGE_KEY = 'xroga-repo-context';
 const REPO_LIST_CACHE_KEY = 'xroga-repo-list-cache';
@@ -107,8 +107,8 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
   // Initialised to 'private' rather than from storage so the first server-rendered paint
   // can never show "Public" for a user whose stored value has not been read yet.
   const [newRepoVisibility, setNewRepoVisibility] = useState<NewRepoVisibility>('private');
-  const repoAnchorRef = useRef<HTMLSpanElement>(null);
-  const branchAnchorRef = useRef<HTMLSpanElement>(null);
+  const repoAnchorRef = useRef<HTMLButtonElement>(null);
+  const branchAnchorRef = useRef<HTMLButtonElement>(null);
   const noticeTimerRef = useRef<number | null>(null);
 
   const showContextNotice = useCallback((message: string) => {
@@ -214,7 +214,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
       const { hasFreshTerminalIntent } = await import('@/lib/repoContext');
       const freshTerminal = hasFreshTerminalIntent();
 
-      // Explicit New product: never auto-bind a sticky repository.
+      // A fresh repository intent must not silently rebind the previous repository.
       const defaultRepo = freshTerminal
         ? savedRepo && list.some((r) => r.fullName === savedRepo)
           ? savedRepo
@@ -252,7 +252,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
           globalThis.setTimeout(runAnalyze, 200);
         }
       } else if (freshTerminal) {
-        // Keep selection cleared for an explicit new product.
+        // Keep selection cleared for an explicit new repository.
         setSelectedBranch('main');
       }
     } catch {
@@ -293,7 +293,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
       setSelectedBranch('main');
       setRepoSummary(null);
       setOpen(null);
-      showContextNotice('Fresh product · no repository files selected yet');
+      showContextNotice('New repository · no files selected yet');
     };
     const onOpenPicker = () => {
       setSelectedRepo(null);
@@ -339,7 +339,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
       return;
     }
     let startedFreshSession = false;
-    if (previousKey && previousKey !== targetKey) {
+    if (messages.length > 0 || (previousKey && previousKey !== targetKey)) {
       startNewChat();
       startedFreshSession = true;
     }
@@ -390,6 +390,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
   }
 
   async function selectBranch(name: string) {
+    if (name === selectedBranch) { setOpen(null); return; }
     setSelectedBranch(name);
     setOpen(null);
     if (selectedRepo) {
@@ -402,6 +403,19 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
       notifyGithubRepoContext(selectedRepo, name);
       void analyzeRepo(selectedRepo, name, false);
     }
+  }
+
+  function startWithNewRepository() {
+    markFreshTerminalIntent();
+    clearSelectedRepoContext();
+    notifyRepoContextCleared();
+    setSelectedRepo(null);
+    setSelectedBranch('main');
+    setRepoSummary(null);
+    setRepoTech([]);
+    setOpen(null);
+    if (messages.length > 0) startNewChat();
+    showContextNotice('New repository selected · it will be created when you start work');
   }
 
   if (!connected && !loadingRepos) return null;
@@ -422,8 +436,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
   }
 
   const textTriggerClass =
-    'inline-flex items-center gap-0.5 cursor-pointer select-none font-semibold text-[var(--foreground)] hover:text-[#006aff] transition-colors outline-none';
-  const plainTextClass = 'inline-flex items-center gap-0.5 font-semibold text-[var(--foreground)]';
+    'inline-flex items-center gap-0.5 cursor-pointer select-none font-semibold text-[var(--foreground)] hover:opacity-75 transition-opacity outline-none focus-visible:ring-1 focus-visible:ring-[var(--foreground)]';
 
   return (
     <>
@@ -436,104 +449,47 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
           !compact && (outside ? 'px-0 py-0' : 'px-2 sm:px-3 py-1 border-0')
         )}
       >
-      {/* Explicit product intent — avoids patching the wrong app */}
-      <div className={cn('flex items-center gap-1 shrink-0', compact && 'xv-repo-intent')}>
-        <button
-          type="button"
-          title={
-            selectedRepo
-              ? `Updates go to ${selectedRepo}`
-              : 'Pick a repo first to update an existing product'
-          }
-          aria-label={selectedRepo ? 'Update current' : 'Pick to update'}
-          onClick={() => {
-            if (!selectedRepo) {
-              setOpen('repo');
-              notifyOpenRepoPicker();
-            }
-          }}
-          className={cn(
-            'rounded px-1.5 py-0.5 border text-[9px] font-semibold transition-colors',
-            selectedRepo
-              ? 'border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
-              : 'border-[var(--card-border)] text-[var(--muted)] hover:text-[var(--foreground)]',
-          )}
-        >
-          <span className="xv-repo-intent-label-full">
-            {selectedRepo ? 'Update current' : 'Pick to update'}
-          </span>
-          <span className="xv-repo-intent-label-short" aria-hidden="true">
-            {selectedRepo ? 'Update' : 'Pick repo'}
-          </span>
-        </button>
-        <button
-          type="button"
-          title="Clear repo selection and start a brand-new product"
-          aria-label="New product"
-          onClick={() => {
-            markFreshTerminalIntent();
-            clearSelectedRepoContext();
-            notifyRepoContextCleared();
-            setSelectedRepo(null);
-            setSelectedBranch('main');
-            setRepoSummary(null);
-            setRepoTech([]);
-            startNewChat();
-            notifyOpenRepoPicker();
-          }}
-          className="rounded px-1.5 py-0.5 border border-[var(--card-border)] text-[9px] font-semibold text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/40 transition-colors"
-        >
-          <span className="xv-repo-intent-label-full">New product</span>
-          <span className="xv-repo-intent-label-short" aria-hidden="true">New</span>
-        </button>
-      </div>
-
       <div className={cn('relative shrink-0', compact && 'xv-repo-identity')}>
-        {repoLocked && selectedRepo ? (
-          <span className={plainTextClass}>
-            <span className="xv-repo-name truncate max-w-[140px] sm:max-w-[220px]">{selectedRepo}</span>
-          </span>
-        ) : (
           <>
-            <span
+            <button
+              type="button"
               ref={repoAnchorRef}
-              role="button"
-              tabIndex={0}
+              aria-label={selectedRepo ? `Repository ${selectedRepo}. Choose another repository` : 'Choose a repository'}
+              aria-expanded={open === 'repo'}
               onClick={() => setOpen(open === 'repo' ? null : 'repo')}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setOpen(open === 'repo' ? null : 'repo');
-                }
-              }}
               className={textTriggerClass}
             >
-              <span className="xv-repo-name truncate max-w-[140px] sm:max-w-[220px]">
-                {selectedRepo ?? 'Select repository'}
+              <span className="xv-repo-name" title={selectedRepo ?? undefined}>
+                <SidebarMovingTitle text={selectedRepo?.split('/').at(-1) ?? 'New repository'} />
               </span>
               <ChevronDown className={cn('w-3 h-3 opacity-50 transition-transform', open === 'repo' && 'rotate-180')} />
-            </span>
-            <ChatBarPortalPopover open={open === 'repo'} onClose={() => setOpen(null)} anchorRef={repoAnchorRef} width={240}>
-              <ul className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] shadow-2xl p-1 max-h-[200px] overflow-y-auto">
+            </button>
+            <ChatBarPortalPopover open={open === 'repo'} onClose={() => setOpen(null)} anchorRef={repoAnchorRef} width={300}>
+              <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] shadow-2xl p-1 max-h-[260px] overflow-y-auto">
+                <p className="px-2.5 py-1 text-[10px] text-[var(--muted)]">GitHub repositories</p>
+                <ul>
                 {repos.map((r) => (
                   <li key={r.fullName}>
-                    <span
-                      role="option"
-                      aria-selected={r.fullName === selectedRepo}
+                    <button
+                      type="button"
                       onClick={() => void selectRepo(r.fullName)}
                       className={cn(
-                        'block px-2.5 py-1.5 rounded-lg text-[10px] cursor-pointer truncate hover:bg-white/10',
-                        r.fullName === selectedRepo && 'text-[#006aff] font-semibold'
+                        'block w-full px-2.5 py-1.5 rounded-lg text-left text-[10px] cursor-pointer truncate hover:bg-white/10',
+                        r.fullName === selectedRepo && 'font-semibold'
                       )}
                     >
                       {r.fullName}
-                    </span>
+                    </button>
                   </li>
                 ))}
-              </ul>
+                </ul>
+                <button type="button" onClick={startWithNewRepository} className="w-full rounded-lg border-t border-[var(--card-border)] px-2.5 py-2 text-left text-[10px] font-semibold hover:bg-white/10">+ New repository</button>
+                {!selectedRepo ? <div className="flex gap-1 px-2 pb-1" role="group" aria-label="New repository visibility">
+                  {(['private', 'public'] as const).map((value) => <button key={value} type="button" aria-pressed={newRepoVisibility === value} onClick={() => { setNewRepoVisibility(value); saveNewRepoVisibility(value); }} className={cn('rounded border border-[var(--card-border)] px-2 py-1 text-[10px] capitalize', newRepoVisibility === value && 'bg-[var(--foreground)]/10 font-semibold')}>{value}</button>)}
+                </div> : null}
+              </div>
             </ChatBarPortalPopover>
           </>
-        )}
       </div>
 
       {selectedRepo ? (
@@ -541,23 +497,14 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
           <span className="xv-repo-slash text-[var(--muted)] opacity-40">/</span>
 
           <div className={cn('relative shrink-0', compact && 'xv-repo-branch')}>
-            {repoLocked ? (
-              <span className={plainTextClass}>
-                {loadingBranches ? <Loader2 className="w-3 h-3 animate-spin" /> : selectedBranch}
-              </span>
-            ) : (
               <>
-                <span
+                <button
+                  type="button"
                   ref={branchAnchorRef}
-                  role="button"
-                  tabIndex={0}
+                  disabled={loadingBranches}
+                  aria-label={`Branch ${selectedBranch}. Choose another branch`}
+                  aria-expanded={open === 'branch'}
                   onClick={() => !loadingBranches && setOpen(open === 'branch' ? null : 'branch')}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      if (!loadingBranches) setOpen(open === 'branch' ? null : 'branch');
-                    }
-                  }}
                   className={cn(textTriggerClass, loadingBranches && 'opacity-60 pointer-events-none')}
                 >
                   {loadingBranches ? (
@@ -566,67 +513,29 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
                     selectedBranch
                   )}
                   <ChevronDown className={cn('w-3 h-3 opacity-50 transition-transform', open === 'branch' && 'rotate-180')} />
-                </span>
+                </button>
                 <ChatBarPortalPopover open={open === 'branch'} onClose={() => setOpen(null)} anchorRef={branchAnchorRef} width={180}>
                   <ul className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] shadow-2xl p-1 max-h-[200px] overflow-y-auto">
                     {branches.map((b) => (
                       <li key={b}>
-                        <span
-                          role="option"
-                          aria-selected={b === selectedBranch}
+                        <button
+                          type="button"
                           onClick={() => void selectBranch(b)}
                           className={cn(
-                            'block px-2.5 py-1.5 rounded-lg text-[10px] cursor-pointer hover:bg-white/10',
-                            b === selectedBranch && 'text-[#006aff] font-semibold'
+                            'block w-full px-2.5 py-1.5 rounded-lg text-left text-[10px] cursor-pointer hover:bg-white/10',
+                            b === selectedBranch && 'font-semibold'
                           )}
                         >
                           {b}
-                        </span>
+                        </button>
                       </li>
                     ))}
                   </ul>
                 </ChatBarPortalPopover>
               </>
-            )}
           </div>
         </>
-      ) : (
-        /*
-         * No repo selected means this build will create one, so this is the only moment
-         * the user can decide whether it is published. It is a two-state toggle rather
-         * than a checkbox because "unchecked" reads as an absence, and an absence must
-         * never be what publishes a repository — here both states are chosen, visible,
-         * and labelled.
-         */
-        <div className={cn('flex items-center gap-1 shrink-0', compact && 'xv-repo-visibility')} role="group" aria-label="Visibility for the repository Xroga will create">
-          {(['private', 'public'] as const).map((value) => (
-            <button
-              key={value}
-              type="button"
-              aria-pressed={newRepoVisibility === value}
-              title={
-                value === 'private'
-                  ? 'The new repository will be private to your account'
-                  : 'The new repository will be visible to anyone on GitHub'
-              }
-              onClick={() => {
-                setNewRepoVisibility(value);
-                saveNewRepoVisibility(value);
-              }}
-              className={cn(
-                'rounded px-1.5 py-0.5 border text-[9px] font-semibold transition-colors capitalize',
-                newRepoVisibility === value
-                  ? value === 'public'
-                    ? 'border-amber-500/50 text-amber-600 dark:text-amber-400 bg-amber-500/10'
-                    : 'border-[var(--accent)]/40 text-[var(--foreground)] bg-[var(--accent)]/10'
-                  : 'border-[var(--card-border)] text-[var(--muted)] hover:text-[var(--foreground)]',
-              )}
-            >
-              {value}
-            </button>
-          ))}
-        </div>
-      )}
+      ) : null}
 
       {(analyzing || repoSummary) && selectedRepo && (
         <span className={cn('text-[9px] text-[var(--muted)] truncate max-w-[200px] sm:max-w-[360px] shrink-0', compact && 'xv-repo-analysis')} title={repoSummary ?? undefined}>

@@ -235,7 +235,7 @@ test('hiding the chatbar leaves nothing floating behind it', () => {
 
 test('opening Project edits keeps the chatbar inside the terminal pane', () => {
   const DOCK = read('../components/terminal/TerminalDock.tsx');
-  assert.match(DOCK, /const dockSuppressed\s*=\s*chatbarHidden;/);
+  assert.match(DOCK, /const dockSuppressed\s*=\s*chatbarHidden && !emptyWorkspace;/);
   assert.match(DOCK, /workspaceOpen\s*&&\s*'xv-terminal-dock--workspace-split'/);
   assert.match(DOCK, /aria-hidden=\{!isDashboard\}/);
   assert.match(

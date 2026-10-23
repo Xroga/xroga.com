@@ -29,6 +29,7 @@ import {
   Library,
   CalendarClock,
   Bot,
+  Globe,
   Package,
   History,
   Files,
@@ -157,21 +158,21 @@ function NavIcon({ entry }: { entry: NavEntry }) {
 }
 
 const navItems: NavEntry[] = [
-  { href: '/workspace', motion: 'blink' as const, label: 'Workspace', icon: Terminal, animated: TerminalIcon, tip: 'Main workspace — build and chat with Xroga AI.' },
   { href: '/dashboard', motion: 'pulse' as const, label: 'Dashboard', icon: LayoutDashboard, animated: LayoutGridIcon, tip: 'Recent activity, billing, plan, and usage.' },
-  { href: '/dashboard/projects', motion: 'flip' as const, label: 'Projects', icon: FolderGit2, animated: FolderOpenIcon, tip: 'Open connected repositories and their workspaces.' },
-  { href: '/dashboard/integrations', motion: 'pulse' as const, label: 'Plugins', icon: Link2, animated: ConnectIcon, tip: 'Connect GitHub, Slack, databases, and tools.' },
   {
-    id: 'automations', href: '/dashboard/automations', label: 'Automations', icon: Workflow, animated: LucideWorkflowIcon, newSection: true,
-    tip: 'Workflows, scheduling, AI Employees, and work packs are coming soon.',
+    id: 'automations', href: '/dashboard/automations#browser-automation', label: 'Automations', icon: Workflow, animated: LucideWorkflowIcon,
+    tip: 'Browser automation, workflows, scheduling, work packs and run history.',
     children: [
-      { href: '/dashboard/automations#workflows', label: 'Workflows', icon: Workflow, animated: LucideWorkflowIcon, tip: 'Coming soon · Connected workflows', planned: true },
-      { href: '/dashboard/automations#scheduled-tasks', label: 'Scheduled Tasks', icon: CalendarClock, animated: LucideClockIcon, tip: 'Coming soon · Repeated work', planned: true },
-      { href: '/dashboard/automations#ai-employees', label: 'AI Employees', icon: Bot, animated: LucideBotIcon, tip: 'Coming soon · Specialist workers', planned: true },
-      { href: '/dashboard/automations#work-packs', label: 'Work Packs', icon: Package, animated: LucideBlocksIcon, tip: 'Coming soon · Reusable work', planned: true },
-      { href: '/dashboard/automations#run-history', label: 'Run History', icon: History, animated: LucideHistoryIcon, tip: 'Coming soon · Unified automation history', planned: true },
+      { href: '/dashboard/automations#browser-automation', label: 'Browser Automation', icon: Globe, tip: 'Plan and review browser work.' },
+      { href: '/dashboard/automations#workflows', label: 'Workflows', icon: Workflow, animated: LucideWorkflowIcon, tip: 'Design and review workflows.' },
+      { href: '/dashboard/automations#scheduled-tasks', label: 'Scheduled Tasks', icon: CalendarClock, animated: LucideClockIcon, tip: 'Plan recurring work.' },
+      { href: '/dashboard/automations#ai-employees', label: 'AI Employees', icon: Bot, animated: LucideBotIcon, tip: 'Explore specialist workers.' },
+      { href: '/dashboard/automations#work-packs', label: 'Work Packs', icon: Package, animated: LucideBlocksIcon, tip: 'Explore reusable work packs.' },
+      { href: '/dashboard/automations#run-history', label: 'Run History', icon: History, animated: LucideHistoryIcon, tip: 'Review automation runs.' },
     ],
   },
+  { href: '/dashboard/automations#ai-employees', motion: 'pulse' as const, label: 'AI Employees', icon: Bot, animated: LucideBotIcon, tip: 'Delegate work to specialized employees.' },
+  { href: '/dashboard/integrations', motion: 'pulse' as const, label: 'Plugins', icon: Link2, animated: ConnectIcon, tip: 'Connect GitHub, Slack, databases, and tools.' },
   {
     id: 'library', href: '/dashboard/library', label: 'Library', icon: Library, animated: LucideFoldersIcon, newSection: true,
     tip: 'Files, artifacts, skills and Xroga Drive will arrive here.',
@@ -236,6 +237,12 @@ export function Sidebar({ displayName, email }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const workspaceIdentity = useWorkspaceIdentity();
+  const [automationLabelIndex, setAutomationLabelIndex] = useState(0);
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const timer = window.setInterval(() => { if (document.visibilityState === 'visible') setAutomationLabelIndex(index => (index + 1) % 2); }, 5000);
+    return () => window.clearInterval(timer);
+  }, []);
   const isGuest = workspaceIdentity.status === 'guest';
   const { requestAuthGate } = useWorkspaceAuthGate();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -705,24 +712,14 @@ export function Sidebar({ displayName, email }: SidebarProps) {
           {navExpanded ? (
             <div className="xv-sidebar-utilities" aria-label="Sidebar utilities">
               <ThemeToggle />
+              <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search workspace" title="Search workspace"><LocateIcon size={16} duration={1} /></button>
               {!incognito ? isGuest ? <button type="button" aria-label="Notifications" onClick={() => requestAuthGate('history')}><Bell size={14} /></button> : <SidebarNotificationButton open={notificationsOpen} onToggle={() => setNotificationsOpen(value => !value)} /> : null}
               <button type="button" aria-label="Close sidebar" onPointerDown={isMobile ? undefined : startEdgeToggleDrag} onClick={() => { if (edgeToggleDraggedRef.current) { edgeToggleDraggedRef.current = false; return; } if (isMobile) closeMobile(); else toggleSidebar(); }}><PanelLeftClose size={14} /></button>
             </div>
           ) : (
             <div className="xv-sidebar-collapsed-actions" aria-label="Workspace shortcuts">
-                <Link
-                  href="/workspace"
-                  aria-label="Workspace"
-                  onClick={handleNavClick}
-                  className={cn(isActive('/workspace') && 'is-active')}
-                >
-                  <AnimatedIcon icon={TerminalIcon} />
-                </Link>
               <button type="button" onClick={handleNewChat} aria-label="New Work">
                 <AnimatedIcon icon={NewTerminalIcon} />
-              </button>
-              <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
-                <LocateIcon size={16} duration={1} />
               </button>
                 <Link
                   href="/dashboard"
@@ -737,14 +734,6 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                   <span className="xv-animated-blocks-hover"><LucideBlocksIcon ref={overviewIconRef} size={16} /></span>
                 </Link>
                 <Link
-                  href="/dashboard/projects"
-                  aria-label="Projects"
-                  onClick={(event) => handleNavEntryClick(event, '/dashboard/projects')}
-                  className={cn(isActive('/dashboard/projects') && 'is-active')}
-                >
-                  <AnimatedIcon icon={FolderOpenIcon} />
-                </Link>
-                <Link
                   href="/dashboard/integrations"
                   aria-label="Integrations"
                   onClick={(event) => handleNavEntryClick(event, '/dashboard/integrations')}
@@ -755,6 +744,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
               <HoverTip label="Theme" description="Choose the workspace theme." side="bottom">
                 <ThemeToggle placement="right-start" />
               </HoverTip>
+              <HoverTip label="Search workspace" side="bottom"><button type="button" onClick={() => setSearchOpen(true)} aria-label="Search workspace"><LocateIcon size={16} duration={1} /></button></HoverTip>
               {!isGuest && !incognito && <HoverTip label="Notifications" side="bottom"><SidebarNotificationButton open={notificationsOpen} onToggle={() => { if (!effectiveSidebarOpen) toggleSidebar(); setNotificationsOpen((value) => !value); }} compact /></HoverTip>}
             </div>
           )}
@@ -803,7 +793,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                       <Link href={entry.href ?? '/workspace'} onClick={(event) => handleNavEntryClick(event, entry.href ?? '/workspace')}
                         className={cn('xv-nav-group__trigger', groupHasActive(entry) && 'xv-active')} aria-label={entry.label}>
                         <NavIcon entry={entry} />
-                        <span>{entry.label}</span>
+                        <span>{entry.id === 'automations' ? ['Automations', 'Browser Automations'][automationLabelIndex] : entry.label}</span>
                         {entry.newSection ? <span className="xv-sidebar-new-badge">NEW</span> : null}
                       </Link>
                     }
@@ -870,6 +860,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             <PanelLeft className="h-4 w-4" aria-hidden="true" />
           </button>
           <button type="button" onClick={() => { if (isGuest) requestAuthGate('history'); else { setMobileOpen(true); setNotificationsOpen(true); } }} aria-label="Notifications"><Bell size={16} /></button>
+          <button type="button" onClick={() => { if (isGuest) requestAuthGate('history'); else setSearchOpen(true); }} aria-label="Search workspace"><LocateIcon size={16} duration={1} /></button>
           <button type="button" onClick={handleNewChat} aria-label="New Terminal">
             <AnimatedIcon icon={NewTerminalIcon} size={16} intro={false} />
           </button>

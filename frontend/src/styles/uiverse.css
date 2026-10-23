@@ -3761,7 +3761,7 @@ body.theme-black .xv-sidebar-root {
   height: var(--xv-exec-pulse-size);
   flex: 0 0 var(--xv-exec-pulse-size);
   border-radius: 999px;
-  color: var(--accent);
+  color: var(--foreground);
   background:
     conic-gradient(
       from 0deg,
@@ -3911,7 +3911,7 @@ body.theme-black .xv-sidebar-root {
 }
 
 .xv-exec-row[data-current="true"] .xv-exec-row-icon {
-  color: var(--accent);
+  color: var(--foreground);
 }
 
 .xv-exec-inline {
@@ -4277,7 +4277,7 @@ body.theme-black .xv-sidebar-root {
 }
 .xv-exec-row:hover .xv-exec-row-icon {
   transform: scale(1.08) rotate(-3deg);
-  color: var(--accent);
+  color: var(--foreground);
 }
 .xv-exec-row-label {
   font-size: 13px !important;

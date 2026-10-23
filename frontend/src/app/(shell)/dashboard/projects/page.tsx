@@ -41,8 +41,7 @@ type Tab = 'projects' | 'conversations';
 
 function ProjectsHubInner() {
   const searchParams = useSearchParams();
-  const initialTab = searchParams.get('tab') === 'conversations' ? 'conversations' : 'projects';
-  const [tab, setTab] = useState<Tab>(initialTab);
+  const [tab, setTab] = useState<Tab>('projects');
   const [projects, setProjects] = useState<Project[]>([]);
   const [localProjects, setLocalProjects] = useState<LocalProjectEntry[]>([]);
   const [history, setHistory] = useState<TerminalHistoryEntry[]>([]);
@@ -54,7 +53,7 @@ function ProjectsHubInner() {
   const { setPrompt, restoreTerminalSession } = useTerminalChat();
 
   useEffect(() => {
-    setTab(searchParams.get('tab') === 'conversations' ? 'conversations' : 'projects');
+    setTab('projects');
   }, [searchParams]);
 
   useEffect(() => {
@@ -111,20 +110,16 @@ function ProjectsHubInner() {
 
   const filteredLocal = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const repoScoped = selectedRepo
-      ? localProjects.filter((p) => p.githubRepoName === selectedRepo)
-      : localProjects;
+    const repoScoped = localProjects;
     if (!q) return repoScoped;
     return repoScoped.filter(
       (p) => p.name.toLowerCase().includes(q) || p.prompt.toLowerCase().includes(q) || p.type.includes(q),
     );
-  }, [localProjects, query, selectedRepo]);
+  }, [localProjects, query]);
 
   const filteredRemote = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const repoScoped = selectedRepo
-      ? projects.filter((p) => p.github_repo_name === selectedRepo)
-      : projects;
+    const repoScoped = projects;
     if (!q) return repoScoped;
     return repoScoped.filter(
       (p) =>
@@ -132,7 +127,7 @@ function ProjectsHubInner() {
         p.type.toLowerCase().includes(q) ||
         (p.github_repo_name?.toLowerCase().includes(q) ?? false),
     );
-  }, [projects, query, selectedRepo]);
+  }, [projects, query]);
 
   const conversationItems = useMemo(() => {
     const seen = new Set<string>();
@@ -307,7 +302,7 @@ function ProjectsHubInner() {
               Projects
             </h1>
             <p className="text-sm text-[var(--muted)] mt-1">
-              Repository-scoped builds and conversations — choose a repo once, then work only inside that repo until you open a new terminal.
+              Your GitHub repositories and projects created without GitHub, together in one place.
             </p>
             {selectedRepo && (
               <p className="mt-2 text-xs font-mono text-[var(--accent)]">
@@ -320,31 +315,10 @@ function ProjectsHubInner() {
           </Link>
         </div>
 
-        <div className="flex gap-2 p-1 rounded-xl bg-[var(--card)] border border-[var(--card-border)] w-fit">
-          {(['projects', 'conversations'] as const).map((key) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => {
-                setTab(key);
-                router.replace(key === 'conversations' ? '/dashboard/projects?tab=conversations' : '/dashboard/projects');
-              }}
-              className={cn(
-                'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
-                tab === key
-                  ? 'bg-[var(--accent)] text-[var(--background)]'
-                  : 'text-[var(--muted)] hover:text-[var(--foreground)]',
-              )}
-            >
-              {key === 'projects' ? 'Code & Repos' : 'Conversations'}
-            </button>
-          ))}
-        </div>
-
         <SectionSearchBar
           value={query}
           onChange={setQuery}
-          placeholder={tab === 'projects' ? 'Search projects & repos…' : 'Search conversations…'}
+          placeholder="Search projects and repositories…"
         />
 
         {tab === 'projects' ? (
@@ -360,7 +334,7 @@ function ProjectsHubInner() {
                 <section className="space-y-3">
                   <div>
                     <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--muted)]">
-                      Current GitHub repository
+                      {selectedRepo ? 'Current GitHub repository' : 'GitHub repositories'}
                     </h2>
                     {selectedRepo && <p className="text-xs font-mono text-[var(--accent)] mt-1">{selectedRepo}</p>}
                   </div>
@@ -408,7 +382,7 @@ function ProjectsHubInner() {
                 </section>
               )}
             </div>
-          ) : (
+          ) : filteredLocal.length === 0 ? (
             <div className="glass-panel rounded-2xl p-10 text-center border border-dashed border-[var(--card-border)]">
               <Sparkles className="w-10 h-10 mx-auto text-[var(--accent)]/50 mb-4" />
               <p className="text-[var(--muted)] mb-2">No projects yet.</p>
@@ -422,7 +396,7 @@ function ProjectsHubInner() {
                 <Rocket className="w-4 h-4" /> Go to Workspace
               </Link>
             </div>
-          )
+          ) : null
         ) : (
           <div className="space-y-6">
             {hasLocalInConversations ? (
@@ -511,6 +485,13 @@ function ProjectsHubInner() {
             </div>
           </div>
         )}
+        {tab === 'projects' && filteredLocal.length > 0 ? <section className="space-y-3" aria-label="Projects without GitHub">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--muted)]">Projects without GitHub</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredLocal.map((project) => <SectionCompactCard key={project.id} title={project.name} subtitle={project.type} dateIso={project.updatedAt}
+              onOpen={() => openLocalProject(project)} onDelete={() => deleteLocal(project.id)} openLabel="Continue project" />)}
+          </div>
+        </section> : null}
       </div>
     </PageFullscreenFrame>
   );

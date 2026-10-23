@@ -28,6 +28,7 @@ import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions } from '@/lib/messageHelpers';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
 import { UserProfileBox } from '@/components/profile/UserProfileBox';
+import { WorkspacePeopleControls } from './WorkspacePeopleControls';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
 import { loadWorkspaceSession } from '@/lib/workspacePersistence';
@@ -89,7 +90,7 @@ function transcriptScrollRoot(): HTMLElement {
 }
 
 export function SwarmMessageLog({ compact, incognito = false, chromeless = false }: SwarmMessageLogProps) {
-  const { messages, sessionId, sessionRestoring, loading, animatingId, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
+  const { messages, sessionId, sessionRestoring, loading, animatingId, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, updateFeatureOutput, retryStoppedBuild, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
     useTerminalChat();
   const [rollbackId, setRollbackId] = useState<string | null>(null);
   const workspaceRepo = useProjectWorkspaceStore((s) => s.repo);
@@ -374,6 +375,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
             <span className="xv-term-badge">Private · not saved</span>
           ) : (
             <div className="xv-terminal-header-tools flex items-center gap-1 shrink-0">
+              <WorkspacePeopleControls />
               <WorkspaceLauncher />
               <TerminalSkinPicker />
               <button
@@ -465,7 +467,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                 )}
               >
                 {msg.role === 'user' && (
-                  isIncognito ? (
+                  <div className="xv-user-avatar-reveal">{isIncognito ? (
                     <IncognitoProfileBox size="terminal" />
                   ) : (
                     <UserProfileBox
@@ -473,7 +475,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                       initial={displayInitial}
                       size="terminalCompact"
                     />
-                  )
+                  )}</div>
                 )}
                 <div
                   className={cn(
@@ -489,7 +491,6 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                         role="user"
                         content={msg.content}
                         messageId={msg.id}
-                        onDelete={() => deleteUserTurn(msg.id)}
                       />
                     </>
                   ) : msg.role === 'system' ? (
@@ -500,9 +501,10 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                         {/* The pending shell is transient request-lifecycle feedback only.
                             It is never persisted as execution evidence. Real canonical
                             activity replaces it as soon as the backend emits a step. */}
-                        {msg.executionActivity?.length ? (
+                        {msg.executionActivity?.length || (!loading && msg.thinkingSteps?.length) ? (
                           <TerminalLiveActivity
                             activity={msg.executionActivity}
+                            thinkingSteps={msg.thinkingSteps}
                             requestText={messagePrompt}
                           />
                         ) : loading &&
@@ -645,8 +647,8 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           role="assistant"
                           content={[msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
                           messageId={msg.id}
+                          createdAt={msg.createdAt}
                           prompt={promptByAssistantId.get(msg.id)}
-                          onDelete={() => deleteTurn(msg.id)}
                         />
                       )}
                       {!msg.content && msg.featureOutput && (
@@ -654,8 +656,8 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           role="assistant"
                           content={shareableDocumentText(msg.featureOutput)}
                           messageId={msg.id}
+                          createdAt={msg.createdAt}
                           prompt={promptByAssistantId.get(msg.id)}
-                          onDelete={() => deleteTurn(msg.id)}
                         />
                       )}
                       {suggestions && (

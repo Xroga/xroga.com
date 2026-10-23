@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { XROGA_PROFILE_AVATARS } from '@/lib/profileAvatars';
 
 const SIZE_CLASS = {
   sidebar: 'w-11 h-11 sm:w-12 sm:h-12',
@@ -26,14 +27,11 @@ export function UserProfileBox({
   onClick,
   title,
 }: UserProfileBoxProps) {
-  const inner = url ? (
+  const inner = (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={url} alt="" className="w-full h-full object-cover object-center" />
-  ) : (
-    <span className="w-full h-full flex items-center justify-center text-sm sm:text-base font-bold bg-[var(--accent)]/15 text-[var(--foreground)]">
-      {initial}
-    </span>
+    <img src={url || XROGA_PROFILE_AVATARS[0].url} alt="" className="w-full h-full object-cover object-center" />
   );
+  void initial;
 
   const boxClass = cn(
     'xv-user-profile-box rounded-full overflow-hidden shrink-0 ring-1 ring-[var(--card-border)] bg-black/20',

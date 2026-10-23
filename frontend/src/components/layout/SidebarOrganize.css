@@ -1,16 +1,33 @@
 
-/* Scoped to the Projects / Pinned / Recents region. */
-.xv-sidebar-long-title--scroll{animation:xv-sidebar-title-pan var(--sidebar-title-duration,2s) ease-in-out .2s forwards}
-@keyframes xv-sidebar-title-pan{0%,9%{transform:translateX(0)} 92%,100%{transform:translateX(var(--sidebar-title-overflow,0px))}}
+/* Scoped to the Projects / Pinned / Recents region. Keep row geometry stable on hover. */
 .xv-sidebar-work-row .xv-sidebar-work-actions{opacity:0;transition:opacity .14s ease}
 .xv-sidebar-work-row:hover .xv-sidebar-work-actions,
 .xv-sidebar-work-row:focus-within .xv-sidebar-work-actions{opacity:1}
-.xv-sidebar-work-row:focus-within{background:color-mix(in srgb,var(--foreground) 5%,transparent)}
+.xv-sidebar-work-row{transition:background-color 100ms ease;color:var(--muted-foreground,var(--foreground))}
+.xv-sidebar-work-row:hover,.xv-sidebar-work-row:focus-within{background:color-mix(in srgb,var(--foreground) 7%,transparent);color:var(--foreground)}
+.xv-sidebar-work-row:has(> button[aria-current='page']),.xv-sidebar-work-row[aria-current='page']{background:color-mix(in srgb,var(--foreground) 13%,transparent);color:var(--foreground)}
 .xv-sidebar-work-menu__action:hover,.xv-sidebar-work-menu__action:focus-visible{background:color-mix(in srgb,var(--foreground) 9%,transparent);outline:none}
 .xv-sidebar-work-menu__action:focus-visible{box-shadow:inset 0 0 0 1px var(--foreground)}
-@media(max-width:767px){.xv-sidebar-work-row .xv-sidebar-work-actions{opacity:1}.xv-sidebar-long-title--scroll{animation:none}}
-@media(prefers-reduced-motion:reduce){.xv-sidebar-long-title--scroll{animation:none}.xv-sidebar-work-row .xv-sidebar-work-actions{transition:none}}
+@media(max-width:767px){.xv-sidebar-work-row .xv-sidebar-work-actions{opacity:1}}
+@media(prefers-reduced-motion:reduce){.xv-sidebar-work-row,.xv-sidebar-work-row .xv-sidebar-work-actions{transition:none}}
 
 /* Dense reading rhythm without overlapping hit areas on touch devices. */
 .xv-sidebar-work-row { min-height:24px; }
 @media (pointer:coarse){ .xv-sidebar-work-row { min-height:32px; } }
+
+/* Workspace project-task hierarchy: clear, compact, left-aligned titles. */
+[data-sidebar-work-organizer] .xv-sidebar-work-row > button:first-child{
+  font-size:13px;font-weight:500;line-height:1.45;text-align:left;justify-content:flex-start;
+  min-height:30px;
+}
+[data-sidebar-work-organizer] .xv-sidebar-long-title{
+  font-size:inherit;text-align:left;
+}
+[data-sidebar-work-organizer] .xv-sidebar-project-task{
+  opacity:.7;transition:opacity 150ms ease;
+}
+[data-sidebar-work-organizer] .group:hover .xv-sidebar-project-task,
+[data-sidebar-work-organizer] .group:focus-within .xv-sidebar-project-task{
+  opacity:1;
+}
+@media (max-width:767px){[data-sidebar-work-organizer] .xv-sidebar-project-task{opacity:1}}

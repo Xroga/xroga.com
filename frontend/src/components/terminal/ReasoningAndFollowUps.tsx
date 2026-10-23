@@ -1,8 +1,8 @@
 'use client';
 
 import { memo, type ReactNode } from 'react';
-import { MessageSquareText } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { BlackHoleWordmark } from './BlackHoleMark';
 import {
   extractImagesFromContent,
   stripImageMarkdown,
@@ -16,9 +16,9 @@ import { isMathSolutionContent } from '@/lib/mathDetect';
 import { ImageStudioCard } from './ImageStudioCard';
 
 function ResponseBody({ children, streaming }: { children: ReactNode; streaming?: boolean }) {
-  return <div className={cn('xv-response-text flex min-w-0 items-start gap-2.5', streaming && 'xv-streaming')}>
-    <MessageSquareText className="mt-1 h-4 w-4 shrink-0 text-[var(--muted)]" aria-hidden="true" />
-    <div className="min-w-0 flex-1">{children}</div>
+  return <div className={cn('xv-response-text min-w-0', streaming && 'xv-streaming')}>
+    {streaming ? <div className="xv-response-identity"><BlackHoleWordmark active /></div> : null}
+    <div className="min-w-0">{children}</div>
   </div>;
 }
 

@@ -1,6 +1,7 @@
 import type { ChatMessage } from '@/context/TerminalChatContext';
 import { getSelectedRepoContext } from '@/lib/repoContext';
 import { projectContextKey } from '@/lib/projectContext';
+import { getActiveSidebarProject } from '@/lib/sidebarProjectTask';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { messagesForStorage, safeStorageSet } from '@/lib/storageSafe';
 import { saveTerminalSessionToIndexedDB, deleteTerminalSessionFromIndexedDB } from '@/lib/terminalSessionStorage';
@@ -244,6 +245,9 @@ export function saveTerminalHistorySession(opts: {
   const rest = loadTerminalHistory().filter((e) => e.id !== opts.sessionId);
   save([entry, ...rest]);
   void saveTerminalSessionToIndexedDB(entry);
+  // Project membership is durable sidebar metadata, not a GitHub or model-routing side effect.
+  const activeProjectAtSave = getActiveSidebarProject();
+  void import('@/lib/sidebarOrganization').then(({scheduleProjectConversationLink})=>scheduleProjectConversationLink(entry,activeProjectAtSave));
   // Non-GitHub chats need the same cross-device restoration capability.
   if (!entry.githubRepoName?.includes('/')) {
     void import('@/lib/sidebarOrganization').then(({scheduleSidebarChatSave}) => scheduleSidebarChatSave(entry));
