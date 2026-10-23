@@ -1,23 +1,23 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "7e10994c8b02e4b3cede14d614d5a22ddc775d7e28b161f64a43282552eb689c",
+  "reviewRegistrySha256": "b389f51beb5148bb1ad9733274d5f7d5a55659f943f409b989e9498bcef89f4d",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 166,
-    "persistenceCandidates": 704,
+    "persistenceCandidates": 705,
     "ownerPredicateCandidates": 165,
-    "reviewRequired": 24,
+    "reviewRequired": 25,
     "reviewedCandidates": 680,
-    "unresolvedSafetyCandidates": 49,
+    "unresolvedSafetyCandidates": 50,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 18
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 24,
+    "REVIEW_REQUIRED": 25,
     "SCOPED_BOUNDARY": 453,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 162,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 112,
-    "unresolvedCandidateBoundaries": 592,
+    "unresolvedCandidateBoundaries": 593,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3636,6 +3636,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "b432c52de68ab28f6085"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "18f7c2043f2ceb0ebac3"
       },
       {
@@ -3841,6 +3845,10 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "32729ec8f9c1a51af983"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "b432c52de68ab28f6085"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6085,10 +6093,10 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 704,
+    "currentCallers": 705,
     "structuredVerified": 112,
-    "structuredUnproven": 592,
-    "manualUnresolved": 49,
+    "structuredUnproven": 593,
+    "manualUnresolved": 50,
     "manualUnsupported": 543,
     "agreedVerified": 112,
     "proofAwaitingManualReconciliation": 0
@@ -21995,6 +22003,17 @@
       }
     },
     {
+      "id": "b432c52de68ab28f6085",
+      "path": "frontend/src/components/terminal/ResponseSources.tsx",
+      "line": 40,
+      "enclosing": "ResponseSources",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "8a354128e21cc162ea8f65573f01b1ee2e2820a012a1e647d9991763e097b3c7"
+    },
+    {
       "id": "18f7c2043f2ceb0ebac3",
       "path": "frontend/src/components/terminal/TerminalChatBar.tsx",
       "line": 426,
@@ -22217,7 +22236,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "1ee3a576071bee8f2409a79f441e68c11e0aae9fa4e936cc224e92cd14434990",
+      "sourceSha256": "8d1efb0a77ecdd69a5c5399b64fc3610b45433d09c78a427406b40e49140e734",
       "semanticReview": {
         "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
         "reason": "The conservative scanner records every from method. This specific conversion creates in-memory render, collection or binary data. Exclusion applies only to this call, not adjacent storage, upload, rendering, authentication or egress behavior. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",

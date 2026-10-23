@@ -11,7 +11,7 @@ test('current-main native conversion reviews bind source without waiving adjacen
   const registry=JSON.parse(read('docs/xroga/security/caller-reviews.json'));
   const paths=['frontend/src/components/dashboard/WorkspaceNewTerminal.tsx','frontend/src/app/crypto/page.tsx',
     'frontend/src/components/community/CommunityFeed.tsx','frontend/src/components/layout/SidebarProjectHistory.tsx',
-    'frontend/src/components/terminal/TerminalChatBar.tsx'];
+    'frontend/src/components/terminal/TerminalChatBar.tsx','frontend/src/lib/formatAiMarkdown.tsx'];
   let reviewed=0;
   for(const path of paths){
     const source=read(path),hash=createHash('sha256').update(source).digest('hex');
@@ -22,7 +22,7 @@ test('current-main native conversion reviews bind source without waiving adjacen
       for(const id of record.callIds){
         const candidate=candidates.find(row=>row.id===id);
         assert.ok(candidate);
-        assert.match(source.split('\n')[candidate.line-1],/Array\.from\(/);
+        assert.match(source.split('\n')[candidate.line-1],/(?:Array|Uint8Array)\.from\(/);
         reviewed++;
       }
     }
@@ -31,7 +31,7 @@ test('current-main native conversion reviews bind source without waiving adjacen
       assert.equal(candidate.ownerPredicateCandidate,true);
     }
   }
-  assert.equal(reviewed,6);
+  assert.equal(reviewed,7);
 });
 test('candidate evidence binds exact virtual merge, base and feature identities without release approval',()=>{
   const result=validateIntegrationIdentity(fixture);

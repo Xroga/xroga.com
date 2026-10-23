@@ -37,6 +37,7 @@ export function renderBlock(block: XrogaBlock, onDocumentSave?: (content: string
 
 const RichBlockRenderer = lazy(() => import('./XrogaRichBlockView').then((module) => ({ default: module.XrogaRichBlockView })));
 const RichResultsRenderer = lazy(() => import('./XrogaRichResultsView').then((module) => ({ default: module.XrogaRichResultsView })));
+const MarketRenderer = lazy(() => import('./XrogaMarketBlockView').then((module) => ({ default: module.XrogaMarketBlockView })));
 const DecisionMatrixRenderer = lazy(() => import('./XrogaDecisionMatrixView').then((module) => ({ default: module.XrogaDecisionMatrixView })));
 const CustomLucideIcon = lazy(() => import('./XrogaLucideIcon').then((module) => ({ default: module.XrogaLucideIcon })));
 
@@ -45,7 +46,7 @@ const typeIcons: Partial<Record<XrogaBlock['type'], LucideIcon>> = {
   plan: ListChecks, activity: Activity, evidence: FileCheck2, citation: ExternalLink, source: ExternalLink,
   approval: CircleHelp, receipt: Check, code: Code2, diff: Code2, terminal: Code2, file: FileText,
   'connection-request': PlugZap, website: Globe2, artifact: FileText,
-  metric: BarChart3, 'metric-group': BarChart3, progress: Activity, 'progress-group': Activity,
+  metric: BarChart3, 'metric-group': BarChart3, 'market-quote': BarChart3, conversion: Calculator, progress: Activity, 'progress-group': Activity,
   calculator: Calculator, calculation: Calculator, gauge: Gauge, comparison: BarChart3, 'key-value': ListChecks,
   checklist: ListChecks, steps: ListChecks, scorecard: Gauge, ranking: BarChart3,
   tabs: LayoutDashboard, accordion: ListChecks, 'file-tree': FolderTree, calendar: CalendarDays,
@@ -167,6 +168,8 @@ registerRenderer('website', WebsiteRenderer);
 registerRenderer('artifact', ArtifactRenderer);
 registerRenderer('decision-matrix', DecisionMatrixRenderer);
 registerRenderer('rich-results', RichResultsRenderer);
+registerRenderer('market-quote', MarketRenderer);
+registerRenderer('conversion', MarketRenderer);
 for (const type of ['metric', 'metric-group', 'progress', 'progress-group', 'calculator', 'calculation', 'gauge', 'comparison', 'key-value', 'checklist', 'steps', 'scorecard', 'ranking', 'tabs', 'accordion', 'file-tree', 'calendar', 'source-list', 'card-grid', 'tree', 'json', 'api-request', 'table', 'chart', 'timeline', 'graph', 'map', 'form', 'choice', 'gallery', 'image', 'audio', 'video', 'dashboard', 'document', 'spreadsheet', 'presentation', 'board', 'database', 'pdf'] as const) registerRenderer(type, RichBlockRenderer);
 
 export function XrogaOutputView({ output, onChange }: { output: XrogaOutputDocument; onChange?: (next: XrogaOutputDocument) => void }) {

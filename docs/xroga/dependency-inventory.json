@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b3ec3e6687a4b5c15763881fd6d86fce34cbb884",
+  "source_sha": "c9afec4353f867d2407dcf612572f3ea10dbebda",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12786,7 +12786,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "bc52cd7eb9ffcfc180c0e14817020a15d562629a2d19fca79dbd775e0b75cf40"
+      "sha256": "9cc6d86a81214b17d18c1ec8f2440c8d658b1c25fda22ee4ed5e7fa3e494082d"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -17213,6 +17213,10 @@
       "sha256": "4d2b818a1f380ffef34ab2940112877c002df6b3ff1e83f89af4e2f723e21a86"
     },
     {
+      "path": "frontend/src/components/terminal/ResponseSources.tsx",
+      "sha256": "8a354128e21cc162ea8f65573f01b1ee2e2820a012a1e647d9991763e097b3c7"
+    },
+    {
       "path": "frontend/src/components/terminal/RuntimeLogsButton.tsx",
       "sha256": "6a3f43d0d4118a8dede463d7673c3a36fdfdb67995ef21328c62b69a8a624c73"
     },
@@ -17234,7 +17238,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "d02abee0af410a01e0a3fc23e290aae95d58abffa2d53f4cb970fb20ae801662"
+      "sha256": "58f7eba369fe5d256d0eab962c937b1f723d900201f8e09e9e16e26e3616c3fd"
     },
     {
       "path": "frontend/src/components/terminal/TerminalBuildReport.tsx",
@@ -17314,7 +17318,7 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaBlockView.tsx",
-      "sha256": "258eab8868bf4ba8662b525d8465a62b40c1854a487dc0ea8e402cb4a1159645"
+      "sha256": "34525d218392357cb904342eb2ff00b21b53f05f9a4d2d8f68ac6ad935471bb5"
     },
     {
       "path": "frontend/src/components/terminal/XrogaDecisionMatrixView.tsx",
@@ -17325,12 +17329,16 @@
       "sha256": "3b16d461ddd8b4338ecc393742c8a0c9f458f7f6d3442242b9f246783b9c1698"
     },
     {
+      "path": "frontend/src/components/terminal/XrogaMarketBlockView.tsx",
+      "sha256": "f95cfa03b999cf175b052086f7eef3ae690c6c121c97e3dc280021e7cbd3d5ea"
+    },
+    {
       "path": "frontend/src/components/terminal/XrogaOrganizerBlockView.tsx",
-      "sha256": "be2fc7b661681d39fff12c78bcd7e3f30e0d435320b0024ffa84f5faaceb6404"
+      "sha256": "6f53a818308e8992298746967a8bca0d408754970caa931f1e853c717a8549bd"
     },
     {
       "path": "frontend/src/components/terminal/XrogaRichBlockView.tsx",
-      "sha256": "8307972adca97ef2fa856158a6df4c935b46b4bb39236730e591645a1592bb96"
+      "sha256": "8bbf6fee9049cd92fd57690379804fc5eaf92a1624ed564d115a540197b29e59"
     },
     {
       "path": "frontend/src/components/terminal/XrogaRichResultsView.tsx",
@@ -17758,7 +17766,7 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "1ee3a576071bee8f2409a79f441e68c11e0aae9fa4e936cc224e92cd14434990"
+      "sha256": "8d1efb0a77ecdd69a5c5399b64fc3610b45433d09c78a427406b40e49140e734"
     },
     {
       "path": "frontend/src/lib/gameBuilderContent.ts",
@@ -18366,7 +18374,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaBlocks.ts",
-      "sha256": "259d80e2456531449151850577245948ce67db4dea27b7182184e6ef4538a58c"
+      "sha256": "357556702c5905a80a605941adbb916b1aa0d1ae5ecfd86660745e86353e7a42"
     },
     {
       "path": "frontend/src/lib/xrogaBrand.ts",
@@ -18382,7 +18390,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaCitations.ts",
-      "sha256": "aa5383341d7f236951ec25ce3fb1eaf5d1ff7ff07ae8185bc87ff21c1c334923"
+      "sha256": "66512dedadb283ba3f587ecd5237170e0ca1648bf0a9f260e412c55297d53890"
     },
     {
       "path": "frontend/src/lib/xrogaConnect.ts",
@@ -23306,7 +23314,7 @@
       "hostname": "www.openstreetmap.org",
       "protocol": "https:",
       "path": "frontend/src/components/terminal/XrogaRichBlockView.tsx",
-      "line": 133,
+      "line": 134,
       "credentialsInUrl": false
     },
     {
@@ -29319,7 +29327,7 @@
     },
     {
       "path": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 215,
+      "line": 213,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -29921,14 +29929,14 @@
     },
     {
       "path": "frontend/src/lib/xrogaBlocks.ts",
-      "line": 180,
+      "line": 193,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/xrogaBlocks.ts",
-      "line": 180,
+      "line": 193,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

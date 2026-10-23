@@ -17,6 +17,16 @@ test('canonical output validation accepts semantic blocks and rejects malformed 
   assert.equal(parseXrogaBlock({ schemaVersion: 1, id: 'bad', type: 'receipt', receipt: {} }), null);
 });
 
+test('market quote and conversion blocks require observed, safe source data', () => {
+  const source = { title: 'Rate provider', url: 'https://example.com/rate', observedAt: '2026-10-24T10:00:00.000Z' };
+  assert.equal(parseXrogaBlock({ schemaVersion: 1, id: 'quote', type: 'market-quote', symbol: 'BTC', name: 'Bitcoin', price: 10, currency: 'USD', source })?.type, 'market-quote');
+  assert.equal(parseXrogaBlock({ schemaVersion: 1, id: 'conversion', type: 'conversion', from: 'USD', to: 'EUR', rate: 0.9, amount: 100, source })?.type, 'conversion');
+  assert.equal(parseXrogaBlock({ schemaVersion: 1, id: 'bad-quote', type: 'market-quote', symbol: 'BTC', name: 'Bitcoin', price: 10, currency: 'USD' }), null);
+  assert.equal(parseXrogaBlock({ schemaVersion: 1, id: 'bad-source', type: 'conversion', from: 'USD', to: 'EUR', rate: 0.9, amount: 100, source: { ...source, url: 'javascript:alert(1)' } }), null);
+  assert.equal(canRender('market-quote'), true);
+  assert.equal(canRender('conversion'), true);
+});
+
 test('evidence, approval, and receipt contracts retain real linkage', () => {
   assert.equal(xrogaEvidenceSchema.parse({ id: 'ev-1', type: 'check', title: 'Tests passed', relatedEventIds: ['event-1'] }).relatedEventIds?.[0], 'event-1');
   assert.equal(xrogaApprovalSchema.parse({ id: 'approval-1', action: 'Deploy', title: 'Deploy production', status: 'requested' }).action, 'Deploy');

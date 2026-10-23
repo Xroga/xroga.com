@@ -5785,7 +5785,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "bc52cd7eb9ffcfc180c0e14817020a15d562629a2d19fca79dbd775e0b75cf40",
+      "sha256": "9cc6d86a81214b17d18c1ec8f2440c8d658b1c25fda22ee4ed5e7fa3e494082d",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -53116,7 +53116,7 @@
         "frontend/src/components/terminal/FullscreenPreviewModal.tsx:7",
         "frontend/src/components/terminal/MessageBubbleActions.tsx:9",
         "frontend/src/components/terminal/MessageShareModal.tsx:20",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:48",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:46",
         "frontend/src/components/terminal/TerminalSkinPicker.tsx:7",
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:3",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx:12",
@@ -54153,7 +54153,7 @@
         "frontend/src/components/terminal/BuildCodeSandbox.tsx:10",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:34",
         "frontend/src/components/terminal/FullscreenPreviewModal.tsx:8",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:49"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:47"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -55128,7 +55128,7 @@
         "frontend/src/components/terminal/BuildCodeSandbox.tsx:11",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:35",
         "frontend/src/components/terminal/FullscreenPreviewModal.tsx:9",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:50"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:48"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -57062,7 +57062,7 @@
         "frontend/src/components/dashboard/IncognitoDashboard.tsx:4",
         "frontend/src/components/layout/IncognitoModeButton.tsx:10",
         "frontend/src/components/layout/Sidebar.tsx:76",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:29"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:27"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -63158,7 +63158,7 @@
       ],
       "callers": [
         "frontend/src/components/layout/Sidebar.tsx:70",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:30"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:28"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -65027,7 +65027,7 @@
       ],
       "callers": [
         "frontend/src/components/settings/SettingsView.tsx:11",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:27"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:25"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -67343,7 +67343,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:38",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:36",
         "frontend/src/lib/chatTurnRail.test.ts:4",
         "frontend/src/lib/workspaceRouteIsolation20261021.test.ts:47"
       ],
@@ -69077,6 +69077,65 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:859f5b3947969d0e6ac1",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/terminal/ResponseSources.tsx",
+      "sha256": "8a354128e21cc162ea8f65573f01b1ee2e2820a012a1e647d9991763e097b3c7",
+      "symbols": [
+        "NumberedSource",
+        "ResponseSources",
+        "SourceTile",
+        "closeRef",
+        "first",
+        "focusables",
+        "last",
+        "numbered",
+        "onKeyDown",
+        "previousOverflow",
+        "trigger",
+        "triggerRef",
+        "url"
+      ],
+      "imports": [
+        "./WebSourcesPanel",
+        "@/lib/xrogaCitations",
+        "lucide-react",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/xrogaCitations.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:16",
+        "frontend/src/components/terminal/XrogaOrganizerBlockView.tsx:15",
+        "frontend/src/lib/terminal/responseSources.test.ts:5"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/terminal/responseSources.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:8ea0e582c11e31d77c3a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/RuntimeLogsButton.tsx",
@@ -69328,7 +69387,7 @@
       "id": "surface:9c57a6290c71522141f5",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "sha256": "d02abee0af410a01e0a3fc23e290aae95d58abffa2d53f4cb970fb20ae801662",
+      "sha256": "58f7eba369fe5d256d0eab962c937b1f723d900201f8e09e9e16e26e3616c3fd",
       "symbols": [
         "AGENT_STYLES",
         "SwarmMessageLog",
@@ -69391,7 +69450,6 @@
         "setTerminalFullscreen",
         "showResearchPages",
         "showSuggestions",
-        "sourcedResults",
         "started",
         "stickToBottomRef",
         "storeIncognito",
@@ -69423,15 +69481,14 @@
         "./MessageBubbleActions",
         "./MessageSuggestionChips",
         "./ReasoningAndFollowUps",
+        "./ResponseSources",
         "./StoppedBuildResumeCard",
         "./TerminalLiveActivity",
         "./TerminalSkinPicker",
         "./UpdateFileTrail",
-        "./WebSourcesPanel",
         "./WorkspaceIdentityMenu",
         "./WorkspaceLauncher",
         "./WorkspacePeopleControls",
-        "./XrogaBlockView",
         "@/components/icons/animated/AnimatedIcon",
         "@/components/icons/animated/ExpandIcon",
         "@/components/icons/animated/MinimizeIcon",
@@ -69449,7 +69506,6 @@
         "@/lib/utils",
         "@/lib/workspacePersistence",
         "@/lib/xrogaShareableOutput",
-        "@/lib/xrogaWebResultAdapter",
         "@/store/useAppStore",
         "@/store/usePrivacyStore",
         "@/store/useProjectWorkspaceStore",
@@ -69472,15 +69528,14 @@
         "frontend/src/components/terminal/MessageBubbleActions.tsx",
         "frontend/src/components/terminal/MessageSuggestionChips.tsx",
         "frontend/src/components/terminal/ReasoningAndFollowUps.tsx",
+        "frontend/src/components/terminal/ResponseSources.tsx",
         "frontend/src/components/terminal/StoppedBuildResumeCard.tsx",
         "frontend/src/components/terminal/TerminalLiveActivity.tsx",
         "frontend/src/components/terminal/TerminalSkinPicker.tsx",
         "frontend/src/components/terminal/UpdateFileTrail.tsx",
-        "frontend/src/components/terminal/WebSourcesPanel.tsx",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx",
         "frontend/src/components/terminal/WorkspaceLauncher.tsx",
         "frontend/src/components/terminal/WorkspacePeopleControls.tsx",
-        "frontend/src/components/terminal/XrogaBlockView.tsx",
         "frontend/src/context/TerminalChatContext.tsx",
         "frontend/src/context/TerminalScrollContext.tsx",
         "frontend/src/hooks/useHydrated.ts",
@@ -69492,7 +69547,6 @@
         "frontend/src/lib/utils.ts",
         "frontend/src/lib/workspacePersistence.ts",
         "frontend/src/lib/xrogaShareableOutput.ts",
-        "frontend/src/lib/xrogaWebResultAdapter.ts",
         "frontend/src/store/useAppStore.ts",
         "frontend/src/store/usePrivacyStore.ts",
         "frontend/src/store/useProjectWorkspaceStore.ts",
@@ -69930,7 +69984,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:37"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:35"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -70057,7 +70111,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/DashboardView.tsx:5",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:36"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:34"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -70393,13 +70447,9 @@
         "frontend/src/lib/utils.ts",
         "frontend/src/lib/xrogaCitations.ts"
       ],
-      "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
-      ],
-      "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:16"
-      ],
-      "reachable": true,
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "lucide-react",
@@ -70411,11 +70461,11 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -70556,7 +70606,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/DashboardView.tsx:19",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:47"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:45"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -70626,7 +70676,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/DashboardView.tsx:6",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:44"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:42"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -70696,7 +70746,7 @@
       ],
       "callers": [
         "frontend/src/components/dashboard/DashboardView.tsx:7",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:31"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:29"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -70809,7 +70859,7 @@
       "id": "surface:dbda11c4aa4a037c288d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/XrogaBlockView.tsx",
-      "sha256": "258eab8868bf4ba8662b525d8465a62b40c1854a487dc0ea8e402cb4a1159645",
+      "sha256": "34525d218392357cb904342eb2ff00b21b53f05f9a4d2d8f68ac6ad935471bb5",
       "symbols": [
         "ApprovalRenderer",
         "ArtifactRenderer",
@@ -70823,6 +70873,7 @@
         "Icon",
         "LinkRenderer",
         "ListRenderer",
+        "MarketRenderer",
         "ReceiptRenderer",
         "Renderer",
         "ResponseBlockIcon",
@@ -70853,6 +70904,7 @@
         "./XrogaArtifactHeader",
         "./XrogaDecisionMatrixView",
         "./XrogaLucideIcon",
+        "./XrogaMarketBlockView",
         "./XrogaRichBlockView",
         "./XrogaRichResultsView",
         "@/components/ui/InlineCopyButton",
@@ -70870,6 +70922,7 @@
         "frontend/src/components/terminal/XrogaArtifactHeader.tsx",
         "frontend/src/components/terminal/XrogaDecisionMatrixView.tsx",
         "frontend/src/components/terminal/XrogaLucideIcon.tsx",
+        "frontend/src/components/terminal/XrogaMarketBlockView.tsx",
         "frontend/src/components/terminal/XrogaRichBlockView.tsx",
         "frontend/src/components/terminal/XrogaRichResultsView.tsx",
         "frontend/src/components/ui/InlineCopyButton.tsx",
@@ -70886,7 +70939,6 @@
       "callers": [
         "frontend/src/app/os-preview/rich-results/RichResultsGallery.tsx:5",
         "frontend/src/components/terminal/FeatureOutputView.tsx:3",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:18",
         "frontend/src/components/terminal/UniversalOutputView.tsx:5",
         "frontend/src/lib/xrogaBlocks.test.ts:5"
       ],
@@ -70946,7 +70998,7 @@
         "frontend/src/app/os-preview/rich-results/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/XrogaBlockView.tsx:40"
+        "frontend/src/components/terminal/XrogaBlockView.tsx:41"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -70988,7 +71040,7 @@
         "frontend/src/app/os-preview/rich-results/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/XrogaBlockView.tsx:41"
+        "frontend/src/components/terminal/XrogaBlockView.tsx:42"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -71009,10 +71061,65 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:bd7fdb8c6e8d5359f25a",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/terminal/XrogaMarketBlockView.tsx",
+      "sha256": "f95cfa03b999cf175b052086f7eef3ae690c6c121c97e3dc280021e7cbd3d5ea",
+      "symbols": [
+        "Evidence",
+        "MarketBlock",
+        "Trend",
+        "XrogaMarketBlockView",
+        "formatAmount",
+        "numericAmount",
+        "result",
+        "rising",
+        "url"
+      ],
+      "imports": [
+        "@/lib/xrogaBlocks",
+        "@/lib/xrogaRichResults",
+        "lucide-react",
+        "react",
+        "recharts"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/xrogaRichResults.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx",
+        "frontend/src/app/os-preview/rich-results/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/terminal/XrogaBlockView.tsx:40"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "react",
+        "recharts"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "frontend/src/components/terminal/XrogaMarketBlockView.tsx#Evidence"
+      ],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:9aa8df2a2893c55222f4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/XrogaOrganizerBlockView.tsx",
-      "sha256": "be2fc7b661681d39fff12c78bcd7e3f30e0d435320b0024ffa84f5faaceb6404",
+      "sha256": "6f53a818308e8992298746967a8bca0d408754970caa931f1e853c717a8549bd",
       "symbols": [
         "AccordionRenderer",
         "CalendarRenderer",
@@ -71029,19 +71136,18 @@
         "depth",
         "entries",
         "events",
-        "href",
         "initial",
         "scheduleLabel",
         "statusClass"
       ],
       "imports": [
-        "@/lib/universalOutput",
+        "./ResponseSources",
         "@/lib/xrogaBlocks",
         "lucide-react",
         "react"
       ],
       "runtimeImports": [
-        "frontend/src/lib/universalOutput.ts"
+        "frontend/src/components/terminal/ResponseSources.tsx"
       ],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx",
@@ -71075,7 +71181,7 @@
       "id": "surface:63ea43cd41638dbb68bc",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/XrogaRichBlockView.tsx",
-      "sha256": "8307972adca97ef2fa856158a6df4c935b46b4bb39236730e591645a1592bb96",
+      "sha256": "8bbf6fee9049cd92fd57690379804fc5eaf92a1624ed564d115a540197b29e59",
       "symbols": [
         "BoardRenderer",
         "CHART_COLORS",
@@ -71130,6 +71236,7 @@
         "src",
         "table",
         "topSpacer",
+        "trendColor",
         "uri",
         "url",
         "useSelection",
@@ -74593,7 +74700,7 @@
         "frontend/src/components/library/LibraryWorkspace.tsx:9",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:32",
         "frontend/src/components/terminal/ProjectWorkspaceRail.tsx:6",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:33",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:31",
         "frontend/src/components/terminal/TerminalChatBar.tsx:10",
         "frontend/src/components/terminal/TerminalDock.tsx:14",
         "frontend/src/components/ui/DownloadAppButton.tsx:8"
@@ -76347,7 +76454,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:19",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:17",
         "frontend/src/context/TerminalChatContext.tsx:44",
         "frontend/src/lib/workLanes.ts:11"
       ],
@@ -77587,7 +77694,7 @@
       "id": "surface:015cc267f70323e72e46",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sha256": "1ee3a576071bee8f2409a79f441e68c11e0aae9fa4e936cc224e92cd14434990",
+      "sha256": "8d1efb0a77ecdd69a5c5399b64fc3610b45433d09c78a427406b40e49140e734",
       "symbols": [
         "AppMark",
         "BusinessActionConfirmationInline",
@@ -77620,16 +77727,19 @@
         "fenced",
         "initials",
         "joinClasses",
+        "lead",
         "link",
         "match",
         "message",
         "normalized",
         "number",
+        "opening",
         "padded",
         "parsed",
         "plan",
         "popup",
         "providerBoundTask",
+        "remaining",
         "result",
         "safeMarkdownUrl",
         "selectedCandidate",
@@ -79445,7 +79555,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:28",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:26",
         "frontend/src/components/terminal/TerminalChatBar.tsx:32",
         "frontend/src/context/TerminalChatContext.tsx:64",
         "frontend/src/lib/codeBuildProcessing.ts:3",
@@ -81995,7 +82105,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:20"
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:18"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -82132,7 +82242,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:39",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:37",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx:23"
       ],
       "reachable": true,
@@ -84921,7 +85031,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:22",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:20",
         "frontend/src/lib/terminal/executionIntent.test.ts:3"
       ],
       "reachable": true,
@@ -85726,7 +85836,6 @@
       ],
       "callers": [
         "frontend/src/components/terminal/XrogaBlockView.tsx:10",
-        "frontend/src/components/terminal/XrogaOrganizerBlockView.tsx:15",
         "frontend/src/components/terminal/XrogaRichBlockView.tsx:11",
         "frontend/src/components/terminal/XrogaStructuredBlockView.tsx:9",
         "frontend/src/lib/universalOutput.test.ts:3",
@@ -86202,7 +86311,7 @@
         "frontend/src/components/terminal/RepoWorkspaceGateModal.tsx:10",
         "frontend/src/components/terminal/SocialShareModal.tsx:6",
         "frontend/src/components/terminal/StoppedBuildResumeCard.tsx:4",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:35",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:33",
         "frontend/src/components/terminal/TerminalBuildReport.tsx:5",
         "frontend/src/components/terminal/TerminalChatBar.tsx:24",
         "frontend/src/components/terminal/TerminalDock.tsx:16",
@@ -86605,7 +86714,7 @@
         "frontend/src/components/dashboard/SwarmRunHistory.tsx:15",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:58",
         "frontend/src/components/notifications/NotificationBell.tsx:10",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:34",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:32",
         "frontend/src/context/TerminalChatContext.tsx:30",
         "frontend/src/lib/projectResume.ts:5",
         "frontend/src/lib/restoreRepoTerminal.ts:9",
@@ -86832,7 +86941,7 @@
       "id": "surface:9abd8d23db6426268ad2",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaBlocks.ts",
-      "sha256": "259d80e2456531449151850577245948ce67db4dea27b7182184e6ef4538a58c",
+      "sha256": "357556702c5905a80a605941adbb916b1aa0d1ae5ecfd86660745e86353e7a42",
       "symbols": [
         "XROGA_BLOCK_SCHEMA_VERSION",
         "XrogaApproval",
@@ -86858,6 +86967,7 @@
         "comparisonBlock",
         "connectionBlock",
         "contentBlock",
+        "conversionBlock",
         "criterionIds",
         "dashboardBlock",
         "dataRow",
@@ -86877,11 +86987,13 @@
         "linkBlock",
         "listBlock",
         "mapBlock",
+        "marketQuoteBlock",
         "mediaItem",
         "metricBlock",
         "metricGroupBlock",
         "metricItem",
         "migrated",
+        "observedMarketSource",
         "option",
         "optionIds",
         "parseXrogaBlock",
@@ -87105,7 +87217,7 @@
       "id": "surface:f6ec62cf29831de59ad0",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaCitations.ts",
-      "sha256": "aa5383341d7f236951ec25ce3fb1eaf5d1ff7ff07ae8185bc87ff21c1c334923",
+      "sha256": "66512dedadb283ba3f587ecd5237170e0ca1648bf0a9f260e412c55297d53890",
       "symbols": [
         "CitationSource",
         "MarkdownNode",
@@ -87135,6 +87247,7 @@
         "frontend/src/app/os-preview/rich-results/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/terminal/ResponseSources.tsx:5",
         "frontend/src/components/terminal/WebSourcesPanel.tsx:6",
         "frontend/src/lib/formatAiMarkdown.tsx:15",
         "frontend/src/lib/sanitizeChatMessages.ts:5",
@@ -87864,6 +87977,7 @@
         "frontend/src/app/os-preview/rich-results/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/terminal/XrogaMarketBlockView.tsx:6",
         "frontend/src/components/terminal/XrogaRichResultsView.tsx:7",
         "frontend/src/lib/xrogaBlocks.ts:2",
         "frontend/src/lib/xrogaRichResults.test.ts:6",
@@ -87908,7 +88022,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:21",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:19",
         "frontend/src/lib/xrogaShareableOutput.test.ts:3"
       ],
       "reachable": true,
@@ -87949,14 +88063,11 @@
         "frontend/src/lib/xrogaBlocks.ts",
         "frontend/src/lib/xrogaRichResults.ts"
       ],
-      "entryPoints": [
-        "frontend/src/app/(workspace)/workspace/page.tsx"
-      ],
+      "entryPoints": [],
       "callers": [
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:17",
         "frontend/src/lib/xrogaRichResults.test.ts:7"
       ],
-      "reachable": true,
+      "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
       "authBoundary": [],
@@ -87967,11 +88078,11 @@
       "testCoverage": [
         "frontend/src/lib/xrogaRichResults.test.ts"
       ],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -88398,7 +88509,7 @@
         "frontend/src/components/layout/Sidebar.tsx:74",
         "frontend/src/components/providers/AppProviders.tsx:6",
         "frontend/src/components/settings/PrivacySettingsPanel.tsx:5",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:32",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:30",
         "frontend/src/components/terminal/TerminalChatBar.tsx:9",
         "frontend/src/components/terminal/TerminalDock.tsx:12",
         "frontend/src/context/TerminalChatContext.tsx:26"
@@ -88501,7 +88612,7 @@
         "frontend/src/components/terminal/ProjectWorkspaceRail.tsx:4",
         "frontend/src/components/terminal/RepoContextBar.tsx:32",
         "frontend/src/components/terminal/RuntimeLogsButton.tsx:20",
-        "frontend/src/components/terminal/SwarmMessageLog.tsx:43",
+        "frontend/src/components/terminal/SwarmMessageLog.tsx:41",
         "frontend/src/components/terminal/TerminalDock.tsx:17",
         "frontend/src/components/terminal/VercelDeployButton.tsx:6",
         "frontend/src/components/terminal/WorkspaceIdentityMenu.tsx:24",
@@ -102642,9 +102753,19 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:0e780e1f57c138547862",
+      "id": "finding:48d10bb0b7a13bf029de",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "line": 225,
+      "line": 188,
+      "kind": "SIMULATED",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:a304c4d08368d3b28d9e",
+      "sourcePath": "backend/src/ai/prompts.ts",
+      "line": 231,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -105192,9 +105313,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:e68c4a64265a46493769",
+      "id": "finding:9b3d5a3824c09553b874",
       "sourcePath": "frontend/src/components/terminal/SwarmMessageLog.tsx",
-      "line": 422,
+      "line": 420,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -105252,9 +105373,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:aaf4f0b83c9cded5ff7e",
+      "id": "finding:03de68f278a20a3072ed",
       "sourcePath": "frontend/src/components/terminal/XrogaRichBlockView.tsx",
-      "line": 90,
+      "line": 91,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -112969,7 +113090,7 @@
     {
       "id": "test-suite:e86d99746326f6010bbc",
       "sourcePath": "frontend/src/lib/formatAiMarkdown.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -113639,6 +113760,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:7ec20b8530cb390db32a",
+      "sourcePath": "frontend/src/lib/terminal/responseSources.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:e9251f946cc52a59f62e",
       "sourcePath": "frontend/src/lib/terminal/softwareAgentEvents.test.ts",
       "declaredTests": 13,
@@ -113844,7 +113972,7 @@
     {
       "id": "test-suite:03d6fa0329989f6d73d5",
       "sourcePath": "frontend/src/lib/xrogaBlocks.test.ts",
-      "declaredTests": 8,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },
