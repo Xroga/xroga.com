@@ -25,6 +25,7 @@
     "frontend/src/lib/workspaceShellLayout.test.ts",
     "frontend/package-lock.json",
     "frontend/e2e/composer-polish.spec.ts",
+    "frontend/e2e/command3-auth.spec.ts",
     "backend/src/organicIntelligence/content/engine.ts",
     "backend/src/organicIntelligence/content/pipeline.ts",
     "backend/src/organicIntelligence/content/engine.test.ts",
