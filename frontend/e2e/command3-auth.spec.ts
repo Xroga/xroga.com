@@ -907,11 +907,22 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     expect(shellState.overflow).toBe(false);
   }
   const companion = page.getByTestId('xroga-companion-floating');
-  await expect(companion).toBeVisible();
-  await expect(companion.getByRole('button', { name: /show usage/i })).toBeVisible();
-  await expect(companion.getByRole('button', { name: 'Start voice input' })).toHaveCount(0);
-  await expect(companion.getByRole('button', { name: /Open .*Xroga companion/ })).toHaveCount(0);
+  await expect(companion).toHaveCount(0);
+  // Main removed the global floating companion. Usage is owned by the current
+  // workspace model control, while durable skin preferences remain in Settings.
+  await page.goto('/workspace');
+  const modelUsage = page.getByRole('button', { name: 'Black Hole model and usage', exact: true });
+  await expect(modelUsage).toBeVisible();
+  await modelUsage.click();
+  const modelPanel = page.getByTestId('black-hole-model-panel');
+  await expect(modelPanel).toBeVisible();
+  await expect(modelPanel.getByText('Sensitive actions require approval.', { exact: true })).toBeVisible();
+  await expect(modelPanel.getByRole('link', { name: 'View plan and usage', exact: true })).toHaveAttribute('href', '/dashboard#plan-usage');
+  await expect(page.getByRole('button', { name: 'Start voice input', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /Open .*Xroga companion/ })).toHaveCount(0);
   await expect(page.getByRole('region', { name: /companion panel/ })).toHaveCount(0);
+  await modelUsage.click();
+  await expect(modelPanel).toHaveCount(0);
 
   for (const viewport of [
     { width: 390, height: 844 },
