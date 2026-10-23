@@ -1153,6 +1153,9 @@ async function runBufferedTurn(
 export function createXrogaAgentModel(
   input: XrogaAgentModelInput,
 ): SoftwareAgentPrebuiltModel {
+  // Bind the selected route and credential together. Upstream mutation after
+  // factory creation must not retarget a captured account credential.
+  input={...input,fallbackModelIds:input.fallbackModelIds?[...input.fallbackModelIds]:undefined};
   const userId =
     requireUserId(
       input.userId,
@@ -1186,6 +1189,9 @@ export function createXrogaAgentModel(
         request:
           AgentModelRequest,
       ) {
+        // Quota and reservation reads can wait. Keep the admitted caller's data
+        // fixed across those waits, preserving the live cancellation signal.
+        request={...request,messages:structuredClone(request.messages),tools:structuredClone(request.tools)};
         const turn =
           await runBufferedTurn({
             userId,
