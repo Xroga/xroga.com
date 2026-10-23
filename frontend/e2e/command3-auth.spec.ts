@@ -18,6 +18,7 @@ let ownerId = ''; let outsiderId = ''; let ownerProjectId = ''; let outsiderProj
 const conversations = {
   first: { id: `draft-owner-first-${run}`, title: `Owner first ${run}`, reply: `Persisted owner first conversation ${run}` },
   second: { id: `draft-owner-second-${run}`, title: `Owner second ${run}`, reply: `Persisted owner second conversation ${run}` },
+  workflow: { id: `draft-owner-workflow-${run}`, title: `Owner workflow ${run}`, reply: `Persisted owner workflow conversation ${run}` },
   outsider: { id: `draft-outsider-${run}`, title: `Outsider conversation ${run}`, reply: `Persisted outsider conversation ${run}` },
 };
 
@@ -104,7 +105,7 @@ test.beforeAll(async () => {
     })),
   ).select('user_id,id');
   expect(savedConversations.error).toBeNull();
-  expect(savedConversations.data).toHaveLength(3);
+  expect(savedConversations.data).toHaveLength(4);
 });
 
 test.afterAll(async () => {
@@ -319,7 +320,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // Empty work keeps its composer visible. Exercise hide/restore only after
   // restoring a real owner-bound PostgreSQL conversation through the current UI.
   await expect(terminalHeader.getByRole('button', { name: 'Composer stays visible in a new workspace', exact: true })).toBeDisabled();
-  await openPersistedConversation(page, conversations.first);
+  await openPersistedConversation(page, conversations.workflow);
   const hideChatbar = terminalHeader.getByRole('button', { name: 'Hide the chatbar' });
   await expect(hideChatbar).toBeVisible();
   await expect(composerInput).toBeVisible();
