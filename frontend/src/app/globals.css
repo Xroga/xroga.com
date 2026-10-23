@@ -14760,3 +14760,10 @@ body.theme-beige .xv-plugins-popover, body.theme-beige .xv-sidebar-hover-menu__c
 .xv-sidebar-bottom { margin-top:auto; margin-bottom:0; padding-bottom:max(4px,env(safe-area-inset-bottom)); }
 .xv-sidebar-profile-row { gap:5px!important; }
 .xv-sidebar-profile-row .xv-upgrade-action { margin-top:1px; }
+.xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-companion-blackhole > button {
+  width:36px!important; min-width:36px!important; height:36px!important;
+  padding:1px!important; border:0!important; background:transparent!important; box-shadow:none!important;
+}
+.xv-terminal-dock .xv-kimi-composer-frame[data-composer-frame="single"] .xv-companion-blackhole > button:hover {
+  background:transparent!important;
+}
