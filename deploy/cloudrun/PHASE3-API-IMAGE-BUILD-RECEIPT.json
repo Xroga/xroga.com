@@ -1,0 +1,62 @@
+{
+  "scope": "REAL_DOCKERFILE_API_BUILD_AND_NETWORK_DISABLED_STARTUP_NEGATIVE_NOT_CLOUD_RUN_CUSTODY",
+  "sourceSha": "cbc79b816a54d0d0c50841e4763087a8854771d1",
+  "buildContext": {
+    "method": "git archive of the exact source, Dockerfile.api and required tracked backend build inputs only",
+    "archive": "xroga-api-cbc79b81-build-context.tar",
+    "bytes": 9205760,
+    "sha256": "256e128bb3fcadd932bd3a6e49ed618112ea3a4cf1ccf6d567a8b551a9d30933",
+    "remoteHashVerifiedBeforeExtraction": true,
+    "dotenvFilesOrLocalCredentialsIncluded": false
+  },
+  "environment": "Existing authenticated Cloud Shell Docker 29.8.2, not Cloud Build or a provisioned Cloud Run service",
+  "dockerfile": "Dockerfile.api unchanged",
+  "buildArgs": { "XROGA_RELEASE_SHA": "cbc79b816a54d0d0c50841e4763087a8854771d1" },
+  "buildExit": 0,
+  "image": {
+    "localTag": "xroga-api:p3-cbc79b81",
+    "manifestListDigest": "sha256:7ce4c153e2f3fe3162abf68f86ff06079ec6f16c315737129af89f343f4a8223",
+    "imageManifestDigest": "sha256:d75543c4bf82a291ed6ea9eb6f18917b0faadc6c5fae389f1e3a510afa76b14d",
+    "configDigest": "sha256:22cdebd572ccba550ee8a64d6eb55f4ecfb94dc55ccce164372ac9fedd957d58",
+    "pushedToRegistry": false,
+    "deployed": false,
+    "limitation": "Local content identity. Approved registry push still requires remote digest readback before the manifest image sentinel can be replaced."
+  },
+  "startupNegative": {
+    "firstAttempt": "Exited 1 for missing Supabase configuration during module import. This did not isolate the KMS gate and is not claimed as KMS proof.",
+    "correctedAttempt": "Same immutable image with synthetic-only database URL/key, no real database credentials, Docker network none, 1 CPU and 1 GiB",
+    "exit": 1,
+    "observedError": "CredentialVault startup configuration is invalid",
+    "assertion": "Production API image refuses startup without managed KMS configuration",
+    "network": "none",
+    "databaseAccess": "None. URL was https://phase3-isolated.invalid and key was an explicitly synthetic noncredential.",
+    "kmsCalls": 0,
+    "containerLifecycle": "--rm disposable containers, no published ports",
+    "logSha256": "397a23452a77cbbb74851d08b13af8985edfcb81789c22e8c56bc7af89c5ec5c"
+  },
+  "protectedCloudShellFiles": {
+    "directory": "/home/mabdullah_built",
+    "buildLog": "xroga-api-cbc79b81-build.log",
+    "buildLogSha256": "6fcbd2e8a9f1fbd6b63c4b95db3a59a1d9654f5be0d1baff40e9c4b44517da17",
+    "imageIdFile": "xroga-api-cbc79b81-image-id.txt",
+    "imageIdFileSha256": "c8548a12318c0a02e0980f884923ba907d984c38522bb9d49e5bcb3bebaf35ac",
+    "negativeLog": "xroga-api-cbc79b81-no-kms-configured-db.log"
+  },
+  "proofObservation": "Transcribed from authenticated browser-visible Cloud Shell command output. No invented provider or database receipt.",
+  "finalPrunedImageChecks": {
+    "securityDependencyPatchExit": 0,
+    "securityDependencyPatchResult": "VERIFIED_PINNED_DOWNSTREAM_FIXES",
+    "nodeForgeRsaSha256": "87a216571d330deb5ea37269c83c5f5bebc7da40afd28a47938326a6f5391442",
+    "npmAdvisoriesWaived": false,
+    "clineCompatibilityExit": 0,
+    "clineCompatibilityResult": "PASS_REVIEWED_COMPATIBILITY",
+    "clineCore": "0.0.82",
+    "simpleGit": "4.0.2",
+    "remainingNamedTestContainers": 0,
+    "scope": "Actual final pruned image, network disabled. Not a new vulnerability audit or provider custody test."
+  },
+  "cloudResourcesCreated": false,
+  "iamChanged": false,
+  "productionChanged": false,
+  "phase3Status": "CODE_READY_KMS_CUTOVER_BLOCKED"
+}
