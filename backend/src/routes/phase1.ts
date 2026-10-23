@@ -508,6 +508,7 @@ router.post(
         await planSemanticRequest(
           {
             userId,
+            tenantContext: requireTenantContext(req.tenantContext),
 
             message,
 

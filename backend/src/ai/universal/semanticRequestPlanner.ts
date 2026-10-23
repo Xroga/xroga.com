@@ -10,8 +10,9 @@ import {
 } from '../models.js';
 
 import {
-  withProviderReservation,
-} from '../providerBudget.js';
+  withTenantModelReservation,
+} from '../tenantModelDispatch.js';
+import { requireTenantContext, requireResourceOwner, type TenantContext } from '../../security/tenantContext.js';
 
 import {
   executeWithProviderFallback,
@@ -1435,6 +1436,7 @@ export async function resolveRequestAuthorities(
 export async function planSemanticRequest(
   input: {
     userId: string;
+    tenantContext: TenantContext;
 
     message: string;
 
@@ -1459,6 +1461,10 @@ export async function planSemanticRequest(
       ];
   },
 ): Promise<SemanticRequestPlan> {
+  const actor = requireTenantContext(input.tenantContext);
+  requireResourceOwner(actor, input.userId);
+  const { tenantContext: _context, ...requestData } = input;
+  input = { ...structuredClone(requestData), tenantContext: actor };
   const social =
     await planProtocolSocialTurn(
       input,
@@ -1676,11 +1682,12 @@ export async function planSemanticRequest(
                         : messages;
 
                     const completion =
-                      await withProviderReservation(
+                      await withTenantModelReservation(
                         {
-                          userId:
-                            input
-                              .userId,
+                          // Planning uses the platform account and request-supplied
+                          // metadata. This does not confer repository/file authority.
+                          scope: { context: actor, userId: actor.userId, connectedAccountId: 'platform' },
+                          payload: { messages: attemptMessages },
 
                           modelId,
 
@@ -1695,15 +1702,13 @@ export async function planSemanticRequest(
                             'complexity',
 
                           execute:
-                            () =>
+                            dispatch =>
                               chatCompletion(
                                 modelId,
 
-                                attemptMessages,
+                                dispatch.payload.messages as ChatMessage[],
 
-                                semanticPlannerCompletionOptions(
-                                  signal,
-                                ),
+                                { ...semanticPlannerCompletionOptions(signal), beforeDispatch: dispatch.beforeDispatch },
                               ),
                         },
                       );

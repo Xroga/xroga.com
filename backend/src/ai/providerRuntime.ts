@@ -118,7 +118,7 @@ export function normalizeProviderError(error: unknown): NormalizedProviderError 
 /** A different provider cannot authorize the same locally rejected request. */
 export function isModelSecurityDenial(error:unknown):boolean{
   return error instanceof TenantAccessError || error instanceof AuthorityError || error instanceof EgressDenied
-    || ['MODEL_DISPATCH_BINDING_DENIED','MODEL_CREDENTIAL_EGRESS_DENIED','MODEL_PAYLOAD_INVALID','MODEL_DESTINATION_DENIED','RUN_STATE_CONFLICT',
+    || ['MODEL_DISPATCH_BINDING_DENIED','MODEL_CREDENTIAL_EGRESS_DENIED','MODEL_PAYLOAD_INVALID','MODEL_DESTINATION_DENIED','RUN_STATE_CONFLICT','PROVIDER_RESERVATION_DENIED',
       'SAFETY_BLOCKED','CAPABILITY_AUTH_REQUIRED','PROJECT_CONTEXT_MISMATCH']
     .includes((error as {code?:string})?.code??'');
 }

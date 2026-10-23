@@ -1659,7 +1659,7 @@
       "callers": [
         "backend/src/ai/black-hole/structuredOutput.test.ts:4",
         "backend/src/ai/qa.ts:5",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:33",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:35",
         "backend/src/services/integrations/businessAccounting.failure.test.ts:5",
         "backend/src/services/integrations/businessAction.ts:25",
         "backend/src/services/integrations/businessRead.ts:16",
@@ -5653,7 +5653,8 @@
         "backend/src/ai/postCompletionAccounting.test.ts:3",
         "backend/src/ai/providerBudget.ts:7",
         "backend/src/ai/providerRuntime.ts:2",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:27",
+        "backend/src/ai/universal/semanticRequestPlanner.test.ts:31",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:29",
         "backend/src/security/usageAccounting.local.integration.ts:6",
         "backend/src/services/integrations/businessAccounting.failure.test.ts:6",
         "backend/src/services/integrations/businessAction.ts:20",
@@ -5674,6 +5675,7 @@
       "testCoverage": [
         "backend/src/ai/postCompletionAccounting.persistence.test.ts",
         "backend/src/ai/postCompletionAccounting.test.ts",
+        "backend/src/ai/universal/semanticRequestPlanner.test.ts",
         "backend/src/security/usageAccounting.local.integration.ts",
         "backend/src/services/integrations/businessAccounting.failure.test.ts"
       ],
@@ -5900,7 +5902,7 @@
       "id": "surface:faad5cf834fc5eb65afc",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/providerBudget.ts",
-      "sha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+      "sha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
       "symbols": [
         "AdmittedOperationsAction",
         "BudgetPurpose",
@@ -6009,7 +6011,6 @@
         "backend/src/ai/providerBudget.test.ts:4",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:18",
         "backend/src/ai/tenantModelDispatch.ts:10",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:12",
         "backend/src/operations/benchmarkAdapter.ts:36",
         "backend/src/operations/operationsProviderBudget.local.integration.ts:6",
         "backend/src/routes/billing.ts:5",
@@ -6186,7 +6187,7 @@
       ],
       "callers": [
         "backend/src/ai/providerHealthStore.test.ts:3",
-        "backend/src/ai/providerRuntime.ts:3",
+        "backend/src/ai/providerRuntime.ts:6",
         "backend/src/security/platformHealth.local.integration.ts:4"
       ],
       "reachable": true,
@@ -6291,7 +6292,7 @@
       "id": "surface:3e9fb9a001d600489a5a",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/providerRuntime.ts",
-      "sha256": "0ad04307675bc9bcd183eac63965239b0b4c091616851b82313f02bb57237a97",
+      "sha256": "5f6ec786ca4d0a076195c19ae6a16e43dca34257d2f7893f149a78d53d9d4b65",
       "symbols": [
         "ModelRuntimeHealth",
         "MutableHealth",
@@ -6345,6 +6346,9 @@
         "value"
       ],
       "imports": [
+        "../security/authority/enforce.js",
+        "../security/egress/egressPolicy.js",
+        "../security/tenantErrors.js",
         "./models.js",
         "./postCompletionAccounting.js",
         "./providerHealthStore.js",
@@ -6353,7 +6357,10 @@
       "runtimeImports": [
         "backend/src/ai/postCompletionAccounting.ts",
         "backend/src/ai/providerHealthStore.ts",
-        "backend/src/ai/universal/runtimeFailure.ts"
+        "backend/src/ai/universal/runtimeFailure.ts",
+        "backend/src/security/authority/enforce.ts",
+        "backend/src/security/egress/egressPolicy.ts",
+        "backend/src/security/tenantErrors.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -6374,7 +6381,7 @@
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:11",
         "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts:6",
         "backend/src/ai/tenantModelDispatch.test.ts:12",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:16",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:17",
         "backend/src/index.ts:50",
         "backend/src/lib/resilience/callWithFallback.ts:4",
         "backend/src/lib/resilience/retry.test.ts:3",
@@ -6386,7 +6393,9 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
-      "authBoundary": [],
+      "authBoundary": [
+        "backend/src/ai/providerRuntime.ts#AuthorityError"
+      ],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -6602,7 +6611,7 @@
         "backend/src/ai/quota.failure.test.ts:3",
         "backend/src/ai/quota.test.ts:18",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:23",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:23",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:25",
         "backend/src/routes/phase1.ts:18",
         "backend/src/routes/phase1BusinessPreflight.ts:3",
         "backend/src/security/budgetOwner.local.integration.ts:6",
@@ -9925,7 +9934,8 @@
         "backend/src/ai/pipeline.ts:4",
         "backend/src/ai/repoSummarize.ts:18",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:2",
-        "backend/src/ai/tenantModelDispatch.test.ts:6"
+        "backend/src/ai/tenantModelDispatch.test.ts:6",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:12"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -10194,7 +10204,7 @@
         "backend/src/ai/pipeline.ts:156",
         "backend/src/ai/universal/goalContract.test.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:21",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:37",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:39",
         "backend/src/ai/universal/universalContracts.test.ts:4",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:14",
         "backend/src/routes/phase1.ts:38",
@@ -10343,7 +10353,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/universal/semanticRequestPlanner.ts:46",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:48",
         "backend/src/ai/universal/universalContracts.test.ts:13",
         "backend/src/synthesis/universalEntrypoint.ts:123"
       ],
@@ -10391,7 +10401,7 @@
       "callers": [
         "backend/src/ai/pipeline.ts:157",
         "backend/src/ai/universal/capabilityReadiness.test.ts:4",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:50",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:52",
         "backend/src/lib/xrogaCapabilities.ts:1"
       ],
       "reachable": true,
@@ -10548,9 +10558,10 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:158",
-        "backend/src/ai/providerRuntime.ts:9",
+        "backend/src/ai/providerRuntime.ts:12",
         "backend/src/ai/universal/runtimeFailure.test.ts:3",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:54",
+        "backend/src/ai/universal/semanticRequestPlanner.test.ts:30",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:56",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:17",
         "backend/src/routes/phase1.ts:47"
       ],
@@ -10564,6 +10575,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/universal/runtimeFailure.test.ts",
+        "backend/src/ai/universal/semanticRequestPlanner.test.ts",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -10666,7 +10678,7 @@
       "id": "surface:2caccad5e3c57290edad",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "eecb884929902fb45c9e63c2389c4729b4f8135803c0c475100c1c2483de293c",
+      "sha256": "b1a888eb0db93a96debf883c6383c525f4c7d8fe6813487230febd93cda3f34e",
       "symbols": [
         "PlannerRouteOutcome",
         "SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS",
@@ -10679,6 +10691,7 @@
         "SemanticRequestPlan",
         "UniversalDispatch",
         "active",
+        "actor",
         "attemptMessages",
         "authorities",
         "authorizedReadOnlyExternal",
@@ -10720,6 +10733,7 @@
         "hedgeTimer",
         "interpretationInput",
         "interpreterModelOrder",
+        "isTerminalDenial",
         "lastStructuredFailure",
         "maximumOutputTokens",
         "messages",
@@ -10738,6 +10752,7 @@
         "protocolSocialResponse",
         "readiness",
         "relayAbort",
+        "requireNoTerminalDenial",
         "requiredAuthorities",
         "requiredCapabilities",
         "resolveRequestAuthorities",
@@ -10750,6 +10765,7 @@
         "semanticPlannerCompletionOptions",
         "social",
         "system",
+        "terminalDenial",
         "totalController",
         "totalTimeoutMs",
         "totalTimer",
@@ -10758,14 +10774,15 @@
       ],
       "imports": [
         "../../capabilities/index.js",
+        "../../security/tenantContext.js",
         "../../services/integrations/githubAuth.js",
         "../black-hole/structuredOutput.js",
         "../models.js",
         "../openaiCompat.js",
         "../postCompletionAccounting.js",
-        "../providerBudget.js",
         "../providerRuntime.js",
         "../quota.js",
+        "../tenantModelDispatch.js",
         "./goalContract.js",
         "./planner.js",
         "./productTruth.js",
@@ -10776,14 +10793,15 @@
         "backend/src/ai/models.ts",
         "backend/src/ai/openaiCompat.ts",
         "backend/src/ai/postCompletionAccounting.ts",
-        "backend/src/ai/providerBudget.ts",
         "backend/src/ai/providerRuntime.ts",
         "backend/src/ai/quota.ts",
+        "backend/src/ai/tenantModelDispatch.ts",
         "backend/src/ai/universal/goalContract.ts",
         "backend/src/ai/universal/planner.ts",
         "backend/src/ai/universal/productTruth.ts",
         "backend/src/ai/universal/runtimeFailure.ts",
         "backend/src/capabilities/index.ts",
+        "backend/src/security/tenantContext.ts",
         "backend/src/services/integrations/githubAuth.ts"
       ],
       "entryPoints": [
@@ -10813,7 +10831,7 @@
         "backend/src/ai/universal/semanticRequestPlanner.ts#authorizedReadOnlyExternal"
       ],
       "costBoundary": [
-        "backend/src/ai/universal/semanticRequestPlanner.ts#withProviderReservation"
+        "backend/src/ai/universal/semanticRequestPlanner.ts#withTenantModelReservation"
       ],
       "evidenceBoundary": [],
       "testCoverage": [
@@ -11127,7 +11145,7 @@
         "backend/src/ai/universal/capabilityReadiness.test.ts:3",
         "backend/src/ai/universal/productTruth.ts:1",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:3",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:29",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:31",
         "backend/src/synthesis/universalEntrypoint.ts:119"
       ],
       "reachable": true,
@@ -19440,7 +19458,7 @@
       "id": "surface:ab58061e67cd2f877ad4",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "sha256": "3f6a017db3e3a620f9559ae4f9b0c1c4048f0906e4d4fb632762a0435442ac3d",
+      "sha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5",
       "symbols": [
         "ToolUiConnectionCandidate",
         "ToolUiDescriptor",
@@ -21390,8 +21408,10 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/ai/providerRuntime.ts:4",
         "backend/src/ai/tenantModelDispatch.test.ts:13",
         "backend/src/ai/tenantModelDispatch.ts:6",
+        "backend/src/ai/universal/semanticRequestPlanner.test.ts:28",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:11",
         "backend/src/security/authority/enforce.test.ts:5",
         "backend/src/security/egress/egress.integration.test.ts:6",
@@ -21430,6 +21450,7 @@
       ],
       "testCoverage": [
         "backend/src/ai/tenantModelDispatch.test.ts",
+        "backend/src/ai/universal/semanticRequestPlanner.test.ts",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/security/authority/enforce.test.ts",
         "backend/src/security/egress/egress.integration.test.ts",
@@ -21737,6 +21758,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/ai/providerRuntime.ts:5",
+        "backend/src/ai/universal/semanticRequestPlanner.test.ts:29",
         "backend/src/security/egress/egress.integration.test.ts:9",
         "backend/src/security/egress/fileEgress.ts:6",
         "backend/src/security/egress/securityDecision.ts:5",
@@ -21761,6 +21784,7 @@
         "backend/src/security/egress/egressPolicy.ts#receipt"
       ],
       "testCoverage": [
+        "backend/src/ai/universal/semanticRequestPlanner.test.ts",
         "backend/src/security/egress/egress.integration.test.ts",
         "backend/tests/securityReceipt.local.integration.ts"
       ],
@@ -22420,6 +22444,7 @@
         "backend/src/ai/tenantModelDispatch.test.ts:4",
         "backend/src/ai/tenantModelDispatch.ts:2",
         "backend/src/ai/universal/resumeProjectContext.test.ts:6",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:15",
         "backend/src/ai/usageAccounting.test.ts:4",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:10",
         "backend/src/middleware/admin.test.ts:7",
@@ -22659,7 +22684,9 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
+        "backend/src/ai/providerRuntime.ts:3",
         "backend/src/ai/runStore.ts:12",
+        "backend/src/ai/universal/semanticRequestPlanner.test.ts:27",
         "backend/src/routes/projectRuntime.ts:9",
         "backend/src/routes/swarm.ts:5",
         "backend/src/routes/terminalSessions.ts:18",
@@ -22690,6 +22717,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/ai/universal/semanticRequestPlanner.test.ts",
         "backend/src/security/ownedRunPersistence.test.ts",
         "backend/src/security/ownedTerminalPersistence.test.ts",
         "backend/src/security/ownership.test.ts",
@@ -24303,7 +24331,7 @@
       "callers": [
         "backend/src/ai/pipeline.ts:161",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:13",
-        "backend/src/ai/universal/semanticRequestPlanner.ts:58",
+        "backend/src/ai/universal/semanticRequestPlanner.ts:60",
         "backend/src/routes/github.settings.test.ts:17",
         "backend/src/routes/github.ts:8",
         "backend/src/security/tenantIsolation.local.integration.ts:39",
@@ -96507,7 +96535,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:e7c218a771966e6a7048",
+      "id": "registration:8cf227611b450c039779",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 389,
       "receiver": "router",
@@ -96519,9 +96547,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a5a0e030c083c14b68c9",
+      "id": "registration:2d9447001f3816a8085f",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 619,
+      "line": 620,
       "receiver": "router",
       "method": "post",
       "path": "/chat",
@@ -96531,9 +96559,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:9d3927f8bf5b6384de5d",
+      "id": "registration:fcec2ec270e8b1f3cd0a",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1651,
+      "line": 1652,
       "receiver": "router",
       "method": "post",
       "path": "/business-apps/:toolkit/connect-link",
@@ -96543,9 +96571,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c577a1ee812f96577132",
+      "id": "registration:fac5246b75fa3e2f1615",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1781,
+      "line": 1782,
       "receiver": "router",
       "method": "get",
       "path": "/business-actions/confirmations/:id",
@@ -96555,9 +96583,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:0acfcebac018dcae2e2a",
+      "id": "registration:221b8fbb07c923e4e2b9",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1847,
+      "line": 1848,
       "receiver": "router",
       "method": "post",
       "path": "/business-actions/confirmations/:id/confirm",
@@ -96567,9 +96595,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b3214a09c44efc3303f4",
+      "id": "registration:7976ff973484ce23bd7f",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1924,
+      "line": 1925,
       "receiver": "router",
       "method": "post",
       "path": "/business-actions/confirmations/:id/cancel",
@@ -96579,9 +96607,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a7a3f4ece277f4cdced4",
+      "id": "registration:680480be5b63e381230c",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1994,
+      "line": 1995,
       "receiver": "router",
       "method": "get",
       "path": "/usage",
@@ -96591,9 +96619,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:d9569b2a77ff61b1f5d5",
+      "id": "registration:e05ff6c2186f0e434a28",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2065,
+      "line": 2066,
       "receiver": "router",
       "method": "get",
       "path": "/economics",
@@ -96603,9 +96631,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:077e79019df321d8b8c2",
+      "id": "registration:f113bc2829f8087ad5cb",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2124,
+      "line": 2125,
       "receiver": "router",
       "method": "post",
       "path": "/emergency-tokens",
@@ -96615,9 +96643,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:5ec940166aeb02d13615",
+      "id": "registration:40f95251db42390eb9ee",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2149,
+      "line": 2150,
       "receiver": "router",
       "method": "get",
       "path": "/health",
@@ -96627,9 +96655,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:dd7eed39992ab06febcb",
+      "id": "registration:9df8e2e4129e56e2907c",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2171,
+      "line": 2172,
       "receiver": "router",
       "method": "get",
       "path": "/quota-check",
@@ -97906,8 +97934,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:821e03d293f47f978c9d",
-      "registrationId": "registration:e7c218a771966e6a7048",
+      "id": "route:076e97fcc0a30bcea3fc",
+      "registrationId": "registration:8cf227611b450c039779",
       "sourcePath": "backend/src/routes/phase1.ts",
       "line": 389,
       "method": "POST",
@@ -97923,10 +97951,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:70de1ecf0cd040bacbcb",
-      "registrationId": "registration:a5a0e030c083c14b68c9",
+      "id": "route:b8c57ae5e4dbaf0fc0c2",
+      "registrationId": "registration:2d9447001f3816a8085f",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 619,
+      "line": 620,
       "method": "POST",
       "path": "/api/phase1/chat",
       "mountChain": [
@@ -97940,10 +97968,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:c7f619706eebb1a39213",
-      "registrationId": "registration:9d3927f8bf5b6384de5d",
+      "id": "route:3ff0c609ccd64744155e",
+      "registrationId": "registration:fcec2ec270e8b1f3cd0a",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1651,
+      "line": 1652,
       "method": "POST",
       "path": "/api/phase1/business-apps/:toolkit/connect-link",
       "mountChain": [
@@ -97957,10 +97985,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8436378175d2ef334bf3",
-      "registrationId": "registration:c577a1ee812f96577132",
+      "id": "route:ac97983ddb62bd46e338",
+      "registrationId": "registration:fac5246b75fa3e2f1615",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1781,
+      "line": 1782,
       "method": "GET",
       "path": "/api/phase1/business-actions/confirmations/:id",
       "mountChain": [
@@ -97974,10 +98002,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:edf748ee83b850003397",
-      "registrationId": "registration:0acfcebac018dcae2e2a",
+      "id": "route:e233b8d35993820e6416",
+      "registrationId": "registration:221b8fbb07c923e4e2b9",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1847,
+      "line": 1848,
       "method": "POST",
       "path": "/api/phase1/business-actions/confirmations/:id/confirm",
       "mountChain": [
@@ -97991,10 +98019,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:f6cf3f1cfbd0eb9ff863",
-      "registrationId": "registration:b3214a09c44efc3303f4",
+      "id": "route:5ae6281022fe6f96e9c9",
+      "registrationId": "registration:7976ff973484ce23bd7f",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1924,
+      "line": 1925,
       "method": "POST",
       "path": "/api/phase1/business-actions/confirmations/:id/cancel",
       "mountChain": [
@@ -98008,10 +98036,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:d41fe5f41bd21b1111fc",
-      "registrationId": "registration:a7a3f4ece277f4cdced4",
+      "id": "route:7eef88889f321d1714cb",
+      "registrationId": "registration:680480be5b63e381230c",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1994,
+      "line": 1995,
       "method": "GET",
       "path": "/api/phase1/usage",
       "mountChain": [
@@ -98025,10 +98053,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:4af18650d7514157e7a6",
-      "registrationId": "registration:d9569b2a77ff61b1f5d5",
+      "id": "route:bb77f01980a26910b627",
+      "registrationId": "registration:e05ff6c2186f0e434a28",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2065,
+      "line": 2066,
       "method": "GET",
       "path": "/api/phase1/economics",
       "mountChain": [
@@ -98042,10 +98070,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b98f9b796940c57a1a14",
-      "registrationId": "registration:077e79019df321d8b8c2",
+      "id": "route:95c860d6d651adcf144a",
+      "registrationId": "registration:f113bc2829f8087ad5cb",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2124,
+      "line": 2125,
       "method": "POST",
       "path": "/api/phase1/emergency-tokens",
       "mountChain": [
@@ -98059,10 +98087,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:8aa2abfd564a467c7e50",
-      "registrationId": "registration:5ec940166aeb02d13615",
+      "id": "route:096fc561de3150c08ac6",
+      "registrationId": "registration:40f95251db42390eb9ee",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2149,
+      "line": 2150,
       "method": "GET",
       "path": "/api/phase1/health",
       "mountChain": [
@@ -98076,10 +98104,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:83d8a1ad47d8f13b2c04",
-      "registrationId": "registration:dd7eed39992ab06febcb",
+      "id": "route:105a8d241cb2f6d9d479",
+      "registrationId": "registration:9df8e2e4129e56e2907c",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2171,
+      "line": 2172,
       "method": "GET",
       "path": "/api/phase1/quota-check",
       "mountChain": [
@@ -109936,7 +109964,7 @@
     {
       "id": "test-suite:4c7f0731a324fb7d047d",
       "sourcePath": "backend/src/ai/universal/semanticRequestPlanner.test.ts",
-      "declaredTests": 31,
+      "declaredTests": 35,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -112402,7 +112430,7 @@
     {
       "id": "test-suite:6d9be4b1beaac4d35b4c",
       "sourcePath": "backend/src/synthesis/universalEntrypoint.test.ts",
-      "declaredTests": 18,
+      "declaredTests": 19,
       "skipLocations": [],
       "focusLocations": []
     },

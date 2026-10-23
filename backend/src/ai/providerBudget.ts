@@ -563,7 +563,15 @@ export async function withProviderReservation<T extends ProviderUsageResult>(inp
   purpose?: BudgetPurpose;
   execute: () => Promise<T>;
 }): Promise<T> {
-  const reservation = await reserveProviderBudget(input);
+  let reservation: ProviderReservation;
+  try { reservation = await reserveProviderBudget(input); }
+  catch (error) {
+    if (normalizeProviderError(error).kind === 'capacity') throw error;
+    // Failure to prove a reservation is a request admission refusal. Another
+    // model/account cannot turn malformed or unavailable budget evidence valid.
+    throw Object.assign(new Error(error instanceof Error ? error.message : 'Provider budget admission is unavailable.', { cause: error }),
+      { code: 'PROVIDER_RESERVATION_DENIED', retryable: false });
+  }
   let providerCompleted = false;
   try {
     const result = await input.execute();
@@ -583,7 +591,12 @@ export async function withProviderReservation<T extends ProviderUsageResult>(inp
       }
       throw new PostCompletionAccountingError();
     }
-    await finishFailedProviderReservation({ userId: input.userId, reservation, error });
+    try { await finishFailedProviderReservation({ userId: input.userId, reservation, error }); }
+    catch {
+      // An unverified release must not become permission to spend again.
+      throw Object.assign(new Error('Provider budget release could not be verified.'),
+        { code: 'PROVIDER_RESERVATION_DENIED', retryable: false });
+    }
     throw error;
   }
 }

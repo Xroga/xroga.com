@@ -3357,7 +3357,7 @@
       "id": "B1-P2-392b9b628a9b92be",
       "family": "billing-budget",
       "sourcePath": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+      "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
       "baselineCallerIds": [
         "00d351afbe045a136c66",
         "254a91383e3a8af0310b",
@@ -3513,7 +3513,24 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-392b9b628a9b92be",
-        "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+        "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+        "phase4BudgetAdmissionContinuation": {
+          "baselineSource": "d68bbd7269395ff4193c372cbbe432acfc1f422a",
+          "previousFileSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+          "changedFunction": "withProviderReservation",
+          "semanticDelta": "Tag failed admission or unverified release as terminal request refusal. Capacity and post-completion accounting remain distinct. No RPC, budget arithmetic or settlement assertion changed.",
+          "unchangedMappedFunctions": [
+            "activatePaidCycle",
+            "getProviderEntitlementStatus",
+            "setUsagePacing",
+            "reserveProviderBudget",
+            "settleProviderBudget",
+            "finishFailedProviderReservation"
+          ],
+          "verification": "All six mapped enclosing functions compared byte-identically using assertUnchangedEnclosing. Updated 72-test focused regression passes with zero failures/skips. This does not promote historical Phase2 acceptance or establish new real-database proof.",
+          "evidence": "docs/xroga/evidence/command-010/FALLBACK-DENIAL-CONTINUATION.md",
+          "currentSourceCi": "PENDING"
+        },
         "executionStatus": "IN_PROGRESS",
         "finding": "DORMANT_ISSUED_OWNER_AND_EXACT_BUDGET_RECEIPTS_REPAIRED_PROOF_PENDING",
         "actualVerification": {
