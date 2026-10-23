@@ -1,0 +1,40 @@
+{
+  "apiVersion": "serving.knative.dev/v1",
+  "kind": "Service",
+  "metadata": {
+    "name": "xroga-p3-staging-20261024",
+    "namespace": "574998934848",
+    "labels": { "cloud.googleapis.com/location": "us-central1", "xroga-scope": "phase3-isolated-staging" },
+    "annotations": { "run.googleapis.com/ingress": "all", "run.googleapis.com/invoker-iam-disabled": "false", "run.googleapis.com/maxScale": "1" }
+  },
+  "spec": {
+    "template": {
+      "metadata": {
+        "annotations": { "autoscaling.knative.dev/minScale": "0", "autoscaling.knative.dev/maxScale": "1", "run.googleapis.com/cpu-throttling": "true", "run.googleapis.com/startup-cpu-boost": "false" }
+      },
+      "spec": {
+        "serviceAccountName": "xroga-p3-staging-20261024@project-c40d4821-e647-4fa2-92d.iam.gserviceaccount.com",
+        "containerConcurrency": 1,
+        "timeoutSeconds": 30,
+        "containers": [{
+          "image": "__SOURCE_BOUND_IMAGE_BY_SHA256__",
+          "ports": [{ "containerPort": 8080 }],
+          "resources": { "limits": { "cpu": "1", "memory": "1Gi" } },
+          "env": [
+            { "name": "NODE_ENV", "value": "production" },
+            { "name": "XROGA_RELEASE_SHA", "value": "cbc79b816a54d0d0c50841e4763087a8854771d1" },
+            { "name": "FRONTEND_URL", "value": "https://phase3-isolated.invalid" },
+            { "name": "XROGA_CREDENTIAL_KMS_PROVIDER", "value": "google_cloud" },
+            { "name": "XROGA_GOOGLE_CLOUD_KMS_KEY_NAME", "value": "projects/project-c40d4821-e647-4fa2-92d/locations/us-central1/keyRings/xroga-p3-verify-20261023/cryptoKeys/xroga-p3-staging-20261024" },
+            { "name": "XROGA_LEGACY_CREDENTIAL_MIGRATION", "value": "disabled" },
+            { "name": "UNIVERSAL_AGENT_ENABLED", "value": "off" },
+            { "name": "SUPABASE_URL", "valueFrom": { "secretKeyRef": { "name": "xroga-p3-staging-supabase-url", "key": "1" } } },
+            { "name": "SUPABASE_SERVICE_ROLE_KEY", "valueFrom": { "secretKeyRef": { "name": "xroga-p3-staging-supabase-role", "key": "1" } } }
+          ],
+          "startupProbe": { "httpGet": { "path": "/ready", "port": 8080 }, "periodSeconds": 10, "timeoutSeconds": 5, "failureThreshold": 24 },
+          "livenessProbe": { "httpGet": { "path": "/health", "port": 8080 }, "periodSeconds": 30, "timeoutSeconds": 5, "failureThreshold": 3 }
+        }]
+      }
+    }
+  }
+}
