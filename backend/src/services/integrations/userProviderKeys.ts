@@ -28,21 +28,37 @@ async function saveKeyToStorage(
   payload: { access_token: string; metadata: Record<string, unknown> },
 ): Promise<boolean> {
   try {
-    if (!(await ensurePrivateOAuthBucket())) return false;
+    // Snapshot the sealed payload before awaiting bucket admission. A mirror is
+    // never authority and must not publish a stale/revoked write as successful.
+    const snapshot = structuredClone(payload);
+    if (!snapshot.access_token.startsWith('vault:v3:') || !vaultBinding(userId, providerRow, snapshot.metadata)) return false;
     const supabase = getSupabaseAdmin();
+    const readCurrent = () => supabase.from('user_integrations')
+      .select('user_id,provider,access_token,metadata,credential_revision')
+      .eq('user_id', userId).eq('provider', providerRow).maybeSingle();
+    const selected = await readCurrent();
+    const matches = (current: typeof selected) => !current.error && current.data?.user_id === userId
+      && current.data?.provider === providerRow && current.data.access_token === snapshot.access_token
+      && typeof current.data.credential_revision === 'string' && current.data.metadata?.revoked !== true
+      && isDeepStrictEqual(current.data.metadata ?? {}, snapshot.metadata);
+    if (!matches(selected)) return false;
+    if (!(await ensurePrivateOAuthBucket())) return false;
+    const current = await readCurrent();
+    if (!matches(current) || current.data?.credential_revision !== selected.data?.credential_revision) return false;
     const { error } = await supabase.storage
       .from(KEY_BUCKET)
-      .upload(keyStoragePath(userId, providerRow), JSON.stringify(payload), {
+      .upload(keyStoragePath(userId, providerRow), JSON.stringify(snapshot), {
         upsert: true,
         contentType: 'application/json',
       });
     if (error) {
-      console.warn('[userProviderKeys] storage upload:', error.message);
+      console.warn('[userProviderKeys] storage upload unavailable');
       return false;
     }
-    return true;
-  } catch (err) {
-    console.warn('[userProviderKeys] storage save:', (err as Error).message);
+    const after = await readCurrent();
+    return matches(after) && after.data?.credential_revision === selected.data?.credential_revision;
+  } catch {
+    console.warn('[userProviderKeys] storage save unavailable');
     return false;
   }
 }
