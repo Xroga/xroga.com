@@ -6,7 +6,7 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 
 ## Counts
 
-- surfaces: 1482
+- surfaces: 1483
 - routeRegistrations: 266
 - routes: 222
 - reachableRoutes: 222
@@ -15,8 +15,8 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 - workflows: 19
 - testSuites: 728
 - declaredTests: 5133
-- classifiedMarkers: 370
-- reachableMarkers: 319
+- classifiedMarkers: 371
+- reachableMarkers: 317
 - absentRequiredPaths: 5
 - duplicateIds: 0
 
@@ -62,7 +62,7 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 | frontend/src/lib/xrogaRichResults.ts | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |
 | frontend/src/lib/xrogaEvent.ts | PRESENT | DEAD_OR_UNREACHABLE |
 | frontend/src/app/(shell)/dashboard/automations/page.tsx | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |
-| frontend/src/app/(shell)/dashboard/library/page.tsx | PRESENT | PLACEHOLDER |
+| frontend/src/app/(shell)/dashboard/library/page.tsx | PRESENT | IMPLEMENTED_BUT_UNVERIFIED |
 
 ## Queue processing
 

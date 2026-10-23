@@ -375,8 +375,9 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
             <span className="xv-term-badge">Private · not saved</span>
           ) : (
             <div className="xv-terminal-header-tools flex items-center gap-1 shrink-0">
+              <WorkspaceLauncher control="project" />
               <WorkspacePeopleControls />
-              <WorkspaceLauncher />
+              <WorkspaceLauncher control="visibility" />
               <TerminalSkinPicker />
               <button
                 type="button"

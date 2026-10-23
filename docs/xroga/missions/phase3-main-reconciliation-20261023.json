@@ -17,6 +17,7 @@
     "frontend/src/lib/sidebarAccountFlyouts.test.ts",
     "frontend/src/lib/sidebarCompactNav.test.ts",
     "frontend/src/lib/sidebarEdgeToggle.test.ts",
+    "frontend/src/lib/sidebarHistoryScroll.test.ts",
     "frontend/src/lib/sidebarOwnerRls.test.ts",
     "frontend/src/lib/workspaceEmptyComposer.test.ts",
     "frontend/src/lib/workspaceFullscreen.test.ts",

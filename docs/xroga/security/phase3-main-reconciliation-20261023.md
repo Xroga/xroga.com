@@ -25,10 +25,12 @@ A separate founder-approved synthetic verification built the exact preserved Pha
 
 Formal status remains B1_P3_BLOCKED. Production credential migration, release, DNS changes and Phase 4 admission remain unauthorized. The strict evaluator must not be changed to count synthetic proof as production custody/cutover. Keep applicable authenticated, disposable fresh/upgrade DB and staged security gates. No production URL or deployed candidate SHA is claimed.
 
-## Rollback
-
 ## CI preflight reconciliation
 
 Candidate `38bee46f74e9ec6080405011d5aa9ea0b87f2c1e` passed standalone frozen install, lint and build in GitHub run 40006528570. Unit run 40006524198 stopped before baseline execution on generated inventory drift. The canonical inventory generator, without `--refresh`, and source-manifest reconciler updated only derived inventory and source checksums. Historical generation identity, frozen criteria, accepted receipts and requirement dispositions remain unchanged. Inventory and requirement-integrity checks then passed. This fixes preflight metadata, not an application or acceptance failure.
+
+Main advanced during verification to `5abcf57a1c54290c9e486f5ed3dc1f68435666e2`. Incorporate that exact commit in a second merge, retaining the new Library and dashboard behavior. WorkspaceLauncher now also preserves main's separate project/visibility controls. The only content conflict is the sidebar history test. Retain both parents' account isolation, durable pin writes, active-item filtering, conditional pins and resumed-conversation assertions against the unchanged history implementation. Refresh the same derived inventories for the added Library source. This pins the integration target for final verification, without authorizing a main merge.
+
+## Rollback
 
 This branch is isolated from both preserved PR branches. Reject the candidate or revert its reconciliation on a new review branch if required. Do not reset or force-push either preserved branch, remove Phase 4 work, reverse accepted historical migrations in a live database, or touch the existing release.

@@ -761,6 +761,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
       </div> : null}
       {navExpanded && notificationsOpen ? <SidebarNotificationCenter open onClose={() => setNotificationsOpen(false)} /> : navExpanded ? <SidebarNavScroller targetRef={navScrollRef} className="flex-1 min-h-0">
         <nav
+          id="xv-sidebar-navigation"
           ref={navScrollRef}
           className="xv-sidebar-nav-scroll xv-sidebar-scroll-track h-full p-2 overflow-y-auto overflow-x-hidden min-h-0"
         >

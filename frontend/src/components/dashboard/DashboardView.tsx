@@ -243,6 +243,10 @@ export function DashboardView() {
             <span className="xv-term-badge">Private · not saved</span>
           ) : (
             <div className="xv-workspace-header-tools">
+              <WorkspaceLauncher control="project" />
+              <WorkspacePeopleControls />
+              <WorkspaceLauncher control="visibility" />
+              <TerminalSkinPicker />
               <button
                 type="button"
                 onClick={() => setTerminalFullscreen(!fullscreen)}
@@ -256,9 +260,6 @@ export function DashboardView() {
                   <AnimatedIcon icon={ExpandIcon} size={14} />
                 )}
               </button>
-              <TerminalSkinPicker />
-              <WorkspaceLauncher />
-              <WorkspacePeopleControls />
             </div>
           )}
         </header>

@@ -3024,6 +3024,9 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
    ============================================================ */
 
 .xv-page-stage {
+  --xv-content-gutter-inline: 10px;
+  --xv-content-gutter-block: 10px;
+  position: relative;
   width: 100%;
   height: 100%;
   min-width: 0;
@@ -3038,14 +3041,19 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   overflow: hidden;
   box-sizing: border-box;
 }
+@media (min-width: 640px) {
+  .xv-page-stage { --xv-content-gutter-inline: 14px; --xv-content-gutter-block: 14px; }
+}
 
 @media (min-width: 1024px) {
   .xv-page-stage:not(.xv-page-fullscreen-stage) {
+    --xv-content-gutter-inline: 18px;
+    --xv-content-gutter-block: 16px;
     padding:
       var(--xv-content-gutter-block)
       var(--xv-content-gutter-inline)
       var(--xv-content-gutter-block)
-      0;
+      var(--xv-content-gutter-inline);
   }
 }
 
@@ -3170,8 +3178,10 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   min-width: 0;
   min-height: 0;
   margin-inline: auto;
-  padding: clamp(12px, 1.25vw, 18px);
+  padding: clamp(18px, 2.15vw, 34px);
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--muted) 48%, transparent) transparent;
   overflow-x: hidden;
   border: 1px solid var(--app-panel-border);
   border-radius: var(--xv-app-radius);
@@ -3180,6 +3190,11 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   box-sizing: border-box;
   overscroll-behavior: contain;
 }
+.xv-page-surface::-webkit-scrollbar { width:5px; }
+.xv-page-surface::-webkit-scrollbar-track { background:transparent; }
+.xv-page-surface::-webkit-scrollbar-thumb { border-radius:999px; background:color-mix(in srgb,var(--muted) 45%,transparent); }
+.xv-page-stage > .xv-page-surface { scrollbar-width:none; }
+.xv-page-stage > .xv-page-surface::-webkit-scrollbar { display:none; width:0; }
 
 .xv-page-frame {
   position: relative;
@@ -3307,7 +3322,7 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   }
 
   .xv-page-surface {
-    padding: 12px;
+    padding: 16px;
     border-radius: var(--xv-app-radius);
   }
 
