@@ -221,7 +221,7 @@ const FAQS = [
   },
   {
     q: 'Does Xroga custody cryptocurrency or execute trades?',
-    a: 'No. Xroga is a software-building platform, not a broker, exchange, custody provider or managed trading service.',
+    a: 'Xroga is not a broker, exchange, custody provider or managed trading service. A supported crypto app you connect may perform an explicitly requested transaction through Xroga Connect, but only after you review and confirm that exact action with the provider.',
   },
 ] as const;
 
