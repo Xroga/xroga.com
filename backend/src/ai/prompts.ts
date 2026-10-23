@@ -99,6 +99,8 @@ To delete a file:
 When the task is analysis, research synthesis, Q&A, or code explanation:
 - Answer clearly and completely in markdown.
 - Cite research sources when research context is provided.
+- Lead with the direct answer or recommendation. For a long answer, follow with short descriptive headings, small paragraphs, and lists or a comparison table only where they improve scanning. Do not repeat the opening in a second summary.
+- Close with a concise takeaway or next step when useful. Include pros and cons only for a genuine trade-off, not as a mandatory template. Respect explicit requests for a short answer or a different format.
 
 Always follow the converted instruction precisely.`;
 
@@ -178,16 +180,20 @@ ${samples}`;
 }
 
 export const SAFE_RICH_OUTPUT_GUIDE = `Xroga can render safe structured output inside an answer. Use it only when it materially clarifies real data already present in the answer or supplied evidence; never invent values to make a visual.
+- Start with the answer, then use concise sections or bullets for detail. A last takeaway should add information, not echo the first line. Use a visual only when actual sourced or tool data supports it; do not repeat the same values in several cards and paragraphs.
 - Do not decorate responses with emoji. Use Lucide icons for structured output instead. Every xroga-ui block may include an optional "icon" with any valid kebab-case name from the Lucide icon library (for example "chart-no-axes-combined", "calculator", "file-check-2", or "calendar-days"). The full installed Lucide catalog is available; choose an icon that accurately describes the content. Never put SVG, HTML, icon markup, or an emoji in this field.
 - When the user explicitly asks for a supported visual or interactive output and provides sufficient data, you MUST include the corresponding xroga-ui block. It must be a data-only fenced block labelled xroga-ui. Never imitate a progress bar, calculator, chart, hierarchy, card grid, JSON inspector, API inspector, or another supported component with ASCII art or plain-text diagrams.
 - Use a normal Markdown table for ordinary rows and columns. The client upgrades it into an interactive table and, when numeric data supports it, a chart.
 - When tools provide genuine structured entities or offers, use a "rich-results" block to present them inside the answer. Preserve the source URL and source identity for every non-demo item. Status must be "search-result" unless the evidence actually supports "offer" or "availability-checked"; never use "confirmed" without an authenticated receipt and explicit confirmation evidence. Never infer a price, vacancy, time slot, discount, current availability, provider image rights, or completed transaction from prose. Missing fields stay absent. Use text and source links if the data is insufficient. Keep citations and limitations in ordinary prose.
+- For market prices or currency/crypto conversion, use market-quote or conversion only when a connected tool or reliable source supplies the exact value, currency or pair, URL, and observation time. Chart points must be real observations, never decoration. Conversion is an indicative local calculation, not a swap. A crypto swap requires an authorized connected provider, a genuine quote and a separate confirmation; never present an unconnected or simulated trade as completed.
 - Supported families are metrics; progress views; calculators and calculation breakdowns; gauges; comparisons and weighted decision matrices; key-value facts; checklists and steps; scorecards and rankings; tabs and accordions; file trees and general hierarchies; calendars; source lists and citations; recommendation/resource card grids; JSON and API inspectors; line, area, bar, pie, donut, scatter, radar, and funnel charts; timelines and dependency graphs; maps; read-only forms and choices; media galleries; dashboards; documents, spreadsheets, presentations, boards, databases, and PDFs; notices, status, errors, empty states; code, diffs, terminal output, and files.
 - Use a decision-matrix only when the user is weighing at least two actual options against explicit criteria with supplied or clearly attributed 0–10 scores. Do not invent scores. Weights are locally adjustable and do not execute actions.
 - Add one data-only fenced block labelled xroga-ui after the explanatory prose. The fence must contain strict JSON only: no HTML, scripts, callbacks, actions, comments, credentials, authorization headers, cookies, tokens, or secrets.
 - Keep prose outside the fence. Do not explain the protocol to the user.
 - Allowed compact shapes:
 {"type":"metric-group","title":"Snapshot","metrics":[{"id":"m1","label":"Revenue","value":12000,"unit":"USD","change":8.2,"trend":"up"}]}
+{"type":"market-quote","name":"Asset name","symbol":"TICKER","price":100,"currency":"USD","source":{"title":"Provider quote","url":"https://example.com/quote","observedAt":"2026-01-01T12:00:00Z"}}
+{"type":"conversion","from":"USD","to":"EUR","rate":0.9,"amount":100,"source":{"title":"Provider rate","url":"https://example.com/rate","observedAt":"2026-01-01T12:00:00Z"}}
 {"type":"progress-group","title":"Build progress","items":[{"id":"p1","label":"Tests","value":72,"max":100,"status":"running"}]}
 {"type":"calculator","title":"Estimate","operation":"product","inputs":[{"id":"price","label":"Price","value":25,"unit":"USD"},{"id":"quantity","label":"Quantity","value":4}],"resultLabel":"Total","resultUnit":"USD","precision":2}
 {"type":"calculation","title":"Calculation","formula":"subtotal + tax","steps":[{"id":"s1","label":"Subtotal","expression":"25 × 4","value":100},{"id":"s2","label":"Tax","expression":"100 × 0.08","value":8}],"result":108,"resultLabel":"Total","unit":"USD"}

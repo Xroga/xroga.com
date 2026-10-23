@@ -5767,6 +5767,53 @@ body.theme-gray * {
 
 .xv-formatted-response {
   letter-spacing: 0.01em;
+  max-width: 920px;
+  overflow-wrap: anywhere;
+}
+
+.xv-formatted-response > :where(h3, h4, h5) {
+  margin-top: 1.65rem;
+  margin-bottom: .55rem;
+}
+
+.xv-formatted-response > :where(p, ul, ol, blockquote) {
+  max-width: 74ch;
+}
+
+.xv-formatted-response > :where(p, ul, ol) {
+  margin-block: .75rem;
+}
+
+.xv-formatted-response :where(li + li) {
+  margin-top: .4rem;
+}
+
+.xv-formatted-response :where(strong) {
+  color: var(--foreground);
+}
+
+.xv-formatted-response .xv-answer-lead {
+  max-width: 820px;
+  margin-bottom: 1.35rem;
+}
+
+.xv-formatted-response .xv-answer-lead p {
+  margin: 0;
+  font-size: 1.05em !important;
+  line-height: 1.55 !important;
+  font-weight: 500;
+}
+
+.xv-formatted-response :where(blockquote) {
+  margin-block: 1rem;
+}
+
+.xv-formatted-response :where(table) {
+  border-collapse: collapse;
+}
+
+.xv-formatted-response :where(tbody tr:nth-child(even)) {
+  background: color-mix(in srgb, var(--foreground) 3%, transparent);
 }
 
 .xv-xroga-response {

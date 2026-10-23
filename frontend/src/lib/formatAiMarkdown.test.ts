@@ -41,3 +41,14 @@ test('CommonMark content renders links, emphasis, fenced code, and tables with e
   assert.match(html, /<td[^>]*><\/td>/, 'the empty GFM cell must remain in the table');
   assert.doesNotMatch(html, /onerror|<img/);
 });
+
+test('long answers present the opening once as a brief lead while preserving sections', () => {
+  const opening = 'The direct answer is to keep the existing connection and improve how its verified results are presented.';
+  const html = renderToStaticMarkup(createElement(FormattedAiMarkdown, {
+    content: `${opening}\n\n## Details\n\n${'Evidence belongs beside the claim, with clear limits and no invented prices. '.repeat(9)}\n\n## Takeaway\n\nKeep the verified result.`,
+  }));
+  assert.match(html, /In brief/);
+  assert.match(html, /Details/);
+  assert.match(html, /Takeaway/);
+  assert.equal(html.split(opening).length - 1, 1, 'the lead must not be duplicated');
+});

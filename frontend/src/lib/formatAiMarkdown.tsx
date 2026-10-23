@@ -1561,11 +1561,12 @@ function CitationChip({ number, source }: { number: number; source: CitationSour
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
         onKeyDown={(event) => { if (event.key === 'Escape') setOpen(false); }}
-        className="rounded border border-[var(--accent)]/25 bg-[var(--accent)]/10 px-1 text-[11px] font-semibold text-[var(--accent)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
+        className="inline-flex h-5 min-w-5 items-center justify-center rounded-md border border-blue-500/35 bg-blue-500/10 px-1 text-[11px] font-bold text-blue-500 transition-colors hover:border-blue-500 hover:bg-blue-500/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
       >
         [{number}]
       </button>
-      <span className={`${open ? 'visible opacity-100' : 'invisible opacity-0'} absolute bottom-full left-0 z-40 mb-2 w-[min(18rem,calc(100vw-2rem))] rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-3 text-left text-xs shadow-lg transition-opacity group-hover/citation:visible group-hover/citation:opacity-100 group-focus-within/citation:visible group-focus-within/citation:opacity-100`}>
+      <span className={`${open ? 'visible opacity-100' : 'invisible opacity-0'} absolute bottom-full left-0 z-40 mb-2 w-[min(19rem,calc(100vw-2rem))] rounded-xl border border-blue-500/30 bg-[var(--card)] p-3.5 text-left text-xs shadow-xl transition-opacity group-hover/citation:visible group-hover/citation:opacity-100 group-focus-within/citation:visible group-focus-within/citation:opacity-100`}>
+        <span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-blue-500">Source {number} · {new URL(url).hostname.replace(/^www\./i, '')}</span>
         <span className="block font-semibold text-[var(--foreground)]">{source.title}</span>
         {source.snippet ? <span className="mt-1 block line-clamp-3 text-[var(--muted)]">{source.snippet}</span> : null}
         <a href={url} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block font-medium text-[var(--accent)] underline">Open source {number}</a>
@@ -1578,6 +1579,7 @@ export function FormattedAiMarkdown({
   content,
   className,
   sources,
+  streaming,
 }: {
   content:
     string;
@@ -1587,6 +1589,10 @@ export function FormattedAiMarkdown({
     string;
   sources?: CitationSource[];
 }) {
+  const normalized = content.replace(/\r\n/g, '\n');
+  const opening = normalized.match(/^([^\n]+(?:\n(?!\n)[^\n]+)*)\n\s*\n/);
+  const lead = !streaming && normalized.length > 500 && opening && opening[1].length >= 45 && opening[1].length <= 400 && !/^\s*(?:[#>*`\-|\d+\.]|!\[)/.test(opening[1]) ? opening[1] : null;
+  const remaining = lead ? normalized.slice(opening![0].length) : normalized;
   const sourceComponents: Components = sources?.length ? {
     ...components,
     a: ({ href, children, ...props }) => {
@@ -1600,10 +1606,11 @@ export function FormattedAiMarkdown({
   return (
     <div
       className={joinClasses(
-        'xv-formatted-response space-y-3 text-[14px] leading-relaxed sm:text-[15px] [&>*:first-child]:mt-0 [&>*:last-child]:mb-0',
+        'xv-formatted-response space-y-4 text-[14px] leading-relaxed sm:text-[15px] [&>*:first-child]:mt-0 [&>*:last-child]:mb-0',
         className,
       )}
     >
+      {lead ? <div className="xv-answer-lead rounded-2xl border border-blue-500/25 bg-gradient-to-br from-blue-500/[0.11] to-transparent p-4 sm:p-5"><span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.16em] text-blue-500">In brief</span><ReactMarkdown remarkPlugins={[remarkGfm, ...(sources?.length ? [remarkSourceCitations(sources)] : [])]} skipHtml urlTransform={safeMarkdownUrl} components={sourceComponents}>{lead}</ReactMarkdown></div> : null}
       <ReactMarkdown
         remarkPlugins={[
           remarkGfm,
@@ -1617,7 +1624,7 @@ export function FormattedAiMarkdown({
           sourceComponents
         }
       >
-        {content}
+        {remaining}
       </ReactMarkdown>
     </div>
   );
