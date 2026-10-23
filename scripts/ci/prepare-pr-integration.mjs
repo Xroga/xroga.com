@@ -67,22 +67,22 @@ export function projectStableArrayConversionReviews(registry,{readFeature,readIn
   const hash=value=>createHash('sha256').update(value).digest('hex');
   const inspect=(path,text)=>{
     const file=ts.createSourceFile(path,text,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX),calls=[];
-    let unsafe=false;
+    const unsafeNames=new Set();
     const visit=node=>{
-      if((ts.isIdentifier(node)||ts.isStringLiteral(node))&&node.text==='Array'){
+      if((ts.isIdentifier(node)||ts.isStringLiteral(node))&&['Array','Uint8Array'].includes(node.text)){
         const parent=node.parent;
         if(!ts.isIdentifier(node)||!ts.isPropertyAccessExpression(parent)||parent.expression!==node
-          ||!['from','isArray'].includes(parent.name.text)||!ts.isCallExpression(parent.parent)||parent.parent.expression!==parent)unsafe=true;
+          ||!['from','isArray'].includes(parent.name.text)||!ts.isCallExpression(parent.parent)||parent.parent.expression!==parent)unsafeNames.add(node.text);
       }
       if(ts.isCallExpression(node)&&ts.isPropertyAccessExpression(node.expression)
-        &&ts.isIdentifier(node.expression.expression)&&node.expression.expression.text==='Array'&&node.expression.name.text==='from'){
+        &&ts.isIdentifier(node.expression.expression)&&['Array','Uint8Array'].includes(node.expression.expression.text)&&node.expression.name.text==='from'){
         let enclosing=node.parent;
         while(enclosing&&!ts.isFunctionDeclaration(enclosing)&&!ts.isFunctionExpression(enclosing)&&!ts.isArrowFunction(enclosing)&&!ts.isMethodDeclaration(enclosing))enclosing=enclosing.parent;
         if(enclosing)calls.push({line:file.getLineAndCharacterOfPosition(node.getStart(file)).line+1,
-          expression:node.getText(file),fn:enclosing.getText(file)});
+          expression:node.getText(file),fn:enclosing.getText(file),native:node.expression.expression.text});
       }
       ts.forEachChild(node,visit);
-    };visit(file);return {unsafe,calls};
+    };visit(file);return {unsafeNames,calls};
   };
   const rebound=[];
   const reviews=registry.reviews.map(record=>{
@@ -92,14 +92,13 @@ export function projectStableArrayConversionReviews(registry,{readFeature,readIn
     const original=readFeature(record.path);
     if(typeof original!=='string'||hash(original.replace(/\r\n/g,'\n'))!==record.sourceSha256)throw new Error('Unbound original conversion review');
     const before=inspect(record.path,original),after=inspect(record.path,current);
-    if(before.unsafe||after.unsafe)return record;
     const explicit=reviewedFunctionChanges.find(review=>review.path===record.path
       &&review.featureSourceSha256===record.sourceSha256&&review.integratedSourceSha256===hash(current.replace(/\r\n/g,'\n')));
     const oldCandidates=discoverPersistenceCalls(record.path,original),newCandidates=discoverPersistenceCalls(record.path,current),ids=[],functions=[],changedFunctions=[];
     for(const id of record.callIds){
       const candidate=oldCandidates.find(call=>call.id===id&&call.kind==='TABLE_OR_BUCKET_CANDIDATE');
       const old=before.calls.filter(call=>call.line===candidate?.line);
-      if(old.length!==1)return record;
+      if(old.length!==1||before.unsafeNames.has(old[0].native)||after.unsafeNames.has(old[0].native))return record;
       const matching=after.calls.filter(call=>call.expression===old[0].expression&&(call.fn===old[0].fn
         ||explicit?.functions.some(review=>review.expression===call.expression
           &&review.featureFunctionSha256===hash(old[0].fn)&&review.integratedFunctionSha256===hash(call.fn))));

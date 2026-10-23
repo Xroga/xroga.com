@@ -13,6 +13,10 @@
     "backend/src/services/integrations/businessActionConfirmations.ts",
     "frontend/src/app/(shell)/dashboard/actions/confirm/[id]/page.tsx",
     "frontend/src/app/crypto/page.tsx",
+    "frontend/src/components/library/LibraryWorkspace.tsx",
+    "frontend/src/components/library/LibraryFilePreview.tsx",
+    "frontend/src/components/library/libraryFilePreview.test.ts",
+    "frontend/src/components/projects/FilePreview.tsx",
     "frontend/src/components/terminal/WorkspaceLauncher.tsx",
     "frontend/src/components/homepage-next/s02/Theater.tsx",
     "frontend/src/components/homepage-next/s02/WorkforceStage.tsx",
@@ -50,6 +54,7 @@
     "docs/xroga/runtime-contract.md",
     "docs/xroga/secret-inventory.md",
     "scripts/ci/prepare-pr-integration.test.mjs",
+    "scripts/ci/prepare-pr-integration.mjs",
     "docs/xroga/security/phase3-main-reconciliation-20261023.md",
     "docs/xroga/missions/phase3-main-reconciliation-20261023.json"
   ],
@@ -62,7 +67,7 @@
   "schemaImpact": {"changed": false, "migrations": [], "rollout": "No SQL edit or database application in this reconciliation. Inherited parent migrations remain subject to original release gates.", "rollback": "No database operation to reverse. Preserve historical rows and accepted migration history."},
   "securityImpact": {
     "auth": {"changed": false, "description": "No authentication implementation or role grant in this code candidate."},
-    "tenant": {"changed": false, "description": "Retain existing owner/session/project draft identity checks. RLS test excludes comments but retains executable ownership predicates."},
+    "tenant": {"changed": true, "description": "Retain existing owner/session/project draft checks and server private-file authorization. Reuse secure download/copy/revoke controls in current Library with exact selected project/file URL binding. Account-keyed remount clears local selections and pending views across verified identity changes. No RLS, role grant or server ownership policy is weakened."},
     "approval": {"changed": true, "description": "Reconcile main's financial-action policy and original-request display with canonical durable permits. Preserve read-only denial, exact scoped approval, receipts and full-access non-bypass. Request display requires a digest-verified scoped plan. No new permission is granted."},
     "credentials": {"changed": false, "description": "Vault and credential consumers unchanged. Confirmation response retains existing redacted parameters. Separate synthetic Google receipts do not authorize production cutover."},
     "egress": {"changed": false, "description": "No egress policy change. Phase 4 remains separate."},
@@ -70,6 +75,7 @@
     "billing": {"changed": false, "description": "No billing feature or paid upgrade. External synthetic verification has separate bounded founder approval and cleanup receipts."}
   },
   "tests": [
+    {"command": "npm run test:frontend plus frontend typecheck and lint", "scope": "Current Library integration: 1,177 tests passed, no failures/skips. Three rendered cases cover exact selected project/file delivery controls, substituted/executable URL denial, safe external preview retention, preview bounds and account-keyed state. Typecheck and lint pass with existing warnings. Real authenticated copy/revoke proof remains mandatory in CI.", "negative": true, "reference": "frontend/src/components/library/libraryFilePreview.test.ts"},
     {"command": "tsx --test businessAction.digest.test.ts businessActionConfirmations.claim.test.ts businessActionRisk.test.ts authority/enforce.test.ts authority/digest.test.ts", "scope": "Pinned 268f31b5 reconciliation: 17 passed, zero failed/skipped. Includes original-request digest substitution refusal, scoped redacted approval metadata and full-access consequential-write non-bypass.", "negative": true, "reference": "backend/src/services/integrations/businessAction.digest.test.ts"},
     {"command": "npm run test:frontend", "scope": "Pinned 268f31b5 reconciliation: all 1,174 tests passed, zero failed/skipped. Backend TypeScript compilation also passed. Mandatory source and virtual-merge CI remain separate.", "negative": true, "reference": "frontend/src/lib/workspaceEmptyComposer.test.ts"},
     {"command": "Focused tsx frontend test run across nine reconciliation files", "scope": "131 passed, zero failed. Positive and negative source contracts, project resume, composer preservation and ownership assertions.", "negative": true, "reference": "frontend/src/lib/workspaceEmptyComposer.test.ts"},

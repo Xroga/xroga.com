@@ -100,6 +100,29 @@ test('integration rebinds only unique byte-identical native Array conversion fun
   assert.throws(()=>project(current,{sourceSha256:'0'.repeat(64)}),/Unbound original/);
 });
 
+test('unchanged native Uint8Array conversion survives unrelated rendering changes without certifying DML',()=>{
+  const path='frontend/typed-conversion.tsx';
+  const old='type Sources = Array<string>;\nfunction decode(list) { return Uint8Array.from(list); }\n';
+  const current='import { createPortal } from "react-dom";\n'+old+'db.from("new_private_table");\n';
+  const hash=text=>createHash('sha256').update(text).digest('hex');
+  const record={path,sourceSha256:hash(old),callIds:[discoverPersistenceCalls(path,old)[0].id],disposition:'NOT_PERSISTENCE'};
+  const project=(text,change={})=>projectStableArrayConversionReviews({reviews:[{...record,...change}]},{readFeature:()=>old,readIntegrated:()=>text});
+  const result=project(current);
+  assert.equal(result.rebound.length,1);
+  const dml=discoverPersistenceCalls(path,current).find(call=>call.target==='new_private_table');
+  assert.ok(dml&&!result.registry.reviews[0].callIds.includes(dml.id));
+  for(const unsafe of [
+    'const Uint8Array = db;\n'+current, 'import Uint8Array from "db";\n'+current,
+    'Uint8Array.from = db.from;\n'+current, 'globalThis.Uint8Array = db;\n'+current,
+    'globalThis["Uint8Array"] = db;\n'+current, 'Object.assign(Uint8Array, db);\n'+current,
+    current.replace('return Uint8Array.from(list);','return Uint8Array.from(list).reverse();'),
+    current+old,
+  ])assert.equal(project(unsafe).rebound.length,0);
+  for(const disposition of ['SCOPED_BOUNDARY','REVIEWED_GAP','NARROW_EXCEPTION'])assert.equal(project(current,{disposition}).rebound.length,0);
+  assert.equal(project(current,{structuredOrigin:{id:'partitioned'}}).rebound.length,0);
+  assert.throws(()=>project(current,{sourceSha256:'0'.repeat(64)}),/Unbound original/);
+});
+
 test('a changed rendering closure requires exact source and function review and cannot hide added DML',()=>{
   const path='frontend/reviewed-conversion.tsx',old='function convert(list) { return Array.from(list); }\n';
   const current='function convert(list) { const label="reviewed"; return Array.from(list); }\ndb.from("new_private_table");\n';

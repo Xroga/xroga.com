@@ -1,6 +1,6 @@
 'use client';
 
-import { useState,useEffect,useRef } from 'react';
+import React, { useState,useEffect,useRef } from 'react';
 import { apiFetch } from '@/lib/api';
 import { isPrivateFileUrl } from '@/lib/privateFileUrl';
 

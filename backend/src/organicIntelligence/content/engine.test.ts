@@ -284,10 +284,15 @@ test('actual repository snapshot reuses Command 1, keeps missing data explicit, 
 });
 
 test('snapshot citation eligibility and reporting share the injected clock and reject expired claims', async () => {
-  const historical = await buildGrowthContentSnapshot({ now: new Date('2026-09-22T00:00:00.000Z') });
+  // Synthetic clock fixture, independent of legitimate live claim re-verification.
+  // No repository source/claim dates or production freshness rules are changed.
+  const growthSource = await loadGrowthContentSource();
+  growthSource.sources = growthSource.sources.map(source => ({ ...source, verifiedAt: '2026-09-22T00:00:00.000Z' }));
+  growthSource.claims = growthSource.claims.map(claim => ({ ...claim, verifiedAt: '2026-09-22T00:00:00.000Z', nextVerificationDue: '2026-10-22T00:00:00.000Z' }));
+  const historical = await buildGrowthContentSnapshot({ growthSource, now: new Date('2026-09-22T00:00:00.000Z') });
   assert.equal(historical.briefs.length, 2);
   assert.ok(historical.contentValidation.every(item => item.issues.length === 0));
-  const expired = await buildGrowthContentSnapshot({ now: new Date('2026-10-24T00:00:00.000Z') });
+  const expired = await buildGrowthContentSnapshot({ growthSource, now: new Date('2026-10-24T00:00:00.000Z') });
   assert.deepEqual(expired.firstBatch, []);
   assert.deepEqual(expired.briefs, []);
   assert.equal(expired.contentValidation.length, historical.contentValidation.length);

@@ -60635,11 +60635,64 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:a97d7131965cda7a384d",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/library/LibraryFilePreview.tsx",
+      "sha256": "d0f36a1edfb4d65f7f63ba72459e79c64fd7fe08b316b1237411766a62b036e8",
+      "symbols": [
+        "LibraryFilePreview",
+        "content",
+        "externalUrl",
+        "privateUrl",
+        "safeFileUrl",
+        "url"
+      ],
+      "imports": [
+        "@/components/projects/FilePreview",
+        "@/lib/api",
+        "@/lib/privateFileUrl",
+        "lucide-react",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/projects/FilePreview.tsx",
+        "frontend/src/lib/privateFileUrl.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/dashboard/library/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/library/LibraryWorkspace.tsx:13",
+        "frontend/src/components/library/libraryFilePreview.test.ts:6"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/components/library/libraryFilePreview.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:94c857b6d7106a374360",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/library/LibraryWorkspace.tsx",
-      "sha256": "3d5e584a8551992dd7d9a1200df94f9836173ed7f99f00f3408c30d7a88e1fcd",
+      "sha256": "51fa82647e6c5eaaee2114bb2a2a620926290753427600dbc8ab1e573ddde908",
       "symbols": [
+        "AccountLibraryWorkspace",
         "CurrentIcon",
         "Empty",
         "Icon",
@@ -60655,16 +60708,15 @@
         "isDocument",
         "isSection",
         "query",
-        "safeFileUrl",
         "sections",
         "sync",
         "toggleSkill",
-        "url",
         "visibleFiles",
         "visibleSkills",
         "visibleTemplates"
       ],
       "imports": [
+        "./LibraryFilePreview",
         "./LibraryWorkspace.module.css",
         "@/components/layout/PageFullscreenFrame",
         "@/components/layout/WorkspaceIdentityContext",
@@ -60679,6 +60731,7 @@
       "runtimeImports": [
         "frontend/src/components/layout/PageFullscreenFrame.tsx",
         "frontend/src/components/layout/WorkspaceIdentityContext.tsx",
+        "frontend/src/components/library/LibraryFilePreview.tsx",
         "frontend/src/components/library/LibraryWorkspace.module.css",
         "frontend/src/hooks/useHydrated.ts",
         "frontend/src/lib/api.ts",
@@ -63186,7 +63239,7 @@
       "id": "surface:6c40bcd3e82e817e4ceb",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/projects/FilePreview.tsx",
-      "sha256": "e72f14706a557f27e6fd0f31e53132c25728b9cb8f838fa4fda1cd8cc6231cef",
+      "sha256": "5c1f7582730c980bcbaf3579fed0e9cb3b4dcef43efdc9b333be61bd3accc15f",
       "symbols": [
         "FilePreview",
         "FilePreviewProps",
@@ -63209,11 +63262,14 @@
         "frontend/src/lib/api.ts",
         "frontend/src/lib/privateFileUrl.ts"
       ],
-      "entryPoints": [],
+      "entryPoints": [
+        "frontend/src/app/(shell)/dashboard/library/page.tsx"
+      ],
       "callers": [
+        "frontend/src/components/library/LibraryFilePreview.tsx:7",
         "frontend/src/components/projects/ProjectDetailView.tsx:10"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "react"
@@ -63228,11 +63284,11 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -80845,13 +80901,16 @@
       ],
       "imports": [],
       "runtimeImports": [],
-      "entryPoints": [],
+      "entryPoints": [
+        "frontend/src/app/(shell)/dashboard/library/page.tsx"
+      ],
       "callers": [
+        "frontend/src/components/library/LibraryFilePreview.tsx:6",
         "frontend/src/components/projects/FilePreview.tsx:5",
         "frontend/src/components/projects/ProjectDetailView.tsx:13",
         "frontend/src/lib/privateFileUrl.test.ts:3"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
       "authBoundary": [],
@@ -80862,11 +80921,11 @@
       "testCoverage": [
         "frontend/src/lib/privateFileUrl.test.ts"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -89299,7 +89358,7 @@
       "id": "surface:276c4109416eb12460ad",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/prepare-pr-integration.mjs",
-      "sha256": "17780f97e9853fbb8c1ac3e5ce65ba5969eeae668c4c9acc01f25c192484ad60",
+      "sha256": "d817c4542cf197c96e1350d2d1172436736efa8d131ba2625737691b1401e2f3",
       "symbols": [
         "admission",
         "after",
@@ -89345,7 +89404,7 @@
         "sourceSha256",
         "stable",
         "target",
-        "unsafe",
+        "unsafeNames",
         "validateIntegrationIdentity",
         "visit"
       ],
@@ -104401,9 +104460,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:6181fb68c8e8d5f721f6",
+      "id": "finding:00fff5c3dbdd978e96e8",
       "sourcePath": "frontend/src/components/library/LibraryWorkspace.tsx",
-      "line": 87,
+      "line": 92,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -106496,30 +106555,30 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:1f692ced01f1552d1308",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 980,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:1923ed671403775a841d",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 981,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:e528598ab0cb1185b17a",
+      "id": "frontend-call:9fd4c7d80186505f1952",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 988,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:f856c0e7be2a8877f8b2",
+      "id": "frontend-call:48423649ec9e94bd3201",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 1002,
+      "line": 989,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:544cf995a39bfa49eb7e",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 996,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:c7cff9f6f58572932a79",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 1010,
       "callee": "fetch",
       "reachable": false
     },
@@ -107665,44 +107724,44 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:b19564a2b71d0619dd86",
+      "id": "frontend-call:802861099a3684aa14d9",
       "sourcePath": "frontend/src/components/library/LibraryWorkspace.tsx",
-      "line": 51,
+      "line": 56,
       "callee": "api.projects.list().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:9984361fca9171299016",
+      "id": "frontend-call:9b51631813679a7fa93c",
       "sourcePath": "frontend/src/components/library/LibraryWorkspace.tsx",
-      "line": 51,
+      "line": 56,
       "callee": "api.projects.list().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:f1586e511895d695c7c4",
+      "id": "frontend-call:44565d127d75196f55cb",
       "sourcePath": "frontend/src/components/library/LibraryWorkspace.tsx",
-      "line": 51,
+      "line": 56,
       "callee": "api.projects.list",
       "reachable": true
     },
     {
-      "id": "frontend-call:39676e8eed766bd9d231",
+      "id": "frontend-call:b261ee817e260f5e18ab",
       "sourcePath": "frontend/src/components/library/LibraryWorkspace.tsx",
-      "line": 63,
+      "line": 68,
       "callee": "api.projects.files().then().catch",
       "reachable": true
     },
     {
-      "id": "frontend-call:762fb9738bb5e7b79a74",
+      "id": "frontend-call:2effcf18721cd75dc129",
       "sourcePath": "frontend/src/components/library/LibraryWorkspace.tsx",
-      "line": 63,
+      "line": 68,
       "callee": "api.projects.files().then",
       "reachable": true
     },
     {
-      "id": "frontend-call:b2659b673e090987a52c",
+      "id": "frontend-call:9ce858e9b473996693ae",
       "sourcePath": "frontend/src/components/library/LibraryWorkspace.tsx",
-      "line": 63,
+      "line": 68,
       "callee": "api.projects.files",
       "reachable": true
     },
@@ -110835,7 +110894,7 @@
       "sourcePath": "backend/src/organicIntelligence/content/engine.test.ts",
       "declaredTests": 33,
       "skipLocations": [
-        "backend/src/organicIntelligence/content/engine.test.ts:378"
+        "backend/src/organicIntelligence/content/engine.test.ts:383"
       ],
       "focusLocations": []
     },
@@ -112893,6 +112952,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:07b7947e9acd174081b4",
+      "sourcePath": "frontend/src/components/library/libraryFilePreview.test.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:365299b4ac71b627e87d",
       "sourcePath": "frontend/src/components/workspace/WorkspaceAuthGate.test.ts",
       "declaredTests": 4,
@@ -114106,7 +114172,7 @@
     {
       "id": "test-suite:29dc8a9e57d60e0e7b24",
       "sourcePath": "scripts/ci/prepare-pr-integration.test.mjs",
-      "declaredTests": 8,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },

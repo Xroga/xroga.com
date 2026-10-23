@@ -967,6 +967,14 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   expect((await fetch(`${backendUrl}/api/projects/${ownerProjectId}/files/${privateFileId}/links`,{method:'DELETE',headers:{Authorization:browserBearer}})).status).toBe(200);
   expect((await page.request.get(signed.url)).status()).toBe(404);
   await page.goto(`/dashboard/projects/${ownerProjectId}`);
+  await expect(page).toHaveURL(new RegExp(`/workspace\\?project=${ownerProjectId}`));
+  // Keep main's unified Workspace navigation. Private saved-file delivery now
+  // lives in Library, using the same owner-only download/copy/revoke controls.
+  await page.goto('/dashboard/library#my-files');
+  const libraryProject = page.getByLabel('Choose project', { exact: true });
+  await libraryProject.selectOption(ownerProjectId);
+  await expect(libraryProject.locator(`option[value="${outsiderProjectId}"]`)).toHaveCount(0);
+  await page.getByRole('button', { name: 'private-browser-fixture.txt' }).click();
   await expect(page.getByRole('link',{name:'Download selected file'})).toHaveAttribute('href',`/api/private-files/${ownerProjectId}/${privateFileId}`);
   await expect(page.getByRole('button',{name:'Download All'})).toHaveCount(0);
   await page.getByRole('button',{name:'Copy 60-second link'}).click();
