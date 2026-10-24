@@ -10,7 +10,7 @@
  * timings, model cost, cleanup. A receipt is PASS only when the actual behaviour equals the expected behaviour.
  */
 import { createHash, randomUUID } from 'node:crypto';
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -358,23 +358,28 @@ workflows.PRODUCT010 = async () => {
 // host start: reap orphans a previous runner left behind (a crashed host process cannot clean up after itself)
 const reaped = new ContainerBrowserWorker({ repoRoot, browserImage, proxyImage }).reapOrphans();
 console.log(`reaped at start: ${reaped.containers} containers, ${reaped.networks} networks`);
-/** Samples memory and CPU of every running browser-job container until stopped; returns peaks per container. */
+/** Samples memory and CPU of every running browser-job container until stopped; returns peaks per container.
+ *  Asynchronous on purpose: a synchronous `docker stats` blocks the event loop for seconds and inflates the latencies being measured. */
 function sampler() {
   const peaks = new Map<string, { memMiB: number; cpuPct: number }>();
-  let on = true;
-  const tick = () => {
-    if (!on) return;
-    const r = spawnSync('docker', ['stats', '--no-stream', '--format', '{{.Name}}|{{.MemUsage}}|{{.CPUPerc}}', ...docker(['ps', '-q', '--filter', 'label=xroga.browser-job=1']).stdout.trim().split('\n').filter(Boolean)], { encoding: 'utf8' });
-    for (const line of (r.stdout ?? '').trim().split('\n').filter((l) => l.includes('|'))) {
-      const [name, mem, cpu] = line.split('|');
-      const m = /([\d.]+)\s*([KMG]i?B)/.exec(mem ?? ''); const mib = m ? Number(m[1]) * ({ KiB: 1 / 1024, KB: 1 / 1024, MiB: 1, MB: 1, GiB: 1024, GB: 1024 } as Record<string, number>)[m[2]!]! : 0;
-      const p = peaks.get(name!) ?? { memMiB: 0, cpuPct: 0 };
-      peaks.set(name!, { memMiB: Math.max(p.memMiB, mib), cpuPct: Math.max(p.cpuPct, Number.parseFloat(cpu ?? '0') || 0) });
+  let on = true; let ticks = 0;
+  const sh = (args: string[]) => new Promise<string>((res) => { let out = ''; const c = spawn('docker', args); c.stdout.on('data', (d) => { out += d; }); c.on('error', () => res('')); c.on('close', () => res(out)); });
+  const loop = (async () => {
+    while (on) {
+      const ids = (await sh(['ps', '-q', '--filter', 'label=xroga.browser-job=1'])).trim().split('\n').filter(Boolean);
+      if (ids.length) {
+        ticks++;
+        for (const line of (await sh(['stats', '--no-stream', '--format', '{{.Name}}|{{.MemUsage}}|{{.CPUPerc}}', ...ids])).trim().split('\n').filter((l) => l.includes('|'))) {
+          const [name, mem, cpu] = line.split('|');
+          const m = /([\d.]+)\s*([KMG]i?B)/.exec(mem ?? ''); const mib = m ? Number(m[1]) * ({ KiB: 1 / 1024, KB: 1 / 1024, MiB: 1, MB: 1, GiB: 1024, GB: 1024 } as Record<string, number>)[m[2]!]! : 0;
+          const p = peaks.get(name!) ?? { memMiB: 0, cpuPct: 0 };
+          peaks.set(name!, { memMiB: Math.max(p.memMiB, mib), cpuPct: Math.max(p.cpuPct, Number.parseFloat(cpu ?? '0') || 0) });
+        }
+      }
+      await new Promise((z) => setTimeout(z, 250));
     }
-    setTimeout(tick, 400);
-  };
-  tick();
-  return () => { on = false; return [...peaks.entries()].map(([name, v]) => ({ name, ...v })); };
+  })();
+  return async () => { on = false; await loop; const all = [...peaks.entries()].map(([name, v]) => ({ name, ...v })); return { browser: all.filter((p) => p.name.startsWith('xroga-bj-browser-')), proxy: all.filter((p) => p.name.startsWith('xroga-bj-proxy-')), ticks }; };
 }
 const pct = (xs: number[], p: number) => { const s = [...xs].sort((a, b) => a - b); return s.length ? s[Math.min(s.length - 1, Math.ceil((p / 100) * s.length) - 1)]! : null; };
 const W15_PLAN = { steps: [{ op: 'click', selector: 'li.next > a' }, { op: 'waitFor', urlPrefix: `${Q}/page/2`, timeoutMs: 15_000 }, { op: 'extractText', selector: '.quote .text', name: 'q', all: true }, { op: 'screenshot', name: 'w15.png' }],
@@ -385,7 +390,7 @@ workflows.W15 = async () => {
   const runs: any[] = [];
   for (let i = 0; i < sequential; i++) runs.push(await run(i % 2 ? bob : alice, { goal: `load run ${i}`, startUrl: `${Q}/`, allowedOrigins: [Q], limits: limits(), plan: W15_PLAN }));
   const wave = await Promise.all(Array.from({ length: concurrent }, (_, i) => run(i % 2 ? bob : alice, { goal: `concurrent run ${i}`, startUrl: `${Q}/`, allowedOrigins: [Q], limits: limits(), plan: W15_PLAN })));
-  const peaks = stop();
+  const { browser: peaks, proxy: proxyPeaks, ticks } = await stop();
   const all = [...runs, ...wave];
   const verified = all.filter((r) => r.status === 'completed' && r.outcomeVerified === true);
   const lat = verified.map((r) => r.elapsedMs as number);
@@ -396,7 +401,8 @@ workflows.W15 = async () => {
     inContainerBrowserMs: { p50: pct(inner, 50), max: inner.length ? Math.max(...inner) : null },
     startupFailures: all.filter((r) => r.status !== 'completed' && /could not start|did not start|exited without/.test(String(r.error ?? ''))).length,
     retriedAttempts: all.reduce((n, r) => n + Math.max(0, (r.attempts ?? 1) - 1), 0),
-    peakContainerMemMiB: peaks.length ? Math.max(...peaks.map((p) => p.memMiB)) : null, peakContainerCpuPct: peaks.length ? Math.max(...peaks.map((p) => p.cpuPct)) : null, sampledContainers: peaks.length,
+    peakBrowserContainerMemMiB: peaks.length ? Math.max(...peaks.map((p) => p.memMiB)) : null, peakBrowserContainerCpuPct: peaks.length ? Math.max(...peaks.map((p) => p.cpuPct)) : null,
+    sampledBrowserContainers: peaks.length, peakProxyContainerMemMiB: proxyPeaks.length ? Math.max(...proxyPeaks.map((p) => p.memMiB)) : null, sampledProxyContainers: proxyPeaks.length, samplerTicks: ticks,
     modelCostMicrosPerVerifiedOutcome: 0,
     note: 'Infrastructure cost per verified outcome is computed in the cost report from the host price and these measured durations; model cost is 0 because these runs use no AI steps.',
   };
