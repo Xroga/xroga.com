@@ -33,3 +33,8 @@ an unknown commit is an error).
 ## What is not covered by CI at all
 The Docker evidence (`browser-sandbox-docker-local-2026-10-24.json`, `browser-egress-isolation-docker-local-2026-10-24.json`) was produced locally from the container inputs recorded in each file
 (the spec, seccomp profile and Dockerfile hashes); re-running them after any change under `deploy/browser-worker/` or `scripts/browser/` is required, and the hashes show whether the inputs changed.
+
+## Delta after `df9b3e98` (commit `3eb986b6`): three files the script classes as code, none run by CI
+`bash scripts/verify-source-equivalence.sh df9b3e98 HEAD` reports NOT EQUIVALENT for exactly these files and no others. They are not documentation by extension, but nothing the CI workflow or the backend imports or executes them:
+`scripts/browser/collect-host-evidence.sh` and `scripts/browser/evaluate-host-evidence.mjs` (run by a person on a target host) and `evidence/batch1-integration/resolution-over-codex-candidate.patch` (a record).
+The CI result for `df9b3e98` therefore still covers every executed file. The evaluator was only smoke-tested (syntax, and it rejects an empty bundle with exit 2); it has not yet judged a real bundle, so the first host run is also its first real test.
