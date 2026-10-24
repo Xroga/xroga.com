@@ -72,7 +72,7 @@ const steps = [
   { id: '02c-phase2-workers-runtime-unit', cmd: ['npx', 'tsx', '--test', ...TAP, ...p2Unit], cwd: 'backend', required: true },
   { id: '03b-phase2-worker-leases-real-sql', cmd: ['npx', 'tsx', '--test', ...TAP, ...p2Pg], cwd: 'backend', required: true, fixture: 'postgres' },
   // A real Chromium on the CI host (LOCAL class: proves the launch policy is honoured by an actual browser, not that the sandbox works in an OCI container).
-  { id: '03c-phase2-real-chromium-LOCAL', cmd: ['npx', 'tsx', '--test', ...TAP, ...p2Browser], cwd: 'backend', required: env.PHASE2_REQUIRE_BROWSER === '1' },
+  { id: '03c-phase2-real-chromium-LOCAL', cmd: ['npx', 'tsx', '--test', ...TAP, ...p2Browser], cwd: 'backend', required: env.PHASE2_REQUIRE_BROWSER === '1', env: env.PHASE2_BROWSERS_PATH ? { PLAYWRIGHT_BROWSERS_PATH: env.PHASE2_BROWSERS_PATH } : {} },
   { id: '03d-phase2-seccomp-derivation', cmd: ['node', 'deploy/browser-worker/derive-seccomp.mjs', '--check'], cwd: '.', required: true, kind: 'exit' },
   { id: '04-s3-wire-emulator-SYNTHETIC', cmd: ['npx', 'tsx', '--test', ...wireTests], cwd: 'backend', required: true, fixture: 's3Emulator' },
   { id: '05-r2-provider-REAL', cmd: ['npx', 'tsx', '--test', ...providerTests], cwd: 'backend', required: false, fixture: 'r2Provider', needs: 'AUTHORISED' },

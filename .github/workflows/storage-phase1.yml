@@ -63,7 +63,11 @@ jobs:
         run: npm ci
       - name: Real Chromium for the Phase 2 browser policy tests (disposable runner)
         run: |
+          # A dedicated browsers directory, visible only to the Phase 2 browser step. An installed browser in Playwright's default location
+          # would also switch on the older in-sandbox tests, which expect the production image's /ms-playwright layout and skip without a browser.
+          export PLAYWRIGHT_BROWSERS_PATH="$RUNNER_TEMP/phase2-browsers"
           npx playwright-core install --with-deps chromium
+          echo "PHASE2_BROWSERS_PATH=$PLAYWRIGHT_BROWSERS_PATH" >> "$GITHUB_ENV"
           # Ubuntu 24.04 runners restrict unprivileged user namespaces, which Chromium's sandbox needs. The runner is throw-away, so lift the
           # restriction here; the tests then run with the sandbox ON (chromiumSandbox: true) exactly as in production policy.
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
