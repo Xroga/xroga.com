@@ -855,6 +855,7 @@ router.post(
             await prepareBusinessAction(
               {
                 userId,
+                tenantContext:requireTenantContext(req.tenantContext),
 
                 useCase:
                   message
@@ -1188,6 +1189,7 @@ router.post(
             await readBusinessData(
               {
                 userId,
+                tenantContext:requireTenantContext(req.tenantContext),
 
                 useCase:
                   message

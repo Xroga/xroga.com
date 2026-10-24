@@ -98,13 +98,13 @@ test('GJ contracts use the real typed GoalContract boundary and conversational p
 });
 test('GJ business preparation finds only the relevant disconnected provider and never executes',async t=>{
   const paths=providerStub(t);
-  const result=await prepareBusinessAction({userId:OWNER,useCase:'Delete the selected Slack message'});
+  const result=await prepareBusinessAction({userId:OWNER,tenantContext:createTenantContext({userId:OWNER,via:'remote_getuser'}),useCase:'Delete the selected Slack message'});
   assert.equal(result.status,'connection_required');
   if(result.status==='connection_required')assert.equal(result.toolkit,'slack');
   assert.equal(paths.filter(path=>path.endsWith('/execute')).length,0);
 });
 test('GJ unsupported action remains unavailable instead of a fabricated success',async t=>{
-  providerStub(t,'empty'); assert.equal((await prepareBusinessAction({userId:OWNER,useCase:'Unsupported fixture operation'})).status,'unavailable');
+  providerStub(t,'empty'); assert.equal((await prepareBusinessAction({userId:OWNER,tenantContext:createTenantContext({userId:OWNER,via:'remote_getuser'}),useCase:'Unsupported fixture operation'})).status,'unavailable');
 });
 test('GJ business write rejects absent user authority and changed prepared arguments',async t=>{
   const paths=providerStub(t,'success',true),plan=preparedPlan();

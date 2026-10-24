@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "762f9ae45a3155154562da499df0c2496d3ef875",
+  "source_sha": "b183079ec8a00cb4d7a29a95e8cdfb517da81acb",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -13625,7 +13625,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sha256": "7ad7b1f7dde453a4065e15ba260998fe5841c6992724d03ee299b71c8380c0f5"
+      "sha256": "c1833bc97b0f678d6c62c44f458fc6aac407d9f835a90e78aab77af94babe19f"
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
@@ -14037,7 +14037,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "ffd706b8deeab7d04891ad77c1e5890ff816829f1c0ee73f31ff206c7aaf325b"
+      "sha256": "86b13c31b9497a0ba8579f23ca6119a44b687e422a72e818dbbd63bc32e78bdb"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -14045,7 +14045,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "sha256": "a1c68f9aa29e6e9f6bac4de7d0ebef07072995039d206fd689851cc0460b4ea0"
+      "sha256": "8da008050feba16638cd6d332bcbd62d1832a3b976eeb07b953ceac6fc1d0ab2"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
@@ -27087,56 +27087,56 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 619,
+      "line": 621,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1108,
+      "line": 1116,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1134,
+      "line": 1142,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 40,
+      "line": 41,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 58,
+      "line": 59,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 514,
+      "line": 516,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 978,
+      "line": 986,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 1003,
+      "line": 1011,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

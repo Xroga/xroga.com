@@ -5,12 +5,13 @@ import {
 } from '../../ai/openaiCompat.js';
 
 import {
-  withProviderReservation,
-} from '../../ai/providerBudget.js';
+  withTenantModelReservation,
+} from '../../ai/tenantModelDispatch.js';
+import {isTerminalModelFailure} from '../../ai/providerRuntime.js';
+import {requireTenantContext,requireResourceOwner,type TenantContext} from '../../security/tenantContext.js';
 
 import {
   recordCompletedProviderUsage as recordUsage,
-  isPostCompletionAccountingError,
 } from '../../ai/postCompletionAccounting.js';
 
 import {
@@ -480,6 +481,7 @@ function buildCandidatePayload(
 async function selectToolAndArguments(
   input: {
     userId: string;
+    tenantContext: TenantContext;
 
     useCase: string;
 
@@ -661,10 +663,10 @@ async function selectToolAndArguments(
                   ];
 
                 const completion =
-                  await withProviderReservation(
+                  await withTenantModelReservation(
                     {
-                      userId:
-                        input.userId,
+                      scope:{context:input.tenantContext,userId:input.userId,connectedAccountId:'platform'},
+                      payload:{messages},
 
                       modelId,
 
@@ -676,10 +678,10 @@ async function selectToolAndArguments(
                       maximumOutputTokens:
                         1_200,
 
-                      execute: () =>
+                      execute: (dispatch) =>
                         chatCompletion(
                           modelId,
-                          messages,
+                          dispatch.payload.messages as ChatMessage[],
                           {
                             temperature:
                               0,
@@ -695,6 +697,8 @@ async function selectToolAndArguments(
 
                             signal:
                               input.signal,
+                            credentialOverride:dispatch.credentialOverride,
+                            beforeDispatch:dispatch.beforeDispatch,
                           },
                         ),
                     },
@@ -721,7 +725,7 @@ async function selectToolAndArguments(
         return structured.value;
       }
     } catch (error) {
-      if (isPostCompletionAccountingError(error)) throw error;
+      if (input.signal?.aborted || isTerminalModelFailure(error)) throw error;
       /*
        * Try the bounded fallback route.
        */
@@ -908,12 +912,16 @@ async function connectionOutcomeForToolkits(
 export async function readBusinessData(
   input: {
     userId: string;
+    tenantContext: TenantContext;
 
     useCase: string;
 
     signal?: AbortSignal;
   },
 ): Promise<BusinessReadOutcome> {
+  const tenantContext=requireTenantContext(input.tenantContext),userId=input.userId;
+  requireResourceOwner(tenantContext,userId);
+  input={userId,tenantContext,useCase:input.useCase,signal:input.signal};
   const useCase =
     input.useCase.trim();
 
@@ -1054,6 +1062,7 @@ export async function readBusinessData(
   const selection =
     await selectToolAndArguments(
       {
+        tenantContext,
         userId:
           input.userId,
 
