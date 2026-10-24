@@ -27,6 +27,7 @@ import {
 import {
   canUserAccessComposioToolkit,
   createReadOnlyComposioSession,
+  getComposioCatalogToolkit,
   isComposioConfigured,
   listComposioCatalog,
   listConnectedComposioToolkits,
@@ -143,19 +144,38 @@ async function connectionRequestResponse(userId: string, message: string, terms:
 
   const possible = new Map<string, { toolkit: string; name: string; description?: string; logo?: string; recommended: boolean }>();
   let exact: string | null = null;
+  // A named app should be resolved by its verified toolkit slug first. The
+  // provider's free-text catalog search can return an empty page even while
+  // direct toolkit lookup and the marketplace both know the app exists.
   for (const term of terms) {
-    const page = await listComposioCatalog({ search: term, limit: 30 });
-    const normalized = term.replace(/[^a-z0-9]/g, '');
-    for (const item of page.items) {
-      if (item.deprecated || !canUserAccessComposioToolkit(userId, item.slug)) continue;
-      const key = item.slug.replace(/[^a-z0-9]/g, '');
-      const name = item.name.toLowerCase().replace(/[^a-z0-9]/g, '');
-      if (!possible.has(item.slug)) possible.set(item.slug, {
-        toolkit: item.slug, name: item.name, description: item.description, logo: item.logo, recommended: false,
-      });
-      if (key === normalized || name === normalized) { exact = item.slug; break; }
+    if (!/^[a-z][a-z0-9_-]{1,59}$/.test(term)) continue;
+    try {
+      const item = await getComposioCatalogToolkit(term);
+      if (!item.deprecated && canUserAccessComposioToolkit(userId, item.slug)) {
+        possible.set(item.slug, { toolkit: item.slug, name: item.name, description: item.description, logo: item.logo, recommended: true });
+        exact = item.slug;
+        break;
+      }
+    } catch {
+      // An unrecognized slug can still match the provider's name/description
+      // search; do not present an unverified catalog candidate.
     }
-    if (exact) break;
+  }
+  if (!exact) {
+    for (const term of terms) {
+      const page = await listComposioCatalog({ search: term, limit: 100 });
+      const normalized = term.replace(/[^a-z0-9]/g, '');
+      for (const item of page.items) {
+        if (item.deprecated || !canUserAccessComposioToolkit(userId, item.slug)) continue;
+        const key = item.slug.replace(/[^a-z0-9]/g, '');
+        const name = item.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+        if (!possible.has(item.slug)) possible.set(item.slug, {
+          toolkit: item.slug, name: item.name, description: item.description, logo: item.logo, recommended: false,
+        });
+        if (key === normalized || name === normalized) { exact = item.slug; break; }
+      }
+      if (exact) break;
+    }
   }
   const candidates = exact
     ? [possible.get(exact)!]
