@@ -89440,6 +89440,7 @@
       ],
       "callers": [
         "scripts/ci/baseline.test.mjs:11",
+        "scripts/security/proxy-origin-fixture.test.mjs:8",
         "scripts/xroga/run-golden-browser.mjs:8",
         "scripts/xroga/verify-phase-one.mjs:9"
       ],
@@ -89463,7 +89464,8 @@
         "scripts/ci/run-baseline.mjs#verifyToolchain"
       ],
       "testCoverage": [
-        "scripts/ci/baseline.test.mjs"
+        "scripts/ci/baseline.test.mjs",
+        "scripts/security/proxy-origin-fixture.test.mjs"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -91233,6 +91235,61 @@
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:559e54a310ce648e7a13",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/proxy-origin-fixture.cjs",
+      "sha256": "e0bb2ce2205cdd172cb9e08a955e777ec4dc70da78b2c374bb85bd8f734e72f6",
+      "symbols": [
+        "HOST",
+        "PUBLIC_ADDRESS",
+        "assert",
+        "assertDisposableFixture",
+        "certPath",
+        "certificate",
+        "config",
+        "configurationPath",
+        "directory",
+        "dns",
+        "fs",
+        "hits",
+        "https",
+        "installProxyOriginTransport",
+        "keyPath",
+        "nonce",
+        "originalLookup",
+        "originalRequest",
+        "path",
+        "pinned",
+        "port",
+        "readConfiguration",
+        "rendezvous",
+        "root",
+        "server",
+        "startProxyOriginFixture"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:127.0.0.1"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -102585,12 +102642,13 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "5b45240a4ad9d340fd7fcbdb4fa398e1552fefc9aa9d6512dbaa1e75fbc6aada",
+      "sha256": "eac35208a1078892a82e99c2ed6ed011cc688477050f42bca9588a27536632f6",
       "sourceEntrypoints": [
         "scripts/security/collect-local-security-logs.mjs",
         "scripts/security/disposable-supabase.mjs",
         "scripts/security/disposable-supabase.test.mjs",
         "scripts/security/full-supabase-history.mjs",
+        "scripts/security/proxy-origin-fixture.test.mjs",
         "scripts/security/verify-oci-federation.ts"
       ],
       "hasSchedule": false
@@ -114052,6 +114110,13 @@
     {
       "id": "test-suite:56884ae799098ba6d5fc",
       "sourcePath": "scripts/security/evaluate-phase-three.test.mjs",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:225b18421f5d3869d6df",
+      "sourcePath": "scripts/security/proxy-origin-fixture.test.mjs",
       "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "3540d3c23fd2f51ac57775b30785d680bf118150",
+  "source_sha": "762f9ae45a3155154562da499df0c2496d3ef875",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12325,7 +12325,7 @@
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "5b45240a4ad9d340fd7fcbdb4fa398e1552fefc9aa9d6512dbaa1e75fbc6aada"
+      "sha256": "eac35208a1078892a82e99c2ed6ed011cc688477050f42bca9588a27536632f6"
     },
     {
       "path": ".github/workflows/command4-authority.yml",
@@ -13837,7 +13837,7 @@
     },
     {
       "path": "backend/src/security/frontendScope.local.integration.ts",
-      "sha256": "055ff88a3d5511dfe91689828495eb7a943f7d0b30db4fde0bae0238fd2c7b86"
+      "sha256": "42ca33edc21b9d7aac885b7bdb1f6b1be5d849e63c781e573e5a200e57331639"
     },
     {
       "path": "backend/src/security/githubConsumer.local.integration.ts",
