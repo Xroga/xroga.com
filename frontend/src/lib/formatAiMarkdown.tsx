@@ -3,8 +3,12 @@
 import React, {
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from 'react';
+import { createPortal } from 'react-dom';
+import { ArrowUpRight, Check, Copy, Search } from 'lucide-react';
+import { SourceLogo } from '@/components/terminal/SourceLogo';
 
 import ReactMarkdown, {
   type Components,
@@ -24,6 +28,8 @@ import {
   clearOAuthResult,
   subscribeOAuthResults,
 } from './oauthPopupResult';
+
+import { xrogaConnect } from './xrogaConnect';
 
 function joinClasses(
   ...values:
@@ -145,6 +151,7 @@ type ConfirmationStatus =
 
 interface SafeConfirmation {
   id: string;
+  request?: string;
   status:
     ConfirmationStatus;
   summary:
@@ -472,8 +479,9 @@ function BusinessActionConfirmationInline({
       </span>
 
       {confirmation ? (
-        <span className="text-[13px] leading-relaxed text-[var(--foreground)]/80">
-          {confirmation.summary}
+        <span className="flex flex-col gap-1 text-[13px] leading-relaxed text-[var(--foreground)]/80">
+          <span>{confirmation.summary}</span>
+          {confirmation.request ? <span className="text-[11px] text-[var(--foreground)]/55">Your request: {confirmation.request}</span> : null}
         </span>
       ) : !failed ? (
         <span className="text-[13px] text-[var(--foreground)]/65">
@@ -920,6 +928,54 @@ function XrogaConnectionCard({
       null,
     );
 
+  const [showAllCandidates, setShowAllCandidates] = useState(false);
+  const [pluginSearch, setPluginSearch] = useState('');
+  const [pluginMatches, setPluginMatches] = useState<Array<{ slug: string; name: string }>>([]);
+  const [pluginSearchBusy, setPluginSearchBusy] = useState(false);
+  const [pluginSearchError, setPluginSearchError] = useState(false);
+
+  useEffect(() => {
+    const query = pluginSearch.trim();
+    if (query.length < 2) {
+      setPluginMatches([]);
+      setPluginSearchBusy(false);
+      setPluginSearchError(false);
+      return;
+    }
+
+    let cancelled = false;
+    setPluginSearchBusy(true);
+    setPluginSearchError(false);
+    const timer = window.setTimeout(() => {
+      void xrogaConnect.catalog({ search: query, limit: 6 })
+        .then((page) => {
+          if (!cancelled) {
+            setPluginMatches(page.items.map((item) => ({
+              slug: item.slug,
+              name: item.name || item.slug,
+            })));
+          }
+        })
+        .catch(() => {
+          if (!cancelled) {
+            setPluginMatches([]);
+            setPluginSearchError(true);
+          }
+        })
+        .finally(() => {
+          if (!cancelled) setPluginSearchBusy(false);
+        });
+    }, 250);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [pluginSearch]);
+
+  const orderedCandidates = [...descriptor.candidates].sort(
+    (left, right) => Number(right.recommended) - Number(left.recommended),
+  );
+
   const selectedCandidate =
     descriptor.candidates.find(
       (candidate) =>
@@ -1188,7 +1244,7 @@ function XrogaConnectionCard({
       </span>
 
       <span className="flex flex-col gap-2">
-        {descriptor.candidates.map(
+        {orderedCandidates.slice(0, showAllCandidates ? undefined : 4).map(
           (candidate) => {
             const connecting =
               connectingToolkit ===
@@ -1261,6 +1317,44 @@ function XrogaConnectionCard({
             );
           },
         )}
+        {descriptor.candidates.length > 4 ? (
+          <button
+            type="button"
+            onClick={() => setShowAllCandidates((value) => !value)}
+            aria-expanded={showAllCandidates}
+            className="self-start text-[11px] font-medium text-[var(--accent)] hover:underline"
+          >
+            {showAllCandidates ? 'Show fewer apps' : `Show ${descriptor.candidates.length - 4} more app${descriptor.candidates.length - 4 === 1 ? '' : 's'}`}
+          </button>
+        ) : null}
+      </span>
+
+      <span className="flex flex-col gap-1.5 border-t border-[var(--card-border)]/50 pt-2.5">
+        <label className="flex items-center gap-2 rounded-lg border border-[var(--card-border)]/60 px-2.5 py-1.5">
+          <Search size={13} aria-hidden="true" className="text-[var(--foreground)]/45" />
+          <span className="sr-only">Search supported plugins</span>
+          <input
+            type="search"
+            value={pluginSearch}
+            onChange={(event) => setPluginSearch(event.target.value)}
+            placeholder="Search more plugins"
+            className="min-w-0 flex-1 bg-transparent text-[11px] text-[var(--foreground)] outline-none placeholder:text-[var(--foreground)]/40"
+          />
+        </label>
+        {pluginSearchBusy ? <span className="text-[10px] text-[var(--foreground)]/50">Searching live catalog…</span> : null}
+        {pluginSearchError ? <span className="text-[10px] text-[var(--foreground)]/50">Plugin search is temporarily unavailable.</span> : null}
+        {pluginSearch.trim().length >= 2 && !pluginSearchBusy && !pluginSearchError && pluginMatches.length === 0 ? (
+          <span className="text-[10px] text-[var(--foreground)]/50">No matching supported plugin found.</span>
+        ) : null}
+        {pluginMatches.map((item) => (
+          <a
+            key={item.slug}
+            href={`/dashboard/integrations/${encodeURIComponent(item.slug)}`}
+            className="rounded-md px-2 py-1 text-[11px] text-[var(--foreground)]/75 hover:bg-[var(--foreground)]/[0.05]"
+          >
+            {item.name} - view plugin
+          </a>
+        ))}
       </span>
 
       <span className="rounded-lg bg-[var(--foreground)]/[0.025] px-2.5 py-2 text-[10px] leading-relaxed text-[var(--foreground)]/50">
@@ -1319,15 +1413,15 @@ const components:
     h1: ({
       children,
     }) => (
-      <h3 className="mt-1 border-b border-[var(--card-border)]/30 pb-1 text-lg font-bold tracking-tight text-[var(--foreground)] sm:text-xl">
+      <h2 className="xv-answer-title text-[var(--foreground)]">
         {children}
-      </h3>
+      </h2>
     ),
 
     h2: ({
       children,
     }) => (
-      <h3 className="mt-0.5 border-b border-[var(--card-border)]/30 pb-1 text-base font-bold tracking-tight text-[var(--foreground)] sm:text-lg">
+      <h3 className="xv-answer-section text-[var(--foreground)]">
         {children}
       </h3>
     ),
@@ -1335,7 +1429,7 @@ const components:
     h3: ({
       children,
     }) => (
-      <h4 className="text-[15px] font-bold tracking-tight text-[var(--accent)]">
+      <h4 className="xv-answer-subsection text-[var(--foreground)]">
         {children}
       </h4>
     ),
@@ -1343,7 +1437,7 @@ const components:
     h4: ({
       children,
     }) => (
-      <h5 className="text-[14px] font-semibold text-[var(--foreground)]">
+      <h5 className="xv-answer-subsection text-[var(--foreground)]">
         {children}
       </h5>
     ),
@@ -1351,7 +1445,7 @@ const components:
     p: ({
       children,
     }) => (
-      <p className="text-[var(--foreground)]/95">
+      <p className="xv-answer-paragraph text-[var(--foreground)]/90">
         {children}
       </p>
     ),
@@ -1455,7 +1549,7 @@ const components:
     ul: ({
       children,
     }) => (
-      <ul className="list-disc space-y-1 pl-5 marker:text-[var(--accent)]">
+      <ul className="xv-answer-list list-disc pl-5">
         {children}
       </ul>
     ),
@@ -1463,7 +1557,7 @@ const components:
     ol: ({
       children,
     }) => (
-      <ol className="list-decimal space-y-1 pl-5 marker:font-semibold marker:text-[var(--accent)]">
+      <ol className="xv-answer-list list-decimal pl-5">
         {children}
       </ol>
     ),
@@ -1471,7 +1565,7 @@ const components:
     li: ({
       children,
     }) => (
-      <li className="pl-0.5 text-[var(--foreground)]/95">
+      <li className="pl-0.5 text-[var(--foreground)]/90">
         {children}
       </li>
     ),
@@ -1479,13 +1573,13 @@ const components:
     blockquote: ({
       children,
     }) => (
-      <blockquote className="rounded-r-lg border-l-2 border-[var(--accent)]/50 bg-[var(--accent)]/5 px-3 py-2 text-[var(--foreground)]/85">
+      <blockquote className="xv-answer-quote px-4 py-2 text-[var(--foreground)]/85">
         {children}
       </blockquote>
     ),
 
     hr: () => (
-      <hr className="my-2 border-[var(--card-border)]/50" />
+      <hr className="xv-answer-divider" />
     ),
 
     code: ({
@@ -1563,30 +1657,80 @@ const components:
     ),
   };
 
-function CitationChip({ number, source }: { number: number; source: CitationSource }) {
-  const [open, setOpen] = useState(false);
+function CitationChip({ number, source, label }: { number?: number; source: CitationSource; label?: React.ReactNode }) {
+  const [visible, setVisible] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+  const linkRef = useRef<HTMLAnchorElement>(null);
+  const dismissRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (dismissRef.current) clearTimeout(dismissRef.current); }, []);
   const url = safeSourceUrl(source.url);
-  if (!url) return <span>[{number}]</span>;
+  if (!url) return <span>{label ?? `[${number}]`}</span>;
+  const domain = new URL(url).hostname.replace(/^www\./i, '');
+  const snippet = source.snippet.replace(/\s+/g, ' ').replace(/^[\s*•-]+/, '').trim();
+  const excerpt = snippet.length > 175 ? `${snippet.slice(0, 172).trimEnd()}…` : snippet;
+  const keepOpen = () => { if (dismissRef.current) clearTimeout(dismissRef.current); };
+  const scheduleClose = () => { keepOpen(); dismissRef.current = setTimeout(() => setVisible(false), 180); };
+  const placePreview = () => {
+    keepOpen();
+    const rect = linkRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const width = Math.min(344, window.innerWidth - 24);
+    const left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
+    const top = rect.bottom + 12 + 260 < window.innerHeight ? rect.bottom + 9 : Math.max(12, rect.top - 260);
+    setPosition({ top, left });
+    setVisible(true);
+  };
   return (
-    <span className="group/citation relative inline-flex align-baseline">
-      <button
-        type="button"
-        aria-label={`Preview source ${number}: ${source.title}`}
-        aria-expanded={open}
-        onClick={() => setOpen((value) => !value)}
-        onKeyDown={(event) => { if (event.key === 'Escape') setOpen(false); }}
-        className="inline-flex h-5 min-w-5 items-center justify-center rounded-md border border-blue-500/35 bg-blue-500/10 px-1 text-[11px] font-bold text-blue-500 transition-colors hover:border-blue-500 hover:bg-blue-500/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
-      >
-        [{number}]
-      </button>
-      <span className={`${open ? 'visible opacity-100' : 'invisible opacity-0'} absolute bottom-full left-0 z-40 mb-2 w-[min(19rem,calc(100vw-2rem))] rounded-xl border border-blue-500/30 bg-[var(--card)] p-3.5 text-left text-xs shadow-xl transition-opacity group-hover/citation:visible group-hover/citation:opacity-100 group-focus-within/citation:visible group-focus-within/citation:opacity-100`}>
-        <span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-blue-500">Source {number} · {new URL(url).hostname.replace(/^www\./i, '')}</span>
-        <span className="block font-semibold text-[var(--foreground)]">{source.title}</span>
-        {source.snippet ? <span className="mt-1 block line-clamp-3 text-[var(--muted)]">{source.snippet}</span> : null}
-        <a href={url} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block font-medium text-[var(--accent)] underline">Open source {number}</a>
-      </span>
+    <span className="inline-flex align-baseline">
+      <a
+        ref={linkRef}
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={number ? `Open source ${number}: ${source.title}` : `Open link: ${source.title}`}
+        onMouseEnter={placePreview}
+        onMouseLeave={scheduleClose}
+        onFocus={placePreview}
+        onBlur={scheduleClose}
+        onKeyDown={(event) => { if (event.key === 'Escape') setVisible(false); }}
+        className={label ? 'xv-resource-link' : 'xv-citation-chip'}
+      >{label ?? <><SourceLogo domain={domain} size={15} /><span>{domain}</span></>}</a>
+      {visible && typeof document !== 'undefined' ? createPortal(
+        <div className="xv-citation-preview" style={{ top: position.top, left: position.left }} onMouseEnter={keepOpen} onMouseLeave={scheduleClose} onFocus={keepOpen} onBlur={scheduleClose}>
+          <span className="xv-citation-preview__top"><span className="xv-citation-preview__icon"><SourceLogo domain={domain} size={27} /></span><span className="min-w-0"><span className="xv-citation-preview__domain">{domain}</span><span className="xv-citation-preview__eyebrow">Source page · verify on original site</span></span></span>
+          <span className="xv-citation-preview__title">{source.title}</span>
+          {excerpt ? <span className="xv-citation-preview__excerpt">{excerpt}</span> : null}
+          <span className="xv-citation-preview__actions"><button type="button" onClick={async () => { try { await navigator.clipboard.writeText(snippet || source.title); setCopied(true); } catch { setCopied(false); } }}>{copied ? <Check size={13} /> : <Copy size={13} />}{copied ? 'Copied' : 'Copy excerpt'}</button><a href={url} target="_blank" rel="noopener noreferrer">Visit source <ArrowUpRight size={13} /></a></span>
+        </div>, document.body,
+      ) : null}
     </span>
   );
+}
+
+/** Add breathing room to legacy wall-of-text answers without rewriting their wording. */
+export function structureLongProse(markdown: string): string {
+  const formatBlock = (block: string) => {
+    const prose = block.trim();
+    if (prose.length < 440 || prose.includes('\n') || /^(?:[#>*+`~|-]|\d+[.)]\s|!\[|<)/.test(prose)) return block;
+    const sentences = prose.split(/(?<=[.!?])\s+(?=(?:\*\*)?[A-Z(])/);
+    if (sentences.length < 3) return block;
+    const paragraphs: string[] = [];
+    let current = '';
+    for (const sentence of sentences) {
+      if (current.length >= 260 && current.length + sentence.length > 370) {
+        paragraphs.push(current);
+        current = sentence;
+      } else {
+        current += `${current ? ' ' : ''}${sentence}`;
+      }
+    }
+    if (current) paragraphs.push(current);
+    return paragraphs.join('\n\n');
+  };
+  return markdown.split(/(```[\s\S]*?```|~~~[\s\S]*?~~~)/g).map((segment, index) => index % 2
+    ? segment
+    : segment.split(/(\n\s*\n)/).map(formatBlock).join('')).join('');
 }
 
 export function FormattedAiMarkdown({
@@ -1594,6 +1738,7 @@ export function FormattedAiMarkdown({
   className,
   sources,
   streaming,
+  afterIntro,
 }: {
   content:
     string;
@@ -1602,29 +1747,44 @@ export function FormattedAiMarkdown({
   className?:
     string;
   sources?: CitationSource[];
+  afterIntro?: React.ReactNode;
 }) {
-  const normalized = content.replace(/\r\n/g, '\n');
+  const normalized = streaming ? content.replace(/\r\n/g, '\n') : structureLongProse(content.replace(/\r\n/g, '\n'));
   const opening = normalized.match(/^([^\n]+(?:\n(?!\n)[^\n]+)*)\n\s*\n/);
-  const lead = !streaming && normalized.length > 500 && opening && opening[1].length >= 45 && opening[1].length <= 400 && !/^\s*(?:[#>*`\-|\d+\.]|!\[)/.test(opening[1]) ? opening[1] : null;
-  const remaining = lead ? normalized.slice(opening![0].length) : normalized;
-  const sourceComponents: Components = sources?.length ? {
+  const lead = !streaming && (normalized.length > 500 || afterIntro) && opening && opening[1].length >= 25 && opening[1].length <= 500 && !/^\s*(?:[#>*`\-|\d+\.]|!\[)/.test(opening[1]) ? opening[1] : null;
+  const introParts = afterIntro && !lead && !streaming ? normalized.split(/\n\s*\n/) : [];
+  const introCount = introParts.length > 1 && /^#{1,2}\s/.test(introParts[0]) && !/^(?:[#>*`\-|\d+\.]|!\[)/.test(introParts[1]) ? 2 : introParts.length > 1 && !/^(?:[#>*`\-|\d+\.]|!\[)/.test(introParts[0]) ? 1 : 0;
+  const introMarkdown = introCount ? introParts.slice(0, introCount).join('\n\n') : null;
+  const remaining = lead ? normalized.slice(opening![0].length) : introMarkdown ? introParts.slice(introCount).join('\n\n') : normalized;
+  const availableSources = sources ?? [];
+  const sourceComponents: Components = {
     ...components,
     a: ({ href, children, ...props }) => {
-      const match = typeof children === 'string' ? /^\[(\d{1,2})\]$/.exec(children) : null;
+      const label = Array.isArray(children) ? children.join('') : children;
+      const match = typeof label === 'string' ? /^\[(\d{1,2})\]$/.exec(label) : null;
       const number = match ? Number(match[1]) : 0;
-      const source = number > 0 ? sources[number - 1] : undefined;
+      const source = number > 0 ? availableSources[number - 1] : undefined;
       if (source && href === safeSourceUrl(source.url)) return <CitationChip number={number} source={source} />;
+      const external = href ? safeSourceUrl(href) : null;
+      if (external) {
+        const knownIndex = availableSources.findIndex((item) => safeSourceUrl(item.url) === external);
+        const title = typeof label === 'string' && label.trim() ? label.trim() : new URL(external).hostname;
+        return <CitationChip number={knownIndex >= 0 ? knownIndex + 1 : undefined} source={knownIndex >= 0 ? availableSources[knownIndex] : { title, url: external, snippet: '' }} label={children} />;
+      }
       return React.createElement(components.a as React.ElementType, { href, ...props }, children);
     },
-  } : components;
+  };
   return (
     <div
       className={joinClasses(
-        'xv-formatted-response space-y-4 text-[14px] leading-relaxed sm:text-[15px] [&>*:first-child]:mt-0 [&>*:last-child]:mb-0',
+        'xv-formatted-response [&>*:first-child]:mt-0 [&>*:last-child]:mb-0',
         className,
       )}
     >
-      {lead ? <div className="xv-answer-lead rounded-2xl border border-blue-500/25 bg-gradient-to-br from-blue-500/[0.11] to-transparent p-4 sm:p-5"><span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.16em] text-blue-500">In brief</span><ReactMarkdown remarkPlugins={[remarkGfm, ...(sources?.length ? [remarkSourceCitations(sources)] : [])]} skipHtml urlTransform={safeMarkdownUrl} components={sourceComponents}>{lead}</ReactMarkdown></div> : null}
+      {lead ? <div className="xv-answer-lead"><span className="xv-answer-lead__label">The short answer</span><ReactMarkdown remarkPlugins={[remarkGfm, ...(sources?.length ? [remarkSourceCitations(sources)] : [])]} skipHtml urlTransform={safeMarkdownUrl} components={sourceComponents}>{lead}</ReactMarkdown></div> : null}
+      {introMarkdown ? <ReactMarkdown remarkPlugins={[remarkGfm, ...(sources?.length ? [remarkSourceCitations(sources)] : [])]} skipHtml urlTransform={safeMarkdownUrl} components={sourceComponents}>{introMarkdown}</ReactMarkdown> : null}
+      {afterIntro && lead ? afterIntro : null}
+      {afterIntro && !lead ? <div className="xv-answer-intro-card">{afterIntro}</div> : null}
       <ReactMarkdown
         remarkPlugins={[
           remarkGfm,

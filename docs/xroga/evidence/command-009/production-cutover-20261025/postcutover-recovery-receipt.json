@@ -1,0 +1,18 @@
+{
+  "status": "PASS_POSTCUTOVER_ENCRYPTED_BACKUP_ACTUAL_RESTORE_EXACT_CUSTODY_STATE",
+  "at": "2026-10-24T20:15:14.006299+00:00",
+  "backupPrefix": "gs://xroga-p3-prod-recovery-574998934848/cutover-20261024/20261024T201227Z/",
+  "snapshotType": "POST_V3_CUTOVER",
+  "productionSqlPreviouslyApplied": true,
+  "restoreStatus": "PASS_ACTUAL_ISOLATED_RESTORE_AND_LEGACY_RECOVERY",
+  "restoredCustodyFingerprint": {
+    "v3Rows": 39,
+    "tombstones": 1,
+    "primaryRows": 41,
+    "githubPairDigest": "a153d76480be6bd4621937bc50dec823",
+    "credentialAuthorityDigest": "0fabe614249ce8e5b251d831dfb7a615"
+  },
+  "objectArchiveIntegrityVerified": 40,
+  "readbackMethod": "AUTHENTICATED_UNIQUE_CACHE_NONCE_ORIGIN",
+  "proofMethod": "Exact restored ciphertext, owner, metadata, epoch and tombstone aggregate matches live state actually decrypted by pinned recovery image. Object bytes independently match encrypted manifest hashes."
+}

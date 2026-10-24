@@ -8,6 +8,8 @@ import { Braces, ChevronRight, ExternalLink, GitBranch, LoaderCircle, TriangleAl
 import { InlineCopyButton } from '@/components/ui/InlineCopyButton';
 import { safeArtifactUri } from '@/lib/universalOutput';
 import type { XrogaBlock } from '@/lib/xrogaBlocks';
+import { SourceLogo } from './SourceLogo';
+import { XrogaStatusBadge } from './XrogaStatusBadge';
 
 type StructuredType = 'card-grid' | 'tree' | 'json' | 'api-request';
 type StructuredBlock = Extract<XrogaBlock, { type: StructuredType }>;
@@ -26,7 +28,7 @@ function Surface({
   if (state === 'loading') return <section className="xv-response-surface max-w-[960px] rounded-2xl border border-[var(--border)] p-5" aria-busy="true"><LoaderCircle className="h-5 w-5 animate-spin motion-reduce:animate-none" aria-hidden="true" /><span className="sr-only">Loading output</span></section>;
   if (state === 'empty') return <section className="xv-response-surface max-w-[960px] rounded-2xl border border-dashed border-[var(--border)] p-5 text-sm text-[var(--muted)]">No data is available for this output.</section>;
   if (state === 'error' || state === 'unsupported') return <section className="xv-response-surface max-w-[960px] rounded-2xl border border-amber-500/35 p-5 text-sm" role="status"><TriangleAlert className="mr-2 inline h-4 w-4" aria-hidden="true" />{state === 'unsupported' ? 'This output cannot be previewed in this workspace yet.' : 'This output could not be rendered.'}</section>;
-  return <section className="xv-response-surface max-w-[960px] overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--background)]/70 shadow-sm">{title || description ? <header className="border-b border-[var(--border)] px-4 py-3">{title ? <h3 className="text-sm font-semibold">{title}</h3> : null}{description ? <p className="mt-0.5 text-xs text-[var(--muted)]">{description}</p> : null}</header> : null}{children}</section>;
+  return <section className="xv-response-surface max-w-[960px] overflow-hidden rounded-2xl bg-[var(--card)] shadow-md">{title || description ? <header className="px-4 py-4">{title ? <h3 className="text-base font-semibold">{title}</h3> : null}{description ? <p className="mt-0.5 text-xs text-[var(--muted)]">{description}</p> : null}</header> : null}{children}</section>;
 }
 
 function CardGridRenderer({ block }: { block: Extract<StructuredBlock, { type: 'card-grid' }> }) {
@@ -35,15 +37,17 @@ function CardGridRenderer({ block }: { block: Extract<StructuredBlock, { type: '
       <div className="xv-response-card-grid grid gap-3 p-4">
         {block.cards.map((card) => {
           const href = card.url ? safeArtifactUri(card.url) : null;
+          const domain = href && /^https?:\/\//.test(href) ? new URL(href).hostname.replace(/^www\./, '') : null;
           const image = card.imageUrl ? safeArtifactUri(card.imageUrl) : null;
           return (
-            <article key={card.id} className="group flex min-w-0 flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-black/[0.018] transition-colors hover:bg-black/[0.035] dark:bg-white/[0.025] dark:hover:bg-white/[0.045] motion-reduce:transition-none">
-              {image ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={image} alt="" loading="lazy" className="aspect-[16/9] w-full border-b border-[var(--border)] object-cover" /> : null}
+            <article key={card.id} className="group flex min-w-0 flex-col overflow-hidden rounded-2xl bg-[var(--background)]/80 shadow-[0_10px_26px_#0003] transition-transform hover:-translate-y-0.5 motion-reduce:transition-none">
+              {image ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={image} alt={card.title} loading="lazy" className="aspect-[16/9] w-full object-cover" /> : null}
               <div className="flex flex-1 flex-col p-4">
-                <div className="flex items-start justify-between gap-3"><div className="min-w-0"><h4 className="truncate text-sm font-semibold">{card.title}</h4>{card.subtitle ? <p className="mt-0.5 truncate text-xs text-[var(--muted)]">{card.subtitle}</p> : null}</div>{card.badge ? <span className="shrink-0 rounded-full border border-[var(--border)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--muted)]">{card.badge}</span> : null}</div>
+                <div className="flex items-start justify-between gap-3"><div className="min-w-0"><h4 className="truncate text-base font-semibold">{card.title}</h4>{card.subtitle ? <p className="mt-0.5 truncate text-xs text-[var(--muted)]">{card.subtitle}</p> : null}</div>{card.badge ? <XrogaStatusBadge status={card.badge.toLowerCase()} label={card.badge} /> : null}</div>
+                {domain ? <span className="mt-2 flex items-center gap-1.5 text-[11px] text-[var(--muted)]"><SourceLogo domain={domain} size={16} />{domain}</span> : null}
                 {card.description ? <p className="mt-3 text-xs leading-5 text-[var(--muted)]">{card.description}</p> : null}
-                {card.metrics ? <dl className="mt-3 grid grid-cols-2 gap-2 border-t border-[var(--border)] pt-3">{Object.entries(card.metrics).map(([label, value]) => <div key={label} className="min-w-0"><dt className="truncate text-[10px] uppercase tracking-wide text-[var(--muted)]">{label}</dt><dd className="truncate text-xs font-medium">{String(value ?? '—')}</dd></div>)}</dl> : null}
-                {href ? <a href={href} target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-[var(--accent)] hover:underline">{card.actionLabel ?? 'Open'}<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" /></a> : null}
+                {card.metrics ? <dl className="mt-3 grid grid-cols-2 gap-2 border-t border-[var(--border)] pt-3">{Object.entries(card.metrics).map(([label, value]) => <div key={label} className="min-w-0"><dt className="truncate text-[10px] uppercase tracking-wide text-[var(--muted)]">{label}</dt><dd className="truncate text-xs font-medium">{String(value ?? '-')}</dd></div>)}</dl> : null}
+                {href ? <a href={href} target="_blank" rel="noreferrer" className="mt-4 inline-flex w-fit items-center gap-1.5 rounded-lg bg-[#316fe8] px-3 py-2 text-xs font-semibold text-white shadow-[0_5px_12px_#2057c144] hover:bg-[#225dcf]">{card.actionLabel ?? 'Visit source'}<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" /></a> : null}
               </div>
             </article>
           );

@@ -59,6 +59,10 @@ import {
   getGitHubToken,
 } from '../../services/integrations/githubAuth.js';
 
+import {
+  splitExplicitBusinessWorkflow,
+} from '../../services/integrations/businessWorkflow.js';
+
 export type UniversalDispatch =
   | 'chat'
   | 'build'
@@ -183,6 +187,134 @@ export function enforceExplicitExecutionControls(
     blockers: [],
     directResponse:
       undefined,
+  };
+}
+
+/**
+ * A request to search the public web is not a request to inspect a connected
+ * business account. Keep this narrow guard at the API boundary so a planner
+ * mistake cannot send travel or other public research into Composio.
+ */
+export function enforceExplicitPublicResearchControls(
+  plan: SemanticRequestPlan,
+  message: string,
+): SemanticRequestPlan {
+  const explicitSearch =
+    /\b(?:web searches?|internet searches?|search (?:the )?(?:web|internet)|browse (?:the )?(?:web|internet)|research online)\b/i.test(message);
+  const negatedSearch =
+    /\b(?:do not|don't|without|avoid)\s+(?:\w+\s+){0,2}(?:web searches?|internet searches?|search (?:the )?(?:web|internet)|browse (?:the )?(?:web|internet)|research online)\b/i.test(message);
+  const followedByAppAction =
+    /\b(?:and|then|also)\s+(?:please\s+)?(?:send|email|message|create|schedule|book|update|edit|delete|remove|publish|post|upload|invite|refund|transfer|pay)\b/i.test(message);
+
+  if (explicitSearch && !negatedSearch && followedByAppAction && plan.dispatch === 'chat') {
+    const blockers = ['Public-web research followed by a connected-app action needs a reviewed multi-source workflow; no action was executed.'];
+    return {
+      ...plan,
+      dispatch: 'blocked',
+      blockers,
+      rationale: 'Do not silently drop either task or pass untrusted web results into an external action.',
+      goalContract: goalContractSchema.parse({ ...plan.goalContract, blockers }),
+      directResponse: undefined,
+    };
+  }
+
+  if (
+    !explicitSearch ||
+    negatedSearch ||
+    plan.dispatch !== 'chat' ||
+    [...plan.capabilityIds, ...plan.goalContract.requiredCapabilities].some(
+      (id) => id === 'business.action' || id === 'software.implement',
+    )
+  ) {
+    return plan;
+  }
+
+  const capabilityIds = [
+    ...new Set([
+      ...plan.capabilityIds.filter((id) => id !== 'business.read'),
+      'research.public-web',
+      'conversation.respond',
+    ]),
+  ];
+  const researchReady =
+    universalCapabilityRegistry.get('research.public-web')?.health() === 'available';
+  const blockers = researchReady
+    ? []
+    : ['Public web research is unavailable because its provider is not configured.'];
+
+  const goalContract = goalContractSchema.parse({
+    ...plan.goalContract,
+    semanticIntent: 'INVESTIGATE',
+    requiredCapabilities: capabilityIds,
+    requiredAuthorities: [
+      ...new Set(
+        capabilityIds.flatMap(
+          (id) => universalCapabilityRegistry.get(id)?.requiredAuthorities ?? [],
+        ),
+      ),
+    ],
+    freshnessRequirement: 'CURRENT_REQUIRED',
+    sourcePolicy: {
+      ...plan.goalContract.sourcePolicy,
+      scope: 'public_web',
+    },
+    blockers,
+  });
+
+  return {
+    ...plan,
+    goalContract,
+    dispatch: researchReady ? 'chat' : 'blocked',
+    capabilityIds,
+    rationale: 'The user explicitly requested public web research, not a connected-app read.',
+    blockers,
+    directResponse: undefined,
+  };
+}
+
+/** Preserve each explicit connected-app task even if the model collapsed a
+ * multi-app request into one read or one action capability. */
+export function enforceExplicitBusinessWorkflowControls(
+  plan: SemanticRequestPlan,
+  message: string,
+): SemanticRequestPlan {
+  if (
+    plan.dispatch !== 'chat' ||
+    !plan.capabilityIds.some((id) => id === 'business.read' || id === 'business.action') ||
+    [...plan.capabilityIds, ...plan.goalContract.requiredCapabilities].some(
+      (id) => id === 'software.implement' || id === 'research.public-web',
+    )
+  ) return plan;
+
+  const steps = splitExplicitBusinessWorkflow(message);
+  if (!steps) return plan;
+
+  const capabilities = [
+    ...new Set([
+      ...plan.capabilityIds,
+      ...(steps.some((step) => step.kind === 'read') ? ['business.read'] : []),
+      'business.action',
+    ]),
+  ];
+  const unavailable = capabilities.filter((id) => universalCapabilityRegistry.get(id)?.health() !== 'available');
+  const blockers = unavailable.length ? [`Connected-app workflow is unavailable: ${unavailable.join(', ')}.`] : [];
+  const goalContract = goalContractSchema.parse({
+    ...plan.goalContract,
+    semanticIntent: steps.some((step) => step.kind === 'read') ? 'MIXED' : 'EXTERNAL_ACTION',
+    requiredCapabilities: capabilities,
+    requiredAuthorities: [
+      ...new Set(capabilities.flatMap((id) => universalCapabilityRegistry.get(id)?.requiredAuthorities ?? [])),
+    ],
+    blockers,
+  });
+  return {
+    ...plan,
+    goalContract,
+    capabilityIds: capabilities,
+    dispatch: blockers.length ? 'blocked' : 'chat',
+    blockers,
+    rationale: 'Preserved all explicit connected-app tasks in the user request.',
+    directResponse: undefined,
   };
 }
 
@@ -1519,7 +1651,7 @@ export async function planSemanticRequest(
     );
 
   const system =
-    `Understand the user's current goal from the full conversation and context. Return one strict JSON semantic decision, not the full internal contract. Do not use product modes, keyword categories, framework guesses, or a default website/build route. Choose the smallest READY capability set that can genuinely produce the requested outcome. Read-only analysis must remain read-only. Select business.action only when the user explicitly asks Xroga to change external business-app state; use business.read for retrieval, search, inspection, listing, or summarization without mutation. A request to create or change software requires software.implement even when the software models concepts that also exist in connected apps, such as records, schedules, messages, payments, or files. Xroga Connect acts on an existing external account; it does not create a requested software product, project Preview, source publication, or deployment. Never upgrade a read request into an action. A project being present is context, not evidence of modification intent. The server owns project identity and authorities; do not return or invent either. Use blockers only for essential missing user input, AUTH_REQUIRED, PROVIDER_UNAVAILABLE, TEMPORARILY_UNAVAILABLE, or UNSUPPORTED capability. Never call information current unless freshnessRequirement is PREFERRED or CURRENT_REQUIRED.\n\n${currentProductTruth(
+    `Understand the user's current goal from the full conversation and context. Return one strict JSON semantic decision, not the full internal contract. Do not use product modes, keyword categories, framework guesses, or a default website/build route. Choose the smallest READY capability set that can genuinely produce the requested outcome. Read-only analysis must remain read-only. Use research.public-web for public websites, flight schedules, fares, prices, travel planning, and other information that does not live inside a user's connected app. Do not select business.read merely because the user says search or research. Select business.action only when the user explicitly asks Xroga to change external business-app state; use business.read for retrieval, search, inspection, listing, or summarization inside the user's connected applications without mutation. A request to create or change software requires software.implement even when the software models concepts that also exist in connected apps, such as records, schedules, messages, payments, or files. Xroga Connect acts on an existing external account; it does not create a requested software product, project Preview, source publication, or deployment. Never upgrade a read request into an action, and never treat a request for an external action as answer-only. If the user requests several independent external actions, preserve every requested outcome; do not imply a single tool call completed them all. A project being present is context, not evidence of modification intent. The server owns project identity and authorities; do not return or invent either. Use blockers only for essential missing user input, AUTH_REQUIRED, PROVIDER_UNAVAILABLE, TEMPORARILY_UNAVAILABLE, or UNSUPPORTED capability. Never call information current unless freshnessRequirement is PREFERRED or CURRENT_REQUIRED.\n\n${currentProductTruth(
       authorities,
     )}\n\nRequired JSON fields: semanticIntent=ANSWER|INVESTIGATE|PROPOSE|MODIFY|EXTERNAL_ACTION|MIXED; requiredCapabilities=[registered ids]; freshnessRequirement=NONE|PREFERRED|CURRENT_REQUIRED. Optional fields: goal; desiredOutcome; constraints[]; acceptance[]; sourcePolicy={mode:any|official_only,scope:public_web|x,officialDomains:[]}; previewRequirement=NONE|PREFERRED|REQUIRED; publicationRequirement=NONE|REQUESTED; deploymentRequirement=NONE|REQUESTED; risks[]; confidence=0..1; blockers[]; contextComplexity=low|medium|high|unknown.\n\nRegistered capabilities and request-time readiness:\n${JSON.stringify(
       availableSummary,

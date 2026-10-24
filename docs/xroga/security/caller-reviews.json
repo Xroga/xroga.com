@@ -4,11 +4,19 @@
     {
       "path": "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
       "sourceSha256": "9bd1a0a08eb68cd52773f00c6b861f5cfcf8f75d2bd2a9c1d2e032fd377c719f",
-      "callIds": ["f7cf4d72de3f0a43a18c", "bd1cdd4ac74c2e9b91c5"],
+      "callIds": [
+        "f7cf4d72de3f0a43a18c",
+        "bd1cdd4ac74c2e9b91c5"
+      ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Exactly two native Buffer.from calls decode bounded JWT header and payload bytes locally before defense-in-depth claim checks. Neither receiver is a database, storage bucket or provider. Decoding is not signature verification or authority. Google STS and exact IAM conditions remain independently required.",
       "reason": "AST review identifies only these two local conversions. This excludes no Fly socket, Google STS/IAM/KMS operation, workload identity, customer credential, production effect or acceptance requirement. Live identity and final source-bound CI remain unverified.",
-      "evidence": [{"path":"backend/src/services/integrations/flyGoogleWorkloadIdentity.ts","marker":"export function flySubjectTokenSupplier"}]
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
+          "marker": "export function flySubjectTokenSupplier"
+        }
+      ]
     },
     {
       "path": "frontend/src/components/dashboard/WorkspaceNewTerminal.tsx",
@@ -4439,7 +4447,7 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "54536d9c340fcb8b6238cf892f6da73c1544f6eaf88104308f0f8a1ab90cc5f4",
+      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628",
       "callIds": [
         "a291f26c3c5001de01f9"
       ],
@@ -4455,7 +4463,7 @@
     },
     {
       "path": "frontend/src/components/layout/SidebarProjectHistory.tsx",
-      "sourceSha256": "54536d9c340fcb8b6238cf892f6da73c1544f6eaf88104308f0f8a1ab90cc5f4",
+      "sourceSha256": "7daceb7dfb3cd3b1faf8b1f42f6e11243daf15afa78ff8fe076371ae510f9628",
       "callIds": [
         "f8d5eaf0193282882763"
       ],
@@ -4679,9 +4687,9 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaUtilityBlockView.tsx",
-      "sourceSha256": "50d499b0b3f231805056051c5651995f849ac0864010857db8857e52700e7664",
+      "sourceSha256": "456bcddeced123a22c4655c4f3837357c7092158f6b5af677414daa32bdc92fa",
       "callIds": [
-        "8bee3dafa232d3071008"
+        "8e9b157c7d4fd26ad135"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in ComparisonRenderer, with no database or Storage client receiver.",
@@ -4695,9 +4703,9 @@
     },
     {
       "path": "frontend/src/components/terminal/XrogaVoiceControl.tsx",
-      "sourceSha256": "f6ca1c376e8ef4cf690055d67cc2a98168257dafba0074c989d4b81add68d88e",
+      "sourceSha256": "aa3541bab9beba30adcc495dae9cbf798133440ce85e2da45814de6a74dd21ad",
       "callIds": [
-        "6520ef22b7832bcb902c"
+        "8f3c7995974f0b7357a6"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in VoiceWave, with no database or Storage client receiver.",
@@ -9400,18 +9408,18 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "6367add6bd41dc2683e35693276e5be33ba6dabdd11fd57501aa9ddc88686d0f",
+      "sourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
       "callIds": [
-        "bc1b1e147cebbd6366f0",
-        "45b5c3fc4d40bba6fa2b",
-        "291386bd727275995fd2",
-        "bc58f82c7f7e2845c1f2",
-        "f4bc3b2f0ff69fdf1cd7",
-        "225429dd5a6aaf987f63",
-        "c9d53e8b321a8eca7bb6",
-        "495566fa0852f3aef30f",
-        "de3d23efab5d7a3e8980",
-        "fdb08e6a79fda69e2cbe"
+        "99ba24aefa7f2c2f6de9",
+        "3c64dc5d4a7058fb12f8",
+        "fc3b3f4bab00e81fbc31",
+        "94f936dfc30fe898eebe",
+        "1f375890c653535bb84b",
+        "9614e2de1a77eacffe05",
+        "b3a2b5af5ead58408dba",
+        "1f7c11b7359e0958073e",
+        "0f9bdee0b411ef2f246d",
+        "adbc1ef16d0ec277edb7"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Only production create consumer is authenticated phase1 prepared execution returning confirmation_required, with original server userId and verified digest. Read/cancel/confirm handlers use requireUserId(req), never body owner. Reads and mutations bind exact confirmation ID plus owner. Expiry is private and takes only the already owner-filtered row. Cancellation can change only pending status for that owner. Confirm compares display identity, full reviewed plan/digest and expiry, then uses the existing service-only locked claim. A claimed receipt must retain original actor, identity, plan and timestamps. Terminal finish remains independently bound to the exact immutable claim. Invalid canonical digest fails before metadata/account/provider calls, then persists only this claim failure. No remote action is executed by these tests.",
@@ -9807,9 +9815,9 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sourceSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
+      "sourceSha256": "7b06621b69ac97ba6f1b6fe56dec83a759dc0f941abfc8cf518c4a74daa7f08e",
       "callIds": [
-        "ebede146c851a085d2b8"
+        "29043e1b2d0f9c86568b"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -9922,9 +9930,9 @@
     },
     {
       "path": "frontend/src/lib/formatAiMarkdown.tsx",
-      "sourceSha256": "8d1efb0a77ecdd69a5c5399b64fc3610b45433d09c78a427406b40e49140e734",
+      "sourceSha256": "074635d63bbbd514febd9eda9219c5d1404bacaed0226859bb9f6511d115189d",
       "callIds": [
-        "bdf5ffe6c8a34bf8d3af"
+        "f40cf50a136b33e64174"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Manually inspected the candidate receiver and surrounding expression. This is a built-in Array, Uint8Array or Buffer conversion in decodeBase64UrlUtf8, with no database or Storage client receiver.",
@@ -12157,9 +12165,9 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "6367add6bd41dc2683e35693276e5be33ba6dabdd11fd57501aa9ddc88686d0f",
+      "sourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
       "callIds": [
-        "6c808730862474ef4948"
+        "c2ce222ac0cc6f913871"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Authenticated phase1 confirmation route passes requireUserId and explicit confirmation UUID. The service reads owner-filtered plan and validates displayed metadata. Service-only claim locks the same owner/ID and compares full plan, digest, expiry, display metadata and pending state, then checks clock_timestamp after lock acquisition before marking executing.",
@@ -12449,9 +12457,9 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "6367add6bd41dc2683e35693276e5be33ba6dabdd11fd57501aa9ddc88686d0f",
+      "sourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
       "callIds": [
-        "9548ef68bd08e1c7ebcb"
+        "8f3d42e8e45d7fb2252a"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Only the existing confirmed-action executor passes its original admin client, verified server owner and exact claimed row. Service-only terminal transaction locks owner/ID and compares full plan, display metadata, original expiry/creation and claimed_at before consumed/failed status, with immutable exact replay. No provider execution, lease extension or confirmation reuse.",
@@ -14966,9 +14974,9 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "6367add6bd41dc2683e35693276e5be33ba6dabdd11fd57501aa9ddc88686d0f",
+      "sourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
       "callIds": [
-        "926fc795645f2f0bc36d"
+        "16c8e03100d592b72118"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
@@ -14986,9 +14994,9 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "6367add6bd41dc2683e35693276e5be33ba6dabdd11fd57501aa9ddc88686d0f",
+      "sourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
       "callIds": [
-        "727627f9887ab81f288b"
+        "402d88eda8e20ef83be0"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
@@ -15006,9 +15014,9 @@
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
-      "sourceSha256": "6367add6bd41dc2683e35693276e5be33ba6dabdd11fd57501aa9ddc88686d0f",
+      "sourceSha256": "9305dabc17c792c9a22dcd9a414252ce172879423ecfb71e9ff6fa64f1284a73",
       "callIds": [
-        "d40fe91b6a6c8b94ab3f"
+        "d8dd240dbf1cb3f97b7d"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The dispatch closure captures the original issued actor and exact claimed owner/plan. The private cancellation helper is reachable only from authenticated owner-filtered cancellation. Service-only RPCs bind owner and exact row under lock. Database verification remains pending for this changed source.",
@@ -15568,7 +15576,17 @@
         "d8a806b779eb8d10543c",
         "3936c61b550b6e7554dd"
       ],
-      "previousSourceBinding": {"source":"2bb72563b2a940bcf906d2a7346cf408cbbd5440","sha256":"9f9a5daaae7246d4eca5e7a5a410b182f74fb401d71b93741cfba862c7975070","callIds":["8eb4738a24cf9aa75051","91a6564e80b0e68d4568","06eaca75f76beddc6077","d409058bdea94f6230eb"],"comparison":"All four Buffer.from AST expressions are byte-identical. Only source positions changed. The new authentication transport is outside this local conversion review."},
+      "previousSourceBinding": {
+        "source": "2bb72563b2a940bcf906d2a7346cf408cbbd5440",
+        "sha256": "9f9a5daaae7246d4eca5e7a5a410b182f74fb401d71b93741cfba862c7975070",
+        "callIds": [
+          "8eb4738a24cf9aa75051",
+          "91a6564e80b0e68d4568",
+          "06eaca75f76beddc6077",
+          "d409058bdea94f6230eb"
+        ],
+        "comparison": "All four Buffer.from AST expressions are byte-identical. Only source positions changed. The new authentication transport is outside this local conversion review."
+      },
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
       "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",

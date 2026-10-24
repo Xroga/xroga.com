@@ -1,7 +1,7 @@
 {
   "version": 1,
   "command": "009",
-  "scope": "SOFTWARE_EVIDENCE_WITH_MANDATORY_PRODUCTION_KMS_BLOCKER",
+  "scope": "SOFTWARE_EVIDENCE_WITH_VERIFIED_MANDATORY_PRODUCTION_KMS_CUTOVER",
   "criteria": [
     {"id":"XB01-C009-AC01","originalText":"All newly stored OAuth/provider secrets use CredentialVault.","status":"SOFTWARE_VERIFIED","proof":{"path":"docs/xroga/security/credential-caller-dispositions.md","marker":"Current v3 writer and private consumer"}},
     {"id":"XB01-C009-AC02","originalText":"No frontend endpoint returns raw secrets.","status":"SOFTWARE_VERIFIED","proof":{"path":"frontend/src/lib/credentialVault.test.ts","marker":"browser vault has no new secret writer or general reveal API"}},
@@ -17,7 +17,7 @@
     {"id":"XB01-C009-AC12","originalText":"Remaining legacy callers are zero or explicitly blocked from production cutover.","status":"SOFTWARE_VERIFIED","proof":{"path":"docs/xroga/security/credential-migration.md","marker":"Enable the temporary migration window"}}
   ],
   "credentialAudit":{"candidates":117,"groups":37,"staticBackendVaultImporters":7},
-  "productionKms":{"status":"CODE_READY_GOOGLE_CLOUD_KMS_NOT_PROVISIONED_OR_VERIFIED","provider":"Google Cloud KMS","developmentFallbackAllowed":false},
-  "liveCredentialMigration":false,
-  "productionEffects":false
+  "productionKms":{"status":"VERIFIED_MANAGED_PROVIDER_AND_CUTOVER","provider":"Google Cloud KMS","developmentFallbackAllowed":false,"productionEvidence":"docs/xroga/evidence/command-009/production-cutover-20261025/observations.json"},
+  "liveCredentialMigration":true,
+  "productionEffects":true
 }

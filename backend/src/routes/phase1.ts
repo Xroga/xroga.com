@@ -30,7 +30,9 @@ import {
 } from '../ai/providerBudget.js';
 
 import {
+  enforceExplicitBusinessWorkflowControls,
   enforceExplicitExecutionControls,
+  enforceExplicitPublicResearchControls,
   planExplicitProjectBuild,
   planSemanticRequest,
 } from '../ai/universal/semanticRequestPlanner.js';
@@ -65,6 +67,22 @@ import {
   executePreparedBusinessAction,
   prepareBusinessAction,
 } from '../services/integrations/businessAction.js';
+
+import {
+  splitExplicitBusinessWorkflow,
+} from '../services/integrations/businessWorkflow.js';
+
+import { connectionCardMarkdown } from '../services/integrations/businessConnectionUi.js';
+
+import {
+  createBusinessWorkflowRun,
+  resumeBusinessWorkflowAfterConfirmation,
+  getBusinessWorkflowRun,
+  resumeBusinessWorkflowAfterSetup,
+  cancelBusinessWorkflowRun,
+  cancelBusinessWorkflowForConfirmation,
+  type BusinessWorkflowProgress,
+} from '../services/integrations/businessWorkflowRuns.js';
 
 import {
   createActionComposioSession,
@@ -189,61 +207,6 @@ function toolUiLink(
   );
 }
 
-function connectionCardMarkdown(
-  input: {
-    mode:
-      'read' |
-      'action';
-
-    task: string;
-
-    message: string;
-
-    candidates:
-      ToolUiConnectionCandidate[];
-  },
-): string {
-  const type =
-    input.candidates.length >
-    1
-      ? 'provider_choice'
-      : 'connection_required';
-
-  const title =
-    type ===
-      'provider_choice'
-      ? 'Choose an app'
-      : `Connect ${input.candidates[0]?.name ?? 'app'}`;
-
-  const href =
-    toolUiLink(
-      {
-        version: 1,
-
-        type,
-
-        mode:
-          input.mode,
-
-        task:
-          input.task,
-
-        title,
-
-        message:
-          input.message,
-
-        candidates:
-          input.candidates,
-      },
-    );
-
-  return (
-    `${input.message}\n\n` +
-    `[Open Xroga Connect](${href})`
-  );
-}
-
 function displayToolkitName(
   toolkit: string,
 ): string {
@@ -260,6 +223,47 @@ function displayToolkitName(
         part.slice(1),
     )
     .join(' ');
+}
+
+function businessWorkflowProgressMarkdown(progress: BusinessWorkflowProgress): string {
+  const parts: string[] = [];
+  const { run } = progress;
+  for (const outcome of run.outcomes) {
+    const excerpt = outcome.data.slice(0, 3_000).replace(/`/g, 'ʼ');
+    parts.push(`**${outcome.request}** — ${outcome.kind === 'read' ? 'read from' : 'completed in'} ${displayToolkitName(outcome.toolkit)}.\n\n\`\`\`text\n${excerpt}\n\`\`\``);
+  }
+  const pending = progress.pendingRead ?? progress.pendingAction;
+  if (pending?.status === 'connection_required') {
+    parts.push(connectionCardMarkdown({ mode: progress.pendingRead ? 'read' : 'action', task: run.request, message: pending.message, candidates: [pending.candidate] }));
+  } else if (pending?.status === 'provider_choice') {
+    parts.push(connectionCardMarkdown({ mode: progress.pendingRead ? 'read' : 'action', task: run.request, message: pending.message, candidates: pending.candidates }));
+  } else if (pending?.status === 'unavailable') {
+    parts.push(pending.message);
+  }
+  if (progress.confirmation) {
+    const confirmation = progress.confirmation;
+    const href = toolUiLink({
+      version: 1,
+      type: 'confirmation_required',
+      task: run.request,
+      title: 'Review next app action',
+      message: 'Review the exact connected-app operation and arguments before this workflow continues.',
+      confirmationId: confirmation.id,
+      summary: confirmation.summary,
+      toolkit: confirmation.toolkit,
+      risk: confirmation.risk,
+      expiresAt: confirmation.expiresAt,
+    });
+    parts.push(`Step ${run.stepIndex + 1} of ${run.stepCount} is ready for review. Nothing in this step has changed yet. [Review action](${href})`);
+  } else if (run.status === 'setup_required') {
+    parts.push(run.failureCode === 'READ_RESULT_TOO_LARGE'
+      ? 'The app returned too many records to pass safely to the next action. Narrow the request and start a new workflow.'
+      : 'Connect or choose the app above, then resume this saved workflow. No pending action was executed.');
+  } else if (run.status === 'completed') {
+    parts.push('All requested workflow steps completed.');
+  }
+  parts.push(`[Open workflow](/dashboard/workflows/${encodeURIComponent(run.id)}) · Workflow ID: ${run.id}`);
+  return parts.join('\n\n');
 }
 
 function buildBusinessEvidence(
@@ -565,8 +569,14 @@ router.post(
         );
 
       return res.json(
-        enforceExplicitExecutionControls(
-          plan,
+        enforceExplicitPublicResearchControls(
+          enforceExplicitBusinessWorkflowControls(
+            enforceExplicitExecutionControls(
+              plan,
+              message,
+            ),
+            message,
+          ),
           message,
         ),
       );
@@ -775,6 +785,42 @@ router.post(
         );
       }
 
+      const explicitWorkflow = semanticGoal.data.requiredCapabilities.every((capability) =>
+          capability === 'business.action' ||
+          capability === 'business.read' ||
+          capability === 'conversation.respond',
+        )
+        ? splitExplicitBusinessWorkflow(message)
+        : null;
+
+      if (explicitWorkflow) {
+        if (attachments?.length) {
+          throw new RuntimeFailure(
+            'CAPABILITY_UNSUPPORTED',
+            'Xroga Connect cannot combine uploaded attachments with connected-app actions in the same execution yet.',
+            { status: 422, retryable: false },
+          );
+        }
+        let workflow;
+        try {
+          workflow = await createBusinessWorkflowRun(requireTenantContext(req.tenantContext), message, explicitWorkflow);
+        } catch (error) {
+          throw businessRuntimeFailure(error, 'Xroga Connect could not start the multi-app workflow. Check its status before retrying because an earlier step may already have completed.');
+        }
+
+        const usage = await getUsage(userId);
+        return res.json({
+          response: businessWorkflowProgressMarkdown(workflow),
+          intent: `business_workflow_${workflow.run.status}`,
+          usage: usageToTokenUsage(usage),
+          webSources: [],
+          engine: 'xroga',
+          businessAction: true,
+          businessActionConfirmationRequired: workflow.run.status === 'awaiting_confirmation',
+          businessWorkflowRunId: workflow.run.id,
+        });
+      }
+
       /*
        * Attachment analysis uses a separate
        * vision/document trust boundary.
@@ -806,10 +852,8 @@ router.post(
       }
 
       /*
-       * A read-then-act workflow needs a
-       * dedicated data-flow policy so
-       * untrusted retrieved content cannot
-       * become action instructions.
+       * An ambiguous read-then-act workflow cannot promote untrusted
+       * retrieved content into instructions for a mutation.
        *
        * Keep the single-turn mutation lane
        * limited to explicit actions whose
@@ -822,7 +866,7 @@ router.post(
         throw new RuntimeFailure(
           'CAPABILITY_UNSUPPORTED',
 
-          'Xroga Connect can read connected data and can perform explicit connected-app actions, but automatic read-then-act workflows are not enabled in one turn yet. Ask for the data first, then request the exact action you want.',
+          'Xroga Connect could not safely separate the connected-app read and action in this request. Ask for the data first, then specify the exact action and targets. No action was executed.',
 
           {
             status:
@@ -1769,13 +1813,43 @@ router.post(
   },
 );
 
+router.get('/business-workflows/:id', async (req: AuthRequest, res) => {
+  const userId = requireUserId(req);
+  if (!userId) return res.status(401).json({ error: 'Sign in required', code: 'UNAUTHORIZED' });
+  try {
+    return res.json({ workflow: await getBusinessWorkflowRun(requireTenantContext(req.tenantContext), String(req.params.id ?? '')) });
+  } catch {
+    return res.status(404).json({ error: 'Workflow not found', code: 'BUSINESS_WORKFLOW_NOT_FOUND' });
+  }
+});
+
+router.post('/business-workflows/:id/resume', async (req: AuthRequest, res) => {
+  const userId = requireUserId(req);
+  if (!userId) return res.status(401).json({ error: 'Sign in required', code: 'UNAUTHORIZED' });
+  try {
+    const progress = await resumeBusinessWorkflowAfterSetup(requireTenantContext(req.tenantContext), String(req.params.id ?? ''));
+    return res.json({ workflow: progress.run, response: businessWorkflowProgressMarkdown(progress), confirmation: progress.confirmation ?? null });
+  } catch {
+    return res.status(409).json({ error: 'Workflow could not resume; check its current state before retrying.', code: 'BUSINESS_WORKFLOW_RESUME_FAILED' });
+  }
+});
+
+router.post('/business-workflows/:id/cancel', async (req: AuthRequest, res) => {
+  const userId = requireUserId(req);
+  if (!userId) return res.status(401).json({ error: 'Sign in required', code: 'UNAUTHORIZED' });
+  try {
+    return res.json({ workflow: await cancelBusinessWorkflowRun(requireTenantContext(req.tenantContext), String(req.params.id ?? '')) });
+  } catch {
+    return res.status(409).json({ error: 'Workflow could not be cancelled.', code: 'BUSINESS_WORKFLOW_CANCEL_FAILED' });
+  }
+});
+
 /**
  * Safe review details for one pending
  * high-risk connected-app action.
  *
- * The stored Composio session, exact tool,
- * arguments, OAuth context and plan digest
- * never leave the server.
+ * The stored Composio session, OAuth context and plan digest stay server-side.
+ * User-visible arguments are redacted and bounded for an exact-action review.
  */
 router.get(
   '/business-actions/confirmations/:id',
@@ -1883,6 +1957,15 @@ router.post(
           ),
         );
 
+      let continuation: BusinessWorkflowProgress | null = null;
+      let continuationNeedsAttention = false;
+      try {
+        continuation = await resumeBusinessWorkflowAfterConfirmation(requireTenantContext(req.tenantContext), result.confirmation.id, result.execution);
+      } catch {
+        // The external action already succeeded. Never suggest retrying it.
+        continuationNeedsAttention = true;
+      }
+
       return res.json(
         {
           ok:
@@ -1892,7 +1975,12 @@ router.post(
             result.confirmation,
 
           response:
-            `The provider reported completion: ${result.confirmation.summary}. Receipt ${result.confirmation.id}.`,
+            `The provider reported completion: ${result.confirmation.summary}. Receipt ${result.confirmation.id}.` +
+            (continuation ? `\n\n${businessWorkflowProgressMarkdown(continuation)}` : '') +
+            (continuationNeedsAttention ? '\n\nThe external action completed, but Xroga could not advance the saved workflow. Check the workflow status before doing anything else.' : ''),
+
+          workflowRunId: continuation?.run.id ?? null,
+          nextConfirmationId: continuation?.confirmation?.id ?? null,
 
           toolkit:
             result.execution
@@ -1960,6 +2048,15 @@ router.post(
           ),
         );
 
+      let workflowCancelNeedsAttention = false;
+      if (confirmation.status === 'cancelled') {
+        try {
+          await cancelBusinessWorkflowForConfirmation(requireTenantContext(req.tenantContext), confirmation.id);
+        } catch {
+          workflowCancelNeedsAttention = true;
+        }
+      }
+
       return res.json(
         {
           ok:
@@ -1967,6 +2064,7 @@ router.post(
             'cancelled',
 
           confirmation,
+          workflowCancelNeedsAttention,
         },
       );
     } catch (error) {

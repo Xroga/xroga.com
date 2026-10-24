@@ -27,12 +27,14 @@ export const ModernResponseText = memo(function ModernResponseText({
   content,
   streaming,
   sources,
+  afterIntro,
 }: {
   content: string;
   streaming?: boolean;
   sources?: CitationSource[];
+  afterIntro?: ReactNode;
 }) {
-  const safeContent = typeof content === 'string' ? content : '';
+  const safeContent = typeof content === 'string' ? content.replace(/[—–]/g, '-') : '';
 
   if (!safeContent && streaming) {
     return null;
@@ -57,7 +59,7 @@ export const ModernResponseText = memo(function ModernResponseText({
       <ResponseBody streaming={streaming}>
         <div className="space-y-2">
           {textOnly && (
-            <FormattedAiMarkdown content={textOnly} streaming={streaming} sources={sources} />
+            <FormattedAiMarkdown content={textOnly} streaming={streaming} sources={sources} afterIntro={afterIntro} />
           )}
 
           {images.map((img, i) => (
@@ -85,7 +87,7 @@ export const ModernResponseText = memo(function ModernResponseText({
           mathMode
         />
       ) : (
-        <FormattedAiMarkdown content={safeContent} streaming={streaming} sources={sources} />
+        <FormattedAiMarkdown content={safeContent} streaming={streaming} sources={sources} afterIntro={afterIntro} />
       )}
     </ResponseBody>
   );

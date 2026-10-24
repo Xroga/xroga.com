@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type ColumnDef } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Funnel, FunnelChart, LabelList, Legend, Line, LineChart, Pie, PieChart, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Funnel, FunnelChart, LabelList, Legend, Line, LineChart, Pie, PieChart, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Scatter, ScatterChart, Tooltip, Treemap, XAxis, YAxis, ZAxis } from 'recharts';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, Circle, Copy, Download, ExternalLink, FileText, LoaderCircle, MapPin, Minus, Search, TriangleAlert } from 'lucide-react';
@@ -24,7 +24,7 @@ type TableBlock = Extract<XrogaBlock, { type: 'table' | 'spreadsheet' | 'databas
 type ChartBlock = Extract<XrogaBlock, { type: 'chart' }>;
 type Metric = Extract<XrogaBlock, { type: 'metric' }>['metric'];
 
-const CHART_COLORS = ['#2563eb', '#7c3aed', '#059669', '#d97706', '#dc2626'];
+const CHART_COLORS = ['#1854e8', '#6546e8', '#13a779', '#f5a524', '#e1536b'];
 
 function ExportButton({ label, create }: { label: string; create: () => Promise<XrogaExportFile> }) {
   const [busy, setBusy] = useState(false);
@@ -39,17 +39,17 @@ function ExportButton({ label, create }: { label: string; create: () => Promise<
   return <span className="inline-flex flex-col items-start gap-1"><button type="button" disabled={busy} onClick={() => void handleDownload()} className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 text-xs font-medium hover:bg-black/5 disabled:opacity-50 dark:hover:bg-white/5"><Download className="h-3.5 w-3.5" aria-hidden="true" />{busy ? 'Preparing…' : label}</button>{error ? <span role="alert" className="max-w-64 text-xs text-red-500">{error}</span> : null}</span>;
 }
 
-function Surface({ children, title, description, state = 'ready' }: { children: React.ReactNode; title?: string; description?: string; state?: RichBlock['state'] }) {
+function Surface({ children, title, description, state = 'ready', variant }: { children: React.ReactNode; title?: string; description?: string; state?: RichBlock['state']; variant?: 'data-table' | 'chart' }) {
   if (state === 'loading') return <section className="xv-response-surface max-w-[960px] rounded-2xl border border-[var(--border)] p-5" aria-busy="true"><LoaderCircle className="h-5 w-5 animate-spin" aria-hidden="true" /><span className="sr-only">Loading output</span></section>;
   if (state === 'empty') return <section className="xv-response-surface max-w-[960px] rounded-2xl border border-dashed border-[var(--border)] p-5 text-sm text-[var(--muted)]">No data is available for this output.</section>;
   if (state === 'error' || state === 'unsupported') return <section className="xv-response-surface max-w-[960px] rounded-2xl border border-amber-500/35 p-5 text-sm" role="status"><TriangleAlert className="mr-2 inline h-4 w-4" aria-hidden="true" />{state === 'unsupported' ? 'This output cannot be previewed in this workspace yet.' : 'This output could not be rendered.'}</section>;
-  return <section className="xv-response-surface max-w-[960px] overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--background)]/65 shadow-sm">{title || description ? <header className="border-b border-[var(--border)] px-4 py-3">{title ? <h3 className="text-sm font-semibold text-[var(--foreground)]">{title}</h3> : null}{description ? <p className="mt-0.5 text-xs text-[var(--muted)]">{description}</p> : null}</header> : null}{children}</section>;
+  return <section data-xroga-surface={variant} className="xv-response-surface max-w-[960px] overflow-hidden rounded-2xl bg-[var(--background)] shadow-[0_12px_36px_rgba(10,30,68,.09)]">{title || description ? <header className="px-5 pb-2 pt-5">{title ? <h3 className="text-base font-semibold tracking-tight text-[var(--foreground)]">{title}</h3> : null}{description ? <p className="mt-1 text-xs text-[var(--muted)]">{description}</p> : null}</header> : null}{children}</section>;
 }
 
 function MetricCard({ metric }: { metric: Metric }) {
   const Icon = metric.trend === 'up' ? ArrowUp : metric.trend === 'down' ? ArrowDown : Minus;
   const trendColor = metric.trend === 'up' ? 'text-emerald-500' : metric.trend === 'down' ? 'text-rose-500' : 'text-blue-500';
-  return <article className="relative min-w-0 overflow-hidden rounded-2xl border border-blue-500/15 bg-[var(--card)]/65 p-4 shadow-sm"><span className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-blue-500/70 to-transparent" aria-hidden="true" /><p className="truncate text-xs font-medium text-[var(--muted)]">{metric.label}</p><p className="mt-3 break-words text-2xl font-semibold tracking-tight sm:text-[1.8rem]">{metric.value}{metric.unit ? <span className="ml-1 text-sm font-normal text-[var(--muted)]">{metric.unit}</span> : null}</p>{metric.change !== undefined ? <p className={`mt-3 inline-flex items-center gap-1 text-xs font-semibold ${trendColor}`}><Icon className="h-3.5 w-3.5" aria-hidden="true" />{Math.abs(metric.change)}%</p> : null}</article>;
+  return <article className="relative min-w-0 overflow-hidden rounded-2xl bg-[var(--card)] p-5 shadow-[0_8px_24px_rgba(18,45,90,.09)]"><span className="absolute left-5 top-0 h-1 w-12 rounded-b-full bg-[#1854e8]" aria-hidden="true" /><p className="truncate text-xs font-medium text-[var(--muted)]">{metric.label}</p><p className="mt-3 break-words text-3xl font-semibold tracking-tight">{metric.value}{metric.unit ? <span className="ml-1 text-sm font-normal text-[var(--muted)]">{metric.unit}</span> : null}</p>{metric.change !== undefined ? <p className={`mt-4 inline-flex items-center gap-1 rounded-full bg-current/10 px-2.5 py-1 text-xs font-semibold ${trendColor}`}><Icon className="h-3.5 w-3.5" aria-hidden="true" />{Math.abs(metric.change)}%</p> : null}</article>;
 }
 
 function MetricRenderer({ block }: { block: Extract<RichBlock, { type: 'metric' | 'metric-group' }> }) {
@@ -86,7 +86,7 @@ function TableRenderer({ block }: { block: TableBlock }) {
     anchor.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
-  return <Surface title={block.title ?? (block.type === 'spreadsheet' ? 'Spreadsheet' : block.type === 'database' ? 'Database' : 'Table')} description={block.description} state={block.state}>
+  return <Surface title={block.title ?? (block.type === 'spreadsheet' ? 'Spreadsheet' : block.type === 'database' ? 'Database' : 'Table')} description={block.description} state={block.state} variant="data-table">
     <div className="flex flex-wrap items-center gap-2 border-b border-[var(--border)] p-3">
       {block.searchable !== false ? <label className="relative min-w-44 flex-1"><Search className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-[var(--muted)]" aria-hidden="true" /><span className="sr-only">Search table</span><input value={filter} onChange={(event) => setFilter(event.target.value)} placeholder="Search rows" className="h-9 w-full rounded-lg border border-[var(--border)] bg-transparent pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-blue-500" /></label> : null}
       {selectedIds.length ? <button type="button" onClick={useSelection} className="h-9 rounded-lg border border-[var(--border)] px-3 text-xs font-medium hover:bg-black/5 dark:hover:bg-white/5">Use {selectedIds.length} as context</button> : null}
@@ -105,19 +105,38 @@ function TableRenderer({ block }: { block: TableBlock }) {
 
 function ChartRenderer({ block }: { block: ChartBlock }) {
   const addSelection = useXrogaArtifactContext((state) => state.addSelection);
-  const common = { data: block.data, margin: { top: 8, right: 16, left: 0, bottom: 8 }, onClick: (state: { activeLabel?: string | number }) => { if (state?.activeLabel !== undefined) addSelection({ artifactId: block.artifactId ?? block.id, blockId: block.id, kind: 'chart-point', label: `${block.xKey}: ${state.activeLabel}`, recordIds: [String(state.activeLabel)] }); } };
-  const children = <><CartesianGrid strokeDasharray="3 3" opacity={0.22} /><XAxis dataKey={block.xKey} tick={{ fontSize: 11 }} /><YAxis tick={{ fontSize: 11 }} /><Tooltip /><Legend />{block.series.map((series, index) => block.chartType === 'bar' ? <Bar key={series.key} dataKey={series.key} name={series.label} fill={series.color ?? CHART_COLORS[index % CHART_COLORS.length]} /> : block.chartType === 'area' ? <Area key={series.key} dataKey={series.key} name={series.label} stroke={series.color ?? CHART_COLORS[index % CHART_COLORS.length]} fill={series.color ?? CHART_COLORS[index % CHART_COLORS.length]} fillOpacity={0.18} /> : <Line key={series.key} dataKey={series.key} name={series.label} stroke={series.color ?? CHART_COLORS[index % CHART_COLORS.length]} strokeWidth={2} dot={false} />)}</>;
+  const common = { data: block.data, margin: { top: 12, right: 18, left: 0, bottom: 8 }, onClick: (state: { activeLabel?: string | number }) => { if (state?.activeLabel !== undefined) addSelection({ artifactId: block.artifactId ?? block.id, blockId: block.id, kind: 'chart-point', label: `${block.xKey}: ${state.activeLabel}`, recordIds: [String(state.activeLabel)] }); } };
   const primary = block.series[0];
+  const isBar = ['bar', 'grouped-bar', 'stacked-bar', 'histogram'].includes(block.chartType);
+  const isArea = ['area', 'stacked-area'].includes(block.chartType);
+  const stacked = block.chartType === 'stacked-bar' || block.chartType === 'stacked-area';
+  const axes = <><CartesianGrid vertical={false} stroke="currentColor" opacity={0.09} /><XAxis dataKey={block.xKey} axisLine={false} tickLine={false} tick={{ fontSize: 11 }} /><YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11 }} /><Tooltip /><Legend /></>;
+  const cartesianChildren = <>{axes}{block.series.map((series, index) => {
+    const color = series.color ?? CHART_COLORS[index % CHART_COLORS.length];
+    if (isBar) return <Bar key={series.key} dataKey={series.key} name={series.label} fill={color} stackId={stacked ? 'total' : undefined} radius={stacked ? 0 : [5, 5, 0, 0]} maxBarSize={36} />;
+    if (isArea) return <Area key={series.key} dataKey={series.key} name={series.label} stackId={stacked ? 'total' : undefined} stroke={color} strokeWidth={2.5} fill={color} fillOpacity={stacked ? 0.42 : 0.14} />;
+    return <Line key={series.key} dataKey={series.key} name={series.label} stroke={color} strokeWidth={2.7} dot={{ r: 2.5 }} activeDot={{ r: 5 }} />;
+  })}</>;
+  const heatValues = block.data.flatMap((row) => block.series.map((series) => Number(row[series.key])).filter(Number.isFinite));
+  const heatMax = Math.max(0, ...heatValues);
+  const heatMin = Math.min(0, ...heatValues);
+  let cumulative = 0;
+  const waterfallData = block.data.map((row) => { const change = Number(row[primary?.key]); const start = cumulative; cumulative += Number.isFinite(change) ? change : 0; return { ...row, __offset: Math.min(start, cumulative), __magnitude: Math.abs(Number.isFinite(change) ? change : 0), __change: change }; });
+  if (block.chartType === 'heatmap') return <Surface title={block.title ?? 'Heatmap'} description={block.description} state={block.state} variant="chart"><div className="overflow-x-auto p-5"><div className="min-w-[400px] space-y-2">{block.data.map((row, rowIndex) => <div key={`${String(row[block.xKey])}-${rowIndex}`} className="grid items-center gap-2" style={{ gridTemplateColumns: `minmax(92px, 1.4fr) repeat(${block.series.length}, minmax(52px, 1fr))` }}><span className="truncate text-xs font-medium" title={String(row[block.xKey])}>{String(row[block.xKey])}</span>{block.series.map((series) => { const value = Number(row[series.key]); const strength = Number.isFinite(value) && heatMax > heatMin ? 0.1 + 0.85 * ((value - heatMin) / (heatMax - heatMin)) : 0.12; return <button key={series.key} type="button" title={`${String(row[block.xKey])} - ${series.label}: ${String(row[series.key])}`} onClick={() => addSelection({ artifactId: block.artifactId ?? block.id, blockId: block.id, kind: 'chart-point', label: `${String(row[block.xKey])} - ${series.label}: ${String(row[series.key])}`, recordIds: [String(row[block.xKey])] })} className="h-11 rounded-lg text-xs font-semibold shadow-sm" style={{ backgroundColor: `rgba(24,84,232,${strength})`, color: strength > 0.45 ? '#fff' : 'var(--foreground)' }}>{String(row[series.key] ?? '')}</button>; })}</div>)}<div className="grid gap-2 pt-1" style={{ gridTemplateColumns: `minmax(92px, 1.4fr) repeat(${block.series.length}, minmax(52px, 1fr))` }}><span />{block.series.map((series) => <span key={series.key} className="text-center text-[11px] text-[var(--muted)]">{series.label}</span>)}</div></div></div><p className="px-5 pb-4 text-xs text-[var(--muted)]">{block.summary}</p></Surface>;
   const chart = block.chartType === 'pie' || block.chartType === 'donut'
     ? <PieChart><Tooltip /><Legend /><Pie data={block.data} dataKey={primary?.key} nameKey={block.xKey} innerRadius={block.chartType === 'donut' ? 58 : 0} outerRadius={92} paddingAngle={2}>{block.data.map((_, index) => <Cell key={`${block.id}-slice-${index}`} fill={primary?.color ?? CHART_COLORS[index % CHART_COLORS.length]} />)}</Pie></PieChart>
     : block.chartType === 'radar'
       ? <RadarChart data={block.data}><PolarGrid /><PolarAngleAxis dataKey={block.xKey} tick={{ fontSize: 11 }} /><PolarRadiusAxis tick={{ fontSize: 10 }} /><Tooltip /><Legend />{block.series.map((series, index) => <Radar key={series.key} dataKey={series.key} name={series.label} stroke={series.color ?? CHART_COLORS[index % CHART_COLORS.length]} fill={series.color ?? CHART_COLORS[index % CHART_COLORS.length]} fillOpacity={0.14} />)}</RadarChart>
       : block.chartType === 'funnel'
         ? <FunnelChart><Tooltip /><Funnel data={block.data} dataKey={primary?.key} nameKey={block.xKey} fill={primary?.color ?? CHART_COLORS[0]}><LabelList position="right" fill="currentColor" stroke="none" dataKey={block.xKey} /></Funnel></FunnelChart>
-        : block.chartType === 'scatter'
-      ? <ScatterChart {...common}><CartesianGrid strokeDasharray="3 3" opacity={0.22} /><XAxis dataKey={block.xKey} tick={{ fontSize: 11 }} /><YAxis dataKey={primary?.key} tick={{ fontSize: 11 }} /><Tooltip cursor={{ strokeDasharray: '3 3' }} /><Legend />{block.series.map((series, index) => <Scatter key={series.key} name={series.label} data={block.data} fill={series.color ?? CHART_COLORS[index % CHART_COLORS.length]} />)}</ScatterChart>
-      : block.chartType === 'bar' ? <BarChart {...common}>{children}</BarChart> : block.chartType === 'area' ? <AreaChart {...common}>{children}</AreaChart> : <LineChart {...common}>{children}</LineChart>;
-  return <Surface title={block.title ?? 'Chart'} description={block.description} state={block.state}><div className="xv-response-chart h-72 w-full p-3" role="img" aria-label={block.summary}><ResponsiveContainer width="100%" height="100%">{chart}</ResponsiveContainer></div><p className="border-t border-[var(--border)] px-4 py-3 text-xs text-[var(--muted)]">{block.summary}. Select a chart point to use it as context.</p></Surface>;
+      : block.chartType === 'scatter' || block.chartType === 'bubble'
+      ? <ScatterChart {...common}><CartesianGrid stroke="currentColor" opacity={0.09} /><XAxis dataKey={block.xKey} tick={{ fontSize: 11 }} /><YAxis dataKey={primary?.key} tick={{ fontSize: 11 }} />{block.chartType === 'bubble' && block.series[1] ? <ZAxis dataKey={block.series[1].key} range={[70, 700]} name={block.series[1].label} /> : null}<Tooltip cursor={{ strokeDasharray: '3 3' }} /><Legend /><Scatter name={primary?.label} data={block.data} fill={primary?.color ?? CHART_COLORS[0]} /></ScatterChart>
+      : block.chartType === 'treemap'
+      ? <Treemap data={block.data} dataKey={primary?.key} nameKey={block.xKey} stroke="var(--background)" fill={CHART_COLORS[0]}><Tooltip /></Treemap>
+      : block.chartType === 'waterfall'
+      ? <BarChart data={waterfallData} margin={common.margin}><CartesianGrid vertical={false} stroke="currentColor" opacity={0.09} /><XAxis dataKey={block.xKey} tick={{ fontSize: 11 }} /><YAxis tick={{ fontSize: 11 }} /><Tooltip formatter={(_value, name, item) => name === 'Change' ? [item.payload.__change, 'Change'] : null} /><Bar dataKey="__offset" stackId="waterfall" fill="transparent" legendType="none" tooltipType="none" /><Bar dataKey="__magnitude" stackId="waterfall" name="Change" maxBarSize={42}>{waterfallData.map((row, index) => <Cell key={`${block.id}-${index}`} fill={row.__change >= 0 ? CHART_COLORS[0] : '#e1536b'} />)}</Bar></BarChart>
+      : isBar ? <BarChart {...common}>{cartesianChildren}</BarChart> : isArea ? <AreaChart {...common}>{cartesianChildren}</AreaChart> : <LineChart {...common}>{cartesianChildren}</LineChart>;
+  return <Surface title={block.title ?? 'Chart'} description={block.description} state={block.state} variant="chart"><div className="xv-response-chart h-72 w-full p-3" role="img" aria-label={block.summary}><ResponsiveContainer width="100%" height="100%">{chart}</ResponsiveContainer></div><p className="border-t border-[var(--border)] px-4 py-3 text-xs text-[var(--muted)]">{block.summary}. Select a chart point to use it as context.</p></Surface>;
 }
 
 function TimelineRenderer({ block }: { block: Extract<RichBlock, { type: 'timeline' }> }) { return <Surface title={block.title ?? 'Timeline'} description={block.description} state={block.state}><ol className="space-y-0 p-4">{block.events.map((event) => <li key={event.id} className="relative grid grid-cols-[20px_1fr] gap-3 pb-5 last:pb-0"><div className="flex flex-col items-center"><Circle className="h-4 w-4 fill-current" aria-hidden="true" /><span className="h-full w-px bg-[var(--border)] last:hidden" /></div><div><p className="text-xs text-[var(--muted)]">{event.date}</p><h4 className="text-sm font-medium">{event.title}</h4>{event.detail ? <p className="mt-1 text-sm text-[var(--muted)]">{event.detail}</p> : null}</div></li>)}</ol></Surface>; }

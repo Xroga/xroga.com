@@ -915,6 +915,14 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     .filter(m=>m.item_type==='conversation'?activeItems.some(s=>s.id===m.item_id):
       Boolean(projectById(m.item_id)));
   const recentConversations=activeItems;
+  const standaloneRecents=recentConversations.filter(session=>{
+    const projectId=metaOf('conversation',session.id)?.project_id;
+    if(projectId)return !accountProjects.some(project=>project.id===projectId)
+      && !pinnedProjectRecords.some(project=>project.id===projectId)
+      && !organizedProjects.some(project=>project.id===projectId);
+    return !organizedProjects.some(project=>Boolean(project.repo&&project.repo===session.githubRepoName))
+      && !accountProjects.some(project=>Boolean(project.github_repo_name&&project.github_repo_name===session.githubRepoName));
+  });
   function conversationTitle(session:RepoSession){
     return metaOf('conversation',session.id)?.title_override ||
       meaningfulSidebarTitle(session.title,session.entry?.prompt||session.preview);
@@ -1218,12 +1226,12 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       {shownPins>10?<button type="button" className={secondary+' px-2 py-1'} onClick={()=>setShownPins(10)}>Show less</button>:null}
     </section>:null}
 
-    {!isGuest?<section className="mt-3" aria-label="Recent conversations">
-      <h2 className={sectionTitle}>Recents</h2>
-      {recentConversations.slice(0,shownRecents).map(session=>
+    {!isGuest?<section className="xv-sidebar-recents-section" aria-label="Recent conversations outside projects">
+      <div className="flex items-center justify-between gap-2"><h2 className={sectionTitle}>Recents</h2><span className="text-[9px] text-[var(--muted)]">Outside projects</span></div>
+      {standaloneRecents.slice(0,shownRecents).map(session=>
         renderRow('conversation',session.id,conversationTitle(session),()=>void openSession(session),false))}
-      {recentConversations.length===0?<p className="px-2 py-1 text-[10px] text-[var(--muted)]">Your saved conversations will appear here.</p>:null}
-      {recentConversations.length>shownRecents?
+      {standaloneRecents.length===0?<p className="px-2 py-1 text-[10px] text-[var(--muted)]">Chats outside a project appear here.</p>:null}
+      {standaloneRecents.length>shownRecents?
         <button type="button" className={secondary+' px-2 py-1'} onClick={()=>setShownRecents(prev=>prev+12)}>View more recents</button>
         :moreCloudSessions||moreSidebarChats?<button type="button" className={secondary+' px-2 py-1'}
           onClick={()=>void loadMoreRecents()}>Load older recents</button>:null}

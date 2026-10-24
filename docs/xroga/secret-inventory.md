@@ -1,6 +1,6 @@
 # Environment/secret NAME inventory
 
-Source SHA: `0c8b5ddf5d82f1d8d7b409ead4c0f55090082f80`. Values are prohibited, including public credential values. 216 named readers/aliases/derived keys; 21 explicitly reviewed bindings.
+Source SHA: `9fb905602455672784b7f26edc054bcc7cbeb7bf`. Values are prohibited, including public credential values. 217 named readers/aliases/derived keys; 21 explicitly reviewed bindings.
 
 | Name | Class | Requiredness | Consuming source | Validation status |
 | --- | --- | --- | --- | --- |
@@ -26,6 +26,7 @@ Source SHA: `0c8b5ddf5d82f1d8d7b409ead4c0f55090082f80`. Values are prohibited, i
 | CLOUDFLARE_R2_SECRET_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/lib/r2.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | COMFYUI_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/lib/comfyui.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | COMPOSIO_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/security/businessAuthority.local.integration.ts, backend/src/security/connectedAccountRoutes.local.integration.ts, backend/src/services/integrations/composioClient.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| COMPOSIO_WEBHOOK_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/routes/businessAutomationWebhook.ts, backend/src/services/integrations/businessAutomations.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | DATABASE_URL | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/lib/capabilityRegistry.ts, backend/src/lib/postgresConnect.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | DEEPDUB_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/config/envSecrets.ts, backend/src/lib/platformReady.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | DEEPGRAM_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/config/envSecrets.ts, backend/src/lib/platformReady.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |

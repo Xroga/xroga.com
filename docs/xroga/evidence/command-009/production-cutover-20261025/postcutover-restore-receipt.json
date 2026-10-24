@@ -1,0 +1,41 @@
+{
+  "startedAt": "2026-10-24T20:14:36.232745+00:00",
+  "backupPrefix": "gs://xroga-p3-prod-recovery-574998934848/cutover-20261024/20261024T201227Z/",
+  "container": "xroga-p3-production-restore-20261024",
+  "database": "xroga_p3_restore",
+  "productionSqlApplied": false,
+  "stages": [
+    "EXACT_IMAGE_NETWORK_NONE_NO_PORTS_TMPFS_ADMIN_READY",
+    "SOURCE_ROLE_ATTRIBUTES_AND_MEMBERSHIPS_RESTORED",
+    "ACTUAL_PRODUCTION_DATABASE_RESTORED_OWNERS_AND_ACLS",
+    "LEGACY_KEY_ESCROW_AND_REAL_HISTORICAL_CREDENTIAL_DECRYPTABILITY_VERIFIED",
+    "RESTORED_DATA_BASELINE_FINGERPRINTS_CAPTURED"
+  ],
+  "roles": {
+    "existingRoleCreatesSkipped": 15,
+    "otherSourceRoleStatementsApplied": true
+  },
+  "eventTriggers": {
+    "count": 7,
+    "originalOwnersAndEnabledStateVerified": true,
+    "deferredTocEntries": 7,
+    "omittedEntries": 0
+  },
+  "dump": {
+    "authenticatedCustomDumpBytes": 12106704,
+    "exitCode": 0,
+    "eventRestoreExitCode": 0
+  },
+  "credentialRecovery": {
+    "databaseV1Records": 0,
+    "objectV1Records": 0,
+    "objectsIntegrityVerified": 40
+  },
+  "tableFingerprints": {
+    "tables": 158,
+    "file": "xroga-p3-restored-baseline-fingerprints.json",
+    "sha256": "570545165b89299aa119a8ab0e498d0a69c21e8fba672a3bff100fae2ca97892"
+  },
+  "status": "PASS_ACTUAL_ISOLATED_RESTORE_AND_LEGACY_RECOVERY",
+  "completedAt": "2026-10-24T20:15:11.219023+00:00"
+}

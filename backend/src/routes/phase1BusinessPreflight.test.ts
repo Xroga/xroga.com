@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import express from 'express';
 import type { AuthRequest } from '../middleware/auth.js';
 
-import router, { explicitConfirmationIntent } from './phase1BusinessPreflight.js';
+import router, { connectionStatusTarget, explicitConfirmationIntent } from './phase1BusinessPreflight.js';
 
 test('only explicit pending-action follow-ups bypass semantic planning', () => {
   assert.equal(explicitConfirmationIntent('Confirm it'), 'confirm');
@@ -70,4 +70,14 @@ test('ambiguous confirmation messages never select or execute a latest action ac
     keys.forEach((key, i) => { if (prior[i] === undefined) delete process.env[key]; else process.env[key] = prior[i]; });
     await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
   }
+});
+
+test('connection-status questions bypass tool discovery without treating connection requests as status checks', () => {
+  assert.equal(connectionStatusTarget('check gmail app is connected with xroga'), 'gmail');
+  assert.equal(connectionStatusTarget('Is my Google Calendar connected?'), 'Google Calendar');
+  assert.equal(connectionStatusTarget('Which apps are connected?'), '*');
+  assert.equal(connectionStatusTarget('Connect my Gmail account'), null);
+  assert.equal(connectionStatusTarget('Send an email from Gmail'), null);
+  assert.equal(connectionStatusTarget('Check Gmail is connected and send an email to Jane'), null);
+  assert.equal(connectionStatusTarget('Which apps are connected, then create a calendar event'), null);
 });
