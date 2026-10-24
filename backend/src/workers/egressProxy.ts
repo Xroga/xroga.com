@@ -39,6 +39,13 @@ export interface EgressProxyOptions {
   bindHost?: string;
   /** fixed port (the sidecar); 0 or omitted picks a free one */
   port?: number;
+  /**
+   * Credentials the browser's launch options carry. Omitted: random per proxy instance (in-process use). A sidecar, started separately from the
+   * browser, is given them by the trusted worker; the password must be at least 24 characters.
+   */
+  credentials?: { username: string; password: string };
+  /** called with every decision as it is made (host and verdict only), for streaming evidence from a sidecar */
+  onDecision?: (decision: EgressDecision) => void;
 }
 
 export interface EgressProxy {
@@ -74,14 +81,17 @@ export async function startEgressProxy(options: EgressProxyOptions): Promise<Egr
   const maxConnections = options.maxConnections ?? Math.min(options.job.limits.maxNavigations * 8, 2_000);
   const idleMs = options.idleMs ?? 30_000;
   const allowedHosts = new Set(options.job.allowedOrigins.map((origin) => new URL(origin).hostname));
-  const username = `job-${randomBytes(6).toString('hex')}`;
-  const password = randomBytes(24).toString('hex');
+  if (options.credentials && (!/^[A-Za-z0-9._-]{3,64}$/.test(options.credentials.username) || options.credentials.password.length < 24)) throw new Error('proxy credentials are too weak');
+  const username = options.credentials?.username ?? `job-${randomBytes(6).toString('hex')}`;
+  const password = options.credentials?.password ?? randomBytes(24).toString('hex');
   const decisions: EgressDecision[] = [];
   const open = new Set<Duplex>();
   let relayed = 0;
   let connections = 0;
   const record = (host: string, allowed: boolean, reason: EgressDecision['reason']) => {
-    if (decisions.length < 5_000) decisions.push({ host: host.slice(0, 255), allowed, reason });
+    const decision: EgressDecision = { host: host.slice(0, 255), allowed, reason };
+    if (decisions.length < 5_000) decisions.push(decision);
+    try { options.onDecision?.(decision); } catch { /* a logging failure never changes a verdict */ }
   };
 
   const server = http.createServer((_req, res) => {

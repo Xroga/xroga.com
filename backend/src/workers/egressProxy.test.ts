@@ -220,6 +220,31 @@ describe('browser egress proxy', () => {
     assert.equal(open.bindAddress, '0.0.0.0');
   });
 
+  it('uses the credentials it is given (the sidecar case) and refuses weak ones', async () => {
+    const up = await upstream('echo');
+    const creds = { username: 'job-fixed', password: 'p'.repeat(32) };
+    const seen: Array<{ host: string; allowed: boolean; reason: string }> = [];
+    const proxy = await startEgressProxy({ job, resolve: async () => [{ address: '93.184.216.34', family: 4 }], credentials: creds, onDecision: (d) => seen.push(d), dial: (_h, _p, lookup) => { lookup('example.com', {}, () => undefined); return net.connect({ host: '127.0.0.1', port: up.port }); } });
+    cleanup.push(() => proxy.close());
+    assert.deepEqual([proxy.username, proxy.password], [creds.username, creds.password]);
+    assert.match((await connect(proxy, 'example.com:443')).status, /^HTTP\/1\.1 200/);
+    assert.match((await connect(proxy, 'evil.net:443')).status, /^HTTP\/1\.1 403/);
+    assert.deepEqual(seen.map((d) => [d.host, d.allowed, d.reason]), [['example.com', true, 'ALLOWED'], ['evil.net', false, 'SCOPE']]);
+    for (const bad of [{ username: 'x', password: 'p'.repeat(32) }, { username: 'job-ok', password: 'short' }, { username: 'bad user', password: 'p'.repeat(32) }]) {
+      // a proxy that wrongly starts is closed before the assertion fails, so a defect cannot leave a listener holding the test process open
+      const started = await startEgressProxy({ job, resolve: async () => [], credentials: bad }).then((p) => p, (e: Error) => e);
+      if (!(started instanceof Error)) { await started.close(); assert.fail(`weak credentials were accepted: ${bad.username}`); }
+      assert.match(started.message, /too weak/);
+    }
+  });
+
+  it('a throwing decision listener never changes the verdict', async () => {
+    const up = await upstream('echo');
+    const proxy = await startEgressProxy({ job, resolve: async () => [{ address: '93.184.216.34', family: 4 }], onDecision: () => { throw new Error('boom'); }, dial: (_h, _p, lookup) => { lookup('example.com', {}, () => undefined); return net.connect({ host: '127.0.0.1', port: up.port }); } });
+    cleanup.push(() => proxy.close());
+    assert.match((await connect(proxy, 'evil.net:443')).status, /^HTTP\/1\.1 403/);
+  });
+
   it('close() tears down open tunnels', async () => {
     const up = await upstream('echo');
     const h = await harness({ 'example.com': ['93.184.216.34'] }, up);

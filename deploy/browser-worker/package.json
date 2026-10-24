@@ -3,8 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "description": "Dependencies of the browser worker container image (Phase 2: the sandbox probe). Pinned exactly; installed with npm ci.",
+  "description": "Dependencies of the browser worker container image. Pinned exactly and installed with npm ci. Stagehand is pinned here (INFRA-005) but not used or imported until INFRA-007; Playwright is the only browser driver the probe uses.",
   "dependencies": {
+    "@browserbasehq/stagehand": "4.2.0",
     "playwright-core": "1.62.0"
   }
 }

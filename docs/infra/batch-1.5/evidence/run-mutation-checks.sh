@@ -204,5 +204,16 @@ mut "workflow: pull-request job gets the Preview environment back" ../.github/wo
     permissions:" $TO $MT
 mut "workflow: pull-request job runs the live runner again" ../.github/workflows/supabase-migrate.yml 'run: node scripts/check-supabase-migrations.mjs --base "origin/${{ github.base_ref }}"' 'run: node scripts/apply-supabase-migrations.mjs --dry-run' $TO $MT
 fi
+if want workers4; then
+W=src/workers; TO=--test-timeout=20000
+EP=$W/egressProxy.ts; ET=$W/egressProxy.test.ts
+mut "proxy: weak sidecar credentials accepted" $EP "options.credentials.password.length < 24)) throw" "false)) throw" $TO $ET
+mut "proxy: a throwing decision listener changes behaviour" $EP "try { options.onDecision?.(decision); } catch { /* a logging failure never changes a verdict */ }" "options.onDecision?.(decision);" $TO $ET
+SC=$W/proxySidecar.ts; SCT=$W/proxySidecar.test.ts
+mut "sidecar: weak credentials accepted" $SC "|| password.length < 24) throw" "|| false) throw" $TO $SCT
+mut "sidecar: any port accepted" $SC "|| port < 1 || port > 65535) throw" "|| false) throw" $TO $SCT
+mut "sidecar: job not validated by the production parser" $SC "job = parseBrowserJob(JSON.parse(env.XROGA_PROXY_JOB ?? ''));" "job = JSON.parse(env.XROGA_PROXY_JOB ?? '') as BrowserJob;" $TO $SCT
+mut "sidecar: error echoes its input" $SC "throw new SidecarConfigError('XROGA_PROXY_JOB is missing or is not a valid browser job');" "throw new SidecarConfigError('bad job: ' + (env.XROGA_PROXY_JOB ?? '').slice(0, 200));" $TO $SCT
+fi
 git -C .. diff --quiet -- backend supabase && echo "restored: working tree clean for mutated files" | tee -a "$LOG"
 if grep -qE '^(SURVIVED|INCONCLUSIVE)' "$LOG"; then echo "FAILED: a defect was not caught, or a run was inconclusive" | tee -a "$LOG"; exit 1; fi

@@ -1,0 +1,22 @@
+# syntax=docker/dockerfile:1.7
+#
+# The egress proxy sidecar (Batch 1.5 Phase 2). It is the one peer of the browser container on its --internal network, and the only process on that
+# network that can reach the internet. It runs the production proxy (backend/src/workers/egressProxy.ts through proxySidecar.ts), bundled by
+# scripts/browser/build-proxy-image.mts. It holds no application secret: the job and the proxy credentials arrive in its environment.
+#
+# Base: Node 22 on Debian bookworm, pinned by digest (a multi-architecture index: amd64 and arm64).
+FROM node:22-bookworm-slim@sha256:de170b39439eb0e5a3444ad7d60b015614a381e10fecae2e30ec9e735122f38d
+
+LABEL org.opencontainers.image.title="xroga-egress-proxy" \
+      org.opencontainers.image.description="Per-job egress proxy: job scope, canonical egress policy, pinned DNS. Not published to the host."
+
+ENV NODE_ENV=production
+
+RUN groupadd --gid 10002 egressproxy \
+ && useradd --uid 10002 --gid 10002 --no-create-home --shell /usr/sbin/nologin egressproxy
+
+WORKDIR /opt/xroga-egress-proxy
+COPY dist/egress-proxy-sidecar.mjs ./egress-proxy-sidecar.mjs
+
+USER 10002:10002
+ENTRYPOINT ["node", "/opt/xroga-egress-proxy/egress-proxy-sidecar.mjs"]
