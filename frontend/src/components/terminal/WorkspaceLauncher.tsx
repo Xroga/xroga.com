@@ -5,8 +5,11 @@ import { FilePenIcon } from '@/components/icons/animated/FilePenIcon';
 import { EyeClosedIcon } from '@/components/icons/animated/EyeClosedIcon';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useThemeStore } from '@/store/useThemeStore';
-import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
+import { useTerminalChat } from '@/context/TerminalChatContext';
+import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
+import { draftForExplicitHide } from '@/lib/composerDraft';
+import { flushSync } from 'react-dom';
 
 /**
  * Compact workspace and composer controls owned by the terminal title bar.
@@ -20,8 +23,25 @@ export function WorkspaceLauncher({ className, control = 'all' }: { className?: 
   const setWorkspaceOpen = useProjectWorkspaceStore((s) => s.setWorkspaceOpen);
   const chatbarHidden = useThemeStore((s) => s.chatbarHidden);
   const setChatbarHidden = useThemeStore((s) => s.setChatbarHidden);
-  const { messages, loading, sessionRestoring } = useTerminalChat();
+  const { setPrompt, sessionId, projectId, sessionRestoring, messages, loading } = useTerminalChat();
   const emptyWorkspace = messages.length === 0 && !loading && !sessionRestoring;
+  const identity = useWorkspaceIdentity();
+
+  function toggleChatbar() {
+    if (emptyWorkspace) return;
+    if (!chatbarHidden) {
+      const snapshots = [...document.querySelectorAll<HTMLTextAreaElement>('[data-terminal-composer]')].map(input => ({
+        owner: input.dataset.draftOwner ?? '', session: input.dataset.draftSession ?? '',
+        project: input.dataset.draftProject ?? '', restoring: input.dataset.draftRestoring !== 'false', value: input.value,
+      }));
+      const latestDraft = draftForExplicitHide(snapshots, {
+        owner: identity.status === 'guest' ? 'guest' : identity.userId ?? '',
+        session: sessionId, project: projectId ?? '',
+      }, sessionRestoring);
+      if (latestDraft !== undefined) flushSync(() => setPrompt(latestDraft));
+    }
+    setChatbarHidden(!chatbarHidden);
+  }
 
   return (
     <div className={cn('flex items-center justify-end gap-1.5', className)}>
@@ -30,7 +50,7 @@ export function WorkspaceLauncher({ className, control = 'all' }: { className?: 
           still reaches assistive technology and hover. */}
       {control !== 'project' && <button
         type="button"
-        onClick={() => { if (!emptyWorkspace) setChatbarHidden(!chatbarHidden); }}
+        onClick={toggleChatbar}
         disabled={emptyWorkspace}
         title={emptyWorkspace ? 'Composer stays visible in a new workspace' : chatbarHidden ? 'Show chatbar' : 'Hide chatbar'}
         className="xv-ws-launch xv-ws-launch--icon"

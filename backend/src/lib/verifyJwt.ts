@@ -45,16 +45,7 @@ async function verifyWithJwtSecret(token: string): Promise<VerifiedUser | null> 
       email: typeof payload.email === 'string' ? payload.email : undefined,
     };
   } catch {
-    try {
-      const { payload } = await jwtVerify(token, key, { issuer });
-      if (!payload.sub) return null;
-      return {
-        userId: payload.sub,
-        email: typeof payload.email === 'string' ? payload.email : undefined,
-      };
-    } catch {
-      return null;
-    }
+    return null;
   }
 }
 
@@ -70,16 +61,7 @@ async function verifyWithJwks(token: string): Promise<VerifiedUser | null> {
       email: typeof payload.email === 'string' ? payload.email : undefined,
     };
   } catch {
-    try {
-      const { payload } = await jwtVerify(token, getJwks(), { issuer });
-      if (!payload.sub) return null;
-      return {
-        userId: payload.sub,
-        email: typeof payload.email === 'string' ? payload.email : undefined,
-      };
-    } catch {
-      return null;
-    }
+    return null;
   }
 }
 

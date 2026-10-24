@@ -6,6 +6,7 @@
 
 import {
   getUserProviderKey,
+  prepareUserProviderKeyWrite,
   saveUserProviderKey,
 } from '../integrations/userProviderKeys.js';
 import { isGitHubConnected } from '../integrations/githubAuth.js';
@@ -197,6 +198,7 @@ export async function ensureExpoProjectLinked(opts: {
   message: string;
   error?: string;
 }> {
+  const writeAdmission=await prepareUserProviderKeyWrite(opts.userId,'expo_project_id');
   const token = await getUserProviderKey(opts.userId, 'expo');
   if (!token) {
     return {
@@ -216,7 +218,7 @@ export async function ensureExpoProjectLinked(opts: {
     const apps = await listExpoApps(token);
     if (apps.length === 1) {
       const id = apps[0]!.id;
-      await saveUserProviderKey(opts.userId, 'expo_project_id', id);
+      await saveUserProviderKey(opts.userId, 'expo_project_id', id,{writeAdmission});
       return {
         projectId: id,
         created: false,
@@ -248,7 +250,7 @@ export async function ensureExpoProjectLinked(opts: {
       accountId: account.id,
       projectName: name,
     });
-    await saveUserProviderKey(opts.userId, 'expo_project_id', createdId);
+    await saveUserProviderKey(opts.userId, 'expo_project_id', createdId,{writeAdmission});
     return {
       projectId: createdId,
       created: true,

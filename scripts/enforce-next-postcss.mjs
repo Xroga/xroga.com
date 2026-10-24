@@ -1,42 +1,26 @@
-import { cp, readFile, rm } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const repositoryRoot = dirname(dirname(fileURLToPath(import.meta.url)));
-const frontendModules = join(repositoryRoot, 'frontend', 'node_modules');
-const source = join(frontendModules, 'postcss');
-const target = join(frontendModules, 'next', 'node_modules', 'postcss');
-
-async function versionAt(directory) {
-  const manifest = JSON.parse(await readFile(join(directory, 'package.json'), 'utf8'));
-  return String(manifest.version ?? '0.0.0');
+const root=dirname(dirname(fileURLToPath(import.meta.url)));
+export function validatePatchedPostcss(version) {
+  const [major,minor,patch]=version.split('.').map(Number);
+  if(!(major>8||(major===8&&(minor>5||(minor===5&&patch>=18)))))throw new Error('Resolved PostCSS is not patched');
 }
-
-function isPatched(version) {
-  const [major, minor, patch] = version.split('.').map((part) => Number.parseInt(part, 10));
-  return major > 8 || (major === 8 && (minor > 5 || (minor === 5 && patch >= 18)));
+export function verifyNextPostcss() {
+  // Resolve through the real workspace/Next module graph, not a guessed node_modules layout.
+  // Both standalone and hoisted installs must use their frozen, approved dependency.
+  const frontend=createRequire(join(root,'frontend/package.json'));
+  const nextManifest=frontend.resolve('next/package.json');
+  const next=createRequire(nextManifest);
+  const expected=JSON.parse(readFileSync(join(root,'frontend/package.json'),'utf8')).devDependencies.postcss;
+  const versions=[frontend,next].map(require=>{
+    const pkg=JSON.parse(readFileSync(require.resolve('postcss/package.json'),'utf8'));
+    if(pkg.name!=='postcss'||pkg.version!==expected)throw new Error('PostCSS resolution differs from the exact approved lock pin');
+    validatePatchedPostcss(pkg.version);return pkg.version;
+  });
+  return {frontend:versions[0],next:versions[1]};
 }
-
-const sourceVersion = await versionAt(source);
-if (!isPatched(sourceVersion)) {
-  throw new Error(`The approved PostCSS package is not patched: ${sourceVersion}`);
-}
-
-let targetVersion = 'missing';
-try {
-  targetVersion = await versionAt(target);
-} catch {
-  // A deduplicated install already uses the approved top-level package.
-}
-
-if (targetVersion !== 'missing' && !isPatched(targetVersion)) {
-  await rm(target, { recursive: true, force: true });
-  await cp(source, target, { recursive: true, force: true });
-  targetVersion = await versionAt(target);
-}
-
-if (targetVersion !== 'missing' && !isPatched(targetVersion)) {
-  throw new Error(`Next.js resolved an unsafe PostCSS package: ${targetVersion}`);
-}
-
-console.log(`verified_next_postcss=${targetVersion === 'missing' ? sourceVersion : targetVersion}`);
+// Fail closed instead of modifying installed packages or hiding lock/resolution drift.
+if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))console.log(JSON.stringify({verified_next_postcss:verifyNextPostcss()}));

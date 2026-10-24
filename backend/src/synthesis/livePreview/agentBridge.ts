@@ -1,6 +1,7 @@
 import {
   randomUUID,
 } from 'node:crypto';
+import { captureAdmittedRunAttempt, type AdmittedRunAttempt } from '../../ai/runStore.js';
 
 import type {
   FileTrailEntry,
@@ -196,6 +197,10 @@ interface AgentLivePreviewBridgeInput {
 }
 
 class AgentLivePreviewBridge {
+  private readonly attempt: AdmittedRunAttempt;
+  private authorityLost = false;
+  private authorityFailure: unknown;
+  private closed = false;
   private started =
     false;
 
@@ -206,12 +211,15 @@ class AgentLivePreviewBridge {
   constructor(
     private readonly input:
       AgentLivePreviewBridgeInput,
-  ) {}
+  ) {
+    this.attempt = captureAdmittedRunAttempt(input.runId, input.userId);
+  }
 
   handle(
     event:
       SoftwareRunEvent,
   ): void {
+    if (this.closed || this.authorityLost) return;
     if (
       !isLivePreviewMutationEvent(
         event,
@@ -232,6 +240,10 @@ class AgentLivePreviewBridge {
           (
             error,
           ) => {
+            if (['RUN_STATE_CONFLICT', 'RESOURCE_ACCESS_UNAVAILABLE'].includes((error as { code?: string })?.code ?? '')) {
+              this.authorityLost = true;
+              this.authorityFailure = error;
+            }
             console.warn(
               '[agent_live_preview_sync_failed]',
 
@@ -244,6 +256,22 @@ class AgentLivePreviewBridge {
             );
           },
         );
+  }
+
+  /** No final revision may overtake a queued preview revision from this attempt. */
+  async closeAndDrain(timeoutMs = 30_000): Promise<void> {
+    this.closed = true;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      await Promise.race([this.queue,new Promise<never>((_,reject) => {
+        timer = setTimeout(() => {
+          this.authorityLost = true;
+          this.authorityFailure = Object.assign(new Error('Live preview persistence did not finish before finalization.'),{code:'RESOURCE_ACCESS_UNAVAILABLE'});
+          reject(this.authorityFailure);
+        },timeoutMs);
+      })]);
+      if (this.authorityFailure) throw this.authorityFailure;
+    } finally { if (timer) clearTimeout(timer); }
   }
 
   private emitDescriptor(
@@ -321,6 +349,7 @@ class AgentLivePreviewBridge {
     event:
       SoftwareRunEvent,
   ): Promise<void> {
+    if (this.authorityLost) return;
     const checkpoint =
       await this.input
         .checkpointStore
@@ -328,6 +357,7 @@ class AgentLivePreviewBridge {
           this.input
             .runId,
         );
+    if (this.authorityLost) return;
 
     if (
       !checkpoint
@@ -351,7 +381,7 @@ class AgentLivePreviewBridge {
     }
 
     const store =
-      new SupabaseProjectRuntimeStore();
+      new SupabaseProjectRuntimeStore(this.attempt);
 
     const previous =
       await store
@@ -363,6 +393,7 @@ class AgentLivePreviewBridge {
             .buildContract
             .projectId,
         );
+    if (this.authorityLost) return;
 
     const baseProject =
       createSoftwareProject({
@@ -441,6 +472,7 @@ class AgentLivePreviewBridge {
 
     const first =
       !this.started;
+    const pendingEvents: SoftwareRunEvent[] = [];
 
     const result =
       await startOrRefreshLivePreview({
@@ -456,10 +488,10 @@ class AgentLivePreviewBridge {
 
         emit:
           first
-            ? this.input
-                .emit
+            ? event => { pendingEvents.push(event); }
             : undefined,
       });
+    if (this.authorityLost) return;
 
     await store
       .saveRevision(
@@ -468,6 +500,8 @@ class AgentLivePreviewBridge {
 
         result.project,
       );
+    if (this.authorityLost) return;
+    for (const pending of pendingEvents) this.input.emit?.(pending);
 
     if (
       result.preview

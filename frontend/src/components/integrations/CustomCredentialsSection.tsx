@@ -1,255 +1,153 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { Plus, Key, Eye, EyeOff, Copy, Trash2, Lock } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { Key, Lock, Upload } from 'lucide-react';
 import {
-  addCredential,
-  deleteCredential,
-  hasVault,
-  loadCredentials,
-  revealCredential,
-  type CredentialType,
+  loadLegacyCredentials,
+  readLegacyCredentialForImport,
+  removeLegacyCredentialAfterImport,
   type StoredCredential,
 } from '@/lib/credentialVault';
-import { cn } from '@/lib/utils';
+import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
 
-const TYPE_OPTIONS: { id: CredentialType; label: string; hint: string }[] = [
-  { id: 'api_key', label: 'API Key', hint: 'Paste your API key — stored encrypted in your vault.' },
-  { id: 'webhook', label: 'Webhook', hint: 'Webhook URL + optional secret for signing.' },
-  { id: 'secret', label: 'Secret', hint: 'Generic secret token — hidden until you unlock.' },
-];
+function envName(value: string, suffix = 'API_KEY') {
+  const normalized = value.trim().toUpperCase().replace(/[^A-Z0-9_]+/g, '_').replace(/^_+|_+$/g, '');
+  const candidate = /^[A-Z_]/.test(normalized) ? normalized : `XROGA_${normalized}`;
+  const alreadyCredential = /_(?:KEY|TOKEN|SECRET|URL)$/.test(candidate);
+  const named = suffix === 'API_KEY' && alreadyCredential
+    ? candidate
+    : `${candidate || 'CUSTOM'}_${suffix}`;
+  return named.slice(0, 64);
+}
 
 export function CustomCredentialsSection() {
-  const [creds, setCreds] = useState<StoredCredential[]>([]);
-  const [showForm, setShowForm] = useState(false);
-  const [type, setType] = useState<CredentialType>('api_key');
+  const [legacy, setLegacy] = useState<StoredCredential[]>([]);
+  const [serverKeys, setServerKeys] = useState<Array<{ provider: string; masked?: string; envVar?: string }>>([]);
   const [name, setName] = useState('');
   const [value, setValue] = useState('');
-  const [webhookUrl, setWebhookUrl] = useState('');
-  const [vaultPw, setVaultPw] = useState('');
-  const [revealed, setRevealed] = useState<Record<string, string>>({});
-  const [unlockId, setUnlockId] = useState<string | null>(null);
-  const [unlockPw, setUnlockPw] = useState('');
-  const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [deletePw, setDeletePw] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [importId, setImportId] = useState<string | null>(null);
+  const [password, setPassword] = useState('');
+  const [consented, setConsented] = useState(false);
 
-  useEffect(() => {
-    setCreds(loadCredentials());
+  const refresh = useCallback(async () => {
+    setLegacy(loadLegacyCredentials());
+    try {
+      const response = await api.integrations.providerKeys();
+      setServerKeys(response.keys.filter(key => key.connected && key.provider === 'custom'));
+    } catch {
+      setServerKeys([]);
+    }
   }, []);
 
-  function refresh() {
-    setCreds(loadCredentials());
-  }
+  useEffect(() => { void refresh(); }, [refresh]);
 
-  function handleSave() {
-    if (!name.trim() || !value.trim()) {
-      toast.error('Name and value required');
+  async function saveNew() {
+    if (!name.trim() || value.trim().length < 8) {
+      toast.error('Enter a name and a credential of at least 8 characters');
       return;
     }
-    if (!vaultPw.trim()) {
-      toast.error(hasVault() ? 'Enter vault password' : 'Set a vault password to lock secrets');
-      return;
-    }
+    setSaving(true);
     try {
-      addCredential(vaultPw, { name: name.trim(), type, value: value.trim(), webhookUrl: webhookUrl || undefined });
-      toast.success('Credential saved & locked');
+      await api.integrations.saveProviderKey('custom', value.trim(), { envVarName: envName(name) });
       setName('');
       setValue('');
-      setWebhookUrl('');
-      setVaultPw('');
-      setShowForm(false);
-      refresh();
-    } catch (e) {
-      toast.error((e as Error).message);
+      toast.success('Credential saved in the server vault');
+      await refresh();
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setSaving(false);
     }
   }
 
-  function tryReveal(id: string) {
-    const plain = revealCredential(id, unlockPw);
+  async function importLegacy(record: StoredCredential) {
+    if (!consented) {
+      toast.error('Confirm the one-time import first');
+      return;
+    }
+    const plain = readLegacyCredentialForImport(record.id, password);
     if (!plain) {
-      toast.error('Wrong vault password');
+      toast.error('The legacy vault password is incorrect');
       return;
     }
-    setRevealed((r) => ({ ...r, [id]: plain }));
-    setUnlockId(null);
-    setUnlockPw('');
-    toast.success('Unlocked');
-  }
-
-  function handleDelete() {
-    if (!deleteId) return;
-    if (!deleteCredential(deleteId, deletePw)) {
-      toast.error('Wrong vault password');
-      return;
+    setSaving(true);
+    try {
+      await api.integrations.saveProviderKey('custom', plain, { envVarName: envName(record.name) });
+      if (record.webhookUrl) {
+        await api.integrations.saveProviderKey('custom', record.webhookUrl, { envVarName: envName(record.name, 'URL') });
+      }
+      if (!removeLegacyCredentialAfterImport(record.id, password)) throw new Error('Secure save succeeded, but local cleanup must be retried');
+      setImportId(null);
+      setPassword('');
+      setConsented(false);
+      toast.success('Legacy credential imported and its browser copy removed');
+      await refresh();
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setSaving(false);
     }
-    setRevealed((r) => {
-      const n = { ...r };
-      delete n[deleteId];
-      return n;
-    });
-    setDeleteId(null);
-    setDeletePw('');
-    refresh();
-    toast.success('Deleted');
   }
-
-  const deleteModal =
-    deleteId && typeof document !== 'undefined'
-      ? createPortal(
-          <div className="fixed inset-0 z-[500] flex items-center justify-center p-4 bg-black/50" onClick={() => setDeleteId(null)}>
-            <div className="bg-[var(--card)] rounded-xl p-4 w-full max-w-xs border border-[var(--card-border)]" onClick={(e) => e.stopPropagation()}>
-              <p className="text-sm font-semibold mb-2">Confirm delete</p>
-              <p className="text-xs text-[var(--muted)] mb-3">Enter vault password to delete this credential.</p>
-              <input
-                type="password"
-                value={deletePw}
-                onChange={(e) => setDeletePw(e.target.value)}
-                placeholder="Vault password"
-                className="w-full px-3 py-2 rounded-lg border border-[var(--card-border)] bg-white/5 text-sm mb-3"
-              />
-              <div className="flex gap-2">
-                <button type="button" onClick={() => setDeleteId(null)} className="flex-1 py-2 rounded-lg border border-[var(--card-border)] text-xs">Cancel</button>
-                <button type="button" onClick={handleDelete} className="flex-1 py-2 rounded-lg bg-red-500 text-white text-xs font-bold">Delete</button>
-              </div>
-            </div>
-          </div>,
-          document.body
-        )
-      : null;
 
   return (
-    <div className="rounded-xl border border-[var(--card-border)]/60 bg-[var(--card)]/40 p-3 sm:p-4 space-y-2.5">
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <div className="min-w-0">
-          <h3 className="text-sm font-bold flex items-center gap-1.5">
-            <Key className="w-3.5 h-3.5 text-[#006aff]" />
-            Custom API Keys & Webhooks
-          </h3>
-          <p className="text-[10px] text-[var(--muted)] mt-0.5 leading-snug">
-            Add your own API keys or webhooks. <strong className="text-[var(--foreground)]">Set a vault password</strong> — required every time you view or copy a key.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-1 text-[10px] px-2.5 py-1.5 rounded-lg bg-[#006aff] text-white font-bold shrink-0"
-        >
-          <Plus className="w-3 h-3" /> Add New Credential
+    <div className="rounded-xl border border-[var(--card-border)]/60 bg-[var(--card)]/40 p-3 sm:p-4 space-y-3">
+      <div>
+        <h3 className="text-sm font-bold flex items-center gap-1.5">
+          <Key className="w-3.5 h-3.5 text-[#006aff]" /> Custom API keys
+        </h3>
+        <p className="mt-1 text-[10px] leading-snug text-[var(--muted)]">
+          New values are sent once to the authenticated backend and stored as bound CredentialVault envelopes. Secret values can’t be revealed in the browser.
+        </p>
+      </div>
+
+      <div className="rounded-lg border border-[var(--card-border)]/50 p-2.5 space-y-2 bg-white/[0.02]">
+        <input placeholder="Service or environment variable name" value={name} onChange={event => setName(event.target.value)} className="w-full px-2.5 py-1.5 rounded-lg border border-[var(--card-border)] bg-white/5 text-xs" />
+        <input placeholder="Paste key or secret" type="password" value={value} onChange={event => setValue(event.target.value)} className="w-full px-2.5 py-1.5 rounded-lg border border-[var(--card-border)] bg-white/5 text-xs font-mono" />
+        <button type="button" disabled={saving} onClick={() => void saveNew()} className="w-full py-1.5 rounded-lg bg-[#006aff] text-white text-xs font-bold disabled:opacity-50">
+          Save to server vault
         </button>
       </div>
 
-      {showForm && (
-        <div className="rounded-lg border border-[var(--card-border)]/50 p-2.5 space-y-2 bg-white/[0.02]">
-          <div className="flex flex-wrap gap-1">
-            {TYPE_OPTIONS.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => setType(t.id)}
-                className={cn(
-                  'text-[10px] font-bold px-2.5 py-1 rounded-md border transition-colors',
-                  type === t.id ? 'bg-[#006aff]/15 border-[#006aff]/40 text-[#006aff]' : 'border-transparent text-[var(--muted)] hover:bg-white/5'
-                )}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-          <p className="text-[9px] text-[var(--muted)]">{TYPE_OPTIONS.find((t) => t.id === type)?.hint}</p>
-          <input
-            placeholder="Service name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full px-2.5 py-1.5 rounded-lg border border-[var(--card-border)] bg-white/5 text-xs"
-          />
-          <input
-            placeholder={type === 'webhook' ? 'Webhook secret (optional)' : 'Paste key or secret'}
-            type="password"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            className="w-full px-2.5 py-1.5 rounded-lg border border-[var(--card-border)] bg-white/5 text-xs font-mono"
-          />
-          {type === 'webhook' && (
-            <input
-              placeholder="Webhook URL"
-              value={webhookUrl}
-              onChange={(e) => setWebhookUrl(e.target.value)}
-              className="w-full px-2.5 py-1.5 rounded-lg border border-[var(--card-border)] bg-white/5 text-xs"
-            />
-          )}
-          <input
-            type="password"
-            placeholder={hasVault() ? 'Vault password' : 'Set vault password (locks all secrets)'}
-            value={vaultPw}
-            onChange={(e) => setVaultPw(e.target.value)}
-            className="w-full px-2.5 py-1.5 rounded-lg border border-[var(--card-border)] bg-white/5 text-xs"
-          />
-          <button type="button" onClick={handleSave} className="w-full py-1.5 rounded-lg bg-[#006aff] text-white text-xs font-bold">
-            Save & Lock
-          </button>
+      {serverKeys.length > 0 && (
+        <div className="space-y-1.5">
+          {serverKeys.map((key, index) => (
+            <div key={`${key.envVar ?? key.provider}-${index}`} className="flex items-center gap-2 rounded-lg border border-[var(--card-border)]/40 px-2 py-1.5 text-[10px]">
+              <Lock className="h-3 w-3 shrink-0 text-emerald-500" />
+              <span className="min-w-0 flex-1 truncate font-semibold">{key.envVar ?? 'Custom credential'}</span>
+              <span className="font-mono text-[var(--muted)]">{key.masked ?? 'connected'}</span>
+            </div>
+          ))}
         </div>
       )}
 
-      {creds.length === 0 ? (
-        <p className="text-[11px] text-[var(--muted)] text-center py-2">No custom credentials yet.</p>
-      ) : (
-        <div className="space-y-1.5 max-h-[200px] overflow-y-auto">
-          {creds.map((cred) => {
-            const plain = revealed[cred.id];
-            const showPlain = !!plain;
-            return (
-              <div key={cred.id} className="flex items-center gap-2 px-2 py-1.5 rounded-lg border border-[var(--card-border)]/40 text-[10px]">
-                <Lock className="w-3 h-3 text-[var(--muted)] shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold truncate">{cred.name}</p>
-                  <p className="text-[var(--muted)] font-mono truncate">{showPlain ? plain : cred.masked}</p>
-                </div>
-                {unlockId === cred.id ? (
-                  <div className="flex items-center gap-1 shrink-0">
-                    <input
-                      type="password"
-                      value={unlockPw}
-                      onChange={(e) => setUnlockPw(e.target.value)}
-                      className="w-20 px-1 py-0.5 rounded border border-[var(--card-border)] text-[9px]"
-                      placeholder="pw"
-                    />
-                    <button type="button" onClick={() => tryReveal(cred.id)} className="text-[#006aff] font-bold">OK</button>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-0.5 shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (showPlain) setRevealed((r) => { const n = { ...r }; delete n[cred.id]; return n; });
-                        else setUnlockId(cred.id);
-                      }}
-                      className="p-1 rounded hover:bg-white/10 text-[var(--muted)]"
-                      title={showPlain ? 'Hide' : 'Reveal'}
-                    >
-                      {showPlain ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-                    </button>
-                    {showPlain && (
-                      <button
-                        type="button"
-                        onClick={() => { void navigator.clipboard.writeText(plain); toast.success('Copied'); }}
-                        className="p-1 rounded hover:bg-white/10 text-[var(--muted)]"
-                      >
-                        <Copy className="w-3 h-3" />
-                      </button>
-                    )}
-                    <button type="button" onClick={() => setDeleteId(cred.id)} className="p-1 rounded hover:bg-red-500/10 text-red-400">
-                      <Trash2 className="w-3 h-3" />
-                    </button>
-                  </div>
-                )}
+      {legacy.length > 0 && (
+        <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-2.5 space-y-2">
+          <p className="text-[10px] leading-snug text-[var(--muted)]">
+            {legacy.length} credential{legacy.length === 1 ? '' : 's'} remain in the retired browser vault. Import each one only with your explicit consent, then rotate it because browser storage didn’t provide secure custody.
+          </p>
+          {legacy.map(record => (
+            <div key={record.id} className="space-y-2 rounded-md border border-[var(--card-border)]/40 p-2">
+              <div className="flex items-center gap-2 text-[10px]">
+                <span className="min-w-0 flex-1 truncate font-semibold">{record.name}</span>
+                <span className="font-mono text-[var(--muted)]">{record.masked}</span>
+                <button type="button" onClick={() => { setImportId(record.id); setConsented(false); }} className="flex items-center gap-1 text-[#006aff] font-bold"><Upload className="h-3 w-3" /> Import</button>
               </div>
-            );
-          })}
+              {importId === record.id && (
+                <div className="space-y-2">
+                  <input type="password" value={password} onChange={event => setPassword(event.target.value)} placeholder="Legacy vault password" className="w-full rounded border border-[var(--card-border)] bg-white/5 px-2 py-1 text-[10px]" />
+                  <label className="flex items-start gap-2 text-[9px] leading-snug text-[var(--muted)]">
+                    <input type="checkbox" checked={consented} onChange={event => setConsented(event.target.checked)} />
+                    I consent to decrypt this selected browser record once, save it in my server vault, and remove the browser copy after a successful save.
+                  </label>
+                  <button type="button" disabled={saving || !consented} onClick={() => void importLegacy(record)} className="w-full rounded bg-[#006aff] py-1 text-[10px] font-bold text-white disabled:opacity-50">Import selected record</button>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
-      {deleteModal}
     </div>
   );
 }

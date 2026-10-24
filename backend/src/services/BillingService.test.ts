@@ -103,6 +103,7 @@ test('checkout uses the v1 API, pinned version, approved server values, metadata
     if (String(input).endsWith('/plans/plan_hlV1A10I5QfSP')) return Response.json(APPROVED_PLAN);
     return Response.json({
       id: 'ch_123', company_id: 'biz_qhYONL4RebGX96', plan: APPROVED_PLAN,
+      mode:'payment',metadata:JSON.parse(String(init?.body)).metadata,
       purchase_url: 'https://whop.com/checkout/plan_hlV1A10I5QfSP/?session=unique',
     });
   }) as typeof fetch;
@@ -130,7 +131,7 @@ test('checkout verifies ownership from the checkout contract when plan retrieval
   withWhopEnv(t);
   const originalFetch = globalThis.fetch;
   const requests: string[] = [];
-  globalThis.fetch = (async (input) => {
+  globalThis.fetch = (async (input,init) => {
     const url = String(input);
     requests.push(url);
     if (url.endsWith('/plans/plan_hlV1A10I5QfSP')) {
@@ -138,6 +139,7 @@ test('checkout verifies ownership from the checkout contract when plan retrieval
     }
     return Response.json({
       id: 'ch_456', company_id: 'biz_qhYONL4RebGX96', plan: APPROVED_PLAN,
+      mode:'payment',metadata:JSON.parse(String(init?.body)).metadata,
       purchase_url: 'https://whop.com/checkout/plan_hlV1A10I5QfSP/?session=verified',
     });
   }) as typeof fetch;
@@ -218,4 +220,47 @@ test('refund and dispute events never fulfill entitlement', async (t) => {
 test('wrong Whop account is rejected before fulfillment', async (t) => {
   withWhopEnv(t);
   await assert.rejects(BillingService.handleWebhookEvent({ type: 'payment.succeeded', account_id: 'biz_wrong', data: {} }, 'msg_1'), /wrong_account/);
+});
+
+test('membership callback denies a foreign owner and closes a concurrent insert collision', async (t) => {
+  withWhopEnv(t);
+  const owner='11111111-1111-4111-8111-111111111111', other='22222222-2222-4222-8222-222222222222';
+  const previousUrl=process.env.SUPABASE_URL, previousKey=process.env.SUPABASE_SERVICE_ROLE_KEY;
+  process.env.SUPABASE_URL='http://127.0.0.1:1'; process.env.SUPABASE_SERVICE_ROLE_KEY='fixture-only';
+  const originalFetch=globalThis.fetch;
+  let mode:'foreign'|'race'|'own'='foreign';
+  let checkoutReads=0;
+  const requests:{method:string;url:URL;headers:Headers}[]=[];
+  globalThis.fetch=async(input,init)=>{
+    const url=new URL(String(input));
+    if(url.origin==='https://api.whop.com'){
+      assert.equal(url.pathname,'/api/v1/checkout_configurations/ch_fixture');checkoutReads++;
+      return Response.json({id:'ch_fixture',account_id:APPROVED_PLAN.account_id,plan:APPROVED_PLAN,mode:'payment',metadata:{xroga_user_id:owner,source:'xroga',plan_tier:'spark',xroga_checkout_id:'fixture_nonce'}});
+    }
+    assert.equal(url.origin,'http://127.0.0.1:1');
+    assert.equal(url.pathname,'/rest/v1/whop_memberships');
+    const method=init?.method??'GET';
+    requests.push({method,url,headers:new Headers(init?.headers)});
+    const data=method==='GET'?(mode==='foreign'?{user_id:other,whop_membership_id:'mem_fixture'}:mode==='own'?{user_id:owner,whop_membership_id:'mem_fixture',whop_plan_id:APPROVED_PLAN.id,whop_account_id:APPROVED_PLAN.account_id}:null)
+      :method==='PATCH'?(mode==='own'?{whop_membership_id:'mem_fixture'}:null):null;
+    return Response.json(data);
+  };
+  t.after(()=>{
+    globalThis.fetch=originalFetch;
+    previousUrl===undefined?delete process.env.SUPABASE_URL:process.env.SUPABASE_URL=previousUrl;
+    previousKey===undefined?delete process.env.SUPABASE_SERVICE_ROLE_KEY:process.env.SUPABASE_SERVICE_ROLE_KEY=previousKey;
+  });
+  const event={type:'membership.activated' as const,account_id:'biz_qhYONL4RebGX96',data:{id:'mem_fixture',plan_id:'plan_hlV1A10I5QfSP',checkout_configuration_id:'ch_fixture',metadata:{xroga_user_id:owner,source:'xroga',plan_tier:'spark'}}};
+  await assert.rejects(BillingService.handleWebhookEvent(event,'msg_fixture'),/membership_owner_mismatch/);
+  assert.deepEqual(requests.map(r=>r.method),['GET']);
+  assert.equal(checkoutReads,0);
+  requests.length=0;mode='race';
+  await assert.rejects(BillingService.handleWebhookEvent(event,'msg_fixture'),/membership_owner_mismatch/);
+  assert.deepEqual(requests.map(r=>r.method),['GET','POST','PATCH']);
+  assert.match(requests[1].headers.get('Prefer')??'',/resolution=ignore-duplicates/);
+  assert.equal(requests[2].url.searchParams.get('whop_membership_id'),'eq.mem_fixture');
+  assert.equal(requests[2].url.searchParams.get('user_id'),`eq.${owner}`);
+  assert.equal(checkoutReads,1);
+  mode='own';
+  assert.deepEqual(await BillingService.handleWebhookEvent(event,'msg_fixture'),{fulfilled:false});
 });

@@ -1,8 +1,11 @@
-const VAULT_HASH_KEY = 'xroga_vault_hash';
-const VAULT_SECRETS_KEY = 'xroga_vault_secrets';
+const LEGACY_VAULT_HASH_KEY = 'xroga_vault_hash';
+const LEGACY_VAULT_SECRETS_KEY = 'xroga_vault_secrets';
 
 export type CredentialType = 'api_key' | 'webhook' | 'secret';
 
+/** Browser-only records created by the retired XOR vault. New credentials must
+ * go to the authenticated backend CredentialVault. These fields remain solely
+ * so a user can explicitly reconnect or import their own legacy record. */
 export interface StoredCredential {
   id: string;
   name: string;
@@ -13,85 +16,53 @@ export interface StoredCredential {
   baseUrl?: string;
 }
 
-function hashPassword(pw: string) {
-  return btoa(unescape(encodeURIComponent(pw)));
+function legacyPasswordHash(password: string) {
+  return btoa(unescape(encodeURIComponent(password)));
 }
 
-export function hasVault() {
-  return typeof window !== 'undefined' && !!localStorage.getItem(VAULT_HASH_KEY);
+export function hasLegacyBrowserVault() {
+  return typeof window !== 'undefined' && !!localStorage.getItem(LEGACY_VAULT_HASH_KEY);
 }
 
-export function setVaultPassword(pw: string) {
-  localStorage.setItem(VAULT_HASH_KEY, hashPassword(pw));
-}
-
-export function verifyVaultPassword(pw: string) {
-  return localStorage.getItem(VAULT_HASH_KEY) === hashPassword(pw);
-}
-
-function enc(value: string, pw: string) {
-  const payload = value.split('').map((c, i) => String.fromCharCode(c.charCodeAt(0) ^ pw.charCodeAt(i % pw.length))).join('');
-  return btoa(unescape(encodeURIComponent(payload)));
-}
-
-function dec(encrypted: string, pw: string) {
-  try {
-    const payload = decodeURIComponent(escape(atob(encrypted)));
-    return payload.split('').map((c, i) => String.fromCharCode(c.charCodeAt(0) ^ pw.charCodeAt(i % pw.length))).join('');
-  } catch {
-    return null;
-  }
-}
-
-export function loadCredentials(): StoredCredential[] {
+export function loadLegacyCredentials(): StoredCredential[] {
   if (typeof window === 'undefined') return [];
   try {
-    const raw = localStorage.getItem(VAULT_SECRETS_KEY);
-    return raw ? (JSON.parse(raw) as StoredCredential[]) : [];
+    const raw = localStorage.getItem(LEGACY_VAULT_SECRETS_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.filter(record =>
+      record && typeof record.id === 'string' && typeof record.name === 'string'
+      && typeof record.encrypted === 'string' && typeof record.masked === 'string') : [];
   } catch {
     return [];
   }
 }
 
-export function saveCredentials(list: StoredCredential[]) {
-  localStorage.setItem(VAULT_SECRETS_KEY, JSON.stringify(list));
+/** Explicit migration read only. Never call during page load or discovery. */
+export function readLegacyCredentialForImport(id: string, password: string) {
+  if (!password || localStorage.getItem(LEGACY_VAULT_HASH_KEY) !== legacyPasswordHash(password)) return null;
+  const credential = loadLegacyCredentials().find(record => record.id === id);
+  if (!credential) return null;
+  try {
+    const payload = decodeURIComponent(escape(atob(credential.encrypted)));
+    return payload.split('').map((character, index) =>
+      String.fromCharCode(character.charCodeAt(0) ^ password.charCodeAt(index % password.length))).join('');
+  } catch {
+    return null;
+  }
 }
 
-export function maskSecret(value: string) {
-  if (value.length <= 8) return '••••••••';
-  return `${value.slice(0, 3)}${'•'.repeat(Math.min(12, value.length - 6))}${value.slice(-3)}`;
-}
-
-export function addCredential(
-  pw: string,
-  data: { name: string; type: CredentialType; value: string; webhookUrl?: string; baseUrl?: string }
-) {
-  if (!hasVault()) setVaultPassword(pw);
-  if (!verifyVaultPassword(pw)) throw new Error('Invalid vault password');
-
-  const cred: StoredCredential = {
-    id: crypto.randomUUID(),
-    name: data.name,
-    type: data.type,
-    masked: maskSecret(data.value),
-    encrypted: enc(data.value, pw),
-    webhookUrl: data.webhookUrl,
-    baseUrl: data.baseUrl,
-  };
-  const next = [...loadCredentials(), cred];
-  saveCredentials(next);
-  return cred;
-}
-
-export function revealCredential(id: string, pw: string) {
-  if (!verifyVaultPassword(pw)) return null;
-  const cred = loadCredentials().find((c) => c.id === id);
-  if (!cred) return null;
-  return dec(cred.encrypted, pw);
-}
-
-export function deleteCredential(id: string, pw: string) {
-  if (!verifyVaultPassword(pw)) return false;
-  saveCredentials(loadCredentials().filter((c) => c.id !== id));
+export function removeLegacyCredentialAfterImport(id: string, password: string) {
+  if (!readLegacyCredentialForImport(id, password)) return false;
+  const remaining = loadLegacyCredentials().filter(record => record.id !== id);
+  localStorage.setItem(LEGACY_VAULT_SECRETS_KEY, JSON.stringify(remaining));
+  if (!remaining.length) {
+    localStorage.removeItem(LEGACY_VAULT_SECRETS_KEY);
+    localStorage.removeItem(LEGACY_VAULT_HASH_KEY);
+  }
   return true;
 }
+
+// Compatibility names are metadata-only. There is deliberately no browser
+// writer, secret reveal, or clipboard API anymore.
+export const hasVault = hasLegacyBrowserVault;
+export const loadCredentials = loadLegacyCredentials;

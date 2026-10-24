@@ -37,4 +37,3 @@ export function MissionGlyph({ id }: { id: MissionId }) {
       );
   }
 }
-

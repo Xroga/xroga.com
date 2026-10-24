@@ -1,0 +1,7 @@
+
+Running 3 tests using 1 worker
+
+[1/3] frontend/e2e/xroga-golden/public-fixtures.spec.ts:27:5 › GJ guest rendering boundary sends fixture input, shows its label and restores the local conversation
+[2/3] frontend/e2e/xroga-golden/public-fixtures.spec.ts:36:5 › GJ private preview and RSC deny a guest without leaking founder fixture content
+[3/3] frontend/e2e/xroga-golden/public-fixtures.spec.ts:45:5 › GJ narrow guest UI shows a truthful actionable failure rather than Coming soon
+  3 passed (5.4s)

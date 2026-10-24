@@ -327,6 +327,7 @@ test('S01 styles stay inside S01 and the homepage composes it between the hero a
   const page = read('../../homepage/HomepageClient.tsx');
   const hero = page.indexOf('<S00Hero />');
   const s01 = page.indexOf('<S01CapabilityDeck />');
+  // Assert the actual integrated composition, including attributes or newlines.
   const next = page.indexOf('<S02Work');
   assert.ok(hero !== -1 && hero < s01 && s01 < next);
   assert.doesNotMatch(page, /<HomepageCapabilitiesMosaic \/>/);

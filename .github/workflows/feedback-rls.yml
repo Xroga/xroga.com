@@ -1,0 +1,47 @@
+name: Feedback isolated Supabase authorization
+on:
+  pull_request:
+    paths:
+      - 'frontend/src/app/admin/feedback/**'
+      - 'frontend/src/lib/feedbackAdminAccess.test.ts'
+      - 'supabase/migrations/*feedback*'
+      - 'scripts/security/feedback-rls.supabase.mjs'
+      - '.github/workflows/feedback-rls.yml'
+permissions:
+  contents: read
+jobs:
+  feedback:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CI: 'true'
+      XB01_DISPOSABLE_SUPABASE: '1'
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with:
+          ref: 9d6234afdd0a20e99f584acf7f93e346c5c49164
+          path: fixture-foundation
+          persist-credentials: false
+          sparse-checkout: scripts/security/disposable-supabase.mjs
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22.21.1'
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Start existing verified disposable Supabase foundation
+        run: node fixture-foundation/scripts/security/disposable-supabase.mjs
+      - name: Real feedback fresh and preserved-row upgrade authorization
+        run: node scripts/security/feedback-rls.supabase.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: feedback-authorization-${{ github.sha }}
+          path: artifacts/feedback-security/
+          if-no-files-found: warn
+      - name: Remove only this isolated stack and synthetic data
+        if: always() && env.XB01_SUPABASE_WORKDIR != ''
+        run: |
+          npm exec --yes --package=supabase@2.120.0 --package=@supabase/cli-linux-x64@2.120.0 -- supabase stop --workdir "$XB01_SUPABASE_WORKDIR" --no-backup
+          node fixture-foundation/scripts/security/disposable-supabase.mjs --verify-teardown

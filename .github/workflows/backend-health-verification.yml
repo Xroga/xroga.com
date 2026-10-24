@@ -12,6 +12,11 @@ name: Backend health verification
 # that writes belongs in a separate workflow with its own controls.
 on:
   workflow_dispatch:
+    inputs:
+      oci_wrong_workflow:
+        description: 'Approved isolated OCI control, skips live health checks'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -21,7 +26,38 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  oci-wrong-workflow:
+    if: inputs.oci_wrong_workflow == true && github.repository == 'Xroga/xroga.com' && github.ref == 'refs/heads/codex/xroga-batch-01'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: xroga-phase3-oci-custody
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: '.node-version'
+      - run: npm ci --workspaces=false
+      - name: Require actual OCI wrong-workflow denial
+        env:
+          XROGA_OCI_FEDERATION_DOMAIN: ${{ vars.XROGA_OCI_FEDERATION_DOMAIN }}
+          XROGA_OCI_FEDERATION_CLIENT_ID: ${{ vars.XROGA_OCI_FEDERATION_CLIENT_ID }}
+          XROGA_OCI_EXCHANGE_CLIENT_SECRET: ${{ secrets.XROGA_OCI_EXCHANGE_CLIENT_SECRET }}
+        run: node --import tsx scripts/security/verify-oci-wrong-workflow.ts
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: oci-wrong-workflow-${{ github.sha }}
+          path: ${{ runner.temp }}/oci-federation-wrong-workflow.json
+          retention-days: 1
+          if-no-files-found: error
   health:
+    if: inputs.oci_wrong_workflow != true
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

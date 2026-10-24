@@ -1,0 +1,14 @@
+{
+  "environment": "disposable_supabase",
+  "anonymous": "DENIED",
+  "wrongEmailOwner": "DENIED",
+  "correctEmailNoRole": "DENIED",
+  "ownerWithoutMfa": "DENIED",
+  "realTotpAal2Owner": "ALLOWED",
+  "revokedRole": "DENIED",
+  "payloads": [
+    "HTML",
+    "RSC"
+  ],
+  "productionData": false
+}

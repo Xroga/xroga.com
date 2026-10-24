@@ -2,6 +2,11 @@
   "name": "xroga",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "npm@10.9.4",
+  "engines": {
+    "node": "22.21.x",
+    "npm": "10.9.x"
+  },
   "description": "Xroga – AI Swarm Operating System",
   "workspaces": [
     "frontend",
@@ -13,6 +18,7 @@
     "dev:backend": "npm run dev --workspace=backend",
     "build": "npm run build --workspace=frontend && npm run build --workspace=backend",
     "lint": "npm run lint --workspace=frontend",
+    "verify:baseline": "node scripts/ci/run-baseline.mjs",
     "test": "npm run test --workspace=backend && npm run test:frontend",
     "test:frontend": "tsx --tsconfig frontend/tsconfig.json --test \"frontend/src/**/*.test.ts\"",
     "test:resilience": "node scripts/test-resilience.js",
@@ -58,14 +64,23 @@
     "test:growth:authority": "tsx --test \"backend/src/organicIntelligence/authority/**/*.test.ts\""
   },
   "overrides": {
+    "undici@^5.29.0": "6.28.1",
+    "pptxgenjs": { "image-size": "2.0.4" },
+    "simple-git": "4.0.2",
     "postcss": "8.5.24",
-    "sharp": "0.35.3"
+    "sharp": "0.35.5",
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "@simple-git/argv-parser": "2.0.1"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
     "@playwright/test": "1.62.0",
-    "concurrently": "10.0.4",
+    "concurrently": "10.0.6",
+    "libpg-query": "18.1.5",
     "pg": "^8.14.1",
     "zod": "4.6.5"
+  },
+  "dependencies": {
+    "xroga": "file:"
   }
 }

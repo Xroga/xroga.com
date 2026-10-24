@@ -3,7 +3,7 @@
   "installCommand": "cd .. && npm install",
   "buildCommand": "npm run build",
   "framework": "nextjs",
-  "ignoreCommand": "git diff HEAD^ HEAD --quiet . ../package.json ../package-lock.json",
+  "ignoreCommand": "node ../scripts/ci/ignore-vercel-build.mjs",
   "headers": [
     {
       "source": "/assets/(.*)",

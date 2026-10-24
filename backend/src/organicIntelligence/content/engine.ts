@@ -388,7 +388,7 @@ export function scoreContentQuality(dimensions: QualityDimensions, threshold = 7
   return { total, threshold, ready: total >= threshold, deficiencies };
 }
 
-export function validateCitationReadyManifest(manifest: ContentManifest, sources: readonly SourceRecord[], claims: readonly ClaimRecord[]): string[] {
+export function validateCitationReadyManifest(manifest: ContentManifest, sources: readonly SourceRecord[], claims: readonly ClaimRecord[], now = new Date()): string[] {
   const issues: string[] = [];
   const required = ['Direct answer', 'At a glance', 'Evidence', 'Limitations', 'Next action'];
   for (const section of required) if (!manifest.requiredSections.some((item) => item.toLowerCase().includes(section.toLowerCase()))) issues.push(`Missing citation-ready section: ${section}.`);
@@ -407,7 +407,7 @@ export function validateCitationReadyManifest(manifest: ContentManifest, sources
   const claimIds = new Set(claims.map((claim) => claim.claimId));
   for (const claimId of manifest.claimIds) if (!claimIds.has(claimId)) issues.push(`Manifest references missing claim ${claimId}.`);
   for (const claim of claims) if (!claim.pagesUsingClaim.includes(pathname)) issues.push(`Claim ${claim.claimId} does not declare page ${pathname}.`);
-  issues.push(...validateSourcesAndClaims(sources, claims));
+  issues.push(...validateSourcesAndClaims(sources, claims, now));
   if (manifest.visualManifest.every((item) => item.type === 'ILLUSTRATION') && manifest.qualityDimensions.visualProof > 5) {
     issues.push('Illustration-only visual evidence cannot claim more than 5/10 visual proof.');
   }

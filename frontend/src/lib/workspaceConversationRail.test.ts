@@ -8,12 +8,16 @@ const rail = read('../components/terminal/ChatTurnRail.tsx');
 const log = read('../components/terminal/SwarmMessageLog.tsx');
 const css = read('../app/globals.css');
 
-test('repository, pinned and recent sidebar rows have their original readable labels', () => {
+test('project, pinned and recent sidebar rows retain readable labels and accessible open controls', () => {
   assert.doesNotMatch(sidebar, /HistoryTick|xv-history-tick/);
-  assert.match(sidebar, /folder\.sessions\.map\(\(session\) =>/);
-  assert.match(sidebar, /className=\{cn\(\s*'w-full flex items-center/);
+  assert.match(sidebar, /function renderRow\(kind:SidebarKind,id:string,label:string,open:\(\)=>void/);
+  assert.match(sidebar, /onClick=\{open\}/);
+  assert.match(sidebar, /aria-label=\{label\}/);
+  assert.match(sidebar, /<SidebarMovingTitle text=\{label\}\/>/);
+  assert.doesNotMatch(sidebar, /\{leading\}/);
   assert.match(sidebar, /session\.title/);
-  assert.match(sidebar, /aria-label="Pinned conversations"/);
+  assert.match(sidebar, /aria-label="Projects"/);
+  assert.match(sidebar, /aria-label="Pinned items"/);
   assert.match(sidebar, /aria-label="Recent conversations"/);
 });
 
@@ -24,10 +28,14 @@ test('only the workspace transcript has a minimal conversation-tick rail', () =>
   assert.match(rail, /onClick=\{\(\) => onJump\(turn\.id\)\}/);
   assert.match(rail, /xv-chat-turn-tick--active/);
   assert.match(rail, /xv-chat-turn-preview/);
-  assert.match(css, /width:\s*var\(--xv-dash-width,7px\)/);
-  assert.match(css, /\.xv-chat-turn-tick--active > span/);
-  assert.match(rail, /proximityWidth/);
-  assert.match(css, /\.xv-chat-turn-tick:focus-visible/);
+    // PRs #829 and #831 own graduated message/artifact markers and bookmarks.
+    assert.match(rail, /proximityWidth\(near\)/);
+    assert.match(rail, /'--xv-dash-width': width \+ 'px'/);
+    assert.match(rail, /toggleBookmark\(hoveredTurn\.id\)/);
+    assert.match(css, /width: var\(--xv-dash-width,\s*7px\);\s*height: 1\.5px;/);
+    assert.match(css, /\.xv-chat-turn-tick--active > span,[\s\S]*?background: var\(--xv-dash-strong\)/);
+    assert.match(css, /\.xv-chat-turn-tick--hovered > span,[\s\S]*?opacity: 1/);
+    assert.match(css, /\.xv-chat-turn-tick:focus-visible \{\s*outline: 1px solid var\(--xv-dash-strong\)/);
   assert.match(css, /\.xv-chat-turn-rail--dock \{\s*background: transparent;/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.xv-chat-turn-tick > span \{ transition: none; \}/);
 });

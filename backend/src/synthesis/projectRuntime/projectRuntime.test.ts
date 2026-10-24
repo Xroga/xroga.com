@@ -537,12 +537,15 @@ describe(
     it(
       'encrypts project secrets and never stores plaintext',
       async () => {
+        const secretOwner =
+          '11111111-1111-4111-8111-111111111111';
+
         const store =
           new InMemoryProjectRuntimeStore();
 
         const manager =
           new ProjectSecretManager(
-            'user-1',
+            secretOwner,
 
             store,
 
@@ -569,7 +572,7 @@ describe(
         const records =
           await store
             .loadEncryptedSecrets(
-              'user-1',
+              secretOwner,
               'project-1',
             );
 

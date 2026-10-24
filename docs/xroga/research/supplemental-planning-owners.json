@@ -1,0 +1,365 @@
+{
+  "version": 1,
+  "authority": "FOUNDER_EXPLICIT_PLANNING_APPROVAL_2026-10-18",
+  "approvalScope": "Eight stable supplemental planning owners, original72 unchanged, roadmap pending, no implementation or external effects",
+  "originalMissionsModified": false,
+  "authorizesImplementation": false,
+  "additionalSpend": 0,
+  "owners": [
+    {
+      "id": "SUPP-CHAIN-RPC-FOUNDATIONS",
+      "sourceRowId": "C2B-005",
+      "sourcePath": "docs/command-2/parts-abc/requirements-ledger.json",
+      "sourceRowSha256": "8bc0bf08f9ccec0dca7db7c242b28f1c2348029071ef546576f55848215f3369",
+      "scope": {
+        "title": "Blockchain Foundations through RPC Resilience",
+        "sourceTests": [
+          "chainRuntime.test.ts"
+        ],
+        "sourceEvidenceClaims": [
+          "wallet replay, signer, transaction, reorg and same-chain failover tests"
+        ],
+        "externalBlocker": "Authorised testnet/mainnet actions belong to external verification and Part C"
+      },
+      "planningStatus": "PLANNED",
+      "implementationStatus": "NOT_IMPLEMENTED",
+      "roadmapPlacement": "PENDING_ROADMAP_RECONCILIATION",
+      "dependencies": [
+        "XB01-C007",
+        "XB01-C008",
+        "XB01-C009",
+        "XB01-C010"
+      ],
+      "dependsOnPlanningOwners": [],
+      "acceptanceCriteria": [
+        "Source-required verification: chainRuntime.test.ts",
+        "Independently verify source-described evidence: wallet replay, signer, transaction, reorg and same-chain failover tests",
+        "Historical implemented/verified_local labels are not current acceptance proof",
+        "Any transaction, signer, organizer submission or public-chain deployment needs separate explicit authority, cost approval and provider verification"
+      ],
+      "existingMissionReview": [
+        {
+          "number": 31,
+          "title": "Custom API and connector admission",
+          "originalImplementation": "Add a gated route for verified provider OpenAPI specs when catalog lacks important function; typed schemas, auth choice, service limits, security and license vetting. No arbitrary third-party code execution or credential exposure.",
+          "reusedAsDedicatedOwner": false,
+          "reason": "Reviewed original implementation and acceptance. It provides a general integration, engineering, authority, evaluation or release mechanism, but does not own the specialized Blockchain Foundations through RPC Resilience tests and external verification contract. Reuse its mechanisms as dependencies, preserve this distinct supplemental acceptance."
+        }
+      ]
+    },
+    {
+      "id": "SUPP-WEB3-CAPABILITY-GRAPH",
+      "sourceRowId": "C2C-001",
+      "sourcePath": "docs/command-2/parts-abc/requirements-ledger.json",
+      "sourceRowSha256": "d0aaa543870f93da77199d00314183f33d9956b9869db3d33c67b53f366965d8",
+      "scope": {
+        "title": "Advanced Web3 capability graph",
+        "sourceTests": [
+          "advancedWeb3.test.ts",
+          "foundation.fixture.test.ts"
+        ],
+        "sourceEvidenceClaims": [
+          "nine explicit advanced chain nodes and deterministic runtime checks"
+        ],
+        "externalBlocker": null
+      },
+      "planningStatus": "PLANNED",
+      "implementationStatus": "NOT_IMPLEMENTED",
+      "roadmapPlacement": "PENDING_ROADMAP_RECONCILIATION",
+      "dependencies": [
+        "XB01-C007",
+        "XB01-C008",
+        "XB01-C009",
+        "XB01-C010"
+      ],
+      "dependsOnPlanningOwners": [
+        "SUPP-CHAIN-RPC-FOUNDATIONS"
+      ],
+      "acceptanceCriteria": [
+        "Source-required verification: advancedWeb3.test.ts",
+        "Source-required verification: foundation.fixture.test.ts",
+        "Independently verify source-described evidence: nine explicit advanced chain nodes and deterministic runtime checks",
+        "Historical implemented/verified_local labels are not current acceptance proof",
+        "Any transaction, signer, organizer submission or public-chain deployment needs separate explicit authority, cost approval and provider verification"
+      ],
+      "existingMissionReview": [
+        {
+          "number": 24,
+          "title": "Capability binding and tool relevance",
+          "originalImplementation": "Build a versioned capability-to-tool mapping on existing Composio and Xroga capability registry; evaluate native-first, app connected, auth requirements, risk, schemas, and task suitability; preloading only small relevant tool set.",
+          "reusedAsDedicatedOwner": false,
+          "reason": "Reviewed original implementation and acceptance. It provides a general integration, engineering, authority, evaluation or release mechanism, but does not own the specialized Advanced Web3 capability graph tests and external verification contract. Reuse its mechanisms as dependencies, preserve this distinct supplemental acceptance."
+        }
+      ]
+    },
+    {
+      "id": "SUPP-EVM-INTEGRATION",
+      "sourceRowId": "C2C-003",
+      "sourcePath": "docs/command-2/parts-abc/requirements-ledger.json",
+      "sourceRowSha256": "75fa0a07dabd89dbdb1d4ef00e80e13a6d4c794ede73a8def034e0d804d14f42",
+      "scope": {
+        "title": "EVM meaningful fixture",
+        "sourceTests": [
+          "advancedWeb3.test.ts",
+          "solc 0.8.30 compile"
+        ],
+        "sourceEvidenceClaims": [
+          "ABI and bytecode generated; authority, terminal-state, conservation, static security and 1000 deterministic fuzz cases passed"
+        ],
+        "externalBlocker": "Public testnet deployment requires owner authorization, signer and funds"
+      },
+      "planningStatus": "PLANNED",
+      "implementationStatus": "NOT_IMPLEMENTED",
+      "roadmapPlacement": "PENDING_ROADMAP_RECONCILIATION",
+      "dependencies": [
+        "XB01-C007",
+        "XB01-C008",
+        "XB01-C009",
+        "XB01-C010"
+      ],
+      "dependsOnPlanningOwners": [
+        "SUPP-CHAIN-RPC-FOUNDATIONS"
+      ],
+      "acceptanceCriteria": [
+        "Source-required verification: advancedWeb3.test.ts",
+        "Source-required verification: solc 0.8.30 compile",
+        "Independently verify source-described evidence: ABI and bytecode generated; authority, terminal-state, conservation, static security and 1000 deterministic fuzz cases passed",
+        "Historical implemented/verified_local labels are not current acceptance proof",
+        "Any transaction, signer, organizer submission or public-chain deployment needs separate explicit authority, cost approval and provider verification"
+      ],
+      "existingMissionReview": [
+        {
+          "number": 36,
+          "title": "Full-stack application golden slice",
+          "originalImplementation": "Choose customer-requested SaaS app including React UI, Supabase auth+tables, API actions, roles and real user flow; build with tested assets, save durable files, create preview and push on branch.",
+          "reusedAsDedicatedOwner": false,
+          "reason": "Reviewed original implementation and acceptance. It provides a general integration, engineering, authority, evaluation or release mechanism, but does not own the specialized EVM meaningful fixture tests and external verification contract. Reuse its mechanisms as dependencies, preserve this distinct supplemental acceptance."
+        }
+      ]
+    },
+    {
+      "id": "SUPP-SOLANA-INTEGRATION",
+      "sourceRowId": "C2C-004",
+      "sourcePath": "docs/command-2/parts-abc/requirements-ledger.json",
+      "sourceRowSha256": "6cd1fad2dbc2367f830c5a688fe44b6aedd5f64bbacaab373dc5e7c3466963fd",
+      "scope": {
+        "title": "Solana meaningful fixture",
+        "sourceTests": [
+          "advancedWeb3.test.ts"
+        ],
+        "sourceEvidenceClaims": [
+          "signer, PDA, content-hash and account-substitution behavior passed in the compiled backend fixture"
+        ],
+        "externalBlocker": "Rust, Solana CLI and local validator are not installed on this Windows host; native SBF build/local-validator/Devnet evidence is pending"
+      },
+      "planningStatus": "PLANNED",
+      "implementationStatus": "NOT_IMPLEMENTED",
+      "roadmapPlacement": "PENDING_ROADMAP_RECONCILIATION",
+      "dependencies": [
+        "XB01-C007",
+        "XB01-C008",
+        "XB01-C009",
+        "XB01-C010"
+      ],
+      "dependsOnPlanningOwners": [
+        "SUPP-CHAIN-RPC-FOUNDATIONS"
+      ],
+      "acceptanceCriteria": [
+        "Source-required verification: advancedWeb3.test.ts",
+        "Independently verify source-described evidence: signer, PDA, content-hash and account-substitution behavior passed in the compiled backend fixture",
+        "Historical implemented/verified_local labels are not current acceptance proof",
+        "Any transaction, signer, organizer submission or public-chain deployment needs separate explicit authority, cost approval and provider verification"
+      ],
+      "existingMissionReview": [
+        {
+          "number": 36,
+          "title": "Full-stack application golden slice",
+          "originalImplementation": "Choose customer-requested SaaS app including React UI, Supabase auth+tables, API actions, roles and real user flow; build with tested assets, save durable files, create preview and push on branch.",
+          "reusedAsDedicatedOwner": false,
+          "reason": "Reviewed original implementation and acceptance. It provides a general integration, engineering, authority, evaluation or release mechanism, but does not own the specialized Solana meaningful fixture tests and external verification contract. Reuse its mechanisms as dependencies, preserve this distinct supplemental acceptance."
+        }
+      ]
+    },
+    {
+      "id": "SUPP-NON-EVM-ADAPTERS",
+      "sourceRowId": "C2C-005",
+      "sourcePath": "docs/command-2/parts-abc/requirements-ledger.json",
+      "sourceRowSha256": "6d57e7b1cc944492ab54ba60754829f448890418540736d8203819a829223b18",
+      "scope": {
+        "title": "Additional non-EVM adapter",
+        "sourceTests": [
+          "advancedWeb3.test.ts"
+        ],
+        "sourceEvidenceClaims": [
+          "Soroban authorization and conservation behavior passed in the compiled backend adapter"
+        ],
+        "externalBlocker": "Rust and Stellar CLI are not installed; native WASM build and local/testnet contract evidence is pending"
+      },
+      "planningStatus": "PLANNED",
+      "implementationStatus": "NOT_IMPLEMENTED",
+      "roadmapPlacement": "PENDING_ROADMAP_RECONCILIATION",
+      "dependencies": [
+        "XB01-C007",
+        "XB01-C008",
+        "XB01-C009",
+        "XB01-C010"
+      ],
+      "dependsOnPlanningOwners": [
+        "SUPP-CHAIN-RPC-FOUNDATIONS"
+      ],
+      "acceptanceCriteria": [
+        "Source-required verification: advancedWeb3.test.ts",
+        "Independently verify source-described evidence: Soroban authorization and conservation behavior passed in the compiled backend adapter",
+        "Historical implemented/verified_local labels are not current acceptance proof",
+        "Any transaction, signer, organizer submission or public-chain deployment needs separate explicit authority, cost approval and provider verification"
+      ],
+      "existingMissionReview": [
+        {
+          "number": 31,
+          "title": "Custom API and connector admission",
+          "originalImplementation": "Add a gated route for verified provider OpenAPI specs when catalog lacks important function; typed schemas, auth choice, service limits, security and license vetting. No arbitrary third-party code execution or credential exposure.",
+          "reusedAsDedicatedOwner": false,
+          "reason": "Reviewed original implementation and acceptance. It provides a general integration, engineering, authority, evaluation or release mechanism, but does not own the specialized Additional non-EVM adapter tests and external verification contract. Reuse its mechanisms as dependencies, preserve this distinct supplemental acceptance."
+        }
+      ]
+    },
+    {
+      "id": "SUPP-WALLET-SIGNING-SECURITY",
+      "sourceRowId": "C2C-006",
+      "sourcePath": "docs/command-2/parts-abc/requirements-ledger.json",
+      "sourceRowSha256": "a13ceed5d2e24cfdd904d5a1060d35f57dbc41853f62b4a3414d894f465d631d",
+      "scope": {
+        "title": "Wallet, RPC, indexer and signing security",
+        "sourceTests": [
+          "chainRuntime.test.ts"
+        ],
+        "sourceEvidenceClaims": [
+          "challenge expiry/replay/domain/chain binding, signer policy, same-chain failover and reorg/idempotency tests"
+        ],
+        "externalBlocker": null
+      },
+      "planningStatus": "PLANNED",
+      "implementationStatus": "NOT_IMPLEMENTED",
+      "roadmapPlacement": "PENDING_ROADMAP_RECONCILIATION",
+      "dependencies": [
+        "XB01-C007",
+        "XB01-C008",
+        "XB01-C009",
+        "XB01-C010"
+      ],
+      "dependsOnPlanningOwners": [
+        "SUPP-CHAIN-RPC-FOUNDATIONS"
+      ],
+      "acceptanceCriteria": [
+        "Source-required verification: chainRuntime.test.ts",
+        "Independently verify source-described evidence: challenge expiry/replay/domain/chain binding, signer policy, same-chain failover and reorg/idempotency tests",
+        "Historical implemented/verified_local labels are not current acceptance proof",
+        "Any transaction, signer, organizer submission or public-chain deployment needs separate explicit authority, cost approval and provider verification"
+      ],
+      "existingMissionReview": [
+        {
+          "number": 8,
+          "title": "Canonical approval and authority contracts",
+          "originalImplementation": "Extend current authorization/approval gates into versioned outcome-scoped authority: identity, allowed target, action class, account, risk, spend limit, expiry, and revocation. Preserve existing prepared-action digest and single-use confirmations; prohibit approvals inferred from LLM text.",
+          "reusedAsDedicatedOwner": false,
+          "reason": "Reviewed original implementation and acceptance. It provides a general integration, engineering, authority, evaluation or release mechanism, but does not own the specialized Wallet, RPC, indexer and signing security tests and external verification contract. Reuse its mechanisms as dependencies, preserve this distinct supplemental acceptance."
+        }
+      ]
+    },
+    {
+      "id": "SUPP-HACKATHON-EXECUTION",
+      "sourceRowId": "C2C-007",
+      "sourcePath": "docs/command-2/parts-abc/requirements-ledger.json",
+      "sourceRowSha256": "b5ec6ce05f19a76b55bb0fd03b53a63636a5ebcd54d2c106887495f7254df395",
+      "scope": {
+        "title": "Hackathon execution and evidence",
+        "sourceTests": [
+          "hackathonRuntime.test.ts"
+        ],
+        "sourceEvidenceClaims": [
+          "official-rule compilation, candidate ranking, timeboxing, sponsor matrix, two-run golden demo and submission validation"
+        ],
+        "externalBlocker": "Organizer submission, video upload and live sponsor/testnet validation remain owner external actions"
+      },
+      "planningStatus": "PLANNED",
+      "implementationStatus": "NOT_IMPLEMENTED",
+      "roadmapPlacement": "PENDING_ROADMAP_RECONCILIATION",
+      "dependencies": [
+        "XB01-C007",
+        "XB01-C008",
+        "XB01-C009",
+        "XB01-C010"
+      ],
+      "dependsOnPlanningOwners": [
+        "SUPP-CHAIN-RPC-FOUNDATIONS"
+      ],
+      "acceptanceCriteria": [
+        "Source-required verification: hackathonRuntime.test.ts",
+        "Independently verify source-described evidence: official-rule compilation, candidate ranking, timeboxing, sponsor matrix, two-run golden demo and submission validation",
+        "Historical implemented/verified_local labels are not current acceptance proof",
+        "Any transaction, signer, organizer submission or public-chain deployment needs separate explicit authority, cost approval and provider verification"
+      ],
+      "existingMissionReview": [
+        {
+          "number": 68,
+          "title": "XrogaBench full evaluation program",
+          "originalImplementation": "Implement reproducible family tests for coding, multi-app, browser, data/documents, rich results, automation, mobile release, permissions, costs and recovery. Shadow-run candidate workers against existing baseline with representative tasks.",
+          "reusedAsDedicatedOwner": false,
+          "reason": "Reviewed original implementation and acceptance. It provides a general integration, engineering, authority, evaluation or release mechanism, but does not own the specialized Hackathon execution and evidence tests and external verification contract. Reuse its mechanisms as dependencies, preserve this distinct supplemental acceptance."
+        }
+      ]
+    },
+    {
+      "id": "SUPP-MAINNET-DEPLOYMENT-EVIDENCE",
+      "sourceRowId": "C2C-008",
+      "sourcePath": "docs/command-2/parts-abc/requirements-ledger.json",
+      "sourceRowSha256": "418fb856cbda500eb29c83ce65a47c2a3d8f66862f2e7fb55ea6e8c0f7778687",
+      "scope": {
+        "title": "Deployment evidence and mainnet safety",
+        "sourceTests": [
+          "advancedWeb3.test.ts",
+          "operationsManifest.test.ts"
+        ],
+        "sourceEvidenceClaims": [
+          "fake evidence rejected; deployment receipt fields and separate mainnet gate enforced"
+        ],
+        "externalBlocker": "No public-chain deployment was authorised"
+      },
+      "planningStatus": "PLANNED",
+      "implementationStatus": "NOT_IMPLEMENTED",
+      "roadmapPlacement": "PENDING_ROADMAP_RECONCILIATION",
+      "dependencies": [
+        "XB01-C007",
+        "XB01-C008",
+        "XB01-C009",
+        "XB01-C010"
+      ],
+      "dependsOnPlanningOwners": [
+        "SUPP-CHAIN-RPC-FOUNDATIONS"
+      ],
+      "acceptanceCriteria": [
+        "Source-required verification: advancedWeb3.test.ts",
+        "Source-required verification: operationsManifest.test.ts",
+        "Independently verify source-described evidence: fake evidence rejected; deployment receipt fields and separate mainnet gate enforced",
+        "Historical implemented/verified_local labels are not current acceptance proof",
+        "Any transaction, signer, organizer submission or public-chain deployment needs separate explicit authority, cost approval and provider verification"
+      ],
+      "existingMissionReview": [
+        {
+          "number": 57,
+          "title": "Publish readiness and release manifest",
+          "originalImplementation": "Create real per-project, per-target compatibility checks, review requirements, target app ownership, version/package id, signing config, cost/approval. Distinguish connected/configured/buildable/submitted/live.",
+          "reusedAsDedicatedOwner": false,
+          "reason": "Reviewed original implementation and acceptance. It provides a general integration, engineering, authority, evaluation or release mechanism, but does not own the specialized Deployment evidence and mainnet safety tests and external verification contract. Reuse its mechanisms as dependencies, preserve this distinct supplemental acceptance."
+        },
+        {
+          "number": 72,
+          "title": "Staged rollout, operator runbooks and handoff",
+          "originalImplementation": "Run migration dry runs and restore, canary deploy and rollback on explicit approval, traffic/feature flags, dashboards, alerts, support docs, project status ledger, follow-on backlog and ownership maps. Prohibit release if critical security/reliability gates fail.",
+          "reusedAsDedicatedOwner": false,
+          "reason": "Reviewed original implementation and acceptance. It provides a general integration, engineering, authority, evaluation or release mechanism, but does not own the specialized Deployment evidence and mainnet safety tests and external verification contract. Reuse its mechanisms as dependencies, preserve this distinct supplemental acceptance."
+        }
+      ]
+    }
+  ]
+}

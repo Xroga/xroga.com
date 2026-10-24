@@ -1,0 +1,551 @@
+{
+  "schema_version": 1,
+  "purpose": "RECONSTRUCTED_EXECUTION_WORKLIST_NOT_ORIGINAL_UNTRACKED_HANDOFF",
+  "status": "STARTING_PLAN_NOT_IMPLEMENTATION_PROOF",
+  "repository": "Xroga/xroga.com",
+  "phase": 3,
+  "phase2_accepted_sha": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+  "phase2_integrated_sha": "b23754250aea1577c95e19d2d342cc07d8cb732e",
+  "source_contract_path": "docs/xroga/research/inputs/batch-one-report.txt",
+  "canonical_original_phase3_handoff_path": "docs/xroga/batch-1/phases/PHASE-3-FROZEN-WORKLIST.json",
+  "handoff_recovery_rule": "If original untracked frozen worklist exists recover/validate it; do not overwrite with this reconstructed planning file.",
+  "original_criteria_count": 22,
+  "action_classes": [
+    "READ",
+    "CREATE",
+    "UPDATE",
+    "DELETE",
+    "SEND_COMMUNICATION",
+    "PUBLISH",
+    "PURCHASE_OR_SPEND",
+    "TRANSFER_OR_FINANCIAL",
+    "CREDENTIAL_OR_PERMISSION_CHANGE",
+    "SENSITIVE_DATA_EXPORT",
+    "EXTERNAL_UPLOAD",
+    "ADMINISTRATIVE_HIGH_RISK"
+  ],
+  "interfaces_to_check": [
+    {
+      "id": "tenant-issuer",
+      "path": "backend/src/security/tenantContext.ts",
+      "note": "Preserve issued user provenance and foreign-object denial",
+      "sha256_at_phase2": "TO_BE_CALCULATED_ON_REAL_CHECKOUT"
+    },
+    {
+      "id": "service-role",
+      "path": "backend/src/security/serviceRoleGuard.ts",
+      "note": "Service role not a sandbox; recipient scopes still mandatory",
+      "sha256_at_phase2": "TO_BE_CALCULATED_ON_REAL_CHECKOUT"
+    },
+    {
+      "id": "business-plans",
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "note": "Reuse prepared plan/digest and approved snapshot",
+      "sha256_at_phase2": "TO_BE_CALCULATED_ON_REAL_CHECKOUT"
+    },
+    {
+      "id": "business-confirmation",
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "note": "Reuse durable claim/finish and TTL",
+      "sha256_at_phase2": "TO_BE_CALCULATED_ON_REAL_CHECKOUT"
+    },
+    {
+      "id": "plugin-policy",
+      "path": "backend/src/services/integrations/pluginPermissionPolicy.ts",
+      "note": "Preference never overrides high-risk limits",
+      "sha256_at_phase2": "TO_BE_CALCULATED_ON_REAL_CHECKOUT"
+    },
+    {
+      "id": "external-tools",
+      "path": "backend/src/services/integrations/composioClient.ts",
+      "note": "Guard actual external effect dispatch",
+      "sha256_at_phase2": "TO_BE_CALCULATED_ON_REAL_CHECKOUT"
+    },
+    {
+      "id": "operations-engine",
+      "path": "backend/src/operations/operationsEngine.ts",
+      "note": "Keep role/risk/class definitions",
+      "sha256_at_phase2": "TO_BE_CALCULATED_ON_REAL_CHECKOUT"
+    },
+    {
+      "id": "operations-service",
+      "path": "backend/src/operations/operationsService.ts",
+      "note": "Keep action/approval/lease/current owner checks",
+      "sha256_at_phase2": "TO_BE_CALCULATED_ON_REAL_CHECKOUT"
+    },
+    {
+      "id": "operations-adapters",
+      "path": "backend/src/operations/providerAdapters.ts",
+      "note": "Reuse registered effect adapters",
+      "sha256_at_phase2": "TO_BE_CALCULATED_ON_REAL_CHECKOUT"
+    },
+    {
+      "id": "budget",
+      "path": "backend/src/ai/providerBudget.ts",
+      "note": "Preserve reservation and exact micro-USD",
+      "sha256_at_phase2": "TO_BE_CALCULATED_ON_REAL_CHECKOUT"
+    },
+    {
+      "id": "accounting",
+      "path": "backend/src/ai/postCompletionAccounting.ts",
+      "note": "No provider replay on accounting uncertainty",
+      "sha256_at_phase2": "TO_BE_CALCULATED_ON_REAL_CHECKOUT"
+    },
+    {
+      "id": "oauth-store",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "note": "Canonical revision/tombstone and PKCE",
+      "sha256_at_phase2": "TO_BE_CALCULATED_ON_REAL_CHECKOUT"
+    },
+    {
+      "id": "envelope",
+      "path": "backend/src/services/integrations/credentialEnvelope.ts",
+      "note": "Existing AEAD codec, not production vault",
+      "sha256_at_phase2": "TO_BE_CALCULATED_ON_REAL_CHECKOUT"
+    },
+    {
+      "id": "byok",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "note": "Eliminate service/JWT/dev key production fallback",
+      "sha256_at_phase2": "TO_BE_CALCULATED_ON_REAL_CHECKOUT"
+    },
+    {
+      "id": "supabase-oauth",
+      "path": "backend/src/services/integrations/supabaseAuth.ts",
+      "note": "Preserve refresh CAS and owner",
+      "sha256_at_phase2": "TO_BE_CALCULATED_ON_REAL_CHECKOUT"
+    },
+    {
+      "id": "vercel-oauth",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "note": "Preserve refresh epoch/lease and mirror safety",
+      "sha256_at_phase2": "TO_BE_CALCULATED_ON_REAL_CHECKOUT"
+    },
+    {
+      "id": "cws",
+      "path": "backend/src/services/publish/chromeWebStore.ts",
+      "note": "Preserve OAuth, uploader and publishing authority",
+      "sha256_at_phase2": "TO_BE_CALCULATED_ON_REAL_CHECKOUT"
+    },
+    {
+      "id": "eas",
+      "path": "backend/src/services/publish/easCredentials.ts",
+      "note": "Secure provider credentials/remote upload",
+      "sha256_at_phase2": "TO_BE_CALCULATED_ON_REAL_CHECKOUT"
+    },
+    {
+      "id": "runtime-secrets",
+      "path": "backend/src/synthesis/projectRuntime/store.ts",
+      "note": "Project/scope secret custody",
+      "sha256_at_phase2": "TO_BE_CALCULATED_ON_REAL_CHECKOUT"
+    },
+    {
+      "id": "frontend-local-vault",
+      "path": "frontend/src/lib/credentialVault.ts",
+      "note": "Replace insecure XOR/localStorage secret custody",
+      "sha256_at_phase2": "TO_BE_CALCULATED_ON_REAL_CHECKOUT"
+    }
+  ],
+  "criteria": [
+    {
+      "id": "XB01-C008-AC01",
+      "command": "008",
+      "original_text": "One canonical authority API exists.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/services/integrations/businessAction.ts",
+        "backend/src/services/integrations/businessActionConfirmations.ts",
+        "backend/src/operations/operationsService.ts"
+      ],
+      "required_implementation": "Implement one API on current business confirmations/Operations claims; no parallel approval system.",
+      "positive_test_obligation": "authority API integration and fail-closed missing state",
+      "negative_test_obligation": "independent confirmation paths delegate to canonical enforcement",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C008-AC02",
+      "command": "008",
+      "original_text": "businessAction consequential writes use it.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/services/integrations/businessAction.ts",
+        "backend/src/services/integrations/businessActionConfirmations.ts",
+        "backend/src/services/integrations/composioClient.ts"
+      ],
+      "required_implementation": "Require canonical prepare, exact-account grant, atomic consumption and effect receipt before Composio execute; never honor model-only boolean.",
+      "positive_test_obligation": "business-action send/write stub valid grant",
+      "negative_test_obligation": "direct unconfirmed Composio tool rejected",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C008-AC03",
+      "command": "008",
+      "original_text": "operationsEngine high-risk operations use it or a documented compatibility adapter.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/operations/operationsEngine.ts",
+        "backend/src/operations/operationsService.ts",
+        "backend/src/operations/providerAdapters.ts"
+      ],
+      "required_implementation": "Retain role/action/lease/atomic-effect RPC; prove high-risk Operations path uses canonical authority or equivalent digest-bound adapter.",
+      "positive_test_obligation": "valid operations approval and provider stub",
+      "negative_test_obligation": "replayed or modified Operations action rejected",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C008-AC04",
+      "command": "008",
+      "original_text": "Grant binds tenant, user, action, target and digest.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/businessActionConfirmations.ts",
+        "backend/src/operations/operationsEngine.ts"
+      ],
+      "required_implementation": "Durable immutable snapshot and source-authenticated user/project/account/provider/recipient/payload/expiry/version/nonce, risk/spend and receipt identity.",
+      "positive_test_obligation": "valid complete grant exercised",
+      "negative_test_obligation": "each modified bound field denied",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C008-AC05",
+      "command": "008",
+      "original_text": "Replay tests pass.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/services/integrations/businessActionConfirmations.ts",
+        "backend/src/operations/operationsService.ts"
+      ],
+      "required_implementation": "Atomic claim, once-only authority, provider idempotency where possible and post-effect UNCERTAIN reconciliation without blind replay.",
+      "positive_test_obligation": "replayed read of completed receipt",
+      "negative_test_obligation": "two consumers same grant only one effect",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C008-AC06",
+      "command": "008",
+      "original_text": "Mutation-after-confirmation tests pass.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/services/integrations/businessAction.ts",
+        "backend/src/operations/operationsEngine.ts"
+      ],
+      "required_implementation": "Capture immutable prepared snapshot and re-hash before effect; reject swapped payload, account, recipient, destination, attachments or amount.",
+      "positive_test_obligation": "same snapshot succeeds",
+      "negative_test_obligation": "mutated snapshot denied without external call",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C008-AC07",
+      "command": "008",
+      "original_text": "Expiry/revocation tests pass.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/services/integrations/businessActionConfirmations.ts",
+        "backend/src/operations/operationsService.ts"
+      ],
+      "required_implementation": "Durable expiry/revocation and current role/account checks at effect boundary; survive queue delay/lock waits.",
+      "positive_test_obligation": "valid unexpired user grant",
+      "negative_test_obligation": "expired/revoked/demoted approval during lock denied",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C008-AC08",
+      "command": "008",
+      "original_text": "Spend-bound tests pass.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/ai/providerBudget.ts",
+        "backend/src/ai/postCompletionAccounting.ts",
+        "backend/src/ai/usageAccounting.ts"
+      ],
+      "required_implementation": "Compose approval amount+currency+target with provider reservation and exact settlement; prevent cross-action reserves and concurrent overdraw.",
+      "positive_test_obligation": "authorized within limit settle",
+      "negative_test_obligation": "exceed limit, wrong currency, uncertain provider reply no replay",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C008-AC09",
+      "command": "008",
+      "original_text": "LLM text alone cannot create authority.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/capabilities/modules/businessAction.ts",
+        "backend/src/services/integrations/businessAction.ts",
+        "backend/src/routes/integrations.ts"
+      ],
+      "required_implementation": "Server-issued approval only; forged model, retrieved document, tool description, user quote, generic yes cannot issue/expand/consume grant.",
+      "positive_test_obligation": "real approval flow works",
+      "negative_test_obligation": "LLM/document approval text never executes",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C008-AC10",
+      "command": "008",
+      "original_text": "Every canonical consequential action class has a policy entry.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/operations/operationsEngine.ts",
+        "backend/src/services/integrations/pluginPermissionPolicy.ts",
+        "backend/src/services/publish/chromeWebStore.ts"
+      ],
+      "required_implementation": "All 12 original action classes covered; inventory all enabled adapters, fail-closed unknown/disabled; read need not get destructive prompt.",
+      "positive_test_obligation": "table-driven 12 classes including no-op unavailable",
+      "negative_test_obligation": "unknown action class or direct adapter bypass rejected",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C009-AC01",
+      "command": "009",
+      "original_text": "All newly stored OAuth/provider secrets use CredentialVault.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/services/integrations/oauthPkceStore.ts",
+        "backend/src/services/integrations/userProviderKeys.ts",
+        "backend/src/services/integrations/credentialEnvelope.ts"
+      ],
+      "required_implementation": "Replace token-bearing stores/writers with encryption-before-persistence vault; detect direct writes across all real writer paths.",
+      "positive_test_obligation": "new access+refresh/BYOK encrypted canonical writes",
+      "negative_test_obligation": "direct plaintext DB/storage write denied",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C009-AC02",
+      "command": "009",
+      "original_text": "No frontend endpoint returns raw secrets.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "frontend/src/lib/credentialVault.ts",
+        "backend/src/routes/integrations.ts",
+        "backend/src/routes/publish.ts"
+      ],
+      "required_implementation": "Allowlist masked credential metadata; replace localStorage XOR vault UX; consented import only.",
+      "positive_test_obligation": "masked credential status and explicit import",
+      "negative_test_obligation": "canary cannot appear in API/HTML/websocket",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C009-AC03",
+      "command": "009",
+      "original_text": "No LLM/task prompt receives raw provider credential.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/services/integrations/composioClient.ts",
+        "backend/src/capabilities/modules/businessAction.ts",
+        "backend/src/ai/postCompletionAccounting.ts"
+      ],
+      "required_implementation": "Use narrow backend withAuthorizedCredential consumer, not prompts, histories, logs, tool descriptions or task evidence.",
+      "positive_test_obligation": "real adapter stub receives token only inside authorized transport",
+      "negative_test_obligation": "canary absent from model/task traces",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C009-AC04",
+      "command": "009",
+      "original_text": "Wrong-tenant retrieval test passes.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/userProviderKeys.ts",
+        "backend/src/services/integrations/oauthPkceStore.ts"
+      ],
+      "required_implementation": "Server-issued context and current canonical owner/provider/account/credential type; wrong tenant and connected account fail before decrypt.",
+      "positive_test_obligation": "correct owner reads",
+      "negative_test_obligation": "foreign owner/account/scope denied on real DB",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C009-AC05",
+      "command": "009",
+      "original_text": "Ciphertext tamper test passes.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/services/integrations/credentialEnvelope.ts"
+      ],
+      "required_implementation": "Authenticated AEAD with AAD tenant/provider/account/type/record/scope/version; reject modifications and unknown versions.",
+      "positive_test_obligation": "seal/decrypt exact context",
+      "negative_test_obligation": "nonce/tag/ciphertext/AAD alterations fail closed",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C009-AC06",
+      "command": "009",
+      "original_text": "Rotation test passes.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/services/integrations/credentialEnvelope.ts",
+        "backend/src/services/integrations/userProviderKeys.ts"
+      ],
+      "required_implementation": "Credential and KEK/DEK versioning; rewrap/re-encrypt with rollback and old-key support during managed transition.",
+      "positive_test_obligation": "rotate and read migrated version",
+      "negative_test_obligation": "interrupted rotation/no old version invalid access",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C009-AC07",
+      "command": "009",
+      "original_text": "Revocation test passes.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/services/integrations/vercelAuth.ts",
+        "backend/src/services/integrations/oauthPkceStore.ts",
+        "backend/src/services/integrations/userProviderKeys.ts"
+      ],
+      "required_implementation": "Canonical revocation+epoch check on read/refresh/use, no legacy mirror resurrection, race-safe reconnect.",
+      "positive_test_obligation": "reconnect with new approved epoch",
+      "negative_test_obligation": "revocation during delayed refresh denies old epoch",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C009-AC08",
+      "command": "009",
+      "original_text": "PKCE has TTL + one-time semantics.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/services/integrations/oauthPkceStore.ts",
+        "backend/src/services/integrations/supabaseAuth.ts",
+        "backend/src/services/integrations/vercelAuth.ts"
+      ],
+      "required_implementation": "Owner/session/state/redirect/revision binding and transactionally consumed one-use short TTL.",
+      "positive_test_obligation": "successful one-time PKCE consumption",
+      "negative_test_obligation": "expired/replay/foreign state/revoked epoch denied",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C009-AC09",
+      "command": "009",
+      "original_text": "Legacy migration is idempotent.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/services/integrations/oauthPkceStore.ts",
+        "backend/src/services/integrations/userProviderKeys.ts"
+      ],
+      "required_implementation": "Dry run, guarded v1 read, encrypt v2, roundtrip, CAS state, non-destructive pause/retry, approved cleanup only.",
+      "positive_test_obligation": "twice-migrated record same authority",
+      "negative_test_obligation": "crash after write cannot duplicate/delete",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C009-AC10",
+      "command": "009",
+      "original_text": "Production cannot use development crypto provider.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/services/integrations/userProviderKeys.ts",
+        "backend/src/services/integrations/credentialEnvelope.ts"
+      ],
+      "required_implementation": "No dev/static/Supabase service-role/JWT fallback; explicit CryptoProvider+production KMS decision; fail production closed if unavailable.",
+      "positive_test_obligation": "test-provider works in CI",
+      "negative_test_obligation": "production dev/fallback key config rejected",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C009-AC11",
+      "command": "009",
+      "original_text": "Credential audit reports remaining direct storage callers.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/services/integrations/oauthPkceStore.ts",
+        "backend/src/services/integrations/credentialStorageBucket.ts",
+        "backend/src/services/integrations/userProviderKeys.ts"
+      ],
+      "required_implementation": "Machine-generated original writers/readers and storage objects; no false zero, static CI check for introduced raw writes.",
+      "positive_test_obligation": "audit lists baseline and migrated consumers",
+      "negative_test_obligation": "introduced direct writer fails scanner",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    },
+    {
+      "id": "XB01-C009-AC12",
+      "command": "009",
+      "original_text": "Remaining legacy callers are zero or explicitly blocked from production cutover.",
+      "status": "PLANNED_NOT_IMPLEMENTED_AT_HANDOFF",
+      "existing_paths_to_verify": [
+        "backend/src/services/integrations/oauthPkceStore.ts",
+        "backend/src/services/publish/chromeWebStore.ts",
+        "backend/src/services/publish/easCredentials.ts"
+      ],
+      "required_implementation": "Per-caller evidence of migrated or enforced fail-closed path, migration/read compatibility scoped and sunset gated.",
+      "positive_test_obligation": "final dry-run proves permitted coverage",
+      "negative_test_obligation": "unmigrated enabled consumer blocks production activation",
+      "actual_test_ids": [],
+      "evidence_refs": [],
+      "verified_source_sha": null,
+      "blocking_dependency": null
+    }
+  ],
+  "approval_limits": {
+    "spend_usd_additional": 0,
+    "phase3_implementation_authorized": true,
+    "production_merge": false,
+    "production_deploy": false,
+    "production_data_migration": false,
+    "live_keys": false,
+    "paid_kms": false,
+    "external_consequential_actions": false
+  },
+  "phase3_exit": "Both Commands 008 and 009 original acceptance requirements proven; true production key custody required for production vault certification. If KMS absent use CODE_READY_KMS_CUTOVER_BLOCKED and request exact founder-only action.",
+  "phase4_boundary": "COMMAND 010 network, browser, tool egress policy remains Phase 4; preserve but do not claim implemented."
+}

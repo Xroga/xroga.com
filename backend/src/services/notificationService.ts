@@ -1,4 +1,5 @@
 import { getSupabaseAdmin } from '../config/supabase.js';
+import { requireTenantContext, type TenantContext } from '../security/tenantContext.js';
 
 export interface PushNotificationInput {
   title: string;
@@ -21,12 +22,19 @@ export interface BuildCompleteNotificationParams {
   assistantMessageId?: string;
 }
 
+/** Failure details belong in protected diagnostics, never a user notification. */
+export function failureNotificationMessage(kind: 'build' | 'video'): string {
+  return kind === 'build'
+    ? 'Xroga could not finish this build. Open Workspace to review available progress and retry.'
+    : 'Xroga could not finish this video. Open Workspace to review its status and retry.';
+}
+
 export function buildCompletionNotification(params: BuildCompleteNotificationParams): {
   title: string;
   message: string;
   type: 'success' | 'warning';
 } {
-  const verifiedLive = params.fullyShipped && params.deployVerified && Boolean(params.deployUrl);
+  const verifiedLive = params.fullyShipped && params.githubPushConfirmed && params.deployVerified && Boolean(params.deployUrl);
   const verifiedHandoff = params.handoffReady && params.githubPushConfirmed;
   return {
     title: verifiedLive
@@ -44,9 +52,11 @@ export function buildCompletionNotification(params: BuildCompleteNotificationPar
 }
 
 export async function pushNotification(
-  userId: string,
+  context: TenantContext,
   input: PushNotificationInput
 ): Promise<string | null> {
+  const { userId } = requireTenantContext(context);
+  input = structuredClone(input);
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from('notifications')
@@ -59,18 +69,18 @@ export async function pushNotification(
       metadata: input.metadata ?? {},
       read: false,
     })
-    .select('id')
+    .select('id,user_id')
     .single();
 
-  if (error) {
-    console.warn('[NotificationService] insert failed:', error.message);
+  if (error || !data || data.user_id !== userId || typeof data.id !== 'string' || !data.id) {
+    console.warn('[NotificationService] insert receipt unavailable');
     return null;
   }
   return data?.id ?? null;
 }
 
 export async function notifyVideoReady(
-  userId: string,
+  context: TenantContext,
   params: {
     jobId: string;
     title: string;
@@ -81,7 +91,7 @@ export async function notifyVideoReady(
     outputFormat?: string;
   }
 ): Promise<void> {
-  await pushNotification(userId, {
+  await pushNotification(context, {
     title: 'Your video is ready',
     message: params.title || params.prompt.slice(0, 80) || 'Video generation complete',
     type: 'success',
@@ -100,12 +110,12 @@ export async function notifyVideoReady(
 }
 
 export async function notifyVideoFailed(
-  userId: string,
+  context: TenantContext,
   params: { jobId: string; prompt: string; error: string; assistantMessageId?: string }
 ): Promise<void> {
-  await pushNotification(userId, {
+  await pushNotification(context, {
     title: 'Video generation failed',
-    message: params.error.slice(0, 200) || 'Something went wrong. Try again with a shorter clip.',
+    message: failureNotificationMessage('video'),
     type: 'error',
     link: '/dashboard',
     metadata: {
@@ -118,11 +128,11 @@ export async function notifyVideoFailed(
 }
 
 export async function notifyBuildComplete(
-  userId: string,
+  context: TenantContext,
   params: BuildCompleteNotificationParams,
 ): Promise<void> {
   const copy = buildCompletionNotification(params);
-  await pushNotification(userId, {
+  await pushNotification(context, {
     ...copy,
     link: '/dashboard',
     metadata: {
@@ -142,7 +152,7 @@ export async function notifyBuildComplete(
 }
 
 export async function notifyBuildFailed(
-  userId: string,
+  context: TenantContext,
   params: {
     projectName: string;
     prompt: string;
@@ -150,9 +160,9 @@ export async function notifyBuildFailed(
     assistantMessageId?: string;
   }
 ): Promise<void> {
-  await pushNotification(userId, {
+  await pushNotification(context, {
     title: 'XROGA build needs attention',
-    message: params.error.slice(0, 200) || 'Build could not finish. Open the dashboard to retry.',
+    message: failureNotificationMessage('build'),
     type: 'error',
     link: '/dashboard',
     metadata: {

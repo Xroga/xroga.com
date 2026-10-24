@@ -1,0 +1,901 @@
+{
+  "version": 1,
+  "scope": "PHASE_1_TRUTH_NOT_PHASE_4_REMEDIATION_OR_AUDIT_CLEAN",
+  "sourceReport": "docs/xroga/security/dependency-advisories.json",
+  "sourceReportSha256": "e113c9dcdf62097a24117988c584b6046ec08bc7c26d9bc5bf38ea21b5917afc",
+  "observedAt": "2026-10-18T15:22:41.672Z",
+  "graphs": [
+    {
+      "scope": "workspace-aggregate",
+      "lockSha256": "e58dacd8b9d6fc91b6052f48ea5c1441153c9849f1fbef48efd54e2da65cbf93",
+      "counts": {
+        "info": 0,
+        "low": 7,
+        "moderate": 16,
+        "high": 20,
+        "critical": 0,
+        "total": 43
+      },
+      "exitCode": 1
+    },
+    {
+      "scope": "frontend-standalone",
+      "lockSha256": "a40d55c1b6cdbab6cbee333734d57e275ef2e5d98a3de476d35aeef8a8274d44",
+      "counts": {
+        "info": 0,
+        "low": 1,
+        "moderate": 4,
+        "high": 7,
+        "critical": 0,
+        "total": 12
+      },
+      "exitCode": 1
+    },
+    {
+      "scope": "backend-standalone",
+      "lockSha256": "d1fdbe9fdb4feec48b702dd6975e09b89a92c06ec6c05e3d6919e1fd4aeea2b8",
+      "counts": {
+        "info": 0,
+        "low": 6,
+        "moderate": 14,
+        "high": 15,
+        "critical": 0,
+        "total": 35
+      },
+      "exitCode": 1
+    }
+  ],
+  "scopeCountsOverlap": true,
+  "waived": false,
+  "phase4ExposureDecisions": [
+    {
+      "scope": "workspace-aggregate",
+      "package": "@cline/llms",
+      "installed": [
+        {
+          "path": "node_modules/@cline/llms",
+          "version": "0.0.82"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "@jerome-benoit/sap-ai-provider"
+        },
+        {
+          "dependency": "@langfuse/vercel-ai-sdk"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "workspace-aggregate",
+      "package": "@jerome-benoit/sap-ai-provider",
+      "installed": [
+        {
+          "path": "node_modules/@jerome-benoit/sap-ai-provider",
+          "version": "4.8.0"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "@sap-ai-sdk/foundation-models"
+        },
+        {
+          "dependency": "@sap-ai-sdk/orchestration"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "workspace-aggregate",
+      "package": "@next/eslint-plugin-next",
+      "installed": [
+        {
+          "path": "node_modules/@next/eslint-plugin-next",
+          "version": "15.5.27"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "fast-glob"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "workspace-aggregate",
+      "package": "@sap-ai-sdk/ai-api",
+      "installed": [
+        {
+          "path": "node_modules/@sap-ai-sdk/ai-api",
+          "version": "2.15.0"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "@sap-ai-sdk/core"
+        },
+        {
+          "dependency": "@sap-cloud-sdk/connectivity"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "workspace-aggregate",
+      "package": "@sap-ai-sdk/core",
+      "installed": [
+        {
+          "path": "node_modules/@sap-ai-sdk/core",
+          "version": "2.15.0"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "@sap-cloud-sdk/connectivity"
+        },
+        {
+          "dependency": "@sap-cloud-sdk/http-client"
+        },
+        {
+          "dependency": "@sap-cloud-sdk/openapi"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "workspace-aggregate",
+      "package": "@sap-ai-sdk/foundation-models",
+      "installed": [
+        {
+          "path": "node_modules/@sap-ai-sdk/foundation-models",
+          "version": "2.15.0"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "@sap-ai-sdk/ai-api"
+        },
+        {
+          "dependency": "@sap-ai-sdk/core"
+        },
+        {
+          "dependency": "@sap-cloud-sdk/connectivity"
+        },
+        {
+          "dependency": "@sap-cloud-sdk/http-client"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "workspace-aggregate",
+      "package": "@sap-ai-sdk/orchestration",
+      "installed": [
+        {
+          "path": "node_modules/@sap-ai-sdk/orchestration",
+          "version": "2.15.0"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "@sap-ai-sdk/ai-api"
+        },
+        {
+          "dependency": "@sap-ai-sdk/core"
+        },
+        {
+          "dependency": "@sap-ai-sdk/prompt-registry"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "workspace-aggregate",
+      "package": "@sap-ai-sdk/prompt-registry",
+      "installed": [
+        {
+          "path": "node_modules/@sap-ai-sdk/prompt-registry",
+          "version": "2.15.0"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "@sap-ai-sdk/core"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "workspace-aggregate",
+      "package": "@sap-cloud-sdk/connectivity",
+      "installed": [
+        {
+          "path": "node_modules/@sap-cloud-sdk/connectivity",
+          "version": "4.9.1"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "jks-js"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "workspace-aggregate",
+      "package": "@sap-cloud-sdk/http-client",
+      "installed": [
+        {
+          "path": "node_modules/@sap-cloud-sdk/http-client",
+          "version": "4.9.1"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "@sap-cloud-sdk/connectivity"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "workspace-aggregate",
+      "package": "@sap-cloud-sdk/openapi",
+      "installed": [
+        {
+          "path": "node_modules/@sap-cloud-sdk/openapi",
+          "version": "4.9.1"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "@sap-cloud-sdk/connectivity"
+        },
+        {
+          "dependency": "@sap-cloud-sdk/http-client"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "workspace-aggregate",
+      "package": "braces",
+      "installed": [
+        {
+          "path": "node_modules/braces",
+          "version": "3.0.3"
+        }
+      ],
+      "advisories": [
+        {
+          "title": "braces vulnerable to stack-exhaustion denial of service through deeply nested patterns",
+          "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+          "severity": "high",
+          "range": "<=3.0.3"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "workspace-aggregate",
+      "package": "chokidar",
+      "installed": [
+        {
+          "path": "backend/node_modules/chokidar",
+          "version": "3.6.0"
+        },
+        {
+          "path": "frontend/node_modules/chokidar",
+          "version": "3.6.0"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "braces"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "workspace-aggregate",
+      "package": "eslint-config-next",
+      "installed": [
+        {
+          "path": "node_modules/eslint-config-next",
+          "version": "15.5.27"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "@next/eslint-plugin-next"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "workspace-aggregate",
+      "package": "fast-glob",
+      "installed": [
+        {
+          "path": "frontend/node_modules/fast-glob",
+          "version": "3.3.3"
+        },
+        {
+          "path": "node_modules/fast-glob",
+          "version": "3.3.1"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "micromatch"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "workspace-aggregate",
+      "package": "jks-js",
+      "installed": [
+        {
+          "path": "node_modules/jks-js",
+          "version": "1.1.7"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "node-forge"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "workspace-aggregate",
+      "package": "micromatch",
+      "installed": [
+        {
+          "path": "node_modules/micromatch",
+          "version": "4.0.8"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "braces"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "workspace-aggregate",
+      "package": "node-forge",
+      "installed": [
+        {
+          "path": "node_modules/node-forge",
+          "version": "1.4.0"
+        }
+      ],
+      "advisories": [
+        {
+          "title": "node-forge RSA PKCS#1 v1.5 signature verification accepts extra nested DigestAlgorithm elements",
+          "url": "https://github.com/advisories/GHSA-86w9-cpqp-85rv",
+          "severity": "high",
+          "range": "<=1.4.0"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "workspace-aggregate",
+      "package": "nodemon",
+      "installed": [
+        {
+          "path": "backend/node_modules/nodemon",
+          "version": "3.1.14"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "chokidar"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "workspace-aggregate",
+      "package": "tailwindcss",
+      "installed": [
+        {
+          "path": "frontend/node_modules/tailwindcss",
+          "version": "3.4.19"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "chokidar"
+        },
+        {
+          "dependency": "fast-glob"
+        },
+        {
+          "dependency": "micromatch"
+        },
+        {
+          "dependency": "postcss-nested"
+        },
+        {
+          "dependency": "postcss-selector-parser"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "frontend-standalone",
+      "package": "@next/eslint-plugin-next",
+      "installed": [
+        {
+          "path": "node_modules/@next/eslint-plugin-next",
+          "version": "15.5.27"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "fast-glob"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "frontend-standalone",
+      "package": "braces",
+      "installed": [
+        {
+          "path": "node_modules/braces",
+          "version": "3.0.3"
+        }
+      ],
+      "advisories": [
+        {
+          "title": "braces vulnerable to stack-exhaustion denial of service through deeply nested patterns",
+          "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+          "severity": "high",
+          "range": "<=3.0.3"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "frontend-standalone",
+      "package": "chokidar",
+      "installed": [
+        {
+          "path": "node_modules/chokidar",
+          "version": "3.6.0"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "braces"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "frontend-standalone",
+      "package": "eslint-config-next",
+      "installed": [
+        {
+          "path": "node_modules/eslint-config-next",
+          "version": "15.5.27"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "@next/eslint-plugin-next"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "frontend-standalone",
+      "package": "fast-glob",
+      "installed": [
+        {
+          "path": "node_modules/@next/eslint-plugin-next/node_modules/fast-glob",
+          "version": "3.3.1"
+        },
+        {
+          "path": "node_modules/fast-glob",
+          "version": "3.3.3"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "micromatch"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "frontend-standalone",
+      "package": "micromatch",
+      "installed": [
+        {
+          "path": "node_modules/micromatch",
+          "version": "4.0.8"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "braces"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "frontend-standalone",
+      "package": "tailwindcss",
+      "installed": [
+        {
+          "path": "node_modules/tailwindcss",
+          "version": "3.4.19"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "chokidar"
+        },
+        {
+          "dependency": "fast-glob"
+        },
+        {
+          "dependency": "micromatch"
+        },
+        {
+          "dependency": "postcss-nested"
+        },
+        {
+          "dependency": "postcss-selector-parser"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "backend-standalone",
+      "package": "@cline/llms",
+      "installed": [
+        {
+          "path": "node_modules/@cline/agents/node_modules/@cline/llms",
+          "version": "0.0.82"
+        },
+        {
+          "path": "node_modules/@cline/core/node_modules/@cline/llms",
+          "version": "0.0.82"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "@jerome-benoit/sap-ai-provider"
+        },
+        {
+          "dependency": "@langfuse/vercel-ai-sdk"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "backend-standalone",
+      "package": "@jerome-benoit/sap-ai-provider",
+      "installed": [
+        {
+          "path": "node_modules/@jerome-benoit/sap-ai-provider",
+          "version": "4.8.0"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "@sap-ai-sdk/foundation-models"
+        },
+        {
+          "dependency": "@sap-ai-sdk/orchestration"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "backend-standalone",
+      "package": "@sap-ai-sdk/ai-api",
+      "installed": [
+        {
+          "path": "node_modules/@sap-ai-sdk/ai-api",
+          "version": "2.15.0"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "@sap-ai-sdk/core"
+        },
+        {
+          "dependency": "@sap-cloud-sdk/connectivity"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "backend-standalone",
+      "package": "@sap-ai-sdk/core",
+      "installed": [
+        {
+          "path": "node_modules/@sap-ai-sdk/core",
+          "version": "2.15.0"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "@sap-cloud-sdk/connectivity"
+        },
+        {
+          "dependency": "@sap-cloud-sdk/http-client"
+        },
+        {
+          "dependency": "@sap-cloud-sdk/openapi"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "backend-standalone",
+      "package": "@sap-ai-sdk/foundation-models",
+      "installed": [
+        {
+          "path": "node_modules/@sap-ai-sdk/foundation-models",
+          "version": "2.15.0"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "@sap-ai-sdk/ai-api"
+        },
+        {
+          "dependency": "@sap-ai-sdk/core"
+        },
+        {
+          "dependency": "@sap-cloud-sdk/connectivity"
+        },
+        {
+          "dependency": "@sap-cloud-sdk/http-client"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "backend-standalone",
+      "package": "@sap-ai-sdk/orchestration",
+      "installed": [
+        {
+          "path": "node_modules/@sap-ai-sdk/orchestration",
+          "version": "2.15.0"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "@sap-ai-sdk/ai-api"
+        },
+        {
+          "dependency": "@sap-ai-sdk/core"
+        },
+        {
+          "dependency": "@sap-ai-sdk/prompt-registry"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "backend-standalone",
+      "package": "@sap-ai-sdk/prompt-registry",
+      "installed": [
+        {
+          "path": "node_modules/@sap-ai-sdk/prompt-registry",
+          "version": "2.15.0"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "@sap-ai-sdk/core"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "backend-standalone",
+      "package": "@sap-cloud-sdk/connectivity",
+      "installed": [
+        {
+          "path": "node_modules/@sap-cloud-sdk/connectivity",
+          "version": "4.9.1"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "jks-js"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "backend-standalone",
+      "package": "@sap-cloud-sdk/http-client",
+      "installed": [
+        {
+          "path": "node_modules/@sap-cloud-sdk/http-client",
+          "version": "4.9.1"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "@sap-cloud-sdk/connectivity"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "backend-standalone",
+      "package": "@sap-cloud-sdk/openapi",
+      "installed": [
+        {
+          "path": "node_modules/@sap-cloud-sdk/openapi",
+          "version": "4.9.1"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "@sap-cloud-sdk/connectivity"
+        },
+        {
+          "dependency": "@sap-cloud-sdk/http-client"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "backend-standalone",
+      "package": "braces",
+      "installed": [
+        {
+          "path": "node_modules/braces",
+          "version": "3.0.3"
+        }
+      ],
+      "advisories": [
+        {
+          "title": "braces vulnerable to stack-exhaustion denial of service through deeply nested patterns",
+          "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+          "severity": "high",
+          "range": "<=3.0.3"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "backend-standalone",
+      "package": "chokidar",
+      "installed": [
+        {
+          "path": "node_modules/chokidar",
+          "version": "3.6.0"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "braces"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "backend-standalone",
+      "package": "jks-js",
+      "installed": [
+        {
+          "path": "node_modules/jks-js",
+          "version": "1.1.7"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "node-forge"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "backend-standalone",
+      "package": "node-forge",
+      "installed": [
+        {
+          "path": "node_modules/node-forge",
+          "version": "1.4.0"
+        }
+      ],
+      "advisories": [
+        {
+          "title": "node-forge RSA PKCS#1 v1.5 signature verification accepts extra nested DigestAlgorithm elements",
+          "url": "https://github.com/advisories/GHSA-86w9-cpqp-85rv",
+          "severity": "high",
+          "range": "<=1.4.0"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    },
+    {
+      "scope": "backend-standalone",
+      "package": "nodemon",
+      "installed": [
+        {
+          "path": "node_modules/nodemon",
+          "version": "3.1.14"
+        }
+      ],
+      "advisories": [
+        {
+          "dependency": "chokidar"
+        }
+      ],
+      "state": "RECORDED_NOT_WAIVED",
+      "requiredDecision": "Use exact dependency tree and existing downstream receiver tests to establish reachable remediation or independently reviewable non-applicability; no blind major overrides"
+    }
+  ],
+  "receiverPatchProofs": [
+    "scripts/security/dependency-patches.test.mjs",
+    "scripts/security/dependency-advisories.test.mjs",
+    "scripts/ci/cline-compat.test.mjs",
+    "scripts/ci/postcss-resolution.test.mjs"
+  ],
+  "cost": {
+    "additionalSpend": 0,
+    "repositoryVisibility": "public",
+    "runner": "existing standard ubuntu-latest",
+    "providerCalls": false,
+    "primaryCostPolicy": "https://docs.github.com/en/actions/reference/runners/github-hosted-runners",
+    "noBillingOrHostingChange": true
+  }
+}

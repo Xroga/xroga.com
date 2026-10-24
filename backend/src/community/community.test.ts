@@ -8,6 +8,7 @@ import {
   moderateCommunityPostSchema,
 } from './schemas.js';
 import { canPermanentlyDelete, canUseOfficialIdentity, isCommunityStaff } from './types.js';
+import { canUpdateCommentFields } from './service.js';
 
 /** LF-normalised: these assertions match SQL text, and a CRLF checkout must not change the answer. */
 function readSql(url: URL): string {
@@ -42,6 +43,22 @@ test('permanent deletion and staff permissions follow role boundaries', () => {
   assert.equal(canPermanentlyDelete('moderator'), false);
   assert.equal(canPermanentlyDelete('admin'), true);
   assert.equal(canPermanentlyDelete('owner'), true);
+});
+
+test('accepting an answer never grants body editing or moderation of another author', () => {
+  for (const accepted of [true, false]) {
+    assert.equal(canUpdateCommentFields('member', false, true, {isAcceptedAnswer:accepted}), true);
+    assert.equal(canUpdateCommentFields('member', false, true, {isAcceptedAnswer:accepted,body:'replacement'}), false);
+    assert.equal(canUpdateCommentFields('member', false, true, {isAcceptedAnswer:accepted,isHidden:false}), false);
+    assert.equal(canUpdateCommentFields('member', false, true, {isAcceptedAnswer:accepted,isHidden:true}), false);
+    assert.equal(canUpdateCommentFields('member', true, false, {isAcceptedAnswer:accepted,body:'own edit'}), false);
+    assert.equal(canUpdateCommentFields('member', true, true, {isAcceptedAnswer:accepted,body:'own edit'}), true);
+  }
+  assert.equal(canUpdateCommentFields('member', true, false, {body:'own edit'}), true);
+  assert.equal(canUpdateCommentFields('member', false, false, {body:'foreign edit'}), false);
+  assert.equal(canUpdateCommentFields('member', true, true, {isHidden:true}), false);
+  assert.equal(canUpdateCommentFields('member', true, true, {}), false);
+  for(const role of ['moderator','admin','owner'] as const) assert.equal(canUpdateCommentFields(role,false,false,{body:'staff edit',isHidden:true,isAcceptedAnswer:true}),true);
 });
 
 test('moderation schema rejects member-write fields and unknown payload keys', () => {

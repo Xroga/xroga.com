@@ -4,9 +4,8 @@ import { ArrowLeft, Lightbulb, MessageSquareText, Star, TrendingUp } from 'lucid
 import { redirect } from 'next/navigation';
 
 import { createClient } from '@/lib/supabase/server';
+import { authorizeFounderRequest } from '@/lib/osFounderAccess';
 import styles from './page.module.css';
-
-const FEEDBACK_ADMIN_EMAIL = 'hello@xroga.com';
 
 type FeedbackRow = {
   id: string;
@@ -38,13 +37,24 @@ export default async function FeedbackAdminPage() {
 
   if (!user) redirect('/auth/login?next=%2Fadmin%2Ffeedback');
 
-  if (user.email?.trim().toLowerCase() !== FEEDBACK_ADMIN_EMAIL) {
+  const decision = await authorizeFounderRequest({
+    getUser: async () => user,
+    getRole: async () => {
+      const { data, error } = await supabase.rpc('current_community_role');
+      return error ? null : data;
+    },
+    getAal: async () => {
+      const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      return error ? null : data.currentLevel;
+    },
+  });
+  if (!decision.allowed) {
     return (
       <main className={styles.deniedPage}>
         <section className={styles.deniedCard}>
           <p>403 · Access denied</p>
           <h1>Feedback owner only</h1>
-          <span>This review area is restricted to the authorized Xroga feedback account.</span>
+          <span>Use the confirmed founder account with its existing owner role and an MFA-verified session. Access remains closed until all checks pass.</span>
           <Link href="/dashboard">Return to dashboard</Link>
         </section>
       </main>
@@ -76,7 +86,7 @@ export default async function FeedbackAdminPage() {
           </div>
           <div className={styles.adminIdentity}>
             <span>Authorized account</span>
-            <strong>{FEEDBACK_ADMIN_EMAIL}</strong>
+            <strong>{user.email}</strong>
           </div>
         </header>
 

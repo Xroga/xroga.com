@@ -60,3 +60,12 @@ CLAUDE.local.md
 /xroga-project-check.json
 /xroga-project-check.svg
 artifacts/growth-authority/
+artifacts/batch-01-baseline/
+artifacts/command-003-ci-*/
+artifacts/batch-01-golden/
+.golden-browser-cache/
+supabase/.temp/
+artifacts/batch-01-local-security/
+artifacts/ci-*/
+artifacts/font-toolchain-packages/
+artifacts/font-sources/

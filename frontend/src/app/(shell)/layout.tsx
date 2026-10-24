@@ -32,13 +32,9 @@ export default async function ShellLayout({
    * problem and not one onboarding should turn into a redirect loop — the shell
    * renders and the account is left alone.
    */
-  const profile = user
-    ? (await supabase
-      .from('profiles')
-      .select('onboarding, display_name')
-      .eq('id', user.id)
-      .single()).data
-    : null;
+  const setup = user ? await supabase.rpc('read_current_profile_setup') : { data: null, error: null };
+  if (setup.error || (setup.data && setup.data.id !== user?.id)) throw new Error('Profile setup unavailable');
+  const profile = setup.data;
 
   if (user && profile && shouldRouteToOnboarding(normalizeOnboarding(profile.onboarding))) {
     redirect('/onboarding');

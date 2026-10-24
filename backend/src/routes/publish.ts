@@ -8,6 +8,7 @@ import {
 import {
   listExpoApps,
   triggerEasPublish,
+  resolveExpoProjectId,
 } from '../services/publish/easPublish.js';
 import {
   getUserProviderKey,
@@ -165,15 +166,18 @@ router.post('/eas-publish', async (req: AuthRequest, res) => {
 
   try {
     if (parsed.data.submit) {
+      const projectId = await resolveExpoProjectId(req.userId!, parsed.data.projectId);
+      if (!projectId) { res.status(400).json({ok:false,error:'NO_PROJECT',message:'Link an EAS project before submitting.'});return; }
+      // Keep credential attachment and dispatch on one admitted destination.
+      parsed.data.projectId = projectId;
       const {
         syncGooglePlayCredentialsToExpo,
         syncAppleAscApiKeyToExpo,
       } = await import('../services/publish/easCredentials.js');
-      if (parsed.data.platform === 'android') {
-        await syncGooglePlayCredentialsToExpo({ userId: req.userId! });
-      } else {
-        await syncAppleAscApiKeyToExpo({ userId: req.userId! });
-      }
+      const sync = parsed.data.platform === 'android'
+        ? await syncGooglePlayCredentialsToExpo({ userId: req.userId!, projectId: parsed.data.projectId })
+        : await syncAppleAscApiKeyToExpo({ userId: req.userId!, projectId: parsed.data.projectId });
+      if (!sync.ok) { res.status(400).json({ok:false,error:sync.error,message:sync.message});return; }
     }
     const result = await triggerEasPublish({
       userId: req.userId!,
@@ -254,7 +258,7 @@ router.post('/cws-oauth/start', async (req: AuthRequest, res) => {
     );
     const redirectUri = getCwsOAuthCallbackUrl(parsed.data.redirectUri);
     const built = await startCwsOAuth({
-      userId: req.userId!,
+      tenantContext: req.tenantContext!,
       clientId: parsed.data.clientId,
       clientSecret: parsed.data.clientSecret,
       extensionId: parsed.data.extensionId,
@@ -288,7 +292,7 @@ router.post('/cws-oauth/callback', async (req: AuthRequest, res) => {
   try {
     const { completeCwsOAuth } = await import('../services/publish/chromeWebStore.js');
     const result = await completeCwsOAuth({
-      userId: req.userId!,
+      tenantContext: req.tenantContext!,
       code: parsed.data.code,
       state: parsed.data.state,
       redirectUri: parsed.data.redirectUri,

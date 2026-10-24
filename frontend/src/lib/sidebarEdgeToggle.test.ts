@@ -43,7 +43,7 @@ test('the edge toggle closes only, because the mark reopens', () => {
    * that, so the collapsed state ended up with two controls a few pixels apart doing
    * the same thing. Both are gone now; hovering the mark expands the rail instead.
    */
-  assert.match(code, /\{effectiveSidebarOpen \? <button/, 'the toggle must not render while collapsed');
+  assert.match(code, /\{navExpanded \? \(\s*<div className="xv-sidebar-utilities"/, 'expanded utilities must own the close control');
   assert.match(code, /aria-label="Close sidebar"/, 'it only ever closes now');
   assert.ok(!/PanelLeftOpen/.test(code), 'the open glyph belongs to a state this no longer has');
   // And the rail's own duplicate is gone with it.
@@ -51,30 +51,21 @@ test('the edge toggle closes only, because the mark reopens', () => {
   assert.ok(!/aria-label="Open sidebar"/.test(rail.slice(0, 900)), 'the rail button is back');
 });
 
-test('hovering the mark expands the rail', () => {
-  assert.match(code, /onMouseEnter=\{openSidebarOnHover\}/, 'the mark must open on hover');
-  assert.match(code, /onMouseLeave=\{cancelSidebarHover\}/, 'leaving must cancel a pending open');
-  // Hover reaches a mouse and nothing else. The mark is a link and already in the tab
-  // order, so the same handler on focus keeps the rail usable from the keyboard.
-  assert.match(code, /onFocus=\{openSidebarOnHover\}/, 'the keyboard needs the same route in');
-  assert.match(code, /onBlur=\{cancelSidebarHover\}/);
-
-  // Delayed and cancellable: opening on the first pixel would fire whenever the pointer
-  // crossed the rail on its way elsewhere, shoving the workspace sideways.
-  assert.match(code, /HOVER_OPEN_DELAY_MS/, 'an undelayed hover opens on a passing cursor');
-  const delay = Number(/const HOVER_OPEN_DELAY_MS = (\d+)/.exec(code)?.[1]);
-  assert.ok(delay >= 100 && delay <= 500, `the delay (${delay}ms) should be a pause, not a wait`);
-  assert.match(code, /if \(effectiveSidebarOpen \|\| terminalFullscreen\) return;/, 'it must be a no-op when open');
-  // A pending timer must not fire into an unmounted sidebar.
-  assert.match(code, /clearTimeout\(hoverOpenTimerRef\.current\)/, 'the timer must be cleared');
+test('the current rail opens deliberately by click, never by passing hover', () => {
+  // PR827 deliberately removed hover expansion. Existing link keyboard activation
+  // bubbles through the same wrapper click, without adding a second toggle.
+  assert.match(code, /onClick=\{event => \{ if \(!effectiveSidebarOpen && !isMobile\) \{ event\.preventDefault\(\); toggleSidebar\(\); \} \}\}/);
+  assert.doesNotMatch(code, /onMouseEnter=\{openSidebarOnHover\}|onFocus=\{openSidebarOnHover\}/);
+  assert.match(code, /description=\{navExpanded \? 'Workspace home' : 'Click to open the sidebar'\}/);
 });
 
-test('the rail carries workspace and the destinations people actually go to', () => {
+test('the current rail starts new work and retains overview and integrations', () => {
   const rail = code.slice(code.indexOf('xv-sidebar-collapsed-actions'));
   const block = rail.slice(0, rail.indexOf('</div>'));
-  assert.match(block, /href="\/workspace"[\s\S]{0,100}aria-label="Workspace"/, 'Workspace should be first on the rail');
-  assert.match(block, /href="\/dashboard"[\s\S]{0,80}aria-label="Dashboard"/, 'Dashboard should be on the rail');
-  assert.match(block, /href="\/dashboard\/projects"[\s\S]{0,80}aria-label="Projects"/, 'Projects should be on the rail');
+  assert.match(block, /onClick=\{handleNewChat\} aria-label="New Work"/);
+  assert.match(block, /href="\/dashboard"[\s\S]{0,80}aria-label="Overview"/, 'Overview should link to the dashboard on the rail');
+  assert.match(block, /href="\/dashboard\/integrations"[\s\S]{0,80}aria-label="Integrations"/);
+  assert.doesNotMatch(block, /aria-label="Projects"|aria-label="Workspace"/);
 });
 
 test('the collapsed rail keeps theme selection available', () => {
@@ -114,7 +105,7 @@ test('the collapsed styling can actually match something', () => {
 });
 
 test('a drag on the toggle resizes instead of doing nothing', () => {
-  assert.match(code, /onPointerDown=\{startEdgeToggleDrag\}/, 'the toggle must accept a drag');
+  assert.match(code, /onPointerDown=\{isMobile \? undefined : startEdgeToggleDrag\}/, 'desktop close control must still accept a drag, not the mobile drawer');
   // Shared with the handle, so both paths move the sidebar the same way.
   assert.match(code, /function beginResize\(startX: number\)/, 'the resize needs a shared entry point');
   assert.match(code, /beginResize\(e\.clientX\)/, 'the handle must use the shared resize');
@@ -139,8 +130,14 @@ test('the collapsed rail has no width to drag', () => {
 });
 
 test('the behaviour is asserted where the workspace can be reached', () => {
+  const reopening = E2E.indexOf('const configuredSidebarWidth');
+  const coordinateCapture = E2E.indexOf('const toggleBox =');
+  assert.ok(reopening > 0 && coordinateCapture > reopening, 'wait for the transitioning control owner before capturing drag coordinates');
+  assert.match(E2E.slice(reopening, coordinateCapture), /rail\.locator\('\.xv-sidebar-floating'\)\)\.toHaveCSS\('width'/);
+  assert.match(E2E.slice(reopening, coordinateCapture), /await edgeToggle\.hover\(\)/);
   assert.match(E2E, /the collapsed rail still carries a sidebar toggle/);
-  assert.match(E2E, /hovering the mark did not reopen the sidebar/);
+  assert.match(E2E, /hovering the mark must not reopen the sidebar/);
+  assert.match(E2E, /clicking the mark did not reopen the sidebar/);
   assert.match(E2E, /dragging from the toggle did not widen the sidebar/);
   // The fullscreen frame is geometry, so it is measured there rather than read off the
   // stylesheet — the stylesheet is exactly what hid the duplicate-rule bug.

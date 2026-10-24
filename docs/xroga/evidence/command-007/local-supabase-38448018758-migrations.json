@@ -1,0 +1,841 @@
+{
+  "status": "PASS",
+  "database": "disposable_supabase_pg17",
+  "cli": "2.120.0",
+  "migrations": [
+    {
+      "file": "001_initial_schema.sql",
+      "sha256": "b0ce10c12427f0312006532dfcc390dce43c94c2f70e12ff1b6ac8e11e3ddc66"
+    },
+    {
+      "file": "002_notifications.sql",
+      "sha256": "19779e1a0cf71c374d3a3c8cb014572b1ed53382762b0bbb75d7807c88bddb49"
+    },
+    {
+      "file": "002a_reconcile_foundation.sql",
+      "sha256": "dfea739222dcf64eea848411b8e6f93e166a4389830fc795b7baf5c2b8f1a0be"
+    },
+    {
+      "file": "003_production_setup.sql",
+      "sha256": "d3e059cf0d36a4ab0ae5137022b56b3e4cab10f0ab522a8baed93d8e1efeedf0"
+    },
+    {
+      "file": "004_messages.sql",
+      "sha256": "d1d67e42e8fb71edc47a840833a5f13e8d8d9cd36b537c2bc4bd1878696a9b9c"
+    },
+    {
+      "file": "005_messages_grants.sql",
+      "sha256": "f08c30cd33977affdcd3faf4a7555b1a115b3d7d33fd1588081f2d2bd0d3291d"
+    },
+    {
+      "file": "006_production_swarm_schema.sql",
+      "sha256": "e7d120a14132e28407082ec1c56b333dbae930c25402ab5ac3002c1ad97396e3"
+    },
+    {
+      "file": "007_billing.sql",
+      "sha256": "de4c26a34213b3d7117a6a2ef2ed55feefffe59fa516f1f6c3de76182c746169"
+    },
+    {
+      "file": "008_concurrency_and_trial.sql",
+      "sha256": "12cca026d408065abc0e15485a60ef5c187e03633b7c29e8dc25c69107e74bdb"
+    },
+    {
+      "file": "009_fix_trial_actions.sql",
+      "sha256": "636da076b67661084aeb33842eb68da5fd2351a4c818db8acb18dd50e6a92953"
+    },
+    {
+      "file": "010_swarm_resilience.sql",
+      "sha256": "bcbce31c373630a38868a5b63220f6cbd7713931d374ad7fd967134532610d67"
+    },
+    {
+      "file": "011_admin_and_orchestrator_v2.sql",
+      "sha256": "4aa42f1118d9fb327ebd12834b19caab04e2b3f42807b4aa51daa1434e975f1d"
+    },
+    {
+      "file": "012_agnes_image_providers.sql",
+      "sha256": "dd43de116aa435bf477802876d992cc2b5e9debf2c39496d011278134e273d17"
+    },
+    {
+      "file": "013_ai_training_corpus.sql",
+      "sha256": "4f4c03f04ef5cb1a9abe2095aec348b52ba057077d382da8f3709b28a1e3af5b"
+    },
+    {
+      "file": "014_image_providers_openai.sql",
+      "sha256": "1b71d57222dfc5d20f00caaaca8256fca76f7c7edc24c84532ec47ecafdff3fa"
+    },
+    {
+      "file": "015_cost_optimized_image_providers.sql",
+      "sha256": "00106fd392cc031fa2f308a9d1b280b28b1fa8e741d41503a369f77bf6288a1d"
+    },
+    {
+      "file": "016_movie_production_schema.sql",
+      "sha256": "9fa4ca9493cb99353d75f638318df47cba48bf21e42d7429d08d271516e49f55"
+    },
+    {
+      "file": "017_oss_video_priority.sql",
+      "sha256": "500ccd0e9ab276a07e7bb2f6a44c34614ba6ea38b1d0f93549875e906387f686"
+    },
+    {
+      "file": "018_hf_spaces_video_priority.sql",
+      "sha256": "9b2ff49004aada757f00d7d7734f71d198755db650ef97a561b49539f96e8ce7"
+    },
+    {
+      "file": "019_video_generation_jobs.sql",
+      "sha256": "f7daac6fc0001fba1d8dbbb2a94539fb3974954aa93d85caf3e270fd99bc0692"
+    },
+    {
+      "file": "020_user_integrations.sql",
+      "sha256": "79831dba1ee23ebce92efb45e77027a3abb877d455c84b6ac9aaceb94d20b5a5"
+    },
+    {
+      "file": "021_github_tokens_bucket.sql",
+      "sha256": "e2093e29a40deea0943788f75083df496c695b9dd48693f5b481df13dda2405d"
+    },
+    {
+      "file": "022_phase1_token_usage.sql",
+      "sha256": "700bdd3dae0d48f86389b1cdeb5baa710b54ef4619f2c3833e4bf7f460543b0e"
+    },
+    {
+      "file": "023_dashboard_xrg_tasks.sql",
+      "sha256": "20d314fd704782344c2f6b93a5c0166b93238a11ff1f4d8a3c3d84b23b74a0b4"
+    },
+    {
+      "file": "024_phase3_referrals_community.sql",
+      "sha256": "f8960ae33310f290b954a2a9f4b6cbd755d6259fb4dddb7186e5c29f572e432c"
+    },
+    {
+      "file": "025_scale_analytics_marketplace_influencer.sql",
+      "sha256": "71e566a92be730bde8b810e37a8c512a616d2c597cedb7eef44a66a51e60906a"
+    },
+    {
+      "file": "026_token_usage_atomic_and_model_caps.sql",
+      "sha256": "e534b4c09f09a4b377032733310c59b305e13b7ea372f7d1e38cc01fdec4e506"
+    },
+    {
+      "file": "027_terminal_sessions.sql",
+      "sha256": "c292c98d09c1a0aa72643c456ec0dd30816f5b066072b14fb05b30d2175645ce"
+    },
+    {
+      "file": "028_ai_cost_ledger_and_rollover.sql",
+      "sha256": "b886947b99e4f6db5000ca56654ad4ed94303a0bb1dfdbbeb7787fc5a4994362"
+    },
+    {
+      "file": "029_user_api_key_vault_note.sql",
+      "sha256": "e11b04125546d2aa6287ce5a558bcf53fe732f69ec4272caafcab9a42e09fb1d"
+    },
+    {
+      "file": "030_project_memory_and_run_trace.sql",
+      "sha256": "a450f998915e74617a22fa14a28fe414fe5ed0640794724dbcb6656c01074ed4"
+    },
+    {
+      "file": "031_session_memory_swarm_columns.sql",
+      "sha256": "b44350109d8fea6eae07a8fa83a9e963a2c97def2771be185736fe0af508c304"
+    },
+    {
+      "file": "035_lemon_squeezy_billing.sql",
+      "sha256": "9e39e2dbecc0ffd65ce30b9e94d907a05a222a4f943db746b5241d14c1803285"
+    },
+    {
+      "file": "036_ensure_user_integrations_schema_cache.sql",
+      "sha256": "4953f31d9f1a188b9f0913c5fe1962ad0cdb0d41f3a91a5e40cc268aadeae62c"
+    },
+    {
+      "file": "037_model_routing_outcomes.sql",
+      "sha256": "6885a001a58ccd3c17e6dc7911dc5f7ad393eb36aadbe6ea75aa1e1f6d7f3254"
+    },
+    {
+      "file": "038_core_execution_runtime.sql",
+      "sha256": "ba1d3f570d87a969edd3ae1621788a273d9ead1912dbc623d178221fd714c0ca"
+    },
+    {
+      "file": "20260726153357_command3a_production_operations.sql",
+      "sha256": "cf8479dfed7a066e954d46886b2deda743f032816b0d68654da0a1d0651ed9b1"
+    },
+    {
+      "file": "20260726211546_command3b_operations_centre.sql",
+      "sha256": "5c04718858c7943ef5ac632b5d21f9a37fa0f8fab399532e76ec36c4ac406dba"
+    },
+    {
+      "file": "20260726211810_command3b_action_retry_hardening.sql",
+      "sha256": "d9bdf678c7aa3a617aea251db577f7d9cfc2c4f09c0320879f9d4c0ced0185af"
+    },
+    {
+      "file": "20260727071619_command3c_growth_runtime.sql",
+      "sha256": "0865ca94f2ffdc3f748d31fabe7d1656c72f010e245a93ee23a591016e897a44"
+    },
+    {
+      "file": "20260727073814_command3c_growth_indexes.sql",
+      "sha256": "ee26e10d08e275288aa25c75f5ea7c26362e30118ae558965bcfee35bc92159f"
+    },
+    {
+      "file": "20260727082121_command3c_deployment_status_access.sql",
+      "sha256": "97e0124738565e42a44c21c1043f18c929fb3a4e0b77db317479c02b81029ba2"
+    },
+    {
+      "file": "20260727082535_command3c_legacy_operations_access.sql",
+      "sha256": "57d4017a4fd8c68bbb5b3f11fc2b0dfb13d19a80aae46fc03df33093c09bc497"
+    },
+    {
+      "file": "20260727_command3a_function_hardening.sql",
+      "sha256": "7e6ac80ab64db0dfb3bda9c181214050de1d38bd08b94dcca9350767b3a1c1a8"
+    },
+    {
+      "file": "20260728010000_command45_shared_provider_entitlement.sql",
+      "sha256": "025d14e8bb12af9fecb4d2e980f0700b79c08759b061abd5a1707b05480010db"
+    },
+    {
+      "file": "20260728193000_notifications_grants.sql",
+      "sha256": "43e69968346a0f33e94553c758a720c37c4f4bba26ffdd0b711fa88f67b40493"
+    },
+    {
+      "file": "20260729192159_community_platform.sql",
+      "sha256": "5918bcd26973d7228e193af42a32b2c30ed6ffc7a77bfa7a4e76008039216430"
+    },
+    {
+      "file": "20260729221500_companion_preferences.sql",
+      "sha256": "6ce3acda9285bfa65097e2b9116a5b2996459fb25ce6686cb48615dbcdacfd4d"
+    },
+    {
+      "file": "20260730020500_community_split_public_read_policies.sql",
+      "sha256": "18ee4e0774f464fa3e87b350a3cbcec673493522e6921f982706a49c79ea09ec"
+    },
+    {
+      "file": "20260801000000_swarm_run_event_replay.sql",
+      "sha256": "0271955add4f50f7fb046a20ea32715e4ade59c8a92643ed52035eaf9a410fb0"
+    },
+    {
+      "file": "20260802000000_swarm_run_runtime_status.sql",
+      "sha256": "6f83b875226ef818b10e813bde1c7714f31ee80f58ac1bffd1ab786c6e8623aa"
+    },
+    {
+      "file": "20260808000000_command2_universal_persistence.sql",
+      "sha256": "c9cb8c876b641c4085babc76d85fa8e9aee06eec2576e1b40f5753ec7e951e17"
+    },
+    {
+      "file": "20260811093000_command3_provider_health_durability.sql",
+      "sha256": "5a000f8bc28a80209a32fc2873ff2e8a49ae9ffe5ed12d0914e4aa938d438337"
+    },
+    {
+      "file": "20260811110000_command3_provider_health_grants.sql",
+      "sha256": "423e5a3c8c5dff026caf2c7d9fbc772490c9be975c5e6b0facffad93b9a9c69e"
+    },
+    {
+      "file": "20260824181000_restore_balanced_pacing_guard.sql",
+      "sha256": "17b4067649f71235106744c868dc936f88dd70d2cbfb90de060d06d782696710"
+    },
+    {
+      "file": "20260824220000_onboarding_state.sql",
+      "sha256": "5ce74e8a5411809822210d790c141d86c83c618d007baabf3b6c7d14b1eb0f46"
+    },
+    {
+      "file": "20260906010000_parallel_web_usage.sql",
+      "sha256": "bd8d6a0198fda370dc855a753d2e1d321758644e8b832ab2a756fa93e71cf23b"
+    },
+    {
+      "file": "20260908001000_project_change_checkpoints.sql",
+      "sha256": "59ef99e3fa1844355ac62af17175e14fd69f3dd4a9fb8b2060914c3014c06790"
+    },
+    {
+      "file": "20260909145816_whop_billing_and_free_plan.sql",
+      "sha256": "93a7cac962bc252d09a282375c585aab458267cea6bb2f3bd0241c3c7488a8d0"
+    },
+    {
+      "file": "20260910090000_universal_cost_ceiling.sql",
+      "sha256": "8d404fa77c2090d2514218ea83a58d1347b58ef41b9b639757776cf3254d9346"
+    },
+    {
+      "file": "20260914180500_business_action_confirmations.sql",
+      "sha256": "1a7f3e08deb3f4536044d710c209d03c268d3054a622b4f9697b1db185bf6122"
+    },
+    {
+      "file": "20260917000000_software_agent_checkpoints.sql",
+      "sha256": "679c1ac8d2b0c53a299b9d149737a4b0e78b0dc5a60e4e7fa120df2b608cbc81"
+    },
+    {
+      "file": "20260919000000_project_runtime_platform.sql",
+      "sha256": "446aecf575bd0ecc1f447393446c372f410f93c318d66f6b2b5628232ea6430e"
+    },
+    {
+      "file": "20260919235500_live_preview.sql",
+      "sha256": "fac78ee44134ca868b139527b99120593bb6495233f3dac51c769ad03631cfff"
+    },
+    {
+      "file": "20260930152000_step7b_build_outcomes.sql",
+      "sha256": "95ffca83568c71286b69227b3fd647d693a8b9ba8a3490c3610adc8865640567"
+    },
+    {
+      "file": "20260930203500_step7b_strategy_learning.sql",
+      "sha256": "affe67f0cf11211f37888bb9a9762a19d38215f15e6473895124fdf1c5d1d3ee"
+    },
+    {
+      "file": "20261002000000_swarm_run_worker_leases.sql",
+      "sha256": "3f878a719cba73cd20ede91390539f440acc0d7e33c3dd9a70bc0c63024e63a4"
+    },
+    {
+      "file": "20261013150357_xroga_tenant_security_baseline.sql",
+      "sha256": "035535945ef49fdac3d52692383998cb03cfc6e4d102949ea55007dc4a9aeede"
+    }
+  ],
+  "upgrade": "PASS",
+  "fresh": "PASS",
+  "applied": [
+    {
+      "phase": "pre-upgrade",
+      "file": "001_initial_schema.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "002_notifications.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "002a_reconcile_foundation.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "003_production_setup.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "004_messages.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "005_messages_grants.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "006_production_swarm_schema.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "007_billing.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "008_concurrency_and_trial.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "009_fix_trial_actions.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "010_swarm_resilience.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "011_admin_and_orchestrator_v2.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "012_agnes_image_providers.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "013_ai_training_corpus.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "014_image_providers_openai.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "015_cost_optimized_image_providers.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "016_movie_production_schema.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "017_oss_video_priority.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "018_hf_spaces_video_priority.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "019_video_generation_jobs.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "020_user_integrations.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "021_github_tokens_bucket.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "022_phase1_token_usage.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "023_dashboard_xrg_tasks.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "024_phase3_referrals_community.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "025_scale_analytics_marketplace_influencer.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "026_token_usage_atomic_and_model_caps.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "027_terminal_sessions.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "028_ai_cost_ledger_and_rollover.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "029_user_api_key_vault_note.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "030_project_memory_and_run_trace.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "031_session_memory_swarm_columns.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "035_lemon_squeezy_billing.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "036_ensure_user_integrations_schema_cache.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "037_model_routing_outcomes.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "038_core_execution_runtime.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260726153357_command3a_production_operations.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260726211546_command3b_operations_centre.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260726211810_command3b_action_retry_hardening.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260727071619_command3c_growth_runtime.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260727073814_command3c_growth_indexes.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260727082121_command3c_deployment_status_access.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260727082535_command3c_legacy_operations_access.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260727_command3a_function_hardening.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260728010000_command45_shared_provider_entitlement.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260728193000_notifications_grants.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260729192159_community_platform.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260729221500_companion_preferences.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260730020500_community_split_public_read_policies.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260801000000_swarm_run_event_replay.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260802000000_swarm_run_runtime_status.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260808000000_command2_universal_persistence.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260811093000_command3_provider_health_durability.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260811110000_command3_provider_health_grants.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260824181000_restore_balanced_pacing_guard.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260824220000_onboarding_state.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260906010000_parallel_web_usage.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260908001000_project_change_checkpoints.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260909145816_whop_billing_and_free_plan.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260910090000_universal_cost_ceiling.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260914180500_business_action_confirmations.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260917000000_software_agent_checkpoints.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260919000000_project_runtime_platform.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260919235500_live_preview.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260930152000_step7b_build_outcomes.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20260930203500_step7b_strategy_learning.sql"
+    },
+    {
+      "phase": "pre-upgrade",
+      "file": "20261002000000_swarm_run_worker_leases.sql"
+    },
+    {
+      "phase": "upgrade",
+      "file": "20261013150357_xroga_tenant_security_baseline.sql"
+    },
+    {
+      "phase": "upgrade-reapply",
+      "file": "20261013150357_xroga_tenant_security_baseline.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "001_initial_schema.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "002_notifications.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "002a_reconcile_foundation.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "003_production_setup.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "004_messages.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "005_messages_grants.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "006_production_swarm_schema.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "007_billing.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "008_concurrency_and_trial.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "009_fix_trial_actions.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "010_swarm_resilience.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "011_admin_and_orchestrator_v2.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "012_agnes_image_providers.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "013_ai_training_corpus.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "014_image_providers_openai.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "015_cost_optimized_image_providers.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "016_movie_production_schema.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "017_oss_video_priority.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "018_hf_spaces_video_priority.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "019_video_generation_jobs.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "020_user_integrations.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "021_github_tokens_bucket.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "022_phase1_token_usage.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "023_dashboard_xrg_tasks.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "024_phase3_referrals_community.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "025_scale_analytics_marketplace_influencer.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "026_token_usage_atomic_and_model_caps.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "027_terminal_sessions.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "028_ai_cost_ledger_and_rollover.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "029_user_api_key_vault_note.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "030_project_memory_and_run_trace.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "031_session_memory_swarm_columns.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "035_lemon_squeezy_billing.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "036_ensure_user_integrations_schema_cache.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "037_model_routing_outcomes.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "038_core_execution_runtime.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260726153357_command3a_production_operations.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260726211546_command3b_operations_centre.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260726211810_command3b_action_retry_hardening.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260727071619_command3c_growth_runtime.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260727073814_command3c_growth_indexes.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260727082121_command3c_deployment_status_access.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260727082535_command3c_legacy_operations_access.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260727_command3a_function_hardening.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260728010000_command45_shared_provider_entitlement.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260728193000_notifications_grants.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260729192159_community_platform.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260729221500_companion_preferences.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260730020500_community_split_public_read_policies.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260801000000_swarm_run_event_replay.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260802000000_swarm_run_runtime_status.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260808000000_command2_universal_persistence.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260811093000_command3_provider_health_durability.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260811110000_command3_provider_health_grants.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260824181000_restore_balanced_pacing_guard.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260824220000_onboarding_state.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260906010000_parallel_web_usage.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260908001000_project_change_checkpoints.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260909145816_whop_billing_and_free_plan.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260910090000_universal_cost_ceiling.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260914180500_business_action_confirmations.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260917000000_software_agent_checkpoints.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260919000000_project_runtime_platform.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260919235500_live_preview.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260930152000_step7b_build_outcomes.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20260930203500_step7b_strategy_learning.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20261002000000_swarm_run_worker_leases.sql"
+    },
+    {
+      "phase": "fresh",
+      "file": "20261013150357_xroga_tenant_security_baseline.sql"
+    }
+  ],
+  "schemaParity": {
+    "status": "NOT_PRODUCTION_DRIFT_CERTIFIED",
+    "observedReferenceTables": 118,
+    "disposableTables": 117,
+    "missingObservedTables": [
+      "public.images",
+      "public.message_shares",
+      "public.websites"
+    ]
+  }
+}

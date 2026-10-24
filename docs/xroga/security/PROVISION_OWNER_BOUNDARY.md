@@ -1,0 +1,18 @@
+# Connected-project provisioning review — not rollout approval
+
+Command007, 2026-10-15. This concerns the existing Supabase Management API/direct-PG/Storage helper, not a new provisioning service. No real project, bucket, provider credential or production schema was accessed or changed.
+
+Confirmed defects corrected in the candidate:
+
+- Generated `xroga_project_memory` and `xroga_session_memory` lacked RLS and explicit browser-role revocation. Old Supabase default grants can expose their private contents. The generator now enables RLS, revokes PUBLIC/anon/authenticated table grants and adds restrictive browser denial, preserving service-role access. Platform UUIDs are not identities in the connected project's Auth realm. Restrictive denial also covers stale column grants/permissive policies without deleting rows.
+- Existing buckets were treated as successful private storage regardless of their visibility; successful/duplicate creation was not independently checked. Now discovery must succeed and the confirmed bucket must be private. Public/unknown buckets fail without silently changing customer configuration.
+- Project URL admission now requires a canonical HTTPS Supabase origin without credentials, custom ports, path/query/fragment. This is a bounded admission fix, not Command010's DNS/redirect/egress system.
+- Helper provisioning success requires both schema and confirmed private storage. Partial progress remains explicit, with safe messages and no raw provider/SQL payload. Same existing transport and clients; no fabricated durable receipts.
+
+Verification: seven actual-helper unit tests pass with transport fixtures (not a hosted-provider or RLS substitute). The real disposable Supabase suite adds a transactionally isolated test that executes the actual generated memory SQL, verifies grants/catalog, retains a service-role row after reapplication, denies both Auth fixture identities and anon, and proves restrictive RLS withstands an overly broad legacy policy/grant. It rolls back all fixture schema changes. Execution and final build/CI results must be recorded for the committed SHA; not assumed from unit assertions.
+
+Remaining gaps: the generator does not retrofit already-connected customer projects. Their catalog/policy/data compatibility and approval must be reviewed before any rollout. No production migration or remote SQL was run. Direct database-password fallback still disables certificate verification; schema application and env sync need exact target/account/approval binding; OAuth state consumption/revocation/refresh and raw-error paths require further work. `getUserSupabaseStatus` still infers provisioning from key presence, and some route-level status fields need authoritative evidence rather than credentials. These are recorded blockers, not certified behavior. Full pipeline actor provenance and all credential consumers remain incomplete.
+
+Rollback: withhold provisioning entry points if compatibility fails, retain private data and restrictions; never restore public reads or treat an unverified bucket as private to make a test pass. Existing connected projects require a separate approved, catalog-aware migration. Generated SQL remains outside the platform migration chain; real tests still apply all70 platform migrations first.
+
+References: inspected `supabaseProvision.ts`, `supabaseAuth.ts`, `supabaseOAuth.ts`, `sessionMemory.ts`, `projectMemory.ts`, and the provisioning call sites in `pipeline.ts`, `routes/integrations.ts`, `userProviderKeys.ts`. [Supabase Data API security](https://supabase.com/docs/guides/api/securing-your-api) documents grants and RLS as independent controls. Current changelog reviewed; no Auth issuer, role or production pin was relaxed.

@@ -44,3 +44,12 @@ export function roleForProjectAccess(input: { isAdmin: boolean; isOwner: boolean
   if (input.isOwner) return 'operator';
   return null;
 }
+
+/** Membership is authoritative only when its persisted owner matches the parent. */
+export function ownerBoundMembershipProjectIds(rows: readonly { project_id: unknown; user_id: unknown; projects: unknown }[]): string[] {
+  return rows.flatMap(row => {
+    const parent = Array.isArray(row.projects) ? (row.projects.length === 1 ? row.projects[0] : null) : row.projects;
+    if (!parent || typeof parent !== 'object' || !('user_id' in parent) || parent.user_id !== row.user_id || typeof row.user_id !== 'string' || !row.user_id) return [];
+    return typeof row.project_id === 'string' && /^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(row.project_id) ? [row.project_id] : [];
+  });
+}

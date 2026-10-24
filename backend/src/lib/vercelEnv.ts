@@ -7,6 +7,7 @@ export interface VercelEnvSyncResult {
   ok: boolean;
   projectName: string;
   upserted: string[];
+  // Includes attempted writes without a verified receipt, not proof of no effect.
   skipped: string[];
   error?: string;
 }
@@ -21,6 +22,27 @@ function teamQuery(teamId?: string): string {
   return teamId ? `?teamId=${encodeURIComponent(teamId)}` : '';
 }
 
+function projectReceipt(value: unknown, expectedName: string): { id: string; name: string } {
+  const row = value as { id?: unknown; name?: unknown } | null;
+  if (!row || typeof row.id !== 'string' || !/^prj_[A-Za-z0-9]+$/.test(row.id)
+    || row.name !== expectedName) throw new Error('Invalid Vercel project receipt');
+  return { id: row.id, name: expectedName };
+}
+
+function validEnvReceipt(value: unknown, key: string, existingId?: string): boolean {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const row = value as Record<string, unknown>;
+  const targets = row.target;
+  return row.key === key && row.type === 'encrypted'
+    && (row.visibility === undefined || row.visibility === 'secret')
+    && (row.id === undefined || (typeof row.id === 'string' && /^[A-Za-z0-9_-]+$/.test(row.id)
+      && (existingId === undefined || row.id === existingId)))
+    && Array.isArray(targets) && targets.length === 3
+    && new Set(targets).size === 3 && ['production','preview','development'].every(target => targets.includes(target))
+    && row.gitBranch == null
+    && (row.customEnvironmentIds === undefined || (Array.isArray(row.customEnvironmentIds) && row.customEnvironmentIds.length === 0));
+}
+
 async function ensureProject(
   token: string,
   projectName: string,
@@ -32,9 +54,9 @@ async function ensureProject(
     { headers: { Authorization: `Bearer ${token}` } },
   );
   if (getRes.ok) {
-    const p = (await getRes.json()) as { id: string; name: string };
-    return { id: p.id, name: p.name };
+    return projectReceipt(await getRes.json(), projectName);
   }
+  if (getRes.status !== 404) throw new Error('Vercel project lookup unavailable');
 
   const createRes = await fetch(`https://api.vercel.com/v10/projects${q}`, {
     method: 'POST',
@@ -45,11 +67,9 @@ async function ensureProject(
     body: JSON.stringify({ name: projectName, framework: null }),
   });
   if (!createRes.ok) {
-    // Project may be created implicitly on first deploy — continue with name
-    return { id: projectName, name: projectName };
+    throw new Error('Vercel project creation unavailable');
   }
-  const created = (await createRes.json()) as { id: string; name: string };
-  return { id: created.id, name: created.name };
+  return projectReceipt(await createRes.json(), projectName);
 }
 
 async function listEnv(
@@ -62,10 +82,14 @@ async function listEnv(
     `https://api.vercel.com/v9/projects/${encodeURIComponent(projectIdOrName)}/env${q}`,
     { headers: { Authorization: `Bearer ${token}` } },
   );
-  if (!res.ok) return [];
+  if (!res.ok) throw new Error('Vercel environment lookup unavailable');
   const data = (await res.json()) as { envs?: VercelEnvItem[] } | VercelEnvItem[];
-  if (Array.isArray(data)) return data;
-  return data.envs ?? [];
+  const rows = Array.isArray(data) ? data : data?.envs;
+  if (!Array.isArray(rows) || rows.some(row => !row || typeof row.id !== 'string' || !/^[A-Za-z0-9_-]+$/.test(row.id)
+    || typeof row.key !== 'string' || !row.key) || new Set(rows.map(row => row.key)).size !== rows.length) {
+    throw new Error('Invalid Vercel environment receipt');
+  }
+  return rows;
 }
 
 async function upsertEnvVar(
@@ -91,7 +115,7 @@ async function upsertEnvVar(
         body: JSON.stringify({ value, type: 'encrypted', target: targets }),
       },
     );
-    if (patchRes.ok) return true;
+    return patchRes.ok && validEnvReceipt(await patchRes.json(), key, existingId);
   }
 
   const postRes = await fetch(
@@ -110,7 +134,11 @@ async function upsertEnvVar(
       }),
     },
   );
-  return postRes.ok;
+  if (!postRes.ok) return false;
+  const receipt = await postRes.json() as { failed?: unknown; created?: unknown } | null;
+  if (!receipt || !Array.isArray(receipt.failed) || receipt.failed.length) return false;
+  const created = Array.isArray(receipt.created) ? receipt.created : [receipt.created];
+  return created.length === 1 && validEnvReceipt(created[0], key);
 }
 
 /**
@@ -123,18 +151,21 @@ export async function syncEnvVarsToVercelProject(opts: {
   env: Record<string, string>;
   teamId?: string;
 }): Promise<VercelEnvSyncResult> {
-  const projectName = opts.projectName
-    .toLowerCase()
-    .replace(/[^a-z0-9-]/g, '-')
-    .replace(/-+/g, '-')
-    .slice(0, 48);
-  const keys = Object.keys(opts.env);
+  // Preserve the user's exact target. Never redirect secrets via normalization.
+  const { projectName, token, teamId } = opts;
+  const env = { ...opts.env };
+  const keys = Object.keys(env);
+  if (!/^[a-z0-9._-]{1,100}$/.test(projectName) || projectName.includes('---')) {
+    return { ok: false, projectName, upserted: [], skipped: keys, error: 'Invalid Vercel project name' };
+  }
   if (!keys.length) {
     return { ok: true, projectName, upserted: [], skipped: [] };
   }
+  const upserted: string[] = [];
+  const skipped: string[] = [];
 
   try {
-    const project = await ensureProject(opts.token, projectName, opts.teamId);
+    const project = await ensureProject(token, projectName, teamId);
     if (!project) {
       return {
         ok: false,
@@ -145,25 +176,22 @@ export async function syncEnvVarsToVercelProject(opts: {
       };
     }
 
-    const existing = await listEnv(opts.token, project.id, opts.teamId);
+    const existing = await listEnv(token, project.id, teamId);
     const byKey = new Map(existing.filter((e) => e.key).map((e) => [e.key!, e]));
 
-    const upserted: string[] = [];
-    const skipped: string[] = [];
-
-    for (const [key, value] of Object.entries(opts.env)) {
+    for (const [key, value] of Object.entries(env)) {
       if (!key || !value) {
         skipped.push(key);
         continue;
       }
       const prev = byKey.get(key);
       const ok = await upsertEnvVar(
-        opts.token,
+        token,
         project.id,
         key,
         value,
         prev?.id,
-        opts.teamId,
+        teamId,
       );
       if (ok) upserted.push(key);
       else skipped.push(key);
@@ -178,16 +206,16 @@ export async function syncEnvVarsToVercelProject(opts: {
       error: ok
         ? undefined
         : skipped.length
-          ? `Could not write ${skipped.length} env var(s). Re-authorize Vercel with Read/Write Project Environment Variables enabled for Xroga AI.`
+          ? `Could not verify ${skipped.length} env var(s). Some writes may have applied. Check Vercel project environment access before retrying.`
           : undefined,
     };
   } catch (err) {
     return {
       ok: false,
       projectName,
-      upserted: [],
-      skipped: keys,
-      error: (err as Error).message.slice(0, 200),
+      upserted,
+      skipped: keys.filter(key => !upserted.includes(key)),
+      error: 'Vercel environment sync failed. Unverified writes may have applied. Check project state before retrying.',
     };
   }
 }

@@ -335,12 +335,14 @@ test('the drawer close button belongs to the toolbar it sits in', () => {
   // three 28px borderless siblings — it sat a head taller with a box drawn round it.
   assert.match(
     SIDEBAR,
-    /<ModalCloseButton onClick=\{closeMobile\} className="xv-sidebar-head-icon" \/>/,
-    'the close button is back to its modal size',
+    /aria-label="Close sidebar" onPointerDown=\{isMobile \? undefined : startEdgeToggleDrag\}[\s\S]{0,240}if \(isMobile\) closeMobile\(\); else toggleSidebar\(\);/,
+    'the shared utility close control must close the drawer on mobile and avoid resize gestures',
   );
   // The compound selector outranks the button's own utilities whatever order they
   // are emitted in, which is the whole reason it is written this way.
   assert.match(CSS, /\.xv-sidebar-header-actions \.xv-sidebar-head-icon svg \{ width: 14px;/);
+  const compact = readFileSync(new URL('./SidebarCompact.module.css', import.meta.url), 'utf8');
+  assert.match(compact, /:global\(\.xv-sidebar-utilities\) button[^}]*height: 30px !important/);
 });
 
 test('the phone can change theme without opening the drawer', () => {
@@ -373,13 +375,20 @@ test('the GitHub mark is a disc that inverts with the theme', () => {
   assert.match(GH_GLYPH, /React\.MouseEvent<HTMLDivElement>/, 'the shared icon type was widened');
 });
 
-test('the repository rows under the filter are fork points', () => {
-  // Named carefully: this is the row icon beneath the Repositories/filter header, not
-  // the Repositories destination in the nav.
-  assert.match(HISTORY, /icon=\{GitForkIcon\}/, 'the repository rows lost the fork');
-  assert.ok(!/FolderGit2/.test(HISTORY), 'the folder glyph is back on the rows');
-  // The open state stays a folder, because that one says "expanded", not "repository".
-  assert.match(HISTORY, /const FolderIcon = isOpen \? FolderOpen : null;/);
+test('project rows preserve expansion, labels and navigation in the current organizer', () => {
+  // PR836 owns the replacement of repository/filter rows with account projects.
+  const organizer = HISTORY.slice(HISTORY.indexOf('  return <div className="mt-2 mb-1 px-1.5" data-sidebar-work-organizer>'));
+  assert.match(organizer, /aria-label=\{expandedProject\?'Collapse '\+p\.label:'Expand '\+p\.label\}/);
+  assert.match(organizer, /onClick=\{\(\)=>setOpenFolders\(prev=>\(\{\.\.\.prev,\[p\.id\]:!expandedProject\}\)\)\}/);
+  assert.match(organizer, /expandedProject\?<ChevronDown size=\{13\}\/>:<ChevronRight size=\{13\}\/>/);
+  // PR839 deliberately makes project and conversation rows text-only.
+  assert.match(organizer, /renderRow\('project',p\.id,projectTitle\(p\.id,p\.label\),\(\)=>openProject\(p\.id\),false\)/);
+  assert.match(organizer, /expandedProject \? <div[^>]*aria-label=\{p\.label\+' conversations'\}/);
+  const resume = HISTORY.slice(HISTORY.indexOf('  function openProject(id:string)'), HISTORY.indexOf('  useEffect', HISTORY.indexOf('  function openProject(id:string)')));
+  assert.match(resume, /if\(!p\)\{toast\.error\('This project is not available'\);return;\}/);
+  assert.match(resume, /if\(activeSidebarProjectId===p\.id\)\{router\.push\('\/workspace'\);return;\}/);
+  assert.match(resume, /const latest=getProjectChats\(p\)\[0\];\s*if\(latest\)\{void openSession\(latest\);return;\}\s*beginProjectTask\(p\);/);
+  assert.doesNotMatch(organizer, /<RepositoryFilterPopover\b|icon=\{GitForkIcon\}|<FolderGit2\b|<FolderOpen\b|<MessageSquare\b/);
 });
 
 test('fullscreen on a phone is a rounded box that fills the screen', () => {
