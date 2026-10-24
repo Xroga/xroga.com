@@ -1444,14 +1444,20 @@ async function composioRequest<T>(
 
       if (response.status === 401 || response.status === 403) {
         message = 'Xroga Connect authorization failed.';
+      } else if (response.status === 400 || response.status === 422) {
+        message = 'Xroga Connect rejected this app request. Please check the selected app and required details, then try again.';
       } else if (response.status === 404) {
         message = 'The requested Xroga Connect resource was not found.';
+      } else if (response.status === 409) {
+        message = 'Xroga Connect reported a conflict with this app request. Refresh the connection and try again.';
       } else if (response.status === 408) {
         message = 'Xroga Connect request timed out.';
       } else if (response.status === 413) {
         message = 'The external request was too large.';
       } else if (response.status === 429) {
         message = 'Xroga Connect is temporarily rate limited.';
+      } else if (response.status >= 500) {
+        message = 'Xroga Connect is temporarily unavailable. Please try again shortly.';
       }
 
       throw new ComposioClientError(message, {
@@ -2291,6 +2297,35 @@ export async function listComposioTriggerTypes(
           : items.length,
     };
   });
+}
+
+/** Register an event only for a connected, allowed toolkit owned by this user. */
+export async function upsertComposioTriggerForUser(
+  userId: string,
+  input: { toolkit: string; triggerSlug: string; triggerConfig: Record<string, unknown> },
+): Promise<string> {
+  const toolkit = cleanToolkit(input.toolkit);
+  const triggerSlug = input.triggerSlug.trim().toUpperCase();
+  if (!/^[A-Z][A-Z0-9_]{2,119}$/.test(triggerSlug)
+    || !canUserAccessComposioToolkit(userId, toolkit)
+    || JSON.stringify(input.triggerConfig).length > 8_000) {
+    throw new ComposioClientError('This trigger is not available for your connected apps.', { status: 403, code: 'COMPOSIO_TRIGGER_NOT_ALLOWED' });
+  }
+  const type = await composioRequest<ComposioTriggerTypeResponse>(`/triggers_types/${encodeURIComponent(triggerSlug)}`);
+  if (type.toolkit?.slug?.trim().toLowerCase() !== toolkit) {
+    throw new ComposioClientError('The selected trigger does not belong to that app.', { status: 422, code: 'COMPOSIO_TRIGGER_TOOLKIT_MISMATCH' });
+  }
+  const session = await createReadOnlyComposioSession(userId);
+  const connected = await listConnectedComposioToolkits(userId, { sessionId: session.session_id, toolkits: [toolkit] });
+  if (!connected.some((item) => item.connected && item.toolkit.trim().toLowerCase() === toolkit)) {
+    throw new ComposioClientError('Connect this app before enabling its trigger.', { status: 409, code: 'COMPOSIO_TRIGGER_CONNECTION_REQUIRED' });
+  }
+  const result = await composioRequest<{ trigger_id?: string }>(`/trigger_instances/${encodeURIComponent(triggerSlug)}/upsert`, {
+    method: 'POST',
+    body: { user_id: composioUserId(userId), trigger_config: input.triggerConfig },
+  });
+  if (!result.trigger_id?.startsWith('ti_')) throw new ComposioClientError('Composio did not return a trigger instance.', { status: 502, code: 'COMPOSIO_TRIGGER_CREATE_FAILED' });
+  return result.trigger_id;
 }
 
 export async function getComposioToolDetails(

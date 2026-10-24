@@ -52,6 +52,26 @@ export interface SafeBusinessActionConfirmation {
   createdAt: string;
   expiresAt: string;
   request?: string;
+  toolSlug?: string;
+  argumentsPreview?: string;
+}
+
+export function previewBusinessActionArguments(argumentsValue: Record<string, unknown>): string {
+  const scrub = (value: unknown, depth: number): unknown => {
+    if (depth > 8) return '[nested value omitted]';
+    if (typeof value === 'string') return value.slice(0, 4_000);
+    if (Array.isArray(value)) return value.slice(0, 50).map((item) => scrub(item, depth + 1));
+    if (value && typeof value === 'object') {
+      return Object.fromEntries(Object.entries(value).slice(0, 50).map(([key, item]) => [
+        key,
+        /token|secret|password|credential|api[_-]?key|authorization|cookie|private[_-]?key/i.test(key)
+          ? '[redacted]'
+          : scrub(item, depth + 1),
+      ]));
+    }
+    return value;
+  };
+  return JSON.stringify(scrub(argumentsValue, 0), null, 2).slice(0, 24_000);
 }
 
 function cleanConfirmationId(
@@ -139,6 +159,7 @@ function isBusinessActionPlan(
     ) &&
     typeof value.requiresConfirmation ===
       'boolean' &&
+    (value.forceConfirmation === undefined || typeof value.forceConfirmation === 'boolean') &&
     typeof value.summary ===
       'string' &&
     Array.isArray(
@@ -199,7 +220,11 @@ function safeConfirmation(
 
     expiresAt:
       row.expires_at,
-    ...(isBusinessActionPlan(row.plan) ? { request: row.plan.useCase } : {}),
+    ...(isBusinessActionPlan(row.plan) ? {
+      request: row.plan.useCase,
+      toolSlug: row.plan.toolSlug,
+      argumentsPreview: previewBusinessActionArguments(row.plan.arguments),
+    } : {}),
   };
 }
 
@@ -804,6 +829,12 @@ export async function confirmBusinessAction(
 
             failure_code:
               null,
+
+            execution_result: {
+              toolkit: execution.toolkit,
+              toolSlug: execution.toolSlug,
+              resultText: execution.resultText,
+            },
           },
         )
         .eq(
