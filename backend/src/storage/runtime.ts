@@ -1,6 +1,6 @@
-import { readFileSync } from 'node:fs';
 import pg from 'pg';
 import { resolveDatabaseUrls } from '../lib/postgresConnect.js';
+import { planDatabaseConnection } from './databaseTls.js';
 import { defaultPolicyConfig } from './policy.js';
 import { PostgresStorageRepository } from './postgresRepository.js';
 import { R2ObjectStore, r2ConfigFromEnv } from './r2ObjectStore.js';
@@ -76,21 +76,15 @@ let pool: pg.Pool | null = null;
 let service: StorageService | null | undefined;
 
 /**
- * Remote database TLS. With STORAGE_DB_SSL_CA (PEM text or a file path) the server certificate IS verified against that CA.
- * Without it the pool keeps the backend's existing behaviour (encrypted, certificate not verified), which matches lib/postgresConnect.ts;
- * that residual MITM exposure is recorded in security-review.md and is closed by supplying the Supabase CA.
+ * The storage pool. TLS policy lives in databaseTls.ts: loopback is plain, every other host is certificate-verified (custom CA,
+ * the pinned Supabase root, or the platform store), and the URL is never passed to pg as a connection string so a `sslmode=` in
+ * DATABASE_URL cannot weaken it. An unusable policy throws, and getStorageService() then reports Drive as unavailable.
  */
-export function databaseTls(env: NodeJS.ProcessEnv = process.env): { rejectUnauthorized: boolean; ca?: string } {
-  const raw = env.STORAGE_DB_SSL_CA?.trim();
-  if (!raw) return { rejectUnauthorized: false };
-  return { rejectUnauthorized: true, ca: raw.includes('BEGIN CERTIFICATE') ? raw : readFileSync(raw, 'utf8') };
-}
-
 export function createPool(connectionString?: string): pg.Pool {
   const url = connectionString ?? resolveDatabaseUrls()[0];
   if (!url) throw new Error('No database URL configured');
-  const local = /localhost|127\.0\.0\.1|sslmode=disable/.test(url);
-  const p = new pg.Pool({ connectionString: url, max: 8, idleTimeoutMillis: 30_000, connectionTimeoutMillis: 15_000, ssl: local ? undefined : databaseTls() });
+  const plan = planDatabaseConnection(url);
+  const p = new pg.Pool({ ...plan.config, max: 8, idleTimeoutMillis: 30_000, connectionTimeoutMillis: 15_000 });
   p.on('error', (e) => console.warn('[storage] idle pool client error:', e.message));
   return p;
 }

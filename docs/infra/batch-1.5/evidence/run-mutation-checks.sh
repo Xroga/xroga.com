@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# Proves the tests can fail: injects 8 deliberate defects one at a time, expects at least one failing test each, restores the file.
+# Proves the tests can fail: injects deliberate defects one at a time, expects at least one failing test each, restores the file.
+# Phase 1 groups first; Phase 2 adds the database-TLS group. MUTATION_LOG overrides the log path (Phase 2 writes under phase-2/).
 set -u
 cd "$(dirname "$0")/../../../../backend"
-OUT="../docs/infra/batch-1.5/evidence/logs"; mkdir -p "$OUT"; LOG="$OUT/07-mutation-checks.log"; : > "$LOG"
+OUT="../docs/infra/batch-1.5/evidence/logs"; mkdir -p "$OUT"; LOG="${MUTATION_LOG:-$OUT/07-mutation-checks.log}"; mkdir -p "$(dirname "$LOG")"; : > "$LOG"
 M=../supabase/migrations/20261022000000_storage_drive_foundation.sql
 mut() { # name file python-replace-old python-replace-new testfiles...
   name="$1"; file="$2"; old="$3"; new="$4"; shift 4
@@ -40,6 +41,15 @@ mut "approvals: plan digest not compared" src/storage/migration/approvals.ts "if
 mut "approvals: environment not compared" src/storage/migration/approvals.ts "if (claims.environment !== e.environment) return" "if (false) return" src/storage/migration/approvals.test.ts
 mut "config: invalid STORAGE_WRITE_MODE silently accepted" src/storage/runtime.ts "else problems.push(\`STORAGE_WRITE_MODE=" "else void (\`STORAGE_WRITE_MODE=" src/storage/config.matrix.test.ts
 mut "provider errors: ECONNREFUSED not transient" src/storage/r2ObjectStore.ts "'ECONNREFUSED', 'ENOTFOUND'" "'ENOTFOUND'" src/storage/r2ObjectStore.test.ts
+# Phase 2 · database TLS (INFRA-005 prerequisite)
+T=src/storage/databaseTls.ts; TT=src/storage/databaseTls.test.ts
+mut "db tls: certificate verification off for remote hosts" $T "const ssl: tls.ConnectionOptions = { rejectUnauthorized: true," "const ssl: tls.ConnectionOptions = { rejectUnauthorized: false," $TT
+mut "db tls: loopback decided by searching the URL text (the Phase 1 bug)" $T "if (isLoopback(host)) return" 'if (/localhost|127\.0\.0\.1|sslmode=disable/.test(url)) return' $TT
+mut "db tls: sslmode=no-verify / disable accepted" $T "  if (weakens) {" "  if (false as boolean) {" $TT
+mut "db tls: raw URL handed to pg (lets sslmode override ssl)" $T "const base: PoolConfig = {" "const base: PoolConfig = { connectionString: url," $TT
+mut "db tls: Supabase suffix without a dot boundary" $T '/(^|\.)supabase\.(co|com)$/' '/supabase\.(co|com)$/' $TT
+mut "db tls: pinned-root fingerprint not checked" $T "new X509Certificate(blocks[0]).fingerprint256 !== expectedSha256" "false" $TT
+mut "db tls: several certificates accepted as the pinned root" $T "blocks.length !== 1 ||" "false ||" $TT
 if [ -n "${STORAGE_TEST_DATABASE_URL:-}" ]; then
 mut "SQL: drop READY-is-verified CHECK" $M "check (state <> 'READY' or (size_bytes is not null and sha256_verified is not null and verified_at is not null))" "check (true)" src/storage/postgresRepository.integration.test.ts
 mut "SQL: remove tenant row lock in storage_reserve" $M "select * into u from public.storage_usage where tenant_id = p_tenant for update;" "select * into u from public.storage_usage where tenant_id = p_tenant;" src/storage/postgresRepository.integration.test.ts
