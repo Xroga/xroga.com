@@ -66,3 +66,11 @@ Only aggregates were returned; no row, file content or credential.
 
 Consequences: the R2 name mismatch has stored **no** file in the database (there are no project files at all), so there is nothing to preserve or migrate; the only durable run output lives in `swarm_runs`,
 small enough for a daily logical backup. Checklist A is complete.
+
+## Changes made under the founder's consolidated authorization (2026-10-24)
+| Change | Before | After (verified) |
+|---|---|---|
+| `r2.dev` public access on `xroga-chat-archive`, `xroga-images`, `xroga-websites` | enabled; each bucket 0 objects, no custom domain; no reference to the three public hostnames in any of 570 branches | **disabled**; each public hostname now answers **401 Unauthorized** (it answered 404 for a missing key before); buckets and settings otherwise untouched |
+| New private bucket `xroga-db-backups` (APAC) | did not exist | public access off, no custom domain, no CORS; lifecycle: `db/` objects deleted after 35 days, incomplete multipart uploads aborted after 1 day |
+| GitHub environment `db-backup` | did not exist | deployment branches: `main` only; no secrets yet |
+| A public Cloudflare Worker outside the repository | reachable | public address disabled and verified unreachable; code, bindings and secrets preserved. Incident details are kept out of this public repository |
