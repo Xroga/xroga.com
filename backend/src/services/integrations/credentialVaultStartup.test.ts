@@ -12,6 +12,14 @@ const env = { NODE_ENV: 'production', XROGA_CREDENTIAL_KMS_PROVIDER: 'oci',
   XROGA_OCI_KMS_ENDPOINT: 'https://fixture-crypto.kms.me-dubai-1.oci.oraclecloud.com',
   XROGA_OCI_KMS_KEY_VERSION: 'ocid1.keyversion.oc1.me-dubai-1.fixture.aaaaaaaa',
   XROGA_OCI_KMS_AUTH_MODE: 'resource_principal', XROGA_OCI_KMS_PRINCIPAL_ID: 'ocid1.fnfunc.oc1.me-dubai-1.fixture.aaaaaaaa' };
+
+test('Fly production cannot inherit metadata ADC or interactive credentials without exact workload federation', () => {
+  const fly = {NODE_ENV:'production', FLY_APP_NAME:'xroga-api', FLY_MACHINE_ID:'e820730b296098',
+    XROGA_CREDENTIAL_KMS_PROVIDER:'google_cloud',
+    XROGA_GOOGLE_CLOUD_KMS_KEY_NAME:'projects/synthetic/locations/us-central1/keyRings/test/cryptoKeys/test'};
+  assert.throws(() => managedCredentialConfiguration(fly), /configuration is invalid/);
+  assert.throws(() => managedCredentialConfiguration({...fly, GOOGLE_APPLICATION_CREDENTIALS:'/operator-or-downloaded-key.json'}), /configuration is invalid/);
+});
 // Explicit refusing/echo transport fixtures, never provider-backed custody proof.
 function fixture() {
   let unavailable = false, encrypts = 0, decrypts = 0;

@@ -1,6 +1,6 @@
 # Deployment topology — read-only truth
 
-Source SHA: `923cacc60370bdefbafa5cfa6431552de5cae52e`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
+Source SHA: `0c8b5ddf5d82f1d8d7b409ead4c0f55090082f80`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -106,6 +106,7 @@ Source SHA: `923cacc60370bdefbafa5cfa6431552de5cae52e`; source/config hashes are
 | endpoint-hardhat-org | Source-defined endpoint hardhat.org | CONFIGURED_BUT_UNVERIFIED | hardhat.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-huggingface-co | Source-defined endpoint huggingface.co | CONFIGURED_BUT_UNVERIFIED | huggingface.co | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-i-postimg-cc | Source-defined endpoint i.postimg.cc | CONFIGURED_BUT_UNVERIFIED | i.postimg.cc | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-iamcredentials-googleapis-com | Source-defined endpoint iamcredentials.googleapis.com | CONFIGURED_BUT_UNVERIFIED | iamcredentials.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-islamic-relief-org | Source-defined endpoint islamic-relief.org | CONFIGURED_BUT_UNVERIFIED | islamic-relief.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-jobs-example-com | Source-defined endpoint jobs.example.com | CONFIGURED_BUT_UNVERIFIED | jobs.example.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-linear-app | Source-defined endpoint linear.app | CONFIGURED_BUT_UNVERIFIED | linear.app | NOT_INDEPENDENTLY_VERIFIED |
@@ -134,6 +135,7 @@ Source SHA: `923cacc60370bdefbafa5cfa6431552de5cae52e`; source/config hashes are
 | endpoint-sentry-io | Source-defined endpoint sentry.io | CONFIGURED_BUT_UNVERIFIED | sentry.io | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-solana-com | Source-defined endpoint solana.com | CONFIGURED_BUT_UNVERIFIED | solana.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-stripe-com | Source-defined endpoint stripe.com | CONFIGURED_BUT_UNVERIFIED | stripe.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-sts-googleapis-com | Source-defined endpoint sts.googleapis.com | CONFIGURED_BUT_UNVERIFIED | sts.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-studio-youtube-com | Source-defined endpoint studio.youtube.com | CONFIGURED_BUT_UNVERIFIED | studio.youtube.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-supabase-com | Source-defined endpoint supabase.com | CONFIGURED_BUT_UNVERIFIED | supabase.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-support-bolt-new | Source-defined endpoint support.bolt.new | CONFIGURED_BUT_UNVERIFIED | support.bolt.new | NOT_INDEPENDENTLY_VERIFIED |
@@ -212,7 +214,7 @@ Frontend release 3b2bad and API release 41665b legitimately differ: the initial 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-731 scoped memory/filesystem candidates are retained for semantic review. Static collections and scratch writes are not automatically unsafe fallbacks; the candidate inventory is not blanket durability certification. All consequential persistence/authority callers require the later security gates. Production/Preview environment protection and main rulesets were inspected as empty; user-mandated release gates still apply. Cloud Run/Jobs/Cloudflare Workers hosting remains proposed; no migration is authorized.
+732 scoped memory/filesystem candidates are retained for semantic review. Static collections and scratch writes are not automatically unsafe fallbacks; the candidate inventory is not blanket durability certification. All consequential persistence/authority callers require the later security gates. Production/Preview environment protection and main rulesets were inspected as empty; user-mandated release gates still apply. Cloud Run/Jobs/Cloudflare Workers hosting remains proposed; no migration is authorized.
 
 ## Boundaries
 

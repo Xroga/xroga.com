@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "923cacc60370bdefbafa5cfa6431552de5cae52e",
+  "source_sha": "0c8b5ddf5d82f1d8d7b409ead4c0f55090082f80",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -4116,6 +4116,40 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-iamcredentials-googleapis-com",
+      "provider": "Source-defined endpoint iamcredentials.googleapis.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts"
+      ],
+      "hostnames": [
+        "iamcredentials.googleapis.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-islamic-relief-org",
       "provider": "Source-defined endpoint islamic-relief.org",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -5152,6 +5186,40 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-sts-googleapis-com",
+      "provider": "Source-defined endpoint sts.googleapis.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts"
+      ],
+      "hostnames": [
+        "sts.googleapis.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-studio-youtube-com",
       "provider": "Source-defined endpoint studio.youtube.com",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -5920,6 +5988,7 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "backend/src/lib/youtubeSearch.ts",
+        "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
         "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
         "backend/src/services/publish/chromeWebStore.ts"
       ],
@@ -5947,6 +6016,7 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/lib/youtubeSearch.ts",
+        "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
         "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
         "backend/src/services/publish/chromeWebStore.ts"
       ],
@@ -7570,6 +7640,7 @@
         "backend/src/operations/readMatrix.local.integration.ts",
         "backend/src/operations/verificationTarget.local.integration.ts",
         "backend/src/security/adminReads.local.integration.ts",
+        "backend/src/security/browserMaintain.local.integration.ts",
         "backend/src/security/budgetOwner.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
@@ -11377,6 +11448,7 @@
         "backend/src/operations/readMatrix.local.integration.ts",
         "backend/src/operations/verificationTarget.local.integration.ts",
         "backend/src/security/adminReads.local.integration.ts",
+        "backend/src/security/browserMaintain.local.integration.ts",
         "backend/src/security/budgetOwner.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
@@ -11485,6 +11557,7 @@
         "backend/src/operations/automationFinalization.local.integration.ts",
         "backend/src/operations/internalEffect.local.integration.ts",
         "backend/src/operations/verificationTarget.local.integration.ts",
+        "backend/src/security/browserMaintain.local.integration.ts",
         "backend/src/security/budgetOwner.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/buildProjectReceipt.local.integration.ts",
@@ -12786,7 +12859,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "9cc6d86a81214b17d18c1ec8f2440c8d658b1c25fda22ee4ed5e7fa3e494082d"
+      "sha256": "c3c9cdfc288ce155a3f8c0a7e15ab1c8fe20656c1f56e1e6bf51d1090ee68c7a"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
@@ -13881,6 +13954,10 @@
       "sha256": "9a20c8cc0e496f893a18d79dba79b4beac820b9001bc1b06d2fc2772c70eee44"
     },
     {
+      "path": "backend/src/security/browserMaintain.local.integration.ts",
+      "sha256": "76292a666c34864e00adc1844216aa19c34779ffb91c1e43944c80264e575614"
+    },
+    {
       "path": "backend/src/security/budgetOwner.local.integration.ts",
       "sha256": "6cf1747676a8b91b25a2b64958292eb46ad4cbf2bb79395a269dca9e0914b15a"
     },
@@ -14078,7 +14155,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338"
+      "sha256": "0a0538a518b06844bd394a40ccfc0cba672449023fadfc799eac7177838df56c"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -14170,11 +14247,15 @@
     },
     {
       "path": "backend/src/services/integrations/credentialVaultStartup.ts",
-      "sha256": "255488d13be2163c09dfae9ac2f4857383ae8740adabb36d70f063c12b4b149f"
+      "sha256": "18d4a28324d7786e707727bb60f177e8a5d37c3fe5d45dca2c001836e07e7469"
     },
     {
       "path": "backend/src/services/integrations/cryptoProvider.ts",
       "sha256": "a4fb326b9cf7382a89649bf05552b4222ed5924397cf1b14a268999ffa721fb9"
+    },
+    {
+      "path": "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
+      "sha256": "9bd1a0a08eb68cd52773f00c6b861f5cfcf8f75d2bd2a9c1d2e032fd377c719f"
     },
     {
       "path": "backend/src/services/integrations/githubAtomicTransport.ts",
@@ -14222,7 +14303,7 @@
     },
     {
       "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-      "sha256": "9f9a5daaae7246d4eca5e7a5a410b182f74fb401d71b93741cfba862c7975070"
+      "sha256": "22d7137f89e80fbd6fe606697a5b6a4d0e0645301723531715e72bfe653d08c4"
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
@@ -20721,77 +20802,77 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 125,
+      "line": 126,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 125,
+      "line": 126,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 546,
+      "line": 548,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 596,
+      "line": 598,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 685,
+      "line": 687,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 854,
+      "line": 856,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 912,
+      "line": 914,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1599,
+      "line": 1601,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1617,
+      "line": 1619,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1625,
+      "line": 1627,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1629,
+      "line": 1631,
       "credentialsInUrl": false
     },
     {
@@ -20977,6 +21058,27 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "sts.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
+      "line": 106,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "www.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
+      "line": 107,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "iamcredentials.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
+      "line": 108,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubAtomicTransport.ts",
@@ -21036,21 +21138,21 @@
       "hostname": "www.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-      "line": 20,
+      "line": 23,
       "credentialsInUrl": false
     },
     {
       "hostname": "cloudkms.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-      "line": 24,
+      "line": 29,
       "credentialsInUrl": false
     },
     {
       "hostname": "cloudkms.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-      "line": 32,
+      "line": 37,
       "credentialsInUrl": false
     },
     {
@@ -27315,14 +27417,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1098,
+      "line": 1100,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1435,
+      "line": 1437,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -27450,6 +27552,13 @@
       "path": "backend/src/services/integrations/cryptoProvider.ts",
       "line": 42,
       "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
+      "line": 41,
+      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
