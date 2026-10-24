@@ -13,7 +13,7 @@ Branch `claude/xroga-b15-phase2-20261024` (continues `claude/xroga-batch-1-5`). 
 | Rollback | written | n/a | `ROLLBACK.md` |
 
 ## Verification, source-bound
-- CI: run 40094315005 on `865d492b`: `overall=PASS` (Phase 2 steps: 189/189, 15/15 real PostgreSQL, 6/6 real Chromium, seccomp derivation; full suite 3114 pass, 5 baseline failures, 0 regressions). `../ci-evidence/run-40094315005/`
+- CI on the final head `511f503a`: run 40094731238, `overall=PASS`, identical numbers to the run below. CI on `865d492b`: run 40094315005 (archived): `overall=PASS` (Phase 2 steps: 189/189, 15/15 real PostgreSQL, 6/6 real Chromium, seccomp derivation; full suite 3114 pass, 5 baseline failures, 0 regressions). `../ci-evidence/run-40094315005/`
 - Mutation checks: 83 injected defects across TLS, leases, job contract, egress proxy, process trees, browser handler, admission, recovery, startup, readiness, logging, launch policy, container spec and the lease SQL: **83 caught, 0 survived** (`evidence/logs/mutation-checks-phase2-final.log`, run on the committed source `6d08cdcf` plus the documentation-only and CI-only commits after it). Two mutants initially survived and exposed a dead guard (removed) and a test that passed for the wrong reason (strengthened).
 - Real-provider and container evidence: `evidence/real-tls-handshake-2026-10-24.json` (live Supabase pooler, TLS trust only); `evidence/browser-sandbox-docker-local-2026-10-24.json` (hardened container `SANDBOX_ON`, default-seccomp control `BLOCKED`).
 - Local: 209 Phase 2 tests pass (1 POSIX-only skip) and 201 Phase 1 storage tests pass against a disposable PostgreSQL 16.
