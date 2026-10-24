@@ -161,6 +161,51 @@ const workflows: Record<string, () => Promise<void>> = {
 // host start: reap orphans a previous runner left behind (a crashed host process cannot clean up after itself)
 const reaped = new ContainerBrowserWorker({ repoRoot, browserImage, proxyImage }).reapOrphans();
 console.log(`reaped at start: ${reaped.containers} containers, ${reaped.networks} networks`);
+/** Samples memory and CPU of every running browser-job container until stopped; returns peaks per container. */
+function sampler() {
+  const peaks = new Map<string, { memMiB: number; cpuPct: number }>();
+  let on = true;
+  const tick = () => {
+    if (!on) return;
+    const r = spawnSync('docker', ['stats', '--no-stream', '--format', '{{.Name}}|{{.MemUsage}}|{{.CPUPerc}}', ...docker(['ps', '-q', '--filter', 'label=xroga.browser-job=1']).stdout.trim().split('\n').filter(Boolean)], { encoding: 'utf8' });
+    for (const line of (r.stdout ?? '').trim().split('\n').filter((l) => l.includes('|'))) {
+      const [name, mem, cpu] = line.split('|');
+      const m = /([\d.]+)\s*([KMG]i?B)/.exec(mem ?? ''); const mib = m ? Number(m[1]) * ({ KiB: 1 / 1024, KB: 1 / 1024, MiB: 1, MB: 1, GiB: 1024, GB: 1024 } as Record<string, number>)[m[2]!]! : 0;
+      const p = peaks.get(name!) ?? { memMiB: 0, cpuPct: 0 };
+      peaks.set(name!, { memMiB: Math.max(p.memMiB, mib), cpuPct: Math.max(p.cpuPct, Number.parseFloat(cpu ?? '0') || 0) });
+    }
+    setTimeout(tick, 400);
+  };
+  tick();
+  return () => { on = false; return [...peaks.entries()].map(([name, v]) => ({ name, ...v })); };
+}
+const pct = (xs: number[], p: number) => { const s = [...xs].sort((a, b) => a - b); return s.length ? s[Math.min(s.length - 1, Math.ceil((p / 100) * s.length) - 1)]! : null; };
+const W15_PLAN = { steps: [{ op: 'click', selector: 'li.next > a' }, { op: 'waitFor', urlPrefix: `${Q}/page/2`, timeoutMs: 15_000 }, { op: 'extractText', selector: '.quote .text', name: 'q', all: true }, { op: 'screenshot', name: 'w15.png' }],
+  expect: [{ kind: 'extracted', name: 'q', minItems: 10 }, { kind: 'artifact', name: 'w15.png' }, { kind: 'finalUrlPrefix', prefix: `${Q}/page/2` }] };
+workflows.W15 = async () => {
+  const sequential = Number(arg('--w15-runs', '8')); const concurrent = Number(arg('--w15-concurrent', '3'));
+  const stop = sampler();
+  const runs: any[] = [];
+  for (let i = 0; i < sequential; i++) runs.push(await run(i % 2 ? bob : alice, { goal: `load run ${i}`, startUrl: `${Q}/`, allowedOrigins: [Q], limits: limits(), plan: W15_PLAN }));
+  const wave = await Promise.all(Array.from({ length: concurrent }, (_, i) => run(i % 2 ? bob : alice, { goal: `concurrent run ${i}`, startUrl: `${Q}/`, allowedOrigins: [Q], limits: limits(), plan: W15_PLAN })));
+  const peaks = stop();
+  const all = [...runs, ...wave];
+  const verified = all.filter((r) => r.status === 'completed' && r.outcomeVerified === true);
+  const lat = verified.map((r) => r.elapsedMs as number);
+  const inner = verified.map((r) => Number(r.metrics?.elapsedMs ?? 0)).filter(Boolean);
+  const metrics = {
+    runs: all.length, sequential, concurrent, verifiedOutcomes: verified.length, completionRate: all.length ? verified.length / all.length : 0,
+    endToEndMs: { first: runs[0]?.elapsedMs ?? null, p50: pct(lat, 50), p95: lat.length >= 10 ? pct(lat, 95) : `not computed (${lat.length} samples < 10)`, max: Math.max(...lat) },
+    inContainerBrowserMs: { p50: pct(inner, 50), max: inner.length ? Math.max(...inner) : null },
+    startupFailures: all.filter((r) => r.status !== 'completed' && /could not start|did not start|exited without/.test(String(r.error ?? ''))).length,
+    retriedAttempts: all.reduce((n, r) => n + Math.max(0, (r.attempts ?? 1) - 1), 0),
+    peakContainerMemMiB: peaks.length ? Math.max(...peaks.map((p) => p.memMiB)) : null, peakContainerCpuPct: peaks.length ? Math.max(...peaks.map((p) => p.cpuPct)) : null, sampledContainers: peaks.length,
+    modelCostMicrosPerVerifiedOutcome: 0,
+    note: 'Infrastructure cost per verified outcome is computed in the cost report from the host price and these measured durations; model cost is 0 because these runs use no AI steps.',
+  };
+  record('W15', 'load and reliability measurements (sequential and concurrent)', 'every run verified, nothing left behind', verified.length === all.length, { status: `${verified.length}/${all.length} verified`, metrics });
+};
+
 const ids = Object.keys(workflows).filter((k) => !only || only.includes(k));
 for (const id of ids) {
   try { await workflows[id]!(); } catch (e) { record(id, 'runner error', 'no runner error', false, { status: 'runner-error', error: (e as Error).message.slice(0, 300) }); }
