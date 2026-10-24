@@ -3,7 +3,7 @@
   "installCommand": "npm ci --prefix frontend --workspaces=false",
   "buildCommand": "npm run build --prefix frontend --workspaces=false",
   "framework": "nextjs",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- frontend/ package.json package-lock.json vercel.json scripts/enforce-next-postcss.mjs",
+  "ignoreCommand": "node scripts/ci/ignore-vercel-build.mjs",
   "redirects": [
     {
       "source": "/dashboard/upgrade",

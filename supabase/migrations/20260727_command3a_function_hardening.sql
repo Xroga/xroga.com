@@ -3,12 +3,22 @@
 -- they must not be callable through the public PostgREST RPC surface.
 
 ALTER FUNCTION public.handle_new_user() SET search_path = public, pg_temp;
-ALTER FUNCTION public.get_old_chats_grouped_by_user(TIMESTAMPTZ) SET search_path = public, pg_temp;
-ALTER FUNCTION public.rls_auto_enable() SET search_path = public, pg_temp;
+-- Optional historical/dashboard routines are absent from repository-created
+-- schemas. Preserve hardening where they exist; never fabricate their bodies.
+DO $$
+BEGIN
+  IF to_regprocedure('public.get_old_chats_grouped_by_user(timestamptz)') IS NOT NULL THEN
+    ALTER FUNCTION public.get_old_chats_grouped_by_user(TIMESTAMPTZ) SET search_path = public, pg_temp;
+    REVOKE ALL ON FUNCTION public.get_old_chats_grouped_by_user(TIMESTAMPTZ) FROM PUBLIC, anon, authenticated;
+  END IF;
+  IF to_regprocedure('public.rls_auto_enable()') IS NOT NULL THEN
+    ALTER FUNCTION public.rls_auto_enable() SET search_path = public, pg_temp;
+    REVOKE ALL ON FUNCTION public.rls_auto_enable() FROM PUBLIC, anon, authenticated;
+  END IF;
+END;
+$$;
 
 REVOKE ALL ON FUNCTION public.handle_new_user() FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION public.get_old_chats_grouped_by_user(TIMESTAMPTZ) FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION public.rls_auto_enable() FROM PUBLIC, anon, authenticated;
 
 REVOKE ALL ON FUNCTION public.increment_user_token_usage(UUID, BIGINT, BIGINT, DATE)
   FROM PUBLIC, anon, authenticated;

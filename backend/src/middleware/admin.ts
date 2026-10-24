@@ -1,5 +1,6 @@
 import type { Response, NextFunction } from 'express';
-import { getSupabaseAdmin } from '../config/supabase.js';
+import { getTenantSupabaseAdmin } from '../security/serviceRoleGuard.js';
+import { requireTenantContext, type TenantContext } from '../security/tenantContext.js';
 import type { AuthRequest } from './auth.js';
 
 export function canReadAdminOperations(role: unknown): boolean {
@@ -11,20 +12,22 @@ export async function adminMiddleware(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  if (!req.userId) {
+  let scope: TenantContext;
+  try { scope = requireTenantContext(req.tenantContext); }
+  catch {
     res.status(401).json({ error: 'Unauthorized' });
     return;
   }
 
   try {
-    const supabase = getSupabaseAdmin();
-    const { data: profile } = await supabase
+    const supabase = getTenantSupabaseAdmin(scope);
+    const { data: profile, error } = await supabase
       .from('profiles')
       .select('role, id')
-      .eq('id', req.userId)
+      .eq('id', scope.userId)
       .maybeSingle();
 
-    if (canReadAdminOperations(profile?.role)) {
+    if (!error && profile?.id === scope.userId && canReadAdminOperations(profile.role)) {
       next();
       return;
     }

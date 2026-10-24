@@ -1,3 +1,4 @@
+import { requireTenantContext } from '../security/tenantContext.js';
 import {
   Buffer,
 } from 'node:buffer';
@@ -802,7 +803,7 @@ router.post(
         }
         let workflow;
         try {
-          workflow = await createBusinessWorkflowRun(userId, message, explicitWorkflow);
+          workflow = await createBusinessWorkflowRun(requireTenantContext(req.tenantContext), message, explicitWorkflow);
         } catch (error) {
           throw businessRuntimeFailure(error, 'Xroga Connect could not start the multi-app workflow. Check its status before retrying because an earlier step may already have completed.');
         }
@@ -1816,7 +1817,7 @@ router.get('/business-workflows/:id', async (req: AuthRequest, res) => {
   const userId = requireUserId(req);
   if (!userId) return res.status(401).json({ error: 'Sign in required', code: 'UNAUTHORIZED' });
   try {
-    return res.json({ workflow: await getBusinessWorkflowRun(userId, String(req.params.id ?? '')) });
+    return res.json({ workflow: await getBusinessWorkflowRun(requireTenantContext(req.tenantContext), String(req.params.id ?? '')) });
   } catch {
     return res.status(404).json({ error: 'Workflow not found', code: 'BUSINESS_WORKFLOW_NOT_FOUND' });
   }
@@ -1826,7 +1827,7 @@ router.post('/business-workflows/:id/resume', async (req: AuthRequest, res) => {
   const userId = requireUserId(req);
   if (!userId) return res.status(401).json({ error: 'Sign in required', code: 'UNAUTHORIZED' });
   try {
-    const progress = await resumeBusinessWorkflowAfterSetup(userId, String(req.params.id ?? ''));
+    const progress = await resumeBusinessWorkflowAfterSetup(requireTenantContext(req.tenantContext), String(req.params.id ?? ''));
     return res.json({ workflow: progress.run, response: businessWorkflowProgressMarkdown(progress), confirmation: progress.confirmation ?? null });
   } catch {
     return res.status(409).json({ error: 'Workflow could not resume; check its current state before retrying.', code: 'BUSINESS_WORKFLOW_RESUME_FAILED' });
@@ -1837,7 +1838,7 @@ router.post('/business-workflows/:id/cancel', async (req: AuthRequest, res) => {
   const userId = requireUserId(req);
   if (!userId) return res.status(401).json({ error: 'Sign in required', code: 'UNAUTHORIZED' });
   try {
-    return res.json({ workflow: await cancelBusinessWorkflowRun(userId, String(req.params.id ?? '')) });
+    return res.json({ workflow: await cancelBusinessWorkflowRun(requireTenantContext(req.tenantContext), String(req.params.id ?? '')) });
   } catch {
     return res.status(409).json({ error: 'Workflow could not be cancelled.', code: 'BUSINESS_WORKFLOW_CANCEL_FAILED' });
   }
@@ -1948,7 +1949,7 @@ router.post(
     try {
       const result =
         await confirmBusinessAction(
-          userId,
+          requireTenantContext(req.tenantContext),
 
           String(
             req.params.id ??
@@ -1959,7 +1960,7 @@ router.post(
       let continuation: BusinessWorkflowProgress | null = null;
       let continuationNeedsAttention = false;
       try {
-        continuation = await resumeBusinessWorkflowAfterConfirmation(userId, result.confirmation.id, result.execution);
+        continuation = await resumeBusinessWorkflowAfterConfirmation(requireTenantContext(req.tenantContext), result.confirmation.id, result.execution);
       } catch {
         // The external action already succeeded. Never suggest retrying it.
         continuationNeedsAttention = true;
@@ -1974,7 +1975,7 @@ router.post(
             result.confirmation,
 
           response:
-            `Done — ${result.confirmation.summary}` +
+            `The provider reported completion: ${result.confirmation.summary}. Receipt ${result.confirmation.id}.` +
             (continuation ? `\n\n${businessWorkflowProgressMarkdown(continuation)}` : '') +
             (continuationNeedsAttention ? '\n\nThe external action completed, but Xroga could not advance the saved workflow. Check the workflow status before doing anything else.' : ''),
 
@@ -2050,7 +2051,7 @@ router.post(
       let workflowCancelNeedsAttention = false;
       if (confirmation.status === 'cancelled') {
         try {
-          await cancelBusinessWorkflowForConfirmation(userId, confirmation.id);
+          await cancelBusinessWorkflowForConfirmation(requireTenantContext(req.tenantContext), confirmation.id);
         } catch {
           workflowCancelNeedsAttention = true;
         }
@@ -2130,7 +2131,7 @@ router.get(
             ),
         },
       );
-    } catch {
+    } catch (error) {
       console.error(
         '[phase1/usage]',
         {
@@ -2141,7 +2142,7 @@ router.get(
 
       return res
         .status(
-          500,
+          (error as { code?: string })?.code === 'QUOTA_UNAVAILABLE' ? 503 : 500,
         )
         .json(
           {
@@ -2316,7 +2317,7 @@ router.get(
 
       res
         .status(
-          402,
+          error.code === 'QUOTA_UNAVAILABLE' ? 503 : 402,
         )
         .json(
           {

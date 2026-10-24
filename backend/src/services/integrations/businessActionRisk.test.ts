@@ -14,5 +14,21 @@ test('full access never bypasses confirmation for a crypto swap', () => {
   const plan = { useCase: 'Swap 1 ETH for USDT', toolSlug: 'EXCHANGE_SWAP', requiresConfirmation: true };
   assert.equal(requiresBusinessActionConfirmation({ permissionMode: 'full_access', plan, currentRisk: 'write' }), true);
   assert.equal(requiresBusinessActionConfirmation({ permissionMode: 'low_risk', plan, currentRisk: 'write' }), true);
-  assert.equal(requiresBusinessActionConfirmation({ permissionMode: 'full_access', plan: { useCase: 'Create an event', toolSlug: 'CALENDAR_CREATE_EVENT', requiresConfirmation: false }, currentRisk: 'write' }), false);
+  assert.equal(requiresBusinessActionConfirmation({ permissionMode: 'full_access', plan: { useCase: 'Create an event', toolSlug: 'CALENDAR_CREATE_EVENT', requiresConfirmation: false }, currentRisk: 'write' }), true);
+});
+
+test('permission preferences cannot waive a prepared approval or current consequential risk', () => {
+  for (const permissionMode of ['full_access', 'low_risk', 'read_only'] as const) {
+    for (const currentRisk of ['write', 'destructive', 'unknown'] as const) {
+      assert.equal(requiresBusinessActionConfirmation({ permissionMode, plan: {
+        useCase: 'Update an event', toolSlug: 'CALENDAR_UPDATE_EVENT', requiresConfirmation: false,
+      }, currentRisk }), true);
+    }
+    assert.equal(requiresBusinessActionConfirmation({ permissionMode, plan: {
+      useCase: 'Read an event', toolSlug: 'CALENDAR_GET_EVENT', requiresConfirmation: true,
+    }, currentRisk: 'read' }), true);
+  }
+  assert.equal(requiresBusinessActionConfirmation({ permissionMode: 'full_access', plan: {
+    useCase: 'Read an event', toolSlug: 'CALENDAR_GET_EVENT', requiresConfirmation: false,
+  }, currentRisk: 'read' }), false);
 });

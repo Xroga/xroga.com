@@ -1,0 +1,12 @@
+{
+  "result": "B1_P3_VERIFIED",
+  "criteria": 22,
+  "command008": "10/10_SOFTWARE_VERIFIED",
+  "command009": "12/12_SOFTWARE_VERIFIED",
+  "productionKms": "VERIFIED_MANAGED_PROVIDER_AND_CUTOVER",
+  "exitCode": 0,
+  "recordedAtUtc": "2026-10-24T20:48:19.5764320Z",
+  "sourceSha": "9fb905602455672784b7f26edc054bcc7cbeb7bf",
+  "evaluatorChanged": false,
+  "finalRestoredProductionVerified": true
+}

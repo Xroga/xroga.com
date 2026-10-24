@@ -29,6 +29,9 @@ test('an empty workspace cannot become a blank shell due to a saved hidden chatb
   assert.match(DOCK, /if \(isDashboard && emptyWorkspace && chatbarHidden\)/);
   assert.match(DOCK, /setChatbarHidden\(false\)/);
   assert.match(LAUNCHER, /disabled=\{emptyWorkspace\}/);
+  assert.match(LAUNCHER, /function toggleChatbar\(\)\s*\{\s*if \(emptyWorkspace\) return;/);
+  assert.match(LAUNCHER, /draftForExplicitHide\(snapshots/);
+  assert.match(LAUNCHER, /flushSync\(\(\) => setPrompt\(latestDraft\)\)/);
   assert.match(PROJECTS, /setWorkspaceOpen\(false\);[\s\S]*setChatbarHidden\(false\);[\s\S]*router\.push\('\/workspace'\)/);
 });
 
@@ -350,6 +353,8 @@ test('a conversation exposes one context-aware navigator that follows scroll pos
     /\.xv-conversation-navigator\.is-direction-down\s*\{[^}]*--xv-navigator-rotation:\s*180deg/,
   );
 
+  assert.match(DOCK, /aria-label=\{showJumpToLatest \? 'Scroll to latest' : 'Scroll to top'\}/);
+  assert.doesNotMatch(DOCK, /data-tooltip|data-short-tip/);
   assert.match(CSS, /\.xv-conversation-navigator,\s*\.xv-conversation-navigator:hover,\s*\.xv-conversation-navigator:active\s*\{[\s\S]*?border:\s*0\s*!important/);
   assert.doesNotMatch(DOCK, /data-tooltip=\{showJumpToLatest/);
   assert.doesNotMatch(DOCK, /xv-conversation-navigator__label/);
@@ -470,7 +475,7 @@ test('repository updates cannot resize or bounce the whole workspace dock', () =
 });
 
 
-test('the companion sits outside the composer while model identity stays beside the primary action', () => {
+test('the current composer keeps its compact model identity without the retired outside anchor', () => {
   assert.doesNotMatch(
     CSS,
     /\.xv-terminal-dock--idle \.xv-companion-composer-anchor/,
@@ -478,7 +483,7 @@ test('the companion sits outside the composer while model identity stays beside 
 
   assert.doesNotMatch(CHATBAR, /<CompanionComposerAnchor \/>/);
   assert.match(CHATBAR, /<BlackHoleVButton compact className="xv-companion-blackhole" \/>/);
-  assert.match(DOCK, /!incognito && !showStarterExperience \? <CompanionComposerAnchor \/> : null/);
+  assert.doesNotMatch(DOCK, /<CompanionComposerAnchor/);
 
   assert.match(
     CSS,
@@ -722,7 +727,8 @@ test('new terminal renders theme-aware readable cards without black-hole artwork
   assert.doesNotMatch(START, /cardImage|1536/);
   assert.doesNotMatch(DASHBOARD, /BetaExpectationBanner/);
   assert.match(START_CSS, /background-clip: text/);
-  assert.equal((START.match(/id: '/g) ?? []).length, 7);
+  assert.deepEqual([...START.matchAll(/id: '([^']+)'/g)].map(match => match[1]),
+    ['create', 'find', 'build', 'ship', 'workflows', 'scheduled-tasks', 'employees', 'work-packs', 'browser-automation', 'apps-mcp']);
   assert.match(START_CSS, /background: var\(--terminal-ui-surface\) !important/);
   assert.match(START_CSS, /color: var\(--foreground\)/);
   assert.match(START_CSS, /font: 12px\/1\.5/);
@@ -733,7 +739,10 @@ test('new terminal renders theme-aware readable cards without black-hole artwork
 
 test('starter cards preserve immediate local drafts and do not auto-submit', () => {
   assert.match(START, /composer\?\.value \?\? prompt/);
-  assert.match(START, /setPrompt\(!currentDraft\.trim\(\) \|\| isStarter \? text/);
+  assert.match(START, /setPrompt\(!currentDraft\.trim\(\) \|\| isStarter \? instruction : `\$\{currentDraft\.trimEnd\(\)\}\\n\\n\$\{instruction\}`\)/);
+  assert.match(START, /Ask for approval before publishing, making payments, sending messages, or changing external systems/);
+  assert.match(START, /Acceptance criteria: \$\{TASK_ACCEPTANCE\[label\]/);
+  assert.match(START, /Do not claim successful execution without evidence/);
   assert.match(START, /currentDraft\.trimEnd\(\)/);
   assert.match(START, /6000/);
   assert.match(START, /aria-haspopup="menu"/);
@@ -742,12 +751,13 @@ test('starter cards preserve immediate local drafts and do not auto-submit', () 
   assert.match(START, /preventScroll: true/);
 });
 
-test('new terminal styling and icons cannot leak into an existing conversation', () => {
+test('new terminal styling stays scoped while approved active composer controls retain parity', () => {
   assert.match(DOCK, /!sessionRestoring &&\s*messages\.length === 0 &&\s*!loading/);
   assert.match(DOCK, /showStarterExperience && !incognito && !dockSuppressed && startStyles.dock/);
   assert.match(DASHBOARD, /showNewTerminal && startStyles.window/);
-  assert.match(CHATBAR, /arrowSend=\{starter\}/);
-  assert.match(CHATBAR, /microphoneIcon=\{starter\}/);
+  assert.match(CHATBAR, /arrowSend=\{!incognito\}/);
+  assert.match(CHATBAR, /plusIcon=\{!incognito\}/);
+  assert.doesNotMatch(CHATBAR, /microphoneIcon=\{starter\}/);
   assert.match(CHATBAR, /setGithubOpen\(true\)/);
   assert.match(CHATBAR, /setIntegrationsOpen\(true\)/);
 });

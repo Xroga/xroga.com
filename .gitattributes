@@ -1,0 +1,2 @@
+# Preserve the exact authoritative source bytes for reproducible SHA-256 verification.
+docs/xroga/research/inputs/batch-one-report.txt -text

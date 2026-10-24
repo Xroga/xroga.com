@@ -1,0 +1,12 @@
+Xroga compatibility modification, 2026-10-15
+
+Upstream: Cline / @cline/core 0.0.82, https://github.com/cline/cline
+Copyright 2026 Cline Bot Inc. Apache License 2.0; included in LICENSE.
+License source pinned at repository commit 83ea9a41d11d733015adc63f47f7363098db2231.
+
+Xroga changes exactly one import in each of three hash-pinned compiled bundles:
+default simple-git factory import -> named simpleGit factory import.
+This admits simple-git 4.0.2 while preserving the installed Cline 0.0.82 runtime.
+All other runtime bytes, copyrights and upstream notices are retained.
+The changed files each carry a modification notice. No upstream endorsement is implied.
+The reproducible transform and original/installed hashes are in backend/scripts/cline-git-compat.mjs.

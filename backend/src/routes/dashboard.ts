@@ -11,6 +11,12 @@ import {
 
 const router = Router();
 
+export function ownedActivityProjectName(project: unknown, userId: string): string | undefined {
+  if (!project || typeof project !== 'object' || Array.isArray(project)) return undefined;
+  const row = project as Record<string, unknown>;
+  return row.user_id === userId && typeof row.name === 'string' ? row.name : undefined;
+}
+
 
 router.get('/platform-ready', (_req, res) => {
   res.json(
@@ -235,7 +241,7 @@ router.get('/summary', async (req: AuthRequest, res) => {
             'activity_logs',
           )
           .select(
-            'action, created_at, projects(name)',
+            'action, created_at, projects(name,user_id)',
           )
           .eq(
             'user_id',
@@ -263,13 +269,7 @@ router.get('/summary', async (req: AuthRequest, res) => {
               row.created_at,
 
             projectName:
-              (
-                row.projects as
-                  | {
-                      name?: string;
-                    }
-                  | null
-              )?.name,
+              ownedActivityProjectName(row.projects, userId),
           }),
         ) ??
         [];

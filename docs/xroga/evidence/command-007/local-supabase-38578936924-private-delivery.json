@@ -1,0 +1,12 @@
+{
+  "expectedRelease": "231dee9d101315d331991f6a5d0f9c0652930dd6",
+  "privateCookieDelivery": 200,
+  "crossTenantDenial": 404,
+  "signedOwnerAccess": 200,
+  "anonymousSignedAccess": 401,
+  "revokedLinkAccess": 404,
+  "renderedCopyAndRevoke": "PASS",
+  "productionTelemetryRequests": 0,
+  "realR2": "NOT_EXECUTED",
+  "observedAt": "2026-10-14T14:22:11.228Z"
+}

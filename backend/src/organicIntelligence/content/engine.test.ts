@@ -283,6 +283,22 @@ test('actual repository snapshot reuses Command 1, keeps missing data explicit, 
   assert.ok(snapshot.contentValidation.every((item) => item.issues.length === 0));
 });
 
+test('snapshot citation eligibility and reporting share the injected clock and reject expired claims', async () => {
+  // Synthetic clock fixture, independent of legitimate live claim re-verification.
+  // No repository source/claim dates or production freshness rules are changed.
+  const growthSource = await loadGrowthContentSource();
+  growthSource.sources = growthSource.sources.map(source => ({ ...source, verifiedAt: '2026-09-22T00:00:00.000Z' }));
+  growthSource.claims = growthSource.claims.map(claim => ({ ...claim, verifiedAt: '2026-09-22T00:00:00.000Z', nextVerificationDue: '2026-10-22T00:00:00.000Z' }));
+  const historical = await buildGrowthContentSnapshot({ growthSource, now: new Date('2026-09-22T00:00:00.000Z') });
+  assert.equal(historical.briefs.length, 2);
+  assert.ok(historical.contentValidation.every(item => item.issues.length === 0));
+  const expired = await buildGrowthContentSnapshot({ growthSource, now: new Date('2026-10-24T00:00:00.000Z') });
+  assert.deepEqual(expired.firstBatch, []);
+  assert.deepEqual(expired.briefs, []);
+  assert.equal(expired.contentValidation.length, historical.contentValidation.length);
+  assert.ok(expired.contentValidation.every(item => item.issues.some(issue => /Claim .* is stale\./.test(issue))));
+});
+
 test('validated demand evidence flows into the matching content brief without duplicates', async () => {
   const [command1Source, growthSource] = await Promise.all([loadSource(), loadGrowthContentSource()]);
   growthSource.keywordMetrics = [metric({

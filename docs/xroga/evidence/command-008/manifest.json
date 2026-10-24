@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "command": "008",
+  "scope": "SOFTWARE_EVIDENCE_NOT_PRODUCTION_OR_RELEASE_AUTHORIZATION",
+  "criteria": [
+    {"id":"XB01-C008-AC01","originalText":"One canonical authority API exists.","status":"SOFTWARE_VERIFIED","proof":{"path":"backend/src/security/authority/enforce.test.ts","marker":"canonical executor dispatches only an exact issued actor and durable adapter claim, once"}},
+    {"id":"XB01-C008-AC02","originalText":"businessAction consequential writes use it.","status":"SOFTWARE_VERIFIED","proof":{"path":"backend/src/security/businessAuthority.local.integration.ts","marker":"real canonical business confirmation claims once and persists exact dispatch and terminal receipts with a synthetic provider"}},
+    {"id":"XB01-C008-AC03","originalText":"operationsEngine high-risk operations use it or a documented compatibility adapter.","status":"SOFTWARE_VERIFIED","proof":{"path":"backend/src/operations/operationsProviderBudget.local.integration.ts","marker":"real Operations reservations bind current two-person authority and serialize the approved spend ceiling"}},
+    {"id":"XB01-C008-AC04","originalText":"Grant binds tenant, user, action, target and digest.","status":"SOFTWARE_VERIFIED","proof":{"path":"backend/src/security/authority/digest.test.ts","marker":"canonical authority digest binds exact nested payload without redaction or locale-dependent ordering"}},
+    {"id":"XB01-C008-AC05","originalText":"Replay tests pass.","status":"SOFTWARE_VERIFIED","proof":{"path":"backend/src/security/authority/enforce.test.ts","marker":"canonical executor dispatches only an exact issued actor and durable adapter claim, once"}},
+    {"id":"XB01-C008-AC06","originalText":"Mutation-after-confirmation tests pass.","status":"SOFTWARE_VERIFIED","proof":{"path":"backend/src/security/authority/enforce.test.ts","marker":"boolean, cloned, serialized, wrong-account and mutated-scope authorities never dispatch"}},
+    {"id":"XB01-C008-AC07","originalText":"Expiry/revocation tests pass.","status":"SOFTWARE_VERIFIED","proof":{"path":"backend/src/security/businessAuthority.local.integration.ts","marker":"real business dispatch rechecks expiry, cancellation and plan after lock waits and rolls admission back"}},
+    {"id":"XB01-C008-AC08","originalText":"Spend-bound tests pass.","status":"SOFTWARE_VERIFIED","proof":{"path":"backend/src/operations/operationsProviderBudget.local.integration.ts","marker":"serialize the approved spend ceiling"}},
+    {"id":"XB01-C008-AC09","originalText":"LLM text alone cannot create authority.","status":"SOFTWARE_VERIFIED","proof":{"path":"backend/src/security/authority/enforce.test.ts","marker":"boolean, cloned, serialized, wrong-account and mutated-scope authorities never dispatch"}},
+    {"id":"XB01-C008-AC10","originalText":"Every canonical consequential action class has a policy entry.","status":"SOFTWARE_VERIFIED","proof":{"path":"backend/src/security/authority/enforce.test.ts","marker":"all twelve server policies exist"}}
+  ],
+  "actionClasses": ["READ","CREATE","UPDATE","DELETE","SEND_COMMUNICATION","PUBLISH","PURCHASE_OR_SPEND","TRANSFER_OR_FINANCIAL","CREDENTIAL_OR_PERMISSION_CHANGE","SENSITIVE_DATA_EXPORT","EXTERNAL_UPLOAD","ADMINISTRATIVE_HIGH_RISK"],
+  "providerEvidence": "SYNTHETIC_PROVIDER_ONLY_NO_LIVE_EFFECT",
+  "productionEffects": false
+}

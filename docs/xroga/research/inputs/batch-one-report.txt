@@ -1,0 +1,2910 @@
+Xroga OS Batch One — Backend Foundation, Security, and Execution Truth
+Executive implementation decision
+Batch One should not attempt to bolt ten new feature systems onto Xroga. Its job is to make the existing platform trustworthy enough that the remaining ninety implementation commands can safely build on it.
+
+The live repository audit shows that Xroga already contains important primitives worth preserving: authenticated backend routing, Supabase integration, an existing migration mechanism, business-action planning and approval concepts, CI workflows, publishing services, and integration infrastructure. For example, backend authentication is already centralised through backend/src/middleware/auth.ts, and protected routes are mounted through that middleware in backend/src/index.ts. The repository also already contains Supabase administration/configuration and migration tooling rather than needing a new database layer.
+
+Likewise, Xroga should extend rather than discard its current authority model. operationsEngine.ts already contains digest-bound confirmation/approval concepts, while businessAction.ts already implements a prepared business-action plan and digest-based authorisation boundary.
+
+One area that deserves genuine replacement/hardening is credential persistence. The current oauthPkceStore.ts visibly persists OAuth credential material into database/storage fields; application-layer envelope encryption is not visible in that module. Batch One therefore replaces that persistence boundary while keeping the higher-level integration APIs compatible.
+
+The repository already contains numerous CI workflows, so the correct move is to consolidate and make them deterministic rather than create another independent CI universe. AGENTS.md also already exists and should be strengthened rather than replaced.
+
+The supplied Xroga source bundle identifies 119 feature/evidence requirements and the earlier implementation programme identifies 72 original missions. Batch One establishes the truth, security, reproducibility and acceptance infrastructure underneath all of those requirements.
+
+The shared ChatGPT URL was not independently retrievable in this research environment. Therefore Command 002 explicitly requires the coding agent to reconcile the supplied exported research bundle and mark any still-inaccessible share content as INACCESSIBLE_PENDING_EXPORT rather than inventing requirements.
+
+The architectural position for this batch is:
+
+Xroga subsystem	Batch One disposition	Reason
+Canonical task graph / execution runtime	KEEP + EXTEND later	No evidence justifies replacing it before benchmarking
+Existing Supabase persistence	KEEP + HARDEN	Real migration/config infrastructure already exists
+Existing authentication middleware	KEEP + EXTEND	Establish tenant context and ownership checks around it
+Existing business-action digest	KEEP + EXTEND	Good foundation for outcome-scoped authority
+Existing operations approval concepts	KEEP + UNIFY	Move to one authority contract
+Composio/tool integrations	KEEP + GATE	Put policy around tools rather than rebuild integrations
+Existing model/planning system	KEEP provisionally	Later benchmarks may justify replacement
+Existing OAuth credential persistence	REPLACE progressively	Introduce encrypted credential-vault boundary
+Ad-hoc direct external egress	DEPRECATE	Route through one egress/security decision layer
+Duplicate orchestrators	FORBID	New capabilities should enter canonical execution
+Placeholder UI routes	KEEP visible as known gaps	Later batches will implement them
+Fake/simulated completion	DEPRECATE completely	Provider state/evidence becomes authoritative
+Existing CI	KEEP + CONSOLIDATE	Deterministic build/test/security gates
+Existing publishing infrastructure	KEEP	Covered by later publishing commands
+Xroga Blocks/event/rich-result primitives	KEEP	Later frontend/output work should extend them
+
+Batch One contains exactly ten sequential commands. They are independent prompts: each tells the coding agent what it must rediscover and does not assume conversational memory.
+
+Batch dependency and completion map
+reproducible test foundation
+
+security journeys become executable
+
+tenant identity
+
+authority context
+
+credential classification
+
+001 Repository Truth Map
+
+002 Research → Requirements Ledger
+
+003 Deterministic Build + CI Baseline
+
+004 Deployment + Dependency Truth
+
+005 Golden Journey Acceptance Harness
+
+006 Engineering Operating Contract
+
+007 Tenant Isolation + RBAC Baseline
+
+008 Canonical Authority + Approval Contract
+
+009 Credential Vault + Rotation
+
+010 Tool/Data Egress + Untrusted Input Boundary
+
+
+
+Show code
+Command	Primary closure	Main committed output	Database	CI gate
+001	Stop coding against assumptions	Current-state truth map	None	Inventory drift
+002	Turn all prior research into traceable requirements	Requirements ledger	None	Ledger integrity
+003	Reproducible builds/tests	Canonical CI baseline	Migration validation only	Required
+004	Know exactly what runs where	Deployment/dependency topology	None	Runtime-config validation
+005	Convert product promises into executable journeys	Golden-journey suite	Fixtures only	Audit/golden suite
+006	Prevent architectural regression	Engineering contract	None	Mission-policy gate
+007	Stop cross-tenant access	Tenant security layer	Yes	Mandatory security tests
+008	Stop unauthorised consequential actions	Authority/approval layer	Likely yes	Mandatory authority tests
+009	Stop plaintext-style credential persistence	Credential vault	Yes	Mandatory secret/crypto tests
+010	Stop unsafe tool/network/data egress	Egress security gateway	Conditional	Mandatory adversarial tests
+
+The commands intentionally do not install every repository discovered in research. Some are implementation dependencies; others are reference designs or later-batch candidates. Adding twenty libraries merely because they were researched would increase attack surface and maintenance cost. Every repository is nevertheless accounted for in the repository register near the end of this report.
+
+Foundation and truth commands
+Command 001 — Build the authoritative current-state map before changing architecture
+
+text
+Copy
+COMMAND 001 — XROGA REPOSITORY TRUTH MAP AND ARCHITECTURE INVENTORY
+
+Mission:
+Create a reproducible, machine-readable and human-readable truth map of the CURRENT Xroga repository. Do not redesign Xroga in this command. Establish what really exists, what is reachable, what is partially implemented, what is placeholder-only, what is dead/unreachable, and what remains unverified.
+
+Repository:
+Xroga/xroga.com
+
+Core rule:
+Do not trust prior documentation, prior prompts, filenames, or architectural claims until they are verified against the checked-out repository. Record the actual HEAD SHA at execution time. Never hard-code the SHA from an earlier research session as current truth.
+
+GOAL
+Close the "we do not know exactly what we already have" problem so every following Xroga command can make evidence-based KEEP / EXTEND / REPLACE / DEPRECATE decisions.
+
+PRECONDITIONS
+1. Work from a clean checkout of the repository.
+2. Fetch the current default branch.
+3. Record:
+   - repository URL
+   - branch
+   - HEAD SHA
+   - working-tree state
+   - Node/package-manager versions discovered
+   - UTC timestamp
+4. Do not deploy anything.
+5. Do not modify production data.
+6. Do not reveal environment-variable values.
+7. If a path named below no longer exists, record it as ABSENT; do not silently create a substitute.
+
+EXACT PATHS TO INSPECT
+
+Repository/governance:
+- AGENTS.md
+- README.md
+- CONTRIBUTING.md
+- DEPLOY.md
+- ROUTING.md
+- SECURITY.md
+- SHIP_COMPLETENESS.md
+- OWNER_SETUP.md
+- package.json if present
+- backend/package.json
+- frontend/package.json
+- all package-manager lockfiles
+
+Deployment/configuration:
+- Dockerfile.api
+- Dockerfile.browser
+- fly.api.toml
+- fly.browser.toml
+- cloudbuild-run-job.yaml
+- cloudbuild-browser-worker.yaml
+- vercel.json
+- .vercel/project.json if tracked
+- .github/workflows/**
+- supabase/migrations/**
+
+Backend entry/security:
+- backend/src/index.ts
+- backend/src/middleware/auth.ts
+- backend/src/middleware/phase1Auth.ts
+- backend/src/config/supabase.ts
+- backend/src/config/jobQueues.ts
+
+Canonical AI/execution:
+- backend/src/ai/taskGraphRunner.ts
+- backend/src/ai/runReconciler.ts
+- backend/src/ai/universal/semanticRequestPlanner.ts
+
+Integrations/actions/storage:
+- backend/src/services/integrations/composioClient.ts
+- backend/src/services/integrations/businessAction.ts
+- backend/src/services/integrations/pluginPermissionPolicy.ts
+- backend/src/services/integrations/oauthPkceStore.ts
+- backend/src/services/storage/projectFiles.ts
+- backend/src/routes/billingWebhook.ts
+
+Publishing:
+- backend/src/services/publish/easCredentials.ts
+- discover and inventory every other file under backend/src/services/publish/**
+- discover all publishing routes
+
+Frontend primitives:
+- frontend/src/lib/xrogaBlocks.ts
+- frontend/src/lib/xrogaRichResults.ts
+- frontend/src/lib/xrogaEvent.ts
+- frontend/src/app/(shell)/dashboard/automations/page.tsx
+- frontend/src/app/(shell)/dashboard/library/page.tsx
+
+Also recursively discover:
+- every backend route
+- every route mount
+- every worker
+- every queue producer and consumer
+- every scheduled job
+- every database migration
+- every webhook
+- every external provider adapter
+- every credential/token store
+- every browser/sandbox service
+- every billing path
+- every file/object-storage path
+- every verification/evidence mechanism
+- every frontend API caller
+- every TODO/FIXME/stub/placeholder/mock that can reach production
+- every test suite and deliberately skipped test
+
+CLASSIFICATION TAXONOMY
+Every meaningful subsystem must receive exactly one primary state:
+- IMPLEMENTED_AND_REACHABLE
+- IMPLEMENTED_BUT_UNVERIFIED
+- PARTIAL
+- PLACEHOLDER
+- DEAD_OR_UNREACHABLE
+- PROPOSED_ONLY
+- UNKNOWN_BLOCKED
+
+For each item record:
+- stable ID
+- subsystem
+- source path
+- key symbols/functions
+- entry point
+- caller
+- persistence dependency
+- external provider dependency
+- auth boundary
+- tenant boundary
+- approval boundary
+- cost boundary
+- evidence/completion boundary
+- test coverage
+- state
+- confidence
+- reason
+- known risk
+- recommended disposition
+
+DO NOT infer reachability from filename alone.
+Trace imports, route mounts, worker registration, queue producers/consumers and frontend callers.
+
+KEEP / EXTEND / REPLACE / DEPRECATE DECISION
+
+KEEP unless evidence contradicts:
+- current canonical task graph
+- current run reconciliation concepts
+- existing auth middleware
+- current Supabase stack
+- existing Composio integration
+- existing businessAction digest logic
+- existing Xroga Blocks/event/rich-result primitives
+- existing publishing adapters
+
+EXTEND:
+- truth/evidence instrumentation
+- route and worker inventory
+- test metadata
+- deployment metadata
+
+REPLACE:
+- nothing in this command; evidence collection only
+
+DEPRECATE:
+- nothing solely because it looks old
+- mark duplicate/unreachable systems as CANDIDATE_FOR_DEPRECATION, but do not delete
+
+MISSION TASKS
+
+A. Establish repository identity
+- Capture current branch and HEAD.
+- Verify clean/dirty state.
+- Detect package managers and lockfiles.
+- Detect runtime version declarations.
+
+B. Produce a structural inventory
+- Generate a deterministic file/symbol inventory for the important system surfaces.
+- Prefer AST/import-aware analysis where practical over grep-only heuristics.
+- Enumerate Express/router mounts from backend/src/index.ts and nested routers.
+- Enumerate queue names, producers, consumers and schedulers.
+- Enumerate all Supabase migrations in chronological order.
+- Enumerate deployment manifests and workflows.
+
+C. Produce call-path maps
+At minimum trace:
+1. authenticated chat request
+2. task-plan creation
+3. task execution
+4. business integration action
+5. file persistence
+6. webhook handling
+7. publishing request
+8. frontend event/result rendering
+
+D. Find competing/duplicate architecture
+Search for:
+- a second orchestrator
+- a second scheduler
+- alternative approval systems
+- parallel cost ledgers
+- parallel credential stores
+- multiple definitions of "completed"
+- multiple tenant identity concepts
+- duplicate browser execution layers
+
+Do not consolidate them yet. Record them.
+
+E. Find production-facing placeholders
+Identify UI or API paths which present as usable but contain:
+- mock data
+- static success
+- TODO implementation
+- simulated provider success
+- hard-coded state
+- disabled server operation
+- unverified completion
+
+F. Create outputs
+
+CREATE:
+- docs/xroga/current-state.md
+- docs/xroga/current-state.json
+- docs/xroga/current-state-schema.json
+- docs/xroga/current-call-paths.md
+- docs/xroga/blockers.md
+- scripts/xroga/inventory.mjs
+- docs/xroga/evidence/command-001/summary.md
+- docs/xroga/evidence/command-001/manifest.json
+
+Do not overwrite unrelated existing documentation.
+
+DATABASE
+No schema migration in this command.
+
+CI
+Inspect existing workflows before adding another workflow.
+If there is no equivalent inventory validation:
+- create .github/workflows/xroga-inventory-check.yml
+Otherwise:
+- extend the closest existing workflow instead.
+
+CI must:
+1. run scripts/xroga/inventory.mjs
+2. validate current-state.json against current-state-schema.json
+3. fail if known entry points disappear without inventory update
+4. fail on duplicate IDs
+5. fail if inventory generation is non-deterministic
+6. never require production secrets
+
+POSITIVE TESTS
+- A known backend route appears in the generated route inventory.
+- A known worker/queue appears if present.
+- Supabase migrations are ordered and counted.
+- businessAction appears under integration/action boundaries.
+- frontend Xroga result primitives appear in UI inventory.
+- generated output is identical on two executions against the same SHA.
+
+NEGATIVE TESTS
+- Inject a temporary fixture representing an unmounted route: classifier must not call it reachable.
+- Inject duplicate inventory IDs: validator must fail.
+- Remove a required field from a fixture: schema validation must fail.
+- A path that does not exist must be ABSENT, not silently omitted.
+- A simulated-success fixture must be labelled PLACEHOLDER/PARTIAL, not IMPLEMENTED_AND_REACHABLE.
+
+ROLLBACK / SAFETY
+- This is a documentation/inventory command.
+- Do not make DB changes.
+- Do not deploy.
+- Do not rotate secrets.
+- Do not delete code.
+- Reverting this command must require only reverting generated inventory/docs/CI additions.
+- Never commit environment values, access tokens, connection strings or customer content.
+
+ACCEPTANCE CRITERIA
+1. 100% of backend route mounts are represented.
+2. 100% of discovered queues have producer/consumer status recorded.
+3. 100% of migrations are listed in order.
+4. Every named subsystem above is represented or explicitly ABSENT.
+5. Every production-facing TODO/mock/placeholder found by the audit is classified.
+6. There are zero duplicate inventory IDs.
+7. Re-running inventory against the same SHA creates no diff.
+8. current-state.md names the exact SHA it describes.
+9. UNKNOWN_BLOCKED entries each contain a reason and next evidence needed.
+10. No architecture replacement occurs in this command.
+
+EXACT EVIDENCE TO PRODUCE
+docs/xroga/evidence/command-001/summary.md must include:
+- repository SHA
+- commands executed
+- inventory counts
+- route count
+- queue count
+- migration count
+- workflow count
+- test count
+- placeholder count
+- duplicate-system candidates
+- failed checks, if any
+- changed file list
+- final PASS / PASS_WITH_BLOCKERS / FAIL assessment
+
+manifest.json must contain the same key counts in machine-readable form.
+
+STOP CONDITION
+Do not claim this mission complete merely because the files exist.
+Completion requires deterministic regeneration and all acceptance checks.
+This command is grounded in the live Xroga repository rather than a theoretical greenfield architecture; the repository already contains Supabase, authentication and CI surfaces that should be inventoried before replacement decisions are made.
+
+Command 002 — Reconcile all Xroga research, repos and feature discoveries into one requirements ledger
+
+text
+Copy
+COMMAND 002 — XROGA RESEARCH-TO-CODE REQUIREMENTS RECONCILIATION
+
+Mission:
+Turn every supplied Xroga research artefact, feature-discovery row, GitHub repository candidate and architecture decision into ONE canonical requirements ledger tied to real repository evidence.
+
+This command does not implement the product features themselves. It eliminates lost ideas, duplicate ideas, contradictory research and "we forgot that feature" failure.
+
+REPOSITORY:
+Xroga/xroga.com
+
+GOAL
+Create a traceability system where every discovered Xroga capability can be answered with:
+- what is it?
+- why do we need it?
+- where did it come from?
+- do we already have it?
+- what code currently supports it?
+- should we keep/extend/replace/deprecate?
+- which later implementation command owns it?
+- how will we prove it works?
+
+PRECONDITIONS
+1. Read Command 001 outputs if present:
+   - docs/xroga/current-state.md
+   - docs/xroga/current-state.json
+2. If they are missing, perform enough read-only repository discovery to avoid inventing paths, and mark COMMAND_001_OUTPUT_MISSING.
+3. Locate the supplied research artefacts if they are available to the coding environment.
+
+EXPECTED SUPPLIED RESEARCH ARTEFACTS
+- Xroga_OS_Complete_Codex_Source_Bundle_2026-10-13.zip
+- Xroga_OS_72_Codex_Missions_Full_Implementation_2026-10-13.md
+- Xroga_OS_Feature_Coverage_119_Items_2026-10-13.csv
+- Xroga_OS_Codex_72_Command_Manifest_2026-10-13.json
+- Xroga_OS_Final_Engineering_Research_2026-10-12.md
+- Xroga_GitHub_Research_Catalog_2026-10-12.json
+
+Also record this historical shared-chat source:
+https://chatgpt.com/share/6acd319b-8244-83ec-ae3f-dfe13f414569
+
+IMPORTANT:
+If the shared ChatGPT page cannot actually be retrieved, DO NOT claim its complete contents were analysed.
+Record it as:
+INACCESSIBLE_PENDING_EXPORT
+and rely only on supplied exported material that can be read directly.
+
+SOURCE INTEGRITY
+For every local research input:
+- calculate SHA-256
+- record filename
+- byte size
+- modified timestamp if available
+- parse status
+- document/category type
+- whether it is authoritative, advisory or historical
+
+EXACT REPOSITORY PATHS TO INSPECT
+Use Command 001 truth map first, then inspect at minimum:
+- docs/**
+- AGENTS.md
+- README.md
+- SECURITY.md
+- SHIP_COMPLETENESS.md
+- backend/src/ai/**
+- backend/src/services/integrations/**
+- backend/src/services/publish/**
+- backend/src/services/storage/**
+- backend/src/routes/**
+- frontend/src/lib/**
+- frontend/src/app/(shell)/dashboard/**
+- supabase/migrations/**
+- .github/workflows/**
+
+CREATE
+- docs/xroga/research/source-manifest.json
+- docs/xroga/research/source-reconciliation.md
+- docs/xroga/requirements-ledger.md
+- docs/xroga/requirements-ledger.json
+- docs/xroga/requirements-ledger.schema.json
+- docs/xroga/feature-coverage.csv
+- docs/xroga/repository-candidate-register.md
+- scripts/xroga/validate-requirements-ledger.mjs
+- docs/xroga/evidence/command-002/summary.md
+- docs/xroga/evidence/command-002/manifest.json
+
+REQUIREMENT RECORD SCHEMA
+Every canonical requirement must include:
+- requirement_id
+- title
+- description
+- user_need
+- source_refs[]
+- feature_category
+- backend/frontend/infrastructure/security classification
+- current_state
+- current_paths[]
+- implementation_owner_command
+- priority
+- dependencies[]
+- provider_dependencies[]
+- security_implications[]
+- data_implications[]
+- authority_implications[]
+- cost_implications[]
+- verification_method
+- acceptance_criteria[]
+- external_repo_candidates[]
+- disposition: KEEP | EXTEND | REPLACE | DEPRECATE | NEW
+- rationale
+- confidence
+- unresolved_questions[]
+
+Use stable IDs.
+Do not make IDs dependent on row ordering.
+
+RECONCILIATION RULES
+1. Semantically duplicate ideas become one canonical requirement with multiple source references.
+2. Related but independently testable capabilities remain separate.
+3. Contradictory requirements must not be silently merged.
+4. Record contradiction and chosen resolution.
+5. Any requirement described as implemented must point to current repository evidence.
+6. "We researched a GitHub repository" does not mean "install it".
+7. Every candidate dependency needs:
+   - purpose
+   - licence
+   - maintenance status
+   - integration surface
+   - build-vs-buy recommendation
+   - dependency risk
+   - whether to vendor, integrate, reference, or reject
+
+MANDATORY CAPABILITY FAMILIES
+Ensure the ledger covers, rather than loses, all discovered families including:
+- repository truth
+- research traceability
+- deterministic CI
+- deployment dependencies
+- golden journeys
+- engineering rules
+- tenant isolation
+- authority/approval
+- credentials
+- egress security
+- canonical durable execution
+- schedulers
+- cost/budget
+- provenance/evidence
+- webhook replay/idempotency
+- long-running work
+- multi-intent requests
+- user intent/relevance
+- Composio/dynamic tools
+- browser execution
+- GitHub coding
+- sandboxes
+- activity feeds
+- Xroga Blocks
+- rich AI UI
+- products/flights/hotels/maps/cards/results
+- file uploads
+- workflow/work packs
+- Activepieces
+- AI Employees
+- app/site creation
+- deployment
+- Android/iOS publishing
+- paid managed publishing
+- billing
+- web research/citations
+- SEO
+- Drive/docs/slides/sheets
+- security
+- observability
+- verification
+- recovery
+- completion semantics
+
+EXTERNAL REPOSITORY CANDIDATES THAT MUST APPEAR
+Do not skip any:
+- Activepieces
+- Playwright
+- Expo EAS CLI
+- Fastlane
+- Iconify
+- json-render
+- assistant-ui/tool-ui
+- LLMCompiler
+- AppWorld
+- MCPMark
+- Schemathesis
+- Pact JS
+- Testcontainers
+- Toxiproxy
+- Uppy
+- Motion
+- Monaco Editor
+- MapLibre GL JS
+- OpenFGA
+- Open Policy Agent
+- ToolHive
+- Snyk Agent Scan
+- Trivy
+
+For assistant-ui/tool-ui explicitly note archival/maintenance state.
+Do not make it a new critical runtime dependency without an explicit justification.
+
+KEEP
+- Existing systems which satisfy the requirement and pass evidence review.
+
+EXTEND
+- Existing systems that are structurally sound but incomplete.
+
+REPLACE
+Only where:
+- security defect exists,
+- architectural duplication exists,
+- measurable acceptance test fails,
+- maintenance/licensing makes current implementation unsuitable,
+- or later benchmarking demonstrates materially superior architecture.
+
+DEPRECATE
+- unreachable duplicate systems
+- fake/simulated production completion
+- redundant planners/orchestrators if proven redundant
+- undocumented one-off provider execution paths
+
+Do not delete them in this command.
+
+MISSION TASKS
+
+A. Parse supplied materials.
+B. Hash source materials.
+C. Import all source feature rows.
+D. Canonicalise duplicate concepts.
+E. Link each requirement to current-state repository evidence.
+F. Map each of the existing 119 feature/evidence rows to a canonical requirement or explicit alias.
+G. Map the 72 prior missions to requirements.
+H. Assign later command ownership.
+I. Record external repository candidates.
+J. Identify requirements with no current implementation.
+K. Identify code with no surviving product requirement.
+L. Identify contradictory recommendations.
+M. Record the resolution or unresolved state.
+N. Produce a coverage report.
+
+DATABASE
+No database migration.
+
+CI
+Add ledger validation to an existing documentation/verification workflow where practical.
+If no suitable workflow exists, create:
+.github/workflows/xroga-requirements-ledger.yml
+
+The validator must fail on:
+- duplicate requirement IDs
+- malformed requirement records
+- unknown disposition values
+- source reference to an unknown source manifest entry
+- implemented status with zero repository evidence
+- later command owner missing for NEW/EXTEND/REPLACE requirements
+- an imported source feature row with no canonical mapping
+
+POSITIVE TESTS
+- Every imported feature row resolves to exactly one canonical requirement or explicit alias.
+- Duplicate source descriptions can point to one requirement.
+- A requirement with multiple sources retains all source refs.
+- Existing code path can be linked as evidence.
+
+NEGATIVE TESTS
+- Duplicate requirement ID -> fail.
+- Missing source hash -> fail.
+- "Implemented" without repository path/evidence -> fail.
+- Unknown source -> fail.
+- External repo silently marked adopted without decision -> fail.
+- Inaccessible shared URL marked fully analysed -> fail validation/manual review.
+
+ROLLBACK / SAFETY
+- Documentation and validation only.
+- Do not change production behaviour.
+- Do not add all candidate dependencies.
+- Do not delete current architecture.
+- Do not treat research suggestions as requirements without traceability.
+
+ACCEPTANCE CRITERIA
+1. Every row from the supplied 119-item feature-coverage file is mapped.
+2. Every prior mission in the supplied 72-mission manifest is mapped.
+3. Every external repository listed above appears in the candidate register.
+4. All local source artefacts have SHA-256 hashes.
+5. No canonical requirement has an ambiguous state.
+6. No IMPLEMENTED requirement lacks repository evidence.
+7. No inaccessible source is represented as read.
+8. Every NEW/EXTEND/REPLACE requirement has an implementation command owner.
+9. Requirements-ledger JSON validates deterministically.
+10. Re-running the converter causes zero semantic diff.
+
+EXACT EVIDENCE
+docs/xroga/evidence/command-002/summary.md:
+- number of sources ingested
+- inaccessible sources
+- raw feature rows
+- canonical requirements
+- aliases/deduplications
+- contradictions
+- implemented
+- partial
+- missing/new
+- keep
+- extend
+- replace
+- deprecate
+- external repositories registered
+- unowned requirements (must be zero at acceptance)
+- test results
+- final status
+
+STOP CONDITION
+Do not say "all Xroga research is covered" unless the ledger validator proves every available source row is represented and inaccessible sources are honestly labelled.
+This command is intentionally conservative about third-party adoption. For example, Activepieces provides a substantial automation platform under a mixed licensing structure—its community portion is MIT while some enterprise/cloud functionality is commercially licensed—so it should be evaluated as an integration/reference, not blindly copied into Xroga. 
+
+Command 003 — Make every future Xroga change reproducibly buildable and testable
+
+text
+Copy
+COMMAND 003 — DETERMINISTIC BUILD, TEST, MIGRATION AND CI BASELINE
+
+Mission:
+Turn Xroga's existing build/test workflows into one reproducible engineering gate so future commands cannot "complete" while the repository is broken, environment-dependent or silently skipping important tests.
+
+GOAL
+A fresh clean checkout at one repository SHA must be able to install, type-check, build and run deterministic non-production tests with documented commands.
+
+PRECONDITIONS
+- Read docs/xroga/current-state.json if available.
+- Read docs/xroga/requirements-ledger.json if available.
+- Inspect actual package managers before changing anything.
+- Do not migrate package managers just for preference.
+- Do not upgrade every dependency in this command.
+- Do not introduce a monorepo framework unless the repo already requires one.
+
+EXACT PATHS TO INSPECT
+- package.json if present
+- backend/package.json
+- frontend/package.json
+- every lockfile
+- tsconfig*.json throughout repository
+- backend test configuration
+- frontend test configuration
+- Playwright configuration if present
+- .github/workflows/unit-tests.yml
+- .github/workflows/api-build-check.yml
+- .github/workflows/vercel-build-check.yml
+- .github/workflows/backend-health-verification.yml
+- .github/workflows/supabase-migrate.yml
+- .github/workflows/launch-production-verification.yml
+- all remaining .github/workflows/**
+- Dockerfile.api
+- Dockerfile.browser
+- supabase/migrations/**
+- scripts/** build/test/migration scripts
+
+CREATE OR MODIFY
+Create only if an equivalent does not already exist:
+- .node-version or the repository's chosen canonical runtime-version file
+- scripts/ci/verify-toolchain.mjs
+- scripts/ci/run-baseline.mjs
+- scripts/ci/check-test-skips.mjs
+- scripts/ci/check-lockfile-integrity.mjs
+- tests/ci/known-skips.json
+- docs/xroga/ci-baseline.md
+- docs/xroga/test-strategy.md
+- docs/xroga/evidence/command-003/summary.md
+- docs/xroga/evidence/command-003/manifest.json
+
+Modify existing CI workflows instead of creating duplicate ones wherever reasonable.
+
+KEEP
+- current package manager if healthy
+- existing lockfile
+- existing tests
+- existing workflow responsibilities that remain valid
+- Supabase migration mechanism
+- existing API/frontend build commands
+
+EXTEND
+- deterministic runtime setup
+- type checking
+- lockfile enforcement
+- migration syntax/ordering checks
+- test skip governance
+- artefact retention
+- cache correctness
+- CI summaries
+
+REPLACE
+- floating/unpinned runtime assumptions
+- duplicated contradictory install procedures
+- non-deterministic dependency installation
+
+DEPRECATE
+- package installation without lockfile enforcement
+- CI jobs that silently ignore a build/test failure
+- accidental .only tests
+- unexplained permanent skips
+
+TASKS
+
+A. Determine canonical toolchain.
+Record:
+- Node version
+- package manager
+- package-manager version
+- TypeScript versions
+- test runners
+- build tools
+
+Do not guess versions.
+Use what repository dependencies actually support.
+
+B. Normalise deterministic dependency installation.
+- CI must use frozen/immutable lockfile semantics.
+- No CI step should silently rewrite lockfiles.
+- Fail when package manifest and lockfile disagree.
+
+C. Define canonical baseline command.
+scripts/ci/run-baseline.mjs must orchestrate, as applicable:
+1. toolchain verification
+2. dependency-state verification
+3. backend typecheck
+4. backend build
+5. backend unit tests
+6. frontend typecheck
+7. frontend build
+8. frontend unit tests
+9. migration validation
+10. static checks already required by repository
+
+It must propagate non-zero failures.
+
+D. Audit test skips.
+- Detect .only/focus constructs.
+- Detect .skip/xit/etc.
+- Fail on .only.
+- Require intentional long-term skips to exist in tests/ci/known-skips.json with:
+  owner, reason, issue/command, expiration or review date.
+- Do not hide currently failing tests by adding them to the allowlist.
+
+E. Migration checks.
+Without touching production:
+- validate migration filenames/order
+- detect duplicate migration identifiers
+- execute migration parser or local DB migration test where supported
+- ensure new CI can eventually use isolated Postgres/Supabase-compatible test infrastructure
+
+F. CI concurrency/caching.
+- Prevent stale cache from substituting for build outputs.
+- Key dependency caches to lockfile.
+- Use concurrency cancellation where safe.
+- Preserve deployment workflows separately from verification workflows.
+
+G. Reproducible evidence.
+CI must upload test/build summaries as artefacts.
+Never upload secrets or .env contents.
+
+EXTERNAL REFERENCES TO CONSULT
+- Schemathesis for later API contract fuzzing
+- Pact JS for provider/consumer contract-test concepts
+- Testcontainers for disposable integration dependencies
+- Toxiproxy for deterministic network-failure testing
+
+Do not install them all automatically.
+Adopt only where the current test architecture benefits.
+
+DATABASE
+Do not add product tables.
+CI may instantiate a disposable database.
+Production/staging databases must not be mutated.
+
+CI CHANGES
+Prefer extending:
+- unit-tests.yml
+- api-build-check.yml
+- vercel-build-check.yml
+- supabase-migrate.yml
+
+Only create xroga-baseline.yml if no existing workflow can provide a single aggregate required check.
+
+The final PR must identify the required branch-protection check name.
+
+POSITIVE TESTS
+- clean checkout + frozen install succeeds
+- backend typecheck succeeds
+- backend build succeeds
+- frontend typecheck succeeds
+- frontend build succeeds
+- unit suites run
+- migration validator succeeds
+- two clean runs use identical dependency graph/lockfile
+- known intentional test skips are reported
+
+NEGATIVE TESTS
+In isolated fixtures or temporary branches:
+- alter package.json without lockfile -> fail
+- introduce test.only -> fail
+- introduce unregistered test.skip -> fail
+- duplicate migration ID -> fail
+- force type error -> baseline command fails
+- force failing unit test -> baseline command fails
+- missing required runtime version -> toolchain verifier fails
+
+Do not leave intentionally broken fixtures in production source paths.
+
+ROLLBACK / SAFETY
+- No production deploy.
+- No live DB migration.
+- Do not mass-upgrade dependencies.
+- Preserve currently working deployment workflows.
+- Any workflow consolidation must maintain an easy git revert.
+- Do not remove old workflow until replacement has run successfully on the same branch/PR.
+
+ACCEPTANCE CRITERIA
+1. One documented baseline command exists.
+2. It returns non-zero on any mandatory build/test failure.
+3. Frozen dependency install is enforced.
+4. Runtime version is explicit.
+5. Accidental focused tests are blocked.
+6. New unexplained skipped tests are blocked.
+7. Migration identifiers/order are validated.
+8. Backend and frontend both build in CI.
+9. CI can run without production credentials.
+10. The same clean checkout can execute the baseline twice without source-tree mutation.
+
+EXACT EVIDENCE
+docs/xroga/evidence/command-003/summary.md:
+- exact runtime/toolchain
+- exact package manager
+- baseline command
+- build results
+- test suite counts
+- skip counts
+- migration count/result
+- workflow files changed
+- CI check names
+- known remaining non-determinism
+- final PASS/FAIL
+
+manifest.json:
+- SHA
+- runtime versions
+- lockfile hashes
+- suite names
+- test counts
+- result codes
+
+STOP CONDITION
+Do not proceed as successful while CI depends on hidden developer-machine state or production credentials.
+The repository already has several CI workflows, so this command consolidates evidence rather than starting from zero. Schemathesis, Testcontainers and Toxiproxy are relevant references for later contract, integration and failure testing rather than reasons to rewrite Xroga’s current test framework. Schemathesis is MIT-licensed, Testcontainers for Node is MIT-licensed, and Toxiproxy is MIT-licensed. 
+
+Command 004 — Establish the real production topology and dependency contract
+
+text
+Copy
+COMMAND 004 — DEPLOYMENT, RUNTIME AND EXTERNAL DEPENDENCY TRUTH
+
+Mission:
+Document and mechanically validate Xroga's real deployment topology. Distinguish ACTIVE, CONFIGURED_BUT_UNVERIFIED, LEGACY, LOCAL_ONLY and PROPOSED infrastructure.
+
+GOAL
+No later command should guess whether a component runs in Vercel, Fly, Cloud Run/Jobs, Cloudflare/R2, Supabase, Redis or another service.
+
+PRECONDITIONS
+- Command 001 truth map should exist.
+- Command 003 baseline should pass or all failures must be documented.
+- This is a read/config validation command.
+- Do not redeploy production.
+- Do not expose secret values.
+
+EXACT PATHS TO INSPECT
+- DEPLOY.md
+- ROUTING.md
+- OWNER_SETUP.md
+- README.md
+- Dockerfile.api
+- Dockerfile.browser
+- fly.api.toml
+- fly.browser.toml
+- cloudbuild-run-job.yaml
+- cloudbuild-browser-worker.yaml
+- vercel.json
+- .vercel/project.json if tracked
+- .github/workflows/fly-deploy.yml
+- .github/workflows/supabase-migrate.yml
+- .github/workflows/vercel-build-check.yml
+- .github/workflows/launch-production-verification.yml
+- every deployment workflow discovered in Command 001
+- backend/src/config/jobQueues.ts
+- backend/src/config/supabase.ts
+- backend/src/lib/r2.ts if present
+- backend/src/services/storage/projectFiles.ts
+- frontend/src/lib/supabase/config.ts
+- frontend/src/lib/supabase/server.ts
+- frontend/src/lib/supabase/client.ts
+- all environment readers under backend/src/**
+- all environment readers under frontend/src/**
+
+DISCOVER
+- public frontend hostname(s)
+- API hostname(s)
+- browser worker hostname(s)
+- queue/Redis provider
+- Supabase project/environment identities
+- object storage buckets
+- worker/job services
+- DNS ownership
+- webhook callback URLs
+- OAuth redirect origins
+- publishing callback/deployment dependencies
+- region assumptions
+- service-to-service authentication
+- health endpoints
+- required secrets by NAME only
+
+CREATE
+- docs/xroga/deployment-topology.md
+- docs/xroga/deployment-topology.mmd
+- docs/xroga/runtime-contract.md
+- docs/xroga/dependency-inventory.json
+- docs/xroga/dependency-inventory.schema.json
+- docs/xroga/secret-inventory.md
+- scripts/xroga/check-runtime-config.mjs
+- docs/xroga/evidence/command-004/summary.md
+- docs/xroga/evidence/command-004/manifest.json
+
+OPTIONAL MODIFY
+- backend/src/config/runtimeContract.ts
+only if runtime configuration is currently fragmented and a typed central contract can be introduced without changing runtime semantics.
+
+DEPENDENCY INVENTORY FIELDS
+For each service:
+- dependency_id
+- provider
+- purpose
+- environment
+- state
+- runtime owner
+- repository config source
+- hostname/resource ID when safe to record
+- region
+- auth mechanism
+- secret names
+- inbound callers
+- outbound dependencies
+- health/readiness mechanism
+- timeout
+- retry policy
+- idempotency expectation
+- data classification
+- failure mode
+- fallback behaviour
+- observability source
+- production verification status
+
+SECRET INVENTORY
+Record ONLY:
+- environment variable name
+- consuming source paths
+- environment(s)
+- secret class
+- rotation owner
+- required/optional
+- startup validation status
+
+Never record values.
+
+KEEP
+- deployment providers actually in use
+- existing working manifests
+- current queue/storage/database providers where verified
+
+EXTEND
+- runtime configuration validation
+- service health checks
+- dependency ownership
+- secret-name inventory
+- deployment evidence
+
+REPLACE
+Nothing solely because another provider is fashionable.
+
+DEPRECATE
+- stale manifests proven unused
+- conflicting documentation
+- fallback-to-local behaviour that can accidentally activate in production
+But only mark as deprecated; actual removal can be a separate scoped change if risky.
+
+TASKS
+
+A. Trace frontend -> API routing.
+B. Trace API -> queues/workers.
+C. Trace API/worker -> Supabase.
+D. Trace API/worker -> R2/object storage.
+E. Trace browser execution.
+F. Trace provider callbacks/webhooks.
+G. Trace deployment workflows to manifests.
+H. Compare docs with code.
+I. Label every discovered dependency state.
+J. Find production code with silent local/in-memory fallback.
+K. Find configuration values duplicated in code and deployment manifests.
+L. Find missing health/readiness checks.
+M. Generate Mermaid topology from inventory.
+N. Build runtime configuration validator.
+
+DATABASE
+No schema migration.
+
+CI
+Run scripts/xroga/check-runtime-config.mjs.
+
+It must:
+- validate schema
+- ensure every required env NAME is documented
+- detect duplicate/conflicting public host configuration
+- reject committed secret values
+- detect clearly unsafe production defaults
+- ensure deployment manifests refer to supported runtime/build outputs
+- not require actual production secret values on PRs
+
+POSITIVE TESTS
+- production API config resolves to one documented service definition.
+- queue config maps to one dependency record.
+- Supabase config maps to one dependency record.
+- storage configuration maps to one dependency record.
+- every env reader is represented in secret/runtime inventory.
+
+NEGATIVE TESTS
+- undocumented env key fixture -> fail
+- plaintext credential-like value in inventory -> fail
+- production URL using localhost fixture -> fail
+- duplicate dependency ID -> fail
+- conflicting hostname definitions -> fail
+- production fallback to ephemeral memory must be reported as high risk
+
+ROLLBACK / SAFETY
+- Do not deploy.
+- Do not edit DNS.
+- Do not rotate secrets.
+- Do not migrate providers.
+- Do not remove a deployment manifest unless its non-use is proven and removal is separately tested.
+- Redact account IDs if they are sensitive.
+
+ACCEPTANCE CRITERIA
+1. Every active deployment manifest appears in inventory.
+2. Every external infrastructure dependency used by application code is represented.
+3. Every environment variable consumed by production code is classified by name.
+4. No secret values appear in committed outputs.
+5. Actual vs proposed infrastructure is explicitly separated.
+6. Every service has a health/readiness strategy or an explicit gap.
+7. Every production fallback to memory/local disk is identified.
+8. Runtime validator runs in CI.
+9. Topology diagram is generated from or checked against inventory.
+10. Documentation names the source SHA.
+
+EXACT EVIDENCE
+summary.md:
+- services discovered
+- active providers
+- unverified providers
+- legacy candidates
+- secret-name count
+- fallback risks
+- missing health checks
+- docs/code contradictions
+- test results
+- final result
+
+manifest.json:
+- SHA
+- inventory hash
+- service count
+- dependency count
+- secret-name count
+- risk counts
+
+STOP CONDITION
+Do not label a service "production active" based only on a checked-in manifest. Require deployment evidence or mark CONFIGURED_BUT_UNVERIFIED.
+Command 005 — Turn Xroga’s promises into reproducible golden journeys
+
+text
+Copy
+COMMAND 005 — END-TO-END GOLDEN USER JOURNEY AND ACCEPTANCE HARNESS
+
+Mission:
+Create the canonical acceptance harness for Xroga. Define end-to-end journeys from user intent through backend planning/execution to verified outcome and UI evidence.
+
+This command establishes the tests/contracts. It is NOT allowed to fake currently missing features merely to make every journey green.
+
+GOAL
+Every later feature command must be able to prove it improved a real user journey instead of only passing isolated unit tests.
+
+PRECONDITIONS
+- Use the current-state map.
+- Use requirements-ledger when available.
+- Use deterministic CI baseline.
+- Identify existing frontend/backend test frameworks before creating another framework.
+
+EXACT PATHS TO INSPECT
+- frontend/package.json
+- backend/package.json
+- existing Playwright configs/specs
+- frontend/src/app/**
+- frontend/src/lib/xrogaBlocks.ts
+- frontend/src/lib/xrogaRichResults.ts
+- frontend/src/lib/xrogaEvent.ts
+- backend/src/index.ts
+- backend/src/ai/taskGraphRunner.ts
+- backend/src/ai/runReconciler.ts
+- backend/src/ai/universal/semanticRequestPlanner.ts
+- backend/src/services/integrations/businessAction.ts
+- backend/src/services/integrations/composioClient.ts
+- backend/src/services/publish/**
+- backend/src/routes/**
+- backend/src/services/storage/**
+- billing routes/webhooks
+- relevant Supabase migrations
+
+CREATE/EXTEND
+Prefer existing e2e directories/config.
+
+If no canonical location exists:
+- frontend/e2e/xroga-golden/**
+- backend/src/e2e/xrogaGoldenJourneys.test.ts
+- tests/golden/fixtures/**
+- tests/golden/contracts/**
+- tests/golden/README.md
+
+Create:
+- docs/xroga/golden-journeys.md
+- docs/xroga/golden-journey-matrix.json
+- docs/xroga/golden-journey-matrix.schema.json
+- scripts/xroga/validate-golden-journeys.mjs
+- docs/xroga/evidence/command-005/summary.md
+- docs/xroga/evidence/command-005/manifest.json
+
+MANDATORY JOURNEYS
+
+GJ-CHAT:
+Authenticated user sends a normal conversational request and receives streamed, recoverable output.
+
+GJ-WEB-RESEARCH:
+User requests fresh web research and receives sourced output with citation/evidence metadata.
+
+GJ-EXISTING-REPO-CODING:
+User asks Xroga to change an existing authorised GitHub repository; system plans, executes in sandbox/authorised environment and produces diff/test evidence.
+
+GJ-NEW-SAAS:
+User asks for a new SaaS/app; system decomposes work and produces reproducible project artefacts.
+
+GJ-BUSINESS-READ:
+User asks for information from a connected business app; correct account/tool is chosen without irrelevant connection suggestions.
+
+GJ-BUSINESS-WRITE:
+User asks for consequential write; plan is prepared, authority/confirmation enforced, action executes once, provider result is verified.
+
+GJ-MIXED-MULTI-OUTCOME:
+One prompt contains several independent outcomes, such as research + CRM + document + message. Canonical execution fans out safely, respects dependencies and reports each result separately.
+
+GJ-DOCUMENTS:
+Document/spreadsheet/slides-style work produces real artefacts and evidence.
+
+GJ-WORK-PACK:
+User installs/starts a prebuilt automation/work pack without manually composing raw plugins.
+
+GJ-AI-EMPLOYEE:
+A durable goal-driven worker can execute a bounded workflow with schedule/state/approval boundaries.
+
+GJ-PAID-ANDROID-PUBLISH:
+A simulated/staging-safe paid publish journey covers preflight -> quote -> verified payment event -> build -> QA -> authorised store submission -> provider status, without actually charging or publishing from normal CI.
+
+GJ-SEO-DRIVE:
+A multi-tool journey combines research/SEO with authorised file/Drive-style output.
+
+FOR EVERY JOURNEY DEFINE
+- fixture ID
+- user intent
+- tenant
+- prerequisite connections
+- required capability classes
+- expected planning graph
+- expected authority points
+- expected budget/cost rules
+- expected durable state
+- expected provider/sandbox behaviour
+- expected verification evidence
+- expected UI events/blocks
+- completion semantics
+- timeout/retry semantics
+- cleanup
+- positive assertions
+- negative assertions
+
+TEST STATE TAXONOMY
+Do NOT make missing functionality "pass".
+
+Use:
+- PASS
+- FAIL
+- BLOCKED_KNOWN_GAP
+- NOT_APPLICABLE
+
+A blocked journey must:
+- point to requirement IDs
+- point to future command ownership
+- state exact missing capability
+
+It must not count as passing coverage.
+
+PLAYWRIGHT
+Use Playwright for browser journey automation if compatible with current frontend stack.
+Keep tests deterministic:
+- stable selectors
+- isolated users/tenants
+- isolated fixtures
+- no shared mutable production accounts
+- captured trace on failure
+- screenshot only when useful
+- no secrets in traces
+
+APPWORLD / MCPMARK
+Use their evaluation ideas/datasets only where licence and fit are appropriate.
+Do not replace Xroga's actual execution runtime with a benchmark environment.
+
+KEEP
+- current task graph/runtime
+- current streaming/event primitives
+- existing test framework
+
+EXTEND
+- e2e coverage
+- evidence collection
+- multi-tool fixtures
+- verification assertions
+
+REPLACE
+- brittle UI tests that assert only text while ignoring backend outcome
+- fake provider-success fixtures used as proof of production completion
+
+DEPRECATE
+- "200 response = task completed" acceptance
+- tests that permit consequential writes without approval
+
+DATABASE
+No production migration is required by this command.
+Create isolated test fixtures through existing test DB mechanisms.
+Never point e2e CI at production.
+
+CI
+Add a golden-journey job.
+
+Separate:
+1. deterministic mock/sandbox golden suite — PR-safe
+2. provider sandbox suite — scheduled/manual
+3. production smoke verification — read-only and tightly scoped
+
+Do not make provider credentials mandatory for normal fork/PR builds.
+
+POSITIVE TESTS
+At minimum implement executable harness tests for capabilities currently present:
+- login/auth isolation
+- basic chat/API journey
+- business-action preparation
+- confirmation rejection/acceptance where current code supports it
+- event/result rendering
+- recovery after refresh where currently supported
+
+NEGATIVE TESTS
+- unauthenticated request
+- second tenant attempts to inspect first tenant journey
+- business write without confirmation
+- confirmation for modified prepared action
+- provider returns failure
+- provider timeout
+- duplicated webhook/event
+- browser refresh during long execution
+- unsupported capability
+- request contains multiple intents but one subtask fails
+- prompt asks system to claim success without provider evidence
+
+ACCEPTANCE CRITERIA
+1. All mandatory journeys above exist in the matrix.
+2. Every journey maps to requirements.
+3. Every journey declares its authority boundary.
+4. Every journey declares completion evidence.
+5. No BLOCKED_KNOWN_GAP is counted as PASS.
+6. Playwright or the existing browser framework can execute at least the currently implemented frontend journeys.
+7. Negative security paths are represented.
+8. Provider-dependent journeys have safe sandbox/stub strategies.
+9. Failing tests preserve diagnostics without secrets.
+10. Later commands can reference stable journey IDs.
+
+EXTERNAL REPOSITORIES TO CONSULT
+- Playwright — browser/e2e execution
+- AppWorld — interactive/function-calling evaluation ideas
+- MCPMark — MCP-oriented evaluation ideas
+- Expo EAS CLI/Fastlane — publishing journey contract reference
+- Activepieces — work-pack/workflow contract reference
+
+Do not integrate all these projects in this command.
+
+ROLLBACK / SAFETY
+- No real customer emails/messages/writes.
+- No real charge.
+- No production Android publishing.
+- No destructive provider operations.
+- Provider sandbox resources must be namespaced and cleaned up.
+- Preserve traces only after redaction.
+
+EXACT EVIDENCE
+summary.md:
+- all journey IDs
+- PASS count
+- FAIL count
+- BLOCKED_KNOWN_GAP count
+- negative-test count
+- frontend trace results
+- API results
+- provider sandbox/stub strategy
+- evidence locations
+- final status
+
+manifest.json:
+- SHA
+- matrix hash
+- journey state counts
+- test command
+- CI check name
+
+STOP CONDITION
+The mission is complete when the acceptance harness is trustworthy, not when every future Xroga product feature is artificially made green.
+Playwright is an Apache-2.0 browser automation/testing project and is a strong fit for the browser portion of this harness. 
+ AppWorld’s core repository is Apache-2.0 and provides a controllable environment for evaluating interactive/function-calling agents; it is more useful here as an evaluation reference than as Xroga’s production runtime. 
+
+Command 006 — Lock in the engineering operating contract before larger implementation begins
+
+text
+Copy
+COMMAND 006 — XROGA ENGINEERING OPERATING CONTRACT AND DEFINITION OF DONE
+
+Mission:
+Strengthen Xroga's repository-level engineering rules so future coding commands cannot create parallel orchestrators, claim fake completion, bypass tenant/approval/cost boundaries, leak credentials or ship unverified work.
+
+GOAL
+Convert architectural principles into enforceable repository rules and CI checks.
+
+PRECONDITIONS
+- Inspect existing AGENTS.md. It already exists in historical/live repository evidence; update it rather than blindly replacing it.
+- Inspect CONTRIBUTING.md, SECURITY.md and SHIP_COMPLETENESS.md.
+- Read Commands 001–005 artefacts if present.
+- Do not delete useful existing rules.
+
+EXACT PATHS TO INSPECT
+- AGENTS.md
+- CONTRIBUTING.md
+- SECURITY.md
+- SHIP_COMPLETENESS.md
+- README.md
+- .github/**
+- docs/xroga/**
+- scripts/**
+- backend/src/ai/taskGraphRunner.ts
+- backend/src/ai/runReconciler.ts
+- backend/src/services/integrations/businessAction.ts
+- backend/src/middleware/auth.ts
+
+MODIFY
+- AGENTS.md
+
+CREATE OR EXTEND
+- docs/xroga/IMPLEMENTATION_STATUS.md
+- docs/xroga/DEFINITION_OF_DONE.md
+- docs/xroga/CHANGE_SAFETY.md
+- docs/xroga/ARCHITECTURE_INVARIANTS.md
+- docs/xroga/PR_EVIDENCE_TEMPLATE.md
+- scripts/xroga/mission-check.mjs
+- tests/mission-policy/**
+- .github/pull_request_template.md if no equivalent exists
+- docs/xroga/evidence/command-006/summary.md
+- docs/xroga/evidence/command-006/manifest.json
+
+CI
+Extend an appropriate existing workflow or create only if necessary:
+.github/workflows/xroga-mission-policy.yml
+
+MANDATORY ARCHITECTURE INVARIANTS
+
+1. One canonical execution system.
+New capabilities must integrate through existing canonical execution/task-graph mechanisms unless a replacement RFC proves why the existing system must be superseded.
+
+2. No second orchestrator by convenience.
+A library with its own scheduler/agent loop cannot silently become another Xroga control plane.
+
+3. Backend is authority.
+LLM text is not permission.
+LLM text is not verified provider completion.
+LLM text is not accounting truth.
+LLM text is not tenant ownership proof.
+
+4. Outcome-specific verification.
+A task is complete only when its completion contract is satisfied.
+
+5. Tenant identity is explicit.
+User/tenant context must not be inferred from model content.
+
+6. Consequential actions require authority.
+Writes, deletes, communications, publishing, financial actions and sensitive data egress must use canonical authority checks.
+
+7. Cost is bounded.
+Execution cannot create unlimited provider/model/tool cost without budget policy.
+
+8. Secrets are never model/client payload by default.
+Credentials remain in protected backend execution boundaries.
+
+9. Evidence is durable.
+Long work should survive process/browser interruption and preserve event/evidence state.
+
+10. No fake completion.
+Mock/simulated provider result must be explicitly labelled as test/simulation.
+
+11. Relevant capability selection.
+Do not show users unrelated app connections merely because an integration exists.
+
+12. Small, reversible changes.
+Each implementation mission should have bounded scope, migrations, rollback and evidence.
+
+PR TEMPLATE MUST REQUIRE
+- current base SHA
+- requirement IDs
+- files changed
+- KEEP/EXTEND/REPLACE/DEPRECATE decisions
+- schema migration impact
+- auth/tenant impact
+- approval impact
+- credential impact
+- egress impact
+- cost impact
+- tests
+- negative tests
+- rollout
+- rollback
+- evidence
+- known gaps
+- no-fake-completion declaration
+
+IMPLEMENTATION STATUS
+Create one row per major subsystem with:
+- owner requirement IDs
+- state
+- proof
+- last verified SHA
+- last verified date
+- production status
+- outstanding blocker
+
+MISSION CHECKER
+scripts/xroga/mission-check.mjs should validate:
+- required documentation/evidence fields
+- no unresolved placeholder "DONE" claims
+- migration documentation for schema changes
+- test/evidence references
+- architecture exception/RFC when new orchestrator is introduced
+- security-impact declaration
+
+Do not attempt brittle natural-language policing of all source code.
+Use structured mission/evidence manifests where possible.
+
+KEEP
+- existing AGENTS/CONTRIBUTING/security guidance that remains correct
+- current canonical execution concepts
+
+EXTEND
+- definition of done
+- evidence requirements
+- security declarations
+- rollback discipline
+
+REPLACE
+- contradictory project rules
+- ambiguous "feature complete if UI exists" language
+
+DEPRECATE
+- fake completion
+- architecture-by-prompt with no repository evidence
+- new duplicated system without migration plan
+- hidden production TODOs represented as finished
+
+DATABASE
+No migration.
+
+POSITIVE TESTS
+Create policy-test fixtures demonstrating:
+- valid mission manifest passes
+- schema-changing mission with migration declaration passes
+- security-changing mission with negative tests passes
+
+NEGATIVE TESTS
+- missing tests -> fail
+- missing rollback on high-risk change -> fail
+- replacement architecture with no RFC/reason -> fail
+- schema change marked "no DB impact" -> fail fixture
+- secret value present in evidence fixture -> fail/redact
+- "all done" with BLOCKED/FAIL golden journeys -> fail status consistency check
+
+ROLLBACK / SAFETY
+- Preserve prior instructions where non-conflicting.
+- Do not turn CI into subjective prose lint.
+- Make checks structured and deterministic.
+- Do not expose secret contents while scanning.
+
+ACCEPTANCE CRITERIA
+1. AGENTS.md clearly encodes the twelve invariants.
+2. Definition of Done distinguishes code-complete from verified-outcome complete.
+3. PR evidence template exists.
+4. Mission checker has positive and negative tests.
+5. Implementation status links subsystems to evidence/SHA.
+6. Adding a duplicate orchestration control plane requires explicit architecture exception.
+7. Security-impact declarations are mandatory.
+8. Rollback is mandatory for high-risk changes.
+9. No test claims full Xroga completion based on UI-only evidence.
+10. CI policy check passes.
+
+EXACT EVIDENCE
+summary.md:
+- rules added/changed
+- conflicts resolved
+- CI checks added
+- positive fixture results
+- negative fixture results
+- architecture invariants hash
+- final PASS/FAIL
+
+STOP CONDITION
+Do not make this a giant prose-only policy document. At least the structured evidence requirements and mission checker must be executable.
+The repository already contains AGENTS.md, so preserving and strengthening it is the safer course than introducing another competing agent-instruction system.
+
+Security and authority commands
+Command 007 — Make tenant ownership a mandatory backend invariant
+
+text
+Copy
+COMMAND 007 — TENANT ISOLATION, SERVER-SIDE OWNERSHIP AND RBAC BASELINE
+
+Mission:
+Establish one explicit tenant/user security context across Xroga backend persistence and consequential resources. Close cross-tenant access paths even when backend code uses privileged Supabase/service credentials.
+
+GOAL
+A user from Tenant A must not be able to read, mutate, execute, approve, download, reconnect or enumerate Tenant B's resources by changing an ID, URL, provider account ID or API body.
+
+PRECONDITIONS
+- Commands 001–006 should be available.
+- CI baseline must be capable of running isolated database/security tests.
+- Inspect actual DB schema before writing policies.
+- DO NOT invent table names that do not exist.
+- DO NOT assume RLS alone protects service-role requests.
+- DO NOT run migration against production as part of ordinary coding/PR execution.
+
+EXACT PATHS TO INSPECT
+
+Authentication:
+- backend/src/middleware/auth.ts
+- backend/src/middleware/phase1Auth.ts
+- backend/src/index.ts
+- backend/src/lib/authRoundTrips.test.ts if present
+
+Supabase:
+- backend/src/config/supabase.ts
+- frontend/src/lib/supabase/server.ts
+- frontend/src/lib/supabase/client.ts
+- frontend/src/lib/supabase/middleware.ts
+- scripts/apply-supabase-migrations.mjs
+- scripts/supabase-db-push.sh
+- supabase/migrations/**
+
+Resource access:
+- backend/src/routes/**
+- backend/src/services/storage/projectFiles.ts
+- backend/src/services/integrations/**
+- backend/src/ai/**
+- backend/src/services/publish/**
+- browser session services/routes
+- billing/cost services/routes
+- project/chat/file/account/run/task/schedule services discovered in current-state inventory
+
+DISCOVER ALL TENANT-BEARING RESOURCE CLASSES
+At minimum investigate:
+- users/profiles
+- organisations/workspaces/tenants, if present
+- projects
+- chats/messages
+- files
+- tool/provider connections
+- OAuth identities
+- business-action plans
+- tasks/runs
+- schedules
+- browser sessions
+- automation/workflow state
+- cost/budget records
+- evidence/artifacts
+- publishing credentials/releases
+- billing orders
+- webhooks where ownership exists
+
+CREATE
+Use these paths unless an equivalent current security module already exists:
+- backend/src/security/tenantContext.ts
+- backend/src/security/ownership.ts
+- backend/src/security/serviceRoleGuard.ts
+- backend/src/security/tenantErrors.ts
+- backend/src/security/tenantContext.test.ts
+- backend/src/security/ownership.test.ts
+- backend/src/security/tenantIsolation.integration.test.ts
+- docs/xroga/security/tenant-model.md
+- docs/xroga/security/rls-audit.md
+- docs/xroga/evidence/command-007/summary.md
+- docs/xroga/evidence/command-007/manifest.json
+
+DATABASE MIGRATION
+Create:
+supabase/migrations/<NEXT_VALID_PREFIX>_xroga_tenant_security_baseline.sql
+
+<NEXT_VALID_PREFIX> is intentionally unresolved in this research report:
+the coding agent must inspect the repository's current migration ordering and select the next valid collision-free prefix.
+
+The migration must ONLY operate on tables actually discovered.
+
+For each tenant-bearing table document:
+- ownership key
+- FK relationships
+- nullable ownership risks
+- current RLS state
+- SELECT policy
+- INSERT policy
+- UPDATE policy
+- DELETE policy
+- privileged/server behaviour
+
+Do not create meaningless RLS rules on tables that are server-only without documenting why.
+
+SERVER-SIDE OWNERSHIP
+Because privileged/service access may bypass normal row policies, introduce explicit server checks before resource operations.
+
+tenantContext should contain only server-derived identity, such as:
+- authenticated user ID
+- tenant/workspace ID where applicable
+- role(s)
+- auth/session provenance
+- request correlation ID
+
+NEVER derive these values from LLM text.
+
+ownership.ts should provide typed helpers such as:
+- requireOwnedProject(...)
+- requireOwnedChat(...)
+- requireOwnedFile(...)
+- requireOwnedProviderConnection(...)
+- requireOwnedRun(...)
+or a generic typed resource policy if that matches current architecture better.
+
+Do not create dozens of wrappers when one proven generic mechanism works.
+
+SERVICE ROLE GUARD
+Any privileged DB operation touching tenant-bearing data must require explicit tenant/user context unless:
+- it is a documented global administrative/background operation,
+- and that exception is registered.
+
+Create a small exception registry rather than allowing silent bypass.
+
+RBAC
+First discover whether Xroga currently has workspace/role semantics.
+If there is no multi-member workspace model, do NOT invent a large enterprise RBAC system.
+
+Implement minimum required roles from current product truth.
+If richer relation-based access is necessary, evaluate OpenFGA/OPA as policy references but do not add both automatically.
+
+KEEP
+- current authMiddleware
+- current Supabase clients
+- existing correct RLS
+- existing auth round-trip tests
+
+EXTEND
+- authenticated request with canonical tenant context
+- resource ownership checks
+- RLS policies
+- service-role governance
+- negative tests
+
+REPLACE
+- endpoint-specific ad-hoc ownership checks when a canonical helper can safely replace them
+- direct client-provided userId ownership
+
+DEPRECATE
+- unscoped service-role queries over tenant-bearing tables
+- resource access by opaque ID alone
+- trusting request-body tenant/user IDs
+- silent fallback to first/default provider account
+
+MISSION TASKS
+A. Inventory all auth entry points.
+B. Inventory every privileged Supabase caller.
+C. Inventory tenant-bearing tables.
+D. Build access matrix: actor × resource × action.
+E. Introduce canonical TenantContext.
+F. Introduce ownership enforcement.
+G. Wire high-risk routes first:
+   projects/files/connections/runs/browser/publishing/costs.
+H. Add/repair RLS.
+I. Ensure background workers carry owner/tenant identity durably.
+J. Add cross-tenant tests.
+K. Verify frontend cannot circumvent backend by supplying IDs.
+L. Document administrative exceptions.
+
+POSITIVE TESTS
+- user reads own project
+- user updates own permitted resource
+- worker resumes run under correct persisted owner
+- provider connection resolves only for owner
+- same-tenant permitted relation works where workspace roles exist
+- service job with registered privileged exception works
+
+NEGATIVE TESTS
+- Tenant A fetches Tenant B project ID -> blocked
+- Tenant A fetches Tenant B file -> blocked
+- Tenant A modifies Tenant B run -> blocked
+- Tenant A supplies B's provider connection ID -> blocked
+- Tenant A accesses B's browser session -> blocked
+- Tenant A accesses B's cost records -> blocked
+- unauthenticated caller accesses private route -> blocked
+- client supplies arbitrary userId -> ignored/rejected
+- service-role call without explicit scope/registered exception -> test fails
+- deleted/revoked membership -> access blocked
+
+Use non-enumerating responses where appropriate (for example 404 instead of revealing resource existence) and document the convention.
+
+CI
+Mandatory:
+- tenant unit tests
+- cross-tenant integration tests
+- migration test against disposable/local database
+- RLS audit script
+- no production DB
+
+CREATE if needed:
+scripts/security/audit-tenant-policies.mjs
+
+ROLLBACK / SAFETY
+1. Migration must be staged.
+2. Before enforcing new NOT NULL/FK constraints, audit existing orphan rows.
+3. Do not delete unknown/orphan data automatically.
+4. Provide remediation report.
+5. Where rollout risk is high:
+   - deploy context/ownership code first,
+   - backfill,
+   - validate,
+   - then tighten DB constraints.
+6. Keep a migration rollback note.
+7. Never disable RLS globally as a workaround.
+
+ACCEPTANCE CRITERIA
+1. Every tenant-bearing table is in rls-audit.md.
+2. Every privileged caller is scoped or explicitly exempt.
+3. Cross-tenant negative tests cover all high-risk resource classes.
+4. No protected endpoint trusts client-supplied ownership without verification.
+5. Background run ownership survives queue/job boundaries.
+6. Provider connection selection is owner scoped.
+7. CI executes tenant isolation tests.
+8. Migration passes fresh DB and upgrade-path tests.
+9. No existing legitimate same-tenant journey is broken.
+10. Security review contains zero unexplained service-role bypasses.
+
+EXTERNAL REPOSITORIES
+Consult:
+- OpenFGA — relationship-based authorisation reference, Apache-2.0.
+- Open Policy Agent — general policy engine/reference, Apache-2.0.
+
+Do not add either dependency unless the discovered Xroga permission model justifies the operational complexity.
+
+EXACT EVIDENCE
+summary.md:
+- tenant-bearing table count
+- RLS-covered count
+- privileged callers
+- scoped privileged callers
+- registered exceptions
+- positive test count
+- cross-tenant negative test count
+- migration validation
+- orphan/remediation count
+- final PASS/FAIL
+
+manifest.json:
+- SHA
+- migration filename
+- access matrix hash
+- table counts
+- caller counts
+- test counts
+
+STOP CONDITION
+Do not mark complete while even one high-risk tenant resource is accessible only through ID possession plus a privileged DB client.
+Xroga already uses Supabase admin configuration and frontend/server Supabase clients, so this command is deliberately a hardening layer rather than a database replacement. OpenFGA and OPA are both Apache-2.0 projects that can inform the policy design without automatically becoming production dependencies. 
+
+Command 008 — Make one backend authority contract govern every consequential action
+
+text
+Copy
+COMMAND 008 — CANONICAL OUTCOME-SCOPED AUTHORITY, APPROVAL AND PREPARED-ACTION CONTRACT
+
+Mission:
+Unify Xroga's existing confirmation/digest mechanisms into one backend-enforced authority system for consequential operations.
+
+The LLM can propose work.
+The LLM can explain work.
+The LLM cannot grant itself permission.
+
+GOAL
+A confirmation must authorise one clearly defined action/outcome, against one target/account, within defined risk/spend/time boundaries. A confirmation for Action A must never authorise modified Action B.
+
+PRECONDITIONS
+- TenantContext from Command 007 must exist or equivalent ownership enforcement must be demonstrably present.
+- Inspect existing approval implementations before creating new logic.
+
+EXACT PATHS TO INSPECT
+- backend/src/services/integrations/businessAction.ts
+- backend/src/services/integrations/pluginPermissionPolicy.ts
+- backend/src/operations/operationsEngine.ts
+- backend/src/routes/integrations.ts
+- backend/src/routes/**
+- backend/src/services/publish/**
+- billing/payment services
+- messaging/email/business-app write actions
+- destructive file/project actions
+- browser actions capable of side effects
+- task graph execution nodes for consequential tools
+- existing DB migrations/tables involving approvals/confirmations/plans
+
+EXISTING BEHAVIOUR TO PRESERVE
+Where correct, preserve:
+- prepared action representation
+- canonical action hashing/digest
+- explicit user authorisation
+- high-risk confirmation concepts
+- operations approval concepts
+
+CREATE
+Prefer this canonical location unless an equivalent security authority module already exists:
+- backend/src/security/authority/types.ts
+- backend/src/security/authority/digest.ts
+- backend/src/security/authority/store.ts
+- backend/src/security/authority/enforce.ts
+- backend/src/security/authority/risk.ts
+- backend/src/security/authority/types.test.ts
+- backend/src/security/authority/digest.test.ts
+- backend/src/security/authority/enforce.test.ts
+- backend/src/security/authority/authority.integration.test.ts
+- docs/xroga/security/authority-model.md
+- docs/xroga/security/action-risk-matrix.md
+- docs/xroga/evidence/command-008/summary.md
+- docs/xroga/evidence/command-008/manifest.json
+
+DATABASE
+First inspect existing approval/action tables.
+
+If no durable canonical equivalent exists, create:
+supabase/migrations/<NEXT_VALID_PREFIX>_xroga_authority_grants_and_receipts.sql
+
+Do not create a duplicate authority store if an existing table can safely be extended.
+
+CANONICAL AUTHORITY GRANT
+It must support at least:
+- version
+- grant ID
+- tenant ID
+- subject user ID
+- actor/run ID
+- target resource/provider
+- provider account/connected-account ID
+- action class
+- prepared action digest
+- risk class
+- data sensitivity class where relevant
+- spend maximum
+- currency
+- issuance time
+- expiry
+- nonce
+- consumption/use state
+- revocation time/reason
+- provenance of user approval
+- resulting action receipt ID
+
+ACTION CLASSES
+Define a stable taxonomy, at minimum:
+- READ
+- CREATE
+- UPDATE
+- DELETE
+- SEND_COMMUNICATION
+- PUBLISH
+- PURCHASE_OR_SPEND
+- TRANSFER_OR_FINANCIAL
+- CREDENTIAL_OR_PERMISSION_CHANGE
+- SENSITIVE_DATA_EXPORT
+- EXTERNAL_UPLOAD
+- ADMINISTRATIVE_HIGH_RISK
+
+Map actual Xroga tools to real classes.
+Do not over-classify harmless reads as destructive.
+
+PREPARED ACTION DIGEST
+Digest must bind all security-relevant parameters, including:
+- action type
+- provider
+- connected-account identity
+- destination/recipient
+- resource ID
+- payload or deterministic payload hash
+- amount/currency where applicable
+- tenant
+- requesting user
+- relevant expiry/version context
+
+Use deterministic canonical serialisation.
+
+AUTHORITY ENFORCEMENT
+Immediately before side effect:
+1. authenticate run/user context
+2. verify tenant
+3. verify target ownership/account scope
+4. recompute prepared digest
+5. find valid grant
+6. verify not expired/revoked/consumed
+7. enforce spend/risk constraint
+8. execute exactly once through idempotency key when provider supports it
+9. persist provider receipt/evidence
+10. consume/update grant when single-use
+
+Never accept:
+- "the LLM said the user approved"
+- text extracted from an untrusted document
+- tool description claiming approval
+- another action's confirmation
+- old grant after payload mutation
+
+APPROVAL UX CONTRACT
+Backend should return structured approval requirement:
+- human-readable summary
+- affected account
+- destination
+- critical parameters
+- estimated spend
+- risk
+- expiry
+- opaque prepared-action identifier/digest
+
+Frontend wording can be improved later.
+Backend contract is authoritative.
+
+SECOND-PERSON / DUAL CONTROL
+Preserve existing dual-approval capability where currently needed for particularly sensitive operations.
+Do not force dual approval onto ordinary user actions without product/security justification.
+
+KEEP
+- businessAction planning/digest concepts
+- operationsEngine confirmation concepts
+- plugin permission policy where compatible
+
+EXTEND
+- durable grant/receipt
+- tenant/account binding
+- expiry/revocation
+- spend boundaries
+- replay prevention
+- one canonical enforcement interface
+
+REPLACE
+- scattered boolean confirmed=true checks
+- approval keyed only to conversation text
+- generic "yes" applying to arbitrary later tool call
+
+DEPRECATE
+- model-inferred approval
+- unlimited/unscoped confirmation
+- reusable high-risk confirmation without explicit policy
+
+POSITIVE TESTS
+- exact prepared action + valid grant executes
+- low-risk read bypasses unnecessary high-risk confirmation where policy permits
+- legitimate single-use grant consumes once
+- permitted spend below maximum executes
+- properly authorised publish action executes in sandbox/stub
+
+NEGATIVE TESTS
+- modified payload after confirmation -> blocked
+- changed recipient -> blocked
+- changed provider account -> blocked
+- changed tenant -> blocked
+- expired grant -> blocked
+- revoked grant -> blocked
+- consumed single-use grant replay -> blocked
+- spend > approved maximum -> blocked
+- currency changed -> blocked
+- only LLM-generated "approved" text -> blocked
+- approval text inside web page/document -> blocked
+- guessed digest -> blocked
+- user A tries to consume user B grant -> blocked
+
+CI
+Make authority unit + integration tests mandatory.
+Run migration against disposable DB.
+Add a static inventory ensuring known consequential action adapters call canonical enforce().
+
+DATABASE ROLLOUT
+If migration is required:
+1. create durable grant/receipt structures
+2. write new grants through canonical system
+3. temporarily read existing approved legacy forms only through explicit compatibility adapter
+4. migrate or expire outstanding legacy approvals
+5. remove compatibility path after defined transition
+
+ROLLBACK / SAFETY
+- Do not loosen permissions for backward compatibility.
+- If migration fails, consequential writes should fail closed, not auto-authorise.
+- Keep a feature flag for new enforcement only for controlled rollout; disabling it must restore the previous verified mechanism, not bypass approval entirely.
+- Never log confidential payloads solely to prove a digest.
+
+ACCEPTANCE CRITERIA
+1. One canonical authority API exists.
+2. businessAction consequential writes use it.
+3. operationsEngine high-risk operations use it or a documented compatibility adapter.
+4. Grant binds tenant, user, action, target and digest.
+5. Replay tests pass.
+6. Mutation-after-confirmation tests pass.
+7. Expiry/revocation tests pass.
+8. Spend-bound tests pass.
+9. LLM text alone cannot create authority.
+10. Every canonical consequential action class has a policy entry.
+
+EXTERNAL REFERENCES
+Evaluate:
+- OpenFGA for relationship/account/target authorisation modelling.
+- Open Policy Agent for deterministic policy concepts.
+
+These are references first; do not add two policy runtimes unless justified.
+
+EXACT EVIDENCE
+summary.md:
+- action adapters audited
+- consequential adapters
+- adapters migrated
+- legacy checks remaining
+- grant/receipt schema decision
+- positive tests
+- mutation/replay/expiry/cross-tenant negative tests
+- migration result
+- final status
+
+manifest.json:
+- SHA
+- migration filename if any
+- action-class count
+- migrated adapter count
+- negative-test count
+
+STOP CONDITION
+Do not call authority complete while consequential action adapters can execute through an alternate path that bypasses canonical enforcement.
+The existing system already contains digest/confirmation concepts, so this is an extension and unification mission rather than a clean rewrite.
+
+Command 009 — Replace credential persistence with a real encrypted vault boundary
+
+text
+Copy
+COMMAND 009 — CREDENTIAL VAULT, ENVELOPE ENCRYPTION, ROTATION AND CONNECTED-ACCOUNT IDENTITY
+
+Mission:
+Replace direct OAuth/provider-token persistence with a canonical encrypted credential-vault interface while preserving existing integrations.
+
+GOAL
+A database/object-storage compromise must not trivially expose reusable provider credentials, and Xroga's LLM/frontend layers must never need raw provider secrets.
+
+PRECONDITIONS
+- Command 007 tenant context/ownership must be available.
+- Command 008 authority model should be available for credential/permission-changing operations.
+- Identify actual deployment/cloud KMS options before production cutover.
+- If production key-management provider is not yet configured, implement interfaces/migrations/tests but DO NOT invent a hard-coded production master key.
+
+EXACT PATHS TO INSPECT
+- backend/src/services/integrations/oauthPkceStore.ts
+- backend/src/services/integrations/pluginPermissionPolicy.ts
+- backend/src/services/integrations/supabaseAuth.ts
+- backend/src/services/integrations/vercelAuth.ts
+- backend/src/services/publish/chromeWebStore.ts
+- backend/src/services/publish/easCredentials.ts
+- backend/src/services/integrations/**
+- backend/src/config/supabase.ts
+- storage helpers
+- Composio connected-account mapping
+- all OAuth callbacks/routes
+- all env-based provider credential readers
+- supabase/migrations/**
+- SECURITY.md
+- logging/redaction utilities
+
+DISCOVER EVERY CREDENTIAL CLASS
+At minimum:
+- OAuth PKCE verifier/state
+- OAuth access token
+- OAuth refresh token
+- provider API key
+- service-account JSON/key material
+- publishing credentials
+- webhook secrets
+- user-supplied integration credentials
+- ephemeral browser/session secrets
+- connector account identifiers that are not themselves secrets
+
+Do not encrypt non-secret IDs unnecessarily if doing so harms queryability.
+Classify first.
+
+CREATE
+Unless equivalent abstractions already exist:
+- backend/src/security/credentials/types.ts
+- backend/src/security/credentials/credentialVault.ts
+- backend/src/security/credentials/cryptoProvider.ts
+- backend/src/security/credentials/redaction.ts
+- backend/src/security/credentials/credentialVault.test.ts
+- backend/src/security/credentials/cryptoProvider.test.ts
+- backend/src/security/credentials/redaction.test.ts
+- backend/src/security/credentials/credentialVault.integration.test.ts
+- scripts/security/migrate-credentials.mjs
+- scripts/security/audit-credential-usage.mjs
+- docs/xroga/security/credential-model.md
+- docs/xroga/security/credential-migration.md
+- docs/xroga/evidence/command-009/summary.md
+- docs/xroga/evidence/command-009/manifest.json
+
+DATABASE MIGRATION
+Create:
+supabase/migrations/<NEXT_VALID_PREFIX>_xroga_credential_encryption_v2.sql
+
+Only after inspecting current schema.
+
+DESIRED VAULT RECORD
+Use the existing schema where possible; otherwise store:
+- credential ID
+- tenant/user owner
+- provider
+- connected-account ID
+- credential type
+- encrypted ciphertext
+- nonce/IV
+- authentication tag if not encoded
+- wrapped data-key/key reference
+- crypto version
+- KMS/master-key version
+- created
+- updated
+- expires
+- last rotated
+- revoked
+- safe metadata only
+
+CRYPTO REQUIREMENTS
+Use established authenticated encryption.
+
+Preferred design:
+- per-record or per-credential data encryption key
+- AES-256-GCM or another approved authenticated-encryption primitive supported by the selected crypto provider
+- wrap data key with managed KMS/master key
+- bind AAD to security-relevant identity:
+  tenant/user + provider + connectedAccount + credentialType + cryptoVersion
+
+Do not implement homemade cryptography.
+
+KEY PROVIDER
+The exact production KMS is UNSPECIFIED until Command 004 deployment truth identifies the provider strategy.
+
+Therefore:
+- create CryptoProvider abstraction
+- implement an approved production adapter only for the actual selected KMS
+- a development/test adapter may exist using ephemeral/test keys
+- production must refuse startup if configured for insecure test cipher/key
+
+PKCE
+PKCE verifier/state:
+- short TTL
+- one-time use
+- deletion after callback completion/expiry
+- tenant/user/session binding
+
+RAW SECRET BOUNDARY
+Only narrowly scoped backend code may request plaintext secret material.
+
+Never:
+- send refresh/access token to browser
+- put token in LLM prompt
+- include token in task-graph textual evidence
+- return token in API error
+- store token in analytics
+- put token into committed test fixture
+
+CONNECTED ACCOUNT IDENTITY
+Separate:
+- stable provider/connected-account ID
+from
+- credential material.
+
+Task plans should refer to account identity, not tokens.
+
+MIGRATION STRATEGY
+Implement safe dual-read migration:
+
+Phase A:
+- deploy new vault write path
+- new credentials written encrypted only
+
+Phase B:
+- allow legacy credential read through tightly scoped compatibility reader
+- on successful legacy read, migrate/rewrite encrypted when safe
+
+Phase C:
+- run migration utility for remaining records
+- verify decryptability/ownership
+
+Phase D:
+- scrub legacy plaintext credential columns/storage objects only after verification
+
+Phase E:
+- disable legacy reads
+
+Do not destroy original values before successful encrypted round-trip verification.
+
+SUPABASE STORAGE MIRROR
+Audit any token JSON/object-storage mirror used by current oauthPkceStore.
+If redundant after encrypted vault:
+- migrate required data
+- verify
+- delete secret-bearing legacy objects
+- preserve non-secret account metadata separately
+
+KEEP
+- OAuth provider flows
+- integration-facing account IDs
+- current user/provider API semantics where safe
+
+EXTEND
+- rotation
+- revocation
+- key versioning
+- audit events
+- expiry
+- tenant-scoped lookup
+
+REPLACE
+- direct token field access
+- direct raw token storage APIs
+- storage-bucket credential mirroring where unnecessary
+
+DEPRECATE
+- callers importing oauthPkceStore specifically to retrieve plaintext persistence fields
+- long-lived PKCE verifier storage
+- logging token-shaped values
+
+POSITIVE TESTS
+- store -> retrieve credential for correct tenant/provider/account
+- rotate key -> retrieve existing credential
+- rotate credential -> new version works
+- revoke -> retrieval denied
+- PKCE state consumed once
+- migration v1 -> v2 preserves functionality
+
+NEGATIVE TESTS
+- wrong tenant decrypt/access -> blocked
+- wrong provider/account AAD -> authentication/decryption fails
+- modified ciphertext -> fails closed
+- modified nonce/tag -> fails closed
+- revoked credential -> denied
+- expired PKCE -> denied
+- replayed PKCE -> denied
+- test/dev key configuration in production mode -> startup/config validation fails
+- logs/errors contain seeded token canary -> test fails
+- API response exposes seeded token canary -> test fails
+
+CI
+Add:
+- credential unit tests
+- crypto tamper tests
+- migration integration test
+- redaction canary test
+- secret scanning
+
+Do not require production KMS credentials in normal PR CI.
+Use ephemeral/test crypto provider.
+
+ROLLBACK
+- During transition, rollback may re-enable controlled legacy READ compatibility.
+- Rollback MUST NOT resume writing plaintext credentials once v2 writes are enabled.
+- Do not delete legacy material until migration evidence is complete.
+- Maintain encrypted backup/restore procedure consistent with current infrastructure.
+
+ACCEPTANCE CRITERIA
+1. All newly stored OAuth/provider secrets use CredentialVault.
+2. No frontend endpoint returns raw secrets.
+3. No LLM/task prompt receives raw provider credential.
+4. Wrong-tenant retrieval test passes.
+5. Ciphertext tamper test passes.
+6. Rotation test passes.
+7. Revocation test passes.
+8. PKCE has TTL + one-time semantics.
+9. Legacy migration is idempotent.
+10. Production cannot use development crypto provider.
+11. Credential audit reports remaining direct storage callers.
+12. Remaining legacy callers are zero or explicitly blocked from production cutover.
+
+EXACT EVIDENCE
+summary.md:
+- credential classes found
+- legacy storage locations
+- callers found
+- callers migrated
+- records migration strategy
+- KMS selection or UNSPECIFIED
+- tamper tests
+- rotation tests
+- redaction tests
+- direct legacy callers remaining
+- final status
+
+manifest.json:
+- SHA
+- migration filename
+- crypto version
+- provider adapter
+- credential class count
+- migrated caller count
+- negative-test count
+
+STOP CONDITION
+Do not claim production credential-vault completion if the actual production key provider is still UNSPECIFIED. In that situation report CODE_READY_KMS_CUTOVER_BLOCKED rather than pretending the security boundary is live.
+This command responds to a concrete current-code risk: oauthPkceStore.ts visibly persists OAuth credential material in database/storage-backed fields, while several integrations consume that store.
+
+Command 010 — Put every tool, browser and network action behind a data-egress security boundary
+
+text
+Copy
+COMMAND 010 — TOOL TRUST, DATA EGRESS, SSRF AND UNTRUSTED-INPUT SECURITY GATEWAY
+
+Mission:
+Create one backend security decision boundary between Xroga's reasoning/execution layer and external destinations/tools.
+
+Treat:
+- web pages
+- uploaded documents
+- MCP/tool descriptions
+- provider-returned content
+- repository text
+- emails/messages
+- browser pages
+as potentially untrusted data, not as authority.
+
+GOAL
+Prevent a malicious document, website, tool description, URL, connector response or prompt injection from causing Xroga to:
+- leak secrets
+- leak another tenant's data
+- access internal infrastructure
+- change provider account
+- perform unapproved actions
+- upload data to an unapproved recipient
+- reinterpret untrusted text as system policy
+
+PRECONDITIONS
+- Tenant isolation implemented or equivalent verified.
+- Canonical authority layer implemented or equivalent verified.
+- CredentialVault available for secret-bearing operations.
+- Current deployment topology available so legitimate internal service traffic can be distinguished from user-supplied arbitrary URLs.
+
+EXACT PATHS TO INSPECT
+- backend/src/services/integrations/composioClient.ts
+- backend/src/services/integrations/businessAction.ts
+- backend/src/services/integrations/pluginPermissionPolicy.ts
+- backend/src/ai/universal/semanticRequestPlanner.ts
+- backend/src/ai/taskGraphRunner.ts
+- backend/src/services/storage/projectFiles.ts
+- backend/src/routes/**
+- browser worker/routes/services discovered in current-state
+- web-fetch/research services
+- URL fetch/download services
+- file upload services
+- MCP configuration/tool-loading code
+- provider webhook/client implementations
+- credential vault created by Command 009
+- authority layer created by Command 008
+
+CREATE
+Unless equivalent modules already exist:
+- backend/src/security/egress/types.ts
+- backend/src/security/egress/dataClassification.ts
+- backend/src/security/egress/toolTrust.ts
+- backend/src/security/egress/urlPolicy.ts
+- backend/src/security/egress/egressPolicy.ts
+- backend/src/security/egress/untrustedInput.ts
+- backend/src/security/egress/securityDecision.ts
+- backend/src/security/egress/urlPolicy.test.ts
+- backend/src/security/egress/egressPolicy.test.ts
+- backend/src/security/egress/toolTrust.test.ts
+- backend/src/security/egress/egress.integration.test.ts
+- scripts/security/audit-egress-callers.mjs
+- docs/xroga/security/egress-policy.md
+- docs/xroga/security/untrusted-input-model.md
+- docs/xroga/evidence/command-010/summary.md
+- docs/xroga/evidence/command-010/manifest.json
+
+DATABASE
+First look for an existing canonical durable evidence/security-event store.
+
+PREFERRED:
+reuse the canonical event/evidence store for security-decision receipts.
+
+ONLY IF NO SUITABLE DURABLE STORE EXISTS:
+create
+supabase/migrations/<NEXT_VALID_PREFIX>_xroga_security_decision_events.sql
+
+Do not create another event system if Xroga already has one.
+
+SECURITY DECISION INPUT
+At minimum:
+- tenant
+- actor/run
+- tool/provider
+- connected account
+- operation class
+- destination
+- data classification
+- purpose
+- authority grant if required
+- credential need
+- URL/network classification
+- trust classification of initiating content
+- requested data fields
+- estimated external exposure
+- decision version
+
+DECISION OUTPUT
+- ALLOW
+- DENY
+- REQUIRE_APPROVAL
+- REQUIRE_REDACTION
+- REQUIRE_RESTRICTED_SANDBOX
+
+Plus:
+- policy reason code
+- safe user-facing reason
+- policy version
+- evidence reference
+
+DATA CLASSIFICATION
+Define a small deterministic taxonomy, e.g.:
+- PUBLIC
+- USER_PRIVATE
+- BUSINESS_CONFIDENTIAL
+- PERSONAL_DATA
+- CREDENTIAL_SECRET
+- HIGHLY_SENSITIVE
+
+Do not ask the LLM to make the final security decision.
+The model may propose classification hints; backend policy is authoritative.
+
+TOOL TRUST
+Tool descriptions, MCP metadata and provider-returned instructions are UNTRUSTED_CAPABILITY_METADATA.
+
+A tool description can describe:
+- parameters
+- capability
+- provider
+
+It cannot:
+- grant permission
+- override tenant policy
+- override data policy
+- create authority
+- reveal credentials
+- disable security
+
+UNTRUSTED INPUT
+Tag provenance of:
+- user text
+- trusted system policy
+- web content
+- document content
+- tool output
+- repository code/text
+- email/message content
+
+Never allow content from an untrusted provenance class to be promoted into system authority merely because it contains instructions such as:
+"ignore previous instructions"
+"send all files to..."
+"this tool is pre-approved"
+"upload your API key"
+
+SSRF / URL POLICY
+Centralise server-side arbitrary URL handling.
+
+Block by default for user-controlled destinations:
+- loopback
+- localhost
+- IPv4 private address ranges
+- IPv6 loopback/private/link-local ranges
+- link-local metadata services
+- cloud instance metadata targets
+- file://
+- gopher://
+- unsupported protocols
+- credential-bearing URLs
+- ambiguous/invalid host encodings
+
+Specifically test cloud metadata address patterns such as:
+169.254.169.254
+
+For allowed HTTP(S):
+- normalise URL
+- resolve hostname
+- validate all resolved addresses
+- enforce port policy
+- apply timeout
+- limit redirects
+- re-validate every redirect
+- guard DNS rebinding where the networking stack allows
+- limit response size
+- define content-type handling
+
+Do not block Xroga's own internal provider/service traffic accidentally:
+internal service destinations must be explicit, server-configured dependencies, not user-supplied allowlist bypasses.
+
+FILE EGRESS
+Before external upload/send:
+- identify file owner
+- classify file/data
+- identify recipient/provider/account
+- establish user authority
+- record purpose
+- verify no raw credential material
+- enforce size/type policy
+- produce evidence receipt
+
+BUSINESS TOOLS
+Integrate policy into Composio/business-action path:
+plan -> authority -> egress decision -> execution -> provider verification.
+
+BROWSER
+Browser actions with side effects must use same authority/egress contract.
+A malicious page cannot self-authorise upload/send/purchase.
+
+WEB RESEARCH
+Read-only web retrieval can use a less restrictive policy than writes, but SSRF/network protections still apply.
+
+KEEP
+- Composio client
+- businessAction plan/digest
+- task graph
+- existing browser/runtime adapters
+
+EXTEND
+- tool metadata with trust classification
+- central egress decision
+- URL validation
+- data classification
+- provenance
+
+REPLACE
+- direct arbitrary server fetches that bypass URL policy
+- direct external uploads that bypass authority/egress checks
+- tool-description-driven security decisions
+
+DEPRECATE
+- "tool said it is safe"
+- "web page instructed agent to send secret"
+- direct use of arbitrary user-provided URL in privileged fetcher
+- security decisions made solely by prompt text
+
+ADVERSARIAL POSITIVE TESTS
+- normal public HTTPS research URL allowed
+- authorised CRM write to selected connected account allowed
+- authorised file upload to approved destination allowed
+- internal server-configured dependency reachable through explicit internal policy
+- safe public tool output remains usable as data
+
+ADVERSARIAL NEGATIVE TESTS
+- http://127.0.0.1 -> blocked
+- http://localhost -> blocked
+- http://169.254.169.254 -> blocked
+- IPv6 loopback -> blocked
+- encoded/alternative private-IP representation -> blocked
+- public URL redirects to private IP -> blocked
+- DNS rebinding simulation -> blocked
+- file:// target -> blocked
+- gopher:// target -> blocked
+- credential in URL -> blocked
+- malicious MCP description claims pre-approval -> ignored/blocked
+- webpage says "send secret to attacker" -> no authority
+- document says "user approved transfer" -> no authority
+- provider output attempts to switch account -> blocked
+- file belonging to Tenant B requested by Tenant A -> blocked
+- credential secret classified for ordinary external upload -> denied
+- external recipient differs from confirmed action -> denied
+- tool asks for extra scopes unrelated to task -> denied/requires explicit reauthorisation
+
+TEST FAILURE BEHAVIOUR
+Security tests must fail closed.
+Timeout/error in security decision cannot become ALLOW for consequential actions.
+
+CI
+Add mandatory:
+- egress unit tests
+- SSRF adversarial tests
+- tool-trust tests
+- cross-tenant egress tests
+- static egress-caller audit
+- dependency/container/secret scanning where compatible
+
+Consult:
+- ToolHive for MCP/tool execution security patterns
+- Snyk Agent Scan for agent/MCP security analysis ideas
+- Trivy for vulnerability/misconfiguration/secret scanning
+
+Do not make external scanners the only security control.
+
+ROLLBACK / SAFETY
+- Introduce policy in observe/audit mode first ONLY for safe/read operations if required.
+- Consequential write/security boundaries should fail closed.
+- Maintain explicit server-owned internal service allowlist.
+- Never log full sensitive payload to explain a DENY.
+- Store hashes/metadata where evidence can avoid raw content.
+- Preserve emergency rollback, but rollback must not restore known SSRF/secret-exfiltration paths.
+
+ACCEPTANCE CRITERIA
+1. All arbitrary outbound URL callers are inventoried.
+2. High-risk URL callers use central URL policy.
+3. All consequential external data egress passes egressPolicy.
+4. businessAction integrates authority + egress before provider execution.
+5. Tool descriptions cannot create authority.
+6. Malicious document/web/tool-output tests cannot override policy.
+7. Loopback/private/link-local/metadata SSRF tests pass.
+8. Redirect-to-private test passes.
+9. Cross-tenant external upload test passes.
+10. Credential-secret egress test passes.
+11. Security decision evidence contains no raw credential.
+12. audit-egress-callers reports zero unexplained high-risk bypasses.
+
+EXTERNAL REPOSITORIES
+Consult:
+- ToolHive — Apache-2.0
+- Snyk Agent Scan — Apache-2.0
+- Trivy — Apache-2.0
+
+Use them as security references/scanners, not as replacements for application-level policy enforcement.
+
+EXACT EVIDENCE
+summary.md:
+- egress callers discovered
+- high-risk callers
+- callers migrated
+- SSRF test vectors
+- prompt/tool-injection vectors
+- cross-tenant vectors
+- blocked/allowed counts
+- scanner findings by severity
+- unresolved bypasses
+- security-event persistence decision
+- final PASS/FAIL
+
+manifest.json:
+- SHA
+- policy version
+- migration filename if any
+- caller counts
+- adversarial test count
+- unresolved high-risk bypass count
+
+STOP CONDITION
+Do not declare Batch One security complete while a high-risk external fetch, upload or tool action can bypass the canonical egress decision layer.
+ToolHive, Snyk Agent Scan and Trivy are all relevant security references for this layer, and their repositories are Apache-2.0 licensed. They supplement rather than replace Xroga’s own application-level authorisation and data-egress policy. 
+
+Deliverables and test matrix
+The most important distinction is that these ten commands close foundational engineering risks, not all 119 Xroga product requirements. For example, Command 005 creates the acceptance contract for Android publishing and AI Employees; later batches actually finish those feature families.
+
+Command	Must exist when complete	Key positive proof	Key negative proof	What this command definitively closes
+001	docs/xroga/current-state.{md,json}	Deterministic inventory	Unmounted route not called reachable	Architecture uncertainty
+002	requirements-ledger.{md,json}	All available source rows mapped	“Implemented” without evidence rejected	Forgotten/duplicated research
+003	scripts/ci/run-baseline.mjs	Clean checkout builds/tests	Broken lockfile / .only fails	Non-reproducible engineering
+004	dependency-inventory.json	Every env consumer mapped	Unsafe prod default detected	Deployment guessing
+005	Golden matrix + e2e harness	Current journeys execute	Fake completion is not PASS	No end-to-end product contract
+006	ARCHITECTURE_INVARIANTS.md + mission checker	Valid mission accepted	Unverified/unsafe mission rejected	Architecture drift
+007	TenantContext + RLS/ownership tests	Own resources accessible	Cross-tenant IDs blocked	Tenant data isolation
+008	Authority enforcement layer	Exact authorised action executes	Mutation/replay/expired grant blocked	Ambiguous approvals
+009	CredentialVault + migration	Encrypted credential round trip	Wrong tenant/tamper/log exposure blocked	Unsafe credential persistence
+010	Egress policy + URL guard	Safe intended egress works	SSRF/injection/exfiltration blocked	Tool/network trust boundary
+
+For Commands 007–010, negative tests are first-class acceptance tests, not optional security polish. Xroga’s future “super-intelligent” behaviour only becomes useful if increasing autonomy is paired with decreasing ambiguity about identity, permission, data ownership and completion.
+
+There should also be a Batch One final gate after Command 010, executed as part of Command 010 evidence rather than creating an eleventh implementation command:
+
+text
+Copy
+BATCH ONE GO/NO-GO GATE
+
+GO only when:
+- current repository truth map is current for final SHA
+- requirements ledger validates
+- clean build/test baseline passes
+- deployment topology is documented
+- golden journey harness exists
+- engineering policy gate passes
+- cross-tenant security tests pass
+- authority replay/mutation tests pass
+- credential tamper/rotation/redaction tests pass
+- SSRF/tool-injection/data-egress tests pass
+- migrations pass clean-database and upgrade-path checks
+- no production secret appears in committed evidence
+- no high-risk bypass is marked unexplained
+
+NO-GO when:
+- any cross-tenant access succeeds
+- any consequential action can bypass authority
+- any new credential is written through legacy plaintext-style persistence
+- arbitrary user URLs can reach private/internal network targets
+- a fake/simulated outcome can become production "completed"
+- CI can report success while mandatory build/tests fail
+External repository register and how Batch One uses each discovery
+All of the prioritised repositories from the research are retained below. “Consult” is not equivalent to “install.” This distinction matters because Xroga already has working subsystems and because every additional runtime dependency adds maintenance, licensing and security implications.
+
+Repository	Licence/status	Batch One use	Adoption decision
+Activepieces	Community Edition MIT; some enterprise/cloud functionality commercially licensed. 
+Requirements ledger, work-pack golden journey	Consult now; integration later
+Microsoft Playwright	Apache-2.0. 
+Browser golden journeys	Strong candidate to use
+Expo EAS CLI	MIT. 
+Android publishing acceptance contract	Keep/extend current EAS integration
+Fastlane	MIT. 
+Native/non-EAS publishing reference	Later adapter candidate
+Iconify	Framework MIT; individual icon sets have their own licences. 
+Future response/UI system requirement	Ledger now; frontend batch later
+json-render	Apache-2.0. 
+Future controlled generative UI	Reference/possible adapter later
+assistant-ui/tool-ui	MIT; repository was archived/read-only in September 2026. 
+UI/tool receipt patterns	Reference only; do not make a new critical dependency
+LLMCompiler	MIT. 
+Compare parallel planning concepts against Xroga task graph	Benchmark later; do not replace current graph in Batch One
+AppWorld	Core repo Apache-2.0; review individual bundled assets before redistribution. 
+Agent/function-calling evaluation concepts	Evaluation reference
+MCPMark	MIT in the researched repository state	MCP/tool evaluation reference	Evaluation reference
+Schemathesis	MIT. 
+API schema/property testing	Likely later CI addition
+Pact JS	Licence should be re-verified against the pinned commit before adoption; it was not independently confirmed in this final research pass	Provider/consumer contracts	Consult; pin only after licence verification
+Testcontainers for Node	MIT. 
+Disposable DB/Redis/provider integration tests	Strong CI candidate
+Toxiproxy	MIT. 
+Timeout/retry/network-partition tests	Strong resilience-test candidate
+Uppy	MIT. 
+Future upload UX	Frontend/file batch later
+Motion	MIT. 
+Future interaction/progress animation	Frontend batch later
+Monaco Editor	MIT. 
+Future coding/editor experience	Coding/UI batch later
+MapLibre GL JS	BSD-3-Clause. 
+Future maps/travel/local result components	Rich-results batch later
+OpenFGA	Apache-2.0. 
+Tenant/relationship-authorisation reference	Consult in 007/008; add only if complexity warrants
+Open Policy Agent	Apache-2.0. 
+Deterministic policy reference	Consult in 007/008; avoid duplicate policy engines
+ToolHive	Apache-2.0. 
+MCP/tool isolation/security patterns	Security reference in 010
+Snyk Agent Scan	Apache-2.0. 
+Agent/MCP security scanning ideas	CI/security reference
+Trivy	Apache-2.0. 
+Dependency/container/misconfiguration/secret scanning	Strong CI security candidate
+
+This also establishes an important rule for later Xroga commands: a researched repository is a design option, not an automatic architecture decision. In particular, LLMCompiler should not displace Xroga’s existing task graph until Xroga’s own benchmark suite demonstrates a measurable gain; OpenFGA and OPA should not both be introduced just because both are capable policy engines; and the archived tool-ui repository should inform component/receipt ideas without becoming a new core production dependency. 
+
+Batch completion state and boundaries
+After these ten commands, Xroga is not yet “fully finished.” What should be finished is the layer that makes the remaining product work safe and measurable:
+
+Truth becomes canonical. Xroga will know what code really exists and what remains partial.
+
+Research becomes traceable. None of the 119 discovered requirements or prioritised repositories should disappear between prompts.
+
+Builds become reproducible. Later commands cannot hide broken code behind environment-specific behaviour.
+
+Infrastructure becomes explicit. Future agents stop guessing where API, workers, queues, storage and deployment actually live.
+
+User promises become executable tests. Chat, research, coding, business actions, workflows, AI Employees, Android publishing and mixed requests all get stable acceptance contracts even where later implementation remains.
+
+Tenant isolation becomes a backend invariant. A resource identifier is never treated as sufficient ownership proof.
+
+Approval becomes precise authority. The action actually executed must be the action the user authorised.
+
+Credentials become backend secrets rather than general application data.
+
+Tool and network access becomes policy-controlled. A webpage, uploaded document, MCP description or model output cannot promote itself into permission.
+
+The major information still genuinely unspecified after research is the production key-management provider that should back Command 009; Command 004 must resolve Xroga's actual hosting/KMS options first. Pact JS’s pinned licence should also be independently checked before introducing it as a dependency. The shared ChatGPT page itself was not directly retrievable in this research environment, so Command 002 correctly treats its exported Xroga source bundle as available evidence and the original page as pending export rather than fabricating access.
+
+Most importantly, Batch One deliberately does not replace Xroga's current AI/execution system simply because replacement is allowed. It creates the benchmarks, security boundaries and evidence needed to make that decision intelligently. If a later planner, compiler, workflow engine or agent runtime demonstrably beats Xroga’s current system against the golden journeys while preserving durable execution, tenant boundaries, authority, cost limits and verification, then a later command can replace the weaker component with an evidence-backed migration. That is the safer route to the highly autonomous Xroga SI product you are targeting than replacing architecture before Xroga has a trustworthy way to measure whether the replacement is actually better.

@@ -79,7 +79,7 @@ describe('swarm run event replay', () => {
       createRun(userId, 'test cancellation', runId);
 
       assert.equal(await requestRunCancellation(runId, userId), true);
-      assert.equal(await isRunCancellationRequested(runId), true);
+      assert.equal(await isRunCancellationRequested(runId, userId), true);
       assert.equal(getRun(runId)?.status, 'cancelled');
       assert.equal(
         (getRun(runId)?.output as { code?: string } | null)?.code,

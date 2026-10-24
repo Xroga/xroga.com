@@ -36,6 +36,11 @@ test('unconfirmed dangerous action waits for confirmation', () => assert.equal(i
 test('approved-risk action waits for approval after confirmation', () => assert.equal(initialActionStatus(ACTION_DEFINITIONS.resume_automation, true), 'approval_required'));
 test('requester cannot self approve', () => assert.equal(approvalIsValid({ requesterId: 'u', approverId: 'u', decision: 'approved', expiresAt: '2099-01-01', approvedTargetVersion: 1, currentTargetVersion: 1, approvedPlanDigest: 'a', currentPlanDigest: 'a' }).reason, 'requester_cannot_self_approve'));
 test('expired approval is invalid', () => assert.equal(approvalIsValid({ requesterId: 'u1', approverId: 'u2', decision: 'approved', expiresAt: '2020-01-01', approvedTargetVersion: 1, currentTargetVersion: 1, approvedPlanDigest: 'a', currentPlanDigest: 'a' }).reason, 'approval_expired'));
+test('malformed approval expiry cannot authorize an otherwise matching plan', () => {
+  for (const expiresAt of ['', 'not-a-date', '999999999999999999999']) {
+    assert.deepEqual(approvalIsValid({ requesterId: 'u1', approverId: 'u2', decision: 'approved', expiresAt, approvedTargetVersion: 1, currentTargetVersion: 1, approvedPlanDigest: 'a', currentPlanDigest: 'a' }), { valid: false, reason: 'approval_expired' });
+  }
+});
 test('changed target invalidates approval', () => assert.equal(approvalIsValid({ requesterId: 'u1', approverId: 'u2', decision: 'approved', expiresAt: '2099-01-01', approvedTargetVersion: 1, currentTargetVersion: 2, approvedPlanDigest: 'a', currentPlanDigest: 'a' }).reason, 'approved_target_changed'));
 test('changed plan invalidates approval', () => assert.equal(approvalIsValid({ requesterId: 'u1', approverId: 'u2', decision: 'approved', expiresAt: '2099-01-01', approvedTargetVersion: 1, currentTargetVersion: 1, approvedPlanDigest: 'a', currentPlanDigest: 'b' }).reason, 'approved_target_changed'));
 

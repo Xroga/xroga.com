@@ -20,3 +20,18 @@ List repository writes, deployments, migrations, package releases, outreach or o
 ## Remaining blockers or owner decisions
 
 List any release, licensing, permission or production decisions still required.
+
+## Structured Xroga mission evidence
+
+- Base SHA / requirement IDs / changed files:
+- KEEP / EXTEND / REPLACE / DEPRECATE:
+- Schema/migration impact, isolated fresh/upgrade and staged proof:
+- Auth / tenant / approval / credentials / egress / cost / billing impact:
+- Actual tests, negative cases, counts, failures/skips and tested SHA:
+- New/replacement control-plane RFC (otherwise canonical integration decision):
+- Rollout / approvals / rollback and data compatibility:
+- Sanitized evidence / known gaps / external prerequisites:
+- [ ] No fake completion: fixture PASS is not real provider work or deployed success
+- Structured manifest / `node scripts/xroga/mission-check.mjs` result:
+
+Full checklist: `docs/xroga/PR_EVIDENCE_TEMPLATE.md`. Never paste secret values, customer data or unredacted authenticated traces.

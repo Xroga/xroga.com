@@ -1,0 +1,49 @@
+{
+  "command": "001",
+  "phase1Revalidation": {
+    "result": "PASS_ORIGINAL_10_CRITERIA_NOT_PRODUCT_OR_RELEASE_ACCEPTANCE",
+    "sourceSha": "8ab6e1dd590ac985fdfba8249ac0051948241963",
+    "integratedSha": "2bea538c4d3f34a29e9982c2b86714006aad672a",
+    "aggregateRun": "39143754722",
+    "disposableRun": "39143754730",
+    "criteriaPassed": 10,
+    "criterionIds": "XB01-C001-AC01 through XB01-C001-AC10",
+    "receipt": "docs/xroga/batch-1/phases/PHASE-1-VERIFIED-EVIDENCE.json",
+    "scoreboard": "docs/xroga/batch-1/phases/BATCH-1-CRITERION-SCOREBOARD.json",
+    "finalHeadArtifact": "artifacts/phase-1-acceptance/PHASE-1-VERIFIED-EVIDENCE.json",
+    "historicalFieldsBelowAreNotCurrentProof": true,
+    "productionAuthorized": false
+  },
+  "title": "Repository Truth Map and Architecture Inventory",
+  "source_sha": "3b2bad21561e8abcb9a4a3bd0e98a7241d0efc3d",
+  "branch": "codex/xroga-batch-01",
+  "assessment": "PASS_WITH_BLOCKERS",
+  "application_behavior_changed": false,
+  "production_operations": false,
+  "inventory_tooling_overlay": true,
+  "counts": {
+    "surfaces": 1308,
+    "route_registrations": 258,
+    "endpoint_paths": 219,
+    "queues": 4,
+    "migrations": 67,
+    "workflows": 14,
+    "test_suites": 402,
+    "declared_test_or_suite_calls": 4041,
+    "classified_markers": 351,
+    "reachable_markers": 301,
+    "absent_required_paths": 5,
+    "duplicate_ids": 0
+  },
+  "verification": [
+    { "command": "node scripts/xroga/inventory.mjs --check", "exit_code": 0, "result": "PASS" },
+    { "command": "node --test scripts/xroga/inventory.test.mjs", "exit_code": 0, "passed": 9, "failed": 0, "skipped": 0 }
+  ],
+  "schema_boundary": "scripts/xroga/inventory-schema.mjs",
+  "inventory": "docs/xroga/current-state.json",
+  "call_paths": "docs/xroga/current-call-paths.md",
+  "blockers": "docs/xroga/blockers.md",
+  "ci_workflow": ".github/workflows/unit-tests.yml",
+  "rollback": "Revert Command 001 tooling/documentation/CI additions; no database/runtime operation to reverse.",
+  "implementation_commit": "Recorded in docs/implementation/batch-01/STATUS.md after the verified commit is created"
+}

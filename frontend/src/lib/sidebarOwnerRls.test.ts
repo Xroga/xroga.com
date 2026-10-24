@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 
-const sql=readFileSync(new URL('../../../supabase/migrations/20261022135500_sidebar_owner_rls.sql',import.meta.url),'utf8');
+// Check executable policy text. The explanatory comment names the tautology the policy prevents.
+const sql=readFileSync(new URL('../../../supabase/migrations/20261022135500_sidebar_owner_rls.sql',import.meta.url),'utf8').replace(/--[^\r\n]*/g,'');
 
 test('sidebar section RLS compares project ownership with its actual parent row',()=>{
  assert.match(sql,/alter policy "sidebar_sections_own" on public\.xroga_sidebar_sections/);

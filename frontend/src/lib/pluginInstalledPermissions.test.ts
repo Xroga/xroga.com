@@ -5,7 +5,7 @@ import test from 'node:test';
 
 import {
   canUserAccessComposioToolkit,
-} from '../../../backend/src/services/integrations/composioClient';
+} from '../../../backend/src/services/integrations/composioNamespace';
 
 function source(path: string): string {
   return readFileSync(resolve(process.cwd(), path), 'utf8');
@@ -42,7 +42,9 @@ test('Plugin permission policy is persisted and enforced for ordinary writes', (
   assert.match(service, /full_access/);
   assert.match(actions, /getUserPluginPermissionMode/);
   assert.match(actions, /input\.plan\.toolkit/);
-  assert.match(actions, /permissionMode ===[\s\S]*'full_access'/);
+  assert.match(actions, /assertAuthorityPermit/);
+  assert.match(actions, /permissionMode === 'read_only'/);
+  assert.doesNotMatch(actions, /permissionMode ===\s*'full_access'\s*\?\s*false/);
   assert.match(service, /providerForToolkit/);
   assert.match(service, /scope: cleanToolkit \? 'toolkit' : 'global'/);
   assert.match(routes, /toolkit: z/);
@@ -76,11 +78,13 @@ test('permission choices use honest Xroga approval wording', () => {
   const permission = source('frontend/src/components/integrations/PluginPermissionControl.tsx');
 
   assert.match(permission, /Ask before every change/);
-  assert.match(permission, /Every external change still asks first/);
-  assert.match(permission, /Sensitive or uncertain actions still ask first/);
+  assert.match(permission, /External changes are blocked for this app/);
+  assert.match(permission, /Every consequential change still needs exact approval/);
   assert.match(permission, /Full access/);
   assert.match(permission, /High trust/);
-  assert.match(permission, /Explicitly requested actions can run without an extra Xroga confirmation/);
+  assert.match(permission, /Consequential actions still need exact Xroga approval/);
+  assert.match(permission, /Full access never grants unlimited or unscoped changes/);
+  assert.doesNotMatch(permission, /actions can run without an extra Xroga confirmation/);
   assert.match(permission, /This setting applies to/);
   assert.match(permission, /<span>Permissions<\/span>/);
   assert.match(permission, /Provider and platform safeguards still apply/);

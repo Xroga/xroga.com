@@ -510,7 +510,17 @@ describe('social protocol fast path', () => {
 });
 
 describe('explicit universal build command', () => {
-  it('routes the canonical arbitrary project directly without guessing a product type', async () => {
+  it('routes the canonical arbitrary project directly without guessing a product type', async t => {
+    const keys = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY']; const prior = keys.map(key => process.env[key]);
+    process.env.SUPABASE_URL = 'http://127.0.0.1:49195'; process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-only';
+    t.after(() => keys.forEach((key, index) => { if (prior[index] === undefined) delete process.env[key]; else process.env[key] = prior[index]; }));
+    t.mock.method(globalThis, 'fetch', async (input: Parameters<typeof fetch>[0]) => {
+      const url = new URL(String(input)); assert.equal(url.origin, 'http://127.0.0.1:49195');
+      assert.equal(url.pathname, '/rest/v1/user_token_usage'); assert.equal(url.searchParams.get('user_id'), 'eq.generated-user');
+      return Response.json({ user_id: 'generated-user', plan_tier: 'free', plan_budget_usd: 1.65,
+        quota_period_start: `${new Date().toISOString().slice(0, 7)}-01`, input_tokens: 0, output_tokens: 0,
+        spent_usd: 0, rollover_usd: 0, model_usage: {} });
+    });
     const plan = await planExplicitProjectBuild({
       userId: 'generated-user',
       message: '/build update the selected source and run its tests',

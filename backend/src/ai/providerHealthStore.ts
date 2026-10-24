@@ -26,7 +26,7 @@
  * rehydrated record carries `restoredAt`.
  */
 
-import { getSupabaseAdmin } from '../config/supabase.js';
+import { getGlobalSupabaseAdmin } from '../security/serviceRoleGuard.js';
 import type { ModelId } from './models.js';
 import type { ModelRuntimeHealth } from './providerRuntime.js';
 
@@ -62,9 +62,9 @@ export class InMemoryProviderHealthStore implements ProviderHealthStore {
 
 export class SupabaseProviderHealthStore implements ProviderHealthStore {
   async load(): Promise<PersistedProviderHealth[]> {
-    const { data, error } = await getSupabaseAdmin()
+    const { data, error } = await getGlobalSupabaseAdmin('platform_provider_health')
       .from('model_provider_health')
-      .select('*');
+      .select('model_id,status,successes,failures,consecutive_failures,recent_failure_rate,validation_successes,validation_failures,validation_success_rate,average_latency_ms,last_checked_at,last_success_at,last_failure_at,circuit_open_until,last_failure_kind');
     if (error) throw error;
     return (data ?? []).map((row: Record<string, unknown>) => ({
       modelId: row.model_id as ModelId,
@@ -89,7 +89,7 @@ export class SupabaseProviderHealthStore implements ProviderHealthStore {
   }
 
   async save(health: ModelRuntimeHealth): Promise<void> {
-    const { error } = await getSupabaseAdmin().from('model_provider_health').upsert(
+    const { error } = await getGlobalSupabaseAdmin('platform_provider_health').from('model_provider_health').upsert(
       {
         model_id: health.modelId,
         status: health.status,

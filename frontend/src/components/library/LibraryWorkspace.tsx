@@ -10,6 +10,7 @@ import { useHydrated } from '@/hooks/useHydrated';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import styles from './LibraryWorkspace.module.css';
+import { LibraryFilePreview } from './LibraryFilePreview';
 
 const sections = [
   { id: 'my-files', label: 'My Files', icon: FolderOpen, summary: 'Browse files already saved to a Xroga project.' },
@@ -21,9 +22,13 @@ const sections = [
 type SectionId = (typeof sections)[number]['id'];
 const isSection = (value: string): value is SectionId => sections.some(section => section.id === value);
 const isDocument = (file: ProjectFile) => /\.(?:pdf|docx?|pptx?|xlsx?|md|txt|csv|png|jpe?g|webp|svg)$/i.test(file.file_name) || /(?:document|image|pdf)/i.test(file.file_type);
-const safeFileUrl = (value: string | null) => { if (!value) return null; try { const url = new URL(value); return ['http:', 'https:'].includes(url.protocol) ? url.href : null; } catch { return null; } };
 
 export function LibraryWorkspace() {
+  const identity = useWorkspaceIdentity();
+  return <AccountLibraryWorkspace key={`${identity.status}:${identity.userId ?? 'unresolved'}`} />;
+}
+
+function AccountLibraryWorkspace() {
   const identity = useWorkspaceIdentity();
   const hydrated = useHydrated();
   const enabledSkills = useComposerToolsStore(state => state.enabledSkills);
@@ -96,7 +101,7 @@ export function LibraryWorkspace() {
             : !projects.length ? <Empty icon={FolderOpen} title="No projects yet" copy="Create a project in Workspace, then its saved files will appear here." action={<Link href="/workspace">Open Workspace <ArrowRight size={14} /></Link>} />
             : filesState === 'error' ? <Empty icon={File} title="Files could not load" copy="The selected project remains unchanged." action={<button type="button" onClick={() => { setFilesState('loading'); setReload(value => value + 1); }}>Retry</button>} />
             : filesState === 'loading' ? <p className={styles.loading} role="status">Loading saved files…</p>
-            : visibleFiles.length ? <div className={styles.fileLayout}><div className={styles.fileList}>{visibleFiles.map(file => <button type="button" key={file.id} className={`${styles.fileRow} ${selectedFile?.id === file.id ? styles.selectedFile : ''}`} onClick={() => setSelectedFile(file)}><span className={styles.fileGlyph}><FileText size={17} /></span><span className={styles.fileMeta}><strong>{file.file_name}</strong><small>{file.file_path || 'Project root'} · {file.file_type || 'File'}</small></span><span className={styles.fileDate}>{new Date(file.created_at).toLocaleDateString()}</span><ChevronRight size={15} /></button>)}</div><div className={styles.filePreview}>{selectedFile ? <><div className={styles.previewTop}><span className={styles.sectionIcon}><FileText size={18} /></span><span>FILE DETAILS</span><button type="button" aria-label="Close file preview" onClick={() => setSelectedFile(null)}><X size={16} /></button></div><h3>{selectedFile.file_name}</h3><dl><dt>Path</dt><dd>{selectedFile.file_path || 'Project root'}</dd><dt>Type</dt><dd>{selectedFile.file_type || 'Unknown'}</dd><dt>Version</dt><dd>{selectedFile.version}</dd><dt>Saved</dt><dd>{new Date(selectedFile.created_at).toLocaleString()}</dd></dl>{selectedFile.content ? <pre>{selectedFile.content.slice(0, 5000)}{selectedFile.content.length > 5000 ? '\n… Preview limited to 5,000 characters' : ''}</pre> : <p>No inline preview is stored for this file.</p>}{safeFileUrl(selectedFile.file_url) && <a href={safeFileUrl(selectedFile.file_url)!} target="_blank" rel="noopener noreferrer">Open saved file <ArrowUpRight size={14} /></a>}</> : <><span className={styles.previewPlaceholder}><File size={24} /></span><strong>Select a file</strong><p>Inspect its path, version and saved content without leaving Library.</p></>}</div></div>
+            : visibleFiles.length ? <div className={styles.fileLayout}><div className={styles.fileList}>{visibleFiles.map(file => <button type="button" key={file.id} className={`${styles.fileRow} ${selectedFile?.id === file.id ? styles.selectedFile : ''}`} onClick={() => setSelectedFile(file)}><span className={styles.fileGlyph}><FileText size={17} /></span><span className={styles.fileMeta}><strong>{file.file_name}</strong><small>{file.file_path || 'Project root'} · {file.file_type || 'File'}</small></span><span className={styles.fileDate}>{new Date(file.created_at).toLocaleDateString()}</span><ChevronRight size={15} /></button>)}</div><div className={styles.filePreview}>{selectedFile ? <><div className={styles.previewTop}><span className={styles.sectionIcon}><FileText size={18} /></span><span>FILE DETAILS</span><button type="button" aria-label="Close file preview" onClick={() => setSelectedFile(null)}><X size={16} /></button></div><h3>{selectedFile.file_name}</h3><dl><dt>Path</dt><dd>{selectedFile.file_path || 'Project root'}</dd><dt>Type</dt><dd>{selectedFile.file_type || 'Unknown'}</dd><dt>Version</dt><dd>{selectedFile.version}</dd><dt>Saved</dt><dd>{new Date(selectedFile.created_at).toLocaleString()}</dd></dl><LibraryFilePreview projectId={projectId} file={selectedFile} /></> : <><span className={styles.previewPlaceholder}><File size={24} /></span><strong>Select a file</strong><p>Inspect its path, version and saved content without leaving Library.</p></>}</div></div>
             : <Empty icon={File} title={query ? 'No files match your search' : section === 'artifacts' ? 'No saved documents in this project' : 'No saved files in this project'} copy={query ? 'Try a different name or clear the search.' : 'Only files saved to this project appear here.'} action={query ? <button type="button" onClick={() => setSearch('')}>Clear search</button> : <Link href="/workspace">Open Workspace <ArrowRight size={14} /></Link>} />}
         </>}
 

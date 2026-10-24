@@ -21,12 +21,12 @@
  *
  * The tradeoff, stated plainly
  * ----------------------------
- * `getUser` additionally reflects server-side revocation: a user who signs out or
- * is deleted is rejected immediately, whereas a locally-verified token stays
- * acceptable until its `exp`. Supabase access tokens are short-lived (one hour by
- * default), so the exposure is bounded by that lifetime. `REQUIRE_REMOTE_AUTH_CHECK`
- * restores the old always-remote behaviour if that bound is ever judged too loose
- * for a particular deployment.
+ * `getUser` additionally obtains a current Auth-server user record, including
+ * whether that user still exists. A locally verified token alone cannot do this.
+ * Do not treat either check as an atomic session-revocation fence: Supabase
+ * documents that access tokens can remain valid until expiry after sign-out.
+ * `REQUIRE_REMOTE_AUTH_CHECK` restores always-remote user checks, while sensitive
+ * actions must establish their own fresh identity and authorization boundaries.
  *
  * Nothing here caches an authorization decision. It caches nothing about *what a
  * user may do* — every route still evaluates permission itself, per request,
@@ -49,8 +49,8 @@ export interface ResolvedIdentity {
 
 /**
  * Set to '1' to force the pre-existing behaviour of verifying every request
- * against Supabase Auth. Costs one round trip per request; use only if immediate
- * revocation matters more than egress.
+ * against Supabase Auth. Costs one round trip per request; this is a fresh user
+ * lookup, not a guarantee of atomic logout revocation through a later action.
  */
 function remoteCheckRequired(): boolean {
   return process.env.REQUIRE_REMOTE_AUTH_CHECK === '1';

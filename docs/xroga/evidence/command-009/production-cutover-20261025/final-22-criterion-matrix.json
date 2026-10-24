@@ -1,0 +1,209 @@
+{
+  "sourceSha": "9fb905602455672784b7f26edc054bcc7cbeb7bf",
+  "softwareCriteria": 22,
+  "originalCriterionTextPreserved": true,
+  "productionKms": "VERIFIED_MANAGED_PROVIDER_AND_CUTOVER",
+  "criteria": [
+    {
+      "id": "XB01-C008-AC01",
+      "originalText": "One canonical authority API exists.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/security/authority/enforce.test.ts",
+        "marker": "canonical executor dispatches only an exact issued actor and durable adapter claim, once"
+      }
+    },
+    {
+      "id": "XB01-C008-AC02",
+      "originalText": "businessAction consequential writes use it.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/security/businessAuthority.local.integration.ts",
+        "marker": "real canonical business confirmation claims once and persists exact dispatch and terminal receipts with a synthetic provider"
+      }
+    },
+    {
+      "id": "XB01-C008-AC03",
+      "originalText": "operationsEngine high-risk operations use it or a documented compatibility adapter.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
+        "marker": "real Operations reservations bind current two-person authority and serialize the approved spend ceiling"
+      }
+    },
+    {
+      "id": "XB01-C008-AC04",
+      "originalText": "Grant binds tenant, user, action, target and digest.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/security/authority/digest.test.ts",
+        "marker": "canonical authority digest binds exact nested payload without redaction or locale-dependent ordering"
+      }
+    },
+    {
+      "id": "XB01-C008-AC05",
+      "originalText": "Replay tests pass.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/security/authority/enforce.test.ts",
+        "marker": "canonical executor dispatches only an exact issued actor and durable adapter claim, once"
+      }
+    },
+    {
+      "id": "XB01-C008-AC06",
+      "originalText": "Mutation-after-confirmation tests pass.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/security/authority/enforce.test.ts",
+        "marker": "boolean, cloned, serialized, wrong-account and mutated-scope authorities never dispatch"
+      }
+    },
+    {
+      "id": "XB01-C008-AC07",
+      "originalText": "Expiry/revocation tests pass.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/security/businessAuthority.local.integration.ts",
+        "marker": "real business dispatch rechecks expiry, cancellation and plan after lock waits and rolls admission back"
+      }
+    },
+    {
+      "id": "XB01-C008-AC08",
+      "originalText": "Spend-bound tests pass.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
+        "marker": "serialize the approved spend ceiling"
+      }
+    },
+    {
+      "id": "XB01-C008-AC09",
+      "originalText": "LLM text alone cannot create authority.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/security/authority/enforce.test.ts",
+        "marker": "boolean, cloned, serialized, wrong-account and mutated-scope authorities never dispatch"
+      }
+    },
+    {
+      "id": "XB01-C008-AC10",
+      "originalText": "Every canonical consequential action class has a policy entry.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/security/authority/enforce.test.ts",
+        "marker": "all twelve server policies exist"
+      }
+    },
+    {
+      "id": "XB01-C009-AC01",
+      "originalText": "All newly stored OAuth/provider secrets use CredentialVault.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "docs/xroga/security/credential-caller-dispositions.md",
+        "marker": "Current v3 writer and private consumer"
+      }
+    },
+    {
+      "id": "XB01-C009-AC02",
+      "originalText": "No frontend endpoint returns raw secrets.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "frontend/src/lib/credentialVault.test.ts",
+        "marker": "browser vault has no new secret writer or general reveal API"
+      }
+    },
+    {
+      "id": "XB01-C009-AC03",
+      "originalText": "No LLM/task prompt receives raw provider credential.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/e2e/xrogaGoldenJourneys.test.ts",
+        "marker": "strips provider credentials before a prompt or client can consume the result"
+      }
+    },
+    {
+      "id": "XB01-C009-AC04",
+      "originalText": "Wrong-tenant retrieval test passes.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/services/integrations/credentialVault.test.ts",
+        "marker": "binds every identity field"
+      }
+    },
+    {
+      "id": "XB01-C009-AC05",
+      "originalText": "Ciphertext tamper test passes.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/services/integrations/credentialVault.test.ts",
+        "marker": "vault rejects ciphertext, tag, wrapped-key and key identity substitution"
+      }
+    },
+    {
+      "id": "XB01-C009-AC06",
+      "originalText": "Rotation test passes.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/services/integrations/credentialVault.test.ts",
+        "marker": "vault rotation uses a new revision and key"
+      }
+    },
+    {
+      "id": "XB01-C009-AC07",
+      "originalText": "Revocation test passes.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/services/integrations/credentialMirrorRace.test.ts",
+        "marker": "legacy downloads recheck authoritative revocation, rotation and outages"
+      }
+    },
+    {
+      "id": "XB01-C009-AC08",
+      "originalText": "PKCE has TTL + one-time semantics.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/services/integrations/oauthPkceStore.consume.test.ts",
+        "marker": "one-use OAuth admission fails closed"
+      }
+    },
+    {
+      "id": "XB01-C009-AC09",
+      "originalText": "Legacy migration is idempotent.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/services/integrations/userProviderKeys.migration.test.ts",
+        "marker": "legacy provider-key migration is owner-bound, CAS protected and idempotent"
+      }
+    },
+    {
+      "id": "XB01-C009-AC10",
+      "originalText": "Production cannot use development crypto provider.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.test.ts",
+        "marker": "managed KMS adapter binds the exact key and AAD"
+      }
+    },
+    {
+      "id": "XB01-C009-AC11",
+      "originalText": "Credential audit reports remaining direct storage callers.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "docs/xroga/security/credential-usage-audit.json",
+        "marker": "PRIVATE_CREDENTIAL_CONSUMER_CANDIDATE"
+      }
+    },
+    {
+      "id": "XB01-C009-AC12",
+      "originalText": "Remaining legacy callers are zero or explicitly blocked from production cutover.",
+      "status": "SOFTWARE_VERIFIED",
+      "proof": {
+        "path": "docs/xroga/security/credential-migration.md",
+        "marker": "Enable the temporary migration window"
+      }
+    }
+  ],
+  "batch1Decision": "NO_GO",
+  "phase4": "SUSPENDED",
+  "mainMerged": false
+}

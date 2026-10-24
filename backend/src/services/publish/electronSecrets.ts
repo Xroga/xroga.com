@@ -17,7 +17,8 @@ async function putRepoSecret(opts: {
   try {
     let sodiumMod: typeof import('libsodium-wrappers') | null = null;
     try {
-      sodiumMod = await import('libsodium-wrappers');
+      const imported = await import('libsodium-wrappers');
+      sodiumMod = imported.default ?? imported;
     } catch {
       sodiumMod = null;
     }
@@ -31,7 +32,7 @@ async function putRepoSecret(opts: {
     const sodium = sodiumMod;
 
     const keyRes = await fetch(
-      `https://api.github.com/repos/${opts.owner}/${opts.repo}/actions/secrets/public-key`,
+      `https://api.github.com/repos/${encodeURIComponent(opts.owner)}/${encodeURIComponent(opts.repo)}/actions/secrets/public-key`,
       {
         headers: {
           Authorization: `Bearer ${opts.token}`,
@@ -48,7 +49,7 @@ async function putRepoSecret(opts: {
     const encrypted = sodium.to_base64(encryptedBytes, sodium.base64_variants.ORIGINAL);
 
     const put = await fetch(
-      `https://api.github.com/repos/${opts.owner}/${opts.repo}/actions/secrets/${encodeURIComponent(opts.name)}`,
+      `https://api.github.com/repos/${encodeURIComponent(opts.owner)}/${encodeURIComponent(opts.repo)}/actions/secrets/${encodeURIComponent(opts.name)}`,
       {
         method: 'PUT',
         headers: {
@@ -60,17 +61,21 @@ async function putRepoSecret(opts: {
         body: JSON.stringify({ encrypted_value: encrypted, key_id: keyData.key_id }),
       },
     );
-    return put.status === 201 || put.status === 204 || put.ok;
+    return put.status === 201 || put.status === 204;
   } catch (err) {
-    console.warn('[electronSecrets]', (err as Error).message);
+    console.warn('[electronSecrets] GitHub secret sync failed');
     return false;
   }
 }
 
-function splitRepo(fullName: string): { owner: string; repo: string } | null {
+export function parseElectronSecretRepository(fullName: string): { owner: string; repo: string } | null {
+  if (typeof fullName !== 'string' || fullName !== fullName.trim()) return null;
   const parts = fullName.replace(/^https:\/\/github\.com\//i, '').replace(/\/$/, '').split('/');
-  if (parts.length < 2 || !parts[0] || !parts[1]) return null;
-  return { owner: parts[0], repo: parts[1].replace(/\.git$/, '') };
+  if (parts.length !== 2) return null;
+  const owner = parts[0]!, repo = parts[1]!.replace(/\.git$/, '');
+  if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/.test(owner)
+    || !/^[A-Za-z0-9_.-]{1,100}$/.test(repo) || repo === '.' || repo === '..') return null;
+  return { owner, repo };
 }
 
 /**
@@ -81,10 +86,10 @@ export async function syncElectronSigningSecretsToGitHub(opts: {
   userId: string;
   repoFullName: string;
 }): Promise<{ ok: boolean; synced: string[]; message: string }> {
+  const parsed = parseElectronSecretRepository(opts.repoFullName);
+  if (!parsed) return { ok: false, synced: [], message: 'Invalid repo' };
   const token = await getGitHubToken(opts.userId);
   if (!token) return { ok: false, synced: [], message: 'GitHub not connected' };
-  const parsed = splitRepo(opts.repoFullName);
-  if (!parsed) return { ok: false, synced: [], message: 'Invalid repo' };
 
   const cscLink = await getUserProviderKey(opts.userId, 'electron_csc_link');
   const cscPass = await getUserProviderKey(opts.userId, 'electron_csc_password');

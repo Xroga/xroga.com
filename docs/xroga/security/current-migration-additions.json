@@ -1,0 +1,102 @@
+{
+  "scope": "REVIEWED_CURRENT_MIGRATION_ADDITIONS_NOT_PRODUCTION_SCHEMA_OBSERVATION",
+  "historicalCatalogUnchanged": true,
+  "tables": [
+    {
+      "schema": "public",
+      "table_name": "product_feedback",
+      "migration": "20261018211950_product_feedback_admin.sql",
+      "migrationSha256": "9ddb71e1f0ad5ec8b0f62163b82aa7bf430355584b4b23f009b39d0c9d8169f2",
+      "authorizationMigration": "20261021100000_feedback_founder_authorization.sql",
+      "authorizationSha256": "b4298f22c6ac16682b1f5b953adaebcd1b15326bf27e94a7cfe216b3ccf297ec",
+      "boundary": "RLS enabled. Public INSERT requires signed caller identity or anonymous null identity. Global SELECT requires current confirmed hello@xroga.com, current owner role and signed AAL2, including restrictive policy. Browser mutation is forbidden.",
+      "tests": "scripts/security/feedback-rls.supabase.mjs",
+      "evidence": "Real disposable full-history run39581744698 observed this installed table and passed upgrade/reapply. Separate feedback fresh/upgrade authorization run39581744708 checks actual Auth, MFA, PostgREST and exact persistence. Neither is production parity.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "xroga_sidebar_chats",
+      "migration": "20261021233500_sidebar_organization.sql",
+      "migrationSha256": "a60e170e2087eaa3b5357b91efa78dac397307aee8eedec50fa3c4f03c7555f4",
+      "authorizationMigration": "20261021233500_sidebar_organization.sql",
+      "authorizationSha256": "a60e170e2087eaa3b5357b91efa78dac397307aee8eedec50fa3c4f03c7555f4",
+      "boundary": "Authenticated owner-only RLS and browser DML. Anonymous writes and foreign reads/writes are denied. Service-role bypass is not a browser entitlement.",
+      "tests": "scripts/security/tenant-rls.database.test.mjs",
+      "evidence": "Current-main PR836 migration, qualified parent repair retained. Real changed-source database and full-history receipts required. Not production schema parity or certification by inventory.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "xroga_sidebar_items",
+      "migration": "20261021233500_sidebar_organization.sql",
+      "migrationSha256": "a60e170e2087eaa3b5357b91efa78dac397307aee8eedec50fa3c4f03c7555f4",
+      "authorizationMigration": "20261022003000_sidebar_exact_parent_guards.sql",
+      "authorizationSha256": "501fc5d78726ee296ac9e56865581c80da1517c7d7fa37629f6736d59941f082",
+      "boundary": "Owner-only RLS with exact current project/section/owner references and composite FK under parent-update concurrency. NOT VALID retains legacy rows without certifying them.",
+      "tests": "scripts/security/tenant-rls.database.test.mjs",
+      "evidence": "Real prior PG15 ownership and lock tests at e883f4f3 passed. New source-bound receipts still required. Legacy orphan audit/validation remains a separate authorized release prerequisite.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "xroga_sidebar_legacy_title_backup",
+      "migration": "20261021233500_sidebar_organization.sql",
+      "migrationSha256": "a60e170e2087eaa3b5357b91efa78dac397307aee8eedec50fa3c4f03c7555f4",
+      "authorizationMigration": "20261021233500_sidebar_organization.sql",
+      "authorizationSha256": "a60e170e2087eaa3b5357b91efa78dac397307aee8eedec50fa3c4f03c7555f4",
+      "boundary": "Owner-only SELECT policy. No browser mutation policy exists, including under inherited DML grants. Only the existing service role writes the legacy title backup. No credential or customer-row copying is authorized by inventory.",
+      "tests": "scripts/security/tenant-rls.database.test.mjs",
+      "evidence": "Original title-only migration source inspected, browser role denial and exact retained rows require real disposable tests. No production observation is inferred.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "xroga_sidebar_sections",
+      "migration": "20261021233500_sidebar_organization.sql",
+      "migrationSha256": "a60e170e2087eaa3b5357b91efa78dac397307aee8eedec50fa3c4f03c7555f4",
+      "authorizationMigration": "20261022003000_sidebar_exact_parent_guards.sql",
+      "authorizationSha256": "501fc5d78726ee296ac9e56865581c80da1517c7d7fa37629f6736d59941f082",
+      "boundary": "Authenticated current owner and owned project required by qualified RLS. Exact section/project/owner FK fences referenced parent reassignment, preserving normal section deletion.",
+      "tests": "scripts/security/tenant-rls.database.test.mjs",
+      "evidence": "Prior real PG15 positive, foreign-parent, rollback and lock tests preserved. Changed-source full-history and database execution required before claiming new evidence.",
+      "productionChanges": false
+    },
+    {
+      "table_name": "business_automation_events",
+      "migration": "20261024200940_connected_app_workflows.sql",
+      "productionChanges": false,
+      "authorizationMigration": "20261024200940_connected_app_workflows.sql",
+      "migrationSha256": "7ce147828be75693255e6ecc04c89b0430636964f8c34d28279528ddc60c17e8",
+      "evidence": "Actual full-history fresh run40134070479 at fbbffe47 detected these three installed main migration tables. This inventory adds their exact reviewed creation/authorization hash without changing historical catalogs or claiming production parity. Changed-source full-history role checks required.",
+      "tests": "scripts/security/full-supabase-history.mjs",
+      "authorizationSha256": "7ce147828be75693255e6ecc04c89b0430636964f8c34d28279528ddc60c17e8",
+      "schema": "public",
+      "boundary": "Server-owned workflow/automation checkpoints. RLS enabled, no anon/authenticated grants, service_role only. Server callers must independently verify actor and exact owner. Automation defaults disabled and consequential steps require existing confirmation."
+    },
+    {
+      "table_name": "business_automation_rules",
+      "migration": "20261024200940_connected_app_workflows.sql",
+      "productionChanges": false,
+      "authorizationMigration": "20261024200940_connected_app_workflows.sql",
+      "migrationSha256": "7ce147828be75693255e6ecc04c89b0430636964f8c34d28279528ddc60c17e8",
+      "evidence": "Actual full-history fresh run40134070479 at fbbffe47 detected these three installed main migration tables. This inventory adds their exact reviewed creation/authorization hash without changing historical catalogs or claiming production parity. Changed-source full-history role checks required.",
+      "tests": "scripts/security/full-supabase-history.mjs",
+      "authorizationSha256": "7ce147828be75693255e6ecc04c89b0430636964f8c34d28279528ddc60c17e8",
+      "schema": "public",
+      "boundary": "Server-owned workflow/automation checkpoints. RLS enabled, no anon/authenticated grants, service_role only. Server callers must independently verify actor and exact owner. Automation defaults disabled and consequential steps require existing confirmation."
+    },
+    {
+      "table_name": "business_workflow_runs",
+      "migration": "20261024200940_connected_app_workflows.sql",
+      "productionChanges": false,
+      "authorizationMigration": "20261024200940_connected_app_workflows.sql",
+      "migrationSha256": "7ce147828be75693255e6ecc04c89b0430636964f8c34d28279528ddc60c17e8",
+      "evidence": "Actual full-history fresh run40134070479 at fbbffe47 detected these three installed main migration tables. This inventory adds their exact reviewed creation/authorization hash without changing historical catalogs or claiming production parity. Changed-source full-history role checks required.",
+      "tests": "scripts/security/full-supabase-history.mjs",
+      "authorizationSha256": "7ce147828be75693255e6ecc04c89b0430636964f8c34d28279528ddc60c17e8",
+      "schema": "public",
+      "boundary": "Server-owned workflow/automation checkpoints. RLS enabled, no anon/authenticated grants, service_role only. Server callers must independently verify actor and exact owner. Automation defaults disabled and consequential steps require existing confirmation."
+    }
+  ]
+}

@@ -203,7 +203,8 @@ test('the transcript renders chromeless inside the shell and framed everywhere e
 // ---------------------------------------------------------------------------
 
 test('the menu keeps a small deliberate gap above the composer', () => {
-  assert.match(MENU, /window\.innerHeight - rect\.top \+ 11/);
+  assert.match(MENU, /window\.innerHeight - rect\.top \+ 6/);
+  assert.match(MENU, /top: rect\.bottom \+ 6/);
   assert.match(CSS, /\.xv-cba-menu\s*\{[\s\S]*?border-radius:\s*13px/);
   assert.doesNotMatch(MENU, /window\.innerHeight - rect\.top - 1/);
 });
@@ -212,28 +213,32 @@ test('the menu is anchored to the composer, not to the plus button', () => {
   // The portal measures the full composer surface rather than the small trigger.
   assert.match(MENU, /className=\{cn\('xv-cba-root shrink-0', className\)\}/);
   assert.match(MENU, /closest<HTMLElement>\('\.xv-chatbar-solid'\)/);
-  assert.match(MENU, /left:\s*rect\.left/);
-  assert.match(MENU, /window\.innerHeight - rect\.top \+ 11/);
+  assert.match(MENU, /const frame = composer\.closest<HTMLElement>\('\.xv-kimi-composer-frame'\) \?\? composer/);
+  assert.match(MENU, /const left = Math\.max\(8, Math\.min\(rect\.left, window\.innerWidth - width - 8\)\)/);
+  assert.match(MENU, /window\.innerHeight - rect\.top \+ 6/);
 });
 
 test('opening the menu overlays the terminal instead of resizing anything', () => {
   assert.match(MENU, /createPortal\(/);
   assert.match(MENU, /document\.body/);
-  assert.match(MENU, /maxHeight:\s*Math\.min\(panel === 'menu' \? 330 : 340, Math\.max\(176, rect\.top - 12\)\)/);
-  assert.match(MENU, /const width = rect\.width/);
+  assert.match(MENU, /maxHeight:\s*Math\.min\(480, Math\.max\(130, rect\.top - 12\)\)/);
+  assert.match(MENU, /const width = Math\.min\(rect\.width, window\.innerWidth - 16\)/);
   assert.match(MENU, /window\.addEventListener\('scroll', sync, \{ capture: true, passive: true \}\)/, 'the portal can detach while its dock scrolls');
 });
 
-test('mobile composer panels attach above the chatbar and stay compact', () => {
-  assert.match(MENU, /const mobile = window\.innerWidth < 640/);
-  assert.match(MENU, /position:\s*'fixed'[\s\S]*left:\s*rect\.left[\s\S]*bottom:\s*Math\.max\(8, window\.innerHeight - rect\.top \+ 11\)/);
-  assert.match(MENU, /width:\s*rect\.width/);
-  assert.match(MENU, /maxHeight:\s*Math\.min\(panel === 'menu' \? 390 : 304, Math\.max\(150, rect\.top - 8\)\)/);
+test('composer panels select the available side and remain viewport bounded on mobile', () => {
+  assert.match(MENU, /const idle = Boolean\(composer\.closest\('\.xv-terminal-dock--idle'\)\)/);
+  assert.match(MENU, /const available = window\.innerHeight - rect\.bottom - 16/);
+  assert.match(MENU, /setMenuStyle\(available >= 160 \?/);
+  assert.match(MENU, /position: 'fixed', left, top: rect\.bottom \+ 6/);
+  assert.match(MENU, /bottom: Math\.max\(8, window\.innerHeight - rect\.top \+ 6\)/);
+  assert.match(MENU, /const width = Math\.min\(rect\.width, window\.innerWidth - 16\)/);
+  assert.match(MENU, /maxHeight: Math\.max\(120, Math\.min\(440, rect\.top - 12\)\)/);
   assert.match(MENU, /menuRef\.current\?\.contains\(target\)/);
 });
 
 test('provider connections are one compact menu row, and the detached pill is gone', () => {
-  assert.match(MENU, /<b>Integrations<\/b>/);
+  assert.match(MENU, /<b>Plugins<\/b>/);
   assert.match(MENU, /onOpenIntegrations/);
   assert.match(CHATBAR, /onOpenIntegrations=\{\(\) => \{/);
   // The duplicate trigger, and its styling hook, must not come back.
@@ -245,13 +250,13 @@ test('the duplicate Connectors row is gone and slash commands expose real action
   assert.doesNotMatch(MENU, /onOpenConnectors/);
   assert.match(MENU, /panel === 'commands'/);
   assert.match(MENU, /COMPOSER_COMMANDS\.map/);
-  assert.match(MENU, /onClick=\{\(\) => insert\(command\.prompt, \{ highlight: 'command', selectionLength: command\.command\.length \}\)\}/);
+  assert.match(MENU, /onClick=\{\(\) => insert\(command\.prompt, \{ highlight: 'command', selectionLength: command\.command\.length, label: command\.command, category: 'Slash command', description: command\.description, tone: 'blue' \}\)\}/);
 });
 
 test('the compact menu exposes the requested working tools', () => {
   for (const label of [
     'Add files or photos',
-    'Integrations',
+    'Plugins',
     'Slash commands',
     'Plan before build',
     'Debug an error',
@@ -267,7 +272,7 @@ test('the compact menu exposes the requested working tools', () => {
 
 test('the action palette follows the reference row order', () => {
   const files = MENU.indexOf('<b>Add files or photos</b>');
-  const integrations = MENU.indexOf('<b>Integrations</b>');
+  const integrations = MENU.indexOf('<b>Plugins</b>');
   const commands = MENU.indexOf('<b>Slash commands</b>');
   const plan = MENU.indexOf('<b>Plan before build</b>');
   assert.ok(files >= 0 && integrations > files, 'integrations should follow file input');
@@ -283,13 +288,13 @@ test('command, plan, and debug inserts expose an intentional selection highlight
   assert.match(CSS, /textarea\[data-insert-highlight='debug'\]::selection[^}]*background:#dc3f4b/);
 });
 
-test('integrations has original provider marks, a hover preview, and the full click action', () => {
-  for (const provider of ['github', 'vercel', 'supabase']) {
-    assert.match(MENU, new RegExp(`IntegrationLogo id="${provider}"`));
-  }
-  assert.match(MENU, /xv-cba-integration-preview/);
-  assert.match(CSS, /\.xv-cba-item--integrations:hover \.xv-cba-integration-preview/);
+test('Plugins keeps its supported-app description and the full gated click action', () => {
+  // PR827 replaced the miniature provider-logo hover preview with one plain row.
+  assert.match(MENU, /className="xv-cba-item xv-cba-item--integrations" data-tone="purple"/);
+  assert.match(MENU, /disabled=\{!onOpenIntegrations\}/);
+  assert.match(MENU, /<b>Plugins<\/b><i>Connect and manage supported apps<\/i>/);
   assert.match(MENU, /onOpenIntegrations\?\.\(\)/);
+  assert.match(MENU, /onOpenIntegrations\?\.\(\); setOpen\(false\)/);
 });
 
 // ---------------------------------------------------------------------------
@@ -301,14 +306,17 @@ test('terminal output is sized like a console, not like a landing page', () => {
   assert.match(CSS, /\.xv-terminal-scroll \.xv-response-text h1,\s*\n\.xv-terminal-scroll \.xv-response-text h2 \{\s*\n\s*font-size:\s*18px/);
 });
 
-test('the prompt bubble and the chips lost their outlines but kept their shape', () => {
+test('the prompt bubble keeps its shape and the current suggestion rows remain flat', () => {
   const bubble = rule('.xv-user-bubble') ?? '';
   assert.match(bubble, /background:\s*rgba\(255, 255, 255, 0\.045\)/);
   assert.match(bubble, /border:\s*1px solid rgba\(255, 255, 255, 0\.075\)/);
   assert.match(bubble, /border-radius:\s*12px/);
   assert.equal(/gradient/.test(bubble), false, 'the blue gradient bubble came back');
 
-  assert.match(rule('.xv-suggest-chip') ?? '', /background:\s*rgba\(255, 255, 255, 0\.035\)/);
+  const suggestion = rule('.xv-suggest-chip') ?? '';
+  assert.match(suggestion, /background:\s*transparent/);
+  assert.match(suggestion, /border-radius:\s*0/);
+  assert.match(suggestion, /border-bottom:\s*1px solid/);
 });
 
 test('the Workspace button uses filled states rather than a border', () => {

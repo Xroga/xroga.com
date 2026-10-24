@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "scope": "PHASE4_HANDOFF_ONLY_COMMAND010_NOT_IMPLEMENTATION_OR_ADMISSION",
+  "sourceContract": "docs/xroga/research/inputs/batch-one-report.txt",
+  "phase2AcceptedSource": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+  "phase3SoftwareSource": "9869d6e7bc5f40be7660562c2005d2bf9266412a",
+  "phase3Status": "PENDING_FINAL_CI_AND_PRODUCTION_KMS_CUTOVER",
+  "command": "010",
+  "criteria": [
+    { "id": "XB01-C010-AC01", "originalText": "All arbitrary outbound URL callers are inventoried.", "status": "PLANNED_NOT_IMPLEMENTED" },
+    { "id": "XB01-C010-AC02", "originalText": "High-risk URL callers use central URL policy.", "status": "PLANNED_NOT_IMPLEMENTED" },
+    { "id": "XB01-C010-AC03", "originalText": "All consequential external data egress passes egressPolicy.", "status": "PLANNED_NOT_IMPLEMENTED" },
+    { "id": "XB01-C010-AC04", "originalText": "businessAction integrates authority + egress before provider execution.", "status": "PLANNED_NOT_IMPLEMENTED" },
+    { "id": "XB01-C010-AC05", "originalText": "Tool descriptions cannot create authority.", "status": "PLANNED_NOT_IMPLEMENTED" },
+    { "id": "XB01-C010-AC06", "originalText": "Malicious document/web/tool-output tests cannot override policy.", "status": "PLANNED_NOT_IMPLEMENTED" },
+    { "id": "XB01-C010-AC07", "originalText": "Loopback/private/link-local/metadata SSRF tests pass.", "status": "PLANNED_NOT_IMPLEMENTED" },
+    { "id": "XB01-C010-AC08", "originalText": "Redirect-to-private test passes.", "status": "PLANNED_NOT_IMPLEMENTED" },
+    { "id": "XB01-C010-AC09", "originalText": "Cross-tenant external upload test passes.", "status": "PLANNED_NOT_IMPLEMENTED" },
+    { "id": "XB01-C010-AC10", "originalText": "Credential-secret egress test passes.", "status": "PLANNED_NOT_IMPLEMENTED" },
+    { "id": "XB01-C010-AC11", "originalText": "Security decision evidence contains no raw credential.", "status": "PLANNED_NOT_IMPLEMENTED" },
+    { "id": "XB01-C010-AC12", "originalText": "audit-egress-callers reports zero unexplained high-risk bypasses.", "status": "PLANNED_NOT_IMPLEMENTED" }
+  ],
+  "reusedInterfaces": [
+    "backend/src/security/authority/enforce.ts",
+    "backend/src/security/authority/risk.ts",
+    "backend/src/services/integrations/businessAction.ts",
+    "backend/src/operations/operationsService.ts",
+    "backend/src/ai/providerBudget.ts",
+    "backend/src/services/integrations/credentialVault.ts",
+    "backend/src/services/integrations/credentialVaultRuntime.ts",
+    "docs/xroga/security/credential-caller-dispositions.md",
+    "docs/xroga/deployment-topology.md"
+  ],
+  "restrictions": {
+    "phase4Started": false,
+    "additionalSpend": 0,
+    "merge": false,
+    "deploy": false,
+    "dnsChange": false,
+    "liveProviderEffect": false
+  }
+}

@@ -19,7 +19,7 @@ test('Projects, conditional Pinned and Recents are compact text-first rows',()=>
 });
 test('Recents renders at most twelve initially and grows only on user request',()=>{
   assert.match(sidebar, /useState\(12\)/);
-  assert.match(visible, /recentConversations\.slice\(0,shownRecents\)\.map/);
+  assert.match(visible, /standaloneRecents\.slice\(0,shownRecents\)\.map/);
   assert.match(visible, /setShownRecents\(prev=>prev\+12\)/);
   assert.match(visible, /onClick=\{\(\)=>setShownRecents\(12\)\}>Show fewer/);
 });

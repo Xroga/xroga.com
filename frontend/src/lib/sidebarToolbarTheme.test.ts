@@ -125,7 +125,7 @@ test('the card carries no colour of its own — only theme variables', () => {
 
 test('the toolbar adds no state and no theme detection of its own', () => {
   const toolbar = SIDEBAR.slice(
-    SIDEBAR.indexOf('xv-sidebar-header-actions'),
+    SIDEBAR.indexOf('xv-sidebar-utilities'),
     SIDEBAR.indexOf('xv-sidebar-collapsed-actions'),
   );
   assert.notEqual(toolbar, '', 'the toolbar markup is gone');
@@ -209,7 +209,9 @@ test('separators are hairlines, and decorative', () => {
   assert.match(sep, /background:\s*var\(--toolbar-separator\)/);
   // Two of them, between three controls, carrying no meaning for a screen reader.
   const spans = SIDEBAR.match(/<span className="xv-toolbar-sep" aria-hidden="true" \/>/g) ?? [];
-  assert.equal(spans.length, 2, `expected 2 separators, found ${spans.length}`);
+  assert.equal(spans.length, 0, 'the current plain utility row has no decorative dividers');
+  const compact = read('../components/layout/SidebarCompact.module.css');
+  assert.match(compact, /:global\(\.xv-sidebar-utilities\) button[^}]*background: transparent;[^}]*color: var\(--foreground\)/);
 });
 
 test('theme changes transition rather than jump', () => {
@@ -224,16 +226,17 @@ test('theme changes transition rather than jump', () => {
 // Nothing else moved
 // ---------------------------------------------------------------------------
 
-test('the three controls, their order and their handlers are untouched', () => {
+test('the approved three utilities preserve order, current handlers and no duplicate state', () => {
   const toolbar = SIDEBAR.slice(
-    SIDEBAR.indexOf('xv-sidebar-header-actions'),
+    SIDEBAR.indexOf('xv-sidebar-utilities'),
     SIDEBAR.indexOf('xv-sidebar-collapsed-actions'),
   );
-  const order = [...toolbar.matchAll(/aria-label="(New Terminal|Search)"|<ThemeToggle \/>/g)].map((m) => m[1] ?? 'Theme');
-  assert.deepEqual(order, ['New Terminal', 'Search', 'Theme'], 'the controls changed or were reordered');
+  const order = [...toolbar.matchAll(/aria-label="(Notifications|Close sidebar)"|<ThemeToggle \/>/g)].map((m) => m[1] ?? 'Theme');
+  assert.deepEqual(order, ['Theme', 'Notifications', 'Close sidebar'], 'the approved utilities changed order');
 
-  assert.match(toolbar, /onClick=\{handleNewChat\}/);
-  assert.match(toolbar, /onClick=\{\(\) => setSearchOpen\(true\)\}/);
+  assert.match(toolbar, /requestAuthGate\('history'\)/);
+  assert.match(toolbar, /setNotificationsOpen\(value => !value\)/);
+  assert.match(toolbar, /if \(isMobile\) closeMobile\(\); else toggleSidebar\(\);/);
   // No labels, no extra controls.
   assert.equal(/<span>(?!New<)/.test(toolbar.replace(/<span className="xv-toolbar-sep"[^/]*\/>/g, '')), false);
 });

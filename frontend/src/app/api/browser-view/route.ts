@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {browserProxyHeaders, escapeProxyHtml} from '@/lib/untrustedProxyResponse';
 
 function browserHtml(message: string, detail: string, target?: string) {
+  message=escapeProxyHtml(message);detail=escapeProxyHtml(detail);target=target===undefined?undefined:escapeProxyHtml(target);
   return `<!doctype html>
 <html lang="en">
   <head>
@@ -34,7 +36,7 @@ export async function GET(request: NextRequest) {
   const target = request.nextUrl.searchParams.get('target')?.trim();
   if (!target) {
     return new NextResponse(browserHtml('No page selected', 'Enter a URL or search term in Xroga Browser.'), {
-      headers: { 'content-type': 'text/html; charset=utf-8' },
+      headers: browserProxyHeaders,
     });
   }
 
@@ -53,7 +55,7 @@ export async function GET(request: NextRequest) {
     if (!response.ok) {
       return new NextResponse(
         browserHtml('Could not open this page', `The site returned ${response.status}.`, target),
-        { headers: { 'content-type': 'text/html; charset=utf-8' }, status: 200 }
+        { headers: browserProxyHeaders, status: 200 }
       );
     }
 
@@ -70,12 +72,7 @@ export async function GET(request: NextRequest) {
       : `<base href="${target}">${html}`;
 
     return new NextResponse(injectedBase, {
-      headers: {
-        'content-type': 'text/html; charset=utf-8',
-        'x-frame-options': 'SAMEORIGIN',
-        'content-security-policy':
-          "default-src * data: blob: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self';",
-      },
+      headers: browserProxyHeaders,
     });
   } catch {
     return new NextResponse(
@@ -84,7 +81,7 @@ export async function GET(request: NextRequest) {
         'This website blocked loading inside the built-in browser proxy, or the request failed. Try another page or open it externally.',
         target
       ),
-      { headers: { 'content-type': 'text/html; charset=utf-8' }, status: 200 }
+      { headers: browserProxyHeaders, status: 200 }
     );
   }
 }

@@ -1,0 +1,47 @@
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { getTenantSupabaseAdmin } from './serviceRoleGuard.js';
+import { requireTenantContext, type TenantContext } from './tenantContext.js';
+import { TenantAccessError, resourceNotFound } from './tenantErrors.js';
+
+/** Only names/keys inspected in the actual schema; no client-supplied table/column. */
+const resources = {
+  project: { table: 'projects', key: 'id' },
+  chat: { table: 'chats', key: 'id' },
+  provider_connection: { table: 'user_integrations', key: 'id' },
+  run: { table: 'swarm_runs', key: 'id' },
+  runtime_session: { table: 'project_runtime_sessions', key: 'session_id' },
+  cost_record: { table: 'ai_usage_ledger', key: 'id' },
+} as const;
+export type OwnedResourceKind = keyof typeof resources;
+
+export async function requireOwnedResource(context: TenantContext, kind: OwnedResourceKind, id: string, client?: SupabaseClient): Promise<void> {
+  const scope = requireTenantContext(context);
+  if (!Object.hasOwn(resources, kind) || typeof id !== 'string' || !id.trim() || id.length > 200) resourceNotFound();
+  const policy = resources[kind];
+  const { data, error } = await (client ?? getTenantSupabaseAdmin(scope)).from(policy.table).select(policy.key).eq(policy.key, id).eq('user_id', scope.userId).maybeSingle();
+  if (error) throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
+  if (!data) resourceNotFound();
+}
+
+export async function requireOwnedFile(context: TenantContext, fileId: string, client?: SupabaseClient): Promise<void> {
+  const scope = requireTenantContext(context);
+  if (typeof fileId !== 'string' || !fileId.trim() || fileId.length > 200) resourceNotFound();
+  const db = client ?? getTenantSupabaseAdmin(scope);
+  // PostgREST inner join applies both predicates in one request; don't fetch the foreign file first.
+  const { data, error } = await db.from('project_files').select('id, projects!inner(user_id)').eq('id', fileId).eq('projects.user_id', scope.userId).maybeSingle();
+  if (error) throw new TenantAccessError(503, 'RESOURCE_ACCESS_UNAVAILABLE');
+  if (!data) resourceNotFound();
+}
+
+export const requireOwnedProject = (context: TenantContext, id: string, client?: SupabaseClient) => requireOwnedResource(context, 'project', id, client);
+
+/** UUIDs name database projects. Workspace run/repository keys remain logical
+ * identities and still need owner-scoped downstream stores, never UUID casting. */
+export async function requireOptionalOwnedDatabaseProject(context:TenantContext,id:string|undefined,client?:SupabaseClient):Promise<string|undefined>{
+  const scope=requireTenantContext(context);
+  if(id===undefined)return undefined;
+  if(typeof id!=='string'||!id.trim())resourceNotFound();
+  const normalized=id.trim();
+  if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(normalized))await requireOwnedProject(scope,normalized,client);
+  return normalized;
+}

@@ -44,6 +44,12 @@ interface SafeConfirmation {
 
   expiresAt: string;
   request?: string;
+  approval?: {
+    preparedActionId: string; actionDigest: string; accountReference: string; operation: string;
+    actionClass: string; destination: unknown; criticalParameters: unknown;
+    spendMaximumMicroUsd: string | null; currency: string | null;
+  };
+  receipt?: { id: string; outcome: string; recordedAt: string; resultDigest?: string };
   toolSlug?: string;
   argumentsPreview?: string;
 }
@@ -489,9 +495,35 @@ export default function BusinessActionConfirmationPage() {
 
             <div className="rounded-xl border border-[var(--border-subtle)] px-4 py-3">
               <p className="text-xs leading-5 text-[var(--text-secondary)]">
-                Xroga keeps the provider session, OAuth credentials, and plan digest on the server. Review the operation and redacted arguments above. Confirming this page authorizes this one prepared action only.
+                Confirming authorizes only this account and exact prepared action. Provider credentials and sessions stay on the server. Sensitive parameter values are redacted below.
               </p>
             </div>
+
+            {confirmation.approval ? (
+              <section className="space-y-3 rounded-xl border border-[var(--border-subtle)] p-4" aria-label="Exact action approval">
+                <dl className="space-y-2 break-all text-sm">
+                  <div><dt className="text-[var(--text-secondary)]">Account</dt><dd>{confirmation.approval.accountReference}</dd></div>
+                  <div><dt className="text-[var(--text-secondary)]">Operation</dt><dd>{confirmation.approval.operation}</dd></div>
+                  <div><dt className="text-[var(--text-secondary)]">Destination</dt><dd>{JSON.stringify(confirmation.approval.destination) ?? 'See parameters'}</dd></div>
+                  <div><dt className="text-[var(--text-secondary)]">Prepared action digest</dt><dd className="font-mono text-xs">{confirmation.approval.actionDigest}</dd></div>
+                  <div><dt className="text-[var(--text-secondary)]">Approved spend ceiling</dt><dd>{confirmation.approval.spendMaximumMicroUsd === null ? 'No spending authority included' : `${confirmation.approval.spendMaximumMicroUsd} micro-USD, ${confirmation.approval.currency}`}</dd></div>
+                </dl>
+                <p className="text-xs text-[var(--text-secondary)]">Critical parameters</p>
+                <pre className="max-h-72 overflow-auto whitespace-pre-wrap break-all text-xs">{JSON.stringify(confirmation.approval.criticalParameters, null, 2)}</pre>
+              </section>
+            ) : pending ? (
+              <p role="alert" className="text-sm text-[var(--text-secondary)]">This older action needs to be prepared again before it can be confirmed.</p>
+            ) : null}
+
+            {confirmation.receipt ? (
+              <p className="break-all text-xs text-[var(--text-secondary)]">
+                Receipt {confirmation.receipt.id}: {confirmation.receipt.outcome === 'provider_reported_success'
+                  ? 'The provider reported success. This receipt is not independent verification of its external state.'
+                  : confirmation.receipt.outcome === 'dispatch_uncertain'
+                    ? 'The dispatch outcome is uncertain. Check the provider before preparing another action.'
+                    : 'The action was not dispatched.'}
+              </p>
+            ) : null}
 
             {message ? (
               <p className="text-sm font-medium text-[var(--text-primary)]">
@@ -532,9 +564,7 @@ export default function BusinessActionConfirmationPage() {
                   onClick={() => {
                     void confirm();
                   }}
-                  disabled={Boolean(
-                    submitting,
-                  )}
+                  disabled={Boolean(submitting) || !confirmation.approval}
                   className="rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white transition-opacity disabled:opacity-50"
                 >
                   {submitting ===

@@ -1,0 +1,614 @@
+{
+  "version": 1,
+  "baselineSource": "ea2305700ae5c46ea24f612f9a09fbfcba4161cd",
+  "branch": "codex/xroga-batch-01",
+  "createdAt": "2026-10-18T15:13:05.813Z",
+  "scope": "PHASE_1_ONLY_NO_RELEASE_AUTHORIZATION",
+  "workingFiles": [
+    {
+      "status": "A ",
+      "path": "backend/src/growth/experimentAdmission.local.integration.ts"
+    },
+    {
+      "status": "A ",
+      "path": "backend/src/growth/experimentAdmission.test.ts"
+    },
+    {
+      "status": "M ",
+      "path": "backend/src/growth/growthService.ts"
+    },
+    {
+      "status": "M ",
+      "path": "backend/src/security/tenantIsolation.local.integration.ts"
+    },
+    {
+      "status": " M",
+      "path": "docs/xroga/blockers.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/xroga/current-state.json"
+    },
+    {
+      "status": " M",
+      "path": "docs/xroga/current-state.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/xroga/dependency-inventory.json"
+    },
+    {
+      "status": " M",
+      "path": "docs/xroga/deployment-topology.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/xroga/missions/command-007.json"
+    },
+    {
+      "status": " M",
+      "path": "docs/xroga/requirements-ledger.json"
+    },
+    {
+      "status": " M",
+      "path": "docs/xroga/requirements-ledger.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/xroga/research/source-manifest.json"
+    },
+    {
+      "status": " M",
+      "path": "docs/xroga/runtime-contract.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/xroga/secret-inventory.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/xroga/security/batch-1-closure-progress.json"
+    },
+    {
+      "status": " M",
+      "path": "docs/xroga/security/caller-reviews.json"
+    },
+    {
+      "status": " M",
+      "path": "docs/xroga/security/privileged-callers.json"
+    },
+    {
+      "status": " M",
+      "path": "docs/xroga/security/rls-audit.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/xroga/security/tenant-model.md"
+    },
+    {
+      "status": "A ",
+      "path": "supabase/migrations/20261018001800_growth_experiment_assignment.sql"
+    },
+    {
+      "status": "A ",
+      "path": "supabase/migrations/20261018001900_growth_experiment_exposure.sql"
+    },
+    {
+      "status": "??",
+      "path": "artifacts/"
+    }
+  ],
+  "migrations": [
+    {
+      "path": "supabase/migrations/001_initial_schema.sql",
+      "sha256": "d7a2f0913bea8639b57f66d0fd97c6ffde1a1cb34828a8010a69a1f1f0807473"
+    },
+    {
+      "path": "supabase/migrations/002_notifications.sql",
+      "sha256": "db9a51381ee54e11668a8e6e23bfd23b245246df77dc6156cc956842b89eaf6b"
+    },
+    {
+      "path": "supabase/migrations/002a_reconcile_foundation.sql",
+      "sha256": "d623c37e057d0eb7c3595833081f0872d3ca972d05ebb1a75128ff702794482b"
+    },
+    {
+      "path": "supabase/migrations/003_production_setup.sql",
+      "sha256": "2d9b7d46e29c0ba485f8337e1b8318a592f036d16b7dbb7561cc35f7c4a6acd2"
+    },
+    {
+      "path": "supabase/migrations/004_messages.sql",
+      "sha256": "b3dbf32653f480be5410acf0fe1241ba85e705827b300979ec8ce5eddcbb2258"
+    },
+    {
+      "path": "supabase/migrations/005_messages_grants.sql",
+      "sha256": "1fa8a93234084725d0c4b462b06cfa61fb6aa953dfb40046c6fe3ea70df56196"
+    },
+    {
+      "path": "supabase/migrations/006_production_swarm_schema.sql",
+      "sha256": "7dbe31a37fcd19c39b7fb508de41fe5a7e1238d269ca7d11ce801e36c77d1ce4"
+    },
+    {
+      "path": "supabase/migrations/007_billing.sql",
+      "sha256": "a3687aadcb425158e72846b918e64a010207183d15d042bc389ee5643c83ac4b"
+    },
+    {
+      "path": "supabase/migrations/008_concurrency_and_trial.sql",
+      "sha256": "b02a206edb6ec4ceef33a122a211d3ce0b7f0142aaa08052c592c00baeccf9c3"
+    },
+    {
+      "path": "supabase/migrations/009_fix_trial_actions.sql",
+      "sha256": "e2d09ee648e5285f1a90accb6e06ac4ff3a2fce6b5d220b32e3eb7c784fe129b"
+    },
+    {
+      "path": "supabase/migrations/010_swarm_resilience.sql",
+      "sha256": "8e0bcd71c21771dbef1281b16dc75ef684496492a7582f79ca12fc1d798c2088"
+    },
+    {
+      "path": "supabase/migrations/011_admin_and_orchestrator_v2.sql",
+      "sha256": "4ae24128c9197075ae9cd590da21632a3df10494c7d6d1fc35e5b2b804e7ede1"
+    },
+    {
+      "path": "supabase/migrations/012_agnes_image_providers.sql",
+      "sha256": "521fa7640ce38ca09389eda738d58e7619a18d1322d4f3dd26ca77908778eeaa"
+    },
+    {
+      "path": "supabase/migrations/013_ai_training_corpus.sql",
+      "sha256": "1ca087c0bb869a56a65c65b0a9b5d046124b02d4783e4fe546fa84a4cea53ea5"
+    },
+    {
+      "path": "supabase/migrations/014_image_providers_openai.sql",
+      "sha256": "b9ff67ff2f01dc66b5ca0de2c27a29b4b6232f0d1252e8823b9d8e01f16b9c75"
+    },
+    {
+      "path": "supabase/migrations/015_cost_optimized_image_providers.sql",
+      "sha256": "6a4da4f2d2ffb061c478e0ac0e21a023eb0e99e186df3a26b1f31a192bc43117"
+    },
+    {
+      "path": "supabase/migrations/016_movie_production_schema.sql",
+      "sha256": "b5d0f2e5f79951fd3cd9bf46743d08a3c9c5942395d52d6cd81b77988d8df4e3"
+    },
+    {
+      "path": "supabase/migrations/017_oss_video_priority.sql",
+      "sha256": "de14b88984122d56798a5274e3266b718d9f964a1a1ec78549160e429e85dfee"
+    },
+    {
+      "path": "supabase/migrations/018_hf_spaces_video_priority.sql",
+      "sha256": "9a59ede1c3423a6f52fe3c0449d57a529511d80ad8ef77c38a6b82f94ec7c3cf"
+    },
+    {
+      "path": "supabase/migrations/019_video_generation_jobs.sql",
+      "sha256": "de79ae0d8bcdc232a03568f55c8a773dffb002ef17f4cbe53be75235001b8633"
+    },
+    {
+      "path": "supabase/migrations/020_user_integrations.sql",
+      "sha256": "82d5f3a3e91aa4eeed530bea73ca4600c66cf33c4e60f4a52514a961a48dcd74"
+    },
+    {
+      "path": "supabase/migrations/021_github_tokens_bucket.sql",
+      "sha256": "19abd22156d0bc43e47a86ce2a40a428560c8741774b02c646acd89b8366f769"
+    },
+    {
+      "path": "supabase/migrations/022_phase1_token_usage.sql",
+      "sha256": "23888730aa1778f2e602fb51c2ca6a77c707d2f9fcb4114793d7a4e412c72133"
+    },
+    {
+      "path": "supabase/migrations/023_dashboard_xrg_tasks.sql",
+      "sha256": "12c4fc0f3faf76083c75673382e0793dc73f507a3ea6f4447f4d2a331ef33aaf"
+    },
+    {
+      "path": "supabase/migrations/024_phase3_referrals_community.sql",
+      "sha256": "e56cfcbf5a401d307804a1ec877f16c0cfd15cb4665fb1754267689ff379a22f"
+    },
+    {
+      "path": "supabase/migrations/025_scale_analytics_marketplace_influencer.sql",
+      "sha256": "b6303e2eb284024ee5c0c53291ebbda956e0b40fe1ae921e173d05417c0010e2"
+    },
+    {
+      "path": "supabase/migrations/026_token_usage_atomic_and_model_caps.sql",
+      "sha256": "cabded68823cc6818ac7d220c126af5661bcabd390e2de1010571426ed57816b"
+    },
+    {
+      "path": "supabase/migrations/027_terminal_sessions.sql",
+      "sha256": "44ffa8ff931dda22aaf190f26f9f42309a8fa394dfd2cabe842b27434a39104c"
+    },
+    {
+      "path": "supabase/migrations/028_ai_cost_ledger_and_rollover.sql",
+      "sha256": "4649e5ef22285a83d05143b72b49e58088274f9df9b2c617857627dc05ea2cbb"
+    },
+    {
+      "path": "supabase/migrations/029_user_api_key_vault_note.sql",
+      "sha256": "35b512d5f76f6ce15170a621a3eb56ca2dc9fc17ee0daf22cf8a56932622a62c"
+    },
+    {
+      "path": "supabase/migrations/030_project_memory_and_run_trace.sql",
+      "sha256": "0c0b34f08a9522a0d2123628bb1c9ed977907e8764ff0e3106e5e7b399830bd3"
+    },
+    {
+      "path": "supabase/migrations/031_session_memory_swarm_columns.sql",
+      "sha256": "08e4e3548b968188768a2a3c03ac4d9e56d66cde615f331a4b61c46c96a7aa5e"
+    },
+    {
+      "path": "supabase/migrations/035_lemon_squeezy_billing.sql",
+      "sha256": "1439b633dc2f6ea2ca56780bb40303cd5ebb100ec9b47d50b0a837cbb9ba4542"
+    },
+    {
+      "path": "supabase/migrations/036_ensure_user_integrations_schema_cache.sql",
+      "sha256": "543645873df1ae6f449683fbcc88554c0efcab14571ccefe3a49287e97171fb6"
+    },
+    {
+      "path": "supabase/migrations/037_model_routing_outcomes.sql",
+      "sha256": "5078e6fbbdae684523ea8bce12be53cf4ac9605ebd1de732d032db485b215f04"
+    },
+    {
+      "path": "supabase/migrations/038_core_execution_runtime.sql",
+      "sha256": "a425a92243a4f07f86b2e8b7e7ea5e85a9d298320de355c3ce79ac18b5bf4942"
+    },
+    {
+      "path": "supabase/migrations/20260726153357_command3a_production_operations.sql",
+      "sha256": "421c1c69111e9d47f4352c43bb9c6984ba4943aa244763f3955e5b11b53157c4"
+    },
+    {
+      "path": "supabase/migrations/20260726211546_command3b_operations_centre.sql",
+      "sha256": "be440a328f2a6a4b1bb5332a5089bf69573c780c2630ab04ef08a80f34468098"
+    },
+    {
+      "path": "supabase/migrations/20260726211810_command3b_action_retry_hardening.sql",
+      "sha256": "57587aedde7297af862f619fadd5b1b6eb831739af08b37054b428fa138a70c7"
+    },
+    {
+      "path": "supabase/migrations/20260727071619_command3c_growth_runtime.sql",
+      "sha256": "4068fcdf1e91fb7ed80bbf5a5899341980b8ca0d58872a7cb69bc2781cb6007e"
+    },
+    {
+      "path": "supabase/migrations/20260727073814_command3c_growth_indexes.sql",
+      "sha256": "c6286c1dce3a9faf713a5008ef859b816ad46255470f2d6e26bf909aabcd926c"
+    },
+    {
+      "path": "supabase/migrations/20260727082121_command3c_deployment_status_access.sql",
+      "sha256": "a1464bb42e647dd61eee6e4b253b8af730921bd9ecce67b1d37e2ca279a1d918"
+    },
+    {
+      "path": "supabase/migrations/20260727082535_command3c_legacy_operations_access.sql",
+      "sha256": "cf827e2ca0b02f5f4b7a77b0c40d434e3a907ae238c94fb3154c7cf21b245b50"
+    },
+    {
+      "path": "supabase/migrations/20260727_command3a_function_hardening.sql",
+      "sha256": "f6dce2f07fa9fd4b42bd8a4c8a03cc7bb072ace6162a91fe159d74bca6961bd2"
+    },
+    {
+      "path": "supabase/migrations/20260728010000_command45_shared_provider_entitlement.sql",
+      "sha256": "33cd15851e9396e412df92148d1e2219624f2bb3eac8f66fe7a5078c4f5bf00a"
+    },
+    {
+      "path": "supabase/migrations/20260728193000_notifications_grants.sql",
+      "sha256": "8779256b40c0ebb732c0fce1bc5ca6e6a17e3371c2f790c5a4dd87c79029423b"
+    },
+    {
+      "path": "supabase/migrations/20260729192159_community_platform.sql",
+      "sha256": "a3ae865bd39cd3608db8d56210620e0a17306709c018fcb08c863a8ac4c69181"
+    },
+    {
+      "path": "supabase/migrations/20260729221500_companion_preferences.sql",
+      "sha256": "ef219573ba229bc48f055cbe802205842c0fb7d068492ffdc2ca3b833b477d34"
+    },
+    {
+      "path": "supabase/migrations/20260730020500_community_split_public_read_policies.sql",
+      "sha256": "b5d0d40d894580e55134916357f6a94549ee5077dacd3d5e95fa9b29c17045ac"
+    },
+    {
+      "path": "supabase/migrations/20260801000000_swarm_run_event_replay.sql",
+      "sha256": "8b3ec5e6c1130c5af3595e85697315234af15cd8a770fd44461102eafe82d0f7"
+    },
+    {
+      "path": "supabase/migrations/20260802000000_swarm_run_runtime_status.sql",
+      "sha256": "aa2c07c975355b4d5b0938d183420711e7f7ace17f97a2d04bac434ad3ad0d18"
+    },
+    {
+      "path": "supabase/migrations/20260808000000_command2_universal_persistence.sql",
+      "sha256": "01c56a0068a80fd3d81c0272d1aabcab781576e33389c1bfef965a8f8ee465d1"
+    },
+    {
+      "path": "supabase/migrations/20260811093000_command3_provider_health_durability.sql",
+      "sha256": "2208ac864d599c908afdd8f51df9b29da49db7b311075dc14a8151a5edaf8bfc"
+    },
+    {
+      "path": "supabase/migrations/20260811110000_command3_provider_health_grants.sql",
+      "sha256": "94ea62951e454cb8b3c31523d03580f53ac3e2cac57d391345f6fa87ec091c69"
+    },
+    {
+      "path": "supabase/migrations/20260824181000_restore_balanced_pacing_guard.sql",
+      "sha256": "ac624e2c468c351e88dece5fc4919293e47f7a6c11e68ba325393c3e2a433528"
+    },
+    {
+      "path": "supabase/migrations/20260824220000_onboarding_state.sql",
+      "sha256": "9937c74376e73aadb5eaebe1ebd1feb683aeec1815ee9597685b0adac6058553"
+    },
+    {
+      "path": "supabase/migrations/20260906010000_parallel_web_usage.sql",
+      "sha256": "ef9e71e59e6f26f4f4c66d5a3a6014067bc6a718c954dac9891513401893cbaa"
+    },
+    {
+      "path": "supabase/migrations/20260908001000_project_change_checkpoints.sql",
+      "sha256": "bd887ec70e8470dd2b1d6bdfaaeb476dc2e42d4b54f3a5dd2f8d2768568df4d0"
+    },
+    {
+      "path": "supabase/migrations/20260909145816_whop_billing_and_free_plan.sql",
+      "sha256": "f356f654de8ed225780792b4c79fea6d2483dbb3374569ac0701efd3afe155d0"
+    },
+    {
+      "path": "supabase/migrations/20260910090000_universal_cost_ceiling.sql",
+      "sha256": "5e485d5e45e810083110c7177894c16f6a515d8b9a22795a3dd1c576eecdcbdf"
+    },
+    {
+      "path": "supabase/migrations/20260914180500_business_action_confirmations.sql",
+      "sha256": "d3a93c037e7704bfad5d4ef72379becd501b5295aba6c8ce0455c9fa99f65b6e"
+    },
+    {
+      "path": "supabase/migrations/20260917000000_software_agent_checkpoints.sql",
+      "sha256": "62da03b2f1926e76e45a99888ec2982649ae377039b4a9a559afbaf1f96d82c7"
+    },
+    {
+      "path": "supabase/migrations/20260919000000_project_runtime_platform.sql",
+      "sha256": "6c90a674e1537d988abff6091dc09f54be694bb960aa0e7b107eba3165086c5f"
+    },
+    {
+      "path": "supabase/migrations/20260919235500_live_preview.sql",
+      "sha256": "0091638f80bf50b94a0065cee9265a762b50ca6d825d0a0c183bad7f95e4138c"
+    },
+    {
+      "path": "supabase/migrations/20260930152000_step7b_build_outcomes.sql",
+      "sha256": "10cfb91a365f6165f9cefbaa7bd607f5da1816920ccb95637080815abffde7de"
+    },
+    {
+      "path": "supabase/migrations/20260930203500_step7b_strategy_learning.sql",
+      "sha256": "c63aded49174e71830747d8ea51698ef1671553e090b16cb1d1fb1c63c6af566"
+    },
+    {
+      "path": "supabase/migrations/20261002000000_swarm_run_worker_leases.sql",
+      "sha256": "55fea07589f100d40e4ea92ec5063c53d6998474ba4d51d2ba383c619fbc083f"
+    },
+    {
+      "path": "supabase/migrations/20261013150357_xroga_tenant_security_baseline.sql",
+      "sha256": "cb284e425be8ea09ba1ed6477f6e7f092b636772ee6f03d3ad35c39823075d29"
+    },
+    {
+      "path": "supabase/migrations/20261013221254_private_project_file_delivery.sql",
+      "sha256": "2b330803b0c9daceab7ea2dcbc133fd1628da5cc4c2e02d1d8b83cb44a8160ea"
+    },
+    {
+      "path": "supabase/migrations/20261015000100_whop_membership_owner_boundary.sql",
+      "sha256": "be22a1c389123977015c51937b788d2e95d08220417118c945516ed6d93db14e"
+    },
+    {
+      "path": "supabase/migrations/20261015000200_immutable_audit_lifecycle.sql",
+      "sha256": "24b6daf37e48402ee970d85e528ae99465989b16848a311f7738c179a3d927e8"
+    },
+    {
+      "path": "supabase/migrations/20261015000300_swarm_run_attempt_fencing.sql",
+      "sha256": "1dc3e170a9f437fd8066ebf08c4f7a055fa0555d258c0f346bba461f9167e98d"
+    },
+    {
+      "path": "supabase/migrations/20261015000400_provider_key_revision_fencing.sql",
+      "sha256": "3b1c35d2bc2117b9ae04261bcccf89a03c4a98d0df9daed08a8609860901082b"
+    },
+    {
+      "path": "supabase/migrations/20261015000500_oauth_session_consumption.sql",
+      "sha256": "34a1cb46063fb4680176d0d58725d39d247e72f779588a167cb60e9082a965ad"
+    },
+    {
+      "path": "supabase/migrations/20261016000100_oauth_authorization_epoch.sql",
+      "sha256": "db0e0d0b7e0e642ab896ea7d47ad47eafb657fb15842d8abbecb0c022f187243"
+    },
+    {
+      "path": "supabase/migrations/20261016000200_github_oauth_atomic_connection.sql",
+      "sha256": "1ec4baba4c1682984c83314828e4fa8cce728ef0e53fb28b29c092d2a216f29d"
+    },
+    {
+      "path": "supabase/migrations/20261016000300_atomic_referral_link.sql",
+      "sha256": "bd96e4ae91d7cc5d9070070e5b454a3a02aaa77b5fdb4b21cfdb4813f626d225"
+    },
+    {
+      "path": "supabase/migrations/20261016000400_atomic_project_deletion.sql",
+      "sha256": "cd3c8de1262222e106950018e910810e073b65e7cb831010dde2aaf9a7003340"
+    },
+    {
+      "path": "supabase/migrations/20261016000500_build_outcome_attempt_fencing.sql",
+      "sha256": "ab08ed884cd90b400cd0eb4b25f0f71f7f011478d32efae354e7459752d75caa"
+    },
+    {
+      "path": "supabase/migrations/20261016000600_cancelled_build_outcome_receipt.sql",
+      "sha256": "46bcdee21a1fc1a4fe2052779dcf19ae691a8da95caf3181dd092cb19433169f"
+    },
+    {
+      "path": "supabase/migrations/20261016000700_atomic_project_creation.sql",
+      "sha256": "fc1b6de4b4e964def27118454053782d1ad368292d3c427a9d62d1b145e20c62"
+    },
+    {
+      "path": "supabase/migrations/20261016000900_guard_growth_referral_event.sql",
+      "sha256": "09cebde93616fd9806179fe2a6bea68d1ae88c675623f51c895d15f6d988eb77"
+    },
+    {
+      "path": "supabase/migrations/20261016001000_execution_checkpoint_attempt.sql",
+      "sha256": "66de5ad5185dcba29f9158739cf4d1fd98f1a1098a4ae259b1ec943f0a7339ad"
+    },
+    {
+      "path": "supabase/migrations/20261016001100_atomic_usage_accounting.sql",
+      "sha256": "e1f30b40e279f75d008be5f495fcd184273291d1a8b8f41afd607870aefdfbec"
+    },
+    {
+      "path": "supabase/migrations/20261016001200_software_checkpoint_attempt.sql",
+      "sha256": "3ea611a61786f0fe073dc3c3bcb92283a0e821d250508414f90b9f96122828e7"
+    },
+    {
+      "path": "supabase/migrations/20261016001300_supabase_credential_bundle.sql",
+      "sha256": "6e42f15d8b669512728f73adc1ce2b12c6c5f075ad645d198a130063b57afc08"
+    },
+    {
+      "path": "supabase/migrations/20261016001400_worker_project_revision.sql",
+      "sha256": "a8d7ce96729c38bf67e9bae634e101c6b456a24f8444507c047ae72952bd6a6b"
+    },
+    {
+      "path": "supabase/migrations/20261016001500_community_comment_update.sql",
+      "sha256": "5cb5f30c553a4f4bd3b3bf986a9285951b5e1b4f001552dd6c5d4c4f949015be"
+    },
+    {
+      "path": "supabase/migrations/20261016001600_community_post_mutation.sql",
+      "sha256": "064498e81bf35cbf0aeec0c80930c4515ed1d6d7beabaa35a6aa25557fb78787"
+    },
+    {
+      "path": "supabase/migrations/20261016001700_run_trace_attempt.sql",
+      "sha256": "9aa06a34f38d796a4bec8f36e5cf01e3be20870c28b476e5a3bc6281056938ab"
+    },
+    {
+      "path": "supabase/migrations/20261016001800_community_remaining_mutations.sql",
+      "sha256": "2f82f395f0b61ddd316fc214a1487f299cd7486db66259029602b47cb3cb8c5b"
+    },
+    {
+      "path": "supabase/migrations/20261016001900_repository_index_snapshot.sql",
+      "sha256": "c99befc592fde3a5d00534e3743b0ad204ac2dc110ec05e1b3049aee9993efe5"
+    },
+    {
+      "path": "supabase/migrations/20261016002000_community_read_visibility.sql",
+      "sha256": "4116ad648c42ad4d298d4a76951130f328cf1f37d0626c495d9ec8640936d655"
+    },
+    {
+      "path": "supabase/migrations/20261016002100_runtime_terminal_latch.sql",
+      "sha256": "f13167137b59c6effca8cb8660be4087911bed34637af7f3da0c8b1400ac139a"
+    },
+    {
+      "path": "supabase/migrations/20261016002200_growth_in_app_delivery.sql",
+      "sha256": "a010489bc3c775337116f80bd36a8195118b4f173993b5cf0982cc51ed794859"
+    },
+    {
+      "path": "supabase/migrations/20261016002300_runtime_session_identity.sql",
+      "sha256": "82eb12247aec192bc3f4a68dfd7094dc5829e87717a978760594ae0912323630"
+    },
+    {
+      "path": "supabase/migrations/20261018000100_operations_completion_receipt.sql",
+      "sha256": "05a454fd9a4a51758e76feebc13a0cfd0c903d54593ed54daadbe9f4b0f70095"
+    },
+    {
+      "path": "supabase/migrations/20261018000200_business_confirmation_claim.sql",
+      "sha256": "ff38a84ef33d414ec6407165ee9cfec2a4fdbd3e735bf134b71e95ef003835a2"
+    },
+    {
+      "path": "supabase/migrations/20261018000300_operations_approval_transaction.sql",
+      "sha256": "0cdb903dbd1afeb0bfc04957e6a1002ea5ed08970a1966c5104944b8c42a40cd"
+    },
+    {
+      "path": "supabase/migrations/20261018000400_operations_claim_clock.sql",
+      "sha256": "3c28578dee9029e17cba93396a427dcaea2ac8a31b1f5c15f44d583bb7e57294"
+    },
+    {
+      "path": "supabase/migrations/20261018000500_operations_confirmation_transaction.sql",
+      "sha256": "65e37044f673cfa0921897dfdb0f91940ba2863436fd60277b8c8a419f9c46e2"
+    },
+    {
+      "path": "supabase/migrations/20261018000600_operations_claim_admission.sql",
+      "sha256": "ea519d807832685ce35ca6233e82b625818935cb97bff787ee2a65d40402b011"
+    },
+    {
+      "path": "supabase/migrations/20261018000700_operations_automation_version.sql",
+      "sha256": "39893cbbcd116bcb2b5db2be7b4239d22016b76dfcdb62f08441e7ce5e4fcdef"
+    },
+    {
+      "path": "supabase/migrations/20261018000800_growth_outcome_transaction.sql",
+      "sha256": "b9f9aa83d3c617fd7ebbbd92589e97433c3a2e234762f5d07c2d3c176a0b59b2"
+    },
+    {
+      "path": "supabase/migrations/20261018000900_business_confirmation_finish.sql",
+      "sha256": "cb2ba5f8636d62028bae1875d50faa7c841c187c744a2b5d972842be5108618d"
+    },
+    {
+      "path": "supabase/migrations/20261018001000_operations_action_creation.sql",
+      "sha256": "704c98284ce79aa7f05290cf638f94d567cba69c91a1fa07321f462a15422467"
+    },
+    {
+      "path": "supabase/migrations/20261018001100_operations_automation_admission.sql",
+      "sha256": "307fbe8cdad30d1562979bc1f7c91234f6819e9141a97b783aba4e441f405c2d"
+    },
+    {
+      "path": "supabase/migrations/20261018001200_operations_automation_creation.sql",
+      "sha256": "86e5531b02564a0eecc9f1cd3ac92f50e18dfde16c8963d6f51aa9130f67a7b3"
+    },
+    {
+      "path": "supabase/migrations/20261018001300_preview_grant_admission.sql",
+      "sha256": "57cef12a292fc1b55dde7773fd3ccaadf3a2de8463bc239a1129d03da8e294a4"
+    },
+    {
+      "path": "supabase/migrations/20261018001400_swarm_run_heartbeat.sql",
+      "sha256": "1822e67dac84e7bb6f4bd85a24faceefb43dea65880923659f6d92bde241f1dd"
+    },
+    {
+      "path": "supabase/migrations/20261018001500_growth_activation_definition.sql",
+      "sha256": "0a5a2760c3c55ead71613772e7dd36c856dc6bdc3c55a3cd06ff79df23d284b2"
+    },
+    {
+      "path": "supabase/migrations/20261018001600_growth_activation_evaluation.sql",
+      "sha256": "603a3caaa6c398a1d59375639fe2fddbefacde5c170df12739bef20c89058fd1"
+    },
+    {
+      "path": "supabase/migrations/20261018001700_growth_lifecycle_transition.sql",
+      "sha256": "47106309a97034798163ad3b9697037f3edef333a0cbe442aab3ae1b3d709f39"
+    },
+    {
+      "path": "supabase/migrations/20261018001800_growth_experiment_assignment.sql",
+      "sha256": "72d23e5f41a3310ea0179ddc67e5f8c77a26d88b2cb8ae914ec2ad8463acf10b"
+    },
+    {
+      "path": "supabase/migrations/20261018001900_growth_experiment_exposure.sql",
+      "sha256": "7b5c22102976c166b34bc5af2c87b94a71f7cbe12c33789b284533633d62444f"
+    }
+  ],
+  "locks": [
+    {
+      "path": "package-lock.json",
+      "sha256": "3521be21c8034bc2a907f2280fe299ef697478f73214e206f47eaba70ef9910c"
+    },
+    {
+      "path": "backend/package-lock.json",
+      "sha256": "3d59000ced0fa7b0b5bae6d6c40df998591af3eb2e1a5a5ed1be21a268f6bb4d"
+    },
+    {
+      "path": "frontend/package-lock.json",
+      "sha256": "1d07c6d1f70ee55849043d2eea73b26c5795a15fdad1d7f0919317f1d0e57a69"
+    }
+  ],
+  "indexDiffSha256": "5183a0a93f1caf4180d79f0e1d1b2cc9e5dae222a6afa290e37720b166155724",
+  "unstagedDiffSha256": "103a7f87595c1d47203811e60cc8174ff62bcdc9ebe18f8edada84350c3d0c47",
+  "verifiedCI": {
+    "source": "ea2305700ae5c46ea24f612f9a09fbfcba4161cd",
+    "integrated": "36c4529fa88ef9558b71b5766c2ea239f35f0f01",
+    "aggregate": "39126345755",
+    "disposable": "39126345772",
+    "workflows": 11,
+    "migrations": 113,
+    "securityTests": 148,
+    "browserTests": 3
+  },
+  "budget": {
+    "additionalSpend": 0,
+    "paidCalls": false,
+    "productionWrites": false,
+    "merge": false,
+    "deployment": false
+  },
+  "artifacts": [
+    {
+      "path": "artifacts/ea230-aggregate/batch-01-baseline-36c4529fa88ef9558b71b5766c2ea239f35f0f01/run-a-manifest.json",
+      "sha256": "5ded21a9214b42651e89c86b1e314d1c9a974c38b72e08ebd65cfd57f3ae0827"
+    },
+    {
+      "path": "artifacts/ea230-aggregate/batch-01-baseline-36c4529fa88ef9558b71b5766c2ea239f35f0f01/run-b-manifest.json",
+      "sha256": "361509748aa582053aa0756425c8a159a80829e806c2cbbd6175d0e5be4d6fca"
+    },
+    {
+      "path": "artifacts/ea230-aggregate/batch-01-integrated-candidate-36c4529fa88ef9558b71b5766c2ea239f35f0f01/batch-01-baseline/run-a-manifest.json",
+      "sha256": "534e7d286b72a785d8c94b7dcebb08fe594c20aa772f3433cf2af9a25d0d4ae2"
+    },
+    {
+      "path": "artifacts/ea230-aggregate/batch-01-integrated-candidate-36c4529fa88ef9558b71b5766c2ea239f35f0f01/batch-01-baseline/run-b-manifest.json",
+      "sha256": "d185f584620abcd20a5e9630ba3382c2c80e218dd0b5e2ff6fddf72356612a43"
+    }
+  ]
+}

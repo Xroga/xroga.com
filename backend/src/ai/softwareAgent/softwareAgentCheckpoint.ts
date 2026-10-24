@@ -5,6 +5,7 @@ import {
 import {
   getSupabaseAdmin,
 } from '../../config/supabase.js';
+import { requireAdmittedRunAttempt, type AdmittedRunAttempt } from '../runStore.js';
 
 import type {
   SoftwareExecutionContract,
@@ -463,10 +464,13 @@ export class SupabaseSoftwareAgentCheckpointStore
   implements
     SoftwareAgentCheckpointStore
 {
+  private readonly attempt?: AdmittedRunAttempt;
+  private writes: Promise<void> = Promise.resolve();
   constructor(
     private readonly userId:
       string,
-  ) {}
+    attempt?: AdmittedRunAttempt,
+  ) { this.attempt = attempt ? requireAdmittedRunAttempt(attempt) : undefined; }
 
   async load(
     runId:
@@ -484,7 +488,7 @@ export class SupabaseSoftwareAgentCheckpointStore
           'software_agent_checkpoints',
         )
         .select(
-          'checkpoint',
+          'run_id,user_id,project_id,repository_identity,base_fingerprint,status,checkpoint',
         )
         .eq(
           'run_id',
@@ -502,66 +506,82 @@ export class SupabaseSoftwareAgentCheckpointStore
       throw error;
     }
 
-    if (
-      !data?.checkpoint
-    ) {
-      return null;
-    }
-
-    return structuredClone(
-      data.checkpoint as
-        SoftwareAgentCheckpoint,
-    );
+    return restoreOwnerBoundSoftwareCheckpoint(data, this.userId, runId);
   }
 
   async save(
     checkpoint:
       SoftwareAgentCheckpoint,
   ): Promise<void> {
-    const {
-      error,
-    } =
-      await getSupabaseAdmin()
-        .from(
-          'software_agent_checkpoints',
-        )
-        .upsert(
-          {
-            run_id:
-              checkpoint.runId,
-
-            user_id:
-              this.userId,
-
-            project_id:
-              checkpoint.projectId,
-
-            repository_identity:
-              checkpoint.repository,
-
-            base_fingerprint:
-              checkpoint
-                .baseFingerprint,
-
-            status:
-              checkpoint.status,
-
-            checkpoint,
-
-            updated_at:
-              checkpoint.updatedAt,
-          },
-
-          {
-            onConflict:
-              'run_id,user_id',
-          },
-        );
-
-    if (
-      error
-    ) {
-      throw error;
+    const attempt = this.attempt;
+    if (!attempt || attempt.userId !== this.userId || attempt.runId !== checkpoint.runId) {
+      throw Object.assign(new Error('Software checkpoint authority is missing.'), { code: 'RUN_STATE_CONFLICT' });
     }
+    requireAdmittedRunAttempt(attempt);
+    const snapshot = cloneCheckpoint(checkpoint);
+    const pending = this.writes.then(async () => {
+      const {data,error} = await getSupabaseAdmin().rpc('persist_software_checkpoint_attempt', {
+        p_run_id: attempt.runId, p_owner_id: this.userId, p_worker_id: attempt.workerId,
+        p_generation: attempt.generation, p_checkpoint: snapshot,
+      });
+      if (error) throw Object.assign(new Error('Software checkpoint persistence is unavailable.'), { code:'RESOURCE_ACCESS_UNAVAILABLE' });
+      if (data !== true) throw Object.assign(new Error('Software checkpoint is no longer authoritative.'), { code:'RUN_STATE_CONFLICT' });
+    });
+    this.writes = pending;
+    void pending.catch(() => {});
+    await pending;
   }
+}
+
+function validCheckpointRepository(value: unknown): value is SoftwareAgentCheckpointRepository | null {
+  if (value === null) return true;
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const repo = value as Record<string,unknown>;
+  return ['owner','repo','branch'].every(key => typeof repo[key] === 'string' && !!repo[key]) &&
+    (repo.sourceCommit === undefined || typeof repo.sourceCommit === 'string');
+}
+
+function validCheckpoint(value: unknown): value is SoftwareAgentCheckpoint {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const item = value as Record<string,unknown>;
+  const evidence = item.evidence as Record<string,unknown> | null;
+  return item.schemaVersion === '1.0.0' && typeof item.runId === 'string' && !!item.runId &&
+    (item.projectId === null || typeof item.projectId === 'string') && validCheckpointRepository(item.repository) &&
+    typeof item.baseFingerprint === 'string' && !!item.baseFingerprint && Array.isArray(item.changes) &&
+    item.changes.every(change => change && typeof change.path === 'string' && ['created','modified','deleted'].includes(change.kind) &&
+      (change.kind === 'deleted' || typeof change.content === 'string')) &&
+    !!evidence && !Array.isArray(evidence) && Array.isArray(evidence.changedFiles) && Array.isArray(evidence.checks) &&
+    Array.isArray(item.blockers) && item.blockers.every(value => typeof value === 'string') &&
+    typeof item.status === 'string' && ['active','verified','incomplete','failed','cancelled'].includes(item.status) &&
+    typeof item.updatedAt === 'string' && Number.isFinite(Date.parse(item.updatedAt));
+}
+
+/** Durable row columns remain authority, embedded JSON cannot relocate a checkpoint. */
+export function restoreOwnerBoundSoftwareCheckpoint(row: unknown, userId: string, runId: string): SoftwareAgentCheckpoint | null {
+  if (!row || typeof row !== 'object' || Array.isArray(row)) return null;
+  const record = row as Record<string,unknown>, checkpoint = record.checkpoint;
+  if (record.user_id !== userId || record.run_id !== runId || !validCheckpoint(checkpoint) || checkpoint.runId !== runId ||
+      checkpoint.projectId !== record.project_id || checkpoint.baseFingerprint !== record.base_fingerprint ||
+      checkpoint.status !== record.status || !validCheckpointRepository(record.repository_identity) ||
+      !sameRepository(checkpoint.repository, record.repository_identity)) return null;
+  return cloneCheckpoint(checkpoint);
+}
+
+/** Restrict every consumer of this store to the immutable authorized run-start base. */
+export function bindSoftwareCheckpointRecovery(store: SoftwareAgentCheckpointStore, expected: {
+  runId: string; projectId: string | null; repository: SoftwareAgentCheckpointRepository | null;
+  baseFiles: readonly SoftwareAgentWorkspaceFile[];
+}): SoftwareAgentCheckpointStore {
+  const identity = {runId:expected.runId,projectId:expected.projectId,repository:structuredClone(expected.repository),
+    baseFingerprint:softwareAgentBaseFingerprint(expected.baseFiles)};
+  return {
+    async load(runId) {
+      if (runId !== identity.runId) return null;
+      const checkpoint = await store.load(runId);
+      if (!validCheckpoint(checkpoint) || checkpoint.runId !== identity.runId || checkpoint.projectId !== identity.projectId ||
+          !sameRepository(checkpoint.repository,identity.repository) || checkpoint.baseFingerprint !== identity.baseFingerprint) return null;
+      return cloneCheckpoint(checkpoint);
+    },
+    save: checkpoint => store.save(checkpoint),
+  };
 }

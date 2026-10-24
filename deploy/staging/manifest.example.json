@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "environment": "staging",
+  "sourceSha": "",
+  "dataPolicy": "synthetic_only",
+  "ownerReview": {
+    "productionResourceInventoryComplete": false,
+    "productionBucketNames": [],
+    "isolationEvidence": ""
+  },
+  "api": { "app": "xroga-api-staging", "origin": "https://xroga-api-staging.fly.dev" },
+  "web": { "projectId": "", "origin": "" },
+  "auth": { "app": "xroga-supabase-staging", "origin": "https://xroga-supabase-staging.fly.dev", "databaseMode": "isolated_self_hosted" },
+  "r2": { "accountId": "", "bucket": "xroga-security-staging", "publicAccess": false, "customDomains": [] },
+  "services": { "billing": "disabled", "externalProviders": "disabled", "webhooks": "disabled", "sandbox": "disabled" }
+}

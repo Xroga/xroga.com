@@ -38,6 +38,8 @@ export async function recordWebSpend(input: {
   microUsd: number;
   providerRequestId?: string;
 }): Promise<void> {
+  // Keep the admitted owner, provider and receipt together across the cycle read.
+  input = { ...input };
   const amount = Math.max(0, Math.round(input.microUsd));
 
   if (!amount) return;
