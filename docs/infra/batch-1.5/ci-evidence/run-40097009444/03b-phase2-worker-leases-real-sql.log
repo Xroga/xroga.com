@@ -1,0 +1,118 @@
+# cmd: npx tsx --test --test-reporter=tap src/workers/postgresLeaseStore.integration.test.ts
+TAP version 13
+# Subtest: worker task leases against real PostgreSQL
+    # Subtest: LeaseStore contract: PostgresLeaseStore
+        # Subtest: grants one live holder at a time
+        ok 1 - grants one live holder at a time
+          ---
+          duration_ms: 9.99565
+          type: 'test'
+          ...
+        # Subtest: fencing tokens strictly increase across expiry and release, never repeat
+        ok 2 - fencing tokens strictly increase across expiry and release, never repeat
+          ---
+          duration_ms: 7.258041
+          type: 'test'
+          ...
+        # Subtest: a stalled worker cannot act after takeover (assertCurrent and renew both refuse)
+        ok 3 - a stalled worker cannot act after takeover (assertCurrent and renew both refuse)
+          ---
+          duration_ms: 12.956362
+          type: 'test'
+          ...
+        # Subtest: a late release by the old holder never frees the new holder
+        ok 4 - a late release by the old holder never frees the new holder
+          ---
+          duration_ms: 7.919013
+          type: 'test'
+          ...
+        # Subtest: renew extends the expiry; an unrenewed lease expires
+        ok 5 - renew extends the expiry; an unrenewed lease expires
+          ---
+          duration_ms: 5.201573
+          type: 'test'
+          ...
+        # Subtest: released leases are immediately available
+        ok 6 - released leases are immediately available
+          ---
+          duration_ms: 5.220973
+          type: 'test'
+          ...
+        # Subtest: is scoped by tenant: identical run and task ids in two tenants are independent
+        ok 7 - is scoped by tenant: identical run and task ids in two tenants are independent
+          ---
+          duration_ms: 4.394138
+          type: 'test'
+          ...
+        # Subtest: rejects blank identifiers and unreasonable ttls
+        ok 8 - rejects blank identifiers and unreasonable ttls
+          ---
+          duration_ms: 2.877657
+          type: 'test'
+          ...
+        # Subtest: a forged token is refused even for the right worker
+        ok 9 - a forged token is refused even for the right worker
+          ---
+          duration_ms: 4.697818
+          type: 'test'
+          ...
+        1..9
+    ok 1 - LeaseStore contract: PostgresLeaseStore
+      ---
+      duration_ms: 61.705783
+      type: 'suite'
+      ...
+    # Subtest: under real contention exactly one of many concurrent acquirers wins
+    ok 2 - under real contention exactly one of many concurrent acquirers wins
+      ---
+      duration_ms: 57.873763
+      type: 'test'
+      ...
+    # Subtest: a lease taken through one connection pool is honoured through another (it is shared state, not process memory)
+    ok 3 - a lease taken through one connection pool is honoured through another (it is shared state, not process memory)
+      ---
+      duration_ms: 15.23482
+      type: 'test'
+      ...
+    # Subtest: with the database clock, an unrenewed lease really expires and the next holder gets a higher token
+    ok 4 - with the database clock, an unrenewed lease really expires and the next holder gets a higher token
+      ---
+      duration_ms: 128.844151
+      type: 'test'
+      ...
+    # Subtest: the table and functions are private: anon and authenticated can neither read, write nor execute
+    ok 5 - the table and functions are private: anon and authenticated can neither read, write nor execute
+      ---
+      duration_ms: 14.38087
+      type: 'test'
+      ...
+    # Subtest: the database refuses out-of-range ttls and over-long identifiers
+    ok 6 - the database refuses out-of-range ttls and over-long identifiers
+      ---
+      duration_ms: 4.571792
+      type: 'test'
+      ...
+    # Subtest: the migration is re-runnable and its rollback removes everything it created
+    ok 7 - the migration is re-runnable and its rollback removes everything it created
+      ---
+      duration_ms: 18.992902
+      type: 'test'
+      ...
+    1..7
+ok 1 - worker task leases against real PostgreSQL
+  ---
+  duration_ms: 557.556804
+  type: 'suite'
+  ...
+1..1
+# tests 15
+# suites 2
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 741.260185
+
+
+# exit: 0
