@@ -84,6 +84,9 @@ async function main() {
       if (hops > job.limits.maxRedirects) stopWith('RESULT_OVER_LIMIT', 'redirect limit reached');
     }
   });
+  // Playwright's route hook does not see redirect hops; the egress proxy refuses an out-of-scope hop at the network. Name that refusal
+  // precisely instead of reporting a generic navigation failure.
+  context.on('requestfailed', (req) => { if (req.isNavigationRequest() && !inScope(req.url())) stopWith('RESULT_OUT_OF_SCOPE', 'a navigation or redirect left the allowed scope'); });
   context.on('page', (p) => {
     counters.pages += 1;
     if (counters.pages > job.limits.maxPages) { stopWith('RESULT_OVER_LIMIT', 'page limit reached'); p.close().catch(() => {}); }
@@ -95,6 +98,7 @@ async function main() {
   const deadline = setTimeout(() => { stopWith('JOB_TIMEOUT', 'the job exceeded its time limit'); context.close().catch(() => {}); }, Math.max(1_000, job.limits.maxDurationMs - 2_000));
 
   let stagehand = null;
+  let modelRefusal = null;
   const ensureStagehand = async () => {
     if (stagehand) return stagehand;
     const { localBrowser, Stagehand } = await import('@browserbasehq/stagehand');
@@ -114,7 +118,7 @@ async function main() {
       model: { generate: (params) => new Promise((resolve, reject) => {
         if (violation) return reject(violation);
         const id = ++seq; counters.llmCalls += 1;
-        waiters.set(id, (m) => (m.ok ? resolve(m.result) : reject(new JobStop(m.code || 'MODEL_REFUSED', m.reason || 'the host refused the model request'))));
+        waiters.set(id, (m) => { if (m.ok) return resolve(m.result); modelRefusal = m.code || 'MODEL_REFUSED'; reject(new JobStop(modelRefusal, m.reason || 'the host refused the model request')); });
         out({ type: 'llm', id, params });
       }) },
       selfHeal: false, cache: false,
@@ -125,6 +129,24 @@ async function main() {
   };
   const shPage = async (sh) => { const pages = await sh.browser.context.pages(); return pages.find((p) => p.url() === page.url()) ?? pages[0]; };
 
+  // one selector, or up to three alternatives tried in order: the first that is present on the page is used (markup-change recovery)
+  const pick = async (selector) => {
+    const list = Array.isArray(selector) ? selector : [selector];
+    for (const [k, one] of list.entries()) {
+      const loc = page.locator(one);
+      if (k === list.length - 1) return loc;
+      if (await loc.first().isVisible().catch(() => false)) return loc;
+      if (await loc.first().waitFor({ state: 'visible', timeout: 1_500 }).then(() => true, () => false)) return loc;
+    }
+    return page.locator(list[0]);
+  };
+  const runFallback = async (fb, name) => {
+    const loc = await pick(fb.selector);
+    if (fb.op === 'click') { await loc.first().click(); await page.waitForLoadState('domcontentloaded').catch(() => {}); return; }
+    if (fb.all) { const n = Math.min(await loc.count(), 500); const vals = []; for (let i = 0; i < n; i++) vals.push(textOf(await loc.nth(i).innerText())); extracted[name] = vals; }
+    else extracted[name] = (await loc.count()) ? textOf(await loc.first().innerText()) : null;
+  };
+  const fallbacks = [];
   const check = () => { if (violation) throw violation; if (cancelled) throw new JobStop('CANCELLED', 'cancelled by the host'); };
   const textOf = (s) => String(s ?? '').replace(/\s+/g, ' ').trim().slice(0, 2_000);
 
@@ -137,24 +159,24 @@ async function main() {
       switch (step.op) {
         case 'goto': await page.goto(step.url, { waitUntil: 'domcontentloaded' }); break;
         case 'click':
-          await page.locator(step.selector).first().click();
+          await (await pick(step.selector)).first().click();
           if (step.consequential) counters.consequentialActions += 1;
           await page.waitForLoadState('domcontentloaded').catch(() => {});
           break;
-        case 'fill': await page.locator(step.selector).first().fill(step.value); break;
-        case 'select': await page.locator(step.selector).first().selectOption(step.value); break;
+        case 'fill': await (await pick(step.selector)).first().fill(step.value); break;
+        case 'select': await (await pick(step.selector)).first().selectOption(step.value); break;
         case 'press':
-          await page.locator(step.selector).first().press(step.key);
+          await (await pick(step.selector)).first().press(step.key);
           if (step.consequential) counters.consequentialActions += 1;
           await page.waitForLoadState('domcontentloaded').catch(() => {});
           break;
         case 'scroll': await page.evaluate((to) => window.scrollTo(0, to === 'top' ? 0 : document.body.scrollHeight), step.to); break;
         case 'waitFor':
-          if (step.selector) await page.locator(step.selector).first().waitFor({ state: 'visible', timeout: step.timeoutMs });
+          if (step.selector) await (await pick(step.selector)).first().waitFor({ state: 'visible', timeout: step.timeoutMs });
           else await page.waitForURL((u) => u.href.startsWith(step.urlPrefix), { timeout: step.timeoutMs });
           break;
         case 'extractText': {
-          const loc = page.locator(step.selector);
+          const loc = await pick(step.selector);
           if (step.all) {
             const n = Math.min(await loc.count(), 500);
             const vals = [];
@@ -174,7 +196,7 @@ async function main() {
           break;
         }
         case 'download': {
-          const [dl] = await Promise.all([page.waitForEvent('download', { timeout: 30_000 }), page.locator(step.selector).first().click()]);
+          const [dl] = await Promise.all([page.waitForEvent('download', { timeout: 30_000 }), (await pick(step.selector)).first().click()]);
           if (!inScope(dl.url())) throw new JobStop('RESULT_OUT_OF_SCOPE', 'a download came from outside the allowed scope');
           const mediaType = mediaTypeOf(step.name);
           if (!mediaType) throw new JobStop('ARTIFACT_REJECTED', 'the download name has an unsupported type');
@@ -190,7 +212,7 @@ async function main() {
         case 'upload': {
           const file = join(launch.userDataDir, `upload-${index}-${step.fileName}`);
           await writeFile(file, step.content);
-          await page.locator(step.selector).first().setInputFiles(file);
+          await (await pick(step.selector)).first().setInputFiles(file);
           break;
         }
         case 'aiObserve': {
@@ -200,20 +222,35 @@ async function main() {
           break;
         }
         case 'aiAct': {
-          const sh = await ensureStagehand();
-          const r = await sh.act(step.instruction, { page: await shPage(sh) });
-          if (step.consequential) counters.consequentialActions += 1;
-          if (r?.data?.success === false) throw new JobStop('WORKER_FAILED', 'the AI action did not succeed');
+          modelRefusal = null;
+          try {
+            const sh = await ensureStagehand();
+            const r = await sh.act(step.instruction, { page: await shPage(sh) });
+            if (step.consequential) counters.consequentialActions += 1;
+            if (r?.data?.success === false) throw new JobStop('WORKER_FAILED', 'the AI action did not succeed');
+          } catch (e) {
+            // the deterministic fallback runs only when the MODEL ROUTE refused (no route, no budget, unmeasured), never to override an answer
+            if (!step.fallback || !modelRefusal) throw e;
+            fallbacks.push({ index, reason: modelRefusal });
+            await runFallback(step.fallback, null);
+          }
           await page.waitForLoadState('domcontentloaded').catch(() => {});
           break;
         }
         case 'aiExtract': {
-          const sh = await ensureStagehand();
-          const { z } = await import('zod');
-          const shape = {};
-          for (const [k, t] of Object.entries(step.fields)) shape[k] = t === 'number' ? z.number() : t === 'boolean' ? z.boolean() : t === 'string[]' ? z.array(z.string()) : z.string();
-          const r = await sh.extract(step.instruction, z.object(shape), { page: await shPage(sh) });
-          extracted[step.name] = r.data ?? null;
+          modelRefusal = null;
+          try {
+            const sh = await ensureStagehand();
+            const { z } = await import('zod');
+            const shape = {};
+            for (const [k, t] of Object.entries(step.fields)) shape[k] = t === 'number' ? z.number() : t === 'boolean' ? z.boolean() : t === 'string[]' ? z.array(z.string()) : z.string();
+            const r = await sh.extract(step.instruction, z.object(shape), { page: await shPage(sh) });
+            extracted[step.name] = r.data ?? null;
+          } catch (e) {
+            if (!step.fallback || !modelRefusal) throw e;
+            fallbacks.push({ index, reason: modelRefusal });
+            await runFallback(step.fallback, step.name);
+          }
           break;
         }
         default: throw new JobStop('JOB_INVALID', 'unknown step');
@@ -226,7 +263,7 @@ async function main() {
     out({ type: 'result', result: {
       finalUrl: page.url(), visitedUrls: [...new Set(visited)].slice(0, job.limits.maxNavigations), navigations: counters.navigations, responseBytes: counters.responseBytes,
       summary: `${plan.steps.length} steps completed`, extracted, artifacts, steps: stepLog,
-      metrics: { elapsedMs: Date.now() - t0, redirects: counters.redirects, pages: counters.pages, consequentialActions: counters.consequentialActions, llmCalls: counters.llmCalls },
+      metrics: { fallbacks, elapsedMs: Date.now() - t0, redirects: counters.redirects, pages: counters.pages, consequentialActions: counters.consequentialActions, llmCalls: counters.llmCalls },
     } });
   } catch (e) {
     const err = violation ?? e;

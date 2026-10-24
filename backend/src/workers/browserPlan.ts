@@ -28,19 +28,24 @@ export const PLAN_LIMITS = Object.freeze({ steps: 60, expectations: 30, selector
 export type ExtractField = 'string' | 'number' | 'boolean' | 'string[]';
 export type BrowserStep =
   | { op: 'goto'; url: string }
-  | { op: 'click'; selector: string; consequential?: boolean }
-  | { op: 'fill'; selector: string; value: string }
-  | { op: 'select'; selector: string; value: string }
-  | { op: 'press'; selector: string; key: string; consequential?: boolean }
+  | { op: 'click'; selector: Selector; consequential?: boolean }
+  | { op: 'fill'; selector: Selector; value: string }
+  | { op: 'select'; selector: Selector; value: string }
+  | { op: 'press'; selector: Selector; key: string; consequential?: boolean }
   | { op: 'scroll'; to: 'top' | 'bottom' }
-  | { op: 'waitFor'; selector?: string; urlPrefix?: string; timeoutMs: number }
-  | { op: 'extractText'; selector: string; name: string; all?: boolean; attribute?: string }
+  | { op: 'waitFor'; selector?: Selector; urlPrefix?: string; timeoutMs: number }
+  | { op: 'extractText'; selector: Selector; name: string; all?: boolean; attribute?: string }
   | { op: 'screenshot'; name: string; fullPage?: boolean }
-  | { op: 'download'; selector: string; name: string }
-  | { op: 'upload'; selector: string; fileName: string; mediaType: 'text/plain' | 'application/json'; content: string }
+  | { op: 'download'; selector: Selector; name: string }
+  | { op: 'upload'; selector: Selector; fileName: string; mediaType: 'text/plain' | 'application/json'; content: string }
   | { op: 'aiObserve'; instruction: string; name: string }
-  | { op: 'aiAct'; instruction: string; consequential?: boolean }
-  | { op: 'aiExtract'; instruction: string; name: string; fields: Record<string, ExtractField> };
+  | { op: 'aiAct'; instruction: string; consequential?: boolean; fallback?: DeterministicFallback }
+  | { op: 'aiExtract'; instruction: string; name: string; fields: Record<string, ExtractField>; fallback?: DeterministicFallback };
+
+/** One CSS selector, or up to three alternatives tried in order (recovery when a page's markup changed). */
+export type Selector = string | string[];
+/** What an AI step does instead when the model route refuses (no route, budget spent, usage unmeasured). Never used to override an answer. */
+export type DeterministicFallback = { op: 'click'; selector: Selector } | { op: 'extractText'; selector: Selector; all?: boolean };
 
 export type Expectation =
   | { kind: 'finalUrlPrefix'; prefix: string }
@@ -71,6 +76,27 @@ function name(o: Record<string, unknown>, k: string, where: string, re = NAME): 
   return v;
 }
 
+function sel(o: Record<string, unknown>, at: string, optional = false): Selector | undefined {
+  const v = o.selector;
+  if (v === undefined && optional) return undefined;
+  if (Array.isArray(v)) {
+    if (v.length < 1 || v.length > 3) throw new BrowserPlanError(`${at}: selector alternatives must list 1-3 selectors`);
+    return v.map((x, k) => str({ s: x }, 's', PLAN_LIMITS.selector, `${at} selector ${k}`)!);
+  }
+  return str(o, 'selector', PLAN_LIMITS.selector, at)!;
+}
+
+function parseFallback(raw: unknown, at: string): DeterministicFallback {
+  if (!isRecord(raw)) throw new BrowserPlanError(`${at}: fallback must be an object`);
+  if (raw.op === 'click') { only(raw, ['op', 'selector'], `${at} fallback`); return { op: 'click', selector: sel(raw, `${at} fallback`)! }; }
+  if (raw.op === 'extractText') {
+    only(raw, ['op', 'selector', 'all'], `${at} fallback`);
+    if (raw.all !== undefined && typeof raw.all !== 'boolean') throw new BrowserPlanError(`${at}: fallback all must be boolean`);
+    return { op: 'extractText', selector: sel(raw, `${at} fallback`)!, ...(raw.all ? { all: true } : {}) };
+  }
+  throw new BrowserPlanError(`${at}: fallback must be a click or extractText`);
+}
+
 function parseStep(raw: unknown, i: number, job: BrowserJob, grant: BrowserPlan['writeGrant']): BrowserStep {
   const at = `step ${i}`;
   if (!isRecord(raw) || typeof raw.op !== 'string') throw new BrowserPlanError(`${at}: must be an object with an op`);
@@ -87,7 +113,7 @@ function parseStep(raw: unknown, i: number, job: BrowserJob, grant: BrowserPlan[
     }
     case 'click': case 'press': {
       only(raw, raw.op === 'click' ? ['op', 'selector', 'consequential'] : ['op', 'selector', 'key', 'consequential'], at);
-      const selector = str(raw, 'selector', PLAN_LIMITS.selector, at)!;
+      const selector = sel(raw, at)!;
       if (raw.consequential !== undefined && typeof raw.consequential !== 'boolean') throw new BrowserPlanError(`${at}: consequential must be boolean`);
       if (raw.consequential) requireWrite('submit');
       if (raw.op === 'click') return { op: 'click', selector, ...(raw.consequential ? { consequential: true } : {}) };
@@ -99,7 +125,7 @@ function parseStep(raw: unknown, i: number, job: BrowserJob, grant: BrowserPlan[
     }
     case 'fill': case 'select': {
       only(raw, ['op', 'selector', 'value'], at);
-      return { op: raw.op, selector: str(raw, 'selector', PLAN_LIMITS.selector, at)!, value: str(raw, 'value', PLAN_LIMITS.text, at)! };
+      return { op: raw.op, selector: sel(raw, at)!, value: str(raw, 'value', PLAN_LIMITS.text, at)! };
     }
     case 'scroll': {
       only(raw, ['op', 'to'], at);
@@ -108,7 +134,7 @@ function parseStep(raw: unknown, i: number, job: BrowserJob, grant: BrowserPlan[
     }
     case 'waitFor': {
       only(raw, ['op', 'selector', 'urlPrefix', 'timeoutMs'], at);
-      const selector = str(raw, 'selector', PLAN_LIMITS.selector, at, true);
+      const selector = sel(raw, at, true);
       const urlPrefix = str(raw, 'urlPrefix', 2_048, at, true);
       if (!selector === !urlPrefix) throw new BrowserPlanError(`${at}: give exactly one of selector or urlPrefix`);
       if (urlPrefix && !navigationAllowed(job, urlPrefix)) throw new BrowserPlanError(`${at}: urlPrefix is outside the job scope`);
@@ -121,7 +147,7 @@ function parseStep(raw: unknown, i: number, job: BrowserJob, grant: BrowserPlan[
       if (raw.all !== undefined && typeof raw.all !== 'boolean') throw new BrowserPlanError(`${at}: all must be boolean`);
       const attribute = raw.attribute === undefined ? undefined : name(raw, 'attribute', at, /^[a-z][a-z0-9-]{0,39}$/);
       if (attribute && /^on/.test(attribute)) throw new BrowserPlanError(`${at}: event-handler attributes are not extractable`);
-      return { op: 'extractText', selector: str(raw, 'selector', PLAN_LIMITS.selector, at)!, name: name(raw, 'name', at), ...(raw.all ? { all: true } : {}), ...(attribute ? { attribute } : {}) };
+      return { op: 'extractText', selector: sel(raw, at)!, name: name(raw, 'name', at), ...(raw.all ? { all: true } : {}), ...(attribute ? { attribute } : {}) };
     }
     case 'screenshot': {
       only(raw, ['op', 'name', 'fullPage'], at);
@@ -130,7 +156,7 @@ function parseStep(raw: unknown, i: number, job: BrowserJob, grant: BrowserPlan[
     }
     case 'download': {
       only(raw, ['op', 'selector', 'name'], at);
-      return { op: 'download', selector: str(raw, 'selector', PLAN_LIMITS.selector, at)!, name: name(raw, 'name', at, ARTIFACT) };
+      return { op: 'download', selector: sel(raw, at)!, name: name(raw, 'name', at, ARTIFACT) };
     }
     case 'upload': {
       only(raw, ['op', 'selector', 'fileName', 'mediaType', 'content'], at);
@@ -138,19 +164,20 @@ function parseStep(raw: unknown, i: number, job: BrowserJob, grant: BrowserPlan[
       if (raw.mediaType !== 'text/plain' && raw.mediaType !== 'application/json') throw new BrowserPlanError(`${at}: mediaType must be text/plain or application/json`);
       const content = raw.content;
       if (typeof content !== 'string' || Buffer.byteLength(content) > PLAN_LIMITS.uploadBytes) throw new BrowserPlanError(`${at}: content must be text up to ${PLAN_LIMITS.uploadBytes} bytes`);
-      return { op: 'upload', selector: str(raw, 'selector', PLAN_LIMITS.selector, at)!, fileName: name(raw, 'fileName', at, ARTIFACT), mediaType: raw.mediaType, content };
+      return { op: 'upload', selector: sel(raw, at)!, fileName: name(raw, 'fileName', at, ARTIFACT), mediaType: raw.mediaType, content };
     }
     case 'aiObserve': case 'aiAct': case 'aiExtract': {
       if (!ai) throw new BrowserPlanError(`${at}: AI steps need a model budget (maxModelCostMicros > 0)`);
       const instruction = str(raw, 'instruction', PLAN_LIMITS.instruction, at)!;
       if (raw.op === 'aiObserve') { only(raw, ['op', 'instruction', 'name'], at); return { op: 'aiObserve', instruction, name: name(raw, 'name', at) }; }
       if (raw.op === 'aiAct') {
-        only(raw, ['op', 'instruction', 'consequential'], at);
+        only(raw, ['op', 'instruction', 'consequential', 'fallback'], at);
         if (raw.consequential !== undefined && typeof raw.consequential !== 'boolean') throw new BrowserPlanError(`${at}: consequential must be boolean`);
         if (raw.consequential) requireWrite('submit');
-        return { op: 'aiAct', instruction, ...(raw.consequential ? { consequential: true } : {}) };
+        if (raw.consequential && raw.fallback !== undefined) throw new BrowserPlanError(`${at}: a consequential AI action has no automatic fallback`);
+        return { op: 'aiAct', instruction, ...(raw.consequential ? { consequential: true } : {}), ...(raw.fallback !== undefined ? { fallback: parseFallback(raw.fallback, at) } : {}) };
       }
-      only(raw, ['op', 'instruction', 'name', 'fields'], at);
+      only(raw, ['op', 'instruction', 'name', 'fields', 'fallback'], at);
       if (!isRecord(raw.fields)) throw new BrowserPlanError(`${at}: fields must be an object`);
       const entries = Object.entries(raw.fields);
       if (entries.length < 1 || entries.length > PLAN_LIMITS.schemaFields) throw new BrowserPlanError(`${at}: 1-${PLAN_LIMITS.schemaFields} fields`);
@@ -159,7 +186,7 @@ function parseStep(raw: unknown, i: number, job: BrowserJob, grant: BrowserPlan[
         if (!NAME.test(k) || !['string', 'number', 'boolean', 'string[]'].includes(t as string)) throw new BrowserPlanError(`${at}: field ${k.slice(0, 30)} must be string, number, boolean or string[]`);
         fields[k] = t as ExtractField;
       }
-      return { op: 'aiExtract', instruction, name: name(raw, 'name', at), fields };
+      return { op: 'aiExtract', instruction, name: name(raw, 'name', at), fields, ...(raw.fallback !== undefined ? { fallback: parseFallback(raw.fallback, at) } : {}) };
     }
     default:
       throw new BrowserPlanError(`${at}: unknown op`);

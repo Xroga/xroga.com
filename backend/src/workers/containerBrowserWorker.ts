@@ -114,6 +114,19 @@ export class ContainerBrowserWorker implements BrowserWorkerPort {
     }
   }
 
+  /**
+   * Removes every browser-job container and network on this host. Call ONLY at host start (coordinator boot): one host process owns all
+   * jobs on its Docker host, so anything labelled then is an orphan of a process that died before its own cleanup ran.
+   */
+  reapOrphans(): { containers: number; networks: number } {
+    const ids = (args: string[]) => this.docker(args).stdout.trim().split('\n').filter(Boolean);
+    const containers = ids(['ps', '-aq', '--filter', 'label=xroga.browser-job=1']);
+    for (const id of containers) this.docker(['rm', '-f', id]);
+    const networks = ids(['network', 'ls', '-q', '--filter', 'label=xroga.browser-job=1']);
+    for (const id of networks) this.docker(['network', 'rm', id]);
+    return { containers: containers.length, networks: networks.length };
+  }
+
   private async waitFor(cond: () => boolean, signal: AbortSignal): Promise<boolean> {
     for (let i = 0; i < 60 && !signal.aborted; i++) { if (cond()) return true; await new Promise((r) => setTimeout(r, 250)); }
     return false;
@@ -123,7 +136,9 @@ export class ContainerBrowserWorker implements BrowserWorkerPort {
     return new Promise((resolveRun, rejectRun) => {
       let settled = false;
       const finish = (fn: () => void) => { if (!settled) { settled = true; signal.removeEventListener('abort', onAbort); fn(); } };
-      const send = (m: object) => { if (child.stdin?.writable) child.stdin.write(`${JSON.stringify(m)}\n`); };
+      // a container that exits (crash, kill, timeout) closes its stdin; a late write must not become an unhandled stream error
+      child.stdin?.on('error', () => undefined);
+      const send = (m: object) => { if (child.stdin?.writable && !child.stdin.destroyed) child.stdin.write(`${JSON.stringify(m)}\n`, () => undefined); };
       const onAbort = () => { send({ type: 'cancel' }); setTimeout(() => child.kill('SIGKILL'), 3_000).unref(); finish(() => rejectRun(new BrowserTaskError('CANCELLED', 'the job was stopped'))); };
       if (signal.aborted) return onAbort();
       signal.addEventListener('abort', onAbort, { once: true });
