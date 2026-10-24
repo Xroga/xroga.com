@@ -116,6 +116,15 @@ describe('/api/browser/runs', () => {
     behaviour = 'ok';
   });
 
+  it('the frontend "Capture page" plan (BrowserRun.tsx) is accepted and verified as sent', async () => {
+    behaviour = 'ok';
+    const capture = { steps: [{ op: 'extractText', selector: 'title', name: 'pageTitle' }, { op: 'screenshot', name: 'page.png', fullPage: true }], expect: [{ kind: 'artifact', name: 'page.png', mediaType: 'image/png' }, { kind: 'noConsequentialAction' }] };
+    const start = await call(h.alice.userId, 'POST', '', { goal: 'Inspect visible content', startUrl: 'https://quotes.toscrape.com/', allowedOrigins: ['https://quotes.toscrape.com'], plan: capture });
+    assert.equal(start.status, 202);
+    const run = await finished(h.alice.userId, start.json.runId);
+    assert.equal(run.status, 'completed');
+  });
+
   it('answers 503 instead of falling back when the browser host or evidence storage is not configured', async () => {
     configured = false;
     const r = await call(h.alice.userId, 'POST', '', request());
