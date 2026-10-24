@@ -1,0 +1,81 @@
+name: Database backup
+
+# Daily encrypted, restore-verified backup of the production Supabase database to a private R2 bucket.
+# Runs only from main, only in the `db-backup` environment (its secrets are scoped to that environment and main).
+# This repository is public: the job prints sizes and a ciphertext digest only, uploads no artifact, and never echoes a URL or credential.
+# Setup, restore and rollback: docs/infra/db-backup/RUNBOOK.md
+
+on:
+  schedule:
+    - cron: '23 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: db-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    environment: db-backup
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22.21.1'
+
+      - name: Install the pinned Supabase CLI
+        run: |
+          npm install --prefix "$RUNNER_TEMP/cli" --no-audit --no-fund supabase@2.122.0
+          echo "SUPABASE=$RUNNER_TEMP/cli/node_modules/.bin/supabase" >> "$GITHUB_ENV"
+
+      - name: Mask connection details
+        env:
+          SUPABASE_BACKUP_DB_URL: ${{ secrets.SUPABASE_BACKUP_DB_URL }}
+        run: |
+          node -e 'const u=new URL(process.env.SUPABASE_BACKUP_DB_URL); for (const v of [u.password, decodeURIComponent(u.password), u.hostname, u.username]) if (v) console.log("::add-mask::"+v)'
+
+      - name: Start a disposable restore database
+        run: |
+          mkdir -p "$RUNNER_TEMP/restore" && cd "$RUNNER_TEMP/restore"
+          "$SUPABASE" init --force >/dev/null
+          sed -i 's/^project_id = .*/project_id = "xroga-backup-restore"/' supabase/config.toml
+          "$SUPABASE" start -x realtime,imgproxy,kong,mailpit,postgrest,postgres-meta,studio,edge-runtime,logflare,vector,supavisor >/dev/null
+
+      - name: Dump, verify by restore, encrypt, upload, read back
+        env:
+          DUMP_ARGS: --db-url ${{ secrets.SUPABASE_BACKUP_DB_URL }}
+          RESTORE_CONTAINER: supabase_db_xroga-backup-restore
+          BACKUP_RECIPIENT_CERT: ${{ vars.BACKUP_RECIPIENT_CERT }}
+          S3_ENDPOINT: https://${{ vars.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+          S3_BUCKET: ${{ vars.R2_BACKUP_BUCKET }}
+          S3_ACCESS_KEY_ID: ${{ secrets.R2_BACKUP_ACCESS_KEY_ID }}
+          S3_SECRET_ACCESS_KEY: ${{ secrets.R2_BACKUP_SECRET_ACCESS_KEY }}
+          BACKUP_PREFIX: db/xroga-ai
+          SUMMARY_FILE: ${{ runner.temp }}/summary.json
+        run: |
+          bash scripts/backup/db-backup.sh
+          node -e 'const s=require(process.argv[1]); console.log(`| backup | ${s.cipherBytes} bytes | sha256 \`${s.cipherSha256}\` | ${s.tablesVerified} tables restore-verified |`)' "$SUMMARY_FILE" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Stop the restore database
+        if: always()
+        run: cd "$RUNNER_TEMP/restore" 2>/dev/null && "$SUPABASE" stop --no-backup >/dev/null 2>&1 || true
+
+      - name: Alert on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="Database backup failed"
+          body="The scheduled database backup failed: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}. No new restore point exists until it passes. Runbook: docs/infra/db-backup/RUNBOOK.md"
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"$title\" in:title" --json number -q '.[0].number')
+          if [ -n "$existing" ]; then gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" --body "$body"; else gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --body "$body"; fi

@@ -1,0 +1,31 @@
+name: Database backup self-test
+
+# Synthetic data only: two disposable local Supabase databases, a local S3 emulator and a throwaway key.
+# No secret, no environment, no production access.
+on:
+  pull_request:
+    paths:
+      - 'scripts/backup/**'
+      - '.github/workflows/db-backup*.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  selftest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22.21.1'
+      - name: Install the pinned Supabase CLI
+        run: |
+          npm install --prefix "$RUNNER_TEMP/cli" --no-audit --no-fund supabase@2.122.0
+          echo "SUPABASE=$RUNNER_TEMP/cli/node_modules/.bin/supabase" >> "$GITHUB_ENV"
+      - name: Self-test
+        run: bash scripts/backup/selftest.sh
