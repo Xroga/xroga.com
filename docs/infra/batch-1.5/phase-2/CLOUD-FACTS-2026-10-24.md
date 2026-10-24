@@ -15,7 +15,7 @@ Nothing was modified. Items that need the Fly login are listed at the end.
 | A1 CORS | none on the four legacy buckets; `xroga-drive-test` allows `http://localhost:3000` for GET, PUT, HEAD | `GET …/cors` |
 | A1 usage | account-level R2 metrics report **0 objects and 0 bytes** in both storage classes (metrics can lag; treat as "very small or empty", not as proof of empty). That is inside any free allowance | `GET …/r2/metrics` |
 | A4 Redis (partial) | no `REDIS_URL` repository secret; `fly.api.toml` sets none; the code uses Redis only when `REDIS_URL` is set; BullMQ has no consumer or producer; the only provider mention is Upstash in the capability registry | repository and GitHub API |
-| A3 Fly (partial, from the repository) | app `xroga-api`, region `iad`, 1 GB VM, second app `xroga-sandbox` named in `XROGA_SANDBOX_FLY_APP` | `fly.api.toml` |
+| A3 Fly (partial, from the repository; superseded below) | app `xroga-api`, toml region `iad` (machines actually run in `sin`), 1 GB VM, second app `xroga-sandbox` named in `XROGA_SANDBOX_FLY_APP` | `fly.api.toml` |
 
 Findings worth acting on later (none was changed): public `r2.dev` access on `xroga-chat-archive` is risky for a bucket named as an archive of chats, even if it is empty today; the production database is on a plan with no PITR.
 
@@ -32,11 +32,28 @@ A deleted table or a bad migration today is unrecoverable. This is a genuine cus
 
 New since the first pass: a third project, `xroga-p3-staging-20261024` (`us-east-1`, created 2026-10-24 14:09 UTC), exists; it appears to be Codex's Phase 3 staging and was not touched.
 
-## Not established, and why
-| Checklist | Missing | Blocked by | Exact next action |
-|---|---|---|---|
-| A3 Fly organization, machines, volumes, secret names | `fly status`, `fly volumes list`, `fly secrets list` for `xroga-api` (names only) and the organization | **no Fly session** (`flyctl auth whoami`: no access token) | you run `! flyctl auth login` in this session, then I run only those read-only commands |
-| A4 Redis provider and persistence | whether `REDIS_URL` exists as a Fly runtime secret | the same Fly login (`fly secrets list`, names only); if absent, Redis is unused and A4 is closed | same login |
-| A5 backups | Supabase backup schedule and retention | not exposed by the tools I have | you read the dashboard (Database, Backups) or tell me the plan's backup setting |
-| A1 Cloudflare billing and per-bucket usage | subscription and plan | the connected token lacks billing read (`403 Authentication error`) | optional: a token with Billing Read, or a screenshot of the plan |
-| A2 database counts | row counts, `pg_total_relation_size('swarm_runs')`, inline data URLs | requires production SQL, which this phase forbids | not needed for Phase 2; leave to a separately approved read-only export |
+## Fly, Redis and backups (after the founder's Fly login, same day)
+Read with a browser-approved Fly CLI session: `fly apps list`, `fly status`, `fly machine list`, `fly volumes list`, `fly secrets list` (names only; values never requested). The session token was kept in a private scratch file, never printed, and deleted afterwards. Nothing was changed.
+
+| Checklist | Fact |
+|---|---|
+| A3 apps | `xroga-api` (deployed, last deploy about 18 h before reading, release 1247) and `xroga-sandbox` (**suspended**, no image, no secrets), both owned by the personal organization |
+| A3 machines | **two** `app` machines for `xroga-api`, both in **`sin`** (the toml's `primary_region = 'iad'` is not where they run), `shared-cpu-1x`, 1024 MB, `NODE_ENV=production`, restart `on-failure` (10 retries), autostop off, health check passing |
+| A3 volumes | **none** on either app: the API is stateless on Fly; nothing durable lives on the machines |
+| A3 secrets | 103 names on `xroga-api`. Relevant: `DATABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `CLOUDFLARE_R2_ACCESS_KEY_ID`, `CLOUDFLARE_R2_SECRET_ACCESS_KEY`, `CLOUDFLARE_R2_BUCKET_NAME`, `CLOUDFLARE_R2_ENDPOINT`, `XROGA_SANDBOX_FLY_TOKEN`. **Absent:** `REDIS_URL`, every `XROGA_CREDENTIAL_KMS_*` / `XROGA_OCI_KMS_*` name, every `XROGA_DRIVE_R2_*` name, `STORAGE_WRITE_MODE` |
+| A4 Redis | **not used in production**: no `REDIS_URL` on Fly or in GitHub, and the code only connects when it is set. Provider and persistence: none. Closed |
+| A5 Supabase | free plan; Supabase takes daily backups only on Pro, Team and Enterprise, so **no provider backup exists**; PITR is a paid add-on. No backup job in the repository. Closed as a fact; the risk is below |
+| A1 Cloudflare | R2 usage 0 objects, so inside the free allowance on any plan (R2 is billed by usage, not by account plan). The account subscription itself was not readable (403) and is not needed for this checklist item. Closed |
+
+**Consequences**
+- **B-3:** no KMS provider is configured on Fly, so a build containing Codex's startup gate would not start there (see `BATCH1-MERGE-SEQUENCE.md`). This is now observed, not inferred.
+- **R2 names do not match the code.** Fly has `CLOUDFLARE_R2_ACCESS_KEY_ID`, `…_SECRET_ACCESS_KEY`, `…_BUCKET_NAME`; `backend/src/lib/r2.ts` reads `CLOUDFLARE_R2_ACCESS_KEY`, `…_SECRET_KEY`, `…_BUCKET`. Every legacy upload therefore throws and
+  `projectFiles.ts` falls back to a base64 `data:` URL stored in `project_files`. That is why every bucket is empty, and it means **the public `r2.dev` buckets are not reachable by current production code**.
+  It also means any such files exist **only in the database, which has no backup**. (Per `current-state.md` W1, that writer has no production caller on `main` today, so the volume is probably small; A2 measures it.)
+- Phase 1 Drive is not configured in production (no `XROGA_DRIVE_R2_*`, no `STORAGE_WRITE_MODE`), as intended.
+
+## Still not established
+| Checklist | Missing | Needs |
+|---|---|---|
+| A2 database counts | `count(*)` and total bytes of `project_files` rows whose `file_url` starts with `data:`; `pg_total_relation_size('swarm_runs')`; the list of `storage.buckets` | one **read-only aggregate** query on production (counts and sizes only, no row content), which needs the founder's explicit approval |
+
