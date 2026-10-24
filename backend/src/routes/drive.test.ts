@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createTenantContext, type TenantContext } from '../security/tenantContext.js';
 import type { AddressInfo } from 'node:net';
 import { after, before, describe, it } from 'node:test';
 import express from 'express';
@@ -19,7 +20,21 @@ describe('/api/drive routes', () => {
     app.use(express.json());
     app.use((req, _res, next) => {
       const as = req.header('x-test-user');
-      if (as) (req as unknown as { userId: string }).userId = as;
+      // what Batch 1's auth middleware does: an ISSUED context, never a bare user id
+      if (as) {
+        const r = req as unknown as { userId: string; tenantContext: TenantContext | undefined };
+        const issued = createTenantContext({ userId: as, via: 'local_jwt' });
+        // x-test-forge simulates a caller that has a user id but no issued context
+        const forged: Record<string, () => TenantContext | undefined> = {
+          missing: () => undefined,
+          plain: () => ({ userId: as, tenantId: as, provenance: 'local_jwt', correlationId: 'x' }) as TenantContext,
+          spread: () => ({ ...issued }),
+          json: () => JSON.parse(JSON.stringify(issued)),
+        };
+        const mode = req.header('x-test-forge');
+        r.tenantContext = mode ? forged[mode]() : issued;
+        r.userId = as; // the middleware sets both
+      }
       next();
     });
     app.use('/api/drive', createDriveRouter(() => (configured ? h.svc : null)));
@@ -76,7 +91,7 @@ describe('/api/drive routes', () => {
   it('quota exhaustion is a 413; unconfigured storage is a 503, never a silent local fallback', async () => {
     const q = harness({ quota: async () => 5 });
     const app = express(); app.use(express.json());
-    app.use((req, _res, next) => { (req as unknown as { userId: string }).userId = q.alice.userId; next(); });
+    app.use((req, _res, next) => { const r = req as unknown as { userId: string; tenantContext: TenantContext }; r.tenantContext = createTenantContext({ userId: q.alice.userId, via: 'local_jwt' }); r.userId = q.alice.userId; next(); });
     app.use('/d', createDriveRouter(() => q.svc));
     const srv = await new Promise<ReturnType<typeof app.listen>>((r) => { const s = app.listen(0, '127.0.0.1', () => r(s)); });
     try {
@@ -89,5 +104,15 @@ describe('/api/drive routes', () => {
     configured = true;
     assert.equal(off.status, 503);
     assert.equal(off.json.code, 'STORAGE_NOT_CONFIGURED');
+  });
+
+  it('a user id without an ISSUED TenantContext never reaches Drive: missing, hand-built, spread and JSON-cloned contexts are 401', async () => {
+    const before = (await call(h.alice.userId, 'GET', '/objects')).json.objects.length;
+    for (const mode of ['missing', 'plain', 'spread', 'json']) {
+      const r = await fetch(base + '/uploads', { method: 'POST', headers: { 'content-type': 'application/json', 'x-test-user': h.alice.userId, 'x-test-forge': mode }, body: JSON.stringify({ filename: 'f.txt', contentType: 'text/plain', size: 1 }) });
+      assert.equal(r.status, 401, mode);
+      assert.equal(((await r.json()) as { code: string }).code, 'TENANT_AUTH_REQUIRED', mode);
+    }
+    assert.equal((await call(h.alice.userId, 'GET', '/objects')).json.objects.length, before);
   });
 });

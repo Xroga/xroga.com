@@ -1,9 +1,11 @@
 import { Router, type Response } from 'express';
 import { z } from 'zod';
 import type { AuthRequest } from '../middleware/auth.js';
-import { actorFromUserId, getStorageService } from '../storage/runtime.js';
+import { actorFromTenantContext, getStorageService } from '../storage/runtime.js';
+import type { TenantContext } from '../security/tenantContext.js';
 import type { StorageService } from '../storage/storageService.js';
 import { httpStatusFor, StorageError } from '../storage/types.js';
+import { TenantAccessError } from '../security/tenantErrors.js';
 
 const uuid = z.string().uuid();
 const initiate = z.object({
@@ -18,6 +20,8 @@ const complete = z.object({ parts: z.array(z.object({ partNumber: z.number().int
 const download = z.object({ ttlSeconds: z.number().int().min(1).max(300).optional() }).strict();
 
 function fail(res: Response, err: unknown) {
+  // a request without an issued TenantContext is an authentication failure, never a 500 and never an anonymous actor
+  if (err instanceof TenantAccessError) { res.status(err.status).json({ error: err.message, code: err.code }); return; }
   if (err instanceof StorageError) {
     res.status(err.status === 400 ? httpStatusFor(err.code) : err.status).json({ error: err.message, code: err.code });
     return;
@@ -40,7 +44,7 @@ export function createDriveRouter(resolve: () => StorageService | null = getStor
     try { await fn(svc, req, res); } catch (err) { fail(res, err); }
   };
   // identity ONLY from the authenticated request; body/query/params can never name a tenant or owner
-  const actor = (req: AuthRequest) => actorFromUserId(req.userId as string);
+  const actor = (req: AuthRequest) => actorFromTenantContext(req.tenantContext as TenantContext);
   const pid = (req: AuthRequest) => String(req.params.id);
 
   router.post('/uploads', handler(async (s, req, res) => res.status(201).json(await s.initiateUpload(actor(req), initiate.parse(req.body)))));

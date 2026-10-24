@@ -1,6 +1,7 @@
 import pg from 'pg';
 import { resolveDatabaseUrls } from '../lib/postgresConnect.js';
 import { planDatabaseConnection } from './databaseTls.js';
+import { createTenantContext, requireTenantContext, type TenantContext } from '../security/tenantContext.js';
 import { defaultPolicyConfig } from './policy.js';
 import { PostgresStorageRepository } from './postgresRepository.js';
 import { R2ObjectStore, r2ConfigFromEnv } from './r2ObjectStore.js';
@@ -112,9 +113,19 @@ export function getStorageService(): StorageService | null {
 /** Test seam. */
 export function setStorageServiceForTests(s: StorageService | null | undefined) { service = s; }
 
-/** Identity only ever comes from the authenticated request. tenant == user until Batch 1 TenantContext is accepted. */
-export function actorFromUserId(userId: string): StorageActor {
-  return { userId, tenantId: userId };
+/**
+ * Identity only ever comes from a TenantContext that Batch 1's `createTenantContext` issued (the auth middleware for requests, the persisted owner for
+ * background work). A plain object, a parsed body or a cloned job payload is refused by `requireTenantContext`, so a caller cannot invent a tenant.
+ * `tenantId` is whatever the context says; today it equals the user id, and Drive's ownership checks are already keyed on it.
+ */
+export function actorFromTenantContext(context: TenantContext): StorageActor {
+  const { userId, tenantId } = requireTenantContext(context);
+  return { userId, tenantId };
+}
+
+/** For operator tools that act for one persisted owner (migrations): the same issued-context path, never a bare user id. */
+export function actorFromPersistedOwner(userId: string): StorageActor {
+  return actorFromTenantContext(createTenantContext({ userId, via: 'persisted_owner' }));
 }
 
 /** Migration ledger on the same pool (only meaningful when Drive itself is configured). */

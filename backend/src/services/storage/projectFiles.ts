@@ -1,7 +1,7 @@
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { uploadToR2, buildR2Key, buildPlaybackUrl, downloadFromR2, type R2UploadResult } from '../../lib/r2.js';
 import { saveLocalMedia, readLocalMedia } from './localMediaCache.js';
-import { actorFromUserId, getMigrationLedger, getStorageService, storageReadOrder, storageWriteMode } from '../../storage/runtime.js';
+import { actorFromPersistedOwner, getMigrationLedger, getStorageService, storageReadOrder, storageWriteMode } from '../../storage/runtime.js';
 import { readStoredFileOrdered } from '../../storage/migration/readCompat.js';
 import { StorageError, type ObjectClass } from '../../storage/types.js';
 
@@ -27,7 +27,8 @@ const CLASS_BY_FILE_TYPE: Record<StoredFile['fileType'], ObjectClass> = {
 async function writeCanonical(userId: string, projectId: string | null, filename: string, content: Buffer | string, contentType: string, fileType: StoredFile['fileType']) {
   const svc = getStorageService();
   if (!svc) throw new StorageError('PROVIDER_UNAVAILABLE', 'Xroga Drive is not configured', 503);
-  return svc.putServerObject(actorFromUserId(userId), {
+  // legacy signature (a user id, no request context); Batch 1's storeProjectFile(context, ...) replaces this path, and until then the id still passes canonical validation
+  return svc.putServerObject(actorFromPersistedOwner(userId), {
     projectId, objectClass: CLASS_BY_FILE_TYPE[fileType], filename, contentType,
     body: typeof content === 'string' ? Buffer.from(content) : content,
   });
@@ -157,6 +158,6 @@ export async function readStoredFile(key: string, actor?: { userId: string }): P
   const ledger = getMigrationLedger();
   // Callers that pass an actor get ownership + ordering enforcement; callers that do not keep the exact legacy behaviour.
   if (!actor || !drive || !ledger) return legacy();
-  const r = await readStoredFileOrdered(key, actorFromUserId(actor.userId), { ledger, drive, readLegacy: legacy, order: storageReadOrder() });
+  const r = await readStoredFileOrdered(key, actorFromPersistedOwner(actor.userId), { ledger, drive, readLegacy: legacy, order: storageReadOrder() });
   return { buffer: r.buffer, contentType: r.contentType };
 }
