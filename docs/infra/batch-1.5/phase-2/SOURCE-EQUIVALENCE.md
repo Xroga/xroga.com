@@ -38,3 +38,9 @@ The Docker evidence (`browser-sandbox-docker-local-2026-10-24.json`, `browser-eg
 `bash scripts/verify-source-equivalence.sh df9b3e98 HEAD` reports NOT EQUIVALENT for exactly these files and no others. They are not documentation by extension, but nothing the CI workflow or the backend imports or executes them:
 `scripts/browser/collect-host-evidence.sh` and `scripts/browser/evaluate-host-evidence.mjs` (run by a person on a target host) and `evidence/batch1-integration/resolution-over-codex-candidate.patch` (a record).
 The CI result for `df9b3e98` therefore still covers every executed file. The evaluator was only smoke-tested (syntax, and it rejects an empty bundle with exit 2); it has not yet judged a real bundle, so the first host run is also its first real test.
+
+## `58a8b414` (run 40111756070): the current CI-tested source
+Phase 2 branch after merging `claude/b15-tenantcontext-core` (Batch 1 TenantContext core plus `main` `f9ac71ef`) and adopting the issued-context storage actor. `overall=PASS`: typecheck; 177/177 unit;
+1 GiB synthetic stream; real PostgreSQL 25/25 and Phase 2 leases 15/15; Phase 2 unit 223/223; real Chromium 6/6; seccomp derivation; S3 wire 7/7; **full backend suite 3167 pass, 0 failures, 16 skips**
+(the five earlier baseline failures are gone with current `main`). Evidence: `../ci-evidence/run-40111756070/`. It supersedes `df9b3e98` for every executable file. Later commits: check with
+`bash scripts/verify-source-equivalence.sh 58a8b414 HEAD`.

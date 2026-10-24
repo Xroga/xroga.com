@@ -33,3 +33,18 @@ Recommended: ask Codex which of A or B is closer. If B is acceptable to Codex, i
 > Phase 2 (Claude) verified compatibility with your #846 at `e8164ba6` (TenantContext reused, no duplicate authorization, resolutions documented). Merging #845 or #846 today would deploy the
 > startup gate to Fly through `fly-deploy.yml` with no KMS provider configured, and the API would not start. Which is closer: (A) completing Fly custody so the gate can deploy, or (B) landing
 > TenantContext on `main` without the gate? Phase 2 needs only TenantContext on `main`.
+
+## Decision from dependency analysis: path B is separable (2026-10-24, later the same day)
+Fly secret names (read after the founder's login) confirm no `XROGA_CREDENTIAL_KMS_*` or `XROGA_OCI_KMS_*` value exists on `xroga-api`, so path A waits on Codex's Fly custody work. Path B does not:
+
+- Codex's canonical boundary is self-contained. `security/tenantContext.ts` imports only `node:crypto`, `lib/resolveIdentity.ts` (on `main`, same `ResolvedIdentity` shape) and `security/tenantErrors.ts`;
+  `security/serviceRoleGuard.ts` imports only `config/supabase.ts` (on `main`). None of them touches `credentialVaultStartup.ts` or `index.ts`.
+- **Branch `claude/b15-tenantcontext-core` @ `5c66fd37`** (from `main` `f9ac71ef`): those four files and their two tests **byte-identical** to Codex PR #846 (`0c8b5ddf`; blob hashes compared),
+  plus the issuing lines of Codex's `middleware/auth.ts` (both `authMiddleware` and `optionalAuthMiddleware` clear caller-supplied fields and set `req.tenantContext = createTenantContext(identity)`).
+  Codex's other `auth.ts` changes (provisioning by context, log wording) are left to Codex's stack. A new test drives the real middleware: issued context for a verified token, forged values discarded, no context on failure (6 tests; two mutants caught).
+- Production effect of merging it: the API image changes only in the auth middleware attaching one frozen object per authenticated request and clearing caller-supplied identity fields. No startup change, no migration, no secret, no new dependency. `fly-deploy.yml` deploys it as an ordinary release.
+- Verification: `tsc` clean; full backend suite locally 2724 tests, 0 failures; GitHub `unit-tests` run 40110784081 on `5c66fd37`: backend 2730 tests, 0 failures (main: 2719, 0 failures); frontend 46 failures, the identical list to `main`'s own run 40031704258 (pre-existing on `main`, none new); `docker build -f Dockerfile.api` succeeds.
+- Compatibility with Codex's later merge: the five files are identical, so they merge without conflict; `auth.ts` overlaps with Codex's own edit of the same lines and resolves by taking Codex's version.
+- Phase 2 adoption is on the Phase 2 branch (merge of the core branch, then `actorFromTenantContext` / `actorFromPersistedOwner`; Drive refuses missing, hand-built, spread and JSON-cloned contexts with 401).
+
+Merge order when approved: (1) `claude/b15-tenantcontext-core` into `main` (deploys the API through `fly-deploy.yml`); (2) the Phase 2 branch, whose merge also applies its two migrations through `supabase-migrate.yml`; (3) Codex's stack later, unchanged except `auth.ts` taking Codex's version.

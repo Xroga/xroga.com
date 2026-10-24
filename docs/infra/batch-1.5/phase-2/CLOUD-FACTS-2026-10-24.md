@@ -52,8 +52,17 @@ Read with a browser-approved Fly CLI session: `fly apps list`, `fly status`, `fl
   It also means any such files exist **only in the database, which has no backup**. (Per `current-state.md` W1, that writer has no production caller on `main` today, so the volume is probably small; A2 measures it.)
 - Phase 1 Drive is not configured in production (no `XROGA_DRIVE_R2_*`, no `STORAGE_WRITE_MODE`), as intended.
 
-## Still not established
-| Checklist | Missing | Needs |
-|---|---|---|
-| A2 database counts | `count(*)` and total bytes of `project_files` rows whose `file_url` starts with `data:`; `pg_total_relation_size('swarm_runs')`; the list of `storage.buckets` | one **read-only aggregate** query on production (counts and sizes only, no row content), which needs the founder's explicit approval |
+## A2: database counts (founder-approved read-only query, run once, 2026-10-24)
+Run once through the Supabase connection with `set transaction_read_only = on; set statement_timeout = '15s'`; the result reports both settings, so the read-only state is evidenced, not assumed.
+Only aggregates were returned; no row, file content or credential.
 
+| Fact | Value |
+|---|---|
+| transaction read only / statement timeout (as reported by the server) | `on` / `15s` |
+| `project_files` rows with a `data:` URL, and their total length | **0**, 0 |
+| `project_files` rows in total | **0** |
+| `swarm_runs` rows / total relation size | **238** / 7,200,768 bytes (about 6.9 MiB) |
+| Supabase Storage buckets | `xroga-github-tokens` (private), `avatars` (public) |
+
+Consequences: the R2 name mismatch has stored **no** file in the database (there are no project files at all), so there is nothing to preserve or migrate; the only durable run output lives in `swarm_runs`,
+small enough for a daily logical backup. Checklist A is complete.
