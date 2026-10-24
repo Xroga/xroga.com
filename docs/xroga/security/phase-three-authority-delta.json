@@ -81,67 +81,67 @@
     },
     {
       "previousCallerId": "046674e946dedc2dbd0a",
-      "currentCallerId": "1169e490665cdec7b3a3"
+      "currentCallerId": "d406c0b568fd6ec5e544"
     },
     {
       "previousCallerId": "f7d8e33dac1c0de787f8",
-      "currentCallerId": "2fbd469f16851f3b71ab"
+      "currentCallerId": "de6707af035c2d7fe760"
     },
     {
       "previousCallerId": "2384f6f1c188f4f6ce83",
-      "currentCallerId": "6f058d1957df9ddef58e"
+      "currentCallerId": "5ffa627faeaa6803aab8"
     },
     {
       "previousCallerId": "03557d58e528c5852636",
-      "currentCallerId": "263d64635be54643daaf"
+      "currentCallerId": "7fb0d4feb0707259368b"
     },
     {
       "previousCallerId": "e2e547f8796cd0aad243",
-      "currentCallerId": "28c7a352253f65a4d63b"
+      "currentCallerId": "abe158166765391a38bb"
     },
     {
       "previousCallerId": "f602ab2d6bfebc170a02",
-      "currentCallerId": "ec7738731d0c6be00798"
+      "currentCallerId": "cd6fb0dc4aecaa924a23"
     },
     {
       "previousCallerId": "8a48ae3957449eee9587",
-      "currentCallerId": "0882d94061fd33117251"
+      "currentCallerId": "48010eb67a70f9160a4e"
     },
     {
       "previousCallerId": "685bdab3b4b31bd28d43",
-      "currentCallerId": "ba74f371a047c8305b9a"
+      "currentCallerId": "c79d0afb3ebeabc76c2d"
     },
     {
       "previousCallerId": "9a847ab5769bb707c1f2",
-      "currentCallerId": "9e5ee446a0fb192d8f39"
+      "currentCallerId": "f8840556255dc425215c"
     },
     {
       "previousCallerId": "e489f9a48f400005cb2d",
-      "currentCallerId": "3a904e92ac521ad89ef0"
+      "currentCallerId": "3c5c04328c11bf512dba"
     },
     {
       "previousCallerId": "d9435c22813b64a1f1f5",
-      "currentCallerId": "495469d5a798cf52f829"
+      "currentCallerId": "88e420183bcb296b87a4"
     },
     {
       "previousCallerId": "1d3ef9e110d2f000f590",
-      "currentCallerId": "4ac1c2be7bfccf034c8e"
+      "currentCallerId": "df66c5e789c6e8f1dd46"
     },
     {
       "previousCallerId": "0b24ee0eecebdda0e6f3",
-      "currentCallerId": "a50ebf735a3e2d6e8587"
+      "currentCallerId": "1523f7744eed6083f0b6"
     },
     {
       "previousCallerId": "ace18dec175b4875e7f7",
-      "currentCallerId": "e5f59ad9b6097a1bb115"
+      "currentCallerId": "4c1b535638e8a0a197f8"
     },
     {
       "previousCallerId": "c07b5b1f63ae0e361ae7",
-      "currentCallerId": "8b8545e8ee1fbbfb3fbf"
+      "currentCallerId": "88789f83425415184ffc"
     },
     {
       "previousCallerId": "fba07b765dafacccf133",
-      "currentCallerId": "60a088c3f2c03ec9402c"
+      "currentCallerId": "5fc4041577ba475ddde3"
     },
     {
       "previousCallerId": "cd8790e39c3283f05482",
@@ -941,7 +941,7 @@
       "sourceSha256": "76e7a8cfda6405a864d376dafb247e0ebbad36b232919cabc2c9386712211e5b"
     },
     {
-      "id": "8aa7e4818165f80a2954",
+      "id": "3ff444168109d6f2d8a7",
       "path": "backend/src/ai/providerBudget.ts",
       "line": 419,
       "enclosing": "reserveOperationsProviderBudget",
@@ -949,10 +949,10 @@
       "target": "reserve_operations_provider_budget",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876"
+      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a"
     },
     {
-      "id": "0dc96ad35c877b5c6b81",
+      "id": "e838e61e27730ca3c3a9",
       "path": "backend/src/ai/providerBudget.ts",
       "line": 419,
       "enclosing": "reserveOperationsProviderBudget",
@@ -960,10 +960,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876"
+      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a"
     },
     {
-      "id": "1e296c319fef476f484e",
+      "id": "d483200769e782169fd9",
       "path": "backend/src/ai/providerBudget.ts",
       "line": 431,
       "enclosing": "reserveOperationsProviderBudget",
@@ -971,10 +971,10 @@
       "target": "ensure_xroga_free_cycle",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876"
+      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a"
     },
     {
-      "id": "10d24b0a58511aa77d5a",
+      "id": "5f776647ab77d7a35536",
       "path": "backend/src/ai/providerBudget.ts",
       "line": 431,
       "enclosing": "reserveOperationsProviderBudget",
@@ -982,7 +982,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876"
+      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a"
     },
     {
       "id": "7b7e6c777416feab8b85",

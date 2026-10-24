@@ -124,7 +124,27 @@
     "backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts",
     "backend/src/security/softwareAgentSdk.local.integration.ts",
     "backend/src/security/tenantIsolation.local.integration.ts",
-    "docs/xroga/evidence/command-010/SOFTWARE-AGENT-SDK-CONTINUATION.md"
+    "docs/xroga/evidence/command-010/SOFTWARE-AGENT-SDK-CONTINUATION.md",
+    "backend/src/ai/benchmarkExecutor.ts",
+    "backend/src/ai/benchmarkRunner.ts",
+    "backend/src/ai/black-hole/webIntelligence.ts",
+    "backend/src/ai/providerBudget.ts",
+    "backend/src/ai/qa.ts",
+    "backend/src/ai/universal/semanticRequestPlanner.ts",
+    "backend/src/operations/benchmarkAdapter.ts",
+    "backend/src/operations/operationsProviderBudget.local.integration.ts",
+    "backend/src/services/integrations/businessAccounting.failure.test.ts",
+    "backend/src/services/integrations/businessAction.ts",
+    "backend/src/services/integrations/businessRead.ts",
+    "backend/src/synthesis/coherentImplementation.test.ts",
+    "backend/src/synthesis/coherentImplementation.ts",
+    "backend/src/synthesis/incrementalImplementation.ts",
+    "backend/src/ai/modelSdkAdmission.ts",
+    "backend/src/ai/genericSdkAdmission.test.ts",
+    "backend/src/ai/operationsSdkAdmission.test.ts",
+    "backend/src/security/genericSdk.local.integration.ts",
+    "docs/xroga/evidence/command-010/GENERIC-SDK-CONTINUATION.md",
+    "backend/src/ai/builderAttempt.ts"
   ],
   "decisions": {
     "keep": [
@@ -222,6 +242,12 @@
       "scope": "19 focused cases PASS, no skips. New disposable SoftwareAgent reservation/receipt/ownership-transfer assertion requires exact-source full run. Historical evidence unchanged.",
       "negative": true,
       "reference": "docs/xroga/evidence/command-010/SOFTWARE-AGENT-SDK-CONTINUATION.md"
+    },
+    {
+      "command": "Canonical safeTestEnvironment Node22.21.1 focused generic SDK and reachable caller suite",
+      "scope": "Final combined191 SDK/guest/Operations/SoftwareAgent/repair/fallback/budget/repository/universal/QA cases PASS0skip/fail. New exact-source disposable assertion remains pending CI.",
+      "negative": true,
+      "reference": "docs/xroga/evidence/command-010/GENERIC-SDK-CONTINUATION.md"
     }
   ],
   "architecture": {
@@ -232,10 +258,10 @@
   "rollout": "Review-only stacked draft PR. Phase3 admission, complete Command010 proof and separate release authorization required.",
   "rollback": "Revert this isolated review branch before release, no schema or live credential rollback needed.",
   "knownGaps": [
-    "119 unclosed AST caller candidates, including64 dynamic/SDK high-risk review candidates, not asserted as demonstrated vulnerabilities",
+    "117 unclosed AST caller candidates, including62 dynamic/SDK high-risk review candidates, not asserted as demonstrated vulnerabilities",
     "Remaining consequential adapters and upload caller migration",
     "Full deployed Supabase/PostgREST and full migration/production parity remain unverified. Local PostgreSQL receipt and ownership race proof is now available.",
-    "Current main has six UI conflict groups. WorkspaceLauncher behavior reconciliation is separately committed, remaining main-history integration is not verified.",
+    "PR844 remains separate from current-main integration and production rollout. No current-main merge or deployment is authorized by this checkpoint.",
     "Phase 3 actual managed-KMS runtime custody and applicable cutover"
   ],
   "placeholderClaimsRemaining": [
@@ -252,17 +278,18 @@
     "docs/xroga/evidence/command-010/PROVENANCE-REPAIR.json",
     "docs/xroga/evidence/command-010/MODEL-BOUNDARY-TRACE.json",
     "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
-    "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json"
+    "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
+    "docs/xroga/evidence/command-010/GENERIC-SDK-CONTINUATION.md"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "119 unclosed AST caller candidates, including64 dynamic/SDK high-risk review candidates, not asserted as demonstrated vulnerabilities",
+      "117 unclosed AST caller candidates, including62 dynamic/SDK high-risk review candidates, not asserted as demonstrated vulnerabilities",
       "Remaining consequential adapters and upload caller migration",
       "Full deployed Supabase/PostgREST and full migration/production parity remain unverified. Local PostgreSQL receipt and ownership race proof is now available.",
-      "Current main has six UI conflict groups. WorkspaceLauncher behavior reconciliation is separately committed, remaining main-history integration is not verified.",
+      "PR844 remains separate from current-main integration and production rollout. No current-main merge or deployment is authorized by this checkpoint.",
       "Phase 3 actual managed-KMS runtime custody and applicable cutover"
     ],
     "authenticatedE2e": "BLOCKED",

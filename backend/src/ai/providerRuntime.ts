@@ -126,6 +126,9 @@ export function isModelSecurityDenial(error:unknown):boolean{
 /** Local admission and uncertain accounting cannot be repaired by another model. */
 export function isTerminalModelFailure(error: unknown): boolean {
   return isModelSecurityDenial(error) || isPostCompletionAccountingError(error)
+    || (error as {code?:string})?.code === 'MODEL_PUBLICATION_FAILED'
+    || (error as {name?:string})?.name === 'AbortError'
+    || (error as {code?:string})?.code === 'BUILD_CANCELLED'
     || (error as { code?: string })?.code === 'PAID_PROVIDER_CAPACITY_UNAVAILABLE'
     || (error instanceof RuntimeFailure && error.code === 'CAPABILITY_TEMPORARILY_UNAVAILABLE');
 }
@@ -306,6 +309,9 @@ export async function executeWithProviderFallback<T>(input: {
         }
         return { value, modelId, failures };
       } catch (error) {
+        if((error as {code?:string})?.code==='MODEL_PUBLICATION_FAILED')throw error;
+        if(((error as {name?:string})?.name==='AbortError'||(error as {code?:string})?.code==='BUILD_CANCELLED')
+          &&!(controller.signal.aborted&&!input.signal?.aborted))throw error;
         if (isPostCompletionAccountingError(error)) throw error;
         if (error instanceof RuntimeFailure && error.code === 'CAPABILITY_TEMPORARILY_UNAVAILABLE') throw error;
         const normalized = controller.signal.aborted && !input.signal?.aborted

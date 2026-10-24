@@ -16,7 +16,7 @@ import { requireTenantContext, requireResourceOwner, type TenantContext } from '
 
 import {
   executeWithProviderFallback,
-  isModelSecurityDenial,
+  isTerminalModelFailure,
   getModelRuntimeHealth,
   recordModelValidation,
   type ModelRuntimeHealth,
@@ -26,7 +26,6 @@ import {
   getUsage,
   usageToTokenUsage,
 } from '../quota.js';
-import { recordCompletedProviderUsage as recordUsage, isPostCompletionAccountingError } from '../postCompletionAccounting.js';
 
 import {
   universalCapabilityRegistry,
@@ -293,9 +292,7 @@ export async function executeHedgedPlannerFallback<T>(
       AbortController
     >();
 
-  const isTerminalDenial = (error: unknown) =>
-    isModelSecurityDenial(error) || isPostCompletionAccountingError(error)
-    || (error instanceof RuntimeFailure && error.code === 'CAPABILITY_TEMPORARILY_UNAVAILABLE');
+  const isTerminalDenial = isTerminalModelFailure;
   let terminalDenial: { error: unknown } | undefined;
   const requireNoTerminalDenial = () => {
     if (terminalDenial) throw terminalDenial.error;
@@ -1716,18 +1713,7 @@ export async function planSemanticRequest(
                     finalModelId =
                       completion.modelId;
 
-                    await recordUsage(
-                      input.userId,
-
-                      completion
-                        .modelId,
-
-                      completion
-                        .inputTokens,
-
-                      completion
-                        .outputTokens,
-                    );
+                    /* Canonical dispatch already verified the atomic usage receipt. */
 
                     return completion
                       .text;
@@ -1892,7 +1878,7 @@ export async function planSemanticRequest(
         ),
     };
   } catch (error) {
-    if (isPostCompletionAccountingError(error) || isModelSecurityDenial(error)) throw error;
+    if (isTerminalModelFailure(error)) throw error;
     if (
       totalController
         .signal

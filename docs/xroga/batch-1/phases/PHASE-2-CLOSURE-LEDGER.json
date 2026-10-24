@@ -206,18 +206,18 @@
       "id": "B1-P2-596d4c8ceb15c1a7",
       "family": "other-source-bound-boundaries",
       "sourcePath": "backend/src/ai/benchmarkRunner.ts",
-      "sourceSha256": "dbc904d809e4c1ea171b0f15eb9d1706028562a848807498e8f8f32747a51184",
+      "sourceSha256": "a5208cdf668988cb24fe1e9c49c9144e3ee2da31dff0a077105dd3c5329faf33",
       "baselineCallerIds": [
         "9506c72ea0f341c2a492"
       ],
       "currentCallerIds": [
-        "9506c72ea0f341c2a492"
+        "cbb864f99fab4cd08610"
       ],
       "mapping": [
         {
           "baselineCallerId": "9506c72ea0f341c2a492",
           "currentCallerIds": [
-            "9506c72ea0f341c2a492"
+            "cbb864f99fab4cd08610"
           ],
           "change": "RETAINED"
         }
@@ -241,7 +241,7 @@
         {
           "path": "backend/src/ai/benchmarkRunner.ts",
           "marker": "SupabaseBenchmarkResultStore",
-          "sourceSha256": "dbc904d809e4c1ea171b0f15eb9d1706028562a848807498e8f8f32747a51184",
+          "sourceSha256": "a5208cdf668988cb24fe1e9c49c9144e3ee2da31dff0a077105dd3c5329faf33",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -918,18 +918,18 @@
       "id": "B1-P2-4a588dd074761414",
       "family": "projects-files-runtime",
       "sourcePath": "backend/src/synthesis/universalEntrypoint.ts",
-      "sourceSha256": "91c22bc5ac1fd79eeeaafab69134d17009c7cc0d2bfba101411dde88625b46a2",
+      "sourceSha256": "3a4002a2359e8fccf4f10791213d4b2d15f37a0e2e02a413ac938fc4fc842a84",
       "baselineCallerIds": [
         "10b5e279dd241e2f40ec"
       ],
       "currentCallerIds": [
-        "cfba5e514ab70426438c"
+        "411b7b4d8d600d797423"
       ],
       "mapping": [
         {
           "baselineCallerId": "10b5e279dd241e2f40ec",
           "currentCallerIds": [
-            "cfba5e514ab70426438c"
+            "411b7b4d8d600d797423"
           ],
           "change": "RETAINED"
         }
@@ -939,7 +939,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-4a588dd074761414",
-        "sourceSha256": "91c22bc5ac1fd79eeeaafab69134d17009c7cc0d2bfba101411dde88625b46a2",
+        "sourceSha256": "3a4002a2359e8fccf4f10791213d4b2d15f37a0e2e02a413ac938fc4fc842a84",
         "historicalBinding": {
           "reference": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
           "sha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4"
@@ -970,7 +970,12 @@
           "Authenticate changed-source disposable default-factory fixture and full source-bound regressions",
           "Require all universal store receiving operations independently verified before original factory closure",
           "Keep arbitrary injected store authorization, model effects and Phase3/4 obligations separate"
-        ]
+        ],
+        "previousGenericSdkBinding": {
+          "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+          "sourceSha256": "91c22bc5ac1fd79eeeaafab69134d17009c7cc0d2bfba101411dde88625b46a2",
+          "scope": "EXACT_PERSISTENCE_EXPRESSION_POSITION_ONLY_NOT_NEW_ACCEPTANCE"
+        }
       },
       "actor": {
         "existingTrace": "tryUniversalBuild constructs the existing SupabaseUniversalStore with issued persisted-owner context from input.userId and passes owner/run to executeUniversalRun.",
@@ -987,7 +992,7 @@
         {
           "path": "backend/src/synthesis/universalEntrypoint.ts",
           "marker": "createTenantContext({userId:input.userId",
-          "sourceSha256": "91c22bc5ac1fd79eeeaafab69134d17009c7cc0d2bfba101411dde88625b46a2",
+          "sourceSha256": "3a4002a2359e8fccf4f10791213d4b2d15f37a0e2e02a413ac938fc4fc842a84",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -2301,7 +2306,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real growth event replay cannot disclose a different project event",
-          "sourceSha256": "0d47c25a8f39062fa6fd9dee2c3edcfd51e7711f5f92b213cbe530802d5abaae",
+          "sourceSha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -3357,7 +3362,7 @@
       "id": "B1-P2-392b9b628a9b92be",
       "family": "billing-budget",
       "sourcePath": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
       "baselineCallerIds": [
         "00d351afbe045a136c66",
         "254a91383e3a8af0310b",
@@ -3377,133 +3382,133 @@
         "3fc72ec34d884b871909"
       ],
       "currentCallerIds": [
-        "1169e490665cdec7b3a3",
-        "2fbd469f16851f3b71ab",
-        "6f058d1957df9ddef58e",
-        "263d64635be54643daaf",
-        "28c7a352253f65a4d63b",
-        "ec7738731d0c6be00798",
-        "0882d94061fd33117251",
-        "ba74f371a047c8305b9a",
-        "9e5ee446a0fb192d8f39",
-        "3a904e92ac521ad89ef0",
-        "495469d5a798cf52f829",
-        "4ac1c2be7bfccf034c8e",
-        "a50ebf735a3e2d6e8587",
-        "e5f59ad9b6097a1bb115",
-        "8b8545e8ee1fbbfb3fbf",
-        "60a088c3f2c03ec9402c"
+        "d406c0b568fd6ec5e544",
+        "de6707af035c2d7fe760",
+        "5ffa627faeaa6803aab8",
+        "7fb0d4feb0707259368b",
+        "abe158166765391a38bb",
+        "cd6fb0dc4aecaa924a23",
+        "48010eb67a70f9160a4e",
+        "c79d0afb3ebeabc76c2d",
+        "f8840556255dc425215c",
+        "3c5c04328c11bf512dba",
+        "88e420183bcb296b87a4",
+        "df66c5e789c6e8f1dd46",
+        "1523f7744eed6083f0b6",
+        "4c1b535638e8a0a197f8",
+        "88789f83425415184ffc",
+        "5fc4041577ba475ddde3"
       ],
       "mapping": [
         {
           "baselineCallerId": "00d351afbe045a136c66",
           "currentCallerIds": [
-            "1169e490665cdec7b3a3"
+            "d406c0b568fd6ec5e544"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "254a91383e3a8af0310b",
           "currentCallerIds": [
-            "2fbd469f16851f3b71ab"
+            "de6707af035c2d7fe760"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "590df28cdc2b297e03b6",
           "currentCallerIds": [
-            "6f058d1957df9ddef58e"
+            "5ffa627faeaa6803aab8"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "39a1f4163240597da04d",
           "currentCallerIds": [
-            "263d64635be54643daaf"
+            "7fb0d4feb0707259368b"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "613d8e71ddafb0d6bd0c",
           "currentCallerIds": [
-            "28c7a352253f65a4d63b"
+            "abe158166765391a38bb"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "a80e4804742dfd6bcc0a",
           "currentCallerIds": [
-            "ec7738731d0c6be00798"
+            "cd6fb0dc4aecaa924a23"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "6285818c6e8220770b29",
           "currentCallerIds": [
-            "0882d94061fd33117251"
+            "48010eb67a70f9160a4e"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "090fe734dc5d1d3dc6e3",
           "currentCallerIds": [
-            "ba74f371a047c8305b9a"
+            "c79d0afb3ebeabc76c2d"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "3f66673813dee0d85b85",
           "currentCallerIds": [
-            "9e5ee446a0fb192d8f39"
+            "f8840556255dc425215c"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "746985044f7d3ee62aff",
           "currentCallerIds": [
-            "3a904e92ac521ad89ef0"
+            "3c5c04328c11bf512dba"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e030677c7ecb6b0dd90e",
           "currentCallerIds": [
-            "495469d5a798cf52f829"
+            "88e420183bcb296b87a4"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e35278adbe80b78c8d41",
           "currentCallerIds": [
-            "4ac1c2be7bfccf034c8e"
+            "df66c5e789c6e8f1dd46"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "b5a82155e981259a207e",
           "currentCallerIds": [
-            "a50ebf735a3e2d6e8587"
+            "1523f7744eed6083f0b6"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "564673e6f6b21c690fce",
           "currentCallerIds": [
-            "e5f59ad9b6097a1bb115"
+            "4c1b535638e8a0a197f8"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "5ed8ef26b72e26561f26",
           "currentCallerIds": [
-            "8b8545e8ee1fbbfb3fbf"
+            "88789f83425415184ffc"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "3fc72ec34d884b871909",
           "currentCallerIds": [
-            "60a088c3f2c03ec9402c"
+            "5fc4041577ba475ddde3"
           ],
           "change": "RETAINED"
         }
@@ -3513,7 +3518,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-392b9b628a9b92be",
-        "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+        "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
         "phase4BudgetAdmissionContinuation": {
           "baselineSource": "d68bbd7269395ff4193c372cbbe432acfc1f422a",
           "previousFileSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
@@ -3582,24 +3587,24 @@
         "current007Evidence": {
           "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
           "verifiedCurrentCallerIds": [
-            "6f058d1957df9ddef58e",
-            "263d64635be54643daaf",
-            "28c7a352253f65a4d63b",
-            "ec7738731d0c6be00798",
-            "0882d94061fd33117251",
-            "ba74f371a047c8305b9a",
-            "9e5ee446a0fb192d8f39",
-            "3a904e92ac521ad89ef0",
-            "a50ebf735a3e2d6e8587",
-            "e5f59ad9b6097a1bb115"
+            "5ffa627faeaa6803aab8",
+            "7fb0d4feb0707259368b",
+            "abe158166765391a38bb",
+            "cd6fb0dc4aecaa924a23",
+            "48010eb67a70f9160a4e",
+            "c79d0afb3ebeabc76c2d",
+            "f8840556255dc425215c",
+            "3c5c04328c11bf512dba",
+            "1523f7744eed6083f0b6",
+            "4c1b535638e8a0a197f8"
           ],
           "remainingCurrentCallerIds": [
-            "1169e490665cdec7b3a3",
-            "2fbd469f16851f3b71ab",
-            "495469d5a798cf52f829",
-            "4ac1c2be7bfccf034c8e",
-            "8b8545e8ee1fbbfb3fbf",
-            "60a088c3f2c03ec9402c"
+            "d406c0b568fd6ec5e544",
+            "de6707af035c2d7fe760",
+            "88e420183bcb296b87a4",
+            "df66c5e789c6e8f1dd46",
+            "88789f83425415184ffc",
+            "5fc4041577ba475ddde3"
           ],
           "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
           "scope": "BYTE_IDENTICAL_EXISTING_FUNCTIONS_MAPPED_NOT_NEW_SOURCE_ACCEPTANCE",
@@ -3678,6 +3683,11 @@
           "historicalSourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
           "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
           "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
+        },
+        "previousGenericSdkBinding": {
+          "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+          "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+          "scope": "EXACT_PERSISTENCE_EXPRESSION_POSITION_ONLY_NOT_NEW_ACCEPTANCE"
         }
       },
       "actor": {
@@ -3837,7 +3847,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real durable database file delivery is owner-only",
-          "sourceSha256": "0d47c25a8f39062fa6fd9dee2c3edcfd51e7711f5f92b213cbe530802d5abaae",
+          "sourceSha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -4829,7 +4839,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real community API rejects cross-author mixed-field privilege escalation without partial writes",
-          "sourceSha256": "0d47c25a8f39062fa6fd9dee2c3edcfd51e7711f5f92b213cbe530802d5abaae",
+          "sourceSha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5077,7 +5087,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "0d47c25a8f39062fa6fd9dee2c3edcfd51e7711f5f92b213cbe530802d5abaae",
+          "sourceSha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -5190,7 +5200,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real revision restore rejects mismatched snapshot identities before restore or fork writes",
-          "sourceSha256": "0d47c25a8f39062fa6fd9dee2c3edcfd51e7711f5f92b213cbe530802d5abaae",
+          "sourceSha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -5507,7 +5517,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real failed-build notification cannot disclose raw backend diagnostic text",
-          "sourceSha256": "0d47c25a8f39062fa6fd9dee2c3edcfd51e7711f5f92b213cbe530802d5abaae",
+          "sourceSha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -5699,7 +5709,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real profile column grants reject self-promotion",
-          "sourceSha256": "0d47c25a8f39062fa6fd9dee2c3edcfd51e7711f5f92b213cbe530802d5abaae",
+          "sourceSha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6133,7 +6143,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "Legitimate membership must remain visible",
-          "sourceSha256": "0d47c25a8f39062fa6fd9dee2c3edcfd51e7711f5f92b213cbe530802d5abaae",
+          "sourceSha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6422,7 +6432,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "project-limited operators cannot retry another project job or webhook owned by the same tenant",
-          "sourceSha256": "0d47c25a8f39062fa6fd9dee2c3edcfd51e7711f5f92b213cbe530802d5abaae",
+          "sourceSha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6514,7 +6524,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "generated external-project memory SQL denies browser roles",
-          "sourceSha256": "0d47c25a8f39062fa6fd9dee2c3edcfd51e7711f5f92b213cbe530802d5abaae",
+          "sourceSha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6639,7 +6649,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "loadSessionHistory(opts.userId",
-          "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+          "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6766,7 +6776,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "const saved = await setProjectMemoryDurable({",
-          "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+          "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6989,7 +6999,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real Whop fulfillment rolls back foreign membership collisions",
-          "sourceSha256": "0d47c25a8f39062fa6fd9dee2c3edcfd51e7711f5f92b213cbe530802d5abaae",
+          "sourceSha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -7699,7 +7709,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "0d47c25a8f39062fa6fd9dee2c3edcfd51e7711f5f92b213cbe530802d5abaae",
+          "sourceSha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -7806,7 +7816,7 @@
         {
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "real credential writer refuses a public bucket",
-          "sourceSha256": "0d47c25a8f39062fa6fd9dee2c3edcfd51e7711f5f92b213cbe530802d5abaae",
+          "sourceSha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -8286,12 +8296,13 @@
         "relatedSourceBindings": [
           {
             "path": "backend/src/ai/pipeline.ts",
-            "sha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+            "sha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
             "historicalBinding": {
               "reference": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
               "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
             },
-            "currentSourceDelta": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json"
+            "currentSourceDelta": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
+            "previousGenericSdkSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc"
           },
           {
             "path": "backend/src/routes/swarm.ts",

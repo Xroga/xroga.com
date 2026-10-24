@@ -52,7 +52,7 @@ import {
 import {
   getSupabaseAdmin,
 } from '../config/supabase.js';
-import { createTenantContext,type TenantContext } from '../security/tenantContext.js';
+import { createTenantContext,requireTenantContext,type TenantContext } from '../security/tenantContext.js';
 import type {AdmittedRunAttempt} from '../ai/runStore.js';
 
 import {
@@ -1076,6 +1076,8 @@ const measuredEvidence =
 
       adapters:
         productionAdapters({
+          dispatchScope:{context:requireTenantContext(input.tenantContext),userId:input.userId,projectId:input.databaseProjectId,
+            runAttempt:input.modelRunAttempt,repository:input.modelRepository,connectedAccountId:'platform'},
           implement:
             async ({
               brief,

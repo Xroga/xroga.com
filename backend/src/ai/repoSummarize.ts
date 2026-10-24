@@ -17,7 +17,7 @@ import type {
 
 import {withTenantModelReservation,type TenantModelScope} from './tenantModelDispatch.js';
 import {requireResourceOwner} from '../security/tenantContext.js';
-import {isModelSecurityDenial} from './providerRuntime.js';
+import {isTerminalModelFailure} from './providerRuntime.js';
 
 import type {
   ProjectFile,
@@ -158,8 +158,8 @@ export async function summarizeRepoForUpdates(
         result.outputTokens,
     };
   } catch (error) {
-    if(isModelSecurityDenial(error)||(error as {code?:string})?.code==='RUN_STATE_CONFLICT')throw error;
-    // An optional memo can be skipped on availability/accounting failure, but
+    if(isTerminalModelFailure(error))throw error;
+    // An optional memo can be skipped on ordinary provider unavailability, but
     // provider error bodies can contain request data and must not reach logs.
     console.warn('[repoSummarize] skipped: unavailable');
 

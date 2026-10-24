@@ -43,7 +43,6 @@ import {
   type BuilderAttemptFailure,
   type BuilderAttemptRecord,
 } from './builderAttempt.js';
-import { withProviderReservation } from './providerBudget.js';
 import {
   BUILDER_SYSTEM,
   CHAT_SYSTEM,
@@ -62,7 +61,7 @@ import {
 import {
   assertCanUseModel,
   assertHasQuota,
-  recordUsage,
+  getUsage,
   usageToTokenUsage,
   type UsageSnapshot,
 } from './quota.js';
@@ -227,7 +226,7 @@ import {
   createIntelligentRoutePlan,
   selectRepairModel as legacySelectRepairModel,
 } from './intelligentRouter.js';
-import { normalizeProviderError, recordModelValidation,isModelSecurityDenial } from './providerRuntime.js';
+import { normalizeProviderError, recordModelValidation,isModelSecurityDenial,isTerminalModelFailure } from './providerRuntime.js';
 import { classifyFailure } from '../lib/recoveryPlanner.js';
 import { explicitlyDisablesResearch } from '../lib/taskClassifier.js';
 import { loadRoutingOutcomes, recordRoutingOutcome } from './routingOutcomes.js';
@@ -739,7 +738,7 @@ export async function callBuilderStream(
     onStreamDelta?: (delta: string) => void;
   },
 ): Promise<Awaited<ReturnType<typeof chatCompletionStream>>> {
-  if(opts.tenantContext)requireResourceOwner(opts.tenantContext,opts.userId);
+  const context=requireTenantContext(opts.tenantContext);requireResourceOwner(context,opts.userId);
   messages=structuredClone(messages);
   opts={...opts,credentialOverrides:opts.credentialOverrides?{...opts.credentialOverrides}:undefined};
   const healthAwareOrder = fallbackOrderForModel(preferred);
@@ -765,58 +764,36 @@ export async function callBuilderStream(
         opts.onModelFallback?.(preferred, modelId);
       }
       const provider = MODELS[modelId].provider;
-      const userCredential = opts.tenantContext?null:
-        opts.credentialOverrides?.[modelId] ??
-        (opts.userId
-          ? await getUserProviderKey(
-              opts.userId,
-              provider,
-            ).catch(() => null)
-          : null);
-      const bufferedDeltas: string[] = [];
-      const execute = async (dispatch?:BoundModelDispatch) => {
+      const execute = async (dispatch:BoundModelDispatch) => {
         // Every attempt runs under a first-token and generation deadline. Without
         // them a provider that accepts the connection and then goes silent held the
         // whole run open until the socket timeout, once per model in the fallback
         // order — which is how a run could stay active for many minutes and still
         // deliver nothing.
         const attempt = await runBuilderAttempt(
-          async ({ signal, onToken }) => {
-            const completion = await chatCompletionStream(modelId, (dispatch?.payload.messages??messages) as ChatMessage[], {
+          async ({ signal, onActivity }) => {
+            const completion = await chatCompletionStream(modelId, dispatch.payload.messages as ChatMessage[], {
               maxTokens: opts.maxTokens,
               temperature: opts.temperature,
               onDelta: (delta) => {
-                onToken(delta);
                 opts.onStreamDelta?.(delta);
-                if (opts.validateResponse) bufferedDeltas.push(delta);
-                else opts.onDelta?.(delta);
+                opts.onDelta?.(delta);
               },
+              onActivity,
               signal,
-              credentialOverride: dispatch?dispatch.credentialOverride:userCredential || undefined,
-              beforeDispatch:dispatch?.beforeDispatch,
+              credentialOverride: dispatch.credentialOverride,
+              beforeDispatch:dispatch.beforeDispatch,
             });
-            opts.validateResponse?.(completion);
             return completion;
           },
           { budget: opts.budget, signal: opts.signal },
         );
-        if (bufferedDeltas.length) opts.onDelta?.(bufferedDeltas.join(''));
         return attempt.value;
       };
       const runAttempt = () =>
-        opts.tenantContext
-          ? withTenantModelReservation({scope:{context:opts.tenantContext,userId:opts.userId!,projectId:opts.databaseProjectId,runAttempt:opts.modelRunAttempt,repository:opts.modelRepository,
+        withTenantModelReservation({scope:{context,userId:context.userId,projectId:opts.databaseProjectId,runAttempt:opts.modelRunAttempt,repository:opts.modelRepository,
               connectedAccountId:opts.credentialOverrides?(opts.credentialOverrides[modelId]?`apikey_${provider}`:'platform'):undefined},
-              modelId,payload:{messages},estimatedInputTokens:estimateMessageTokens(messages),maximumOutputTokens:opts.maxTokens??8192,execute})
-          : opts.userId
-          ? withProviderReservation({
-              userId: opts.userId,
-              modelId,
-              estimatedInputTokens: estimateMessageTokens(messages),
-              maximumOutputTokens: opts.maxTokens ?? 8192,
-              execute,
-            })
-          : execute();
+              modelId,payload:{messages},estimatedInputTokens:estimateMessageTokens(messages),maximumOutputTokens:opts.maxTokens??8192,execute,validateResponse:opts.validateResponse});
       return opts.onWaiting
         ? await withProgressHeartbeat(
             {
@@ -829,7 +806,7 @@ export async function callBuilderStream(
     } catch (err) {
       lastErr = err as Error;
       const code = (lastErr as Error & { code?: string }).code;
-      if(isModelSecurityDenial(lastErr))throw lastErr;
+      if(isTerminalModelFailure(lastErr))throw lastErr;
       const failure = classifyBuilderFailure(lastErr);
       opts.onAttemptFailure?.({
         // §30/§31: this field reached the client. Which model failed is recorded in the
@@ -977,7 +954,7 @@ export async function runChatPipeline(opts: {
   goalContract?: GoalContract;
   projectEvidence?: string;
 }): Promise<ChatPipelineResult> {
-  if(opts.tenantContext)requireResourceOwner(opts.tenantContext,opts.userId);
+  requireResourceOwner(requireTenantContext(opts.tenantContext),opts.userId);
   const initialUsage = await assertHasQuota(opts.userId);
 
   const prepared = await prepareAttachments(opts.attachments);
@@ -1022,12 +999,7 @@ export async function runChatPipeline(opts: {
       },
     );
 
-    const usage = await recordUsage(
-      opts.userId,
-      result.modelId,
-      result.inputTokens,
-      result.outputTokens,
-    );
+    const usage = await getUsage(opts.userId);
 
     return {
       response: result.text,
@@ -1075,6 +1047,7 @@ export async function runChatPipeline(opts: {
     try {
       const web = await runWebIntelligence({
         userId: opts.userId,
+        dispatchScope:{...opts.modelScope!,context:requireTenantContext(opts.tenantContext),userId:opts.userId,connectedAccountId:'platform'},
         prompt: opts.prompt,
         ...(opts.goalContract
           ? { decision: webDecisionFromGoalContract(opts.goalContract) ?? undefined }
@@ -1084,6 +1057,7 @@ export async function runChatPipeline(opts: {
       research = web.bundle;
       researchBlock = web.evidence;
     } catch (error) {
+      if(isTerminalModelFailure(error))throw error;
       console.warn(
         '[pipeline] web intelligence unavailable for chat:',
         normalizeProviderError(error).safeMessage,
@@ -1150,7 +1124,7 @@ export async function runChatPipeline(opts: {
     },
   );
 
-  const usage = await recordUsage(opts.userId, result.modelId, result.inputTokens, result.outputTokens);
+  const usage = await getUsage(opts.userId);
 
   return {
     response: result.text,
@@ -1766,7 +1740,7 @@ const universalRequestPrompt =
             signal: opts.signal,
           }),
         });
-        await recordUsage(opts.userId, completion.modelId, completion.inputTokens, completion.outputTokens);
+        /* Canonical dispatch already verified the atomic usage receipt. */
         return completion.text;
       });
     },
@@ -2380,7 +2354,7 @@ publicationReason:
     // any model call. Recording zero tokens returns the user's real quota state rather
     // than a hand-built object that would drift from the real shape.
     const universalUsage = usageToTokenUsage(
-      usage ?? (await recordUsage(opts.userId, route.builder, 0, 0)),
+      usage ?? (await getUsage(opts.userId)),
     );
 
     // Close the run record before returning.
@@ -2449,7 +2423,7 @@ publicationReason:
       output: { type: 'error', error: message, code: 'LEGACY_BUILDER_DISABLED' },
       // No model was called, so this reports the user's real quota state rather than a
       // hand-built zero object that would drift from the shape every other path returns.
-      tokenUsage: usageToTokenUsage(await recordUsage(opts.userId, route.builder, 0, 0)),
+      tokenUsage: usageToTokenUsage(await getUsage(opts.userId)),
       route,
     };
   }
@@ -2526,7 +2500,7 @@ publicationReason:
     });
     if (memo) {
       cachedSummary = memo.summary;
-      usage = await recordUsage(opts.userId, memo.modelId, memo.inputTokens, memo.outputTokens);
+      usage = await getUsage(opts.userId);
       setProjectMemory({
         userId: opts.userId,
         repo: memoryRepo,
@@ -2587,6 +2561,7 @@ publicationReason:
         () =>
           runWebIntelligence({
             userId: opts.userId,
+            dispatchScope:{...modelScope,connectedAccountId:'platform'},
             prompt: opts.prompt,
             projectContext,
             signal: opts.signal,
@@ -2633,6 +2608,7 @@ publicationReason:
         });
       }
     } catch (error) {
+      if(isTerminalModelFailure(error))throw error;
       console.warn(
         '[pipeline] web intelligence unavailable for build:',
         normalizeProviderError(error).safeMessage,
@@ -2680,12 +2656,7 @@ publicationReason:
         ],
         { userId: opts.userId, tenantContext, databaseProjectId:admittedDatabaseProjectId, modelRunAttempt:admittedModelAttempt,modelRepository:modelScope.repository, maxTokens: 2048, temperature: 0.3, signal: opts.signal, onModelFallback: emitModelSwitch },
       );
-      usage = await recordUsage(
-        opts.userId,
-        vision.modelId,
-        vision.inputTokens,
-        vision.outputTokens,
-      );
+      usage = await getUsage(opts.userId);
       designReference = `\n\nDESIGN / SCREENSHOT REFERENCE:\n${vision.text.slice(0, 6000)}`;
       emit({
         agent: 'vision',
@@ -2781,12 +2752,7 @@ publicationReason:
       researchBlock || undefined,
       {...modelScope,connectedAccountId:'platform'},
     );
-    usage = await recordUsage(
-      opts.userId,
-      'deepseek_v4_flash',
-      converted.inputTokens,
-      converted.outputTokens,
-    );
+    usage = await getUsage(opts.userId);
   }
 
   // Architect agent — concrete file plan (real multi-agent stage).
@@ -2870,12 +2836,7 @@ publicationReason:
           );
         }),
       ]);
-      usage = await recordUsage(
-        opts.userId,
-        'deepseek_v4_flash',
-        plan.inputTokens,
-        plan.outputTokens,
-      );
+      usage = await getUsage(opts.userId);
       architectBlock = formatArchitectForBuilder(plan);
       architectPlanSummary = {
         stack: plan.stack,
@@ -3057,7 +3018,7 @@ publicationReason:
   });
 
   if (!usedDeterministicScaffold) {
-    usage = await recordUsage(opts.userId, result.modelId, result.inputTokens, result.outputTokens);
+    usage = await getUsage(opts.userId);
   }
 
   // Resolve output files: patches first, then full files, then classic site
@@ -3166,12 +3127,7 @@ publicationReason:
             validateResponse: (completion) => requireBuildArtifacts(completion.text, true),
           },
         );
-        usage = await recordUsage(
-          opts.userId,
-          retry.modelId,
-          retry.inputTokens,
-          retry.outputTokens,
-        );
+        usage = await getUsage(opts.userId);
         result = retry;
         const patches = extractSearchReplacePatches(retry.text);
         if (patches.length) {
@@ -3430,6 +3386,7 @@ publicationReason:
     meta?.githubTargetBranch,
   )?.commitSha;
   let qa = await reviewBuildOutput({
+    dispatchScope:{...modelScope,connectedAccountId:'platform'},
     prompt: userFacingPrompt,
     html: siteForQa.html,
     css: siteForQa.css,
@@ -3452,12 +3409,7 @@ publicationReason:
     };
   }
   if (qa.inputTokens || qa.outputTokens) {
-    usage = await recordUsage(
-      opts.userId,
-      reviewerModel,
-      qa.inputTokens,
-      qa.outputTokens,
-    );
+    usage = await getUsage(opts.userId);
   }
 
   // Does the delivered product actually contain what this kind of product needs?
@@ -3616,12 +3568,7 @@ publicationReason:
           validateResponse: (completion) => requireBuildArtifacts(completion.text, isUpdate),
         },
       );
-      usage = await recordUsage(
-        opts.userId,
-        fixResult.modelId,
-        fixResult.inputTokens,
-        fixResult.outputTokens,
-      );
+      usage = await getUsage(opts.userId);
 
       if (isUpdate) {
         const patches = extractSearchReplacePatches(fixResult.text);
@@ -3665,6 +3612,7 @@ publicationReason:
 
       const reQaSite = filesToSite(nextFiles);
       qa = await reviewBuildOutput({
+        dispatchScope:{...modelScope,connectedAccountId:'platform'},
         prompt: userFacingPrompt,
         html: reQaSite.html,
         css: reQaSite.css,
@@ -3678,12 +3626,7 @@ publicationReason:
         validationResults: [{ kind: 'production_build', ok: compile.ok, command: compile.buildCommand, exitCode: compile.buildExitCode }],
       });
       if (qa.inputTokens || qa.outputTokens) {
-        usage = await recordUsage(
-          opts.userId,
-          reviewerModel,
-          qa.inputTokens,
-          qa.outputTokens,
-        );
+        usage = await getUsage(opts.userId);
       }
       // Re-compile after fix pass
       compile = await compileValidateProject(nextFiles, { signal: opts.signal });

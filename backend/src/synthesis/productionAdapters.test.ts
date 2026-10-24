@@ -72,19 +72,18 @@ describe('the implementation brief carries the decisions, not the prompt', () =>
 describe('the review adapter fails closed', () => {
   // §46. A reviewer that throws is not a reviewer that approved, and this is the only
   // place that could quietly invert it.
-  it('treats a thrown reviewer as a rejection', async () => {
+  it('propagates missing reviewer authority as a terminal denial before repair or commit', async () => {
+    let commits=0,repairs=0;
     const adapters = productionAdapters({
       implement: async () => [],
-      commit: async () => ({ commitSha: 'x' }),
+      commit: async () => {commits++;return {commitSha:'x'};},
+      repair: async () => {repairs++;return [];},
     });
 
     // reviewBuildOutput is called with a shape it cannot satisfy without model access, so
     // this exercises the real failure path rather than a mocked one.
-    const result = await adapters.review([f('src/main.rs', 'fn main() {}')]);
-    assert.equal(typeof result.approved, 'boolean');
-    if (!result.approved) {
-      assert.ok(result.findings.length > 0, 'a rejection must say why');
-    }
+    await assert.rejects(adapters.review([f('src/main.rs', 'fn main() {}')]),{code:'TENANT_AUTH_REQUIRED'});
+    assert.equal(commits,0);assert.equal(repairs,0);
   });
 
   it('never returns approved without a completed review', async () => {

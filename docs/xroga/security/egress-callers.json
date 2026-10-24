@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "6ce6a55222c74aa2271e4b5fdc1662880e34f84057545e4292e91265f7f4850f",
+  "sourceTreeDigest": "77b09db5cbc7693346a7dca1f5a2d58238ddfa292c3b76e7efaa1643726da443",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -38,7 +38,7 @@
     {
       "id": "c0bca58cc5345c0837e1",
       "file": "backend/src/ai/black-hole/webIntelligence.ts",
-      "line": 434,
+      "line": 438,
       "entryPoint": "grokXSearch",
       "transport": "fetch",
       "callee": "fetch",
@@ -54,7 +54,7 @@
     {
       "id": "038ced12b0f74e8d5e0f",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 212,
+      "line": 214,
       "entryPoint": "createModelProviderClient",
       "transport": "fetch",
       "callee": "globalThis.fetch",
@@ -74,41 +74,73 @@
         {
           "path": "backend/src/ai/openaiCompat.egress.test.ts",
           "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
-          "sha256": "8c94de6b687e9f709217f09a58ccc5f148094a3125e2b74af85e73c42dc1b859"
+          "sha256": "649092d8bd97b3fed5a12305399a7d577b2c1b4a35ac3e952149cf6a5f834e0a"
         }
       ]
     },
     {
       "id": "31380a8d5b9454a98a98",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 279,
+      "line": 289,
       "entryPoint": "chatCompletion",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
       "callSha256": "fedd059e41f3487339705716fdb7a912b28962fccd7daa038b5fa87580cc0eca",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "SHARED_JSON_SDK_DISPATCH_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
+      "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_OR_EXISTING_BOUNDED_ANONYMOUS_GUEST_LEASE_EACH_WIRE_RECHECKS_CURRENT_BINDING_COMPLETION_REQUIRES_SETTLEMENT_AND_ATOMIC_RECEIPT_OR_VERIFIED_CONSERVATIVE_GUEST_BUDGET_NO_RAW_ID_OR_CALLBACK_AUTHORITY",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "backend/src/ai/genericSdkAdmission.test.ts",
+          "marker": "31380a8d5b9454a98a98",
+          "sha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
+        },
+        {
+          "path": "backend/src/ai/tenantModelDispatch.test.ts",
+          "marker": "Exactly one canonical atomic receipt per completion",
+          "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
+        },
+        {
+          "path": "backend/src/ai/operationsSdkAdmission.test.ts",
+          "marker": "No unauthorized retry, fallback or unaccounted publication",
+          "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
+        }
+      ]
     },
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 375,
+      "line": 395,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
       "callSha256": "947695aec368f03b9176f97c4a6f418234ba9b7a641099d4efcad35b0b4d5c30",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "SHARED_SSE_SDK_DISPATCH_AND_DEFERRED_ACCOUNTED_PUBLICATION_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
+      "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_EACH_WIRE_RECHECKS_CURRENT_OWNER_PROJECT_RUN_CREDENTIAL_AUTHORITY_BINDING_NO_PUBLIC_DELTAS_UNTIL_SETTLEMENT_AND_EXACT_ATOMIC_RECEIPT_CANCELLATION_REVOCATION_AND_PUBLICATION_FAILURE_CANNOT_RETRY_MODEL",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "backend/src/ai/genericSdkAdmission.test.ts",
+          "marker": "9c345e07b723c086440e",
+          "sha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
+        },
+        {
+          "path": "backend/src/ai/tenantModelDispatch.test.ts",
+          "marker": "No successful stream publication without settlement and a valid atomic receipt",
+          "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
+        },
+        {
+          "path": "backend/src/ai/operationsSdkAdmission.test.ts",
+          "marker": "No unauthorized retry, fallback or unaccounted publication",
+          "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
+        }
+      ]
     },
     {
       "id": "4d93886d8bbc12e799b8",
@@ -181,7 +213,7 @@
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "SDK retry rechecks revocation",
-          "sha256": "c3b3f0c500752064df2fcd5b921198adf36d5398077830c408d11725adecf651"
+          "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
         },
         {
           "path": "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
@@ -2536,8 +2568,8 @@
   ],
   "counts": {
     "total": 134,
-    "reviewed": 15,
-    "pending": 119,
-    "unresolvedHighRiskBypasses": 64
+    "reviewed": 17,
+    "pending": 117,
+    "unresolvedHighRiskBypasses": 62
   }
 }

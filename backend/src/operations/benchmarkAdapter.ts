@@ -185,6 +185,7 @@ export function createBenchmarkAdapter(deps: BenchmarkAdapterDeps = {}): Provide
           estimatedInputTokens: estimateMessageTokens(completion.messages),
           maximumOutputTokens: completion.maximumOutputTokens,
           idempotencyKey: reservationKey(actionId, completion.sequence),
+          payload: {messages:completion.messages},
           execute: completion.execute,
         })),
         runValidation: sandboxValidationRunner(),

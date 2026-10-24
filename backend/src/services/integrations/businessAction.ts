@@ -20,10 +20,6 @@ import {isTerminalModelFailure} from '../../ai/providerRuntime.js';
 import {requireTenantContext,requireResourceOwner,type TenantContext} from '../../security/tenantContext.js';
 
 import {
-  recordCompletedProviderUsage as recordUsage,
-} from '../../ai/postCompletionAccounting.js';
-
-import {
   generateStructured,
 } from '../../ai/black-hole/structuredOutput.js';
 
@@ -832,15 +828,7 @@ async function selectActionToolAndArguments(
                     },
                   );
 
-                await recordUsage(
-                  input.userId,
-
-                  completion.modelId,
-
-                  completion.inputTokens,
-
-                  completion.outputTokens,
-                );
+                /* Canonical dispatch already verified the atomic usage receipt. */
 
                 return completion.text;
               },

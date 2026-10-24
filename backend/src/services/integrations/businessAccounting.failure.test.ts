@@ -19,7 +19,8 @@ for (const [file, name] of [['businessRead.ts', 'selectToolAndArguments'], ['bus
     const ast = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true);
     const selector = ast.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === name);
     assert.ok(selector);
-    assert.match(source, /recordCompletedProviderUsage as recordUsage/);
+    assert.match(selector.getText(ast), /withTenantModelReservation\(/);
+    assert.doesNotMatch(selector.getText(ast), /\brecordUsage\(/,'The canonical issuer owns accounting, selectors must not charge twice');
     const code = ts.transpileModule(selector.getText(ast), { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText;
     let providerCalls = 0, accountingCalls = 0, failAccounting = true, malformed = false;
     const valid = JSON.stringify({ toolSlug: 'FIXTURE_TOOL', arguments: {}, summary: 'Synthetic action' });
@@ -27,13 +28,13 @@ for (const [file, name] of [['businessRead.ts', 'selectToolAndArguments'], ['bus
       buildCandidatePayload: () => [{ toolSlug: 'FIXTURE_TOOL' }], selectPlannerRoutes: () => ['kimi_k3', 'glm_5_3'],
       generateStructured, isPlainRecord: (value: unknown) => !!value && typeof value === 'object', validateArguments: () => true,
       estimateMessageTokens: () => 1,
-      withTenantModelReservation: async (input: { payload: ModelPayload; execute: (dispatch: BoundModelDispatch) => Promise<unknown> }) =>
-        input.execute({ payload: input.payload, credentialOverride: undefined, beforeDispatch: async () => {} }),
-      chatCompletion: async (modelId: string) => { providerCalls++; return { modelId, inputTokens: 2, outputTokens: 1, text: malformed && providerCalls === 1 ? 'invalid JSON' : valid }; },
-      recordUsage: async (...args: Parameters<typeof recordCompletedProviderUsage>) => {
+      withTenantModelReservation: async (input: { scope:{userId:string};modelId:Parameters<typeof recordCompletedProviderUsage>[1];payload: ModelPayload; execute: (dispatch: BoundModelDispatch) => Promise<{inputTokens:number;outputTokens:number}> }) => {
+        const result=await input.execute({ payload: input.payload, credentialOverride: undefined, beforeDispatch: async () => {} });
         accountingCalls++;
-        if (failAccounting) return recordCompletedProviderUsage(...args);
+        if(failAccounting)await recordCompletedProviderUsage(input.scope.userId,input.modelId,result.inputTokens,result.outputTokens);
+        return result;
       },
+      chatCompletion: async (modelId: string) => { providerCalls++; return { modelId, inputTokens: 2, outputTokens: 1, text: malformed && providerCalls === 1 ? 'invalid JSON' : valid }; },
       isTerminalModelFailure, ComposioClientError: Error,
     };
     const run = new Function(...Object.keys(adapters), `${code}; return ${name};`)(...Object.values(adapters));

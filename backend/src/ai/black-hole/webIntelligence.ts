@@ -12,9 +12,8 @@ import {
   type ChatMessage,
 } from '../openaiCompat.js';
 
-import {
-  withProviderReservation,
-} from '../providerBudget.js';
+import {withTenantModelReservation,type TenantModelScope} from '../tenantModelDispatch.js';
+import {isTerminalModelFailure} from '../providerRuntime.js';
 
 import {
   parallelExtract,
@@ -225,6 +224,7 @@ export function applyRequestedSourcePolicy(
  */
 export async function decideWebAction(input: {
   userId: string;
+  dispatchScope?:TenantModelScope;
   prompt: string;
   projectContext?: string;
 }): Promise<WebDecision> {
@@ -353,8 +353,9 @@ ${redactSecrets(
 
   try {
     const result =
-      await withProviderReservation({
-        userId: input.userId,
+      await withTenantModelReservation({
+        scope: input.dispatchScope!,
+        payload:{messages},
 
         modelId:
           'deepseek_v4_flash',
@@ -368,14 +369,16 @@ ${redactSecrets(
 
         purpose: 'daily_work',
 
-        execute: () =>
+        execute: dispatch =>
           chatCompletion(
             'deepseek_v4_flash',
-            messages,
+            dispatch.payload.messages as ChatMessage[],
             {
               maxTokens: 500,
               temperature: 0,
               json: true,
+              credentialOverride:dispatch.credentialOverride,
+              beforeDispatch:dispatch.beforeDispatch,
             },
           ),
       });
@@ -392,7 +395,8 @@ ${redactSecrets(
           'Web decision was not parseable.',
       }
     );
-  } catch {
+  } catch (error) {
+    if(isTerminalModelFailure(error))throw error;
     // A broken classifier must not trigger
     // accidental paid searches.
     return {
@@ -678,6 +682,7 @@ function toUiSources(
 export async function runWebIntelligence(
   input: {
     userId: string;
+    dispatchScope?:TenantModelScope;
     prompt: string;
     projectContext?: string;
     officialDomains?: readonly string[];

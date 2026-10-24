@@ -17,7 +17,7 @@ test('actual repository memo binds platform scope, worker, JSON payload and comp
   const context=createTenantContext({userId:owner,via:'remote_getuser'}),metadata={type:'user_api_key',vault_revision:randomUUID()};
   const token=await runtimeCredentialVault().seal(context,{tenant:owner,owner,provider:'zhipu',account:'apikey_zhipu',credentialType:'user_api_key',recordId:'apikey_zhipu',revision:metadata.vault_revision,scope:'user-provider-key'},'synthetic-current-user-key');
   const original={user_id:owner,provider:'apikey_zhipu',access_token:token,metadata,credential_revision:randomUUID()};
-  let row=structuredClone(original),mode='ok',effects=0,projectReads=0;
+  let row=structuredClone(original),mode='ok',effects=0,projectReads=0,receipts=0;
   const requests:string[]=[];
   let run:Record<string,unknown>={};
   const reservations=new Map<string,Record<string,unknown>>(),settlements:Record<string,unknown>[]=[];
@@ -70,6 +70,10 @@ test('actual repository memo binds platform scope, worker, JSON payload and comp
       return Response.json({...r,status:'settled',settled_micro_usd:body.p_actual_micro_usd,provider_request_id:body.p_provider_request_id,actual_input_tokens:body.p_actual_input_tokens,cached_input_tokens:body.p_cached_input_tokens,output_tokens:body.p_output_tokens,reasoning_tokens:body.p_reasoning_tokens,tool_calls:body.p_tool_calls,search_calls:body.p_search_calls});
     }
     if(url.pathname.endsWith('/release_xroga_provider_budget')){assert.equal(body.p_pending_reconciliation,false);return Response.json(null);}
+    if(url.pathname.endsWith('/record_ai_usage_atomic')){
+      receipts++;return Response.json({userId:mode==='foreignAtomicReceipt'?foreign:owner,receiptId:body.p_receipt_id,modelId:body.p_model_id,poolRole:body.p_pool_role,inputTokens:body.p_input,
+        outputTokens:body.p_output,costUsd:body.p_cost_usd,ledgerId:'1',period:new Date().toISOString().slice(0,7)+'-01',replayed:false,usage:{user_id:owner}});
+    }
     assert.fail('Unexpected protocol request '+url.pathname);
   });
   const attempt=await withRunAttempt(async()=>{await createRunDurable(owner,'Synthetic memo',runId,project);return captureAdmittedRunAttempt(runId,owner);});
@@ -94,4 +98,7 @@ test('actual repository memo binds platform scope, worker, JSON payload and comp
   }
   reset('wrongReservation');run={...current};await assert.rejects(summarizeRepoForUpdates(options()),{code:'PROVIDER_RESERVATION_DENIED',retryable:false});assert.equal(effects,4);
   reset('providerFailure');run={...current};assert.equal(await summarizeRepoForUpdates(options()),null);assert.equal(effects,5,'Availability failure preserves optional memo behavior without unsafe logging');
+  reset('foreignAtomicReceipt');run={...current};
+  await assert.rejects(summarizeRepoForUpdates(options()),{code:'POST_COMPLETION_ACCOUNTING_UNCERTAIN'});
+  assert.equal(effects,6);assert.equal(receipts,5,'Every completed memo is accounted once, and receipt denial cannot be hidden as an optional memo');
 });

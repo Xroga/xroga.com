@@ -228,9 +228,9 @@
     },
     {
       "path": "backend/src/ai/benchmarkRunner.ts",
-      "sourceSha256": "dbc904d809e4c1ea171b0f15eb9d1706028562a848807498e8f8f32747a51184",
+      "sourceSha256": "a5208cdf668988cb24fe1e9c49c9144e3ee2da31dff0a077105dd3c5329faf33",
       "callIds": [
-        "9506c72ea0f341c2a492"
+        "cbb864f99fab4cd08610"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "Existing OperationsService authorized action/claim selects its fixed benchmark adapter, deterministic model/case catalog and existing caps. This record method does not execute models. It validates and inserts only fixed platform measurement flags, identifiers and numeric counters. No owner argument, customer prompt/source or credential is persisted. This exception authorizes only metadata persistence, never paid execution.",
@@ -278,6 +278,14 @@
         "originalReviewReason": "Current source validates finite numeric/boolean/time result evidence before insert and reports partial persistence without retrying the provider.55 focused tests pass. Platform-global upstream benchmark approval/budget, registered scope, real database receipts, authentic producer provenance and replay remain unresolved. No paid benchmark ran in this mission.",
         "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
         "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      },
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "dbc904d809e4c1ea171b0f15eb9d1706028562a848807498e8f8f32747a51184",
+        "callIds": [
+          "9506c72ea0f341c2a492"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
       }
     },
     {
@@ -826,9 +834,9 @@
     },
     {
       "path": "backend/src/synthesis/universalEntrypoint.ts",
-      "sourceSha256": "91c22bc5ac1fd79eeeaafab69134d17009c7cc0d2bfba101411dde88625b46a2",
+      "sourceSha256": "3a4002a2359e8fccf4f10791213d4b2d15f37a0e2e02a413ac938fc4fc842a84",
       "callIds": [
-        "cfba5e514ab70426438c"
+        "411b7b4d8d600d797423"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Only the admitted runBuildPipeline invokes this production default. Its original issued context and owner are checked before opts are copied, and the actual universal call allocates a fresh owner/run/project literal. The unchanged entrypoint passes its only private SDK result directly into universalStore with an internal issued context for that server-admitted subject. Privileged stores are per invocation, never the global memory singleton. All seven actual direct receiving store operations and their owned-write subchain independently verify. Real default factory use constructs different owner instances, rejects primitive/cloned issuance and preserves all existing owned/foreign project/run/spec/index and contention assertions. No injected arbitrary client, model output or public body grants this default subject.",
@@ -867,6 +875,14 @@
           "OB-4a588dd074761414:verified-construction-tryUniversalBuild"
         ],
         "scope": "EXACT_ORIGINAL007_ROUTING_CONSTRUCTION_AND_ENDPOINTS_NEW_SOURCE_ACCEPTANCE_REQUIRED"
+      },
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "91c22bc5ac1fd79eeeaafab69134d17009c7cc0d2bfba101411dde88625b46a2",
+        "callIds": [
+          "cfba5e514ab70426438c"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
       }
     },
     {
@@ -3389,9 +3405,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+      "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
       "callIds": [
-        "6c962371859b256ff96c"
+        "af88e0f5ab6048f75011"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3417,13 +3433,21 @@
             "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
           }
         ]
+      },
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+        "callIds": [
+          "6c962371859b256ff96c"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
       }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+      "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
       "callIds": [
-        "8db8b524179b45694274"
+        "863e45f48048017eb977"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3449,6 +3473,14 @@
             "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
           }
         ]
+      },
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+        "callIds": [
+          "8db8b524179b45694274"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
       }
     },
     {
@@ -9441,10 +9473,10 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
       "callIds": [
-        "1169e490665cdec7b3a3",
-        "2fbd469f16851f3b71ab"
+        "d406c0b568fd6ec5e544",
+        "de6707af035c2d7fe760"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "No active production consumer exists for this export and none is invented. Every callable invocation now requires the original WeakSet-issued tenant context before SDK access. syncPlanBudget derives only that subject, delegates the unchanged fixed service-only set_user_ai_plan_budget RPC and reads the existing owner-bound validated usage row to confirm exact tier/budget before touching its local usage floor. activatePaidCycle requires its input subject to equal that issued actor and snapshots all input, including Dates, before waits. Its unchanged canonical service-only activation routine retains owner-keyed advisory serialization and returns the paid cycle. The helper validates exact original subject, UUID, paid kind, evidence reference and captured period before reading only that same subject status. All other accounting/pacing/read functions and module bytes are independently identical to accepted5722.",
@@ -9468,24 +9500,24 @@
         }
       ],
       "structuredOrigin": {
-        "id": "OB-5e9d521ebb7253b5",
+        "id": "OB-e316498540d10d15",
         "callIds": [
-          "1169e490665cdec7b3a3",
-          "2fbd469f16851f3b71ab",
-          "6f058d1957df9ddef58e",
-          "263d64635be54643daaf",
-          "28c7a352253f65a4d63b",
-          "ec7738731d0c6be00798",
-          "0882d94061fd33117251",
-          "ba74f371a047c8305b9a",
-          "9e5ee446a0fb192d8f39",
-          "3a904e92ac521ad89ef0",
-          "495469d5a798cf52f829",
-          "4ac1c2be7bfccf034c8e",
-          "a50ebf735a3e2d6e8587",
-          "e5f59ad9b6097a1bb115",
-          "8b8545e8ee1fbbfb3fbf",
-          "60a088c3f2c03ec9402c"
+          "d406c0b568fd6ec5e544",
+          "de6707af035c2d7fe760",
+          "5ffa627faeaa6803aab8",
+          "7fb0d4feb0707259368b",
+          "abe158166765391a38bb",
+          "cd6fb0dc4aecaa924a23",
+          "48010eb67a70f9160a4e",
+          "c79d0afb3ebeabc76c2d",
+          "f8840556255dc425215c",
+          "3c5c04328c11bf512dba",
+          "88e420183bcb296b87a4",
+          "df66c5e789c6e8f1dd46",
+          "1523f7744eed6083f0b6",
+          "4c1b535638e8a0a197f8",
+          "88789f83425415184ffc",
+          "5fc4041577ba475ddde3"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -9646,6 +9678,15 @@
           "046674e946dedc2dbd0a",
           "f7d8e33dac1c0de787f8"
         ]
+      },
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+        "callIds": [
+          "1169e490665cdec7b3a3",
+          "2fbd469f16851f3b71ab"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
       }
     },
     {
@@ -12778,18 +12819,18 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
       "callIds": [
-        "6f058d1957df9ddef58e",
-        "263d64635be54643daaf",
-        "28c7a352253f65a4d63b",
-        "ec7738731d0c6be00798",
-        "0882d94061fd33117251",
-        "ba74f371a047c8305b9a",
-        "9e5ee446a0fb192d8f39",
-        "3a904e92ac521ad89ef0",
-        "a50ebf735a3e2d6e8587",
-        "e5f59ad9b6097a1bb115"
+        "5ffa627faeaa6803aab8",
+        "7fb0d4feb0707259368b",
+        "abe158166765391a38bb",
+        "cd6fb0dc4aecaa924a23",
+        "48010eb67a70f9160a4e",
+        "c79d0afb3ebeabc76c2d",
+        "f8840556255dc425215c",
+        "3c5c04328c11bf512dba",
+        "1523f7744eed6083f0b6",
+        "4c1b535638e8a0a197f8"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Active public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.",
@@ -12866,24 +12907,24 @@
         "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
       },
       "structuredOrigin": {
-        "id": "OB-5e9d521ebb7253b5",
+        "id": "OB-e316498540d10d15",
         "callIds": [
-          "1169e490665cdec7b3a3",
-          "2fbd469f16851f3b71ab",
-          "6f058d1957df9ddef58e",
-          "263d64635be54643daaf",
-          "28c7a352253f65a4d63b",
-          "ec7738731d0c6be00798",
-          "0882d94061fd33117251",
-          "ba74f371a047c8305b9a",
-          "9e5ee446a0fb192d8f39",
-          "3a904e92ac521ad89ef0",
-          "495469d5a798cf52f829",
-          "4ac1c2be7bfccf034c8e",
-          "a50ebf735a3e2d6e8587",
-          "e5f59ad9b6097a1bb115",
-          "8b8545e8ee1fbbfb3fbf",
-          "60a088c3f2c03ec9402c"
+          "d406c0b568fd6ec5e544",
+          "de6707af035c2d7fe760",
+          "5ffa627faeaa6803aab8",
+          "7fb0d4feb0707259368b",
+          "abe158166765391a38bb",
+          "cd6fb0dc4aecaa924a23",
+          "48010eb67a70f9160a4e",
+          "c79d0afb3ebeabc76c2d",
+          "f8840556255dc425215c",
+          "3c5c04328c11bf512dba",
+          "88e420183bcb296b87a4",
+          "df66c5e789c6e8f1dd46",
+          "1523f7744eed6083f0b6",
+          "4c1b535638e8a0a197f8",
+          "88789f83425415184ffc",
+          "5fc4041577ba475ddde3"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -13014,6 +13055,23 @@
           "0b24ee0eecebdda0e6f3",
           "ace18dec175b4875e7f7"
         ]
+      },
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+        "callIds": [
+          "6f058d1957df9ddef58e",
+          "263d64635be54643daaf",
+          "28c7a352253f65a4d63b",
+          "ec7738731d0c6be00798",
+          "0882d94061fd33117251",
+          "ba74f371a047c8305b9a",
+          "9e5ee446a0fb192d8f39",
+          "3a904e92ac521ad89ef0",
+          "a50ebf735a3e2d6e8587",
+          "e5f59ad9b6097a1bb115"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
       }
     },
     {
@@ -14138,12 +14196,12 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
       "callIds": [
-        "495469d5a798cf52f829",
-        "4ac1c2be7bfccf034c8e",
-        "8b8545e8ee1fbbfb3fbf",
-        "60a088c3f2c03ec9402c"
+        "88e420183bcb296b87a4",
+        "df66c5e789c6e8f1dd46",
+        "88789f83425415184ffc",
+        "5fc4041577ba475ddde3"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Reservation fallback retains the same original userId of reserveProviderBudget and passes it to fixed ensure_xroga_free_cycle only after missing-active-cycle error. It cannot choose a paid amount or a different account. Failed reservation finalization is private to withProviderReservation flow, which retains the same owner and reservation captured before execute. The release RPC matches both reservation ID and owner and locks that exact owner cycle before accounting. Definite pre-completion failures release only this hold, uncertain outcomes retain it. Logging a failed foreign release does not grant success or mutate rows.",
@@ -14159,24 +14217,24 @@
         }
       ],
       "structuredOrigin": {
-        "id": "OB-5e9d521ebb7253b5",
+        "id": "OB-e316498540d10d15",
         "callIds": [
-          "1169e490665cdec7b3a3",
-          "2fbd469f16851f3b71ab",
-          "6f058d1957df9ddef58e",
-          "263d64635be54643daaf",
-          "28c7a352253f65a4d63b",
-          "ec7738731d0c6be00798",
-          "0882d94061fd33117251",
-          "ba74f371a047c8305b9a",
-          "9e5ee446a0fb192d8f39",
-          "3a904e92ac521ad89ef0",
-          "495469d5a798cf52f829",
-          "4ac1c2be7bfccf034c8e",
-          "a50ebf735a3e2d6e8587",
-          "e5f59ad9b6097a1bb115",
-          "8b8545e8ee1fbbfb3fbf",
-          "60a088c3f2c03ec9402c"
+          "d406c0b568fd6ec5e544",
+          "de6707af035c2d7fe760",
+          "5ffa627faeaa6803aab8",
+          "7fb0d4feb0707259368b",
+          "abe158166765391a38bb",
+          "cd6fb0dc4aecaa924a23",
+          "48010eb67a70f9160a4e",
+          "c79d0afb3ebeabc76c2d",
+          "f8840556255dc425215c",
+          "3c5c04328c11bf512dba",
+          "88e420183bcb296b87a4",
+          "df66c5e789c6e8f1dd46",
+          "1523f7744eed6083f0b6",
+          "4c1b535638e8a0a197f8",
+          "88789f83425415184ffc",
+          "5fc4041577ba475ddde3"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -14372,6 +14430,17 @@
           "c07b5b1f63ae0e361ae7",
           "fba07b765dafacccf133"
         ]
+      },
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+        "callIds": [
+          "495469d5a798cf52f829",
+          "4ac1c2be7bfccf034c8e",
+          "8b8545e8ee1fbbfb3fbf",
+          "60a088c3f2c03ec9402c"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
       }
     },
     {
@@ -14976,9 +15045,9 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
       "callIds": [
-        "8aa7e4818165f80a2954"
+        "3ff444168109d6f2d8a7"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
@@ -14993,13 +15062,21 @@
         "XB01-C008-AC05",
         "XB01-C008-AC06",
         "XB01-C008-AC07"
-      ]
+      ],
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+        "callIds": [
+          "8aa7e4818165f80a2954"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
       "callIds": [
-        "0dc96ad35c877b5c6b81"
+        "e838e61e27730ca3c3a9"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
@@ -15014,13 +15091,21 @@
         "XB01-C008-AC05",
         "XB01-C008-AC06",
         "XB01-C008-AC07"
-      ]
+      ],
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+        "callIds": [
+          "0dc96ad35c877b5c6b81"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
       "callIds": [
-        "1e296c319fef476f484e"
+        "d483200769e782169fd9"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
@@ -15035,13 +15120,21 @@
         "XB01-C008-AC05",
         "XB01-C008-AC06",
         "XB01-C008-AC07"
-      ]
+      ],
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+        "callIds": [
+          "1e296c319fef476f484e"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
       "callIds": [
-        "10d24b0a58511aa77d5a"
+        "5f776647ab77d7a35536"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
@@ -15056,7 +15149,15 @@
         "XB01-C008-AC05",
         "XB01-C008-AC06",
         "XB01-C008-AC07"
-      ]
+      ],
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+        "callIds": [
+          "10d24b0a58511aa77d5a"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+      }
     },
     {
       "path": "backend/src/services/integrations/githubAuth.ts",

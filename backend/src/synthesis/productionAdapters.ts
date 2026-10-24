@@ -22,6 +22,8 @@ import { browserVerificationAdapter } from './browserVerificationAdapter.js';
 import type { ProjectFile } from '../ai/patches.js';
 import { executeSandboxed } from '../sandbox/sandboxRuntime.js';
 import { reviewBuildOutput } from '../ai/qa.js';
+import type {TenantModelScope} from '../ai/tenantModelDispatch.js';
+import {isTerminalModelFailure} from '../ai/providerRuntime.js';
 import { buildSandboxEnvironment } from '../sandbox/sandboxEnvironment.js';
 import type { ExecutionAdapters } from './universalExecution.js';
 import type { UniversalRunPlan, ValidationRunner } from './universalFlow.js';
@@ -197,6 +199,7 @@ export function sandboxValidationRunner(): ValidationRunner {
  * since both are pure functions of the files plus systems that already exist.
  */
 export function productionAdapters(input: {
+  dispatchScope?:TenantModelScope;
   implement:
     ImplementFn;
 
@@ -298,6 +301,7 @@ return input
     review: async (files) => {
       try {
         const result = await reviewBuildOutput({
+          dispatchScope:input.dispatchScope,
           prompt: 'Universal engineering run — review the complete generated change.',
           html: '', css: '', js: '',
           files: [...files],
@@ -308,6 +312,7 @@ return input
 
         return { approved: Boolean(result?.ok), findings: result?.issues ?? [] };
       } catch (error) {
+        if(isTerminalModelFailure(error))throw error;
         // A reviewer that throws is not a reviewer that approved. §46 requires the review
         // to fail closed, and this is the only place that could quietly invert it.
         return {

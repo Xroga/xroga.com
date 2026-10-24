@@ -13,10 +13,10 @@ test('current transport proof binds every claimed source and keeps unresolved ca
   for(const binding of proof.currentSourceBindings)assert.equal(createHash('sha256').update(read(binding.path)).digest('hex'),binding.sha256,binding.path);
   for(const key of ['total','reviewed','pending'])assert.equal(proof.counts[key],inventory.counts[key]);
   assert.equal(proof.counts.unresolvedHighRiskReviewCandidates,inventory.counts.unresolvedHighRiskBypasses);
-  assert.equal(proof.threeSdkFinalDispositions,'ONE_VERIFIED_GUARD_TWO_PENDING_SOURCE_TRACE');
+  assert.equal(proof.threeSdkFinalDispositions,'THREE_SCOPED_SDK_GUARDS_UPSTREAM_CALLERS_REMAIN_OPEN');
   assert.deepEqual(Object.fromEntries(inventory.callers.filter(row=>row.transport==='provider-sdk').map(row=>[row.id,row.disposition])),{
-    '31380a8d5b9454a98a98':'PENDING_SOURCE_TRACE',
-    '9c345e07b723c086440e':'PENDING_SOURCE_TRACE',
+    '31380a8d5b9454a98a98':'VERIFIED_GUARD',
+    '9c345e07b723c086440e':'VERIFIED_GUARD',
     '4c899876b9e3850af11b':'VERIFIED_GUARD',
   });
   assert.equal(proof.phase4,'PREPARATORY_NOT_ACCEPTED');

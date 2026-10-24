@@ -1,4 +1,5 @@
 import {isDeepStrictEqual} from 'node:util';
+import {randomUUID} from 'node:crypto';
 import {requireTenantContext,requireResourceOwner,type TenantContext} from '../security/tenantContext.js';
 import {requireOwnedProject} from '../security/ownership.js';
 import {getTenantSupabaseAdmin} from '../security/serviceRoleGuard.js';
@@ -7,6 +8,11 @@ import {assertAuthorityPermit} from '../security/authority/enforce.js';
 import type {AuthorityPermit,AuthorityDispatchBinding} from '../security/authority/types.js';
 import {preparedActionDigest} from '../security/authority/digest.js';
 import {MODELS,resolveModelSpec,type ModelId} from './models.js';
+import {costUsdForTokens} from './models.js';
+import {poolRoleFor} from './quota.js';
+import {persistUsageAccounting} from './usageAccounting.js';
+import {PostCompletionAccountingError} from './postCompletionAccounting.js';
+import {registerModelSdkAdmission} from './modelSdkAdmission.js';
 import {withProviderReservation,type ProviderUsageResult,type BudgetPurpose} from './providerBudget.js';
 import {requireAdmittedRunAttempt,type AdmittedRunAttempt} from './runStore.js';
 
@@ -55,9 +61,10 @@ export async function withTenantModelReservation<T extends ProviderUsageResult>(
   scope:TenantModelScope;modelId:ModelId;payload:ModelPayload;
   estimatedInputTokens:number;maximumOutputTokens:number;
   purpose?:BudgetPurpose;
+  validateResponse?:(result:T)=>void;
   execute:(dispatch:BoundModelDispatch)=>Promise<T>;
 }):Promise<T>{
-  const context=requireTenantContext(input.scope.context);
+  const context=requireTenantContext(input.scope?.context);
   requireResourceOwner(context,input.scope.userId);
   const scope={...input.scope,context,authority:input.scope.authority?{...input.scope.authority,binding:{...input.scope.authority.binding}}:undefined};
   const modelId=input.modelId,model=resolveModelSpec(modelId),provider=MODELS[modelId].provider;
@@ -66,7 +73,7 @@ export async function withTenantModelReservation<T extends ProviderUsageResult>(
   if(!model)denied();
   const apiModel=model.apiModel,maximumOutputTokens=input.maximumOutputTokens;
   const estimatedInputTokens=input.estimatedInputTokens,purpose=input.purpose;
-  const payload=structuredClone(input.payload),execute=input.execute;
+  const payload=structuredClone(input.payload),execute=input.execute,validateResponse=input.validateResponse;
   // Bind the exact JSON wire representation. Optional tool-schema properties
   // with undefined values are omitted by the SDK, not changed user content.
   let expectedPayload:unknown;
@@ -108,7 +115,8 @@ export async function withTenantModelReservation<T extends ProviderUsageResult>(
     assertAuthorityPermit(scope.authority.permit,binding);
   };
   checkAuthority();
-  return withProviderReservation({userId:context.userId,modelId,
+  let sdk:ReturnType<typeof registerModelSdkAdmission>|undefined;
+  const result=await withProviderReservation({userId:context.userId,modelId,
     estimatedInputTokens,maximumOutputTokens,purpose,
     execute:async()=>{
       let active=true;
@@ -130,7 +138,20 @@ export async function withTenantModelReservation<T extends ProviderUsageResult>(
           checkAuthority();
           if(!active)denied();
         };
+        sdk=registerModelSdkAdmission(beforeDispatch,modelId,credential??undefined);
         return await execute({payload:structuredClone(payload),credentialOverride:credential??undefined,beforeDispatch});
-      }finally{active=false;}
+      }finally{active=false;sdk?.revoke();}
     }});
+  const completion=sdk?.completion();
+  if(completion){
+    try {
+      if(result.inputTokens!==completion.result.inputTokens||result.outputTokens!==completion.result.outputTokens
+        ||('modelId' in result&&result.modelId!==modelId))throw Error('Changed completion usage');
+      await persistUsageAccounting(context,{receiptId:randomUUID(),modelId,poolRole:poolRoleFor(modelId),
+        inputTokens:completion.result.inputTokens,outputTokens:completion.result.outputTokens,
+        costUsd:costUsdForTokens(modelId,completion.result.inputTokens,completion.result.outputTokens)});
+    }catch{throw new PostCompletionAccountingError();}
+    completion.checkCancellation();validateResponse?.(result);completion.publish();
+  }
+  return result;
 }

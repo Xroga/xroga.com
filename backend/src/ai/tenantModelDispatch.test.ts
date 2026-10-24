@@ -4,15 +4,16 @@ import {randomUUID} from 'node:crypto';
 import {createTenantContext} from '../security/tenantContext.js';
 import {runtimeCredentialVault} from '../services/integrations/credentialVaultRuntime.js';
 import {withTenantModelReservation,type TenantModelScope} from './tenantModelDispatch.js';
-import {chatCompletion,type ChatMessage} from './openaiCompat.js';
+import {chatCompletion,chatCompletionStream,type ChatMessage} from './openaiCompat.js';
 import {callBuilderStream} from './pipeline.js';
 import {runArchitectPlan} from './architect.js';
 import {convertUserRequest} from './converter.js';
 import {createXrogaAgentModel} from './softwareAgent/xrogaAgentModel.js';
-import {executeWithProviderFallback} from './providerRuntime.js';
+import {executeWithProviderFallback,resetModelRuntimeHealth} from './providerRuntime.js';
 import {executeAuthorizedAction} from '../security/authority/enforce.js';
 import {preparedActionDigest} from '../security/authority/digest.js';
 import type {PreparedAuthorityScope} from '../security/authority/types.js';
+import {DEFAULT_BUILDER_BUDGET} from './builderAttempt.js';
 import {withRunAttempt,createRunDurable,captureAdmittedRunAttempt} from './runStore.js';
 
 test('actual pipeline, completion and SoftwareAgent calls bind tenant, account revision, payload and canonical reservation',async t=>{
@@ -30,6 +31,8 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
   const reservations=new Map<string,Record<string,unknown>>(),releases:Array<Record<string,unknown>>=[];
   let mutate:(()=>void)|undefined,expire:(()=>void)|undefined;
   let executionRow:Record<string,unknown>|undefined;
+  let atomicReceipts=0;
+  let abortDuringResponse:AbortController|undefined;
   const reset=(next='ok')=>{mode=next;row=structuredClone(original);ownerNow=owner;credentialReads=0;projectReads=0;mutate=undefined;expire=undefined;};
   const stringify=JSON.stringify;
   t.mock.method(JSON,'stringify',((value:unknown,...args:unknown[])=>{
@@ -42,6 +45,7 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
     const url=new URL(String(input));
     if(['https://openrouter.ai','https://open.bigmodel.cn'].includes(url.origin)){
       effects++;const body=JSON.parse(String(init?.body));assert.doesNotMatch(JSON.stringify(body),/foreign source|cached-key|SYNTHETIC_CREDENTIAL/);
+      abortDuringResponse?.abort();
       assert.equal(new Headers(init?.headers).get('authorization'),'Bearer '+(url.origin==='https://openrouter.ai'&&mode!=='platform503'?'synthetic-user-current':'synthetic-platform-key'));
       assert.equal(init?.redirect,'error');
       if(mode==='platform503'&&url.origin==='https://openrouter.ai')return Response.json({error:{message:'Synthetic provider outage'}},{status:503});
@@ -92,6 +96,7 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
     }
     if(url.pathname.endsWith('/release_xroga_provider_budget')){releases.push(body);return Response.json(null);}
     if(url.pathname.endsWith('/record_ai_usage_atomic')){
+      atomicReceipts++;
       return Response.json({userId:mode==='foreignAtomicReceipt'?foreign:owner,receiptId:body.p_receipt_id,modelId:body.p_model_id,poolRole:body.p_pool_role,inputTokens:body.p_input,
         outputTokens:body.p_output,costUsd:body.p_cost_usd,ledgerId:'1',period:new Date().toISOString().slice(0,7)+'-01',replayed:false,usage:{user_id:owner}});
     }
@@ -182,9 +187,52 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
   assert.ok((await agentTurn({...scope,connectedAccountId:'platform'})).length>0);
   assert.equal(effects,beforeFallback+3,'One bounded SDK retry then the authorized alternative provider');
   assert.equal(reservations.size,beforeReservations+2,'The alternative has its own exact reservation');
+
+  // Exercise BOTH generic SDK entry points through the real tenant issuer.
+  // No arbitrary callback, raw ID, alternate account or model may grant access.
+  for(const invoke of [chatCompletion,chatCompletionStream]){
+    const deltas:string[]=[];
+    const controller=new AbortController();
+    const request=(signal?:AbortSignal)=>withTenantModelReservation({scope,modelId:'deepseek_v4_flash',payload:{messages},estimatedInputTokens:10,maximumOutputTokens:64,
+      execute:d=>invoke('deepseek_v4_flash',d.payload.messages as ChatMessage[],{maxTokens:64,credentialOverride:d.credentialOverride,beforeDispatch:d.beforeDispatch,signal,
+        onDelta:text=>deltas.push(text)})});
+    reset();const beforePositive:number=effects,receiptsBefore:number=atomicReceipts;
+    assert.ok((await request()).text.length>0);
+    assert.equal(effects,beforePositive+1);assert.equal(atomicReceipts,receiptsBefore+1,'Exactly one canonical atomic receipt per completion');
+    assert.equal(deltas.length,invoke===chatCompletionStream?1:0);
+    for(const failure of ['accountingFailure','foreignAtomicReceipt']){
+      reset(failure);deltas.length=0;const before:number=effects;
+      await assert.rejects(request(),{code:'POST_COMPLETION_ACCOUNTING_UNCERTAIN'});
+      assert.equal(effects,before+1);assert.equal(deltas.length,0,'No successful stream publication without settlement and a valid atomic receipt');
+    }
+    reset('revokeDuringRetry');deltas.length=0;const beforeRevoke:number=effects;
+    await assert.rejects(request(),{code:'MODEL_DISPATCH_BINDING_DENIED'});assert.equal(effects,beforeRevoke+1);assert.equal(deltas.length,0);
+    reset();controller.abort();const beforeAbort:number=effects;
+    await assert.rejects(request(controller.signal),{name:'AbortError'});assert.equal(effects,beforeAbort);
+    reset();const during=new AbortController();abortDuringResponse=during;const beforeDuring:number=effects;
+    try{await assert.rejects(request(during.signal));assert.equal(effects,beforeDuring+1);assert.equal(deltas.length,0);}
+    finally{abortDuringResponse=undefined;}
+    reset('platform503');deltas.length=0;resetModelRuntimeHealth();const beforeRecovery:number=effects,receiptRecovery:number=atomicReceipts;
+    const recovered=await executeWithProviderFallback({routes:['deepseek_v4_flash','glm_5_3_flash'],maximumAttemptsPerRoute:1,recordHealth:false,
+      execute:modelId=>withTenantModelReservation({scope:{...scope,connectedAccountId:'platform'},modelId,payload:{messages},estimatedInputTokens:10,maximumOutputTokens:64,
+        execute:d=>invoke(modelId,d.payload.messages as ChatMessage[],{maxTokens:64,credentialOverride:d.credentialOverride,beforeDispatch:d.beforeDispatch,onDelta:text=>deltas.push(text)})})});
+    assert.equal(recovered.modelId,'glm_5_3_flash');assert.equal(effects,beforeRecovery+3);assert.equal(atomicReceipts,receiptRecovery+1);
+    assert.equal(deltas.length,invoke===chatCompletionStream?1:0,'Only the successfully accounted fallback publishes output');
+  }
+  reset();resetModelRuntimeHealth();const beforeDelivery:number=effects,receiptDelivery:number=atomicReceipts;
+  await assert.rejects(executeWithProviderFallback({routes:['deepseek_v4_flash','glm_5_3_flash'],maximumAttemptsPerRoute:1,recordHealth:false,
+    execute:modelId=>withTenantModelReservation({scope,modelId,payload:{messages},estimatedInputTokens:10,maximumOutputTokens:64,
+      execute:d=>chatCompletionStream(modelId,d.payload.messages as ChatMessage[],{maxTokens:64,credentialOverride:d.credentialOverride,beforeDispatch:d.beforeDispatch,
+        onDelta:()=>{throw Error('Synthetic disconnected output consumer');}})})}),{code:'MODEL_PUBLICATION_FAILED',providerCompleted:true,retryable:false});
+  assert.equal(effects,beforeDelivery+1);assert.equal(atomicReceipts,receiptDelivery+1,'Delivery failure retains accounting and cannot repeat provider work');
+  reset();resetModelRuntimeHealth();const beforeLimit:number=effects;let limitedOutput='';
+  await assert.rejects(callBuilderStream('deepseek_v4_flash',messages,{userId:owner,tenantContext:context,databaseProjectId:project,maxTokens:64,maxAttempts:1,
+    budget:{...DEFAULT_BUILDER_BUDGET,maxOutputChars:4},onDelta:text=>{limitedOutput+=text;}}),{code:'BUILDER_OUTPUT_LIMIT'});
+  assert.equal(effects,beforeLimit+1);assert.equal(limitedOutput,'','Buffering public output must preserve the existing active provider output limit');
 });
 
 test('local request security denial cannot fall through to a different provider or account',async()=>{
+  resetModelRuntimeHealth();
   for(const code of ['MODEL_DISPATCH_BINDING_DENIED','MODEL_CREDENTIAL_EGRESS_DENIED','MODEL_PAYLOAD_INVALID','MODEL_DESTINATION_DENIED']){
     const routes:string[]=[];
     await assert.rejects(executeWithProviderFallback({routes:['deepseek_v4_flash','glm_5_3_flash'],maximumAttemptsPerRoute:1,
