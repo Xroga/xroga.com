@@ -1,9 +1,9 @@
 # Batch 1.5 Phase 2: acceptance report
 
-# Verdict: `BATCH_1_5_PHASE_2_BLOCKED`
+# Verdict: `BATCH_1_5_PHASE_2_ACCEPTED`
 
-All Phase 2 engineering is implemented and verified to the strongest evidence class available without a target host. Four prerequisites in the original handoff cannot be
-satisfied from this machine, so Phase 2 cannot be accepted yet. Nothing below is relabelled to look stronger than it is.
+Every original Phase 2 criterion passes with real evidence. The four blockers are closed: B-1 and B-2 on Google Compute Engine (AMD64 and native ARM64, after the founder replaced OCI with Google Cloud),
+B-3 by the TenantContext core merged and deployed (#847, `404bfa30`), B-4 by the completed read-only cloud facts. Nothing below is relabelled to look stronger than it is.
 
 | | |
 |---|---|
@@ -44,11 +44,11 @@ Row numbers refer to rows of this table (they are references, not new requiremen
 | 12 | Production migration history inspected, never auto-applied; Preview boundary verified before any PR | **PASS** | history read earlier (82 records); the PR path of `supabase-migrate.yml` is now an offline job with no environment and no secret (9 tests). `command3-auth-browser.yml`: **no `E2E_*` secret and no `E2E_ISOLATED_PROJECT_REF` variable exist** at repository or environment level (read through the GitHub API), so on a PR it receives empty values and its preflight fails at `missing_required_variable` before any network call; if they are added later its preflight refuses the production project ref |
 | 13 | Separate trusted-API and restricted browser-worker images | **PASS** | `Dockerfile.api` has no browser; `deploy/browser-worker/Dockerfile` and `Dockerfile.proxy` are separate |
 | 14 | Pinned Chromium, Playwright, Stagehand | **PASS** | base image by digest (multi-arch index `sha256:baed2032…`); `playwright-core@1.62.0` and `@browserbasehq/stagehand@4.2.0` exact, locked with integrity hashes, 43 packages all MIT, Apache-2.0 or BSD-2-Clause, installed `--ignore-scripts`; Stagehand is pinned but unwired (INFRA-007). `imagePins.ts`, 9 tests |
-| 15 | Non-root; Chromium sandbox ON (else BLOCKED) | amd64 **PASS** (DOCKER_LOCAL_TESTED) · Compute Engine host **BLOCKED (B-1)** | `evidence/browser-sandbox-docker-local-2026-10-24.json`: `SANDBOX_ON`, every Chromium process seccomp-filtered, renderer in its own PID namespace, default-seccomp control `BLOCKED` |
-| 16 | seccomp, dropped capabilities, CPU/RAM/process limits, filesystem and process isolation | amd64 **PASS** (DOCKER_LOCAL_TESTED) · Compute Engine host **BLOCKED (B-1)** | 12 conformance checks observed inside the live container (uid, capability bounding set, no-new-privileges, seccomp, read-only root mount flag, tmpfs flags, memory/pids/cpu cgroup limits, shared memory, no Docker socket, own PID namespace, no leaked Chromium process). **Six weakened variants** (root user, writable root, capabilities kept, privilege escalation allowed, no resource limits, executable tmpfs) are each detected by name; cleanup left no container or network |
+| 15 | Non-root; Chromium sandbox ON (else BLOCKED) | amd64 **PASS** (DOCKER_LOCAL_TESTED) · Compute Engine **PASS**: `GCE_HOST_TESTED` on `e2-standard-2` (x86_64) and `t2a-standard-2` (aarch64), 31/31 each (`evidence/host-bundles/GCE-RUN-RECORD.md`) | `evidence/browser-sandbox-docker-local-2026-10-24.json`: `SANDBOX_ON`, every Chromium process seccomp-filtered, renderer in its own PID namespace, default-seccomp control `BLOCKED` |
+| 16 | seccomp, dropped capabilities, CPU/RAM/process limits, filesystem and process isolation | amd64 **PASS** (DOCKER_LOCAL_TESTED) · Compute Engine **PASS**: `GCE_HOST_TESTED` on `e2-standard-2` (x86_64) and `t2a-standard-2` (aarch64), 31/31 each (`evidence/host-bundles/GCE-RUN-RECORD.md`) | 12 conformance checks observed inside the live container (uid, capability bounding set, no-new-privileges, seccomp, read-only root mount flag, tmpfs flags, memory/pids/cpu cgroup limits, shared memory, no Docker socket, own PID namespace, no leaked Chromium process). **Six weakened variants** (root user, writable root, capabilities kept, privilege escalation allowed, no resource limits, executable tmpfs) are each detected by name; cleanup left no container or network |
 | 17 | Private authenticated CDP | **PASS** | launch policy refuses a network DevTools port; the live Chromium process carries the pipe flag and no port (`chromiumProxy.browser.test.ts`) |
-| 18 | Egress policy including metadata, RFC1918, rebinding; browser-to-proxy isolation | container network and production proxy **PASS** (DOCKER_LOCAL_TESTED) · Compute Engine host **BLOCKED (B-1)** | `evidence/browser-egress-isolation-docker-local-2026-10-24.json`: browser on an `--internal` network whose only peer is the **production** proxy (`egressProxy.ts` through `proxySidecar.ts`). 21 checks pass: no direct IP on any tested port or protocol (TCP, UDP DNS), no public DNS, no IPv6, no metadata, no RFC1918 or CGNAT, no loopback service, no gateway; Chromium without a proxy flag loads nothing; the authorised destination loads; out-of-scope host, a real **cross-origin redirect** (`wikipedia.org` to `www.wikipedia.org`), names resolving to loopback, metadata and RFC1918, literal IPs, alternate ports and plain HTTP are all refused with the expected reason; the proxy never connected to its own loopback. **Two weakened controls prove the battery can fail**: a default bridge network (direct IP, DNS and no-proxy navigation all work) and a permissive proxy (a canary on its loopback is hit and it dials loopback, metadata and RFC1918) |
-| 19 | AMD64/ARM64 proof before choosing a shape | AMD64 **PASS** (local) · ARM64 **BLOCKED (B-2)** | arm64 image runs and the container **conforms** under emulation (`evidence/browser-sandbox-arm64-emulated-docker-local-2026-10-24.json`, class `ARM64_EMULATED_DOCKER_LOCAL`); the sandbox is `BLOCKED` under emulation, and a diagnostic attributes that to the emulator (same flags, seccomp unconfined: native amd64 `SANDBOX_ON`, emulated arm64 `BLOCKED`). This is **not** an ARM64 pass |
+| 18 | Egress policy including metadata, RFC1918, rebinding; browser-to-proxy isolation | container network and production proxy **PASS** (DOCKER_LOCAL_TESTED) · Compute Engine **PASS**: `GCE_HOST_TESTED` on `e2-standard-2` (x86_64) and `t2a-standard-2` (aarch64), 31/31 each (`evidence/host-bundles/GCE-RUN-RECORD.md`); all 21 checks and both weakened controls on both hosts | `evidence/browser-egress-isolation-docker-local-2026-10-24.json`: browser on an `--internal` network whose only peer is the **production** proxy (`egressProxy.ts` through `proxySidecar.ts`). 21 checks pass: no direct IP on any tested port or protocol (TCP, UDP DNS), no public DNS, no IPv6, no metadata, no RFC1918 or CGNAT, no loopback service, no gateway; Chromium without a proxy flag loads nothing; the authorised destination loads; out-of-scope host, a real **cross-origin redirect** (`wikipedia.org` to `www.wikipedia.org`), names resolving to loopback, metadata and RFC1918, literal IPs, alternate ports and plain HTTP are all refused with the expected reason; the proxy never connected to its own loopback. **Two weakened controls prove the battery can fail**: a default bridge network (direct IP, DNS and no-proxy navigation all work) and a permissive proxy (a canary on its loopback is hit and it dials loopback, metadata and RFC1918) |
+| 19 | AMD64/ARM64 proof before choosing a shape | **PASS**: AMD64 `AMD64_HOST_TESTED` 32/32 on `e2-standard-2` (Intel Broadwell); **native ARM64** `ARM64_HOST_TESTED` 32/32 on `t2a-standard-2` (Ampere Altra), no emulation | Compute Engine bundles in `evidence/host-bundles/`. Earlier, superseded: arm64 image runs and the container **conforms** under emulation (`evidence/browser-sandbox-arm64-emulated-docker-local-2026-10-24.json`, class `ARM64_EMULATED_DOCKER_LOCAL`); the sandbox is `BLOCKED` under emulation, and a diagnostic attributes that to the emulator (same flags, seccomp unconfined: native amd64 `SANDBOX_ON`, emulated arm64 `BLOCKED`). This is **not** an ARM64 pass |
 | 20 | Rollback | **PASS** | `ROLLBACK.md`; the lease `.down.sql` is applied and verified to leave nothing behind on real PostgreSQL 16 (CI step 03b) |
 
 ### INFRA-006: workers and scheduler
@@ -85,7 +85,7 @@ Row numbers refer to rows of this table (they are references, not new requiremen
 | Sandbox and conformance (amd64) | `evidence/browser-sandbox-docker-local-2026-10-24.json` | DOCKER_LOCAL_TESTED: hardened ON and conforming, control BLOCKED, 6 of 6 weakened variants detected, cleanup clean |
 | Network isolation (amd64) | `evidence/browser-egress-isolation-docker-local-2026-10-24.json` | DOCKER_LOCAL_TESTED: 21 of 21 checks, both weakened controls show the weakness |
 | ARM64 | `evidence/browser-sandbox-arm64-emulated-docker-local-2026-10-24.json`, `…-arm64-emulation-diagnostic-2026-10-24.json` | image runs and conforms under emulation; sandbox inconclusive under emulation; not an ARM64 pass |
-| Cloud host (OCI dropped 2026-10-24; now Compute Engine) | none yet | NOT RUN: awaiting credit confirmation and approval |
+| Cloud hosts (Google Compute Engine; OCI dropped) | `evidence/host-bundles/gce-{amd64,arm64}-{gce,amd64,arm64}/`, `GCE-RUN-RECORD.md` | four bundles from commit `93c6a36d`, all HOST_ACCEPTED on the host and re-evaluated locally against the committed files; VMs torn down and absence read back |
 | Security and mutation | `evidence/logs/mutation-checks-phase2-final.log` | 99 injected defects across database TLS, leases, job contract, egress proxy and sidecar, process trees, browser handler, admission, recovery, startup, readiness, logging, launch policy, container spec and the lease SQL: **99 caught, 0 survived, 0 inconclusive** (run on the committed source `e2a3fb49`). Earlier runs exposed and fixed: a dead guard, a test that passed for the wrong reason, redundant branches, a vacuous redirect check, a probe that could not see a missing capability drop or a writable root, and a test that left a listener open. Container-level checks are covered by the six weakened variants and two weakened network controls instead |
 | Batch 1 integration | `BATCH1-INTEGRATION-VERIFICATION.md`, `evidence/batch1-integration/resolution-over-codex-candidate.patch` | isolated merge with Codex `e8164ba6`: tsc clean, 500 targeted tests (499 pass, 1 POSIX-only skip), both migration validators pass; nothing merged or pushed |
 | Cloud facts | `CLOUD-FACTS-2026-10-24.md` | read-only, no credential printed, nothing changed |
@@ -95,13 +95,13 @@ Row numbers refer to rows of this table (they are references, not new requiremen
 | Source equivalence | `SOURCE-EQUIVALENCE.md`, `scripts/verify-source-equivalence.sh` | later commits documentation only |
 | Real-provider TLS | `evidence/real-tls-handshake-2026-10-24.json` | live Supabase pooler, TLS trust only |
 
-## C. Remaining blockers
-| # | Status | Exact remaining requirement | Evidence already available | One executable next action | Needs you |
-|---|---|---|---|---|---|
-| **B-1** Compute Engine host (was OCI) | **BLOCKED** | hardened container, sandbox ON, egress isolation and weakened controls on a Compute Engine VM (`GCE_HOST_TESTED`); see `GCP-HOST-VERIFICATION.md` | amd64 `DOCKER_LOCAL_TESTED`; the collector and evaluator are tested (27 evaluator tests, three mutants caught; end-to-end self-test 32/32 on Docker Desktop, labelled as a self-test only) | enable the Compute Engine API, `gce-verification-host.sh create amd64`, then `prepare-host.sh` and `collect-host-evidence.sh GCE_HOST_TESTED` over SSH; evaluate the bundle | yes: credit confirmation and approval to enable the API and create the VMs |
-| **B-2** native ARM64 | **BLOCKED** | the same on native ARM64 (Tau T2A), or a founder-approved revision of criterion 19 to the chosen AMD64 shape | emulation diagnostic only (not acceptance) | `create arm64`, then `collect-host-evidence.sh ARM64_HOST_TESTED` on `t2a-standard-2` | same approval, or the revision |
-| **B-3** TenantContext in `main` | **PASS** | none | row 34 | none | no (a signed-in check on xroga.com by the founder is the last manual confirmation) |
-| **B-4** cloud facts | **PASS** | none | `CLOUD-FACTS-2026-10-24.md` | none | no |
+## C. Blockers: all closed
+| # | Status | Evidence |
+|---|---|---|
+| **B-1** cloud host (was OCI, now Compute Engine) | **PASS** | `GCE_HOST_TESTED` 31/31 on `e2-standard-2` and on `t2a-standard-2` |
+| **B-2** native ARM64 | **PASS** | `ARM64_HOST_TESTED` 32/32 on `t2a-standard-2` (Ampere Altra, aarch64) |
+| **B-3** TenantContext in `main` | **PASS** | #847 merged as `404bfa30`, deployed, production reports that release |
+| **B-4** cloud facts | **PASS** | `CLOUD-FACTS-2026-10-24.md`, checklist A complete |
 
 ## D2. Security and reliability findings (not Phase 2 criteria; disposition)
 | Finding | Evidence | Disposition |
@@ -121,7 +121,7 @@ Branch `claude/xroga-b15-phase2-20261024` is pushed to `Xroga/xroga.com`; `main`
 the branch head, which differs from it only in documentation, is stated in the checkpoint message and verified with the equivalence script.
 
 ## E. Phase 3 readiness
-Phase 2 is **not** accepted, so this is not permission to start Phase 3. For when it is, the components Phase 3 (INFRA-007/008) should reuse, all already in this branch:
+Phase 2 is accepted. The Phase 3 handoff is `PHASE-2-TO-PHASE-3-HANDOFF.md`. The components Phase 3 (INFRA-007/008) should reuse, all already in this branch:
 
 | Reuse | Where |
 |---|---|
