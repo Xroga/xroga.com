@@ -116,12 +116,17 @@ test('the plus menu is a compact two-column launcher rather than a composer-wide
   assert.match(code, /\.xv-cba-grid\s*\{[\s\S]*?grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/, 'the desktop launcher needs two compact columns');
 });
 
-test('an empty fullscreen terminal shows rotating build-command inspiration', () => {
+test('fullscreen preserves the current empty-workspace starter and one canonical composer', () => {
   const DOCK = read('../components/terminal/TerminalDock.tsx');
-  assert.match(DOCK, /dashboardFullscreen\s*&&\s*emptyWorkspace\s*&&\s*!incognito/);
-  assert.match(DOCK, /xv-fullscreen-inspiration/);
-  assert.match(DOCK, /FULLSCREEN_BUILD_COMMANDS\.map/);
-  assert.match(code, /\.xv-fullscreen-inspiration code\s*\{[^}]*animation:\s*xv-fullscreen-command-cycle/);
+  assert.match(DOCK, /emptyWorkspace\s*=\s*hydrated\s*&&\s*!sessionRestoring\s*&&\s*messages\.length === 0\s*&&\s*!loading/);
+  assert.match(DOCK, /showStarterExperience\s*=\s*emptyWorkspace\s*&&\s*!workspaceOpen/);
+  assert.match(DOCK, /dashboardFullscreen\s*\?\s*'z-\[210\] xv-terminal-dock--fullscreen'/);
+  for (const component of ['WorkspaceStartHeader', 'WorkspaceStartCards']) {
+    assert.match(DOCK, new RegExp(`showStarterExperience\\s*&&\\s*!incognito\\s*\\?\\s*\\(\\s*<${component} \\/>`));
+  }
+  assert.equal((DOCK.match(/<TerminalChatBar\b/g) ?? []).length, 1);
+  assert.match(DOCK, /<TerminalChatBar starter=\{showStarterExperience && !incognito\} \/>/);
+  assert.doesNotMatch(DOCK, /FULLSCREEN_BUILD_COMMANDS|xv-fullscreen-inspiration/);
 });
 
 test('only the root list is a grid', () => {

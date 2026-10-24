@@ -7,6 +7,8 @@ test.beforeEach(async ({ page, baseURL }) => {
   if (!baseURL || !['localhost', '127.0.0.1'].includes(new URL(baseURL).hostname)) {
     throw new Error('Run this mocked interaction test against a local preview only.');
   }
+  // This UI fixture must never send authentication traffic to a live project.
+  await page.route('https://*.supabase.co/**', route => route.abort());
   await page.route('**/api/guest/chat', route => route.fulfill({
     status: 200,
     contentType: 'application/json',
@@ -17,6 +19,55 @@ test.beforeEach(async ({ page, baseURL }) => {
       guest: { limit: 10, remaining: 9, resetAt: '2099-01-01T00:00:00Z' },
     }),
   }));
+});
+
+test('starter plus is opt-in and conversation restores the ordinary ring without a second composer', async ({ page }) => {
+  await page.goto('/workspace');
+  const composer = page.locator('[data-terminal-composer]');
+  const actions = page.getByRole('button', { name: 'More composer actions', exact: true });
+  await expect(page.getByTestId('workspace-start-header')).toBeVisible();
+  await expect(actions.locator('svg.lucide-plus')).toHaveCount(1);
+  await expect(composer).toHaveCount(1);
+  await composer.fill('Local icon-transition fixture');
+  await page.getByRole('button', { name: 'Send prompt', exact: true }).click();
+  await expect(page.getByText('Local UI fixture reply verified.', { exact: false }).first()).toBeVisible();
+  await expect(page.getByTestId('workspace-start-header')).toHaveCount(0);
+  await expect(page.getByTestId('workspace-start-cards')).toHaveCount(0);
+  await expect(actions.locator('svg.lucide-plus')).toHaveCount(0);
+  await expect(actions.locator('svg')).toHaveCount(1);
+  await expect(composer).toHaveCount(1);
+});
+
+test('fullscreen preserves the current starter, draft and one composer on entry and exit', async ({ page }) => {
+  await page.goto('/workspace');
+  const composer = page.locator('[data-terminal-composer]');
+  await expect(page.getByTestId('workspace-start-header')).toBeVisible();
+  await composer.fill('Draft retained through fullscreen');
+  const header = page.getByTestId('terminal-identity-header');
+  await header.getByRole('button', { name: 'Fullscreen terminal', exact: true }).click();
+  await expect(page.locator('body')).toHaveClass(/xv-terminal-fullscreen-active/);
+  await expect(page.getByTestId('workspace-start-header')).toBeVisible();
+  await expect(page.getByTestId('workspace-start-cards')).toBeVisible();
+  await expect(composer).toHaveCount(1);
+  await expect(composer).toHaveValue('Draft retained through fullscreen');
+  await header.getByRole('button', { name: 'Exit fullscreen', exact: true }).click();
+  await expect(page.locator('body')).not.toHaveClass(/xv-terminal-fullscreen-active/);
+  await expect(composer).toHaveValue('Draft retained through fullscreen');
+});
+
+test('private empty workspace never exposes starter cards or starter plus', async ({ page }) => {
+  await page.addInitScript(() => {
+    // Persist a preference belonging to this guest, not an authenticated session.
+    // Missing cache ownership correctly purges legacy cross-account preferences.
+    localStorage.setItem('xroga-cache-owner', 'v2:guest');
+    localStorage.setItem('xroga-privacy-v1', JSON.stringify({ state: { incognito: true }, version: 0 }));
+  });
+  await page.goto('/workspace');
+  await expect(page.locator('[data-terminal-composer]')).toHaveCount(1);
+  await expect(page.locator('[data-terminal-composer]')).toHaveAttribute('placeholder', 'Type a private message…');
+  await expect(page.getByTestId('workspace-start-header')).toHaveCount(0);
+  await expect(page.getByTestId('workspace-start-cards')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'More composer actions', exact: true }).locator('svg.lucide-plus')).toHaveCount(0);
 });
 
 test('compact visual starter fits desktop, tablet and phones without overflowing', async ({ page }) => {
