@@ -9,14 +9,15 @@
     {
       "path": "backend/src/ai/pipeline.ts",
       "historicalSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
-      "currentSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+      "currentSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+      "genericSdkPreviousCurrentBinding": {"reference":"2dc69b2b3df123f30e7e6b493266b10b7e2acad8","sha256":"2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc","afterIds":["6c962371859b256ff96c","8db8b524179b45694274"],"scope":"HISTORICAL_EXACT_CONVERSION_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"},
       "beforeIds": [
         "01d5efe9b761bc670212",
         "944a58bb15dca85b3ddd"
       ],
       "afterIds": [
-        "6c962371859b256ff96c",
-        "8db8b524179b45694274"
+        "af88e0f5ab6048f75011",
+        "863e45f48048017eb977"
       ],
       "unchangedNearestBlockSha256": [
         "121ecd46287fd271b61cc97e84d2b17dce2570e8b82f7a6bdf77a6e4b7133436",
@@ -53,12 +54,13 @@
     {
       "path": "backend/src/synthesis/universalEntrypoint.ts",
       "historicalSha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4",
-      "currentSha256": "91c22bc5ac1fd79eeeaafab69134d17009c7cc0d2bfba101411dde88625b46a2",
+      "currentSha256": "3a4002a2359e8fccf4f10791213d4b2d15f37a0e2e02a413ac938fc4fc842a84",
+      "genericSdkPreviousCurrentBinding": {"reference":"2dc69b2b3df123f30e7e6b493266b10b7e2acad8","sha256":"91c22bc5ac1fd79eeeaafab69134d17009c7cc0d2bfba101411dde88625b46a2","afterIds":["cfba5e514ab70426438c"],"scope":"HISTORICAL_EXACT_CONSTRUCTOR_PROOF_NOT_NEW_SECURITY_ACCEPTANCE"},
       "beforeIds": [
         "10b5e279dd241e2f40ec"
       ],
       "afterIds": [
-        "cfba5e514ab70426438c"
+        "411b7b4d8d600d797423"
       ],
       "unchangedConstructorCallSha256": "87204a9f0158a5f0f5a7b3da90d6580419ad58c24720fc9cad951a7e98666857",
       "semanticScope": "The same request-scoped universalStore constructor receives the same internal persisted-owner context. Added model context/project/attempt fields are forwarded to SoftwareAgent and do not replace persistence subject, stores or receiving guards. Historical constructor proof remains bound to its original source, with new-source integration still required."

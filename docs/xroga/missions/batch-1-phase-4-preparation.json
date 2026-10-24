@@ -245,7 +245,7 @@
     },
     {
       "command": "Canonical safeTestEnvironment Node22.21.1 focused generic SDK and reachable caller suite",
-      "scope": "Final combined191 SDK/guest/Operations/SoftwareAgent/repair/fallback/budget/repository/universal/QA cases PASS0skip/fail. New exact-source disposable assertion remains pending CI.",
+      "scope": "Final combined191 focused cases PASS0skip/fail. Exact8fd full authenticated40095139649 PASS browser6/DB211 including real genericSDK case122. Unit application3200/backend1155/frontend passed before stale proof-binding gate failure, metadata-only correction retains historical assertions. New-source automatic CI still required.",
       "negative": true,
       "reference": "docs/xroga/evidence/command-010/GENERIC-SDK-CONTINUATION.md"
     }
