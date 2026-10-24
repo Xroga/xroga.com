@@ -14,7 +14,7 @@ case "$label" in OCI_HOST_TESTED|ARM64_HOST_TESTED|AMD64_HOST_TESTED) ;; *) echo
 cd "$(git rev-parse --show-toplevel)"
 if [ -n "$(git status --porcelain --untracked-files=no)" ]; then echo "refusing: the working tree has uncommitted changes, so the evidence could not name an exact source" >&2; exit 2; fi
 stamp="$(date -u +%Y%m%dT%H%M%SZ)"
-out="out/host-evidence-$(hostname -s)-$stamp"
+out="out/host-evidence-$(hostname | cut -d. -f1)-$stamp"
 mkdir -p "$out"
 { echo "commit=$(git rev-parse HEAD)"; echo "tree=clean"; echo "collected=$stamp"; } > "$out/source.txt"
 bash deploy/browser-worker/host-facts.sh > "$out/host-facts.json"

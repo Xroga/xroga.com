@@ -35,6 +35,8 @@ const criteria = [];
 const rule = (id, pass, detail) => criteria.push({ id, pass: Boolean(pass), detail });
 
 rule('host.architecture-known', hostArch !== undefined, `host arch "${facts.arch}"`);
+// host-facts.sh runs in the shell, the probe asks the Docker engine: both must describe the same machine (catches a remote DOCKER_HOST or a VM of another arch)
+rule('host.docker-engine-same-arch', archOf[probe.host?.arch] === hostArch, `shell ${facts.arch}, docker engine ${probe.host?.arch}`);
 if (expectArch) rule('host.architecture-matches-label', hostArch === expectArch, `label ${label} needs ${expectArch}, host is ${hostArch}`);
 if (label === 'OCI_HOST_TESTED') rule('host.is-oci', Boolean(facts.oci?.shape) && Boolean(facts.oci?.region), `instance metadata shape=${facts.oci?.shape ?? 'null'} region=${facts.oci?.region ?? 'null'}`);
 else rule('host.label-does-not-claim-oci', true, 'non-OCI label');
@@ -51,7 +53,9 @@ const checks = iso.acceptance?.checks ?? {};
 rule('isolation.label-matches', iso.evidenceClass === label, `evidenceClass ${iso.evidenceClass}`);
 rule('isolation.not-emulated', iso.platform === 'host default', `platform=${iso.platform}`);
 rule('isolation.image-arch-matches-host', iso.images?.browserArch === hostArch, `image ${iso.images?.browserArch}, host ${hostArch}`);
-rule('isolation.all-21-checks', Object.keys(checks).length >= 21 && Object.values(checks).every((v) => v === true), `${Object.values(checks).filter(Boolean).length}/${Object.keys(checks).length}`);
+rule('isolation.all-21-checks', iso.acceptOk === true && Object.keys(checks).length >= 21 && Object.values(checks).every((v) => v === true), `acceptOk=${iso.acceptOk} ${Object.values(checks).filter(Boolean).length}/${Object.keys(checks).length}`);
+rule('isolation.internal-network', iso.networkSpec?.mode === 'internal' && (iso.networkSpec?.publishedPorts ?? []).length === 0, `mode=${iso.networkSpec?.mode}`);
+rule('isolation.same-browser-image-as-probe', Boolean(iso.images?.browserId) && iso.images.browserId === probe.image?.id, 'browser image id equal in both runs');
 rule('isolation.both-weakened-controls-show-weakness', iso.bridgeShown === true && iso.permissiveShown === true, `bridge=${iso.bridgeShown} permissive=${iso.permissiveShown}`);
 rule('isolation.production-proxy', typeof iso.images?.proxy === 'string' && Boolean(iso.inputs?.['backend/src/workers/egressProxy.ts']), 'proxy image and egressProxy.ts hash recorded');
 
@@ -65,7 +69,8 @@ same('seccomp-profile', probe.inputs?.seccompProfileSha256, 'deploy/browser-work
 same('dockerfile', probe.inputs?.dockerfileSha256, 'deploy/browser-worker/Dockerfile');
 same('probe', probe.inputs?.probeSha256, 'deploy/browser-worker/sandboxProbe.mjs');
 same('package-lock', probe.inputs?.packageLockSha256, 'deploy/browser-worker/package-lock.json');
-same('egress-proxy-source', iso.inputs?.['backend/src/workers/egressProxy.ts'], 'backend/src/workers/egressProxy.ts');
+for (const rel of ['backend/src/workers/egressProxy.ts', 'backend/src/workers/proxySidecar.ts', 'backend/src/security/boundedPublicGet.ts', 'deploy/browser-worker/Dockerfile.proxy', 'deploy/browser-worker/container-spec.json'])
+  same(`isolation:${rel}`, iso.inputs?.[rel], rel);
 
 // the bundle must not have been edited after collection
 let sumsOk = sums !== null;
