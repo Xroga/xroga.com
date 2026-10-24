@@ -25,6 +25,7 @@ import { remoteSandboxFromEnvironment } from './remoteSandbox.js';
 import { flyMachineSandboxFromEnvironment } from './flyMachineSandbox.js';
 import {
   SandboxUnavailableError,
+  requireEnforcedSandboxNetworkPolicy,
   type SandboxAvailability,
   type SandboxExecutionRequest,
   type SandboxExecutionResult,
@@ -86,6 +87,7 @@ export class ContainerSandboxRuntime implements SandboxRuntime {
   }
 
   async execute(request: SandboxExecutionRequest): Promise<SandboxExecutionResult> {
+    requireEnforcedSandboxNetworkPolicy(request.networkPolicy, this.name);
     const availability = await this.probe();
     if (!availability.available) throw new SandboxUnavailableError(availability);
     // A per-request image overrides the provider default. Every isolation flag in
@@ -140,7 +142,9 @@ export function buildContainerArgs(
   image: string,
   request: SandboxExecutionRequest,
 ): string[] {
-  // Network is denied unless the stage explicitly needs a registry. A typecheck or a
+  requireEnforcedSandboxNetworkPolicy(request.networkPolicy, 'container');
+  // Registry-only was refused above, never translated to an unrestricted bridge.
+  // A typecheck or a
   // production build has no legitimate reason to reach the network, and denying it
   // removes exfiltration as an option even if the environment allowlist were weakened.
   const network = request.networkPolicy === 'none' ? 'none' : 'bridge';

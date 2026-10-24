@@ -1,5 +1,7 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { Router, type Request } from 'express';
+import {isDeepStrictEqual} from 'node:util';
+import {registerModelSdkAdmission,modelAdmissionDenied} from '../ai/modelSdkAdmission.js';
+import { Router, type Request, type RequestHandler } from 'express';
 import { z } from 'zod';
 
 import {
@@ -9,9 +11,10 @@ import {
 } from '../ai/openaiCompat.js';
 import {
   callableModelIds,
+  resolveModelSpec,
   type ModelId,
 } from '../ai/models.js';
-import { normalizeProviderError } from '../ai/providerRuntime.js';
+import { normalizeProviderError,isTerminalModelFailure } from '../ai/providerRuntime.js';
 import { SAFE_RICH_OUTPUT_GUIDE } from '../ai/prompts.js';
 import { getRedis } from '../config/redis.js';
 import {
@@ -36,7 +39,13 @@ interface GuestLease {
   token: string;
   sessionId: string;
   redisKey?: string;
+  expiresAt:number;
 }
+const issuedLeases=new WeakSet<GuestLease>();
+const productionGuest=()=>process.env.NODE_ENV==='production'||Boolean(process.env.FLY_APP_NAME);
+function guestAccountingDenied():never{throw Object.assign(Error('Guest admission or accounting is unavailable.'),{code:'PROVIDER_RESERVATION_DENIED',status:503});}
+function requireGuestRedis(){const redis=getRedis();if(!redis&&productionGuest())guestAccountingDenied();return redis;}
+function issueGuestLease(lease:GuestLease):GuestLease{Object.freeze(lease);issuedLeases.add(lease);return lease;}
 
 const sessionBuckets = new Map<string, RateBucket>();
 const ipBuckets = new Map<string, RateBucket>();
@@ -170,7 +179,10 @@ async function redisIncrement(
     .incrby(key, amount)
     .pexpire(key, ttlMs * 2)
     .exec();
-  return Number(result?.[0]?.[1] ?? 0);
+  const count=result?.[0]?.[1];
+  if(!Array.isArray(result)||result.length!==2||result.some(row=>!row||row[0])
+    ||typeof count!=='number'||!Number.isSafeInteger(count)||count<amount||result[1]?.[1]!==1)guestAccountingDenied();
+  return count;
 }
 
 async function consumeGuestAllowanceDistributed(
@@ -178,7 +190,7 @@ async function consumeGuestAllowanceDistributed(
   clientAddress: string,
   now = Date.now(),
 ) {
-  const redis = getRedis();
+  const redis = requireGuestRedis();
   if (!redis) return consumeGuestAllowance(guestSessionId, clientAddress, now);
 
   try {
@@ -222,7 +234,8 @@ async function consumeGuestAllowanceDistributed(
       resetsAt: Math.max(sessionWindow.resetsAt, ipWindow.resetsAt),
     };
   } catch (error) {
-    console.warn('[guest/chat] Redis allowance fallback:', (error as Error).message);
+    if(productionGuest())guestAccountingDenied();
+    console.warn('[guest/chat] Redis allowance unavailable');
     return consumeGuestAllowance(guestSessionId, clientAddress, now);
   }
 }
@@ -232,7 +245,7 @@ async function consumeGuestTokenBudgetDistributed(
   requestedTokens: number,
   now = Date.now(),
 ) {
-  const redis = getRedis();
+  const redis = requireGuestRedis();
   if (!redis) return consumeGuestTokenBudget(guestSessionId, requestedTokens, now);
 
   try {
@@ -246,7 +259,8 @@ async function consumeGuestTokenBudgetDistributed(
       resetsAt: window.resetsAt,
     } as const;
   } catch (error) {
-    console.warn('[guest/chat] Redis token-budget fallback:', (error as Error).message);
+    if(productionGuest())guestAccountingDenied();
+    console.warn('[guest/chat] Redis token-budget unavailable');
     return consumeGuestTokenBudget(guestSessionId, requestedTokens, now);
   }
 }
@@ -256,7 +270,7 @@ async function acquireGuestLease(
   now = Date.now(),
 ): Promise<GuestLease | null> {
   cleanExpired(now);
-  const redis = getRedis();
+  const redis = requireGuestRedis();
   if (redis) {
     try {
       const token = randomUUID();
@@ -269,9 +283,10 @@ async function acquireGuestLease(
         'NX',
       );
       if (result !== 'OK') return null;
-      return { token, sessionId: guestSessionId, redisKey };
+      return issueGuestLease({ token, sessionId: guestSessionId, redisKey,expiresAt:now+GUEST_CHAT_CONCURRENCY_TTL_MS });
     } catch (error) {
-      console.warn('[guest/chat] Redis concurrency fallback:', (error as Error).message);
+      if(productionGuest())guestAccountingDenied();
+      console.warn('[guest/chat] Redis concurrency unavailable');
     }
   }
 
@@ -282,10 +297,11 @@ async function acquireGuestLease(
     token,
     expiresAt: now + GUEST_CHAT_CONCURRENCY_TTL_MS,
   });
-  return { token, sessionId: guestSessionId };
+  return issueGuestLease({ token, sessionId: guestSessionId,expiresAt:now+GUEST_CHAT_CONCURRENCY_TTL_MS });
 }
 
 async function releaseGuestLease(lease: GuestLease) {
+  issuedLeases.delete(lease);
   if (lease.redisKey) {
     const redis = getRedis();
     if (redis) {
@@ -298,7 +314,7 @@ async function releaseGuestLease(lease: GuestLease) {
         );
         return;
       } catch (error) {
-        console.warn('[guest/chat] Redis lease release fallback:', (error as Error).message);
+        console.warn('[guest/chat] Redis lease release unavailable');
       }
     }
   }
@@ -311,12 +327,15 @@ async function isGuestSessionClaimed(guestSessionId: string, now = Date.now()) {
   cleanExpired(now);
   if ((claimedSessions.get(guestSessionId) ?? 0) > now) return true;
 
-  const redis = getRedis();
+  const redis = requireGuestRedis();
   if (!redis) return false;
   try {
-    return (await redis.exists(`xroga:guest:claimed:${guestSessionId}`)) > 0;
+    const receipt=await redis.exists(`xroga:guest:claimed:${guestSessionId}`);
+    if(receipt!==0&&receipt!==1)guestAccountingDenied();
+    return receipt===1;
   } catch (error) {
-    console.warn('[guest/chat] Redis claimed-session fallback:', (error as Error).message);
+    if(productionGuest())guestAccountingDenied();
+    console.warn('[guest/chat] Redis claimed-session unavailable');
     return false;
   }
 }
@@ -328,17 +347,19 @@ async function markGuestSessionClaimed(
 ) {
   claimedSessions.set(guestSessionId, now + GUEST_CHAT_CLAIM_TTL_MS);
 
-  const redis = getRedis();
+  const redis = requireGuestRedis();
   if (!redis) return;
   try {
-    await redis.set(
+    const receipt=await redis.set(
       `xroga:guest:claimed:${guestSessionId}`,
       userId,
       'PX',
       GUEST_CHAT_CLAIM_TTL_MS,
     );
+    if(receipt!=='OK')guestAccountingDenied();
   } catch (error) {
-    console.warn('[guest/claim] Redis claim persistence fallback:', (error as Error).message);
+    if(productionGuest())guestAccountingDenied();
+    console.warn('[guest/claim] Redis claim persistence unavailable');
   }
 }
 
@@ -432,22 +453,63 @@ export function resetGuestChatRateLimitsForTest() {
   claimedSessions.clear();
 }
 
-async function guestCompletion(messages: ChatMessage[]) {
+async function requireCurrentGuestLease(lease:GuestLease){
+  if(!issuedLeases.has(lease)||lease.expiresAt<=Date.now())guestAccountingDenied();
+  const redis=requireGuestRedis();
+  if(lease.redisKey){
+    if(!redis)guestAccountingDenied();
+    let current:unknown;try{current=await redis.get(lease.redisKey);}catch{guestAccountingDenied();}
+    if(current!==lease.token)guestAccountingDenied();
+  }else{const current=activeSessions.get(lease.sessionId);if(!current||current.token!==lease.token||current.expiresAt<=Date.now())guestAccountingDenied();}
+  if(await isGuestSessionClaimed(lease.sessionId))guestAccountingDenied();
+}
+
+async function guestCompletion(messages: ChatMessage[],lease:GuestLease,prepaidTokens:number,signal:AbortSignal) {
+  messages=structuredClone(messages);
+  const maximumInput=Buffer.byteLength(JSON.stringify(messages),'utf8'),maximumOutput=900;
+  if(prepaidTokens!==maximumInput+maximumOutput)guestAccountingDenied();
+  await requireCurrentGuestLease(lease);
+  let wires=0;
   const callable = new Set(callableModelIds());
   const candidates: ModelId[] = ['deepseek_v4_flash', 'glm_5_3_flash'];
 
   let lastError: unknown = null;
   for (const modelId of candidates) {
     if (!callable.has(modelId)) continue;
+    const apiModel=resolveModelSpec(modelId)?.apiModel;
+    if(!apiModel)continue;
+    let active=true;
+    const beforeDispatch=async(body:string)=>{
+      if(!active||signal.aborted)modelAdmissionDenied();
+      const wire=JSON.parse(body);
+      if(wire.model!==apiModel||wire.max_tokens!==maximumOutput||!isDeepStrictEqual(wire.messages,messages)||(wire.tools?.length??0)!==0)modelAdmissionDenied();
+      await requireCurrentGuestLease(lease);
+      if(wires>0&&!(await consumeGuestTokenBudgetDistributed(lease.sessionId,prepaidTokens)).allowed)guestAccountingDenied();
+      wires++;
+      await requireCurrentGuestLease(lease);
+      if(!active||signal.aborted)modelAdmissionDenied();
+    };
+    const admitted=registerModelSdkAdmission(beforeDispatch,modelId,undefined);
     try {
-      return await chatCompletion(modelId, messages, {
+      const result=await chatCompletion(modelId, messages, {
         maxTokens: 900,
         temperature: 0.45,
         reasoningMode: 'none',
+        beforeDispatch,signal,
       });
+      // The existing guest counter conservatively consumes each wire attempt's
+      // full byte-bound input plus maximum output before sending, with no refund
+      // or uncertain accounting replay. It grants no signed-in tenant authority.
+      if(!wires||!Number.isSafeInteger(result.inputTokens)||result.inputTokens<0||result.inputTokens>maximumInput
+        ||!Number.isSafeInteger(result.outputTokens)||result.outputTokens<0||result.outputTokens>maximumOutput)guestAccountingDenied();
+      await requireCurrentGuestLease(lease);
+      const completion=admitted.completion();if(!completion)guestAccountingDenied();
+      completion.checkCancellation();completion.publish();
+      return result;
     } catch (error) {
       lastError = error;
-    }
+      if(signal.aborted||isTerminalModelFailure(error))throw error;
+    }finally{active=false;admitted.revoke();}
   }
 
   if (lastError) throw lastError;
@@ -455,8 +517,14 @@ async function guestCompletion(messages: ChatMessage[]) {
 }
 
 const router = Router();
+function guestRoute(handler:RequestHandler):RequestHandler{
+  return(req,res,next)=>{void Promise.resolve().then(()=>handler(req,res,next)).catch(()=>{
+    if(!res.headersSent)res.status(503).json({error:'Guest preview is temporarily unavailable.',code:'GUEST_ADMISSION_UNAVAILABLE'});
+    else res.end();
+  });};
+}
 
-router.post('/claim', authMiddleware, async (req: AuthRequest, res) => {
+router.post('/claim', authMiddleware, guestRoute(async (req: AuthRequest, res) => {
   const parsed = guestClaimSchema.safeParse(req.body);
   if (!parsed.success || !req.userId) {
     res.status(400).json({
@@ -469,9 +537,9 @@ router.post('/claim', authMiddleware, async (req: AuthRequest, res) => {
   await markGuestSessionClaimed(parsed.data.guestSessionId, req.userId);
   res.setHeader('Cache-Control', 'no-store');
   res.json({ ok: true });
-});
+}));
 
-router.post('/chat', async (req, res) => {
+router.post('/chat', guestRoute(async (req, res) => {
   const parsed = guestChatSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({
@@ -546,7 +614,7 @@ router.post('/chat', async (req, res) => {
   // bypass the guest budget.
   const tokenBudget = await consumeGuestTokenBudgetDistributed(
     guestSessionId,
-    estimatedInputTokens + 900,
+    Buffer.byteLength(JSON.stringify(messages),'utf8') + 900,
   );
   if (!tokenBudget.allowed) {
     res.status(429).json({
@@ -568,8 +636,13 @@ router.post('/chat', async (req, res) => {
     return;
   }
 
+  const controller=new AbortController();
+  const cancel=()=>controller.abort();
+  const close=()=>{if(!res.writableEnded)cancel();};
+  req.once('aborted',cancel);res.once('close',close);
+  if(req.aborted||res.destroyed)cancel();
   try {
-    const result = await guestCompletion(messages);
+    const result = await guestCompletion(messages,lease,Buffer.byteLength(JSON.stringify(messages),'utf8')+900,controller.signal);
 
     res.json({
       response: result.text,
@@ -595,8 +668,9 @@ router.post('/chat', async (req, res) => {
       },
     });
   } finally {
+    req.off('aborted',cancel);res.off('close',close);
     await releaseGuestLease(lease);
   }
-});
+}));
 
 export default router;

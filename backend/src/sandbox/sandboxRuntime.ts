@@ -18,6 +18,7 @@
 import {
   DEFAULT_SANDBOX_LIMITS,
   SandboxUnavailableError,
+  requireEnforcedSandboxNetworkPolicy,
   type SandboxAvailability,
   type SandboxExecutionRequest,
   type SandboxExecutionResult,
@@ -99,6 +100,7 @@ export async function executeSandboxed(
     limits?: Partial<SandboxExecutionRequest['limits']>;
   },
 ): Promise<SandboxExecutionResult> {
+  requireEnforcedSandboxNetworkPolicy(request.networkPolicy, 'sandbox');
   const { runtime, availability } = await selectSandboxProvider();
   cachedProbe = { at: Date.now(), value: availability };
   if (!runtime || !availability.available) throw new SandboxUnavailableError(availability);

@@ -29,11 +29,22 @@ type Mode = 'success' | 'failure' | 'timeout' | 'empty' | 'input_required' | 'in
 function providerStub(t: TestContext, mode: Mode = 'success', connected = false, slug = TOOL) {
   const previous = new Map(['COMPOSIO_API_KEY','SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','SUPABASE_JWT_SECRET'].map(key=>[key,process.env[key]]));
   process.env.COMPOSIO_API_KEY = 'golden-test-canary-not-a-real-key';
-  delete process.env.SUPABASE_SERVICE_ROLE_KEY; delete process.env.SUPABASE_URL; delete process.env.SUPABASE_JWT_SECRET;
+  process.env.SUPABASE_URL='http://127.0.0.1:54321';process.env.SUPABASE_SERVICE_ROLE_KEY='synthetic-offline-service-role';delete process.env.SUPABASE_JWT_SECRET;
   t.after(()=>{for(const[key,value]of previous)value===undefined?delete process.env[key]:process.env[key]=value;});
   const paths: string[] = [];
   t.mock.method(globalThis,'fetch',async (input: string | URL | Request, init?: RequestInit) => {
     const url = new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);
+    if(url.origin==='http://127.0.0.1:54321'){
+      if(url.pathname==='/rest/v1/user_integrations'&&(!init?.method||init.method==='GET'))return new Response('[]',{headers:{'Content-Type':'application/json'}});
+      if(url.pathname==='/rest/v1/production_audit_log'&&init?.method==='POST'){
+        const row=JSON.parse(String(init.body));assert.equal(row.user_id,OWNER);assert.equal(row.actor_id,OWNER);
+        assert.equal(row.action,'egress_decision');assert.equal(row.outcome,'ALLOW');
+        assert.match(row.metadata.payloadDigest,/^[a-f0-9]{64}$/);assert.equal(row.metadata.policyVersion,'xroga-egress-1');
+        assert.doesNotMatch(JSON.stringify(row),/SYNTHETIC_PROVIDER_RESULT_CREDENTIAL|fixture-account-A|fixture-message/);
+        return new Response(JSON.stringify(row),{headers:{'Content-Type':'application/json'}});
+      }
+      assert.fail('Unexpected local security receipt request');
+    }
     assert.equal(url.origin,'https://backend.composio.dev','No unexpected provider/production traffic is allowed');
     const path=url.pathname; paths.push(path);
     const response=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json'}});
@@ -87,13 +98,13 @@ test('GJ contracts use the real typed GoalContract boundary and conversational p
 });
 test('GJ business preparation finds only the relevant disconnected provider and never executes',async t=>{
   const paths=providerStub(t);
-  const result=await prepareBusinessAction({userId:OWNER,useCase:'Delete the selected Slack message'});
+  const result=await prepareBusinessAction({userId:OWNER,tenantContext:createTenantContext({userId:OWNER,via:'remote_getuser'}),useCase:'Delete the selected Slack message'});
   assert.equal(result.status,'connection_required');
   if(result.status==='connection_required')assert.equal(result.toolkit,'slack');
   assert.equal(paths.filter(path=>path.endsWith('/execute')).length,0);
 });
 test('GJ unsupported action remains unavailable instead of a fabricated success',async t=>{
-  providerStub(t,'empty'); assert.equal((await prepareBusinessAction({userId:OWNER,useCase:'Unsupported fixture operation'})).status,'unavailable');
+  providerStub(t,'empty'); assert.equal((await prepareBusinessAction({userId:OWNER,tenantContext:createTenantContext({userId:OWNER,via:'remote_getuser'}),useCase:'Unsupported fixture operation'})).status,'unavailable');
 });
 test('GJ business write rejects absent user authority and changed prepared arguments',async t=>{
   const paths=providerStub(t,'success',true),plan=preparedPlan();

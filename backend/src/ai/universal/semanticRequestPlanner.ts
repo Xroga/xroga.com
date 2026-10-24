@@ -10,11 +10,13 @@ import {
 } from '../models.js';
 
 import {
-  withProviderReservation,
-} from '../providerBudget.js';
+  withTenantModelReservation,
+} from '../tenantModelDispatch.js';
+import { requireTenantContext, requireResourceOwner, type TenantContext } from '../../security/tenantContext.js';
 
 import {
   executeWithProviderFallback,
+  isTerminalModelFailure,
   getModelRuntimeHealth,
   recordModelValidation,
   type ModelRuntimeHealth,
@@ -24,7 +26,6 @@ import {
   getUsage,
   usageToTokenUsage,
 } from '../quota.js';
-import { recordCompletedProviderUsage as recordUsage, isPostCompletionAccountingError } from '../postCompletionAccounting.js';
 
 import {
   universalCapabilityRegistry,
@@ -291,6 +292,12 @@ export async function executeHedgedPlannerFallback<T>(
       AbortController
     >();
 
+  const isTerminalDenial = isTerminalModelFailure;
+  let terminalDenial: { error: unknown } | undefined;
+  const requireNoTerminalDenial = () => {
+    if (terminalDenial) throw terminalDenial.error;
+  };
+
   const run =
     async (
       modelId: ModelId,
@@ -354,7 +361,8 @@ export async function executeHedgedPlannerFallback<T>(
             result.modelId,
         };
       } catch (error) {
-        if (isPostCompletionAccountingError(error)) {
+        if (isTerminalDenial(error)) {
+          terminalDenial ??= { error };
           for (const active of controllers.values()) active.abort();
         }
         return {
@@ -383,6 +391,7 @@ export async function executeHedgedPlannerFallback<T>(
           }
         >,
     ) => {
+      requireNoTerminalDenial();
       for (
         const [
           modelId,
@@ -483,7 +492,7 @@ export async function executeHedgedPlannerFallback<T>(
     );
   }
 
-  if (beforeHedge !== 'hedge' && !beforeHedge.ok && isPostCompletionAccountingError(beforeHedge.error)) {
+  if (beforeHedge !== 'hedge' && !beforeHedge.ok && isTerminalDenial(beforeHedge.error)) {
     if (hedgeTimer) clearTimeout(hedgeTimer);
     throw beforeHedge.error;
   }
@@ -510,7 +519,7 @@ export async function executeHedgedPlannerFallback<T>(
     const fallbackOutcome =
       await fallback;
 
-    if (!fallbackOutcome.ok && isPostCompletionAccountingError(fallbackOutcome.error)) throw fallbackOutcome.error;
+    requireNoTerminalDenial();
 
     if (
       fallbackOutcome.ok
@@ -552,7 +561,7 @@ export async function executeHedgedPlannerFallback<T>(
       ],
     );
 
-  if (!first.ok && isPostCompletionAccountingError(first.error)) throw first.error;
+  requireNoTerminalDenial();
 
   if (
     first.ok
@@ -568,7 +577,7 @@ export async function executeHedgedPlannerFallback<T>(
       ? await fallback
       : await primary;
 
-  if (!other.ok && isPostCompletionAccountingError(other.error)) throw other.error;
+  requireNoTerminalDenial();
 
   if (
     other.ok
@@ -1424,6 +1433,7 @@ export async function resolveRequestAuthorities(
 export async function planSemanticRequest(
   input: {
     userId: string;
+    tenantContext: TenantContext;
 
     message: string;
 
@@ -1448,6 +1458,10 @@ export async function planSemanticRequest(
       ];
   },
 ): Promise<SemanticRequestPlan> {
+  const actor = requireTenantContext(input.tenantContext);
+  requireResourceOwner(actor, input.userId);
+  const { tenantContext: _context, ...requestData } = input;
+  input = { ...structuredClone(requestData), tenantContext: actor };
   const social =
     await planProtocolSocialTurn(
       input,
@@ -1665,11 +1679,12 @@ export async function planSemanticRequest(
                         : messages;
 
                     const completion =
-                      await withProviderReservation(
+                      await withTenantModelReservation(
                         {
-                          userId:
-                            input
-                              .userId,
+                          // Planning uses the platform account and request-supplied
+                          // metadata. This does not confer repository/file authority.
+                          scope: { context: actor, userId: actor.userId, connectedAccountId: 'platform' },
+                          payload: { messages: attemptMessages },
 
                           modelId,
 
@@ -1684,15 +1699,13 @@ export async function planSemanticRequest(
                             'complexity',
 
                           execute:
-                            () =>
+                            dispatch =>
                               chatCompletion(
                                 modelId,
 
-                                attemptMessages,
+                                dispatch.payload.messages as ChatMessage[],
 
-                                semanticPlannerCompletionOptions(
-                                  signal,
-                                ),
+                                { ...semanticPlannerCompletionOptions(signal), beforeDispatch: dispatch.beforeDispatch },
                               ),
                         },
                       );
@@ -1700,18 +1713,7 @@ export async function planSemanticRequest(
                     finalModelId =
                       completion.modelId;
 
-                    await recordUsage(
-                      input.userId,
-
-                      completion
-                        .modelId,
-
-                      completion
-                        .inputTokens,
-
-                      completion
-                        .outputTokens,
-                    );
+                    /* Canonical dispatch already verified the atomic usage receipt. */
 
                     return completion
                       .text;
@@ -1876,7 +1878,7 @@ export async function planSemanticRequest(
         ),
     };
   } catch (error) {
-    if (isPostCompletionAccountingError(error)) throw error;
+    if (isTerminalModelFailure(error)) throw error;
     if (
       totalController
         .signal

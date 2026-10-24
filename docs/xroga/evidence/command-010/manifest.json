@@ -1,0 +1,479 @@
+{
+  "version": 1,
+  "transportLifetimeContinuation": {
+    "proof": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
+    "startingSource": "944bd5e3078be7d3c4d536baefd50c42eb83b32e",
+    "authenticatedStartingWorkflows": "6_SUCCESS_NOT_CURRENT_EDIT_ACCEPTANCE",
+    "callerCounts": {
+      "total": 134,
+      "reviewed": 14,
+      "pending": 120,
+      "highRiskReviewCandidates": 65
+    },
+    "newNarrowDisabledCallers": [
+      "46ad38b463b0beb61ba5",
+      "e2ad9aec1c5cd1e3ab27"
+    ],
+    "completeAudit": "BLOCKED_120_PENDING",
+    "allThreeSdkFinalDispositions": "PENDING_SOURCE_TRACE",
+    "currentSourceCi": "REQUIRED_ON_STABLE_FINAL_SOURCE"
+  },
+  "command": "010",
+  "status": "PARTIALLY_VERIFIED_PREPARATION_ONLY",
+  "baseSha": "fb95f76bafc1b544b6655d435cddede260d9cd99",
+  "implementationCommit": "00151e6d2dd93d2477970b7337126fcab883862c",
+  "sourceIdentityNote": "Runtime and regression changes began in 00151e6d, provenance repair in 930c1d65. The current continuation adds the third SDK floor, deterministic budget/health handling and correct database-test placement. Each CI receipt below applies only to its explicit source.",
+  "formalPhase4Admission": false,
+  "phase3Status": "BLOCKED_MANAGED_KMS_RUNTIME_CUSTODY_AND_APPLICABLE_CUTOVER",
+  "releaseState": "BLOCKED",
+  "frozenCriteriaSource": "docs/xroga/batch-1/phases/phase-4/PHASE-4-FROZEN-WORKLIST.json",
+  "criteria": [
+    {
+      "id": "XB01-C010-AC01",
+      "originalText": "All arbitrary outbound URL callers are inventoried.",
+      "status": "PARTIALLY_VERIFIED",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC02",
+      "originalText": "High-risk URL callers use central URL policy.",
+      "status": "PARTIALLY_VERIFIED",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC03",
+      "originalText": "All consequential external data egress passes egressPolicy.",
+      "status": "PARTIALLY_VERIFIED",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC04",
+      "originalText": "businessAction integrates authority + egress before provider execution.",
+      "status": "VERIFIED_LOCAL",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC05",
+      "originalText": "Tool descriptions cannot create authority.",
+      "status": "VERIFIED_LOCAL",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC06",
+      "originalText": "Malicious document/web/tool-output tests cannot override policy.",
+      "status": "VERIFIED_LOCAL",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC07",
+      "originalText": "Loopback/private/link-local/metadata SSRF tests pass.",
+      "status": "VERIFIED_LOCAL",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC08",
+      "originalText": "Redirect-to-private test passes.",
+      "status": "VERIFIED_LOCAL",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC09",
+      "originalText": "Cross-tenant external upload test passes.",
+      "status": "PARTIALLY_VERIFIED",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC10",
+      "originalText": "Credential-secret egress test passes.",
+      "status": "VERIFIED_LOCAL",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC11",
+      "originalText": "Security decision evidence contains no raw credential.",
+      "status": "VERIFIED_LOCAL",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    },
+    {
+      "id": "XB01-C010-AC12",
+      "originalText": "audit-egress-callers reports zero unexplained high-risk bypasses.",
+      "status": "NOT_VERIFIED",
+      "evidence": "docs/xroga/evidence/command-010/summary.md",
+      "liveProviderVerified": false
+    }
+  ],
+  "tests": {
+    "focusedSecurity": {
+      "tests": 52,
+      "pass": 52,
+      "fail": 0,
+      "skipped": 0,
+      "transport": "CONTROLLED_DNS_HTTP_AND_DATABASE_FIXTURES"
+    },
+    "frontendUnit": {
+      "testedSha": "9d5e0213b5a4af7a79f8ed160f023cb960cbdaa2",
+      "reuseScope": "No frontend runtime source changed in this continuation",
+      "tests": 1155,
+      "pass": 1155,
+      "fail": 0,
+      "skipped": 0,
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test --test-concurrency=4 --test-reporter=spec frontend/src/**/*.test.ts"
+    },
+    "actualProxyRoutes": {
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "transport": "ACTUAL_HANDLERS_AND_POLICY_WITH_DNS_SOCKET_FIXTURES"
+    },
+    "frontendBuild": {
+      "status": "PASS_WITH_WARNINGS",
+      "node": "22.21.1",
+      "next": "15.5.27",
+      "authRealm": "local-disposable",
+      "providerCalls": false,
+      "warnings": [
+        "Existing lint warnings",
+        "Supabase Edge Runtime process.version warning",
+        "Multiple lockfile/root inference and Tailwind content warning"
+      ]
+    },
+    "focusedFrontendLint": {
+      "status": "PASS"
+    },
+    "finalTypechecks": {
+      "status": "PASS_BACKEND_AND_FRONTEND",
+      "backendBuild": "PASS_TSC_EMIT",
+      "frontendBuild": "PASS_WITH_WARNINGS"
+    },
+    "fullBackend": {
+      "testedSha": "9d5e0213b5a4af7a79f8ed160f023cb960cbdaa2",
+      "currentSourceVerifiedByThisHistoricalRun": false,
+      "status": "PASS_WITH_REGISTERED_SKIPS",
+      "tests": 3158,
+      "pass": 3145,
+      "fail": 0,
+      "skipped": 13,
+      "durationMs": 222212,
+      "environment": "Existing runSteps/safeTestEnvironment harness, Node22.21.1",
+      "skipsNotCertified": true
+    },
+    "callerInventory": {
+      "total": 133,
+      "reviewedTransportScopesOnly": 11,
+      "reviewedUrlGuards": 10,
+      "reviewedFixedProviderTransport": 1,
+      "pending": 122,
+      "highRiskPendingCandidates": 68,
+      "strictCompleteness": "FAIL_EXPECTED_NOT_ACCEPTED"
+    },
+    "missionPolicy": {
+      "status": "PASS_MISSION_POLICY_NOT_RELEASE_AUTHORIZATION"
+    },
+    "browserDriver": {
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "skipped": 0,
+      "command": "NODE_ENV=test node --import tsx --test backend/src/synthesis/playwrightDriver.integration.test.ts",
+      "scope": "REAL_LOCAL_CHROMIUM_AGAINST_LOOPBACK_FIXTURES_NOT_PROVIDER_OR_DATABASE_PROOF"
+    },
+    "preservedPhase2Register": {
+      "status": "PASS_FINITE_PHASE_2_REGISTER",
+      "packets": 73,
+      "historicalRecords": 371,
+      "certifiedByGeneration": 0
+    },
+    "frozenPhase4Handoff": {
+      "status": "PASS_12_ORIGINAL_CRITERIA_UNCHANGED"
+    },
+    "currentStateInventory": {
+      "status": "PASS_REGENERATED_CURRENT_SOURCE_NOT_HISTORICAL_SECURITY_EVIDENCE"
+    },
+    "skipGovernance": {
+      "status": "PASS_SKIP_GOVERNANCE",
+      "registeredSkips": 20,
+      "focusedTests": 0
+    },
+    "backendCompatibility": {
+      "status": "PASS_PINNED_CLINE_GIT_AND_DOWNSTREAM_FIX_CHECKS",
+      "dependenciesAdded": 0
+    },
+    "currentFocused": {
+      "tests": 217,
+      "pass": 217,
+      "fail": 0,
+      "skipped": 0,
+      "scope": "Current sandbox, adapters, egress and three SDK call-site tests, provider policy/health and telemetry, with controlled transports",
+      "command": "NODE_ENV=test node --import tsx --test backend/src/sandbox/*.test.ts backend/src/synthesis/productionAdapters.test.ts backend/src/synthesis/projectRuntime/projectRuntime.test.ts backend/src/synthesis/browserVerificationAdapter.test.ts backend/src/ai/p0Regressions.test.ts backend/src/security/egress/*.test.ts backend/src/ai/openaiCompat.egress.test.ts backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts backend/src/ai/providerRuntime.test.ts backend/src/ai/providerPolicy.test.ts backend/src/ai/softwareAgent/xrogaAgentModelTelemetry.test.ts",
+      "priorRuntimeAndProjectionRegressions": {
+        "tests": 25,
+        "pass": 25,
+        "fail": 0,
+        "scope": "Preserved earlier checkpoint, not rerun and relabeled as current"
+      },
+      "currentScannerAndProjectionRegressions": {
+        "tests": 11,
+        "pass": 11,
+        "fail": 0
+      },
+      "backendTypecheck": "PASS",
+      "backendBuild": "PASS"
+    },
+    "realPostgresReceipt": {
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "skipped": 0,
+      "database": "DEDICATED_LOOPBACK_POSTGRESQL",
+      "containerImage": "postgres:16-alpine",
+      "imageId": "sha256:deb28ee471183cb0c303113dac9b2433c51eeeeb678def7af9a9ec5820367815",
+      "httpLayer": "CONTROLLED_POSTGREST_PROTOCOL_BRIDGE_TO_REAL_SQL_NOT_LIVE_SUPABASE",
+      "ddl": "Actual audit table/alter/immutable trigger fragments and complete immutable lifecycle migration",
+      "coverage": [
+        "persistence/readback",
+        "rollback",
+        "duplicate error",
+        "context/tenant mismatch",
+        "credential redaction",
+        "browser role denial",
+        "immutable update/delete/truncate",
+        "missing subjects",
+        "owned-file positive and committed ownership change during DNS wait"
+      ],
+      "cleanup": "TEMPORARY_CONTAINER_REMOVED",
+      "fullMigrationHistoryVerified": false
+    },
+    "fileAuthorityWaitRegression": {
+      "status": "PASS",
+      "effectCountOnRevocation": 0,
+      "scope": "Owner re-read after asynchronous permit consumption, no cross-system atomicity claim"
+    },
+    "provenanceRegression": {
+      "tests": 8,
+      "pass": 8,
+      "fail": 0,
+      "validatorWeakened": false,
+      "originalRecords": "docs/xroga/evidence/command-010/PROVENANCE-REPAIR.json"
+    },
+    "registryNetworking": {
+      "status": "FAIL_CLOSED_ONLINE_REGISTRY_INFRASTRUCTURE_REQUIRED",
+      "focusedTests": 106,
+      "pass": 106,
+      "fail": 0,
+      "realLocalContainerTests": 1,
+      "realLocalContainerPass": 1,
+      "offlineInstallVerified": true,
+      "onlineRegistryVerified": false,
+      "evidence": "docs/xroga/evidence/command-010/REGISTRY-NETWORK-PROOF.json"
+    },
+    "modelDestinationRegression": {
+      "tests": 35,
+      "pass": 35,
+      "fail": 0,
+      "scope": "Three actual SDK call sites, actual SDK JSON/SSE parsing with controlled fetch, exact provider URL and credential namespace, no redirects, budget release and health handling. Not tenant/project, DNS pinning, DLP or universal spend certification."
+    }
+  },
+  "integration": {
+    "observedMain": "326c16a7939b1153d48611a2ebd810370d64e4a8",
+    "method": "git merge-tree --write-tree HEAD FETCH_HEAD",
+    "status": "CONFLICT_NOT_INTEGRATION_VERIFIED",
+    "conflicts": [
+      "frontend/src/components/homepage-next/s02/Theater.tsx",
+      "frontend/src/components/homepage-next/s02/Workforce rename/rename",
+      "frontend/src/components/homepage-next/s02/s02.test.ts",
+      "frontend/src/components/terminal/WorkspaceLauncher.tsx",
+      "frontend/src/lib/sidebarAccountFlyouts.test.ts",
+      "frontend/src/lib/sidebarCompactNav.test.ts"
+    ],
+    "conflictResolutionAuthorized": false,
+    "separateLauncherReconciliation": {
+      "branch": "codex/xroga-phase4-ui-integration-20261023",
+      "sha": "54774d9b3e679eac03c248047978271f829a3aae",
+      "tests": 5,
+      "pass": 5,
+      "scope": "Preserves main empty workspace controls and existing scoped explicit-hide draft flush. Not merged into PR844 and not a complete main integration."
+    }
+  },
+  "ci": {
+    "previousHead": "9d5e0213b5a4af7a79f8ed160f023cb960cbdaa2",
+    "previousRuns": [
+      {
+        "id": "39849347975",
+        "name": "Growth technical publishing",
+        "conclusion": "success"
+      },
+      {
+        "id": "39849348001",
+        "name": "Xroga golden acceptance harness",
+        "conclusion": "success"
+      },
+      {
+        "id": "39849347978",
+        "name": "Xroga mission operating policy",
+        "conclusion": "success"
+      },
+      {
+        "id": "39849348079",
+        "name": "Unit tests",
+        "conclusion": "failure"
+      },
+      {
+        "id": "39849348072",
+        "name": "Xroga tenant security fixtures",
+        "conclusion": "failure"
+      }
+    ],
+    "corrections": "Current advisory source manifest and exact native conversion reviews reconciled. Original validators and historical hashes preserved.",
+    "verifiedPriorCheckpoint": {
+      "featureSha": "57e1c1bdd7af87f5ac0bf0784bb9ce7dac38c376",
+      "integratedSha": "a61df63a19adb4c851d10c3fe3f176e2a0479eca",
+      "baseSha": "fb95f76bafc1b544b6655d435cddede260d9cd99",
+      "tenantSecurity": {
+        "run": 39864120844,
+        "conclusion": "success",
+        "realPostgresTests": 3
+      },
+      "otherSuccessfulRuns": [
+        39864120849,
+        39864120964,
+        39864120892,
+        39864120879
+      ],
+      "unit": {
+        "run": 39864120832,
+        "conclusion": "failure",
+        "branchAndIntegratedFailure": "runtime-config-integrity: test-only dynamic environment cleanup was discovered as production runtime source",
+        "originalProvenanceFailuresResolved": true,
+        "backendDeclaredTests": 3161,
+        "frontendDeclaredTests": 1155,
+        "buildsAndTypechecks": "PASS"
+      },
+      "correction": "Move the standalone, explicitly invoked DB test out of backend/src to backend/tests and regenerate runtime facts. No discovery, binding or acceptance validator changed. All three moved real PostgreSQL tests pass locally."
+    },
+    "acceptedStartingCheckpointCi": {
+      "featureSha": "f040165e69222990ea3d03d90057dcbec1d501d7",
+      "mergeSha": "f482cd0c54a54ad7a7ddf2db30d1efd0079f9c24",
+      "baseSha": "fb95f76bafc1b544b6655d435cddede260d9cd99",
+      "golden": {
+        "run": 39867159524,
+        "conclusion": "success"
+      },
+      "unit": {
+        "run": 39867159485,
+        "conclusion": "success",
+        "branchAndRepeatedIntegrated": true
+      },
+      "scope": "These requested existing runs were authenticated without duplicate dispatch. They do not certify this later registry/model source."
+    },
+    "currentSourceStatus": "PENDING_CHANGED_SOURCE_GITHUB_VERIFICATION",
+    "previousPhase3ReceiptsReusedAsCurrent": false
+  },
+  "realDatabasePersistenceVerified": "LOCAL_POSTGRES_ONLY_WITH_PROTOCOL_BRIDGE",
+  "cloudResourcesCreated": false,
+  "providerEffects": false,
+  "productionChanges": false,
+  "spend": 0,
+  "merge": false,
+  "deploy": false,
+  "knownGaps": [
+    "121 unclosed AST caller candidates, including 67 dynamic/SDK high-risk candidates, not asserted as 68 demonstrated vulnerabilities",
+    "Remaining consequential adapters and upload caller migration",
+    "Online registry-only execution is fail closed until a restricted worker is independently verified. Offline install under kernel network none is proven.",
+    "Model tenant/account/project/reservation identity and complete egressPolicy binding remain open despite fixed provider destinations and tested credential floors.",
+    "Full deployed Supabase/PostgREST and full migration/production parity remain unverified. Local PostgreSQL receipt and ownership race proof is now available.",
+    "Current main has six UI conflict groups. WorkspaceLauncher behavior reconciliation is separately committed, remaining main-history integration is not verified.",
+    "Phase 3 actual managed-KMS runtime custody and applicable cutover"
+  ],
+  "modelDispatchContinuation": {
+    "reference": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
+    "proof": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
+    "focusedTests": {
+      "passed": 41,
+      "failed": 0,
+      "skipped": 0
+    },
+    "provenanceTests": {
+      "passed": 18,
+      "failed": 0,
+      "skipped": 0
+    },
+    "backendTypecheck": "PASS",
+    "callers": {
+      "total": 133,
+      "reviewed": 12,
+      "pending": 121,
+      "highRiskCandidates": 67
+    },
+    "threeSdkFinalDispositions": "PENDING_SOURCE_TRACE",
+    "sourceBoundCi": "PENDING_FOR_CHANGED_SOURCE"
+  },
+  "verification": {
+    "accepted2a797dc1": {
+      "featureSha": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
+      "mergeSha": "8223e449f20d07033268f703ba242167909e77ae",
+      "baseSha": "fb95f76bafc1b544b6655d435cddede260d9cd99",
+      "allSixConclusions": "success",
+      "runs": [
+        39940487767,
+        39940487784,
+        39940487779,
+        39940487789,
+        39940487837,
+        39940487838
+      ],
+      "scope": "Prior-source authenticated evidence only, not certification of this continuation"
+    },
+    "authenticated9379a2f1": {
+      "sourceSha": "9379a2f105bb59b787f164836de563655657bc6d",
+      "integratedSha": "bef80900004e13ca3c2043f2edb1eddcaf004e40",
+      "baseSha": "fb95f76bafc1b544b6655d435cddede260d9cd99",
+      "unitRun": 39954786890,
+      "unitConclusion": "success",
+      "integratedConclusion": "success",
+      "fullBaselines": 4,
+      "stagesEach": 21,
+      "sourceTreeMutated": false,
+      "scope": "Authenticated prior source only, no duplicate workflows and no new-source claim"
+    }
+  },
+  "repoContextContinuation": {
+    "proof": "docs/xroga/evidence/command-010/REPO-CONTEXT-PROOF.json",
+    "focusedTests": 40,
+    "failures": 0,
+    "skips": 0,
+    "callerCounts": {
+      "total": 133,
+      "reviewed": 12,
+      "pending": 121,
+      "highRiskReviewCandidates": 67
+    },
+    "currentSourceCi": "PENDING_CHANGED_SOURCE_VERIFICATION",
+    "allThreeSdkFinalDispositions": "PENDING_SOURCE_TRACE"
+  },
+  "softwareAgentSdkContinuation": {
+    "reference": "f6dfa28e88238a40e94f71ff0086dc841e4f5761",
+    "proof": "docs/xroga/evidence/command-010/SOFTWARE-AGENT-SDK-CONTINUATION.md",
+    "callerId": "4c899876b9e3850af11b",
+    "callerCounts": {
+      "total": 134,
+      "reviewed": 15,
+      "pending": 119,
+      "highRiskReviewCandidates": 64
+    },
+    "completeAudit": "BLOCKED_119_PENDING",
+    "scope": "SCOPED_IMPLEMENTED_GUARD_NOT_RELEASE_OR_PHASE_ACCEPTANCE",
+    "newSourceCi": "REQUIRED",
+    "newDisposableAssertion": "softwareAgentSdk.local.integration.ts"
+  }
+}

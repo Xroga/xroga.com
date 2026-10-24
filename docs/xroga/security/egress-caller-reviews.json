@@ -1,0 +1,395 @@
+{
+  "version": 1,
+  "scope": "PREPARATORY_URL_BOUNDARY_REVIEW_NOT_COMMAND010_ACCEPTANCE",
+  "reviews": [
+    {
+      "id": "46ad38b463b0beb61ba5",
+      "callSha256": "4b303195d0968754dfb611ec02a4d78c8bbf88442db79ef84c6d6b339b831074",
+      "sourceFileSha256": "f06715ebdce2f87406ba021e872f191d93460bc9e07f4e3b961c14a291bed719",
+      "disposition": "DISABLED_WITH_PROOF",
+      "trust": "NO_REACHABLE_PRODUCTION_IMPORTER_AND_CLOSED_PRODUCTION_LEGACY_WINDOW_ONLY_NOT_APPROVAL_OF_FUTURE_MIGRATION_CALLERS",
+      "tenantAuthority": "CURRENT_KNOWN_SOURCE_GRAPH_HAS_ONLY_TEST_CALLERS._EXPLICIT_LEGACY_WRITES_REMAIN_UNCERTIFIED_IF_REINTRODUCED",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/legacyGitHubUploadReachability.test.ts",
+          "marker": "legacy GitHub mirror writer has no production importer or invocation in the tracked source graph",
+          "sha256": "2d5082e73c3f8c0aca20a002eb53c960dca073ea9c4dd531eb1a07efb044e910"
+        },
+        {
+          "path": "backend/src/services/integrations/credentialUploadBoundary.test.ts",
+          "marker": "actual legacy credential upload refuses public/unknown buckets and binds both upload attempts to original owner",
+          "sha256": "6562354400b3c747a1efb8257b28f70489a445e13401824699aca8836eb99cc8"
+        }
+      ]
+    },
+    {
+      "id": "e2ad9aec1c5cd1e3ab27",
+      "callSha256": "9ed3fbe253284de0c824dd74feff9ecb99040484501a69e6b59246c9e9f44037",
+      "sourceFileSha256": "f06715ebdce2f87406ba021e872f191d93460bc9e07f4e3b961c14a291bed719",
+      "disposition": "DISABLED_WITH_PROOF",
+      "trust": "NO_REACHABLE_PRODUCTION_IMPORTER_AND_CLOSED_PRODUCTION_LEGACY_WINDOW_ONLY_NOT_APPROVAL_OF_FUTURE_MIGRATION_CALLERS",
+      "tenantAuthority": "CURRENT_KNOWN_SOURCE_GRAPH_HAS_ONLY_TEST_CALLERS._EXPLICIT_LEGACY_WRITES_REMAIN_UNCERTIFIED_IF_REINTRODUCED",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/legacyGitHubUploadReachability.test.ts",
+          "marker": "legacy GitHub mirror writer has no production importer or invocation in the tracked source graph",
+          "sha256": "2d5082e73c3f8c0aca20a002eb53c960dca073ea9c4dd531eb1a07efb044e910"
+        },
+        {
+          "path": "backend/src/services/integrations/credentialUploadBoundary.test.ts",
+          "marker": "actual legacy credential upload refuses public/unknown buckets and binds both upload attempts to original owner",
+          "sha256": "6562354400b3c747a1efb8257b28f70489a445e13401824699aca8836eb99cc8"
+        }
+      ]
+    },
+    {
+      "id": "f0eab43244d6d3c88de8",
+      "callSha256": "8a2096fa7242a30e44a83faf4b81e3998b2107f080574f87fe9905f4658a425f",
+      "sourceFileSha256": "998cbd6efbdb066f493234d2d6960539151f43e33dbfe2baed81183fbb68578a",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FIXED_LOCAL_CONTAINER_CLI_VERSION_HEALTH_PROBE_ONLY_NOT_SANDBOX_EXECUTION_OR_NETWORK_CERTIFICATION",
+      "tenantAuthority": "ONLY_CONTAINER_RUNTIME_PROBE_CALLS_FIXED_VERSION_ARGUMENT_WITH_SCRUBBED_ENVIRONMENT_NO_TENANT_PAYLOAD_OR_CREDENTIALS",
+      "evidence": [
+        {
+          "path": "backend/src/sandbox/sandboxProbeBoundary.test.ts",
+          "marker": "actual sandbox probe child receives only fixed version argument and a scrubbed environment",
+          "sha256": "0facd9f9ac6c0ebb27b0b2d5f42368f16b38606235f5a886762049712c1f6a73"
+        }
+      ]
+    },
+    {
+      "id": "5fdd141576170dfae26b",
+      "callSha256": "e2d2bde2675e08b6f28f22840fe41137544037b1fe6ef85de69c7e15db91d066",
+      "sourceFileSha256": "a41f6fa55c00275359176456e6c0fa175f2ad7a5209b4d529cc465494725e565",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "OWNED_TEXT_FILE_ADAPTER_ONLY_NOT_UNMIGRATED_UPLOAD_OR_LIVE_PROVIDER_CERTIFICATION",
+      "tenantAuthority": "ISSUED_CONTEXT_PARENT_FILE_OWNER_READBACK_AND_CONSUMED_EXACT_AUTHORITY_PERMIT_AT_DISPATCH",
+      "evidence": [
+        {
+          "path": "backend/src/security/egress/fileEgress.test.ts",
+          "marker": "executeOwnedFileEgress",
+          "sha256": "57cd5c48604400c9a94d8d6b29a891ab6566d4141a831365582420873f6d657b"
+        },
+        {
+          "path": "backend/tests/securityReceipt.local.integration.ts",
+          "marker": "executeOwnedFileEgress",
+          "sha256": "5ac2b201b759b261d5ddeaf223bf0ecd296a795257017f0ba73bdeaacd01de53"
+        }
+      ]
+    },
+    {
+      "id": "038ced12b0f74e8d5e0f",
+      "callSha256": "2246d32bbb9462be893f84093c1be641b5ade15f2b11515899e2594063873708",
+      "sourceFileSha256": "3e5456bd309138f609f9cf2fc9077918714108fc7e0fe0d5cfdb3f186226d8e1",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FIXED_PROVIDER_ENDPOINT_AND_NO_REDIRECT_ONLY_NOT_DNS_OR_FULL_EGRESS_CERTIFICATION",
+      "tenantAuthority": "THREE_UPSTREAM_SDK_TENANT_ACCOUNT_AUTHORITY_AND_DATA_OBLIGATIONS_REMAIN_PENDING",
+      "evidence": [
+        {
+          "path": "backend/src/ai/providerPolicy.ts",
+          "marker": "assertModelProviderDestination",
+          "sha256": "c496870604060d04ede920af1a8b06e67ad0749c8330788568f96f4a0d6dea9f"
+        },
+        {
+          "path": "backend/src/ai/openaiCompat.egress.test.ts",
+          "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
+          "sha256": "649092d8bd97b3fed5a12305399a7d577b2c1b4a35ac3e952149cf6a5f834e0a"
+        }
+      ],
+      "previousGenericSdkReview": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceFileSha256": "a558327133bf32c58403390f5bac2ab9411c26db42cd7fc99055bf2a3c91ac0a",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerPolicy.ts",
+            "marker": "assertModelProviderDestination",
+            "sha256": "c496870604060d04ede920af1a8b06e67ad0749c8330788568f96f4a0d6dea9f"
+          },
+          {
+            "path": "backend/src/ai/openaiCompat.egress.test.ts",
+            "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
+            "sha256": "8c94de6b687e9f709217f09a58ccc5f148094a3125e2b74af85e73c42dc1b859"
+          }
+        ],
+        "scope": "HISTORICAL_REVIEW_SOURCE_NOT_CURRENT_EXECUTION_PROOF"
+      }
+    },
+    {
+      "id": "0e0e3527ad05d7405c68",
+      "callSha256": "e3c3def0a39603c733ecb26163e672be02388db71ca7cd804feb8390d9b4afc1",
+      "sourceFileSha256": "c50dc741653646df6b6dddc6ec1ba4337fa3b3a48a94b5d9a66afe52b81cbd46",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "DNS admits no mixed private answers",
+          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+        }
+      ]
+    },
+    {
+      "id": "eae67182cbfc4c6f9091",
+      "callSha256": "8dd30df44a4f89a7f1a994404d767095242ebbcc37d5db91115c26657a33b28c",
+      "sourceFileSha256": "6d61d603fb3585e28e8fd6ccfbc0077d21ccd55452439a819e4b0f621a28c7da",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "DNS admits no mixed private answers",
+          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+        }
+      ]
+    },
+    {
+      "id": "cd9013aa3fb869fdac91",
+      "callSha256": "8c5affa940c508ab14fa41eb3fc9d6b23970e1ece00ac92872d60e44d46a9fd3",
+      "sourceFileSha256": "4fb72f464e770db5da19b4bd6f9351113eb94d0df9de64513245ccfd7c30f018",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "DNS admits no mixed private answers",
+          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+        }
+      ]
+    },
+    {
+      "id": "83834d34bdcfc0b016bb",
+      "callSha256": "f4ced48fe2f39d5c35d205cc89077b6d655b3d9454979506464e39904bfe6535",
+      "sourceFileSha256": "4fb72f464e770db5da19b4bd6f9351113eb94d0df9de64513245ccfd7c30f018",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "DNS admits no mixed private answers",
+          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+        }
+      ]
+    },
+    {
+      "id": "7415b9c13ced3db60b0a",
+      "callSha256": "5bd3f992f97bfd084657a2b98e941258e3963c0ecc7ff011f5b917baff0a25c3",
+      "sourceFileSha256": "70af3217e8620ae65efcdc418f775c8c36feff10d4d81d8e204cf645284fc625",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "DNS admits no mixed private answers",
+          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+        }
+      ]
+    },
+    {
+      "id": "d5061137673f9bba1398",
+      "callSha256": "92cbd751d9f7418596a52898fe4f7afc4532e6d2a82678650962cd461c406822",
+      "sourceFileSha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "DNS admits no mixed private answers",
+          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+        }
+      ]
+    },
+    {
+      "id": "73bf2c76c1358dacf6a0",
+      "callSha256": "e0582bb3493b1402c331c06ae96b729e681215194f1129938e5edc8bc6b52f4e",
+      "sourceFileSha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+        },
+        {
+          "path": "backend/src/security/egress/publicPost.test.ts",
+          "marker": "upload pins the admitted address",
+          "sha256": "ad473aabd5f6df2b4eb0732949f09215e92e584a9a19b8b900755c6cbf479d18"
+        }
+      ]
+    },
+    {
+      "id": "be1e785f2ee1037bb1c0",
+      "callSha256": "b749cc0e9a861b7fc060b881bbab4985fdb9c9db13ff4f487fb6775dfd7ff283",
+      "sourceFileSha256": "32a340e8c942c965f0ec08179234ee7431efb32f77dceb6a809ee7b1b9451293",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "DNS admits no mixed private answers",
+          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+        }
+      ]
+    },
+    {
+      "id": "651ba21f8a976701efbf",
+      "callSha256": "a8f19669cd8ca23be192dfe9b090eb42e168b12aba3a041c4d7cd6d59380a658",
+      "sourceFileSha256": "51467588b07c73bb6b06bd1434fe2d126388635b053cecc681587a3c11588be1",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "URL_TRANSPORT_BOUNDARY_ONLY_NOT_FULL_ACTION_OR_TENANT_CERTIFICATION",
+      "tenantAuthority": "EXISTING_CALLER_REQUIREMENTS_RETAINED_NOT_CERTIFIED_BY_URL_TEST",
+      "evidence": [
+        {
+          "path": "backend/src/security/boundedPublicGet.ts",
+          "marker": "admitPublicTarget",
+          "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
+        },
+        {
+          "path": "backend/src/security/boundedPublicGet.test.ts",
+          "marker": "DNS admits no mixed private answers",
+          "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+        }
+      ]
+    },
+    {
+      "id": "4c899876b9e3850af11b",
+      "callSha256": "1ba7ccd42498525ef3a4c149f12d7db2bddb245ea2c228dd11ec75a14011d9a6",
+      "sourceFileSha256": "19228038780105d23a8365a5551c5c5715e1fb71839443ed483cd93ef34bf93c",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "ACTUAL_SOFTWARE_AGENT_SDK_ISSUED_SCOPE_WIRE_AND_ATOMIC_RECEIPT_NOT_OTHER_SDK_OR_TOOL_EFFECT_CERTIFICATION",
+      "tenantAuthority": "SOLE_TRACKED_PRODUCTION_IMPORTER_REQUIRES_ORIGINAL_ISSUED_OWNER_CONTEXT_CANONICAL_PROJECT_RUN_ACCOUNT_REVISION_AND_RESERVATION_RECHECK_BEFORE_EACH_WIRE_COMPLETION_EVENTS_REQUIRE_VERIFIED_ATOMIC_RECEIPT",
+      "evidence": [
+        {
+          "path": "backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts",
+          "marker": "tracked production SoftwareAgent SDK caller carries original identity through both universal branches",
+          "sha256": "29f6423cf26a0c1e3672cc7cf8861f6c978efef1773c6d39e39fff17604858c7"
+        },
+        {
+          "path": "backend/src/ai/tenantModelDispatch.test.ts",
+          "marker": "SDK retry rechecks revocation",
+          "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
+        },
+        {
+          "path": "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
+          "marker": "Each completed turn must have one verified atomic receipt",
+          "sha256": "d14d602244ac9ceac7c31c2aa6c9f359eac10ff6a8aac0229d625aa8bc1cf348"
+        }
+      ],
+      "previousGenericSdkReview": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceFileSha256": "19228038780105d23a8365a5551c5c5715e1fb71839443ed483cd93ef34bf93c",
+        "evidence": [
+          {
+            "path": "backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts",
+            "marker": "tracked production SoftwareAgent SDK caller carries original identity through both universal branches",
+            "sha256": "29f6423cf26a0c1e3672cc7cf8861f6c978efef1773c6d39e39fff17604858c7"
+          },
+          {
+            "path": "backend/src/ai/tenantModelDispatch.test.ts",
+            "marker": "SDK retry rechecks revocation",
+            "sha256": "c3b3f0c500752064df2fcd5b921198adf36d5398077830c408d11725adecf651"
+          },
+          {
+            "path": "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
+            "marker": "Each completed turn must have one verified atomic receipt",
+            "sha256": "d14d602244ac9ceac7c31c2aa6c9f359eac10ff6a8aac0229d625aa8bc1cf348"
+          }
+        ],
+        "scope": "HISTORICAL_REVIEW_SOURCE_NOT_CURRENT_EXECUTION_PROOF"
+      }
+    },
+    {
+      "id": "31380a8d5b9454a98a98",
+      "callSha256": "fedd059e41f3487339705716fdb7a912b28962fccd7daa038b5fa87580cc0eca",
+      "sourceFileSha256": "3e5456bd309138f609f9cf2fc9077918714108fc7e0fe0d5cfdb3f186226d8e1",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "SHARED_JSON_SDK_DISPATCH_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
+      "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_OR_EXISTING_BOUNDED_ANONYMOUS_GUEST_LEASE_EACH_WIRE_RECHECKS_CURRENT_BINDING_COMPLETION_REQUIRES_SETTLEMENT_AND_ATOMIC_RECEIPT_OR_VERIFIED_CONSERVATIVE_GUEST_BUDGET_NO_RAW_ID_OR_CALLBACK_AUTHORITY",
+      "evidence": [
+        {
+          "path": "backend/src/ai/genericSdkAdmission.test.ts",
+          "marker": "31380a8d5b9454a98a98",
+          "sha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
+        },
+        {
+          "path": "backend/src/ai/tenantModelDispatch.test.ts",
+          "marker": "Exactly one canonical atomic receipt per completion",
+          "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
+        },
+        {
+          "path": "backend/src/ai/operationsSdkAdmission.test.ts",
+          "marker": "No unauthorized retry, fallback or unaccounted publication",
+          "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
+        }
+      ]
+    },
+    {
+      "id": "9c345e07b723c086440e",
+      "callSha256": "947695aec368f03b9176f97c4a6f418234ba9b7a641099d4efcad35b0b4d5c30",
+      "sourceFileSha256": "3e5456bd309138f609f9cf2fc9077918714108fc7e0fe0d5cfdb3f186226d8e1",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "SHARED_SSE_SDK_DISPATCH_AND_DEFERRED_ACCOUNTED_PUBLICATION_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
+      "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_EACH_WIRE_RECHECKS_CURRENT_OWNER_PROJECT_RUN_CREDENTIAL_AUTHORITY_BINDING_NO_PUBLIC_DELTAS_UNTIL_SETTLEMENT_AND_EXACT_ATOMIC_RECEIPT_CANCELLATION_REVOCATION_AND_PUBLICATION_FAILURE_CANNOT_RETRY_MODEL",
+      "evidence": [
+        {
+          "path": "backend/src/ai/genericSdkAdmission.test.ts",
+          "marker": "9c345e07b723c086440e",
+          "sha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
+        },
+        {
+          "path": "backend/src/ai/tenantModelDispatch.test.ts",
+          "marker": "No successful stream publication without settlement and a valid atomic receipt",
+          "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
+        },
+        {
+          "path": "backend/src/ai/operationsSdkAdmission.test.ts",
+          "marker": "No unauthorized retry, fallback or unaccounted publication",
+          "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
+        }
+      ]
+    }
+  ]
+}

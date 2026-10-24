@@ -209,25 +209,28 @@
     },
     {
       "path": "backend/src/security/boundedPublicGet.ts",
-      "sourceSha256": "9a20c8cc0e496f893a18d79dba79b4beac820b9001bc1b06d2fc2772c70eee44",
+      "sourceSha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472",
       "callIds": [
-        "5383a9cea2b6b4c93a63"
+        "397bc5f68faa782a225a",
+        "4666625d956886af8791",
+        "35dad2a7210ffe5b9e49"
       ],
       "disposition": "NOT_PERSISTENCE",
-      "authority": "This candidate is Node Buffer.from converting an already received stream chunk before byte accounting. No database, storage bucket, identity or service-role client is accessed at this expression.",
-      "reason": "Source tracing proves a byte conversion rather than persistence. The enclosing inactive GET helper has separate SSRF and byte/time fixtures, but this disposition certifies neither future callers nor complete egress policy.",
+      "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
+      "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",
       "evidence": [
         {
           "path": "backend/src/security/boundedPublicGet.ts",
           "marker": "const chunk = Buffer.isBuffer(item.value) ? item.value : Buffer.from(item.value);"
         }
-      ]
+      ],
+      "priorReviewReference": "docs/xroga/evidence/command-010/PROVENANCE-REPAIR.json"
     },
     {
       "path": "backend/src/ai/benchmarkRunner.ts",
-      "sourceSha256": "dbc904d809e4c1ea171b0f15eb9d1706028562a848807498e8f8f32747a51184",
+      "sourceSha256": "a5208cdf668988cb24fe1e9c49c9144e3ee2da31dff0a077105dd3c5329faf33",
       "callIds": [
-        "9506c72ea0f341c2a492"
+        "cbb864f99fab4cd08610"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "Existing OperationsService authorized action/claim selects its fixed benchmark adapter, deterministic model/case catalog and existing caps. This record method does not execute models. It validates and inserts only fixed platform measurement flags, identifiers and numeric counters. No owner argument, customer prompt/source or credential is persisted. This exception authorizes only metadata persistence, never paid execution.",
@@ -275,6 +278,14 @@
         "originalReviewReason": "Current source validates finite numeric/boolean/time result evidence before insert and reports partial persistence without retrying the provider.55 focused tests pass. Platform-global upstream benchmark approval/budget, registered scope, real database receipts, authentic producer provenance and replay remain unresolved. No paid benchmark ran in this mission.",
         "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
         "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+      },
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "dbc904d809e4c1ea171b0f15eb9d1706028562a848807498e8f8f32747a51184",
+        "callIds": [
+          "9506c72ea0f341c2a492"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
       }
     },
     {
@@ -695,10 +706,10 @@
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "sourceSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
+      "sourceSha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
       "callIds": [
-        "b4b2b91f3280a140691a",
-        "48c115e3fcc79a824240"
+        "55ac9b0f3f9ba972ca8c",
+        "2360912af68a9536c836"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The private integration reader is used only by the existing authenticated GitHub routes and admitted pipeline consumer. Original server actor is retained for canonical token and owner-filtered metadata, then canonical token is re-read after metadata. Missing, disconnected, replaced or unavailable authority returns no integration, before ghFetch. The actual repo-state router uses authenticated req.userId regardless of query actor and passes this exact selected token to its existing repository reader. Fixed owner metadata cannot replace the credential. The provider stub refuses every GET without forwarding any network call.",
@@ -823,9 +834,9 @@
     },
     {
       "path": "backend/src/synthesis/universalEntrypoint.ts",
-      "sourceSha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4",
+      "sourceSha256": "3a4002a2359e8fccf4f10791213d4b2d15f37a0e2e02a413ac938fc4fc842a84",
       "callIds": [
-        "10b5e279dd241e2f40ec"
+        "411b7b4d8d600d797423"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Only the admitted runBuildPipeline invokes this production default. Its original issued context and owner are checked before opts are copied, and the actual universal call allocates a fresh owner/run/project literal. The unchanged entrypoint passes its only private SDK result directly into universalStore with an internal issued context for that server-admitted subject. Privileged stores are per invocation, never the global memory singleton. All seven actual direct receiving store operations and their owned-write subchain independently verify. Real default factory use constructs different owner instances, rejects primitive/cloned issuance and preserves all existing owned/foreign project/run/spec/index and contention assertions. No injected arbitrary client, model output or public body grants this default subject.",
@@ -864,6 +875,14 @@
           "OB-4a588dd074761414:verified-construction-tryUniversalBuild"
         ],
         "scope": "EXACT_ORIGINAL007_ROUTING_CONSTRUCTION_AND_ENDPOINTS_NEW_SOURCE_ACCEPTANCE_REQUIRED"
+      },
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "91c22bc5ac1fd79eeeaafab69134d17009c7cc0d2bfba101411dde88625b46a2",
+        "callIds": [
+          "cfba5e514ab70426438c"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
       }
     },
     {
@@ -3335,67 +3354,22 @@
     },
     {
       "path": "backend/src/ai/attachments.ts",
-      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
+      "sourceSha256": "c50dc741653646df6b6dddc6ec1ba4337fa3b3a48a94b5d9a66afe52b81cbd46",
       "callIds": [
-        "cd2b486a9d7f060cd3bc"
+        "097f3b056977288927ab",
+        "a014c3fc158d8544965e",
+        "6dad3dd6bb66b6180fa5"
       ],
       "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected the receiver and surrounding expression in fetchAsBuffer. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+      "authority": "Re-traced all listed expressions to the native unshadowed Buffer.from implementation. Each performs local stream, body snapshot, data-URL or DOCX byte conversion. None is a database, storage bucket or service-role receiver.",
+      "reason": "Current-source conversion-only review. The removed Buffer.from(ab) is preserved with the exact original review in PROVENANCE-REPAIR.json. Network effects, ownership, approval, data classification and complete Command010 acceptance remain separate open obligations.",
       "evidence": [
         {
           "path": "backend/src/ai/attachments.ts",
-          "marker": "    if (/;base64/i.test(meta)) return Buffer.from(data, 'base64');\n    return Buffer.from(decodeURIComponent(data), 'utf8');\n  }"
+          "marker": "if (/;base64/i.test(meta)) return Buffer.from(data, 'base64');"
         }
-      ]
-    },
-    {
-      "path": "backend/src/ai/attachments.ts",
-      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
-      "callIds": [
-        "e21e7f85f2e0a5a7982f"
       ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected the receiver and surrounding expression in fetchAsBuffer. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
-      "evidence": [
-        {
-          "path": "backend/src/ai/attachments.ts",
-          "marker": "    return Buffer.from(decodeURIComponent(data), 'utf8');\n  }\n  assertSafeAttachmentUrl(url);"
-        }
-      ]
-    },
-    {
-      "path": "backend/src/ai/attachments.ts",
-      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
-      "callIds": [
-        "5584ba3ed9e6d2fa054a"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected the receiver and surrounding expression in fetchAsBuffer. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
-      "evidence": [
-        {
-          "path": "backend/src/ai/attachments.ts",
-          "marker": "  return Buffer.from(ab);\n}\n"
-        }
-      ]
-    },
-    {
-      "path": "backend/src/ai/attachments.ts",
-      "sourceSha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5",
-      "callIds": [
-        "a60c96422aaa959a471d"
-      ],
-      "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected the receiver and surrounding expression in extractDocxText. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
-      "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
-      "evidence": [
-        {
-          "path": "backend/src/ai/attachments.ts",
-          "marker": "      if (method === 0) xml = Buffer.from(data);\n      else if (method === 8) xml = inflateRawSync(data);\n      else continue;"
-        }
-      ]
+      "priorReviewReference": "docs/xroga/evidence/command-010/PROVENANCE-REPAIR.json"
     },
     {
       "path": "backend/src/ai/black-hole/toolRegistry.ts",
@@ -3431,9 +3405,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+      "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
       "callIds": [
-        "01d5efe9b761bc670212"
+        "af88e0f5ab6048f75011"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3459,13 +3433,21 @@
             "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
           }
         ]
+      },
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+        "callIds": [
+          "6c962371859b256ff96c"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
       }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+      "sourceSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
       "callIds": [
-        "944a58bb15dca85b3ddd"
+        "863e45f48048017eb977"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3491,6 +3473,14 @@
             "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
           }
         ]
+      },
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
+        "callIds": [
+          "8db8b524179b45694274"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
       }
     },
     {
@@ -3671,9 +3661,9 @@
     },
     {
       "path": "backend/src/middleware/runtimePreviewGateway.ts",
-      "sourceSha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106",
+      "sourceSha256": "2f42e628938cf4bee850bea66c8d7c44de087422dd14f7dec67765c80de9ce57",
       "callIds": [
-        "b9d29af2f2ef47d2dbd8"
+        "5f28d665d687ff7e0502"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in attachRuntimePreviewWebSocketGateway. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3710,12 +3700,13 @@
     },
     {
       "path": "backend/src/sandbox/flyMachineSandbox.ts",
-      "sourceSha256": "3bdef3facc61c0c324b73d3fd06d93cac3b764e9b3dcd0309874ed4bc7e86ca6",
+      "sourceSha256": "3317c592f7c0a68ad945ff4dc654360f3a0621e1ed9f5dd65e6ec7d57953af3e",
       "callIds": [
-        "0d4114d4eca28b97f4cf"
+        "6e872b93785f20224da7"
       ],
       "disposition": "NOT_PERSISTENCE",
-      "authority": "Inspected the receiver and surrounding expression in buildMachineConfig. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+      "authority": "Inspected the native Buffer.from(file.content, utf8).toString(base64) conversion in buildMachineConfig. That entire method has the same AST-text SHA256 before and after registry-only refusal. This is not the adjacent provider transport or persistence.",
+      "priorReviewReference": "docs/xroga/evidence/command-010/REGISTRY-NETWORK-PROOF.json",
       "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
       "evidence": [
         {
@@ -3758,9 +3749,9 @@
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "sourceSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
+      "sourceSha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
       "callIds": [
-        "a6b38f59fd65dcf93b63"
+        "d1009c426dd9153743b7"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in fetchRepoTextFile. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3774,9 +3765,9 @@
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "sourceSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
+      "sourceSha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
       "callIds": [
-        "ff18538f080dddb2c506"
+        "ad1b1dafdbd324ceed15"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in decodeRepositoryTextBlob. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3982,9 +3973,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "sourceSha256": "9474dbe5e7b780c55d291fdd2d5e51f21e893a9d13cfbafbd70f601bc3ad2d63",
+      "sourceSha256": "a1fe5bf2ab884ad9c0b1b9784418644af5585cd8012b3e7c623757d6f0692d41",
       "callIds": [
-        "b60d7d17a4b3923a0093"
+        "22f13665d50eefc35d52"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in create. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3998,9 +3989,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "sourceSha256": "9474dbe5e7b780c55d291fdd2d5e51f21e893a9d13cfbafbd70f601bc3ad2d63",
+      "sourceSha256": "a1fe5bf2ab884ad9c0b1b9784418644af5585cd8012b3e7c623757d6f0692d41",
       "callIds": [
-        "7e77a9e9c61c1c49cb12"
+        "7d5759807b07e44830bb"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in writeFiles. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -4014,9 +4005,9 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "sourceSha256": "9474dbe5e7b780c55d291fdd2d5e51f21e893a9d13cfbafbd70f601bc3ad2d63",
+      "sourceSha256": "a1fe5bf2ab884ad9c0b1b9784418644af5585cd8012b3e7c623757d6f0692d41",
       "callIds": [
-        "f783b8237adeb061973a"
+        "ab91c7c3506f3c3dc16d"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in readFile. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -9482,10 +9473,10 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
       "callIds": [
-        "1169e490665cdec7b3a3",
-        "2fbd469f16851f3b71ab"
+        "d406c0b568fd6ec5e544",
+        "de6707af035c2d7fe760"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "No active production consumer exists for this export and none is invented. Every callable invocation now requires the original WeakSet-issued tenant context before SDK access. syncPlanBudget derives only that subject, delegates the unchanged fixed service-only set_user_ai_plan_budget RPC and reads the existing owner-bound validated usage row to confirm exact tier/budget before touching its local usage floor. activatePaidCycle requires its input subject to equal that issued actor and snapshots all input, including Dates, before waits. Its unchanged canonical service-only activation routine retains owner-keyed advisory serialization and returns the paid cycle. The helper validates exact original subject, UUID, paid kind, evidence reference and captured period before reading only that same subject status. All other accounting/pacing/read functions and module bytes are independently identical to accepted5722.",
@@ -9509,24 +9500,24 @@
         }
       ],
       "structuredOrigin": {
-        "id": "OB-5e9d521ebb7253b5",
+        "id": "OB-e316498540d10d15",
         "callIds": [
-          "1169e490665cdec7b3a3",
-          "2fbd469f16851f3b71ab",
-          "6f058d1957df9ddef58e",
-          "263d64635be54643daaf",
-          "28c7a352253f65a4d63b",
-          "ec7738731d0c6be00798",
-          "0882d94061fd33117251",
-          "ba74f371a047c8305b9a",
-          "9e5ee446a0fb192d8f39",
-          "3a904e92ac521ad89ef0",
-          "495469d5a798cf52f829",
-          "4ac1c2be7bfccf034c8e",
-          "a50ebf735a3e2d6e8587",
-          "e5f59ad9b6097a1bb115",
-          "8b8545e8ee1fbbfb3fbf",
-          "60a088c3f2c03ec9402c"
+          "d406c0b568fd6ec5e544",
+          "de6707af035c2d7fe760",
+          "5ffa627faeaa6803aab8",
+          "7fb0d4feb0707259368b",
+          "abe158166765391a38bb",
+          "cd6fb0dc4aecaa924a23",
+          "48010eb67a70f9160a4e",
+          "c79d0afb3ebeabc76c2d",
+          "f8840556255dc425215c",
+          "3c5c04328c11bf512dba",
+          "88e420183bcb296b87a4",
+          "df66c5e789c6e8f1dd46",
+          "1523f7744eed6083f0b6",
+          "4c1b535638e8a0a197f8",
+          "88789f83425415184ffc",
+          "5fc4041577ba475ddde3"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -9687,6 +9678,15 @@
           "046674e946dedc2dbd0a",
           "f7d8e33dac1c0de787f8"
         ]
+      },
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+        "callIds": [
+          "1169e490665cdec7b3a3",
+          "2fbd469f16851f3b71ab"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
       }
     },
     {
@@ -9798,7 +9798,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sourceSha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b",
+      "sourceSha256": "c1833bc97b0f678d6c62c44f458fc6aac407d9f835a90e78aab77af94babe19f",
       "callIds": [
         "ebede146c851a085d2b8"
       ],
@@ -11020,10 +11020,10 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "064e4bfd4f37af44215d",
-        "a17b512e046309335346"
+        "3d61f3f5ae6402c20b58",
+        "64f0d9db49a13b562831"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "The four inspected decryptApiKey receivers convert ciphertext components with Buffer.from, not a database or Storage client.",
@@ -11045,9 +11045,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "60641ebebf916f3f47ab"
+        "8784feaf266f3ae5d72e"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The existing CWS callback starts and consumes the original issued-owner PKCE session, then captures prepareUserProviderKeyWrite for that exact owner and cws_oauth provider. The process-local unforgeable admission holds owner/provider/env plus canonical revision and OAuth-receipt flag. The shared save client is used only after matching that handle. OAuth receipt selects the fixed save_cws_oauth_key_if_current RPC. Both save branches encrypt with the existing envelope and require true CAS receipt before optional owner mirror. No browser value can choose the owner of that callback. Ordinary BYOK callers retain their separate exact-owner CAS and HTTP proof.",
@@ -11063,26 +11063,26 @@
         }
       ],
       "structuredOrigin": {
-        "id": "OB-bba86daf8e995c79",
+        "id": "OB-90b403522ff570b3",
         "callIds": [
-          "a6063fe099976dc970f7",
-          "67a6738bb98de6ea35e6",
-          "fa8edcff0bd9d41187f5",
-          "1e079f47b68cfa4b0ee1",
-          "7ce8a829e7682246c531",
-          "877306d453c374d2e0b5",
-          "60641ebebf916f3f47ab",
-          "2604632d4df816296c98",
-          "90411ad954f04510350e",
-          "4d24d57fe7012dc5dd75",
-          "c14b11328e9369fa6e7f",
-          "8716b1816d340d8ef220",
-          "1ba202fc5a6dd57faf27",
-          "22b15fbd9a04f1c32cb6",
-          "c10dcb70902c0260de04",
-          "d402557729d7b229c33f",
-          "14b09354c0efcdc2fdbf",
-          "88d220a299b3576a5c37"
+          "feecde5ebb7ae5f4ad78",
+          "5e37205582073bfc30c9",
+          "018c071575ceb3f8516a",
+          "c0cad7450906cef3fce8",
+          "125d1fa1b446def91170",
+          "56f1365c1095ea75af85",
+          "8784feaf266f3ae5d72e",
+          "5f84595697b6399ed442",
+          "30d93bb175651c6091b1",
+          "6021c31eedb4e0085d2b",
+          "c36354753e5d659f1133",
+          "36190833aa1b3b96e8ee",
+          "cac7d32579dae1ccf84c",
+          "a497ca44a05b78d07e6c",
+          "977606a7b1f57d55adb2",
+          "4c3d52cdd8d4da245c3a",
+          "fa50fc7afb1cc2af0bfe",
+          "aa227a13e3f851a147cb"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -11162,9 +11162,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "2d2e0b1518dc39fd144c"
+        "b101c0c287c875bae159"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
@@ -11225,9 +11225,9 @@
         "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
       },
       "structuredOrigin": {
-        "id": "OB-0959494e21b6b0e7",
+        "id": "OB-b9ec4bdda5b4238f",
         "callIds": [
-          "2d2e0b1518dc39fd144c"
+          "b101c0c287c875bae159"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -11241,9 +11241,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "5325278cd77c5cf43ece"
+        "1c2765565427d7a39f41"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
@@ -11268,10 +11268,10 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "985a191bb6a3829d93a3",
-        "5de53ce023fae631bbe1"
+        "c135db5a5ea7536cfe6f",
+        "bfd902ca64f5f7780a21"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Exact owner/provider database authority, post-download mirror revalidation, service-only revision CAS saves and durable revocation tombstones on existing user_integrations. Browser BYOK mutations and rename bypasses denied by restrictive policies.",
@@ -11297,9 +11297,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "b4fad07683df7604b45b"
+        "726ceac5ed6ed44f0821"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Exact-row revocation RPC only. Authenticated integration and Supabase disconnect routes supply req.userId. Private helper admits validated provider or exact delete-only legacy alias, calls service-only revoke_provider_key and requires true receipt. SQL binds owner/provider, clears credentials, retains revoked tombstone and rotates revision atomically.",
@@ -11328,9 +11328,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "ee7bb2f7b51795d5885a"
+        "37cfa6ca45abf19a23eb"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The existing CWS callback starts and consumes the original issued-owner PKCE session, then captures prepareUserProviderKeyWrite for that exact owner and cws_oauth provider. The process-local unforgeable admission holds owner/provider/env plus canonical revision and OAuth-receipt flag. The shared save client is used only after matching that handle. OAuth receipt selects the fixed save_cws_oauth_key_if_current RPC. Both save branches encrypt with the existing envelope and require true CAS receipt before optional owner mirror. No browser value can choose the owner of that callback. Ordinary BYOK callers retain their separate exact-owner CAS and HTTP proof.",
@@ -11389,10 +11389,10 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "c06d3f691fef0e9a9320",
-        "d235d34aeef6e920a127"
+        "fe37d49899df3732b5cc",
+        "ef2d01aaa4ae1572ad53"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
@@ -11446,10 +11446,10 @@
         "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
       },
       "structuredOrigin": {
-        "id": "OB-b05d9418e9456971",
+        "id": "OB-b15369ed39d1c08a",
         "callIds": [
-          "c06d3f691fef0e9a9320",
-          "d235d34aeef6e920a127"
+          "fe37d49899df3732b5cc",
+          "ef2d01aaa4ae1572ad53"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -11464,9 +11464,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "30f1b688a8b8ec4f22c0"
+        "21bfc5f4b895f0031a37"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Node Buffer.from decodes a supplied JWT payload for negative project-ref mismatch detection. The receiver is Buffer, not a database/Storage client, and no side effect occurs in this expression.",
@@ -11487,9 +11487,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "8d454ae0583ff0b8a697"
+        "b8a2f76b780dc05a1342"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "snapshotSupabaseRows is private and called only by prepareSupabaseBundleWrite and readUserSupabaseBundle. Canonical readers use original server owner from authenticated integration/status/publish routes, the issued-owner pipeline, or their same-owner provisioning wrappers. connectUserSupabase requires the issued context. OAuth and explicit one-click preparation retain that original req.userId and capture admission before remote work. The query is the fixed four provider rows with exact user_id and validates every returned owner, provider, metadata and revision. Normal reads never download orphan authority. Only explicit reconnect inspects that owner private object path, strips association claims and rechecks current revisions after the downloads. A read-only snapshot cannot activate these bytes. The later save uses the separately accepted opaque admission and atomic generation transaction.",
@@ -11541,9 +11541,9 @@
         "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
       },
       "structuredOrigin": {
-        "id": "OB-377e00fd316f8bb1",
+        "id": "OB-caa4e953fab4f4ad",
         "callIds": [
-          "8d454ae0583ff0b8a697"
+          "b8a2f76b780dc05a1342"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -11557,9 +11557,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "e4b3729dbce70a455196"
+        "bf70a476decc73712608"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "snapshotSupabaseRows is private and called only by prepareSupabaseBundleWrite and readUserSupabaseBundle. Canonical readers use original server owner from authenticated integration/status/publish routes, the issued-owner pipeline, or their same-owner provisioning wrappers. connectUserSupabase requires the issued context. OAuth and explicit one-click preparation retain that original req.userId and capture admission before remote work. The query is the fixed four provider rows with exact user_id and validates every returned owner, provider, metadata and revision. Normal reads never download orphan authority. Only explicit reconnect inspects that owner private object path, strips association claims and rechecks current revisions after the downloads. A read-only snapshot cannot activate these bytes. The later save uses the separately accepted opaque admission and atomic generation transaction.",
@@ -11611,9 +11611,9 @@
         "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
       },
       "structuredOrigin": {
-        "id": "OB-2c411d68bf07758e",
+        "id": "OB-10cd9b587d54f041",
         "callIds": [
-          "e4b3729dbce70a455196"
+          "bf70a476decc73712608"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -11627,9 +11627,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "e17cae98899a7ed70612"
+        "fc6a606bde6698305460"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "snapshotSupabaseRows is private and called only by prepareSupabaseBundleWrite and readUserSupabaseBundle. Canonical readers use original server owner from authenticated integration/status/publish routes, the issued-owner pipeline, or their same-owner provisioning wrappers. connectUserSupabase requires the issued context. OAuth and explicit one-click preparation retain that original req.userId and capture admission before remote work. The query is the fixed four provider rows with exact user_id and validates every returned owner, provider, metadata and revision. Normal reads never download orphan authority. Only explicit reconnect inspects that owner private object path, strips association claims and rechecks current revisions after the downloads. A read-only snapshot cannot activate these bytes. The later save uses the separately accepted opaque admission and atomic generation transaction.",
@@ -11681,9 +11681,9 @@
         "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
       },
       "structuredOrigin": {
-        "id": "OB-a0b3452e0a3fefda",
+        "id": "OB-c634fe022d896702",
         "callIds": [
-          "e17cae98899a7ed70612"
+          "fc6a606bde6698305460"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -11697,9 +11697,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "37a3830ff80942ec3e00"
+        "a48ccd229f5da7688e01"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected exact receiver: Node Buffer.from decodes a JWT payload in memory for project/role consistency only. It performs no database or Storage operation and does not verify the JWT signature.",
@@ -11720,9 +11720,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "f59d11df4719c567f3ba"
+        "ff2f67e37627c078ddb6"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected exact receiver: Node Buffer.from decodes a JWT payload in memory for project/role consistency only. It performs no database or Storage operation and does not verify the JWT signature.",
@@ -11743,9 +11743,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "2ee5ca9468b0a47bc429"
+        "dda425f65c86b04927bd"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing Supabase vault bundle helpers snapshot exact owner-scoped four rows and missing legacy objects without mutation, recheck revisions after mirror reads, and issue immutable admission. Atomic save locks fixed provider order, validates every expected revision and commits one common association generation or rolls back all rows. PAT stays account scoped.",
@@ -11766,9 +11766,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "f1c0b859e956f853f600"
+        "00a5b7095a4b9bb8d860"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Existing Supabase vault bundle helpers snapshot exact owner-scoped four rows and missing legacy objects without mutation, recheck revisions after mirror reads, and issue immutable admission. Atomic save locks fixed provider order, validates every expected revision and commits one common association generation or rolls back all rows. PAT stays account scoped.",
@@ -12819,18 +12819,18 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
       "callIds": [
-        "6f058d1957df9ddef58e",
-        "263d64635be54643daaf",
-        "28c7a352253f65a4d63b",
-        "ec7738731d0c6be00798",
-        "0882d94061fd33117251",
-        "ba74f371a047c8305b9a",
-        "9e5ee446a0fb192d8f39",
-        "3a904e92ac521ad89ef0",
-        "a50ebf735a3e2d6e8587",
-        "e5f59ad9b6097a1bb115"
+        "5ffa627faeaa6803aab8",
+        "7fb0d4feb0707259368b",
+        "abe158166765391a38bb",
+        "cd6fb0dc4aecaa924a23",
+        "48010eb67a70f9160a4e",
+        "c79d0afb3ebeabc76c2d",
+        "f8840556255dc425215c",
+        "3c5c04328c11bf512dba",
+        "1523f7744eed6083f0b6",
+        "4c1b535638e8a0a197f8"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Active public consumers are authenticated billing/dashboard/phase1 handlers and their existing BillingService wrapper, using req.userId. Internal reservation failure and pacing retain that original server actor. The fixed ensure_xroga_free_cycle call supplies only this owner and cannot choose a paid plan or amount. The decisive cycle read applies exact user_id before selecting the latest bounded entitlement fields. Current cycle state is mapped only from that owner row. Paid membership/activation authority is handled elsewhere and is not inferred from this status helper.\nThe sole production setUsagePacing consumer is the auth-mounted billing pacing route. Owner comes from req.userId, never body/query/context-shaped JSON. Zod bounds pacing and confirmation. Primitive owner is retained across the same-owner entitlement preflight and fixed service-only set_xroga_usage_pacing RPC. The current cycle mutation remains constrained to that owner. Actual HTTP test authenticates two real isolated actors, confirms only owner cycle changes, foreign body substitution cannot grant paid pacing, unauthenticated and malformed/unconfirmed requests cannot mutate either cycle.\nThe selected reserve and settle calls have no public endpoint of their own. Production reservation consumers use the original pipeline/server userId or authenticated phase1/business read/action/planner actor. The issued run/worker and confirmation producer chains remain independently checked by their existing proofs. withProviderReservation retains that owner with its reservation through execute and settle. Reserve sends exact owner plus idempotency/model/purpose/amount, and validates the full returned owner/intent/version/status tuple. Settlement sends original owner plus exact reservation ID and validates owner, model, price, amount, usage counts and provider receipt. SQL scopes reservation and settlement to that owner and serializes current reservation/cycle accounting. No body-supplied reservation owner or another actor reservation can settle.",
@@ -12907,24 +12907,24 @@
         "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
       },
       "structuredOrigin": {
-        "id": "OB-5e9d521ebb7253b5",
+        "id": "OB-e316498540d10d15",
         "callIds": [
-          "1169e490665cdec7b3a3",
-          "2fbd469f16851f3b71ab",
-          "6f058d1957df9ddef58e",
-          "263d64635be54643daaf",
-          "28c7a352253f65a4d63b",
-          "ec7738731d0c6be00798",
-          "0882d94061fd33117251",
-          "ba74f371a047c8305b9a",
-          "9e5ee446a0fb192d8f39",
-          "3a904e92ac521ad89ef0",
-          "495469d5a798cf52f829",
-          "4ac1c2be7bfccf034c8e",
-          "a50ebf735a3e2d6e8587",
-          "e5f59ad9b6097a1bb115",
-          "8b8545e8ee1fbbfb3fbf",
-          "60a088c3f2c03ec9402c"
+          "d406c0b568fd6ec5e544",
+          "de6707af035c2d7fe760",
+          "5ffa627faeaa6803aab8",
+          "7fb0d4feb0707259368b",
+          "abe158166765391a38bb",
+          "cd6fb0dc4aecaa924a23",
+          "48010eb67a70f9160a4e",
+          "c79d0afb3ebeabc76c2d",
+          "f8840556255dc425215c",
+          "3c5c04328c11bf512dba",
+          "88e420183bcb296b87a4",
+          "df66c5e789c6e8f1dd46",
+          "1523f7744eed6083f0b6",
+          "4c1b535638e8a0a197f8",
+          "88789f83425415184ffc",
+          "5fc4041577ba475ddde3"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -13055,6 +13055,23 @@
           "0b24ee0eecebdda0e6f3",
           "ace18dec175b4875e7f7"
         ]
+      },
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+        "callIds": [
+          "6f058d1957df9ddef58e",
+          "263d64635be54643daaf",
+          "28c7a352253f65a4d63b",
+          "ec7738731d0c6be00798",
+          "0882d94061fd33117251",
+          "ba74f371a047c8305b9a",
+          "9e5ee446a0fb192d8f39",
+          "3a904e92ac521ad89ef0",
+          "a50ebf735a3e2d6e8587",
+          "e5f59ad9b6097a1bb115"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
       }
     },
     {
@@ -14034,25 +14051,25 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "a6063fe099976dc970f7",
-        "67a6738bb98de6ea35e6",
-        "fa8edcff0bd9d41187f5",
-        "1e079f47b68cfa4b0ee1",
-        "7ce8a829e7682246c531",
-        "877306d453c374d2e0b5",
-        "2604632d4df816296c98",
-        "90411ad954f04510350e",
-        "4d24d57fe7012dc5dd75",
-        "c14b11328e9369fa6e7f",
-        "8716b1816d340d8ef220",
-        "1ba202fc5a6dd57faf27",
-        "22b15fbd9a04f1c32cb6",
-        "c10dcb70902c0260de04",
-        "d402557729d7b229c33f",
-        "14b09354c0efcdc2fdbf",
-        "88d220a299b3576a5c37"
+        "feecde5ebb7ae5f4ad78",
+        "5e37205582073bfc30c9",
+        "018c071575ceb3f8516a",
+        "c0cad7450906cef3fce8",
+        "125d1fa1b446def91170",
+        "56f1365c1095ea75af85",
+        "5f84595697b6399ed442",
+        "30d93bb175651c6091b1",
+        "6021c31eedb4e0085d2b",
+        "c36354753e5d659f1133",
+        "36190833aa1b3b96e8ee",
+        "cac7d32579dae1ccf84c",
+        "a497ca44a05b78d07e6c",
+        "977606a7b1f57d55adb2",
+        "4c3d52cdd8d4da245c3a",
+        "fa50fc7afb1cc2af0bfe",
+        "aa227a13e3f851a147cb"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Private saveKeyToStorage is called only after the existing exact owner/provider/revision CAS succeeds. Canonical row owner and fixed sanitized provider select owner/vault-provider.json. Private load/list helpers have no independent public caller and re-read that exact owner/provider canonical authority after download, never letting absent authority or an orphan object grant a secret. The authenticated integrations route overwrites actor from server req.userId for saves and metadata reads, and supplies original req.tenantContext for disconnect. No body actor chooses a row. Category custom reads stay within that owner, named reads select exact provider. Deployment-env selection uses that same owner and rejects invalid/misbound provider metadata and public secret aliases. Bulk deletion requires issued context and completely enumerates owner-only DB and private object pages before individually recording owner/provider tombstones and removing exact owner paths. Provider/caller lifecycle at other source files remains independent.",
@@ -14130,26 +14147,26 @@
         "laterPhaseTraceability": "docs/xroga/batch-1/phases/BATCH-1-FOUR-PHASE-TRACEABILITY.md"
       },
       "structuredOrigin": {
-        "id": "OB-bba86daf8e995c79",
+        "id": "OB-90b403522ff570b3",
         "callIds": [
-          "a6063fe099976dc970f7",
-          "67a6738bb98de6ea35e6",
-          "fa8edcff0bd9d41187f5",
-          "1e079f47b68cfa4b0ee1",
-          "7ce8a829e7682246c531",
-          "877306d453c374d2e0b5",
-          "60641ebebf916f3f47ab",
-          "2604632d4df816296c98",
-          "90411ad954f04510350e",
-          "4d24d57fe7012dc5dd75",
-          "c14b11328e9369fa6e7f",
-          "8716b1816d340d8ef220",
-          "1ba202fc5a6dd57faf27",
-          "22b15fbd9a04f1c32cb6",
-          "c10dcb70902c0260de04",
-          "d402557729d7b229c33f",
-          "14b09354c0efcdc2fdbf",
-          "88d220a299b3576a5c37"
+          "feecde5ebb7ae5f4ad78",
+          "5e37205582073bfc30c9",
+          "018c071575ceb3f8516a",
+          "c0cad7450906cef3fce8",
+          "125d1fa1b446def91170",
+          "56f1365c1095ea75af85",
+          "8784feaf266f3ae5d72e",
+          "5f84595697b6399ed442",
+          "30d93bb175651c6091b1",
+          "6021c31eedb4e0085d2b",
+          "c36354753e5d659f1133",
+          "36190833aa1b3b96e8ee",
+          "cac7d32579dae1ccf84c",
+          "a497ca44a05b78d07e6c",
+          "977606a7b1f57d55adb2",
+          "4c3d52cdd8d4da245c3a",
+          "fa50fc7afb1cc2af0bfe",
+          "aa227a13e3f851a147cb"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -14179,12 +14196,12 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
       "callIds": [
-        "495469d5a798cf52f829",
-        "4ac1c2be7bfccf034c8e",
-        "8b8545e8ee1fbbfb3fbf",
-        "60a088c3f2c03ec9402c"
+        "88e420183bcb296b87a4",
+        "df66c5e789c6e8f1dd46",
+        "88789f83425415184ffc",
+        "5fc4041577ba475ddde3"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Reservation fallback retains the same original userId of reserveProviderBudget and passes it to fixed ensure_xroga_free_cycle only after missing-active-cycle error. It cannot choose a paid amount or a different account. Failed reservation finalization is private to withProviderReservation flow, which retains the same owner and reservation captured before execute. The release RPC matches both reservation ID and owner and locks that exact owner cycle before accounting. Definite pre-completion failures release only this hold, uncertain outcomes retain it. Logging a failed foreign release does not grant success or mutate rows.",
@@ -14200,24 +14217,24 @@
         }
       ],
       "structuredOrigin": {
-        "id": "OB-5e9d521ebb7253b5",
+        "id": "OB-e316498540d10d15",
         "callIds": [
-          "1169e490665cdec7b3a3",
-          "2fbd469f16851f3b71ab",
-          "6f058d1957df9ddef58e",
-          "263d64635be54643daaf",
-          "28c7a352253f65a4d63b",
-          "ec7738731d0c6be00798",
-          "0882d94061fd33117251",
-          "ba74f371a047c8305b9a",
-          "9e5ee446a0fb192d8f39",
-          "3a904e92ac521ad89ef0",
-          "495469d5a798cf52f829",
-          "4ac1c2be7bfccf034c8e",
-          "a50ebf735a3e2d6e8587",
-          "e5f59ad9b6097a1bb115",
-          "8b8545e8ee1fbbfb3fbf",
-          "60a088c3f2c03ec9402c"
+          "d406c0b568fd6ec5e544",
+          "de6707af035c2d7fe760",
+          "5ffa627faeaa6803aab8",
+          "7fb0d4feb0707259368b",
+          "abe158166765391a38bb",
+          "cd6fb0dc4aecaa924a23",
+          "48010eb67a70f9160a4e",
+          "c79d0afb3ebeabc76c2d",
+          "f8840556255dc425215c",
+          "3c5c04328c11bf512dba",
+          "88e420183bcb296b87a4",
+          "df66c5e789c6e8f1dd46",
+          "1523f7744eed6083f0b6",
+          "4c1b535638e8a0a197f8",
+          "88789f83425415184ffc",
+          "5fc4041577ba475ddde3"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -14413,6 +14430,17 @@
           "c07b5b1f63ae0e361ae7",
           "fba07b765dafacccf133"
         ]
+      },
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+        "callIds": [
+          "495469d5a798cf52f829",
+          "4ac1c2be7bfccf034c8e",
+          "8b8545e8ee1fbbfb3fbf",
+          "60a088c3f2c03ec9402c"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
       }
     },
     {
@@ -15017,9 +15045,9 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
       "callIds": [
-        "8aa7e4818165f80a2954"
+        "3ff444168109d6f2d8a7"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
@@ -15034,13 +15062,21 @@
         "XB01-C008-AC05",
         "XB01-C008-AC06",
         "XB01-C008-AC07"
-      ]
+      ],
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+        "callIds": [
+          "8aa7e4818165f80a2954"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
       "callIds": [
-        "0dc96ad35c877b5c6b81"
+        "e838e61e27730ca3c3a9"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
@@ -15055,13 +15091,21 @@
         "XB01-C008-AC05",
         "XB01-C008-AC06",
         "XB01-C008-AC07"
-      ]
+      ],
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+        "callIds": [
+          "0dc96ad35c877b5c6b81"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
       "callIds": [
-        "1e296c319fef476f484e"
+        "d483200769e782169fd9"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
@@ -15076,13 +15120,21 @@
         "XB01-C008-AC05",
         "XB01-C008-AC06",
         "XB01-C008-AC07"
-      ]
+      ],
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+        "callIds": [
+          "1e296c319fef476f484e"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+      }
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
       "callIds": [
-        "10d24b0a58511aa77d5a"
+        "5f776647ab77d7a35536"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "The Operations-only reservation boundary receives the issued actor and immutable admitted action. Its service-only database routine locks and rechecks actor membership, owner, project, approval, lease, action snapshot, normal entitlement and the admitted action ceiling before returning an exact owner-bound reservation receipt.",
@@ -15097,7 +15149,15 @@
         "XB01-C008-AC05",
         "XB01-C008-AC06",
         "XB01-C008-AC07"
-      ]
+      ],
+      "previousGenericSdkSourceBinding": {
+        "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+        "callIds": [
+          "10d24b0a58511aa77d5a"
+        ],
+        "scope": "UNCHANGED_EXACT_PERSISTENCE_EXPRESSIONS_ONLY_NOT_NEW_SECURITY_CERTIFICATION"
+      }
     },
     {
       "path": "backend/src/services/integrations/githubAuth.ts",
@@ -15290,9 +15350,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "9410f0207c086070cbe9"
+        "1f040da6c68c16cd33e2"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",
@@ -15311,9 +15371,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "7839b0a49e20e551f26b"
+        "c0b89211921517abfb82"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",
@@ -15332,9 +15392,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "ed5b917b1d684e7326d9"
+        "6a42e1dbe625c387daee"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",
@@ -15353,9 +15413,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "02bcd9af68c7c3ac2c1e"
+        "f7171c690025f6a4bdde"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",
@@ -15374,9 +15434,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "b5dbe13cb2b6b496c93a"
+        "88c53c3d219aa201d578"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",
@@ -15395,9 +15455,9 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "callIds": [
-        "e0456ce0f2abfa813fb5"
+        "dc1960ee19b048e0649c"
       ],
       "disposition": "REVIEWED_GAP",
       "authority": "This persistence expression belongs to the Phase3 authority or CredentialVault cutover. The exact caller remains bound to current source and retains its original actor, owner, project and parent checks. It receives no inherited Phase2 certification.",

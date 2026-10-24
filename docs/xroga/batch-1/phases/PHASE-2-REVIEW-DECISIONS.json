@@ -859,7 +859,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "00d351afbe045a136c66",
-      "currentCallerId": "1169e490665cdec7b3a3",
+      "currentCallerId": "d406c0b568fd6ec5e544",
       "enclosing": "activatePaidCycle",
       "kind": "RPC_CANDIDATE",
       "target": "activate_xroga_paid_cycle",
@@ -869,7 +869,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "254a91383e3a8af0310b",
-      "currentCallerId": "2fbd469f16851f3b71ab",
+      "currentCallerId": "de6707af035c2d7fe760",
       "enclosing": "activatePaidCycle",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -879,7 +879,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "590df28cdc2b297e03b6",
-      "currentCallerId": "6f058d1957df9ddef58e",
+      "currentCallerId": "5ffa627faeaa6803aab8",
       "enclosing": "getProviderEntitlementStatus",
       "kind": "RPC_CANDIDATE",
       "target": "ensure_xroga_free_cycle",
@@ -889,7 +889,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "39a1f4163240597da04d",
-      "currentCallerId": "263d64635be54643daaf",
+      "currentCallerId": "7fb0d4feb0707259368b",
       "enclosing": "getProviderEntitlementStatus",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -899,7 +899,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "613d8e71ddafb0d6bd0c",
-      "currentCallerId": "28c7a352253f65a4d63b",
+      "currentCallerId": "abe158166765391a38bb",
       "enclosing": "getProviderEntitlementStatus",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "xroga_billing_cycles",
@@ -909,7 +909,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "a80e4804742dfd6bcc0a",
-      "currentCallerId": "ec7738731d0c6be00798",
+      "currentCallerId": "cd6fb0dc4aecaa924a23",
       "enclosing": "getProviderEntitlementStatus",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -919,7 +919,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "6285818c6e8220770b29",
-      "currentCallerId": "0882d94061fd33117251",
+      "currentCallerId": "48010eb67a70f9160a4e",
       "enclosing": "setUsagePacing",
       "kind": "RPC_CANDIDATE",
       "target": "set_xroga_usage_pacing",
@@ -929,7 +929,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "090fe734dc5d1d3dc6e3",
-      "currentCallerId": "ba74f371a047c8305b9a",
+      "currentCallerId": "c79d0afb3ebeabc76c2d",
       "enclosing": "setUsagePacing",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -939,7 +939,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "3f66673813dee0d85b85",
-      "currentCallerId": "9e5ee446a0fb192d8f39",
+      "currentCallerId": "f8840556255dc425215c",
       "enclosing": "reserveProviderBudget",
       "kind": "RPC_CANDIDATE",
       "target": "reserve_xroga_provider_budget",
@@ -949,7 +949,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "746985044f7d3ee62aff",
-      "currentCallerId": "3a904e92ac521ad89ef0",
+      "currentCallerId": "3c5c04328c11bf512dba",
       "enclosing": "reserveProviderBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -959,7 +959,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "e030677c7ecb6b0dd90e",
-      "currentCallerId": "495469d5a798cf52f829",
+      "currentCallerId": "88e420183bcb296b87a4",
       "enclosing": "reserveProviderBudget",
       "kind": "RPC_CANDIDATE",
       "target": "ensure_xroga_free_cycle",
@@ -969,7 +969,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "e35278adbe80b78c8d41",
-      "currentCallerId": "4ac1c2be7bfccf034c8e",
+      "currentCallerId": "df66c5e789c6e8f1dd46",
       "enclosing": "reserveProviderBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -979,7 +979,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "b5a82155e981259a207e",
-      "currentCallerId": "a50ebf735a3e2d6e8587",
+      "currentCallerId": "1523f7744eed6083f0b6",
       "enclosing": "settleProviderBudget",
       "kind": "RPC_CANDIDATE",
       "target": "settle_xroga_provider_budget",
@@ -989,7 +989,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "564673e6f6b21c690fce",
-      "currentCallerId": "e5f59ad9b6097a1bb115",
+      "currentCallerId": "4c1b535638e8a0a197f8",
       "enclosing": "settleProviderBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -999,7 +999,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "5ed8ef26b72e26561f26",
-      "currentCallerId": "8b8545e8ee1fbbfb3fbf",
+      "currentCallerId": "88789f83425415184ffc",
       "enclosing": "finishFailedProviderReservation",
       "kind": "RPC_CANDIDATE",
       "target": "release_xroga_provider_budget",
@@ -1009,7 +1009,7 @@
     {
       "path": "backend/src/ai/providerBudget.ts",
       "previousCallerId": "3fc72ec34d884b871909",
-      "currentCallerId": "60a088c3f2c03ec9402c",
+      "currentCallerId": "5fc4041577ba475ddde3",
       "enclosing": "finishFailedProviderReservation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
@@ -1715,7 +1715,7 @@
     },
     {
       "packetId": "B1-P2-8c13793907db3388",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "executionStatus": "IN_PROGRESS",
       "finding": "DEMONSTRATED_PROVISIONING_BUNDLE_ORPHAN_AUTHORITY_FIXED_PENDING_REAL_PRIVATE_OBJECT_PROOF",
       "actualVerification": {
@@ -1784,7 +1784,24 @@
     },
     {
       "packetId": "B1-P2-392b9b628a9b92be",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+      "sourceSha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a",
+      "phase4BudgetAdmissionContinuation": {
+        "baselineSource": "d68bbd7269395ff4193c372cbbe432acfc1f422a",
+        "previousFileSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876",
+        "changedFunction": "withProviderReservation",
+        "semanticDelta": "Tag failed admission or unverified release as terminal request refusal. Capacity and post-completion accounting remain distinct. No RPC, budget arithmetic or settlement assertion changed.",
+        "unchangedMappedFunctions": [
+          "activatePaidCycle",
+          "getProviderEntitlementStatus",
+          "setUsagePacing",
+          "reserveProviderBudget",
+          "settleProviderBudget",
+          "finishFailedProviderReservation"
+        ],
+        "verification": "All six mapped enclosing functions compared byte-identically using assertUnchangedEnclosing. Updated 72-test focused regression passes with zero failures/skips. This does not promote historical Phase2 acceptance or establish new real-database proof.",
+        "evidence": "docs/xroga/evidence/command-010/FALLBACK-DENIAL-CONTINUATION.md",
+        "currentSourceCi": "PENDING"
+      },
       "executionStatus": "IN_PROGRESS",
       "finding": "DORMANT_ISSUED_OWNER_AND_EXACT_BUDGET_RECEIPTS_REPAIRED_PROOF_PENDING",
       "actualVerification": {
@@ -1836,24 +1853,24 @@
       "current007Evidence": {
         "sourceSha": "7be4403096a3c782520a52464f544e36212c587e",
         "verifiedCurrentCallerIds": [
-          "6f058d1957df9ddef58e",
-          "263d64635be54643daaf",
-          "28c7a352253f65a4d63b",
-          "ec7738731d0c6be00798",
-          "0882d94061fd33117251",
-          "ba74f371a047c8305b9a",
-          "9e5ee446a0fb192d8f39",
-          "3a904e92ac521ad89ef0",
-          "a50ebf735a3e2d6e8587",
-          "e5f59ad9b6097a1bb115"
+          "5ffa627faeaa6803aab8",
+          "7fb0d4feb0707259368b",
+          "abe158166765391a38bb",
+          "cd6fb0dc4aecaa924a23",
+          "48010eb67a70f9160a4e",
+          "c79d0afb3ebeabc76c2d",
+          "f8840556255dc425215c",
+          "3c5c04328c11bf512dba",
+          "1523f7744eed6083f0b6",
+          "4c1b535638e8a0a197f8"
         ],
         "remainingCurrentCallerIds": [
-          "1169e490665cdec7b3a3",
-          "2fbd469f16851f3b71ab",
-          "495469d5a798cf52f829",
-          "4ac1c2be7bfccf034c8e",
-          "8b8545e8ee1fbbfb3fbf",
-          "60a088c3f2c03ec9402c"
+          "d406c0b568fd6ec5e544",
+          "de6707af035c2d7fe760",
+          "88e420183bcb296b87a4",
+          "df66c5e789c6e8f1dd46",
+          "88789f83425415184ffc",
+          "5fc4041577ba475ddde3"
         ],
         "proofArtifact": "artifacts/phase-2-proof/7be4403096a3c782520a52464f544e36212c587e/result.json",
         "scope": "BYTE_IDENTICAL_EXISTING_FUNCTIONS_MAPPED_NOT_NEW_SOURCE_ACCEPTANCE",
@@ -1932,6 +1949,11 @@
         "historicalSourceSha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
         "scope": "Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
         "currentSourceCertification": "NOT_INFERRED_REQUIRES_REGRESSION"
+      },
+      "previousGenericSdkBinding": {
+        "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "293df4be82bfda5764c790ccbeccb872f3e9db60b5ab8c2e5c5752415d70e1cd",
+        "scope": "EXACT_PERSISTENCE_EXPRESSION_POSITION_ONLY_NOT_NEW_ACCEPTANCE"
       }
     },
     {
@@ -2174,7 +2196,7 @@
     },
     {
       "packetId": "B1-P2-d3895e94f03fa522",
-      "sourceSha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785",
+      "sourceSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
       "executionStatus": "IN_PROGRESS",
       "finding": "DEMONSTRATED_ABSENT_BYOK_AUTHORITY_MIRROR_RESURRECTION_FIXED_VERIFIED_AT_7BE44030",
       "actorTrace": "Owner/provider-scoped database lookup must contain an active canonical credential. The legacy private download previously returned its encrypted payload when the post-download authority query found no row. It now denies that absence, while active canonical legacy envelopes and valid database-backed connections retain existing behavior.",
@@ -2321,7 +2343,13 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
+          "sha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
+          "historicalBinding": {
+            "reference": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
+            "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
+          },
+          "currentSourceDelta": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
+          "previousGenericSdkSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc"
         },
         {
           "path": "backend/src/routes/swarm.ts",
@@ -3213,7 +3241,12 @@
     },
     {
       "packetId": "B1-P2-4a588dd074761414",
-      "sourceSha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4",
+      "sourceSha256": "3a4002a2359e8fccf4f10791213d4b2d15f37a0e2e02a413ac938fc4fc842a84",
+      "historicalBinding": {
+        "reference": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
+        "sha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4"
+      },
+      "currentSourceDelta": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
       "executionStatus": "IN_PROGRESS",
       "finding": "EXISTING_ISSUED_PIPELINE_TO_REQUEST_SCOPED_STORE_CONSTRUCTION_PROOF_PREPARED",
       "originalCriteria": [
@@ -3239,7 +3272,12 @@
         "Authenticate changed-source disposable default-factory fixture and full source-bound regressions",
         "Require all universal store receiving operations independently verified before original factory closure",
         "Keep arbitrary injected store authorization, model effects and Phase3/4 obligations separate"
-      ]
+      ],
+      "previousGenericSdkBinding": {
+        "reference": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+        "sourceSha256": "91c22bc5ac1fd79eeeaafab69134d17009c7cc0d2bfba101411dde88625b46a2",
+        "scope": "EXACT_PERSISTENCE_EXPRESSION_POSITION_ONLY_NOT_NEW_ACCEPTANCE"
+      }
     }
   ],
   "endpointIsolationReview": {

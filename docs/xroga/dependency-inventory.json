@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e883f4f339caf370564806fe6b37f104adf62a34",
+  "source_sha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -574,6 +574,7 @@
         "backend/src/security/deliveryEvidenceRead.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
+        "backend/src/security/genericSdk.local.integration.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/learningOwnerReads.local.integration.ts",
@@ -597,6 +598,7 @@
         "backend/src/security/runtimeProjectBinding.local.integration.ts",
         "backend/src/security/runtimeSecretRead.local.integration.ts",
         "backend/src/security/runtimeTerminal.local.integration.ts",
+        "backend/src/security/softwareAgentSdk.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/swarmHeartbeat.local.integration.ts",
@@ -631,10 +633,12 @@
         "E2E_BACKEND_URL",
         "E2E_ISOLATED_PROJECT_REF",
         "EXPECTED_RELEASE_SHA",
+        "FLY_APP_NAME",
         "FRONTEND_URL",
         "GITHUB_CLIENT_ID",
         "GITHUB_CLIENT_SECRET",
         "GITHUB_OAUTH_CALLBACK_URL",
+        "GLM_API_KEY",
         "NEXT_PUBLIC_API_URL",
         "NEXT_PUBLIC_SUPABASE_ANON_KEY",
         "NEXT_PUBLIC_SUPABASE_URL",
@@ -671,6 +675,8 @@
         "XROGA_PREVIEW_SIGNING_SECRET",
         "XROGA_RELEASE_SHA",
         "XROGA_SANDBOX_BROWSER_IMAGE",
+        "XROGA_SANDBOX_FLY_APP",
+        "XROGA_SANDBOX_FLY_TOKEN",
         "XROGA_STAGING_AUTH_BUILD"
       ],
       "inbound_callers": [
@@ -728,6 +734,7 @@
         "backend/src/security/deliveryEvidenceRead.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
+        "backend/src/security/genericSdk.local.integration.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/learningOwnerReads.local.integration.ts",
@@ -751,6 +758,7 @@
         "backend/src/security/runtimeProjectBinding.local.integration.ts",
         "backend/src/security/runtimeSecretRead.local.integration.ts",
         "backend/src/security/runtimeTerminal.local.integration.ts",
+        "backend/src/security/softwareAgentSdk.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/swarmHeartbeat.local.integration.ts",
@@ -1364,6 +1372,7 @@
         "backend/src/routes/github.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/services/integrations/githubDeploy.ts",
+        "backend/src/services/integrations/githubSourceRead.ts",
         "backend/src/services/publish/electronSecrets.ts",
         "backend/src/services/publish/nonWebShip.ts"
       ],
@@ -1405,6 +1414,7 @@
         "backend/src/routes/github.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/services/integrations/githubDeploy.ts",
+        "backend/src/services/integrations/githubSourceRead.ts",
         "backend/src/services/publish/electronSecrets.ts",
         "backend/src/services/publish/nonWebShip.ts"
       ],
@@ -1563,7 +1573,8 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "backend/src/ai/models.ts"
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerPolicy.ts"
       ],
       "hostnames": [
         "api.moonshot.ai"
@@ -1584,7 +1595,8 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "backend/src/ai/models.ts"
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerPolicy.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -1907,6 +1919,7 @@
         "CI",
         "CLOUDFLARE_R2_PRIVATE_BUCKET",
         "E2E_BACKEND_URL",
+        "FLY_APP_NAME",
         "SUPABASE_ANON_KEY",
         "SUPABASE_SERVICE_ROLE_KEY",
         "SUPABASE_URL",
@@ -1916,7 +1929,9 @@
         "WHOP_REDIRECT_URL",
         "WHOP_WEBHOOK_SECRET",
         "XB01_DISPOSABLE_SUPABASE",
-        "XB01_LOCAL_DATABASE_URL"
+        "XB01_LOCAL_DATABASE_URL",
+        "XROGA_SANDBOX_FLY_APP",
+        "XROGA_SANDBOX_FLY_TOKEN"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -3378,6 +3393,7 @@
         "CI",
         "CLOUDFLARE_R2_PRIVATE_BUCKET",
         "E2E_BACKEND_URL",
+        "FLY_APP_NAME",
         "SUPABASE_ANON_KEY",
         "SUPABASE_SERVICE_ROLE_KEY",
         "SUPABASE_URL",
@@ -3387,7 +3403,9 @@
         "WHOP_REDIRECT_URL",
         "WHOP_WEBHOOK_SECRET",
         "XB01_DISPOSABLE_SUPABASE",
-        "XB01_LOCAL_DATABASE_URL"
+        "XB01_LOCAL_DATABASE_URL",
+        "XROGA_SANDBOX_FLY_APP",
+        "XROGA_SANDBOX_FLY_TOKEN"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -4505,7 +4523,10 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "backend/src/ai/models.ts"
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerPolicy.ts",
+        "backend/src/security/genericSdk.local.integration.ts",
+        "backend/src/security/softwareAgentSdk.local.integration.ts"
       ],
       "hostnames": [
         "open.bigmodel.cn"
@@ -4513,7 +4534,12 @@
       "resource_id": null,
       "region": "Not verified",
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
-      "secret_names": [],
+      "secret_names": [
+        "CI",
+        "GLM_API_KEY",
+        "SUPABASE_URL",
+        "XB01_DISPOSABLE_SUPABASE"
+      ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
       ],
@@ -4526,7 +4552,10 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "backend/src/ai/models.ts"
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerPolicy.ts",
+        "backend/src/security/genericSdk.local.integration.ts",
+        "backend/src/security/softwareAgentSdk.local.integration.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -4539,7 +4568,8 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "backend/src/ai/models.ts"
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerPolicy.ts"
       ],
       "hostnames": [
         "openrouter.ai"
@@ -4560,7 +4590,8 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "backend/src/ai/models.ts"
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerPolicy.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -4757,6 +4788,7 @@
         "CI",
         "CLOUDFLARE_R2_PRIVATE_BUCKET",
         "E2E_BACKEND_URL",
+        "FLY_APP_NAME",
         "SUPABASE_ANON_KEY",
         "SUPABASE_SERVICE_ROLE_KEY",
         "SUPABASE_URL",
@@ -4766,7 +4798,9 @@
         "WHOP_REDIRECT_URL",
         "WHOP_WEBHOOK_SECRET",
         "XB01_DISPOSABLE_SUPABASE",
-        "XB01_LOCAL_DATABASE_URL"
+        "XB01_LOCAL_DATABASE_URL",
+        "XROGA_SANDBOX_FLY_APP",
+        "XROGA_SANDBOX_FLY_TOKEN"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -6986,7 +7020,6 @@
         "GLM_5_3_INPUT_USD_PER_1M",
         "GLM_5_3_MODEL_ID",
         "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
         "GROQ_CODE_API_KEY",
         "HAILUO_UID",
         "HAPPYSCRIBE_API_KEY",
@@ -7410,6 +7443,7 @@
         "backend/src/security/deliveryEvidenceRead.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
+        "backend/src/security/genericSdk.local.integration.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/learningOwnerReads.local.integration.ts",
@@ -7433,6 +7467,7 @@
         "backend/src/security/runtimeProjectBinding.local.integration.ts",
         "backend/src/security/runtimeSecretRead.local.integration.ts",
         "backend/src/security/runtimeTerminal.local.integration.ts",
+        "backend/src/security/softwareAgentSdk.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/swarmHeartbeat.local.integration.ts",
@@ -7470,6 +7505,7 @@
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
         "endpoint-fixtureproject-supabase-co",
+        "endpoint-open-bigmodel-cn",
         "endpoint-public-example-invalid",
         "endpoint-whop-com"
       ]
@@ -8083,8 +8119,12 @@
     {
       "name": "FLY_APP_NAME",
       "consuming_sources": [
+        "backend/src/routes/guestChat.ts",
         "backend/src/sandbox/flyMachineSandbox.ts",
         "backend/src/scripts/verifyFlySandboxBrowser.ts",
+        "backend/src/security/previewConsumer.local.integration.ts",
+        "backend/src/security/previewGrantAdmission.local.integration.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/services/integrations/cryptoProvider.ts",
         "backend/src/services/integrations/ociKmsCryptoProvider.ts",
@@ -8101,7 +8141,11 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "api"
+        "api",
+        "endpoint-127-0-0-1",
+        "endpoint-api-whop-com",
+        "endpoint-example-invalid",
+        "endpoint-public-example-invalid"
       ]
     },
     {
@@ -8456,7 +8500,9 @@
         "backend/src/ai/providerCostTiers.ts",
         "backend/src/config/envSecrets.ts",
         "backend/src/lib/capabilityRegistry.ts",
-        "backend/src/lib/platformReady.ts"
+        "backend/src/lib/platformReady.ts",
+        "backend/src/security/genericSdk.local.integration.ts",
+        "backend/src/security/softwareAgentSdk.local.integration.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -8468,10 +8514,12 @@
       "mechanisms": [
         "DECLARED_SECRET_ALIAS",
         "REVIEWED_DYNAMIC_BINDING",
-        "SECRET_HELPER_CALL"
+        "SECRET_HELPER_CALL",
+        "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "runtime-controls-and-conditional-aliases"
+        "endpoint-127-0-0-1",
+        "endpoint-open-bigmodel-cn"
       ]
     },
     {
@@ -9511,6 +9559,7 @@
         "backend/src/ai/runStore.ts",
         "backend/src/index.ts",
         "backend/src/routes/github.ts",
+        "backend/src/routes/guestChat.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/services/integrations/cryptoProvider.ts",
         "backend/src/services/integrations/ociKmsCryptoProvider.ts",
@@ -10489,6 +10538,7 @@
         "backend/src/security/deliveryEvidenceRead.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
+        "backend/src/security/genericSdk.local.integration.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/learningOwnerReads.local.integration.ts",
@@ -10513,6 +10563,7 @@
         "backend/src/security/runtimeProjectBinding.local.integration.ts",
         "backend/src/security/runtimeSecretRead.local.integration.ts",
         "backend/src/security/runtimeTerminal.local.integration.ts",
+        "backend/src/security/softwareAgentSdk.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/swarmHeartbeat.local.integration.ts",
@@ -10555,6 +10606,7 @@
         "endpoint-fixture-supabase-co",
         "endpoint-fixtureproject-supabase-co",
         "endpoint-localhost",
+        "endpoint-open-bigmodel-cn",
         "endpoint-public-example-invalid",
         "endpoint-whop-com",
         "endpoint-xrogaaicom-vercel-app"
@@ -11217,6 +11269,7 @@
         "backend/src/security/deliveryEvidenceRead.local.integration.ts",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts",
         "backend/src/security/frontendScope.local.integration.ts",
+        "backend/src/security/genericSdk.local.integration.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/security/growthReferral.local.integration.ts",
         "backend/src/security/learningOwnerReads.local.integration.ts",
@@ -11240,6 +11293,7 @@
         "backend/src/security/runtimeProjectBinding.local.integration.ts",
         "backend/src/security/runtimeSecretRead.local.integration.ts",
         "backend/src/security/runtimeTerminal.local.integration.ts",
+        "backend/src/security/softwareAgentSdk.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/swarmHeartbeat.local.integration.ts",
@@ -11278,6 +11332,7 @@
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
         "endpoint-fixtureproject-supabase-co",
+        "endpoint-open-bigmodel-cn",
         "endpoint-public-example-invalid",
         "endpoint-whop-com"
       ]
@@ -11872,6 +11927,9 @@
       "consuming_sources": [
         "backend/src/sandbox/flyMachineSandbox.ts",
         "backend/src/scripts/verifyFlySandboxBrowser.ts",
+        "backend/src/security/previewConsumer.local.integration.ts",
+        "backend/src/security/previewGrantAdmission.local.integration.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.ts"
       ],
       "environments": [
@@ -11885,7 +11943,11 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "fly-sandbox"
+        "fly-sandbox",
+        "endpoint-127-0-0-1",
+        "endpoint-api-whop-com",
+        "endpoint-example-invalid",
+        "endpoint-public-example-invalid"
       ]
     },
     {
@@ -11933,6 +11995,9 @@
       "consuming_sources": [
         "backend/src/sandbox/flyMachineSandbox.ts",
         "backend/src/scripts/verifyFlySandboxBrowser.ts",
+        "backend/src/security/previewConsumer.local.integration.ts",
+        "backend/src/security/previewGrantAdmission.local.integration.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.ts"
       ],
       "environments": [
@@ -11946,7 +12011,11 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "fly-sandbox"
+        "fly-sandbox",
+        "endpoint-127-0-0-1",
+        "endpoint-api-whop-com",
+        "endpoint-example-invalid",
+        "endpoint-public-example-invalid"
       ]
     },
     {
@@ -12284,7 +12353,7 @@
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "5b45240a4ad9d340fd7fcbdb4fa398e1552fefc9aa9d6512dbaa1e75fbc6aada"
+      "sha256": "eac35208a1078892a82e99c2ed6ed011cc688477050f42bca9588a27536632f6"
     },
     {
       "path": ".github/workflows/command4-authority.yml",
@@ -12340,7 +12409,7 @@
     },
     {
       "path": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "48b77618e63bb78afbc744d3a467d0dcf02758f13f0aec8e3628a6e322539ce1"
+      "sha256": "a8001c358c302a60ce19a6dbd5e7fea7fa273cc80f6f89081b3ee83a43dc68f1"
     },
     {
       "path": "Dockerfile.api",
@@ -12348,15 +12417,15 @@
     },
     {
       "path": "backend/src/ai/architect.ts",
-      "sha256": "f87530534c2a86bafe28e30028ede08e77484888e870bee2aebe2ef5c8eebaf4"
+      "sha256": "102e1d18e249c6591ec7b098ce095d6af1f5af1a3cb5023d20868788c8c55062"
     },
     {
       "path": "backend/src/ai/attachments.ts",
-      "sha256": "978ac1769dee9987d18e7f52de4fd65ec4f3c93a972975d4cd5905078cf048e5"
+      "sha256": "c50dc741653646df6b6dddc6ec1ba4337fa3b3a48a94b5d9a66afe52b81cbd46"
     },
     {
       "path": "backend/src/ai/benchmarkExecutor.ts",
-      "sha256": "7156eb0852c998f62b800c4d22430d31c6956107d32e74487e708bee943aae8d"
+      "sha256": "b969f1f6f3d65ce8fb53fe87a5406461d21cf9e0e7b12c57a0152bef548c8e33"
     },
     {
       "path": "backend/src/ai/benchmarkLedger.ts",
@@ -12364,7 +12433,7 @@
     },
     {
       "path": "backend/src/ai/benchmarkRunner.ts",
-      "sha256": "dbc904d809e4c1ea171b0f15eb9d1706028562a848807498e8f8f32747a51184"
+      "sha256": "a5208cdf668988cb24fe1e9c49c9144e3ee2da31dff0a077105dd3c5329faf33"
     },
     {
       "path": "backend/src/ai/black-hole/agentRuntime.ts",
@@ -12388,7 +12457,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/gateway.ts",
-      "sha256": "95f0eeb65f2ddeeba02f6596b404bc1b7143e7dca9a2ffee9eeac4785bd202ee"
+      "sha256": "29d52b00493f5aebb26b8ac71b8ef4ed38f69ee242ddb8c94a098d4cfc2e84d4"
     },
     {
       "path": "backend/src/ai/black-hole/productionBridge.ts",
@@ -12440,7 +12509,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "sha256": "0b87b152cad5f8e49539af9e0e696d7e09ddcf7680231fdfd44020b4338f2d6d"
+      "sha256": "f7ee10618d7993cc8e827b7f77d23eec06e663232d26a44c598a48825fbb6b7d"
     },
     {
       "path": "backend/src/ai/buildImprovementMemory.ts",
@@ -12472,7 +12541,7 @@
     },
     {
       "path": "backend/src/ai/builderAttempt.ts",
-      "sha256": "d4aadbc3c5b57d3d9bca56b1bcfb87ba9cbb930d59fedfd10bec29ed5c4b2ecd"
+      "sha256": "8a31b2354b50b32fe202939ce967cc55d9264427de982256e752c82ef4e4a833"
     },
     {
       "path": "backend/src/ai/capabilityMaturity.ts",
@@ -12504,7 +12573,7 @@
     },
     {
       "path": "backend/src/ai/converter.ts",
-      "sha256": "e0a4c76d986824bf272cfeb0013c93b5fd8f1734f8cf9450c90ceb84f4457a0a"
+      "sha256": "64dc8d414ffcaf4735d4ecbdd169f2d15c66bfde9282e024e0767e19168ae85c"
     },
     {
       "path": "backend/src/ai/engineeringArtifact.ts",
@@ -12571,12 +12640,16 @@
       "sha256": "a24e948bc83804e407e128107120a42fc9e650a1f6f8d87d29326a048131789f"
     },
     {
+      "path": "backend/src/ai/modelSdkAdmission.ts",
+      "sha256": "59b8660b5578b5fe58729eeb6164f007f751139bae4efac55948ec48dd9aac85"
+    },
+    {
       "path": "backend/src/ai/models.ts",
       "sha256": "ce06bc3f842d59758d5adea1a144c184dda2a3ee4748a59895ce887b7111d952"
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "41ef0899e797d9813bdbdee6f86a27c0739bcc92f1df49da5a9285a52b8a8fbb"
+      "sha256": "3e5456bd309138f609f9cf2fc9077918714108fc7e0fe0d5cfdb3f186226d8e1"
     },
     {
       "path": "backend/src/ai/parallelWeb.ts",
@@ -12596,7 +12669,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
+      "sha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -12616,7 +12689,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876"
+      "sha256": "c85fa6f341fdf1643f3bb633d16d7e22a515ac3bbaf0b84ee8d83a819875045a"
     },
     {
       "path": "backend/src/ai/providerCostTiers.ts",
@@ -12628,15 +12701,15 @@
     },
     {
       "path": "backend/src/ai/providerPolicy.ts",
-      "sha256": "cc8813f2aa654dc180ad120690603f4cf742d03d8141bf44f6803b7cf79e3066"
+      "sha256": "c496870604060d04ede920af1a8b06e67ad0749c8330788568f96f4a0d6dea9f"
     },
     {
       "path": "backend/src/ai/providerRuntime.ts",
-      "sha256": "5adc2426b03c4b2626a20b18c72b3a1f6ff17a04bed513aa443746dbfc789fb8"
+      "sha256": "6d1292ee2cf9d8428b16d1fa27e30ead891062ba09b77b159244342b53905428"
     },
     {
       "path": "backend/src/ai/qa.ts",
-      "sha256": "b7a6c8cd2bcffddebe8a0ae0ef4c37bff9c68cba6fb83558383fcdab27fcf5ad"
+      "sha256": "435121475541eb442df584e1d2674b9abcbe863d4d41c8ba06fbaaa8098e5c92"
     },
     {
       "path": "backend/src/ai/quota.ts",
@@ -12644,7 +12717,7 @@
     },
     {
       "path": "backend/src/ai/repoSummarize.ts",
-      "sha256": "1c0b0e74c11817a0778354e2210a5ed718d48d9ceb3aa8208d0d7e3c666288d5"
+      "sha256": "bc3c17979ae5ddf3d896055af8ea923d5d77e5fdadf6e8fd2c33f31b45b3fd6d"
     },
     {
       "path": "backend/src/ai/repositoryTools.ts",
@@ -12800,7 +12873,7 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "sha256": "96a7c930b828b49332d3eb5e6fd8304452ca59bad007cc3319cba771ca72202e"
+      "sha256": "19228038780105d23a8365a5551c5c5715e1fb71839443ed483cd93ef34bf93c"
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaProductionAdapters.ts",
@@ -12829,6 +12902,10 @@
     {
       "path": "backend/src/ai/temperatureCompat.ts",
       "sha256": "201ee7527db180ce418c7bea47ef6a3ed2e3021cdd95005768a107a0a3847115"
+    },
+    {
+      "path": "backend/src/ai/tenantModelDispatch.ts",
+      "sha256": "023fa43509d92dc08fb7f2e68c22c95626461669809c9388a6f54f4fee749690"
     },
     {
       "path": "backend/src/ai/universal/artifactWorkspace.ts",
@@ -12884,7 +12961,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "eecb884929902fb45c9e63c2389c4729b4f8135803c0c475100c1c2483de293c"
+      "sha256": "1cd8184f146f76899fc3070dbb8a59fb847f03231a7ff35041e494fa61349102"
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
@@ -13140,7 +13217,7 @@
     },
     {
       "path": "backend/src/lib/deployVerify.ts",
-      "sha256": "abcf85356420eda9b29ae5c3aae5a29aa70fb174ab73cb4d9ffb708823b2125e"
+      "sha256": "6d61d603fb3585e28e8fd6ccfbc0077d21ccd55452439a819e4b0f621a28c7da"
     },
     {
       "path": "backend/src/lib/exa.ts",
@@ -13248,7 +13325,7 @@
     },
     {
       "path": "backend/src/lib/shipVerify.ts",
-      "sha256": "f20629c081ef80bea2164d8ee879820ec0dc4a7577de8c931a74c6667f2bc654"
+      "sha256": "4fb72f464e770db5da19b4bd6f9351113eb94d0df9de64513245ccfd7c30f018"
     },
     {
       "path": "backend/src/lib/slimOutputForSse.ts",
@@ -13328,7 +13405,7 @@
     },
     {
       "path": "backend/src/middleware/runtimePreviewGateway.ts",
-      "sha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106"
+      "sha256": "2f42e628938cf4bee850bea66c8d7c44de087422dd14f7dec67765c80de9ce57"
     },
     {
       "path": "backend/src/operations/actionAdmission.local.integration.ts",
@@ -13372,7 +13449,7 @@
     },
     {
       "path": "backend/src/operations/benchmarkAdapter.ts",
-      "sha256": "17c0cdeef10806c1f57a9fc70ad48f1e6130ed66a1a2c8fd27d5b79162aa31bc"
+      "sha256": "417e10890cf8ca9d615c2d807e6a625168b073c418aed43d517e1a9a1334afe5"
     },
     {
       "path": "backend/src/operations/completionGate.ts",
@@ -13388,7 +13465,7 @@
     },
     {
       "path": "backend/src/operations/operationsProviderBudget.local.integration.ts",
-      "sha256": "10f38124af684baaf96c9bfda962b89735980a02d4672062c0eaaf881b5cb67f"
+      "sha256": "8a454fcddb3ea3c4eaaf9c5c0746d6fcef756826f8cd93504a4cdfcde381790c"
     },
     {
       "path": "backend/src/operations/operationsService.ts",
@@ -13404,7 +13481,7 @@
     },
     {
       "path": "backend/src/operations/providerAdapters.ts",
-      "sha256": "58f92ebf5556be31c7e225057fede5d9e91d3204dd53a8b53c9699c39a87dbde"
+      "sha256": "70af3217e8620ae65efcdc418f775c8c36feff10d4d81d8e204cf645284fc625"
     },
     {
       "path": "backend/src/operations/readMatrix.local.integration.ts",
@@ -13548,7 +13625,7 @@
     },
     {
       "path": "backend/src/routes/guestChat.ts",
-      "sha256": "66db2da449ef1541c41333501630b0065ff880a18a181d76fa2d408354341b77"
+      "sha256": "260a5f28139ce66b174efbf9f17d6a03045ff0738a56dd07685e6f0fd8306d36"
     },
     {
       "path": "backend/src/routes/influencer.ts",
@@ -13580,7 +13657,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sha256": "ff58f5c490ec150132c684e66ff60cfb2e63196cfc7144ce6938a8705f9b196b"
+      "sha256": "c1833bc97b0f678d6c62c44f458fc6aac407d9f835a90e78aab77af94babe19f"
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
@@ -13656,11 +13733,11 @@
     },
     {
       "path": "backend/src/sandbox/flyMachineSandbox.ts",
-      "sha256": "3bdef3facc61c0c324b73d3fd06d93cac3b764e9b3dcd0309874ed4bc7e86ca6"
+      "sha256": "3317c592f7c0a68ad945ff4dc654360f3a0621e1ed9f5dd65e6ec7d57953af3e"
     },
     {
       "path": "backend/src/sandbox/remoteSandbox.ts",
-      "sha256": "6b53af8e7dd32c04c7fada22a07683ec904a53dbc0611f91fc99430d9435b4ee"
+      "sha256": "a97ed5a5320436ba360e384b95a9bdd6232a19f021a6e551b378cc6969f475a2"
     },
     {
       "path": "backend/src/sandbox/sandboxEnvironment.ts",
@@ -13668,15 +13745,15 @@
     },
     {
       "path": "backend/src/sandbox/sandboxProviders.ts",
-      "sha256": "a2408c76adf38200f7b22868c52233a0893d57b2cc78115581fc9d40e699c5aa"
+      "sha256": "998cbd6efbdb066f493234d2d6960539151f43e33dbfe2baed81183fbb68578a"
     },
     {
       "path": "backend/src/sandbox/sandboxRuntime.ts",
-      "sha256": "670289bf6032d26a6835832903d72f1c179a51bd751b4b260b7451cedc3bab3a"
+      "sha256": "50c6fb0616c3dec6ef615a20367e19b8882063690fc15a06ea34931415ea5a5b"
     },
     {
       "path": "backend/src/sandbox/sandboxTypes.ts",
-      "sha256": "eaa3593e3296fc0e5aa3c67e363616af6b5296874239f24f1f15dec6183e1a80"
+      "sha256": "3cac3a3b7f5ecd2f7c79742adb08f3fec48494764b502e5ba4fbd45fd49f86ca"
     },
     {
       "path": "backend/src/scripts/verifyFlySandboxBrowser.ts",
@@ -13704,7 +13781,7 @@
     },
     {
       "path": "backend/src/security/boundedPublicGet.ts",
-      "sha256": "9a20c8cc0e496f893a18d79dba79b4beac820b9001bc1b06d2fc2772c70eee44"
+      "sha256": "f93cb06e869b74d6082eeecb747e23bc1fdd71c3d4b217abe1d6223de51e2472"
     },
     {
       "path": "backend/src/security/budgetOwner.local.integration.ts",
@@ -13755,12 +13832,48 @@
       "sha256": "379184e2e75a8002df7e9e84525e2aa4603f4c65fd38f2befebddeb5bd182d5e"
     },
     {
+      "path": "backend/src/security/egress/dataClassification.ts",
+      "sha256": "f9954c04057b0d513ccf889c406dc51bc57b4d097ffa445fb7d3ec66ad5ebe22"
+    },
+    {
+      "path": "backend/src/security/egress/egressPolicy.ts",
+      "sha256": "599dc837cd2b3fdefc0e3abc189c7d5e3ee9f38763f1f3ee2964ac18b49e8125"
+    },
+    {
+      "path": "backend/src/security/egress/fileEgress.ts",
+      "sha256": "a41f6fa55c00275359176456e6c0fa175f2ad7a5209b4d529cc465494725e565"
+    },
+    {
+      "path": "backend/src/security/egress/securityDecision.ts",
+      "sha256": "961cd8cbefb5a179538c9f23b59a62d0162ce8f32db8737c6d020a237f7609cb"
+    },
+    {
+      "path": "backend/src/security/egress/toolTrust.ts",
+      "sha256": "a0b180fb8f43e4bff77688a0c2f6005c1b60690216adc2fd8cd0332244ee751c"
+    },
+    {
+      "path": "backend/src/security/egress/types.ts",
+      "sha256": "65b96a70630b02c22bbc67ece994d401058afd03392f2eafa5ac81c1bc6d7224"
+    },
+    {
+      "path": "backend/src/security/egress/untrustedInput.ts",
+      "sha256": "7cc0441a6b8c11792797a9c2e27712f5dc026137aebed6c0dae9a60693311e92"
+    },
+    {
+      "path": "backend/src/security/egress/urlPolicy.ts",
+      "sha256": "029047096756212afb39fb30f5cdd4522e15ff825f819d7ea0f8efcab735f580"
+    },
+    {
       "path": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
       "sha256": "6ae3a77e6c4551ca3fc6657b1eff6334c757a9a163d4ac3ed4d53f2c00257a69"
     },
     {
       "path": "backend/src/security/frontendScope.local.integration.ts",
-      "sha256": "055ff88a3d5511dfe91689828495eb7a943f7d0b30db4fde0bae0238fd2c7b86"
+      "sha256": "42ca33edc21b9d7aac885b7bdb1f6b1be5d849e63c781e573e5a200e57331639"
+    },
+    {
+      "path": "backend/src/security/genericSdk.local.integration.ts",
+      "sha256": "cb5c247ade126ef0a316b4be90647160b30e2158674b8b0a9e28acb2be145dff"
     },
     {
       "path": "backend/src/security/githubConsumer.local.integration.ts",
@@ -13808,11 +13921,11 @@
     },
     {
       "path": "backend/src/security/previewConsumer.local.integration.ts",
-      "sha256": "be9d96528dc945a4158975f76bb15b2eb3681b989c2002902f4f026765b7ec59"
+      "sha256": "900df49e8e0ae9c336790ba3b72e969cf83a3eb4ef79bb1af1ca3e1f383acb7a"
     },
     {
       "path": "backend/src/security/previewGrantAdmission.local.integration.ts",
-      "sha256": "2ed8be81fb77731af5adde7da3f9c528ef9fc90677be559b9837d36b45f48c73"
+      "sha256": "79ed27adfdbd455d2be0583101ac46adc666006c364b5438b1f3cc60647acc30"
     },
     {
       "path": "backend/src/security/profileDeletion.local.integration.ts",
@@ -13879,6 +13992,10 @@
       "sha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0"
     },
     {
+      "path": "backend/src/security/softwareAgentSdk.local.integration.ts",
+      "sha256": "6a80239bd1e05deb5992e911f7782aea111cdd4f3ea5246b997591a79d74c768"
+    },
+    {
       "path": "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
       "sha256": "fddcbdd3fce9263e69b782e4abb5f1e180eed62af96173c0f9812d397b926487"
     },
@@ -13904,7 +14021,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "a93edf13b23483f374f01e81c69f68f5b3b25e40612f355bb050a003a414a338"
+      "sha256": "435e6670a00ccd975ede1ae00eaf62db2d95e626a5c880546d3704f208d56a63"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -13960,7 +14077,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "ffd706b8deeab7d04891ad77c1e5890ff816829f1c0ee73f31ff206c7aaf325b"
+      "sha256": "79fa4e23cd501826f0425aaa01bcdc79a14b2d457f57f2f56a29b0fde021c0a3"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -13968,11 +14085,11 @@
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "sha256": "a1c68f9aa29e6e9f6bac4de7d0ebef07072995039d206fd689851cc0460b4ea0"
+      "sha256": "c051a5b6418a6ec659d62b693c1dec64b3a03a5b81a1a341e83ede8ca2cd24a7"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "927ae82aefde6fc54744c0c076b94cf2e2a5a2f661bd36308ae704ddabd1bb56"
+      "sha256": "e4b6d2f34ee0ce9ccfcc69d33848483395ff8830cd127152d704214bdd2f65d4"
     },
     {
       "path": "backend/src/services/integrations/composioNamespace.ts",
@@ -14024,7 +14141,7 @@
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "sha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d"
+      "sha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706"
     },
     {
       "path": "backend/src/services/integrations/githubMutationPlan.ts",
@@ -14037,6 +14154,10 @@
     {
       "path": "backend/src/services/integrations/githubRunBranch.ts",
       "sha256": "a0b27a06e1f3a55d387a7bfe5dad37e8e211f0d0c100b05de8f4f82090569294"
+    },
+    {
+      "path": "backend/src/services/integrations/githubSourceRead.ts",
+      "sha256": "ee3ae54b30581b8f230c4c15fab27c298ca8f674a307b28b5c8a95f86786520c"
     },
     {
       "path": "backend/src/services/integrations/githubTokenStore.ts",
@@ -14080,7 +14201,7 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "sha256": "99a90ce870db5a6e55fff7a588384f8abb9ced3bf141ad7cd3d35522cf6a9785"
+      "sha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69"
     },
     {
       "path": "backend/src/services/integrations/vercelAuth.ts",
@@ -14264,7 +14385,7 @@
     },
     {
       "path": "backend/src/synthesis/coherentImplementation.ts",
-      "sha256": "3b856fb21bf9958d230998f9b2a268503faac48f1528594ad908ea84af55d701"
+      "sha256": "92f310a4bee2d7f762debce3e6a9f2351a2fb540fdb42248f55739bc3b7e70c8"
     },
     {
       "path": "backend/src/synthesis/delivery/projectDelivery.ts",
@@ -14304,7 +14425,7 @@
     },
     {
       "path": "backend/src/synthesis/incrementalImplementation.ts",
-      "sha256": "74061bc4cef64c767e7639b22b4bba78e266c0404934cfd768c9dab860dda009"
+      "sha256": "83521be1d68976af19a4e74f0517d94c1ef323821873a3b0c75967c2b9110b59"
     },
     {
       "path": "backend/src/synthesis/integrations/communicationAi.ts",
@@ -14324,7 +14445,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/access.ts",
-      "sha256": "c01a9bdbac40ebe84699b83bcb815b27a41d1644322ff36396a29074ba23b74f"
+      "sha256": "6b51567c0ceee8eaffc184431c14dcba969845c0b7566744e1a50190b41ae55c"
     },
     {
       "path": "backend/src/synthesis/livePreview/agentBridge.ts",
@@ -14392,7 +14513,7 @@
     },
     {
       "path": "backend/src/synthesis/productionAdapters.ts",
-      "sha256": "0243060876196a038d2cf44b99f56ff093edda89132ac92cf2e8d80113428b70"
+      "sha256": "440de34413df3178118f0f2d4067bcd26dd01069b5338a25f9a89c1ae88271f2"
     },
     {
       "path": "backend/src/synthesis/projectRunState.ts",
@@ -14408,7 +14529,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "sha256": "9474dbe5e7b780c55d291fdd2d5e51f21e893a9d13cfbafbd70f601bc3ad2d63"
+      "sha256": "a1fe5bf2ab884ad9c0b1b9784418644af5585cd8012b3e7c623757d6f0692d41"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/index.ts",
@@ -14416,7 +14537,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/manager.ts",
-      "sha256": "9d6d1fb373b181d391acd4492dea36fa7d381314fbe69aa5e438e28fcb618d86"
+      "sha256": "cdee96fe5ceb6319f9d720315f90c26b5aa705b1ac154ddf17315597b5661e04"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/processManager.ts",
@@ -14436,7 +14557,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/types.ts",
-      "sha256": "c0b716c3b8392d45b15cb52ebde868349538e1f404246bf1cbb85807ac665a89"
+      "sha256": "c920d23646a2c62472dceea4ee35e04aac7792e9a487e6d970ded00e923cefaf"
     },
     {
       "path": "backend/src/synthesis/reliability/canonicalResume.ts",
@@ -14508,7 +14629,7 @@
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "sha256": "ae9c0df005e5dd37b474169566b4911a24b911054bd9e192eee2d9f67ba3da53"
+      "sha256": "3842744009c252da5eff4cdf9900344fd18cdd85c49797c3e76d8a140c71dc1b"
     },
     {
       "path": "backend/src/synthesis/softwareProject.ts",
@@ -14528,7 +14649,7 @@
     },
     {
       "path": "backend/src/synthesis/universalEntrypoint.ts",
-      "sha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4"
+      "sha256": "3a4002a2359e8fccf4f10791213d4b2d15f37a0e2e02a413ac938fc4fc842a84"
     },
     {
       "path": "backend/src/synthesis/universalExecution.ts",
@@ -14780,7 +14901,7 @@
     },
     {
       "path": "frontend/src/app/api/browser-view/route.ts",
-      "sha256": "fde077374fd308e3322ee3cfcca5a7c7eb26e0c58284caa1485d2544b4fb77bd"
+      "sha256": "32a340e8c942c965f0ec08179234ee7431efb32f77dceb6a809ee7b1b9451293"
     },
     {
       "path": "frontend/src/app/api/geo/route.ts",
@@ -14788,7 +14909,7 @@
     },
     {
       "path": "frontend/src/app/api/image-fetch/route.ts",
-      "sha256": "4d77a9db680dcc7bd30d4cff26398c2e0c50058a4b28439dd92016b4e7dc0f25"
+      "sha256": "51467588b07c73bb6b06bd1434fe2d126388635b053cecc681587a3c11588be1"
     },
     {
       "path": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
@@ -17903,6 +18024,10 @@
       "sha256": "46bc7cde5cc8d4450f72b57c159442393a3829562f644296539d750cceb81620"
     },
     {
+      "path": "frontend/src/lib/server/publicEgress.ts",
+      "sha256": "99a9c2078e855c5d147e1a8109e5380b0024cd770f3466efc8bb493a572e9179"
+    },
+    {
       "path": "frontend/src/lib/setProfileFromImage.ts",
       "sha256": "5815d4ace7692c8b88a10810ca72cbfe4ed6e23c8c3574cda6c4dd138fc42d45"
     },
@@ -18604,7 +18729,7 @@
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 177,
+      "line": 183,
       "expression": "def.secretKey",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -19106,7 +19231,7 @@
       "hostname": "api.x.ai",
       "protocol": "https:",
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "line": 435,
+      "line": 439,
       "credentialsInUrl": false
     },
     {
@@ -19141,7 +19266,7 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 106,
+      "line": 110,
       "credentialsInUrl": false
     },
     {
@@ -19155,7 +19280,28 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4010,
+      "line": 3997,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.moonshot.ai",
+      "protocol": "https:",
+      "path": "backend/src/ai/providerPolicy.ts",
+      "line": 97,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "open.bigmodel.cn",
+      "protocol": "https:",
+      "path": "backend/src/ai/providerPolicy.ts",
+      "line": 98,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "openrouter.ai",
+      "protocol": "https:",
+      "path": "backend/src/ai/providerPolicy.ts",
+      "line": 99,
       "credentialsInUrl": false
     },
     {
@@ -19897,7 +20043,7 @@
       "hostname": "api.machines.dev",
       "protocol": "https:",
       "path": "backend/src/sandbox/flyMachineSandbox.ts",
-      "line": 99,
+      "line": 100,
       "credentialsInUrl": false
     },
     {
@@ -20120,6 +20266,27 @@
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
+      "path": "backend/src/security/genericSdk.local.integration.ts",
+      "line": 14,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "open.bigmodel.cn",
+      "protocol": "https:",
+      "path": "backend/src/security/genericSdk.local.integration.ts",
+      "line": 30,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "open.bigmodel.cn",
+      "protocol": "https:",
+      "path": "backend/src/security/genericSdk.local.integration.ts",
+      "line": 31,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
       "path": "backend/src/security/githubConsumer.local.integration.ts",
       "line": 16,
       "credentialsInUrl": false
@@ -20254,21 +20421,21 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/previewConsumer.local.integration.ts",
-      "line": 14,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "127.0.0.1",
-      "protocol": "http:",
-      "path": "backend/src/security/previewConsumer.local.integration.ts",
       "line": 23,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
+      "path": "backend/src/security/previewConsumer.local.integration.ts",
+      "line": 32,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
       "path": "backend/src/security/previewGrantAdmission.local.integration.ts",
-      "line": 14,
+      "line": 23,
       "credentialsInUrl": false
     },
     {
@@ -20421,6 +20588,27 @@
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
+      "path": "backend/src/security/softwareAgentSdk.local.integration.ts",
+      "line": 14,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "open.bigmodel.cn",
+      "protocol": "https:",
+      "path": "backend/src/security/softwareAgentSdk.local.integration.ts",
+      "line": 31,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "open.bigmodel.cn",
+      "protocol": "https:",
+      "path": "backend/src/security/softwareAgentSdk.local.integration.ts",
+      "line": 32,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
       "path": "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
       "line": 13,
       "credentialsInUrl": false
@@ -20471,77 +20659,77 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 125,
+      "line": 127,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 125,
+      "line": 127,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 546,
+      "line": 559,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 596,
+      "line": 609,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 685,
+      "line": 698,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 854,
+      "line": 867,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 912,
+      "line": 925,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1599,
+      "line": 1612,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1617,
+      "line": 1630,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1625,
+      "line": 1638,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1629,
+      "line": 1642,
       "credentialsInUrl": false
     },
     {
@@ -20723,7 +20911,7 @@
       "hostname": "backend.composio.dev",
       "protocol": "https:",
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 9,
+      "line": 13,
       "credentialsInUrl": false
     },
     {
@@ -20737,42 +20925,42 @@
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 277,
+      "line": 280,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 656,
+      "line": 659,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 708,
+      "line": 711,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 834,
+      "line": 837,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 867,
+      "line": 870,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1710,
+      "line": 1721,
       "credentialsInUrl": false
     },
     {
@@ -20780,6 +20968,13 @@
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubRepoCreation.ts",
       "line": 141,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.github.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/githubSourceRead.ts",
+      "line": 34,
       "credentialsInUrl": false
     },
     {
@@ -21367,7 +21562,7 @@
       "hostname": "api.machines.dev",
       "protocol": "https:",
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
-      "line": 34,
+      "line": 35,
       "credentialsInUrl": false
     },
     {
@@ -24636,14 +24831,14 @@
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "line": 83,
+      "line": 82,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/black-hole/webIntelligence.ts",
-      "line": 547,
+      "line": 551,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24971,6 +25166,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/ai/openaiCompat.ts",
+      "line": 231,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/ai/parallelWeb.ts",
       "line": 329,
       "scope": "FUNCTION_LOCAL",
@@ -25126,56 +25328,56 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 531,
+      "line": 532,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 561,
+      "line": 562,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1110,
+      "line": 1111,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1468,
+      "line": 1477,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2203,
+      "line": 2215,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3780,
+      "line": 3767,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3960,
+      "line": 3947,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4924,
+      "line": 4911,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -25196,14 +25398,14 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 56,
+      "line": 59,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 57,
+      "line": 60,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -25238,56 +25440,56 @@
     },
     {
       "path": "backend/src/ai/providerRuntime.ts",
-      "line": 54,
+      "line": 57,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/providerRuntime.ts",
-      "line": 271,
+      "line": 295,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/qa.ts",
-      "line": 210,
+      "line": 213,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/qa.ts",
-      "line": 236,
+      "line": 239,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/qa.ts",
-      "line": 378,
+      "line": 384,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/qa.ts",
-      "line": 383,
+      "line": 389,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/qa.ts",
-      "line": 421,
+      "line": 427,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/qa.ts",
-      "line": 422,
+      "line": 428,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -25539,14 +25741,14 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "line": 847,
+      "line": 803,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "line": 1191,
+      "line": 1145,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -25728,49 +25930,49 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 123,
+      "line": 124,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 145,
+      "line": 146,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 270,
+      "line": 271,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 289,
+      "line": 290,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1377,
+      "line": 1386,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1475,
+      "line": 1489,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1768,
+      "line": 1770,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26022,14 +26224,21 @@
     },
     {
       "path": "backend/src/middleware/runtimePreviewGateway.ts",
-      "line": 119,
+      "line": 126,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/middleware/runtimePreviewGateway.ts",
+      "line": 140,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/operations/benchmarkAdapter.ts",
-      "line": 216,
+      "line": 217,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26148,7 +26357,7 @@
     },
     {
       "path": "backend/src/operations/providerAdapters.ts",
-      "line": 111,
+      "line": 101,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26771,42 +26980,42 @@
     },
     {
       "path": "backend/src/routes/guestChat.ts",
-      "line": 41,
+      "line": 50,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/routes/guestChat.ts",
-      "line": 42,
+      "line": 51,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/routes/guestChat.ts",
-      "line": 43,
+      "line": 52,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/routes/guestChat.ts",
-      "line": 44,
+      "line": 53,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/routes/guestChat.ts",
-      "line": 45,
+      "line": 54,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/routes/guestChat.ts",
-      "line": 436,
+      "line": 473,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26925,14 +27134,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1098,
+      "line": 1111,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1435,
+      "line": 1448,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26960,84 +27169,84 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 619,
+      "line": 617,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1108,
+      "line": 1104,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1134,
+      "line": 1130,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 40,
+      "line": 37,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 58,
+      "line": 55,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 514,
+      "line": 512,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 978,
+      "line": 974,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 1003,
+      "line": 999,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 677,
+      "line": 681,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1213,
+      "line": 1217,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1242,
+      "line": 1246,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1849,
+      "line": 1853,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -27079,28 +27288,28 @@
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1432,
+      "line": 1441,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1464,
+      "line": 1475,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1470,
+      "line": 1481,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1544,
+      "line": 1555,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -27177,70 +27386,70 @@
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 192,
+      "line": 208,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 207,
+      "line": 223,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 209,
+      "line": 225,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 604,
+      "line": 620,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 651,
+      "line": 667,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 652,
+      "line": 668,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 885,
+      "line": 901,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 1035,
+      "line": 1051,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 1102,
+      "line": 1118,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/userProviderKeys.ts",
-      "line": 1108,
+      "line": 1124,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -27632,14 +27841,14 @@
     },
     {
       "path": "backend/src/synthesis/coherentImplementation.ts",
-      "line": 705,
+      "line": 706,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/coherentImplementation.ts",
-      "line": 706,
+      "line": 707,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -27863,7 +28072,7 @@
     },
     {
       "path": "backend/src/synthesis/incrementalImplementation.ts",
-      "line": 552,
+      "line": 554,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -27912,21 +28121,21 @@
     },
     {
       "path": "backend/src/synthesis/productionAdapters.ts",
-      "line": 68,
+      "line": 70,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/manager.ts",
-      "line": 460,
+      "line": 461,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/manager.ts",
-      "line": 551,
+      "line": 552,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28192,35 +28401,35 @@
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "line": 135,
+      "line": 140,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "line": 250,
+      "line": 255,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "line": 554,
+      "line": 564,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "line": 559,
+      "line": 569,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "line": 567,
+      "line": 577,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28241,7 +28450,7 @@
     },
     {
       "path": "backend/src/synthesis/universalEntrypoint.ts",
-      "line": 707,
+      "line": 712,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

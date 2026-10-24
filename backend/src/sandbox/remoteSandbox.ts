@@ -30,6 +30,7 @@
  */
 
 import {
+  requireEnforcedSandboxNetworkPolicy,
   type SandboxAvailability,
   type SandboxExecutionRequest,
   type SandboxExecutionResult,
@@ -238,6 +239,7 @@ export class RemoteSandboxRuntime implements SandboxRuntime {
   }
 
   async execute(request: SandboxExecutionRequest): Promise<SandboxExecutionResult> {
+    requireEnforcedSandboxNetworkPolicy(request.networkPolicy, this.name);
     const started = Date.now();
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), request.timeoutMs + TRANSPORT_GRACE_MS);

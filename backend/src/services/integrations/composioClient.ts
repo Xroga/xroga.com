@@ -5,6 +5,10 @@ export { xrogaCustomToolkitPrefix, canUserAccessComposioToolkit, canUserAccessCo
 import { canonicalAuthorityValue, preparedActionDigest } from '../../security/authority/digest.js';
 import { assertAuthorityPermit, consumeAuthorityPermit } from '../../security/authority/enforce.js';
 import type { AuthorityDispatchBinding, AuthorityPermit } from '../../security/authority/types.js';
+import { businessActionClass } from '../../security/authority/risk.js';
+import { createTenantContext } from '../../security/tenantContext.js';
+import { enforceEgress } from '../../security/egress/egressPolicy.js';
+import { persistSecurityDecision } from '../../security/egress/securityDecision.js';
 
 const COMPOSIO_API_BASE = 'https://backend.composio.dev/api/v3.1';
 
@@ -2434,6 +2438,15 @@ async function executeDiscoveredComposioTool(
       });
     }
     account = current.noAuth ? undefined : accountId;
+    // Existing exact permit and live account readback precede the egress gate.
+    // Provider headers/credentials are attached only inside composioRequest.
+    const context=createTenantContext({userId,via:'persisted_owner'});
+    await enforceEgress({context,actionClass:businessActionClass(toolSlug),binding:actualBinding,
+      authorityPermit:input.authorityPermit,destination:COMPOSIO_API_BASE,
+      recipient:accountId,purpose:'confirmed_business_action',
+      payload:{sessionId,useCase:input.useCase,toolSlug,arguments:input.arguments},
+      toolTrust:toolkit.startsWith(xrogaCustomToolkitPrefix(userId))?'UNTRUSTED_CAPABILITY_METADATA':'SERVER_REGISTERED',
+    },receipt=>persistSecurityDecision(context,receipt));
     await consumeAuthorityPermit(input.authorityPermit, actualBinding);
   }
 

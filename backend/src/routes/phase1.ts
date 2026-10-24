@@ -508,6 +508,7 @@ router.post(
         await planSemanticRequest(
           {
             userId,
+            tenantContext: requireTenantContext(req.tenantContext),
 
             message,
 
@@ -854,6 +855,7 @@ router.post(
             await prepareBusinessAction(
               {
                 userId,
+                tenantContext:requireTenantContext(req.tenantContext),
 
                 useCase:
                   message
@@ -1187,6 +1189,7 @@ router.post(
             await readBusinessData(
               {
                 userId,
+                tenantContext:requireTenantContext(req.tenantContext),
 
                 useCase:
                   message
@@ -1502,6 +1505,7 @@ router.post(
         await runChatPipeline(
           {
             userId,
+            tenantContext:requireTenantContext(req.tenantContext),
 
             prompt:
               promptForChat,

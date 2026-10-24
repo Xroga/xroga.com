@@ -180,7 +180,7 @@ test('the sandbox request carries real limits, not unbounded execution', async (
       command: 'npm',
       args: ['install'],
       timeoutMs: 5_000,
-      networkPolicy: 'registry-only',
+      networkPolicy: 'none',
       environment: buildSandboxEnvironment(),
     });
     const limits = captured[0].limits as Record<string, number>;

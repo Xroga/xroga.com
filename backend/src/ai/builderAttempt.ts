@@ -192,7 +192,7 @@ export async function runBuilderAttempt<T>(
   run: (ctx: {
     signal: AbortSignal;
     /** Any live provider stream activity, including private reasoning deltas. */
-    onActivity: () => void;
+    onActivity: (answerCharacters?:number) => void;
     /** Usable answer output only. Private reasoning must never be passed here. */
     onToken: (chunk: string) => void;
   }) => Promise<T>,
@@ -250,22 +250,20 @@ export async function runBuilderAttempt<T>(
     );
   }, budget.generationMs);
 
-  const onActivity = () => {
+  const onActivity = (answerCharacters=0) => {
     if (firstActivityAt === null) {
       firstActivityAt = Date.now();
       clearTimeout(firstTokenTimer);
     }
+    if(answerCharacters>0){
+      if(firstTokenAt===null)firstTokenAt=Date.now();
+      outputChars+=answerCharacters;
+      if(outputChars>budget.maxOutputChars)abortWith(timeoutError('BUILDER_OUTPUT_LIMIT',`Provider exceeded ${budget.maxOutputChars} characters`));
+    }
   };
 
   const onToken = (chunk: string) => {
-    onActivity();
-    if (firstTokenAt === null) firstTokenAt = Date.now();
-    outputChars += chunk.length;
-    if (outputChars > budget.maxOutputChars) {
-      abortWith(
-        timeoutError('BUILDER_OUTPUT_LIMIT', `Provider exceeded ${budget.maxOutputChars} characters`),
-      );
-    }
+    onActivity(chunk.length);
   };
 
   try {

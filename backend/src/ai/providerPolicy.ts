@@ -90,6 +90,20 @@ export function requiredCodingTransport(modelId: string): string | null {
   return isCodingModel(modelId) ? CODING_MODEL_TRANSPORT[modelId] : null;
 }
 
+/** Provider identity binds both its credential namespace and exact API base.
+ * This is separate from model-id configuration and cannot be supplied by a prompt. */
+export function assertModelProviderDestination(provider: string, baseUrl: string, secretName?: string): void {
+  const allowed:Record<string,{url:string;secret:string}>={
+    moonshot:{url:'https://api.moonshot.ai/v1',secret:'KIMI_API_KEY'},
+    zhipu:{url:'https://open.bigmodel.cn/api/paas/v4',secret:'GLM_API_KEY'},
+    openrouter:{url:'https://openrouter.ai/api/v1',secret:'OPENROUTER_API_KEY'},
+  };
+  const expected=allowed[provider];
+  if(!expected||baseUrl!==expected.url||(secretName!==undefined&&secretName!==expected.secret)){
+    throw Object.assign(new Error('Model provider destination or credential namespace is not approved.'),{code:'MODEL_DESTINATION_DENIED',status:400});
+  }
+}
+
 export class ProviderPolicyError extends Error {
   readonly code = 'PROVIDER_POLICY_VIOLATION' as const;
   constructor(message: string) {

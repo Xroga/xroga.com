@@ -5,6 +5,8 @@ import { randomUUID, createHash, createHmac } from 'node:crypto';
 import express from 'express';
 import {registerGithubConsumerTests} from './githubConsumer.local.integration.js';
 import {registerPlatformBenchmarkTests} from './platformBenchmark.local.integration.js';
+import {registerSoftwareAgentSdkTests} from './softwareAgentSdk.local.integration.js';
+import {registerGenericSdkTests} from './genericSdk.local.integration.js';
 import {registerWebAccountingTests} from './webAccounting.local.integration.js';
 import {registerConnectedMemoryConsumerTests} from './connectedMemoryConsumer.local.integration.js';
 import {registerLearningOwnerReadTests} from './learningOwnerReads.local.integration.js';
@@ -197,6 +199,8 @@ registerRuntimeEventParentTests(admin,()=>users);
 registerAdminReadTests(admin,request);
 registerGithubConsumerTests(admin,()=>users);
 registerPlatformBenchmarkTests(admin,()=>users);
+registerSoftwareAgentSdkTests(admin);
+registerGenericSdkTests(admin);
 registerWebAccountingTests(admin,()=>users);
 registerConnectedMemoryConsumerTests(admin);
 registerLearningOwnerReadTests(admin,()=>users);
@@ -458,12 +462,21 @@ test('real revision restore rejects mismatched snapshot identities before restor
 });
 
 test('real durable preview session cannot resolve a misbound owner/project or stale capability', async t => {
+  const priorProviderApp=process.env.XROGA_SANDBOX_FLY_APP;
+  const priorProviderToken=process.env.XROGA_SANDBOX_FLY_TOKEN;
+  const priorControlApp=process.env.FLY_APP_NAME;
+  Object.assign(process.env,{XROGA_SANDBOX_FLY_APP:'xroga-synthetic-runtime',XROGA_SANDBOX_FLY_TOKEN:'synthetic-provider-only',FLY_APP_NAME:'xroga-api'});
+  t.after(()=>{
+    if(priorProviderApp===undefined)delete process.env.XROGA_SANDBOX_FLY_APP;else process.env.XROGA_SANDBOX_FLY_APP=priorProviderApp;
+    if(priorProviderToken===undefined)delete process.env.XROGA_SANDBOX_FLY_TOKEN;else process.env.XROGA_SANDBOX_FLY_TOKEN=priorProviderToken;
+    if(priorControlApp===undefined)delete process.env.FLY_APP_NAME;else process.env.FLY_APP_NAME=priorControlApp;
+  });
   const [owner, other] = users;
   const now = Date.now(), sessionId = randomUUID();
   const store = new SupabaseProjectRuntimeStore();
   const session: ProjectRuntimeSession = {
     schemaVersion: '1.0.0', sessionId, userId: owner.id, projectId: owner.project,
-    providerId: 'fixture-no-execution', runtimeClass: 'interactive', status: 'running', image: null,
+    providerId: 'fly-project-runtime', runtimeClass: 'interactive', status: 'running', image: null,
     workspaceRevision: 1, knownFiles: [], processes: [],
     ports: [{ port: 3000, protocol: 'http', processId: 'fixture', status: 'declared' }],
     providerState: { machineId: 'abc123', app: 'xroga-synthetic-runtime' },

@@ -1,4 +1,4 @@
-import OpenAI from 'openai';
+import OpenAI, {type ClientOptions} from 'openai';
 import { getSecret } from '../config/envSecrets.js';
 import {
   MODELS,
@@ -8,8 +8,12 @@ import {
   type ModelId,
 } from './models.js';
 import { recordModelExecution } from './providerRuntime.js';
-import { ProviderPolicyError, requiredCodingTransport } from './providerPolicy.js';
+import { ProviderPolicyError, requiredCodingTransport, assertModelProviderDestination } from './providerPolicy.js';
 import { withTemperatureFallback } from './temperatureCompat.js';
+import {containsCredentialSecretText} from '../security/egress/dataClassification.js';
+import {publicHttpsUrl} from '../security/egress/urlPolicy.js';
+import {requireModelSdkAdmission,modelAdmissionDenied} from './modelSdkAdmission.js';
+import {DEFAULT_BUILDER_BUDGET} from './builderAttempt.js';
 
 export type ContentPart =
   | { type: 'text'; text: string }
@@ -140,6 +144,8 @@ export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): 
     );
   }
 
+  assertModelProviderDestination(def.provider,def.baseUrl,def.secretKey);
+
   // Configuration is checked *after* the transport policy, deliberately.
   //
   // A model can be both misconfigured and mis-transported. If the configuration guard ran
@@ -186,14 +192,58 @@ export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): 
   };
 }
 
-function clientFor(endpoint: ResolvedEndpoint): OpenAI {
+export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispatch?:(wireBody:string)=>Promise<void>): OpenAI {
+  publicHttpsUrl(endpoint.baseUrl);
+  assertModelProviderDestination(endpoint.provider,endpoint.baseUrl);
   return new OpenAI({
     apiKey: endpoint.apiKey,
     baseURL: endpoint.baseUrl,
     timeout: 180_000,
     maxRetries: 1,
     defaultHeaders: endpoint.defaultHeaders,
+    fetch:async (input,init)=>{
+      const url=new URL(typeof input==='string'?input:'url' in input?input.url:input.href);
+      if(url.href!==endpoint.baseUrl+'/chat/completions'||init?.method?.toUpperCase()!=='POST'||typeof init.body!=='string')throw Object.assign(Error('Model SDK destination denied.'),{code:'MODEL_DESTINATION_DENIED',status:400});
+      try { await beforeDispatch?.(init.body); }
+      catch {
+        // Let the SDK preserve the local policy code, rather than wrapping a
+        // thrown fetch error as a retryable/uncertain provider connection error.
+        return Response.json({error:{message:'Local model dispatch denied before provider request.',code:'MODEL_DISPATCH_BINDING_DENIED'}},
+          {status:400,headers:{'x-should-retry':'false'}}) as unknown as Awaited<ReturnType<NonNullable<ClientOptions['fetch']>>>;
+      }
+      const response=await globalThis.fetch(url,{method:'POST',body:init.body,
+        headers:init.headers as NonNullable<Parameters<typeof fetch>[1]>['headers'],signal:init.signal as AbortSignal|undefined,redirect:'error'});
+      if(response.redirected||(response.status>=300&&response.status<400))throw Object.assign(Error('Model SDK redirect denied.'),{code:'MODEL_DESTINATION_DENIED',status:400});
+      // SDK v4's Node typings require node-fetch-only convenience methods, but
+      // its chat JSON/SSE parser consumes the standard Response surface. Keep
+      // this Node22 interoperability cast at the transport boundary and test
+      // both actual SDK parsers, rather than invent those methods or metadata.
+      return response as unknown as Awaited<ReturnType<NonNullable<ClientOptions['fetch']>>>;
+    },
   });
+}
+
+/** Shared by ordinary completion and the canonical SoftwareAgent SDK boundary.
+ * Tool arguments/descriptions are data too. This issues no authority or budget. */
+export function snapshotModelEgressPayload<T>(value:T,credential:string):T{
+  const invalid=()=>Object.assign(Error('Model payload structure limit exceeded.'),{status:400,code:'MODEL_PAYLOAD_INVALID'});
+  let snapshot:T;try{snapshot=structuredClone(value);}catch{throw invalid();}
+  const pending:Array<{value:unknown;exit:boolean}>=[{value:snapshot,exit:false}],active=new Set<object>();let nodes=0;
+  while(pending.length){
+    const step=pending.pop()!,item=step.value;
+    if(step.exit){active.delete(item as object);continue;}
+    if(++nodes>100_000)throw invalid();
+    if(typeof item==='string'){
+      if(containsCredentialSecretText(item)||(credential.length>=8&&item.includes(credential)))throw Object.assign(Error('Model payload denied by credential egress policy.'),{status:400,code:'MODEL_CREDENTIAL_EGRESS_DENIED'});
+    }else if(item&&typeof item==='object'){
+      if(active.has(item))throw invalid();active.add(item);pending.push({value:item,exit:true});
+      for(const [key,child] of Object.entries(item)){
+        if(pending.length>=99_999)throw invalid();
+        pending.push({value:key,exit:false},{value:child,exit:false});
+      }
+    }
+  }
+  return snapshot;
 }
 
 function contentTokenEstimate(content: string | ContentPart[]): number {
@@ -218,12 +268,23 @@ export async function chatCompletion(
     reasoningMode?: ReasoningMode;
     signal?: AbortSignal;
     credentialOverride?: string;
+    beforeDispatch?: (wireBody:string)=>Promise<void>;
   } = {},
 ): Promise<ChatResult> {
   const started = Date.now();
+  opts={...opts};
   try {
+    const admission=requireModelSdkAdmission(opts.beforeDispatch,modelId,opts.credentialOverride);
+    const checkCancellation=()=>{if(opts.signal?.aborted)throw Object.assign(Error('Build cancelled'),{name:'AbortError',code:'BUILD_CANCELLED'});};
+    checkCancellation();
     const endpoint = resolveEndpoint(modelId, opts.credentialOverride);
-    const client = clientFor(endpoint);
+    messages=snapshotModelEgressPayload(messages,endpoint.apiKey);
+    const client = createModelProviderClient(endpoint,async wire=>{
+      checkCancellation();
+      const current=resolveEndpoint(modelId,opts.credentialOverride);
+      if(current.apiKey!==endpoint.apiKey||current.baseUrl!==endpoint.baseUrl||current.apiModel!==endpoint.apiModel||current.provider!==endpoint.provider)modelAdmissionDenied();
+      await opts.beforeDispatch!(wire);checkCancellation();
+    });
     const completion = await withTemperatureFallback(opts.temperature ?? 0.4, (temperature) =>
       client.chat.completions.create(
         {
@@ -272,7 +333,7 @@ export async function chatCompletion(
       messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
     const outputTokens = completion.usage?.completion_tokens ?? estimateTokens(text);
     recordModelExecution(modelId, { ok: true, latencyMs: Date.now() - started });
-    return {
+    const result:ChatResult = {
       text,
       finishReason: completion.choices[0]?.finish_reason ?? null,
       modelId,
@@ -283,6 +344,8 @@ export async function chatCompletion(
       totalTokens: inputTokens + outputTokens,
       providerRequestId: completion.id,
     };
+    admission.complete(result,()=>{},checkCancellation);
+    return Object.freeze(result);
   } catch (error) {
     recordModelExecution(modelId, { ok: false, latencyMs: Date.now() - started, error });
     throw error;
@@ -297,19 +360,30 @@ export async function chatCompletionStream(
     temperature?: number;
     onDelta?: (delta: string) => void;
     /** Provider stream activity, including private reasoning chunks. */
-    onActivity?: () => void;
+    onActivity?: (answerCharacters?:number) => void;
     /** Provider-specific reasoning control. Used only by direct-output workloads. */
     reasoningMode?: ReasoningMode;
     /** Ask the compatible endpoint to constrain the response to one JSON object. */
     json?: boolean;
     signal?: AbortSignal;
     credentialOverride?: string;
+    beforeDispatch?: (wireBody:string)=>Promise<void>;
   } = {},
 ): Promise<ChatResult> {
   const started = Date.now();
+  opts={...opts};
   try {
+    const admission=requireModelSdkAdmission(opts.beforeDispatch,modelId,opts.credentialOverride);
+    const checkCancellation=()=>{if(opts.signal?.aborted)throw Object.assign(Error('Build cancelled'),{name:'AbortError',code:'BUILD_CANCELLED'});};
+    checkCancellation();
     const endpoint = resolveEndpoint(modelId, opts.credentialOverride);
-    const client = clientFor(endpoint);
+    messages=snapshotModelEgressPayload(messages,endpoint.apiKey);
+    const client = createModelProviderClient(endpoint,async wire=>{
+      checkCancellation();
+      const current=resolveEndpoint(modelId,opts.credentialOverride);
+      if(current.apiKey!==endpoint.apiKey||current.baseUrl!==endpoint.baseUrl||current.apiModel!==endpoint.apiModel||current.provider!==endpoint.provider)modelAdmissionDenied();
+      await opts.beforeDispatch!(wire);checkCancellation();
+    });
     if (opts.signal?.aborted) {
       const err = new Error('Build cancelled') as Error & { code?: string };
       err.code = 'BUILD_CANCELLED';
@@ -357,12 +431,13 @@ export async function chatCompletionStream(
         choice?.finish_reason ||
         chunk.usage
       ) {
-        opts.onActivity?.();
+        opts.onActivity?.(delta.length||undefined);
+        checkCancellation();
       }
       finishReason = choice?.finish_reason ?? finishReason;
       if (delta) {
+        if(text.length+delta.length>DEFAULT_BUILDER_BUDGET.maxOutputChars)throw Object.assign(Error('Provider exceeded the bounded output buffer'),{code:'BUILDER_OUTPUT_LIMIT'});
         text += delta;
-        opts.onDelta?.(delta);
       }
 
       if (chunk.usage) {
@@ -375,7 +450,7 @@ export async function chatCompletionStream(
     if (!outputTokens) outputTokens = estimateTokens(text);
 
     recordModelExecution(modelId, { ok: true, latencyMs: Date.now() - started });
-    return {
+    const result:ChatResult = {
       text,
       finishReason,
       modelId,
@@ -386,6 +461,8 @@ export async function chatCompletionStream(
       totalTokens: inputTokens + outputTokens,
       providerRequestId,
     };
+    admission.complete(result,()=>opts.onDelta?.(text),checkCancellation);
+    return Object.freeze(result);
   } catch (error) {
     recordModelExecution(modelId, { ok: false, latencyMs: Date.now() - started, error });
     throw error;

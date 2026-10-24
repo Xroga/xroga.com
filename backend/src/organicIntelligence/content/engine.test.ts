@@ -262,7 +262,10 @@ test('source and claim registries reject duplicate and stale records', () => {
   assert.ok(issues.some((item) => item.includes('is stale')));
 });
 
-test('actual repository snapshot reuses Command 1, keeps missing data explicit, and produces two valid FIX briefs', async () => {
+test('actual repository snapshot reuses Command 1, keeps missing data explicit, and produces two valid FIX briefs', async t => {
+  // This is an explicitly dated historical fixture. Nested freshness checks
+  // must observe the same clock, without changing production expiry rules.
+  t.mock.timers.enable({apis:['Date'],now:new Date('2026-09-22T00:00:00.000Z')});
   const snapshot = await buildGrowthContentSnapshot({ now: new Date('2026-09-22T00:00:00.000Z') });
   assert.equal(snapshot.command1.validationIssues.length, 0);
   assert.equal(snapshot.validatedCandidates.filter((item) => item.origin === 'VALIDATED_DEMAND').length, 0);
@@ -283,7 +286,8 @@ test('actual repository snapshot reuses Command 1, keeps missing data explicit, 
   assert.ok(snapshot.contentValidation.every((item) => item.issues.length === 0));
 });
 
-test('validated demand evidence flows into the matching content brief without duplicates', async () => {
+test('validated demand evidence flows into the matching content brief without duplicates', async t => {
+  t.mock.timers.enable({apis:['Date'],now:new Date('2026-09-22T00:00:00.000Z')});
   const [command1Source, growthSource] = await Promise.all([loadSource(), loadGrowthContentSource()]);
   growthSource.keywordMetrics = [metric({
     id: 'metric:validated-readiness',
