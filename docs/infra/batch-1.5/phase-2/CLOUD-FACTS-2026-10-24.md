@@ -19,6 +19,19 @@ Nothing was modified. Items that need the Fly login are listed at the end.
 
 Findings worth acting on later (none was changed): public `r2.dev` access on `xroga-chat-archive` is risky for a bucket named as an archive of chats, even if it is empty today; the production database is on a plan with no PITR.
 
+## Exposure and recovery, measured (follow-up, same day)
+**R2 public access: no object is exposed today.** A full object listing (API status 200, `success: true`, not truncated) returns **0 objects** in all five buckets, including the three with `r2.dev` enabled.
+The only code that writes to R2, `backend/src/lib/r2.ts` (used by `projectFiles.ts`), writes to `CLOUDFLARE_R2_BUCKET`, default `xroga-assets` (r2.dev **off**), and **builds `https://<bucket>.r2.dev/<key>` URLs** when
+`CLOUDFLARE_R2_PUBLIC_URL` is unset. The future risk: if production sets `CLOUDFLARE_R2_BUCKET` to one of the three public buckets, every uploaded project file becomes readable by anyone who has or guesses
+its key (`users/<userId>/<ms timestamp>-<filename>`). Whether `CLOUDFLARE_R2_*` is set on Fly is answered by the Fly secret names. Since all three buckets are empty, turning `r2.dev` off on them breaks nothing that exists today.
+Phase 1's Drive path does not use these URLs (private delivery; its provider test asserts the object is not reachable on `r2.dev`).
+
+**Supabase backups: the production database has no provider backup to restore.** Supabase's documentation: daily backups are taken for Pro, Team and Enterprise projects only;
+free projects are advised to export their own with `supabase db dump`. `xroga-ai` is on the free plan, and the repository has no backup workflow (no `pg_dump` or `db dump` in `.github`).
+A deleted table or a bad migration today is unrecoverable. This is a genuine customer-data risk, independent of Phase 2.
+
+New since the first pass: a third project, `xroga-p3-staging-20261024` (`us-east-1`, created 2026-10-24 14:09 UTC), exists; it appears to be Codex's Phase 3 staging and was not touched.
+
 ## Not established, and why
 | Checklist | Missing | Blocked by | Exact next action |
 |---|---|---|---|
