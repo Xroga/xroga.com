@@ -17,16 +17,17 @@ an unknown commit is an error).
 | Tested commit | CI run | Result | Archived |
 |---|---|---|---|
 | `511f503a` | 40094731238 | `overall=PASS` (189 unit, 15 real PostgreSQL, 6 real Chromium; full suite 5 baseline failures, 0 regressions) | `../ci-evidence/run-40094315005/` (same code, run on `865d492b`) and the run page |
-| **`fdb5face`** | **40097009444** | **`overall=PASS`** (207 unit, 15 real PostgreSQL, 6 real Chromium, seccomp derivation; full suite 3132 pass and the same 5 baseline failures, 0 regressions) | `../ci-evidence/run-40097009444/` |
+| `fdb5face` | 40097009444 | `overall=PASS` (207 unit, 15 real PostgreSQL, 6 real Chromium, seccomp derivation; full suite 3132 pass and the same 5 baseline failures, 0 regressions) | `../ci-evidence/run-40097009444/` |
+| **`e2a3fb49`** | **40101667223** | **`overall=PASS`** (223 unit, 15 real PostgreSQL, 6 real Chromium, seccomp derivation; full suite 3148 pass and the same 5 baseline failures, 0 regressions) | `../ci-evidence/run-40101667223/` |
 
-`fdb5face` is the current CI-tested commit and supersedes `511f503a`: the network model, the offline pull-request migration job, the custody readiness alignment and the equivalence
-classifier were added after it, and each has tests that ran in that run.
+`e2a3fb49` is the current CI-tested commit. It supersedes `fdb5face`, which supersedes `511f503a`: the production-proxy sidecar, the runtime conformance probe, the image pins and the proxy credential and decision hooks were added after `fdb5face`, and each has tests that ran in run 40101667223.
 
 ## Equivalence checks performed
 | Tested | Later | Command output |
 |---|---|---|
 | `511f503a` | `fbb81ccf` | `doc docs/infra/batch-1.5/phase-2/README.md` then `EQUIVALENT: fbb81ccf differs from 511f503a only in documentation`. Also identical git tree hashes for `backend`, `deploy`, `scripts`, `supabase`, `.github`, `package.json`, `package-lock.json` at both commits |
-| `fdb5face` | each later documentation commit on this branch | run `bash scripts/verify-source-equivalence.sh fdb5face HEAD` before relying on the CI result; the last check made is stated in the checkpoint report |
+| `fdb5face` | `9ffbc069` | `EQUIVALENT: 9ffbc069 differs from fdb5face only in documentation` |
+| `e2a3fb49` | each later documentation commit on this branch | run `bash scripts/verify-source-equivalence.sh e2a3fb49 HEAD` before relying on the CI result; the last check made is stated in the checkpoint report |
 
 ## What is not covered by CI at all
 The Docker evidence (`browser-sandbox-docker-local-2026-10-24.json`, `browser-egress-isolation-docker-local-2026-10-24.json`) was produced locally from the container inputs recorded in each file

@@ -12,7 +12,7 @@ Status vocabulary: NOT_STARTED · IN_PROGRESS · IMPLEMENTED · LOCAL_TESTED · 
 | INFRA-005 | API/runtime hardening and the browser worker image | **LOCAL_TESTED** (TLS, startup policy, readiness, safe logging, launch policy, egress proxy against a real Chromium) · **DOCKER_LOCAL_TESTED** (sandbox ON, amd64, not OCI) · OCI and ARM64 **NOT_RUN** | `phase-2/PHASE-2-CRITERIA.md`, `phase-2/INFRA-005-*.md` |
 | INFRA-006 | Workers and scheduler (fenced leases, admission, recovery, worker artifacts) | **LOCAL_TESTED** · leases **DISPOSABLE_DATABASE_TESTED** (PostgreSQL 16, local and CI) · no worker caller exists yet (INFRA-007) | `phase-2/INFRA-006-workers-and-scheduler.md`, CI run 40094315005 |
 | INFRA-007 … 008 | — | NOT_STARTED (Phase 3) | — |
-| Phase 2 overall | | **NOT COMPLETE**: blocked on founder decisions D1 to D5 and on the OCI and ARM64 sandbox proof | `phase-2/PHASE-2-CRITERIA.md`, `phase-2/DECISIONS-FOR-FOUNDER.md` |
+| Phase 2 overall | | **`BATCH_1_5_PHASE_2_BLOCKED`**: engineering complete; blocked on an authorized OCI host, a native ARM64 run, Batch 1 `TenantContext` in `main`, and read-only cloud facts | `phase-2/PHASE-2-ACCEPTANCE-REPORT.md` |
 
 | Safety flag | State |
 |---|---|

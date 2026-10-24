@@ -1,6 +1,6 @@
 # Phase 2 criteria and their actual state
 
-**Verdict: Phase 2 is NOT complete.** The remaining work is reduced to three criteria and three decisions in `PHASE-2-REMAINING.md`. The engineering that can be done and proven without external resources is done and tested; the rest is blocked on
+**Verdict: Phase 2 is NOT complete (`BATCH_1_5_PHASE_2_BLOCKED`).** This is the earlier working matrix; the definitive one, with the final evidence and the four blockers, is `PHASE-2-ACCEPTANCE-REPORT.md`. The engineering that can be done and proven without external resources is done and tested; the rest is blocked on
 decisions and resources that only the founder can provide (listed at the end). Nothing is labelled stronger than the evidence.
 
 Where the criteria come from: Batch 1.5 has no separate frozen "Phase 2 acceptance matrix". The contract is `PHASE-1-TO-PHASE-2-HANDOFF.md` (rows quoted

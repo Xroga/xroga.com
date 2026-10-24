@@ -1,7 +1,6 @@
 # Batch 1.5 Phase 2 status (2026-10-24)
 
-Branch `claude/xroga-b15-phase2-20261024` (continues `claude/xroga-batch-1-5`). **Phase 2 is not complete.** What remains is reduced to three criteria that one run on the
-target host closes, and three decisions: `PHASE-2-REMAINING.md`. Every criterion with its evidence: `PHASE-2-CRITERIA.md`. Nothing here touched `main`, production, a hosted
+Branch `claude/xroga-b15-phase2-20261024` (continues `claude/xroga-batch-1-5`). **Verdict: `BATCH_1_5_PHASE_2_BLOCKED`**: `PHASE-2-ACCEPTANCE-REPORT.md` is the definitive matrix, evidence register and blocker list; `PHASE-2-REMAINING.md` is the short blocker page. Nothing here touched `main`, production, a hosted
 database, a credential, IAM, or a paid resource. Cost: $0.
 
 | Item | State | Evidence class | Where |

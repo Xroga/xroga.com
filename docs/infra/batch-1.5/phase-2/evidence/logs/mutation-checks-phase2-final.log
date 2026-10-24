@@ -15,12 +15,12 @@ CAUGHT | job: limits above the ceiling accepted | # pass 8 # fail 1 # cancelled 
 CAUGHT | job: start URL may be outside the allowed origins | # pass 8 # fail 1 # cancelled 0 
 CAUGHT | job: navigation scope by host suffix instead of exact origin | # pass 8 # fail 1 # cancelled 0 
 CAUGHT | job: idempotency key built by joining with a delimiter | # pass 8 # fail 1 # cancelled 0 
-CAUGHT | proxy: no proxy credential required | # pass 11 # fail 1 # cancelled 1 
-CAUGHT | proxy: any host allowed | # pass 12 # fail 1 # cancelled 0 
-CAUGHT | proxy: any port allowed | # pass 12 # fail 1 # cancelled 0 
-CAUGHT | proxy: byte budget not enforced | # pass 12 # fail 1 # cancelled 0 
-CAUGHT | proxy: tunnel cap not enforced | # pass 12 # fail 1 # cancelled 0 
-CAUGHT | proxy: egress policy bypassed (connect to loopback) | # pass 8 # fail 5 # cancelled 0 
+CAUGHT | proxy: no proxy credential required | # pass 14 # fail 1 # cancelled 1 
+CAUGHT | proxy: any host allowed | # pass 13 # fail 3 # cancelled 0 
+CAUGHT | proxy: any port allowed | # pass 15 # fail 1 # cancelled 0 
+CAUGHT | proxy: byte budget not enforced | # pass 15 # fail 1 # cancelled 0 
+CAUGHT | proxy: tunnel cap not enforced | # pass 15 # fail 1 # cancelled 0 
+CAUGHT | proxy: egress policy bypassed (connect to loopback) | # pass 11 # fail 5 # cancelled 0 
 CAUGHT | process tree: child inherits the worker environment | # pass 6 # fail 1 # cancelled 0 
 CAUGHT | handler: no authorisation before dispatch | # pass 27 # fail 3 # cancelled 0 
 CAUGHT | handler: no authorisation before a durable write | # pass 28 # fail 2 # cancelled 0 
@@ -55,21 +55,21 @@ CAUGHT | startup: staging, preview and unclassified run the mutating duties | # 
 CAUGHT | startup: a staging claim on the production app is accepted | # pass 8 # fail 1 # cancelled 0 
 CAUGHT | startup: a production claim on another app is accepted | # pass 8 # fail 1 # cancelled 0 
 CAUGHT | startup: any Fly app is inferred to be production | # pass 8 # fail 1 # cancelled 0 
-CAUGHT | readiness: an unclassified environment is ready | # pass 15 # fail 1 # cancelled 0 
-CAUGHT | readiness: a TLS verification failure is ignored | # pass 15 # fail 1 # cancelled 0 
-CAUGHT | readiness: development key material accepted where managed custody is required | # pass 15 # fail 1 # cancelled 0 
-CAUGHT | readiness: probe text echoed to the public result | # pass 15 # fail 1 # cancelled 0 
+CAUGHT | readiness: an unclassified environment is ready | # pass 16 # fail 1 # cancelled 0 
+CAUGHT | readiness: a TLS verification failure is ignored | # pass 16 # fail 1 # cancelled 0 
+CAUGHT | readiness: development key material accepted where managed custody is required | # pass 16 # fail 1 # cancelled 0 
+CAUGHT | readiness: probe text echoed to the public result | # pass 16 # fail 1 # cancelled 0 
 CAUGHT | boot: safe logging import removed from index.ts | # pass 5 # fail 1 # cancelled 0 
 CAUGHT | boot: schema ensure runs unconditionally | # pass 4 # fail 2 # cancelled 0 
 CAUGHT | logging: exact secret values not removed | # pass 4 # fail 28 # cancelled 0 
 CAUGHT | logging: credential shapes not removed | # pass 8 # fail 24 # cancelled 0 
 CAUGHT | logging: fails open when redaction throws | # pass 31 # fail 1 # cancelled 0 
 CAUGHT | logging: URL-encoded secret not covered | # pass 31 # fail 1 # cancelled 0 
-CAUGHT | launch: sandbox may be off | # pass 12 # fail 2 # cancelled 0 
-CAUGHT | launch: forbidden flags accepted | # pass 11 # fail 3 # cancelled 0 
-CAUGHT | launch: loopback proxy bypass accepted | # pass 12 # fail 2 # cancelled 0 
-CAUGHT | launch: secret environment variables accepted | # pass 13 # fail 1 # cancelled 0 
-CAUGHT | launch: profile may be outside the per-job root | # pass 13 # fail 1 # cancelled 0 
+CAUGHT | launch: sandbox may be off | # pass 13 # fail 2 # cancelled 0 
+CAUGHT | launch: forbidden flags accepted | # pass 12 # fail 3 # cancelled 0 
+CAUGHT | launch: loopback proxy bypass accepted | # pass 13 # fail 2 # cancelled 0 
+CAUGHT | launch: secret environment variables accepted | # pass 14 # fail 1 # cancelled 0 
+CAUGHT | launch: profile may be outside the per-job root | # pass 14 # fail 1 # cancelled 0 
 CAUGHT | container: privileged accepted | # pass 17 # fail 2 # cancelled 0 
 CAUGHT | container: added capabilities accepted | # pass 17 # fail 2 # cancelled 0 
 CAUGHT | container: writable root accepted | # pass 18 # fail 1 # cancelled 0 
@@ -80,5 +80,21 @@ CAUGHT | dockerfile: root user accepted | # pass 18 # fail 1 # cancelled 0
 CAUGHT | dockerfile: unpinned base accepted | # pass 18 # fail 1 # cancelled 0 
 CAUGHT | handler: worker summary stored without redaction | # pass 29 # fail 1 # cancelled 0 
 CAUGHT | handler: admission not applied | # pass 27 # fail 2 # cancelled 1 
-CAUGHT | proxy: 407 without a Proxy-Authenticate challenge | # pass 12 # fail 1 # cancelled 0 
+CAUGHT | proxy: 407 without a Proxy-Authenticate challenge | # pass 15 # fail 1 # cancelled 0 
+CAUGHT | container: bridge network accepted | # pass 18 # fail 1 # cancelled 0 
+CAUGHT | container: internal network without a named proxy accepted | # pass 18 # fail 1 # cancelled 0 
+CAUGHT | launch: an undeclared internal proxy host accepted | # pass 13 # fail 2 # cancelled 0 
+CAUGHT | custody: google configuration shape not checked | # pass 15 # fail 2 # cancelled 0 
+CAUGHT | custody: oci beside a google key accepted | # pass 16 # fail 1 # cancelled 0 
+CAUGHT | custody: Batch 1 round trip ignored | # pass 16 # fail 1 # cancelled 0 
+CAUGHT | migration check: forbidden statements not refused | # pass 8 # fail 1 # cancelled 0 
+CAUGHT | migration check: duplicate prefix not detected | # pass 8 # fail 1 # cancelled 0 
+CAUGHT | workflow: pull-request job gets the Preview environment back | # pass 7 # fail 2 # cancelled 0 
+CAUGHT | workflow: pull-request job runs the live runner again | # pass 7 # fail 2 # cancelled 0 
+CAUGHT | proxy: weak sidecar credentials accepted | # pass 15 # fail 1 # cancelled 0 
+CAUGHT | proxy: a throwing decision listener changes behaviour | # pass 15 # fail 1 # cancelled 0 
+CAUGHT | sidecar: weak credentials accepted | # pass 4 # fail 1 # cancelled 0 
+CAUGHT | sidecar: any port accepted | # pass 4 # fail 1 # cancelled 0 
+CAUGHT | sidecar: job not validated by the production parser | # pass 4 # fail 1 # cancelled 0 
+CAUGHT | sidecar: error echoes its input | # pass 4 # fail 1 # cancelled 0 
 restored: working tree clean for mutated files
