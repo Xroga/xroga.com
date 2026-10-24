@@ -48,3 +48,6 @@ Legend: ✔ implemented + tested locally · ◐ implemented, provider/live proof
 | Operator scripts | ✔ | `scripts/storage/*.mts` (dry-run default, receipts, BLOCKED exit 3, NOT_APPROVED exit 4) | `cli.test` |
 | Server-side multipart **copy** for objects > 1 GiB | ✔ LOCAL_TESTED (synthetic) | `StorageService.ingestLegacyMultipart` + engine routing: bounded memory, resume, per-part MD5 verification, end-to-end read-back SHA-256 | `largeObject.test` (17), `largeObject.stream.test` (real 1 GiB+5 B, 65 parts, +130 MiB RSS) |
 | Adapter for `swarm_runs.output` inline artifacts | ✖ | out of Phase 1 (needs artifact-extraction design) | — |
+
+## INFRA-004, INFRA-005, INFRA-006 (Phase 2)
+Not part of the finite Phase 1 matrix above. Their criterion-by-criterion status, with evidence classes and gaps, is `phase-2/PHASE-2-CRITERIA.md`.

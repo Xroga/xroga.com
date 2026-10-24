@@ -55,3 +55,9 @@ credential migration plan (`INFRA-004-credential-audit.md`).
 ## 6. What I will not do without an explicit instruction
 Create a cloud resource or billing account · apply any migration to production · migrate or rotate any live credential · change DNS,
 Fly or Vercel settings · merge or rebase onto Codex's branch · open a pull request for this branch while D5 is open.
+
+## Update (2026-10-24, later): newer evidence
+Re-checked against the repository at the end of Phase 2 (`origin/main` f9ac71ef unchanged; Codex branch `e8164ba6`, PR #846): the direction on D1 and D2 has moved to
+**Google Cloud KMS through Fly OIDC federation, with the API staying on Fly**, which makes the Oracle API and OCI KMS statements in section 2 stale rather than
+merely unresolved. The browser worker stays on OCI Compute and needs no custody key, so D1 and D3 are independent. Full options, effects and recommendations are
+in `DECISIONS-FOR-FOUNDER.md`; section 4 above is superseded by it.
