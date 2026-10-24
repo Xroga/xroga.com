@@ -73,6 +73,16 @@ describe('browser model gateway (Stagehand ClientLLM through the canonical ledge
     assert.equal(unmeasured.ledger.released.length, 1); assert.equal(unmeasured.ledger.settled.length, 0);
   });
 
+  it('uses JSON mode plus the schema in the prompt for providers without strict json_schema (GLM, Kimi)', async () => {
+    const bodies: any[] = [];
+    const gw = createBrowserModelGateway({ modelId: 'glm_5_3_flash', reserve: async (i) => ({ id: 'r', reservedMicroUsd: estimateProviderReservationMicroUsd(i), priceVersion: 't' }), settle: async () => {}, release: async () => {},
+      client: () => ({ model: 'glm', create: async (b) => { bodies.push(b); return ok('```json\n{"elements":[]}\n```'); } }) });
+    const r = await gw.generate({ messages: [{ role: 'user', content: { type: 'text', text: 'observe' } }], responseFormat: { type: 'json_schema', name: 'Observe', schema: { type: 'object', required: ['elements'] } } }, { job: job(), remainingMicros: 2_000_000, signal });
+    assert.deepEqual(bodies[0].response_format, { type: 'json_object' });
+    assert.match(bodies[0].messages[0].content, /JSON Schema/);
+    assert.deepEqual((r.result as any).structuredContent, { elements: [] });
+  });
+
   it('maps tools, tool calls and tool results both ways (Stagehand act)', async () => {
     const { gw, bodies } = harness(() => ok('', { tool_calls: [{ id: 'call_1', type: 'function', function: { name: 'click', arguments: '{"selector":"#go"}' } }] }));
     const r = await gw.generate({

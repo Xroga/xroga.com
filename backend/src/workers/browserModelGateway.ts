@@ -13,7 +13,7 @@
  */
 import { createHash } from 'node:crypto';
 import OpenAI from 'openai';
-import type { ModelId } from '../ai/models.js';
+import { MODELS, type ModelId } from '../ai/models.js';
 import { resolveEndpoint } from '../ai/openaiCompat.js';
 import { actualProviderCostMicroUsd, estimateProviderReservationMicroUsd, finishFailedProviderReservation, reserveProviderBudget, settleProviderBudget, type ProviderReservation } from '../ai/providerBudget.js';
 import type { BrowserJob } from './browserJob.js';
@@ -41,7 +41,12 @@ export interface GatewayDeps {
   client?: () => { model: string; create: (body: Record<string, unknown>, opts: { signal: AbortSignal }) => Promise<any> };
   /** largest single answer, before the budget cap */
   maxOutputTokens?: number;
+  /** how structured output is requested; default by provider (strict json_schema where supported, JSON mode plus the schema in the prompt otherwise) */
+  structuredMode?: 'json_schema' | 'json_object';
 }
+
+/** Providers whose OpenAI-compatible API offers JSON mode but not strict json_schema. Stagehand still validates every answer against its schema. */
+const JSON_OBJECT_PROVIDERS = new Set(['zhipu', 'moonshot']);
 
 const MAX_REQUEST_CHARS = 2_000_000;
 const deterministicUuid = (parts: unknown[]) => {
@@ -78,12 +83,16 @@ export function createBrowserModelGateway(deps: GatewayDeps): BrowserModelGatewa
     return { model: e.apiModel, create: (body, opts) => c.chat.completions.create(body as never, { signal: opts.signal }) };
   });
   const seq = new Map<string, number>();
+  const structuredMode = deps.structuredMode ?? (JSON_OBJECT_PROVIDERS.has(String((MODELS[deps.modelId] as { provider?: string } | undefined)?.provider)) ? 'json_object' : 'json_schema');
 
   return {
     async generate(raw, { job, remainingMicros, signal }) {
       const p = raw as StagehandParams;
       if (!p || !Array.isArray(p.messages) || p.messages.length === 0) throw new BrowserModelError('MODEL_REQUEST_INVALID', 'no messages');
-      const messages = toOpenAiMessages(p);
+      const structuredFormat = p.responseFormat?.type === 'json_schema' ? p.responseFormat : undefined;
+      const messages = toOpenAiMessages(structuredFormat && structuredMode === 'json_object'
+        ? { ...p, systemPrompt: `${p.systemPrompt ? `${p.systemPrompt}\n\n` : ''}Respond with a single JSON object that conforms to this JSON Schema (no prose, no code fences):\n${JSON.stringify(structuredFormat.schema)}` }
+        : p);
       const requestText = JSON.stringify(messages);
       if (requestText.length > MAX_REQUEST_CHARS) throw new BrowserModelError('MODEL_REQUEST_INVALID', 'request too large');
       const estimatedInputTokens = Math.ceil(requestText.length / 3);
@@ -103,7 +112,7 @@ export function createBrowserModelGateway(deps: GatewayDeps): BrowserModelGatewa
         const structured = p.responseFormat?.type === 'json_schema' ? p.responseFormat : undefined;
         completion = await client.create({
           model: client.model, messages, max_tokens: maxOut, ...(p.temperature !== undefined ? { temperature: p.temperature } : {}), ...(p.stopSequences?.length ? { stop: p.stopSequences } : {}),
-          ...(structured ? { response_format: { type: 'json_schema', json_schema: { name: structured.name.replace(/[^A-Za-z0-9_-]/g, '_').slice(0, 64) || 'result', schema: structured.schema, strict: false } } } : {}),
+          ...(structured ? { response_format: structuredMode === 'json_object' ? { type: 'json_object' } : { type: 'json_schema', json_schema: { name: structured.name.replace(/[^A-Za-z0-9_-]/g, '_').slice(0, 64) || 'result', schema: structured.schema, strict: false } } } : {}),
           ...(p.tools?.length ? { tools: p.tools.map((t) => ({ type: 'function', function: { name: t.name, description: t.description ?? '', parameters: t.inputSchema } })), ...(p.toolChoice?.mode ? { tool_choice: p.toolChoice.mode } : {}) } : {}),
         }, { signal });
       } catch (e) {
@@ -125,7 +134,7 @@ export function createBrowserModelGateway(deps: GatewayDeps): BrowserModelGatewa
       let result: Record<string, unknown>;
       if (p.responseFormat?.type === 'json_schema') {
         let structuredContent: unknown;
-        try { structuredContent = JSON.parse(String(msg.content ?? '')); } catch { throw new BrowserModelError('MODEL_FAILED', 'the model did not return valid JSON'); }
+        try { structuredContent = JSON.parse(String(msg.content ?? '').replace(/^\s*```(?:json)?\s*|\s*```\s*$/g, '')); } catch { throw new BrowserModelError('MODEL_FAILED', 'the model did not return valid JSON'); }
         result = { role: 'assistant', content: { type: 'text', text: String(msg.content) }, outputFormat: 'json_schema', structuredContent, usage, stopReason: completion?.choices?.[0]?.finish_reason };
       } else {
         const blocks: Block[] = [];
