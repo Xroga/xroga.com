@@ -185,5 +185,24 @@ mut "handler: worker summary stored without redaction" $W/browserTaskHandler.ts 
 mut "handler: admission not applied" $W/browserTaskHandler.ts "const release = await deps.admission.acquire(deps.actor.tenantId, signal);" "const release = () => undefined;" $TO $W/browserTaskHandler.test.ts
 mut "proxy: 407 without a Proxy-Authenticate challenge" $W/egressProxy.ts "return deny(clientSocket, '407 Proxy Authentication Required', PROXY_CHALLENGE);" "return deny(clientSocket, '407 Proxy Authentication Required');" $TO $W/egressProxy.test.ts
 fi
+if want workers3; then
+W=src/workers; R=src/runtime; TO=--test-timeout=20000
+CS=$W/containerSpec.ts; CST=$W/containerSpec.test.ts
+mut "container: bridge network accepted" $CS "} else if (mode !== 'none' && mode !== 'host' && !/^container:/.test(mode ?? '')) {" "} else if (false) {" $TO $CST
+mut "container: internal network without a named proxy accepted" $CS "if (!/^[a-z0-9][a-z0-9-]{0,39}\$/.test(spec.network.proxyHost ?? ''))" "if (false)" $TO $CST
+mut "launch: an undeclared internal proxy host accepted" $W/chromiumLaunch.ts "if (!isLoopbackHost(host) && !allowedProxyHosts.includes(host)) {" "if (false) {" $TO $W/chromiumLaunch.test.ts
+RD=$R/readiness.ts; RDT=$R/readiness.test.ts
+mut "custody: google configuration shape not checked" $RD "if (provider === 'google_cloud') return env.XROGA_GOOGLE_CLOUD_KMS_KEY_NAME && !oci.some(Boolean) ? null : 'custody_config_invalid';" "if (provider === 'google_cloud') return null;" $TO $RDT
+mut "custody: oci beside a google key accepted" $RD "return !env.XROGA_GOOGLE_CLOUD_KMS_KEY_NAME && oci.every(Boolean)" "return oci.every(Boolean)" $TO $RDT
+mut "custody: Batch 1 round trip ignored" $RD "if (deps.custodyRoundTrip && !(await deps.custodyRoundTrip())) return 'credential_provider_unavailable';" "" $TO $RDT
+MT=$R/migrationCheck.test.ts
+mut "migration check: forbidden statements not refused" ../scripts/check-supabase-migrations.mjs "for (const [re, label] of FORBIDDEN) if (re.test(body)) errors.push" "for (const [re, label] of FORBIDDEN) if (false) errors.push" $TO $MT
+mut "migration check: duplicate prefix not detected" ../scripts/check-supabase-migrations.mjs "if (prefixes.has(key)) errors.push(" "if (false) errors.push(" $TO $MT
+mut "workflow: pull-request job gets the Preview environment back" ../.github/workflows/supabase-migrate.yml "    timeout-minutes: 5
+    permissions:" "    timeout-minutes: 5
+    environment: Preview
+    permissions:" $TO $MT
+mut "workflow: pull-request job runs the live runner again" ../.github/workflows/supabase-migrate.yml 'run: node scripts/check-supabase-migrations.mjs --base "origin/${{ github.base_ref }}"' 'run: node scripts/apply-supabase-migrations.mjs --dry-run' $TO $MT
+fi
 git -C .. diff --quiet -- backend supabase && echo "restored: working tree clean for mutated files" | tee -a "$LOG"
 if grep -qE '^(SURVIVED|INCONCLUSIVE)' "$LOG"; then echo "FAILED: a defect was not caught, or a run was inconclusive" | tee -a "$LOG"; exit 1; fi

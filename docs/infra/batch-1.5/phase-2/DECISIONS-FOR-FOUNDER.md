@@ -1,5 +1,7 @@
 # Decisions only the founder can make (consolidated, 2026-10-24)
 
+> **Reduced for Phase 2 acceptance:** only three of these are needed to finish Phase 2 (a host for the sandbox proof, whether acceptance needs real KMS evidence, and the `E2E_SUPABASE_*` check before any PR). They are in `PHASE-2-REMAINING.md` section E. The rest below belong to the Batch 1 cutover and Phase 3 and block nothing in Phase 2.
+
 One approval item instead of routine questions. Nothing below has been done; every row is an option with its effect and a recommendation. Evidence is current
 as of `origin/main` f9ac71ef (unchanged since Phase 2 began) and Codex's branch `codex/xroga-cloudrun-readiness-20261024` @ `e8164ba6` (PR #846, updated today).
 Prices are not asserted: confirm each in the provider console before enabling anything.

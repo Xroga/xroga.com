@@ -1,7 +1,8 @@
 # Batch 1.5 Phase 2 status (2026-10-24)
 
-Branch `claude/xroga-b15-phase2-20261024` (continues `claude/xroga-batch-1-5`). **Phase 2 is not complete**: see `PHASE-2-CRITERIA.md` for every criterion and
-`DECISIONS-FOR-FOUNDER.md` for what is blocked and why. Nothing here touched `main`, production, a hosted database, a credential, IAM, or a paid resource. Cost: $0.
+Branch `claude/xroga-b15-phase2-20261024` (continues `claude/xroga-batch-1-5`). **Phase 2 is not complete.** What remains is reduced to three criteria that one run on the
+target host closes, and three decisions: `PHASE-2-REMAINING.md`. Every criterion with its evidence: `PHASE-2-CRITERIA.md`. Nothing here touched `main`, production, a hosted
+database, a credential, IAM, or a paid resource. Cost: $0.
 
 | Item | State | Evidence class | Where |
 |---|---|---|---|
@@ -10,6 +11,11 @@ Branch `claude/xroga-b15-phase2-20261024` (continues `claude/xroga-batch-1-5`). 
 | INFRA-005 database TLS | done | LOCAL_TESTED + live handshake | `INFRA-005-database-tls.md` |
 | INFRA-005 startup, readiness, safe logging, browser worker image | done locally | LOCAL_TESTED; sandbox DOCKER_LOCAL_TESTED (amd64, not OCI) | `INFRA-005-runtime-and-browser-worker.md` |
 | INFRA-006 workers and scheduler | done locally; no worker caller exists yet (INFRA-007) | LOCAL_TESTED; leases DISPOSABLE_DATABASE_TESTED | `INFRA-006-workers-and-scheduler.md` |
+| Browser container network isolation (bypass beyond the proxy) | proven on real containers, with an open-network control | DOCKER_LOCAL_TESTED | `INFRA-005-runtime-and-browser-worker.md`, `evidence/browser-egress-isolation-docker-local-2026-10-24.json` |
+| OCI and ARM64 sandbox and isolation proof | procedure and host-facts script ready; **not run** (no authorized host; none created) | n/a | `OCI-SANDBOX-VERIFICATION.md`, `deploy/browser-worker/host-facts.sh` |
+| Pull-request safety of the migration workflow | PR path is offline, no environment, no secret; one other PR workflow (`command3`) uses unconfirmed `E2E_*` secrets | LOCAL_TESTED | `BOUNDARY-CHECK.md`, `PHASE-2-REMAINING.md` section D |
+| Managed custody dependency | reconciled to Batch 1's actual environment contract; round trip injectable; no vault or provider written | LOCAL_TESTED | `PHASE-2-REMAINING.md` section C |
+| Source equivalence for documentation-only commits | classifier script and tests; record of the tested chain | LOCAL_TESTED | `SOURCE-EQUIVALENCE.md` |
 | Rollback | written | n/a | `ROLLBACK.md` |
 
 ## Verification, source-bound

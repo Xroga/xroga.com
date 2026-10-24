@@ -54,8 +54,14 @@ for (let i = 0; i < hardenedArgs.length; i++) {
   controlArgs.push(hardenedArgs[i]!);
 }
 
-const hardened = run('hardened (container-spec.json, derived seccomp profile)', hardenedArgs);
-const control = run('control (same, Docker default seccomp profile)', controlArgs);
+// the spec's network is an --internal Docker network: create it for the run and remove it afterwards (only if this script created it)
+const netName = spec.network.mode === 'internal' ? spec.network.name! : null;
+const createdNet = netName ? docker(['network', 'create', '--internal', netName]).status === 0 : false;
+let hardened, control;
+try {
+  hardened = run('hardened (container-spec.json, derived seccomp profile)', hardenedArgs);
+  control = run('control (same, Docker default seccomp profile)', controlArgs);
+} finally { if (createdNet && netName) docker(['network', 'rm', netName]); }
 
 const record = {
   evidenceClass: label,

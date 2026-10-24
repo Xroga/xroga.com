@@ -35,6 +35,9 @@ check. Evidence class: **source read + GitHub API read** (no workflow was trigge
 - Add required reviewers on `Production`, so a merge cannot apply migrations or deploy Fly without a named approval.
 - Make the migration gate's connection verify the certificate, using the same planner as the Drive pool.
 
+## Resolved in this branch (2026-10-24, later)
+Findings 1 and 2 are closed for pull requests by `supabase-migrate.yml`: the PR path is now a separate job with **no environment, no secret reference and a read-only token**, running `scripts/check-supabase-migrations.mjs` (offline; never reads the environment; no network or database client in its source, asserted by a test). The live runner and the Production environment remain on the push-to-`main` job only. `main` has no branch protection and no rulesets, so no required check depends on the old job name. Findings 3 and 4 stand: the unverified database connections are production paths left untouched, and merging this branch still applies its migrations to production through the push job. One PR-triggered workflow still uses secrets: `command3-auth-browser.yml` (`E2E_SUPABASE_*`), unconfirmed.
+
 ## Not done
 No PR was opened. No workflow was dispatched. The `Preview`/`Production` secret *values* were not and cannot be read; "production-capable"
 is inferred from the secrets being repository-level and from the names, not from reading them.

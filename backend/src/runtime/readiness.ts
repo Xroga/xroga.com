@@ -61,11 +61,27 @@ export interface ApiProbeDeps {
   database: () => Promise<void>;
   /** handshake-only TLS verification of the storage database (databaseTls.probeDatabaseTls); omitted in unit tests */
   databaseTls?: (plan: DatabaseConnectionPlan) => Promise<TlsProbeResult>;
+  /** Batch 1's bounded synthetic key round trip, once it is in `main`; omitted until then (the configuration check still runs) */
+  custodyRoundTrip?: () => Promise<boolean>;
   /** candidate database URLs; defaults to the process environment's resolution */
   databaseUrls?: () => string[];
 }
 
 const truthy = (v: string | undefined) => /^(1|true|yes|on)$/i.test((v ?? '').trim());
+
+/**
+ * Whether the managed-custody settings are the ones Batch 1's startup (`credentialVaultStartup.ts`) accepts: a provider named in
+ * `XROGA_CREDENTIAL_KMS_PROVIDER`, exactly that provider's variables, and none of the other's. Names are Batch 1's, not new ones.
+ * Returns a fixed reason code, or null when the combination is acceptable. It checks shape only and contacts no provider.
+ */
+export function managedCustodyConfigProblem(env: NodeJS.ProcessEnv): string | null {
+  const provider = env.XROGA_CREDENTIAL_KMS_PROVIDER;
+  const oci = [env.XROGA_OCI_KMS_KEY_ID, env.XROGA_OCI_KMS_ENDPOINT, env.XROGA_OCI_KMS_KEY_VERSION, env.XROGA_OCI_KMS_AUTH_MODE, env.XROGA_OCI_KMS_PRINCIPAL_ID];
+  if (!provider) return 'custody_provider_not_configured';
+  if (provider === 'google_cloud') return env.XROGA_GOOGLE_CLOUD_KMS_KEY_NAME && !oci.some(Boolean) ? null : 'custody_config_invalid';
+  if (provider === 'oci') return !env.XROGA_GOOGLE_CLOUD_KMS_KEY_NAME && oci.every(Boolean) && ['instance_principal', 'resource_principal', 'workload_federation'].includes(env.XROGA_OCI_KMS_AUTH_MODE!) ? null : 'custody_config_invalid';
+  return 'custody_config_invalid';
+}
 
 /** Everything a customer-facing API process needs before it is routed traffic. */
 export function apiProbes(env: NodeJS.ProcessEnv, deps: ApiProbeDeps): ReadinessProbe[] {
@@ -111,8 +127,12 @@ export function apiProbes(env: NodeJS.ProcessEnv, deps: ApiProbeDeps): Readiness
       run: async () => {
         // development and test key material must never be present where managed custody is required
         if (env.XROGA_DEV_CREDENTIAL_KEK || env.XROGA_TEST_CREDENTIAL_KEK) return 'custody_dev_key_present';
-        const managed = Boolean(env.XROGA_GOOGLE_CLOUD_KMS_KEY_NAME) || /^(google-cloud-kms|oci-kms)$/.test(env.XROGA_MANAGED_CUSTODY_PROVIDER ?? '');
-        return managed ? null : 'custody_provider_not_configured';
+        const code = managedCustodyConfigProblem(env);
+        if (code) return code;
+        // the live synthetic key round trip belongs to Batch 1's vault (`initializeCredentialVaultForServer().checkReadiness`), not to this
+        // module: when that code is in `main` it is passed in here, so there is one custody check and no second implementation of it
+        if (deps.custodyRoundTrip && !(await deps.custodyRoundTrip())) return 'credential_provider_unavailable';
+        return null;
       },
     });
   }

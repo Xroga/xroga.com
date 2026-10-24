@@ -44,7 +44,7 @@ describe('the committed browser worker container spec', () => {
   it('turns into the expected docker run flags: no privileged, no capability, read only, seccomp, limits, tmpfs only', () => {
     const args = dockerRunArgs(good(), { repoRoot });
     const joined = args.join(' ');
-    for (const needle of ['--user 10001:10001', '--read-only', '--security-opt no-new-privileges:true', '--cap-drop ALL', '--network bridge', '--memory 2048m', '--memory-swap 2048m', '--pids-limit 512', '--cpus 2', '--shm-size 256m']) {
+    for (const needle of ['--user 10001:10001', '--read-only', '--security-opt no-new-privileges:true', '--cap-drop ALL', '--network xroga-browser-internal', '--memory 2048m', '--memory-swap 2048m', '--pids-limit 512', '--cpus 2', '--shm-size 256m']) {
       assert.ok(joined.includes(needle), needle);
     }
     assert.match(joined, /--security-opt seccomp=.*seccomp-chromium\.json/);
@@ -79,7 +79,15 @@ describe('the container checker refuses every weakening', () => {
     }
     assert.ok(violations((s) => { s.network.mode = 'host'; }).includes('HOST_NETWORK'));
     assert.ok(violations((s) => { s.network.mode = 'container:proxy'; }).includes('HOST_NETWORK'));
-    assert.ok(violations((s) => { s.network.mode = 'macvlan'; }).includes('HOST_NETWORK'));
+    assert.ok(violations((s) => { s.network.mode = 'macvlan'; }).includes('NETWORK_NOT_RESTRICTED'));
+    // bridge hands the browser a direct route out, so a browser that ignored its proxy setting could reach anything
+    assert.deepEqual(violations((s) => { s.network.mode = 'bridge'; }), ['NETWORK_NOT_RESTRICTED']);
+    // internal means: an internal-only network by name, with the egress proxy as its one named peer
+    for (const [field, bad] of [['name', ''], ['name', 'Bad Name'], ['proxyHost', ''], ['proxyHost', 'proxy.example.com'], ['proxyHost', '10.0.0.5'], ['proxyPort', 0], ['proxyPort', 70000], ['proxyPort', '3128']] as const) {
+      assert.ok(violations((s) => { s.network[field] = bad; }).includes('NETWORK_NOT_RESTRICTED'), `${field}=${String(bad)}`);
+    }
+    assert.deepEqual(violations((s) => { s.network = { ...s.network, mode: 'none' }; }), [], 'no network at all is allowed');
+    assert.equal(dockerRunArgs({ ...good(), network: { ...good().network, mode: 'none' } }, { repoRoot }).join(' ').includes('--network none'), true);
     assert.deepEqual(violations((s) => { s.network.publishedPorts = ['9222:9222']; }), ['PUBLISHED_PORT']);
     assert.deepEqual(violations((s) => { s.network.extraHosts = ['example.com:127.0.0.1']; }), ['EXTRA_HOSTS']);
   });

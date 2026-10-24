@@ -2,7 +2,7 @@
   "evidenceClass": "DOCKER_LOCAL_TESTED",
   "notOci": true,
   "claim": "Chromium starts with its sandbox ON inside the hardened container spec; the sandbox does NOT start under Docker's default seccomp profile.",
-  "at": "2026-10-24T12:09:09.066Z",
+  "at": "2026-10-24T13:03:57.666Z",
   "host": {
     "docker": "29.7.2",
     "os": "Docker Desktop (containerized)",
@@ -18,7 +18,7 @@
     "id": "sha256:c7d3814ccede7446f907c73b593991b4e60626ca29ae3057201b40c229a5bacc"
   },
   "inputs": {
-    "containerSpecSha256": "1878f39c6122e628baec359901c7dfdf06a85f2060aa090020823cc60c756216",
+    "containerSpecSha256": "59baef8f93bfc8f10f120d524a76200aa611c16c8f8cd0335056d873e7a7645e",
     "seccompProfileSha256": "4065c77710bfcaca9e12f89420626713bc824f6fb3afa73905ba4fa2cf683bf9",
     "dockerfileSha256": "af8e2d2062f4680b7e6943a01a9a5d0ecb5713446be77877bce8c6ef9a9307f8"
   },
@@ -36,7 +36,7 @@
     "--ipc",
     "private",
     "--network",
-    "bridge",
+    "xroga-browser-internal",
     "--tmpfs",
     "/tmp:rw,nosuid,nodev,noexec,size=512m",
     "--tmpfs",
@@ -59,11 +59,11 @@
   "hardened": {
     "name": "hardened (container-spec.json, derived seccomp profile)",
     "exitCode": 0,
-    "ms": 1204,
+    "ms": 968,
     "verdict": "SANDBOX_ON",
     "report": {
       "probe": "xroga-browser-sandbox",
-      "at": "2026-10-24T12:09:07.479Z",
+      "at": "2026-10-24T13:03:56.213Z",
       "arch": "x64",
       "node": "v24.18.0",
       "uid": 10001,
@@ -84,7 +84,7 @@
           "capEff": "0000000000000000",
           "noNewPrivs": "1",
           "seccomp": "2",
-          "pidNs": "pid:[4026532452]",
+          "pidNs": "pid:[4026532377]",
           "userNs": "user:[4026531837]"
         },
         {
@@ -93,7 +93,7 @@
           "capEff": "0000000000000000",
           "noNewPrivs": "1",
           "seccomp": "2",
-          "pidNs": "pid:[4026532452]",
+          "pidNs": "pid:[4026532377]",
           "userNs": "user:[4026531837]"
         },
         {
@@ -102,8 +102,8 @@
           "capEff": "0000000000000000",
           "noNewPrivs": "1",
           "seccomp": "2",
-          "pidNs": "pid:[4026532528]",
-          "userNs": "user:[4026532597]"
+          "pidNs": "pid:[4026532453]",
+          "userNs": "user:[4026532522]"
         },
         {
           "pid": 24,
@@ -111,35 +111,35 @@
           "capEff": "0000000000200000",
           "noNewPrivs": "1",
           "seccomp": "2",
-          "pidNs": "pid:[4026532528]",
-          "userNs": "user:[4026532597]"
+          "pidNs": "pid:[4026532453]",
+          "userNs": "user:[4026532522]"
         },
         {
-          "pid": 41,
+          "pid": 40,
           "type": "gpu-process",
           "capEff": "0000000000000000",
           "noNewPrivs": "1",
           "seccomp": "2",
-          "pidNs": "pid:[4026532452]",
+          "pidNs": "pid:[4026532377]",
           "userNs": "user:[4026531837]"
         },
         {
-          "pid": 62,
+          "pid": 61,
           "type": "utility",
           "capEff": "0000000000000000",
           "noNewPrivs": "1",
           "seccomp": "2",
-          "pidNs": "pid:[4026532452]",
+          "pidNs": "pid:[4026532377]",
           "userNs": "user:[4026531837]"
         },
         {
-          "pid": 74,
+          "pid": 78,
           "type": "renderer",
           "capEff": "0000000000000000",
           "noNewPrivs": "1",
           "seccomp": "2",
-          "pidNs": "pid:[4026532525]",
-          "userNs": "user:[4026532597]"
+          "pidNs": "pid:[4026532450]",
+          "userNs": "user:[4026532522]"
         }
       ],
       "noSandboxFlagAnywhere": false,
@@ -151,11 +151,11 @@
   "control": {
     "name": "control (same, Docker default seccomp profile)",
     "exitCode": 3,
-    "ms": 1100,
+    "ms": 922,
     "verdict": "BLOCKED",
     "report": {
       "probe": "xroga-browser-sandbox",
-      "at": "2026-10-24T12:09:08.741Z",
+      "at": "2026-10-24T13:03:57.226Z",
       "arch": "x64",
       "node": "v24.18.0",
       "uid": 10001,

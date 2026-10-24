@@ -82,9 +82,10 @@ function within(root: string, candidate: string): boolean {
 }
 
 export interface LaunchContext {
+  /** the proxy host on the container's internal network (single label). Omitted: the proxy is in-process on loopback. */
   /** fixed, worker-owned directory under which every per-job profile lives (a tmpfs in the container) */
   profileRoot: string;
-  proxy: { port: number; username: string; password: string };
+  proxy: { port: number; username: string; password: string; host?: string };
   /** base environment of the worker, filtered down to the allow-list */
   baseEnv?: NodeJS.ProcessEnv;
   executablePath?: string;
@@ -98,7 +99,7 @@ export function buildChromiumLaunch(job: BrowserJob, ctx: LaunchContext): Chromi
   const options: ChromiumLaunchOptions = {
     headless: true,
     chromiumSandbox: true,
-    proxy: { server: `http://127.0.0.1:${ctx.proxy.port}`, username: ctx.proxy.username, password: ctx.proxy.password, bypass: '<-loopback>' },
+    proxy: { server: `http://${ctx.proxy.host ?? '127.0.0.1'}:${ctx.proxy.port}`, username: ctx.proxy.username, password: ctx.proxy.password, bypass: '<-loopback>' },
     args: ['--disable-dev-shm-usage', '--mute-audio', '--no-first-run', '--no-default-browser-check', '--disable-background-networking', '--disable-sync'],
     env,
     userDataDir: dir,
@@ -107,12 +108,12 @@ export function buildChromiumLaunch(job: BrowserJob, ctx: LaunchContext): Chromi
     timeout: Math.min(job.limits.maxDurationMs, 60_000),
     ...(ctx.executablePath ? { executablePath: ctx.executablePath } : {}),
   };
-  assertLaunchSafe(options, ctx.profileRoot);
+  assertLaunchSafe(options, ctx.profileRoot, ctx.proxy.host ? [ctx.proxy.host] : []);
   return options;
 }
 
 /** Throws ChromiumLaunchError listing every violated rule. Accepts `unknown` shapes: it is also the guard for options built elsewhere. */
-export function assertLaunchSafe(options: object, profileRoot: string): void {
+export function assertLaunchSafe(options: object, profileRoot: string, allowedProxyHosts: readonly string[] = []): void {
   const o = options as Partial<ChromiumLaunchOptions> & Record<string, unknown>;
   const v: LaunchViolation[] = [];
   const notes: string[] = [];
@@ -134,7 +135,7 @@ export function assertLaunchSafe(options: object, profileRoot: string): void {
   if (!proxy || typeof proxy.server !== 'string') { v.push('PROXY_MISSING'); notes.push('a proxy is required'); } else {
     let host = '';
     try { host = new URL(proxy.server).hostname; } catch { /* handled below */ }
-    if (!isLoopbackHost(host)) { v.push('PROXY_NOT_LOOPBACK'); notes.push('the proxy must be on loopback'); }
+    if (!isLoopbackHost(host) && !allowedProxyHosts.includes(host)) { v.push('PROXY_NOT_LOOPBACK'); notes.push('the proxy must be on loopback or the one declared internal proxy host'); }
     if (proxy.bypass !== '<-loopback>') { v.push('PROXY_BYPASS'); notes.push('bypass must be exactly <-loopback>'); }
     if (typeof proxy.username !== 'string' || !proxy.username || typeof proxy.password !== 'string' || proxy.password.length < 16) { v.push('PROXY_NO_CREDENTIALS'); notes.push('the proxy needs per-job credentials'); }
   }

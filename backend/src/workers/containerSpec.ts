@@ -24,7 +24,12 @@ export interface ContainerSpec {
   noNewPrivileges: boolean;
   /** path (relative to the repository root) of the seccomp profile */
   seccompProfile: string;
-  network: { mode: string; publishedPorts: string[]; extraHosts: string[]; dns: string[] };
+  /**
+   * `internal`: the container is attached ONLY to a Docker network created with `--internal` (no route to the internet, the host or the
+   * metadata address), and the egress proxy is the one peer on it, reached by name. A browser that ignored its proxy setting, or escaped its
+   * sandbox, still has nowhere to connect. `none` is for runs that need no network. `bridge` is refused: it gives the browser a direct route.
+   */
+  network: { mode: string; name?: string; proxyHost?: string; proxyPort?: number; publishedPorts: string[]; extraHosts: string[]; dns: string[] };
   ipc: string;
   pid: string;
   uts: string;
@@ -41,7 +46,7 @@ export interface ContainerSpec {
 
 export type SpecViolation =
   | 'PRIVILEGED' | 'ROOT_USER' | 'CAPABILITY_ADDED' | 'CAPABILITIES_NOT_DROPPED' | 'WRITABLE_ROOT' | 'PRIVILEGE_ESCALATION' | 'SECCOMP_MISSING'
-  | 'SECCOMP_DISABLED' | 'HOST_NAMESPACE' | 'HOST_NETWORK' | 'PUBLISHED_PORT' | 'EXTRA_HOSTS' | 'FORBIDDEN_MOUNT' | 'UNBOUNDED_RESOURCES'
+  | 'SECCOMP_DISABLED' | 'HOST_NAMESPACE' | 'HOST_NETWORK' | 'NETWORK_NOT_RESTRICTED' | 'PUBLISHED_PORT' | 'EXTRA_HOSTS' | 'FORBIDDEN_MOUNT' | 'UNBOUNDED_RESOURCES'
   | 'SECRET_ENV' | 'IMAGE_NOT_PINNED' | 'EGRESS_RULES_MISSING' | 'TMPFS_EXEC_OR_SUID';
 
 export class SpecError extends Error {
@@ -82,7 +87,15 @@ export function assertContainerSpecSafe(spec: ContainerSpec, opts: { repoRoot?: 
 
   for (const ns of ['ipc', 'pid', 'uts'] as const) if (spec[ns] !== 'private') bad('HOST_NAMESPACE', `${ns} must be private`);
   if (spec.network?.mode === 'host' || /^container:/.test(spec.network?.mode ?? '')) bad('HOST_NETWORK', 'host or shared network namespace');
-  if (!['bridge', 'none'].includes(spec.network?.mode ?? '')) bad('HOST_NETWORK', 'network mode must be bridge or none');
+  const mode = spec.network?.mode;
+  if (mode === 'internal') {
+    if (!/^[a-z0-9][a-z0-9_.-]{2,40}$/.test(spec.network.name ?? '')) bad('NETWORK_NOT_RESTRICTED', 'an internal network needs a name');
+    if (!/^[a-z0-9][a-z0-9-]{0,39}$/.test(spec.network.proxyHost ?? '')) bad('NETWORK_NOT_RESTRICTED', 'the egress proxy must be one single-label host on that network');
+    if (!Number.isInteger(spec.network.proxyPort) || spec.network.proxyPort! < 1 || spec.network.proxyPort! > 65535) bad('NETWORK_NOT_RESTRICTED', 'the egress proxy needs a port');
+  } else if (mode !== 'none' && mode !== 'host' && !/^container:/.test(mode ?? '')) {
+    // bridge (and anything else) gives the browser a direct route out, so a browser that ignored its proxy setting could reach anything
+    bad('NETWORK_NOT_RESTRICTED', 'network mode must be internal (proxy as the only peer) or none');
+  }
   if (!Array.isArray(spec.network?.publishedPorts) || spec.network.publishedPorts.length) bad('PUBLISHED_PORT', 'the browser worker publishes no port');
   if (!Array.isArray(spec.network?.extraHosts) || spec.network.extraHosts.length) bad('EXTRA_HOSTS', 'no extra host mappings (they bypass DNS policy)');
 
@@ -120,7 +133,7 @@ export function dockerRunArgs(spec: ContainerSpec, opts: { repoRoot: string; nam
   args.push('--security-opt', `seccomp=${resolve(opts.repoRoot, spec.seccompProfile)}`);
   for (const c of spec.capDrop) args.push('--cap-drop', c);
   args.push('--ipc', 'private'); // pid and uts are private by default in Docker: no flag
-  args.push('--network', spec.network.mode);
+  args.push('--network', spec.network.mode === 'internal' ? spec.network.name! : 'none');
   for (const m of spec.mounts) args.push('--tmpfs', `${m.target}:rw,${m.options.join(',')},size=${m.sizeMb}m`);
   args.push('--shm-size', `${spec.shmSizeMb}m`, '--memory', `${spec.memoryMb}m`, '--memory-swap', `${spec.memorySwapMb}m`, '--cpus', String(spec.cpus), '--pids-limit', String(spec.pidsLimit));
   for (const [k, val] of Object.entries(spec.env)) args.push('--env', `${k}=${val}`);

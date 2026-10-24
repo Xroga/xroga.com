@@ -35,10 +35,16 @@ export interface EgressProxyOptions {
   dial?: (host: string, port: number, lookup: LookupFunction) => net.Socket;
   maxConnections?: number;
   idleMs?: number;
+  /** address to listen on. Loopback by default; the proxy sidecar on the browser's internal network listens on 0.0.0.0 */
+  bindHost?: string;
+  /** fixed port (the sidecar); 0 or omitted picks a free one */
+  port?: number;
 }
 
 export interface EgressProxy {
   readonly port: number;
+  /** the address the proxy listens on */
+  readonly bindAddress: string;
   /** credentials to give the browser; random per proxy instance */
   readonly username: string;
   readonly password: string;
@@ -156,13 +162,13 @@ export async function startEgressProxy(options: EgressProxyOptions): Promise<Egr
 
   await new Promise<void>((resolve, reject) => {
     server.once('error', reject);
-    server.listen(0, '127.0.0.1', () => resolve());
+    server.listen(options.port ?? 0, options.bindHost ?? '127.0.0.1', () => resolve());
   });
   const address = server.address();
   if (!address || typeof address === 'string') throw new Error('egress proxy failed to bind');
 
   return {
-    port: address.port, username, password, decisions,
+    port: address.port, bindAddress: address.address, username, password, decisions,
     bytesRelayed: () => relayed,
     close: () => new Promise<void>((resolve) => {
       clearTimeout(deadline);

@@ -121,6 +121,17 @@ describe('chromium launch checker', () => {
     assert.deepEqual([...got].sort(), ['FORBIDDEN_FLAG', 'PROXY_BYPASS', 'SANDBOX_OFF']);
   });
 
+  it('a proxy on the internal network of the container is allowed only as the one declared host', () => {
+    const o = buildChromiumLaunch(job, { ...ctx, proxy: { ...ctx.proxy, host: 'egress-proxy' } });
+    assert.equal(o.proxy.server, 'http://egress-proxy:43210');
+    assert.doesNotThrow(() => assertLaunchSafe(o, ROOT, ['egress-proxy']));
+    assert.throws(() => assertLaunchSafe(o, ROOT), (e) => e instanceof ChromiumLaunchError && e.violations.includes('PROXY_NOT_LOOPBACK'), 'not declared: refused');
+    assert.throws(() => assertLaunchSafe(o, ROOT, ['another-host']), ChromiumLaunchError);
+    const rogue = structuredClone(o) as unknown as Record<string, unknown>;
+    (rogue.proxy as Record<string, unknown>).server = 'http://evil.example.com:3128';
+    assert.throws(() => assertLaunchSafe(rogue, ROOT, ['egress-proxy']), ChromiumLaunchError);
+  });
+
   it('the builder itself refuses an unsafe context', () => {
     assert.throws(() => buildChromiumLaunch(job, { ...ctx, proxy: { port: 1, username: '', password: 'x' } }), ChromiumLaunchError);
   });

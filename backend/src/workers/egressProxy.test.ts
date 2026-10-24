@@ -208,6 +208,18 @@ describe('browser egress proxy', () => {
     assert.match(a.status, /200/); assert.match(b.status, /200/); assert.match(c.status, /^HTTP\/1\.1 429/);
   });
 
+  it('listens on loopback unless a bind address is given (the sidecar on an internal network needs 0.0.0.0)', async () => {
+    const up = await upstream('echo');
+    const h = await harness({ 'example.com': ['93.184.216.34'] }, up);
+    const probe = net.connect({ host: '127.0.0.1', port: h.proxy.port });
+    await new Promise<void>((r, j) => { probe.once('connect', () => r()); probe.once('error', j); });
+    probe.destroy();
+    assert.equal(h.proxy.bindAddress, '127.0.0.1');
+    const open = await startEgressProxy({ job, resolve: async () => [], bindHost: '0.0.0.0' });
+    cleanup.push(() => open.close());
+    assert.equal(open.bindAddress, '0.0.0.0');
+  });
+
   it('close() tears down open tunnels', async () => {
     const up = await upstream('echo');
     const h = await harness({ 'example.com': ['93.184.216.34'] }, up);

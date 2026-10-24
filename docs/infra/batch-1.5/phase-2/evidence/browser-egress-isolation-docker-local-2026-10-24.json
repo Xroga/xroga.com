@@ -1,0 +1,77 @@
+{
+  "evidenceClass": "DOCKER_LOCAL_TESTED",
+  "notOci": true,
+  "claim": "On an --internal Docker network whose only peer is the proxy, the hardened browser container cannot reach the internet, public DNS, the metadata address, or the host gateway, and Chromium without a proxy flag loads nothing; a default bridge network (control) does not have these properties.",
+  "at": "2026-10-24T13:03:33.527Z",
+  "image": "xroga-browser-worker:phase2-probe",
+  "networkSpec": {
+    "mode": "internal",
+    "name": "xroga-browser-internal",
+    "proxyHost": "egress-proxy",
+    "proxyPort": 3128,
+    "publishedPorts": [],
+    "extraHosts": [],
+    "dns": []
+  },
+  "isolated": {
+    "scenario": "isolated",
+    "network": "xroga-browser-internal",
+    "result": {
+      "proxyPeerByName": "connected",
+      "publicIp": "error:ENETUNREACH",
+      "publicDns": "error:ESERVFAIL",
+      "metadata": "error:ENETUNREACH",
+      "gateway": null,
+      "gatewayPorts": {},
+      "chromiumWithoutProxyFlag": "failed:net::ERR_NAME_NOT_RESOLVED",
+      "chromiumWithProxyFlag": "failed:net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    "sidecarSawConnects": [
+      "example.com:443"
+    ]
+  },
+  "control": {
+    "scenario": "control",
+    "network": "xroga-egress-control-bridge",
+    "result": {
+      "proxyPeerByName": "connected",
+      "publicIp": "connected",
+      "publicDns": "resolved:104.20.23.154",
+      "metadata": "error:ECONNREFUSED",
+      "gateway": "172.19.0.1",
+      "gatewayPorts": {
+        "22": "error:ECONNREFUSED",
+        "80": "error:ECONNREFUSED",
+        "443": "error:ECONNREFUSED",
+        "2375": "error:ECONNREFUSED"
+      },
+      "chromiumWithoutProxyFlag": "loaded:200",
+      "chromiumWithProxyFlag": "failed:net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    "sidecarSawConnects": [
+      "example.com:443"
+    ]
+  },
+  "verdicts": {
+    "isolated": {
+      "proxyPeerReachable": true,
+      "noDirectPublicIp": true,
+      "noPublicDns": true,
+      "noMetadata": true,
+      "noHostGateway": true,
+      "chromiumWithoutProxyFlagBlocked": true,
+      "chromiumWithProxyFlagReachedOnlyTheSidecar": true
+    },
+    "controlBehavesLikeOpenNetwork": {
+      "publicIpReachable": true,
+      "publicDnsResolves": true,
+      "chromiumWithoutProxyFlagLoaded": true
+    }
+  },
+  "isolatedOk": true,
+  "controlOk": true,
+  "limits": [
+    "Docker Desktop internal network semantics on one host. The same property on OCI is a security-list or network-security-group rule set and must be verified there with verify-host.sh.",
+    "The sidecar is a stand-in listener: it shows what the network lets the browser reach, not the proxy implementation (tested separately)."
+  ]
+}

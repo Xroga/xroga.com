@@ -1,6 +1,6 @@
 # Phase 2 criteria and their actual state
 
-**Verdict: Phase 2 is NOT complete.** The engineering that can be done and proven without external resources is done and tested; the rest is blocked on
+**Verdict: Phase 2 is NOT complete.** The remaining work is reduced to three criteria and three decisions in `PHASE-2-REMAINING.md`. The engineering that can be done and proven without external resources is done and tested; the rest is blocked on
 decisions and resources that only the founder can provide (listed at the end). Nothing is labelled stronger than the evidence.
 
 Where the criteria come from: Batch 1.5 has no separate frozen "Phase 2 acceptance matrix". The contract is `PHASE-1-TO-PHASE-2-HANDOFF.md` (rows quoted
@@ -21,7 +21,7 @@ Documents: `INFRA-004-credential-audit.md` · `INFRA-005-database-tls.md` · `IN
 | Keep the `SECRET_BUCKETS` denylist (handoff) | **DONE** (unchanged) | Phase 1 tests | none |
 | Identify every reachable raw-credential writer, SEC-OAUTH-1 (directive) | **DONE** | `INFRA-004-credential-audit.md`: W1 to W9 with file and line, F1 to F8 | SOURCE_READ. `project_runtime_secrets` was not counted (no production SQL) |
 | Bounded legacy migration path with approval gates, no live migration (directive) | **PLAN ONLY** | audit §5: inventory, deploy, per-owner CAS migration, close window, rotate, retire, rollback never to the plaintext reader | needs D1 and D4 and a separate signed approval per stage. Nothing was migrated, rotated or deleted |
-| Reject development crypto in production (directive) | **PARTIAL** | readiness `credential_custody`: with managed custody required, development or test key material makes the process not ready (LOCAL_TESTED, 4 tests, 1 injected defect caught). Batch 1's vault refuses development crypto in production (read in its source, not run by me) | enforcement inside the vault is Batch 1's, unverified here |
+| Reject development crypto in production (directive) | **PARTIAL** | readiness `credential_custody`, aligned to Batch 1's own contract (`XROGA_CREDENTIAL_KMS_PROVIDER`, provider-specific variables, mixed settings refused, Batch 1's round trip injectable): development or test key material makes the process not ready (LOCAL_TESTED, 5 tests). Batch 1's vault refuses development crypto in production (read in its source, not run by me) | enforcement inside the vault is Batch 1's, unverified here |
 | Managed-provider custody claimed only with genuine provider evidence (directive) | **NOT CLAIMED** | no key provider call was made | D1: no key, no billing, no provider chosen |
 
 ## INFRA-005: API and runtime
@@ -34,14 +34,14 @@ Documents: `INFRA-004-credential-audit.md` · `INFRA-005-database-tls.md` · `IN
 | Managed identity / KMS bindings (directive) | **BLOCKED** | readiness requirement and refusal of dev keys only | D1, D2, D4 |
 | Database TLS verified before any real Supabase deployment (risk 7) | **DONE** | `INFRA-005-database-tls.md`: 24 tests, live Supabase handshake, 17 injected defects caught | the migration gate, `postgresConnect.ts` and `supabaseProvision.ts` are still unverified connections (production paths, deliberately untouched) |
 | Inspect production migration history; never auto-apply (directive) | **DONE** | 82 records read earlier; this branch adds `20261024000000_worker_task_leases.sql`, **not applied anywhere** | merging to `main` would apply it: see PR gate |
-| Verify the `supabase-migrate.yml` Preview boundary before any PR (handoff risk 3, directive) | **DONE: unsafe** | `BOUNDARY-CHECK.md` | D5 |
+| Verify the `supabase-migrate.yml` Preview boundary before any PR (handoff risk 3, directive) | **DONE: was unsafe, fixed in this branch** | `BOUNDARY-CHECK.md`: the PR path now uses no environment, no secret and no live runner (offline check, 9 tests) | `command3-auth-browser.yml` `E2E_*` secrets unconfirmed; see `PHASE-2-REMAINING.md` section D |
 | Separate trusted-API and restricted browser-worker images (browser table) | **DONE** | `Dockerfile.api` has no browser; `deploy/browser-worker` is its own image | the API image runs as root (finding, unchanged) |
 | Pinned Chromium, Playwright, Stagehand (browser table) | **PARTIAL** | base image by digest, `playwright-core@1.62.0` by lockfile | Stagehand: no dependency exists yet (INFRA-007) |
 | Non-root; sandbox ON else BLOCKED (browser table) | **DONE** DOCKER_LOCAL_TESTED | probe: `SANDBOX_ON` in the hardened container, control `BLOCKED` | **not OCI**; not ARM64 |
 | seccomp, dropped capabilities, CPU/RAM/process limits (browser table) | **DONE** | derived profile (default plus five syscalls), spec checker (19 tests, 8 injected defects caught), the probe ran under exactly those flags | enforcement by the real host is untested |
 | Private authenticated CDP (browser table) | **DONE** | launch checker refuses network DevTools; real Chromium shows the pipe and no port | none |
-| Egress policy including metadata, RFC1918, rebinding (browser table) | **DONE** LOCAL_TESTED with a real Chromium | proxy plus the canonical policy; Chromium cannot reach loopback, metadata or out-of-scope hosts, and does not ignore TLS errors | network-level deny rules are declared in the spec and **unverified** (need the host) |
-| AMD64 and ARM64 proof before choosing a shape (browser table) | **PARTIAL** | AMD64 local | **ARM64 not run; OCI host not run** |
+| Egress policy including metadata, RFC1918, rebinding (browser table) | **DONE** application level (LOCAL_TESTED, real Chromium) and container network level (DOCKER_LOCAL_TESTED) | proxy plus the canonical policy; Chromium cannot reach loopback, metadata or out-of-scope hosts, and does not ignore TLS errors. On an `--internal` network the browser container cannot reach a public IP, public DNS, metadata or a host gateway even with no proxy flag; the open-network control differs | the same on the target host and the proxy sidecar's host-level deny rules: **R-3** |
+| AMD64 and ARM64 proof before choosing a shape (browser table) | **PARTIAL** | AMD64 local; the pinned image index contains `linux/arm64` | **ARM64 not run; OCI host not run: R-1, R-2** (procedure ready: `OCI-SANDBOX-VERIFICATION.md`) |
 | Rollback (directive) | **DONE** | `ROLLBACK.md` and the lease `.down.sql` (tested) | none |
 
 ## INFRA-006: workers and scheduler

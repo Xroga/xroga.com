@@ -24,11 +24,32 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Pull requests get ONLY this job: no environment, no secret, read-only token, no network or database. It replaces a "dry run" that
+  # connected to the live database with the repository's Supabase credentials (through the Preview environment, which has no secrets of
+  # its own) and executed CREATE SCHEMA / CREATE TABLE IF NOT EXISTS against it.
+  validate-migrations:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - name: Offline migration check
+        run: node scripts/check-supabase-migrations.mjs --base "origin/${{ github.base_ref }}"
+
+  # Applies migrations. Runs only for a push to main (or a manual dispatch, whose steps below still require ref main): never for a pull request.
   migrate:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    environment: ${{ github.event_name == 'pull_request' && 'Preview' || 'Production' }}
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    environment: Production
 
     steps:
       - uses: actions/checkout@v5
@@ -65,16 +86,3 @@ jobs:
           SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SERVICE_KEY || secrets.SUPABASE_SECRET_KEY }}
         run: node backend/scripts/verify-community-rls.mjs
-
-      - name: Dry-run on pull request
-        if: github.event_name == 'pull_request'
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL || secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SERVICE_KEY || secrets.SUPABASE_SECRET_KEY }}
-          SUPABASE_POOLER_HOST: ${{ secrets.SUPABASE_POOLER_HOST }}
-          DRY_RUN: '1'
-        run: node scripts/apply-supabase-migrations.mjs --dry-run

@@ -7,7 +7,7 @@
   "capDrop": ["ALL"],
   "noNewPrivileges": true,
   "seccompProfile": "deploy/browser-worker/seccomp-chromium.json",
-  "network": { "mode": "bridge", "publishedPorts": [], "extraHosts": [], "dns": [] },
+  "network": { "mode": "internal", "name": "xroga-browser-internal", "proxyHost": "egress-proxy", "proxyPort": 3128, "publishedPorts": [], "extraHosts": [], "dns": [] },
   "ipc": "private",
   "pid": "private",
   "uts": "private",

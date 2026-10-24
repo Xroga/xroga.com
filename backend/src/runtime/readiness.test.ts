@@ -96,29 +96,60 @@ describe('API readiness', () => {
     });
   });
 
-  describe('managed credential custody', () => {
-    it('is not required unless declared; once declared it needs a managed provider', async () => {
+  describe('managed credential custody (Batch 1 environment contract: XROGA_CREDENTIAL_KMS_PROVIDER)', () => {
+    const need = { ...prod, XROGA_REQUIRE_MANAGED_CUSTODY: '1' };
+    const GKEY = 'projects/p/locations/l/keyRings/r/cryptoKeys/k';
+    const google = { ...need, XROGA_CREDENTIAL_KMS_PROVIDER: 'google_cloud', XROGA_GOOGLE_CLOUD_KMS_KEY_NAME: GKEY };
+    const oci = { ...need, XROGA_CREDENTIAL_KMS_PROVIDER: 'oci', XROGA_OCI_KMS_KEY_ID: 'ocid1.key.oc1.me-dubai-1.x', XROGA_OCI_KMS_ENDPOINT: 'https://kms.example', XROGA_OCI_KMS_KEY_VERSION: 'ocid1.keyversion.oc1.x', XROGA_OCI_KMS_AUTH_MODE: 'instance_principal', XROGA_OCI_KMS_PRINCIPAL_ID: 'ocid1.instance.oc1.x' };
+
+    it('is not required unless declared; once declared it needs a provider', async () => {
       assert.equal((await verdict(prod)).checks.some((c) => c.name === 'credential_custody'), false);
-      const r = await verdict({ ...prod, XROGA_REQUIRE_MANAGED_CUSTODY: '1' });
+      const r = await verdict(need);
       assert.equal(r.ready, false);
       assert.equal(reasonOf(r, 'credential_custody'), 'custody_provider_not_configured');
     });
 
-    it('a configured managed provider satisfies it', async () => {
-      assert.equal((await verdict({ ...prod, XROGA_REQUIRE_MANAGED_CUSTODY: 'true', XROGA_GOOGLE_CLOUD_KMS_KEY_NAME: 'projects/p/locations/l/keyRings/r/cryptoKeys/k' })).ready, true);
-      assert.equal((await verdict({ ...prod, XROGA_REQUIRE_MANAGED_CUSTODY: 'on', XROGA_MANAGED_CUSTODY_PROVIDER: 'oci-kms' })).ready, true);
+    it('accepts exactly the combinations Batch 1\'s startup accepts', async () => {
+      assert.equal((await verdict(google)).ready, true);
+      assert.equal((await verdict(oci)).ready, true);
+      for (const mode of ['resource_principal', 'workload_federation']) assert.equal((await verdict({ ...oci, XROGA_OCI_KMS_AUTH_MODE: mode })).ready, true, mode);
     });
 
-    it('development or test key material alongside required managed custody is not ready, even with a provider set', async () => {
+    it('refuses the combinations Batch 1\'s startup refuses: missing, mixed, partial or unknown', async () => {
+      const bad: Array<[string, NodeJS.ProcessEnv]> = [
+        ['google without a key name', { ...google, XROGA_GOOGLE_CLOUD_KMS_KEY_NAME: '' }],
+        ['google with an OCI variable beside it', { ...google, XROGA_OCI_KMS_KEY_ID: 'ocid1.key.oc1.x' }],
+        ['oci missing a variable', { ...oci, XROGA_OCI_KMS_ENDPOINT: '' }],
+        ['oci with a google key beside it', { ...oci, XROGA_GOOGLE_CLOUD_KMS_KEY_NAME: GKEY }],
+        ['oci with an unknown auth mode', { ...oci, XROGA_OCI_KMS_AUTH_MODE: 'cli_profile' }],
+        ['unknown provider', { ...need, XROGA_CREDENTIAL_KMS_PROVIDER: 'local-file', XROGA_GOOGLE_CLOUD_KMS_KEY_NAME: GKEY }],
+        ['a key name with no provider', { ...need, XROGA_GOOGLE_CLOUD_KMS_KEY_NAME: GKEY }],
+        ['the invented names used before alignment', { ...need, XROGA_MANAGED_CUSTODY_PROVIDER: 'oci-kms' }],
+      ];
+      for (const [label, e] of bad) assert.equal((await verdict(e)).ready, false, label);
+      assert.equal(reasonOf(await verdict({ ...google, XROGA_OCI_KMS_KEY_ID: 'ocid1.key.oc1.x' }), 'credential_custody'), 'custody_config_invalid');
+    });
+
+    it('development or test key material beside required managed custody is not ready, even with a valid provider', async () => {
       for (const k of ['XROGA_DEV_CREDENTIAL_KEK', 'XROGA_TEST_CREDENTIAL_KEK']) {
-        const r = await verdict({ ...prod, XROGA_REQUIRE_MANAGED_CUSTODY: '1', XROGA_GOOGLE_CLOUD_KMS_KEY_NAME: 'k', [k]: 'abc' });
-        assert.equal(reasonOf(r, 'credential_custody'), 'custody_dev_key_present', k);
+        assert.equal(reasonOf(await verdict({ ...google, [k]: 'abc' }), 'credential_custody'), 'custody_dev_key_present', k);
       }
     });
 
-    it('an unrecognised provider name does not count', async () => {
-      const r = await verdict({ ...prod, XROGA_REQUIRE_MANAGED_CUSTODY: '1', XROGA_MANAGED_CUSTODY_PROVIDER: 'local-file' });
-      assert.equal(reasonOf(r, 'credential_custody'), 'custody_provider_not_configured');
+    it('uses Batch 1\'s live round trip when it is supplied, and reports only a fixed code when it fails', async () => {
+      let calls = 0;
+      const healthy = await verdict(google, { ...okDb, custodyRoundTrip: async () => { calls++; return true; } });
+      assert.equal(healthy.ready, true);
+      assert.equal(calls, 1);
+      const down = await verdict(google, { ...okDb, custodyRoundTrip: async () => false });
+      assert.equal(reasonOf(down, 'credential_custody'), 'credential_provider_unavailable');
+      const throws = await verdict(google, { ...okDb, custodyRoundTrip: async () => { throw new Error('PERMISSION_DENIED projects/p key k'); } });
+      assert.equal(throws.ready, false);
+      assert.ok(!JSON.stringify(throws).includes('PERMISSION_DENIED'));
+      // a bad configuration never reaches the provider
+      let reached = false;
+      await verdict({ ...google, XROGA_GOOGLE_CLOUD_KMS_KEY_NAME: '' }, { ...okDb, custodyRoundTrip: async () => { reached = true; return true; } });
+      assert.equal(reached, false);
     });
   });
 });
