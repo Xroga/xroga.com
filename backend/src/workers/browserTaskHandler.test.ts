@@ -6,6 +6,7 @@ import { harness, type Harness } from '../storage/testing/harness.js';
 import { StorageError, type StorageActor } from '../storage/types.js';
 import type { BrowserJob } from './browserJob.js';
 import { createBrowserTaskHandler, type BrowserHandlerDeps, type BrowserWorkerPort, type BrowserWorkerResult } from './browserTaskHandler.js';
+import { AdmissionController } from './admission.js';
 import { MemoryLeaseStore, type Lease } from './leaseStore.js';
 
 const PNG = Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), Buffer.alloc(64, 7)]);
@@ -257,6 +258,15 @@ describe('browser task handler on the canonical scheduler', () => {
     });
   });
 
+  it('the worker\'s free-text summary is stored without any credential it may have copied from a page', async () => {
+    const token = 'ghp_' + 'A1b2C3d4E5f6G7h8I9j0K1l2M3';
+    const r = rig(async () => okResult({ summary: `page said: use ${token} to log in` }));
+    const { task: t } = await r.run();
+    assert.equal(t.status, 'completed');
+    assert.ok(!JSON.stringify(t).includes(token));
+    assert.match(String((t.output as { summary: string }).summary), /page said: use \[redacted\] to log in/);
+  });
+
   describe('idempotency and recovery', () => {
     it('a retry reuses artifacts an earlier attempt stored, so a crash between writes leaves no duplicates', async () => {
       const r = rig(async () => okResult());
@@ -303,6 +313,78 @@ describe('browser task handler on the canonical scheduler', () => {
       assert.equal(bobs.length, 2);
       assert.equal(alices.length, 2);
       assert.equal(new Set([...bobs, ...alices].map((o) => o.id)).size, 4);
+    });
+  });
+
+  describe('admission (bounded concurrency, tenant fairness)', () => {
+    const track = () => { const s = { now: 0, peak: 0 }; return { s, enter: () => { s.now++; s.peak = Math.max(s.peak, s.now); }, leave: () => { s.now--; } }; };
+
+    it('the same tenant queues behind its own cap, one job at a time', async () => {
+      const t = track();
+      const admission = new AdmissionController({ maxConcurrent: 4, maxPerTenant: 1, maxQueuedPerTenant: 5, maxQueuedTotal: 10 });
+      const r = rig(async () => { t.enter(); await new Promise((x) => setTimeout(x, 40)); t.leave(); return okResult(); }, { admission });
+      const results = await Promise.all(['a', 'b', 'c'].map((id) => r.run({ taskId: id })));
+      assert.ok(results.every((x) => x.task.status === 'completed'));
+      assert.equal(t.s.peak, 1, 'the tenant never ran two browsers at once');
+    });
+
+    it('two tenants run side by side while each respects its own cap', async () => {
+      const t = track();
+      const admission = new AdmissionController({ maxConcurrent: 2, maxPerTenant: 1, maxQueuedPerTenant: 5, maxQueuedTotal: 10 });
+      const slow = async () => { t.enter(); await new Promise((x) => setTimeout(x, 80)); t.leave(); return okResult(); };
+      const alice = rig(slow, { admission });
+      const bobHandler = createBrowserTaskHandler({ ...alice.deps, actor: alice.h.bob, admission });
+      const stateB = createCanonicalExecutionState({ projectId: alice.h.bobProject, runId: randomUUID(), tasks: [task('b-1')] });
+      const [a1, b1] = await Promise.all([
+        alice.run({ taskId: 'a-1' }),
+        new ExecutionScheduler(new InMemoryExecutionStateStore()).run(stateB, { browser_automation: bobHandler }),
+      ]);
+      assert.equal(a1.task.status, 'completed');
+      assert.equal(b1.tasks[0]!.status, 'completed');
+      assert.equal(t.s.peak, 2, 'different tenants overlap');
+    });
+
+    it('a full queue fails fast with a typed error and never reaches the worker', async () => {
+      const admission = new AdmissionController({ maxConcurrent: 1, maxPerTenant: 1, maxQueuedPerTenant: 1, maxQueuedTotal: 1 });
+      let release!: () => void;
+      const gate = new Promise<void>((x) => { release = x; });
+      const r = rig(async () => { await gate; return okResult(); }, { admission });
+      const running = r.run({ taskId: 'a' });
+      await new Promise((x) => setTimeout(x, 30));
+      const queued = r.run({ taskId: 'b' });
+      await new Promise((x) => setTimeout(x, 30));
+      const refused = await r.run({ taskId: 'c' });
+      assert.equal(failureCode(refused.task), 'QUEUE_FULL');
+      assert.equal(r.calls.length, 1, 'only the running job reached the worker');
+      release();
+      await Promise.all([running, queued]);
+    });
+
+    it('authority revoked while a job waits in the queue stops it: the worker is never started', async () => {
+      const admission = new AdmissionController({ maxConcurrent: 1, maxPerTenant: 1, maxQueuedPerTenant: 5, maxQueuedTotal: 5 });
+      let revoked = false;
+      let release!: () => void;
+      const gate = new Promise<void>((x) => { release = x; });
+      const r = rig(async () => { await gate; return okResult(); }, { admission, authorise: async () => !revoked });
+      const first = r.run({ taskId: 'first' });
+      await new Promise((x) => setTimeout(x, 30));
+      const second = r.run({ taskId: 'second' });
+      await new Promise((x) => setTimeout(x, 30));
+      revoked = true;
+      release();
+      const [, waited] = await Promise.all([first, second]);
+      assert.equal(failureCode(waited.task), 'PERMISSION_REVOKED');
+      assert.deepEqual(r.calls.map((j) => j.taskId), ['first'], 'the queued job never started');
+    });
+
+    it('a failed or cancelled job gives its slot back', async () => {
+      const admission = new AdmissionController({ maxConcurrent: 1, maxPerTenant: 1, maxQueuedPerTenant: 5, maxQueuedTotal: 5 });
+      let n = 0;
+      const r = rig(async () => { if (++n === 1) throw new Error('boom'); return okResult(); }, { admission });
+      const [bad, good] = await Promise.all([r.run({ taskId: 'x' }), r.run({ taskId: 'y' })]);
+      assert.equal(bad.task.status, 'failed');
+      assert.equal(good.task.status, 'completed');
+      assert.deepEqual([admission.stats().running, admission.stats().queued], [0, 0]);
     });
   });
 

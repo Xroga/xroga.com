@@ -49,3 +49,15 @@ describe('boot duties are gated by the startup policy', () => {
     assert.match(source, /app\.get\('\/ready'[\s\S]{0,400}runReadiness\(apiProbes\(/);
   });
 });
+
+describe('credential-safe logging is installed before anything can log', () => {
+  it('the safe-logging module is the first import after environment loading', () => {
+    const imports = [...source.matchAll(/^import\s+(?:[^;]*?from\s+)?'([^']+)';/gm)].map((m) => m[1]);
+    assert.equal(imports[0], 'dotenv/config');
+    assert.equal(imports[1], './runtime/installSafeLogging.js');
+  });
+
+  it('HTTP request logging goes through the redactor (morgan bypasses console)', () => {
+    assert.match(source, /morgan\('dev',\s*\{\s*stream:\s*\{\s*write:[^}]*redactText\(/);
+  });
+});

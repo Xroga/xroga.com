@@ -1,0 +1,31 @@
+{
+  "image": "xroga-browser-worker:phase2-probe",
+  "user": "10001:10001",
+  "privileged": false,
+  "readOnlyRootFilesystem": true,
+  "capAdd": [],
+  "capDrop": ["ALL"],
+  "noNewPrivileges": true,
+  "seccompProfile": "deploy/browser-worker/seccomp-chromium.json",
+  "network": { "mode": "bridge", "publishedPorts": [], "extraHosts": [], "dns": [] },
+  "ipc": "private",
+  "pid": "private",
+  "uts": "private",
+  "mounts": [
+    { "type": "tmpfs", "target": "/tmp", "sizeMb": 512, "options": ["nosuid", "nodev", "noexec"] },
+    { "type": "tmpfs", "target": "/run/xroga/profiles", "sizeMb": 1024, "options": ["nosuid", "nodev", "noexec"] }
+  ],
+  "shmSizeMb": 256,
+  "memoryMb": 2048,
+  "memorySwapMb": 2048,
+  "cpus": 2,
+  "pidsLimit": 512,
+  "env": { "HOME": "/tmp", "NODE_ENV": "production" },
+  "egress": {
+    "enforcement": "required-at-deploy",
+    "denyCidrs": [
+      "0.0.0.0/8", "10.0.0.0/8", "100.64.0.0/10", "127.0.0.0/8", "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24", "192.168.0.0/16", "198.18.0.0/15",
+      "::1/128", "fc00::/7", "fe80::/10"
+    ]
+  }
+}

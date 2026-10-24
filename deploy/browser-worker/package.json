@@ -1,0 +1,10 @@
+{
+  "name": "xroga-browser-worker-image",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Dependencies of the browser worker container image (Phase 2: the sandbox probe). Pinned exactly; installed with npm ci.",
+  "dependencies": {
+    "playwright-core": "1.62.0"
+  }
+}

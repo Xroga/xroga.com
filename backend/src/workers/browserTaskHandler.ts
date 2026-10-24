@@ -24,6 +24,8 @@ import { looksLikeCredential } from '../storage/migration/sources.js';
 import { sanitizeFilename } from '../storage/keys.js';
 import { StorageError, type ObjectClass, type StorageActor } from '../storage/types.js';
 import { jobIdempotencyKey, navigationAllowed, parseBrowserJob, type BrowserJob, type BrowserJobLimits } from './browserJob.js';
+import type { AdmissionController } from './admission.js';
+import { redactText } from '../runtime/safeLogging.js';
 import { LeaseError, type Lease, type LeaseStore } from './leaseStore.js';
 
 export type BrowserTaskFailureCode =
@@ -73,6 +75,8 @@ export interface BrowserHandlerDeps {
   authorise: (actor: StorageActor, projectId: string) => Promise<boolean>;
   /** the trusted plan's scope for this task: which origins, which start page, how much */
   scopeFor: (task: Parameters<TaskHandler>[0], state: Parameters<TaskHandler>[1]) => { allowedOrigins: string[]; startUrl: string; limits: BrowserJobLimits };
+  /** bounded concurrency with tenant fairness; when set, a job waits for a slot before anything else happens */
+  admission?: AdmissionController;
   leaseTtlMs?: number;
   /** max artifacts per job */
   maxArtifacts?: number;
@@ -105,7 +109,7 @@ export function createBrowserTaskHandler(deps: BrowserHandlerDeps): TaskHandler 
   const ttl = deps.leaseTtlMs ?? 30_000;
   const maxArtifacts = deps.maxArtifacts ?? 50;
 
-  return async (task, state, schedulerSignal) => {
+  const run: TaskHandler = async (task, state, schedulerSignal) => {
     const scope = deps.scopeFor(task, state);
     // Authority is written AFTER the scope, so nothing scopeFor returns can override the issued tenant, user, project, run or task;
     // an unknown field in the scope is refused by the strict parser.
@@ -213,7 +217,11 @@ export function createBrowserTaskHandler(deps: BrowserHandlerDeps): TaskHandler 
         timestamp: now(),
       });
       return {
-        output: { summary: result.summary.slice(0, 2_000), finalHost: new URL(result.finalUrl).hostname, artifacts: stored, leaseToken: lease!.token },
+        output: {
+          // free text from an untrusted worker: never stored with a credential in it
+          summary: redactText(String(result.summary)).slice(0, 2_000),
+          finalHost: new URL(result.finalUrl).hostname, artifacts: stored, leaseToken: lease!.token,
+        },
         evidence,
         validated: true,
       };
@@ -223,5 +231,13 @@ export function createBrowserTaskHandler(deps: BrowserHandlerDeps): TaskHandler 
       schedulerSignal.removeEventListener('abort', onScheduler);
       await deps.leases.release(lease!).catch(() => undefined);
     }
+  };
+
+  // Admission wraps the whole job. Authority and the lease are checked AFTER the wait, at the moment the job actually starts, so a
+  // permission revoked while a job sat in the queue stops it, and no lease is held while merely queued.
+  return async (task, state, signal) => {
+    if (!deps.admission) return run(task, state, signal);
+    const release = await deps.admission.acquire(deps.actor.tenantId, signal);
+    try { return await run(task, state, signal); } finally { release(); }
   };
 }

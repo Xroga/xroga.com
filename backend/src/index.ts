@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import './runtime/installSafeLogging.js';
 import { createServer } from 'http';
 import express from 'express';
 import cors from 'cors';
@@ -45,6 +46,7 @@ import { resolveStorageConfig } from './storage/runtime.js';
 import { probeDatabaseTls } from './storage/databaseTls.js';
 import { decideStartup } from './runtime/startupPolicy.js';
 import { apiProbes, runReadiness } from './runtime/readiness.js';
+import { redactText } from './runtime/safeLogging.js';
 import capabilitiesRouter from './routes/capabilities.js';
 import { adminMiddleware } from './middleware/admin.js';
 import { ensureGithubSchema } from './db/ensureGithubSchema.js';
@@ -94,7 +96,8 @@ app.use(
     crossOriginResourcePolicy: { policy: 'cross-origin' },
   })
 );
-app.use(morgan('dev'));
+// morgan writes request lines straight to stdout, bypassing console: route it through the same redactor (OAuth callbacks carry `code=` and `state=`).
+app.use(morgan('dev', { stream: { write: (line: string) => { process.stdout.write(redactText(line)); } } }));
 
 const allowedOrigins = [
   process.env.FRONTEND_URL,

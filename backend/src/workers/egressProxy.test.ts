@@ -96,6 +96,21 @@ describe('browser egress proxy', () => {
     assert.equal(up.connections, 0);
   });
 
+  it('the 407 carries a Proxy-Authenticate challenge, or a real browser cannot authenticate at all', async () => {
+    const up = await upstream('echo');
+    const h = await harness({ 'example.com': ['93.184.216.34'] }, up);
+    const raw = await new Promise<string>((resolve) => {
+      const s = net.connect({ host: '127.0.0.1', port: h.proxy.port });
+      cleanup.push(() => { s.destroy(); });
+      let buf = '';
+      s.on('data', (d) => { buf += d.toString('latin1'); });
+      s.once('close', () => resolve(buf));
+      s.write('CONNECT example.com:443 HTTP/1.1\r\nHost: example.com:443\r\n\r\n');
+    });
+    assert.match(raw, /^HTTP\/1\.1 407/);
+    assert.match(raw, /\r\nProxy-Authenticate: Basic realm="[^"]+"\r\n/i);
+  });
+
   it('refuses hosts outside the job scope and ports other than 443, before DNS', async () => {
     const up = await upstream('echo');
     const h = await harness({ 'evil.net': ['93.184.216.34'], 'example.com': ['93.184.216.34'] }, up);

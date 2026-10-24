@@ -49,9 +49,12 @@ export interface EgressProxy {
 
 const defaultDial = (host: string, port: number, lookup: LookupFunction): net.Socket => net.connect({ host, port, lookup });
 
-function deny(socket: Duplex, status: string): void {
-  socket.end(`HTTP/1.1 ${status}\r\nConnection: close\r\nContent-Length: 0\r\n\r\n`);
+function deny(socket: Duplex, status: string, extraHeaders = ''): void {
+  socket.end(`HTTP/1.1 ${status}\r\n${extraHeaders}Connection: close\r\nContent-Length: 0\r\n\r\n`);
 }
+
+/** Chromium only answers a proxy challenge it can recognise: without this header it fails with ERR_PROXY_AUTH_UNSUPPORTED. */
+const PROXY_CHALLENGE = 'Proxy-Authenticate: Basic realm="xroga-egress"\r\n';
 
 function authorised(header: string | undefined, username: string, password: string): boolean {
   if (!header?.startsWith('Basic ')) return false;
@@ -91,7 +94,7 @@ export async function startEgressProxy(options: EgressProxyOptions): Promise<Egr
 
     if (!authorised(req.headers['proxy-authorization'], username, password)) {
       record('', false, 'AUTH');
-      return deny(clientSocket, '407 Proxy Authentication Required');
+      return deny(clientSocket, '407 Proxy Authentication Required', PROXY_CHALLENGE);
     }
     const m = /^(\[[0-9a-fA-F:.]+\]|[^:\s]+):(\d{1,5})$/.exec(req.url ?? '');
     const host = m ? m[1]!.replace(/^\[|\]$/g, '').replace(/\.$/, '').toLowerCase() : '';

@@ -5,6 +5,9 @@ set -u
 cd "$(dirname "$0")/../../../../backend"
 OUT="../docs/infra/batch-1.5/evidence/logs"; mkdir -p "$OUT"; LOG="${MUTATION_LOG:-$OUT/07-mutation-checks.log}"; mkdir -p "$(dirname "$LOG")"; : > "$LOG"
 M=../supabase/migrations/20261022000000_storage_drive_foundation.sql
+# A defect is CAUGHT when a test fails OR is cancelled: a mutant that makes a test wait forever (for example, removing a bound so an
+# expected rejection never arrives) shows up as "# cancelled", not "# fail", under node:test.
+caught() { local f c; f=$(echo "$1" | sed -nE 's/.*# fail ([0-9]+).*/\1/p'); c=$(echo "$1" | sed -nE 's/.*# cancelled ([0-9]+).*/\1/p'); if [ "${f:-0}" -gt 0 ] || [ "${c:-0}" -gt 0 ]; then echo CAUGHT; else echo SURVIVED; fi; }
 mut() { # name file python-replace-old python-replace-new testfiles...
   name="$1"; file="$2"; old="$3"; new="$4"; shift 4
   if [ -n "${MUTATION_ONLY:-}" ] && ! [[ "$name" =~ $MUTATION_ONLY ]]; then return; fi
@@ -16,10 +19,10 @@ assert os.environ['OLD'] in s, 'mutation target not found'
 open(p,'w').write(s.replace(os.environ['OLD'],os.environ['NEW'],1))
 PY
   # the TAP reporter is forced: the default reporter differs between Node versions, and a missing summary must never read as "no failures"
-  res=$(npx tsx --test --test-reporter=tap "$@" 2>&1 | grep -E '^# (pass|fail)' | tr '\n' ' ')
+  res=$(npx tsx --test --test-reporter=tap "$@" 2>&1 | grep -E '^# (pass|fail|cancelled)' | tr '\n' ' ')
   cp /tmp/mut.bak "$file"
   fails=$(echo "$res" | sed -E 's/.*# fail ([0-9]+).*/\1/')
-  if [ -z "$res" ]; then verdict=INCONCLUSIVE; else verdict=$([ "${fails:-0}" -gt 0 ] && echo CAUGHT || echo SURVIVED); fi
+  if [ -z "$res" ]; then verdict=INCONCLUSIVE; else verdict=$(caught "$res"); fi
   echo "$verdict | $name | $res" | tee -a "$LOG"
 }
 want() { [ -z "${MUTATION_GROUPS:-}" ] || [[ ",${MUTATION_GROUPS}," == *",$1,"* ]]; }
@@ -35,8 +38,8 @@ a="if (head.size !== cur.declaredSize) await fail("; b="if (size !== cur.declare
 assert a in s and b in s
 open(p,'w').write(s.replace(a,"if (false) await fail(",1).replace(b,"if (false) await fail(",1))
 PY
-res=$(npx tsx --test --test-reporter=tap src/storage/storageService.test.ts 2>&1 | grep -E '^# (pass|fail)' | tr '\n' ' '); cp /tmp/mut.bak $S
-fails=$(echo "$res" | sed -E 's/.*# fail ([0-9]+).*/\1/'); if [ -z "$res" ]; then verdict=INCONCLUSIVE; else verdict=$([ "${fails:-0}" -gt 0 ] && echo CAUGHT || echo SURVIVED); fi
+res=$(npx tsx --test --test-reporter=tap src/storage/storageService.test.ts 2>&1 | grep -E '^# (pass|fail|cancelled)' | tr '\n' ' '); cp /tmp/mut.bak $S
+fails=$(echo "$res" | sed -E 's/.*# fail ([0-9]+).*/\1/'); if [ -z "$res" ]; then verdict=INCONCLUSIVE; else verdict=$(caught "$res"); fi
 echo "$verdict | service: skip BOTH size verifications | $res" | tee -a "$LOG"
 mut "memory repo: commit replay double counts" src/storage/repository.ts "if (r.state === 'COMMITTED') return 'ALREADY_COMMITTED';" "if (r.state === 'COMMITTED') { this.#u(r.tenantId).committedBytes += actual; return 'ALREADY_COMMITTED'; }" src/storage/storageService.test.ts
 mut "migration: skip source-vs-destination hash comparison" src/storage/migration/engine.ts "if (object.sha256Verified !== sourceSha || object.sizeBytes !== opened.size) {" "if (false) {" src/storage/migration/engine.test.ts
@@ -66,7 +69,7 @@ mut "SQL: authenticated can read object_key" $M "grant select (id, tenant_id," "
 fi
 # Phase 2 · workers: leases, browser job contract, egress proxy, process trees, browser task handler (INFRA-005/006)
 if want workers; then
-W=src/workers; TO=--test-timeout=25000
+W=src/workers; TO=--test-timeout=20000
 LS=$W/leaseStore.ts; LT=$W/leaseStore.test.ts
 mut "lease: fencing token not incremented" $LS "token: (current?.token ?? 0) + 1" "token: 1" $TO $LT
 mut "lease: an expired lease is never retaken" $LS "if (current?.held && current.expiresAt > t) return null;" "if (current?.held) return null;" $TO $LT
@@ -115,9 +118,72 @@ a="      await guard();\n\n      // The worker is untrusted"; b="      await gua
 assert a in s and b in s
 open(p,'w').write(s.replace(a,"\n      // The worker is untrusted",1).replace(b,"",1))
 PY
-res=$(npx tsx --test --test-reporter=tap $TO $HT 2>&1 | grep -E '^# (pass|fail)' | tr '\n' ' '); cp /tmp/mut.bak $H
-fails=$(echo "$res" | sed -E 's/.*# fail ([0-9]+).*/\1/'); if [ -z "$res" ]; then verdict=INCONCLUSIVE; else verdict=$([ "${fails:-0}" -gt 0 ] && echo CAUGHT || echo SURVIVED); fi
+res=$(npx tsx --test --test-reporter=tap $TO $HT 2>&1 | grep -E '^# (pass|fail|cancelled)' | tr '\n' ' '); cp /tmp/mut.bak $H
+fails=$(echo "$res" | sed -E 's/.*# fail ([0-9]+).*/\1/'); if [ -z "$res" ]; then verdict=INCONCLUSIVE; else verdict=$(caught "$res"); fi
 echo "$verdict | handler: BOTH post-result lease checks removed | $res" | tee -a "$LOG"
+fi
+if want workers && [ -n "${STORAGE_TEST_DATABASE_URL:-}" ]; then
+LM=../supabase/migrations/20261024000000_worker_task_leases.sql; LP=src/workers/postgresLeaseStore.integration.test.ts; TO=--test-timeout=20000
+mut "lease SQL: fencing token not incremented" $LM "token     = l.token + 1," "token     = l.token," $TO $LP
+mut "lease SQL: a live lease can be taken over" $LM "where (not l.held) or l.expires_at <= v_now" "where true" $TO $LP
+mut "lease SQL: release ignores the token" $LM "and worker_id = p_worker and token = p_token and held;" "and held;" $TO $LP
+mut "lease SQL: renew ignores the token" $LM "and worker_id = p_worker and token = p_token and held and expires_at > v_now;" "and held and expires_at > v_now;" $TO $LP
+mut "lease SQL: check ignores the token" $LM "or r.worker_id <> p_worker or r.token <> p_token then return 'lost'" "or r.worker_id <> p_worker then return 'lost'" $TO $LP
+mut "lease SQL: anon can read the table" $LM "revoke all on public.worker_task_leases from public, anon, authenticated;" "grant select on public.worker_task_leases to anon;" $TO $LP
+mut "lease SQL: RLS not forced" $LM "alter table public.worker_task_leases force row level security;" "" $TO $LP
+mut "lease SQL: ttl unbounded" $LM "if p_ttl_ms is null or p_ttl_ms < 1 or p_ttl_ms > 900000 then
+    raise exception 'lease ttl out of range' using errcode = '22023';
+  end if;
+  insert into" "insert into" $TO $LP
+fi
+if want workers2; then
+W=src/workers; R=src/runtime; TO=--test-timeout=20000
+AD=$W/admission.ts; AT=$W/admission.test.ts
+mut "admission: per-tenant cap not enforced" $AD "&& (this.#running.get(tenantId) ?? 0) < this.#opts.maxPerTenant;" ";" $TO $AT
+mut "admission: waiting jobs served oldest-first instead of fairly" $AD "if (running < bestRunning || (running === bestRunning && best && head.seq < best.seq))" "if (!best || head.seq < best.seq)" $TO $AT
+mut "admission: queue not bounded" $AD "if (queue.length >= this.#opts.maxQueuedPerTenant || this.#queuedTotal >= this.#opts.maxQueuedTotal) {" "if (false) {" $TO $AT
+mut "admission: a cancelled waiter stays queued" $AD "if (i >= 0) {" "if (false) {" $TO $AT
+mut "admission: release not idempotent" $AD "if (released) return;" "" $TO $AT
+# (a "newcomer jumps the queue" mutant is not listed: the guard it targeted was dead code, removed; see admission.ts)
+RR=$W/resumeRecovery.ts; RT=$W/resumeRecovery.test.ts
+mut "recovery: a live worker's task is resumed anyway" $RR "if (holder) held.push(task.id);" "" $TO $RT
+mut "recovery: held tasks are not restored after canonical recovery" $RR "result.state.tasks = result.state.tasks.map((t) => originals.get(t.id) ?? t);" "" $TO $RT
+SP=$R/startupPolicy.ts; ST=$R/startupPolicy.test.ts
+mut "startup: staging, preview and unclassified run the mutating duties" $SP "return { ensureSchemas: false, reconcileOrphanedRuns: false };" "return { ensureSchemas: true, reconcileOrphanedRuns: true };" $TO $ST
+mut "startup: a staging claim on the production app is accepted" $SP "if (fly === PRODUCTION_FLY_APP && claimed !== 'production')" "if (false)" $TO $ST
+mut "startup: a production claim on another app is accepted" $SP "if (fly && fly !== PRODUCTION_FLY_APP && claimed === 'production')" "if (false)" $TO $ST
+mut "startup: any Fly app is inferred to be production" $SP "if (fly === PRODUCTION_FLY_APP) return { environment: 'production', source: 'inferred' };" "if (fly) return { environment: 'production', source: 'inferred' };" $TO $ST
+RD=$R/readiness.ts; RDT=$R/readiness.test.ts
+mut "readiness: an unclassified environment is ready" $RD "run: async () => (resolveDeploymentEnvironment(env).environment === 'unclassified' ? 'environment_unclassified' : null)," "run: async () => null," $TO $RDT
+mut "readiness: a TLS verification failure is ignored" $RD "if (!probe.ok) return 'storage_database_tls_failed';" "" $TO $RDT
+mut "readiness: development key material accepted where managed custody is required" $RD "if (env.XROGA_DEV_CREDENTIAL_KEK || env.XROGA_TEST_CREDENTIAL_KEK) return 'custody_dev_key_present';" "" $TO $RDT
+mut "readiness: probe text echoed to the public result" $RD "reason: CODE.test(outcome) ? outcome : 'check_failed'," "reason: outcome," $TO $RDT
+BG=$R/bootGuard.test.ts
+mut "boot: safe logging import removed from index.ts" src/index.ts "import './runtime/installSafeLogging.js';" "" $TO $BG
+mut "boot: schema ensure runs unconditionally" src/index.ts "if (startup.duties.ensureSchemas) {" "if (true) {" $TO $BG
+SL=$R/safeLogging.ts; SLT=$R/safeLogging.test.ts
+mut "logging: exact secret values not removed" $SL "if (out.includes(secret)) out = out.split(secret).join(REPLACEMENT);" "" $TO $SLT
+mut "logging: credential shapes not removed" $SL "for (const [re, to] of SHAPES) out = out.replace(re, to);" "" $TO $SLT
+mut "logging: fails open when redaction throws" $SL "line = '[log line withheld: redaction failed]'" "line = format(...args)" $TO $SLT
+mut "logging: URL-encoded secret not covered" $SL "if (enc !== value) out.add(enc);" "" $TO $SLT
+CL=$W/chromiumLaunch.ts; CLT=$W/chromiumLaunch.test.ts
+mut "launch: sandbox may be off" $CL "if (o.chromiumSandbox !== true) {" "if (false) {" $TO $CLT
+mut "launch: forbidden flags accepted" $CL "if (name && FORBIDDEN_FLAGS.includes(name)) {" "if (false) {" $TO $CLT
+mut "launch: loopback proxy bypass accepted" $CL "if (proxy.bypass !== '<-loopback>')" "if (false)" $TO $CLT
+mut "launch: secret environment variables accepted" $CL "if (ENV_SECRET.test(k)) {" "if (false) {" $TO $CLT
+mut "launch: profile may be outside the per-job root" $CL "!within(profileRoot, o.userDataDir)" "false" $TO $CLT
+CS=$W/containerSpec.ts; CST=$W/containerSpec.test.ts
+mut "container: privileged accepted" $CS "if (spec.privileged !== false)" "if (false)" $TO $CST
+mut "container: added capabilities accepted" $CS "if (!Array.isArray(spec.capAdd) || spec.capAdd.length)" "if (false)" $TO $CST
+mut "container: writable root accepted" $CS "if (spec.readOnlyRootFilesystem !== true)" "if (false)" $TO $CST
+mut "container: unconfined seccomp accepted" $CS "if (!spec.seccompProfile || /unconfined/i.test(spec.seccompProfile))" "if (false)" $TO $CST
+mut "container: bind mounts and sockets accepted" $CS "if (m.type !== 'tmpfs')" "if (false)" $TO $CST
+mut "container: egress deny list not required" $CS "if (missing.length)" "if (false)" $TO $CST
+mut "dockerfile: root user accepted" $CS "if (!/^[1-9][0-9]*(:[1-9][0-9]*)?\$/.test(last))" "if (false)" $TO $CST
+mut "dockerfile: unpinned base accepted" $CS "if (!from.length || from.some((l) => !/@sha256:[0-9a-f]{64}/.test(l)))" "if (false)" $TO $CST
+mut "handler: worker summary stored without redaction" $W/browserTaskHandler.ts "summary: redactText(String(result.summary)).slice(0, 2_000)," "summary: String(result.summary).slice(0, 2_000)," $TO $W/browserTaskHandler.test.ts
+mut "handler: admission not applied" $W/browserTaskHandler.ts "const release = await deps.admission.acquire(deps.actor.tenantId, signal);" "const release = () => undefined;" $TO $W/browserTaskHandler.test.ts
+mut "proxy: 407 without a Proxy-Authenticate challenge" $W/egressProxy.ts "return deny(clientSocket, '407 Proxy Authentication Required', PROXY_CHALLENGE);" "return deny(clientSocket, '407 Proxy Authentication Required');" $TO $W/egressProxy.test.ts
 fi
 git -C .. diff --quiet -- backend supabase && echo "restored: working tree clean for mutated files" | tee -a "$LOG"
 if grep -qE '^(SURVIVED|INCONCLUSIVE)' "$LOG"; then echo "FAILED: a defect was not caught, or a run was inconclusive" | tee -a "$LOG"; exit 1; fi

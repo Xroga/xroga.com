@@ -19,7 +19,8 @@ Re-verified from source today. "Raw" means the secret itself is the stored value
 | W5 | Vercel token save | `vercelAuth.ts:114-116` (bucket const `:18`); read `:133-136` | **raw** JSON including `access_token` | same bucket |
 | W6 | `userProviderKeys` (BYOK and the Supabase "vault" keys) | `userProviderKeys.ts:7` (AES-256-GCM), `:45-46` upload, key material `:217-218` | **encrypted**, but the master key is `USER_SECRETS_ENCRYPTION_KEY || SUPABASE_SERVICE_ROLE_KEY` (`:217-218`); `:224` requires one of them in production | same bucket, `user_integrations` |
 | W7 | plugin permission policy | `pluginPermissionPolicy.ts:129` (`access_token: mode`) | a **policy value** (not a secret) stored in the credential column | `user_integrations` |
-| – | project runtime secrets, `routes/integrations.ts` | `synthesis/projectRuntime/secretManager.ts`, `routes/integrations.ts` both use `createCipheriv` | **not audited by me**; key source unknown | – |
+| W8 | project runtime secrets | `synthesis/projectRuntime/secretManager.ts:17-59` (key), `:61-110` (`encrypt`), `:111-189` (`decrypt`); table `project_runtime_secrets` (`20260919000000_project_runtime_platform.sql:118`; store at `projectRuntime/store.ts:982,1036,1119`) | **encrypted**, AES-256-GCM, format `v1:iv:tag:ct`, **no AAD**; master key `USER_SECRETS_ENCRYPTION_KEY \|\| SUPABASE_SERVICE_ROLE_KEY \|\| SUPABASE_JWT_SECRET`, fixed salt `xroga-project-runtime-v1`; with none set it throws only when `NODE_ENV === 'production'`, otherwise it uses the hardcoded key `xroga-dev-project-runtime-key` | `project_runtime_secrets` |
+| W9 | `routes/integrations.ts` | no cipher of its own: it calls `saveUserProviderKey` (`routes/integrations.ts:811`, import `:24`), i.e. W6 | inherits W6's key and format | `user_integrations`, bucket |
 
 Consequences: anyone with the service-role key, a database backup, or the bucket can read W1-W5 directly; W6 is only as strong as one of two
 server-held keys, and falls back to the service-role key. `SECRET_BUCKETS` already makes Drive refuse this bucket, so Drive cannot copy these.
@@ -55,6 +56,9 @@ Whatever the cause, one-time PKCE secrets are persisting.
 | F2 | W6 depends on `SUPABASE_SERVICE_ROLE_KEY` as a fallback master key; I cannot see which key is configured on Fly |
 | F3 | PKCE verifiers outlive their flow (6 rows) |
 | F4 | `access_token` is also used to store a non-secret policy (W7): a blind "seal every row" migration would corrupt it; rows must be classified by `provider` first |
+| F6 | W8 has no associated data: nothing binds a ciphertext to its user, project or secret name, so a row's ciphertext copied into another row (by anyone able to write the table) decrypts there. Batch 1's v3 envelope binds tenant, owner, provider, account, type, record, revision and scope |
+| F7 | W8 and W6 share one master-key fallback chain that ends at `SUPABASE_JWT_SECRET` (W8) / `SUPABASE_SERVICE_ROLE_KEY` (W6): a key whose compromise has nothing to do with these secrets decrypts them; and any host that is not `NODE_ENV=production` (staging, preview, an unset variable) silently uses a publicly visible hardcoded key |
+| F8 | the row count of `project_runtime_secrets` is unknown: it was not queried (this phase forbids production SQL). The migration plan must size it with a counts-only query under a separate approval |
 | F5 | the three-way duplication (two tables + bucket) means a revoke must remove all three; Batch 1's tombstones are the model |
 
 ## 5. Bounded migration path (a plan; nothing here has run)

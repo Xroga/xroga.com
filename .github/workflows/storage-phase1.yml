@@ -1,4 +1,4 @@
-# Batch 1.5 Phase 1 verification. SAFE BY CONSTRUCTION:
+# Batch 1.5 Phase 1 and Phase 2 verification. SAFE BY CONSTRUCTION:
 #   - runs only on pushes to the Claude-owned branch, or when dispatched by hand; it is NOT triggered by pull_request or by main
 #   - uses no repository/environment secrets and no GitHub Environment (nothing can reach Supabase, Fly, Cloudflare or production)
 #   - read-only token; the database is a disposable service container; the object store is a throw-away S3 emulator
@@ -8,11 +8,17 @@ name: storage-phase1
 
 on:
   push:
-    branches: ['claude/xroga-batch-1-5']
+    branches: ['claude/xroga-batch-1-5', 'claude/xroga-b15-phase2-20261024']
     paths:
       - 'backend/src/storage/**'
       - 'backend/src/routes/drive*'
       - 'backend/src/services/storage/**'
+      - 'backend/src/workers/**'
+      - 'backend/src/runtime/**'
+      - 'backend/src/security/**'
+      - 'backend/src/index.ts'
+      - 'supabase/migrations/20261024000000_worker_task_leases.sql'
+      - 'deploy/browser-worker/**'
       - 'supabase/migrations/20261022000000_storage_drive_foundation.sql'
       - 'scripts/storage/**'
       - 'docs/infra/batch-1.5/evidence/**'
@@ -46,6 +52,7 @@ jobs:
       STORAGE_TEST_S3_ENDPOINT: http://127.0.0.1:4569
       REQUIRE_PHASE1_FIXTURES: '1'
       PHASE1_STEP_TIMEOUT_MS: '900000'
+      PHASE2_REQUIRE_BROWSER: '1'
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v6
@@ -54,6 +61,12 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
+      - name: Real Chromium for the Phase 2 browser policy tests (disposable runner)
+        run: |
+          npx playwright-core install --with-deps chromium
+          # Ubuntu 24.04 runners restrict unprivileged user namespaces, which Chromium's sandbox needs. The runner is throw-away, so lift the
+          # restriction here; the tests then run with the sandbox ON (chromiumSandbox: true) exactly as in production policy.
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
       - name: Start synthetic S3 emulator (not Cloudflare R2)
         run: |
           mkdir -p /tmp/s3emu && cd /tmp/s3emu && npm init -y >/dev/null && npm i s3rver@3.7.1 --no-audit --no-fund

@@ -57,12 +57,23 @@ const unit = [...tests.filter((f) => !f.includes('.integration.') && f.split(pat
 const pgTests = tests.filter((f) => f.includes('.integration.') && !f.includes('wire') && !f.includes('provider')).sort();
 const wireTests = tests.filter((f) => f.includes('wire.integration')).sort();
 const providerTests = tests.filter((f) => f.includes('provider.integration')).sort();
+// Phase 2 (INFRA-005/006): workers, runtime policy, egress. Same runner, extra steps; TAP reporter forced so the counts parse on any Node version.
+const under = (sub, pred) => walk(path.join(root, 'backend/src', sub)).filter((f) => f.endsWith('.test.ts') && pred(f)).map(rel).sort();
+const p2Unit = [...under('workers', (f) => !/\.(integration|browser)\./.test(f)), ...under('runtime', () => true), 'src/security/boundedPublicGet.test.ts'];
+const p2Pg = under('workers', (f) => f.includes('.integration.'));
+const p2Browser = under('workers', (f) => f.includes('.browser.'));
+const TAP = ['--test-reporter=tap'];
 
 const steps = [
   { id: '01-typecheck', cmd: ['npx', 'tsc', '--noEmit', '-p', '.'], cwd: 'backend', required: true, kind: 'tsc' },
   { id: '02-unit-and-adapters', cmd: ['npx', 'tsx', '--test', ...unit], cwd: 'backend', required: true },
   { id: '02b-large-object-1GiB-SYNTHETIC', cmd: ['npx', 'tsx', '--test', LARGE], cwd: 'backend', required: true, env: { XROGA_LARGE_TEST: '1' } },
   { id: '03-postgres-real-sql', cmd: ['npx', 'tsx', '--test', ...pgTests], cwd: 'backend', required: true, fixture: 'postgres' },
+  { id: '02c-phase2-workers-runtime-unit', cmd: ['npx', 'tsx', '--test', ...TAP, ...p2Unit], cwd: 'backend', required: true },
+  { id: '03b-phase2-worker-leases-real-sql', cmd: ['npx', 'tsx', '--test', ...TAP, ...p2Pg], cwd: 'backend', required: true, fixture: 'postgres' },
+  // A real Chromium on the CI host (LOCAL class: proves the launch policy is honoured by an actual browser, not that the sandbox works in an OCI container).
+  { id: '03c-phase2-real-chromium-LOCAL', cmd: ['npx', 'tsx', '--test', ...TAP, ...p2Browser], cwd: 'backend', required: env.PHASE2_REQUIRE_BROWSER === '1' },
+  { id: '03d-phase2-seccomp-derivation', cmd: ['node', 'deploy/browser-worker/derive-seccomp.mjs', '--check'], cwd: '.', required: true, kind: 'exit' },
   { id: '04-s3-wire-emulator-SYNTHETIC', cmd: ['npx', 'tsx', '--test', ...wireTests], cwd: 'backend', required: true, fixture: 's3Emulator' },
   { id: '05-r2-provider-REAL', cmd: ['npx', 'tsx', '--test', ...providerTests], cwd: 'backend', required: false, fixture: 'r2Provider', needs: 'AUTHORISED' },
   { id: '06-full-backend-suite', cmd: ['npm', 'test'], cwd: 'backend', required: true, kind: 'full' },
@@ -92,7 +103,7 @@ for (const s of steps) {
   Object.assign(r, { exit: p.status, tests: n('tests'), pass: n('pass'), fail: n('fail'), skipped: n('skipped'), suiteSkips: (text.match(/# SKIP/g) ?? []).length });
   const failed = [...text.matchAll(/^\s*not ok \d+ - (.+)$/gm)].map((m) => m[1].trim()).filter((v, i, a) => a.indexOf(v) === i);
   if (timedOut) { r.status = 'FAIL'; r.timedOut = true; r.failedTests = ['STEP TIMED OUT after ' + (Number(env.PHASE1_STEP_TIMEOUT_MS) || 15 * 60_000) / 1000 + 's (see log tail)']; }
-  else if (s.kind === 'tsc') r.status = p.status === 0 ? 'PASS' : 'FAIL';
+  else if (s.kind === 'tsc' || s.kind === 'exit') r.status = p.status === 0 ? 'PASS' : 'FAIL';
   else if (s.kind === 'full') {
     const topLevel = [...text.matchAll(/^not ok \d+ - (.+)$/gm)].map((m) => m[1].trim());
     r.baselineFailures = topLevel.filter((t) => baseline.includes(t)); r.regressions = topLevel.filter((t) => !baseline.includes(t));
