@@ -120,7 +120,11 @@
     "backend/src/services/integrations/legacyGitHubUploadReachability.test.ts",
     "scripts/security/source-lifetime-bindings.test.mjs",
     "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
-    "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json"
+    "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
+    "backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts",
+    "backend/src/security/softwareAgentSdk.local.integration.ts",
+    "backend/src/security/tenantIsolation.local.integration.ts",
+    "docs/xroga/evidence/command-010/SOFTWARE-AGENT-SDK-CONTINUATION.md"
   ],
   "decisions": {
     "keep": [
@@ -212,6 +216,12 @@
       "scope": "Real local HTTP/WebSocket plus controlled database/provider protocol tests, not live Fly, RLS or provider acceptance",
       "negative": true,
       "reference": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json"
+    },
+    {
+      "command": "node --import tsx --test backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts backend/src/ai/tenantModelDispatch.test.ts backend/src/ai/providerRuntime.test.ts backend/src/ai/postCompletionAccounting.test.ts",
+      "scope": "19 focused cases PASS, no skips. New disposable SoftwareAgent reservation/receipt/ownership-transfer assertion requires exact-source full run. Historical evidence unchanged.",
+      "negative": true,
+      "reference": "docs/xroga/evidence/command-010/SOFTWARE-AGENT-SDK-CONTINUATION.md"
     }
   ],
   "architecture": {
@@ -222,7 +232,7 @@
   "rollout": "Review-only stacked draft PR. Phase3 admission, complete Command010 proof and separate release authorization required.",
   "rollback": "Revert this isolated review branch before release, no schema or live credential rollback needed.",
   "knownGaps": [
-    "120 unclosed AST caller candidates, including65 dynamic/SDK high-risk review candidates, not asserted as demonstrated vulnerabilities",
+    "119 unclosed AST caller candidates, including64 dynamic/SDK high-risk review candidates, not asserted as demonstrated vulnerabilities",
     "Remaining consequential adapters and upload caller migration",
     "Full deployed Supabase/PostgREST and full migration/production parity remain unverified. Local PostgreSQL receipt and ownership race proof is now available.",
     "Current main has six UI conflict groups. WorkspaceLauncher behavior reconciliation is separately committed, remaining main-history integration is not verified.",
@@ -249,7 +259,7 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "120 unclosed AST caller candidates, including65 dynamic/SDK high-risk review candidates, not asserted as demonstrated vulnerabilities",
+      "119 unclosed AST caller candidates, including64 dynamic/SDK high-risk review candidates, not asserted as demonstrated vulnerabilities",
       "Remaining consequential adapters and upload caller migration",
       "Full deployed Supabase/PostgREST and full migration/production parity remain unverified. Local PostgreSQL receipt and ownership race proof is now available.",
       "Current main has six UI conflict groups. WorkspaceLauncher behavior reconciliation is separately committed, remaining main-history integration is not verified.",

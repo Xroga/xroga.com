@@ -1,6 +1,9 @@
 import OpenAI from 'openai';
+import {randomUUID} from 'node:crypto';
 import {withTenantModelReservation,type TenantModelScope,type BoundModelDispatch} from '../tenantModelDispatch.js';
-import {requireResourceOwner} from '../../security/tenantContext.js';
+import {requireTenantContext,requireResourceOwner} from '../../security/tenantContext.js';
+import {persistUsageAccounting} from '../usageAccounting.js';
+import {PostCompletionAccountingError} from '../postCompletionAccounting.js';
 
 import {
   resolveEndpoint,
@@ -16,17 +19,17 @@ import {
 } from '../providerRuntime.js';
 
 import {
-  withProviderReservation,
   type ProviderUsageResult,
 } from '../providerBudget.js';
 
 import {
   assertCanUseModel,
-  recordUsage,
+  poolRoleFor,
 } from '../quota.js';
 
 import {
   MODELS,
+  costUsdForTokens,
   type ModelId,
 } from '../models.js';
 
@@ -151,7 +154,7 @@ export interface SoftwareAgentModelTelemetry {
 
 export interface XrogaAgentModelInput {
   userId: string;
-  dispatchScope?:TenantModelScope;
+  dispatchScope:TenantModelScope;
 
   /**
    * Canonical Xroga build run.
@@ -171,10 +174,8 @@ export interface XrogaAgentModelInput {
   fallbackModelIds?: readonly ModelId[];
 
   /**
-   * Optional user-owned provider credential already decrypted by Xroga.
-   *
-   * It never leaves the backend and is passed only to Xroga's existing
-   * provider endpoint resolver.
+   * Legacy input retained for source compatibility only. Dispatch always
+   * resolves the selected account through the canonical issued scope.
    */
   credentialOverride?: string;
 
@@ -698,10 +699,8 @@ function assertModelAvailable(
 async function runSingleModelTurn(
   input: {
     userId: string;
-    dispatchScope?:TenantModelScope;
+    dispatchScope:TenantModelScope;
     modelId: ModelId;
-    primaryModelId: ModelId;
-    credentialOverride?: string;
     maximumOutputTokens: number;
     request: AgentModelRequest;
     signal?: AbortSignal;
@@ -721,17 +720,7 @@ async function runSingleModelTurn(
       input.request,
     );
 
-  /*
-   * A user-owned credential is scoped to the originally selected model.
-   * Never forward one provider's credential to a fallback provider.
-   */
-  const credentialOverride =
-    input.modelId ===
-    input.primaryModelId
-      ? input.credentialOverride
-      : undefined;
-
-  const execute = async (dispatch?:BoundModelDispatch) => {
+  const execute = async (dispatch:BoundModelDispatch) => {
         const startedAt =
           Date.now();
 
@@ -739,16 +728,13 @@ async function runSingleModelTurn(
           const endpoint =
             resolveEndpoint(
               input.modelId,
-              dispatch?dispatch.credentialOverride:credentialOverride,
+              dispatch.credentialOverride,
             );
 
           const client =
-            createModelProviderClient(endpoint,dispatch?.beforeDispatch);
+            createModelProviderClient(endpoint,dispatch.beforeDispatch);
 
-          const {messages,tools}=snapshotModelEgressPayload((dispatch?.payload??{
-            messages:toOpenAiMessages(input.request),
-            tools:toOpenAiTools(input.request.tools),
-          }) as {messages:ReturnType<typeof toOpenAiMessages>;tools:ReturnType<typeof toOpenAiTools>},endpoint.apiKey);
+          const {messages,tools}=snapshotModelEgressPayload(dispatch.payload as {messages:ReturnType<typeof toOpenAiMessages>;tools:ReturnType<typeof toOpenAiTools>},endpoint.apiKey);
 
           const stream =
             await client.chat.completions.create(
@@ -820,6 +806,7 @@ async function runSingleModelTurn(
             const chunk of
             stream
           ) {
+            if(input.signal?.aborted)throw Object.assign(new Error('Provider request cancelled'),{name:'AbortError'});
             providerRequestId =
               providerRequestId ??
               chunk.id;
@@ -1001,18 +988,15 @@ async function runSingleModelTurn(
           throw error;
         }
       };
-  return input.dispatchScope
-    ? withTenantModelReservation({scope:input.dispatchScope,modelId:input.modelId,
+  return withTenantModelReservation({scope:input.dispatchScope,modelId:input.modelId,
         payload:{messages:toOpenAiMessages(input.request),tools:toOpenAiTools(input.request.tools)},
-        estimatedInputTokens,maximumOutputTokens:input.maximumOutputTokens,execute})
-    : withProviderReservation({userId:input.userId,modelId:input.modelId,estimatedInputTokens,
-        maximumOutputTokens:input.maximumOutputTokens,purpose:'daily_work',execute});
+        estimatedInputTokens,maximumOutputTokens:input.maximumOutputTokens,purpose:'daily_work',execute});
 }
 
 async function runBufferedTurn(
   input: {
     userId: string;
-    dispatchScope?:TenantModelScope;
+    dispatchScope:TenantModelScope;
 
     runId?: string;
 
@@ -1020,8 +1004,6 @@ async function runBufferedTurn(
 
     fallbackModelIds:
       readonly ModelId[];
-
-    credentialOverride?: string;
 
     maximumOutputTokens:
       number;
@@ -1079,12 +1061,6 @@ async function runBufferedTurn(
               input.userId,
 
             modelId,
-
-            primaryModelId:
-              input.modelId,
-
-            credentialOverride:
-              input.credentialOverride,
 
             maximumOutputTokens:
               input.maximumOutputTokens,
@@ -1148,10 +1124,12 @@ async function runBufferedTurn(
 export function createXrogaAgentModel(
   input: XrogaAgentModelInput,
 ): SoftwareAgentPrebuiltModel {
-  if(input.dispatchScope)requireResourceOwner(input.dispatchScope.context,input.userId);
+  const context=requireTenantContext(input.dispatchScope?.context);
+  requireResourceOwner(context,input.userId);
+  requireResourceOwner(context,input.dispatchScope.userId);
   // Bind the selected route and credential together. Upstream mutation after
   // factory creation must not retarget a captured account credential.
-  input={...input,dispatchScope:input.dispatchScope?{...input.dispatchScope}:undefined,fallbackModelIds:input.fallbackModelIds?[...input.fallbackModelIds]:undefined};
+  input={...input,dispatchScope:{...input.dispatchScope,context},fallbackModelIds:input.fallbackModelIds?[...input.fallbackModelIds]:undefined};
   const userId =
     requireUserId(
       input.userId,
@@ -1161,11 +1139,6 @@ export function createXrogaAgentModel(
     normalizeMaximumOutputTokens(
       input.maximumOutputTokens,
     );
-
-  const credentialOverride =
-    input.credentialOverride
-      ?.trim() ||
-    undefined;
 
   const fallbackModelIds =
     [
@@ -1201,8 +1174,6 @@ export function createXrogaAgentModel(
 
             fallbackModelIds,
 
-            credentialOverride,
-
             maximumOutputTokens,
 
             request,
@@ -1216,12 +1187,13 @@ export function createXrogaAgentModel(
          * released into the agent loop. Quota usage is recorded against
          * the route that actually succeeded, including a fallback.
          */
-        await recordUsage(
-          userId,
-          turn.modelId,
-          turn.inputTokens,
-          turn.outputTokens,
-        );
+        try {
+          await persistUsageAccounting(context,{
+            receiptId:randomUUID(),modelId:turn.modelId,poolRole:poolRoleFor(turn.modelId),
+            inputTokens:turn.inputTokens,outputTokens:turn.outputTokens,
+            costUsd:costUsdForTokens(turn.modelId,turn.inputTokens,turn.outputTokens),
+          });
+        } catch { throw new PostCompletionAccountingError(); }
 
         for (
           const event of

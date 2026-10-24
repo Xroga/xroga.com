@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "b183079ec8a00cb4d7a29a95e8cdfb517da81acb",
+  "source_sha": "f6dfa28e88238a40e94f71ff0086dc841e4f5761",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -597,6 +597,7 @@
         "backend/src/security/runtimeProjectBinding.local.integration.ts",
         "backend/src/security/runtimeSecretRead.local.integration.ts",
         "backend/src/security/runtimeTerminal.local.integration.ts",
+        "backend/src/security/softwareAgentSdk.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/swarmHeartbeat.local.integration.ts",
@@ -636,6 +637,7 @@
         "GITHUB_CLIENT_ID",
         "GITHUB_CLIENT_SECRET",
         "GITHUB_OAUTH_CALLBACK_URL",
+        "GLM_API_KEY",
         "NEXT_PUBLIC_API_URL",
         "NEXT_PUBLIC_SUPABASE_ANON_KEY",
         "NEXT_PUBLIC_SUPABASE_URL",
@@ -754,6 +756,7 @@
         "backend/src/security/runtimeProjectBinding.local.integration.ts",
         "backend/src/security/runtimeSecretRead.local.integration.ts",
         "backend/src/security/runtimeTerminal.local.integration.ts",
+        "backend/src/security/softwareAgentSdk.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/swarmHeartbeat.local.integration.ts",
@@ -4519,7 +4522,8 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "backend/src/ai/models.ts",
-        "backend/src/ai/providerPolicy.ts"
+        "backend/src/ai/providerPolicy.ts",
+        "backend/src/security/softwareAgentSdk.local.integration.ts"
       ],
       "hostnames": [
         "open.bigmodel.cn"
@@ -4527,7 +4531,12 @@
       "resource_id": null,
       "region": "Not verified",
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
-      "secret_names": [],
+      "secret_names": [
+        "CI",
+        "GLM_API_KEY",
+        "SUPABASE_URL",
+        "XB01_DISPOSABLE_SUPABASE"
+      ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
       ],
@@ -4541,7 +4550,8 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/ai/models.ts",
-        "backend/src/ai/providerPolicy.ts"
+        "backend/src/ai/providerPolicy.ts",
+        "backend/src/security/softwareAgentSdk.local.integration.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -7006,7 +7016,6 @@
         "GLM_5_3_INPUT_USD_PER_1M",
         "GLM_5_3_MODEL_ID",
         "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
         "GROQ_CODE_API_KEY",
         "HAILUO_UID",
         "HAPPYSCRIBE_API_KEY",
@@ -7453,6 +7462,7 @@
         "backend/src/security/runtimeProjectBinding.local.integration.ts",
         "backend/src/security/runtimeSecretRead.local.integration.ts",
         "backend/src/security/runtimeTerminal.local.integration.ts",
+        "backend/src/security/softwareAgentSdk.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/swarmHeartbeat.local.integration.ts",
@@ -7490,6 +7500,7 @@
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
         "endpoint-fixtureproject-supabase-co",
+        "endpoint-open-bigmodel-cn",
         "endpoint-public-example-invalid",
         "endpoint-whop-com"
       ]
@@ -8483,7 +8494,8 @@
         "backend/src/ai/providerCostTiers.ts",
         "backend/src/config/envSecrets.ts",
         "backend/src/lib/capabilityRegistry.ts",
-        "backend/src/lib/platformReady.ts"
+        "backend/src/lib/platformReady.ts",
+        "backend/src/security/softwareAgentSdk.local.integration.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -8495,10 +8507,12 @@
       "mechanisms": [
         "DECLARED_SECRET_ALIAS",
         "REVIEWED_DYNAMIC_BINDING",
-        "SECRET_HELPER_CALL"
+        "SECRET_HELPER_CALL",
+        "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "runtime-controls-and-conditional-aliases"
+        "endpoint-127-0-0-1",
+        "endpoint-open-bigmodel-cn"
       ]
     },
     {
@@ -10540,6 +10554,7 @@
         "backend/src/security/runtimeProjectBinding.local.integration.ts",
         "backend/src/security/runtimeSecretRead.local.integration.ts",
         "backend/src/security/runtimeTerminal.local.integration.ts",
+        "backend/src/security/softwareAgentSdk.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/swarmHeartbeat.local.integration.ts",
@@ -10582,6 +10597,7 @@
         "endpoint-fixture-supabase-co",
         "endpoint-fixtureproject-supabase-co",
         "endpoint-localhost",
+        "endpoint-open-bigmodel-cn",
         "endpoint-public-example-invalid",
         "endpoint-whop-com",
         "endpoint-xrogaaicom-vercel-app"
@@ -11267,6 +11283,7 @@
         "backend/src/security/runtimeProjectBinding.local.integration.ts",
         "backend/src/security/runtimeSecretRead.local.integration.ts",
         "backend/src/security/runtimeTerminal.local.integration.ts",
+        "backend/src/security/softwareAgentSdk.local.integration.ts",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
         "backend/src/security/supabaseBundle.local.integration.ts",
         "backend/src/security/swarmHeartbeat.local.integration.ts",
@@ -11305,6 +11322,7 @@
         "endpoint-fixture-invalid",
         "endpoint-fixture-supabase-co",
         "endpoint-fixtureproject-supabase-co",
+        "endpoint-open-bigmodel-cn",
         "endpoint-public-example-invalid",
         "endpoint-whop-com"
       ]
@@ -12841,7 +12859,7 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "sha256": "fcfee3d38cf89192e61d679501feab221246c0757d7c530cba65d551d9cb6ae6"
+      "sha256": "19228038780105d23a8365a5551c5c5715e1fb71839443ed483cd93ef34bf93c"
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaProductionAdapters.ts",
@@ -13956,6 +13974,10 @@
       "sha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0"
     },
     {
+      "path": "backend/src/security/softwareAgentSdk.local.integration.ts",
+      "sha256": "6a80239bd1e05deb5992e911f7782aea111cdd4f3ea5246b997591a79d74c768"
+    },
+    {
       "path": "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
       "sha256": "fddcbdd3fce9263e69b782e4abb5f1e180eed62af96173c0f9812d397b926487"
     },
@@ -13981,7 +14003,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "7cf52ba275eead56ab05160e615db38f7d85765bb8e099f1ca2a584aad9d2422"
+      "sha256": "0d47c25a8f39062fa6fd9dee2c3edcfd51e7711f5f92b213cbe530802d5abaae"
     },
     {
       "path": "backend/src/security/terminalIdentity.local.integration.ts",
@@ -14589,7 +14611,7 @@
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "sha256": "d78c0ca611d1e7b70b351bdb917bc791bf86e9d3eef8dc65d22f31755d8c0af5"
+      "sha256": "3842744009c252da5eff4cdf9900344fd18cdd85c49797c3e76d8a140c71dc1b"
     },
     {
       "path": "backend/src/synthesis/softwareProject.ts",
@@ -20527,6 +20549,27 @@
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
+      "path": "backend/src/security/softwareAgentSdk.local.integration.ts",
+      "line": 14,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "open.bigmodel.cn",
+      "protocol": "https:",
+      "path": "backend/src/security/softwareAgentSdk.local.integration.ts",
+      "line": 31,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "open.bigmodel.cn",
+      "protocol": "https:",
+      "path": "backend/src/security/softwareAgentSdk.local.integration.ts",
+      "line": 32,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
       "path": "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
       "line": 13,
       "credentialsInUrl": false
@@ -20577,77 +20620,77 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 125,
+      "line": 126,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 125,
+      "line": 126,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 555,
+      "line": 557,
       "credentialsInUrl": false
     },
     {
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 605,
+      "line": 607,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 694,
+      "line": 696,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 863,
+      "line": 865,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 921,
+      "line": 923,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1608,
+      "line": 1610,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1626,
+      "line": 1628,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.whop.com",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1634,
+      "line": 1636,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1638,
+      "line": 1640,
       "credentialsInUrl": false
     },
     {
@@ -25659,14 +25702,14 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "line": 817,
+      "line": 803,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "line": 1172,
+      "line": 1145,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -27052,14 +27095,14 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1107,
+      "line": 1109,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 1444,
+      "line": 1446,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28333,13 +28376,6 @@
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "line": 559,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
       "line": 564,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
@@ -28347,7 +28383,14 @@
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "line": 572,
+      "line": 569,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
+      "line": 577,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -121,13 +121,13 @@
   ],
   "counts": {
     "total": 134,
-    "reviewed": 14,
-    "pending": 120,
-    "unresolvedHighRiskReviewCandidates": 65,
+    "reviewed": 15,
+    "pending": 119,
+    "unresolvedHighRiskReviewCandidates": 64,
     "newNarrowClosures": 2,
     "newTransportCandidates": 1
   },
-  "threeSdkFinalDispositions": "PENDING_SOURCE_TRACE",
+  "threeSdkFinalDispositions": "ONE_VERIFIED_GUARD_TWO_PENDING_SOURCE_TRACE",
   "sourcePositionProof": "docs/xroga/evidence/command-010/SOURCE-LIFETIME-PROOF.json",
   "criteria": "All 12 original states unchanged in manifest.json, AC12 not verified",
   "phase3": "B1_P3_BLOCKED",
@@ -136,7 +136,7 @@
   "productionEffects": false,
   "spend": 0,
   "rollback": "Revert the preparatory code commit before release. No schema, live credential or production effects need reversal.",
-  "nextReadyTask": "Trace remaining production callers of coherent/incremental synthesis, semanticRequestPlanner, businessRead/businessAction and webIntelligence into the three model SDKs. Carry existing issued scope and exact reservation through real reachable callers, with negative payload/account/project tests. Do not modify unreachable Black Hole gateway on the assumption its exported production-named function is a routed API.",
+  "nextReadyTask": "Finish other two generic SDK caller dispositions and whole preview/connected data lifecycle obligations. Preserve earlier source-bound CI, execute changed SoftwareAgent full/disposable checkpoint once.",
   "currentSourceBindings": [
     {
       "path": "backend/src/middleware/runtimePreviewGateway.ts",
@@ -182,7 +182,22 @@
     },
     {
       "path": "scripts/security/source-lifetime-bindings.test.mjs",
-      "sha256": "e496dd9165e16c1cef2346fe779b85b19312ad98b18e93208ca50e1e12fc6c97"
+      "sha256": "71eaca46f240f51b1ac490fd9e137cafbe0d0423313991de7b1bc0f57e588bcb"
     }
-  ]
+  ],
+  "previousCallerCounts": {
+    "reference": "f6dfa28e88238a40e94f71ff0086dc841e4f5761",
+    "total": 134,
+    "reviewed": 14,
+    "pending": 120,
+    "unresolvedHighRiskReviewCandidates": 65,
+    "newNarrowClosures": 2,
+    "newTransportCandidates": 1
+  },
+  "softwareAgentContinuation": {
+    "proof": "docs/xroga/evidence/command-010/SOFTWARE-AGENT-SDK-CONTINUATION.md",
+    "callerId": "4c899876b9e3850af11b",
+    "scope": "ACTUAL_SCOPED_SDK_DISPATCH_NOT_OTHER_GENERIC_SDK_OR_TOOL_EFFECT_ACCEPTANCE",
+    "realDisposable": "NEW_ASSERTION_REGISTERED_REQUIRES_NEW_SOURCE_RUN"
+  }
 }

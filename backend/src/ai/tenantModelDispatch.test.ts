@@ -31,12 +31,24 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
   let mutate:(()=>void)|undefined,expire:(()=>void)|undefined;
   let executionRow:Record<string,unknown>|undefined;
   const reset=(next='ok')=>{mode=next;row=structuredClone(original);ownerNow=owner;credentialReads=0;projectReads=0;mutate=undefined;expire=undefined;};
+  const stringify=JSON.stringify;
+  t.mock.method(JSON,'stringify',((value:unknown,...args:unknown[])=>{
+    if(mode==='mutatedAgentWire'&&value&&typeof value==='object'&&'model' in value&&'messages' in value){
+      value={...value,messages:[{role:'user',content:'foreign source substituted after SDK serialization'}]};
+    }
+    return Reflect.apply(stringify,JSON,[value,...args]);
+  }) as typeof JSON.stringify);
   t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
     const url=new URL(String(input));
     if(['https://openrouter.ai','https://open.bigmodel.cn'].includes(url.origin)){
       effects++;const body=JSON.parse(String(init?.body));assert.doesNotMatch(JSON.stringify(body),/foreign source|cached-key|SYNTHETIC_CREDENTIAL/);
-      assert.equal(new Headers(init?.headers).get('authorization'),'Bearer '+(url.origin==='https://openrouter.ai'?'synthetic-user-current':'synthetic-platform-key'));
+      assert.equal(new Headers(init?.headers).get('authorization'),'Bearer '+(url.origin==='https://openrouter.ai'&&mode!=='platform503'?'synthetic-user-current':'synthetic-platform-key'));
       assert.equal(init?.redirect,'error');
+      if(mode==='platform503'&&url.origin==='https://openrouter.ai')return Response.json({error:{message:'Synthetic provider outage'}},{status:503});
+      if(mode==='revokeDuringRetry'&&url.origin==='https://openrouter.ai'){
+        row.metadata={...row.metadata,revoked:true} as typeof row.metadata;
+        return Response.json({error:{message:'Synthetic retryable outage'}},{status:503});
+      }
       if(body.stream)return new Response('data: '+JSON.stringify({id:'synthetic-provider-receipt',choices:[{delta:{content:'owned result'},finish_reason:'stop'}],usage:{prompt_tokens:2,completion_tokens:2}})+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream'}});
       return Response.json({id:'synthetic-provider-receipt',choices:[{message:{content:'{"stack":"static","files":[],"notes":[]}'},finish_reason:'stop'}],usage:{prompt_tokens:2,completion_tokens:2}});
     }
@@ -73,11 +85,16 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
     }
     if(url.pathname.endsWith('/settle_xroga_provider_budget')){
       const r=reservations.get(body.p_reservation_id);assert.ok(r);assert.equal(body.p_user_id,r.user_id);
+      if(mode==='accountingFailure')return Response.json({message:'synthetic settlement refusal'},{status:400});
       return Response.json({...r,status:'settled',settled_micro_usd:body.p_actual_micro_usd,provider_request_id:body.p_provider_request_id,
         actual_input_tokens:body.p_actual_input_tokens,cached_input_tokens:body.p_cached_input_tokens,output_tokens:body.p_output_tokens,
         reasoning_tokens:body.p_reasoning_tokens,tool_calls:body.p_tool_calls,search_calls:body.p_search_calls});
     }
     if(url.pathname.endsWith('/release_xroga_provider_budget')){releases.push(body);return Response.json(null);}
+    if(url.pathname.endsWith('/record_ai_usage_atomic')){
+      return Response.json({userId:mode==='foreignAtomicReceipt'?foreign:owner,receiptId:body.p_receipt_id,modelId:body.p_model_id,poolRole:body.p_pool_role,inputTokens:body.p_input,
+        outputTokens:body.p_output,costUsd:body.p_cost_usd,ledgerId:'1',period:new Date().toISOString().slice(0,7)+'-01',replayed:false,usage:{user_id:owner}});
+    }
     assert.ok(['/rest/v1/rpc/increment_user_token_usage','/rest/v1/rpc/merge_user_model_usage','/rest/v1/rpc/insert_ai_usage_ledger'].includes(url.pathname));return Response.json(null);
   });
   const scope:TenantModelScope={context,userId:owner,projectId:project,connectedAccountId:'apikey_openrouter'};
@@ -137,6 +154,34 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
     reset();executionRow={...currentRun,...change};await assert.rejects(complete({...scope,runAttempt:attempt}));assert.equal(effects,8);
   }
   reset('staleRunAtBudget');executionRow={...currentRun};await assert.rejects(complete({...scope,runAttempt:attempt}));assert.equal(effects,8);
+
+  const agentTurn=async(selected:TenantModelScope,signal?:AbortSignal)=>{
+    const bound=createXrogaAgentModel({userId:owner,modelId:'deepseek_v4_flash',fallbackModelIds:['glm_5_3_flash'],dispatchScope:selected,maximumOutputTokens:1024});
+    const events=[];
+    for await(const event of bound.stream({systemPrompt:'owned system',messages:[{role:'user',content:[{type:'text',text:'owned source'}]}],tools:[],signal} as Parameters<typeof bound.stream>[0]))events.push(event);
+    return events;
+  };
+  for(const failure of ['foreignCredential','rotateAtBudget','projectAtWire','reservationMismatch','mutatedAgentWire']){
+    reset(failure);const before:number=effects;
+    await assert.rejects(agentTurn(scope));
+    assert.equal(effects,before,'No route may send provider bytes after '+failure);
+  }
+  reset('revokeDuringRetry');const beforeRetry=effects;
+  await assert.rejects(agentTurn(scope),{code:'MODEL_DISPATCH_BINDING_DENIED'});
+  assert.equal(effects,beforeRetry+1,'SDK retry rechecks revocation and must not send a second request or use the fallback');
+  reset('accountingFailure');const beforeAccounting=effects;
+  await assert.rejects(agentTurn(scope),{code:'POST_COMPLETION_ACCOUNTING_UNCERTAIN'});
+  assert.equal(effects,beforeAccounting+1,'Completed work with failed settlement must not dispatch another model or yield agent events');
+  reset('foreignAtomicReceipt');const beforeReceipt=effects;
+  await assert.rejects(agentTurn(scope),{code:'POST_COMPLETION_ACCOUNTING_UNCERTAIN'});
+  assert.equal(effects,beforeReceipt+1,'A foreign durable receipt must withhold events without replaying the model');
+  reset();const controller=new AbortController();controller.abort();const beforeCancel=effects;
+  await assert.rejects(agentTurn(scope,controller.signal),{name:'AbortError'});
+  assert.equal(effects,beforeCancel,'Caller cancellation must send zero provider bytes');
+  reset('platform503');const beforeFallback=effects,beforeReservations=reservations.size;
+  assert.ok((await agentTurn({...scope,connectedAccountId:'platform'})).length>0);
+  assert.equal(effects,beforeFallback+3,'One bounded SDK retry then the authorized alternative provider');
+  assert.equal(reservations.size,beforeReservations+2,'The alternative has its own exact reservation');
 });
 
 test('local request security denial cannot fall through to a different provider or account',async()=>{

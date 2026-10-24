@@ -2311,7 +2311,7 @@
         "backend/src/ai/runStore.ts:16",
         "backend/src/ai/step7LearningStrategy.test.ts:12",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:33",
+        "backend/src/security/tenantIsolation.local.integration.ts:34",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:41"
       ],
       "reachable": true,
@@ -3499,7 +3499,7 @@
         "backend/src/hardening/launchHardening.test.ts:47",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts:7",
         "backend/src/security/recoveryMemoryRead.local.integration.ts:5",
-        "backend/src/security/tenantIsolation.local.integration.ts:29",
+        "backend/src/security/tenantIsolation.local.integration.ts:30",
         "backend/src/security/workerProjectAdmission.local.integration.ts:8",
         "backend/src/security/workerProjectAdmission.test.ts:6",
         "backend/src/security/workerRevision.local.integration.ts:8",
@@ -3983,7 +3983,7 @@
         "backend/src/ai/buildOutcomeMemory.ts:10",
         "backend/src/ai/buildOutcomeRoutingMemory.ts:9",
         "backend/src/ai/buildStrategyMemory.ts:5",
-        "backend/src/security/tenantIsolation.local.integration.ts:36",
+        "backend/src/security/tenantIsolation.local.integration.ts:37",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:24"
       ],
       "reachable": true,
@@ -4437,7 +4437,7 @@
         "backend/src/ai/quota.test.ts:4",
         "backend/src/ai/quota.ts:3",
         "backend/src/ai/routerConfig.ts:1",
-        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:28",
+        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:30",
         "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts:7",
         "backend/src/ai/tenantModelDispatch.ts:9",
         "backend/src/ai/universal/semanticRequestPlanner.ts:7",
@@ -4598,7 +4598,7 @@
         "backend/src/ai/pipeline.ts:22",
         "backend/src/ai/qa.ts:1",
         "backend/src/ai/repoSummarize.ts:8",
-        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:5",
+        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:8",
         "backend/src/ai/tenantModelDispatch.test.ts:7",
         "backend/src/ai/universal/semanticRequestPlanner.ts:1",
         "backend/src/hardening/launchHardening.test.ts:19",
@@ -5656,6 +5656,7 @@
         "backend/src/ai/postCompletionAccounting.test.ts:3",
         "backend/src/ai/providerBudget.ts:7",
         "backend/src/ai/providerRuntime.ts:2",
+        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:6",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:31",
         "backend/src/ai/universal/semanticRequestPlanner.ts:29",
         "backend/src/security/usageAccounting.local.integration.ts:6",
@@ -6013,7 +6014,7 @@
         "backend/src/ai/providerBudget.evidence.test.ts:4",
         "backend/src/ai/providerBudget.settlement.test.ts:4",
         "backend/src/ai/providerBudget.test.ts:4",
-        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:18",
+        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:21",
         "backend/src/ai/tenantModelDispatch.ts:10",
         "backend/src/operations/benchmarkAdapter.ts:36",
         "backend/src/operations/operationsProviderBudget.local.integration.ts:6",
@@ -6022,7 +6023,7 @@
         "backend/src/routes/phase1.ts:28",
         "backend/src/security/budgetOwner.local.integration.ts:7",
         "backend/src/security/confirmationMetadata.local.integration.ts:8",
-        "backend/src/security/tenantIsolation.local.integration.ts:42",
+        "backend/src/security/tenantIsolation.local.integration.ts:43",
         "backend/src/services/BillingService.ts:14"
       ],
       "reachable": true,
@@ -6382,7 +6383,7 @@
         "backend/src/ai/repoSummarize.security.test.ts:9",
         "backend/src/ai/repoSummarize.ts:20",
         "backend/src/ai/research.ts:2",
-        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:11",
+        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:14",
         "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts:6",
         "backend/src/ai/tenantModelDispatch.test.ts:12",
         "backend/src/ai/universal/semanticRequestPlanner.ts:17",
@@ -6618,7 +6619,7 @@
         "backend/src/ai/postCompletionAccounting.ts:2",
         "backend/src/ai/quota.failure.test.ts:3",
         "backend/src/ai/quota.test.ts:18",
-        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:23",
+        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:25",
         "backend/src/ai/universal/semanticRequestPlanner.ts:25",
         "backend/src/routes/phase1.ts:18",
         "backend/src/routes/phase1BusinessPreflight.ts:3",
@@ -7149,7 +7150,7 @@
       "callers": [
         "backend/src/ai/runReconciler.test.ts:3",
         "backend/src/index.ts:49",
-        "backend/src/security/tenantIsolation.local.integration.ts:23"
+        "backend/src/security/tenantIsolation.local.integration.ts:24"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -7339,7 +7340,7 @@
         "backend/src/security/runTraceAttempt.local.integration.ts:7",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts:7",
         "backend/src/security/tenantIsolation.integration.test.ts:13",
-        "backend/src/security/tenantIsolation.local.integration.ts:43",
+        "backend/src/security/tenantIsolation.local.integration.ts:44",
         "backend/src/security/workerProjectAdmission.local.integration.ts:7",
         "backend/src/security/workerProjectAdmission.test.ts:8",
         "backend/src/security/workerRevision.local.integration.ts:7",
@@ -9297,7 +9298,7 @@
       "id": "surface:6b3219ea2bb7bf7d7c7c",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "sha256": "fcfee3d38cf89192e61d679501feab221246c0757d7c530cba65d551d9cb6ae6",
+      "sha256": "19228038780105d23a8365a5551c5c5715e1fb71839443ed483cd93ef34bf93c",
       "symbols": [
         "AgentMessage",
         "AgentMessagePart",
@@ -9322,9 +9323,9 @@
         "chunk",
         "client",
         "content",
+        "context",
         "createXrogaAgentModel",
         "createXrogaAgentModelRoute",
-        "credentialOverride",
         "delta",
         "endpoint",
         "error",
@@ -9375,20 +9376,25 @@
         "../../security/tenantContext.js",
         "../models.js",
         "../openaiCompat.js",
+        "../postCompletionAccounting.js",
         "../providerBudget.js",
         "../providerRuntime.js",
         "../quota.js",
         "../tenantModelDispatch.js",
+        "../usageAccounting.js",
         "./agentModelRoute.js",
+        "node:crypto",
         "openai"
       ],
       "runtimeImports": [
         "backend/src/ai/models.ts",
         "backend/src/ai/openaiCompat.ts",
+        "backend/src/ai/postCompletionAccounting.ts",
         "backend/src/ai/providerBudget.ts",
         "backend/src/ai/providerRuntime.ts",
         "backend/src/ai/quota.ts",
         "backend/src/ai/tenantModelDispatch.ts",
+        "backend/src/ai/usageAccounting.ts",
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
@@ -9399,18 +9405,20 @@
         "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts:4",
         "backend/src/ai/softwareAgent/xrogaAgentModelTelemetry.test.ts:7",
         "backend/src/ai/tenantModelDispatch.test.ts:11",
+        "backend/src/security/softwareAgentSdk.local.integration.ts:6",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:35"
       ],
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
+        "node:crypto",
         "openai"
       ],
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [
-        "backend/src/ai/softwareAgent/xrogaAgentModel.ts#withProviderReservation",
+        "backend/src/ai/softwareAgent/xrogaAgentModel.ts#costUsdForTokens",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts#withTenantModelReservation"
       ],
       "evidenceBoundary": [
@@ -9422,7 +9430,8 @@
       "testCoverage": [
         "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
         "backend/src/ai/softwareAgent/xrogaAgentModelTelemetry.test.ts",
-        "backend/src/ai/tenantModelDispatch.test.ts"
+        "backend/src/ai/tenantModelDispatch.test.ts",
+        "backend/src/security/softwareAgentSdk.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -9941,7 +9950,7 @@
         "backend/src/ai/modelContext.security.test.ts:5",
         "backend/src/ai/pipeline.ts:4",
         "backend/src/ai/repoSummarize.ts:18",
-        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:2",
+        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:3",
         "backend/src/ai/tenantModelDispatch.test.ts:6",
         "backend/src/ai/universal/semanticRequestPlanner.ts:12",
         "backend/src/services/integrations/businessAction.ts:16",
@@ -10887,6 +10896,7 @@
       ],
       "callers": [
         "backend/src/ai/postCompletionAccounting.ts:4",
+        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:5",
         "backend/src/ai/usageAccounting.test.ts:3",
         "backend/src/security/usageAccounting.local.integration.ts:7"
       ],
@@ -12642,7 +12652,7 @@
         "backend/src/growth/sharedWriteAdmission.test.ts:4",
         "backend/src/routes/growth.ts:5",
         "backend/src/security/growthReferral.local.integration.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:44"
+        "backend/src/security/tenantIsolation.local.integration.ts:45"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -18352,7 +18362,7 @@
       "callers": [
         "backend/src/index.ts:24",
         "backend/src/routes/billingWebhook.test.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:17",
+        "backend/src/security/tenantIsolation.local.integration.ts:18",
         "backend/src/services/billingOwnership.local.integration.ts:6"
       ],
       "reachable": true,
@@ -22128,7 +22138,7 @@
         "backend/src/security/ownedRunHeartbeat.test.ts:5",
         "backend/src/security/ownedRunPersistence.test.ts:4",
         "backend/src/security/swarmHeartbeat.local.integration.ts:8",
-        "backend/src/security/tenantIsolation.local.integration.ts:21",
+        "backend/src/security/tenantIsolation.local.integration.ts:22",
         "backend/src/synthesis/projectRuntime/store.ts:12",
         "backend/src/synthesis/universalPersistence.ts:25"
       ],
@@ -22251,7 +22261,7 @@
         "backend/src/ai/tenantModelDispatch.ts:3",
         "backend/src/security/ownership.test.ts:5",
         "backend/src/security/tenantIsolation.integration.test.ts:16",
-        "backend/src/security/tenantIsolation.local.integration.ts:20",
+        "backend/src/security/tenantIsolation.local.integration.ts:21",
         "backend/src/services/storage/projectFiles.ts:6"
       ],
       "reachable": true,
@@ -22455,7 +22465,9 @@
         "backend/src/ai/routingOutcomes.receipt.test.ts:4",
         "backend/src/ai/routingOutcomes.ts:3",
         "backend/src/ai/runStore.ts:11",
-        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:3",
+        "backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts:8",
+        "backend/src/ai/softwareAgent/xrogaAgentModel.ts:4",
+        "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts:8",
         "backend/src/ai/tenantModelDispatch.test.ts:4",
         "backend/src/ai/tenantModelDispatch.ts:2",
         "backend/src/ai/universal/resumeProjectContext.test.ts:6",
@@ -22514,10 +22526,11 @@
         "backend/src/security/repositorySnapshot.local.integration.ts:8",
         "backend/src/security/runtimeProjectBinding.test.ts:13",
         "backend/src/security/serviceRoleGuard.ts:2",
+        "backend/src/security/softwareAgentSdk.local.integration.ts:5",
         "backend/src/security/swarmHeartbeat.local.integration.ts:7",
         "backend/src/security/tenantContext.test.ts:3",
         "backend/src/security/tenantIsolation.integration.test.ts:15",
-        "backend/src/security/tenantIsolation.local.integration.ts:19",
+        "backend/src/security/tenantIsolation.local.integration.ts:20",
         "backend/src/security/terminalIdentity.local.integration.ts:5",
         "backend/src/security/usageAccounting.local.integration.ts:8",
         "backend/src/security/workerProjectAdmission.test.ts:7",
@@ -22577,6 +22590,7 @@
         "backend/src/synthesis/livePreview/store.ts:6",
         "backend/src/synthesis/projectRuntime/secretRead.test.ts:7",
         "backend/src/synthesis/projectRuntime/store.ts:9",
+        "backend/src/synthesis/softwareAgentImplementationAdapter.ts:10",
         "backend/src/synthesis/universalEntrypoint.ts:55",
         "backend/src/synthesis/universalPersistence.owner.test.ts:7",
         "backend/src/synthesis/universalPersistence.snapshot.test.ts:6",
@@ -22605,6 +22619,8 @@
         "backend/src/ai/quota.failure.test.ts",
         "backend/src/ai/repoSummarize.security.test.ts",
         "backend/src/ai/routingOutcomes.receipt.test.ts",
+        "backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts",
+        "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts",
         "backend/src/ai/universal/resumeProjectContext.test.ts",
         "backend/src/ai/universal/semanticRequestPlanner.egress.test.ts",
@@ -22640,6 +22656,7 @@
         "backend/src/security/provisioningReceipt.local.integration.ts",
         "backend/src/security/repositorySnapshot.local.integration.ts",
         "backend/src/security/runtimeProjectBinding.test.ts",
+        "backend/src/security/softwareAgentSdk.local.integration.ts",
         "backend/src/security/swarmHeartbeat.local.integration.ts",
         "backend/src/security/tenantContext.test.ts",
         "backend/src/security/tenantIsolation.integration.test.ts",
@@ -22892,7 +22909,7 @@
         "backend/src/routes/billing.ts:3",
         "backend/src/routes/billingWebhook.test.ts:7",
         "backend/src/routes/billingWebhook.ts:3",
-        "backend/src/security/tenantIsolation.local.integration.ts:52",
+        "backend/src/security/tenantIsolation.local.integration.ts:53",
         "backend/src/services/BillingService.budget.test.ts:3",
         "backend/src/services/BillingService.checkoutOwnership.test.ts:3",
         "backend/src/services/BillingService.test.ts:4",
@@ -23826,7 +23843,7 @@
         "backend/src/security/credentialReadMatrix.local.integration.ts:7",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:8",
         "backend/src/security/supabaseBundle.local.integration.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:38",
+        "backend/src/security/tenantIsolation.local.integration.ts:39",
         "backend/src/security/vercelRefreshAccount.local.integration.ts:6",
         "backend/src/services/integrations/githubTokenStore.ts:3",
         "backend/src/services/integrations/oauthPkceStore.test.ts:4",
@@ -24374,7 +24391,7 @@
         "backend/src/ai/universal/semanticRequestPlanner.ts:60",
         "backend/src/routes/github.settings.test.ts:17",
         "backend/src/routes/github.ts:8",
-        "backend/src/security/tenantIsolation.local.integration.ts:39",
+        "backend/src/security/tenantIsolation.local.integration.ts:40",
         "backend/src/services/integrations/githubAuth.revocation.test.ts:4",
         "backend/src/services/integrations/githubDeploy.ts:15",
         "backend/src/services/integrations/githubSourceRead.ts:2",
@@ -25200,7 +25217,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:37",
+        "backend/src/security/tenantIsolation.local.integration.ts:38",
         "backend/src/services/integrations/absentCredentialAuthority.test.ts:3",
         "backend/src/services/integrations/credentialMirrorRace.test.ts:5",
         "backend/src/services/integrations/credentialUploadBoundary.test.ts:4",
@@ -25411,7 +25428,7 @@
       "callers": [
         "backend/src/routes/github.ts:7",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:41",
+        "backend/src/security/tenantIsolation.local.integration.ts:42",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:6",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:4",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:5",
@@ -25666,7 +25683,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:919",
+        "backend/src/security/tenantIsolation.local.integration.ts:921",
         "backend/src/services/integrations/businessAction.ts:45",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -25956,7 +25973,7 @@
         "backend/src/routes/supabaseOAuth.ts:21",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:6",
         "backend/src/security/providerKeyRevision.local.integration.ts:5",
-        "backend/src/security/tenantIsolation.local.integration.ts:53",
+        "backend/src/security/tenantIsolation.local.integration.ts:54",
         "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts:4",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:6",
@@ -26211,7 +26228,7 @@
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:11",
         "backend/src/security/providerKeyRevision.local.integration.ts:6",
         "backend/src/security/supabaseBundle.local.integration.ts:5",
-        "backend/src/security/tenantIsolation.local.integration.ts:22",
+        "backend/src/security/tenantIsolation.local.integration.ts:23",
         "backend/src/services/integrations/absentCredentialAuthority.test.ts:4",
         "backend/src/services/integrations/credentialMirrorRace.test.ts:4",
         "backend/src/services/integrations/credentialUploadLifecycle.test.ts:4",
@@ -26420,7 +26437,7 @@
         "backend/src/routes/supabaseOAuth.ts:35",
         "backend/src/routes/vercel.ts:5",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:10",
-        "backend/src/security/tenantIsolation.local.integration.ts:40",
+        "backend/src/security/tenantIsolation.local.integration.ts:41",
         "backend/src/security/vercelRefreshAccount.local.integration.ts:5",
         "backend/src/services/integrations/githubDeploy.ts:16",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:5",
@@ -26740,7 +26757,7 @@
       ],
       "callers": [
         "backend/src/routes/swarm.ts:11",
-        "backend/src/security/tenantIsolation.local.integration.ts:25",
+        "backend/src/security/tenantIsolation.local.integration.ts:26",
         "backend/src/services/notificationService.receipt.test.ts:4",
         "backend/src/services/notificationService.test.ts:3"
       ],
@@ -27530,7 +27547,7 @@
       ],
       "entryPoints": [],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:24",
+        "backend/src/security/tenantIsolation.local.integration.ts:25",
         "backend/src/services/responseCache.receipt.test.ts:4",
         "backend/src/services/responseCache.test.ts:4"
       ],
@@ -28256,7 +28273,7 @@
         "backend/src/routes/projects.ts:7",
         "backend/src/security/egress/fileEgress.test.ts:8",
         "backend/src/security/egress/fileEgress.ts:4",
-        "backend/src/security/tenantIsolation.local.integration.ts:47",
+        "backend/src/security/tenantIsolation.local.integration.ts:48",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:4",
         "backend/src/services/storage/privateFileDelivery.ts:6",
         "backend/src/services/storage/projectFiles.receipt.test.ts:6",
@@ -28372,7 +28389,7 @@
       "callers": [
         "backend/src/routes/projects.ts:6",
         "backend/src/security/egress/fileEgress.ts:3",
-        "backend/src/security/tenantIsolation.local.integration.ts:46",
+        "backend/src/security/tenantIsolation.local.integration.ts:47",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:5"
       ],
       "reachable": true,
@@ -28441,7 +28458,7 @@
       "callers": [
         "backend/src/security/buildProjectReceipt.local.integration.ts:7",
         "backend/src/security/tenantIsolation.integration.test.ts:14",
-        "backend/src/security/tenantIsolation.local.integration.ts:45",
+        "backend/src/security/tenantIsolation.local.integration.ts:46",
         "backend/src/services/memory/buildProjectStore.ts:10",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:7",
         "backend/src/services/storage/projectFiles.receipt.test.ts:5"
@@ -28835,7 +28852,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:32",
+        "backend/src/security/tenantIsolation.local.integration.ts:33",
         "backend/src/security/universalOwnerReads.local.integration.ts:9",
         "backend/src/synthesis/followUpAndRegression.test.ts:23",
         "backend/src/synthesis/securityControls.test.ts:14",
@@ -30826,7 +30843,7 @@
       ],
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:29",
-        "backend/src/security/tenantIsolation.local.integration.ts:48",
+        "backend/src/security/tenantIsolation.local.integration.ts:49",
         "backend/src/synthesis/livePreview/access.test.ts:5",
         "backend/src/synthesis/livePreview/store.ts:9"
       ],
@@ -31355,7 +31372,7 @@
         "backend/src/routes/projectRuntime.ts:21",
         "backend/src/security/previewConsumer.local.integration.ts:8",
         "backend/src/security/previewGrantAdmission.local.integration.ts:9",
-        "backend/src/security/tenantIsolation.local.integration.ts:51",
+        "backend/src/security/tenantIsolation.local.integration.ts:52",
         "backend/src/synthesis/livePreview/coordinator.ts:28",
         "backend/src/synthesis/livePreview/index.ts:3",
         "backend/src/synthesis/livePreview/store.receipt.test.ts:6"
@@ -32554,7 +32571,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:28",
+        "backend/src/security/tenantIsolation.local.integration.ts:29",
         "backend/src/synthesis/projectRuntime/index.ts:5",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:36"
       ],
@@ -32739,7 +32756,7 @@
         "backend/src/security/runtimeProjectBinding.test.ts:6",
         "backend/src/security/runtimeSecretRead.local.integration.ts:5",
         "backend/src/security/runtimeTerminal.local.integration.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:27",
+        "backend/src/security/tenantIsolation.local.integration.ts:28",
         "backend/src/security/workerProjectAdmission.local.integration.ts:11",
         "backend/src/security/workerRevision.local.integration.ts:9",
         "backend/src/synthesis/livePreview/store.receipt.test.ts:4",
@@ -33289,7 +33306,7 @@
       "runtimeImports": [],
       "entryPoints": [],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:34",
+        "backend/src/security/tenantIsolation.local.integration.ts:35",
         "backend/src/synthesis/researchEvidence.test.ts:15",
         "backend/src/synthesis/universalPersistence.test.ts:20"
       ],
@@ -34196,7 +34213,7 @@
       "id": "surface:427e719ea1910d933449",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "sha256": "d78c0ca611d1e7b70b351bdb917bc791bf86e9d3eef8dc65d22f31755d8c0af5",
+      "sha256": "3842744009c252da5eff4cdf9900344fd18cdd85c49797c3e76d8a140c71dc1b",
       "symbols": [
         "DEFINITELY_NON_BROWSER_SURFACES",
         "UniversalSoftwareImplementationInput",
@@ -34204,6 +34221,7 @@
         "bindings",
         "checkpointStore",
         "checkpointStoreFor",
+        "context",
         "diagnosticEvents",
         "error",
         "eventObserver",
@@ -34260,6 +34278,7 @@
         "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts",
         "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.ts",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
+        "backend/src/security/tenantContext.ts",
         "backend/src/synthesis/livePreview/agentBridge.ts",
         "backend/src/synthesis/staticWebBootstrap.ts"
       ],
@@ -34267,6 +34286,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts:9",
         "backend/src/synthesis/universalEntrypoint.ts:133"
       ],
       "reachable": true,
@@ -34289,7 +34309,9 @@
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts#events",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts#inMemorySoftwareAgentCheckpointStore"
       ],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -35019,7 +35041,7 @@
       ],
       "callers": [
         "backend/src/security/repositorySnapshot.local.integration.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:30",
+        "backend/src/security/tenantIsolation.local.integration.ts:31",
         "backend/src/security/universalOwnerReads.local.integration.ts:7",
         "backend/src/synthesis/followUpAndRegression.test.ts:24",
         "backend/src/synthesis/universalEntrypoint.test.ts:20",
@@ -35143,7 +35165,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:31",
+        "backend/src/security/tenantIsolation.local.integration.ts:32",
         "backend/src/security/universalOwnerReads.local.integration.ts:8",
         "backend/src/synthesis/followUpAndRegression.test.ts:22",
         "backend/src/synthesis/securityControls.test.ts:15",
@@ -102904,9 +102926,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:64d26cc56049110704c1",
+      "id": "finding:c66bfc6cf5c7c35d9e27",
       "sourcePath": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "line": 558,
+      "line": 559,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -109953,6 +109975,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:9c346d08730d125fdc52",
+      "sourcePath": "backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:087e43283818f1a791c3",
       "sourcePath": "backend/src/ai/softwareAgent/swarmRunSoftwareEventSink.test.ts",
       "declaredTests": 2,
@@ -109969,7 +109998,7 @@
     {
       "id": "test-suite:baf85469acddb6d3b726",
       "sourcePath": "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -111371,6 +111400,13 @@
     {
       "id": "test-suite:ac541d563efcbc546c08",
       "sourcePath": "backend/src/security/serviceRoleGuard.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:538b91cd6cdbd63bc53c",
+      "sourcePath": "backend/src/security/softwareAgentSdk.local.integration.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []

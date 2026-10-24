@@ -43,38 +43,58 @@
       ]
     },
     {
-      "id":"f0eab43244d6d3c88de8",
-      "callSha256":"8a2096fa7242a30e44a83faf4b81e3998b2107f080574f87fe9905f4658a425f",
-      "sourceFileSha256":"998cbd6efbdb066f493234d2d6960539151f43e33dbfe2baed81183fbb68578a",
-      "disposition":"REVIEWED_FIXED_DEPENDENCY",
-      "trust":"FIXED_LOCAL_CONTAINER_CLI_VERSION_HEALTH_PROBE_ONLY_NOT_SANDBOX_EXECUTION_OR_NETWORK_CERTIFICATION",
-      "tenantAuthority":"ONLY_CONTAINER_RUNTIME_PROBE_CALLS_FIXED_VERSION_ARGUMENT_WITH_SCRUBBED_ENVIRONMENT_NO_TENANT_PAYLOAD_OR_CREDENTIALS",
-      "evidence":[
-        {"path":"backend/src/sandbox/sandboxProbeBoundary.test.ts","marker":"actual sandbox probe child receives only fixed version argument and a scrubbed environment","sha256":"0facd9f9ac6c0ebb27b0b2d5f42368f16b38606235f5a886762049712c1f6a73"}
+      "id": "f0eab43244d6d3c88de8",
+      "callSha256": "8a2096fa7242a30e44a83faf4b81e3998b2107f080574f87fe9905f4658a425f",
+      "sourceFileSha256": "998cbd6efbdb066f493234d2d6960539151f43e33dbfe2baed81183fbb68578a",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FIXED_LOCAL_CONTAINER_CLI_VERSION_HEALTH_PROBE_ONLY_NOT_SANDBOX_EXECUTION_OR_NETWORK_CERTIFICATION",
+      "tenantAuthority": "ONLY_CONTAINER_RUNTIME_PROBE_CALLS_FIXED_VERSION_ARGUMENT_WITH_SCRUBBED_ENVIRONMENT_NO_TENANT_PAYLOAD_OR_CREDENTIALS",
+      "evidence": [
+        {
+          "path": "backend/src/sandbox/sandboxProbeBoundary.test.ts",
+          "marker": "actual sandbox probe child receives only fixed version argument and a scrubbed environment",
+          "sha256": "0facd9f9ac6c0ebb27b0b2d5f42368f16b38606235f5a886762049712c1f6a73"
+        }
       ]
     },
     {
-      "id":"5fdd141576170dfae26b",
-      "callSha256":"e2d2bde2675e08b6f28f22840fe41137544037b1fe6ef85de69c7e15db91d066",
-      "sourceFileSha256":"a41f6fa55c00275359176456e6c0fa175f2ad7a5209b4d529cc465494725e565",
-      "disposition":"VERIFIED_GUARD",
-      "trust":"OWNED_TEXT_FILE_ADAPTER_ONLY_NOT_UNMIGRATED_UPLOAD_OR_LIVE_PROVIDER_CERTIFICATION",
-      "tenantAuthority":"ISSUED_CONTEXT_PARENT_FILE_OWNER_READBACK_AND_CONSUMED_EXACT_AUTHORITY_PERMIT_AT_DISPATCH",
-      "evidence":[
-        {"path":"backend/src/security/egress/fileEgress.test.ts","marker":"executeOwnedFileEgress","sha256":"57cd5c48604400c9a94d8d6b29a891ab6566d4141a831365582420873f6d657b"},
-        {"path":"backend/tests/securityReceipt.local.integration.ts","marker":"executeOwnedFileEgress","sha256":"5ac2b201b759b261d5ddeaf223bf0ecd296a795257017f0ba73bdeaacd01de53"}
+      "id": "5fdd141576170dfae26b",
+      "callSha256": "e2d2bde2675e08b6f28f22840fe41137544037b1fe6ef85de69c7e15db91d066",
+      "sourceFileSha256": "a41f6fa55c00275359176456e6c0fa175f2ad7a5209b4d529cc465494725e565",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "OWNED_TEXT_FILE_ADAPTER_ONLY_NOT_UNMIGRATED_UPLOAD_OR_LIVE_PROVIDER_CERTIFICATION",
+      "tenantAuthority": "ISSUED_CONTEXT_PARENT_FILE_OWNER_READBACK_AND_CONSUMED_EXACT_AUTHORITY_PERMIT_AT_DISPATCH",
+      "evidence": [
+        {
+          "path": "backend/src/security/egress/fileEgress.test.ts",
+          "marker": "executeOwnedFileEgress",
+          "sha256": "57cd5c48604400c9a94d8d6b29a891ab6566d4141a831365582420873f6d657b"
+        },
+        {
+          "path": "backend/tests/securityReceipt.local.integration.ts",
+          "marker": "executeOwnedFileEgress",
+          "sha256": "5ac2b201b759b261d5ddeaf223bf0ecd296a795257017f0ba73bdeaacd01de53"
+        }
       ]
     },
     {
-      "id":"038ced12b0f74e8d5e0f",
-      "callSha256":"2246d32bbb9462be893f84093c1be641b5ade15f2b11515899e2594063873708",
-      "sourceFileSha256":"a558327133bf32c58403390f5bac2ab9411c26db42cd7fc99055bf2a3c91ac0a",
-      "disposition":"REVIEWED_FIXED_DEPENDENCY",
-      "trust":"FIXED_PROVIDER_ENDPOINT_AND_NO_REDIRECT_ONLY_NOT_DNS_OR_FULL_EGRESS_CERTIFICATION",
-      "tenantAuthority":"THREE_UPSTREAM_SDK_TENANT_ACCOUNT_AUTHORITY_AND_DATA_OBLIGATIONS_REMAIN_PENDING",
-      "evidence":[
-        {"path":"backend/src/ai/providerPolicy.ts","marker":"assertModelProviderDestination","sha256":"c496870604060d04ede920af1a8b06e67ad0749c8330788568f96f4a0d6dea9f"},
-        {"path":"backend/src/ai/openaiCompat.egress.test.ts","marker":"real SDK completion and streaming use only the approved endpoint and refuse redirects","sha256":"8c94de6b687e9f709217f09a58ccc5f148094a3125e2b74af85e73c42dc1b859"}
+      "id": "038ced12b0f74e8d5e0f",
+      "callSha256": "2246d32bbb9462be893f84093c1be641b5ade15f2b11515899e2594063873708",
+      "sourceFileSha256": "a558327133bf32c58403390f5bac2ab9411c26db42cd7fc99055bf2a3c91ac0a",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FIXED_PROVIDER_ENDPOINT_AND_NO_REDIRECT_ONLY_NOT_DNS_OR_FULL_EGRESS_CERTIFICATION",
+      "tenantAuthority": "THREE_UPSTREAM_SDK_TENANT_ACCOUNT_AUTHORITY_AND_DATA_OBLIGATIONS_REMAIN_PENDING",
+      "evidence": [
+        {
+          "path": "backend/src/ai/providerPolicy.ts",
+          "marker": "assertModelProviderDestination",
+          "sha256": "c496870604060d04ede920af1a8b06e67ad0749c8330788568f96f4a0d6dea9f"
+        },
+        {
+          "path": "backend/src/ai/openaiCompat.egress.test.ts",
+          "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
+          "sha256": "8c94de6b687e9f709217f09a58ccc5f148094a3125e2b74af85e73c42dc1b859"
+        }
       ]
     },
     {
@@ -254,6 +274,31 @@
           "path": "backend/src/security/boundedPublicGet.test.ts",
           "marker": "DNS admits no mixed private answers",
           "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
+        }
+      ]
+    },
+    {
+      "id": "4c899876b9e3850af11b",
+      "callSha256": "1ba7ccd42498525ef3a4c149f12d7db2bddb245ea2c228dd11ec75a14011d9a6",
+      "sourceFileSha256": "19228038780105d23a8365a5551c5c5715e1fb71839443ed483cd93ef34bf93c",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "ACTUAL_SOFTWARE_AGENT_SDK_ISSUED_SCOPE_WIRE_AND_ATOMIC_RECEIPT_NOT_OTHER_SDK_OR_TOOL_EFFECT_CERTIFICATION",
+      "tenantAuthority": "SOLE_TRACKED_PRODUCTION_IMPORTER_REQUIRES_ORIGINAL_ISSUED_OWNER_CONTEXT_CANONICAL_PROJECT_RUN_ACCOUNT_REVISION_AND_RESERVATION_RECHECK_BEFORE_EACH_WIRE_COMPLETION_EVENTS_REQUIRE_VERIFIED_ATOMIC_RECEIPT",
+      "evidence": [
+        {
+          "path": "backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts",
+          "marker": "tracked production SoftwareAgent SDK caller carries original identity through both universal branches",
+          "sha256": "29f6423cf26a0c1e3672cc7cf8861f6c978efef1773c6d39e39fff17604858c7"
+        },
+        {
+          "path": "backend/src/ai/tenantModelDispatch.test.ts",
+          "marker": "SDK retry rechecks revocation",
+          "sha256": "c3b3f0c500752064df2fcd5b921198adf36d5398077830c408d11725adecf651"
+        },
+        {
+          "path": "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
+          "marker": "Each completed turn must have one verified atomic receipt",
+          "sha256": "d14d602244ac9ceac7c31c2aa6c9f359eac10ff6a8aac0229d625aa8bc1cf348"
         }
       ]
     }

@@ -4,8 +4,16 @@
     "proof": "docs/xroga/evidence/command-010/TRANSPORT-LIFETIME-PROOF.json",
     "startingSource": "944bd5e3078be7d3c4d536baefd50c42eb83b32e",
     "authenticatedStartingWorkflows": "6_SUCCESS_NOT_CURRENT_EDIT_ACCEPTANCE",
-    "callerCounts": { "total": 134, "reviewed": 14, "pending": 120, "highRiskReviewCandidates": 65 },
-    "newNarrowDisabledCallers": ["46ad38b463b0beb61ba5", "e2ad9aec1c5cd1e3ab27"],
+    "callerCounts": {
+      "total": 134,
+      "reviewed": 14,
+      "pending": 120,
+      "highRiskReviewCandidates": 65
+    },
+    "newNarrowDisabledCallers": [
+      "46ad38b463b0beb61ba5",
+      "e2ad9aec1c5cd1e3ab27"
+    ],
     "completeAudit": "BLOCKED_120_PENDING",
     "allThreeSdkFinalDispositions": "PENDING_SOURCE_TRACE",
     "currentSourceCi": "REQUIRED_ON_STABLE_FINAL_SOURCE"
@@ -452,5 +460,20 @@
     },
     "currentSourceCi": "PENDING_CHANGED_SOURCE_VERIFICATION",
     "allThreeSdkFinalDispositions": "PENDING_SOURCE_TRACE"
+  },
+  "softwareAgentSdkContinuation": {
+    "reference": "f6dfa28e88238a40e94f71ff0086dc841e4f5761",
+    "proof": "docs/xroga/evidence/command-010/SOFTWARE-AGENT-SDK-CONTINUATION.md",
+    "callerId": "4c899876b9e3850af11b",
+    "callerCounts": {
+      "total": 134,
+      "reviewed": 15,
+      "pending": 119,
+      "highRiskReviewCandidates": 64
+    },
+    "completeAudit": "BLOCKED_119_PENDING",
+    "scope": "SCOPED_IMPLEMENTED_GUARD_NOT_RELEASE_OR_PHASE_ACCEPTANCE",
+    "newSourceCi": "REQUIRED",
+    "newDisposableAssertion": "softwareAgentSdk.local.integration.ts"
   }
 }

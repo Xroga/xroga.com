@@ -7,7 +7,7 @@ import type {
 } from '../ai/models.js';
 
 import { captureAdmittedRunAttempt,type AdmittedRunAttempt } from '../ai/runStore.js';
-import type {TenantContext} from '../security/tenantContext.js';
+import {requireTenantContext,requireResourceOwner,type TenantContext} from '../security/tenantContext.js';
 import {
   assertCodingModel,
 } from '../ai/providerPolicy.js';
@@ -530,6 +530,11 @@ export async function runUniversalSoftwareImplementation(
 ): Promise<
   readonly ProjectFile[]
 > {
+  const context=requireTenantContext(input.tenantContext);
+  requireResourceOwner(context,input.userId);
+  // Bind identity before creating production adapters or awaiting work. A raw
+  // user ID is not an authorization substitute for an omitted request context.
+  input={...input,tenantContext:context};
   assertCodingModel(
     input.primaryModelId,
     'universal software-agent primary model',
@@ -582,7 +587,7 @@ export async function runUniversalSoftwareImplementation(
 
   const model =
     createXrogaAgentModelRoute({
-      dispatchScope:input.tenantContext?{context:input.tenantContext,userId:input.userId,projectId:input.databaseProjectId,runAttempt:input.modelRunAttempt,repository:input.modelRepository,connectedAccountId:'platform'}:undefined,
+      dispatchScope:{context,userId:input.userId,projectId:input.databaseProjectId,runAttempt:input.modelRunAttempt,repository:input.modelRepository,connectedAccountId:'platform'},
       userId:
         input.userId,
 

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "62900a659ddc9f9e30212122362235a95aab00d84efdde113d521014cd5959ab",
+  "sourceTreeDigest": "6ce6a55222c74aa2271e4b5fdc1662880e34f84057545e4292e91265f7f4850f",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -161,18 +161,34 @@
     {
       "id": "4c899876b9e3850af11b",
       "file": "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
-      "line": 754,
+      "line": 740,
       "entryPoint": "execute",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
       "callSha256": "1ba7ccd42498525ef3a4c149f12d7db2bddb245ea2c228dd11ec75a14011d9a6",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "ACTUAL_SOFTWARE_AGENT_SDK_ISSUED_SCOPE_WIRE_AND_ATOMIC_RECEIPT_NOT_OTHER_SDK_OR_TOOL_EFFECT_CERTIFICATION",
+      "tenantAuthority": "SOLE_TRACKED_PRODUCTION_IMPORTER_REQUIRES_ORIGINAL_ISSUED_OWNER_CONTEXT_CANONICAL_PROJECT_RUN_ACCOUNT_REVISION_AND_RESERVATION_RECHECK_BEFORE_EACH_WIRE_COMPLETION_EVENTS_REQUIRE_VERIFIED_ATOMIC_RECEIPT",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts",
+          "marker": "tracked production SoftwareAgent SDK caller carries original identity through both universal branches",
+          "sha256": "29f6423cf26a0c1e3672cc7cf8861f6c978efef1773c6d39e39fff17604858c7"
+        },
+        {
+          "path": "backend/src/ai/tenantModelDispatch.test.ts",
+          "marker": "SDK retry rechecks revocation",
+          "sha256": "c3b3f0c500752064df2fcd5b921198adf36d5398077830c408d11725adecf651"
+        },
+        {
+          "path": "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
+          "marker": "Each completed turn must have one verified atomic receipt",
+          "sha256": "d14d602244ac9ceac7c31c2aa6c9f359eac10ff6a8aac0229d625aa8bc1cf348"
+        }
+      ]
     },
     {
       "id": "176750c88ee667a2d5f8",
@@ -2520,8 +2536,8 @@
   ],
   "counts": {
     "total": 134,
-    "reviewed": 14,
-    "pending": 120,
-    "unresolvedHighRiskBypasses": 65
+    "reviewed": 15,
+    "pending": 119,
+    "unresolvedHighRiskBypasses": 64
   }
 }
