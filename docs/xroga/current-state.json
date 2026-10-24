@@ -6390,6 +6390,7 @@
         "backend/src/lib/resilience/callWithFallback.ts:4",
         "backend/src/lib/resilience/retry.test.ts:3",
         "backend/src/routes/guestChat.ts:14",
+        "backend/src/services/integrations/businessAccounting.failure.test.ts:7",
         "backend/src/services/integrations/businessAction.ts:19",
         "backend/src/services/integrations/businessRead.ts:10",
         "backend/src/services/systemErrorLog.ts:2",
@@ -6416,7 +6417,8 @@
         "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
         "backend/src/ai/tenantModelDispatch.test.ts",
         "backend/src/lib/resilience/retry.test.ts",
-        "backend/src/security/platformHealth.local.integration.ts"
+        "backend/src/security/platformHealth.local.integration.ts",
+        "backend/src/services/integrations/businessAccounting.failure.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -9975,7 +9977,8 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/ai/modelContext.security.test.ts",
-        "backend/src/ai/tenantModelDispatch.test.ts"
+        "backend/src/ai/tenantModelDispatch.test.ts",
+        "backend/src/services/integrations/businessAccounting.failure.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -22521,6 +22524,7 @@
         "backend/src/services/BillingService.budget.test.ts:5",
         "backend/src/services/ensureUserRecords.receipt.test.ts:5",
         "backend/src/services/ensureUserRecords.ts:4",
+        "backend/src/services/integrations/businessAccounting.failure.test.ts:9",
         "backend/src/services/integrations/businessAction.ts:20",
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts:5",
         "backend/src/services/integrations/businessActionConfirmations.ts:3",
@@ -22646,6 +22650,7 @@
         "backend/src/security/workerProjectAdmission.test.ts",
         "backend/src/services/BillingService.budget.test.ts",
         "backend/src/services/ensureUserRecords.receipt.test.ts",
+        "backend/src/services/integrations/businessAccounting.failure.test.ts",
         "backend/src/services/integrations/businessActionConfirmations.claim.test.ts",
         "backend/src/services/integrations/businessModelEgress.test.ts",
         "backend/src/services/integrations/credentialUploadBoundary.test.ts",
