@@ -21,11 +21,13 @@ The repository is public, so the job logs only sizes and the ciphertext digest, 
 | # | Where | Action |
 |---|---|---|
 | 1 | your own machine, offline | `openssl req -x509 -newkey rsa:4096 -nodes -keyout xroga-backup-key.pem -out xroga-backup-cert.pem -subj "/CN=xroga-db-backup" -days 3650`. Store `xroga-backup-key.pem` in your password manager **and** one offline copy. Without it no backup can be restored |
-| 2 | Cloudflare, R2 | create bucket `xroga-db-backups` (public access off, no custom domain) and an object lifecycle rule: delete objects with prefix `db/` after **35 days** |
+| 2 | Cloudflare, R2 | **done 2026-10-24**: bucket `xroga-db-backups` (APAC, public access off, no custom domain, no CORS); lifecycle: `db/` deleted after 35 days, incomplete uploads aborted after 1 day |
 | 3 | Cloudflare, R2, API tokens | an R2 token with **Object Read & Write on `xroga-db-backups` only** (no other bucket, no admin) |
 | 4 | Supabase | the database connection string for the session pooler (port 5432). A dedicated read-only backup role is the follow-up hardening (needs a production DDL change; see below) |
-| 5 | GitHub, Settings, Environments | create `db-backup`, deployment branches: `main` only. Secrets: `SUPABASE_BACKUP_DB_URL`, `R2_BACKUP_ACCESS_KEY_ID`, `R2_BACKUP_SECRET_ACCESS_KEY`. Variables: `R2_ACCOUNT_ID`, `R2_BACKUP_BUCKET=xroga-db-backups`, `BACKUP_RECIPIENT_CERT` (the contents of `xroga-backup-cert.pem`) |
+| 5 | GitHub, Settings, Environments | **environment created 2026-10-24** (`db-backup`, deployment branches: `main` only); add Secrets: `SUPABASE_BACKUP_DB_URL`, `R2_BACKUP_ACCESS_KEY_ID`, `R2_BACKUP_SECRET_ACCESS_KEY`. Variables: `R2_ACCOUNT_ID`, `R2_BACKUP_BUCKET=xroga-db-backups`, `BACKUP_RECIPIENT_CERT` (the contents of `xroga-backup-cert.pem`) |
 | 6 | GitHub, Actions | run "Database backup" once by hand; the summary shows size, digest and the number of tables restore-verified |
+| 7 | your machine | isolated restore drill: download that backup, decrypt with your key, restore into a disposable local Supabase database (steps below), compare `manifest.tsv` |
+| 8 | GitHub, Settings, Variables | only after 6 and 7 pass: repository variable `DB_BACKUP_SCHEDULE_ENABLED=true` turns on the daily schedule (until then scheduled runs are skipped) |
 
 ## Restore (disaster recovery)
 1. Download the newest `db/xroga-ai/YYYY/MM/<stamp>-<digest>.tar.cms` and its `.json` from `xroga-db-backups`.

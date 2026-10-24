@@ -20,7 +20,9 @@ concurrency:
 
 jobs:
   backup:
-    if: github.ref == 'refs/heads/main'
+    # Manual runs only until the first controlled backup and an isolated restore are verified; then set the repository
+    # variable DB_BACKUP_SCHEDULE_ENABLED=true to let the daily schedule run.
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || vars.DB_BACKUP_SCHEDULE_ENABLED == 'true')
     runs-on: ubuntu-24.04
     environment: db-backup
     timeout-minutes: 45
