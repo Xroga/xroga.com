@@ -14,10 +14,11 @@ p=os.environ['FILE']; s=open(p).read()
 assert os.environ['OLD'] in s, 'mutation target not found'
 open(p,'w').write(s.replace(os.environ['OLD'],os.environ['NEW'],1))
 PY
-  res=$(npx tsx --test "$@" 2>&1 | grep -E '^# (pass|fail)' | tr '\n' ' ')
+  # the TAP reporter is forced: the default reporter differs between Node versions, and a missing summary must never read as "no failures"
+  res=$(npx tsx --test --test-reporter=tap "$@" 2>&1 | grep -E '^# (pass|fail)' | tr '\n' ' ')
   cp /tmp/mut.bak "$file"
   fails=$(echo "$res" | sed -E 's/.*# fail ([0-9]+).*/\1/')
-  verdict=$([ "${fails:-0}" -gt 0 ] && echo CAUGHT || echo SURVIVED)
+  if [ -z "$res" ]; then verdict=INCONCLUSIVE; else verdict=$([ "${fails:-0}" -gt 0 ] && echo CAUGHT || echo SURVIVED); fi
   echo "$verdict | $name | $res" | tee -a "$LOG"
 }
 S=src/storage/storageService.ts
@@ -31,8 +32,8 @@ a="if (head.size !== cur.declaredSize) await fail("; b="if (size !== cur.declare
 assert a in s and b in s
 open(p,'w').write(s.replace(a,"if (false) await fail(",1).replace(b,"if (false) await fail(",1))
 PY
-res=$(npx tsx --test src/storage/storageService.test.ts 2>&1 | grep -E '^# (pass|fail)' | tr '\n' ' '); cp /tmp/mut.bak $S
-fails=$(echo "$res" | sed -E 's/.*# fail ([0-9]+).*/\1/'); verdict=$([ "${fails:-0}" -gt 0 ] && echo CAUGHT || echo SURVIVED)
+res=$(npx tsx --test --test-reporter=tap src/storage/storageService.test.ts 2>&1 | grep -E '^# (pass|fail)' | tr '\n' ' '); cp /tmp/mut.bak $S
+fails=$(echo "$res" | sed -E 's/.*# fail ([0-9]+).*/\1/'); if [ -z "$res" ]; then verdict=INCONCLUSIVE; else verdict=$([ "${fails:-0}" -gt 0 ] && echo CAUGHT || echo SURVIVED); fi
 echo "$verdict | service: skip BOTH size verifications | $res" | tee -a "$LOG"
 mut "memory repo: commit replay double counts" src/storage/repository.ts "if (r.state === 'COMMITTED') return 'ALREADY_COMMITTED';" "if (r.state === 'COMMITTED') { this.#u(r.tenantId).committedBytes += actual; return 'ALREADY_COMMITTED'; }" src/storage/storageService.test.ts
 mut "migration: skip source-vs-destination hash comparison" src/storage/migration/engine.ts "if (object.sha256Verified !== sourceSha || object.sizeBytes !== opened.size) {" "if (false) {" src/storage/migration/engine.test.ts
@@ -58,3 +59,4 @@ mut "SQL: search_path pin removed from storage_reserve" $M ") returns text langu
 mut "SQL: authenticated can read object_key" $M "grant select (id, tenant_id," "grant select (object_key, id, tenant_id," src/storage/postgresRepository.integration.test.ts
 fi
 git -C .. diff --quiet -- backend supabase && echo "restored: working tree clean for mutated files" | tee -a "$LOG"
+if grep -qE '^(SURVIVED|INCONCLUSIVE)' "$LOG"; then echo "FAILED: a defect was not caught, or a run was inconclusive" | tee -a "$LOG"; exit 1; fi
