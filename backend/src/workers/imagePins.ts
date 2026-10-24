@@ -10,6 +10,9 @@
  *  - Stagehand is pinned but NOT wired: nothing in the probe imports it (that is INFRA-007). Its hosted-Browserbase SDK arrives as a transitive
  *    dependency; it is inert here, and the browser network has no route out for it to use.
  */
+/** the only file allowed to use Stagehand, and only in local mode */
+export const STAGEHAND_RUNTIME = 'runJob.mjs';
+
 export interface PinProblem { code: 'EXACT_VERSION' | 'LOCK_OUT_OF_SYNC' | 'LOCK_VERSION' | 'LOCK_INTEGRITY' | 'LOCK_SOURCE' | 'LICENSE' | 'INSTALL_SCRIPT' | 'BASE_IMAGE' | 'BASE_TAG_MISMATCH' | 'NPM_CI_FLAGS' | 'STAGEHAND_WIRED'; detail: string }
 
 export const ALLOWED_LICENSES: readonly string[] = ['MIT', 'Apache-2.0', 'BSD-2-Clause', 'BSD-3-Clause', 'ISC', '0BSD', 'BlueOak-1.0.0'];
@@ -49,6 +52,16 @@ export function checkImagePins(input: { pkg: Pkg; lock: Lock; dockerfile: string
   if (input.proxyDockerfile !== undefined && !/^FROM\s+\S+@sha256:[0-9a-f]{64}\s*$/m.test(input.proxyDockerfile)) add('BASE_IMAGE', 'the proxy image base is not pinned by digest');
   if (!/npm ci\b[^\n]*--ignore-scripts/.test(input.dockerfile)) add('NPM_CI_FLAGS', 'the Dockerfile must install with npm ci --ignore-scripts');
 
-  for (const [file, text] of Object.entries(input.probeSources ?? {})) if (/stagehand/i.test(text)) add('STAGEHAND_WIRED', `${file} references Stagehand: wiring it is INFRA-007`);
+  // INFRA-007 wires Stagehand into exactly one file, the job runtime, and only in local mode: it attaches to the Chromium the hardened
+  // launch policy started (localBrowser.connect), never launches its own (its defaults include --remote-allow-origins=*), never uses the
+  // hosted Browserbase launcher, and never configures a Stagehand API key or API URL (Browserbase's managed gateway).
+  for (const [file, text] of Object.entries(input.probeSources ?? {})) {
+    if (!/stagehand/i.test(text)) continue;
+    if (file !== STAGEHAND_RUNTIME) { add('STAGEHAND_WIRED', `${file} references Stagehand: only ${STAGEHAND_RUNTIME} may`); continue; }
+    if (/\bbrowserbase\s*\.|\{[^}]*\bbrowserbase\b[^}]*\}\s*=\s*await import/.test(text)) add('STAGEHAND_WIRED', `${file} uses the hosted Browserbase launcher`);
+    if (/localBrowser\s*\.\s*launch/.test(text)) add('STAGEHAND_WIRED', `${file} lets Stagehand launch its own Chromium`);
+    if (!/localBrowser\s*\.\s*connect/.test(text)) add('STAGEHAND_WIRED', `${file} does not attach Stagehand to the policy-launched Chromium`);
+    if (/\bapi(Key|Url)\s*:/.test(text)) add('STAGEHAND_WIRED', `${file} configures a Stagehand API key or URL`);
+  }
   return out;
 }

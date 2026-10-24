@@ -27,6 +27,7 @@ import { jobIdempotencyKey, navigationAllowed, parseBrowserJob, type BrowserJob,
 import type { AdmissionController } from './admission.js';
 import { redactText } from '../runtime/safeLogging.js';
 import { LeaseError, type Lease, type LeaseStore } from './leaseStore.js';
+import { evaluatePostconditions, parseBrowserPlan, type BrowserPlan, type ExtractedValue, type PostconditionResult } from './browserPlan.js';
 
 export type BrowserTaskFailureCode =
   | 'PERMISSION_REVOKED' | 'LEASE_HELD' | 'LEASE_LOST' | 'JOB_TIMEOUT' | 'CANCELLED'
@@ -57,11 +58,16 @@ export interface BrowserWorkerResult {
   responseBytes: number;
   summary: string;
   artifacts: BrowserWorkerArtifact[];
+  /** values the plan's extract steps produced (untrusted data, judged only by the plan's postconditions) */
+  extracted?: Record<string, ExtractedValue>;
+  /** measured by the worker host, not by the page: timings, counters and model usage */
+  metrics?: Record<string, unknown> & { consequentialActions?: number; modelUsage?: { calls: number; inputTokens: number; outputTokens: number; costMicros: number; refused: number } };
+  steps?: Array<{ index: number; op: string; ok: boolean }>;
 }
 
 /** The seam to the isolated browser worker. A real implementation talks to the sandboxed container; tests substitute their own. */
 export interface BrowserWorkerPort {
-  run(job: BrowserJob, ctx: { signal: AbortSignal; lease: Lease }): Promise<BrowserWorkerResult>;
+  run(job: BrowserJob, ctx: { signal: AbortSignal; lease: Lease; plan?: BrowserPlan }): Promise<BrowserWorkerResult>;
 }
 
 export interface BrowserHandlerDeps {
@@ -80,6 +86,10 @@ export interface BrowserHandlerDeps {
   leaseTtlMs?: number;
   /** max artifacts per job */
   maxArtifacts?: number;
+  /** the trusted plan for this task (steps and postconditions), strictly parsed against the issued job; absent: legacy screenshot-only job */
+  planFor?: (task: Parameters<TaskHandler>[0], state: Parameters<TaskHandler>[1], job: BrowserJob) => unknown;
+  /** Drive project that holds this run's evidence; null stores it as the user's own (project-less) Drive object. Default: the job's project. */
+  driveProjectFor?: (projectId: string) => string | null;
 }
 
 const ARTIFACT_TYPES: Record<string, ObjectClass> = {
@@ -91,10 +101,10 @@ const LIST_PAGE = 500;
 const LIST_PAGES = 4;
 
 /** Existing READY object with exactly this name and hash, left by an earlier attempt of the same task. */
-async function findStored(drive: BrowserHandlerDeps['drive'], actor: StorageActor, projectId: string, filename: string, sha256: string): Promise<string | null> {
+async function findStored(drive: BrowserHandlerDeps['drive'], actor: StorageActor, projectId: string | null, filename: string, sha256: string): Promise<string | null> {
   let afterId: string | undefined;
   for (let page = 0; page < LIST_PAGES; page++) {
-    const rows = await drive.listObjects(actor, { projectId, limit: LIST_PAGE, afterId });
+    const rows = await drive.listObjects(actor, { projectId: projectId ?? undefined, limit: LIST_PAGE, afterId });
     const hit = rows.find((o) => o.filename === filename && o.sha256 === sha256 && o.state === 'READY');
     if (hit) return hit.id;
     if (rows.length < LIST_PAGE) return null;
@@ -104,6 +114,13 @@ async function findStored(drive: BrowserHandlerDeps['drive'], actor: StorageActo
 }
 
 const sha256 = (b: Uint8Array) => createHash('sha256').update(b).digest('hex');
+
+/** Extracted page data is persisted with the run: keep it bounded and free of credential-looking text. */
+function boundedExtracted(values: Record<string, ExtractedValue>): Record<string, ExtractedValue> | { truncated: true; bytes: number } {
+  const text = redactText(JSON.stringify(values));
+  if (text.length > 64 * 1024) return { truncated: true, bytes: text.length };
+  try { return JSON.parse(text) as Record<string, ExtractedValue>; } catch { return { truncated: true, bytes: text.length }; }
+}
 
 export function createBrowserTaskHandler(deps: BrowserHandlerDeps): TaskHandler {
   const ttl = deps.leaseTtlMs ?? 30_000;
@@ -119,6 +136,8 @@ export function createBrowserTaskHandler(deps: BrowserHandlerDeps): TaskHandler 
       taskId: task.id, attempt: Math.max(1, task.attempts),
     });
 
+ const plan: BrowserPlan | undefined = deps.planFor ? parseBrowserPlan(deps.planFor(task, state, job), job) : undefined;
+    const driveProject = deps.driveProjectFor ? deps.driveProjectFor(job.projectId) : job.projectId;
     if (!(await deps.authorise(deps.actor, job.projectId))) throw new BrowserTaskError('PERMISSION_REVOKED', 'the user no longer has access to this project');
 
     const key = { tenantId: job.tenantId, runId: job.runId, taskId: job.taskId };
@@ -149,7 +168,7 @@ export function createBrowserTaskHandler(deps: BrowserHandlerDeps): TaskHandler 
     try {
       let result: BrowserWorkerResult;
       try {
-        result = await deps.worker.run(job, { signal: controller.signal, lease });
+        result = await deps.worker.run(job, { signal: controller.signal, lease, ...(plan ? { plan } : {}) });
       } catch (e) {
         await guard(); // a lost lease, timeout or cancel is reported as itself, not as a worker error
         if (e instanceof BrowserTaskError) throw e;
@@ -192,11 +211,11 @@ export function createBrowserTaskHandler(deps: BrowserHandlerDeps): TaskHandler 
         let id: string | null = null;
         let reused = false;
         try {
-          id = await findStored(deps.drive, deps.actor, job.projectId, filename, digest);
+          id = await findStored(deps.drive, deps.actor, driveProject, filename, digest);
           reused = id !== null;
           if (!id) {
             const object = await deps.drive.putServerObject(deps.actor, {
-              projectId: job.projectId, objectClass: ARTIFACT_TYPES[a.mediaType]!, filename, contentType: a.mediaType, body: Buffer.from(a.bytes),
+              projectId: driveProject, objectClass: ARTIFACT_TYPES[a.mediaType]!, filename, contentType: a.mediaType, body: Buffer.from(a.bytes),
             });
             if (object.state !== 'READY' || object.sha256 !== digest) throw new BrowserTaskError('STORAGE_FAILED', 'an artifact was not durably stored');
             id = object.id;
@@ -211,6 +230,18 @@ export function createBrowserTaskHandler(deps: BrowserHandlerDeps): TaskHandler 
       }
       await guard(); // the result is accepted only while the worker still holds the task
 
+      // Outcome, not activity: the plan's postconditions are judged here, on the worker's report, by the trusted side.
+      const postconditions: PostconditionResult[] = plan ? evaluatePostconditions(plan, {
+        finalUrl: result.finalUrl, extracted: result.extracted ?? {},
+        artifacts: result.artifacts.map((a) => ({ name: a.name, mediaType: a.mediaType, size: a.bytes.length })),
+        consequentialActions: Number(result.metrics?.consequentialActions ?? 0),
+      }) : [];
+      const outcomeVerified = postconditions.every((p) => p.passed);
+      const usage = result.metrics?.modelUsage;
+      if (usage && usage.costMicros > job.limits.maxModelCostMicros) throw new BrowserTaskError('RESULT_OVER_LIMIT', 'model spend exceeded the job budget');
+      if (plan) evidence.push({ id: randomUUID(), kind: 'browser_outcome', summary: `${postconditions.filter((p) => p.passed).length}/${postconditions.length} postconditions passed`, timestamp: now() });
+      if (usage) evidence.push({ id: randomUUID(), kind: 'model_usage', summary: `${usage.calls} model calls, ${usage.inputTokens}+${usage.outputTokens} tokens, ${usage.costMicros} micro-USD, ${usage.refused} refused`, timestamp: now() });
+
       evidence.unshift({
         id: randomUUID(), kind: 'browser_run',
         summary: `${result.navigations} navigations, ${result.responseBytes} bytes, ended on ${new URL(result.finalUrl).hostname}; lease token ${lease!.token}`,
@@ -221,9 +252,12 @@ export function createBrowserTaskHandler(deps: BrowserHandlerDeps): TaskHandler 
           // free text from an untrusted worker: never stored with a credential in it
           summary: redactText(String(result.summary)).slice(0, 2_000),
           finalHost: new URL(result.finalUrl).hostname, artifacts: stored, leaseToken: lease!.token,
+          ...(plan ? { postconditions, outcomeVerified, extracted: boundedExtracted(result.extracted ?? {}) } : {}),
+          ...(result.metrics ? { metrics: result.metrics } : {}),
         },
         evidence,
-        validated: true,
+        // a task whose outcome did not verify is not complete, however many steps ran
+        validated: outcomeVerified,
       };
     } finally {
       clearTimeout(deadline);

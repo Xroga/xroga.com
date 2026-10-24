@@ -24,7 +24,7 @@ RUN groupadd --gid 10001 browser \
 WORKDIR /opt/xroga-browser-worker
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev --ignore-scripts --no-audit --no-fund
-COPY sandboxProbe.mjs ./
+COPY sandboxProbe.mjs runJob.mjs ./
 
 USER 10001:10001
 ENTRYPOINT ["node", "/opt/xroga-browser-worker/sandboxProbe.mjs"]

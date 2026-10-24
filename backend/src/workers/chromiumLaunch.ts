@@ -10,7 +10,12 @@
  *    proxy bypass for localhost), so the browser cannot reach the worker's own services or another tenant's processes.
  *  - DNS is the proxy's: `--host-resolver-rules` and similar overrides are refused.
  *  - TLS errors are never ignored, web security is never disabled, site isolation is never switched off.
- *  - DevTools is private: no TCP debugging port or address; Playwright talks to the browser over a pipe it owns.
+ *  - DevTools is private: no TCP debugging port or address; Playwright talks to the browser over a pipe it owns. The ONE exception is
+ *    AI mode (a job with Stagehand steps, INFRA-007): Stagehand needs a CDP WebSocket and loads its bundled extension over CDP, so the
+ *    launch adds exactly `--remote-debugging-port=0` (an ephemeral port Chromium binds to 127.0.0.1 inside the job's own container
+ *    network namespace) and `--enable-unsafe-extension-debugging`. Page content still cannot reach it: loopback goes through the
+ *    egress proxy, which refuses loopback, and `--remote-allow-origins` (the flag that would let a web origin open the socket) and
+ *    `--remote-debugging-address` stay forbidden in every mode.
  *  - each job gets its own throwaway profile directory below a fixed root, named by a hash of tenant, run, task and attempt.
  *  - the browser's environment is a short allow-list; no worker secret is inherited.
  */
@@ -91,7 +96,10 @@ export interface LaunchContext {
   executablePath?: string;
 }
 
-export function buildChromiumLaunch(job: BrowserJob, ctx: LaunchContext): ChromiumLaunchOptions {
+export interface LaunchMode { /** Stagehand steps present: loopback DevTools port and CDP extension loading, nothing else */ aiDevtools?: boolean }
+export const AI_DEVTOOLS_ARGS = Object.freeze(['--remote-debugging-port=0', '--enable-unsafe-extension-debugging']);
+
+export function buildChromiumLaunch(job: BrowserJob, ctx: LaunchContext, mode: LaunchMode = {}): ChromiumLaunchOptions {
   const sep = ctx.profileRoot.includes('\\') ? '\\' : '/';
   const dir = `${ctx.profileRoot.replace(/[\\/]+$/, '')}${sep}${segment(job)}`;
   const env: Record<string, string> = {};
@@ -100,7 +108,7 @@ export function buildChromiumLaunch(job: BrowserJob, ctx: LaunchContext): Chromi
     headless: true,
     chromiumSandbox: true,
     proxy: { server: `http://${ctx.proxy.host ?? '127.0.0.1'}:${ctx.proxy.port}`, username: ctx.proxy.username, password: ctx.proxy.password, bypass: '<-loopback>' },
-    args: ['--disable-dev-shm-usage', '--mute-audio', '--no-first-run', '--no-default-browser-check', '--disable-background-networking', '--disable-sync'],
+    args: ['--disable-dev-shm-usage', '--mute-audio', '--no-first-run', '--no-default-browser-check', '--disable-background-networking', '--disable-sync', ...(mode.aiDevtools ? AI_DEVTOOLS_ARGS : [])],
     env,
     userDataDir: dir,
     downloadsPath: `${dir}${sep}downloads`,
@@ -108,12 +116,12 @@ export function buildChromiumLaunch(job: BrowserJob, ctx: LaunchContext): Chromi
     timeout: Math.min(job.limits.maxDurationMs, 60_000),
     ...(ctx.executablePath ? { executablePath: ctx.executablePath } : {}),
   };
-  assertLaunchSafe(options, ctx.profileRoot, ctx.proxy.host ? [ctx.proxy.host] : []);
+  assertLaunchSafe(options, ctx.profileRoot, ctx.proxy.host ? [ctx.proxy.host] : [], mode);
   return options;
 }
 
 /** Throws ChromiumLaunchError listing every violated rule. Accepts `unknown` shapes: it is also the guard for options built elsewhere. */
-export function assertLaunchSafe(options: object, profileRoot: string, allowedProxyHosts: readonly string[] = []): void {
+export function assertLaunchSafe(options: object, profileRoot: string, allowedProxyHosts: readonly string[] = [], mode: LaunchMode = {}): void {
   const o = options as Partial<ChromiumLaunchOptions> & Record<string, unknown>;
   const v: LaunchViolation[] = [];
   const notes: string[] = [];
@@ -125,6 +133,9 @@ export function assertLaunchSafe(options: object, profileRoot: string, allowedPr
   for (const a of args) {
     if (typeof a !== 'string') { v.push('FORBIDDEN_FLAG'); notes.push('non-string argument'); continue; }
     const name = flagName(a);
+    // AI mode admits exactly these two arguments, byte for byte (port 0 only: never a fixed, guessable port)
+    if (mode.aiDevtools && AI_DEVTOOLS_ARGS.includes(a)) continue;
+    if (name === 'enable-unsafe-extension-debugging') { v.push('DEVTOOLS_NETWORK'); notes.push(`--${name} outside AI mode`); continue; }
     if (name && FORBIDDEN_FLAGS.includes(name)) {
       v.push(name.startsWith('remote-debugging') || name === 'remote-allow-origins' ? 'DEVTOOLS_NETWORK' : 'FORBIDDEN_FLAG');
       notes.push(`--${name}`);

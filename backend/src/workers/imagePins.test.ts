@@ -10,11 +10,11 @@ const dir = join(repo, 'deploy/browser-worker');
 const json = (f: string) => JSON.parse(readFileSync(join(dir, f), 'utf8'));
 const text = (f: string) => readFileSync(join(dir, f), 'utf8');
 const probeSources = Object.fromEntries(readdirSync(dir).filter((f) => f.endsWith('.mjs')).map((f) => [f, text(f)]));
-const real = () => ({ pkg: json('package.json'), lock: json('package-lock.json'), dockerfile: text('Dockerfile'), proxyDockerfile: text('Dockerfile.proxy'), probeSources });
+const real = () => ({ pkg: json('package.json'), lock: json('package-lock.json'), dockerfile: text('Dockerfile'), proxyDockerfile: text('Dockerfile.proxy'), probeSources: { ...probeSources } });
 const codes = (mut: (i: ReturnType<typeof real>) => void): string[] => { const i = real(); mut(i); return [...new Set(checkImagePins(i).map((p: PinProblem) => p.code))]; };
 
 describe('browser worker image pins', () => {
-  it('the committed pins are exact, locked, integrity checked, licence checked, and Stagehand is not wired', () => {
+  it('the committed pins are exact, locked, integrity checked, licence checked, and Stagehand is wired only locally in the job runtime', () => {
     assert.deepEqual(checkImagePins(real()), []);
     const i = real();
     assert.equal(i.pkg.dependencies['playwright-core'], '1.62.0');
@@ -65,6 +65,16 @@ describe('browser worker image pins', () => {
 
   it('refuses wiring Stagehand into the probe: that is INFRA-007', () => {
     assert.ok(codes((i) => { i.probeSources['sandboxProbe.mjs'] += "\nimport { Stagehand } from '@browserbasehq/stagehand';"; }).includes('STAGEHAND_WIRED'));
+  });
+
+  it('allows Stagehand only in the job runtime, attached locally, with no hosted launcher, no own launch and no API key or URL', () => {
+    const rt = (edit: (t: string) => string) => codes((i) => { i.probeSources['runJob.mjs'] = edit(i.probeSources['runJob.mjs']!); });
+    assert.deepEqual(rt((t) => t), []);
+    assert.ok(rt((t) => t.replace('localBrowser.connect(', 'localBrowser.launch(')).includes('STAGEHAND_WIRED'));
+    assert.ok(rt((t) => `${t}\nconst b = await browserbase.launch({});`).includes('STAGEHAND_WIRED'));
+    assert.ok(rt((t) => t.replace('selfHeal: false,', 'selfHeal: false, apiKey: process.env.X,')).includes('STAGEHAND_WIRED'));
+    assert.ok(rt((t) => t.replace('selfHeal: false,', "selfHeal: false, apiUrl: 'https://example.com',")).includes('STAGEHAND_WIRED'));
+    assert.ok(codes((i) => { i.probeSources['other.mjs'] = "import { Stagehand } from '@browserbasehq/stagehand';"; }).includes('STAGEHAND_WIRED'));
   });
 
   it('backend source does not import Stagehand or the hosted Browserbase SDK either', () => {
