@@ -18,15 +18,17 @@ afterEach(async () => { while (cleanup.length) await cleanup.pop()!(); });
 /** a stand-in "internet": accepts the proxied TCP connection and either echoes or floods */
 async function upstream(behaviour: 'echo' | 'flood'): Promise<{ port: number; connections: number }> {
   const state = { port: 0, connections: 0 };
+  const sockets = new Set<net.Socket>();
   const server = net.createServer((s) => {
     state.connections++;
+    sockets.add(s);
     s.on('error', () => {});
     if (behaviour === 'echo') s.pipe(s);
     else s.write(Buffer.alloc(50_000, 1));
   });
   await new Promise<void>((r) => server.listen(0, '127.0.0.1', () => r()));
   state.port = (server.address() as net.AddressInfo).port;
-  cleanup.push(() => new Promise<void>((r) => { server.close(() => r()); server.closeAllConnections?.(); }));
+  cleanup.push(() => new Promise<void>((r) => { server.close(() => r()); for (const s of sockets) s.destroy(); }));
   return state;
 }
 

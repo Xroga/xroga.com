@@ -83,7 +83,8 @@ describe('browser job contract', () => {
 
   it('idempotency key is stable across attempts and differs across tenant, run and task', () => {
     const base = parseBrowserJob(good());
-    assert.equal(jobIdempotencyKey(base), jobIdempotencyKey({ ...base, attempt: 3 }));
+    const retry = { ...base, attempt: 3 };
+    assert.equal(jobIdempotencyKey(base), jobIdempotencyKey(retry));
     const keys = new Set([jobIdempotencyKey(base), jobIdempotencyKey({ ...base, tenantId: 't2' }), jobIdempotencyKey({ ...base, runId: 'r2' }), jobIdempotencyKey({ ...base, taskId: 'k2' })]);
     assert.equal(keys.size, 4);
     // delimiter smuggling: ("a","b:c") must not collide with ("a:b","c")

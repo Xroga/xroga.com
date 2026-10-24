@@ -42,6 +42,9 @@ import { phase1AuthMiddleware } from './middleware/phase1Auth.js';
 import mediaRouter from './routes/media.js';
 import driveRouter from './routes/drive.js';
 import { resolveStorageConfig } from './storage/runtime.js';
+import { probeDatabaseTls } from './storage/databaseTls.js';
+import { decideStartup } from './runtime/startupPolicy.js';
+import { apiProbes, runReadiness } from './runtime/readiness.js';
 import capabilitiesRouter from './routes/capabilities.js';
 import { adminMiddleware } from './middleware/admin.js';
 import { ensureGithubSchema } from './db/ensureGithubSchema.js';
@@ -168,18 +171,21 @@ app.get('/health', (_req, res) => {
 });
 
 app.get('/ready', async (_req, res) => {
-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    res.status(503).json({ status: 'not_ready', reason: 'database_not_configured' });
-    return;
-  }
-  try {
-    const { error } = await getSupabaseAdmin().from('profiles').select('id').limit(1);
-    if (error) throw error;
+  // Fixed reason codes only (see runtime/readiness.ts): this endpoint is reachable without authentication.
+  const result = await runReadiness(apiProbes(process.env, {
+    database: async () => {
+      const { error } = await getSupabaseAdmin().from('profiles').select('id').limit(1);
+      if (error) throw error;
+    },
+    databaseTls: probeDatabaseTls,
+  }));
+  if (result.ready) {
     const health = publicHealthPayload();
     res.json({ status: 'ready', service: 'xroga-api', release: health.release, timestamp: new Date().toISOString() });
-  } catch {
-    res.status(503).json({ status: 'not_ready', reason: 'database_unavailable' });
+    return;
   }
+  const failing = result.checks.find((c) => c.status === 'fail');
+  res.status(503).json({ status: 'not_ready', reason: failing?.reason ?? 'not_ready', checks: result.checks });
 });
 
 app.get('/api/health', (_req, res) => {
@@ -289,21 +295,28 @@ server.listen(port, '0.0.0.0', () => {
     const storageCfg = resolveStorageConfig();
     if (storageCfg.problems.length) console.error('[storage] INVALID CONFIGURATION:', storageCfg.problems.join('; '));
   }
-  void ensurePhase1Schema().catch((err) => {
-    console.warn('[phase1Schema] Startup ensure skipped:', (err as Error).message);
-  });
-  void ensureGithubSchema().catch((err) => {
-    console.warn('[githubSchema] Startup ensure skipped:', (err as Error).message);
-  });
-  void ensureTerminalSessionsSchema().catch((err) => {
-    console.warn('[terminalSessionsSchema] Startup ensure skipped:', (err as Error).message);
-  });
-  void ensureMessageSharesSchema().catch((err) => {
-    console.warn('[messageSharesSchema] Startup ensure skipped:', (err as Error).message);
-  });
-  void ensureShipLoopSchema().catch((err) => {
-    console.warn('[shipLoopSchema] Startup ensure skipped:', (err as Error).message);
-  });
+  // Boot duties that WRITE to the database run only in a process positively identified as production (or local development).
+  // A staging, preview or unclassified service holding a live service-role key must not run DDL or fail production runs by starting.
+  const startup = decideStartup();
+  for (const note of startup.notes) console.warn(`[startup] ${note}`);
+  console.log(`[startup] environment=${startup.environment} (${startup.source}) schemaEnsure=${startup.duties.ensureSchemas} orphanReconcile=${startup.duties.reconcileOrphanedRuns}`);
+  if (startup.duties.ensureSchemas) {
+    void ensurePhase1Schema().catch((err) => {
+      console.warn('[phase1Schema] Startup ensure skipped:', (err as Error).message);
+    });
+    void ensureGithubSchema().catch((err) => {
+      console.warn('[githubSchema] Startup ensure skipped:', (err as Error).message);
+    });
+    void ensureTerminalSessionsSchema().catch((err) => {
+      console.warn('[terminalSessionsSchema] Startup ensure skipped:', (err as Error).message);
+    });
+    void ensureMessageSharesSchema().catch((err) => {
+      console.warn('[messageSharesSchema] Startup ensure skipped:', (err as Error).message);
+    });
+    void ensureShipLoopSchema().catch((err) => {
+      console.warn('[shipLoopSchema] Startup ensure skipped:', (err as Error).message);
+    });
+  }
   // Provider health survives this restart (§15). Without it a circuit opened against a
   // failing provider was forgotten on every deploy, and the model went straight back into
   // rotation — a breaker that resets exactly when a bad deploy lands protects nothing.
@@ -319,9 +332,11 @@ server.listen(port, '0.0.0.0', () => {
     });
   // Reconcile only stale durable worker leases. During a rolling deploy the outgoing
   // API may still own a long build, so a row being old and `running` is not enough.
-  void reconcileOrphanedRuns().catch((err) => {
-    console.warn('[runReconciler] Startup reconcile skipped:', (err as Error).message);
-  });
+  if (startup.duties.reconcileOrphanedRuns) {
+    void reconcileOrphanedRuns().catch((err) => {
+      console.warn('[runReconciler] Startup reconcile skipped:', (err as Error).message);
+    });
+  }
   // Registers a hosted isolation worker only if an operator configured one. With no
   // XROGA_SANDBOX_WORKER_URL this does nothing and costs nothing: the container
   // providers are tried and, failing those, executable validation refuses rather than
