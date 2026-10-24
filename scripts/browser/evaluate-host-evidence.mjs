@@ -12,6 +12,7 @@
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { spawnSync } from 'node:child_process';
 
 const args = process.argv.slice(2);
 const dir = args[0];
@@ -62,8 +63,14 @@ rule('isolation.production-proxy', typeof iso.images?.proxy === 'string' && Bool
 rule('seccomp.profile-equals-derivation', seccomp !== null && /^exit=0\s*$/m.test(seccomp), (seccomp ?? 'seccomp-check.txt missing').trim().slice(0, 80));
 rule('source.recorded-and-clean', source !== null && /^commit=[0-9a-f]{40}$/m.test(source) && /^tree=clean$/m.test(source), (source ?? 'source.txt missing').replace(/\n/g, ' ').slice(0, 100));
 
-// the evidence must describe the reviewed configuration, not some other one
-const same = (name, recorded, rel) => { const p = join(repo, rel); rule(`inputs.${name}-is-the-reviewed-file`, existsSync(p) && recorded === sha(p), existsSync(p) ? `recorded ${String(recorded).slice(0, 10)}…` : `${rel} not found in --repo`); };
+// the evidence must describe the reviewed configuration, not some other one. Compare with the file AS COMMITTED at the bundle's recorded commit
+// (a working copy can differ, for example CRLF checkouts on Windows); fall back to the working copy only when that commit is not in --repo.
+const commit = source?.match(/^commit=([0-9a-f]{40})$/m)?.[1];
+const committed = (rel) => { if (!commit) return null; const r = spawnSync('git', ['-C', repo, 'show', `${commit}:${rel}`], { maxBuffer: 64 * 1024 * 1024 }); return r.status === 0 ? createHash('sha256').update(r.stdout).digest('hex') : null; };
+const same = (name, recorded, rel) => {
+  const p = join(repo, rel); const atCommit = committed(rel); const actual = atCommit ?? (existsSync(p) ? sha(p) : null);
+  rule(`inputs.${name}-is-the-reviewed-file`, actual !== null && recorded === actual, actual === null ? `${rel} not found in --repo` : `recorded ${String(recorded).slice(0, 10)}… vs ${atCommit ? 'commit' : 'working copy'} ${actual.slice(0, 10)}…`);
+};
 same('container-spec', probe.inputs?.containerSpecSha256, 'deploy/browser-worker/container-spec.json');
 same('seccomp-profile', probe.inputs?.seccompProfileSha256, 'deploy/browser-worker/seccomp-chromium.json');
 same('dockerfile', probe.inputs?.dockerfileSha256, 'deploy/browser-worker/Dockerfile');

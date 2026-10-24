@@ -1,0 +1,512 @@
+{
+  "evidenceClass": "GCE_HOST_TESTED",
+  "notOci": true,
+  "platform": "host default",
+  "claim": "Browser on an --internal network with the production egress proxy as its only peer: no direct route by IP, port, UDP, DNS, IPv6, metadata, RFC1918 or gateway; the proxy refuses out-of-scope, redirect, DNS-to-internal, literal-IP, alternate-port and plain-HTTP destinations and never connected to its own loopback; the authorised destination loads. Two weakened controls show the battery detects real bypasses.",
+  "at": "2026-10-24T18:04:33.666Z",
+  "images": {
+    "browser": "xroga-browser-worker:phase2-probe",
+    "proxy": "xroga-egress-proxy:phase2-test",
+    "browserId": "sha256:fb25e4aa7f3e171c3345e508c70c6b03892684251eb2f46bfe9d5970ed5f98a9",
+    "proxyId": "sha256:dbdc07afac2106821f482ae6dd8f0f7a5e6d519a63d5c5916250664d8c870435",
+    "browserArch": "arm64"
+  },
+  "inputs": {
+    "deploy/browser-worker/container-spec.json": "59baef8f93bfc8f10f120d524a76200aa611c16c8f8cd0335056d873e7a7645e",
+    "deploy/browser-worker/Dockerfile": "af8e2d2062f4680b7e6943a01a9a5d0ecb5713446be77877bce8c6ef9a9307f8",
+    "deploy/browser-worker/Dockerfile.proxy": "9946147ce8f5876133ac765880bcf80a32cc75822229950fc2758dc8369c837a",
+    "deploy/browser-worker/package-lock.json": "eef7da61fd19491b8a146bec2ce7f0d099f82387078fc22484265b765418b573",
+    "backend/src/workers/egressProxy.ts": "29e977db658433c30d19e3fe3f9268056997be1bbcc1cd9b4a7bf5a3d813d02c",
+    "backend/src/workers/proxySidecar.ts": "363fecf2f4f0a75c4a009a79e07f01d9dad5fa3a913fd9114b4386e3bea6af7c",
+    "backend/src/security/boundedPublicGet.ts": "9a20c8cc0e496f893a18d79dba79b4beac820b9001bc1b06d2fc2772c70eee44"
+  },
+  "job": {
+    "allowedOrigins": [
+      "https://example.com",
+      "https://wikipedia.org",
+      "https://localtest.me",
+      "https://169.254.169.254.nip.io",
+      "https://10.0.0.5.nip.io"
+    ]
+  },
+  "networkSpec": {
+    "mode": "internal",
+    "name": "xroga-browser-internal",
+    "proxyHost": "egress-proxy",
+    "proxyPort": 3128,
+    "publishedPorts": [],
+    "extraHosts": [],
+    "dns": []
+  },
+  "acceptance": {
+    "checks": {
+      "browserReachesItsProxyPeer": true,
+      "noOtherPortOnThePeer": true,
+      "noDirectPublicIpOnAnyPortOrProtocol": true,
+      "noPublicDnsWithoutTheProxy": true,
+      "noIpv6": true,
+      "noMetadata": true,
+      "noRfc1918OrCgnat": true,
+      "noLoopbackServices": true,
+      "noHostGateway": true,
+      "chromiumWithoutProxyFlagLoadsNothing": true,
+      "authorisedDestinationLoadsThroughTheRealProxy": true,
+      "outOfScopeHostRefused": true,
+      "redirectToOutOfScopeRefused": true,
+      "hostnameResolvingToLoopbackRefusedByProxyDns": true,
+      "hostnameResolvingToMetadataRefusedByProxyDns": true,
+      "hostnameResolvingToRfc1918RefusedByProxyDns": true,
+      "ipv6LoopbackLiteralRefused": true,
+      "publicIpLiteralRefused": true,
+      "plainHttpRefused": true,
+      "alternatePortsRefused": true,
+      "proxyNeverConnectedToItsOwnLoopback": true
+    },
+    "scenario": "isolated-real-proxy",
+    "browserNetwork": "xroga-browser-internal",
+    "proxyReady": true,
+    "canaryReady": true,
+    "result": {
+      "raw": {
+        "proxyPort": "connected",
+        "proxyOtherPorts": {
+          "22": "error:ECONNREFUSED",
+          "80": "error:ECONNREFUSED",
+          "443": "error:ECONNREFUSED",
+          "3129": "error:ECONNREFUSED",
+          "8080": "error:ECONNREFUSED"
+        },
+        "publicIp": {
+          "1.1.1.1:443": "error:ENETUNREACH",
+          "1.1.1.1:80": "error:ENETUNREACH",
+          "1.1.1.1:53": "error:ENETUNREACH",
+          "8.8.8.8:443": "error:ENETUNREACH",
+          "93.184.216.34:443": "error:ENETUNREACH",
+          "1.1.1.1:8443": "error:ENETUNREACH"
+        },
+        "udpDns": {
+          "1.1.1.1": "no-answer",
+          "8.8.8.8": "no-answer"
+        },
+        "publicDns": "error:ESERVFAIL",
+        "ipv6Public": "error:ENETUNREACH",
+        "ipv6Loopback": "error:ECONNREFUSED",
+        "metadata": "error:ENETUNREACH",
+        "privateRanges": {
+          "10.0.0.5": "error:ENETUNREACH",
+          "172.16.0.5": "error:ENETUNREACH",
+          "192.168.1.1": "error:ENETUNREACH",
+          "100.64.0.1": "error:ENETUNREACH"
+        },
+        "loopbackServices": "error:ECONNREFUSED",
+        "gateway": null,
+        "gatewayPorts": {}
+      },
+      "nav": {
+        "withoutProxyFlag": "failed:net::ERR_NAME_NOT_RESOLVED",
+        "authorised": "loaded:200:example.com",
+        "outOfScope": "failed:net::ERR_TUNNEL_CONNECTION_FAILED",
+        "redirectToOutOfScope": "failed:net::ERR_TUNNEL_CONNECTION_FAILED",
+        "hostnameResolvingToLoopback": "failed:net::ERR_TUNNEL_CONNECTION_FAILED",
+        "hostnameResolvingToMetadata": "failed:net::ERR_TUNNEL_CONNECTION_FAILED",
+        "hostnameResolvingToRfc1918": "failed:net::ERR_TUNNEL_CONNECTION_FAILED",
+        "ipv6Loopback": "failed:net::ERR_TUNNEL_CONNECTION_FAILED",
+        "publicIpLiteral": "failed:net::ERR_TUNNEL_CONNECTION_FAILED",
+        "plainHttp": "loaded:405:example.com",
+        "alternatePort8443": "failed:net::ERR_TUNNEL_CONNECTION_FAILED",
+        "alternatePort8080": "failed:net::ERR_TUNNEL_CONNECTION_FAILED"
+      }
+    },
+    "decisions": [
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "AUTH"
+      },
+      {
+        "host": "example.com",
+        "allowed": true,
+        "reason": "ALLOWED"
+      },
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "AUTH"
+      },
+      {
+        "host": "www.iana.org",
+        "allowed": false,
+        "reason": "SCOPE"
+      },
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "AUTH"
+      },
+      {
+        "host": "wikipedia.org",
+        "allowed": true,
+        "reason": "ALLOWED"
+      },
+      {
+        "host": "www.wikipedia.org",
+        "allowed": false,
+        "reason": "SCOPE"
+      },
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "AUTH"
+      },
+      {
+        "host": "localtest.me",
+        "allowed": false,
+        "reason": "DNS"
+      },
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "AUTH"
+      },
+      {
+        "host": "169.254.169.254.nip.io",
+        "allowed": false,
+        "reason": "DNS"
+      },
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "AUTH"
+      },
+      {
+        "host": "10.0.0.5.nip.io",
+        "allowed": false,
+        "reason": "DNS"
+      },
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "AUTH"
+      },
+      {
+        "host": "::1",
+        "allowed": false,
+        "reason": "SCOPE"
+      },
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "AUTH"
+      },
+      {
+        "host": "1.1.1.1",
+        "allowed": false,
+        "reason": "SCOPE"
+      },
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "METHOD"
+      },
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "AUTH"
+      },
+      {
+        "host": "example.com",
+        "allowed": false,
+        "reason": "PORT"
+      },
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "AUTH"
+      },
+      {
+        "host": "example.com",
+        "allowed": false,
+        "reason": "PORT"
+      }
+    ],
+    "permissiveDials": [],
+    "canaryHits": 0
+  },
+  "controlBridge": {
+    "scenario": "control-bridge-browser",
+    "browserNetwork": "xroga-egress-control-bridge",
+    "proxyReady": true,
+    "canaryReady": true,
+    "result": {
+      "raw": {
+        "proxyPort": "connected",
+        "proxyOtherPorts": {
+          "22": "error:ECONNREFUSED",
+          "80": "error:ECONNREFUSED",
+          "443": "error:ECONNREFUSED",
+          "3129": "error:ECONNREFUSED",
+          "8080": "error:ECONNREFUSED"
+        },
+        "publicIp": {
+          "1.1.1.1:443": "connected",
+          "1.1.1.1:80": "connected",
+          "1.1.1.1:53": "connected",
+          "8.8.8.8:443": "connected",
+          "93.184.216.34:443": "timeout",
+          "1.1.1.1:8443": "connected"
+        },
+        "udpDns": {
+          "1.1.1.1": "answered",
+          "8.8.8.8": "answered"
+        },
+        "publicDns": "resolved:104.20.23.154",
+        "ipv6Public": "error:ENETUNREACH",
+        "ipv6Loopback": "error:ECONNREFUSED",
+        "metadata": "connected",
+        "privateRanges": {
+          "10.0.0.5": "timeout",
+          "172.16.0.5": "timeout",
+          "192.168.1.1": "timeout",
+          "100.64.0.1": "timeout"
+        },
+        "loopbackServices": "error:ECONNREFUSED",
+        "gateway": "172.19.0.1",
+        "gatewayPorts": {
+          "22": "connected",
+          "80": "error:ECONNREFUSED",
+          "443": "error:ECONNREFUSED",
+          "2375": "error:ECONNREFUSED"
+        }
+      },
+      "nav": {
+        "withoutProxyFlag": "loaded:200:example.com",
+        "authorised": "loaded:200:example.com",
+        "outOfScope": "failed:net::ERR_TUNNEL_CONNECTION_FAILED",
+        "redirectToOutOfScope": "failed:net::ERR_TUNNEL_CONNECTION_FAILED",
+        "hostnameResolvingToLoopback": "failed:net::ERR_TUNNEL_CONNECTION_FAILED",
+        "hostnameResolvingToMetadata": "failed:net::ERR_TUNNEL_CONNECTION_FAILED",
+        "hostnameResolvingToRfc1918": "failed:net::ERR_TUNNEL_CONNECTION_FAILED",
+        "ipv6Loopback": "failed:net::ERR_TUNNEL_CONNECTION_FAILED",
+        "publicIpLiteral": "failed:net::ERR_TUNNEL_CONNECTION_FAILED",
+        "plainHttp": "loaded:405:example.com",
+        "alternatePort8443": "failed:net::ERR_TUNNEL_CONNECTION_FAILED",
+        "alternatePort8080": "failed:net::ERR_TUNNEL_CONNECTION_FAILED"
+      }
+    },
+    "decisions": [
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "AUTH"
+      },
+      {
+        "host": "example.com",
+        "allowed": true,
+        "reason": "ALLOWED"
+      },
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "AUTH"
+      },
+      {
+        "host": "www.iana.org",
+        "allowed": false,
+        "reason": "SCOPE"
+      },
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "AUTH"
+      },
+      {
+        "host": "wikipedia.org",
+        "allowed": true,
+        "reason": "ALLOWED"
+      },
+      {
+        "host": "www.wikipedia.org",
+        "allowed": false,
+        "reason": "SCOPE"
+      },
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "AUTH"
+      },
+      {
+        "host": "localtest.me",
+        "allowed": false,
+        "reason": "DNS"
+      },
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "AUTH"
+      },
+      {
+        "host": "169.254.169.254.nip.io",
+        "allowed": false,
+        "reason": "DNS"
+      },
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "AUTH"
+      },
+      {
+        "host": "10.0.0.5.nip.io",
+        "allowed": false,
+        "reason": "DNS"
+      },
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "AUTH"
+      },
+      {
+        "host": "::1",
+        "allowed": false,
+        "reason": "SCOPE"
+      },
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "AUTH"
+      },
+      {
+        "host": "1.1.1.1",
+        "allowed": false,
+        "reason": "SCOPE"
+      },
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "METHOD"
+      },
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "AUTH"
+      },
+      {
+        "host": "example.com",
+        "allowed": false,
+        "reason": "PORT"
+      },
+      {
+        "host": "",
+        "allowed": false,
+        "reason": "AUTH"
+      },
+      {
+        "host": "example.com",
+        "allowed": false,
+        "reason": "PORT"
+      }
+    ],
+    "permissiveDials": [],
+    "canaryHits": 0
+  },
+  "controlPermissiveProxy": {
+    "scenario": "control-permissive-proxy",
+    "browserNetwork": "xroga-browser-internal",
+    "proxyReady": true,
+    "canaryReady": true,
+    "result": {
+      "raw": {
+        "proxyPort": "connected",
+        "proxyOtherPorts": {
+          "22": "error:ECONNREFUSED",
+          "80": "error:ECONNREFUSED",
+          "443": "error:ECONNREFUSED",
+          "3129": "error:ECONNREFUSED",
+          "8080": "error:ECONNREFUSED"
+        },
+        "publicIp": {
+          "1.1.1.1:443": "error:ENETUNREACH",
+          "1.1.1.1:80": "error:ENETUNREACH",
+          "1.1.1.1:53": "error:ENETUNREACH",
+          "8.8.8.8:443": "error:ENETUNREACH",
+          "93.184.216.34:443": "error:ENETUNREACH",
+          "1.1.1.1:8443": "error:ENETUNREACH"
+        },
+        "udpDns": {
+          "1.1.1.1": "no-answer",
+          "8.8.8.8": "no-answer"
+        },
+        "publicDns": "error:ESERVFAIL",
+        "ipv6Public": "error:ENETUNREACH",
+        "ipv6Loopback": "error:ECONNREFUSED",
+        "metadata": "error:ENETUNREACH",
+        "privateRanges": {
+          "10.0.0.5": "error:ENETUNREACH",
+          "172.16.0.5": "error:ENETUNREACH",
+          "192.168.1.1": "error:ENETUNREACH",
+          "100.64.0.1": "error:ENETUNREACH"
+        },
+        "loopbackServices": "error:ECONNREFUSED",
+        "gateway": null,
+        "gatewayPorts": {}
+      },
+      "nav": {
+        "withoutProxyFlag": "failed:net::ERR_NAME_NOT_RESOLVED",
+        "authorised": "loaded:200:example.com",
+        "outOfScope": "loaded:200:www.iana.org",
+        "redirectToOutOfScope": "loaded:200:www.wikipedia.org",
+        "hostnameResolvingToLoopback": "failed:net::ERR_CONNECTION_CLOSED",
+        "hostnameResolvingToMetadata": "failed:net::ERR_CERT_AUTHORITY_INVALID",
+        "hostnameResolvingToRfc1918": "failed:other",
+        "ipv6Loopback": "failed:net::ERR_EMPTY_RESPONSE",
+        "publicIpLiteral": "loaded:200:one.one.one.one",
+        "plainHttp": "loaded:200:example.com",
+        "alternatePort8443": "failed:other",
+        "alternatePort8080": "failed:net::ERR_SSL_PROTOCOL_ERROR"
+      }
+    },
+    "decisions": [],
+    "permissiveDials": [
+      "example.com 172.66.147.243:443",
+      "www.iana.org 104.18.24.232:443",
+      "cse.google.com 108.177.121.139:443",
+      "www.google.com 142.251.150.119:443",
+      "www.google.com 142.251.153.119:443",
+      "www.google.com 142.251.150.119:443",
+      "clients1.google.com 192.178.129.139:443",
+      "wikipedia.org 208.80.153.224:443",
+      "www.wikipedia.org 208.80.153.224:443",
+      "localtest.me ::1:443",
+      "localtest.me ::1:443",
+      "169.254.169.254.nip.io 169.254.169.254:443",
+      "10.0.0.5.nip.io 10.0.0.5:443",
+      "1.1.1.1 1.1.1.1:443",
+      "one.one.one.one 1.0.0.1:443",
+      "example.com 172.66.147.243:8443",
+      "example.com 104.20.23.154:8080",
+      "example.com 172.66.147.243:8080"
+    ],
+    "canaryHits": 2
+  },
+  "controls": {
+    "bridgeBrowserCanBypass": {
+      "publicIpReachable": true,
+      "publicDnsResolves": true,
+      "chromiumWithoutProxyFlagLoaded": true
+    },
+    "permissiveProxyIsDetected": {
+      "canaryHit": true,
+      "dialedLoopback": true,
+      "dialedMetadata": true,
+      "dialedRfc1918": true
+    }
+  },
+  "acceptOk": true,
+  "bridgeShown": true,
+  "permissiveShown": true,
+  "limits": [
+    "One host. The same battery must pass on the target host (OCI-SANDBOX-VERIFICATION.md).",
+    "The DNS-name cases use public names that resolve to internal addresses (localtest.me, *.nip.io); they require outbound internet and the services staying up.",
+    "The internal network has no default gateway, so the host-gateway check is true by construction.",
+    "Host-level firewall rules for the proxy container (DOCKER-USER / security group) are NOT exercised here: the proxy runs the production policy, and this run shows what that policy refuses."
+  ]
+}

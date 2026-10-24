@@ -1,0 +1,167 @@
+{
+  "label": "GCE_HOST_TESTED",
+  "hostArch": "amd64",
+  "verdict": "HOST_REJECTED",
+  "passed": 30,
+  "total": 31,
+  "reasons": [
+    "isolation.both-weakened-controls-show-weakness: bridge=true permissive=false"
+  ],
+  "criteria": [
+    {
+      "id": "host.architecture-known",
+      "pass": true,
+      "detail": "host arch \"x86_64\""
+    },
+    {
+      "id": "host.docker-engine-same-arch",
+      "pass": true,
+      "detail": "shell x86_64, docker engine x86_64"
+    },
+    {
+      "id": "host.is-gce",
+      "pass": true,
+      "detail": "metadata machineType=e2-standard-2 zone=us-central1-a"
+    },
+    {
+      "id": "sandbox.label-matches",
+      "pass": true,
+      "detail": "evidenceClass GCE_HOST_TESTED"
+    },
+    {
+      "id": "sandbox.not-emulated-or-quick",
+      "pass": true,
+      "detail": "platform=host default quick=false"
+    },
+    {
+      "id": "sandbox.image-arch-matches-host",
+      "pass": true,
+      "detail": "image amd64, host amd64"
+    },
+    {
+      "id": "sandbox.hardened-on-and-conforming",
+      "pass": true,
+      "detail": "hardened=SANDBOX_ON"
+    },
+    {
+      "id": "sandbox.control-blocked",
+      "pass": true,
+      "detail": "control=BLOCKED"
+    },
+    {
+      "id": "sandbox.six-weakened-variants-detected",
+      "pass": true,
+      "detail": "6/6"
+    },
+    {
+      "id": "sandbox.cleanup",
+      "pass": true,
+      "detail": "leftover containers=0, networks=0"
+    },
+    {
+      "id": "isolation.label-matches",
+      "pass": true,
+      "detail": "evidenceClass GCE_HOST_TESTED"
+    },
+    {
+      "id": "isolation.not-emulated",
+      "pass": true,
+      "detail": "platform=host default"
+    },
+    {
+      "id": "isolation.image-arch-matches-host",
+      "pass": true,
+      "detail": "image amd64, host amd64"
+    },
+    {
+      "id": "isolation.all-21-checks",
+      "pass": true,
+      "detail": "acceptOk=true 21/21"
+    },
+    {
+      "id": "isolation.internal-network",
+      "pass": true,
+      "detail": "mode=internal"
+    },
+    {
+      "id": "isolation.same-browser-image-as-probe",
+      "pass": true,
+      "detail": "browser image id equal in both runs"
+    },
+    {
+      "id": "isolation.both-weakened-controls-show-weakness",
+      "pass": false,
+      "detail": "bridge=true permissive=false"
+    },
+    {
+      "id": "isolation.production-proxy",
+      "pass": true,
+      "detail": "proxy image and egressProxy.ts hash recorded"
+    },
+    {
+      "id": "seccomp.profile-equals-derivation",
+      "pass": true,
+      "detail": "seccomp-chromium.json matches its derivation\nexit=0"
+    },
+    {
+      "id": "source.recorded-and-clean",
+      "pass": true,
+      "detail": "commit=8037e1d4144a4e68cad20eaba83c2f437d3ec09a tree=clean collected=20261024T175650Z "
+    },
+    {
+      "id": "inputs.container-spec-is-the-reviewed-file",
+      "pass": true,
+      "detail": "recorded 59baef8f93…"
+    },
+    {
+      "id": "inputs.seccomp-profile-is-the-reviewed-file",
+      "pass": true,
+      "detail": "recorded 4065c77710…"
+    },
+    {
+      "id": "inputs.dockerfile-is-the-reviewed-file",
+      "pass": true,
+      "detail": "recorded af8e2d2062…"
+    },
+    {
+      "id": "inputs.probe-is-the-reviewed-file",
+      "pass": true,
+      "detail": "recorded 024d55b387…"
+    },
+    {
+      "id": "inputs.package-lock-is-the-reviewed-file",
+      "pass": true,
+      "detail": "recorded eef7da61fd…"
+    },
+    {
+      "id": "inputs.isolation:backend/src/workers/egressProxy.ts-is-the-reviewed-file",
+      "pass": true,
+      "detail": "recorded 29e977db65…"
+    },
+    {
+      "id": "inputs.isolation:backend/src/workers/proxySidecar.ts-is-the-reviewed-file",
+      "pass": true,
+      "detail": "recorded 363fecf2f4…"
+    },
+    {
+      "id": "inputs.isolation:backend/src/security/boundedPublicGet.ts-is-the-reviewed-file",
+      "pass": true,
+      "detail": "recorded 9a20c8cc0e…"
+    },
+    {
+      "id": "inputs.isolation:deploy/browser-worker/Dockerfile.proxy-is-the-reviewed-file",
+      "pass": true,
+      "detail": "recorded 9946147ce8…"
+    },
+    {
+      "id": "inputs.isolation:deploy/browser-worker/container-spec.json-is-the-reviewed-file",
+      "pass": true,
+      "detail": "recorded 59baef8f93…"
+    },
+    {
+      "id": "bundle.checksums-match",
+      "pass": true,
+      "detail": "every file matches SHA256SUMS"
+    }
+  ]
+}
