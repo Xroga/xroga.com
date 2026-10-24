@@ -71,7 +71,7 @@ Row numbers refer to rows of this table (they are references, not new requiremen
 |---|---|---|---|
 | 32 | GitHub write access and first remote CI | **PASS** | Phase 1; this phase's CI runs are green |
 | 33 | R2 provider suite | **PASS** | Phase 1 (9/9). Owner cleanup still open and not blocking: revoke the temporary token, delete the local secrets file, delete the empty test bucket |
-| 34 | Batch 1 `TenantContext` accepted into `main` | **BLOCKED (B-3)**: ready, awaiting the founder's merge | Codex's full stack cannot merge safely (its startup gate needs a KMS provider Fly does not have). The canonical core is separable: `claude/b15-tenantcontext-core` @ `5c66fd37`, Codex's files byte-identical, CI green (`unit-tests` 40110784081: backend 0 failures; frontend failures identical to `main`). `BATCH1-MERGE-SEQUENCE.md` |
+| 34 | Batch 1 `TenantContext` accepted into `main` | **PASS** | PR #847 merged 2026-10-24 as `404bfa30` under the founder's conditional authorization: Codex's canonical files byte-identical to #846, no startup gate, no migration, no configuration or secret. PR checks: API build pass; backend 2732 tests 0 failures (including the production remote-identity path); frontend failures identical to `main`; `authenticated-browser` cannot run on `main`'s workflow (no `E2E_*` secrets). `fly-deploy.yml` run 40115475587 succeeded; production `/health` and `/ready` report release `404bfa30`; unauthenticated, invalid-token and forged-header requests return the same 401 responses as the pre-merge baseline. Rollback recorded: Fly v1247 image `deployment-01M5ND22CPARR6DQK98GRRH81E` |
 | 35 | Read-only cloud facts, checklist A | **PASS** | A1 Cloudflare, A2 database counts (founder-approved read-only query, run once), A3 Fly, A4 Redis (unused), A5 Supabase (free plan, no provider backups): `CLOUD-FACTS-2026-10-24.md` |
 
 ## B. Evidence register
@@ -100,7 +100,7 @@ Row numbers refer to rows of this table (they are references, not new requiremen
 |---|---|---|---|---|---|
 | **B-1** OCI host | **BLOCKED** | hardened container, sandbox ON, egress isolation and weakened controls on an authorized OCI host | amd64 `DOCKER_LOCAL_TESTED`; the collector and evaluator are tested (26 evaluator tests, three mutants caught; end-to-end self-test 32/32 on Docker Desktop, labelled as a self-test only) | create the Always Free A1 instance (steps in the final report), then I run `prepare-host.sh` and `collect-host-evidence.sh OCI_HOST_TESTED` over SSH and evaluate the bundle | yes: the account checks and the instance |
 | **B-2** native ARM64 | **BLOCKED** | the same on native ARM64 | emulation diagnostic only (not acceptance) | the same run with `ARM64_HOST_TESTED` on the A1 instance | same instance |
-| **B-3** TenantContext in `main` | **BLOCKED**, ready | `claude/b15-tenantcontext-core` merged into `main` | see row 34; Phase 2 adoption on this branch passes CI (run 40111756070) with a forgery test (missing, hand-built, spread and JSON-cloned contexts never reach Drive; mutant caught) | merge the core branch (deploys the API through `fly-deploy.yml`; no migration, no startup change) | yes: the merge |
+| **B-3** TenantContext in `main` | **PASS** | none | row 34 | none | no (a signed-in check on xroga.com by the founder is the last manual confirmation) |
 | **B-4** cloud facts | **PASS** | none | `CLOUD-FACTS-2026-10-24.md` | none | no |
 
 ## D2. Security and reliability findings (not Phase 2 criteria; disposition)
