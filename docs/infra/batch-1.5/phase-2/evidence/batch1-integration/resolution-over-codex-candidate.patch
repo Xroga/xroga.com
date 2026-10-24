@@ -1,0 +1,1198 @@
+diff --git a/.github/workflows/supabase-migrate.yml b/.github/workflows/supabase-migrate.yml
+index 3dba9e46..bf5d1344 100644
+--- a/.github/workflows/supabase-migrate.yml
++++ b/.github/workflows/supabase-migrate.yml
+@@ -24,11 +24,37 @@ concurrency:
+   cancel-in-progress: false
+ 
+ jobs:
++  # Pull requests get ONLY this job: no environment, no secret, read-only token, no network or database. It replaces a "dry run" that
++  # connected to the live database with the repository's Supabase credentials (through the Preview environment, which has no secrets of
++  # its own) and executed CREATE SCHEMA / CREATE TABLE IF NOT EXISTS against it.
++  validate-migrations:
++    if: github.event_name == 'pull_request'
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    permissions:
++      contents: read
++    steps:
++      - uses: actions/checkout@v5
++        with:
++          fetch-depth: 0
++          persist-credentials: false
++      - uses: actions/setup-node@v6
++        with:
++          node-version-file: '.node-version'
++          cache: npm
++      - name: Install dependencies (no secrets, read-only token)
++        run: npm ci --workspaces=false
++      - name: SQL grammar and migration identifier verification (Batch 1)
++        run: node scripts/ci/validate-migrations.mjs
++      - name: Offline migration review check (Phase 2)
++        run: node scripts/check-supabase-migrations.mjs --base "origin/${{ github.base_ref }}"
++
++  # Applies migrations. Runs only for a push to main (or a manual dispatch, whose steps below still require ref main): never for a pull request.
+   migrate:
++    if: github.event_name != 'pull_request'
+     runs-on: ubuntu-latest
+     timeout-minutes: 15
+-    environment: ${{ github.event_name == 'pull_request' && 'Preview' || 'Production' }}
+-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
++    environment: Production
+ 
+     steps:
+       - uses: actions/checkout@v5
+@@ -65,7 +91,3 @@ jobs:
+           SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SERVICE_KEY || secrets.SUPABASE_SECRET_KEY }}
+         run: node backend/scripts/verify-community-rls.mjs
+-
+-      - name: Secret-free SQL and migration identifier verification on pull request
+-        if: github.event_name == 'pull_request'
+-        run: node scripts/ci/validate-migrations.mjs
+diff --git a/backend/package-lock.json b/backend/package-lock.json
+index 29da92f7..647fab4b 100644
+--- a/backend/package-lock.json
++++ b/backend/package-lock.json
+@@ -10,6 +10,7 @@
+       "hasInstallScript": true,
+       "dependencies": {
+         "@aws-sdk/client-s3": "^3.750.0",
++        "@aws-sdk/s3-request-presigner": "^3.1075.0",
+         "@cline/sdk": "0.0.82",
+         "@supabase/supabase-js": "2.110.7",
+         "bullmq": "^5.41.2",
+@@ -309,17 +310,17 @@
+       }
+     },
+     "node_modules/@aws-sdk/core": {
+-      "version": "3.978.0",
+-      "resolved": "https://registry.npmjs.org/@aws-sdk/core/-/core-3.978.0.tgz",
+-      "integrity": "sha512-2yX9LUmxPklVjSGTb8dfnWRJSiFQ3TeH2nn7G1mdKHTfnabzF0+gfrS8rYfLWmZrQ8A3mEcxMJjRc51dL5KWaA==",
++      "version": "3.978.5",
++      "resolved": "https://registry.npmjs.org/@aws-sdk/core/-/core-3.978.5.tgz",
++      "integrity": "sha512-ruI0AWqcrfL20XDS6SwZIJFPOBZ6N0ADa9nLzWlBhxk1aoUjbUX3JkTR9vEmk7o35XpAHi68ahZ4T6RE2U9XyA==",
+       "license": "Apache-2.0",
+       "dependencies": {
+-        "@aws-sdk/types": "^3.974.5",
+-        "@aws-sdk/xml-builder": "^3.972.40",
++        "@aws-sdk/types": "^3.975.0",
++        "@aws-sdk/xml-builder": "^3.972.41",
+         "@aws/lambda-invoke-store": "^0.3.0",
+-        "@smithy/core": "^3.33.3",
+-        "@smithy/signature-v4": "^5.6.12",
+-        "@smithy/types": "^4.17.2",
++        "@smithy/core": "^3.36.1",
++        "@smithy/signature-v4": "^5.7.4",
++        "@smithy/types": "^4.19.0",
+         "bowser": "^2.11.0",
+         "tslib": "^2.6.2"
+       },
+@@ -554,15 +555,32 @@
+         "node": ">=20.0.0"
+       }
+     },
++    "node_modules/@aws-sdk/s3-request-presigner": {
++      "version": "3.1156.0",
++      "resolved": "https://registry.npmjs.org/@aws-sdk/s3-request-presigner/-/s3-request-presigner-3.1156.0.tgz",
++      "integrity": "sha512-M4yj4HmAPydhIMxKK90eTcnHr5FHBl000d2oFMAWpt+XPX86c2kmNJpiYbKrPLIe8jyK9sweRt5CDdWrhq/QTg==",
++      "license": "Apache-2.0",
++      "dependencies": {
++        "@aws-sdk/core": "^3.978.5",
++        "@aws-sdk/signature-v4-multi-region": "^3.996.49",
++        "@aws-sdk/types": "^3.975.0",
++        "@smithy/core": "^3.36.1",
++        "@smithy/types": "^4.19.0",
++        "tslib": "^2.6.2"
++      },
++      "engines": {
++        "node": ">=20.0.0"
++      }
++    },
+     "node_modules/@aws-sdk/signature-v4-multi-region": {
+-      "version": "3.996.46",
+-      "resolved": "https://registry.npmjs.org/@aws-sdk/signature-v4-multi-region/-/signature-v4-multi-region-3.996.46.tgz",
+-      "integrity": "sha512-L+2xZTye/2T96f3lwCws0Zw6GG2JHZW9e8FpVgGBeeExSKyeoZ6CWRpBml/7DNiK/O26jrgPM9F+Ay8VkgzUWQ==",
++      "version": "3.996.49",
++      "resolved": "https://registry.npmjs.org/@aws-sdk/signature-v4-multi-region/-/signature-v4-multi-region-3.996.49.tgz",
++      "integrity": "sha512-nvuAZNRrRRVCiARRKsYlQ0VnXiEQiq7vXPH+UA+LSo+kN3Djl9eo/V2r0udkw85PnsNshmv2Em1clld5M3j67w==",
+       "license": "Apache-2.0",
+       "dependencies": {
+-        "@aws-sdk/types": "^3.974.5",
+-        "@smithy/signature-v4": "^5.6.12",
+-        "@smithy/types": "^4.17.2",
++        "@aws-sdk/types": "^3.975.0",
++        "@smithy/signature-v4": "^5.7.4",
++        "@smithy/types": "^4.19.0",
+         "tslib": "^2.6.2"
+       },
+       "engines": {
+@@ -587,12 +605,12 @@
+       }
+     },
+     "node_modules/@aws-sdk/types": {
+-      "version": "3.974.5",
+-      "resolved": "https://registry.npmjs.org/@aws-sdk/types/-/types-3.974.5.tgz",
+-      "integrity": "sha512-LkwLL2BLbC6wNNm4JaH9mbEqBMdOZCct6VAYqhdN4U1xrWM+fUJQEfbHwQgDypapOWTRtlk25akb5afM0P8CIQ==",
++      "version": "3.975.0",
++      "resolved": "https://registry.npmjs.org/@aws-sdk/types/-/types-3.975.0.tgz",
++      "integrity": "sha512-WQlhs6juByzWOzj5fwxOx0mPJaEqMcG/sDpl3Id61B3XhKE63xY+0QWcnG+sWR/sCfprmreyUo1lM7IKZmHMzw==",
+       "license": "Apache-2.0",
+       "dependencies": {
+-        "@smithy/types": "^4.17.2",
++        "@smithy/types": "^4.19.0",
+         "tslib": "^2.6.2"
+       },
+       "engines": {
+@@ -600,12 +618,12 @@
+       }
+     },
+     "node_modules/@aws-sdk/xml-builder": {
+-      "version": "3.972.40",
+-      "resolved": "https://registry.npmjs.org/@aws-sdk/xml-builder/-/xml-builder-3.972.40.tgz",
+-      "integrity": "sha512-wlFmCIGUlwF4zx/kncw+bmxTQh1HeSJq4mYV/V5cZUSJadDP3kXvGW8Rn21cimj/7y9ju+47oYWXi97vF7czaA==",
++      "version": "3.972.41",
++      "resolved": "https://registry.npmjs.org/@aws-sdk/xml-builder/-/xml-builder-3.972.41.tgz",
++      "integrity": "sha512-ctjVSyCMegrWfXlx6VqzSBFI6UqmQ5ZlnfMhdLIiWmhoH8UAQxSCP5N3OpG7X3k4LnS7ou74C4mt20+bfTW2aQ==",
+       "license": "Apache-2.0",
+       "dependencies": {
+-        "@smithy/types": "^4.17.2",
++        "@smithy/types": "^4.19.0",
+         "tslib": "^2.6.2"
+       },
+       "engines": {
+@@ -3000,12 +3018,12 @@
+       }
+     },
+     "node_modules/@smithy/core": {
+-      "version": "3.34.1",
+-      "resolved": "https://registry.npmjs.org/@smithy/core/-/core-3.34.1.tgz",
+-      "integrity": "sha512-dLcOUxz8YCv1RZUMKq6GbyUf95pLbrqh34bPvpCZ1+CByFF31BEAFewZjsGCnVsZTKdThNENfGyAgk2TJqVwSw==",
++      "version": "3.36.2",
++      "resolved": "https://registry.npmjs.org/@smithy/core/-/core-3.36.2.tgz",
++      "integrity": "sha512-oRw0rB9QSUiCZfEs23G5F4Af+b2rQt1lItIICWu5IejFNd+uPM8SWqiKLMpQ6bX1Q7slsLbjuoE2niErFtkVPQ==",
+       "license": "Apache-2.0",
+       "dependencies": {
+-        "@smithy/types": "^4.18.0",
++        "@smithy/types": "^4.19.0",
+         "tslib": "^2.6.2"
+       },
+       "engines": {
+@@ -3068,13 +3086,13 @@
+       }
+     },
+     "node_modules/@smithy/signature-v4": {
+-      "version": "5.7.3",
+-      "resolved": "https://registry.npmjs.org/@smithy/signature-v4/-/signature-v4-5.7.3.tgz",
+-      "integrity": "sha512-7ImGm+FkHRLcBaRttIAMZ6bzJZWb2cJGoYjq46F2UjycujWzrL9GEN9h4w7eQyXJYnltrUhxbbieBAIRrdqpow==",
++      "version": "5.7.4",
++      "resolved": "https://registry.npmjs.org/@smithy/signature-v4/-/signature-v4-5.7.4.tgz",
++      "integrity": "sha512-tHy0K0VtqNd5Y7Y41h0a0Lhh0L1GzC08dTWg0F7vRJWFtTENg7IZikf3wQkanYIRdb7ngoIPMTmqgUi401fEeQ==",
+       "license": "Apache-2.0",
+       "dependencies": {
+-        "@smithy/core": "^3.33.3",
+-        "@smithy/types": "^4.17.2",
++        "@smithy/core": "^3.35.0",
++        "@smithy/types": "^4.19.0",
+         "tslib": "^2.6.2"
+       },
+       "engines": {
+@@ -3082,9 +3100,9 @@
+       }
+     },
+     "node_modules/@smithy/types": {
+-      "version": "4.18.0",
+-      "resolved": "https://registry.npmjs.org/@smithy/types/-/types-4.18.0.tgz",
+-      "integrity": "sha512-CgB6HHWer/vrKps24ulRIbpcpb7K4xAU7SkZ7YHzBPlwHsvsrCJFEXK421s+cJzX+ZrqtA/TuU5w1HzI7k9N8A==",
++      "version": "4.19.0",
++      "resolved": "https://registry.npmjs.org/@smithy/types/-/types-4.19.0.tgz",
++      "integrity": "sha512-r7jh49VJxGerfAcTQA6gXcKc+98zOp/tqRwzYjgOE+iSQsP6cEU1hq2QzbuipmP68QtYdY9wKEhiCQZIzHgZ4Q==",
+       "license": "Apache-2.0",
+       "dependencies": {
+         "tslib": "^2.6.2"
+diff --git a/backend/src/index.ts b/backend/src/index.ts
+index 6c070c1b..1e55be20 100644
+--- a/backend/src/index.ts
++++ b/backend/src/index.ts
+@@ -1,4 +1,5 @@
+ import 'dotenv/config';
++import './runtime/installSafeLogging.js';
+ import { createServer } from 'http';
+ import express from 'express';
+ import cors from 'cors';
+@@ -40,6 +41,12 @@ import { metricsMiddleware, getMetricsText } from './middleware/metricsMiddlewar
+ import { getSupabaseCounterText } from './lib/supabaseCallCounters.js';
+ import { phase1AuthMiddleware } from './middleware/phase1Auth.js';
+ import mediaRouter from './routes/media.js';
++import driveRouter from './routes/drive.js';
++import { resolveStorageConfig } from './storage/runtime.js';
++import { probeDatabaseTls } from './storage/databaseTls.js';
++import { decideStartup } from './runtime/startupPolicy.js';
++import { apiProbes, runReadiness } from './runtime/readiness.js';
++import { redactText } from './runtime/safeLogging.js';
+ import capabilitiesRouter from './routes/capabilities.js';
+ import { adminMiddleware } from './middleware/admin.js';
+ import {
+@@ -88,9 +95,9 @@ app.use(
+     crossOriginResourcePolicy: { policy: 'cross-origin' },
+   })
+ );
+-// Never record signed capability/OAuth/query credentials in request URLs.
+-morgan.token('safe-path',req=>req.url?.split('?')[0]??'/');
+-app.use(morgan(':method :safe-path :status :response-time ms'));
++// Never record signed capability/OAuth/query credentials in request URLs (path only), and redact whatever remains.
++morgan.token('safe-path', (req) => (req as { url?: string }).url?.split('?')[0] ?? '/');
++app.use(morgan(':method :safe-path :status :response-time ms', { stream: { write: (line: string) => { process.stdout.write(redactText(line)); } } }));
+ 
+ const allowedOrigins = [
+   process.env.FRONTEND_URL,
+@@ -167,17 +174,20 @@ app.get('/health', (_req, res) => {
+ });
+ 
+ app.get('/ready', credentialVaultReadinessMiddleware(credentialVaultReadiness), async (_req, res) => {
+-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+-    res.status(503).json({ status: 'not_ready', reason: 'database_not_configured' });
+-    return;
+-  }
+-  try {
+-    await probeDatabaseReadiness();
++  // Fixed reason codes only (see runtime/readiness.ts): this endpoint is reachable without authentication.
++  // Batch 1's middleware above is kept as the canonical custody gate; the evaluator reuses its round trip, it does not reimplement it.
++  const result = await runReadiness(apiProbes(process.env, {
++    database: probeDatabaseReadiness,
++    databaseTls: probeDatabaseTls,
++    custodyRoundTrip: () => credentialVaultReadiness.checkReadiness(),
++  }));
++  if (result.ready) {
+     const health = publicHealthPayload();
+     res.json({ status: 'ready', service: 'xroga-api', release: health.release, timestamp: new Date().toISOString() });
+-  } catch {
+-    res.status(503).json({ status: 'not_ready', reason: 'database_unavailable' });
++    return;
+   }
++  const failing = result.checks.find((c) => c.status === 'fail');
++  res.status(503).json({ status: 'not_ready', reason: failing?.reason ?? 'not_ready', checks: result.checks });
+ });
+ 
+ app.get('/api/health', (_req, res) => {
+@@ -230,6 +240,7 @@ app.use('/api/profile', authMiddleware, profileRouter);
+ // Showcase template export writes to a user's repository, so it is auth-gated.
+ app.use('/api/showcase', authMiddleware, showcaseRouter);
+ app.use('/api/media', authMiddleware, mediaRouter);
++app.use('/api/drive', authMiddleware, driveRouter);
+ app.use('/api/capabilities', authMiddleware, capabilitiesRouter);
+ app.use('/api/debug', authMiddleware, debugRouter);
+ app.use('/api/wellbeing', authMiddleware, wellbeingRouter);
+@@ -282,7 +293,15 @@ server.listen(port, '0.0.0.0', () => {
+   if (!process.env.SUPABASE_URL) {
+     console.warn('WARNING: SUPABASE_URL is not set — authenticated routes will fail');
+   }
+-  // Schema changes belong to the migration gate, never request/startup credentials.
++  { // an invalid storage switch must be loud at boot; writes then fail closed (see storage/runtime.ts)
++    const storageCfg = resolveStorageConfig();
++    if (storageCfg.problems.length) console.error('[storage] INVALID CONFIGURATION:', storageCfg.problems.join('; '));
++  }
++  // Schema changes belong to the migration gate, never request/startup credentials (Batch 1). The remaining database-writing boot duty,
++  // reconciling runs a previous process left active, runs only in a process positively identified as production or local development.
++  const startup = decideStartup();
++  for (const note of startup.notes) console.warn(`[startup] ${note}`);
++  console.log(`[startup] environment=${startup.environment} (${startup.source}) orphanReconcile=${startup.duties.reconcileOrphanedRuns}`);
+   // Provider health survives this restart (§15). Without it a circuit opened against a
+   // failing provider was forgotten on every deploy, and the model went straight back into
+   // rotation — a breaker that resets exactly when a bad deploy lands protects nothing.
+@@ -298,9 +317,11 @@ server.listen(port, '0.0.0.0', () => {
+     });
+   // Reconcile only stale durable worker leases. During a rolling deploy the outgoing
+   // API may still own a long build, so a row being old and `running` is not enough.
+-  void reconcileOrphanedRuns().catch((err) => {
+-    console.warn('[runReconciler] Startup reconcile skipped:', (err as Error).message);
+-  });
++  if (startup.duties.reconcileOrphanedRuns) {
++    void reconcileOrphanedRuns().catch((err) => {
++      console.warn('[runReconciler] Startup reconcile skipped:', (err as Error).message);
++    });
++  }
+   // Registers a hosted isolation worker only if an operator configured one. With no
+   // XROGA_SANDBOX_WORKER_URL this does nothing and costs nothing: the container
+   // providers are tried and, failing those, executable validation refuses rather than
+diff --git a/backend/src/routes/drive.test.ts b/backend/src/routes/drive.test.ts
+new file mode 100644
+index 00000000..57595651
+--- /dev/null
++++ b/backend/src/routes/drive.test.ts
+@@ -0,0 +1,99 @@
++import assert from 'node:assert/strict';
++import { createTenantContext, type TenantContext } from '../security/tenantContext.js';
++import type { AddressInfo } from 'node:net';
++import { after, before, describe, it } from 'node:test';
++import express from 'express';
++import { sha256Hex } from '../storage/integrity.js';
++import { harness, type Harness } from '../storage/testing/harness.js';
++import { createDriveRouter } from './drive.js';
++
++/** Real HTTP server, real router and validation; identity is injected exactly where authMiddleware would set it. */
++describe('/api/drive routes', () => {
++  let h: Harness;
++  let base: string;
++  let server: ReturnType<ReturnType<typeof express>['listen']>;
++  let configured = true;
++
++  before(async () => {
++    h = harness();
++    const app = express();
++    app.use(express.json());
++    app.use((req, _res, next) => {
++      const as = req.header('x-test-user');
++      // what Batch 1's auth middleware does: an ISSUED context, never a bare user id
++      if (as) {
++        const r = req as unknown as { userId: string; tenantContext: TenantContext };
++        r.tenantContext = createTenantContext({ userId: as, via: 'local_jwt' });
++        r.userId = as; // the middleware sets both
++      }
++      next();
++    });
++    app.use('/api/drive', createDriveRouter(() => (configured ? h.svc : null)));
++    await new Promise<void>((r) => { server = app.listen(0, '127.0.0.1', () => r()); });
++    base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/api/drive`;
++  });
++  after(() => { server.close(); });
++
++  const call = async (user: string | null, method: string, path: string, body?: unknown) => {
++    const r = await fetch(base + path, { method, headers: { 'content-type': 'application/json', ...(user ? { 'x-test-user': user } : {}) }, body: body === undefined ? undefined : JSON.stringify(body) });
++    const text = await r.text();
++    // eslint-disable-next-line @typescript-eslint/no-explicit-any
++    return { status: r.status, cache: r.headers.get('cache-control'), json: (text ? JSON.parse(text) : null) as any, text };
++  };
++
++  it('end to end over HTTP: initiate, upload to the synthetic provider, complete, sign, download, delete', async () => {
++    const body = Buffer.from('over http');
++    const i = await call(h.alice.userId, 'POST', '/uploads', { filename: 'h.txt', contentType: 'text/plain', size: body.length, sha256: sha256Hex(body) });
++    assert.equal(i.status, 201);
++    assert.equal(i.cache, 'no-store');
++    assert.equal(h.store.clientPut(i.json.upload.url, i.json.upload.headers, body).status, 200);
++    const c = await call(h.alice.userId, 'POST', `/uploads/${i.json.objectId}/complete`, {});
++    assert.equal(c.status, 200);
++    assert.equal(c.json.state, 'READY');
++    const d = await call(h.alice.userId, 'POST', `/objects/${i.json.objectId}/download-url`, {});
++    assert.equal(d.status, 200);
++    assert.deepEqual(h.store.clientGet(d.json.url).body, body);
++    const list = await call(h.alice.userId, 'GET', '/objects');
++    assert.equal(list.json.objects.length, 1);
++    assert.equal((await call(h.alice.userId, 'DELETE', `/objects/${i.json.objectId}`)).status, 204);
++    assert.equal((await call(h.alice.userId, 'POST', `/objects/${i.json.objectId}/download-url`, {})).status, 404);
++  });
++
++  it('identity cannot be supplied by the client: owner/tenant fields are rejected, other users get 404', async () => {
++    const i = await call(h.alice.userId, 'POST', '/uploads', { filename: 'a.txt', contentType: 'text/plain', size: 1 });
++    assert.equal((await call(h.alice.userId, 'POST', '/uploads', { filename: 'a.txt', contentType: 'text/plain', size: 1, tenantId: h.bob.tenantId })).status, 400);
++    assert.equal((await call(h.alice.userId, 'POST', '/uploads', { filename: 'a.txt', contentType: 'text/plain', size: 1, ownerUserId: h.bob.userId })).status, 400);
++    assert.equal((await call(h.alice.userId, 'POST', '/uploads', { filename: 'a.txt', contentType: 'text/plain', size: 1, bucket: 'other' })).status, 400);
++    assert.equal((await call(h.bob.userId, 'POST', `/uploads/${i.json.objectId}/complete`, {})).status, 404);
++    assert.equal((await call(h.bob.userId, 'GET', `/objects/${i.json.objectId}`)).status, 404);
++    assert.equal((await call(h.bob.userId, 'DELETE', `/objects/${i.json.objectId}`)).status, 404);
++  });
++
++  it('refuses unauthenticated calls, malformed ids and bad bodies without leaking internals', async () => {
++    assert.equal((await call(null, 'GET', '/objects')).status, 401);
++    assert.equal((await call(h.alice.userId, 'GET', '/objects/not-a-uuid')).status, 404);
++    assert.equal((await call(h.alice.userId, 'GET', '/objects?limit=99999')).status, 400);
++    const bad = await call(h.alice.userId, 'POST', '/uploads', { filename: '', contentType: 'x', size: 'big' });
++    assert.equal(bad.status, 400);
++    assert.ok(!/v1\/tenants|xroga-drive-test|stack|at /.test(bad.text));
++    assert.equal((await call(h.alice.userId, 'POST', '/uploads', { filename: 'a.exe', contentType: 'application/octet-stream', size: 1 })).status, 415);
++  });
++
++  it('quota exhaustion is a 413; unconfigured storage is a 503, never a silent local fallback', async () => {
++    const q = harness({ quota: async () => 5 });
++    const app = express(); app.use(express.json());
++    app.use((req, _res, next) => { const r = req as unknown as { userId: string; tenantContext: TenantContext }; r.tenantContext = createTenantContext({ userId: q.alice.userId, via: 'local_jwt' }); r.userId = q.alice.userId; next(); });
++    app.use('/d', createDriveRouter(() => q.svc));
++    const srv = await new Promise<ReturnType<typeof app.listen>>((r) => { const s = app.listen(0, '127.0.0.1', () => r(s)); });
++    try {
++      const r = await fetch(`http://127.0.0.1:${(srv.address() as AddressInfo).port}/d/uploads`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ filename: 'a.txt', contentType: 'text/plain', size: 6 }) });
++      assert.equal(r.status, 413);
++      assert.equal(((await r.json()) as { code: string }).code, 'QUOTA_EXCEEDED');
++    } finally { srv.close(); }
++    configured = false;
++    const off = await call(h.alice.userId, 'GET', '/objects');
++    configured = true;
++    assert.equal(off.status, 503);
++    assert.equal(off.json.code, 'STORAGE_NOT_CONFIGURED');
++  });
++});
+diff --git a/backend/src/routes/drive.ts b/backend/src/routes/drive.ts
+new file mode 100644
+index 00000000..b5502524
+--- /dev/null
++++ b/backend/src/routes/drive.ts
+@@ -0,0 +1,63 @@
++import { Router, type Response } from 'express';
++import { z } from 'zod';
++import type { AuthRequest } from '../middleware/auth.js';
++import { actorFromTenantContext, getStorageService } from '../storage/runtime.js';
++import type { TenantContext } from '../security/tenantContext.js';
++import type { StorageService } from '../storage/storageService.js';
++import { httpStatusFor, StorageError } from '../storage/types.js';
++import { TenantAccessError } from '../security/tenantErrors.js';
++
++const uuid = z.string().uuid();
++const initiate = z.object({
++  projectId: uuid.nullish(),
++  filename: z.string().min(1).max(255),
++  contentType: z.string().min(3).max(150),
++  size: z.number().int().min(0),
++  sha256: z.string().regex(/^[0-9a-f]{64}$/).nullish(),
++}).strict();
++const parts = z.object({ partNumbers: z.array(z.number().int().min(1).max(10_000)).min(1).max(100) }).strict();
++const complete = z.object({ parts: z.array(z.object({ partNumber: z.number().int().min(1).max(10_000), etag: z.string().min(1).max(200) }).strict()).max(10_000).optional() }).strict();
++const download = z.object({ ttlSeconds: z.number().int().min(1).max(300).optional() }).strict();
++
++function fail(res: Response, err: unknown) {
++  // a request without an issued TenantContext is an authentication failure, never a 500 and never an anonymous actor
++  if (err instanceof TenantAccessError) { res.status(err.status).json({ error: err.message, code: err.code }); return; }
++  if (err instanceof StorageError) {
++    res.status(err.status === 400 ? httpStatusFor(err.code) : err.status).json({ error: err.message, code: err.code });
++    return;
++  }
++  if (err instanceof z.ZodError) { res.status(400).json({ error: 'Invalid request', code: 'INVALID_REQUEST' }); return; }
++  // never echo provider errors: they can carry request ids, hosts or signed material
++  console.error('[drive] unexpected error:', (err as Error)?.name);
++  res.status(500).json({ error: 'Storage request failed', code: 'INTERNAL' });
++}
++
++/** `resolve` is injectable for tests; production uses the lazily-built singleton. */
++export function createDriveRouter(resolve: () => StorageService | null = getStorageService): Router {
++  const router = Router();
++  router.use((_req, res, next) => { res.setHeader('Cache-Control', 'no-store'); next(); });
++
++  const handler = (fn: (svc: StorageService, req: AuthRequest, res: Response) => Promise<unknown>) => async (req: AuthRequest, res: Response) => {
++    const svc = resolve();
++    if (!svc) { res.status(503).json({ error: 'Xroga Drive is not configured on this deployment', code: 'STORAGE_NOT_CONFIGURED' }); return; }
++    if (!req.userId) { res.status(401).json({ error: 'Unauthorized', code: 'NO_TOKEN' }); return; }
++    try { await fn(svc, req, res); } catch (err) { fail(res, err); }
++  };
++  // identity ONLY from the authenticated request; body/query/params can never name a tenant or owner
++  const actor = (req: AuthRequest) => actorFromTenantContext(req.tenantContext as TenantContext);
++  const pid = (req: AuthRequest) => String(req.params.id);
++
++  router.post('/uploads', handler(async (s, req, res) => res.status(201).json(await s.initiateUpload(actor(req), initiate.parse(req.body)))));
++  router.post('/uploads/:id/parts', handler(async (s, req, res) => res.json({ parts: await s.signUploadParts(actor(req), pid(req), parts.parse(req.body).partNumbers) })));
++  router.post('/uploads/:id/complete', handler(async (s, req, res) => res.json(await s.completeUpload(actor(req), pid(req), complete.parse(req.body ?? {})))));
++  router.get('/objects', handler(async (s, req, res) => {
++    const q = z.object({ projectId: uuid.optional(), limit: z.coerce.number().int().min(1).max(500).optional(), after: uuid.optional() }).parse(req.query);
++    res.json({ objects: await s.listObjects(actor(req), { projectId: q.projectId, limit: q.limit, afterId: q.after }) });
++  }));
++  router.get('/objects/:id', handler(async (s, req, res) => res.json(await s.getObjectMeta(actor(req), pid(req)))));
++  router.post('/objects/:id/download-url', handler(async (s, req, res) => res.json(await s.getDownload(actor(req), pid(req), download.parse(req.body ?? {}).ttlSeconds))));
++  router.delete('/objects/:id', handler(async (s, req, res) => { await s.deleteObject(actor(req), pid(req)); res.status(204).end(); }));
++  return router;
++}
++
++export default createDriveRouter();
+diff --git a/backend/src/runtime/bootGuard.test.ts b/backend/src/runtime/bootGuard.test.ts
+new file mode 100644
+index 00000000..8966236d
+--- /dev/null
++++ b/backend/src/runtime/bootGuard.test.ts
+@@ -0,0 +1,59 @@
++import assert from 'node:assert/strict';
++import { readFileSync } from 'node:fs';
++import { describe, it } from 'node:test';
++
++/**
++ * index.ts starts a server when imported, so the boot wiring cannot be exercised as a unit. This test pins the wiring itself: every
++ * database-writing boot duty must sit inside the block that checks the policy decision, so a later edit cannot quietly move a call outside it.
++ */
++const source = readFileSync(new URL('../index.ts', import.meta.url), 'utf8');
++
++/** the text between the braces of the block opened by the first occurrence of `guard` */
++function blockOf(guard: string): { start: number; end: number } {
++  const at = source.indexOf(guard);
++  assert.ok(at >= 0, `missing guard: ${guard}`);
++  const open = source.indexOf('{', at);
++  let depth = 0;
++  for (let i = open; i < source.length; i++) {
++    if (source[i] === '{') depth++;
++    else if (source[i] === '}' && --depth === 0) return { start: open, end: i };
++  }
++  throw new Error('unbalanced braces');
++}
++
++const calls = (re: RegExp): number[] => [...source.matchAll(re)].map((m) => m.index!);
++
++describe('boot duties are gated by the startup policy', () => {
++  it('no schema-ensure call remains at boot: schema changes belong to the migration gate (Batch 1)', () => {
++    assert.equal(calls(/\bensure\w*Schema\(\)/g).length, 0);
++  });
++
++  it('orphaned-run reconciliation is inside `if (startup.duties.reconcileOrphanedRuns)`', () => {
++    const block = blockOf('if (startup.duties.reconcileOrphanedRuns)');
++    const found = calls(/\breconcileOrphanedRuns\(/g);
++    assert.equal(found.length, 1, 'exactly one boot call site');
++    assert.ok(found[0]! > block.start && found[0]! < block.end);
++  });
++
++  it('the decision is made before any duty runs', () => {
++    const decided = source.indexOf('decideStartup()');
++    assert.ok(decided > 0);
++        assert.ok(decided < source.indexOf('if (startup.duties.reconcileOrphanedRuns)'));
++  });
++
++  it('/ready uses the shared evaluator, so it can never report ready on a missing mandatory dependency', () => {
++    assert.match(source, /app\.get\('\/ready'[\s\S]{0,400}runReadiness\(apiProbes\(/);
++  });
++});
++
++describe('credential-safe logging is installed before anything can log', () => {
++  it('the safe-logging module is the first import after environment loading', () => {
++    const imports = [...source.matchAll(/^import\s+(?:[^;]*?from\s+)?'([^']+)';/gm)].map((m) => m[1]);
++    assert.equal(imports[0], 'dotenv/config');
++    assert.equal(imports[1], './runtime/installSafeLogging.js');
++  });
++
++  it('HTTP request logging goes through the redactor (morgan bypasses console)', () => {
++    assert.match(source, /morgan\(':method :safe-path[^']*',\s*\{\s*stream:\s*\{\s*write:[^}]*redactText\(/);
++  });
++});
+diff --git a/backend/src/runtime/startupPolicy.test.ts b/backend/src/runtime/startupPolicy.test.ts
+new file mode 100644
+index 00000000..ba1f0ce4
+--- /dev/null
++++ b/backend/src/runtime/startupPolicy.test.ts
+@@ -0,0 +1,69 @@
++import assert from 'node:assert/strict';
++import { describe, it } from 'node:test';
++import { decideStartup, dutiesFor, resolveDeploymentEnvironment, PRODUCTION_FLY_APP } from './startupPolicy.js';
++
++const env = (e: Record<string, string | undefined>): NodeJS.ProcessEnv => e;
++const NO_DUTIES = { reconcileOrphanedRuns: false };
++const ALL_DUTIES = { reconcileOrphanedRuns: true };
++
++describe('deployment environment resolution', () => {
++  it('the production Fly app is production with no new configuration, so today\'s deployment is unchanged', () => {
++    const r = resolveDeploymentEnvironment(env({ FLY_APP_NAME: PRODUCTION_FLY_APP, NODE_ENV: 'production' }));
++    assert.deepEqual([r.environment, r.source], ['production', 'inferred']);
++    assert.deepEqual(decideStartup(env({ FLY_APP_NAME: PRODUCTION_FLY_APP })).duties, ALL_DUTIES);
++  });
++
++  it('an explicit environment is honoured', () => {
++    for (const e of ['production', 'staging', 'preview', 'development', 'test']) {
++      assert.equal(resolveDeploymentEnvironment(env({ XROGA_DEPLOYMENT_ENVIRONMENT: e })).environment, e);
++      assert.equal(resolveDeploymentEnvironment(env({ XROGA_DEPLOYMENT_ENVIRONMENT: ` ${e.toUpperCase()} ` })).environment, e, 'case and spaces');
++    }
++  });
++
++  it('an unknown or empty-meaning value is unclassified, not a guess', () => {
++    for (const bad of ['prod', 'live', 'stage', 'yes', 'production;staging']) {
++      const r = resolveDeploymentEnvironment(env({ XROGA_DEPLOYMENT_ENVIRONMENT: bad }));
++      assert.equal(r.environment, 'unclassified', bad);
++      assert.ok(r.problem);
++    }
++  });
++
++  it('a declaration that contradicts the platform is unclassified (staging claim on the production app, production claim on another app)', () => {
++    assert.equal(resolveDeploymentEnvironment(env({ FLY_APP_NAME: PRODUCTION_FLY_APP, XROGA_DEPLOYMENT_ENVIRONMENT: 'staging' })).environment, 'unclassified');
++    assert.equal(resolveDeploymentEnvironment(env({ FLY_APP_NAME: 'xroga-api-staging', XROGA_DEPLOYMENT_ENVIRONMENT: 'production' })).environment, 'unclassified');
++    assert.equal(resolveDeploymentEnvironment(env({ FLY_APP_NAME: 'xroga-api-staging', XROGA_DEPLOYMENT_ENVIRONMENT: 'staging' })).environment, 'staging');
++  });
++
++  it('anything not positively identified is unclassified: another Fly app, Cloud Run, a bare host', () => {
++    for (const e of [{ FLY_APP_NAME: 'xroga-api-staging' }, { FLY_APP_NAME: 'xroga-api-2' }, { K_SERVICE: 'xroga-api' }, { NODE_ENV: 'production' }, {}]) {
++      assert.equal(resolveDeploymentEnvironment(env(e)).environment, 'unclassified', JSON.stringify(e));
++    }
++  });
++
++  it('NODE_ENV alone identifies only local development and test', () => {
++    assert.equal(resolveDeploymentEnvironment(env({ NODE_ENV: 'test' })).environment, 'test');
++    assert.equal(resolveDeploymentEnvironment(env({ NODE_ENV: 'development' })).environment, 'development');
++  });
++});
++
++describe('boot duties', () => {
++  it('only production and local development may write to the database at boot', () => {
++    assert.deepEqual(dutiesFor('production'), ALL_DUTIES);
++    assert.deepEqual(dutiesFor('development'), ALL_DUTIES);
++    for (const e of ['staging', 'preview', 'test', 'unclassified'] as const) assert.deepEqual(dutiesFor(e), NO_DUTIES, e);
++  });
++
++  it('a staging service holding a live service-role key performs no reconcile, and the boot log says so', () => {
++    const d = decideStartup(env({ FLY_APP_NAME: 'xroga-api-staging', XROGA_DEPLOYMENT_ENVIRONMENT: 'staging', SUPABASE_SERVICE_ROLE_KEY: 'x'.repeat(40), SUPABASE_URL: 'https://example.supabase.co' }));
++    assert.deepEqual(d.duties, NO_DUTIES);
++    assert.ok(d.notes.some((n) => /disabled by policy/.test(n)));
++    assert.ok(d.notes.some((n) => /WARNING.*SUPABASE_SERVICE_ROLE_KEY/.test(n)));
++    assert.ok(!JSON.stringify(d).includes('x'.repeat(40)), 'the key itself is never logged');
++  });
++
++  it('a host nobody classified performs no mutating duty even with production credentials present', () => {
++    const d = decideStartup(env({ K_SERVICE: 'cloud-run-staging', SUPABASE_SERVICE_ROLE_KEY: 'k', SUPABASE_URL: 'https://prod.supabase.co' }));
++    assert.deepEqual(d.duties, NO_DUTIES);
++    assert.ok(d.notes.some((n) => /not recognised/.test(n)));
++  });
++});
+diff --git a/backend/src/runtime/startupPolicy.ts b/backend/src/runtime/startupPolicy.ts
+new file mode 100644
+index 00000000..4c4b65f4
+--- /dev/null
++++ b/backend/src/runtime/startupPolicy.ts
+@@ -0,0 +1,82 @@
++/**
++ * Which deployment this process is, and which boot-time duties it is therefore allowed to perform (INFRA-005).
++ *
++ * At boot the API currently does four things against whatever database its credentials point at: it runs schema-ensure DDL, it fails
++ * every `swarm_runs` row still marked `running` and older than five minutes, it hydrates provider health, and it registers sandbox
++ * providers. A staging, preview or half-configured service that holds a live service-role key therefore rewrites production run state
++ * and schema just by starting. The staging descriptor already sets `XROGA_DEPLOYMENT_ENVIRONMENT=staging` and `RUN_SWARM_WORKER=false`
++ * to say "no production work", but no backend source reads either variable, so nothing enforced it. This module makes the declaration binding.
++ *
++ * The rule is fail closed: only a process positively identified as production (or a local development / test process) may run the
++ * mutating duties. Anything staging, preview, conflicting or unidentifiable runs none of them and says so loudly. The production Fly app is
++ * recognised by name without any new configuration, so today's deployment behaves exactly as before.
++ */
++
++export type DeploymentEnvironment = 'production' | 'staging' | 'preview' | 'development' | 'test' | 'unclassified';
++
++/** The Fly app that serves customers (`fly.api.toml`). A different app name is never production, whatever else it claims. */
++export const PRODUCTION_FLY_APP = 'xroga-api';
++
++const NAMED: readonly DeploymentEnvironment[] = ['production', 'staging', 'preview', 'development', 'test'];
++
++export interface ResolvedEnvironment {
++  environment: DeploymentEnvironment;
++  source: 'explicit' | 'inferred' | 'unknown';
++  /** why the environment is `unclassified`, when it is */
++  problem?: string;
++}
++
++export function resolveDeploymentEnvironment(env: NodeJS.ProcessEnv = process.env): ResolvedEnvironment {
++  const raw = env.XROGA_DEPLOYMENT_ENVIRONMENT?.trim().toLowerCase();
++  const fly = env.FLY_APP_NAME?.trim();
++  if (raw) {
++    if (!(NAMED as readonly string[]).includes(raw)) return { environment: 'unclassified', source: 'unknown', problem: 'XROGA_DEPLOYMENT_ENVIRONMENT is not one of production|staging|preview|development|test' };
++    const claimed = raw as DeploymentEnvironment;
++    // A claim must agree with what the platform says about where this is running.
++    if (fly === PRODUCTION_FLY_APP && claimed !== 'production') return { environment: 'unclassified', source: 'unknown', problem: `running as the production Fly app but declared "${claimed}"` };
++    if (fly && fly !== PRODUCTION_FLY_APP && claimed === 'production') return { environment: 'unclassified', source: 'unknown', problem: `declared production but running as Fly app "${fly.slice(0, 40)}"` };
++    return { environment: claimed, source: 'explicit' };
++  }
++  if (fly === PRODUCTION_FLY_APP) return { environment: 'production', source: 'inferred' };
++  if (env.NODE_ENV === 'test') return { environment: 'test', source: 'inferred' };
++  if (env.NODE_ENV === 'development') return { environment: 'development', source: 'inferred' };
++  return { environment: 'unclassified', source: 'unknown', problem: 'XROGA_DEPLOYMENT_ENVIRONMENT is not set and this is not the production Fly app' };
++}
++
++export interface StartupDuties {
++  /** fail abandoned `running` runs left by a previous process */
++  reconcileOrphanedRuns: boolean;
++}
++
++/** Duties that WRITE to the database at boot. Everything not listed here is read-only or process-local and is not gated. */
++export function dutiesFor(environment: DeploymentEnvironment): StartupDuties {
++  switch (environment) {
++    case 'production':
++    case 'development':
++      return { reconcileOrphanedRuns: true };
++    case 'test':
++    case 'staging':
++    case 'preview':
++    case 'unclassified':
++      return { reconcileOrphanedRuns: false };
++  }
++}
++
++export interface StartupDecision {
++  environment: DeploymentEnvironment;
++  source: ResolvedEnvironment['source'];
++  duties: StartupDuties;
++  /** human-readable lines for the boot log; never contains a secret */
++  notes: string[];
++}
++
++export function decideStartup(env: NodeJS.ProcessEnv = process.env): StartupDecision {
++  const r = resolveDeploymentEnvironment(env);
++  const duties = dutiesFor(r.environment);
++  const notes: string[] = [];
++  if (r.problem) notes.push(`environment not recognised: ${r.problem}; mutating boot duties are disabled`);
++  else if (!duties.reconcileOrphanedRuns) notes.push(`environment "${r.environment}": orphaned-run reconciliation is disabled by policy`);
++  const holdsServiceRole = Boolean(env.SUPABASE_SERVICE_ROLE_KEY);
++  if (holdsServiceRole && (r.environment === 'staging' || r.environment === 'preview')) notes.push(`WARNING: a "${r.environment}" process holds SUPABASE_SERVICE_ROLE_KEY; confirm it points at a disposable project`);
++  return { environment: r.environment, source: r.source, duties, notes };
++}
+diff --git a/backend/src/services/storage/projectFiles.canonical.test.ts b/backend/src/services/storage/projectFiles.canonical.test.ts
+new file mode 100644
+index 00000000..2243ed82
+--- /dev/null
++++ b/backend/src/services/storage/projectFiles.canonical.test.ts
+@@ -0,0 +1,119 @@
++import assert from 'node:assert/strict';
++import { randomUUID } from 'node:crypto';
++import { createServer, type IncomingMessage } from 'node:http';
++import type { AddressInfo } from 'node:net';
++import { after, afterEach, before, describe, it } from 'node:test';
++import { createTenantContext, type TenantContext } from '../../security/tenantContext.js';
++import { setStorageServiceForTests } from '../../storage/runtime.js';
++import { harness } from '../../storage/testing/harness.js';
++import { StorageError } from '../../storage/types.js';
++
++/**
++ * Phase 1's Drive write modes, re-expressed on Batch 1's `storeProjectFile(context, ...)` (integration verification of the merged tree).
++ * The fake PostgREST enforces what the real policy enforces: a project is visible only to its owner, and an insert receipt must equal the row.
++ */
++describe('storeProjectFile Drive modes on the Batch 1 TenantContext signature', () => {
++  const inserts: Array<Record<string, unknown>> = [];
++  const owners = new Map<string, string>(); // project id -> owner user id
++  let server: ReturnType<typeof createServer>;
++  let store: typeof import('./projectFiles.js');
++  const saved = { ...process.env };
++  const readBody = (req: IncomingMessage) => new Promise<string>((r) => { let b = ''; req.on('data', (c) => (b += c)); req.on('end', () => r(b)); });
++
++  before(async () => {
++    server = createServer(async (req, res) => {
++      const body = await readBody(req);
++      const url = new URL(req.url ?? '/', 'http://x');
++      if (req.method === 'GET' && url.pathname === '/rest/v1/projects') {
++        const id = (url.searchParams.get('id') ?? '').replace(/^eq\./, '');
++        const user = (url.searchParams.get('user_id') ?? '').replace(/^eq\./, '');
++        res.writeHead(200, { 'content-type': 'application/json' });
++        res.end(JSON.stringify(owners.get(id) === user ? [{ id }] : []));
++        return;
++      }
++      if (req.method === 'POST' && url.pathname === '/rest/v1/project_files') {
++        const row = JSON.parse(body) as Record<string, unknown>;
++        inserts.push(row);
++        res.writeHead(201, { 'content-type': 'application/json' });
++        res.end(JSON.stringify(row)); // an exact receipt, as the real policy requires
++        return;
++      }
++      res.writeHead(404).end();
++    });
++    await new Promise<void>((r) => server.listen(0, '127.0.0.1', () => r()));
++    process.env.SUPABASE_URL = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
++    process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role';
++    store = await import('./projectFiles.js');
++  });
++  const DRIVE_ENV = { XROGA_DRIVE_R2_ACCOUNT_ID: 'a', XROGA_DRIVE_R2_ACCESS_KEY_ID: 'k', XROGA_DRIVE_R2_SECRET_ACCESS_KEY: 's', XROGA_DRIVE_R2_BUCKET: 'd', DATABASE_URL: 'postgres://x' };
++  const driveEnv = () => Object.assign(process.env, DRIVE_ENV);
++  afterEach(() => { inserts.length = 0; owners.clear(); setStorageServiceForTests(undefined); delete process.env.STORAGE_WRITE_MODE; for (const k of Object.keys(DRIVE_ENV)) delete process.env[k]; });
++  after(() => { server.close(); for (const k of Object.keys(process.env)) if (!(k in saved)) delete process.env[k]; Object.assign(process.env, saved); });
++
++  const ctxFor = (userId: string): TenantContext => createTenantContext({ userId, via: 'persisted_owner' });
++
++  it('legacy mode (default) is Batch 1 behaviour: private delivery, no Drive write, never claims canonical durability', async () => {
++    const h = harness(); setStorageServiceForTests(h.svc); owners.set(h.aliceProject, h.alice.userId);
++    const f = await store.storeProjectFile(ctxFor(h.alice.userId), h.aliceProject, 'a.txt', 'hi', 'text/plain', 'code');
++    assert.notEqual(f.canonicalDurable, true);
++    assert.equal(h.repo.objects.size, 0);
++    assert.equal(inserts[0]!.storage_object_id, undefined);
++    assert.equal((inserts[0]!.storage_metadata as { provider: string }).provider, 'database');
++  });
++
++  it('dual mode writes a verified private Drive object and links it on the record', async () => {
++    process.env.STORAGE_WRITE_MODE = 'dual'; driveEnv();
++    const h = harness(); setStorageServiceForTests(h.svc); owners.set(h.aliceProject, h.alice.userId);
++    const f = await store.storeProjectFile(ctxFor(h.alice.userId), h.aliceProject, 'src_app.ts', 'export const x = 1;', 'text/plain', 'code');
++    assert.equal(f.canonicalDurable, true);
++    assert.equal(inserts[0]!.storage_object_id, f.storageObjectId);
++    assert.equal((await h.repo.getObject(f.storageObjectId!))!.state, 'READY');
++    const mine = await h.svc.listObjects(h.alice, { projectId: h.aliceProject });
++    assert.equal(mine.length, 1);
++    assert.equal((await h.svc.listObjects(h.bob, { projectId: h.bobProject })).length, 0, 'another tenant sees nothing');
++  });
++
++  it('dual mode: a Drive failure never fails the private-delivery write and never claims durability', async () => {
++    process.env.STORAGE_WRITE_MODE = 'dual'; driveEnv();
++    const h = harness(); setStorageServiceForTests(h.svc); owners.set(h.aliceProject, h.alice.userId);
++    h.store.failNext('put', 'throw');
++    const f = await store.storeProjectFile(ctxFor(h.alice.userId), h.aliceProject, 'a.txt', 'hi', 'text/plain', 'code');
++    assert.notEqual(f.canonicalDurable, true);
++    assert.equal(inserts[0]!.storage_object_id, undefined);
++    assert.equal(inserts.length, 1);
++  });
++
++  it('dual mode without a configured Drive fails closed before any write', async () => {
++    process.env.STORAGE_WRITE_MODE = 'dual';
++    const h = harness(); owners.set(h.aliceProject, h.alice.userId);
++    await assert.rejects(store.storeProjectFile(ctxFor(h.alice.userId), h.aliceProject, 'a.txt', 'hi', 'text/plain', 'code'), (e: unknown) => (e as Error).name === 'StorageConfigError' || (e instanceof StorageError && e.code === 'PROVIDER_UNAVAILABLE')); // the configuration validator refuses it first
++    assert.equal(inserts.length, 0);
++  });
++
++  it('r2 (Drive only) fails closed: the private-delivery handlers cannot resolve a drive:// reference yet', async () => {
++    process.env.STORAGE_WRITE_MODE = 'r2'; driveEnv();
++    const h = harness(); setStorageServiceForTests(h.svc); owners.set(h.aliceProject, h.alice.userId);
++    await assert.rejects(store.storeProjectFile(ctxFor(h.alice.userId), h.aliceProject, 'a.txt', 'hi', 'text/plain', 'code'), (e: unknown) => e instanceof StorageError && /Drive provider/.test(e.message));
++    assert.equal(inserts.length, 0);
++    assert.equal(h.repo.objects.size, 0);
++  });
++
++  it('a forged or cloned context never reaches Drive: a user id, a spread copy and a JSON clone are refused before any write', async () => {
++    process.env.STORAGE_WRITE_MODE = 'dual'; driveEnv();
++    const h = harness(); setStorageServiceForTests(h.svc); owners.set(h.aliceProject, h.alice.userId);
++    const real = ctxFor(h.alice.userId);
++    for (const forged of [h.alice.userId, { ...real }, JSON.parse(JSON.stringify(real)), { userId: h.alice.userId, tenantId: h.alice.userId, provenance: 'persisted_owner', correlationId: randomUUID() }]) {
++      await assert.rejects(store.storeProjectFile(forged as TenantContext, h.aliceProject, 'a.txt', 'hi', 'text/plain', 'code'));
++    }
++    assert.equal(h.repo.objects.size, 0);
++    assert.equal(inserts.length, 0);
++  });
++
++  it('another user\'s genuine context cannot write into a project it does not own', async () => {
++    process.env.STORAGE_WRITE_MODE = 'dual'; driveEnv();
++    const h = harness(); setStorageServiceForTests(h.svc); owners.set(h.aliceProject, h.alice.userId);
++    await assert.rejects(store.storeProjectFile(ctxFor(h.bob.userId), h.aliceProject, 'a.txt', 'hi', 'text/plain', 'code'));
++    assert.equal(h.repo.objects.size, 0);
++    assert.equal(inserts.length, 0);
++  });
++});
+diff --git a/backend/src/services/storage/projectFiles.ts b/backend/src/services/storage/projectFiles.ts
+index 89acb907..c00d282d 100644
+--- a/backend/src/services/storage/projectFiles.ts
++++ b/backend/src/services/storage/projectFiles.ts
+@@ -4,15 +4,44 @@ import { getSupabaseAdmin } from '../../config/supabase.js';
+ import { uploadToR2,buildR2Key } from '../../lib/r2.js';
+ import { requireTenantContext,type TenantContext } from '../../security/tenantContext.js';
+ import { requireOwnedProject } from '../../security/ownership.js';
++import { actorFromTenantContext, getStorageService, storageWriteMode } from '../../storage/runtime.js';
++import { StorageError, type ObjectClass } from '../../storage/types.js';
+ import { FileDeliveryError,digestBytes,privateFileUrl,storageMetadataSchema,MAX_PRIVATE_FILE_BYTES,type PrivateStorageMetadata } from './fileDeliveryPolicy.js';
+ 
+-export interface StoredFile {id:string;fileName:string;fileUrl:string;fileType:'code'|'video'|'image'|'audio'|'pdf'|'other';projectId?:string}
++export interface StoredFile {
++  id:string;fileName:string;fileUrl:string;fileType:'code'|'video'|'image'|'audio'|'pdf'|'other';projectId?:string;
++  /** Canonical Xroga Drive object, present only when the verified private write succeeded (STORAGE_WRITE_MODE=dual). */
++  storageObjectId?:string;
++  /** True only when the bytes are also in verified private Drive storage. */
++  canonicalDurable?:boolean;
++}
++
++const CLASS_BY_FILE_TYPE: Record<StoredFile['fileType'], ObjectClass> = { code:'artifact', video:'media', image:'media', audio:'media', pdf:'artifact', other:'artifact' };
++
++async function writeCanonical(context:TenantContext,projectId:string,filename:string,bytes:Buffer,contentType:string,fileType:StoredFile['fileType']) {
++  const svc=getStorageService();
++  if(!svc) throw new StorageError('PROVIDER_UNAVAILABLE','Xroga Drive is not configured',503);
++  return svc.putServerObject(actorFromTenantContext(context),{projectId,objectClass:CLASS_BY_FILE_TYPE[fileType],filename,contentType,body:bytes});
++}
++
+ export async function storeProjectFile(context:TenantContext,projectId:string,filename:string,content:Buffer|string,contentType:string,fileType:StoredFile['fileType']): Promise<StoredFile> {
+   const {userId}=requireTenantContext(context);
+   content=Buffer.isBuffer(content)?Buffer.from(content):content;
+   await requireOwnedProject(context,projectId);
+   const id=randomUUID(),bytes=Buffer.isBuffer(content)?content:Buffer.from(content);
+   if(!filename.trim() || filename.length>200 || bytes.length>MAX_PRIVATE_FILE_BYTES || !['code','video','image','audio','pdf','other'].includes(fileType) || !storageMetadataSchema.safeParse({provider:'database',ownerId:userId,size:bytes.length,sha256:digestBytes(bytes),contentType}).success)throw new FileDeliveryError(400,'INVALID_FILE');
++
++  // Xroga Drive write mode (Phase 1). `legacy` is Batch 1's private-delivery behaviour, unchanged.
++  const mode=storageWriteMode();
++  // `r2` (Drive only) would store a drive:// reference that the private-delivery handlers cannot resolve: their metadata schema knows only
++  // `database` and `private_r2`. It fails closed until a Drive provider is added to that schema.
++  if(mode==='r2') throw new StorageError('INVALID_REQUEST','STORAGE_WRITE_MODE=r2 for project files needs a Drive provider in the private-delivery metadata',409);
++  if(mode==='dual' && !getStorageService()) throw new StorageError('PROVIDER_UNAVAILABLE','STORAGE_WRITE_MODE=dual but Xroga Drive is not configured',503);
++  // dual: the canonical write runs alongside the private-delivery write. Its failure is recorded, never hidden, and never reported as durable.
++  const canonical=mode==='dual'
++    ? await writeCanonical(context,projectId,filename,bytes,contentType,fileType).then((o)=>o,(e)=>{console.error('[Storage] canonical write failed in dual mode:',(e as Error).message);return null;})
++    : null;
++
+   let metadata:PrivateStorageMetadata;
+   let inline:string|null=null;
+   if(typeof content==='string' && content.length<50000) {
+@@ -24,9 +53,11 @@ export async function storeProjectFile(context:TenantContext,projectId:string,fi
+   }
+   metadata=storageMetadataSchema.parse(metadata);
+   const fileUrl=privateFileUrl(projectId,id);
+-  const row={id,project_id:projectId,file_name:filename,file_path:metadata.key??filename,file_type:fileType,file_url:fileUrl,content:inline,storage_metadata:metadata};
++  const link=canonical?.state==='READY'?{storage_object_id:canonical.id}:{};
++  const row:Record<string,unknown>={id,project_id:projectId,file_name:filename,file_path:metadata.key??filename,file_type:fileType,file_url:fileUrl,content:inline,storage_metadata:metadata,...link};
++  const columns='id,project_id,file_name,file_path,file_type,file_url,content,storage_metadata'+(canonical?.state==='READY'?',storage_object_id':'');
+   try {
+-    const {data,error}=await getSupabaseAdmin().from('project_files').insert(row).select('id,project_id,file_name,file_path,file_type,file_url,content,storage_metadata').single();
++    const {data,error}=await getSupabaseAdmin().from('project_files').insert(row).select(columns).single();
+     if(error || !data || typeof data!=='object' || Array.isArray(data) || !isDeepStrictEqual(data,row)) throw new FileDeliveryError(503,'FILE_RECORD_WRITE_UNAVAILABLE');
+   } catch {
+     if(metadata.provider==='private_r2') {
+@@ -36,7 +67,7 @@ export async function storeProjectFile(context:TenantContext,projectId:string,fi
+     }
+     throw new FileDeliveryError(503,'FILE_RECORD_WRITE_UNAVAILABLE');
+   }
+-  return {id,fileName:filename,fileUrl,fileType,projectId};
++  return {id,fileName:filename,fileUrl,fileType,projectId,...(canonical?.state==='READY'?{storageObjectId:canonical.id,canonicalDurable:true}:{})};
+ }
+ /** Retired unscoped media paths have no active callers; never fabricate durable delivery. */
+ export async function storeUserFile(_userId:string,_filename:string,_content:Buffer|string,_contentType:string): Promise<{fileUrl:string;playbackUrl:string;key:string}> {throw new FileDeliveryError(503,'PROJECT_FILE_SCOPE_REQUIRED');}
+diff --git a/backend/src/storage/runtime.ts b/backend/src/storage/runtime.ts
+new file mode 100644
+index 00000000..cf99160d
+--- /dev/null
++++ b/backend/src/storage/runtime.ts
+@@ -0,0 +1,134 @@
++import pg from 'pg';
++import { resolveDatabaseUrls } from '../lib/postgresConnect.js';
++import { planDatabaseConnection } from './databaseTls.js';
++import { createTenantContext, requireTenantContext, type TenantContext } from '../security/tenantContext.js';
++import { defaultPolicyConfig } from './policy.js';
++import { PostgresStorageRepository } from './postgresRepository.js';
++import { R2ObjectStore, r2ConfigFromEnv } from './r2ObjectStore.js';
++import { StorageService } from './storageService.js';
++import { PostgresLedger } from './migration/postgresLedger.js';
++import type { StorageActor } from './types.js';
++
++/**
++ * Where new durable writes go. `legacy` keeps today's behaviour exactly (the default when unset). `dual` and `r2` are opt-in and
++ * are only switched on by an operator after the Phase 1 cutover approval; see docs/infra/batch-1.5/runbook-storage.md.
++ * A value that is set but not understood is a configuration ERROR, never silently treated as `legacy`.
++ */
++export type StorageWriteMode = 'legacy' | 'dual' | 'r2';
++export type StorageReadSource = 'legacy' | 'r2';
++
++export class StorageConfigError extends Error {
++  constructor(readonly problems: string[]) {
++    super(`invalid storage configuration: ${problems.join('; ')}`);
++    this.name = 'StorageConfigError';
++  }
++}
++
++export interface ResolvedStorageConfig {
++  writeMode: StorageWriteMode;
++  readOrder: StorageReadSource[];
++  problems: string[];
++}
++
++/** Pure: validates the combination of switches and credentials without touching the network. */
++export function resolveStorageConfig(env: NodeJS.ProcessEnv = process.env): ResolvedStorageConfig {
++  const problems: string[] = [];
++  const rawMode = env.STORAGE_WRITE_MODE?.trim().toLowerCase();
++  let writeMode: StorageWriteMode = 'legacy';
++  if (rawMode) {
++    if (rawMode === 'legacy' || rawMode === 'dual' || rawMode === 'r2') writeMode = rawMode;
++    else problems.push(`STORAGE_WRITE_MODE="${rawMode.slice(0, 20)}" is not one of legacy|dual|r2`);
++  }
++  const rawOrder = env.STORAGE_READ_ORDER?.trim().toLowerCase();
++  let readOrder: StorageReadSource[] = ['legacy', 'r2'];
++  if (rawOrder) {
++    const parts = rawOrder.split(',').map((x) => x.trim());
++    const bad = parts.filter((x) => x !== 'legacy' && x !== 'r2');
++    if (bad.length || !parts.length) problems.push(`STORAGE_READ_ORDER contains unsupported source(s): ${bad.map((b) => `"${b.slice(0, 12)}"`).join(',') || '(empty)'}`);
++    else if (new Set(parts).size !== parts.length) problems.push('STORAGE_READ_ORDER lists a source twice');
++    else readOrder = parts as StorageReadSource[];
++  }
++  const needsDrive = writeMode !== 'legacy' || rawOrder === 'r2';
++  if (needsDrive) {
++    if (!(env.XROGA_DRIVE_R2_ACCESS_KEY_ID && env.XROGA_DRIVE_R2_SECRET_ACCESS_KEY && env.XROGA_DRIVE_R2_BUCKET && (env.XROGA_DRIVE_R2_ACCOUNT_ID ?? env.CLOUDFLARE_R2_ACCOUNT_ID ?? env.CLOUDFLARE_ACCOUNT_ID))) {
++      problems.push(`${writeMode !== 'legacy' ? `STORAGE_WRITE_MODE=${writeMode}` : 'STORAGE_READ_ORDER=r2'} requires XROGA_DRIVE_R2_* credentials and bucket`);
++    }
++    if (env.XROGA_DRIVE_R2_BUCKET && env.XROGA_DRIVE_R2_BUCKET === (env.CLOUDFLARE_R2_BUCKET ?? 'xroga-assets')) {
++      problems.push('XROGA_DRIVE_R2_BUCKET must be a dedicated private bucket, not the legacy assets bucket');
++    }
++    if (!(env.DATABASE_URL || env.SUPABASE_DB_URL || env.SUPABASE_DB_PASSWORD)) problems.push('canonical storage requires a database URL');
++  }
++  return { writeMode, readOrder, problems };
++}
++
++/** Throws StorageConfigError for an invalid combination: callers fail closed instead of picking a default. */
++export function storageWriteMode(env: NodeJS.ProcessEnv = process.env): StorageWriteMode {
++  const c = resolveStorageConfig(env);
++  if (c.problems.length) throw new StorageConfigError(c.problems);
++  return c.writeMode;
++}
++export function storageReadOrder(env: NodeJS.ProcessEnv = process.env): StorageReadSource[] {
++  const c = resolveStorageConfig(env);
++  if (c.problems.length) throw new StorageConfigError(c.problems);
++  return c.readOrder;
++}
++
++let pool: pg.Pool | null = null;
++let service: StorageService | null | undefined;
++
++/**
++ * The storage pool. TLS policy lives in databaseTls.ts: loopback is plain, every other host is certificate-verified (custom CA,
++ * the pinned Supabase root, or the platform store), and the URL is never passed to pg as a connection string so a `sslmode=` in
++ * DATABASE_URL cannot weaken it. An unusable policy throws, and getStorageService() then reports Drive as unavailable.
++ */
++export function createPool(connectionString?: string): pg.Pool {
++  const url = connectionString ?? resolveDatabaseUrls()[0];
++  if (!url) throw new Error('No database URL configured');
++  const plan = planDatabaseConnection(url);
++  const p = new pg.Pool({ ...plan.config, max: 8, idleTimeoutMillis: 30_000, connectionTimeoutMillis: 15_000 });
++  p.on('error', (e) => console.warn('[storage] idle pool client error:', e.message));
++  return p;
++}
++
++/** Null when the private R2 bucket or the database is not configured: callers must treat that as "Drive unavailable". */
++export function getStorageService(): StorageService | null {
++  if (service !== undefined) return service;
++  try {
++    const cfg = r2ConfigFromEnv();
++    if (!cfg || !resolveDatabaseUrls().length) { service = null; return service; }
++    pool = createPool();
++    const quotaEnv = process.env.STORAGE_QUOTA_BYTES;
++    const quota = quotaEnv && /^\d+$/.test(quotaEnv) ? Number(quotaEnv) : null;
++    service = new StorageService({
++      repo: new PostgresStorageRepository(pool), store: new R2ObjectStore(cfg), bucket: cfg.bucket,
++      policy: defaultPolicyConfig(), quota: async () => quota,
++    });
++  } catch (err) {
++    console.warn('[storage] Xroga Drive not available:', (err as Error).message);
++    service = null;
++  }
++  return service;
++}
++
++/** Test seam. */
++export function setStorageServiceForTests(s: StorageService | null | undefined) { service = s; }
++
++/**
++ * Identity only ever comes from a TenantContext that Batch 1's `createTenantContext` issued (the auth middleware for requests, the persisted owner for
++ * background work). A plain object, a parsed body or a cloned job payload is refused by `requireTenantContext`, so a caller cannot invent a tenant.
++ * `tenantId` is whatever the context says; today it equals the user id, and Drive's ownership checks are already keyed on it.
++ */
++export function actorFromTenantContext(context: TenantContext): StorageActor {
++  const { userId, tenantId } = requireTenantContext(context);
++  return { userId, tenantId };
++}
++
++/** For operator tools that act for one persisted owner (migrations): the same issued-context path, never a bare user id. */
++export function actorFromPersistedOwner(userId: string): StorageActor {
++  return actorFromTenantContext(createTenantContext({ userId, via: 'persisted_owner' }));
++}
++
++/** Migration ledger on the same pool (only meaningful when Drive itself is configured). */
++export function getMigrationLedger(): PostgresLedger | null {
++  return getStorageService() && pool ? new PostgresLedger(pool) : null;
++}
+diff --git a/tests/ci/known-skips.json b/tests/ci/known-skips.json
+index cb6fb331..58589caa 100644
+--- a/tests/ci/known-skips.json
++++ b/tests/ci/known-skips.json
+@@ -201,6 +201,136 @@
+       "reason": "Pre-existing helper requires an isolated TEST founder AAL2 session. Missing configuration is BLOCKED, not passing authenticated coverage. No new skip is introduced; the independent authenticated-browser CI remains failing until TEST configuration and auth-realm isolation pass.",
+       "issue_or_command": "XB01-C003 platform/browser baseline",
+       "review_date": "2026-11-13"
++    },
++    {
++      "id": "3beb681574bb759b8ca69ebc07000cdb375ed6481d82f716a501d66a11f0bd1b",
++      "path": "backend/src/storage/databaseTls.test.ts",
++      "title": "database TLS against a real TLS handshake",
++      "condition": "haveOpenssl ? false : 'openssl is not installed'",
++      "owner": "Xroga engineering (Batch 1.5)",
++      "reason": "Skips only when openssl is not installed on the machine; the Linux CI runner has it, so CI runs the real TLS handshake tests.",
++      "issue_or_command": "npx tsx --test backend/src/storage/databaseTls.test.ts (storage-phase1 CI)",
++      "review_date": "2026-11-13"
++    },
++    {
++      "id": "5a2647acb52fd618f0498bc96c3135b0eb17dab013058ef97abe5365f08a08a7",
++      "path": "backend/src/storage/migration/largeObject.stream.test.ts",
++      "title": "large-object migration: real 1 GiB+ crossing",
++      "condition": "enabled ? false : 'set XROGA_LARGE_TEST=1 (needs ~1.2 GiB free temp disk)'",
++      "owner": "Xroga engineering (Batch 1.5)",
++      "reason": "Needs XROGA_LARGE_TEST=1 and about 1.2 GiB of temporary disk; the CI step 02b sets it.",
++      "issue_or_command": "XROGA_LARGE_TEST=1 npx tsx --test backend/src/storage/migration/largeObject.stream.test.ts",
++      "review_date": "2026-11-13"
++    },
++    {
++      "id": "1a760d8f399f8653f5a538766ecd0b4bedbc6be9a59249c396c1589c9b7deaf8",
++      "path": "backend/src/storage/migration/postgresMigration.integration.test.ts",
++      "title": "migration engine against real PostgreSQL ledger + metadata",
++      "condition": "skip",
++      "owner": "Xroga engineering (Batch 1.5)",
++      "reason": "Needs a disposable PostgreSQL superuser URL in STORAGE_TEST_DATABASE_URL; the CI Postgres service provides it (steps 03 and 03b).",
++      "issue_or_command": "STORAGE_TEST_DATABASE_URL=postgresql://... npx tsx --test backend/src/storage/migration/postgresMigration.integration.test.ts",
++      "review_date": "2026-11-13"
++    },
++    {
++      "id": "e7ce498033b38d7f9ed446aa873e05e4552e59353f1c21b8e542de2a620010e5",
++      "path": "backend/src/storage/migration/runOutputArtifacts.integration.test.ts",
++      "title": "run-output artifact adapter (real PostgreSQL)",
++      "condition": "skip",
++      "owner": "Xroga engineering (Batch 1.5)",
++      "reason": "Needs a disposable PostgreSQL superuser URL in STORAGE_TEST_DATABASE_URL; the CI Postgres service provides it (steps 03 and 03b).",
++      "issue_or_command": "STORAGE_TEST_DATABASE_URL=postgresql://... npx tsx --test backend/src/storage/migration/runOutputArtifacts.integration.test.ts",
++      "review_date": "2026-11-13"
++    },
++    {
++      "id": "7e60ad60ef32893de0b882d8032920034fcbfbcc149d3434206842ba50078b6d",
++      "path": "backend/src/storage/postgresRepository.integration.test.ts",
++      "title": "Xroga Drive against real PostgreSQL (migration + RLS + atomic quota)",
++      "condition": "skip",
++      "owner": "Xroga engineering (Batch 1.5)",
++      "reason": "Needs a disposable PostgreSQL superuser URL in STORAGE_TEST_DATABASE_URL; the CI Postgres service provides it (steps 03 and 03b).",
++      "issue_or_command": "STORAGE_TEST_DATABASE_URL=postgresql://... npx tsx --test backend/src/storage/postgresRepository.integration.test.ts",
++      "review_date": "2026-11-13"
++    },
++    {
++      "id": "5fcbb693c1e2f0ff9202a0932cc313dad1d3f608f05c295679ad3a5b6f01f134",
++      "path": "backend/src/storage/r2.provider.integration.test.ts",
++      "title": "Cloudflare R2 provider verification (REAL endpoint)",
++      "condition": "skip",
++      "owner": "Xroga engineering (Batch 1.5)",
++      "reason": "Real Cloudflare R2: runs only with the explicit isolated-bucket authorisation variables, never in default CI.",
++      "issue_or_command": "npm run test:storage-provider --workspace=backend (needs XROGA_DRIVE_R2_TEST_CONFIRM)",
++      "review_date": "2026-11-13"
++    },
++    {
++      "id": "69f1f4fb6a0e8f1fe993af67a30f9114ac9f340cae4302d98e85bae1b2055588",
++      "path": "backend/src/storage/r2ObjectStore.wire.integration.test.ts",
++      "title": "R2ObjectStore over the AWS SDK wire protocol (S3 emulator, SYNTHETIC)",
++      "condition": "skip",
++      "owner": "Xroga engineering (Batch 1.5)",
++      "reason": "Needs the synthetic S3 emulator endpoint STORAGE_TEST_S3_ENDPOINT; CI step 04 provides it.",
++      "issue_or_command": "STORAGE_TEST_S3_ENDPOINT=http://127.0.0.1:4569 npx tsx --test backend/src/storage/r2ObjectStore.wire.integration.test.ts",
++      "review_date": "2026-11-13"
++    },
++    {
++      "id": "4649230c835ca95e2d136ae12bd9b8b00d54f3251e671d4ce3582081dfdf96dc",
++      "path": "backend/src/storage/schemaUpgrade.integration.test.ts",
++      "title": "migration upgrade, idempotency, hardening and rollback on real PostgreSQL",
++      "condition": "skip",
++      "owner": "Xroga engineering (Batch 1.5)",
++      "reason": "Needs a disposable PostgreSQL superuser URL in STORAGE_TEST_DATABASE_URL; the CI Postgres service provides it (steps 03 and 03b).",
++      "issue_or_command": "STORAGE_TEST_DATABASE_URL=postgresql://... npx tsx --test backend/src/storage/schemaUpgrade.integration.test.ts",
++      "review_date": "2026-11-13"
++    },
++    {
++      "id": "ff2dface36cba8f9a6ee372716ba9b39590bbd33f70e0eb63a2a145d6b0f6c96",
++      "path": "backend/src/workers/chromiumProxy.browser.test.ts",
++      "title": "real Chromium under the production launch policy",
++      "condition": "process.env.XROGA_SKIP_BROWSER_TESTS ? 'XROGA_SKIP_BROWSER_TESTS is set' : undefined",
++      "owner": "Xroga engineering (Batch 1.5)",
++      "reason": "Needs a launchable Chromium (and openssl for the certificate case); CI step 03c installs one in a dedicated directory and requires it.",
++      "issue_or_command": "PHASE2_REQUIRE_BROWSER=1 npx tsx --test backend/src/workers/chromiumProxy.browser.test.ts",
++      "review_date": "2026-11-13"
++    },
++    {
++      "id": "69805bb35eb6f7287b53c9cd6334bc897cecf355937dadeffefafe19a4830664",
++      "path": "backend/src/workers/chromiumProxy.browser.test.ts",
++      "title": "real Chromium under the production launch policy",
++      "condition": "skipReason",
++      "owner": "Xroga engineering (Batch 1.5)",
++      "reason": "Needs a launchable Chromium (and openssl for the certificate case); CI step 03c installs one in a dedicated directory and requires it.",
++      "issue_or_command": "PHASE2_REQUIRE_BROWSER=1 npx tsx --test backend/src/workers/chromiumProxy.browser.test.ts",
++      "review_date": "2026-11-13"
++    },
++    {
++      "id": "433471597699b529d41675352cae8e8cb5379e875809812da04b7f3e5fd87613",
++      "path": "backend/src/workers/chromiumProxy.browser.test.ts",
++      "title": "TLS errors are never ignored: an in-scope host presenting an untrusted certificate fails in the browser",
++      "condition": "'openssl not available to generate the untrusted certificate'",
++      "owner": "Xroga engineering (Batch 1.5)",
++      "reason": "Needs a launchable Chromium (and openssl for the certificate case); CI step 03c installs one in a dedicated directory and requires it.",
++      "issue_or_command": "PHASE2_REQUIRE_BROWSER=1 npx tsx --test backend/src/workers/chromiumProxy.browser.test.ts",
++      "review_date": "2026-11-13"
++    },
++    {
++      "id": "a892dbc2eb6cd0d5d23257f354cab6f16a59fadf4a41d79ee567ee8e6fd1e3c8",
++      "path": "backend/src/workers/postgresLeaseStore.integration.test.ts",
++      "title": "worker task leases against real PostgreSQL",
++      "condition": "skip",
++      "owner": "Xroga engineering (Batch 1.5)",
++      "reason": "Needs a disposable PostgreSQL superuser URL in STORAGE_TEST_DATABASE_URL; the CI Postgres service provides it (steps 03 and 03b).",
++      "issue_or_command": "STORAGE_TEST_DATABASE_URL=postgresql://... npx tsx --test backend/src/workers/postgresLeaseStore.integration.test.ts",
++      "review_date": "2026-11-13"
++    },
++    {
++      "id": "9384efe760ff1fda73dcfe4a8de410bd98e85419e56b4f4eecde9348a7d41907",
++      "path": "backend/src/workers/processTree.test.ts",
++      "title": "sweeps orphans left behind by a child that exited normally",
++      "condition": "process.platform === 'win32' ? 'POSIX process groups only' : false",
++      "owner": "Xroga engineering (Batch 1.5)",
++      "reason": "POSIX process groups only: Windows cannot address a process tree whose parent already exited. The Linux CI runner executes it.",
++      "issue_or_command": "npx tsx --test backend/src/workers/processTree.test.ts (Linux)",
++      "review_date": "2026-11-13"
+     }
+   ]
+ }

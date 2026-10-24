@@ -1,0 +1,4 @@
+# cmd: npx tsc --noEmit -p .
+
+
+# exit: 0

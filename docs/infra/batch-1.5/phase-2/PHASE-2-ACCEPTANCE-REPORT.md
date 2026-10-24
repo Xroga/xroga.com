@@ -8,9 +8,9 @@ satisfied from this machine, so Phase 2 cannot be accepted yet. Nothing below is
 | | |
 |---|---|
 | Branch | `claude/xroga-b15-phase2-20261024` (Phase 1 baseline `e792523f` preserved) |
-| CI-tested executable commit | `e2a3fb49ea77a2df54ea373e8a32c4f5c836b9f5` |
-| CI run | 40101667223: `overall=PASS` (archived in `../ci-evidence/run-40101667223/`) |
-| Later commits | documentation only, checked with `scripts/verify-source-equivalence.sh e2a3fb49 HEAD` (see `SOURCE-EQUIVALENCE.md`) |
+| CI-tested executable commit | `df9b3e98449e32b28ed33c08c14b7c65dddb3131` (adds the backend lock fix and its CI step to `e2a3fb49`) |
+| CI run | 40108091362: `overall=PASS` (archived in `../ci-evidence/run-40108091362/`); the earlier run 40101667223 on `e2a3fb49` is kept in `../ci-evidence/run-40101667223/` |
+| Later commits | documentation and host-evidence tooling only (see `SOURCE-EQUIVALENCE.md`) |
 | Authority for the criteria | the handoff `PHASE-1-TO-PHASE-2-HANDOFF.md` (INFRA-004/005/006 rows, browser table, risk 7, preconditions) and its restatement in the Phase 2 directives. No INFRA-007, Phase 3 or Batch 1 cutover requirement was added |
 | Cost | $0 |
 
@@ -71,14 +71,14 @@ Row numbers refer to rows of this table (they are references, not new requiremen
 |---|---|---|---|
 | 32 | GitHub write access and first remote CI | **PASS** | Phase 1; this phase's CI runs are green |
 | 33 | R2 provider suite | **PASS** | Phase 1 (9/9). Owner cleanup still open and not blocking: revoke the temporary token, delete the local secrets file, delete the empty test bucket |
-| 34 | Batch 1 `TenantContext` accepted into `main` | **BLOCKED (B-3)** | Codex's stack (PR #846 and below) is unmerged |
-| 35 | Read-only cloud facts, checklist A | **BLOCKED (B-4)** | partly done: Supabase production migration history and credential counts, GitHub environments, secrets and variables, TLS trust. Not available: A1 Cloudflare, A3 Fly, A4 Redis, A5 Supabase plan |
+| 34 | Batch 1 `TenantContext` accepted into `main` | **BLOCKED (B-3)**, pre-merge verification **PASS** | Codex's stack (PR #846 on #845) is unmerged. Compatibility with candidate `e8164ba6` was verified in an isolated, never-pushed worktree: `BATCH1-INTEGRATION-VERIFICATION.md` |
+| 35 | Read-only cloud facts, checklist A | **BLOCKED (B-4)**, partly established | established: Supabase plan and projects, R2 buckets, public access, CORS, GitHub isolation, Redis repository secret absent (`CLOUD-FACTS-2026-10-24.md`). Missing: Fly status, volumes and secret names (no Fly session), Supabase backup setting, Cloudflare billing |
 
 ## B. Evidence register
 | Evidence | Where | Result |
 |---|---|---|
-| Verified commit | `e2a3fb49ea77a2df54ea373e8a32c4f5c836b9f5` | CI-tested; documentation-only equivalence to the head checked |
-| GitHub Actions | run 40101667223 (earlier runs 40097009444 on `fdb5face`, 40094731238 on `511f503a`) | `overall=PASS`; Phase 2 unit 223/223; full suite 3148 pass, the same 5 baseline failures, 0 regressions |
+| Verified commit | `df9b3e98449e32b28ed33c08c14b7c65dddb3131` | CI-tested; later commits checked with the equivalence script |
+| GitHub Actions | run 40108091362 on `df9b3e98` (`overall=PASS`: 223/223 Phase 2 unit, 15/15 PostgreSQL, 6/6 Chromium, full suite 3148 pass, the same 5 baseline failures, 0 regressions); run 40101667223 on `e2a3fb49` (earlier runs 40097009444 on `fdb5face`, 40094731238 on `511f503a`) | `overall=PASS`; Phase 2 unit 223/223; full suite 3148 pass, the same 5 baseline failures, 0 regressions |
 | Real PostgreSQL 16 | CI 03b, and local | 15/15 lease contract and SQL tests; Phase 1 real-SQL 25/25; 8 SQL defects caught |
 | Real Chromium | CI 03c (Linux runner) and local | 6/6: policy flags on the live process, proxy used for loopback, TLS errors not ignored, tree cleanup |
 | Local totals | this machine, final source | 267 pass, 0 fail, 1 POSIX-only skip (Phase 2 suites with real PostgreSQL and Chromium) |
@@ -87,25 +87,29 @@ Row numbers refer to rows of this table (they are references, not new requiremen
 | ARM64 | `evidence/browser-sandbox-arm64-emulated-docker-local-2026-10-24.json`, `…-arm64-emulation-diagnostic-2026-10-24.json` | image runs and conforms under emulation; sandbox inconclusive under emulation; not an ARM64 pass |
 | OCI host | none | NOT RUN: no authorized host exists |
 | Security and mutation | `evidence/logs/mutation-checks-phase2-final.log` | 99 injected defects across database TLS, leases, job contract, egress proxy and sidecar, process trees, browser handler, admission, recovery, startup, readiness, logging, launch policy, container spec and the lease SQL: **99 caught, 0 survived, 0 inconclusive** (run on the committed source `e2a3fb49`). Earlier runs exposed and fixed: a dead guard, a test that passed for the wrong reason, redundant branches, a vacuous redirect check, a probe that could not see a missing capability drop or a writable root, and a test that left a listener open. Container-level checks are covered by the six weakened variants and two weakened network controls instead |
+| Batch 1 integration | `BATCH1-INTEGRATION-VERIFICATION.md`, `evidence/batch1-integration/resolution-over-codex-candidate.patch` | isolated merge with Codex `e8164ba6`: tsc clean, 500 targeted tests (499 pass, 1 POSIX-only skip), both migration validators pass; nothing merged or pushed |
+| Cloud facts | `CLOUD-FACTS-2026-10-24.md` | read-only, no credential printed, nothing changed |
+| Defect found by the integration check | `backend/package-lock.json` | stale since Phase 1 (`npm ci` failed in `backend`); regenerated; CI now runs the same standalone install |
+| Host evidence tooling | `scripts/browser/collect-host-evidence.sh`, `scripts/browser/evaluate-host-evidence.mjs` | one command produces a checksummed bundle on a host; the evaluator accepts it only if every criterion holds (native arch, not emulated, hashes of the reviewed files, 21 isolation checks, six variants, cleanup). Rejects an empty bundle (exit 2) |
 | Rollback | CI 03b, `ROLLBACK.md` | `.down.sql` verified on real PostgreSQL 16; code rollbacks documented |
 | Source equivalence | `SOURCE-EQUIVALENCE.md`, `scripts/verify-source-equivalence.sh` | later commits documentation only |
 | Real-provider TLS | `evidence/real-tls-handshake-2026-10-24.json` | live Supabase pooler, TLS trust only |
 
 ## C. Remaining blockers
-Only these prevent acceptance. Each has one next action.
+Only these prevent acceptance. Each is BLOCKED on something outside this machine; none is blocked on engineering.
 
-| # | Blocker | Criteria | Exact next action | Authorization | Smallest safe way |
+| # | Status | Exact remaining requirement | Evidence already available | One executable next action | Needs you |
 |---|---|---|---|---|---|
-| **B-1** | No authorized OCI compute host exists (none documented; no OCI CLI here; the OCI credentials found are scoped to KMS test identities and were not used) | 15, 16, 18 on the target host | someone with a host runs `OCI-SANDBOX-VERIFICATION.md` (about ten commands) and returns the five output files | access to an existing instance, or approval to create one | an Always Free Ampere A1 instance: it also closes B-2 |
-| **B-2** | No native ARM64 host | 19 | run the same procedure on ARM64 with `--label ARM64_HOST_TESTED` | any native ARM64 Linux Docker host | an Apple Silicon Mac running Docker natively would do for the architecture proof (it is not OCI) |
-| **B-3** | Batch 1 `TenantContext` is not in `main` | 34 (and the tenant mapping in 31) | founder reviews and merges Codex's stacked PRs in order, then one controlled integration checkpoint replaces `actorFromUserId` | founder (a merge to `main`) | none from this side |
-| **B-4** | Read-only cloud facts unavailable | 35 | run `! flyctl auth login` in this session (then I run only `fly status`, `fly volumes list` and `fly secrets list`, names only), and supply the Redis provider and persistence, the Supabase plan and backup setting, and a read-only Cloudflare token or screenshot | the Fly login and the answers | five one-line answers |
+| **B-1** OCI host | **BLOCKED** | the hardened container, sandbox ON, egress isolation and weakened-control checks run on an authorized OCI host, with immutable redacted evidence | amd64 `DOCKER_LOCAL_TESTED` for all of it; no OCI host documented, no OCI CLI, the OCI credentials found are KMS-test scoped and were not used. No instance was created | on the host: `git clone` this branch, `npm ci`, then `bash scripts/browser/collect-host-evidence.sh OCI_HOST_TESTED`, and return the `out/host-evidence-*` folder. I run `node scripts/browser/evaluate-host-evidence.mjs <folder> --label OCI_HOST_TESTED --repo .` | yes: access to an existing instance, or your approval after confirming an Always Free shape is available at $0 |
+| **B-2** native ARM64 | **BLOCKED** | the same run on native ARM64, no emulation | arm64 image conforms under emulation; sandbox inconclusive under emulation and attributed to the emulator by a diagnostic. Not retried, by instruction | same command with `ARM64_HOST_TESTED` on any native ARM64 Docker host (the OCI host above, if Ampere A1, closes both) | yes: an ARM64 host |
+| **B-3** TenantContext in `main` | **BLOCKED**, pre-merge **PASS** | Codex's stack accepted into `main` | compatibility verified against `e8164ba6`: merged tree `7daeeb4e`, resolutions in a patch, tsc clean, 499 of 500 tests pass (1 POSIX-only skip), validators pass. Found and fixed a stale lock in our branch. Not a virtual-merge substitute | you review and merge #845 then #846; then re-apply `evidence/batch1-integration/resolution-over-codex-candidate.patch` as one integration commit (steps in `BATCH1-INTEGRATION-VERIFICATION.md`). Do not deploy to Fly before a KMS provider is configured: Codex's boot now fails closed without one | yes: the merge is yours (production workflows deploy Fly and apply SQL) |
+| **B-4** cloud facts | **BLOCKED**, partly established | Fly status, volumes and secret names; Redis; Supabase backups; Cloudflare billing | Supabase plan (free, no PITR) and projects, R2 buckets, public `r2.dev` on three buckets, CORS, GitHub isolation, no Redis repo secret: `CLOUD-FACTS-2026-10-24.md`. No token printed, nothing changed | `! flyctl auth login`, then I run only `fly status`, `fly volumes list`, `fly secrets list` for `xroga-api` (names only) | yes: the Fly login. Also the Supabase backup setting (dashboard) and the Cloudflare plan, one line each |
 
 Not blockers, and not Phase 2: the Batch 1 production cutover (key provider, KMS identity, credential sealing and rotation, legacy-writer drain, staging service), INFRA-007 and INFRA-008, and the pull request and merge.
 The PR gate itself is cleared on safety grounds (offline migration check; no secret reaches PR code; `main` unprotected so no check name depends on the old job); a merge still applies this branch's two migrations to production and stays your decision.
 
 ## D. GitHub handoff
-Branch `claude/xroga-b15-phase2-20261024` is pushed to `Xroga/xroga.com`; `main` is untouched, no pull request was opened, nothing was force-pushed. The executable commit is `e2a3fb49`;
+Branch `claude/xroga-b15-phase2-20261024` is pushed to `Xroga/xroga.com`; `main` is untouched, no pull request was opened, nothing was force-pushed. The executable commit is `df9b3e98`;
 the branch head, which differs from it only in documentation, is stated in the checkpoint message and verified with the equivalence script.
 
 ## E. Phase 3 readiness
