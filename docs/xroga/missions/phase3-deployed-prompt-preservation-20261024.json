@@ -12,7 +12,11 @@
     "backend/src/ai/prompts.ts",
     "docs/xroga/missions/phase3-deployed-prompt-preservation-20261024.json",
     "docs/xroga/current-state.json",
-    "docs/xroga/research/source-manifest.json"
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/runtime-contract.md",
+    "docs/xroga/secret-inventory.md"
   ],
   "decisions": {
     "keep": [

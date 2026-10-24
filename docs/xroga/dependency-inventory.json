@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2bb72563b2a940bcf906d2a7346cf408cbbd5440",
+  "source_sha": "0c8b5ddf5d82f1d8d7b409ead4c0f55090082f80",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12859,7 +12859,7 @@
     },
     {
       "path": "backend/src/ai/prompts.ts",
-      "sha256": "9cc6d86a81214b17d18c1ec8f2440c8d658b1c25fda22ee4ed5e7fa3e494082d"
+      "sha256": "c3c9cdfc288ce155a3f8c0a7e15ab1c8fe20656c1f56e1e6bf51d1090ee68c7a"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
