@@ -16,7 +16,7 @@ import { actorFromTenantContext } from '../storage/runtime.js';
 import type { StorageService } from '../storage/storageService.js';
 import type { StorageActor } from '../storage/types.js';
 import type { AdmissionController } from './admission.js';
-import { BROWSER_JOB_CEILINGS, parseBrowserJob, type BrowserJobLimits } from './browserJob.js';
+import { BROWSER_JOB_CEILINGS, parseBrowserJob, type BrowserJob, type BrowserJobLimits } from './browserJob.js';
 import { parseBrowserPlan, type BrowserPlan } from './browserPlan.js';
 import { createBrowserTaskHandler, type BrowserWorkerPort } from './browserTaskHandler.js';
 import type { LeaseStore } from './leaseStore.js';
@@ -31,7 +31,10 @@ export interface BrowserRunRequest {
   goal: string;
   startUrl: string;
   allowedOrigins: string[];
-  plan: unknown;
+  /** an explicit plan; when absent the configured planner derives one from the goal (its output is parsed like any plan) */
+  plan?: unknown;
+  /** allow the planner to use AI (Stagehand) steps; needs limits.maxModelCostMicros > 0 */
+  allowAiSteps?: boolean;
   limits?: Partial<BrowserJobLimits>;
   /** a Drive project the user owns; null keeps the evidence as the user's own Drive objects */
   projectId?: string | null;
@@ -47,6 +50,8 @@ export interface BrowserCapabilityDeps {
   authoriseProject: (actor: StorageActor, projectId: string) => Promise<boolean>;
   workerId: string;
   admission?: AdmissionController;
+  /** natural-language planning (browserPlanner.ts); absent means a request must carry an explicit plan */
+  planner?: (goal: string, job: BrowserJob, allowAi: boolean) => Promise<BrowserPlan>;
 }
 
 export class BrowserRunError extends Error {
@@ -90,20 +95,26 @@ export async function runBrowserTask(context: TenantContext, request: BrowserRun
   // validate the whole request up front with the same parsers the handler and the host use, so a bad request never becomes a run
   const runId = randomUUID();
   let plan: BrowserPlan;
+  let job: BrowserJob;
   try {
-    const job = parseBrowserJob({ version: 1, tenantId: actor.tenantId, userId: actor.userId, projectId: 'validation', runId, taskId: 'browser-1', attempt: 1, allowedOrigins: request.allowedOrigins, startUrl: request.startUrl, limits });
-    plan = parseBrowserPlan(request.plan, job);
+    job = parseBrowserJob({ version: 1, tenantId: actor.tenantId, userId: actor.userId, projectId: runProject, runId, taskId: 'browser-1', attempt: 1, allowedOrigins: request.allowedOrigins, startUrl: request.startUrl, limits });
+    if (request.plan === undefined && !deps.planner) throw new Error('a plan is required on this deployment');
+    if (request.plan !== undefined) plan = parseBrowserPlan(request.plan, job);
   } catch (e) { throw new BrowserRunError(400, 'RUN_INVALID', (e as Error).message.slice(0, 300)); }
+  if (request.plan === undefined) {
+    try { plan = await deps.planner!(request.goal, job, !!request.allowAiSteps); } catch (e) { throw new BrowserRunError(400, 'RUN_INVALID', (e as Error).message.slice(0, 300)); }
+  }
+  const trustedPlan = plan!;
 
   const handler = createBrowserTaskHandler({
     actor, drive: deps.drive, leases: deps.leases, worker: deps.worker, workerId: deps.workerId, admission: deps.admission,
     // the run's own project key is authorised by construction (it is the issued user's); a Drive project is re-checked every time
     authorise: async (a, projectId) => (projectId === `user:${actor.userId}` ? a.userId === actor.userId : deps.authoriseProject(a, projectId)),
     scopeFor: () => ({ allowedOrigins: request.allowedOrigins, startUrl: request.startUrl, limits }),
-    planFor: () => request.plan,
+    planFor: () => trustedPlan,
     driveProjectFor: () => driveProject,
   });
-  const state = createCanonicalExecutionState({ projectId: runProject, runId, requiredCapabilities: ['browser_automation'], tasks: [taskFor(request.goal, plan, limits)] });
+  const state = createCanonicalExecutionState({ projectId: runProject, runId, requiredCapabilities: ['browser_automation'], tasks: [taskFor(request.goal, trustedPlan, limits)] });
   const finished = await new ExecutionScheduler(deps.storeFor(actor.userId)).run(state, { browser_automation: handler }, signal);
   return { runId, task: finished.tasks[0]!, state: finished };
 }

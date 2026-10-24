@@ -19,6 +19,7 @@ import { AdmissionController } from '../workers/admission.js';
 import { RemoteBrowserWorker } from '../workers/browserCoordinator.js';
 import { BrowserRunError, runBrowserTask, type BrowserCapabilityDeps } from '../workers/browserCapability.js';
 import { createBrowserModelGateway } from '../workers/browserModelGateway.js';
+import { planBrowserTask } from '../workers/browserPlanner.js';
 import { PostgresLeaseStore } from '../workers/postgresLeaseStore.js';
 import type { ModelId } from '../ai/models.js';
 
@@ -26,7 +27,8 @@ const body = z.object({
   goal: z.string().min(1).max(2_000),
   startUrl: z.string().min(1).max(2_048),
   allowedOrigins: z.array(z.string().min(1).max(300)).min(1).max(20),
-  plan: z.record(z.string(), z.unknown()),
+  plan: z.record(z.string(), z.unknown()).optional(),
+  allowAiSteps: z.boolean().optional(),
   limits: z.record(z.string(), z.number().int().nonnegative()).optional(),
   projectId: z.string().uuid().nullish(),
 }).strict();
@@ -45,6 +47,7 @@ function productionDeps(): BrowserCapabilityDeps | null {
     authoriseProject: async (actor, projectId) => drive.listObjects(actor, { projectId, limit: 1 }).then(() => true, () => false),
     workerId: `api-${process.env.FLY_MACHINE_ID ?? process.pid}`,
     admission: new AdmissionController({ maxConcurrent: 4, maxPerTenant: 2, maxQueuedPerTenant: 4, maxQueuedTotal: 32 }),
+    ...(process.env.XROGA_BROWSER_PLANNER_MODEL ? { planner: async (goal: string, job: Parameters<typeof planBrowserTask>[1], allowAi: boolean) => (await planBrowserTask(goal, job, { modelId: process.env.XROGA_BROWSER_PLANNER_MODEL as ModelId }, { allowAi })).plan } : {}),
   };
   return production;
 }
