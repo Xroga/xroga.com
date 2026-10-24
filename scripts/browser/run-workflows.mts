@@ -220,12 +220,15 @@ workflows.W05 = async () => {
 
 workflows.W06x = async () => {
   if (!testbed) return notTested('W06x', 'session expiry and human handoff on the owned site', 'no owned testbed origin (--testbed)');
-  const r = await run(alice, { goal: 'sign in, then observe the session expire', startUrl: `${testbed}/login`, allowedOrigins: [testbed], limits: limits({ maxDurationMs: 90_000 }),
+  const r = await run(alice, { goal: 'sign in, let the session expire, hand back to a human', startUrl: `${testbed}/login`, allowedOrigins: [testbed], limits: limits({ maxDurationMs: 120_000 }),
     plan: { writeGrant: { grantId: 'grant-w06x-synthetic', actions: ['submit'] }, steps: [
       { op: 'fill', selector: '#username', value: 'synthetic' }, { op: 'click', selector: '#sign-in', consequential: true }, { op: 'waitFor', selector: '#state', timeoutMs: 15_000 },
-      { op: 'extractText', selector: '#state', name: 'before' }, { op: 'waitFor', selector: '#never-present', timeoutMs: 23_000 }].slice(0, 4),
-      expect: [{ kind: 'extracted', name: 'before', equals: 'Signed in' }] } });
-  record('W06x', 'owned-site session established with secure, http-only, short-lived cookie', 'completed (Signed in)', r.status === 'completed' && r.outcomeVerified === true, r);
+      { op: 'extractText', selector: '#state', name: 'before' }, { op: 'pause', ms: 22_000 }, { op: 'goto', url: `${testbed}/account` },
+      { op: 'extractText', selector: '#state', name: 'after' }],
+      // Chromium drops the cookie at Max-Age, so the site sees no session: expiry is enforced by the browser, and Xroga reports the
+      // signed-out state instead of signing in again on its own (re-authentication is handed back to the user)
+      expect: [{ kind: 'extracted', name: 'before', equals: 'Signed in' }, { kind: 'extracted', name: 'after', equals: 'Signed out' }] } });
+  record('W06x', 'session expiry enforced by the browser; no silent re-login (re-authentication handed back to the user)', 'completed: Signed in, then Signed out after expiry', r.status === 'completed' && r.outcomeVerified === true, r);
 };
 
 workflows.W07 = async () => {

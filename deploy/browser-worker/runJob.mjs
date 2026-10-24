@@ -170,6 +170,7 @@ async function main() {
           if (step.consequential) counters.consequentialActions += 1;
           await page.waitForLoadState('domcontentloaded').catch(() => {});
           break;
+        case 'pause': await new Promise((r) => setTimeout(r, step.ms)); break;
         case 'scroll': await page.evaluate((to) => window.scrollTo(0, to === 'top' ? 0 : document.body.scrollHeight), step.to); break;
         case 'waitFor':
           if (step.selector) await (await pick(step.selector)).first().waitFor({ state: 'visible', timeout: step.timeoutMs });

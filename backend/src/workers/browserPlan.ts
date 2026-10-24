@@ -33,6 +33,7 @@ export type BrowserStep =
   | { op: 'select'; selector: Selector; value: string }
   | { op: 'press'; selector: Selector; key: string; consequential?: boolean }
   | { op: 'scroll'; to: 'top' | 'bottom' }
+  | { op: 'pause'; ms: number }
   | { op: 'waitFor'; selector?: Selector; urlPrefix?: string; timeoutMs: number }
   | { op: 'extractText'; selector: Selector; name: string; all?: boolean; attribute?: string }
   | { op: 'screenshot'; name: string; fullPage?: boolean }
@@ -126,6 +127,11 @@ function parseStep(raw: unknown, i: number, job: BrowserJob, grant: BrowserPlan[
     case 'fill': case 'select': {
       only(raw, ['op', 'selector', 'value'], at);
       return { op: raw.op, selector: sel(raw, at)!, value: str(raw, 'value', PLAN_LIMITS.text, at)! };
+    }
+    case 'pause': {
+      only(raw, ['op', 'ms'], at);
+      if (typeof raw.ms !== 'number' || !Number.isSafeInteger(raw.ms) || raw.ms < 1 || raw.ms > PLAN_LIMITS.waitMs) throw new BrowserPlanError(`${at}: ms must be 1-${PLAN_LIMITS.waitMs}`);
+      return { op: 'pause', ms: raw.ms };
     }
     case 'scroll': {
       only(raw, ['op', 'to'], at);
