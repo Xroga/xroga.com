@@ -5,6 +5,7 @@ import { ChevronRight, ChevronLeft, Search, Code2, Rocket, Users, Layers, Bot, G
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { AnchoredPortalPopover } from '@/components/ui/AnchoredPortalPopover';
+import Link from 'next/link';
 import styles from './WorkspaceNewTerminal.module.css';
 import controls from '@/components/terminal/WorkspaceControls.module.css';
 
@@ -27,15 +28,24 @@ const CAPABILITIES = [
   ] },
 ] as const;
 const AUTOMATIONS = [
+  { id: 'workflows', title: 'Workflows', icon: Layers, description: 'Build repeatable steps that move work from idea to verified result.', features: [
+    ['Create a workflow', 'Build a workflow for this outcome: '], ['Review a workflow', 'Review and improve this workflow: '],
+  ] },
+  { id: 'scheduled-tasks', title: 'Scheduled Tasks', icon: Bot, description: 'Plan recurring work and review each run before it acts.', features: [
+    ['Plan a schedule', 'Plan a scheduled task for: '], ['Review recurring work', 'Review the schedule and safeguards for: '],
+  ] },
   { id: 'employees', title: 'AI Employees', icon: Users, description: 'Delegate research, content and everyday work to specialized AI employees.', features: [
     ['Research assistant', 'Help me delegate this research task to an AI employee: '], ['Content assistant', 'Help me delegate this content task to an AI employee: '],
     ['Operations assistant', 'Help me delegate this operations task to an AI employee: '],
   ] },
-  { id: 'browser', title: 'Browser automation', icon: Globe2, description: 'Research websites, test real interactions and simplify repetitive browser tasks.', features: [
+  { id: 'work-packs', title: 'Work Packs', icon: Layers, description: 'Start with an outcome; Xroga maps the people, tools and approvals.', features: [
+    ['Plan a work pack', 'Plan a complete work pack for this outcome: '], ['Publish a blog', 'Plan a research, writing, review and publishing work pack for: '],
+  ] },
+  { id: 'browser-automation', title: 'Browser Automation', icon: Globe2, description: 'Research websites, test real interactions and simplify repetitive browser tasks.', features: [
     ['Browser testing', 'Test this website in a browser and report problems: '], ['Collect information', 'Collect and organize public information from these web pages: '],
     ['Repeat a workflow', 'Plan a browser workflow for this task, asking before sensitive actions: '],
   ] },
-  { id: 'plugins', title: 'Apps & plugins', icon: Puzzle, description: 'Connect your tools and automate workflows across your authorized apps.', features: [
+  { id: 'apps-mcp', title: 'Apps & MCP', icon: Puzzle, description: 'Connect authorized apps and MCP tools to your workflows.', features: [
     ['Connect tools', 'Help me connect the apps needed for this workflow: '], ['Sync information', 'Plan how to sync this information across my authorized apps: '],
     ['App automation', 'Build an automation using my connected apps for: '],
   ] },
@@ -67,6 +77,12 @@ const TASK_ACCEPTANCE: Record<string, string> = {
   'Connect tools': 'Identify required authorized apps and scopes, confirm account access, and test connections without unapproved changes.',
   'Sync information': 'Identify source and destination systems, mapping rules, privacy protections, conflict resolution and verification.',
   'App automation': 'Design a secure connected-app flow with triggers, idempotency, retries, approval boundaries and evidence of execution.',
+  'Create a workflow': 'Identify each step, required tools, approvals and expected outputs, then verify the path.',
+  'Review a workflow': 'Check every step, failure path and permission before recommending changes.',
+  'Plan a schedule': 'Specify timing, time zone, inputs, approvals and evidence for each scheduled run.',
+  'Review recurring work': 'Find overlaps, missing approvals and recovery paths in the existing schedule.',
+  'Plan a work pack': 'Map the outcome to employees, workflows, browser tools, apps, permissions, approvals and deliverables.',
+  'Publish a blog': 'Map research, drafting, SEO review, human approval, publishing and post-publication verification.',
 };
 
 const STARTER_PROMPTS = [...CAPABILITIES, ...AUTOMATIONS].flatMap(card => card.features.map(feature => feature[1]));
@@ -91,7 +107,7 @@ function useRotation(length: number, paused: boolean, interval = 6000) {
 
 /** Subtle scalable decoration, not text baked into an image. */
 function CapabilityVisual({ id }: { id: Capability['id'] }) {
-  const Icon = id === 'employees' ? Bot : id === 'browser' ? Globe2 : id === 'plugins' ? Puzzle : id === 'ship' ? Rocket : id === 'find' ? Search : null;
+  const Icon = id === 'employees' ? Bot : id === 'browser-automation' ? Globe2 : id === 'apps-mcp' ? Puzzle : id === 'ship' ? Rocket : id === 'find' ? Search : null;
   return <span className={styles.visual} data-visual={id} aria-hidden="true">
     {Icon ? <Icon /> : <><i /><i /><i /></>}
   </span>;
@@ -199,6 +215,7 @@ function FeatureCard({ card, onInteraction }: { card: Capability; onInteraction?
           <button type="button" onClick={() => { close(); anchorRef.current?.focus(); }} aria-label="Close features"><X size={14} /></button>
         </div>
         <p>{card.description}</p>
+        {'id' in card && AUTOMATIONS.some(item => item.id === card.id) ? <Link href={`/dashboard/automations#${card.id === 'employees' ? 'ai-employees' : card.id}`} className={controls.featureChoose} onClick={close}>Open {card.title} workspace <ChevronRight size={14} aria-hidden="true" /></Link> : null}
         {selectedFeature === null ? <div className={controls.featureOptions} role="group" aria-label={`${card.title} categories`}>
           {card.features.map((feature, index) => <button type="button" role="menuitem"
             key={feature[0]}

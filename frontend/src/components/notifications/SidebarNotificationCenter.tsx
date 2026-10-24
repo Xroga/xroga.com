@@ -1,6 +1,7 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { requestBuildNotificationPermission } from '@/lib/buildBrowserNotify';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Bell, CheckCheck, Settings2, X } from 'lucide-react';
@@ -26,11 +27,24 @@ export function SidebarNotificationCenter({ open, onClose }: Pick<Props, 'open' 
   const notifications = useAppStore((s) => s.notifications);
   const unread = useAppStore((s) => s.unreadCount);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [browserStatus, setBrowserStatus] = useState('');
+  useEffect(() => {
+    if (!open) return;
+    let active = true;
+    setError('');
+    void Promise.all([api.notifications.list(), api.notifications.unreadCount()]).then(([list, count]) => {
+      if (active) useAppStore.setState({ notifications: list, unreadCount: count.count });
+    }).catch(() => { if (active) setError('Could not refresh notifications. Please reopen to retry.'); });
+    return () => { active = false; };
+  }, [open]);
 
   const openNotification = useCallback(async (n: XrogaNotification) => {
     if (!n.read) {
-      try { await api.notifications.markRead(n.id); } catch { /* navigation still works */ }
-      useAppStore.setState((state) => ({ notifications: state.notifications.map((item) => item.id === n.id ? { ...item, read: true } : item), unreadCount: Math.max(0, state.unreadCount - 1) }));
+      try {
+        await api.notifications.markRead(n.id);
+        useAppStore.setState((state) => ({ notifications: state.notifications.map((item) => item.id === n.id ? { ...item, read: true } : item), unreadCount: Math.max(0, state.unreadCount - 1) }));
+      } catch { /* Navigate without pretending the update was saved. */ }
     }
     onClose();
     const link = typeof n.link === 'string' && n.link.startsWith('/') && !n.link.startsWith('//') ? n.link : '/workspace';
@@ -43,7 +57,7 @@ export function SidebarNotificationCenter({ open, onClose }: Pick<Props, 'open' 
     try {
       await api.notifications.markAllRead();
       useAppStore.setState((state) => ({ notifications: state.notifications.map((n) => ({ ...n, read: true })), unreadCount: 0 }));
-    } finally { setBusy(false); }
+    } catch { setError('Could not mark notifications read. Please try again.'); } finally { setBusy(false); }
   }
 
   if (!open) return null;
@@ -59,6 +73,9 @@ export function SidebarNotificationCenter({ open, onClose }: Pick<Props, 'open' 
       <button type="button" onClick={() => void markAllRead()} disabled={busy || unread === 0} className="inline-flex items-center gap-1 text-[10px] text-sky-400 hover:underline disabled:opacity-40"><CheckCheck className="h-3 w-3" /> Mark all read</button>
     </div>
     <div className="xv-notification-scroll min-h-0 flex-1 overflow-y-auto p-2">
+      <button type="button" className="mb-2 w-full rounded-lg border border-[var(--card-border)] p-2 text-xs" onClick={async () => { const allowed = await requestBuildNotificationPermission(); setBrowserStatus(allowed ? 'Browser notifications enabled for real task updates.' : 'Notifications are unavailable or blocked. Check this site’s browser permissions.'); }}>Enable browser notifications</button>
+      {browserStatus ? <p role="status" className="mb-2 text-xs text-[var(--muted)]">{browserStatus}</p> : null}
+      {error ? <p role="alert" className="mb-2 text-xs">{error}</p> : null}
       {notifications.length === 0 ? <div className="px-3 py-10 text-center text-xs text-[var(--muted)]">No notifications yet. Real task updates will appear here.</div> : notifications.map((n) => <button key={n.id} type="button" onClick={() => void openNotification(n)} className={`mb-1 flex w-full items-start gap-2.5 rounded-xl px-2.5 py-2.5 text-left transition hover:bg-[var(--foreground)]/[.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 ${n.read ? '' : 'bg-[var(--foreground)]/[.045]'}`}>
         <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${toneClass[notificationTone(n)]}`} aria-hidden="true" />
         <span className="min-w-0 flex-1"><span className="block text-xs font-semibold leading-snug">{n.title}</span><span className="mt-1 block text-[11px] leading-relaxed text-[var(--muted)] line-clamp-3">{n.message}</span><span className="mt-1.5 flex gap-2 text-[10px] text-[var(--muted)]"><span>{notificationStatus(n)}</span><span>·</span><span>{formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}</span></span></span>

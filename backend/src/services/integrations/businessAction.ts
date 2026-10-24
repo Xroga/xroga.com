@@ -37,6 +37,7 @@ import {
 
 import {
   getUserPluginPermissionMode,
+  type PluginPermissionMode,
 } from './pluginPermissionPolicy.js';
 
 const MAX_USE_CASE_LENGTH = 500;
@@ -44,6 +45,26 @@ const MAX_TOOL_CANDIDATES = 10;
 const MAX_SCHEMA_CHARS = 7_500;
 const MAX_ARGUMENT_CHARS = 24_000;
 const MAX_RESULT_CHARS = 60_000;
+
+/** Financial mutations always need a separate, exact-action confirmation. */
+export function isFinancialAction(useCase: string, toolSlug: string): boolean {
+  const action = `${useCase} ${toolSlug}`;
+  return /\b(swap|trade|buy|sell|purchase|payment|pay|charge|refund|withdraw|deposit|transfer|bridge|stake)\b/i.test(action)
+    || /(?:^|_)(?:SWAP|TRADE|BUY|SELL|PAYMENT|CHARGE|REFUND|WITHDRAW|DEPOSIT|TRANSFER|BRIDGE|STAKE)(?:_|$)/i.test(toolSlug);
+}
+
+export function requiresBusinessActionConfirmation(input: {
+  permissionMode: PluginPermissionMode;
+  plan: Pick<BusinessActionPlan, 'useCase' | 'toolSlug' | 'requiresConfirmation'>;
+  currentRisk: XrogaConnectToolRisk;
+}): boolean {
+  if (isFinancialAction(input.plan.useCase, input.plan.toolSlug)) return true;
+  if (input.permissionMode === 'full_access') return false;
+  return input.plan.requiresConfirmation
+    || input.currentRisk === 'destructive'
+    || input.currentRisk === 'unknown'
+    || (input.permissionMode !== 'low_risk' && input.currentRisk === 'write');
+}
 
 interface ActionToolChoice {
   toolSlug: string;
@@ -171,8 +192,9 @@ export interface BusinessActionAuthorization {
    * Used for the normal safety checkpoint on destructive, financial,
    * permission-changing, cancellation, deletion, refund, transfer, etc.
    *
-   * A user-selected full-access Plugin policy can waive that extra
-   * checkpoint, but never the explicitUserAuthorization requirement above.
+   * Financial actions require this checkpoint even under a full-access
+   * Plugin policy. Other writes may follow that policy, but never waive
+   * the explicitUserAuthorization requirement above.
    */
   confirmedHighRisk?:
     true;
@@ -1275,6 +1297,7 @@ export async function prepareBusinessAction(
     details.risk;
 
   const requiresConfirmation =
+    isFinancialAction(useCase, selected.slug) ||
     risk ===
       'destructive' ||
     risk ===
@@ -1425,24 +1448,11 @@ export async function executePreparedBusinessAction(
       input.plan.toolkit,
     );
 
-  const highRiskNow =
-    permissionMode ===
-      'full_access'
-      ? false
-      : (
-          input.plan
-            .requiresConfirmation ||
-          details.risk ===
-            'destructive' ||
-          details.risk ===
-            'unknown' ||
-          (
-            permissionMode !==
-              'low_risk' &&
-            details.risk ===
-              'write'
-          )
-        );
+  const highRiskNow = requiresBusinessActionConfirmation({
+    permissionMode,
+    plan: input.plan,
+    currentRisk: details.risk,
+  });
 
   if (
     highRiskNow &&

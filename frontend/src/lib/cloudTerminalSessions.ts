@@ -210,7 +210,8 @@ export function cloudToHistoryEntry(session: CloudTerminalSession): TerminalHist
   const messages = (Array.isArray(session.messages) ? session.messages : []) as ChatMessage[];
   return {
     id: session.id,
-    title: cloudTerminalLabel(session.terminalNumber),
+    title: session.title && !/^#\d+\s+terminal$/i.test(session.title)
+      ? session.title : ((session.prompt || session.preview || '').replace(/\s+/g,' ').trim().slice(0,90) || 'Untitled conversation'),
     preview: session.preview || session.prompt.slice(0, 200),
     prompt: session.prompt,
     messages,
@@ -218,7 +219,7 @@ export function cloudToHistoryEntry(session: CloudTerminalSession): TerminalHist
     status: (session.status as TerminalHistoryEntry['status']) || 'complete',
     githubRepoName: session.githubRepoName,
     githubBranch: session.githubBranch || 'main',
-    githubRepoUrl: `https://github.com/${session.githubRepoName}`,
+    githubRepoUrl: session.githubRepoName?.includes('/') ? `https://github.com/${session.githubRepoName}` : undefined,
     messageCount: session.messageCount || messages.length,
     createdAt: session.createdAt,
     updatedAt: session.updatedAt,

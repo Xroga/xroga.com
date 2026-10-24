@@ -1,16 +1,17 @@
 import type { Request, Response, NextFunction } from 'express';
 import { ensureUserRecords } from '../services/ensureUserRecords.js';
 import { resolveIdentity } from '../lib/resolveIdentity.js';
+import { createTenantContext, type TenantContext } from '../security/tenantContext.js';
 
 export interface AuthRequest extends Request {
   userId?: string;
   accessToken?: string;
   userEmail?: string;
+  tenantContext?: TenantContext;
 }
 
-async function resolveUser(token: string): Promise<{ userId: string; email?: string }> {
-  const identity = await resolveIdentity(token);
-  return { userId: identity.userId, email: identity.email };
+async function resolveUser(token: string) {
+  return resolveIdentity(token);
 }
 
 export async function verifyAccessToken(token: string): Promise<{ userId: string; email?: string }> {
@@ -36,6 +37,7 @@ async function provisionIfNeeded(userId: string, email?: string): Promise<void> 
 }
 
 export async function authMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
+  delete req.userId; delete req.userEmail; delete req.accessToken; delete req.tenantContext;
   const authHeader = req.headers.authorization;
 
   if (!authHeader?.startsWith('Bearer ')) {
@@ -49,7 +51,9 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
   const token = authHeader.slice(7);
 
   try {
-    const { userId, email } = await resolveUser(token);
+    const identity = await resolveUser(token);
+    const { userId, email } = identity;
+    req.tenantContext = createTenantContext(identity);
     req.userId = userId;
     req.accessToken = token;
     req.userEmail = email;
@@ -82,6 +86,7 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
 
 /** Resolve a viewer for public routes when a bearer token is present. */
 export async function optionalAuthMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
+  delete req.userId; delete req.userEmail; delete req.accessToken; delete req.tenantContext;
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     next();
@@ -94,7 +99,9 @@ export async function optionalAuthMiddleware(req: AuthRequest, res: Response, ne
 
   try {
     const token = authHeader.slice(7);
-    const { userId, email } = await resolveUser(token);
+    const identity = await resolveUser(token);
+    const { userId, email } = identity;
+    req.tenantContext = createTenantContext(identity);
     req.userId = userId;
     req.accessToken = token;
     req.userEmail = email;

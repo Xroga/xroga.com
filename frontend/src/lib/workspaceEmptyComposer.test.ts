@@ -21,6 +21,17 @@ const START = read('../components/dashboard/WorkspaceNewTerminal.tsx');
 const START_CSS = read('../components/dashboard/WorkspaceNewTerminal.module.css');
 const CSS = read('../app/globals.css').replace(/\/\*[\s\S]*?\*\//g, '');
 
+const LAUNCHER = read('../components/terminal/WorkspaceLauncher.tsx');
+const PROJECTS = read('../components/layout/SidebarProjectHistory.tsx');
+
+test('an empty workspace cannot become a blank shell due to a saved hidden chatbar', () => {
+  assert.match(DOCK, /dockSuppressed = chatbarHidden && !emptyWorkspace/);
+  assert.match(DOCK, /if \(isDashboard && emptyWorkspace && chatbarHidden\)/);
+  assert.match(DOCK, /setChatbarHidden\(false\)/);
+  assert.match(LAUNCHER, /disabled=\{emptyWorkspace\}/);
+  assert.match(PROJECTS, /setWorkspaceOpen\(false\);[\s\S]*setChatbarHidden\(false\);[\s\S]*router\.push\('\/workspace'\)/);
+});
+
 test('an empty terminal centers the one canonical composer without duplicate suggestion tabs', () => {
   assert.match(DOCK, /messages\.length === 0/);
 
@@ -328,17 +339,18 @@ test('a conversation exposes one context-aware navigator that follows scroll pos
 
   assert.match(
     DOCK,
-    /showJumpToLatest\s*\? scrollToLatest\('smooth'\)\s*:\s*scrollToFirst\('smooth'\)/,
+    /if \(showJumpToLatest\) scrollToLatest\('smooth'\);\s*else scrollToFirst\('smooth'\);/,
   );
 
-  assert.match(DOCK, /<SquareChevronUpIcon size=\{19\}/);
+  assert.match(DOCK, /<ArrowDown size=\{19\}/);
+  assert.match(DOCK, /<ArrowUp size=\{19\}/);
 
   assert.match(
     CSS,
     /\.xv-conversation-navigator\.is-direction-down\s*\{[^}]*--xv-navigator-rotation:\s*180deg/,
   );
 
-  assert.match(CSS, /\.xv-conversation-navigator\s*\{[\s\S]*?width:\s*2\.25rem[\s\S]*?border-radius:\s*0\.62rem/);
+  assert.match(CSS, /\.xv-conversation-navigator,\s*\.xv-conversation-navigator:hover,\s*\.xv-conversation-navigator:active\s*\{[\s\S]*?border:\s*0\s*!important/);
   assert.doesNotMatch(DOCK, /data-tooltip=\{showJumpToLatest/);
   assert.doesNotMatch(DOCK, /xv-conversation-navigator__label/);
 });
@@ -732,7 +744,7 @@ test('starter cards preserve immediate local drafts and do not auto-submit', () 
 
 test('new terminal styling and icons cannot leak into an existing conversation', () => {
   assert.match(DOCK, /!sessionRestoring &&\s*messages\.length === 0 &&\s*!loading/);
-  assert.match(DOCK, /showStarterExperience && !incognito && !chatbarHidden && startStyles.dock/);
+  assert.match(DOCK, /showStarterExperience && !incognito && !dockSuppressed && startStyles.dock/);
   assert.match(DASHBOARD, /showNewTerminal && startStyles.window/);
   assert.match(CHATBAR, /arrowSend=\{starter\}/);
   assert.match(CHATBAR, /microphoneIcon=\{starter\}/);

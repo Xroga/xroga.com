@@ -69,7 +69,7 @@ export function CommunityFeed() {
         {!loading && posts.map((post) => <CommunityPostCard key={post.id} post={post} />)}
       </div>
       {cursor && !loading && <button type="button" disabled={loadingMore} onClick={() => void load(cursor)} className="mx-auto mt-5 block rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold dark:border-white/10">{loadingMore ? 'Loading…' : 'Load more'}</button>}
-      <FeedbackModal open={compose} onClose={() => setCompose(false)} />
+      <FeedbackModal open={compose} onClose={() => setCompose(false)} initialCategory={searchParams.get('category') === 'bug' ? 'bug' : undefined} />
     </>
   );
 }

@@ -51,6 +51,7 @@ export interface SafeBusinessActionConfirmation {
   risk: XrogaConnectToolRisk;
   createdAt: string;
   expiresAt: string;
+  request?: string;
 }
 
 function cleanConfirmationId(
@@ -198,6 +199,7 @@ function safeConfirmation(
 
     expiresAt:
       row.expires_at,
+    ...(isBusinessActionPlan(row.plan) ? { request: row.plan.useCase } : {}),
   };
 }
 
@@ -356,8 +358,7 @@ export async function createBusinessActionConfirmation(
   }
 
   return safeConfirmation(
-    data as
-      ConfirmationRow,
+    { ...(data as ConfirmationRow), plan },
   );
 }
 
@@ -382,7 +383,7 @@ export async function getBusinessActionConfirmation(
         'business_action_confirmations',
       )
       .select(
-        'id,user_id,status,plan_digest,summary,toolkit,risk,created_at,expires_at,claimed_at,completed_at,failure_code',
+        'id,user_id,status,plan,plan_digest,summary,toolkit,risk,created_at,expires_at,claimed_at,completed_at,failure_code',
       )
       .eq(
         'id',

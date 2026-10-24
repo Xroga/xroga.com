@@ -11,27 +11,29 @@ const STYLES = read('../styles/uiverse.css');
 const CAPABILITIES = read('../components/dashboard/UpcomingCapabilitySection.tsx');
 const ROCKET = read('../components/icons/animated/RocketIcon.tsx');
 
-test('a single native thumb scrolls all sidebar content, no arrow controls or nested 280px history scroller', () => {
+test('a compact control scrolls the unified sidebar without a full-height native thumb', () => {
   assert.match(NAV, /xv-sidebar-scroll-track/);
   assert.match(SCROLLER, /xv-nav-scroller/);
-  assert.doesNotMatch(SCROLLER, /ChevronUp|ChevronDown|xv-nav-arrow|scrollBy/);
-  assert.match(GLOBAL, /xv-sidebar-nav-scroll\.xv-sidebar-scroll-track::\-webkit-scrollbar-thumb/);
-  assert.match(GLOBAL, /scrollbar-width: thin !important/);
+  assert.match(SCROLLER, /CompactScrollIndicator[\s\S]*ChevronUp|ChevronUp[\s\S]*CompactScrollIndicator/);
+  assert.match(SCROLLER, /aria-controls=\{controlsId\}/);
+  assert.match(GLOBAL, /xv-nav-scroll-progress/);
+  assert.match(GLOBAL, /scrollbar-width: none !important/);
   assert.doesNotMatch(HISTORY, /max-h-\[280px\]/);
   assert.match(GLOBAL, /xv-repos-scroll \{ overflow: visible !important; max-height: none !important/);
 });
 
-test('repository terminals precede pinned and recent conversations with account-scoped pins', () => {
-  const repo = HISTORY.indexOf('Repositories');
-  const pin = HISTORY.indexOf('aria-label="Pinned conversations"');
+test('projects precede account-scoped pins and recent conversations', () => {
+  const repo = HISTORY.indexOf('aria-label="Projects"');
+  const pin = HISTORY.indexOf('aria-label="Pinned items"');
   const rec = HISTORY.indexOf('aria-label="Recent conversations"');
   assert.ok(repo !== -1 && repo < pin && pin < rec, 'sidebar history ordering');
   assert.match(HISTORY, /xroga_sidebar_pins_v1:/);
-  assert.match(HISTORY, /workspaceIdentity\.userId/);
-  assert.match(HISTORY, /aria-label=\{pinned \? 'Unpin conversation' : 'Pin conversation'\}/);
-  assert.match(HISTORY, /savedConversations\.filter\(s => !pinnedIds\.includes\(s\.id\)\)/);
+  assert.match(HISTORY, /const accountId\s*=.*workspaceIdentity\.userId/);
+  assert.match(HISTORY, /aria-label=\{saved\?'Unpin '\+label:'Pin '\+label\}/);
+  assert.match(HISTORY, /const pinnedItems=sortPinned\(itemMeta/);
+  assert.match(HISTORY, /recentConversations\.slice\(0,shownRecents\)/);
   assert.doesNotMatch(HISTORY, /foldersList = foldersList\.slice\(0, 12\)/);
-  assert.match(HISTORY, /onClick=\{\(\) => void openSession\(session\)\}/);
+  assert.match(HISTORY, /renderRow\('conversation',session\.id,conversationTitle\(session\),\(\)=>void openSession\(session\),false\)/);
 });
 
 test('sidebar font changes are scoped, with full-size touch targets on mobile', () => {

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { xrogaRichResultSchema } from './xrogaRichResults';
+import { safeRichSourceUrl, xrogaRichResultSchema } from './xrogaRichResults';
 
 export const XROGA_BLOCK_SCHEMA_VERSION = 1 as const;
 
@@ -136,6 +136,19 @@ const tableShape = {
 
 const metricBlock = richBase.extend({ type: z.literal('metric'), metric: metricItem });
 const metricGroupBlock = richBase.extend({ type: z.literal('metric-group'), metrics: z.array(metricItem).min(1) });
+const observedMarketSource = z.object({ title: z.string().min(1), url: z.string().url().refine((value) => safeRichSourceUrl(value) !== null), observedAt: z.string().datetime() });
+const marketQuoteBlock = richBase.extend({
+  type: z.literal('market-quote'), symbol: z.string().min(1).max(30), name: z.string().min(1).max(120),
+  price: z.number().finite().nonnegative(), currency: z.string().regex(/^[A-Z]{3}$/),
+  changePercent: z.number().finite().optional(), period: z.string().max(50).optional(),
+  source: observedMarketSource,
+  points: z.array(z.object({ label: z.string().min(1), value: z.number().finite() })).min(2).max(250).optional(),
+});
+const conversionBlock = richBase.extend({
+  type: z.literal('conversion'), from: z.string().min(2).max(20), to: z.string().min(2).max(20),
+  rate: z.number().finite().positive(), amount: z.number().finite().nonnegative(), source: observedMarketSource,
+  feeNote: z.string().max(250).optional(),
+});
 const progressBlock = richBase.extend({ type: z.literal('progress'), progress: progressItem });
 const progressGroupBlock = richBase.extend({ type: z.literal('progress-group'), items: z.array(progressItem).min(1) });
 const calculatorBlock = richBase.extend({
@@ -276,7 +289,7 @@ const apiRequestBlock = richBase.extend({
 });
 const tableBlock = richBase.extend({ type: z.literal('table'), ...tableShape });
 const chartBlock = richBase.extend({
-  type: z.literal('chart'), chartType: z.enum(['line', 'area', 'bar', 'pie', 'donut', 'scatter', 'radar', 'funnel']), data: z.array(dataRow), xKey: z.string().min(1),
+  type: z.literal('chart'), chartType: z.enum(['line', 'area', 'bar', 'grouped-bar', 'stacked-bar', 'stacked-area', 'histogram', 'waterfall', 'bubble', 'heatmap', 'treemap', 'pie', 'donut', 'scatter', 'radar', 'funnel']), data: z.array(dataRow), xKey: z.string().min(1),
   series: z.array(z.object({ key: z.string().min(1), label: z.string().min(1), color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional() })).min(1),
   datasetId: z.string().optional(), summary: z.string().min(1),
 });
@@ -293,7 +306,7 @@ const galleryBlock = richBase.extend({ type: z.literal('gallery'), items: z.arra
 const imageBlock = richBase.extend({ type: z.literal('image'), image: mediaItem });
 const audioBlock = richBase.extend({ type: z.literal('audio'), audio: mediaItem });
 const videoBlock = richBase.extend({ type: z.literal('video'), video: mediaItem });
-const dashboardBlock = richBase.extend({ type: z.literal('dashboard'), metrics: z.array(metricItem).optional(), charts: z.array(z.object({ id: z.string().min(1), title: z.string().optional(), chartType: z.enum(['line', 'area', 'bar', 'pie', 'donut', 'scatter', 'radar', 'funnel']), data: z.array(dataRow), xKey: z.string().min(1), series: z.array(z.object({ key: z.string().min(1), label: z.string().min(1), color: z.string().optional() })).min(1), summary: z.string().min(1) })).optional(), tables: z.array(z.object({ id: z.string().min(1), title: z.string().optional(), ...tableShape })).optional() });
+const dashboardBlock = richBase.extend({ type: z.literal('dashboard'), metrics: z.array(metricItem).optional(), charts: z.array(z.object({ id: z.string().min(1), title: z.string().optional(), chartType: z.enum(['line', 'area', 'bar', 'grouped-bar', 'stacked-bar', 'stacked-area', 'histogram', 'waterfall', 'bubble', 'heatmap', 'treemap', 'pie', 'donut', 'scatter', 'radar', 'funnel']), data: z.array(dataRow), xKey: z.string().min(1), series: z.array(z.object({ key: z.string().min(1), label: z.string().min(1), color: z.string().optional() })).min(1), summary: z.string().min(1) })).optional(), tables: z.array(z.object({ id: z.string().min(1), title: z.string().optional(), ...tableShape })).optional() });
 const documentBlock = richBase.extend({
   type: z.literal('document'),
   content: z.string(),
@@ -310,7 +323,7 @@ const pdfBlock = richBase.extend({ type: z.literal('pdf'), name: z.string().min(
 export const xrogaBlockSchema = z.discriminatedUnion('type', [
   textBlock, listBlock, evidenceBlock, linkBlock, approvalBlock, receiptBlock,
   contentBlock, connectionBlock, websiteBlock, artifactBlock,
-  metricBlock, metricGroupBlock, progressBlock, progressGroupBlock, calculatorBlock, calculationBlock,
+  metricBlock, metricGroupBlock, marketQuoteBlock, conversionBlock, progressBlock, progressGroupBlock, calculatorBlock, calculationBlock,
   gaugeBlock, comparisonBlock, decisionMatrixBlock, keyValueBlock, checklistBlock, stepsBlock, scorecardBlock, rankingBlock,
   tabsBlock, accordionBlock, fileTreeBlock, calendarBlock, sourceListBlock,
   cardGridBlock, richResultsBlock, treeBlock, jsonBlock, apiRequestBlock,

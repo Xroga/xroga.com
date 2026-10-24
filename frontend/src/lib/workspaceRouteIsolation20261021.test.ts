@@ -60,8 +60,9 @@ test('conversation navigation uses 1 marker per user request and reply with adap
   assert.match(css, /xv-chat-rail-page--newer/);
 });
 
-test('automatic intro replaces first line in the same position; scroll control is animated', () => {
+test('automatic intro replaces first line in the same position; scroll control has direct arrows', () => {
   assert.match(starter, /className=\{styles\.automaticFirst\} data-visible=\{!showDetail\}/);
   assert.match(starter, /className=\{styles\.automaticDetail\} data-visible=\{showDetail\}/);
-  assert.match(dock, /<SquareChevronUpIcon size=\{19\}/);
+  assert.match(dock, /<ArrowDown size=\{19\}/);
+  assert.match(dock, /<ArrowUp size=\{19\}/);
 });

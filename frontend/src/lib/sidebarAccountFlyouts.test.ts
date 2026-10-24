@@ -23,7 +23,8 @@ test('More consolidates legacy groups and uses the portalled flyout', () => {
   assert.match(HOVER_MENU, /createPortal/);
   assert.match(HOVER_MENU, /onMouseEnter=\{cancelClose\}/);
   assert.match(HOVER_MENU, /onMouseLeave=\{scheduleClose\}/);
-  assert.match(HOVER_MENU, /if \(!event\.defaultPrevented\) setOpen\(true\)/);
+  assert.match(HOVER_MENU, /if \(!event\.defaultPrevented\) openMenu\(\)/);
+  assert.match(HOVER_MENU, /window\.dispatchEvent\(new CustomEvent\(FLYOUT_OPEN_EVENT/);
   assert.match(HOVER_MENU, /onClick\?\.\(event\)/);
   for (const label of ['Operations', 'Growth', 'Settings', 'Explore', 'Showcase', 'Community', 'Share Feedback']) {
     assert.match(SIDEBAR, new RegExp("label: '" + label + "'"));
@@ -63,35 +64,16 @@ test('account popup groups destinations and displays authenticated identity', ()
   assert.match(PROFILE_MENU, /<UpgradeActionButton \/>/);
   assert.doesNotMatch(PROFILE_MENU, /<strong>Premium<\/strong>/);
   assert.match(PROFILE_MENU, /data\.user\?\.app_metadata\?\.provider/);
-  assert.match(PROFILE_MENU, /\{email \? <small>\{email\}<\/small> : null\}/);
+  assert.match(PROFILE_MENU, /aria-label="Copy account email"/);
+  assert.match(PROFILE_MENU, /<small>\{email\}<\/small>/);
   assert.match(PROFILE_MENU, /xv-pqm-submenu/);
   assert.match(PROFILE_MENU, /trigger\.right \+ gap/);
   assert.match(PROFILE_MENU, /event\.key !== 'Escape'/);
 });
 
-test('the beta banner starts at the hero and becomes a compact hover notice after scrolling', () => {
-  assert.doesNotMatch(BETA_BANNER, /setInterval|scrollIntoView|sessionStorage/);
-  assert.match(BETA_BANNER, /TOP_NOTICE_DURATION_MS = 5_000/);
-  assert.match(BETA_BANNER, /window\.scrollY > CORNER_NOTICE_SCROLL_Y/);
-  assert.match(BETA_BANNER, /xv-beta-banner--top/);
-  assert.match(BETA_BANNER, /xv-beta-banner--corner/);
-  assert.match(BETA_BANNER, /Early access/);
-  assert.match(BETA_BANNER, /Xroga is live while we finish a few features/);
-  assert.match(BETA_BANNER, /Report an issue/);
-  assert.match(BETA_BANNER, /aria-label="Dismiss Xroga notice"/);
-  assert.match(PUBLIC_CHROME, /<BetaExpectationBanner \/>/);
-  // the expired top notice stays mounted but hidden until the first scroll: re-inserting it high in the shell
-  // restyled the whole page in one frame
-  assert.match(BETA_BANNER, /const parked = !compact && topExpired && !scrolled;/);
-  assert.match(BETA_BANNER, /style=\{parked \? \{ display: 'none' \} : undefined\}/);
-  assert.doesNotMatch(BETA_BANNER, /topExpired && !scrolled\)\) return null/);
-  assert.match(APP_SHELL, /!isDashboard \? <BetaExpectationBanner compact \/>/);
-  assert.doesNotMatch(DASHBOARD_VIEW, /BetaExpectationBanner/);
-  assert.match(CSS, /\.xv-public-marketing-shell > \.xv-beta-banner--top\s*\{[\s\S]*position:\s*absolute !important/);
-  assert.match(CSS, /\.xv-public-marketing-shell > \.xv-beta-banner--corner\s*\{[\s\S]*position:\s*fixed !important/);
-  assert.match(CSS, /\.xv-beta-banner--corner:hover[\s\S]*width:\s*min\(390px/);
-  assert.match(CSS, /background:\s*#080808 !important;[\s\S]*color:\s*#fff !important/);
-  assert.match(CSS, /\.xv-beta-banner__cta,[\s\S]*background:\s*#dc2626 !important/);
+test('the early-access notice is retired across layout callers', () => {
+  assert.match(BETA_BANNER, /return null/);
+  assert.doesNotMatch(BETA_BANNER, /Early access|Report an issue|setInterval/);
 });
 
 test('composer retains a small bottom breathing space', () => {

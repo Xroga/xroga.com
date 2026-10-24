@@ -1,6 +1,6 @@
 'use client';
 
-import { useDeferredValue, useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { useDeferredValue, useEffect, useRef, useState, useMemo, useCallback, lazy, Suspense } from 'react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -13,9 +13,9 @@ import { ChatErrorBoundary } from './ChatErrorBoundary';
 import { StoppedBuildResumeCard } from './StoppedBuildResumeCard';
 import { CapacityUnavailableCard } from './CapacityUnavailableCard';
 import { UpdateFileTrail } from './UpdateFileTrail';
-import { WebSourcesPanel } from './WebSourcesPanel';
+import { ResponseSources } from './ResponseSources';
 import { webSourcesToRichResults } from '@/lib/xrogaWebResultAdapter';
-import { XrogaOutputView } from './XrogaBlockView';
+const XrogaRichResultsView = lazy(() => import('./XrogaRichResultsView').then((module) => ({ default: module.XrogaRichResultsView })));
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
 import { promptWantsLiveResearch } from '@/lib/researchWait';
 import { shareableDocumentText } from '@/lib/xrogaShareableOutput';
@@ -28,6 +28,7 @@ import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions } from '@/lib/messageHelpers';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
 import { UserProfileBox } from '@/components/profile/UserProfileBox';
+import { WorkspacePeopleControls } from './WorkspacePeopleControls';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
 import { loadWorkspaceSession } from '@/lib/workspacePersistence';
@@ -89,7 +90,7 @@ function transcriptScrollRoot(): HTMLElement {
 }
 
 export function SwarmMessageLog({ compact, incognito = false, chromeless = false }: SwarmMessageLogProps) {
-  const { messages, sessionId, sessionRestoring, loading, animatingId, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
+  const { messages, sessionId, sessionRestoring, loading, animatingId, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, updateFeatureOutput, retryStoppedBuild, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
     useTerminalChat();
   const [rollbackId, setRollbackId] = useState<string | null>(null);
   const workspaceRepo = useProjectWorkspaceStore((s) => s.repo);
@@ -374,7 +375,9 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
             <span className="xv-term-badge">Private · not saved</span>
           ) : (
             <div className="xv-terminal-header-tools flex items-center gap-1 shrink-0">
-              <WorkspaceLauncher />
+              <WorkspaceLauncher control="project" />
+              <WorkspacePeopleControls />
+              <WorkspaceLauncher control="visibility" />
               <TerminalSkinPicker />
               <button
                 type="button"
@@ -439,18 +442,21 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
           )}
 
           {renderedMessages.map((msg) => {
-            const sourcedResults = !msg.featureOutput && msg.webSources?.length ? webSourcesToRichResults(msg.webSources, msg.id) : null;
             const isLastAssistant = msg.id === lastAssistantId && !loading;
             const showSuggestions = isLastAssistant && msg.role === 'assistant';
             const isImageOutput =
               msg.featureOutput != null &&
               (msg.featureOutput as { type?: string }).type === 'image';
+            const featureType = (msg.featureOutput as { type?: string } | undefined)?.type;
+            const isRenderedFeature = Boolean(msg.featureOutput && featureType !== 'image' && featureType !== 'chat');
             const suggestions =
               !isIncognito && showSuggestions && !isImageOutput
                 ? generateMessageSuggestions(lastUserText, msg.content)
                 : null;
             const messagePrompt = promptByAssistantId.get(msg.id) || lastUserText;
             const suppressGreetingActivity = isQuickConversationPrompt(messagePrompt);
+            const discoveryBlock = msg.role === 'assistant' && (!isRenderedFeature || featureType === 'xroga.output') && !(msg.id === animatingId && loading)
+              ? webSourcesToRichResults(msg.webSources, msg.id, messagePrompt) : null;
 
             return (
               <div
@@ -465,7 +471,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                 )}
               >
                 {msg.role === 'user' && (
-                  isIncognito ? (
+                  <div className="xv-user-avatar-reveal">{isIncognito ? (
                     <IncognitoProfileBox size="terminal" />
                   ) : (
                     <UserProfileBox
@@ -473,7 +479,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                       initial={displayInitial}
                       size="terminalCompact"
                     />
-                  )
+                  )}</div>
                 )}
                 <div
                   className={cn(
@@ -489,7 +495,6 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                         role="user"
                         content={msg.content}
                         messageId={msg.id}
-                        onDelete={() => deleteUserTurn(msg.id)}
                       />
                     </>
                   ) : msg.role === 'system' ? (
@@ -500,9 +505,10 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                         {/* The pending shell is transient request-lifecycle feedback only.
                             It is never persisted as execution evidence. Real canonical
                             activity replaces it as soon as the backend emits a step. */}
-                        {msg.executionActivity?.length ? (
+                        {msg.executionActivity?.length || (!loading && msg.thinkingSteps?.length) ? (
                           <TerminalLiveActivity
                             activity={msg.executionActivity}
+                            thinkingSteps={msg.thinkingSteps}
                             requestText={messagePrompt}
                           />
                         ) : loading &&
@@ -586,11 +592,12 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                             }
                           />
                         ) : null}
-                        {msg.featureOutput &&
-                        (msg.featureOutput as { type?: string }).type !== 'image' ? (
+                        {isRenderedFeature ? (
                           <ChatErrorBoundary>
                             <FeatureOutputView
                               output={msg.featureOutput}
+                              sources={msg.webSources}
+                              discoveryBlock={discoveryBlock}
                               messageId={msg.id}
                               onDelete={() => deleteTurn(msg.id)}
                               onPreviewUpdate={updateFeatureOutput}
@@ -606,9 +613,12 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           !msg.content?.trim() ? null : (
                           <ModernResponseText
                             sources={msg.webSources}
+                            afterIntro={discoveryBlock ? <Suspense fallback={null}><XrogaRichResultsView block={discoveryBlock} sourcePreviews={msg.webSources} /></Suspense> : undefined}
                             content={
                               msg.content?.trim()
                                 ? msg.content
+                                : featureType === 'chat' && typeof (msg.featureOutput as { content?: unknown }).content === 'string'
+                                  ? (msg.featureOutput as { content: string }).content
                                 : !loading && !msg.featureOutput && !msg.buildStopped && !msg.updateTrail
                                   ? (() => {
                                       if (!(codeBuildActive || heavyBuildActive)) {
@@ -632,12 +642,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           />
                         )}
                         {msg.webSources && msg.webSources.length > 0 ? (
-                          <>
-                            {sourcedResults ? (
-                              <ChatErrorBoundary><XrogaOutputView output={{ schemaVersion: 1, id: `web-result-output-${msg.id}`, status: 'completed', blocks: [sourcedResults] }} /></ChatErrorBoundary>
-                            ) : null}
-                            <WebSourcesPanel sources={msg.webSources} />
-                          </>
+                          <ResponseSources sources={msg.webSources} />
                         ) : null}
                       </div>
                       {msg.content && (
@@ -645,8 +650,8 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           role="assistant"
                           content={[msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
                           messageId={msg.id}
+                          createdAt={msg.createdAt}
                           prompt={promptByAssistantId.get(msg.id)}
-                          onDelete={() => deleteTurn(msg.id)}
                         />
                       )}
                       {!msg.content && msg.featureOutput && (
@@ -654,8 +659,8 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           role="assistant"
                           content={shareableDocumentText(msg.featureOutput)}
                           messageId={msg.id}
+                          createdAt={msg.createdAt}
                           prompt={promptByAssistantId.get(msg.id)}
-                          onDelete={() => deleteTurn(msg.id)}
                         />
                       )}
                       {suggestions && (

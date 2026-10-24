@@ -23,6 +23,7 @@ import { removeTerminalHistoryEntry } from '@/lib/terminalHistory';
 import { rollbackProjectUpdate } from '@/lib/rollbackProjectUpdate';
 import { useProjectWorkspaceStore, type ProjectWorkspaceStatus } from '@/store/useProjectWorkspaceStore';
 import { AnchoredPortalPopover } from '@/components/ui/AnchoredPortalPopover';
+import { SidebarMovingTitle } from '@/components/layout/SidebarMovingTitle';
 
 const PROJECT_REVIEW_PROMPT =
   'Inspect this project and tell me its current health, biggest risk, unfinished work, and the highest-value next step. Do not change code unless I explicitly ask.';
@@ -59,7 +60,6 @@ function formatRelative(timestamp: number | null): string {
 export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boolean }) {
   const { sessionId, setPrompt, startNewChat } = useTerminalChat();
   const activeProject = useProjectWorkspaceStore((state) => state.activeProjectContext);
-  const projectName = useProjectWorkspaceStore((state) => state.projectName);
   const deployUrl = useProjectWorkspaceStore((state) => state.deployUrl);
   const githubRepoUrl = useProjectWorkspaceStore((state) => state.githubRepoUrl);
   const commitSha = useProjectWorkspaceStore((state) => state.commitSha);
@@ -75,7 +75,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
   const rootRef = useRef<HTMLDivElement>(null);
   const repoIdentity = {
     fullName: activeProject?.repo || '',
-    label: activeProject?.repo.split('/').pop() || (githubRepoUrl?.split('/').filter(Boolean).pop()) || 'Workspace',
+    label: activeProject?.repo.split('/').pop() || (githubRepoUrl?.split('/').filter(Boolean).pop()) || 'Black Hole',
     branch: activeProject?.branch || '',
   };
   const visibleStatus: ProjectWorkspaceStatus = activeProject ? status : 'idle';
@@ -222,23 +222,25 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
       <button
         type="button"
         className="xv-term-title xv-term-title--button"
-        aria-label="Project actions"
-        onClick={() => setOpen((value) => !value)}
+        aria-label={repoIdentity.fullName ? 'Project actions' : 'About Xroga Black Hole'}
+        onMouseEnter={() => { if (!repoIdentity.fullName) setOpen(true); }}
+        onClick={() => setOpen((value) => repoIdentity.fullName ? !value : true)}
         aria-haspopup="menu"
         aria-expanded={open}
       >
-        <h3 className="max-w-[136px] truncate">{repoIdentity.label}</h3>
+        <h3 className="xv-repo-name" title={repoIdentity.fullName}><SidebarMovingTitle text={repoIdentity.label} /></h3>
 
       </button>
 
-      <AnchoredPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={rootRef} placement="bottom-start" width={290} ariaLabel="Project actions"
-          className="absolute left-0 top-[calc(100%+.45rem)] z-[1000] w-[min(290px,calc(100vw-24px))] overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-1.5 text-[var(--foreground)] shadow-[0_20px_60px_rgba(0,0,0,.28)] backdrop-blur-xl"
+      <AnchoredPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={rootRef} placement="bottom-start" width={repoIdentity.fullName ? 290 : 236} ariaLabel={repoIdentity.fullName ? 'Project actions' : 'About Xroga Black Hole'}
+          className="absolute left-0 top-[calc(100%+.45rem)] z-[1000] overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-1.5 text-[var(--foreground)] shadow-[0_20px_60px_rgba(0,0,0,.28)]"
         >
+          {!repoIdentity.fullName ? <div className="px-2.5 py-2"><strong className="block text-xs">Xroga · Black Hole</strong><span className="mt-1 block text-[11px] text-[var(--muted)]">Super Intelligence</span><p className="mb-0 mt-2 text-[11px] leading-relaxed">Describe the work. Xroga selects available capabilities automatically.</p></div> : <>
           <div className="px-2.5 pb-2 pt-2">
             <div className="flex items-start gap-2.5">
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold">{repoIdentity.label}</p>
-                <p className="mt-0.5 truncate font-mono text-[10px] text-[var(--muted)]">
+                <button type="button" className="block w-full break-all text-left text-sm font-semibold" title="Copy full repository name" onClick={() => { if (repoIdentity.fullName) void navigator.clipboard.writeText(repoIdentity.fullName).then(() => toast.success('Repository name copied')).catch(() => toast.error('Could not copy repository name')); }}>{repoIdentity.fullName || repoIdentity.label}</button>
+                <p className="mt-0.5 break-all font-mono text-[10px] text-[var(--muted)]">
                   {repoIdentity.fullName || 'No GitHub repository'} · {repoIdentity.branch}
                 </p>
               </div>
@@ -364,6 +366,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
               </button>
             </div>
           ) : null}
+          </>}
       </AnchoredPortalPopover>
     </div>
   );

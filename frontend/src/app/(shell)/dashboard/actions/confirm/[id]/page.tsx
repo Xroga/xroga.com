@@ -43,6 +43,7 @@ interface SafeConfirmation {
   createdAt: string;
 
   expiresAt: string;
+  request?: string;
 }
 
 function displayToolkitName(
@@ -432,6 +433,8 @@ export default function BusinessActionConfirmationPage() {
                 {confirmation.summary}
               </p>
             </div>
+
+            {confirmation.request ? <div className="rounded-xl border border-blue-500/25 bg-blue-500/[0.06] px-4 py-3"><p className="text-xs font-semibold uppercase tracking-[0.12em] text-blue-500">Your original request</p><p className="mt-1 text-sm leading-6 text-[var(--text-primary)]">{confirmation.request}</p></div> : null}
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
