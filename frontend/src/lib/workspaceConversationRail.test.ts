@@ -18,7 +18,7 @@ test('project, pinned and recent sidebar rows retain readable labels and accessi
   assert.match(sidebar, /session\.title/);
   assert.match(sidebar, /aria-label="Projects"/);
   assert.match(sidebar, /aria-label="Pinned items"/);
-  assert.match(sidebar, /aria-label="Recent conversations"/);
+  assert.match(sidebar, /aria-label="Recent conversations outside projects"/);
 });
 
 test('only the workspace transcript has a minimal conversation-tick rail', () => {

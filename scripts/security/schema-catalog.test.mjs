@@ -3,11 +3,11 @@ import {test} from 'node:test';
 import {readFileSync} from 'node:fs';
 import {assertDisposableSource,collectSchemaCatalog,validateCurrentMigrationAdditions} from './schema-catalog.mjs';
 
-test('current feedback and sidebar additions are exact migration-bound evidence, never a broad missing-table waiver',()=>{
+test('current feedback sidebar and workflow additions are exact migration-bound evidence, never a broad missing-table waiver',()=>{
   const additions=JSON.parse(readFileSync(new URL('../../docs/xroga/security/current-migration-additions.json',import.meta.url),'utf8'));
   const files=additions.tables.flatMap(t=>[t.migration,t.authorizationMigration]);
   const read=file=>readFileSync(new URL(`../../supabase/migrations/${file}`,import.meta.url),'utf8');
-  assert.equal(validateCurrentMigrationAdditions(additions,files,read).length,5);
+  assert.equal(validateCurrentMigrationAdditions(additions,files,read).length,8);
   assert.throws(()=>validateCurrentMigrationAdditions(additions,[],read));
   assert.throws(()=>validateCurrentMigrationAdditions(additions,files,file=>read(file)+'\n-- source drift'));
   const extra=structuredClone(additions);extra.tables.push({...extra.tables[0],table_name:'unreviewed'});

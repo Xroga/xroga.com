@@ -25,7 +25,7 @@ test('a compact control scrolls the unified sidebar without a full-height native
 test('projects precede conditional pinned items and recents with account-scoped durable pins', () => {
   const repo = HISTORY.indexOf('aria-label="Projects"');
   const pin = HISTORY.indexOf('aria-label="Pinned items"');
-  const rec = HISTORY.indexOf('aria-label="Recent conversations"');
+  const rec = HISTORY.indexOf('aria-label="Recent conversations outside projects"');
   assert.ok(repo !== -1 && repo < pin && pin < rec, 'sidebar history ordering');
   assert.match(HISTORY, /xroga_sidebar_pins_v1:/);
   assert.match(HISTORY, /const accountId\s*=.*workspaceIdentity\.userId/);
@@ -38,7 +38,7 @@ test('projects precede conditional pinned items and recents with account-scoped 
   assert.doesNotMatch(HISTORY, /foldersList = foldersList\.slice\(0, 12\)/);
   assert.match(HISTORY, /renderRow\('conversation',session\.id,conversationTitle\(session\),\(\)=>void openSession\(session\)/);
   assert.match(HISTORY, /const pinnedItems=sortPinned\(itemMeta/);
-  assert.match(HISTORY, /recentConversations\.slice\(0,shownRecents\)/);
+  assert.match(HISTORY, /standaloneRecents\.slice\(0,shownRecents\)/);
   assert.match(HISTORY, /renderRow\('conversation',session\.id,conversationTitle\(session\),\(\)=>void openSession\(session\),false\)/);
 });
 

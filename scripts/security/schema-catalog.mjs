@@ -7,7 +7,10 @@ export function validateCurrentMigrationAdditions(additions,files,readMigration)
   const sidebar='20261021233500_sidebar_organization.sql',parents='20261022003000_sidebar_exact_parent_guards.sql';
   const reviewed={product_feedback:['20261018211950_product_feedback_admin.sql','20261021100000_feedback_founder_authorization.sql'],
     xroga_sidebar_chats:[sidebar,sidebar],xroga_sidebar_items:[sidebar,parents],
-    xroga_sidebar_legacy_title_backup:[sidebar,sidebar],xroga_sidebar_sections:[sidebar,parents]};
+    xroga_sidebar_legacy_title_backup:[sidebar,sidebar],xroga_sidebar_sections:[sidebar,parents],
+    business_automation_events:['20261024200940_connected_app_workflows.sql','20261024200940_connected_app_workflows.sql'],
+    business_automation_rules:['20261024200940_connected_app_workflows.sql','20261024200940_connected_app_workflows.sql'],
+    business_workflow_runs:['20261024200940_connected_app_workflows.sql','20261024200940_connected_app_workflows.sql']};
   assert.deepEqual(additions.tables.map(t=>`${t.schema}.${t.table_name}`),Object.keys(reviewed).map(name=>'public.'+name));
   for(const entry of additions.tables){
     assert.deepEqual([entry.migration,entry.authorizationMigration],reviewed[entry.table_name],'Only the explicitly reviewed creation and ownership migrations apply');

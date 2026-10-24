@@ -19,7 +19,17 @@
     "backend/src/services/integrations/businessAutomations.ts",
     "frontend/src/app/(shell)/dashboard/actions/confirm/[id]/page.tsx",
     ".github/workflows/supabase-migrate.yml",
-    "docs/xroga/missions/phase3-accepted-main-integration-20261025.json"
+    "docs/xroga/missions/phase3-accepted-main-integration-20261025.json",
+    "scripts/security/schema-catalog.mjs",
+    "scripts/security/schema-catalog.test.mjs",
+    "scripts/security/full-supabase-history.mjs",
+    "docs/xroga/security/current-migration-additions.json",
+    "frontend/e2e/composer-polish.spec.ts",
+    "frontend/src/lib/sidebarCompactSmooth.test.ts",
+    "frontend/src/lib/sidebarComposerRegression20261023.test.ts",
+    "frontend/src/lib/sidebarHistoryScroll.test.ts",
+    "frontend/src/lib/workspaceConversationRail.test.ts",
+    "frontend/src/lib/terminal/handsFreeVoiceUi.test.ts"
   ],
   "decisions": {
     "keep": [
@@ -82,6 +92,24 @@
       "command": "npm run verify:baseline and existing PR845 required workflows",
       "reference": "scripts/ci/run-baseline.mjs",
       "scope": "Required final source-bound integration baseline and isolated authenticated/fresh-upgrade proof must pass before main merge."
+    },
+    {
+      "reference": "scripts/security/schema-catalog.test.mjs",
+      "command": "node --test scripts/security/schema-catalog.test.mjs",
+      "scope": "Three exact-catalog provenance tests pass. All eight selected additions reject missing source, source drift, unknown tables, changed authorization migration and claimed production mutation. Actual fresh/upgrade CI retains unknown-table denial and adds browser-denied/service-allowed checks for the three main workflow tables.",
+      "negative": true
+    },
+    {
+      "command": "Existing Conversation dash guest browser verification workflow",
+      "reference": "frontend/e2e/composer-polish.spec.ts",
+      "negative": false,
+      "scope": "Preserve main519045 idle microphone and listening audio-line behavior. Replace stale six-path idle-waveform expectation with enabled Start voice typing and exact microphone glyph. Real rendered guest CI required."
+    },
+    {
+      "scope": "All28 focused existing UI contracts pass after reproducing five stale source-text assertions against current main grouping and idle/listening icons. Preserve every other assertion and all current frontend implementation.",
+      "reference": "frontend/src/lib/sidebarHistoryScroll.test.ts",
+      "command": "node --import tsx --test frontend/src/lib/sidebarCompactSmooth.test.ts frontend/src/lib/sidebarComposerRegression20261023.test.ts frontend/src/lib/sidebarHistoryScroll.test.ts frontend/src/lib/workspaceConversationRail.test.ts frontend/src/lib/terminal/handsFreeVoiceUi.test.ts",
+      "negative": true
     }
   ],
   "architecture": {

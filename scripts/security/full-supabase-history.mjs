@@ -114,6 +114,25 @@ try {
   evidence.schemaParity={status:'NOT_PRODUCTION_DRIFT_CERTIFIED',observedReferenceTables:observed.tables.length,disposableTables:actual.length,missingObservedTables:observed.tables.filter(row=>!names.has(`${row.schema}.${row.table_name}`)).map(row=>`${row.schema}.${row.table_name}`)};
   const catalog=await collectSchemaCatalog(db,{sourceSha,observedAt:new Date().toISOString()});
   assert.deepEqual(catalog.tables.filter(t=>t.schema==='public'&&!t.rls_enabled).map(t=>t.table_name),[],'Every installed public table must have an explicit RLS boundary');
+  // Main's durable workflow checkpoints remain server-only. Inventorying the
+  // exact migration is not permission to expose its stored requests/results.
+  for(const name of ['business_automation_events','business_automation_rules','business_workflow_runs']){
+    const table=catalog.tables.find(t=>t.schema==='public'&&t.table_name===name);
+    assert.ok(table?.rls_enabled,'Workflow checkpoints require RLS');
+    assert.deepEqual(table.grants.filter(g=>['anon','authenticated','PUBLIC'].includes(g.role)),[],'No browser grant on workflow checkpoints');
+    for(const privilege of ['SELECT','INSERT','UPDATE','DELETE'])assert.ok(table.grants.some(g=>g.role==='service_role'&&g.privilege===privilege));
+    for(const role of ['anon','authenticated']){
+      await db.query('begin');
+      try{
+        await db.query(`set local role ${role}`);
+        await assert.rejects(db.query(`select id from public.${name} limit 0`),error=>error.code==='42501');
+      }finally{await db.query('rollback');}
+    }
+    await db.query('begin');
+    try{await db.query('set local role service_role');assert.equal((await db.query(`select id from public.${name} limit 0`)).rowCount,0);}
+    finally{await db.query('rollback');}
+  }
+  evidence.workflowCheckpointRoleChecks='PASS_BROWSER_DENIED_SERVICE_ALLOWED';
   writeFileSync(join(out,'schema-catalog.json'),JSON.stringify(catalog,null,2)+'\n');
   await db.query("notify pgrst, 'reload schema'");
   evidence.fresh='PASS'; evidence.status='PASS'; save();

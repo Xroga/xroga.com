@@ -83,7 +83,10 @@ test('existing conversation composer has the identical control layout without a 
   await expect(surface.getByRole('button', { name: 'Plugins' })).toBeVisible();
   await expect(surface.getByRole('button', { name: 'Black Hole model and usage' })).toBeVisible();
   await expect(surface.getByRole('button', { name: 'Start voice typing' })).toBeVisible();
-  await expect(surface.locator('.xv-voice-icon-only svg path')).toHaveCount(6);
+  // Current main uses the microphone glyph while idle and audio lines only
+  // while listening. Preserve that UI choice when verifying the idle composer.
+  await expect(surface.getByRole('button', { name: 'Start voice typing' })).toBeEnabled();
+  await expect(surface.locator('.xv-voice-icon-only svg.lucide-mic')).toHaveCount(1);
   await surface.getByRole('button', { name: 'Black Hole model and usage' }).hover();
   await page.waitForTimeout(330);
   await expect(page.locator('.xv-compact-app-tooltip')).toHaveCount(0);
