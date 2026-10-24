@@ -1,7 +1,17 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { explicitConfirmationIntent } from './phase1BusinessPreflight.js';
+import { connectionStatusTarget, explicitConfirmationIntent } from './phase1BusinessPreflight.js';
+
+test('connection-status questions bypass tool discovery without treating connection requests as status checks', () => {
+  assert.equal(connectionStatusTarget('check gmail app is connected with xroga'), 'gmail');
+  assert.equal(connectionStatusTarget('Is my Google Calendar connected?'), 'Google Calendar');
+  assert.equal(connectionStatusTarget('Which apps are connected?'), '*');
+  assert.equal(connectionStatusTarget('Connect my Gmail account'), null);
+  assert.equal(connectionStatusTarget('Send an email from Gmail'), null);
+  assert.equal(connectionStatusTarget('Check Gmail is connected and send an email to Jane'), null);
+  assert.equal(connectionStatusTarget('Which apps are connected, then create a calendar event'), null);
+});
 
 test('only explicit pending-action follow-ups bypass semantic planning', () => {
   assert.equal(explicitConfirmationIntent('Confirm it'), 'confirm');
