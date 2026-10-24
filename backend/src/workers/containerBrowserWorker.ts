@@ -42,6 +42,8 @@ export interface ContainerWorkerOptions {
   spawnDocker?: (args: string[]) => ChildProcess;
   /** for AI jobs only: the full Chromium channel (extensions need it); deterministic jobs keep the default headless shell */
   aiChannel?: string;
+  /** operator diagnostics (worker error reasons, container stderr). Never attached in production: it can carry page-derived text. */
+  onDiagnostic?: (line: string) => void;
 }
 
 const PROXY_PORT = 3128;
@@ -79,6 +81,7 @@ export class ContainerBrowserWorker implements BrowserWorkerPort {
     const usage: ModelUsage = { calls: 0, inputTokens: 0, outputTokens: 0, costMicros: 0, refused: 0 };
     this.lastUsage = usage;
     const cleanup = () => {
+      if (this.opts.onDiagnostic) for (const l of this.docker(['logs', proxyName]).stdout.split('\n').filter((x) => x.includes('decision')).slice(-20)) this.opts.onDiagnostic(`proxy: ${l.slice(0, 300)}`);
       this.docker(['rm', '-f', browserName]); this.docker(['rm', '-f', proxyName]); this.docker(['network', 'rm', net]);
     };
 
@@ -90,11 +93,16 @@ export class ContainerBrowserWorker implements BrowserWorkerPort {
       if (proxy.status !== 0) throw new BrowserTaskError('WORKER_FAILED', 'could not start the egress proxy');
       if (this.docker(['network', 'connect', '--alias', PROXY_HOST, net, proxyName]).status !== 0) throw new BrowserTaskError('WORKER_FAILED', 'could not attach the egress proxy');
       if (!(await this.waitFor(() => this.docker(['logs', proxyName]).stdout.includes('"listening"'), ctx.signal))) throw new BrowserTaskError('WORKER_FAILED', 'the egress proxy did not start');
+      // Joining the internal network switches the proxy to Docker's embedded resolver; the first lookups right after can fail transiently.
+      // Wait until the proxy itself resolves the start host, instead of letting the job's first navigation race it.
+      const host = new URL(job.startUrl).hostname;
+      const probe = `require('dns').promises.lookup(${JSON.stringify(host)}).then(()=>process.exit(0),()=>process.exit(1))`;
+      if (!(await this.waitFor(() => this.docker(['exec', proxyName, 'node', '-e', probe]).status === 0, ctx.signal))) throw new BrowserTaskError('WORKER_FAILED', 'the egress proxy cannot resolve the start host');
 
       const launch = buildChromiumLaunch(job, { profileRoot: '/run/xroga/profiles', proxy: { host: PROXY_HOST, port: PROXY_PORT, username, password }, baseEnv: { HOME: '/tmp', PATH: '/usr/local/bin:/usr/bin:/bin' } }, ai ? { aiDevtools: true } : undefined);
       const flags = dockerRunArgs(this.spec, { repoRoot: this.opts.repoRoot, name: browserName });
       flags[flags.indexOf('--network') + 1] = net;
-      const child = this.spawnDocker(['run', '-i', '--label', 'xroga.browser-job=1', ...flags, '--entrypoint', 'node', '--workdir', '/opt/xroga-browser-worker', this.spec.image, '/opt/xroga-browser-worker/runJob.mjs']);
+      const child = this.spawnDocker(['run', '-i', '--label', 'xroga.browser-job=1', ...flags, ...(this.opts.onDiagnostic ? ['--env', 'XROGA_WORKER_DEBUG=1'] : []), '--entrypoint', 'node', '--workdir', '/opt/xroga-browser-worker', this.spec.image, '/opt/xroga-browser-worker/runJob.mjs']);
       return await this.converse(child, job, plan, { ...launch, ...(ai && this.opts.aiChannel ? { channel: this.opts.aiChannel } : {}) }, usage, ctx.signal);
     } finally {
       cleanup();
@@ -117,6 +125,7 @@ export class ContainerBrowserWorker implements BrowserWorkerPort {
       const llmAbort = new AbortController();
       signal.addEventListener('abort', () => llmAbort.abort(), { once: true });
 
+      if (this.opts.onDiagnostic) createInterface({ input: child.stderr! }).on('line', (l) => this.opts.onDiagnostic!(`stderr: ${l.slice(0, 500)}`));
       const rl = createInterface({ input: child.stdout! });
       rl.on('line', (raw) => {
         let m: Record<string, any>;
@@ -142,6 +151,7 @@ export class ContainerBrowserWorker implements BrowserWorkerPort {
           }));
           send({ type: 'done' });
         } else if (m.type === 'error') {
+          this.opts.onDiagnostic?.(`worker error ${m.code}: ${m.reason}`);
           const code = WORKER_ERRORS.has(m.code) ? (m.code as BrowserTaskFailureCode) : 'WORKER_FAILED';
           finish(() => rejectRun(new BrowserTaskError(code, code === 'WORKER_FAILED' ? `the browser worker failed (${String(m.code).slice(0, 40)})` : String(m.reason).slice(0, 200))));
         }

@@ -16,6 +16,8 @@ import { readFile, writeFile, stat, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { chromium } from 'playwright-core';
 
+const debug = process.env.XROGA_WORKER_DEBUG === '1' ? (m) => process.stderr.write(`[runJob] ${String(m).slice(0, 400)}
+`) : () => {};
 const out = (msg) => process.stdout.write(`${JSON.stringify(msg)}\n`);
 const fail = (code, reason) => { out({ type: 'error', code, reason: String(reason).slice(0, 300) }); };
 
@@ -53,7 +55,7 @@ async function main() {
   const context = await chromium.launchPersistentContext(launch.userDataDir, {
     headless: true, chromiumSandbox: true, proxy: launch.proxy, args: launch.args, env: launch.env, downloadsPath: launch.downloadsPath,
     acceptDownloads: true, handleSIGINT: false, handleSIGTERM: false, handleSIGHUP: false, timeout: launch.timeout,
-    ...(launch.channel ? { channel: launch.channel } : {}), ...(launch.executablePath ? { executablePath: launch.executablePath } : {}),
+    ...(launch.channel ? { channel: launch.channel } : {}), ...(launch.ignoreDefaultArgs ? { ignoreDefaultArgs: launch.ignoreDefaultArgs } : {}), ...(launch.executablePath ? { executablePath: launch.executablePath } : {}),
     viewport: { width: 1280, height: 800 }, serviceWorkers: 'block',
   });
   onCancel = () => { stopWith('CANCELLED', 'cancelled by the host'); context.close().catch(() => {}); };
@@ -96,9 +98,15 @@ async function main() {
   const ensureStagehand = async () => {
     if (stagehand) return stagehand;
     const { localBrowser, Stagehand } = await import('@browserbasehq/stagehand');
-    const portFile = await readFile(join(launch.userDataDir, 'DevToolsActivePort'), 'utf8');
-    const [port, path] = portFile.trim().split('\n');
-    const browser = await localBrowser.connect({ cdpUrl: `ws://127.0.0.1:${Number(port)}${path}` });
+    // the host chose the port and the launch policy validated it together with its bypass and origin rule; nothing else is accepted
+    const port = Number((launch.args.find((a) => a.startsWith('--remote-debugging-port=')) ?? '').split('=')[1]);
+    if (!Number.isSafeInteger(port) || port < 20_000 || port > 59_999) throw new JobStop('WORKER_FAILED', 'AI mode launched without its DevTools port');
+    let ready = false;
+    for (let i = 0; i < 50 && !ready; i++) { ready = await fetch(`http://127.0.0.1:${port}/json/version`).then((r) => r.ok, () => false); if (!ready) await new Promise((r) => setTimeout(r, 100)); }
+    if (!ready) throw new JobStop('WORKER_FAILED', 'DevTools did not come up');
+    debug(`devtools port ${port}`);
+    const browser = await localBrowser.connect({ cdpUrl: `http://127.0.0.1:${port}` });
+    debug('stagehand connected');
     let seq = 0;
     stagehand = await Stagehand.create({
       browser,
@@ -110,7 +118,9 @@ async function main() {
         out({ type: 'llm', id, params });
       }) },
       selfHeal: false, cache: false,
+      logging: { level: process.env.XROGA_WORKER_DEBUG === '1' ? 'debug' : 'error', format: 'json', onLog: (e) => debug(`stagehand ${JSON.stringify(e)}`) },
     });
+    debug('stagehand created');
     return stagehand;
   };
   const shPage = async (sh) => { const pages = await sh.browser.context.pages(); return pages.find((p) => p.url() === page.url()) ?? pages[0]; };

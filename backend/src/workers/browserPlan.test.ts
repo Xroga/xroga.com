@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { parseBrowserJob } from './browserJob.js';
 import { BrowserPlanError, evaluatePostconditions, parseBrowserPlan } from './browserPlan.js';
-import { AI_DEVTOOLS_ARGS, assertLaunchSafe, buildChromiumLaunch, ChromiumLaunchError } from './chromiumLaunch.js';
+import { aiDevtoolsArgs, assertLaunchSafe, buildChromiumLaunch, ChromiumLaunchError, STAGEHAND_EXTENSION_ID } from './chromiumLaunch.js';
 
 const limits = { maxDurationMs: 60_000, maxNavigations: 20, maxRedirects: 3, maxPages: 2, maxResponseBytes: 10_000_000, maxArtifactBytes: 5_000_000, maxModelCostMicros: 0 };
 const job = (over: Partial<typeof limits> = {}) => parseBrowserJob({
@@ -73,23 +73,43 @@ describe('browser plan contract', () => {
   });
 });
 
-describe('launch policy: AI mode is the only DevTools exception, and a narrow one', () => {
+describe('launch policy: AI mode is the only DevTools exception, and a narrow, matched one', () => {
   const ctx = { profileRoot: '/run/xroga/profiles', proxy: { host: 'egress-proxy', port: 3128, username: 'job1', password: 'p'.repeat(32) } };
-  it('adds exactly the two AI arguments only when asked', () => {
-    const plain = buildChromiumLaunch(job(), ctx);
-    for (const a of AI_DEVTOOLS_ARGS) assert.ok(!plain.args.includes(a));
-    const ai = buildChromiumLaunch(job({ maxModelCostMicros: 10 }), ctx, { aiDevtools: true });
-    for (const a of AI_DEVTOOLS_ARGS) assert.ok(ai.args.includes(a));
+  it('the Stagehand runtime extension id is the one Chromium reported for the image path', () => {
+    assert.equal(STAGEHAND_EXTENSION_ID, 'pgfpmmndcidciloohojhmoamdjjeifdf');
   });
-  it('refuses the AI arguments outside AI mode, a fixed port, and any origin allowance or address in every mode', () => {
+  it('adds the matched set only when asked: random port, exact bypass, exact extension origin', () => {
+    const plain = buildChromiumLaunch(job(), ctx);
+    assert.ok(!plain.args.some((a) => a.startsWith('--remote-')));
+    assert.equal(plain.proxy.bypass, '<-loopback>');
+    assert.equal(plain.ignoreDefaultArgs, undefined);
+    const ai = buildChromiumLaunch(job({ maxModelCostMicros: 10 }), ctx, { aiDevtools: true });
+    const port = Number(ai.args.find((a) => a.startsWith('--remote-debugging-port='))!.split('=')[1]);
+    assert.ok(port >= 20_000 && port <= 59_999);
+    assert.equal(ai.proxy.bypass, `<-loopback>,127.0.0.1:${port}`);
+    assert.ok(ai.args.includes(`--remote-allow-origins=chrome-extension://${STAGEHAND_EXTENSION_ID}`));
+    assert.deepEqual(ai.ignoreDefaultArgs, ['--disable-extensions']);
+  });
+  it('refuses every mismatch or widening of the set, and the whole set outside AI mode', () => {
+    const ai = buildChromiumLaunch(job({ maxModelCostMicros: 10 }), ctx, { aiDevtools: true, devtoolsPort: 31_337 });
     const base = buildChromiumLaunch(job(), ctx);
-    const viol = (args: string[], mode = {}) => { try { assertLaunchSafe({ ...base, args: [...base.args, ...args] }, ctx.profileRoot, ['egress-proxy'], mode); return []; } catch (e) { return (e as ChromiumLaunchError).violations; } };
-    assert.ok(viol(['--remote-debugging-port=0']).includes('DEVTOOLS_NETWORK'));
-    assert.ok(viol(['--enable-unsafe-extension-debugging']).includes('DEVTOOLS_NETWORK'));
-    assert.ok(viol(['--remote-debugging-port=9222'], { aiDevtools: true }).includes('DEVTOOLS_NETWORK'));
-    assert.ok(viol(['--remote-allow-origins=*'], { aiDevtools: true }).includes('DEVTOOLS_NETWORK'));
-    assert.ok(viol(['--remote-debugging-address=0.0.0.0'], { aiDevtools: true }).includes('DEVTOOLS_NETWORK'));
-    assert.ok(viol(['--no-sandbox'], { aiDevtools: true }).includes('FORBIDDEN_FLAG'));
-    assert.deepEqual(viol([...AI_DEVTOOLS_ARGS], { aiDevtools: true }), []);
+    const viol = (opts: object, mode: object = { aiDevtools: true }) => { try { assertLaunchSafe(opts, ctx.profileRoot, ['egress-proxy'], mode); return []; } catch (e) { return (e as ChromiumLaunchError).violations; } };
+    assert.deepEqual(viol(ai), []);
+    const origin = `--remote-allow-origins=chrome-extension://${STAGEHAND_EXTENSION_ID}`;
+    const swap = (from: string, to: string) => ({ ...ai, args: ai.args.map((a) => (a === from ? to : a)) });
+    assert.ok(viol(swap(origin, '--remote-allow-origins=*')).includes('DEVTOOLS_NETWORK'));
+    assert.ok(viol(swap(origin, '--remote-allow-origins=chrome-extension://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')).includes('DEVTOOLS_NETWORK'));
+    assert.ok(viol(swap('--remote-debugging-port=31337', '--remote-debugging-port=9222')).length > 0);
+    assert.ok(viol({ ...ai, proxy: { ...ai.proxy, bypass: '<-loopback>,127.0.0.1:31338' } }).includes('PROXY_BYPASS'));
+    assert.ok(viol({ ...ai, proxy: { ...ai.proxy, bypass: '<-loopback>,127.0.0.1:31337;localhost' } }).includes('PROXY_BYPASS'));
+    assert.ok(viol({ ...ai, args: [...ai.args, '--remote-debugging-port=31338'] }).includes('DEVTOOLS_NETWORK'));
+    assert.ok(viol({ ...ai, args: [...ai.args, '--remote-debugging-address=0.0.0.0'] }).includes('DEVTOOLS_NETWORK'));
+    assert.ok(viol({ ...ai, args: [...ai.args, '--load-extension=/tmp/x'] }).includes('FORBIDDEN_FLAG'));
+    assert.ok(viol({ ...ai, args: [...ai.args, '--no-sandbox'] }).includes('FORBIDDEN_FLAG'));
+    assert.ok(viol({ ...base, args: [...base.args, ...aiDevtoolsArgs(31_337)] }, {}).includes('DEVTOOLS_NETWORK'));
+    assert.ok(viol({ ...base, proxy: { ...base.proxy, bypass: '<-loopback>,127.0.0.1:31337' } }, {}).includes('PROXY_BYPASS'));
+    assert.ok(viol({ ...ai, ignoreDefaultArgs: true }).includes('DEFAULT_ARGS_IGNORED'));
+    assert.ok(viol({ ...ai, ignoreDefaultArgs: ['--disable-extensions', '--disable-popup-blocking'] }).includes('DEFAULT_ARGS_IGNORED'));
+    assert.ok(viol({ ...base, ignoreDefaultArgs: ['--disable-extensions'] }, {}).includes('DEFAULT_ARGS_IGNORED'));
   });
 });
