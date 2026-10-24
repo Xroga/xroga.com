@@ -2,7 +2,7 @@
 /**
  * Decides, from the files alone, whether a host evidence bundle satisfies the Phase 2 browser acceptance criteria for that host. No network, no Docker.
  *
- *   node scripts/browser/evaluate-host-evidence.mjs <bundle-dir> --label OCI_HOST_TESTED|ARM64_HOST_TESTED|AMD64_HOST_TESTED [--repo <repo root>]
+ *   node scripts/browser/evaluate-host-evidence.mjs <bundle-dir> --label GCE_HOST_TESTED|ARM64_HOST_TESTED|AMD64_HOST_TESTED [--repo <repo root>]
  *
  * The bundle (made by collect-host-evidence.sh) holds: host-facts.json, sandbox-probe.json, egress-isolation.json, seccomp-check.txt (exit status),
  * source.txt (commit and clean-tree statement) and SHA256SUMS. Every rule below is a way a result could be over-claimed; each must hold.
@@ -18,7 +18,7 @@ const dir = args[0];
 const opt = (n, d) => { const i = args.indexOf(n); return i >= 0 ? args[i + 1] : d; };
 const label = opt('--label');
 const repo = resolve(opt('--repo', '.'));
-if (!dir || !['OCI_HOST_TESTED', 'ARM64_HOST_TESTED', 'AMD64_HOST_TESTED'].includes(label ?? '')) { console.error('usage: evaluate-host-evidence.mjs <dir> --label OCI_HOST_TESTED|ARM64_HOST_TESTED|AMD64_HOST_TESTED [--repo <root>]'); process.exit(2); }
+if (!dir || !['GCE_HOST_TESTED', 'ARM64_HOST_TESTED', 'AMD64_HOST_TESTED'].includes(label ?? '')) { console.error('usage: evaluate-host-evidence.mjs <dir> --label GCE_HOST_TESTED|ARM64_HOST_TESTED|AMD64_HOST_TESTED [--repo <root>]'); process.exit(2); }
 
 const read = (f) => { try { return readFileSync(join(dir, f), 'utf8'); } catch { return null; } };
 const json = (f) => { const t = read(f); if (t === null) return null; try { return JSON.parse(t); } catch { return null; } };
@@ -30,7 +30,7 @@ if (!facts || !probe || !iso) { console.log(JSON.stringify({ verdict: 'HOST_REJE
 
 const archOf = { x86_64: 'amd64', aarch64: 'arm64', arm64: 'arm64' };
 const hostArch = archOf[facts.arch];
-const expectArch = label === 'ARM64_HOST_TESTED' ? 'arm64' : label === 'AMD64_HOST_TESTED' ? 'amd64' : null; // OCI: either, but must match the host
+const expectArch = label === 'ARM64_HOST_TESTED' ? 'arm64' : label === 'AMD64_HOST_TESTED' ? 'amd64' : null; // GCE: either, but must match the host
 const criteria = [];
 const rule = (id, pass, detail) => criteria.push({ id, pass: Boolean(pass), detail });
 
@@ -38,8 +38,8 @@ rule('host.architecture-known', hostArch !== undefined, `host arch "${facts.arch
 // host-facts.sh runs in the shell, the probe asks the Docker engine: both must describe the same machine (catches a remote DOCKER_HOST or a VM of another arch)
 rule('host.docker-engine-same-arch', archOf[probe.host?.arch] === hostArch, `shell ${facts.arch}, docker engine ${probe.host?.arch}`);
 if (expectArch) rule('host.architecture-matches-label', hostArch === expectArch, `label ${label} needs ${expectArch}, host is ${hostArch}`);
-if (label === 'OCI_HOST_TESTED') rule('host.is-oci', Boolean(facts.oci?.shape) && Boolean(facts.oci?.region), `instance metadata shape=${facts.oci?.shape ?? 'null'} region=${facts.oci?.region ?? 'null'}`);
-else rule('host.label-does-not-claim-oci', true, 'non-OCI label');
+if (label === 'GCE_HOST_TESTED') rule('host.is-gce', Boolean(facts.gce?.machineType) && Boolean(facts.gce?.zone), `metadata machineType=${facts.gce?.machineType ?? 'null'} zone=${facts.gce?.zone ?? 'null'}`);
+else rule('host.label-does-not-claim-gce', true, 'non-GCE label');
 
 rule('sandbox.label-matches', probe.evidenceClass === label, `evidenceClass ${probe.evidenceClass}`);
 rule('sandbox.not-emulated-or-quick', probe.platform === 'host default' && probe.quick === false, `platform=${probe.platform} quick=${probe.quick}`);

@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const ev = join(repo, 'docs/infra/batch-1.5/phase-2/evidence');
 const base = {
-  facts: { arch: 'x86_64', kernel: 'test', os: 'test', docker: 'test', oci: { shape: null, region: null, availabilityDomain: null } },
+  facts: { arch: 'x86_64', kernel: 'test', os: 'test', docker: 'test', gce: { machineType: null, zone: null, cpuPlatform: null } },
   probe: JSON.parse(readFileSync(join(ev, 'browser-sandbox-docker-local-2026-10-24.json'), 'utf8')),
   iso: JSON.parse(readFileSync(join(ev, 'browser-egress-isolation-docker-local-2026-10-24.json'), 'utf8')),
 };
@@ -38,6 +38,11 @@ function run(label, mutate = () => {}, { resum = true } = {}) {
 }
 const rejectedBy = (r, id) => { assert.equal(r.code, 1, JSON.stringify(r.out.reasons)); assert.ok(r.out.reasons.some((x) => x.startsWith(id)), `expected ${id}, got ${JSON.stringify(r.out.reasons)}`); };
 
+test('a GCE label with Compute Engine metadata on a matching amd64 host is accepted', () => {
+  const r = run('GCE_HOST_TESTED', (b) => { b.facts.gce = { machineType: 'e2-standard-2', zone: 'us-central1-a', cpuPlatform: 'Intel Broadwell' }; });
+  assert.equal(r.out.verdict, 'HOST_ACCEPTED', JSON.stringify(r.out.reasons));
+});
+
 test('the committed amd64 evidence, labelled as an amd64 host run, is accepted', () => {
   const r = run('AMD64_HOST_TESTED');
   assert.equal(r.out.verdict, 'HOST_ACCEPTED', JSON.stringify(r.out.reasons));
@@ -46,7 +51,7 @@ test('the committed amd64 evidence, labelled as an amd64 host run, is accepted',
 
 const cases = [
   ['ARM64 label on an amd64 host', 'ARM64_HOST_TESTED', () => {}, 'host.architecture-matches-label'],
-  ['OCI label without OCI instance metadata', 'OCI_HOST_TESTED', () => {}, 'host.is-oci'],
+  ['GCE label without Compute Engine metadata', 'GCE_HOST_TESTED', () => {}, 'host.is-gce'],
   ['emulated run', 'AMD64_HOST_TESTED', (b) => { b.probe.platform = 'linux/arm64'; }, 'sandbox.not-emulated-or-quick'],
   ['quick run', 'AMD64_HOST_TESTED', (b) => { b.probe.quick = true; }, 'sandbox.not-emulated-or-quick'],
   ['image of another architecture', 'AMD64_HOST_TESTED', (b) => { b.probe.image.architecture = 'arm64'; }, 'sandbox.image-arch-matches-host'],
