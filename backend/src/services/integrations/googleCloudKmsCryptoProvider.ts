@@ -1,4 +1,5 @@
 import { GoogleAuth } from 'google-auth-library';
+import {createFlyGoogleAuth, flyGoogleWorkloadConfiguration, type FlyGoogleWorkloadConfiguration} from './flyGoogleWorkloadIdentity.js';
 import type { CryptoProvider, WrappedDataKey } from './cryptoProvider.js';
 
 const keyNamePattern = /^projects\/[a-z][a-z0-9-]{4,28}[a-z0-9]\/locations\/[a-z0-9-]+\/keyRings\/[A-Za-z0-9_-]{1,63}\/cryptoKeys\/[A-Za-z0-9_-]{1,63}$/;
@@ -16,10 +17,14 @@ export interface GoogleCloudKmsTransport {
   decrypt(keyName: string, ciphertext: string, additionalAuthenticatedData: string): Promise<{ plaintext?: unknown }>;
 }
 
-class ApplicationDefaultGoogleKmsTransport implements GoogleCloudKmsTransport {
-  readonly #auth = new GoogleAuth({ scopes: ['https://www.googleapis.com/auth/cloud-platform'] });
+export class ApplicationDefaultGoogleKmsTransport implements GoogleCloudKmsTransport {
+  readonly #auth;
+  constructor(configuration?: FlyGoogleWorkloadConfiguration) {
+    this.#auth = configuration ? createFlyGoogleAuth(configuration) : new GoogleAuth({ scopes: ['https://www.googleapis.com/auth/cloud-platform'] });
+  }
+  async client() {return this.#auth instanceof GoogleAuth ? this.#auth.getClient() : this.#auth;}
   async encrypt(keyName: string, plaintext: string, additionalAuthenticatedData: string): Promise<{ ciphertext?: unknown }> {
-    const client = await this.#auth.getClient();
+    const client = await this.client();
     const response = await client.request<{ ciphertext?: unknown }>({
       url: `https://cloudkms.googleapis.com/v1/${keyName}:encrypt`, method: 'POST',
       data: { plaintext, additionalAuthenticatedData },
@@ -27,7 +32,7 @@ class ApplicationDefaultGoogleKmsTransport implements GoogleCloudKmsTransport {
     return response.data;
   }
   async decrypt(keyName: string, ciphertext: string, additionalAuthenticatedData: string): Promise<{ plaintext?: unknown }> {
-    const client = await this.#auth.getClient();
+    const client = await this.client();
     const response = await client.request<{ plaintext?: unknown }>({
       url: `https://cloudkms.googleapis.com/v1/${keyName}:decrypt`, method: 'POST',
       data: { ciphertext, additionalAuthenticatedData },
@@ -41,7 +46,7 @@ class ApplicationDefaultGoogleKmsTransport implements GoogleCloudKmsTransport {
  * and cloudkms.cryptoKeyVersions.useToDecrypt on this exact key resource. */
 export class GoogleCloudKmsCryptoProvider implements CryptoProvider {
   readonly kind = 'managed' as const;
-  constructor(readonly keyName: string, readonly transport: GoogleCloudKmsTransport = new ApplicationDefaultGoogleKmsTransport()) {
+  constructor(readonly keyName: string, readonly transport: GoogleCloudKmsTransport = new ApplicationDefaultGoogleKmsTransport(flyGoogleWorkloadConfiguration(process.env,keyName))) {
     if (!keyNamePattern.test(keyName)) throw new Error('Invalid Google Cloud KMS key resource.');
   }
   async wrapDataKey(dataKey: Uint8Array, associatedData: Uint8Array): Promise<WrappedDataKey> {

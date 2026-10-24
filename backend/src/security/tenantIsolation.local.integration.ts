@@ -4,6 +4,7 @@ import { before, after, test } from 'node:test';
 import { randomUUID, createHash, createHmac } from 'node:crypto';
 import express from 'express';
 import {registerGithubConsumerTests} from './githubConsumer.local.integration.js';
+import {registerBrowserMaintainTests} from './browserMaintain.local.integration.js';
 import {registerPlatformBenchmarkTests} from './platformBenchmark.local.integration.js';
 import {registerWebAccountingTests} from './webAccounting.local.integration.js';
 import {registerConnectedMemoryConsumerTests} from './connectedMemoryConsumer.local.integration.js';
@@ -126,6 +127,7 @@ if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || 
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
 const admin=createClient(url,process.env.SUPABASE_SERVICE_ROLE_KEY!,{auth:{persistSession:false,autoRefreshToken:false}});
 const users: Array<{id:string;token:string;context:TenantContext;project:string;file:string;run:string;provider:string;session:string;cost:string}>=[];
+registerBrowserMaintainTests();
 registerProviderKeyRevisionTests(admin, () => users);
 registerOAuthSessionTests(admin, () => users);
 registerBuildOutcomeAttemptTests(admin, () => users);

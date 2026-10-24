@@ -2300,7 +2300,7 @@
         "backend/src/ai/runStore.ts:16",
         "backend/src/ai/step7LearningStrategy.test.ts:12",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:33",
+        "backend/src/security/tenantIsolation.local.integration.ts:34",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:41"
       ],
       "reachable": true,
@@ -3479,7 +3479,7 @@
         "backend/src/hardening/launchHardening.test.ts:47",
         "backend/src/security/executionCheckpointAttempt.local.integration.ts:7",
         "backend/src/security/recoveryMemoryRead.local.integration.ts:5",
-        "backend/src/security/tenantIsolation.local.integration.ts:29",
+        "backend/src/security/tenantIsolation.local.integration.ts:30",
         "backend/src/security/workerProjectAdmission.local.integration.ts:8",
         "backend/src/security/workerProjectAdmission.test.ts:6",
         "backend/src/security/workerRevision.local.integration.ts:8",
@@ -3963,7 +3963,7 @@
         "backend/src/ai/buildOutcomeMemory.ts:10",
         "backend/src/ai/buildOutcomeRoutingMemory.ts:9",
         "backend/src/ai/buildStrategyMemory.ts:5",
-        "backend/src/security/tenantIsolation.local.integration.ts:36",
+        "backend/src/security/tenantIsolation.local.integration.ts:37",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:24"
       ],
       "reachable": true,
@@ -5965,7 +5965,7 @@
         "backend/src/routes/phase1.ts:28",
         "backend/src/security/budgetOwner.local.integration.ts:7",
         "backend/src/security/confirmationMetadata.local.integration.ts:8",
-        "backend/src/security/tenantIsolation.local.integration.ts:42",
+        "backend/src/security/tenantIsolation.local.integration.ts:43",
         "backend/src/services/BillingService.ts:14",
         "backend/src/services/integrations/businessAction.ts:16",
         "backend/src/services/integrations/businessRead.ts:7"
@@ -7058,7 +7058,7 @@
       "callers": [
         "backend/src/ai/runReconciler.test.ts:3",
         "backend/src/index.ts:49",
-        "backend/src/security/tenantIsolation.local.integration.ts:23"
+        "backend/src/security/tenantIsolation.local.integration.ts:24"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -7245,7 +7245,7 @@
         "backend/src/security/runTraceAttempt.local.integration.ts:7",
         "backend/src/security/softwareCheckpointAttempt.local.integration.ts:7",
         "backend/src/security/tenantIsolation.integration.test.ts:13",
-        "backend/src/security/tenantIsolation.local.integration.ts:43",
+        "backend/src/security/tenantIsolation.local.integration.ts:44",
         "backend/src/security/workerProjectAdmission.local.integration.ts:7",
         "backend/src/security/workerProjectAdmission.test.ts:8",
         "backend/src/security/workerRevision.local.integration.ts:7",
@@ -12401,7 +12401,7 @@
         "backend/src/growth/sharedWriteAdmission.test.ts:4",
         "backend/src/routes/growth.ts:5",
         "backend/src/security/growthReferral.local.integration.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:44"
+        "backend/src/security/tenantIsolation.local.integration.ts:45"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -18082,7 +18082,7 @@
       "callers": [
         "backend/src/index.ts:24",
         "backend/src/routes/billingWebhook.test.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:17",
+        "backend/src/security/tenantIsolation.local.integration.ts:18",
         "backend/src/services/billingOwnership.local.integration.ts:6"
       ],
       "reachable": true,
@@ -21374,7 +21374,7 @@
         "backend/src/security/ownedRunHeartbeat.test.ts:5",
         "backend/src/security/ownedRunPersistence.test.ts:4",
         "backend/src/security/swarmHeartbeat.local.integration.ts:8",
-        "backend/src/security/tenantIsolation.local.integration.ts:21",
+        "backend/src/security/tenantIsolation.local.integration.ts:22",
         "backend/src/synthesis/projectRuntime/store.ts:12",
         "backend/src/synthesis/universalPersistence.ts:25"
       ],
@@ -21496,7 +21496,7 @@
         "backend/src/ai/pipeline.ts:3",
         "backend/src/security/ownership.test.ts:5",
         "backend/src/security/tenantIsolation.integration.test.ts:16",
-        "backend/src/security/tenantIsolation.local.integration.ts:20",
+        "backend/src/security/tenantIsolation.local.integration.ts:21",
         "backend/src/services/storage/projectFiles.ts:6"
       ],
       "reachable": true,
@@ -21746,7 +21746,7 @@
         "backend/src/security/swarmHeartbeat.local.integration.ts:7",
         "backend/src/security/tenantContext.test.ts:3",
         "backend/src/security/tenantIsolation.integration.test.ts:15",
-        "backend/src/security/tenantIsolation.local.integration.ts:19",
+        "backend/src/security/tenantIsolation.local.integration.ts:20",
         "backend/src/security/terminalIdentity.local.integration.ts:5",
         "backend/src/security/usageAccounting.local.integration.ts:8",
         "backend/src/security/workerProjectAdmission.test.ts:7",
@@ -22101,7 +22101,7 @@
         "backend/src/routes/billing.ts:3",
         "backend/src/routes/billingWebhook.test.ts:7",
         "backend/src/routes/billingWebhook.ts:3",
-        "backend/src/security/tenantIsolation.local.integration.ts:52",
+        "backend/src/security/tenantIsolation.local.integration.ts:53",
         "backend/src/services/BillingService.budget.test.ts:3",
         "backend/src/services/BillingService.checkoutOwnership.test.ts:3",
         "backend/src/services/BillingService.test.ts:4",
@@ -23015,7 +23015,7 @@
         "backend/src/security/credentialReadMatrix.local.integration.ts:7",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:8",
         "backend/src/security/supabaseBundle.local.integration.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:38",
+        "backend/src/security/tenantIsolation.local.integration.ts:39",
         "backend/src/security/vercelRefreshAccount.local.integration.ts:6",
         "backend/src/services/integrations/githubTokenStore.ts:3",
         "backend/src/services/integrations/oauthPkceStore.test.ts:4",
@@ -23170,7 +23170,7 @@
         "backend/src/security/oauthSession.local.integration.ts:5",
         "backend/src/security/vercelRefreshAccount.local.integration.ts:7",
         "backend/src/services/integrations/credentialVaultRuntime.test.ts:6",
-        "backend/src/services/integrations/credentialVaultStartup.ts:7",
+        "backend/src/services/integrations/credentialVaultStartup.ts:8",
         "backend/src/services/integrations/githubAuth.ts:6",
         "backend/src/services/integrations/githubTokenStore.ts:5",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:9",
@@ -23217,7 +23217,7 @@
       "id": "surface:150ecf04bcc64698f6a1",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/credentialVaultStartup.ts",
-      "sha256": "255488d13be2163c09dfae9ac2f4857383ae8740adabb36d70f063c12b4b149f",
+      "sha256": "18d4a28324d7786e707727bb60f177e8a5d37c3fe5d45dca2c001836e07e7469",
       "symbols": [
         "Environment",
         "ManagedConfiguration",
@@ -23230,6 +23230,7 @@
         "createManaged",
         "credentialVaultReadinessMiddleware",
         "domain",
+        "federation",
         "healthy",
         "initializeCredentialVaultForServer",
         "invalid",
@@ -23250,6 +23251,7 @@
       "imports": [
         "./credentialVaultRuntime.js",
         "./cryptoProvider.js",
+        "./flyGoogleWorkloadIdentity.js",
         "./googleCloudKmsCryptoProvider.js",
         "./ociKmsCryptoProvider.js",
         "./ociWorkloadFederation.js",
@@ -23259,6 +23261,7 @@
       "runtimeImports": [
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/services/integrations/cryptoProvider.ts",
+        "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
         "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
         "backend/src/services/integrations/ociKmsCryptoProvider.ts",
         "backend/src/services/integrations/ociWorkloadFederation.ts"
@@ -23270,6 +23273,7 @@
       "callers": [
         "backend/src/index.ts:63",
         "backend/src/services/integrations/credentialVaultStartup.test.ts:4",
+        "backend/src/services/integrations/flyGoogleWorkloadIdentity.test.ts:9",
         "backend/src/services/integrations/ociWorkloadFederation.test.ts:5",
         "scripts/security/verify-oci-federation.ts:9"
       ],
@@ -23286,6 +23290,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/services/integrations/credentialVaultStartup.test.ts",
+        "backend/src/services/integrations/flyGoogleWorkloadIdentity.test.ts",
         "backend/src/services/integrations/ociWorkloadFederation.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -23345,6 +23350,84 @@
         "backend/src/services/integrations/credentialVault.test.ts",
         "backend/src/services/integrations/credentialVaultStartup.test.ts",
         "backend/src/synthesis/projectRuntime/secretRead.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:aded64895f945658a00f",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
+      "sha256": "9bd1a0a08eb68cd52773f00c6b861f5cfcf8f75d2bd2a9c1d2e032fd377c719f",
+      "symbols": [
+        "Environment",
+        "FlyGoogleWorkloadConfiguration",
+        "app",
+        "audience",
+        "body",
+        "bytes",
+        "c",
+        "chunks",
+        "claim",
+        "configured",
+        "createFlyGoogleAuth",
+        "fail",
+        "flyGoogleWorkloadConfiguration",
+        "flySubjectTokenSupplier",
+        "header",
+        "imageDigests",
+        "issuer",
+        "machineId",
+        "now",
+        "oidcAudience",
+        "organizationId",
+        "project",
+        "req",
+        "requestFlyOidcToken",
+        "serviceAccount",
+        "timer",
+        "token",
+        "unavailable",
+        "values"
+      ],
+      "imports": [
+        "google-auth-library",
+        "node:http"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts",
+        "scripts/security/verify-oci-federation.ts"
+      ],
+      "callers": [
+        "backend/src/services/integrations/credentialVaultStartup.ts:5",
+        "backend/src/services/integrations/flyGoogleWorkloadIdentity.test.ts:8",
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts:2"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:sts.googleapis.com",
+        "declared-host:www.googleapis.com",
+        "google-auth-library",
+        "node:http"
+      ],
+      "authBoundary": [
+        "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts#IdentityPoolClient",
+        "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts#createFlyGoogleAuth"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts#imageDigests"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/services/integrations/flyGoogleWorkloadIdentity.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -23555,7 +23638,7 @@
         "backend/src/ai/universal/semanticRequestPlanner.ts:58",
         "backend/src/routes/github.settings.test.ts:17",
         "backend/src/routes/github.ts:8",
-        "backend/src/security/tenantIsolation.local.integration.ts:39",
+        "backend/src/security/tenantIsolation.local.integration.ts:40",
         "backend/src/services/integrations/githubAuth.revocation.test.ts:4",
         "backend/src/services/integrations/githubDeploy.ts:15",
         "backend/src/services/publish/easPublish.ts:12",
@@ -24317,7 +24400,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:37",
+        "backend/src/security/tenantIsolation.local.integration.ts:38",
         "backend/src/services/integrations/absentCredentialAuthority.test.ts:3",
         "backend/src/services/integrations/credentialMirrorRace.test.ts:5",
         "backend/src/services/integrations/githubAuth.ts:2",
@@ -24415,7 +24498,7 @@
       "id": "surface:307d3a7c49ad52f2b8db",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-      "sha256": "9f9a5daaae7246d4eca5e7a5a410b182f74fb401d71b93741cfba862c7975070",
+      "sha256": "22d7137f89e80fbd6fe606697a5b6a4d0e0645301723531715e72bfe653d08c4",
       "symbols": [
         "ApplicationDefaultGoogleKmsTransport",
         "GoogleCloudKmsCryptoProvider",
@@ -24431,9 +24514,12 @@
       ],
       "imports": [
         "./cryptoProvider.js",
+        "./flyGoogleWorkloadIdentity.js",
         "google-auth-library"
       ],
-      "runtimeImports": [],
+      "runtimeImports": [
+        "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts"
+      ],
       "entryPoints": [
         "backend/src/index.ts",
         "scripts/security/verify-oci-federation.ts"
@@ -24450,7 +24536,8 @@
         "google-auth-library"
       ],
       "authBoundary": [
-        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts#GoogleAuth"
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts#GoogleAuth",
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts#createFlyGoogleAuth"
       ],
       "tenantBoundary": [],
       "approvalBoundary": [],
@@ -24526,7 +24613,7 @@
       "callers": [
         "backend/src/routes/github.ts:7",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:41",
+        "backend/src/security/tenantIsolation.local.integration.ts:42",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:6",
         "backend/src/services/integrations/oauthPkceStore.consume.test.ts:4",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:5",
@@ -24625,7 +24712,7 @@
       ],
       "callers": [
         "backend/src/services/integrations/credentialVaultStartup.test.ts:8",
-        "backend/src/services/integrations/credentialVaultStartup.ts:5",
+        "backend/src/services/integrations/credentialVaultStartup.ts:6",
         "backend/src/services/integrations/ociKmsCryptoProvider.test.ts:4",
         "scripts/security/verify-oci-federation.ts:10",
         "scripts/security/verify-oci-kms.ts:6"
@@ -24714,7 +24801,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
-        "backend/src/services/integrations/credentialVaultStartup.ts:6",
+        "backend/src/services/integrations/credentialVaultStartup.ts:7",
         "backend/src/services/integrations/ociKmsCryptoProvider.ts:3",
         "backend/src/services/integrations/ociWorkloadFederation.test.ts:4",
         "scripts/security/verify-oci-federation.ts:8"
@@ -24781,7 +24868,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:31",
-        "backend/src/security/tenantIsolation.local.integration.ts:910",
+        "backend/src/security/tenantIsolation.local.integration.ts:912",
         "backend/src/services/integrations/businessAction.ts:44",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
@@ -25071,7 +25158,7 @@
         "backend/src/routes/supabaseOAuth.ts:21",
         "backend/src/security/connectedMemoryConsumer.local.integration.ts:6",
         "backend/src/security/providerKeyRevision.local.integration.ts:5",
-        "backend/src/security/tenantIsolation.local.integration.ts:53",
+        "backend/src/security/tenantIsolation.local.integration.ts:54",
         "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts:4",
         "backend/src/services/integrations/supabaseProvision.test.ts:3",
         "backend/src/services/integrations/userProviderKeys.revision.test.ts:6",
@@ -25321,7 +25408,7 @@
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:11",
         "backend/src/security/providerKeyRevision.local.integration.ts:6",
         "backend/src/security/supabaseBundle.local.integration.ts:5",
-        "backend/src/security/tenantIsolation.local.integration.ts:22",
+        "backend/src/security/tenantIsolation.local.integration.ts:23",
         "backend/src/services/integrations/absentCredentialAuthority.test.ts:4",
         "backend/src/services/integrations/credentialMirrorRace.test.ts:4",
         "backend/src/services/integrations/githubDeploy.ts:58",
@@ -25527,7 +25614,7 @@
         "backend/src/routes/supabaseOAuth.ts:35",
         "backend/src/routes/vercel.ts:5",
         "backend/src/security/oauthWrapperOwnership.local.integration.ts:10",
-        "backend/src/security/tenantIsolation.local.integration.ts:40",
+        "backend/src/security/tenantIsolation.local.integration.ts:41",
         "backend/src/security/vercelRefreshAccount.local.integration.ts:5",
         "backend/src/services/integrations/githubDeploy.ts:16",
         "backend/src/services/integrations/oauthAuthorizationEpoch.test.ts:5",
@@ -25847,7 +25934,7 @@
       ],
       "callers": [
         "backend/src/routes/swarm.ts:11",
-        "backend/src/security/tenantIsolation.local.integration.ts:25",
+        "backend/src/security/tenantIsolation.local.integration.ts:26",
         "backend/src/services/notificationService.receipt.test.ts:4",
         "backend/src/services/notificationService.test.ts:3"
       ],
@@ -26637,7 +26724,7 @@
       ],
       "entryPoints": [],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:24",
+        "backend/src/security/tenantIsolation.local.integration.ts:25",
         "backend/src/services/responseCache.receipt.test.ts:4",
         "backend/src/services/responseCache.test.ts:4"
       ],
@@ -27361,7 +27448,7 @@
       "callers": [
         "backend/src/lib/r2.ts:3",
         "backend/src/routes/projects.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:47",
+        "backend/src/security/tenantIsolation.local.integration.ts:48",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:4",
         "backend/src/services/storage/privateFileDelivery.ts:6",
         "backend/src/services/storage/projectFiles.receipt.test.ts:6",
@@ -27475,7 +27562,7 @@
       ],
       "callers": [
         "backend/src/routes/projects.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:46",
+        "backend/src/security/tenantIsolation.local.integration.ts:47",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:5"
       ],
       "reachable": true,
@@ -27544,7 +27631,7 @@
       "callers": [
         "backend/src/security/buildProjectReceipt.local.integration.ts:7",
         "backend/src/security/tenantIsolation.integration.test.ts:14",
-        "backend/src/security/tenantIsolation.local.integration.ts:45",
+        "backend/src/security/tenantIsolation.local.integration.ts:46",
         "backend/src/services/memory/buildProjectStore.ts:10",
         "backend/src/services/storage/fileDeliveryPolicy.test.ts:7",
         "backend/src/services/storage/projectFiles.receipt.test.ts:5"
@@ -27938,7 +28025,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:32",
+        "backend/src/security/tenantIsolation.local.integration.ts:33",
         "backend/src/security/universalOwnerReads.local.integration.ts:9",
         "backend/src/synthesis/followUpAndRegression.test.ts:23",
         "backend/src/synthesis/securityControls.test.ts:14",
@@ -29925,7 +30012,7 @@
       ],
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:29",
-        "backend/src/security/tenantIsolation.local.integration.ts:48",
+        "backend/src/security/tenantIsolation.local.integration.ts:49",
         "backend/src/synthesis/livePreview/access.test.ts:5",
         "backend/src/synthesis/livePreview/store.ts:9"
       ],
@@ -30450,7 +30537,7 @@
         "backend/src/routes/projectRuntime.ts:21",
         "backend/src/security/previewConsumer.local.integration.ts:8",
         "backend/src/security/previewGrantAdmission.local.integration.ts:9",
-        "backend/src/security/tenantIsolation.local.integration.ts:51",
+        "backend/src/security/tenantIsolation.local.integration.ts:52",
         "backend/src/synthesis/livePreview/coordinator.ts:28",
         "backend/src/synthesis/livePreview/index.ts:3",
         "backend/src/synthesis/livePreview/store.receipt.test.ts:6"
@@ -31639,7 +31726,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:28",
+        "backend/src/security/tenantIsolation.local.integration.ts:29",
         "backend/src/synthesis/projectRuntime/index.ts:5",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:36"
       ],
@@ -31823,7 +31910,7 @@
         "backend/src/security/runtimeProjectBinding.test.ts:6",
         "backend/src/security/runtimeSecretRead.local.integration.ts:5",
         "backend/src/security/runtimeTerminal.local.integration.ts:7",
-        "backend/src/security/tenantIsolation.local.integration.ts:27",
+        "backend/src/security/tenantIsolation.local.integration.ts:28",
         "backend/src/security/workerProjectAdmission.local.integration.ts:11",
         "backend/src/security/workerRevision.local.integration.ts:9",
         "backend/src/synthesis/livePreview/store.receipt.test.ts:4",
@@ -32371,7 +32458,7 @@
       "runtimeImports": [],
       "entryPoints": [],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:34",
+        "backend/src/security/tenantIsolation.local.integration.ts:35",
         "backend/src/synthesis/researchEvidence.test.ts:15",
         "backend/src/synthesis/universalPersistence.test.ts:20"
       ],
@@ -34099,7 +34186,7 @@
       ],
       "callers": [
         "backend/src/security/repositorySnapshot.local.integration.ts:6",
-        "backend/src/security/tenantIsolation.local.integration.ts:30",
+        "backend/src/security/tenantIsolation.local.integration.ts:31",
         "backend/src/security/universalOwnerReads.local.integration.ts:7",
         "backend/src/synthesis/followUpAndRegression.test.ts:24",
         "backend/src/synthesis/universalEntrypoint.test.ts:20",
@@ -34223,7 +34310,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/security/tenantIsolation.local.integration.ts:31",
+        "backend/src/security/tenantIsolation.local.integration.ts:32",
         "backend/src/security/universalOwnerReads.local.integration.ts:8",
         "backend/src/synthesis/followUpAndRegression.test.ts:22",
         "backend/src/synthesis/securityControls.test.ts:15",
@@ -90779,6 +90866,54 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:f6e9549e2b3e90aece7b",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/check-cloudrun-staging.mjs",
+      "sha256": "4bc719fe863adcbd6ba75a71b1b27b23ad6f468eb79838c028e225dbffa278f7",
+      "symbols": [
+        "annotations",
+        "checkStagingTemplate",
+        "container",
+        "env",
+        "requireCandidateBinding",
+        "spec",
+        "template"
+      ],
+      "imports": [
+        "node:assert/strict",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "scripts/security/check-cloudrun-staging.test.mjs:4"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:assert/strict",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/security/check-cloudrun-staging.test.mjs"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:7ce56aaa7d4c67e10d25",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/collect-local-security-logs.mjs",
@@ -90819,6 +90954,61 @@
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:68c9077ea796a484ebe8",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/compare-production-migrations.mjs",
+      "sha256": "3c6d9b7bf386feffdee52d49ce96d9e3ce5b7ccb5c2d872d9392b032a9167e27",
+      "symbols": [
+        "aliases",
+        "classification",
+        "classifyMigration",
+        "compareMigrations",
+        "exact",
+        "historyPath",
+        "input",
+        "markers",
+        "migrations",
+        "outputPath",
+        "report",
+        "version"
+      ],
+      "imports": [
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "scripts/security/compare-production-migrations.test.mjs:3"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/security/compare-production-migrations.test.mjs"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -102584,6 +102774,13 @@
       "version": "20261022135500",
       "order": 142,
       "sha256": "6d93a6b25ad28160d2f3085c29591020d61d5458f96c2ba75162663e2a6cd659"
+    },
+    {
+      "id": "migration:7d23daf9935bedfb14a8",
+      "sourcePath": "supabase/migrations/20261024111128_browser_maintain_privilege.sql",
+      "version": "20261024111128",
+      "order": 143,
+      "sha256": "ffd661899490d2d800f165474b511a4dc78bc3c44a8a2d9fcb1093c4020eb284"
     }
   ],
   "workflows": [
@@ -111134,6 +111331,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:c9ba6c76e7e1e55feba9",
+      "sourcePath": "backend/src/security/browserMaintain.local.integration.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:ae2c6dfac6889a1b7301",
       "sourcePath": "backend/src/security/budgetOwner.local.integration.ts",
       "declaredTests": 1,
@@ -111689,7 +111893,14 @@
     {
       "id": "test-suite:25c3a43091242c1f5406",
       "sourcePath": "backend/src/services/integrations/credentialVaultStartup.test.ts",
-      "declaredTests": 7,
+      "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:e42a5d78d4cda83dfde6",
+      "sourcePath": "backend/src/services/integrations/flyGoogleWorkloadIdentity.test.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -114205,6 +114416,20 @@
       "id": "test-suite:b441f6ccbad579f7b851",
       "sourcePath": "scripts/security/caller-reviews.closure.test.mjs",
       "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:7ade26302aeaffa6b91a",
+      "sourcePath": "scripts/security/check-cloudrun-staging.test.mjs",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:d7bbc1e95cef97d73ca3",
+      "sourcePath": "scripts/security/compare-production-migrations.test.mjs",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -1,17 +1,17 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "c7560c6ea7899730a125d8870951e069fdb4c22689e0d22cff01bb98b9fa22ef",
+  "reviewRegistrySha256": "41f831afd9f9c5c6509770d6d63eba76401318fb942eff1eabb1787e8ac6128f",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 166,
-    "persistenceCandidates": 705,
+    "persistenceCandidates": 707,
     "ownerPredicateCandidates": 165,
     "reviewRequired": 25,
-    "reviewedCandidates": 680,
+    "reviewedCandidates": 682,
     "unresolvedSafetyCandidates": 50,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 18
@@ -20,7 +20,7 @@
     "REVIEW_REQUIRED": 25,
     "SCOPED_BOUNDARY": 453,
     "NARROW_EXCEPTION": 40,
-    "NOT_PERSISTENCE": 162,
+    "NOT_PERSISTENCE": 164,
     "REVIEWED_GAP": 25
   },
   "acceptance": {
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 112,
-    "unresolvedCandidateBoundaries": 593,
+    "unresolvedCandidateBoundaries": 595,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3060,6 +3060,14 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "f7cf4d72de3f0a43a18c"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "bd1cdd4ac74c2e9b91c5"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "41ad1c8958ec765129f6"
       },
       {
@@ -3152,19 +3160,19 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8eb4738a24cf9aa75051"
+        "id": "40e92e9644eb0296fe11"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "91a6564e80b0e68d4568"
+        "id": "ae4afbcbef62e88edc30"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "06eaca75f76beddc6077"
+        "id": "d8a806b779eb8d10543c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d409058bdea94f6230eb"
+        "id": "3936c61b550b6e7554dd"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5304,6 +5312,14 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "f7cf4d72de3f0a43a18c"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "bd1cdd4ac74c2e9b91c5"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "41ad1c8958ec765129f6"
       },
       {
@@ -5388,19 +5404,19 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "8eb4738a24cf9aa75051"
+        "id": "40e92e9644eb0296fe11"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "91a6564e80b0e68d4568"
+        "id": "ae4afbcbef62e88edc30"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "06eaca75f76beddc6077"
+        "id": "d8a806b779eb8d10543c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "d409058bdea94f6230eb"
+        "id": "3936c61b550b6e7554dd"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -6093,11 +6109,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 705,
+    "currentCallers": 707,
     "structuredVerified": 112,
-    "structuredUnproven": 593,
+    "structuredUnproven": 595,
     "manualUnresolved": 50,
-    "manualUnsupported": 543,
+    "manualUnsupported": 545,
     "agreedVerified": 112,
     "proofAwaitingManualReconciliation": 0
   },
@@ -15517,6 +15533,48 @@
       }
     },
     {
+      "id": "f7cf4d72de3f0a43a18c",
+      "path": "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
+      "line": 87,
+      "enclosing": "getSubjectToken",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "9bd1a0a08eb68cd52773f00c6b861f5cfcf8f75d2bd2a9c1d2e032fd377c719f",
+      "semanticReview": {
+        "authority": "Exactly two native Buffer.from calls decode bounded JWT header and payload bytes locally before defense-in-depth claim checks. Neither receiver is a database, storage bucket or provider. Decoding is not signature verification or authority. Google STS and exact IAM conditions remain independently required.",
+        "reason": "AST review identifies only these two local conversions. This excludes no Fly socket, Google STS/IAM/KMS operation, workload identity, customer credential, production effect or acceptance requirement. Live identity and final source-bound CI remain unverified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
+            "marker": "export function flySubjectTokenSupplier"
+          }
+        ]
+      }
+    },
+    {
+      "id": "bd1cdd4ac74c2e9b91c5",
+      "path": "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
+      "line": 88,
+      "enclosing": "getSubjectToken",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "NOT_PERSISTENCE",
+      "sourceSha256": "9bd1a0a08eb68cd52773f00c6b861f5cfcf8f75d2bd2a9c1d2e032fd377c719f",
+      "semanticReview": {
+        "authority": "Exactly two native Buffer.from calls decode bounded JWT header and payload bytes locally before defense-in-depth claim checks. Neither receiver is a database, storage bucket or provider. Decoding is not signature verification or authority. Google STS and exact IAM conditions remain independently required.",
+        "reason": "AST review identifies only these two local conversions. This excludes no Fly socket, Google STS/IAM/KMS operation, workload identity, customer credential, production effect or acceptance requirement. Live identity and final source-bound CI remain unverified.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
+            "marker": "export function flySubjectTokenSupplier"
+          }
+        ]
+      }
+    },
+    {
       "id": "61043cdc80b90c8d957b",
       "path": "backend/src/services/integrations/githubAtomicTransport.ts",
       "line": 72,
@@ -16126,15 +16184,15 @@
       }
     },
     {
-      "id": "8eb4738a24cf9aa75051",
+      "id": "40e92e9644eb0296fe11",
       "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-      "line": 9,
+      "line": 10,
       "enclosing": "strictBase64",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "9f9a5daaae7246d4eca5e7a5a410b182f74fb401d71b93741cfba862c7975070",
+      "sourceSha256": "22d7137f89e80fbd6fe606697a5b6a4d0e0645301723531715e72bfe653d08c4",
       "semanticReview": {
         "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
         "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
@@ -16147,15 +16205,15 @@
       }
     },
     {
-      "id": "91a6564e80b0e68d4568",
+      "id": "ae4afbcbef62e88edc30",
       "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-      "line": 49,
+      "line": 54,
       "enclosing": "wrapDataKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "9f9a5daaae7246d4eca5e7a5a410b182f74fb401d71b93741cfba862c7975070",
+      "sourceSha256": "22d7137f89e80fbd6fe606697a5b6a4d0e0645301723531715e72bfe653d08c4",
       "semanticReview": {
         "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
         "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
@@ -16168,15 +16226,15 @@
       }
     },
     {
-      "id": "06eaca75f76beddc6077",
+      "id": "d8a806b779eb8d10543c",
       "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-      "line": 51,
+      "line": 56,
       "enclosing": "wrapDataKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "9f9a5daaae7246d4eca5e7a5a410b182f74fb401d71b93741cfba862c7975070",
+      "sourceSha256": "22d7137f89e80fbd6fe606697a5b6a4d0e0645301723531715e72bfe653d08c4",
       "semanticReview": {
         "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
         "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
@@ -16189,15 +16247,15 @@
       }
     },
     {
-      "id": "d409058bdea94f6230eb",
+      "id": "3936c61b550b6e7554dd",
       "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-      "line": 63,
+      "line": 68,
       "enclosing": "unwrapDataKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "9f9a5daaae7246d4eca5e7a5a410b182f74fb401d71b93741cfba862c7975070",
+      "sourceSha256": "22d7137f89e80fbd6fe606697a5b6a4d0e0645301723531715e72bfe653d08c4",
       "semanticReview": {
         "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
         "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",

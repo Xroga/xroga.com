@@ -102,6 +102,7 @@ flowchart LR
   endpoint_hardhat_org["Source-defined endpoint hardhat.org — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_huggingface_co["Source-defined endpoint huggingface.co — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_i_postimg_cc["Source-defined endpoint i.postimg.cc — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_iamcredentials_googleapis_com["Source-defined endpoint iamcredentials.googleapis.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_islamic_relief_org["Source-defined endpoint islamic-relief.org — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_jobs_example_com["Source-defined endpoint jobs.example.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_linear_app["Source-defined endpoint linear.app — CONFIGURED_BUT_UNVERIFIED"]
@@ -130,6 +131,7 @@ flowchart LR
   endpoint_sentry_io["Source-defined endpoint sentry.io — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_solana_com["Source-defined endpoint solana.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_stripe_com["Source-defined endpoint stripe.com — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_sts_googleapis_com["Source-defined endpoint sts.googleapis.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_studio_youtube_com["Source-defined endpoint studio.youtube.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_supabase_com["Source-defined endpoint supabase.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_support_bolt_new["Source-defined endpoint support.bolt.new — CONFIGURED_BUT_UNVERIFIED"]
@@ -279,6 +281,7 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_hardhat_org
   frontend -. "source host/reference; unverified" .-> endpoint_huggingface_co
   frontend -. "source host/reference; unverified" .-> endpoint_i_postimg_cc
+  api -. "source host/reference; unverified" .-> endpoint_iamcredentials_googleapis_com
   frontend -. "source host/reference; unverified" .-> endpoint_islamic_relief_org
   api -. "source host/reference; unverified" .-> endpoint_jobs_example_com
   frontend -. "source host/reference; unverified" .-> endpoint_linear_app
@@ -307,6 +310,7 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_sentry_io
   api -. "source host/reference; unverified" .-> endpoint_solana_com
   frontend -. "source host/reference; unverified" .-> endpoint_stripe_com
+  api -. "source host/reference; unverified" .-> endpoint_sts_googleapis_com
   frontend -. "source host/reference; unverified" .-> endpoint_studio_youtube_com
   frontend -. "source host/reference; unverified" .-> endpoint_supabase_com
   frontend -. "source host/reference; unverified" .-> endpoint_support_bolt_new
