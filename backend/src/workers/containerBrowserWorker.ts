@@ -48,7 +48,7 @@ export interface ContainerWorkerOptions {
 
 const PROXY_PORT = 3128;
 const PROXY_HOST = 'egress-proxy';
-const WORKER_ERRORS = new Set<BrowserTaskFailureCode>(['RESULT_OUT_OF_SCOPE', 'RESULT_OVER_LIMIT', 'ARTIFACT_REJECTED', 'JOB_TIMEOUT', 'CANCELLED']);
+export const WORKER_ERRORS: ReadonlySet<BrowserTaskFailureCode> = new Set<BrowserTaskFailureCode>(['RESULT_OUT_OF_SCOPE', 'RESULT_OVER_LIMIT', 'ARTIFACT_REJECTED', 'JOB_TIMEOUT', 'CANCELLED']);
 
 const defaultDocker = (args: string[], input?: string) => {
   const r = spawnSync('docker', args, { encoding: 'utf8', input, timeout: 120_000, maxBuffer: 64 * 1024 * 1024 });
@@ -70,10 +70,15 @@ export class ContainerBrowserWorker implements BrowserWorkerPort {
   }
 
   async run(job: BrowserJob, ctx: { signal: AbortSignal; lease: Lease; plan?: BrowserPlan }): Promise<BrowserWorkerResult> {
+    return this.runWithGateway(job, ctx, this.opts.gateway);
+  }
+
+  /** As `run`, with the model route given per job (the coordinator relays model requests back to the API's own gateway). */
+  async runWithGateway(job: BrowserJob, ctx: { signal: AbortSignal; lease: Lease; plan?: BrowserPlan }, gateway: BrowserModelGateway | undefined): Promise<BrowserWorkerResult> {
     const plan: BrowserPlan = ctx.plan ?? { steps: [{ op: 'screenshot', name: 'page.png' }], expect: [] };
     const ai = plan.steps.some((s) => s.op.startsWith('ai'));
     if (ai && job.limits.maxModelCostMicros <= 0) throw new BrowserTaskError('WORKER_FAILED', 'AI steps need a model budget');
-    if (ai && !this.opts.gateway) throw new BrowserTaskError('WORKER_FAILED', 'no model route is configured for AI steps');
+    if (ai && !gateway) throw new BrowserTaskError('WORKER_FAILED', 'no model route is configured for AI steps');
 
     const tag = createHash('sha256').update(JSON.stringify([job.tenantId, job.runId, job.taskId, job.attempt, ctx.lease.token])).digest('hex').slice(0, 16);
     const net = `xroga-bj-${tag}`; const proxyName = `xroga-bj-proxy-${tag}`; const browserName = `xroga-bj-browser-${tag}`;
@@ -103,7 +108,7 @@ export class ContainerBrowserWorker implements BrowserWorkerPort {
       const flags = dockerRunArgs(this.spec, { repoRoot: this.opts.repoRoot, name: browserName });
       flags[flags.indexOf('--network') + 1] = net;
       const child = this.spawnDocker(['run', '-i', '--label', 'xroga.browser-job=1', ...flags, ...(this.opts.onDiagnostic ? ['--env', 'XROGA_WORKER_DEBUG=1'] : []), '--entrypoint', 'node', '--workdir', '/opt/xroga-browser-worker', this.spec.image, '/opt/xroga-browser-worker/runJob.mjs']);
-      return await this.converse(child, job, plan, { ...launch, ...(ai && this.opts.aiChannel ? { channel: this.opts.aiChannel } : {}) }, usage, ctx.signal);
+      return await this.converse(child, job, plan, { ...launch, ...(ai && this.opts.aiChannel ? { channel: this.opts.aiChannel } : {}) }, usage, ctx.signal, gateway);
     } finally {
       cleanup();
     }
@@ -114,7 +119,7 @@ export class ContainerBrowserWorker implements BrowserWorkerPort {
     return false;
   }
 
-  private converse(child: ChildProcess, job: BrowserJob, plan: BrowserPlan, launch: object, usage: ModelUsage, signal: AbortSignal): Promise<BrowserWorkerResult> {
+  private converse(child: ChildProcess, job: BrowserJob, plan: BrowserPlan, launch: object, usage: ModelUsage, signal: AbortSignal, gateway: BrowserModelGateway | undefined): Promise<BrowserWorkerResult> {
     return new Promise((resolveRun, rejectRun) => {
       let settled = false;
       const finish = (fn: () => void) => { if (!settled) { settled = true; signal.removeEventListener('abort', onAbort); fn(); } };
@@ -133,9 +138,9 @@ export class ContainerBrowserWorker implements BrowserWorkerPort {
         if (m.type === 'llm') {
           const remaining = job.limits.maxModelCostMicros - usage.costMicros;
           const refuse = (code: string, reason: string) => { usage.refused += 1; send({ type: 'llm-reply', id: m.id, ok: false, code, reason }); };
-          if (!this.opts.gateway) return refuse('MODEL_ROUTE_MISSING', 'no model route is configured');
+          if (!gateway) return refuse('MODEL_ROUTE_MISSING', 'no model route is configured');
           if (remaining <= 0) return refuse('MODEL_BUDGET_EXHAUSTED', 'the job model budget is spent');
-          this.opts.gateway.generate(m.params, { job, remainingMicros: remaining, signal: llmAbort.signal }).then((r) => {
+          gateway.generate(m.params, { job, remainingMicros: remaining, signal: llmAbort.signal }).then((r) => {
             if (!Number.isFinite(r.costMicros) || r.costMicros < 0) { usage.refused += 1; return refuse('MODEL_COST_UNMEASURED', 'the model call cost could not be measured'); }
             usage.calls += 1; usage.inputTokens += r.inputTokens; usage.outputTokens += r.outputTokens; usage.costMicros += Math.ceil(r.costMicros);
             if (usage.costMicros > job.limits.maxModelCostMicros) { send({ type: 'llm-reply', id: m.id, ok: false, code: 'MODEL_BUDGET_EXHAUSTED', reason: 'the job model budget is spent' }); return; }
