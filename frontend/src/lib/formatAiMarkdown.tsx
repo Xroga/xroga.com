@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowUpRight, Check, Copy } from 'lucide-react';
+import { ArrowUpRight, Check, Copy, Search } from 'lucide-react';
 import { SourceLogo } from '@/components/terminal/SourceLogo';
 
 import ReactMarkdown, {
@@ -28,6 +28,8 @@ import {
   clearOAuthResult,
   subscribeOAuthResults,
 } from './oauthPopupResult';
+
+import { xrogaConnect } from './xrogaConnect';
 
 function joinClasses(
   ...values:
@@ -149,6 +151,7 @@ type ConfirmationStatus =
 
 interface SafeConfirmation {
   id: string;
+  request?: string;
   status:
     ConfirmationStatus;
   summary:
@@ -474,8 +477,9 @@ function BusinessActionConfirmationInline({
       </span>
 
       {confirmation ? (
-        <span className="text-[13px] leading-relaxed text-[var(--foreground)]/80">
-          {confirmation.summary}
+        <span className="flex flex-col gap-1 text-[13px] leading-relaxed text-[var(--foreground)]/80">
+          <span>{confirmation.summary}</span>
+          {confirmation.request ? <span className="text-[11px] text-[var(--foreground)]/55">Your request: {confirmation.request}</span> : null}
         </span>
       ) : !failed ? (
         <span className="text-[13px] text-[var(--foreground)]/65">
@@ -910,6 +914,54 @@ function XrogaConnectionCard({
       null,
     );
 
+  const [showAllCandidates, setShowAllCandidates] = useState(false);
+  const [pluginSearch, setPluginSearch] = useState('');
+  const [pluginMatches, setPluginMatches] = useState<Array<{ slug: string; name: string }>>([]);
+  const [pluginSearchBusy, setPluginSearchBusy] = useState(false);
+  const [pluginSearchError, setPluginSearchError] = useState(false);
+
+  useEffect(() => {
+    const query = pluginSearch.trim();
+    if (query.length < 2) {
+      setPluginMatches([]);
+      setPluginSearchBusy(false);
+      setPluginSearchError(false);
+      return;
+    }
+
+    let cancelled = false;
+    setPluginSearchBusy(true);
+    setPluginSearchError(false);
+    const timer = window.setTimeout(() => {
+      void xrogaConnect.catalog({ search: query, limit: 6 })
+        .then((page) => {
+          if (!cancelled) {
+            setPluginMatches(page.items.map((item) => ({
+              slug: item.slug,
+              name: item.name || item.slug,
+            })));
+          }
+        })
+        .catch(() => {
+          if (!cancelled) {
+            setPluginMatches([]);
+            setPluginSearchError(true);
+          }
+        })
+        .finally(() => {
+          if (!cancelled) setPluginSearchBusy(false);
+        });
+    }, 250);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [pluginSearch]);
+
+  const orderedCandidates = [...descriptor.candidates].sort(
+    (left, right) => Number(right.recommended) - Number(left.recommended),
+  );
+
   const selectedCandidate =
     descriptor.candidates.find(
       (candidate) =>
@@ -1178,7 +1230,7 @@ function XrogaConnectionCard({
       </span>
 
       <span className="flex flex-col gap-2">
-        {descriptor.candidates.map(
+        {orderedCandidates.slice(0, showAllCandidates ? undefined : 4).map(
           (candidate) => {
             const connecting =
               connectingToolkit ===
@@ -1251,6 +1303,44 @@ function XrogaConnectionCard({
             );
           },
         )}
+        {descriptor.candidates.length > 4 ? (
+          <button
+            type="button"
+            onClick={() => setShowAllCandidates((value) => !value)}
+            aria-expanded={showAllCandidates}
+            className="self-start text-[11px] font-medium text-[var(--accent)] hover:underline"
+          >
+            {showAllCandidates ? 'Show fewer apps' : `Show ${descriptor.candidates.length - 4} more app${descriptor.candidates.length - 4 === 1 ? '' : 's'}`}
+          </button>
+        ) : null}
+      </span>
+
+      <span className="flex flex-col gap-1.5 border-t border-[var(--card-border)]/50 pt-2.5">
+        <label className="flex items-center gap-2 rounded-lg border border-[var(--card-border)]/60 px-2.5 py-1.5">
+          <Search size={13} aria-hidden="true" className="text-[var(--foreground)]/45" />
+          <span className="sr-only">Search supported plugins</span>
+          <input
+            type="search"
+            value={pluginSearch}
+            onChange={(event) => setPluginSearch(event.target.value)}
+            placeholder="Search more plugins"
+            className="min-w-0 flex-1 bg-transparent text-[11px] text-[var(--foreground)] outline-none placeholder:text-[var(--foreground)]/40"
+          />
+        </label>
+        {pluginSearchBusy ? <span className="text-[10px] text-[var(--foreground)]/50">Searching live catalog…</span> : null}
+        {pluginSearchError ? <span className="text-[10px] text-[var(--foreground)]/50">Plugin search is temporarily unavailable.</span> : null}
+        {pluginSearch.trim().length >= 2 && !pluginSearchBusy && !pluginSearchError && pluginMatches.length === 0 ? (
+          <span className="text-[10px] text-[var(--foreground)]/50">No matching supported plugin found.</span>
+        ) : null}
+        {pluginMatches.map((item) => (
+          <a
+            key={item.slug}
+            href={`/dashboard/integrations/${encodeURIComponent(item.slug)}`}
+            className="rounded-md px-2 py-1 text-[11px] text-[var(--foreground)]/75 hover:bg-[var(--foreground)]/[0.05]"
+          >
+            {item.name} - view plugin
+          </a>
+        ))}
       </span>
 
       <span className="rounded-lg bg-[var(--foreground)]/[0.025] px-2.5 py-2 text-[10px] leading-relaxed text-[var(--foreground)]/50">

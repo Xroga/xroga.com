@@ -19,6 +19,7 @@ import { sections, packs, type Section } from "./catalog";
 import { Activity, ActivityStrip, useRuns } from "./Activity";
 import { People, WorkPacks } from "./PeopleAndPacks";
 import { Schedules } from "./Schedules";
+import { ConnectedAppAutomations } from "./ConnectedAppAutomations";
 import { BrowserStudio } from "./BrowserStudio";
 import { Connections } from "./Connections";
 import { DraftSummary } from "./DraftSummary";
@@ -318,7 +319,7 @@ function Workspace() {
         </>
       )}
       {route.section === "workflows" && <WorkflowEditor onSelect={select} />}
-      {route.section === "scheduled-tasks" && <Schedules onSelect={select} />}
+      {route.section === "scheduled-tasks" && <><ConnectedAppAutomations /><Schedules onSelect={select} /></>}
       {route.section === "ai-employees" && <People onSelect={select} />}
       {route.section === "work-packs" && (
         <WorkPacks
