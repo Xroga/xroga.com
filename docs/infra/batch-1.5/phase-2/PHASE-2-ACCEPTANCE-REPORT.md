@@ -8,8 +8,8 @@ satisfied from this machine, so Phase 2 cannot be accepted yet. Nothing below is
 | | |
 |---|---|
 | Branch | `claude/xroga-b15-phase2-20261024` (Phase 1 baseline `e792523f` preserved) |
-| CI-tested executable commit | `df9b3e98449e32b28ed33c08c14b7c65dddb3131` (adds the backend lock fix and its CI step to `e2a3fb49`) |
-| CI run | 40108091362: `overall=PASS` (archived in `../ci-evidence/run-40108091362/`); the earlier run 40101667223 on `e2a3fb49` is kept in `../ci-evidence/run-40101667223/` |
+| CI-tested executable commit | `58a8b41478f9d1564f3d35a1df411b7ee290f87f`: Phase 2 plus the Batch 1 TenantContext core and current `main`, with the storage actor taken only from an issued context |
+| CI run | 40111756070: `overall=PASS`, full backend suite 3167 pass and **0 failures** (archived in `../ci-evidence/run-40111756070/`); earlier runs 40108091362 (`df9b3e98`) and 40101667223 (`e2a3fb49`) kept |
 | Later commits | documentation and host-evidence tooling only (see `SOURCE-EQUIVALENCE.md`) |
 | Authority for the criteria | the handoff `PHASE-1-TO-PHASE-2-HANDOFF.md` (INFRA-004/005/006 rows, browser table, risk 7, preconditions) and its restatement in the Phase 2 directives. No INFRA-007, Phase 3 or Batch 1 cutover requirement was added |
 | Cost | $0 |
@@ -71,8 +71,8 @@ Row numbers refer to rows of this table (they are references, not new requiremen
 |---|---|---|---|
 | 32 | GitHub write access and first remote CI | **PASS** | Phase 1; this phase's CI runs are green |
 | 33 | R2 provider suite | **PASS** | Phase 1 (9/9). Owner cleanup still open and not blocking: revoke the temporary token, delete the local secrets file, delete the empty test bucket |
-| 34 | Batch 1 `TenantContext` accepted into `main` | **BLOCKED (B-3)**, pre-merge verification **PASS** | Codex's stack (PR #846 on #845) is unmerged. Compatibility with candidate `e8164ba6` was verified in an isolated, never-pushed worktree: `BATCH1-INTEGRATION-VERIFICATION.md` |
-| 35 | Read-only cloud facts, checklist A | **BLOCKED (B-4)**, partly established | established: Supabase plan and projects, R2 buckets, public access, CORS, GitHub isolation, Redis repository secret absent (`CLOUD-FACTS-2026-10-24.md`). Missing: Fly status, volumes and secret names (no Fly session), Supabase backup setting, Cloudflare billing |
+| 34 | Batch 1 `TenantContext` accepted into `main` | **BLOCKED (B-3)**: ready, awaiting the founder's merge | Codex's full stack cannot merge safely (its startup gate needs a KMS provider Fly does not have). The canonical core is separable: `claude/b15-tenantcontext-core` @ `5c66fd37`, Codex's files byte-identical, CI green (`unit-tests` 40110784081: backend 0 failures; frontend failures identical to `main`). `BATCH1-MERGE-SEQUENCE.md` |
+| 35 | Read-only cloud facts, checklist A | **PASS** | A1 Cloudflare, A2 database counts (founder-approved read-only query, run once), A3 Fly, A4 Redis (unused), A5 Supabase (free plan, no provider backups): `CLOUD-FACTS-2026-10-24.md` |
 
 ## B. Evidence register
 | Evidence | Where | Result |
@@ -96,14 +96,22 @@ Row numbers refer to rows of this table (they are references, not new requiremen
 | Real-provider TLS | `evidence/real-tls-handshake-2026-10-24.json` | live Supabase pooler, TLS trust only |
 
 ## C. Remaining blockers
-Only these prevent acceptance. Each is BLOCKED on something outside this machine; none is blocked on engineering.
-
 | # | Status | Exact remaining requirement | Evidence already available | One executable next action | Needs you |
 |---|---|---|---|---|---|
-| **B-1** OCI host | **BLOCKED** | the hardened container, sandbox ON, egress isolation and weakened-control checks run on an authorized OCI host, with immutable redacted evidence | amd64 `DOCKER_LOCAL_TESTED` for all of it; no OCI host documented, no OCI CLI, the OCI credentials found are KMS-test scoped and were not used. No instance was created | on the host: `git clone` this branch, `npm ci`, then `bash scripts/browser/collect-host-evidence.sh OCI_HOST_TESTED`, and return the `out/host-evidence-*` folder. I run `node scripts/browser/evaluate-host-evidence.mjs <folder> --label OCI_HOST_TESTED --repo .` | yes: access to an existing instance, or your approval after confirming an Always Free shape is available at $0 |
-| **B-2** native ARM64 | **BLOCKED** | the same run on native ARM64, no emulation | arm64 image conforms under emulation; sandbox inconclusive under emulation and attributed to the emulator by a diagnostic. Not retried, by instruction | same command with `ARM64_HOST_TESTED` on any native ARM64 Docker host (the OCI host above, if Ampere A1, closes both) | yes: an ARM64 host |
-| **B-3** TenantContext in `main` | **BLOCKED**, pre-merge **PASS** | Codex's stack accepted into `main` | compatibility verified against `e8164ba6`: merged tree `7daeeb4e`, resolutions in a patch, tsc clean, 499 of 500 tests pass (1 POSIX-only skip), validators pass. Found and fixed a stale lock in our branch. Not a virtual-merge substitute | you review and merge #845 then #846; then re-apply `evidence/batch1-integration/resolution-over-codex-candidate.patch` as one integration commit (steps in `BATCH1-INTEGRATION-VERIFICATION.md`). Do not deploy to Fly before a KMS provider is configured: Codex's boot now fails closed without one | yes: the merge is yours (production workflows deploy Fly and apply SQL) |
-| **B-4** cloud facts | **BLOCKED**, partly established | Fly status, volumes and secret names; Redis; Supabase backups; Cloudflare billing | Supabase plan (free, no PITR) and projects, R2 buckets, public `r2.dev` on three buckets, CORS, GitHub isolation, no Redis repo secret: `CLOUD-FACTS-2026-10-24.md`. No token printed, nothing changed | `! flyctl auth login`, then I run only `fly status`, `fly volumes list`, `fly secrets list` for `xroga-api` (names only) | yes: the Fly login. Also the Supabase backup setting (dashboard) and the Cloudflare plan, one line each |
+| **B-1** OCI host | **BLOCKED** | hardened container, sandbox ON, egress isolation and weakened controls on an authorized OCI host | amd64 `DOCKER_LOCAL_TESTED`; the collector and evaluator are tested (26 evaluator tests, three mutants caught; end-to-end self-test 32/32 on Docker Desktop, labelled as a self-test only) | create the Always Free A1 instance (steps in the final report), then I run `prepare-host.sh` and `collect-host-evidence.sh OCI_HOST_TESTED` over SSH and evaluate the bundle | yes: the account checks and the instance |
+| **B-2** native ARM64 | **BLOCKED** | the same on native ARM64 | emulation diagnostic only (not acceptance) | the same run with `ARM64_HOST_TESTED` on the A1 instance | same instance |
+| **B-3** TenantContext in `main` | **BLOCKED**, ready | `claude/b15-tenantcontext-core` merged into `main` | see row 34; Phase 2 adoption on this branch passes CI (run 40111756070) with a forgery test (missing, hand-built, spread and JSON-cloned contexts never reach Drive; mutant caught) | merge the core branch (deploys the API through `fly-deploy.yml`; no migration, no startup change) | yes: the merge |
+| **B-4** cloud facts | **PASS** | none | `CLOUD-FACTS-2026-10-24.md` | none | no |
+
+## D2. Security and reliability findings (not Phase 2 criteria; disposition)
+| Finding | Evidence | Disposition |
+|---|---|---|
+| A public Cloudflare Worker with authentication capability exists outside the repository | read-only inspection | reported to the founder with a reversible mitigation awaiting approval; details are withheld from this public repository until it is mitigated |
+| Production database has no provider backup (free plan) | Supabase docs; plan read; no backup job | backup job built and self-tested on `claude/b15-db-backup` (14 of 14 synthetic checks); activation needs the founder's key, bucket and environment (`docs/infra/db-backup/RUNBOOK.md`) |
+| R2 variable names on Fly do not match `lib/r2.ts` | Fly secret names; isolated reproduction | no data affected (`project_files` has 0 rows). Codex's Batch 1 `lib/r2.ts` already implements the private, fail-closed design; production needs its five `CLOUDFLARE_R2_*` names when Batch 1 deploys. No competing fix |
+| Public `r2.dev` on three empty buckets | 0 objects, 0 R2 operations in 30 days, no code reference | disabling proposed; awaiting approval |
+| `unit-tests` workflow is red on `main` (46 frontend failures) | runs 40031704258 and 40110784081 | pre-existing on `main`; unchanged by this work; not a Phase 2 item |
+| Mutation sweep | 99 of 99 on `e2a3fb49` | the code covered by it is unchanged in `58a8b414` except the storage actor, which has its own forgery test and mutant; the sweep was not re-run |
 
 Not blockers, and not Phase 2: the Batch 1 production cutover (key provider, KMS identity, credential sealing and rotation, legacy-writer drain, staging service), INFRA-007 and INFRA-008, and the pull request and merge.
 The PR gate itself is cleared on safety grounds (offline migration check; no secret reaches PR code; `main` unprotected so no check name depends on the old job); a merge still applies this branch's two migrations to production and stays your decision.
