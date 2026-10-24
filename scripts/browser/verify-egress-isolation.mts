@@ -65,7 +65,11 @@ s.on('connect', async (req, client, head) => {
 s.listen(${PROXY_PORT}, '0.0.0.0', () => console.log('listening'));
 `;
 /** a TCP listener on the proxy container's own loopback:443; any connection there is a policy bypass */
-const CANARY = `require('node:net').createServer((s) => { console.log('HIT'); s.destroy(); }).listen(443, '127.0.0.1', () => console.log('listening'));`;
+// Loopback canary on 127.0.0.1 and, where the container has IPv6 loopback, ::1 as well: a name like localtest.me resolves to either family
+// depending on the host's resolver order (Docker Desktop returned 127.0.0.1; Compute Engine Ubuntu returned ::1), and both must count.
+const CANARY = `const net = require('node:net'); const hit = (s) => { console.log('HIT'); s.destroy(); };
+net.createServer(hit).listen(443, '127.0.0.1', () => console.log('listening'));
+net.createServer(hit).on('error', () => {}).listen(443, '::1');`;
 
 /** runs inside the hardened browser container and prints one JSON object */
 const BATTERY = `
@@ -182,7 +186,7 @@ const controls = {
   bridgeBrowserCanBypass: B ? { publicIpReachable: isConn(B.raw.publicIp['1.1.1.1:443']), publicDnsResolves: String(B.raw.publicDns).startsWith('resolved:'), chromiumWithoutProxyFlagLoaded: /^loaded:2\d\d:/.test(B.nav.withoutProxyFlag) } : null,
   permissiveProxyIsDetected: permissive!.result ? {
     canaryHit: permissive!.canaryHits > 0,
-    dialedLoopback: permissive!.permissiveDials.some((d) => d.includes('localtest.me 127.0.0.1')),
+    dialedLoopback: permissive!.permissiveDials.some((d) => d.includes('localtest.me 127.0.0.1') || d.includes('localtest.me ::1')),
     dialedMetadata: permissive!.permissiveDials.some((d) => d.includes('169.254.169.254.nip.io 169.254.169.254')),
     dialedRfc1918: permissive!.permissiveDials.some((d) => d.includes('10.0.0.5.nip.io 10.0.0.5')),
   } : null,
