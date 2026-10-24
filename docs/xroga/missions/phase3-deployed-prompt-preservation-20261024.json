@@ -1,0 +1,100 @@
+{
+  "version": "1.0",
+  "missionId": "XB01-P3-DEPLOYED-PROMPT-PRESERVATION-20261024",
+  "baseSha": "e8164ba6e2cc3eee46a183b752ea39188ce2e9b7",
+  "requirementIds": [
+    "XB01-C009"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "low",
+  "scope": "Preserve the exact fifteen-line backend presentation prompt update currently deployed at f9ac71ef while preparing the Phase3 API release. No frontend files or security runtime behavior change.",
+  "changedFiles": [
+    "backend/src/ai/prompts.ts",
+    "docs/xroga/missions/phase3-deployed-prompt-preservation-20261024.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Existing frontend developer prompt presentation, citation and rich chart behavior",
+      "All canonical custody, identity, schema, evaluator and acceptance evidence"
+    ],
+    "extend": [],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No SQL or schema change.",
+    "rollback": "No database operation. Preserve ciphertext, revisions and tombstones."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "Presentation strings only. No auth boundary or authority change."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "Presentation strings only. No tenant boundary or authority change."
+    },
+    "approval": {
+      "changed": false,
+      "description": "Presentation strings only. No approval boundary or authority change."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "Presentation strings only. No credentials boundary or authority change."
+    },
+    "egress": {
+      "changed": false,
+      "description": "Presentation strings only. No egress boundary or authority change."
+    },
+    "cost": {
+      "changed": false,
+      "description": "Presentation strings only. No cost boundary or authority change."
+    },
+    "billing": {
+      "changed": false,
+      "description": "Presentation strings only. No billing boundary or authority change."
+    }
+  },
+  "tests": [
+    {
+      "command": "Node22.21.1 --import tsx --test backend/src/ai/prompts.test.ts backend/src/ai/richResponsePrompt.test.ts",
+      "scope": "Eight existing positive and negative prompt/rich-output contract tests PASS, zero failures or skips. No external execution.",
+      "negative": true,
+      "reference": "backend/src/ai/richResponsePrompt.test.ts"
+    }
+  ],
+  "architecture": {
+    "change": "none",
+    "reason": "Preserve exact currently deployed presentation strings. No call graph or runtime boundary changes.",
+    "rfc": null
+  },
+  "rollout": "Push only the existing Phase3 readiness branch after focused validation. Rebuild the API from exact source, retain the verified e816 recovery image. No main merge or production deployment authorized.",
+  "rollback": "Use the verified managed-compatible e816 image/config, preserving v3 ciphertext, revisions, tombstones and key versions. Never use legacy1247/1246 after v3 writes.",
+  "knownGaps": [
+    "New source-bound mandatory checks and built image readback required",
+    "Production protected restore, Fly federation and customer cutover require separate authorization"
+  ],
+  "placeholderClaimsRemaining": [
+    "No production cutover or final acceptance claim"
+  ],
+  "evidenceRefs": [
+    "backend/src/ai/prompts.test.ts",
+    "backend/src/ai/richResponsePrompt.test.ts",
+    "deploy/cloudrun/PHASE3-STAGING-RUNBOOK.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Production operations are not authorized",
+      "Final source/image checks and production backup/restore/federation/cutover remain required"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}
