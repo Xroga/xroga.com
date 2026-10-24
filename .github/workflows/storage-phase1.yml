@@ -61,6 +61,8 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
+      - name: Backend standalone lockfile installs (the API image and the migration job run exactly this)
+        run: npm ci --prefix backend --workspaces=false --dry-run --no-audit --no-fund
       - name: Real Chromium for the Phase 2 browser policy tests (disposable runner)
         run: |
           # A dedicated browsers directory, visible only to the Phase 2 browser step. An installed browser in Playwright's default location
