@@ -12,7 +12,7 @@ describe('redaction of known credential shapes', () => {
     ['GitHub fine-grained', 'token github_pat_' + '11ABCDEFG0abcdefghij_klmnopqrstuvwxyz0123456789', 'github_pat_11'],
     ['OpenAI-style key', 'using sk-' + 'Z9y8X7w6V5u4T3s2R1q0P9o8', 'sk-Z9y8'],
     ['Anthropic-style key', 'key sk-ant-' + 'api03-AbCdEfGhIjKlMnOpQrStUvWx', 'api03-AbCd'],
-    ['AWS access key id', 'creds AKIA' + 'IOSFODNN7EXAMPLE here', 'AKIAIOSFODNN7EXAMPLE'],
+    ['AWS access key id', 'creds AKIA' + 'IOSFODNN7EXAMPLE here', 'AKIA' + 'IOSFODNN7EXAMPLE'],
     ['Slack token', 'xoxb-' + '123456789012-abcdefghijkl', 'xoxb-1234'],
     ['Supabase PAT', 'sbp_' + '0123456789abcdef0123456789abcdef01234567', 'sbp_0123'],
     ['JWT', 'jwt eyJ' + 'hbGciOiJIUzI1NiJ9.eyJ' + 'zdWIiOiIxMjM0NTY3ODkwIn0.SflKxwRJSMeKKF2QT4fwpM', 'eyJhbGci'],
