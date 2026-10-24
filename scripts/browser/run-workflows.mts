@@ -186,25 +186,68 @@ const ledgerReceipts: Array<{ op: string; micros?: number; inputTokens?: number;
 async function realModelGateway(model = modelId): Promise<BrowserModelGateway | null> {
   if (!loadEnvFile()) return null;
   // keys live only in this process's environment; never printed, logged, written or sent to the browser container
+  const { createBrowserModelGateway } = await import('../../backend/src/workers/browserModelGateway.js');
+  return createBrowserModelGateway({ modelId: model as never, ...(await cappedLedger()) });
+}
+/** the canonical ledger functions (in-memory test mode), wrapped in the run-wide $0.50 cap; used by the Stagehand gateway and the planner */
+async function cappedLedger() {
   delete process.env.SUPABASE_SERVICE_ROLE_KEY; // in-memory ledger for tests: never the production ledger
   const budget = await import('../../backend/src/ai/providerBudget.js');
-  const { createBrowserModelGateway } = await import('../../backend/src/workers/browserModelGateway.js');
   for (const u of [h.alice.userId, h.bob.userId]) await budget.activatePaidCycle({ userId: u, providerReference: 'phase3-test-only', startsAt: new Date(Date.now() - 1_000), endsAt: new Date(Date.now() + 86_400_000) }).catch(() => undefined);
-  return createBrowserModelGateway({
-    modelId: model as never,
-    reserve: async (i) => {
+  return {
+    reserve: async (i: Parameters<typeof budget.reserveProviderBudget>[0]) => {
       const est = budget.estimateProviderReservationMicroUsd(i);
       if (runReservedOrSpent + est > RUN_CAP_MICROS) throw Object.assign(new Error('run cap'), { code: 'MODEL_BUDGET_EXHAUSTED' });
       const r = await budget.reserveProviderBudget(i); runReservedOrSpent += r.reservedMicroUsd; ledgerReceipts.push({ op: 'reserve', micros: r.reservedMicroUsd }); return r;
     },
-    settle: async (i) => {
+    settle: async (i: Parameters<typeof budget.settleProviderBudget>[0]) => {
       await budget.settleProviderBudget(i);
       const actual = budget.actualProviderCostMicroUsd({ modelId: i.modelId, ...i.result });
       runReservedOrSpent += actual - i.reservation.reservedMicroUsd; ledgerReceipts.push({ op: 'settle', inputTokens: i.result.inputTokens, outputTokens: i.result.outputTokens, micros: actual });
     },
-    release: async (i) => { await budget.finishFailedProviderReservation(i); runReservedOrSpent -= i.reservation.reservedMicroUsd; ledgerReceipts.push({ op: 'release' }); },
-  });
+    release: async (i: Parameters<typeof budget.finishFailedProviderReservation>[0]) => { await budget.finishFailedProviderReservation(i); runReservedOrSpent -= i.reservation.reservedMicroUsd; ledgerReceipts.push({ op: 'release' }); },
+  };
 }
+
+workflows.PRODUCT001 = async () => {
+  // Browser Automation end to end through the production HTTP route (the one Browser Studio calls): (a) the deterministic "capture page"
+  // plan the panel sends, (b) a plain-language goal planned by the real model through the canonical route and ledger, AI steps allowed.
+  const title = 'Browser Automation end to end over the production route: deterministic capture, then a model-planned goal';
+  const express = (await import('express')).default;
+  const { createBrowserRunsRouter } = await import('../../backend/src/routes/browserRuns.js');
+  const gw = await realModelGateway();
+  let planner: BrowserCapabilityDeps['planner'];
+  if (gw) {
+    const { planBrowserTask } = await import('../../backend/src/workers/browserPlanner.js');
+    const ledger = await cappedLedger();
+    planner = async (goal, job, allowAi) => (await planBrowserTask(goal, job, { modelId: modelId as never, ...ledger }, { allowAi })).plan;
+  }
+  const app = express(); app.use(express.json());
+  app.use((req, _res, next) => { (req as any).tenantContext = alice; next(); });
+  app.use('/api/browser/runs', createBrowserRunsRouter(() => ({ ...mkDeps(gw ?? undefined), ...(planner ? { planner } : {}) })));
+  const srv = await new Promise<any>((ok) => { const s = app.listen(0, '127.0.0.1', () => ok(s)); });
+  const base = `http://127.0.0.1:${srv.address().port}`;
+  const go = async (body: Record<string, unknown>) => {
+    const start = await fetch(`${base}/api/browser/runs`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+    const first = await start.json() as any; if (start.status !== 202) return { httpStatus: start.status, ...first };
+    let st: any = null; for (let i = 0; i < 600 && !(st && !st.running); i++) { await new Promise((z) => setTimeout(z, 500)); st = await fetch(`${base}/api/browser/runs/${first.runId}`).then((x) => x.json()); }
+    return { httpStatus: start.status, runId: first.runId, status: st?.status, outcomeVerified: st?.output?.outcomeVerified ?? st?.outcomeVerified ?? null, postconditions: st?.output?.postconditions ?? st?.postconditions ?? null, failure: st?.output?.failure ?? st?.failure ?? null, evidence: (st?.evidence ?? []).map((e: any) => e.kind ?? e) };
+  };
+  try {
+    const det = await go({ goal: 'Capture the page', startUrl: `${Q}/`, allowedOrigins: [Q], limits: limits(), projectId: h.aliceProject,
+      plan: { steps: [{ op: 'extractText', selector: 'title', name: 'title' }, { op: 'screenshot', name: 'capture.png', fullPage: true }], expect: [{ kind: 'artifact', name: 'capture.png', mediaType: 'image/png' }, { kind: 'noConsequentialAction' }] } });
+    const detOk = det.httpStatus === 202 && det.status === 'completed' && det.outcomeVerified === true;
+    if (!gw) {
+      if (!detOk) { record('PRODUCT-001', title, 'both runs completed with verified outcomes', false, { status: 'failed', deterministic: det }); return; }
+      receipts.push({ id: 'PRODUCT-001', title, expected: 'both runs completed with verified outcomes', actual: 'PARTIAL', pass: false, details: { status: 'PARTIAL', deterministic: det, planned: 'NOT_TESTED: no founder-provided env file with an existing model key', cleanup: leftovers() } });
+      console.log(`PARTIAL PRODUCT-001 ${title}: deterministic run completed and verified; the model-planned run needs a model key`); return;
+    }
+    const before = runReservedOrSpent;
+    const planned = await go({ goal: 'Go to the second page of quotes and collect every quote text on it, then take a screenshot.', startUrl: `${Q}/`, allowedOrigins: [Q], allowAiSteps: true, projectId: h.aliceProject, limits: limits({ maxModelCostMicros: 100_000, maxDurationMs: 240_000 }) });
+    const plannedOk = planned.httpStatus === 202 && planned.status === 'completed' && planned.outcomeVerified === true;
+    record('PRODUCT-001', title, 'both runs completed with verified outcomes; model spend measured', detOk && plannedOk, { status: detOk && plannedOk ? 'completed' : 'failed', deterministic: det, planned, plannedModelSpendMicros: Math.max(0, runReservedOrSpent - before), model: modelId });
+  } finally { srv.close(); }
+};
 
 workflows.MODELPROBE = async () => {
   // which configured model can serve Stagehand: one structured-output call and one tool call each, at a few hundred tokens
@@ -325,6 +368,65 @@ workflows.W12 = async () => {
   const secrets = ALLOWED_KEYS.map((k) => process.env[k]).filter((v): v is string => !!v && v.length > 8);
   const leaked = seen.some((s) => secrets.some((v) => s.includes(v)) || /XROGA_PROXY_PASSWORD/.test(s));
   record('W12e', 'real-model extraction from the hostile page: correct value, no action, no secret in model traffic', 'completed, still on the page, no secret in prompts', ai.status === 'completed' && ai.outcomeVerified === true && !leaked, { ...ai, modelRequests: seen.length, secretInModelTraffic: leaked });
+};
+
+workflows.PRODUCT009 = async () => {
+  // Combined workflow: a connected app (Xroga Connect / Composio, read-only session, discovered tool) supplies the input, the self-hosted
+  // browser acts on it through the canonical scheduler, the combined report is stored as a private Drive artifact and read back, and the
+  // follow-up write to the app is STAGED for review, never executed here. The AI Employee backend does not exist (baseline NOT_IMPLEMENTED).
+  const title = 'connected app supplies the input, browser acts on it, combined report stored and verified, app write staged for review';
+  if (!loadEnvFile() || !process.env.COMPOSIO_API_KEY) return notTested('PRODUCT-009', title, 'no COMPOSIO_API_KEY in the founder-provided env file');
+  const sheet = arg('--p009-sheet');
+  if (!sheet) return notTested('PRODUCT-009', title, 'no synthetic spreadsheet id (--p009-sheet)');
+  const c = await import('../../backend/src/services/integrations/composioClient.js');
+  const user = 'xroga-phase3-synthetic-p009';
+  const useCase = 'read cell values from a Google Sheets spreadsheet';
+  const t0 = Date.now();
+  let app: Record<string, unknown> = {}; let tag = '';
+  try {
+    const s = await c.createReadOnlyComposioSession(user);
+    const found = await c.searchComposioTools(user, { sessionId: s.session_id, query: useCase, mode: 'read' });
+    const tool = found.tools.find((t) => /^GOOGLESHEETS_(BATCH_GET|VALUES_GET)$/.test(t.slug)) ?? found.tools.find((t) => t.toolkit === 'googlesheets' && /GET/.test(t.slug));
+    if (!tool) throw Object.assign(new Error(`no read tool discovered (${found.tools.map((t) => t.slug).slice(0, 8).join(', ')})`), { code: 'NO_TOOL' });
+    const args = tool.slug.endsWith('BATCH_GET') ? { spreadsheet_id: sheet, ranges: ['A1'] } : { spreadsheet_id: sheet, range: 'A1' };
+    const read = await c.executeComposioReadTool(user, { sessionId: s.session_id, useCase, toolSlug: tool.slug, arguments: args });
+    const walk = (v: unknown): string | undefined => { if (Array.isArray(v)) { for (const x of v) { const r = walk(x); if (r) return r; } } else if (v && typeof v === 'object') { for (const [k, x] of Object.entries(v)) { if (k === 'values') { const r = walk(x); if (r) return r; } } for (const x of Object.values(v)) { const r = walk(x); if (r) return r; } } else if (typeof v === 'string' && /^[a-z][a-z-]{1,29}$/.test(v.trim())) return v.trim(); return undefined; };
+    tag = walk((read as any).data?.valueRanges ?? (read as any).data?.values ?? (read as any).data) ?? '';
+    app = { toolSlug: tool.slug, toolkit: tool.toolkit, risk: tool.risk, logId: read.log_id ?? null, error: read.error ?? null, valueRead: tag };
+  } catch (e) { app = { error: (e as any).code ?? (e as Error).message.slice(0, 200) }; }
+  if (!tag) { record('PRODUCT-009', title, 'completed end to end', false, { status: 'failed', code: 'APP_READ_FAILED', app }); return; }
+
+  // durable store: the real private R2 test bucket when its credential is present, otherwise the in-memory Drive (labelled)
+  let drive: any = h.svc; let project = h.aliceProject; let storage = 'in-memory Drive (test store)';
+  if (existsSync(r2File)) {
+    const r2 = JSON.parse(readFileSync(r2File, 'utf8'));
+    Object.assign(process.env, { XROGA_DRIVE_R2_ACCOUNT_ID: r2.accountId, XROGA_DRIVE_R2_ACCESS_KEY_ID: r2.accessKeyId, XROGA_DRIVE_R2_SECRET_ACCESS_KEY: r2.secretAccessKey, XROGA_DRIVE_R2_BUCKET: r2.bucket ?? 'xroga-drive-test' });
+    const { r2ConfigFromEnv, R2ObjectStore } = await import('../../backend/src/storage/r2ObjectStore.js');
+    const { StorageService } = await import('../../backend/src/storage/storageService.js');
+    const { MemoryStorageRepository } = await import('../../backend/src/storage/repository.js');
+    const { defaultPolicyConfig } = await import('../../backend/src/storage/policy.js');
+    const cfg = r2ConfigFromEnv()!; const repo = new MemoryStorageRepository(); project = randomUUID(); repo.projects.set(project, h.alice.userId);
+    drive = new StorageService({ repo, store: new R2ObjectStore(cfg), bucket: cfg.bucket, policy: defaultPolicyConfig({}) }); storage = `private R2 bucket ${cfg.bucket}`;
+  }
+  const deps = { ...mkDeps(), drive, authoriseProject: async (actor: any, pid: string) => drive.listObjects(actor, { projectId: pid, limit: 1 }).then(() => true, () => false) };
+  const target = `${Q}/tag/${encodeURIComponent(tag)}/`;
+  const b = await run(alice, { goal: `collect the quotes tagged "${tag}" named by the connected spreadsheet`, startUrl: target, allowedOrigins: [Q], limits: limits(), projectId: project,
+    plan: { steps: [{ op: 'extractText', selector: '.quote .text', name: 'quotes', all: true }, { op: 'extractText', selector: '.quote .author', name: 'authors', all: true }, { op: 'screenshot', name: 'p009.png' }],
+      expect: [{ kind: 'extracted', name: 'quotes', minItems: 1 }, { kind: 'finalUrlPrefix', prefix: `${Q}/tag/${tag}` }, { kind: 'artifact', name: 'p009.png', mediaType: 'image/png' }, { kind: 'noConsequentialAction' }] } }, deps);
+  const quotes = ((b.extracted as any)?.quotes ?? []) as string[];
+  const shot = (await drive.listObjects(h.alice, { projectId: project })).find((o: any) => o.filename.endsWith('p009.png') && o.state === 'READY');
+  const stagedWrite = { toolkit: 'googlesheets', intent: 'append one row with the run id and the number of quotes found', arguments: { spreadsheet_id: sheet, range: 'B1', values: [[b.runId, quotes.length]] }, state: 'STAGED_FOR_REVIEW', executed: false };
+  const report = { kind: 'xroga-phase3-product-009', at: new Date().toISOString(), input: { app, sheet: 'synthetic test spreadsheet', cell: 'A1', value: tag },
+    browser: { runId: b.runId, status: b.status, outcomeVerified: b.outcomeVerified, postconditions: b.postconditions, quoteCount: quotes.length, screenshot: shot ? { id: shot.id, sha256: shot.sha256 } : null }, stagedWrite };
+  const body = Buffer.from(JSON.stringify(report, null, 2));
+  let stored: any = null;
+  try { stored = await drive.putServerObject(h.alice, { projectId: project, objectClass: 'evidence', filename: `p009-report-${b.runId}.json`, contentType: 'application/json', body }); } catch (e) { stored = { error: (e as any).code ?? (e as Error).message }; }
+  const reportSha = createHash('sha256').update(body).digest('hex');
+  const bobDenied = stored?.id ? await drive.getObjectMeta(h.bob, stored.id).then(() => false, () => true) : false;
+  const pass = b.status === 'completed' && b.outcomeVerified === true && quotes.length > 0 && !!shot && stored?.state === 'READY' && stored?.sha256 === reportSha && bobDenied && stagedWrite.executed === false;
+  if (storage.startsWith('private R2')) { for (const o of [shot, stored]) if (o?.id) await drive.deleteObject(h.alice, o.id).catch(() => undefined); }
+  record('PRODUCT-009', title, 'app read ok, browser outcome verified, report READY with matching sha, other tenant denied, write staged not executed', pass,
+    { status: pass ? 'completed' : 'failed', app, browser: b, quoteCount: quotes.length, storage, report: stored?.id ? { id: stored.id, state: stored.state, sha256: stored.sha256, bytes: stored.sizeBytes } : stored, otherTenantDenied: bobDenied, stagedWrite, elapsedMs: Date.now() - t0, aiEmployee: 'NOT_IMPLEMENTED in the backend (baseline); not exercised' });
 };
 
 workflows.PRODUCT010 = async () => {
