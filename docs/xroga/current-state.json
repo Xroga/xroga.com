@@ -5785,7 +5785,7 @@
       "id": "surface:087b17b9e17fc86ddade",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "sha256": "9cc6d86a81214b17d18c1ec8f2440c8d658b1c25fda22ee4ed5e7fa3e494082d",
+      "sha256": "c3c9cdfc288ce155a3f8c0a7e15ab1c8fe20656c1f56e1e6bf51d1090ee68c7a",
       "symbols": [
         "BRIEF_RESEARCH_RESPONSE_RE",
         "BUILDER_SYSTEM",
@@ -103014,9 +103014,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:48d10bb0b7a13bf029de",
+      "id": "finding:0c043fedb2a46b0bd2cc",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "line": 188,
+      "line": 190,
       "kind": "SIMULATED",
       "reachable": true,
       "state": "PARTIAL",
@@ -103024,9 +103024,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:a304c4d08368d3b28d9e",
+      "id": "finding:3bbb163ef395b7f005f9",
       "sourcePath": "backend/src/ai/prompts.ts",
-      "line": 231,
+      "line": 234,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",

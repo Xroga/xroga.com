@@ -10,7 +10,8 @@
   "scope": "Preserve the exact fifteen-line backend presentation prompt update currently deployed at f9ac71ef while preparing the Phase3 API release. No frontend files or security runtime behavior change.",
   "changedFiles": [
     "backend/src/ai/prompts.ts",
-    "docs/xroga/missions/phase3-deployed-prompt-preservation-20261024.json"
+    "docs/xroga/missions/phase3-deployed-prompt-preservation-20261024.json",
+    "docs/xroga/current-state.json"
   ],
   "decisions": {
     "keep": [
