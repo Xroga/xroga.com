@@ -10,6 +10,8 @@ import {
 import { recordModelExecution } from './providerRuntime.js';
 import { ProviderPolicyError, requiredCodingTransport } from './providerPolicy.js';
 import { withTemperatureFallback } from './temperatureCompat.js';
+import { pinnedProviderRequest, retryOtherApprovedEndpoint, validatedOpenRouterEndpoints,
+  type ValidatedEndpoint } from './openRouterRouting.js';
 
 export type ContentPart =
   | { type: 'text'; text: string }
@@ -40,6 +42,11 @@ export interface ChatResult {
   outputTokens: number;
   totalTokens: number;
   providerRequestId?: string;
+  upstreamProvider?: string;
+  providerAttempts?: string[];
+  cachedInputTokens?: number;
+  reasoningTokens?: number;
+  actualCostUsd?: number;
 }
 
 interface ResolvedEndpoint {
@@ -112,9 +119,7 @@ function openRouterHeaders(): Record<string, string> {
 
 /**
  * Resolve API endpoint for a model.
- * - DeepSeek → OpenRouter ONLY (OPENROUTER_API_KEY)
- * - Kimi → Moonshot official (KIMI_API_KEY)
- * - GLM → Zhipu official (GLM_API_KEY)
+ * Every active model uses OpenRouter and the single OPENROUTER_API_KEY.
  */
 export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): ResolvedEndpoint {
   const def = MODELS[modelId];
@@ -162,7 +167,7 @@ export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): 
     if (!orKey) {
       throw new Error(
         `OPENROUTER_API_KEY is not configured (required for ${apiModel}). ` +
-          'DeepSeek runs only via OpenRouter — DEEPSEEK_API_KEY is not used.',
+          'All active models run only via OpenRouter.',
       );
     }
     return {
@@ -174,25 +179,20 @@ export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): 
     };
   }
 
-  const apiKey = credentialOverride?.trim() || getSecret(def.secretKey);
-  if (!apiKey) {
-    throw new Error(`${def.secretKey} is not configured on the server`);
-  }
-  return {
-    apiKey,
-    baseUrl: def.baseUrl,
-    apiModel,
-    provider: def.provider,
-  };
+  throw new ProviderPolicyError(`${modelId} has an unapproved direct-provider transport`);
 }
 
-function clientFor(endpoint: ResolvedEndpoint): OpenAI {
+function clientFor(endpoint: ResolvedEndpoint, fetcher?: typeof fetch): OpenAI {
   return new OpenAI({
     apiKey: endpoint.apiKey,
     baseURL: endpoint.baseUrl,
     timeout: 180_000,
-    maxRetries: 1,
+    // Xroga owns the sequential two-endpoint retry; SDK retries obscure the upstream route.
+    maxRetries: 0,
     defaultHeaders: endpoint.defaultHeaders,
+    // The SDK's Fetch typing still describes node-fetch responses; the runtime accepts
+    // the standard Fetch API used by the endpoint-catalog test seam.
+    ...(fetcher ? { fetch: fetcher as unknown as NonNullable<ConstructorParameters<typeof OpenAI>[0]>['fetch'] } : {}),
   });
 }
 
@@ -218,25 +218,69 @@ export async function chatCompletion(
     reasoningMode?: ReasoningMode;
     signal?: AbortSignal;
     credentialOverride?: string;
+    /** Test seam only; never sourced from model output or a user request. */
+    fetcher?: typeof fetch;
   } = {},
 ): Promise<ChatResult> {
   const started = Date.now();
   try {
     const endpoint = resolveEndpoint(modelId, opts.credentialOverride);
-    const client = clientFor(endpoint);
-    const completion = await withTemperatureFallback(opts.temperature ?? 0.4, (temperature) =>
-      client.chat.completions.create(
-        {
-          model: endpoint.apiModel,
-          messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
-          max_tokens: opts.maxTokens ?? 8192,
-          ...(temperature === undefined ? {} : { temperature }),
-          ...providerReasoningControls(endpoint.provider, opts.reasoningMode),
-          ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
-        },
-        opts.signal ? { signal: opts.signal } : undefined,
-      ),
-    );
+    const client = clientFor(endpoint, opts.fetcher);
+    const hasImages = messages.some(message => Array.isArray(message.content)
+      && message.content.some(part => part.type === 'image_url'));
+    const approved = await validatedOpenRouterEndpoints(modelId, {
+      json: opts.json, images: hasImages,
+      fetcher: opts.fetcher,
+      requiredContext: estimateMessageTokens(messages) + (opts.maxTokens ?? 8192),
+    });
+    const attempts: string[] = [];
+    let selected: ValidatedEndpoint | undefined;
+    let completion: OpenAI.Chat.ChatCompletion | undefined;
+    let lastError: unknown;
+    for (const candidate of approved) {
+      if (opts.signal?.aborted) throw opts.signal.reason ?? new Error('Request cancelled');
+      // This endpoint requires reasoning; requesting none is a known 400, so use the
+      // approved fallback instead of paying for a guaranteed rejected request.
+      if (opts.reasoningMode === 'none' && modelId === 'glm_5_3_flash' && candidate.tag === 'relace') continue;
+      attempts.push(candidate.tag);
+      try {
+        const response = await withTemperatureFallback(opts.temperature ?? 0.4, (temperature) =>
+          client.chat.completions.create({
+            model: endpoint.apiModel,
+            messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
+            max_tokens: opts.maxTokens ?? 8192,
+            ...(temperature === undefined ? {} : { temperature }),
+            ...providerReasoningControls(endpoint.provider, opts.reasoningMode),
+            ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
+            provider: pinnedProviderRequest(candidate, modelId),
+            usage: { include: true },
+          } as OpenAI.Chat.ChatCompletionCreateParamsNonStreaming,
+          opts.signal ? { signal: opts.signal } : undefined),
+        );
+        const actualProvider = (response as OpenAI.Chat.ChatCompletion & { provider?: string }).provider;
+        if (actualProvider !== candidate.provider) {
+          throw new ProviderPolicyError('OpenRouter returned an unapproved upstream provider');
+        }
+        const answer = (response.choices[0]?.message?.content ?? '').trim();
+        const reasoning = (response.choices[0]?.message as { reasoning_content?: unknown } | undefined)?.reasoning_content;
+        if (!answer) {
+          const error = new Error(typeof reasoning === 'string' && reasoning
+            ? `${modelId} used its output budget reasoning without an answer`
+            : `${modelId} returned an empty completion`) as Error & { code?: string };
+          // A 200 response may already have consumed paid tokens. Keep the budget hold
+          // for reconciliation; do not buy a second answer on this same reservation.
+          error.code = 'BILLED_EMPTY_PROVIDER_RESPONSE';
+          throw error;
+        }
+        selected = candidate;
+        completion = response;
+        break;
+      } catch (error) {
+        lastError = error;
+        if (!retryOtherApprovedEndpoint(error) || opts.signal?.aborted) throw error;
+      }
+    }
+    if (!completion || !selected) throw lastError ?? new Error('Both approved providers are unavailable');
     const choice = completion.choices[0]?.message;
 
     // Reasoning models split their reply in two. GLM and the DeepSeek v4 family return
@@ -271,6 +315,15 @@ export async function chatCompletion(
       completion.usage?.prompt_tokens ??
       messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
     const outputTokens = completion.usage?.completion_tokens ?? estimateTokens(text);
+    const extendedUsage = completion.usage as (OpenAI.CompletionUsage & {
+      cost?: number;
+      prompt_tokens_details?: { cached_tokens?: number };
+      completion_tokens_details?: { reasoning_tokens?: number };
+    }) | undefined;
+    const actualCostUsd = extendedUsage?.cost;
+    if (actualCostUsd !== undefined && (!Number.isFinite(actualCostUsd) || actualCostUsd < 0)) {
+      throw new ProviderPolicyError('OpenRouter returned invalid cost accounting');
+    }
     recordModelExecution(modelId, { ok: true, latencyMs: Date.now() - started });
     return {
       text,
@@ -282,6 +335,11 @@ export async function chatCompletion(
       outputTokens,
       totalTokens: inputTokens + outputTokens,
       providerRequestId: completion.id,
+      upstreamProvider: selected.provider,
+      providerAttempts: attempts,
+      cachedInputTokens: extendedUsage?.prompt_tokens_details?.cached_tokens ?? 0,
+      reasoningTokens: extendedUsage?.completion_tokens_details?.reasoning_tokens ?? 0,
+      actualCostUsd,
     };
   } catch (error) {
     recordModelExecution(modelId, { ok: false, latencyMs: Date.now() - started, error });
@@ -304,88 +362,106 @@ export async function chatCompletionStream(
     json?: boolean;
     signal?: AbortSignal;
     credentialOverride?: string;
+    /** Test seam only; never sourced from model output or a user request. */
+    fetcher?: typeof fetch;
   } = {},
 ): Promise<ChatResult> {
   const started = Date.now();
   try {
     const endpoint = resolveEndpoint(modelId, opts.credentialOverride);
-    const client = clientFor(endpoint);
+    const client = clientFor(endpoint, opts.fetcher);
     if (opts.signal?.aborted) {
       const err = new Error('Build cancelled') as Error & { code?: string };
       err.code = 'BUILD_CANCELLED';
       throw err;
     }
-    // Some models refuse any temperature but their own default and answer 400.
-    // Retry once without the parameter rather than losing the run to it.
-    const stream = await withTemperatureFallback(opts.temperature ?? 0.4, (temperature) =>
-      client.chat.completions.create(
-        {
-          model: endpoint.apiModel,
-          messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
-          max_tokens: opts.maxTokens ?? 8192,
-          ...(temperature === undefined ? {} : { temperature }),
-          ...providerReasoningControls(endpoint.provider, opts.reasoningMode),
-          ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
-          stream: true,
-        } as OpenAI.Chat.ChatCompletionCreateParamsStreaming,
-        opts.signal ? { signal: opts.signal } : undefined,
-      ),
-    );
-
-    let text = '';
-    let providerRequestId: string | undefined;
-    let finishReason: string | null = null;
-    let inputTokens = messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
-    let outputTokens = 0;
-
-    for await (const chunk of stream) {
-      providerRequestId ??= chunk.id;
-      if (opts.signal?.aborted) {
-        const err = new Error('Build cancelled') as Error & { code?: string };
-        err.code = 'BUILD_CANCELLED';
-        throw err;
-      }
-      const choice = chunk.choices[0];
-      const delta = choice?.delta?.content ?? '';
-      const reasoningDelta = (choice?.delta as { reasoning_content?: unknown } | undefined)?.reasoning_content;
-      // Reasoning-capable providers can spend tens of seconds streaming private
-      // reasoning before answer content. That is live transport activity, so it must
-      // cancel the silence deadline without becoming answer text or telemetry output.
-      if (
-        delta ||
-        (typeof reasoningDelta === 'string' && reasoningDelta.length > 0) ||
-        choice?.finish_reason ||
-        chunk.usage
-      ) {
-        opts.onActivity?.();
-      }
-      finishReason = choice?.finish_reason ?? finishReason;
-      if (delta) {
-        text += delta;
-        opts.onDelta?.(delta);
-      }
-
-      if (chunk.usage) {
-        inputTokens = chunk.usage.prompt_tokens ?? inputTokens;
-        outputTokens = chunk.usage.completion_tokens ?? outputTokens;
+    const hasImages = messages.some(message => Array.isArray(message.content)
+      && message.content.some(part => part.type === 'image_url'));
+    const approved = await validatedOpenRouterEndpoints(modelId, {
+      json: opts.json, images: hasImages,
+      fetcher: opts.fetcher,
+      requiredContext: estimateMessageTokens(messages) + (opts.maxTokens ?? 8192),
+    });
+    const attempts: string[] = [];
+    let lastError: unknown;
+    for (const candidate of approved) {
+      if (opts.signal?.aborted) throw opts.signal.reason ?? new Error('Request cancelled');
+      if (opts.reasoningMode === 'none' && modelId === 'glm_5_3_flash' && candidate.tag === 'relace') continue;
+      attempts.push(candidate.tag);
+      let text = '';
+      let providerRequestId: string | undefined;
+      let finishReason: string | null = null;
+      let inputTokens = estimateMessageTokens(messages);
+      let outputTokens = 0;
+      let cachedInputTokens = 0;
+      let reasoningTokens = 0;
+      let actualCostUsd: number | undefined;
+      try {
+        const stream = await withTemperatureFallback(opts.temperature ?? 0.4, (temperature) =>
+          client.chat.completions.create({
+            model: endpoint.apiModel,
+            messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
+            max_tokens: opts.maxTokens ?? 8192,
+            ...(temperature === undefined ? {} : { temperature }),
+            ...providerReasoningControls(endpoint.provider, opts.reasoningMode),
+            ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
+            stream: true,
+            stream_options: { include_usage: true },
+            provider: pinnedProviderRequest(candidate, modelId),
+            usage: { include: true },
+          } as OpenAI.Chat.ChatCompletionCreateParamsStreaming,
+          opts.signal ? { signal: opts.signal } : undefined),
+        );
+        for await (const chunk of stream) {
+          providerRequestId ??= chunk.id;
+          if (opts.signal?.aborted) throw opts.signal.reason ?? new Error('Build cancelled');
+          const actualProvider = (chunk as typeof chunk & { provider?: string }).provider;
+          if (actualProvider && actualProvider !== candidate.provider) {
+            throw new ProviderPolicyError('OpenRouter returned an unapproved upstream provider');
+          }
+          const choice = chunk.choices[0];
+          const delta = choice?.delta?.content ?? '';
+          const reasoningDelta = (choice?.delta as { reasoning_content?: unknown } | undefined)?.reasoning_content;
+          if (delta || (typeof reasoningDelta === 'string' && reasoningDelta.length > 0)
+            || choice?.finish_reason || chunk.usage) opts.onActivity?.();
+          finishReason = choice?.finish_reason ?? finishReason;
+          if (delta) { text += delta; opts.onDelta?.(delta); }
+          if (chunk.usage) {
+            const usage = chunk.usage as typeof chunk.usage & {
+              cost?: number;
+              prompt_tokens_details?: { cached_tokens?: number };
+              completion_tokens_details?: { reasoning_tokens?: number };
+            };
+            inputTokens = usage.prompt_tokens ?? inputTokens;
+            outputTokens = usage.completion_tokens ?? outputTokens;
+            cachedInputTokens = usage.prompt_tokens_details?.cached_tokens ?? cachedInputTokens;
+            reasoningTokens = usage.completion_tokens_details?.reasoning_tokens ?? reasoningTokens;
+            actualCostUsd = usage.cost ?? actualCostUsd;
+          }
+        }
+        if (!text.trim()) {
+          const error = new Error(`${modelId} returned no public answer after a provider stream`) as Error & { code?: string };
+          error.code = 'BILLED_EMPTY_PROVIDER_RESPONSE';
+          throw error;
+        }
+        text = requireNonEmptyModelText(text, modelId);
+        if (!outputTokens) outputTokens = estimateTokens(text);
+        if (actualCostUsd !== undefined && (!Number.isFinite(actualCostUsd) || actualCostUsd < 0)) {
+          throw new ProviderPolicyError('OpenRouter returned invalid cost accounting');
+        }
+        recordModelExecution(modelId, { ok: true, latencyMs: Date.now() - started });
+        return { text, finishReason, modelId, apiModel: endpoint.apiModel,
+          provider: endpoint.provider, upstreamProvider: candidate.provider,
+          providerAttempts: attempts, inputTokens, outputTokens,
+          totalTokens: inputTokens + outputTokens, providerRequestId,
+          cachedInputTokens, reasoningTokens, actualCostUsd };
+      } catch (error) {
+        lastError = error;
+        // Once a delta is visible to the caller, another provider would duplicate output.
+        if (text || !retryOtherApprovedEndpoint(error) || opts.signal?.aborted) throw error;
       }
     }
-
-    text = requireNonEmptyModelText(text, modelId);
-    if (!outputTokens) outputTokens = estimateTokens(text);
-
-    recordModelExecution(modelId, { ok: true, latencyMs: Date.now() - started });
-    return {
-      text,
-      finishReason,
-      modelId,
-      apiModel: endpoint.apiModel,
-      provider: endpoint.provider,
-      inputTokens,
-      outputTokens,
-      totalTokens: inputTokens + outputTokens,
-      providerRequestId,
-    };
+    throw lastError ?? new Error('Both approved providers are unavailable');
   } catch (error) {
     recordModelExecution(modelId, { ok: false, latencyMs: Date.now() - started, error });
     throw error;
@@ -416,10 +492,6 @@ export function estimateMessageTokens(messages: ChatMessage[]): number {
 export function modelKeyStatus(): Record<string, boolean> {
   return {
     OPENROUTER_API_KEY: Boolean(getSecret('OPENROUTER_API_KEY')),
-    KIMI_API_KEY: Boolean(getSecret('KIMI_API_KEY')),
-    GLM_API_KEY: Boolean(getSecret('GLM_API_KEY')),
-    XAI_API_KEY: Boolean(getSecret('XAI_API_KEY')),
-    DEEPSEEK_VIA_OPENROUTER: Boolean(getSecret('OPENROUTER_API_KEY')),
   };
 }
 

@@ -8,7 +8,7 @@ import { PostCompletionAccountingError } from './postCompletionAccounting.js';
 
 export const SHARED_PROVIDER_ENTITLEMENT_MICRO_USD = 20_000_000;
 export const FREE_PROVIDER_ENTITLEMENT_MICRO_USD = 1_650_000;
-export const PROVIDER_PRICE_VERSION = '2026-07-28-v1';
+export const PROVIDER_PRICE_VERSION = '2026-10-25-openrouter-approved-pairs-v1';
 export type BudgetPurpose = 'daily_work' | 'complexity' | 'completion';
 
 export interface ProviderUsageResult {
@@ -19,6 +19,9 @@ export interface ProviderUsageResult {
   reasoningTokens?: number;
   toolCalls?: number;
   searchCalls?: number;
+  actualCostUsd?: number;
+  upstreamProvider?: string;
+  providerAttempts?: string[];
 }
 
 export interface ProviderReservation {
@@ -93,12 +96,21 @@ export function actualProviderCostMicroUsd(input: {
   cachedInputTokens?: number;
   outputTokens: number;
   reasoningTokens?: number;
+  actualCostUsd?: number;
 }): number {
   requireUsageCounts(input.inputTokens, input.outputTokens, input.cachedInputTokens ?? 0, input.reasoningTokens ?? 0);
+  if (input.actualCostUsd !== undefined) {
+    if (!Number.isFinite(input.actualCostUsd) || input.actualCostUsd < 0) throw new Error('Invalid OpenRouter cost');
+    const authoritative = asSafeInteger(Math.ceil(input.actualCostUsd * 1_000_000));
+    const conservative = actualProviderCostMicroUsd({ ...input, actualCostUsd: undefined });
+    if (authoritative > conservative + 2) throw new Error('OpenRouter cost exceeds the approved price ceiling');
+    return authoritative;
+  }
   const price = requirePricing(input.modelId);
   const cachedInput = Math.min(Math.max(0, input.cachedInputTokens ?? 0), Math.max(0, input.inputTokens));
   const billableInput = Math.max(0, input.inputTokens - cachedInput);
-  const billableOutput = Math.max(0, input.outputTokens + (input.reasoningTokens ?? 0));
+  // OpenRouter completion_tokens already includes the reasoning_tokens detail.
+  const billableOutput = Math.max(0, input.outputTokens);
   // None of the active model specifications carries a separately verified cached-input
   // price. Charge the normal input rate conservatively; silently treating cache hits as
   // free undercounts real provider spend and can breach the product ceiling.
@@ -487,6 +499,17 @@ export async function settleProviderBudget(input: {
   if (actual > input.reservation.reservedMicroUsd) {
     throw new Error('Provider cost exceeded the conservative reservation');
   }
+  const logSettlement = () => console.info(JSON.stringify({
+    event: 'provider_usage_settled', modelId: input.modelId,
+    upstreamProvider: input.result.upstreamProvider ?? null,
+    providerAttempts: input.result.providerAttempts ?? [],
+    providerRequestId: input.result.providerRequestId ?? null,
+    inputTokens: input.result.inputTokens,
+    cachedInputTokens: input.result.cachedInputTokens ?? 0,
+    outputTokens: input.result.outputTokens,
+    reasoningTokens: input.result.reasoningTokens ?? 0,
+    costMicroUsd: actual,
+  }));
   if (hasDurableStore()) {
     const { data, error } = await getSupabaseAdmin().rpc('settle_xroga_provider_budget', {
       p_user_id: input.userId,
@@ -517,6 +540,7 @@ export async function settleProviderBudget(input: {
       !exactCount(row.search_calls, input.result.searchCalls ?? 0)) {
       throw new Error('Provider settlement evidence is inconsistent or unavailable');
     }
+    logSettlement();
     return;
   }
   const row = memoryReservations.get(input.reservation.id);
@@ -525,6 +549,7 @@ export async function settleProviderBudget(input: {
   cycle.reserved -= row.amount;
   cycle.settled += actual;
   row.status = 'settled';
+  logSettlement();
 }
 
 export async function finishFailedProviderReservation(input: {

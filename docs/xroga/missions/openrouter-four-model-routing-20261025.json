@@ -1,0 +1,35 @@
+{
+  "version": "1.0",
+  "missionId": "OPENROUTER-FOUR-MODEL-ROUTING-20261025",
+  "baseSha": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+  "requirementIds": ["XR-FAMILY-cost-budget"],
+  "state": "CODE_COMPLETE",
+  "risk": "high",
+  "scope": "Constrain the existing AI runtime to four audited OpenRouter models, two pinned endpoints per model, live price and capability checks, bounded sequential fallback, and actual usage settlement. Whop webhook configuration is an independent Cloud Run operations change, not part of this code mission.",
+  "changedFiles": ["backend/.env.example", "backend/src/ai/black-hole/registry.test.ts", "backend/src/ai/black-hole/registry.ts", "backend/src/ai/black-hole/router.ts", "backend/src/ai/modelCapabilityRegistry.ts", "backend/src/ai/models.ts", "backend/src/ai/openaiCompat.ts", "backend/src/ai/openRouterRouting.ts", "backend/src/ai/openRouterRouting.test.ts", "backend/src/ai/openRouterExecution.test.ts", "backend/src/ai/providerBudget.ts", "backend/src/ai/providerCostTiers.test.ts", "backend/src/ai/providerCostTiers.ts", "backend/src/ai/providerPolicy.test.ts", "backend/src/ai/providerPolicy.ts", "backend/src/ai/providerRuntime.ts", "backend/src/ai/routerConfig.test.ts", "backend/src/config/envSecrets.ts", "backend/src/lib/capabilityRegistry.ts", "backend/src/lib/platformReady.ts", "docs/xroga/missions/openrouter-four-model-routing-20261025.json"],
+  "decisions": {"keep": ["Canonical router, provider runtime, durable budget ledger, task approval and scheduler"], "extend": ["OpenRouter endpoint discovery, capability checks, pinned sequential provider fallback and actual usage accounting"], "replace": ["Legacy direct-vendor model transports and retired model registry entries"], "deprecate": []},
+  "schemaImpact": {"changed": false, "migrations": [], "rollout": "No database schema change.", "rollback": "Restore the previous compatible API revision if this runtime fails staging verification."},
+  "securityImpact": {
+    "auth": {"changed": false, "description": "No auth boundary change."},
+    "tenant": {"changed": false, "description": "Budget settlement remains owner-bound."},
+    "approval": {"changed": false, "description": "External action approval remains in the canonical execution path."},
+    "credentials": {"changed": true, "description": "Only server-side OPENROUTER_API_KEY is required for AI routing; no direct-vendor key is used."},
+    "egress": {"changed": true, "description": "AI model traffic is restricted to OpenRouter and the approved endpoint pairs."},
+    "cost": {"changed": true, "description": "Per-model price caps, provider pinning and actual usage settlement are enforced; paid empty responses do not trigger duplicate calls."},
+    "billing": {"changed": false, "description": "No customer payment or subscription change."}
+  },
+  "tests": [
+    {"command": "npx tsx --test src/ai/openRouterExecution.test.ts src/ai/openRouterRouting.test.ts src/ai/blackBoxExecution.test.ts src/ai/providerBudget.test.ts", "scope": "29 focused tests passed, including forbidden provider, price cap, paid-empty and no duplicate external action.", "negative": true, "reference": "backend/src/ai/openRouterExecution.test.ts"},
+    {"command": "npx tsx --test src/ai/black-hole/registry.test.ts src/ai/providerCostTiers.test.ts src/ai/providerPolicy.test.ts src/ai/routerConfig.test.ts", "scope": "43 registry, policy and router tests passed.", "negative": true, "reference": "backend/src/ai/providerPolicy.test.ts"},
+    {"command": "npm run build --workspace=backend", "scope": "TypeScript build passed locally; authenticated end-to-end verification remains pending.", "negative": false, "reference": "backend/src/ai/openaiCompat.ts"}
+  ],
+  "architecture": {"change": "extends_canonical", "reason": "Uses existing router, runtime and budget ledger; no second scheduler.", "rfc": null},
+  "rollout": "Stage the new API image on Cloud Run, verify authenticated chat and connected-app work, then consider production traffic cutover after release gates.",
+  "rollback": "Restore the prior Cloud Run revision and retain the old production endpoint until authenticated verification succeeds.",
+  "knownGaps": ["Authenticated preview AI and app automation not verified", "Full backend test suite did not complete cleanly", "Cloud Run code revision has not been deployed", "No production traffic cutover"],
+  "placeholderClaimsRemaining": ["Four-model routing is code-complete and focused-test verified, not independently live in Xroga"],
+  "evidenceRefs": ["backend/src/ai/openRouterRouting.test.ts", "backend/src/ai/openRouterExecution.test.ts"],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {"state": "BLOCKED", "blockers": ["Authenticated Cloud Run preview and full release checks pending"], "authenticatedE2e": "BLOCKED", "stagedSecurity": "BLOCKED", "liveUrl": null, "deployedSha": null}
+}
