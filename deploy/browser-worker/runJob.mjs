@@ -151,6 +151,9 @@ async function main() {
   const textOf = (s) => String(s ?? '').replace(/\s+/g, ' ').trim().slice(0, 2_000);
 
   try {
+    // Stagehand's act() runs inside the world its extension injects at navigation; a page loaded before the extension never gets it and
+    // act() waits forever. Attach first whenever the plan has an AI step, so the start navigation already carries the extension world.
+    if (plan.steps.some((s) => s.op.startsWith('ai'))) await ensureStagehand();
     await page.goto(job.startUrl, { waitUntil: 'domcontentloaded' });
     check();
     for (const [index, step] of plan.steps.entries()) {

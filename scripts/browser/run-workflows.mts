@@ -40,7 +40,7 @@ const storeFor = (u: string) => { if (!stores.has(u)) stores.set(u, new InMemory
 const leases = new MemoryLeaseStore();
 const admission = new AdmissionController({ maxConcurrent: 4, maxPerTenant: 2, maxQueuedPerTenant: 4, maxQueuedTotal: 16 });
 const mkDeps = (gateway?: BrowserModelGateway): BrowserCapabilityDeps => ({
-  worker: new ContainerBrowserWorker({ repoRoot, browserImage, proxyImage, gateway, aiChannel: 'chromium' }),
+  worker: new ContainerBrowserWorker({ repoRoot, browserImage, proxyImage, gateway, aiChannel: 'chromium', ...(process.argv.includes('--diag') ? { onDiagnostic: (l: string) => console.error(`[diag] ${l}`) } : {}) }),
   leases, drive: h.svc, storeFor, workerId: 'workflow-runner', admission,
   authoriseProject: async (actor, projectId) => h.svc.listObjects(actor, { projectId, limit: 1 }).then(() => true, () => false),
 });
@@ -277,7 +277,7 @@ workflows.MODELPROBE = async () => {
 workflows.W03 = async () => {
   const gw = await realModelGateway();
   if (!gw) return notTested('W03', 'real-model local Stagehand observe, act, extract', 'no founder-provided env file with an existing model key');
-  const r = await run(alice, { goal: 'use AI to read and navigate the quotes site', startUrl: `${Q}/`, allowedOrigins: [Q], limits: limits({ maxModelCostMicros: 150_000, maxDurationMs: 240_000 }),
+  const r = await run(alice, { goal: 'use AI to read and navigate the quotes site', startUrl: `${Q}/`, allowedOrigins: [Q], limits: limits({ maxModelCostMicros: 150_000, maxDurationMs: Number(arg("--w03-ms", "240000")) }),
     plan: { steps: [
       { op: 'aiExtract', instruction: 'Extract the author of the first quote on the page and how many quotes are shown.', name: 'facts', fields: { firstAuthor: 'string', quoteCount: 'number' } },
       { op: 'aiObserve', instruction: 'Find the link that goes to the next page of quotes.', name: 'nextTargets' },
