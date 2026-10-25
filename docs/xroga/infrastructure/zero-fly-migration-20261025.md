@@ -209,3 +209,24 @@ configuration/callback parity, verified forward/recovery images and controlled
 traffic cutover. Missing Python/Rust image admission fails explicitly and must
 be completed before claiming toolchain parity. The two prior temporary access
 windows are consumed. They do not authorize new persistent grants.
+
+## 2026-10-26, bounded physical allocation slots
+
+New workers use only `xroga-exec-slot-1` and, when explicitly configured,
+`xroga-exec-slot-2` in the pinned project and zone. Resource-name uniqueness
+prevents multiple API processes from creating different random names after a
+stale fleet read. A conflict is a capacity denial with no replacement retry or
+deletion of the winning worker. Instance IDs, runtime UUIDs, owner/project
+bindings, source hash and expiry still fence slot reuse. Legacy UUID-named
+handles remain readable for recovery and count against admission.
+
+The negative slot test failed before the correction. Focused controller, SSH,
+provider and target tests pass. A two-process HTTP fixture forces both
+inventories to be stale, verifies one allocation and one capacity denial, and
+verifies exactly one owned deletion. This is adapter concurrency evidence, not
+a repeated live Google experiment or a project-wide spending cap. Evidence is
+`docs/xroga/evidence/zero-fly/allocation-slots-source-20261026.json`.
+
+No IAM, VM, Job, network, deployment or production mutation was performed.
+The accepted live native execution proof remains preserved. Real caller
+staging, uncertain-outcome reconciliation and the other migration gates remain.

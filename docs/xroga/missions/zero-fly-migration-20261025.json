@@ -73,7 +73,9 @@
     "backend/src/synthesis/projectRuntime/googleProvider.test.ts",
     "backend/src/synthesis/projectRuntime/googleProvider.ts",
     "docs/xroga/evidence/zero-fly/workspace-linux-unit-20261026.json",
-    "docs/xroga/evidence/zero-fly/project-runtime-source-checkpoint-20261026.json"
+    "docs/xroga/evidence/zero-fly/project-runtime-source-checkpoint-20261026.json",
+    "backend/src/sandbox/google/gceAllocationRace.test.ts",
+    "docs/xroga/evidence/zero-fly/allocation-slots-source-20261026.json"
   ],
   "decisions": {
     "keep": [
@@ -242,6 +244,12 @@
       "scope": "Linux real filesystem tests for path traversal, symlink/special-file escape, bounded data, atomic replacement, expiry and temporary-file cleanup. No cloud resource or Docker operation.",
       "negative": true,
       "reference": "backend/src/sandbox/google/runtime_workspace_test.py"
+    },
+    {
+      "command": "node --import tsx --test backend/src/sandbox/google/gceAllocationRace.test.ts",
+      "scope": "Two real Node processes against a synthetic HTTP Compute API with deliberately stale empty inventories. One bounded slot wins, the other is denied, and only the winning instance is deleted. Not live GCP proof.",
+      "negative": true,
+      "reference": "backend/src/sandbox/google/gceAllocationRace.test.ts"
     }
   ],
   "architecture": {
@@ -257,7 +265,7 @@
     "Cloud Run background dispatch must persist requests and integrate with canonical run leases/checkpoints. Current in-process route behavior is not restart-safe transport.",
     "Configuration/callback parity, current costs, final integration, immutable forward/recovery verification and production traffic cutover remain required.",
     "Earlier two native temporary access windows are consumed and fully cleaned. New security-sensitive access needs a concrete action-time confirmation, not reuse of prior windows.",
-    "Global allocation admission across multiple Cloud Run processes and uncertain creation outcomes require explicit reconciliation before enabling production workers."
+    "Bounded physical slot naming passes separate-process HTTP fixture contention. Real Google caller integration and uncertain creation outcomes still need verification/reconciliation before production activation."
   ],
   "placeholderClaimsRemaining": [
     "No zero-Fly completion or new production deployment claim"
@@ -268,7 +276,8 @@
     "docs/xroga/evidence/zero-fly/local-cleanup-and-main-integration-20261025.json",
     "docs/xroga/evidence/zero-fly/native-transport-recheck-78e28fab-20261026.json",
     "docs/xroga/evidence/zero-fly/workspace-linux-unit-20261026.json",
-    "docs/xroga/evidence/zero-fly/project-runtime-source-checkpoint-20261026.json"
+    "docs/xroga/evidence/zero-fly/project-runtime-source-checkpoint-20261026.json",
+    "docs/xroga/evidence/zero-fly/allocation-slots-source-20261026.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,

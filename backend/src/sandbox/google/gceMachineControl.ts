@@ -156,12 +156,12 @@ export class GceMachineControl {
     try { return (await this.api.request<T>({url:this.prefix+path, method, data, retry:false, timeout:30000})).data; }
     catch (error) {
       const status = (error as {response?: {status?: number}})?.response?.status;
-      return fail(status === 404 ? 'GCE_CONTROL_NOT_FOUND' : status === 401 || status === 403
+      return fail(status === 409 ? 'GCE_EXECUTION_CAPACITY_RESERVED' : status === 404 ? 'GCE_CONTROL_NOT_FOUND' : status === 401 || status === 403
         ? 'GCE_CONTROL_PERMISSION_DENIED' : 'GCE_CONTROL_REQUEST_UNAVAILABLE');
     }
   }
   private path(name: string) {
-    if (!/^xroga-exec-[a-f0-9]{32}$/.test(name)) fail('INVALID_GCE_EXECUTION_REFERENCE');
+    if (!/^xroga-exec-(?:[a-f0-9]{32}|slot-[12])$/.test(name)) fail('INVALID_GCE_EXECUTION_REFERENCE');
     return `/zones/${this.configuration.zone}/instances/${name}`;
   }
   async probe(): Promise<void> {
@@ -188,20 +188,25 @@ export class GceMachineControl {
     const scope = executionBinding(input);
     const image = await this.call<{id?: string; status?: string}>('GET', `/global/images/${this.configuration.imageName}`);
     if (image.id !== this.configuration.imageId || image.status !== 'READY') fail('GCE_BASE_IMAGE_IDENTITY_MISMATCH');
-    // Process-local serialized admission reconciles actual resources after a
-    // restart. This is not a global cash cap or a new task scheduler.
+    // Inventory reconciles existing allocations, including legacy names. The
+    // fixed slot names below enforce the physical bound across processes:
+    // Compute rejects duplicate names, even after a stale inventory response.
     let page: string | undefined;
     let observed=0;
+    const occupied=new Set<string>();
     for(let index=0; index<20; index++) {
       const list=await this.call<{items?: {name?: string}[];nextPageToken?: string}>('GET',
         `/zones/${this.configuration.zone}/instances?maxResults=500&fields=items(name),nextPageToken${page?'&pageToken='+encodeURIComponent(page):''}`);
       observed+=(list.items ?? []).filter(instance=>instance.name?.startsWith('xroga-exec-')).length;
+      for(const instance of list.items??[])if(instance.name)occupied.add(instance.name);
       if(observed>=(this.configuration.maxConcurrentInstances ?? 2))fail('GCE_EXECUTION_CAPACITY_RESERVED');
       page=list.nextPageToken;
       if(!page)break;
       if(index===19)fail('GCE_FLEET_INVENTORY_INCOMPLETE');
     }
-    const name = 'xroga-exec-' + input.runtimeId.replaceAll('-', '');
+    const name = ['xroga-exec-slot-1','xroga-exec-slot-2'].slice(0,this.configuration.maxConcurrentInstances??2)
+      .find(candidate=>!occupied.has(candidate));
+    if(!name)return fail('GCE_EXECUTION_CAPACITY_RESERVED');
     const expiresAtEpoch = Math.floor(Date.now()/1000) + input.ttlSeconds;
     const binding = {...scope, expiresAtEpoch, memoryMb:input.memoryMb, diskMb:input.diskMb,
       cpus:input.cpus, maxProcesses:input.maxProcesses, allowedImages:this.configuration.admittedImages,
@@ -247,11 +252,11 @@ export class GceMachineControl {
     this.path(handle.name);
     if (!id(handle.instanceId) || !/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/.test(handle.runtimeId)
       || !/^[a-f0-9]{40}$/.test(handle.ownerBinding) || !/^[a-f0-9]{40}$/.test(handle.projectBinding)
-      || handle.name !== 'xroga-exec-'+handle.runtimeId.replaceAll('-','')
+      || (handle.name !== 'xroga-exec-'+handle.runtimeId.replaceAll('-','') && !/^xroga-exec-slot-[12]$/.test(handle.name))
       || !Number.isInteger(handle.expiresAtEpoch) || (!cleanup && handle.expiresAtEpoch <= Date.now()/1000)) fail('GCE_RUNTIME_EXPIRED_OR_INVALID');
     const machine = await this.call<Instance>('GET', this.path(handle.name));
     const metadata = Object.fromEntries((machine.metadata?.items ?? []).map(item => [item.key,item.value]));
-    if (machine.id !== handle.instanceId || machine.serviceAccounts?.length
+    if (machine.id !== handle.instanceId || machine.name!==handle.name || machine.serviceAccounts?.length
       || machine.labels?.['xroga-runtime'] !== handle.runtimeId || machine.labels?.['xroga-owner'] !== handle.ownerBinding
       || machine.labels?.['xroga-project'] !== handle.projectBinding || metadata['xroga-expires-at'] !== String(handle.expiresAtEpoch)
       || metadata['xroga-control-sha256'] !== digest(this.workerSource)) fail('GCE_RUNTIME_IDENTITY_OR_OWNER_MISMATCH');

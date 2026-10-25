@@ -33,6 +33,7 @@ function fixture() {
     if(options.url.includes('/global/images/')) value={id:configuration.imageId,status:'READY'};
     else if(options.method==='POST') {
       const body=options.data as typeof machine;
+      machine.name=body.name;
       machine.labels=body.labels;
       machine.metadata.items=(body.metadata.items as {key: string;value: string}[]);
       handle.expiresAtEpoch=Number(machine.metadata.items.find(item=>item.key==='xroga-expires-at')!.value);
@@ -153,4 +154,38 @@ test('actual fleet capacity blocks another billable instance before provisioning
   }};
   await assert.rejects(new GceMachineControl(configuration,api,workerSource).create(input()),{message:'GCE_EXECUTION_CAPACITY_RESERVED'});
   assert.equal(provisions,0);
+});
+
+test('new executions use only bounded physical slots, including after a stale empty inventory',async()=>{
+  const f=fixture();await f.control.create(f.creation);
+  assert.equal((f.calls.find(call=>call.method==='POST')!.data as {name:string}).name,'xroga-exec-slot-1');
+  const conflict=fixture();const original=conflict.api.request.bind(conflict.api);
+  conflict.api.request=async<T>(options:Parameters<GceApi['request']>[0])=>{
+    if(options.method==='POST'){
+      conflict.calls.push(options);assert.equal((options.data as {name:string}).name,'xroga-exec-slot-1');
+      throw Object.assign(new Error('PRIVATE_EXISTING_RESOURCE_CANARY'),{response:{status:409}});
+    }
+    return original<T>(options);
+  };
+  await assert.rejects(conflict.control.create(conflict.creation),{message:'GCE_EXECUTION_CAPACITY_RESERVED'});
+  assert.equal(conflict.calls.filter(call=>call.method==='POST').length,1);
+  assert.equal(conflict.calls.filter(call=>call.method==='DELETE').length,0);
+});
+
+test('the second slot is selected only when configured capacity and actual inventory permit it',async()=>{
+  const f=fixture();const original=f.api.request.bind(f.api);
+  f.api.request=async<T>(options:Parameters<GceApi['request']>[0])=>options.url.includes('/instances?maxResults=')
+    ? {data:{items:[{name:'xroga-exec-slot-1'}]} as T}:original<T>(options);
+  const handle=await f.control.create(f.creation);assert.equal(handle.name,'xroga-exec-slot-2');
+  const limited=new GceMachineControl({...configuration,maxConcurrentInstances:1},f.api,workerSource);
+  const before=f.calls.filter(call=>call.method==='POST').length;
+  await assert.rejects(limited.create(input()),{message:'GCE_EXECUTION_CAPACITY_RESERVED'});
+  assert.equal(f.calls.filter(call=>call.method==='POST').length,before);
+});
+
+test('a recycled physical slot never accepts or deletes a stale instance handle',async()=>{
+  const f=fixture();f.handle.name='xroga-exec-slot-1';f.machine.name=f.handle.name;f.machine.id='9876543';
+  await assert.rejects(f.control.resolve(f.handle),{message:'GCE_RUNTIME_IDENTITY_OR_OWNER_MISMATCH'});
+  await assert.rejects(f.control.destroy(f.handle),{message:'GCE_RUNTIME_IDENTITY_OR_OWNER_MISMATCH'});
+  assert.equal(f.calls.some(call=>call.method==='DELETE'),false);
 });
