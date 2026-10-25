@@ -255,3 +255,13 @@ These synthetic tests do not certify upstream caller groups or live Google
 integration. No production, IAM, deployment, main or Phase 4 changes occurred.
 Next are real Preview integration and durable background transport through the
 existing canonical pipeline. The original live and 13-workflow proof is retained.
+
+## 2026-10-26, Preview routing integration
+
+Local HTTP/WebSocket fixture tests pass for routing, worker redirects, echo,
+reconnect, expiry and denied reconnect. Google URLs now use one 57-character
+label so an ordinary wildcard certificate can cover them. Existing two-label
+grants remain parseable during migration. Worker redirects no longer retain a
+private port. Final pre-connection admission is bounded and fails closed.
+Negative and passing receipts are in `docs/xroga/evidence/zero-fly/preview-routing-source-20261026.json`.
+This does not certify Google-hosted Preview, production DNS or TLS deployment.

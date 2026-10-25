@@ -37,7 +37,7 @@ import {
   verifyLivePreviewSignature,
 } from '../synthesis/livePreview/signing.js';
 
-interface PreviewTarget {
+export interface PreviewTarget {
   readonly expiresAt:number;
   readonly revalidate:()=>Promise<boolean>;
   readonly host:
@@ -239,6 +239,10 @@ function rewriteLocation(
       parsed.host =
         target.publicHost;
 
+      // URL.host without an explicit port retains an existing non-default
+      // worker port. Public Preview traffic always returns through HTTPS.
+      parsed.port = '';
+
       return parsed.toString();
     }
   } catch {
@@ -390,7 +394,24 @@ function proxyHttp(
   upstream.once('close',stopAdmissionWatch);
 }
 
-export async function runtimePreviewGateway(
+type TargetResolver=(hostname:string)=>Promise<PreviewTarget|null>;
+
+/** Recheck after asynchronous admission and immediately before opening a
+ * connection. A stalled store or a grant expiring during admission must not
+ * reach the worker. This does not issue an execution or tenant capability. */
+async function admitConnection(hostname:string,resolver:TargetResolver):Promise<PreviewTarget|null>{
+  let timer:ReturnType<typeof setTimeout>|undefined;
+  try{return await Promise.race([(async()=>{
+    const target=await resolver(hostname);
+    if(!target||!Number.isFinite(target.expiresAt)||target.expiresAt<=Date.now())return null;
+    if(!await target.revalidate()||target.expiresAt<=Date.now())return null;
+    return target;
+  })(),new Promise<null>(resolve=>{timer=setTimeout(()=>resolve(null),5000);})]);}
+  catch{return null;}finally{if(timer)clearTimeout(timer);}
+}
+
+export function createRuntimePreviewGateway(resolver:TargetResolver=resolveTarget){
+return async function runtimePreviewGateway(
   req:
     Request,
 
@@ -419,9 +440,7 @@ export async function runtimePreviewGateway(
   }
 
   const target =
-    await resolveTarget(
-      hostname,
-    );
+    await admitConnection(hostname,resolver);
 
   if (
     !target
@@ -443,6 +462,9 @@ export async function runtimePreviewGateway(
     target,
   );
 }
+}
+
+export const runtimePreviewGateway=createRuntimePreviewGateway();
 
 const previewWebSocketServer =
   new WebSocketServer({
@@ -481,6 +503,7 @@ function rejectUpgrade(
 export function attachRuntimePreviewWebSocketGateway(
   server:
     Server,
+  resolver:TargetResolver=resolveTarget,
 ): void {
   server.on(
     'upgrade',
@@ -506,9 +529,7 @@ export function attachRuntimePreviewWebSocketGateway(
       void (
         async () => {
           const target =
-            await resolveTarget(
-              hostname,
-            );
+            await admitConnection(hostname,resolver);
 
           if (
             !target

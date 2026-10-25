@@ -100,7 +100,11 @@
     "backend/src/sandbox/googleSelection.test.ts",
     "backend/src/synthesis/googleBrowserImage.test.ts",
     "docs/xroga/evidence/zero-fly/retained-browser-image-20261025.json",
-    "docs/xroga/evidence/zero-fly/canonical-sandbox-source-20261026.json"
+    "docs/xroga/evidence/zero-fly/canonical-sandbox-source-20261026.json",
+    "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
+    "backend/src/synthesis/livePreview/signing.ts",
+    "backend/src/synthesis/livePreview/signingDns.test.ts",
+    "docs/xroga/evidence/zero-fly/preview-routing-source-20261026.json"
   ],
   "decisions": {
     "keep": [
