@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "aeaadb4d7de952c491369d1fc99339d406bb0d68",
+  "source_sha": "54077316e8a0d80488c8ee9739707caef15e2122",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -14258,7 +14258,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessConnectionIntent.ts",
-      "sha256": "9e1df0ca0d797ec09debbccbb81f0e8ffb8d9eba13bd6fab4706cce46ac5620e"
+      "sha256": "898f15cf0791fed9e63d58e1e305c8df877202ad24ef9eba97aaede16bd22858"
     },
     {
       "path": "backend/src/services/integrations/businessConnectionUi.ts",
@@ -27590,21 +27590,21 @@
     },
     {
       "path": "backend/src/services/integrations/businessConnectionIntent.ts",
-      "line": 7,
+      "line": 9,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessConnectionIntent.ts",
-      "line": 24,
+      "line": 26,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessConnectionIntent.ts",
-      "line": 29,
+      "line": 31,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
