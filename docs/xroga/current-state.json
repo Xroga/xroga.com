@@ -12613,6 +12613,7 @@
         "backend/src/routes/analytics.ts",
         "backend/src/routes/billing.ts",
         "backend/src/routes/billingWebhook.ts",
+        "backend/src/routes/businessAutomationScheduler.ts",
         "backend/src/routes/businessAutomationWebhook.ts",
         "backend/src/routes/businessAutomations.ts",
         "backend/src/routes/capabilities.ts",
@@ -18143,6 +18144,67 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:6dbebfee28e03831c3ad",
+      "subsystem": "backend_routes",
+      "sourcePath": "backend/src/routes/businessAutomationScheduler.ts",
+      "sha256": "d775beaa5fc78872dbb4a1a5ac6087f122499e96fe9416f49a751d054f3851e6",
+      "symbols": [
+        "authorized",
+        "error",
+        "match",
+        "payload",
+        "router",
+        "ticket",
+        "verifier",
+        "verifyBusinessAutomationSchedulerToken"
+      ],
+      "imports": [
+        "../services/integrations/businessAutomations.js",
+        "express",
+        "google-auth-library"
+      ],
+      "runtimeImports": [
+        "backend/src/services/integrations/businessAutomations.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/index.ts:32",
+        "backend/src/routes/businessAutomationScheduler.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:accounts.google.com",
+        "express",
+        "google-auth-library"
+      ],
+      "authBoundary": [
+        "backend/src/routes/businessAutomationScheduler.ts#OAuth2Client",
+        "backend/src/routes/businessAutomationScheduler.ts#authorized",
+        "backend/src/routes/businessAutomationScheduler.ts#verifyBusinessAutomationSchedulerToken"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "backend/src/routes/businessAutomationScheduler.ts#authorized"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/routes/businessAutomationScheduler.ts#verifier",
+        "backend/src/routes/businessAutomationScheduler.ts#verifyBusinessAutomationSchedulerToken"
+      ],
+      "testCoverage": [
+        "backend/src/routes/businessAutomationScheduler.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:9a6027d199c0309f1018",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/businessAutomationWebhook.ts",
@@ -22786,6 +22848,7 @@
       ],
       "callers": [
         "backend/src/index.ts:33",
+        "backend/src/routes/businessAutomationScheduler.ts:3",
         "backend/src/routes/businessAutomationWebhook.ts:3",
         "backend/src/routes/businessAutomations.ts:4"
       ],
@@ -96264,6 +96327,18 @@
       "inlineResponse": true
     },
     {
+      "id": "registration:da1c0db0f3c2a37d2f5b",
+      "sourcePath": "backend/src/routes/businessAutomationScheduler.ts",
+      "line": 29,
+      "receiver": "router",
+      "method": "post",
+      "path": "/tick",
+      "handlers": [],
+      "scope": "module",
+      "functionName": "<module>",
+      "inlineResponse": true
+    },
+    {
       "id": "registration:1f8566f12a3edb71901d",
       "sourcePath": "backend/src/routes/businessAutomationWebhook.ts",
       "line": 26,
@@ -98885,6 +98960,21 @@
       "path": "/api/integrations/composio/webhook",
       "mountChain": [
         "backend/src/index.ts:134"
+      ],
+      "authBoundary": [],
+      "reachable": true,
+      "state": "IMPLEMENTED_AND_REACHABLE",
+      "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
+    },
+    {
+      "id": "route:27f633423bb81a54b5d4",
+      "registrationId": "registration:da1c0db0f3c2a37d2f5b",
+      "sourcePath": "backend/src/routes/businessAutomationScheduler.ts",
+      "line": 29,
+      "method": "POST",
+      "path": "/internal/business-automations/tick",
+      "mountChain": [
+        "backend/src/index.ts:135"
       ],
       "authBoundary": [],
       "reachable": true,
@@ -112457,6 +112547,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:737541501f2a6ecb9393",
+      "sourcePath": "backend/src/routes/businessAutomationScheduler.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:bf15921f07d757bee647",
       "sourcePath": "backend/src/routes/businessAutomationWebhook.test.ts",
       "declaredTests": 1,
@@ -116078,7 +116175,6 @@
     "Computed route paths, runtime registrations, Docker/worker commands and dynamic nonliteral imports require explicit manual reconciliation.",
     "No production credentials or customer data were read; live behavior remains unverified in this command.",
     "Static imports do not prove provider availability or authorization correctness.",
-    "Unresolved local import backend/src/index.ts:32 -> ./routes/businessAutomationScheduler.js",
     "Unresolved local import scripts/render-software-art.mjs:17 -> ../node_modules/playwright/index.mjs"
   ]
 }

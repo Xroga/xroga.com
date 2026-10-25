@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a48842b780eb125c75cbe37cf432e3597d534217",
+  "source_sha": "bb47def0d8476bd57a4db85325d52325b09e4d13",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -817,6 +817,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "backend/src/routes/businessAutomationScheduler.ts",
         "backend/src/services/publish/chromeWebStore.ts"
       ],
       "hostnames": [
@@ -827,7 +828,10 @@
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
       "secret_names": [
         "FRONTEND_URL",
-        "NODE_ENV"
+        "NODE_ENV",
+        "XROGA_AUTOMATION_SCHEDULER_AUDIENCE",
+        "XROGA_AUTOMATION_SCHEDULER_MODE",
+        "XROGA_AUTOMATION_SCHEDULER_SERVICE_ACCOUNT"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -841,6 +845,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "backend/src/routes/businessAutomationScheduler.ts",
         "backend/src/services/publish/chromeWebStore.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -11673,9 +11678,9 @@
       ]
     },
     {
-      "name": "XROGA_AUTOMATION_SCHEDULER_MODE",
+      "name": "XROGA_AUTOMATION_SCHEDULER_AUDIENCE",
       "consuming_sources": [
-        "backend/src/index.ts"
+        "backend/src/routes/businessAutomationScheduler.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -11688,8 +11693,48 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
+        "endpoint-accounts-google-com"
+      ]
+    },
+    {
+      "name": "XROGA_AUTOMATION_SCHEDULER_MODE",
+      "consuming_sources": [
+        "backend/src/index.ts",
+        "backend/src/routes/businessAutomationScheduler.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-accounts-google-com",
         "endpoint-localhost",
         "endpoint-xrogaaicom-vercel-app"
+      ]
+    },
+    {
+      "name": "XROGA_AUTOMATION_SCHEDULER_SERVICE_ACCOUNT",
+      "consuming_sources": [
+        "backend/src/routes/businessAutomationScheduler.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-accounts-google-com"
       ]
     },
     {
@@ -13809,6 +13854,10 @@
     {
       "path": "backend/src/routes/billingWebhook.ts",
       "sha256": "a7ab9896df1a729f603a742a1951fd81357562d86ed289bcce64deca45a75f15"
+    },
+    {
+      "path": "backend/src/routes/businessAutomationScheduler.ts",
+      "sha256": "d775beaa5fc78872dbb4a1a5ac6087f122499e96fe9416f49a751d054f3851e6"
     },
     {
       "path": "backend/src/routes/businessAutomationWebhook.ts",
@@ -20179,6 +20228,13 @@
       "protocol": "https:",
       "path": "backend/src/organicIntelligence/authority/engine.ts",
       "line": 303,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "accounts.google.com",
+      "protocol": "https:",
+      "path": "backend/src/routes/businessAutomationScheduler.ts",
+      "line": 23,
       "credentialsInUrl": false
     },
     {

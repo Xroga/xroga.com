@@ -17,6 +17,7 @@
     "docs/xroga/dependency-inventory.json",
     "docs/xroga/deployment-topology.md",
     "docs/xroga/research/source-manifest.json",
+    "docs/xroga/research/source-reconciliation.md",
     "docs/xroga/runtime-contract.md",
     "docs/xroga/secret-inventory.md",
     "docs/xroga/missions/cloud-run-automation-scheduler-20261025.json"
