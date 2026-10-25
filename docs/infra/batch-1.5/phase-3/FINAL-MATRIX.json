@@ -332,8 +332,8 @@
       "arm64": 0.0847
     },
     "deterministicOutcomeUsd": {
-      "amd64": 0.00009,
-      "arm64": 0.00007
+      "amd64": 9e-05,
+      "arm64": 7e-05
     },
     "aiOutcomeModelUsd": 0.0009,
     "finalSuiteModelUsd": 0.001307,
@@ -357,7 +357,8 @@
     "merge to main: awaits explicit founder approval; frontend CI failures clear on rebase"
   ],
   "ci": {
-    "run": 40187643238,
+    "run": 40190755203,
+    "headSha": "de8667de",
     "backend": {
       "tests": 3194,
       "fail": 0
@@ -365,8 +366,8 @@
     "frontend": {
       "tests": 1135,
       "fail": 46,
-      "identicalToMainBase": "519045ac run 40130535064",
-      "fixedOnCurrentMain": "c14c3e11"
+      "identicalByNameToMainBase": "519045ac run 40130535064",
+      "mainRunGreen": "c14c3e11"
     }
   }
 }

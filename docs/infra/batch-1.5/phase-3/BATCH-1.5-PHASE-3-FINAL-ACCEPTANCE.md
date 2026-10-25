@@ -95,7 +95,10 @@ An always-on host costs $53.8 to $61.0 a month, so utilisation decides the real 
 | R2, Worker testbed | inside the free tiers | free tier |
 
 ## CI
-The `Unit tests` workflow was run on the branch. Results and the pre-existing frontend failures are recorded in the CI section at the end of this file.
+`Unit tests` on the branch at `de8667de` (run 40190755203; code identical to `37069f73`, the commits after it are documents and evidence):
+
+- **Backend:** 3,194 tests, 0 failures.
+- **Frontend:** 1,135 tests, 46 failures. The workflow is red because of them. They are the same 46 tests, by name, as the failures in the CI run on the branch's `main` base `519045ac` (run 40130535064), so none is caused by Phase 3. Phase 3 changes two frontend files: `BrowserRun.tsx` (new) and two lines in `BrowserStudio.tsx`. The latest completed `main` run (`c14c3e11`) is green, so the 46 clear when the branch is rebased onto current `main`. I did not rebase, because that is a merge-adjacent step the founder has not approved.
 
 ## Legacy path, rollback and independence
 - **Legacy path:** unchanged (empty diff against `main` for `synthesis/`, `lib/browserbase.ts`, `capabilityRegistry.ts` and `verifyFlySandboxBrowser.ts`).
