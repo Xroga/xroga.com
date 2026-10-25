@@ -12,12 +12,24 @@ LABELS={'owner':'io.xroga.cleanup.owner','job':'io.xroga.cleanup.job','disposabl
 def utc():return datetime.datetime.now(datetime.timezone.utc).isoformat()
 def read(path):return json.loads(path.read_text(encoding='utf-8-sig'))
 def write(path,value):
- path.parent.mkdir(parents=True,exist_ok=True);temp=path.with_name(path.name+'.new');temp.write_text(json.dumps(value,indent=2)+'\n',encoding='utf-8');os.replace(temp,path)
+ path.parent.mkdir(parents=True,exist_ok=True)
+ temp=path.with_name(path.name+'.new-'+str(uuid.uuid4()))
+ try:
+  temp.write_text(json.dumps(value,indent=2)+'\n',encoding='utf-8')
+  for attempt in range(20):
+   try:os.replace(temp,path);return
+   except PermissionError as error:
+    # Progress readers and scanners can briefly deny replacement on Windows.
+    # Never broaden file permissions or ignore a persistent access failure.
+    if getattr(error,'winerror',None) not in [5,32,33] or attempt==19:raise
+    time.sleep(.1)
+ finally:
+  if temp.exists():temp.unlink()
 def audit(action,**values):
  p=MANAGED/'audit';p.mkdir(parents=True,exist_ok=True)
  with (p/(datetime.date.today().isoformat()+'.jsonl')).open('a',encoding='utf-8') as f:f.write(json.dumps({'atUtc':utc(),'action':action,**values})+'\n')
 def safe_path(path,root):
- path=pathlib.Path(os.path.abspath(path));root=pathlib.Path(os.path.abspath(root))
+ path=long_path(path);root=long_path(root)
  if path==root or not path.is_relative_to(root):raise ValueError('DELETE_TARGET_OUTSIDE_OWNED_CHILD_ROOT')
  current=path
  while True:
@@ -26,7 +38,17 @@ def safe_path(path,root):
   if current.parent==current:break
   current=current.parent
  return path
+
+def long_path(path):
+ # Node/npm create cache paths beyond MAX_PATH. Use Windows' extended native
+ # path spelling for inspection and deletion without changing system settings.
+ value=os.path.abspath(path)
+ if not value.startswith('\\\\?\\'):
+  value='\\\\?\\UNC\\'+value[2:] if value.startswith('\\\\') else '\\\\?\\'+value
+ return pathlib.Path(value)
+
 def tree(path):
+ path=long_path(path)
  if not path.exists():return []
  rows=[];stack=[path]
  while stack:

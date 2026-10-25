@@ -21,8 +21,11 @@ npm run local:run -- --cwd C:/path/to/xroga --timeout 900 --preserve report.json
 
 Use absolute executable paths. Shell strings and `.cmd` launchers are refused.
 For npm tasks, run `node.exe <installed npm-cli.js> run <script>` through the
-wrapper. Existing npm scripts remain available for CI and existing tooling.
-Developers and assistants must use the wrapper for local bounded commands.
+wrapper. Root build, test, test:frontend, test:resilience and verify:baseline
+commands automatically enter the wrapper on Windows outside CI. Their original
+command plans and strict baseline are preserved. Already managed jobs aren't
+wrapped again. Linux CI runs the original plans without a Python dependency.
+Developers and assistants must use the wrapper for other local bounded commands.
 Do not recursively wrap the cleanup tool itself.
 
 Temporary files use task-owned TEMP/TMP/TMPDIR. Download/cache paths can use

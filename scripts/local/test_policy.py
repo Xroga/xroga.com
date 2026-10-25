@@ -61,6 +61,21 @@ class PolicyTests(unittest.TestCase):
   writer=m.RotatingOutput(self.base/'logs',1024,3)
   for _ in range(100):writer.append(b'x'*8192)
   writer.close();self.assertEqual(writer.total,819200);self.assertLessEqual(sum(p.stat().st_size for p in (self.base/'logs').iterdir()),3072)
+ def test_atomic_receipt_write_survives_a_transient_windows_reader(self):
+  original=os.replace;calls=[]
+  def transient(source,destination):
+   calls.append((source,destination))
+   if len(calls)==1:
+    error=PermissionError('synthetic Windows sharing collision');error.winerror=5;raise error
+   return original(source,destination)
+  with patch.object(m.os,'replace',side_effect=transient):m.write(self.base/'receipt.json',{'preserved':True})
+  self.assertEqual(m.read(self.base/'receipt.json'),{'preserved':True});self.assertEqual(len(calls),2)
+ def test_owned_cache_paths_beyond_windows_max_path_are_measured_and_cleaned(self):
+  d,tmp=self.job();deep=m.long_path(tmp/('a'*100)/('b'*100));deep.mkdir(parents=True)
+  p=deep/'download.tmp';p.write_bytes(b'disposable-long-path')
+  self.assertGreater(len(str(p)),260)
+  self.assertGreater(m.temporary_usage(tmp),0)
+  self.assertGreater(m.safe_remove(tmp,d,True),0);self.assertFalse(tmp.exists())
  def test_storage_monitor_tolerates_file_rename_but_not_permission_failure(self):
   from types import SimpleNamespace
   missing=SimpleNamespace(stat=lambda: (_ for _ in ()).throw(FileNotFoundError()))

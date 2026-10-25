@@ -69,3 +69,51 @@ The failure exposed an observability defect: the adapter discarded all SSH stder
 The Job, VM, boot disk, four temporary bindings, firewall and recreated execution subnet were independently removed. `xroga-api-private` and its otherwise empty VPC remain pending because Google retains internal reservation `serverless-ipv4-cloudrun-1792939555541134225`. Google documents a 1–2 hour subnet-release delay after deleting Cloud Run resources. Retrying deletion does not count as completed cleanup. There is no remaining test worker or temporary runtime IAM access.
 
 The source-bound partial receipt is `docs/xroga/evidence/zero-fly/native-transport-f90abe82-20261025.json`. Original workspace cloud/audit/cleanup receipts are preserved without rewriting prior acceptance evidence. PR #852 is now merged at `bc669f8acb1838a4476d19a3f7193a0b4b71ce69`; both Fly workflows were rechecked and remain disabled. The isolated transport proof is tied to f90abe82 and does not claim validation of the new main backend. No production service, customer configuration, Fly resource or traffic changed.
+
+## Resumption and local storage policy, October 25
+
+The migration branch now integrates main at `bc669f8a` through merge `36c95330`,
+with no conflicts. The repository's narrow fetch refspec initially left the local
+main reference stale. Explicitly fetching `refs/heads/main:refs/remotes/origin/main`
+and comparing GitHub's actual main resolved that discrepancy. No Batch 1.5 branch
+was modified and no new main merge or deployment occurred.
+
+The SSH propagation correction is committed at `c23f351c`. It waits five seconds
+after OS Login key import and rechecks ownership, host identity and admission
+expiry before dispatch. Forty-two focused integration tests pass, including the
+native controller/transport, startup/configuration and merged route boundaries.
+The frozen installed-dependency check passes for 1,186 packages. Backend type
+checking and the unchanged mission policy pass. These are source/fixture checks,
+not proof of successful live SSH execution.
+
+Cloud Build `aa228957-d4ac-47fd-941b-a0e7cafdfd33` successfully built source
+`78e28fab94b77746d742e5cc33481804afb41cdc` into
+`sha256:4190b3474dcc2ff113a0defd87eae30acf88a4a408808a06266d58b568e637b5`.
+It was not deployed. The earlier diagnostic build was read back as successful
+rather than repeated. The former test subnet and VPC were finally deleted after
+checking exact resource IDs and the absence of references. Both deletion commands
+and independent empty-list readbacks succeeded. No temporary network cleanup
+remains from the first window.
+
+The permanent local cleanup rule is now in AGENTS.md, the PR checklist and
+`LOCAL_STORAGE_CLEANUP.md`. Windows root build/test entrypoints automatically use
+repository-owned bounded jobs. Failure/cancellation cleanup preserves evidence,
+handles Windows long paths and transient receipt-file sharing, and refuses
+production/recovery images, persistent volumes, source and uncertain data.
+Seventeen native cleanup tests and six dispatch tests pass. An actual failing
+job preserved its required receipt and removed its temporary files. A successful
+standard command also exercised automatic dispatch and cleanup. Docker safety
+tests use fixtures because the local engine remains stopped.
+
+Two inactive old Xroga webpack caches were reviewed and removed, 2,396,867,825
+logical bytes. Both worktrees' Git state and references were unchanged. Temporary
+npm downloads created during this task were also removed after frozen installation
+and patch verification. All owned temporary directories are absent. Installed
+dependencies required for current migration work remain intact.
+
+The prior single-execution IAM approval was used and all of its bindings were
+removed. The next exact single recheck request is preserved in the workspace's
+`NATIVE-EXECUTION-RECHECK-APPROVAL.md`, bound to the new immutable digest and the
+same narrow roles, private resources, one VM and $0.25 ceiling. Fresh action-time
+confirmation is required before recreating that security-sensitive access.
+Production, customer credentials/data, Fly resources and Phase 4 remain unchanged.

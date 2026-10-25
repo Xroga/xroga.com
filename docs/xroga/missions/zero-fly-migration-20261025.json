@@ -38,7 +38,18 @@
     "backend/src/scripts/verifyGceExecution.ts",
     "infra/google/execution-verification-scope.json",
     "docs/xroga/infrastructure/native-execution-verification-approval.md",
-    "docs/xroga/evidence/zero-fly/native-transport-f90abe82-20261025.json"
+    "docs/xroga/evidence/zero-fly/native-transport-f90abe82-20261025.json",
+    "AGENTS.md",
+    ".github/pull_request_template.md",
+    "package.json",
+    "scripts/local/local_maintenance.py",
+    "scripts/local/win_job.py",
+    "scripts/local/cleanup-policy.json",
+    "scripts/local/test_policy.py",
+    "scripts/local/run-task.mjs",
+    "scripts/local/run-task.test.mjs",
+    "docs/xroga/LOCAL_STORAGE_CLEANUP.md",
+    "docs/xroga/evidence/zero-fly/local-cleanup-and-main-integration-20261025.json"
   ],
   "decisions": {
     "keep": [
@@ -47,7 +58,8 @@
       "Frontend features and independent Batch1.5 branches"
     ],
     "extend": [
-      "Existing provider seams with native Google identity and verified Google execution"
+      "Existing provider seams with native Google identity and verified Google execution",
+      "Repository-owned local development cleanup, bounded temporary storage and evidence-preserving failure recovery, independent of production orchestration"
     ],
     "replace": [
       "Active Fly infrastructure and deployment dependencies with verified Google equivalents"
@@ -149,9 +161,21 @@
     },
     {
       "command": "node dist/scripts/verifyGceExecution.js in the explicitly named private synthetic Cloud Run verification Job",
-      "scope": "New native identity and OS Login transport verification only. Requires exact IAM and private-network setup. No DB, customer key, model or production traffic operation. Not executed yet.",
+      "scope": "The former single execution verified native identity, authenticated worker source and foreign physical-owner denial, then failed isolated Node dispatch. Preserve its partial source-bound receipt. Current immutable image awaits a new exact access-window confirmation. No DB, customer key, model or production traffic operation.",
       "negative": true,
       "reference": "backend/src/scripts/verifyGceExecution.ts"
+    },
+    {
+      "command": "python -B scripts/local/test_policy.py",
+      "scope": "17 native Windows checks for ownership, active leases, retention, protected data, path escapes, long paths, process-tree crash cleanup, bounded logs, image references and transient local receipt-file sharing. Docker operations are fixtures while the engine is offline.",
+      "negative": true,
+      "reference": "scripts/local/test_policy.py"
+    },
+    {
+      "command": "node --test scripts/local/run-task.test.mjs scripts/ci/baseline.test.mjs",
+      "scope": "Six cleanup-dispatch tests plus thirteen unchanged baseline negative fixtures. Preserve Windows automatic wrapping, CI command order, frontend test collection, failure exits and trailing argument propagation.",
+      "negative": true,
+      "reference": "scripts/local/run-task.test.mjs"
     }
   ],
   "architecture": {
@@ -169,7 +193,8 @@
   ],
   "evidenceRefs": [
     "docs/xroga/infrastructure/zero-fly-migration-20261025.md",
-    "docs/xroga/evidence/zero-fly/native-transport-f90abe82-20261025.json"
+    "docs/xroga/evidence/zero-fly/native-transport-f90abe82-20261025.json",
+    "docs/xroga/evidence/zero-fly/local-cleanup-and-main-integration-20261025.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
