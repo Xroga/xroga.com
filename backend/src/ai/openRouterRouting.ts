@@ -31,6 +31,7 @@ type EndpointRecord = {
   tag?: unknown;
   provider_name?: unknown;
   model_id?: unknown;
+  status?: unknown;
   context_length?: unknown;
   pricing?: { prompt?: unknown; completion?: unknown; input_cache_read?: unknown };
   supported_parameters?: unknown;
@@ -114,7 +115,7 @@ export async function validatedOpenRouterEndpoints(
     for (const desired of APPROVED_OPENROUTER_ENDPOINTS[modelId]) {
       const row = rows.find(item => item.tag === desired.tag && item.provider_name === desired.provider
         && item.model_id === model);
-      if (!row) continue;
+      if (!row || row.status !== 0) continue;
       const input = finitePrice(row.pricing?.prompt);
       const output = finitePrice(row.pricing?.completion);
       const cacheRead = finitePrice(row.pricing?.input_cache_read);

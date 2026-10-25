@@ -292,7 +292,7 @@ server.listen(port, '0.0.0.0', () => {
   }
   console.log(`Server running on port ${port}`);
   console.log(`Environment: ${process.env.NODE_ENV ?? 'development'}`);
-  console.log('[AI] Converter→Builder online — DeepSeek@OpenRouter + Kimi/GLM/Grok official + Tavily');
+  console.log('[AI] Converter→Builder online — four approved models via OpenRouter');
   console.log('[AI] Keys:', JSON.stringify(modelKeyStatus()));
   console.log('[AI] Routes:', JSON.stringify(modelTransportStatus()));
   if (!process.env.SUPABASE_URL) {

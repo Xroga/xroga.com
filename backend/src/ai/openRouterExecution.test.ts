@@ -6,10 +6,10 @@ import { executeWithProviderFallback, resetModelRuntimeHealth } from './provider
 
 const model = 'z-ai/glm-5.3';
 const endpoints = [
-  { tag: 'wafer/us', provider_name: 'Wafer', model_id: model,
+  { status: 0, tag: 'wafer/us', provider_name: 'Wafer', model_id: model,
     context_length: 1_048_576, pricing: { prompt: '0.000000079', completion: '0.0000014', input_cache_read: '0.000000078' },
     supported_parameters: ['temperature', 'reasoning', 'max_tokens', 'tools', 'response_format'] },
-  { tag: 'sail-research/us', provider_name: 'Sail Research', model_id: model,
+  { status: 0, tag: 'sail-research/us', provider_name: 'Sail Research', model_id: model,
     context_length: 1_048_576, pricing: { prompt: '0.0000005', completion: '0.000002', input_cache_read: '0.00000008' },
     supported_parameters: ['temperature', 'reasoning', 'max_tokens', 'tools', 'response_format'] },
 ];
