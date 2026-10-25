@@ -26,7 +26,7 @@ const TOOL = 'SLACK_DELETE_MESSAGE';
 type Mode = 'success' | 'failure' | 'timeout' | 'empty' | 'input_required' | 'incomplete' | 'malformed';
 
 /** Intercepts actual adapter calls, not a replacement runtime. Never forwards a request. */
-function providerStub(t: TestContext, mode: Mode = 'success', connected = false, slug = TOOL) {
+function providerStub(t: TestContext, mode: Mode = 'success', connected = false, slug = TOOL, multiAccount = true) {
   const previous = new Map(['COMPOSIO_API_KEY','SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','SUPABASE_JWT_SECRET'].map(key=>[key,process.env[key]]));
   process.env.COMPOSIO_API_KEY = 'golden-test-canary-not-a-real-key';
   delete process.env.SUPABASE_SERVICE_ROLE_KEY; delete process.env.SUPABASE_URL; delete process.env.SUPABASE_JWT_SECRET;
@@ -49,7 +49,13 @@ function providerStub(t: TestContext, mode: Mode = 'success', connected = false,
     if(path.includes('/tools/'))return response({slug,toolkit:{slug:'slack'},tags:[slug===TOOL?'destructiveHint':'readOnlyHint'],input_parameters:{type:'object'},scopes:['fixture.message.delete']});
     if(path.endsWith('/search'))return response({tool_schemas:mode==='empty'?{}:{fixture:{tool_slug:slug,toolkit:'slack',description:'Synthetic fixture only',input_schema:{type:'object'}}}});
     if(path.endsWith('/toolkits'))return response({items:[{slug:'slack',name:'Slack',connected_account:connected?{id:'fixture-account-A',status:'ACTIVE'}:null}]});
-    if(path.endsWith('/session')||path.endsWith(`/${SESSION}`))return response({session_id:SESSION,config:{user_id:`xroga:${OWNER}`,workbench:{enable:false,enable_proxy_execution:false},execute:{enable_multi_execute:false},tags:['readOnlyHint']}});
+    if(path.endsWith('/session')||path.endsWith(`/${SESSION}`)){
+      if(path.endsWith('/session') && init?.method==='POST'){
+        const body=JSON.parse(String(init.body)) as {tags?:string[];multi_account?:{enable?:boolean;require_explicit_selection?:boolean}};
+        if(!body.tags)assert.deepEqual(body.multi_account,{enable:true,require_explicit_selection:true});
+      }
+      return response({session_id:SESSION,config:{user_id:`xroga:${OWNER}`,workbench:{enable:false,enable_proxy_execution:false},execute:{enable_multi_execute:false},multi_account:{enable:multiAccount,require_explicit_selection:multiAccount},tags:['readOnlyHint']}});
+    }
     assert.fail('Unexpected adapter path: no call is forwarded');
   });
   return paths;
@@ -128,6 +134,19 @@ test('GJ changed or disconnected account blocks the real action adapter before d
   const paths=providerStub(t,'success',false);
   await assert.rejects(executeFixture(),code('COMPOSIO_ACTION_ACCOUNT_CHANGED'));
   assert.equal(paths.filter(path=>path.endsWith('/execute')).length,0);
+});
+
+test('GJ legacy single-account session cannot dispatch an action with an unsupported account selector',async t=>{
+  const paths=providerStub(t,'success',true,TOOL,false);
+  await assert.rejects(executeFixture(),code('COMPOSIO_ACTION_ACCOUNT_SELECTION_REQUIRED'));
+  assert.equal(paths.filter(path=>path.endsWith('/execute')).length,0);
+});
+
+test('GJ newly prepared actions enable explicit account selection in the Composio session',async t=>{
+  providerStub(t);
+  const session=await createActionComposioSession(OWNER);
+  assert.equal(session.config?.multi_account?.enable,true);
+  assert.equal(session.config?.multi_account?.require_explicit_selection,true);
 });
 
 test('GJ legitimate read uses no write confirmation and strips provider credentials before a prompt or client can consume the result',async t=>{

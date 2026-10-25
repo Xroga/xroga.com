@@ -63,6 +63,10 @@ interface ComposioWorkbenchConfig {
 
 interface ComposioSessionConfig {
   user_id?: string;
+  multi_account?: {
+    enable?: boolean;
+    require_explicit_selection?: boolean;
+  };
   tags?: string[] | ComposioTagsConfig;
   search?: {
     enable?: boolean;
@@ -1584,6 +1588,15 @@ async function createComposioSession(
     },
   };
 
+  if (mode === 'action') {
+    // Confirmed actions are bound to one exact connected account. Composio
+    // rejects the `account` selector unless this mode is enabled.
+    body.multi_account = {
+      enable: true,
+      require_explicit_selection: true,
+    };
+  }
+
   if (mode === 'read') {
     body.tags = [READ_ONLY_TAG];
   }
@@ -2426,7 +2439,7 @@ async function executeDiscoveredComposioTool(
     ...(input.authorityBinding ? { authorityBinding: { ...input.authorityBinding } } : {}) };
   const sessionId = cleanSessionId(input.sessionId);
 
-  await assertComposioSession(userId, sessionId, input.mode);
+  const session = await assertComposioSession(userId, sessionId, input.mode);
 
   const toolSlug = cleanToolSlug(input.toolSlug);
 
@@ -2456,6 +2469,12 @@ async function executeDiscoveredComposioTool(
 
   let account: string | undefined;
   if (input.mode === 'action') {
+    if (session.config?.multi_account?.enable !== true) {
+      throw new ComposioClientError(
+        'This Xroga Connect action session cannot select the approved app account. Prepare the action again.',
+        { status: 409, code: 'COMPOSIO_ACTION_ACCOUNT_SELECTION_REQUIRED' },
+      );
+    }
     const binding = input.authorityBinding;
     if (!binding || !allowedTool || toolSlug.startsWith('COMPOSIO_')) {
       throw new ComposioClientError('Exact application authority is required.', { status: 403, code: 'COMPOSIO_ACTION_CONFIRMATION_REQUIRED' });
