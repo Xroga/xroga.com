@@ -1,0 +1,14 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --no-cache
+      - --build-arg
+      - XROGA_RELEASE_SHA=${_RELEASE_SHA}
+      - -f
+      - Dockerfile.api
+      - -t
+      - ${_IMAGE}
+      - .
+images:
+  - ${_IMAGE}
