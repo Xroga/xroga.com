@@ -3,7 +3,7 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { GceMachineControl, type GceExecutionHandle } from '../sandbox/google/gceMachineControl.js';
-import { GceSshTransport } from '../sandbox/google/gceSshTransport.js';
+import { GceSshExecutionError, GceSshTransport } from '../sandbox/google/gceSshTransport.js';
 
 const project='project-c40d4821-e647-4fa2-92d';
 const account=`xroga-api-runtime@${project}.iam.gserviceaccount.com`;
@@ -21,6 +21,7 @@ const cleanup=(): Promise<void> => !handle ? Promise.resolve() : cleanupPromise 
 })();
 process.once('SIGTERM',()=>{stopping=true;void cleanup().finally(()=>{process.exitCode=1;});});
 try {
+  receipt.phase='native_identity';
   if(process.env.XROGA_GCE_VERIFY_ONLY!=='synthetic_native_transport' || !process.env.CLOUD_RUN_JOB)
     throw new Error('EXPLICIT_PRIVATE_VERIFICATION_JOB_REQUIRED');
   const identity=await fetch('http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/email',
@@ -31,16 +32,19 @@ try {
     subnet:`projects/${project}/regions/us-central1/subnetworks/xroga-verify-subnet`,
     imageName:'xroga-exec-base-20261025',imageId:'8312988193178802095',serviceAccount:account,
     admittedImages:[nodeImage,browserImage],maxConcurrentInstances:1});
+  receipt.phase='create_worker';
   handle=await control.create({runtimeId:randomUUID(),ownerReference:account,scopeReference:'synthetic-native-transport',
     ttlSeconds:600,memoryMb:512,diskMb:128,maxProcesses:64,cpus:1});
   if(stopping)throw new Error('VERIFICATION_CANCELLED');
   receipt.instance={name:handle.name,id:handle.instanceId,zone:'us-central1-a',hardLifetimeSeconds:600};
   const transport=new GceSshTransport(control);
+  receipt.phase='authenticated_worker_probe';
   const probe=await transport.run<{available?: boolean;controlSha256?: string}>(handle,{operation:'probe'},15000);
   const worker=readFileSync(new URL('../../src/sandbox/google/runtime_control.py',import.meta.url));
   if(probe.available!==true || probe.controlSha256!==createHash('sha256').update(worker).digest('hex'))
     throw new Error('IMMUTABLE_WORKER_CONTROL_NOT_VERIFIED');
   receipt.workerSourceVerified=true;
+  receipt.phase='foreign_binding_denial';
   let ownerDenied=false;
   try {await transport.run({...handle,ownerBinding:'0'.repeat(40)},{operation:'probe'},5000);}
   catch(error){ownerDenied=error instanceof Error && error.message==='GCE_RUNTIME_IDENTITY_OR_OWNER_MISMATCH';}
@@ -59,6 +63,7 @@ const fs=require('node:fs');
  memoryLimit:fs.readFileSync('/sys/fs/cgroup/memory.max','utf8').trim()==='536870912'};
  console.log(JSON.stringify(checks));if(!Object.values(checks).every(Boolean))process.exitCode=1;
 })().catch(()=>{process.exitCode=1;});`;
+  receipt.phase='isolated_node_execution';
   const result=await transport.run<{exitCode?: number;stdout?: string;timedOut?: boolean;killedForLimit?: boolean}>(handle,
     {operation:'exec',image:nodeImage,command:['node','-e',script],environment:{SYNTHETIC_EXECUTION:'1'},
       timeoutMs:15000,networkPolicy:'none'},15000);
@@ -68,9 +73,11 @@ const fs=require('node:fs');
   if(Object.keys(checks).length!==7 || !Object.values(checks).every(value=>value===true))
     throw new Error('NATIVE_SANDBOX_NEGATIVE_CHECK_FAILED');
   receipt.execution=checks;
+  receipt.phase='complete';
   receipt.status='PASS_SYNTHETIC_NATIVE_IDENTITY_OS_LOGIN_AND_ISOLATED_EXECUTION';
 } catch(error) {
   receipt.status='BLOCKED_NATIVE_GCE_TRANSPORT';
+  if(error instanceof GceSshExecutionError)receipt.sshFailure={category:error.failureCategory,exitCode:error.exitCode};
   receipt.reason=error instanceof Error && /^[A-Z_]+$/.test(error.message)?error.message:'VERIFICATION_OPERATION_FAILED';
   process.exitCode=1;
 } finally {

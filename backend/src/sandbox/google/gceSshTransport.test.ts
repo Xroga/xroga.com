@@ -4,7 +4,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { GceControlError, type GceApi, type GceExecutionHandle } from './gceMachineControl.js';
-import { GceSshTransport, type NativeCommand } from './gceSshTransport.js';
+import { classifyNativeSshFailure, GceSshExecutionError, GceSshTransport, nativeSshCommand, type NativeCommand } from './gceSshTransport.js';
 
 // Synthetic OS Login replies and child-process fixtures. Not live SSH evidence.
 async function fixture() {
@@ -107,5 +107,34 @@ test('a missing expiry or developer account cannot substitute for the issued ser
     await assert.rejects(new GceSshTransport(f.control,api,f.command,f.keyFactory).run(f.handle,{operation:'probe'},5000),
       {message:mode==='expiry'?'NATIVE_OS_LOGIN_KEY_EXPIRY_INVALID':'NATIVE_OS_LOGIN_PRINCIPAL_AMBIGUOUS'});
     assert.equal(f.commands.length,0);assert.ok(f.cleaned);
+  }
+});
+
+test('failed native SSH records a bounded safe category without returning provider stderr',async()=>{
+  const result=await nativeSshCommand(process.execPath,['-e',
+    "process.stdout.write('PRIVATE_STDOUT_CANARY');process.stderr.write('Permission denied (publickey). PRIVATE_PROVIDER_ERROR_CANARY');process.exitCode=255;"],'',5000);
+  assert.equal(result.code,255);
+  assert.equal((result as {failureCategory?: string}).failureCategory,'PUBLIC_KEY_NOT_ADMITTED');
+  assert.ok(!JSON.stringify(result).includes('PRIVATE_PROVIDER_ERROR_CANARY'));
+  assert.ok(!JSON.stringify(result).includes('PRIVATE_STDOUT_CANARY'));
+});
+
+test('safe failure categories preserve denial, no retry and ephemeral-key cleanup',async()=>{
+  for(const [diagnostic,category] of [
+    ['Host key verification failed. PRIVATE_CANARY','HOST_KEY_REJECTED'],
+    ['connect to host 10.90.0.2 port 22: Connection timed out PRIVATE_CANARY','PRIVATE_ROUTE_UNAVAILABLE'],
+    ['sudo: a password is required PRIVATE_CANARY','REMOTE_ADMIN_DENIED'],
+    ["python3: can't open file /opt/xroga/runtime_control.py PRIVATE_CANARY",'REMOTE_CONTROL_UNAVAILABLE'],
+    ['Connection reset by peer PRIVATE_CANARY','CHANNEL_INTERRUPTED'],
+    ['PRIVATE_UNKNOWN_CANARY','REMOTE_COMMAND_FAILED'],
+  ] as const) {
+    assert.equal(classifyNativeSshFailure(diagnostic),category);
+    const f=await fixture();let dispatches=0;
+    const transport=new GceSshTransport(f.control,f.api,async()=>{
+      dispatches++;return{code:255,stdout:'PRIVATE_CANARY',failureCategory:category};
+    },f.keyFactory);
+    await assert.rejects(transport.run(f.handle,{operation:'exec'},5000),error=>error instanceof GceSshExecutionError
+      && error.exitCode===255 && error.failureCategory===category && !error.message.includes('PRIVATE_CANARY'));
+    assert.equal(dispatches,1);assert.ok(f.cleaned);assert.equal(f.calls.at(-1)!.method,'DELETE');
   }
 });

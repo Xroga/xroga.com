@@ -37,7 +37,8 @@
     ".gitignore",
     "backend/src/scripts/verifyGceExecution.ts",
     "infra/google/execution-verification-scope.json",
-    "docs/xroga/infrastructure/native-execution-verification-approval.md"
+    "docs/xroga/infrastructure/native-execution-verification-approval.md",
+    "docs/xroga/evidence/zero-fly/native-transport-f90abe82-20261025.json"
   ],
   "decisions": {
     "keep": [
@@ -167,7 +168,8 @@
     "No zero-Fly completion or new production deployment claim"
   ],
   "evidenceRefs": [
-    "docs/xroga/infrastructure/zero-fly-migration-20261025.md"
+    "docs/xroga/infrastructure/zero-fly-migration-20261025.md",
+    "docs/xroga/evidence/zero-fly/native-transport-f90abe82-20261025.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,

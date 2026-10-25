@@ -5,8 +5,28 @@ import { join, resolve } from 'node:path';
 import { attachedGceIdentity, GceControlError, type GceApi, type GceExecutionHandle,
   type GceMachineControl } from './gceMachineControl.js';
 
-interface CommandResult { code: number | null; stdout: string; }
+export type SshFailureCategory = 'PUBLIC_KEY_NOT_ADMITTED' | 'HOST_KEY_REJECTED' | 'PRIVATE_ROUTE_UNAVAILABLE'
+  | 'REMOTE_ADMIN_DENIED' | 'REMOTE_CONTROL_UNAVAILABLE' | 'CHANNEL_INTERRUPTED' | 'REMOTE_COMMAND_FAILED';
+interface CommandResult { code: number | null; stdout: string; failureCategory?: SshFailureCategory; }
 export type NativeCommand = (binary: string, args: readonly string[], input: string, timeoutMs: number) => Promise<CommandResult>;
+
+/** Error text is untrusted diagnostic input, never authority or permission to retry.
+ * Return an allowlisted category only. Never retain provider stderr in an error. */
+export function classifyNativeSshFailure(stderr: string): SshFailureCategory {
+  if (/Permission denied.*publickey|no supported authentication methods/i.test(stderr)) return 'PUBLIC_KEY_NOT_ADMITTED';
+  if (/host key verification failed|REMOTE HOST IDENTIFICATION HAS CHANGED/i.test(stderr)) return 'HOST_KEY_REJECTED';
+  if (/connect to host[^\r\n]*(?:timed out|refused)|No route to host|Network is unreachable/i.test(stderr)) return 'PRIVATE_ROUTE_UNAVAILABLE';
+  if (/sudo:[^\r\n]*(?:password|not allowed)|not in the sudoers/i.test(stderr)) return 'REMOTE_ADMIN_DENIED';
+  if (/python3:[^\r\n]*(?:can't open file|not found)/i.test(stderr)) return 'REMOTE_CONTROL_UNAVAILABLE';
+  if (/Connection (?:closed|reset)|Broken pipe|killed by signal/i.test(stderr)) return 'CHANNEL_INTERRUPTED';
+  return 'REMOTE_COMMAND_FAILED';
+}
+
+export class GceSshExecutionError extends GceControlError {
+  constructor(readonly failureCategory: SshFailureCategory, readonly exitCode: number | null) {
+    super('NATIVE_SSH_'+failureCategory);
+  }
+}
 
 /** Child environment is intentionally independent of process.env. No Google
  * token, platform credential, SSH agent or developer configuration reaches SSH. */
@@ -14,16 +34,26 @@ export const nativeSshCommand: NativeCommand = (binary, args, input, timeoutMs) 
   const child = spawn(binary, [...args], {stdio:['pipe','pipe','pipe'],
     env:{PATH:'/usr/local/bin:/usr/bin:/bin', LANG:'C.UTF-8'}});
   const chunks: Buffer[] = [];
+  const diagnostics: Buffer[] = [];
   let bytes = 0;
+  let diagnosticBytes = 0;
   let failed = false;
   const deny = () => { if (failed) return; failed=true; child.kill('SIGKILL'); reject(new GceControlError('NATIVE_SSH_TRANSPORT_UNAVAILABLE')); };
   const timer = setTimeout(deny, timeoutMs);
   child.once('error', deny);
   child.stdout.on('data', (value: Buffer) => {bytes+=value.length;if(bytes>1_000_000)deny();else chunks.push(value);});
-  // Provider stderr can include source, remote output or credentials. Never log it.
-  child.stderr.resume();
+  // Bound diagnostic input, then discard it after classifying a nonzero exit.
+  // Raw stderr can contain source or credentials and never leaves this function.
+  child.stderr.on('data', (value: Buffer) => {
+    const remaining=16384-diagnosticBytes;
+    if(remaining>0){const captured=value.subarray(0,remaining);diagnostics.push(captured);diagnosticBytes+=captured.length;}
+  });
   child.stdin.once('error', deny);
-  child.once('close', code => {clearTimeout(timer);if(!failed)accept({code,stdout:Buffer.concat(chunks).toString('utf8')});});
+  child.once('close', code => {
+    clearTimeout(timer);
+    if(!failed)accept(code===0 ? {code,stdout:Buffer.concat(chunks).toString('utf8')} :
+      {code,stdout:'',failureCategory:classifyNativeSshFailure(Buffer.concat(diagnostics).toString('utf8'))});
+  });
   child.stdin.end(input);
 });
 
@@ -112,7 +142,7 @@ export class GceSshTransport {
         '-o','KbdInteractiveAuthentication=no','-o','GSSAPIAuthentication=no','-o','ProxyCommand=none',
         '-o','ConnectTimeout=10','-o','ServerAliveInterval=10','-o','ServerAliveCountMax=2',
         '--',accounts[0].username+'@'+target.privateIp,'sudo','-n','python3','/opt/xroga/runtime_control.py'],payload,timeoutMs+30000);
-      if(result.code!==0)throw new GceControlError('NATIVE_SSH_EXECUTION_DENIED_OR_INTERRUPTED');
+      if(result.code!==0)throw new GceSshExecutionError(result.failureCategory ?? 'REMOTE_COMMAND_FAILED',result.code);
       let reply: {ok?: unknown;result?: T;code?: unknown};
       try {reply=JSON.parse(result.stdout);} catch {throw new GceControlError('INVALID_NATIVE_EXECUTION_RECEIPT');}
       if(reply.ok!==true || !Object.hasOwn(reply,'result'))throw new GceControlError(
