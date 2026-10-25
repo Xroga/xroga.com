@@ -27,12 +27,12 @@ export async function verifyAccessToken(token: string): Promise<{ userId: string
  * this middleware read the rows it creates, and it stays non-fatal because a
  * provisioning hiccup must not lock a signed-in user out of read-only surfaces.
  */
-async function provisionIfNeeded(userId: string, email?: string): Promise<void> {
+async function provisionIfNeeded(context: TenantContext, email?: string): Promise<void> {
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return;
   try {
-    await ensureUserRecords(userId, email);
-  } catch (provisionErr) {
-    console.warn('[auth] ensureUserRecords failed (non-fatal):', (provisionErr as Error).message);
+    await ensureUserRecords(context, email);
+  } catch {
+    console.warn('[auth]', { category: 'provisioning_unavailable', fatal: false });
   }
 }
 
@@ -58,12 +58,12 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
     req.accessToken = token;
     req.userEmail = email;
 
-    await provisionIfNeeded(userId, email);
+    await provisionIfNeeded(req.tenantContext, email);
 
     next();
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Authentication failed';
-    console.error('[auth]', message);
+    console.error('[auth]', { category: 'authentication_failed' });
 
     if (
       message.includes('SUPABASE_URL') ||
@@ -71,14 +71,14 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
       message.includes('SUPABASE_JWT_SECRET')
     ) {
       res.status(503).json({
-        error: 'API auth not configured on Fly.io. Set SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY.',
+        error: 'Sign-in is temporarily unavailable. Retry shortly.',
         code: 'AUTH_NOT_CONFIGURED',
       });
       return;
     }
 
     res.status(401).json({
-      error: message,
+      error: 'Your session is invalid or expired. Sign in again and retry.',
       code: 'AUTH_FAILED',
     });
   }
@@ -106,7 +106,7 @@ export async function optionalAuthMiddleware(req: AuthRequest, res: Response, ne
     req.accessToken = token;
     req.userEmail = email;
     if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      await provisionIfNeeded(userId, email);
+      await provisionIfNeeded(req.tenantContext, email);
     }
     next();
   } catch {

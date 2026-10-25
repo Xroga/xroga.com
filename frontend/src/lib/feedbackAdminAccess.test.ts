@@ -31,14 +31,26 @@ test('feedback submissions persist to Supabase rather than one browser', () => {
   assert.doesNotMatch(storage, /localStorage|xroga_user_feedback|SEED/);
 });
 
-test('feedback admin page verifies the signed-in email before querying submissions', () => {
-  assert.match(adminPage, /const FEEDBACK_ADMIN_EMAIL = 'hello@xroga\.com'/);
+test('feedback admin page uses canonical verified founder policy before querying submissions', () => {
   assert.match(adminPage, /supabase\.auth\.getUser\(\)/);
   assert.match(adminPage, /redirect\('\/auth\/login\?next=%2Fadmin%2Ffeedback'\)/);
-  assert.match(adminPage, /user\.email\?\.trim\(\)\.toLowerCase\(\) !== FEEDBACK_ADMIN_EMAIL/);
-  const authorization = adminPage.indexOf("user.email?.trim().toLowerCase() !== FEEDBACK_ADMIN_EMAIL");
+  assert.match(adminPage, /authorizeFounderRequest\(/);
+  assert.match(adminPage, /supabase\.rpc\('current_community_role'\)/);
+  assert.match(adminPage, /getAuthenticatorAssuranceLevel\(\)/);
+  const authorization = adminPage.indexOf('if (!decision.allowed)');
   const query = adminPage.indexOf(".from('product_feedback')");
   assert.ok(authorization >= 0 && query > authorization, 'authorization must run before the feedback query');
+});
+
+test('feedback SQL independently requires current confirmed identity, owner role and AAL2', () => {
+  const sql = read('../../../supabase/migrations/20261021100000_feedback_founder_authorization.sql');
+  for (const text of ["auth.jwt() ->> 'aal'", "= 'aal2'", 'auth.users u', 'u.email_confirmed_at is not null', "p.role = 'owner'", "= 'hello@xroga.com'", 'as restrictive for select to authenticated']) assert.ok(sql.includes(text));
+  assert.match(sql, /security definer\s+set search_path = pg_catalog/);
+  assert.doesNotMatch(sql, /user_metadata|grant.*service_role/i);
+  for (const name of ['Verified founder can review product feedback', 'Feedback founder read guard']) {
+    assert.ok(sql.indexOf(`drop policy if exists "${name}"`) < sql.indexOf(`create policy "${name}"`), 'replay must replace the same policy inside the transaction');
+    assert.ok(sql.includes(`drop policy if exists "${name}"`));
+  }
 });
 
 test('database RLS permits submission but reserves reading for hello@xroga.com', () => {

@@ -1,0 +1,206 @@
+{
+  "version": "1.0",
+  "inspected_source_sha": "c7230c815870ad3942f5f74ddf70c9ddff2ec988",
+  "entries": [
+    {
+      "id": "13ed7d28beb5768d108060411a216321f4915bd286ff2b4f5ef07c652bd4d75c",
+      "path": "backend/src/ai/compileCommand.test.ts",
+      "title": "separate executions lose node_modules — this is the production failure",
+      "condition": "requiresPosixShell",
+      "owner": "Xroga engineering",
+      "reason": "Existing test executes the production Linux /bin/sh sandbox command; Windows cannot execute /bin/sh. Linux baseline CI must run it.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "847eb84bd90092a6f6c816cb8f832293bd76b6a39b59ae71a6f35774001b25af",
+      "path": "backend/src/ai/compileCommand.test.ts",
+      "title": "one execution keeps what install produced — this is the fix",
+      "condition": "requiresPosixShell",
+      "owner": "Xroga engineering",
+      "reason": "Existing test executes the production Linux /bin/sh sandbox command; Windows cannot execute /bin/sh. Linux baseline CI must run it.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "7b761a012400f1e09fd38b4f3137e3184d8e8255cc2a766fdfdb87e7c5e5a79e",
+      "path": "backend/src/ai/compileCommand.test.ts",
+      "title": "a missing compiler reports tscRan=false, not a type-check failure",
+      "condition": "requiresPosixShell",
+      "owner": "Xroga engineering",
+      "reason": "Existing test executes the production Linux /bin/sh sandbox command; Windows cannot execute /bin/sh. Linux baseline CI must run it.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "d0a6b213d2063aa185abbcfa0d0f58c194f02392e5dfc1951060774f99eab381",
+      "path": "backend/src/ai/compileCommand.test.ts",
+      "title": "a real type error is still reported as a failure",
+      "condition": "requiresPosixShell",
+      "owner": "Xroga engineering",
+      "reason": "Existing test executes the production Linux /bin/sh sandbox command; Windows cannot execute /bin/sh. Linux baseline CI must run it.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "597fd2fbfa68de6528bd483224567d0cd8f596cd8f7977738dfdbc6985d7c867",
+      "path": "backend/src/ai/compileCommand.test.ts",
+      "title": "the build runs only after install and typecheck both succeed",
+      "condition": "requiresPosixShell",
+      "owner": "Xroga engineering",
+      "reason": "Existing test executes the production Linux /bin/sh sandbox command; Windows cannot execute /bin/sh. Linux baseline CI must run it.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "d216beb9ad6f4259c29822756eba87dbd4951135cac01de15edaa8528154341c",
+      "path": "backend/src/ai/compileCommand.test.ts",
+      "title": "the generated script is valid shell",
+      "condition": "requiresPosixShell",
+      "owner": "Xroga engineering",
+      "reason": "Existing test executes the production Linux /bin/sh sandbox command; Windows cannot execute /bin/sh. Linux baseline CI must run it.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "a6b3531284608f6c07cd758798e8446353627317d6a7dc14b5f3bd5c5b30cc5f",
+      "path": "backend/src/ai/compileCommand.test.ts",
+      "title": "install arguments are quoted",
+      "condition": "requiresPosixShell",
+      "owner": "Xroga engineering",
+      "reason": "Existing test executes the production Linux /bin/sh sandbox command; Windows cannot execute /bin/sh. Linux baseline CI must run it.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "311a3def2cf904a4454e6220cb70d3763e8a20d4887488d034dfe4c013a20695",
+      "path": "backend/src/organicIntelligence/content/engine.test.ts",
+      "title": "content path resolution rejects traversal and symbolic-link escapes",
+      "condition": "'Creating a test junction is unavailable on this host.'",
+      "owner": "Xroga engineering",
+      "reason": "Existing symlink/junction negative test may lack permission on Windows (EPERM); it must execute on the Linux CI host.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "e9e06469adb18471e5a2547532e950775432ad28806aca0cc2dbf679868194f1",
+      "path": "backend/src/synthesis/inSandboxBrowser.integration.test.ts",
+      "title": "real in-sandbox run: a working application passes on collected evidence",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Existing local sandbox/browser integration requires Linux /bin/sh and installed Chromium. CI must execute it using one matching browser cache; Windows cannot exercise this boundary.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "5ba163e2e30074348f9ac78a61e283d808d66fddcc0cedd6f72999f86e3adbfb",
+      "path": "backend/src/synthesis/inSandboxBrowser.integration.test.ts",
+      "title": "real in-sandbox run: a page that throws fails with the exact error",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Existing local sandbox/browser integration requires Linux /bin/sh and installed Chromium. CI must execute it using one matching browser cache; Windows cannot exercise this boundary.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "5f89099c19ab090ca0d7b1601febb2b739c8909811c400006236063e88744086",
+      "path": "backend/src/synthesis/inSandboxBrowser.integration.test.ts",
+      "title": "real in-sandbox run: an unmet acceptance criterion fails on what the DOM actually held",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Existing local sandbox/browser integration requires Linux /bin/sh and installed Chromium. CI must execute it using one matching browser cache; Windows cannot exercise this boundary.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "b2f2331da0b7f612cd37555be05330d5a794db159e9314ab1e5e5ea6fdd31c84",
+      "path": "backend/src/synthesis/inSandboxBrowser.integration.test.ts",
+      "title": "real in-sandbox run: the application does not outlive a passing command",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Existing local sandbox/browser integration requires Linux /bin/sh and installed Chromium. CI must execute it using one matching browser cache; Windows cannot exercise this boundary.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "5ed7c8cdca585dbc07c4937fb4ee7b5a0fa09f2dba165456f5554f69a5b29b1a",
+      "path": "backend/src/synthesis/inSandboxBrowser.integration.test.ts",
+      "title": "cleanup also happens when verification fails",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Existing local sandbox/browser integration requires Linux /bin/sh and installed Chromium. CI must execute it using one matching browser cache; Windows cannot exercise this boundary.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "093897ab042b8b0922223e7be0f6094d3ad0a8b8181c7859d9353ecf6ecce20e",
+      "path": "backend/src/synthesis/inSandboxBrowser.test.ts",
+      "title": "the generated shell command is syntactically valid shell",
+      "condition": "requiresPosixShell",
+      "owner": "Xroga engineering",
+      "reason": "Existing shell syntax assertion requires /bin/sh; Windows limitation only. Linux baseline CI must run it.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "b61ecd2bd410e86b15ccd41de8d34195505145bfed488315d268395ba250b4d5",
+      "path": "backend/src/synthesis/playwrightDriver.integration.test.ts",
+      "title": "`real browser: a healthy page passes every deterministic rung${label}`",
+      "condition": "!available",
+      "owner": "Xroga engineering",
+      "reason": "Existing real-browser test is conditional on installed Chromium. Baseline CI installs pinned Playwright Chromium; missing browser is a reported gap, not passing browser coverage.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "7b800d4f8542896ff332149946a674a61bdd078da8e9c2bca73a1a8b04b020d2",
+      "path": "backend/src/synthesis/playwrightDriver.integration.test.ts",
+      "title": "`real browser: a page that throws is caught and blocks verification${label}`",
+      "condition": "!available",
+      "owner": "Xroga engineering",
+      "reason": "Existing real-browser test is conditional on installed Chromium. Baseline CI installs pinned Playwright Chromium; missing browser is a reported gap, not passing browser coverage.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "8f8b0c10a745938aa16d80ef7a95a07243ce90d0953623d8e2e39d14bf7a9cf7",
+      "path": "backend/src/synthesis/playwrightDriver.integration.test.ts",
+      "title": "`real browser: a missing expected element is detected${label}`",
+      "condition": "!available",
+      "owner": "Xroga engineering",
+      "reason": "Existing real-browser test is conditional on installed Chromium. Baseline CI installs pinned Playwright Chromium; missing browser is a reported gap, not passing browser coverage.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "b840d63ac2b32fc89f79ac82250ffedbb66067912b28ae1defeff96a1ebe5d0d",
+      "path": "backend/src/synthesis/playwrightDriver.integration.test.ts",
+      "title": "`real browser: an interaction that works is confirmed${label}`",
+      "condition": "!available",
+      "owner": "Xroga engineering",
+      "reason": "Existing real-browser test is conditional on installed Chromium. Baseline CI installs pinned Playwright Chromium; missing browser is a reported gap, not passing browser coverage.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "62de770bc896b0578692aaf00f4ec916f12234b3fe8107b82b3589a664769e51",
+      "path": "backend/src/synthesis/playwrightDriver.integration.test.ts",
+      "title": "`real browser: an unreachable URL fails rather than reporting a clean page${label}`",
+      "condition": "!available",
+      "owner": "Xroga engineering",
+      "reason": "Existing real-browser test is conditional on installed Chromium. Baseline CI installs pinned Playwright Chromium; missing browser is a reported gap, not passing browser coverage.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    },
+    {
+      "id": "aad429207d8a73e925011bc88e2cbbe8435c02781aa960fdd61e3b96ef34a8ab",
+      "path": "frontend/e2e/os-preview-founder-fixture.ts",
+      "title": "!state",
+      "condition": "!state",
+      "owner": "Xroga engineering",
+      "reason": "Pre-existing helper requires an isolated TEST founder AAL2 session. Missing configuration is BLOCKED, not passing authenticated coverage. No new skip is introduced; the independent authenticated-browser CI remains failing until TEST configuration and auth-realm isolation pass.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
+    }
+  ]
+}

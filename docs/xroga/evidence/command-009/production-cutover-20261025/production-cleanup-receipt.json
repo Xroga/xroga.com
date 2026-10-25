@@ -1,0 +1,10 @@
+{
+  "status": "PASS_ISOLATED_CUSTOMER_PLAINTEXT_AND_OPERATOR_RAM_CLEANUP",
+  "at": "2026-10-24T20:25:49.519283+00:00",
+  "isolatedContainerRemoved": true,
+  "protectedOperatorsStopped": 2,
+  "privateSocketsRemoved": true,
+  "encryptedCustomerBackupsRetained": true,
+  "productionKeysRetained": true,
+  "productionApiNotStopped": true
+}

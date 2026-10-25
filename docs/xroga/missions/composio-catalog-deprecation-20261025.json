@@ -1,0 +1,68 @@
+{
+  "version": "1.0",
+  "missionId": "COMPOSIO-CATALOG-DEPRECATION-20261025",
+  "baseSha": "aeaadb4d7de952c491369d1fc99339d406bb0d68",
+  "requirementIds": ["XR-FAMILY-composio-dynamic-tools", "XR-ORIGINAL-F041"],
+  "state": "CODE_COMPLETE",
+  "risk": "medium",
+  "scope": "Interpret Composio's deprecated field as a retirement flag only when boolean true, and distinguish a requested source link from a command to link an app. The former hid active apps; the latter blocked ordinary research. This does not claim all app actions work.",
+  "changedFiles": [
+    "backend/src/services/integrations/composioClient.ts",
+    "backend/src/services/integrations/composioClient.catalogDeprecation.test.ts",
+    "backend/src/services/integrations/businessConnectionIntent.ts",
+    "backend/src/services/integrations/businessConnectionIntent.test.ts",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/runtime-contract.md",
+    "docs/xroga/secret-inventory.md",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/missions/composio-catalog-deprecation-20261025.json"
+  ],
+  "decisions": {
+    "keep": ["Existing connection preflight, catalog and authorization card"],
+    "extend": ["Strict boolean deprecation mapping based on live Composio response shape", "Explicit link-command detection without misclassifying a requested source URL"],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No database schema change.",
+    "rollback": "Revert this adapter mapping if a verified Composio catalog response requires different retirement semantics."
+  },
+  "securityImpact": {
+    "auth": {"changed": false, "description": "Existing authenticated app access remains required."},
+    "tenant": {"changed": false, "description": "Existing per-user toolkit filtering remains unchanged."},
+    "approval": {"changed": false, "description": "No OAuth or app action is initiated by catalog display."},
+    "credentials": {"changed": false, "description": "No credential handling changes."},
+    "egress": {"changed": false, "description": "Same bounded Composio catalog requests."},
+    "cost": {"changed": false, "description": "No execution budget or pricing rule changes."},
+    "billing": {"changed": false, "description": "No payment or subscription path changes."}
+  },
+  "tests": [
+    {"command": "npx tsx --test backend/src/services/integrations/composioClient.catalogDeprecation.test.ts", "scope": "Legacy metadata object remains active while explicit true and is_deprecated true remain retired.", "negative": true, "reference": "backend/src/services/integrations/composioClient.catalogDeprecation.test.ts"},
+    {"command": "npx tsx --test backend/src/services/integrations/businessConnectionIntent.test.ts", "scope": "Source-link research remains research while explicit link-app commands still trigger connection discovery.", "negative": true, "reference": "backend/src/services/integrations/businessConnectionIntent.test.ts"},
+    {"command": "npm run build --workspace=backend", "scope": "TypeScript and pinned dependency patch checks.", "negative": false, "reference": "backend/src/services/integrations/composioClient.ts"},
+    {"command": "node scripts/xroga/inventory.mjs --check", "scope": "Generated source inventory consistency.", "negative": false, "reference": "docs/xroga/current-state.json"},
+    {"command": "node scripts/xroga/validate-requirements-ledger.mjs", "scope": "Source manifest integrity.", "negative": false, "reference": "docs/xroga/research/source-manifest.json"},
+    {"command": "node scripts/xroga/check-runtime-config.mjs", "scope": "Runtime inventory consistency.", "negative": false, "reference": "docs/xroga/dependency-inventory.json"}
+  ],
+  "architecture": {"change": "extends_canonical", "reason": "Repairs the existing provider adapter with no new execution path.", "rfc": null},
+  "rollout": "Merge after CI and policy checks, then retest named Gmail connection and source-link research prompts on Cloud Run before production frontend cutover.",
+  "rollback": "Revert the adapter source change and roll Cloud Run back to its preceding ready revision if live catalog selection regresses.",
+  "knownGaps": ["Connected Gmail action not tested without an authorized test connection", "Authenticated browser preview OAuth still redirects to production", "Production frontend cutover and event-trigger subscriptions remain incomplete"],
+  "placeholderClaimsRemaining": ["Connected-app write and multi-app execution require authorized account testing"],
+  "evidenceRefs": ["backend/src/services/integrations/composioClient.catalogDeprecation.test.ts", "backend/src/services/integrations/composioClient.ts"],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": ["Cloud Run revision with this change has not been live tested", "Production cutover and connected-app action acceptance remain incomplete"],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

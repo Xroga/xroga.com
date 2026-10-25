@@ -1,0 +1,48 @@
+{
+  "observedAt": "2026-10-24T16:46:02.087521+00:00",
+  "sourceSha": "9fb905602455672784b7f26edc054bcc7cbeb7bf",
+  "forwardImageApplicationSource": "d24ab25384ec34005d68753dd54134059393e39f",
+  "recoveryImageSource": "e8164ba6e2cc3eee46a183b752ea39188ce2e9b7",
+  "changedFilesSinceRecovery": [
+    "backend/src/ai/prompts.ts",
+    "docs/xroga/current-state.json",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/missions/phase3-deployed-prompt-preservation-20261024.json",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/runtime-contract.md",
+    "docs/xroga/secret-inventory.md"
+  ],
+  "metadataOnlyAfterForwardBuild": [
+    "docs/xroga/current-state.json",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/missions/phase3-deployed-prompt-preservation-20261024.json",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/runtime-contract.md",
+    "docs/xroga/secret-inventory.md"
+  ],
+  "unchangedAreas": [
+    "frontend",
+    "supabase/migrations",
+    "scripts/security/evaluate-phase-three.mjs",
+    "docs/xroga/evidence/phase-3-manifest.json",
+    "docs/xroga/evidence/command-008/manifest.json",
+    "docs/xroga/evidence/command-009/manifest.json",
+    "Dockerfile.api",
+    "package-lock.json",
+    "backend/package-lock.json",
+    ".github/workflows"
+  ],
+  "sqlFilesHashVerified": 72,
+  "frontEndChanges": false,
+  "securityCredentialRuntimeChangesSinceRecovery": false,
+  "historicalAuthenticationEvidence": {
+    "sourceSha": "e8164ba6e2cc3eee46a183b752ea39188ce2e9b7",
+    "workflow": 40090405483,
+    "browser": 6,
+    "database": 210,
+    "reuseReason": "Exact frontend, authentication, tenant, migrations, fixture and workflow source unchanged. New prompt presentation content does not change those semantics. Not an execution at the new SHA."
+  },
+  "buildEvidence": "staging-capsule.json compiled dist comparison excludes prompts only. Both real immutable images executed."
+}

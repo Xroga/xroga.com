@@ -18,9 +18,9 @@ test('the sidebar keeps its Automations flyout and separate AI Employees entry',
 
 test('pinned and recent conversations render from the real history records', () => {
   assert.match(history, /aria-label="Pinned items"/);
-  assert.match(history, /aria-label="Recent conversations"/);
+  assert.match(history, /aria-label="Recent conversations outside projects"/);
   assert.match(history, /pinnedItems\.slice\(0,shownPins\)/);
-  assert.match(history, /recentConversations\.slice\(0,shownRecents\)/);
+  assert.match(history, /standaloneRecents\.slice\(0,shownRecents\)/);
 });
 
 test('composer menus expose real files, apps, skills, tools and agents', () => {

@@ -1,0 +1,14 @@
+{
+  "sourceSha": "a586aa91b5b73951aa04aa4260e8edc7e08074bb",
+  "scope": "GUEST_FIXTURE_RENDERING_AND_ANONYMOUS_DENIAL_NOT_AUTHENTICATED_PROVIDER_COMPLETION",
+  "result": "PASS",
+  "exitCode": 0,
+  "results": [
+    {
+      "name": "golden-guest-browser",
+      "exitCode": 0,
+      "durationMs": 6309
+    }
+  ],
+  "productionEffects": false
+}

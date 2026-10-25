@@ -1,3 +1,4 @@
+import { createTenantContext } from '../../security/tenantContext.js';
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { isComposioConfigured, upsertComposioTriggerForUser } from './composioClient.js';
 import { splitExplicitBusinessWorkflow, type BusinessWorkflowStep } from './businessWorkflow.js';
@@ -142,7 +143,7 @@ async function launchRule(rule: BusinessAutomationRule, eventKey: string, initia
   const eventId = await claimEvent(rule, eventKey);
   if (!eventId) return;
   try {
-    const progress = await createBusinessWorkflowRun(rule.user_id, rule.request, rule.steps, initialEvidence);
+    const progress = await createBusinessWorkflowRun(createTenantContext({ userId: rule.user_id, via: 'persisted_owner' }), rule.request, rule.steps, initialEvidence);
     const { error } = await getSupabaseAdmin().from('business_automation_events')
       .update({ status: 'started', workflow_run_id: progress.run.id })
       .eq('id', eventId)

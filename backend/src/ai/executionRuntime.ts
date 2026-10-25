@@ -3,7 +3,9 @@ import { redactSecrets } from '../lib/truthfulExecution.js';
 import type { ProjectFile, FilePatch } from './patches.js';
 import { applyDeletes, applyPatches, buildFileTrail } from './patches.js';
 import type { ModelId } from './models.js';
-import { getSupabaseAdmin } from '../config/supabase.js';
+import { createTenantContext } from '../security/tenantContext.js';
+import { getTenantSupabaseAdmin } from '../security/serviceRoleGuard.js';
+import { requireAdmittedRunAttempt, type AdmittedRunAttempt } from './runStore.js';
 import type { IntelligentRoutePlan } from './intelligentRouter.js';
 import { MODELS } from './models.js';
 
@@ -106,6 +108,8 @@ export interface ReviewFinding {
 
 export interface CanonicalExecutionState {
   projectId: string;
+  /** Database project binding, distinct from the repository/branch/root context key. */
+  databaseProjectId?: string | null;
   runId: string;
   repository: { owner: string; name: string; remote?: string } | null;
   selectedBranch: string;
@@ -162,31 +166,99 @@ export class InMemoryExecutionStateStore implements ExecutionStateStore {
 }
 
 export class SupabaseExecutionStateStore implements ExecutionStateStore {
-  constructor(private readonly userId: string) {}
+  private readonly attempt?: AdmittedRunAttempt;
+  private writes: Promise<void> = Promise.resolve();
+  constructor(private readonly userId: string, attempt?: AdmittedRunAttempt) {
+    this.attempt = attempt ? requireAdmittedRunAttempt(attempt) : undefined;
+  }
 
   async load(runId: string): Promise<CanonicalExecutionState | null> {
-    const { data, error } = await getSupabaseAdmin().from('execution_runs').select('state').eq('run_id', runId).eq('user_id', this.userId).maybeSingle();
+    const context=createTenantContext({userId:this.userId,via:'persisted_owner'});
+    const { data, error } = await getTenantSupabaseAdmin(context).from('execution_runs').select('state,user_id,run_id,project_id,repository_identity,selected_branch,starting_commit_sha').eq('run_id', runId).eq('user_id', context.userId).maybeSingle();
     if (error) throw error;
-    return data?.state ? data.state as CanonicalExecutionState : null;
+    return restoreOwnerBoundExecutionState(data,this.userId,runId);
   }
 
   async save(state: CanonicalExecutionState): Promise<void> {
+    const attempt = this.attempt;
+    if (!attempt || attempt.userId !== this.userId || attempt.runId !== state.runId) {
+      throw Object.assign(new Error('Execution checkpoint authority is missing.'), { code: 'RUN_STATE_CONFLICT' });
+    }
+    requireAdmittedRunAttempt(attempt);
+    state = structuredClone(state);
+    const pending = this.writes.then(() => this.saveSnapshot(state, attempt));
+    // A failed write poisons this attempt's queue. Later writes cannot mask it.
+    this.writes = pending;
+    void pending.catch(() => {});
+    await pending;
+  }
+
+  private async saveSnapshot(state: CanonicalExecutionState, attempt: AdmittedRunAttempt): Promise<void> {
     const terminal = state.tasks.every((task) => ['completed', 'blocked', 'failed', 'cancelled'].includes(task.status));
     const hasFailure = state.tasks.some((task) => task.status === 'failed');
     const hasBlocked = state.tasks.some((task) => task.status === 'blocked');
     const hasComplete = state.tasks.some((task) => task.status === 'completed');
     const status = !terminal ? 'running' : hasFailure && !hasComplete ? 'failed' : hasBlocked ? (hasComplete ? 'partially_completed' : 'blocked') : 'completed';
-    const { error } = await getSupabaseAdmin().from('execution_runs').upsert({
-      run_id: state.runId, user_id: this.userId, project_id: state.projectId,
-      repository_identity: state.repository, selected_branch: state.selectedBranch,
-      starting_commit_sha: state.startingCommitSha, state, status, updated_at: state.updatedAt,
+    const context=createTenantContext({userId:this.userId,via:'persisted_owner'});
+    const { data, error } = await getTenantSupabaseAdmin(context).rpc('persist_execution_checkpoint_attempt', {
+      p_run_id: state.runId, p_owner_id: this.userId, p_worker_id: attempt.workerId,
+      p_generation: attempt.generation, p_state: state, p_status: status,
     });
-    if (error) throw error;
+    if (error) throw Object.assign(new Error('Execution checkpoint persistence is unavailable.'), { code: 'RESOURCE_ACCESS_UNAVAILABLE' });
+    if (data !== true) throw Object.assign(new Error('Execution checkpoint is no longer authoritative.'), { code: 'RUN_STATE_CONFLICT' });
   }
+}
+
+/** Bind resumed work to durable identity; embedded state cannot change its run/project. */
+export function restoreOwnerBoundExecutionState(row:unknown,userId:string,runId:string):CanonicalExecutionState|null {
+  if(!row||typeof row!=='object'||Array.isArray(row))return null;
+  const record=row as Record<string,unknown>,state=record.state;
+  if(!state||typeof state!=='object'||Array.isArray(state))return null;
+  const snapshot=state as Record<string,unknown>;
+  if(record.user_id!==userId||record.run_id!==runId||typeof record.project_id!=='string'||!record.project_id||snapshot.runId!==runId||snapshot.projectId!==record.project_id)return null;
+  if (!validCanonicalRecoveryState(snapshot) || record.selected_branch !== snapshot.selectedBranch ||
+      record.starting_commit_sha !== snapshot.startingCommitSha || !sameCanonicalRepository(record.repository_identity,snapshot.repository)) return null;
+  return structuredClone(state as CanonicalExecutionState);
+}
+
+function sameCanonicalRepository(left:unknown,right:unknown):boolean {
+  if(left===null||right===null)return left===null&&right===null;
+  if(!left||!right||typeof left!=='object'||typeof right!=='object'||Array.isArray(left)||Array.isArray(right))return false;
+  const a=left as Record<string,unknown>,b=right as Record<string,unknown>;
+  return ['owner','name'].every(key=>typeof a[key]==='string'&&!!a[key]&&a[key]===b[key]) &&
+    (a.remote===undefined||typeof a.remote==='string') && a.remote===b.remote;
+}
+
+/** Reject malformed durable control data before it can acquire a resumed worker lease. */
+function validCanonicalRecoveryState(state:Record<string,unknown>):boolean {
+  const strings=(value:unknown):value is string[]=>Array.isArray(value)&&value.every(item=>typeof item==='string');
+  const object=(value:unknown):value is Record<string,unknown>=>!!value&&typeof value==='object'&&!Array.isArray(value);
+  if(typeof state.selectedBranch!=='string'||!state.selectedBranch||
+    !(state.startingCommitSha===null||typeof state.startingCommitSha==='string')||
+    !(state.databaseProjectId===undefined||state.databaseProjectId===null||typeof state.databaseProjectId==='string')||
+    !sameCanonicalRepository(state.repository,state.repository)||
+    !Array.isArray(state.currentWorkingSnapshot)||!state.currentWorkingSnapshot.every(file=>object(file)&&typeof file.path==='string'&&typeof file.content==='string')||
+    !object(state.productManifest)||!object(state.deploymentState)||typeof state.deploymentState.status!=='string'||
+    !['architectureDecisions','requiredCapabilities','selectedIntegrations','generatedFiles','changedFiles','deletedFiles','blockers'].every(key=>strings(state[key]))||
+    !['pendingPatches','appliedPatches','validationResults','reviewFindings','repairHistory','evidence','tasks'].every(key=>Array.isArray(state[key]))||
+    !['createdAt','updatedAt'].every(key=>typeof state[key]==='string'&&Number.isFinite(Date.parse(state[key] as string))))return false;
+  const ids=new Set<string>();
+  for(const task of state.tasks as unknown[]){
+    if(!object(task)||typeof task.id!=='string'||!task.id||ids.has(task.id)||typeof task.operationType!=='string'||!task.operationType||
+      typeof task.objective!=='string'||!['pending','ready','running','waiting_for_authorization','waiting_for_user_input','waiting_for_provider','validating','repairing','completed','blocked','failed','cancelled'].includes(String(task.status))||
+      !['requiredCapabilities','requiredContextReferences','allowedFiles','dependencies','validationMethod','evidenceRequirements'].every(key=>strings(task[key]))||
+      !Array.isArray(task.evidence)||!Array.isArray(task.fallbackRoutes)||!object(task.expectedOutputSchema)||!object(task.budget)||!object(task.retryPolicy)||
+      !Number.isSafeInteger(task.attempts)||Number(task.attempts)<0||!Number.isFinite(task.timeoutMs)||Number(task.timeoutMs)<=0||
+      !Number.isSafeInteger(task.retryPolicy.maximumAttempts)||Number(task.retryPolicy.maximumAttempts)<1||
+      !['initialBackoffMs','maximumBackoffMs'].every(key=>typeof task.retryPolicy==='object'&&task.retryPolicy!==null&&Number.isFinite((task.retryPolicy as Record<string,unknown>)[key])&&Number((task.retryPolicy as Record<string,unknown>)[key])>=0))return false;
+    ids.add(task.id);
+  }
+  return true;
 }
 
 export function createCanonicalExecutionState(input: {
   projectId: string;
+  databaseProjectId?: string | null;
   runId?: string;
   repository?: CanonicalExecutionState['repository'];
   selectedBranch?: string;
@@ -198,6 +270,7 @@ export function createCanonicalExecutionState(input: {
   const now = new Date().toISOString();
   return {
     projectId: input.projectId,
+    ...(input.databaseProjectId !== undefined ? { databaseProjectId: input.databaseProjectId } : {}),
     runId: input.runId ?? randomUUID(),
     repository: input.repository ?? null,
     selectedBranch: input.selectedBranch ?? 'main',

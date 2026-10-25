@@ -1,4 +1,5 @@
 import type { ModelId } from './models.js';
+import { isPostCompletionAccountingError } from './postCompletionAccounting.js';
 import {
   providerHealthStore,
   stillConstraining,
@@ -284,6 +285,7 @@ export async function executeWithProviderFallback<T>(input: {
         }
         return { value, modelId, failures };
       } catch (error) {
+        if (isPostCompletionAccountingError(error)) throw error;
         const normalized = controller.signal.aborted && !input.signal?.aborted
           ? normalizeProviderError(Object.assign(new Error('Provider request timed out'), { code: 'ETIMEDOUT' }))
           : normalizeProviderError(error);

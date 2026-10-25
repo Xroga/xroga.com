@@ -114,7 +114,7 @@ test('the persistence check reads real durable storage, with no CI-only shortcut
   // preference was stored, which is worse than the flake it replaced.
   const block = SPEC.slice(
     SPEC.indexOf('const techwear = page.getByRole'),
-    SPEC.indexOf('await page.goto(\'/settings\');'),
+    SPEC.indexOf('await page.goto(\'/settings\');', SPEC.indexOf('const techwear = page.getByRole')),
   );
   assert.match(block, /admin\.from\('profiles'\)\.select\('companion_preferences'\)/);
   assert.equal(/localStorage|sessionStorage|__TEST__|mockPersist/.test(block), false, 'a CI-only persistence path appeared');

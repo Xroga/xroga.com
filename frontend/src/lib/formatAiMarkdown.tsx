@@ -167,6 +167,8 @@ interface SafeConfirmation {
     string;
   expiresAt:
     string;
+  approval?: { accountReference: string; operation: string; actionDigest: string; destination: unknown;
+    criticalParameters: unknown; spendMaximumMicroUsd: string | null; currency: string | null };
 }
 
 function toolkitLabel(
@@ -489,6 +491,20 @@ function BusinessActionConfirmationInline({
 
       {status ===
       'pending' ? (
+        <span role="group" aria-label="Exact action approval" className="flex flex-col gap-1 text-[12px] text-[var(--foreground)]/75">
+          {confirmation?.approval ? <>
+            <span>Account: {confirmation.approval.accountReference}</span>
+            <span>Operation: {confirmation.approval.operation}</span>
+            <span>Destination: {JSON.stringify(confirmation.approval.destination)}</span>
+            <span>Spend ceiling: {confirmation.approval.spendMaximumMicroUsd === null ? 'No spending authority included' : `${confirmation.approval.spendMaximumMicroUsd} micro-USD, ${confirmation.approval.currency}`}</span>
+            <code className="block max-h-48 overflow-auto whitespace-pre-wrap break-all">{JSON.stringify(confirmation.approval.criticalParameters, null, 2)}</code>
+            <span className="break-all text-[10px]">Prepared digest: {confirmation.approval.actionDigest}</span>
+          </> : <span>This older action needs to be prepared again before confirmation.</span>}
+        </span>
+      ) : null}
+
+      {status ===
+      'pending' ? (
         <span className="flex flex-wrap items-center gap-2 pt-1">
           <button
             type="button"
@@ -496,9 +512,7 @@ function BusinessActionConfirmationInline({
               confirm
             }
             disabled={
-              Boolean(
-                busy,
-              )
+              Boolean(busy) || !confirmation?.approval
             }
             className="rounded-lg bg-[var(--accent)] px-3 py-1.5 text-[12px] font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
@@ -527,7 +541,7 @@ function BusinessActionConfirmationInline({
           </button>
 
           <span className="text-[11px] text-[var(--foreground)]/50">
-            Executes once only.
+            One dispatch attempt. Review uncertain outcomes before retrying.
           </span>
         </span>
       ) : null}

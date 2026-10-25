@@ -7,13 +7,18 @@ function source(relativePath: string): string {
   return fs.readFileSync(path.resolve(__dirname, relativePath), 'utf8');
 }
 
-test('voice uses the supplied AudioLines icon with no pill, circle, settings, or fake Voice off UI', () => {
+test('voice uses an idle microphone and supplied listening AudioLines with no fake Voice off UI', () => {
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
   const icon = source('../../components/terminal/AudioLinesIcon.tsx');
   const css = source('../../styles/uiverse.css');
 
-  assert.match(voice, /<AudioLinesIcon size=\{28\}/);
-  assert.match(icon, /motion\.path/);
+  assert.match(voice, /mode === 'listening' \? <AudioLinesIcon size=\{22\} active \/> : <Mic/);
+  assert.match(icon, /<m\.path/);
+  assert.match(icon, /scaleY: \[1, scale, 1\]/);
+  assert.match(icon, /controls\.start\(active && canAnimate \? 'animate' : 'normal'\)/);
+  assert.match(icon, /const canAnimate = isAnimated && !reduced/);
+  assert.match(icon, /repeat: active \? Number\.POSITIVE_INFINITY : 0/);
+  assert.equal((icon.match(/\{ x: \d+, d:/g) ?? []).length, 6);
   assert.doesNotMatch(voice, /Voice off|Voice settings|Prefer female|Prefer male|Tone/);
   assert.match(css, /VOICE V8 — wake \+ multilingual inline voice/);
   assert.match(css, /border-radius:\s*0\s*!important/);

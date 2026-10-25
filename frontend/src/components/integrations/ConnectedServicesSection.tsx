@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { FreeApiOptionsPanel } from '@/components/integrations/FreeApiOptionsPanel';
 import { Key, Lock } from 'lucide-react';
-import { loadCredentials, hasVault } from '@/lib/credentialVault';
+import { loadLegacyCredentials, hasLegacyBrowserVault } from '@/lib/credentialVault';
 import toast from 'react-hot-toast';
 import { SettingsPanelHeader } from '@/components/settings/SettingsPrimitives';
 
@@ -19,10 +19,10 @@ const CONNECTABLE = [
  */
 export function ConnectedServicesSection() {
   const [customCount, setCustomCount] = useState(0);
-  const vaultReady = hasVault();
+  const legacyVaultPresent = hasLegacyBrowserVault();
 
   useEffect(() => {
-    setCustomCount(loadCredentials().length);
+    setCustomCount(loadLegacyCredentials().length);
   }, []);
 
   function explainCredentialSetup(name: string) {
@@ -65,13 +65,13 @@ export function ConnectedServicesSection() {
       </div>
 
       <p className="text-[11px] leading-relaxed text-[var(--text-muted)]">
-        {vaultReady ? (
+        {legacyVaultPresent ? (
           <>
-            Your vault has {customCount} custom credential{customCount === 1 ? '' : 's'}. Unlock with your vault password to view or copy keys below.
+            {customCount} retired browser credential{customCount === 1 ? '' : 's'} need an explicit one-time import or reconnection below. Rotate imported values after migration.
           </>
         ) : (
           <>
-            <strong className="text-[var(--text-primary)]">Set a vault password</strong> in Custom API Keys — required every time you view or copy an integrated key.
+            Add custom credentials below. Values are stored by the authenticated server vault and aren’t returned to the browser.
           </>
         )}
       </p>

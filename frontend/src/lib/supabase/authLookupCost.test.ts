@@ -28,9 +28,19 @@ test('public content and guest-browse app pages do not cost an auth round trip',
 });
 
 test('private pages still cost one, because the answer decides the response', () => {
-  for (const pathname of ['/workspace/project-private', '/admin', '/onboarding']) {
+  for (const pathname of ['/workspace/project-private', '/admin', '/onboarding', '/os-preview', '/os-preview/founder']) {
     assert.equal(requiresUserLookup(pathname), true, `${pathname} must still be gated`);
   }
+});
+
+test('private OS preview denies before streaming and reuses server identity, role and MFA policy',()=>{
+  assert.match(MIDDLEWARE,/pathname === '\/os-preview' \|\| pathname\.startsWith\('\/os-preview\/'\)/);
+  assert.match(MIDDLEWARE,/await authorizeFounderRequest/);
+  assert.match(MIDDLEWARE,/getUser: async \(\) => user/);
+  assert.match(MIDDLEWARE,/supabase\.rpc\('current_community_role'\)/);
+  assert.match(MIDDLEWARE,/supabase\.auth\.mfa\.getAuthenticatorAssuranceLevel\(\)/);
+  assert.match(MIDDLEWARE,/status: 403/);assert.match(MIDDLEWARE,/'Cache-Control': 'private, no-store'/);
+  assert.doesNotMatch(MIDDLEWARE,/user_metadata.*owner|localStorage|NEXT_PUBLIC_.*FOUNDER/);
 });
 
 test('auth pages keep the lookup even though they are public', () => {

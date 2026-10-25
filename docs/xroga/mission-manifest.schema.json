@@ -1,0 +1,455 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "missionId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "baseSha": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "requirementIds": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "state": {
+      "type": "string",
+      "enum": [
+        "IN_PROGRESS",
+        "CODE_COMPLETE",
+        "VERIFIED_SCOPE",
+        "LIVE_VERIFIED",
+        "BLOCKED"
+      ]
+    },
+    "risk": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "changedFiles": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "decisions": {
+      "type": "object",
+      "properties": {
+        "keep": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "extend": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "replace": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "deprecate": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "keep",
+        "extend",
+        "replace",
+        "deprecate"
+      ],
+      "additionalProperties": false
+    },
+    "schemaImpact": {
+      "type": "object",
+      "properties": {
+        "changed": {
+          "type": "boolean"
+        },
+        "migrations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "rollout": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rollback": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "changed",
+        "migrations",
+        "rollout",
+        "rollback"
+      ],
+      "additionalProperties": false
+    },
+    "securityImpact": {
+      "type": "object",
+      "properties": {
+        "auth": {
+          "type": "object",
+          "properties": {
+            "changed": {
+              "type": "boolean"
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "changed",
+            "description"
+          ],
+          "additionalProperties": false
+        },
+        "tenant": {
+          "type": "object",
+          "properties": {
+            "changed": {
+              "type": "boolean"
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "changed",
+            "description"
+          ],
+          "additionalProperties": false
+        },
+        "approval": {
+          "type": "object",
+          "properties": {
+            "changed": {
+              "type": "boolean"
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "changed",
+            "description"
+          ],
+          "additionalProperties": false
+        },
+        "credentials": {
+          "type": "object",
+          "properties": {
+            "changed": {
+              "type": "boolean"
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "changed",
+            "description"
+          ],
+          "additionalProperties": false
+        },
+        "egress": {
+          "type": "object",
+          "properties": {
+            "changed": {
+              "type": "boolean"
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "changed",
+            "description"
+          ],
+          "additionalProperties": false
+        },
+        "cost": {
+          "type": "object",
+          "properties": {
+            "changed": {
+              "type": "boolean"
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "changed",
+            "description"
+          ],
+          "additionalProperties": false
+        },
+        "billing": {
+          "type": "object",
+          "properties": {
+            "changed": {
+              "type": "boolean"
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "changed",
+            "description"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "auth",
+        "tenant",
+        "approval",
+        "credentials",
+        "egress",
+        "cost",
+        "billing"
+      ],
+      "additionalProperties": false
+    },
+    "tests": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "negative": {
+            "type": "boolean"
+          },
+          "reference": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "command",
+          "scope",
+          "negative",
+          "reference"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "architecture": {
+      "type": "object",
+      "properties": {
+        "change": {
+          "type": "string",
+          "enum": [
+            "none",
+            "extends_canonical",
+            "new_control_plane",
+            "replacement"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rfc": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "change",
+        "reason",
+        "rfc"
+      ],
+      "additionalProperties": false
+    },
+    "rollout": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rollback": {
+      "type": "string",
+      "minLength": 1
+    },
+    "knownGaps": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "placeholderClaimsRemaining": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "evidenceRefs": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "claimsFullProductCompletion": {
+      "type": "boolean"
+    },
+    "claimsAllBatchCommandsComplete": {
+      "type": "boolean"
+    },
+    "release": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": [
+            "BLOCKED",
+            "NOT_REQUESTED",
+            "READY_FOR_REVIEW",
+            "LIVE_VERIFIED"
+          ]
+        },
+        "blockers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "authenticatedE2e": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "BLOCKED",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "stagedSecurity": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "BLOCKED",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "liveUrl": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "deployedSha": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "state",
+        "blockers",
+        "authenticatedE2e",
+        "stagedSecurity",
+        "liveUrl",
+        "deployedSha"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "version",
+    "missionId",
+    "baseSha",
+    "requirementIds",
+    "state",
+    "risk",
+    "scope",
+    "changedFiles",
+    "decisions",
+    "schemaImpact",
+    "securityImpact",
+    "tests",
+    "architecture",
+    "rollout",
+    "rollback",
+    "knownGaps",
+    "placeholderClaimsRemaining",
+    "evidenceRefs",
+    "claimsFullProductCompletion",
+    "claimsAllBatchCommandsComplete",
+    "release"
+  ],
+  "additionalProperties": false
+}

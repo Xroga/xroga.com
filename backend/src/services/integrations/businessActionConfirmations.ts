@@ -1,3 +1,9 @@
+import { isDeepStrictEqual } from 'node:util';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { requireTenantContext, type TenantContext } from '../../security/tenantContext.js';
+import { executeAuthorizedAction } from '../../security/authority/enforce.js';
+import { preparedActionDigest } from '../../security/authority/digest.js';
+import { redactOperationsValue } from '../../operations/operationsEngine.js';
 import {
   getSupabaseAdmin,
 } from '../../config/supabase.js';
@@ -9,6 +15,9 @@ import {
 
 import {
   executePreparedBusinessAction,
+  verifyPlanDigest,
+  snapshotBusinessActionPlan,
+  businessActionAuthorityScope,
   type BusinessActionPlan,
   type BusinessActionExecutionOutcome,
 } from './businessAction.js';
@@ -41,6 +50,7 @@ interface ConfirmationRow {
   claimed_at?: string | null;
   completed_at?: string | null;
   failure_code?: string | null;
+  effect_receipt?: Record<string, unknown> | null;
 }
 
 export interface SafeBusinessActionConfirmation {
@@ -52,6 +62,11 @@ export interface SafeBusinessActionConfirmation {
   createdAt: string;
   expiresAt: string;
   request?: string;
+  approval?: {
+    preparedActionId: string; actionDigest: string; accountReference: string; operation: string;
+    actionClass: string; destination: unknown; criticalParameters: unknown; spendMaximumMicroUsd: string | null; currency: string | null;
+  };
+  receipt?: { id: string; outcome: string; recordedAt: string; resultDigest?: string };
   toolSlug?: string;
   argumentsPreview?: string;
 }
@@ -71,7 +86,7 @@ export function previewBusinessActionArguments(argumentsValue: Record<string, un
     }
     return value;
   };
-  return JSON.stringify(scrub(argumentsValue, 0), null, 2).slice(0, 24_000);
+  return JSON.stringify(scrub(redactOperationsValue(argumentsValue), 0), null, 2).slice(0, 24_000);
 }
 
 function cleanConfirmationId(
@@ -183,6 +198,7 @@ function safeConfirmation(
 ): SafeBusinessActionConfirmation {
   const risk =
     row.risk;
+  const plan = isBusinessActionPlan(row.plan) && row.plan.authority && verifyPlanDigest(row.plan) ? row.plan : undefined;
 
   if (
     risk !== 'read' &&
@@ -220,11 +236,20 @@ function safeConfirmation(
 
     expiresAt:
       row.expires_at,
-    ...(isBusinessActionPlan(row.plan) ? {
-      request: row.plan.useCase,
-      toolSlug: row.plan.toolSlug,
-      argumentsPreview: previewBusinessActionArguments(row.plan.arguments),
-    } : {}),
+    ...(plan ? { request: redactOperationsValue(plan.useCase) as string } : {}),
+    ...(plan ? { approval: { preparedActionId: row.id, actionDigest: row.plan_digest,
+      accountReference: plan.authority!.connectedAccountId, operation: plan.toolSlug,
+      actionClass: plan.authority!.actionClass,
+      destination: redactOperationsValue(plan.arguments.destination ?? plan.arguments.recipient ?? plan.arguments.to ?? plan.arguments.channel ?? plan.arguments.target ?? null),
+      criticalParameters: redactOperationsValue(plan.arguments),
+      spendMaximumMicroUsd: plan.authority!.maxSpendMicroUsd, currency: plan.authority!.currency } } : {}),
+    ...(row.effect_receipt && row.effect_receipt.grantId === row.id
+      && ['provider_reported_success','dispatch_uncertain','not_dispatched'].includes(String(row.effect_receipt.outcome))
+      && Number.isFinite(Date.parse(String(row.effect_receipt.recordedAt)))
+      ? { receipt: { id: row.id, outcome: String(row.effect_receipt.outcome), recordedAt: String(row.effect_receipt.recordedAt),
+          ...(typeof row.effect_receipt.resultDigest === 'string' && /^[a-f0-9]{64}$/.test(row.effect_receipt.resultDigest)
+            ? { resultDigest: row.effect_receipt.resultDigest } : {}) } } : {}),
+    ...(plan ? { toolSlug: plan.toolSlug, argumentsPreview: previewBusinessActionArguments(plan.arguments) } : {}),
   };
 }
 
@@ -307,6 +332,12 @@ export async function createBusinessActionConfirmation(
   userId: string,
   plan: BusinessActionPlan,
 ): Promise<SafeBusinessActionConfirmation> {
+  if (!isBusinessActionPlan(plan) || !verifyPlanDigest(plan)) {
+    throw new ComposioClientError('The prepared external action changed after planning.', {
+      status: 409, code: 'BUSINESS_ACTION_PLAN_CHANGED',
+    });
+  }
+  plan = snapshotBusinessActionPlan(plan);
   if (
     !plan.requiresConfirmation
   ) {
@@ -323,7 +354,11 @@ export async function createBusinessActionConfirmation(
   const db =
     getSupabaseAdmin();
 
-  const expiresAt =
+  if (plan.authority && (plan.authority.userId !== userId || plan.authority.tenantId !== userId
+    || !Number.isFinite(Date.parse(plan.authority.expiresAt)) || Date.parse(plan.authority.expiresAt) <= Date.now())) {
+    throw new ComposioClientError('The action approval scope is invalid or expired.', { status: 409, code: 'BUSINESS_ACTION_AUTHORITY_SCOPE_REQUIRED' });
+  }
+  const expiresAt = plan.authority?.expiresAt ??
     new Date(
       Date.now() +
         CONFIRMATION_TTL_MS,
@@ -382,9 +417,7 @@ export async function createBusinessActionConfirmation(
     );
   }
 
-  return safeConfirmation(
-    { ...(data as ConfirmationRow), plan },
-  );
+  return safeConfirmation({ ...data, plan } as ConfirmationRow);
 }
 
 export async function getBusinessActionConfirmation(
@@ -408,7 +441,7 @@ export async function getBusinessActionConfirmation(
         'business_action_confirmations',
       )
       .select(
-        'id,user_id,status,plan,plan_digest,summary,toolkit,risk,created_at,expires_at,claimed_at,completed_at,failure_code',
+        'id,user_id,status,plan,plan_digest,summary,toolkit,risk,created_at,expires_at,claimed_at,completed_at,failure_code,effect_receipt',
       )
       .eq(
         'id',
@@ -470,11 +503,12 @@ export async function cancelBusinessActionConfirmation(
     );
 
   if (
-    current.status !==
-    'pending'
+    current.status !== 'pending' && current.status !== 'executing'
   ) {
     return current;
   }
+
+  if (current.status === 'executing') return cancelClaimedBusinessActionConfirmation(userId, id);
 
   const db =
     getSupabaseAdmin();
@@ -483,39 +517,14 @@ export async function cancelBusinessActionConfirmation(
     data,
     error,
   } =
-    await db
-      .from(
-        'business_action_confirmations',
-      )
-      .update(
-        {
-          status:
-            'cancelled',
-
-          completed_at:
-            new Date()
-              .toISOString(),
-        },
-      )
-      .eq(
-        'id',
-        id,
-      )
-      .eq(
-        'user_id',
-        userId,
-      )
-      .eq(
-        'status',
-        'pending',
-      )
-      .select(
-        'id,user_id,status,plan_digest,summary,toolkit,risk,created_at,expires_at,claimed_at,completed_at,failure_code',
-      )
-      .maybeSingle();
+    await db.from('business_action_confirmations')
+      .update({ status: 'cancelled', completed_at: new Date().toISOString() })
+      .eq('id', id).eq('user_id', userId).eq('status', 'pending')
+      .select('id,user_id,status,plan_digest,summary,toolkit,risk,created_at,expires_at,claimed_at,completed_at,failure_code')
+      .maybeSingle<ConfirmationRow>();
 
   if (
-    error
+    error || (data && (data.id !== id || data.user_id !== userId))
   ) {
     throw new ComposioClientError(
       'Xroga could not cancel the pending action.',
@@ -530,10 +539,9 @@ export async function cancelBusinessActionConfirmation(
   if (
     !data
   ) {
-    return getBusinessActionConfirmation(
-      userId,
-      id,
-    );
+    // A concurrent claim may have won the pending CAS. Revoke under the same
+    // lock used for dispatch, unless that external effect has already started.
+    return cancelClaimedBusinessActionConfirmation(userId, id);
   }
 
   return safeConfirmation(
@@ -542,8 +550,53 @@ export async function cancelBusinessActionConfirmation(
   );
 }
 
+async function cancelClaimedBusinessActionConfirmation(userId: string, id: string): Promise<SafeBusinessActionConfirmation> {
+  const { data, error } = await getSupabaseAdmin().rpc('cancel_business_action_confirmation', {
+    p_owner: userId, p_id: id,
+  }).maybeSingle<ConfirmationRow>();
+  if (error || !data || data.id !== id || data.user_id !== userId) {
+    throw new ComposioClientError('Xroga could not cancel the action.', {
+      status: 503, code: 'BUSINESS_ACTION_CONFIRMATION_STORE_UNAVAILABLE',
+    });
+  }
+  return safeConfirmation(data);
+}
+
+async function finishClaimedConfirmation(
+  db: SupabaseClient, userId: string, id: string, expected: ConfirmationRow, status: 'consumed' | 'failed', failureCode?: unknown, resultDigest?: string,
+): Promise<ConfirmationRow> {
+  const code = status === 'consumed' ? null
+    : typeof failureCode === 'string' && /^[A-Za-z0-9_.:-]{1,120}$/.test(failureCode) ? failureCode : 'execution_failed';
+  if (expected.id !== id || expected.user_id !== userId || expected.status !== 'executing'
+    || typeof expected.claimed_at !== 'string' || !Number.isFinite(Date.parse(expected.claimed_at))) {
+    throw new ComposioClientError('The claimed action record could not be verified.', {
+      status: 503, code: 'BUSINESS_ACTION_CONFIRMATION_FINALIZE_FAILED',
+    });
+  }
+  const scopedPlan = isBusinessActionPlan(expected.plan) && expected.plan.authority ? expected.plan : undefined;
+  const receipt = scopedPlan ? { version: 1, grantId: id, planDigest: expected.plan_digest,
+    provider: expected.toolkit, account: scopedPlan.authority!.connectedAccountId, operation: scopedPlan.toolSlug,
+    ...(status === 'consumed' && typeof resultDigest === 'string' && /^[a-f0-9]{64}$/.test(resultDigest) ? { resultDigest } : {}) } : undefined;
+  const { data, error } = await db.rpc('finish_business_action_confirmation', {
+    p_owner: userId, p_expected: receipt ? { ...expected, effect_receipt: receipt } : expected, p_status: status, p_failure_code: code,
+  }).maybeSingle<ConfirmationRow>();
+  if (error || !data || data.id !== id || data.user_id !== userId || data.status !== status || data.failure_code !== code
+    || typeof data.completed_at !== 'string' || !Number.isFinite(Date.parse(data.completed_at))
+    || !['plan','plan_digest','summary','toolkit','risk','created_at','expires_at','claimed_at']
+      .every(key => isDeepStrictEqual(data[key as keyof ConfirmationRow], expected[key as keyof ConfirmationRow]))
+    || (receipt && (!data?.effect_receipt || !Object.entries(receipt).every(([key, value]) => data.effect_receipt![key] === value)
+      || !['provider_reported_success','dispatch_uncertain','not_dispatched'].includes(String(data.effect_receipt.outcome))
+      || (status === 'consumed' && data.effect_receipt.outcome !== 'provider_reported_success')
+      || !Number.isFinite(Date.parse(String(data.effect_receipt.recordedAt)))))) {
+    throw new ComposioClientError('Xroga could not finalize the claimed action record. Its execution outcome may require recovery.', {
+      status: 503, code: 'BUSINESS_ACTION_CONFIRMATION_FINALIZE_FAILED',
+    });
+  }
+  return data as ConfirmationRow;
+}
+
 export async function confirmBusinessAction(
-  userId: string,
+  context: TenantContext,
   confirmationId: string,
 ): Promise<{
   confirmation:
@@ -557,6 +610,7 @@ export async function confirmBusinessAction(
       }
     >;
 }> {
+  const { userId } = requireTenantContext(context);
   const id =
     cleanConfirmationId(
       confirmationId,
@@ -651,7 +705,10 @@ export async function confirmBusinessAction(
       row.plan,
     ) ||
     row.plan.planDigest !==
-      row.plan_digest
+      row.plan_digest ||
+    row.summary !== row.plan.summary ||
+    row.toolkit !== row.plan.toolkit ||
+    row.risk !== row.plan.risk
   ) {
     throw new ComposioClientError(
       'Stored business-action confirmation is invalid.',
@@ -663,42 +720,15 @@ export async function confirmBusinessAction(
     );
   }
 
-  const claimedAt =
-    new Date()
-      .toISOString();
-
   const {
     data: claimed,
     error: claimError,
   } =
     await db
-      .from(
-        'business_action_confirmations',
-      )
-      .update(
-        {
-          status:
-            'executing',
-
-          claimed_at:
-            claimedAt,
-        },
-      )
-      .eq(
-        'id',
-        id,
-      )
-      .eq(
-        'user_id',
-        userId,
-      )
-      .eq(
-        'status',
-        'pending',
-      )
-      .select(
-        'id,user_id,status,plan,plan_digest,summary,toolkit,risk,created_at,expires_at,claimed_at,completed_at,failure_code',
-      )
+      .rpc('claim_business_action_confirmation', {
+        p_owner: userId, p_id: id, p_digest: row.plan_digest,
+        p_plan: row.plan, p_expires: row.expires_at,
+      })
       .maybeSingle();
 
   if (
@@ -736,34 +766,20 @@ export async function confirmBusinessAction(
       claimedRow.plan,
     ) ||
     claimedRow.plan.planDigest !==
-      claimedRow.plan_digest
+      claimedRow.plan_digest ||
+    claimedRow.plan_digest !== row.plan_digest ||
+    claimedRow.summary !== claimedRow.plan.summary ||
+    claimedRow.toolkit !== claimedRow.plan.toolkit ||
+    claimedRow.risk !== claimedRow.plan.risk ||
+    !isDeepStrictEqual(claimedRow.plan, row.plan) ||
+    claimedRow.created_at !== row.created_at ||
+    claimedRow.expires_at !== row.expires_at ||
+    typeof claimedRow.claimed_at !== 'string' ||
+    !Number.isFinite(Date.parse(claimedRow.claimed_at)) ||
+    claimedRow.user_id !== userId ||
+    claimedRow.id !== id ||
+    claimedRow.status !== 'executing'
   ) {
-    await db
-      .from(
-        'business_action_confirmations',
-      )
-      .update(
-        {
-          status:
-            'failed',
-
-          completed_at:
-            new Date()
-              .toISOString(),
-
-          failure_code:
-            'invalid_plan',
-        },
-      )
-      .eq(
-        'id',
-        id,
-      )
-      .eq(
-        'user_id',
-        userId,
-      );
-
     throw new ComposioClientError(
       'Stored business-action confirmation is invalid.',
       {
@@ -775,13 +791,31 @@ export async function confirmBusinessAction(
   }
 
   try {
-    const execution =
-      await executePreparedBusinessAction(
+    // Validate before any provider metadata request, including malformed legacy
+    // records. The existing claim is the single durable confirmation authority.
+    const plan = snapshotBusinessActionPlan(claimedRow.plan);
+    const scope = businessActionAuthorityScope(plan);
+    if (Date.parse(scope.expiresAt) !== Date.parse(claimedRow.expires_at)) {
+      throw new ComposioClientError('The approval expiry changed.', { status: 409, code: 'BUSINESS_ACTION_AUTHORITY_SCOPE_REQUIRED' });
+    }
+    const claim = { id, userId, scopeDigest: preparedActionDigest(scope), expiresAt: scope.expiresAt, claimedAt: claimedRow.claimed_at! };
+    const execution = await executeAuthorizedAction({ context, scope, claim, revalidateBeforeEffect: async () => {
+      const { data, error } = await db.rpc('authorize_business_action_dispatch', { p_owner: userId, p_expected: claimedRow }).maybeSingle<ConfirmationRow & { effect_started_at: string }>();
+      if (error || !data || data.id !== id || data.user_id !== userId || data.status !== 'executing'
+        || !Number.isFinite(Date.parse(data.effect_started_at))
+        || !['plan','plan_digest','summary','toolkit','risk','created_at','expires_at','claimed_at']
+          .every(key => isDeepStrictEqual(data[key as keyof ConfirmationRow], claimedRow[key as keyof ConfirmationRow]))) {
+        throw new ComposioClientError('The action approval was revoked, expired or changed before dispatch.', {
+          status: 409, code: 'BUSINESS_ACTION_DISPATCH_DENIED',
+        });
+      }
+      return claim;
+    } }, async authorityPermit => executePreparedBusinessAction(
         {
           userId,
 
           plan:
-            claimedRow.plan,
+            plan,
 
           authorization: {
             explicitUserAuthorization:
@@ -790,8 +824,9 @@ export async function confirmBusinessAction(
             confirmedHighRisk:
               true,
           },
+          authorityPermit,
         },
-      );
+      ));
 
     if (
       execution.status !==
@@ -807,66 +842,7 @@ export async function confirmBusinessAction(
       );
     }
 
-    const completedAt =
-      new Date()
-        .toISOString();
-
-    const {
-      data: completed,
-      error: completeError,
-    } =
-      await db
-        .from(
-          'business_action_confirmations',
-        )
-        .update(
-          {
-            status:
-              'consumed',
-
-            completed_at:
-              completedAt,
-
-            failure_code:
-              null,
-
-            execution_result: {
-              toolkit: execution.toolkit,
-              toolSlug: execution.toolSlug,
-              resultText: execution.resultText,
-            },
-          },
-        )
-        .eq(
-          'id',
-          id,
-        )
-        .eq(
-          'user_id',
-          userId,
-        )
-        .eq(
-          'status',
-          'executing',
-        )
-        .select(
-          'id,user_id,status,plan_digest,summary,toolkit,risk,created_at,expires_at,claimed_at,completed_at,failure_code',
-        )
-        .single();
-
-    if (
-      completeError ||
-      !completed
-    ) {
-      throw new ComposioClientError(
-        'The external action completed, but Xroga could not finalize its confirmation record.',
-        {
-          status: 503,
-          code:
-            'BUSINESS_ACTION_CONFIRMATION_FINALIZE_FAILED',
-        },
-      );
-    }
+    const completed = await finishClaimedConfirmation(db, userId, id, claimedRow, 'consumed', undefined, execution.resultDigest);
 
     return {
       confirmation:
@@ -893,40 +869,7 @@ export async function confirmBusinessAction(
           'BUSINESS_ACTION_CONFIRMATION_FINALIZE_FAILED'
       )
     ) {
-      await db
-        .from(
-          'business_action_confirmations',
-        )
-        .update(
-          {
-            status:
-              'failed',
-
-            completed_at:
-              new Date()
-                .toISOString(),
-
-            failure_code:
-              (
-                error as {
-                  code?: string;
-                }
-              )?.code ??
-              'execution_failed',
-          },
-        )
-        .eq(
-          'id',
-          id,
-        )
-        .eq(
-          'user_id',
-          userId,
-        )
-        .eq(
-          'status',
-          'executing',
-        );
+      await finishClaimedConfirmation(db, userId, id, claimedRow, 'failed', (error as { code?: unknown })?.code);
     }
 
     throw error;

@@ -1,7 +1,6 @@
 import { getSupabaseAdmin } from '../config/supabase.js';
+import { randomUUID } from 'node:crypto';
 import {
-  canPermanentlyDelete,
-  canUseOfficialIdentity,
   isCommunityStaff,
   type CommunityAuthor,
   type CommunityComment,
@@ -48,6 +47,15 @@ function bool(row: DbRow, key: string): boolean {
   return row[key] === true;
 }
 
+/** Authorization is per field; permission to accept an answer cannot edit its author. */
+export function canUpdateCommentFields(role: CommunityRole, ownsComment: boolean, ownsPost: boolean, input: UpdateCommunityCommentInput): boolean {
+  if (isCommunityStaff(role)) return true;
+  if (input.isHidden !== undefined) return false;
+  if (input.body !== undefined && !ownsComment) return false;
+  if (input.isAcceptedAnswer !== undefined && !ownsPost) return false;
+  return input.body !== undefined || input.isAcceptedAnswer !== undefined;
+}
+
 function encodeCursor(row: DbRow): string {
   return Buffer.from(JSON.stringify({ createdAt: text(row, 'created_at'), id: text(row, 'id') })).toString('base64url');
 }
@@ -74,7 +82,7 @@ function profileToAuthor(row: DbRow | undefined, id: string): CommunityAuthor {
 }
 
 export class CommunityService {
-  private readonly db = getSupabaseAdmin();
+  constructor(private readonly db = getSupabaseAdmin()) {}
 
   async role(userId?: string): Promise<CommunityRole> {
     if (!userId) return 'member';
@@ -147,14 +155,14 @@ export class CommunityService {
   }
 
   async listPosts(input: CommunityListInput, viewerId?: string): Promise<{ posts: CommunityPost[]; nextCursor: string | null }> {
-    const role = await this.role(viewerId);
-    const staff = isCommunityStaff(role);
     const fetchLimit = input.filter === 'trending' || input.filter === 'unanswered' || input.official === 'missing'
       ? Math.min(100, input.limit * 4)
       : input.limit + 1;
-    let request = this.db.from('community_posts').select(POST_COLUMNS);
-    if (!staff || input.hidden === 'exclude') request = request.eq('is_hidden', false);
-    if (staff && input.hidden === 'only') request = request.eq('is_hidden', true);
+    let request = this.db.rpc('visible_community_posts', { p_actor: viewerId ?? null }).select(POST_COLUMNS);
+    if (input.hidden === 'exclude') request = request.eq('is_hidden', false);
+    // Preserve the existing non-staff "only" fallback to visible posts. This
+    // lookup affects filtering only, visibility is independently enforced by SQL.
+    if (input.hidden === 'only' && isCommunityStaff(await this.role(viewerId))) request = request.eq('is_hidden', true);
     const category = input.category ?? (['feedback', 'feature_request', 'bug', 'question'].includes(input.filter) ? input.filter : undefined);
     const status = input.status ?? (['released', 'solved'].includes(input.filter) ? input.filter : undefined);
     if (category) request = request.eq('category', category);
@@ -181,14 +189,10 @@ export class CommunityService {
   }
 
   async getPost(postId: string, viewerId?: string): Promise<{ post: CommunityPost; comments: CommunityComment[] }> {
-    const role = await this.role(viewerId);
-    const staff = isCommunityStaff(role);
-    let postRequest = this.db.from('community_posts').select(POST_COLUMNS).eq('id', postId);
-    if (!staff) postRequest = postRequest.eq('is_hidden', false);
+    const postRequest = this.db.rpc('visible_community_posts', { p_actor: viewerId ?? null }).select(POST_COLUMNS).eq('id', postId);
     const row = await query<DbRow | null>(postRequest.maybeSingle(), 'The community post is temporarily unavailable.');
     if (!row) throw new CommunityServiceError(404, 'POST_NOT_FOUND', 'Community post not found.');
-    let commentRequest = this.db.from('community_comments').select(COMMENT_COLUMNS).eq('post_id', postId);
-    if (!staff) commentRequest = commentRequest.eq('is_hidden', false);
+    const commentRequest = this.db.rpc('visible_community_comments', { p_actor: viewerId ?? null, p_post: postId }).select(COMMENT_COLUMNS);
     const commentRows = await query<DbRow[]>(commentRequest.order('created_at', { ascending: true }), 'Comments are temporarily unavailable.');
     const posts = await this.enrichPosts([row], viewerId);
     const profiles = await this.profiles(commentRows.map((comment) => text(comment, 'author_id')));
@@ -211,44 +215,59 @@ export class CommunityService {
   }
 
   async createPost(userId: string, input: CreateCommunityPostInput): Promise<CommunityPost> {
-    const rows = await query<DbRow[]>(
-      this.db.from('community_posts').insert({ author_id: userId, category: input.category, title: input.title, body: input.body }).select(POST_COLUMNS),
-      'Your post could not be published.',
-    );
-    return (await this.enrichPosts(rows, userId))[0];
+    const id = randomUUID();
+    const row = await this.mutateItem(userId, 'create_post', id, { category: input.category, title: input.title, body: input.body },
+      { id, author_id: userId, category: input.category, title: input.title, body: input.body });
+    return (await this.enrichPosts([row], userId))[0];
+  }
+
+  private async mutateItem(userId: string, operation: string, target: string, payload: DbRow, expected: DbRow): Promise<DbRow> {
+    const { data, error } = await this.db.rpc('mutate_community_item_authorized', {
+      p_actor: userId, p_operation: operation, p_target: target, p_payload: payload,
+    });
+    if (error?.code === '42501') throw new CommunityServiceError(403, 'FORBIDDEN', 'You cannot change this community item.');
+    if (error?.code === 'P0002') throw new CommunityServiceError(404, 'COMMUNITY_ITEM_NOT_FOUND', 'Community item not found.');
+    if (error?.code === 'P0003') throw new CommunityServiceError(423, 'POST_LOCKED', 'This discussion is locked.');
+    const row = data?.row;
+    if (error || data?.operation !== operation || data?.target !== target || !row || typeof row !== 'object' || Array.isArray(row)
+      || (operation !== 'vote_remove' && (typeof row.id !== 'string' || !row.id))
+      || Object.entries(expected).some(([key,value]) => row[key] !== value)) {
+      throw new CommunityServiceError(503, 'COMMUNITY_STORAGE_UNAVAILABLE', 'The community change could not be verified.');
+    }
+    return row;
   }
 
   async updatePost(userId: string, postId: string, input: UpdateCommunityPostInput): Promise<CommunityPost> {
-    const role = await this.role(userId);
-    const current = await query<DbRow | null>(this.db.from('community_posts').select(POST_COLUMNS).eq('id', postId).maybeSingle(), 'The post could not be checked.');
-    if (!current) throw new CommunityServiceError(404, 'POST_NOT_FOUND', 'Community post not found.');
-    if (text(current, 'author_id') !== userId && !isCommunityStaff(role)) throw new CommunityServiceError(403, 'FORBIDDEN', 'You cannot edit this post.');
-    if (bool(current, 'is_locked') && !isCommunityStaff(role)) throw new CommunityServiceError(423, 'POST_LOCKED', 'This discussion is locked.');
-    const rows = await query<DbRow[]>(this.db.from('community_posts').update(input).eq('id', postId).select(POST_COLUMNS), 'The post could not be updated.');
-    return (await this.enrichPosts(rows, userId))[0];
+    const patch: DbRow = {};
+    for (const key of ['title', 'body', 'category'] as const) if (input[key] !== undefined) patch[key] = input[key];
+    const row = await this.mutatePost(userId, postId, 'update', patch);
+    return (await this.enrichPosts([row], userId))[0];
   }
 
   async deletePost(userId: string, postId: string): Promise<void> {
-    const role = await this.role(userId);
-    const current = await query<DbRow | null>(this.db.from('community_posts').select('author_id,is_locked').eq('id', postId).maybeSingle(), 'The post could not be checked.');
-    if (!current) throw new CommunityServiceError(404, 'POST_NOT_FOUND', 'Community post not found.');
-    const owns = text(current, 'author_id') === userId;
-    if (!owns && !canPermanentlyDelete(role)) throw new CommunityServiceError(403, 'FORBIDDEN', 'Permanent deletion requires an administrator.');
-    if (owns && bool(current, 'is_locked') && !canPermanentlyDelete(role)) throw new CommunityServiceError(423, 'POST_LOCKED', 'This discussion is locked.');
-    await query(this.db.from('community_posts').delete().eq('id', postId), 'The post could not be deleted.');
+    await this.mutatePost(userId, postId, 'delete', {});
+  }
+
+  private async mutatePost(userId: string, postId: string, operation: 'update' | 'delete' | 'moderate', patch: DbRow): Promise<DbRow> {
+    const { data, error } = await this.db.rpc('mutate_community_post_authorized', {
+      p_actor: userId, p_post: postId, p_operation: operation, p_patch: patch,
+    });
+    if (error?.code === '42501') throw new CommunityServiceError(403, 'FORBIDDEN', 'You cannot change this post.');
+    if (error?.code === 'P0002') throw new CommunityServiceError(404, 'POST_NOT_FOUND', 'Community post not found.');
+    if (error?.code === 'P0003') throw new CommunityServiceError(423, 'POST_LOCKED', 'This discussion is locked.');
+    const row = data?.post;
+    if (error || !row || typeof row !== 'object' || Array.isArray(row) || data.operation !== operation
+      || row.id !== postId || typeof row.author_id !== 'string'
+      || Object.entries(patch).some(([key, value]) => row[key] !== value)) {
+      throw new CommunityServiceError(503, 'COMMUNITY_STORAGE_UNAVAILABLE', 'The post change could not be verified.');
+    }
+    return row;
   }
 
   async createComment(userId: string, postId: string, input: CreateCommunityCommentInput): Promise<CommunityComment> {
-    const role = await this.role(userId);
-    const post = await query<DbRow | null>(this.db.from('community_posts').select('id,is_hidden,is_locked').eq('id', postId).maybeSingle(), 'The discussion could not be checked.');
-    if (!post || (bool(post, 'is_hidden') && !isCommunityStaff(role))) throw new CommunityServiceError(404, 'POST_NOT_FOUND', 'Community post not found.');
-    if (bool(post, 'is_locked') && !isCommunityStaff(role)) throw new CommunityServiceError(423, 'POST_LOCKED', 'This discussion is locked.');
-    if (input.officialIdentity && !canUseOfficialIdentity(role, input.officialIdentity)) {
-      throw new CommunityServiceError(403, 'OFFICIAL_IDENTITY_FORBIDDEN', 'You cannot use that official identity.');
-    }
-    const rows = await query<DbRow[]>(this.db.from('community_comments').insert({ post_id: postId, author_id: userId, body: input.body, official_identity: input.officialIdentity ?? null }).select(COMMENT_COLUMNS), 'Your reply could not be published.');
+    const row = await this.mutateItem(userId, 'create_comment', postId, { body: input.body, official_identity: input.officialIdentity ?? null },
+      { post_id: postId, author_id: userId, body: input.body, official_identity: input.officialIdentity ?? null, is_hidden: false, is_accepted_answer: false });
     const profiles = await this.profiles([userId]);
-    const row = rows[0];
     return {
       id: text(row, 'id'), postId, authorId: userId, author: profileToAuthor(profiles.get(userId), userId),
       body: text(row, 'body'), officialIdentity: input.officialIdentity ?? null,
@@ -257,86 +276,65 @@ export class CommunityService {
   }
 
   async updateComment(userId: string, commentId: string, input: UpdateCommunityCommentInput): Promise<void> {
-    const role = await this.role(userId);
-    const current = await query<DbRow | null>(this.db.from('community_comments').select('author_id,post_id').eq('id', commentId).maybeSingle(), 'The reply could not be checked.');
-    if (!current) throw new CommunityServiceError(404, 'COMMENT_NOT_FOUND', 'Reply not found.');
-    const ownsComment = text(current, 'author_id') === userId;
-    let allowed = ownsComment && input.isHidden === undefined && input.isAcceptedAnswer === undefined;
-    if (isCommunityStaff(role)) allowed = true;
-    if (!allowed && input.isAcceptedAnswer !== undefined) {
-      const post = await query<DbRow | null>(this.db.from('community_posts').select('author_id').eq('id', text(current, 'post_id')).maybeSingle(), 'The post owner could not be checked.');
-      allowed = text(post ?? {}, 'author_id') === userId;
-    }
-    if (!allowed) throw new CommunityServiceError(403, 'FORBIDDEN', 'You cannot update this reply.');
     const patch: Record<string, unknown> = {};
     if (input.body !== undefined) patch.body = input.body;
     if (input.isHidden !== undefined) patch.is_hidden = input.isHidden;
     if (input.isAcceptedAnswer !== undefined) patch.is_accepted_answer = input.isAcceptedAnswer;
-    await query(this.db.from('community_comments').update(patch).eq('id', commentId), 'The reply could not be updated.');
+    const { data, error } = await this.db.rpc('update_community_comment_authorized', {
+      p_actor: userId, p_comment: commentId, p_patch: patch,
+    });
+    if (error?.code === '42501') throw new CommunityServiceError(403, 'FORBIDDEN', 'You cannot update this reply.');
+    if (error?.code === 'P0002') throw new CommunityServiceError(404, 'COMMENT_NOT_FOUND', 'Reply not found.');
+    if (error || !data || typeof data !== 'object' || Array.isArray(data)
+      || data.id !== commentId || typeof data.author_id !== 'string' || typeof data.post_id !== 'string'
+      || Object.entries(patch).some(([key, value]) => data[key] !== value)) {
+      throw new CommunityServiceError(503, 'COMMUNITY_STORAGE_UNAVAILABLE', 'The reply update could not be verified.');
+    }
   }
 
   async deleteComment(userId: string, commentId: string): Promise<void> {
-    const role = await this.role(userId);
-    const current = await query<DbRow | null>(this.db.from('community_comments').select('author_id').eq('id', commentId).maybeSingle(), 'The reply could not be checked.');
-    if (!current) throw new CommunityServiceError(404, 'COMMENT_NOT_FOUND', 'Reply not found.');
-    if (text(current, 'author_id') !== userId && !canPermanentlyDelete(role)) throw new CommunityServiceError(403, 'FORBIDDEN', 'Permanent deletion requires an administrator.');
-    await query(this.db.from('community_comments').delete().eq('id', commentId), 'The reply could not be deleted.');
+    await this.mutateItem(userId, 'delete_comment', commentId, {}, { id: commentId });
   }
 
   async setVote(userId: string, postId: string, enabled: boolean): Promise<{ voted: boolean }> {
-    const post = await query<DbRow | null>(this.db.from('community_posts').select('id,is_hidden').eq('id', postId).maybeSingle(), 'The post could not be checked.');
-    if (!post || bool(post, 'is_hidden')) throw new CommunityServiceError(404, 'POST_NOT_FOUND', 'Community post not found.');
-    if (enabled) {
-      const { error } = await this.db.from('community_votes').upsert({ post_id: postId, user_id: userId }, { onConflict: 'post_id,user_id', ignoreDuplicates: true });
-      if (error) throw new CommunityServiceError(503, 'COMMUNITY_STORAGE_UNAVAILABLE', 'The vote could not be recorded.');
-    } else {
-      await query(this.db.from('community_votes').delete().eq('post_id', postId).eq('user_id', userId), 'The vote could not be removed.');
-    }
+    await this.mutateItem(userId, enabled ? 'vote_add' : 'vote_remove', postId, {},
+      { post_id: postId, user_id: userId, ...(!enabled ? { voted: false } : {}) });
     return { voted: enabled };
   }
 
   async moderatePost(userId: string, postId: string, input: ModerateCommunityPostInput): Promise<CommunityPost> {
-    const role = await this.role(userId);
-    if (!isCommunityStaff(role)) throw new CommunityServiceError(403, 'COMMUNITY_ADMIN_REQUIRED', 'Community staff access is required.');
     const patch: Record<string, unknown> = {};
     if (input.status !== undefined) patch.status = input.status;
     if (input.isPinned !== undefined) patch.is_pinned = input.isPinned;
     if (input.isHidden !== undefined) patch.is_hidden = input.isHidden;
     if (input.isLocked !== undefined) patch.is_locked = input.isLocked;
-    const rows = await query<DbRow[]>(this.db.from('community_posts').update(patch).eq('id', postId).select(POST_COLUMNS), 'The moderation action could not be completed.');
-    if (!rows.length) throw new CommunityServiceError(404, 'POST_NOT_FOUND', 'Community post not found.');
-    return (await this.enrichPosts(rows, userId))[0];
+    const row = await this.mutatePost(userId, postId, 'moderate', patch);
+    return (await this.enrichPosts([row], userId))[0];
   }
 
   async addNote(userId: string, postId: string, note: string): Promise<DbRow> {
-    const role = await this.role(userId);
-    if (!isCommunityStaff(role)) throw new CommunityServiceError(403, 'COMMUNITY_ADMIN_REQUIRED', 'Community staff access is required.');
-    const rows = await query<DbRow[]>(this.db.from('community_admin_notes').insert({ post_id: postId, author_id: userId, note }).select('id,post_id,author_id,note,created_at,updated_at'), 'The internal note could not be saved.');
-    return rows[0];
+    return this.mutateItem(userId, 'add_note', postId, { note }, { post_id: postId, author_id: userId, note });
   }
 
   async notes(userId: string, postId: string): Promise<DbRow[]> {
-    const role = await this.role(userId);
-    if (!isCommunityStaff(role)) throw new CommunityServiceError(403, 'COMMUNITY_ADMIN_REQUIRED', 'Community staff access is required.');
-    return query<DbRow[]>(this.db.from('community_admin_notes').select('id,post_id,author_id,note,created_at,updated_at').eq('post_id', postId).order('created_at', { ascending: false }), 'Internal notes are temporarily unavailable.');
+    const data = await query<DbRow | null>(this.db.rpc('read_community_staff_notes', { p_actor: userId, p_post: postId }), 'Internal notes are temporarily unavailable.');
+    if (!data) throw new CommunityServiceError(403, 'COMMUNITY_ADMIN_REQUIRED', 'Community staff access is required.');
+    if (!isCommunityStaff(data.role as CommunityRole) || !Array.isArray(data.notes)
+      || data.notes.some(note => !note || typeof note !== 'object' || note.post_id !== postId || typeof note.note !== 'string')) {
+      throw new CommunityServiceError(503, 'COMMUNITY_STORAGE_UNAVAILABLE', 'Internal notes could not be verified.');
+    }
+    return data.notes;
   }
 
   async summary(userId: string): Promise<Record<string, number | string>> {
-    const role = await this.role(userId);
-    if (!isCommunityStaff(role)) throw new CommunityServiceError(403, 'COMMUNITY_ADMIN_REQUIRED', 'Community staff access is required.');
-    const posts = await query<DbRow[]>(this.db.from('community_posts').select('category,status,is_hidden,created_at'), 'Community totals are temporarily unavailable.');
-    const count = (predicate: (row: DbRow) => boolean) => posts.filter(predicate).length;
-    return {
-      role,
-      open: count((row) => text(row, 'status') === 'open' && !bool(row, 'is_hidden')),
-      underReview: count((row) => text(row, 'status') === 'under_review'),
-      featureRequests: count((row) => text(row, 'category') === 'feature_request'),
-      bugs: count((row) => text(row, 'category') === 'bug'),
-      questions: count((row) => text(row, 'category') === 'question'),
-      planned: count((row) => text(row, 'status') === 'planned'),
-      building: count((row) => text(row, 'status') === 'building'),
-      released: count((row) => text(row, 'status') === 'released'),
-      hidden: count((row) => bool(row, 'is_hidden')),
-    };
+    const data = await query<DbRow | null>(this.db.rpc('read_community_staff_summary', { p_actor: userId }), 'Community totals are temporarily unavailable.');
+    if (!data) throw new CommunityServiceError(403, 'COMMUNITY_ADMIN_REQUIRED', 'Community staff access is required.');
+    const counts = data.counts as DbRow | null;
+    const keys = ['open','underReview','featureRequests','bugs','questions','planned','building','released','hidden'];
+    if (!isCommunityStaff(data.role as CommunityRole) || !counts || typeof counts !== 'object'
+      || keys.some(key => !Number.isSafeInteger(counts[key]) || (counts[key] as number) < 0)) {
+      throw new CommunityServiceError(503, 'COMMUNITY_STORAGE_UNAVAILABLE', 'Community totals could not be verified.');
+    }
+    return { role: data.role as CommunityRole, ...Object.fromEntries(keys.map(key => [key, counts[key] as number])) };
   }
 }

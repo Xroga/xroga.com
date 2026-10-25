@@ -1,0 +1,38 @@
+{
+  "machines": [
+    {
+      "id": "7845746ce20008",
+      "state": "started",
+      "cordoned": false,
+      "digest": "sha256:57979db6a41a1a924ac6c3e733ab272c9d1aaf5f33d976feaaf306ec7e02f592"
+    },
+    {
+      "id": "e820730b296098",
+      "state": "started",
+      "cordoned": false,
+      "digest": "sha256:57979db6a41a1a924ac6c3e733ab272c9d1aaf5f33d976feaaf306ec7e02f592"
+    }
+  ],
+  "atUtc": "2026-10-24T20:20:20.1513088Z",
+  "status": "PASS_PUBLIC_PRODUCTION_REOPENED_ON_PINNED_MANAGED_CUSTODY_API",
+  "phase4Deployed": false,
+  "mainMerged": false,
+  "checks": [
+    {
+      "serviceStatus": "ok",
+      "release": "d24ab25384ec34005d68753dd54134059393e39f",
+      "path": "/health",
+      "status": 200
+    },
+    {
+      "serviceStatus": "ready",
+      "release": "d24ab25384ec34005d68753dd54134059393e39f",
+      "path": "/ready",
+      "status": 200
+    },
+    {
+      "status": 401,
+      "path": "/api/projects"
+    }
+  ]
+}

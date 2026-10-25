@@ -1,0 +1,733 @@
+{
+  "version": 1,
+  "scope": "ORIGINAL_COMMAND008_009_PLANNING_ONLY_NOT_PHASE3_IMPLEMENTATION_OR_ADMISSION",
+  "frozenAgainstCodeSource": "0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0",
+  "acceptedPhaseTwoSource": "a21a82029276d38d53c9e17c580a15f57b653fe3",
+  "phase2FinalSourceAcceptance": "VERIFIED_ORIGINAL007_EXTERNAL_RECEIPT_SEPARATE_PHASE3_ADMISSION_REQUIRED",
+  "phase2AcceptanceManifest": {
+    "path": "artifacts/phase-2-proof/a21a82029276d38d53c9e17c580a15f57b653fe3/command-007-final-manifest.json",
+    "sha256": "394b76da1fa2a57ce2adebcb83bb38e095065b45b2e99aeb649300c144831fcb"
+  },
+  "originalContractPath": "docs/xroga/research/inputs/batch-one-report.txt",
+  "originalContractSha256": "a0926f4e47149450c3f9fc33c59782eac31d19be57789f11950b20b03c01b499",
+  "criteria": [
+    {
+      "id": "XB01-C008-AC01",
+      "command": "008",
+      "originalText": "One canonical authority API exists.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "issued_actor",
+        "current_owner",
+        "construction_scope",
+        "operations",
+        "business_intent",
+        "confirmations"
+      ],
+      "implementationObligation": "Extend one canonical API across existing business/operations/adapter boundaries. Do not add a competing approval engine.",
+      "testRequirements": [
+        "Every alternate consequential path reaches the same guard",
+        "Missing or cloned actor denies before external I/O"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C008-AC02",
+      "command": "008",
+      "originalText": "businessAction consequential writes use it.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "business_intent",
+        "confirmations",
+        "plugin_policy"
+      ],
+      "implementationObligation": "Bind business writes to durable outcome-scoped authority immediately before their existing adapter effect.",
+      "testRequirements": [
+        "Same approved intent succeeds",
+        "Changed account/recipient/action/digest and absent approval deny"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C008-AC03",
+      "command": "008",
+      "originalText": "operationsEngine high-risk operations use it or a documented compatibility adapter.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "operations"
+      ],
+      "implementationObligation": "Connect existing high-risk operations claims through the same API or exact documented compatibility adapter.",
+      "testRequirements": [
+        "Current role/parent/lease and approval succeed",
+        "Revocation/parent changes during waits deny without effects"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C008-AC04",
+      "command": "008",
+      "originalText": "Grant binds tenant, user, action, target and digest.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "issued_actor",
+        "business_intent",
+        "operations"
+      ],
+      "implementationObligation": "Bind tenant/user/run, action, target/account, digest/version, risk, issuance/expiry/revocation/use, limits/currency and receipt.",
+      "testRequirements": [
+        "Exact captured grant tuple",
+        "Substitute every bound field independently and reject"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C008-AC05",
+      "command": "008",
+      "originalText": "Replay tests pass.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "confirmations",
+        "operations",
+        "post_effect_uncertainty"
+      ],
+      "implementationObligation": "Reuse durable single-use states and supported provider idempotency, preserving ambiguous outcomes.",
+      "testRequirements": [
+        "Concurrent duplicate consume has one allowed effect",
+        "Lost reply never causes blind external replay"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C008-AC06",
+      "command": "008",
+      "originalText": "Mutation-after-confirmation tests pass.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "business_intent",
+        "operations"
+      ],
+      "implementationObligation": "Execute only the confirmed immutable snapshot, with no post-confirmation mutable arguments.",
+      "testRequirements": [
+        "Original payload and target succeed",
+        "Delayed recipient/account/amount/currency mutation denies"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C008-AC07",
+      "command": "008",
+      "originalText": "Expiry/revocation tests pass.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "confirmations",
+        "operations",
+        "pkce"
+      ],
+      "implementationObligation": "Recheck expiry and current revocation after waits and before the decisive effect.",
+      "testRequirements": [
+        "Valid current grant succeeds",
+        "Observed lock wait followed by expiry/revoke denies"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C008-AC08",
+      "command": "008",
+      "originalText": "Spend-bound tests pass.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "budget",
+        "quota",
+        "accounting",
+        "post_effect_uncertainty"
+      ],
+      "implementationObligation": "Connect the same canonical grant to existing micro-USD budget/reservation accounting.",
+      "testRequirements": [
+        "Below limit and exact settlement",
+        "Above limit, changed currency/intent, concurrent spend and uncertain settlement fail safely"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C008-AC09",
+      "command": "008",
+      "originalText": "LLM text alone cannot create authority.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "business_intent",
+        "confirmations",
+        "plugin_policy",
+        "untrusted_origin"
+      ],
+      "implementationObligation": "Model/document/web text and unrelated confirmation must never mint authority.",
+      "testRequirements": [
+        "Explicit bound user approval",
+        "Prompt injection, guessed digest, unrelated later yes and forged confirmation deny"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C008-AC10",
+      "command": "008",
+      "originalText": "Every canonical consequential action class has a policy entry.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "operations",
+        "business_intent",
+        "plugin_policy"
+      ],
+      "implementationObligation": "Freeze actual adapter-to-action policy inventory for all twelve original classes, including source-backed absent/blocked entries.",
+      "testRequirements": [
+        "Every actual adapter has a justified class/policy",
+        "Missing class, bypass adapter and unapproved activation fail the inventory gate"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C009-AC01",
+      "command": "009",
+      "originalText": "All newly stored OAuth/provider secrets use CredentialVault.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "envelope",
+        "pkce",
+        "github",
+        "vercel",
+        "supabase",
+        "byok_bundle",
+        "runtime_secrets"
+      ],
+      "implementationObligation": "Route every new OAuth/provider secret writer through the canonical CredentialVault, preserving current revisions and exact receipts.",
+      "testRequirements": [
+        "All credential classes encrypt at rest",
+        "No plaintext compatibility write after cutover"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION",
+        "COMMAND008_CANONICAL_AUTHORITY_INTERFACE"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C009-AC02",
+      "command": "009",
+      "originalText": "No frontend endpoint returns raw secrets.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "github",
+        "vercel",
+        "supabase",
+        "byok_bundle",
+        "runtime_store"
+      ],
+      "implementationObligation": "Prevent raw credentials across all frontend status/error/projection endpoints.",
+      "testRequirements": [
+        "Expected redacted status",
+        "Seeded token/refresh/service/signing canaries never appear"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION",
+        "COMMAND008_CANONICAL_AUTHORITY_INTERFACE"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C009-AC03",
+      "command": "009",
+      "originalText": "No LLM/task prompt receives raw provider credential.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "business_intent",
+        "byok_bundle",
+        "runtime_secrets"
+      ],
+      "implementationObligation": "Keep raw provider credentials out of model/task/tool/evidence payloads.",
+      "testRequirements": [
+        "Backend action-scoped retrieval",
+        "Prompt/tool/log/artifact canary exclusion for every consumer"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION",
+        "COMMAND008_CANONICAL_AUTHORITY_INTERFACE"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C009-AC04",
+      "command": "009",
+      "originalText": "Wrong-tenant retrieval test passes.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "issued_actor",
+        "current_owner",
+        "github",
+        "vercel",
+        "supabase",
+        "byok_bundle",
+        "runtime_store"
+      ],
+      "implementationObligation": "Deny wrong tenant/provider/account/type retrieval and decrypt.",
+      "testRequirements": [
+        "Own exact credential retrieval",
+        "Foreign actor/account, wrong AAD and canonical absence deny"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION",
+        "COMMAND008_CANONICAL_AUTHORITY_INTERFACE"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C009-AC05",
+      "command": "009",
+      "originalText": "Ciphertext tamper test passes.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "envelope"
+      ],
+      "implementationObligation": "Use authenticated encryption and complete tenant/account/provider/type AAD.",
+      "testRequirements": [
+        "Valid envelope roundtrip",
+        "Ciphertext/tag/nonce/AAD substitution and malformed envelope deny"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION",
+        "COMMAND008_CANONICAL_AUTHORITY_INTERFACE"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C009-AC06",
+      "command": "009",
+      "originalText": "Rotation test passes.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "envelope",
+        "github",
+        "vercel",
+        "supabase",
+        "byok_bundle",
+        "runtime_store"
+      ],
+      "implementationObligation": "Implement key/version rotation while retaining authorized old-record decrypt and safe rollback.",
+      "testRequirements": [
+        "Old/new version compatibility and completed rotation",
+        "Wrong key, partial rotation and unavailable production key fail closed"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION",
+        "COMMAND008_CANONICAL_AUTHORITY_INTERFACE"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C009-AC07",
+      "command": "009",
+      "originalText": "Revocation test passes.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "pkce",
+        "github",
+        "vercel",
+        "supabase",
+        "byok_bundle"
+      ],
+      "implementationObligation": "Preserve canonical revocation/revision fences through vault retrieval and writes.",
+      "testRequirements": [
+        "Current authorized credential",
+        "Disconnect/revoke during lock/download/refresh prevents resurrection or later use"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION",
+        "COMMAND008_CANONICAL_AUTHORITY_INTERFACE"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C009-AC08",
+      "command": "009",
+      "originalText": "PKCE has TTL + one-time semantics.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "pkce"
+      ],
+      "implementationObligation": "Keep OAuth PKCE TTL, provider/owner/epoch binding and one-use semantics.",
+      "testRequirements": [
+        "Valid callback consumes once",
+        "Expired/replayed/foreign state or changed epoch denies"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION",
+        "COMMAND008_CANONICAL_AUTHORITY_INTERFACE"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C009-AC09",
+      "command": "009",
+      "originalText": "Legacy migration is idempotent.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "envelope",
+        "github",
+        "vercel",
+        "supabase",
+        "byok_bundle",
+        "runtime_store"
+      ],
+      "implementationObligation": "Implement explicit idempotent legacy migration with inventory, receipts and rollback.",
+      "testRequirements": [
+        "Repeat migration makes no new semantic changes",
+        "Partial failure/duplicate/foreign legacy record cannot overwrite authority"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION",
+        "COMMAND008_CANONICAL_AUTHORITY_INTERFACE"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C009-AC10",
+      "command": "009",
+      "originalText": "Production cannot use development crypto provider.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "envelope",
+        "runtime_secrets"
+      ],
+      "implementationObligation": "Production must reject development key providers and insecure key fallbacks. Establish real deployment/KMS options before cutover.",
+      "testRequirements": [
+        "Configured production-provider contract tests",
+        "Development/literal/service-role/JWT fallback and unavailable custody deny"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION",
+        "COMMAND008_CANONICAL_AUTHORITY_INTERFACE"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C009-AC11",
+      "command": "009",
+      "originalText": "Credential audit reports remaining direct storage callers.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "pkce",
+        "github",
+        "vercel",
+        "supabase",
+        "byok_bundle",
+        "runtime_store"
+      ],
+      "implementationObligation": "Report every remaining direct credential storage caller using an actual source inventory.",
+      "testRequirements": [
+        "Complete reproducible direct-call register",
+        "Unknown writer or omitted credential class fails"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION",
+        "COMMAND008_CANONICAL_AUTHORITY_INTERFACE"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    },
+    {
+      "id": "XB01-C009-AC12",
+      "command": "009",
+      "originalText": "Remaining legacy callers are zero or explicitly blocked from production cutover.",
+      "source": "docs/xroga/research/inputs/batch-one-report.txt",
+      "phase": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED",
+      "existingMechanisms": [
+        "pkce",
+        "github",
+        "vercel",
+        "supabase",
+        "byok_bundle",
+        "runtime_store"
+      ],
+      "implementationObligation": "Reach zero legacy callers or explicitly block every remaining caller from production cutover.",
+      "testRequirements": [
+        "Verified migrated consumers",
+        "Unmigrated legacy path cannot activate or silently fall back"
+      ],
+      "dependencies": [
+        "B1_P2_VERIFIED",
+        "EXPLICIT_FOUNDER_PHASE3_ADMISSION",
+        "COMMAND008_CANONICAL_AUTHORITY_INTERFACE"
+      ],
+      "completionCondition": "Original criterion passes genuine source-bound tests and required integration/provider evidence. File presence, planning status and Command007 proof do not certify it."
+    }
+  ],
+  "interfaces": [
+    {
+      "id": "issued_actor",
+      "path": "backend/src/security/tenantContext.ts",
+      "sha256": "ecf0a5591895c075c28baad727fd390fb45fa9785dd9ef69f12ce3784cbbb5f3",
+      "contract": "Original WeakSet-issued immutable context. No plain user ID or cloned JSON can issue authority.",
+      "verificationScope": "REUSABLE_EXISTING_INTERFACE_NOT_COMMAND008_OR009_ACCEPTANCE"
+    },
+    {
+      "id": "current_owner",
+      "path": "backend/src/security/ownership.ts",
+      "sha256": "2771e83fbadd2591d749909cfdf5f4d641d57cbd052f9cf98dab52bb5075c792",
+      "contract": "Existing owner/resource/parent guards and non-enumerating denial.",
+      "verificationScope": "REUSABLE_EXISTING_INTERFACE_NOT_COMMAND008_OR009_ACCEPTANCE"
+    },
+    {
+      "id": "construction_scope",
+      "path": "backend/src/security/serviceRoleGuard.ts",
+      "sha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+      "contract": "Original issued-context construction and exact named data operations. Review-only constructor policy is uncallable and is never a general administrative grant or query sandbox.",
+      "verificationScope": "REUSABLE_EXISTING_INTERFACE_NOT_COMMAND008_OR009_ACCEPTANCE"
+    },
+    {
+      "id": "untrusted_origin",
+      "path": "frontend/src/lib/untrustedProxyResponsePolicy.mjs",
+      "sha256": "2f9681a30651e242fc237632eccab0a9252bc1074b429e53204ebb50cce06cc9",
+      "contract": "Retain the shared hosting/route policy for opaque upstream-content origins and no-script active-image isolation. This protects application cookies/storage and is not action approval or Command010 network enforcement.",
+      "verificationScope": "REUSABLE_EXISTING_INTERFACE_NOT_COMMAND008_OR009_ACCEPTANCE"
+    },
+    {
+      "id": "operations",
+      "path": "backend/src/operations/operationsService.ts",
+      "sha256": "f5c2b7d4015b8885761eee6761ed7a5b1639350d6fabb960d60bc8dcd3c99f59",
+      "contract": "Existing action/approval/claim/current-role/lease engine, atomic internal completion and automation finalization.",
+      "verificationScope": "REUSABLE_EXISTING_INTERFACE_NOT_COMMAND008_OR009_ACCEPTANCE"
+    },
+    {
+      "id": "business_intent",
+      "path": "backend/src/services/integrations/businessAction.ts",
+      "sha256": "0c2480b8fae9641148fceddd40e111d2d62d579cadd3cb5697e2853fd8ef24a2",
+      "contract": "Prepared immutable action digest and existing external adapter.",
+      "verificationScope": "REUSABLE_EXISTING_INTERFACE_NOT_COMMAND008_OR009_ACCEPTANCE"
+    },
+    {
+      "id": "confirmations",
+      "path": "backend/src/services/integrations/businessActionConfirmations.ts",
+      "sha256": "32229709ed4da07e64bd576390678e34900d0165e98ad458d55c19c12f6dba99",
+      "contract": "Existing durable pending/executing/consumed and current claim/finish state.",
+      "verificationScope": "REUSABLE_EXISTING_INTERFACE_NOT_COMMAND008_OR009_ACCEPTANCE"
+    },
+    {
+      "id": "plugin_policy",
+      "path": "backend/src/services/integrations/pluginPermissionPolicy.ts",
+      "sha256": "e2f5003e2bf6f567b9f893812668288e9dfb01e920df0eea7870896cdb3b3b3d",
+      "contract": "Current authoritative permission preference, never a replacement for an action grant.",
+      "verificationScope": "REUSABLE_EXISTING_INTERFACE_NOT_COMMAND008_OR009_ACCEPTANCE"
+    },
+    {
+      "id": "budget",
+      "path": "backend/src/ai/providerBudget.ts",
+      "sha256": "4c16b680db04feaff7a4ab3f1756c8fc668288f953760cfc8588d66d6a38bb1c",
+      "contract": "Existing micro-USD reservation/settle/release and parent fence. Dormant paid-cycle export now requires issued actor and exact period receipt, but does not establish payment approval.",
+      "verificationScope": "REUSABLE_EXISTING_INTERFACE_NOT_COMMAND008_OR009_ACCEPTANCE"
+    },
+    {
+      "id": "quota",
+      "path": "backend/src/ai/quota.ts",
+      "sha256": "a2b3f404004691fd201dadcd241a46d2d33b9b33a26a09b0cdfbb0cca76a01e4",
+      "contract": "Current durable quota evidence and owner-bound budget update receipt. No client upgrade authority.",
+      "verificationScope": "REUSABLE_EXISTING_INTERFACE_NOT_COMMAND008_OR009_ACCEPTANCE"
+    },
+    {
+      "id": "accounting",
+      "path": "backend/src/ai/usageAccounting.ts",
+      "sha256": "c1b6b050622cfa76e1daf090d78007da8d29afcaad6fd6ab5cad223292b97e68",
+      "contract": "Existing actor-bound durable usage transaction and exact receipt.",
+      "verificationScope": "REUSABLE_EXISTING_INTERFACE_NOT_COMMAND008_OR009_ACCEPTANCE"
+    },
+    {
+      "id": "post_effect_uncertainty",
+      "path": "backend/src/ai/postCompletionAccounting.ts",
+      "sha256": "383162b55f3eccc771041ad603f010043694b9c6eb23b915907ee7e78c5a379b",
+      "contract": "Preserve non-retryable completion/accounting uncertainty rather than re-executing a paid or consequential operation.",
+      "verificationScope": "REUSABLE_EXISTING_INTERFACE_NOT_COMMAND008_OR009_ACCEPTANCE"
+    },
+    {
+      "id": "pkce",
+      "path": "backend/src/services/integrations/oauthPkceStore.ts",
+      "sha256": "f66a59e450d7553418e3254fe573eb7d5e8123d47b5922f286c0d9989b21dd36",
+      "contract": "Existing owner/provider/epoch, TTL and one-use session admission.",
+      "verificationScope": "REUSABLE_EXISTING_INTERFACE_NOT_COMMAND008_OR009_ACCEPTANCE"
+    },
+    {
+      "id": "envelope",
+      "path": "backend/src/services/integrations/credentialEnvelope.ts",
+      "sha256": "76f0508b50bd9ba4548c90fbb7ed5214421639bef2895f6107cafb4fa72ff770",
+      "contract": "Existing authenticated-envelope helper, not a certified production vault/KMS.",
+      "verificationScope": "REUSABLE_EXISTING_INTERFACE_NOT_COMMAND008_OR009_ACCEPTANCE"
+    },
+    {
+      "id": "github",
+      "path": "backend/src/services/integrations/githubAuth.ts",
+      "sha256": "f0f2ffcc7beecd156976cda49c910e8c336912d4150a5fb899a2e1db4b4fee84",
+      "contract": "Canonical account/grant source, orphan mirror denial and revocation.",
+      "verificationScope": "REUSABLE_EXISTING_INTERFACE_NOT_COMMAND008_OR009_ACCEPTANCE"
+    },
+    {
+      "id": "vercel",
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "sha256": "c6e2554f8365db1b5a80b3b3fe11f3339dad3c52e376b3f7fefd885140f67875",
+      "contract": "Exact owner/account and original revision/refresh CAS, including delayed/disconnect denial.",
+      "verificationScope": "REUSABLE_EXISTING_INTERFACE_NOT_COMMAND008_OR009_ACCEPTANCE"
+    },
+    {
+      "id": "supabase",
+      "path": "backend/src/services/integrations/supabaseAuth.ts",
+      "sha256": "74f34f3da6268ede980df076b2334ae3ccd3baf5153b40911059b586fd41c463",
+      "contract": "Existing OAuth callback owner/account/project/revision binding.",
+      "verificationScope": "REUSABLE_EXISTING_INTERFACE_NOT_COMMAND008_OR009_ACCEPTANCE"
+    },
+    {
+      "id": "byok_bundle",
+      "path": "backend/src/services/integrations/userProviderKeys.ts",
+      "sha256": "2782f8e833d376b52ce755b6916ee99684e53575d5044f7f710f3b74b2785c3f",
+      "contract": "Current BYOK/provider identity, coherent Supabase bundle and revision guards.",
+      "verificationScope": "REUSABLE_EXISTING_INTERFACE_NOT_COMMAND008_OR009_ACCEPTANCE"
+    },
+    {
+      "id": "runtime_secrets",
+      "path": "backend/src/synthesis/projectRuntime/secretManager.ts",
+      "sha256": "c87a85c867c50912011975a9feb919194a37aada4dada38f59c3cbf1eb769898",
+      "contract": "Existing project secret retrieval consumer. Preserve owner/project/scope and replace unsafe production key custody through009.",
+      "verificationScope": "REUSABLE_EXISTING_INTERFACE_NOT_COMMAND008_OR009_ACCEPTANCE"
+    },
+    {
+      "id": "runtime_store",
+      "path": "backend/src/synthesis/projectRuntime/store.ts",
+      "sha256": "592ed786e73af7eda5862d54f72ee5a4f298050fb232cedf1c3dda39a6bd12bb",
+      "contract": "Current owner/session/revision/attempt parent guards and encrypted-record receipts.",
+      "verificationScope": "REUSABLE_EXISTING_INTERFACE_NOT_COMMAND008_OR009_ACCEPTANCE"
+    }
+  ],
+  "actionClasses": [
+    "READ",
+    "CREATE",
+    "UPDATE",
+    "DELETE",
+    "SEND_COMMUNICATION",
+    "PUBLISH",
+    "PURCHASE_OR_SPEND",
+    "TRANSFER_OR_FINANCIAL",
+    "CREDENTIAL_OR_PERMISSION_CHANGE",
+    "SENSITIVE_DATA_EXPORT",
+    "EXTERNAL_UPLOAD",
+    "ADMINISTRATIVE_HIGH_RISK"
+  ],
+  "restrictions": {
+    "additionalSpend": 0,
+    "phase3Started": false,
+    "productionMerge": false,
+    "deploy": false,
+    "dnsChange": false,
+    "liveCredentialMigration": false,
+    "paidProviderCall": false
+  },
+  "separatelyUnverified": [
+    "Actual R2 provider acceptance",
+    "Production-schema parity",
+    "Production key-management provider and permissions before009 cutover",
+    "Commercial hosting eligibility",
+    "Existing dependency advisories remain unwaived"
+  ],
+  "preparationEvidence": {
+    "source": "0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0",
+    "observationsArtifact": "artifacts/phase-2-proof/0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0/observations.json",
+    "observationsSha256": "0f8f3ee993f4fdd168e0de921399622ac884a94a01ede8d5b561d8577a6e49fa",
+    "manualReconciliationArtifact": "artifacts/phase-2-proof/0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0/final-manual-reconciliation-next-source.json",
+    "manualReconciliationSha256": "90231012295cbcd8d98780693d60a776532aae09830eb93b22496da512867501"
+  }
+}

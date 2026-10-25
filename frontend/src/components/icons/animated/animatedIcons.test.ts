@@ -175,7 +175,6 @@ test('reduced motion leaves every icon still', () => {
 
 test('the sidebar nav rows carry their animated icons', () => {
   for (const [label, icon] of [
-    ["'Workspace'", 'TerminalIcon'],
     ["'Dashboard'", 'LayoutGridIcon'],
     ["'Plugins'", 'ConnectIcon'],
     ["'Publish'", 'RocketIcon'],
@@ -189,15 +188,22 @@ test('the sidebar nav rows carry their animated icons', () => {
   }
 });
 
-test('the collapsed rail names each of its four shortcuts', () => {
+test('the collapsed rail keeps the current named creation, overview, integration and search controls', () => {
   // Searched forward from the rail, not from the top of the file: `SidebarNavScroller`
   // is imported above it, so an unanchored lookup ends the slice before it starts.
   const start = SIDEBAR.indexOf('xv-sidebar-collapsed-actions');
   const rail = SIDEBAR.slice(start, SIDEBAR.indexOf('<SidebarNavScroller', start));
   assert.ok(rail.length > 0, 'the collapsed rail could not be located');
-  assert.match(rail, /icon=\{LocateFixedIcon\}/, 'the rail lost the search glyph');
-  assert.match(rail, /icon=\{LayoutGridIcon\}/, 'the rail lost the dashboard glyph');
-  assert.match(rail, /icon=\{FolderOpenIcon\}/, 'the rail lost the folder');
+  assert.match(rail, /<LocateIcon size=\{16\} duration=\{1\}/, 'the rail lost the animated search glyph');
+  assert.match(rail, /<LucideBlocksIcon ref=\{overviewIconRef\} size=\{16\}/, 'the rail lost the animated overview glyph');
+  assert.match(rail, /overviewIconRef\.current\?\.startAnimation\(\)/);
+  assert.match(rail, /overviewIconRef\.current\?\.stopAnimation\(\)/);
+  for (const label of ['New Work', 'Search workspace', 'Overview', 'Integrations']) {
+    assert.ok(rail.includes(`aria-label="${label}"`), `${label} lost its accessible name`);
+  }
+  assert.match(rail, /onClick=\{\(\) => setSearchOpen\(true\)\}/);
+  assert.match(rail, /icon=\{ConnectIcon\}/);
+  assert.doesNotMatch(rail, /aria-label="Projects"|aria-label="Workspace"/);
   /*
    * The rail's second button carries the new-terminal window, not the code brackets.
    *
@@ -219,7 +225,12 @@ test('no static lucide glyph is left at a control that was given an animated one
     assert.ok(!gone.test(source), `${name} still renders the static glyph`);
   }
   assert.match(THEME, /icon=\{PaletteIcon\}/);
-  assert.match(HISTORY, /icon=\{FilterIcon\}/);
+  // PR836 replaced the repository-filter control with the Projects organizer.
+  // Assert the actual rendered scope, not now-unused legacy icon imports.
+  const organizer = HISTORY.slice(HISTORY.indexOf('  return <div className="mt-2 mb-1 px-1.5" data-sidebar-work-organizer>'));
+  assert.match(organizer, /<section aria-label="Projects"/);
+  assert.match(organizer, /aria-label="Create project"/);
+  assert.doesNotMatch(organizer, /<Filter\b|icon=\{FilterIcon\}|<RepositoryFilterPopover\b/);
   assert.match(PROFILE, /icon=\{SlidersHorizontalIcon\}/);
 });
 
@@ -241,7 +252,15 @@ test('the send button takes the wheel at rest and keeps the rest of its states',
 
 test('the composer takes the ring, the bars and the wheel', () => {
   assert.match(ACTIONS, /icon=\{CirclePlayIcon\}/, 'the composer menu trigger is not the ring');
-  assert.ok(!/<Plus\b/.test(ACTIONS), 'the static plus is back');
+  // The reusable component defaults to the ring. PR834 explicitly opts the
+  // canonical non-private composer into Plus in both empty and active chats.
+  assert.match(ACTIONS, /plusIcon\s*=\s*false/, 'ordinary composer defaults to the ring');
+  assert.match(ACTIONS, /plusIcon\?:\s*boolean/, 'starter icon is an explicit opt-in');
+  assert.match(ACTIONS, /plusIcon\s*\?\s*<Plus\b[^>]*\/?>\s*:\s*<AnimatedIcon icon=\{CirclePlayIcon\}/);
+  assert.equal((ACTIONS.match(/<Plus\b/g) ?? []).length, 1, 'no unconditional or duplicate plus');
+  const CHATBAR = read('../../terminal/TerminalChatBar.tsx');
+  assert.match(CHATBAR, /starter\s*=\s*false/);
+  assert.match(CHATBAR, /plusIcon=\{!incognito\}/);
   /*
    * The mic renders the meter directly rather than through `AnimatedIcon`, because it
    * drives the animation from the recording state rather than from a pointer. What it
@@ -292,13 +311,12 @@ test('every fullscreen and minimize control animates its corners', () => {
   }
 });
 
-test('Projects opens its folder, in the row and in the rail', () => {
-  const at = SIDEBAR.indexOf("label: 'Projects',");
-  assert.ok(at > 0, 'the Projects row is gone');
-  assert.match(SIDEBAR.slice(at, at + 260), /animated: FolderOpenIcon,/, 'the row lost the folder');
-  const start = SIDEBAR.indexOf('xv-sidebar-collapsed-actions');
-  const rail = SIDEBAR.slice(start, SIDEBAR.indexOf('<SidebarNavScroller', start));
-  assert.match(rail, /icon=\{FolderOpenIcon\}/, 'the rail lost the folder');
+test('Projects belongs to the current organizer instead of duplicate navigation rows', () => {
+  const organizer = HISTORY.slice(HISTORY.indexOf('data-sidebar-work-organizer'));
+  assert.match(organizer, /<section aria-label="Projects"/);
+  assert.match(organizer, /aria-label="Create project"/);
+  assert.match(SIDEBAR, /<SidebarProjectHistory expanded=\{navExpanded\}/);
+  assert.doesNotMatch(SIDEBAR, /label: 'Projects',/);
 });
 
 test('the merged Personalization settings tab wears the palette', () => {
@@ -466,12 +484,13 @@ test('the composer, the skin picker and the repo area take their icons', () => {
   assert.match(PROJECTS, /icon=\{TerminalIcon\}/, 'New Terminal lost the chevron');
 
   const BUBBLE = read('../../terminal/MessageBubbleActions.tsx');
-  for (const icon of ['UpvoteIcon', 'DownvoteIcon', 'CopyIcon', 'ShareIcon', 'Trash2Icon']) {
+  for (const icon of ['UpvoteIcon', 'DownvoteIcon', 'CopyIcon', 'ShareIcon']) {
     assert.match(BUBBLE, new RegExp(`icon=\\{${icon}\\}`), `the message actions lost ${icon}`);
   }
   assert.ok(!/ThumbsUp|ThumbsDown/.test(BUBBLE), 'the static thumbs are back');
   assert.ok(!/<Share2\b|<Trash2\b/.test(BUBBLE), 'static share/delete glyphs are back');
   assert.match(BUBBLE, /<MessageShareModal/, 'share fell back to clipboard-only output');
+  assert.doesNotMatch(BUBBLE, /aria-label="Delete"|onDelete/, 'message actions must not restore the retired delete control');
 });
 
 /**
@@ -592,7 +611,15 @@ test('the New Terminal label is hidden by name, not by element', () => {
     'a bare span rule is back, which hides the icon along with the label',
   );
   assert.match(CSS, /\.xv-new-terminal-compact__label \{ display: none; \}/, 'the label is no longer hidden');
-  assert.match(SIDEBAR, /className="xv-new-terminal-compact__label"/, 'the label lost the class the rule targets');
+  // PR827 replaced the compact text label with named icon-only controls.
+  // Both desktop and mobile still need an accessible name and a visible glyph.
+  const buttons = [...SIDEBAR.matchAll(/<button\b[^>]*aria-label="New Work"[^>]*>([\s\S]*?)<\/button>/g)];
+  assert.equal(buttons.length, 2, 'expanded and collapsed New Work controls must remain present');
+  assert.match(SIDEBAR, /aria-label="New Terminal"[\s\S]*?<AnimatedIcon icon=\{NewTerminalIcon\}/, 'the mobile creation control must retain its accessible name and icon');
+  for (const [, content] of buttons) {
+    assert.match(content, /<AnimatedIcon icon=\{NewTerminalIcon\}/);
+    assert.doesNotMatch(content, /xv-new-terminal-compact__label/, 'the retired hidden label must not wrap the icon');
+  }
 
   // The icon's own wrapper is a span, which is the whole reason the rule had to change.
   assert.match(HOST, /<span ref=\{hostRef\}/, 'the host is no longer a span, so this guard is checking the wrong thing');

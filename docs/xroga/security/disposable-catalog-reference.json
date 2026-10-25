@@ -1,0 +1,226 @@
+{
+  "version": 1,
+  "scope": "DISPOSABLE_METADATA_NOT_PRODUCTION_PARITY",
+  "sourceSha": "8a4e016c85cfd4d39ea0e681791abfe83719d9ea",
+  "runId": "39151242547",
+  "observedAt": "2026-10-18T17:51:18.472Z",
+  "catalogSha256": "7b0909436f58c68df95fec627a0b30a35129fc77940c745c7c3f2996157aadc2",
+  "catalogTables": 118,
+  "productionChanges": false,
+  "customerRowsRead": false,
+  "missingObservedTables": [
+    "public.images",
+    "public.websites"
+  ],
+  "additionalTables": [
+    {
+      "schema": "storage",
+      "table_name": "iceberg_namespaces",
+      "rls_enabled": true,
+      "rls_forced": false,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "bucket_name",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb",
+          "nullable": false
+        },
+        {
+          "name": "catalog_id",
+          "type": "uuid",
+          "nullable": false
+        }
+      ],
+      "constraints": [
+        {
+          "name": "iceberg_namespaces_catalog_id_fkey",
+          "definition": "FOREIGN KEY (catalog_id) REFERENCES storage.buckets_analytics(id) ON DELETE CASCADE"
+        },
+        {
+          "name": "iceberg_namespaces_pkey",
+          "definition": "PRIMARY KEY (id)"
+        }
+      ],
+      "policies": [],
+      "grants": [
+        {
+          "role": "anon",
+          "privilege": "SELECT"
+        },
+        {
+          "role": "authenticated",
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "privilege": "UPDATE"
+        }
+      ]
+    },
+    {
+      "schema": "storage",
+      "table_name": "iceberg_tables",
+      "rls_enabled": true,
+      "rls_forced": false,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "namespace_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "bucket_name",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "location",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false
+        },
+        {
+          "name": "remote_table_id",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "shard_key",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "shard_id",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "catalog_id",
+          "type": "uuid",
+          "nullable": false
+        }
+      ],
+      "constraints": [
+        {
+          "name": "iceberg_tables_catalog_id_fkey",
+          "definition": "FOREIGN KEY (catalog_id) REFERENCES storage.buckets_analytics(id) ON DELETE CASCADE"
+        },
+        {
+          "name": "iceberg_tables_namespace_id_fkey",
+          "definition": "FOREIGN KEY (namespace_id) REFERENCES storage.iceberg_namespaces(id) ON DELETE CASCADE"
+        },
+        {
+          "name": "iceberg_tables_pkey",
+          "definition": "PRIMARY KEY (id)"
+        }
+      ],
+      "policies": [],
+      "grants": [
+        {
+          "role": "anon",
+          "privilege": "SELECT"
+        },
+        {
+          "role": "authenticated",
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "privilege": "UPDATE"
+        }
+      ]
+    }
+  ],
+  "ownershipReview": "Storage analytics catalog hierarchy references buckets_analytics and namespaces. No application tenant column is invented. RLS enabled with no policies denies browser SELECT despite SELECT grants. Service-role access is still privileged, not certified by this metadata. Production presence/parity remains unverified."
+}

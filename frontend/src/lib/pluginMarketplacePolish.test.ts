@@ -355,7 +355,7 @@ test('Add Plugin opens a compact anchored menu before deeper setup dialogs', () 
 
 test('upstream platform app is not exposed as an Xroga App', () => {
   const runtime = source(
-    'backend/src/services/integrations/composioClient.ts',
+    'backend/src/services/integrations/composioNamespace.ts',
   );
 
   assert.match(runtime, /clean === 'composio'/);

@@ -1,7 +1,9 @@
 /** Recognize an explicit request to connect an app before action-tool discovery. */
 export function connectionSearchTerms(message: string): string[] | null {
   const text = message.trim().toLowerCase();
-  if (!/\b(?:connect|reconnect|link|authorize|authorise)\b/.test(text)
+  // A requested URL/source "link" is a noun, not authorization to link an app.
+  const linkCommand = /(?:^|[;.!?]\s*|\b(?:please|can you|could you|would you|i want to|we want to|and|then)\s+)link\s+(?:(?:my|our|the|to|with|an?)\s+){0,4}[a-z]/.test(text);
+  if (!(/\b(?:connect|reconnect|authorize|authorise)\b/.test(text) || linkCommand)
     || /\b(?:do not|don't|without|never)\s+(?:want(?:ing)?\s+to\s+)?(?:connect|reconnect|link|authorize|authorise)\b/.test(text)) return null;
 
   const stop = new Set([

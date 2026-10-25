@@ -1,6 +1,7 @@
 import {
   getSupabaseAdmin,
 } from '../../config/supabase.js';
+import { TenantAccessError } from '../../security/tenantErrors.js';
 
 import type {
   SoftwareProject,
@@ -8,6 +9,7 @@ import type {
 
 import {
   SupabaseProjectRuntimeStore,
+  restoreOwnerBoundProjectRevision,
   type ProjectRevisionRecord,
   type ProjectRuntimeEventRecord,
 } from './store.js';
@@ -31,42 +33,9 @@ function revisionFromRow(
   projectId:
     string,
 ): ProjectRevisionRecord {
-  return {
-    revisionId:
-      String(
-        row.revision_id,
-      ),
-
-    userId,
-
-    projectId,
-
-    runId:
-      String(
-        row.run_id,
-      ),
-
-    revisionNumber:
-      Number(
-        row.revision_number,
-      ),
-
-    workspaceFingerprint:
-      String(
-        row.workspace_fingerprint,
-      ),
-
-    project:
-      clone(
-        row.software_project as
-          SoftwareProject,
-      ),
-
-    createdAt:
-      String(
-        row.created_at,
-      ),
-  };
+  const restored = restoreOwnerBoundProjectRevision(row, userId, projectId);
+  if (!restored) throw new TenantAccessError(404, 'RESOURCE_NOT_FOUND');
+  return restored;
 }
 
 export async function listProjectRevisions(
@@ -99,7 +68,7 @@ export async function listProjectRevisions(
         'project_runtime_revisions',
       )
       .select(
-        'revision_id, run_id, revision_number, workspace_fingerprint, software_project, created_at',
+        'revision_id, user_id, project_id, run_id, revision_number, workspace_fingerprint, software_project, created_at',
       )
       .eq(
         'user_id',
@@ -165,7 +134,7 @@ export async function loadProjectRevision(
         'project_runtime_revisions',
       )
       .select(
-        'revision_id, run_id, revision_number, workspace_fingerprint, software_project, created_at',
+        'revision_id, user_id, project_id, run_id, revision_number, workspace_fingerprint, software_project, created_at',
       )
       .eq(
         'user_id',

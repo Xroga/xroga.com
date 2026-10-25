@@ -1,6 +1,7 @@
 import {
   randomUUID,
 } from 'node:crypto';
+import { loadProjectRuntimeSession } from '../../security/runtimeProjectBinding.js';
 
 import type {
   SoftwareRunEvent,
@@ -567,6 +568,10 @@ export async function startOrRefreshLivePreview(
         .status ===
         'running'
     ) {
+      // Reject a same-owner, different-project binding before restore can call a
+      // provider. Missing expired sessions may still use the existing new-runtime path.
+      const bound = await loadProjectRuntimeSession(runtimeStore,input.userId,input.project.projectId,previousBinding.sessionId);
+      if (bound) {
       try {
         session =
           await runtime
@@ -591,6 +596,7 @@ export async function startOrRefreshLivePreview(
       } catch {
         session =
           null;
+      }
       }
     }
 
@@ -1004,11 +1010,7 @@ if (
 
       const current =
         (
-          await runtimeStore
-            .loadSession(
-              input.userId,
-              session.sessionId,
-            )
+          await loadProjectRuntimeSession(runtimeStore,input.userId,input.project.projectId,session.sessionId)
         ) ??
         session;
 

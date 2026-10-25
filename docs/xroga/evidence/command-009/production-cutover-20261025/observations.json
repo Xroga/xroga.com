@@ -1,0 +1,132 @@
+{
+  "scope": "ACTUAL_SOURCE_CI_AND_PRODUCTION_MANAGED_PROVIDER_CUSTODY_CUTOVER",
+  "sourceSha": "9fb905602455672784b7f26edc054bcc7cbeb7bf",
+  "finalSourceCi": {
+    "status": "PASS",
+    "sourceSha": "9fb905602455672784b7f26edc054bcc7cbeb7bf",
+    "url": "https://github.com/Xroga/xroga.com/actions/runs/40112042117",
+    "job": "unit",
+    "repetitions": 2,
+    "stagesPerRun": 21,
+    "tests": {
+      "backend-unit-tests": 3154,
+      "frontend-unit-tests": 1177,
+      "baseline-negative-fixtures": 42,
+      "inventory-and-ledger-fixtures": 132
+    },
+    "fail": 0,
+    "skip": 0,
+    "sourceTreeMutated": false
+  },
+  "integratedCi": {
+    "status": "PASS",
+    "featureSha": "9fb905602455672784b7f26edc054bcc7cbeb7bf",
+    "baseSha": "cbc79b816a54d0d0c50841e4763087a8854771d1",
+    "testedSha": "ff09d37550cfcf7ec79eb09e7088ce8f6f1ebb88",
+    "url": "https://github.com/Xroga/xroga.com/actions/runs/40112042117",
+    "job": "integrated-candidate",
+    "repetitions": 2,
+    "stagesPerRun": 21,
+    "tests": {
+      "backend-unit-tests": 3154,
+      "frontend-unit-tests": 1177,
+      "baseline-negative-fixtures": 42,
+      "inventory-and-ledger-fixtures": 132
+    },
+    "fail": 0,
+    "skip": 0,
+    "sourceTreeMutated": false,
+    "notCurrentMain": true
+  },
+  "additionalCurrentSourceCi": {
+    "workflows": [
+      {
+        "conclusion": "success",
+        "headSha": "9fb905602455672784b7f26edc054bcc7cbeb7bf",
+        "name": "Xroga mission operating policy",
+        "status": "completed",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/40112042116",
+        "id": 40112042116
+      },
+      {
+        "conclusion": "success",
+        "headSha": "9fb905602455672784b7f26edc054bcc7cbeb7bf",
+        "name": "Xroga tenant security fixtures",
+        "status": "completed",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/40112042112",
+        "id": 40112042112
+      },
+      {
+        "conclusion": "success",
+        "headSha": "9fb905602455672784b7f26edc054bcc7cbeb7bf",
+        "name": "Xroga golden acceptance harness",
+        "status": "completed",
+        "url": "https://github.com/Xroga/xroga.com/actions/runs/40112042105",
+        "id": 40112042105
+      }
+    ],
+    "historicalAuthenticationReuse": "outputs/phase3-staging-20261024/source-equivalence.json",
+    "historicalSourceSha": "e8164ba6e2cc3eee46a183b752ea39188ce2e9b7",
+    "browserPass": 6,
+    "databasePass": 210,
+    "notRerunAtCurrentSha": true
+  },
+  "productionKms": {
+    "status": "VERIFIED_MANAGED_PROVIDER_AND_CUTOVER",
+    "provider": "Google Cloud KMS",
+    "productionAuthorization": "EXPLICIT_FOUNDER_EXACT_SCOPE_AND_30_USD_ALLOCATION",
+    "runtimeIdentity": "xroga-api-kms-20261024@project-c40d4821-e647-4fa2-92d.iam.gserviceaccount.com",
+    "identityMode": "FLY_OIDC_GOOGLE_WIF_MACHINE_AND_IMAGE_BOUND_NO_KEY_FILE",
+    "keyName": "projects/project-c40d4821-e647-4fa2-92d/locations/us-central1/keyRings/xroga-p3-verify-20261023/cryptoKeys/xroga-production-credentials",
+    "forwardSourceSha": "d24ab25384ec34005d68753dd54134059393e39f",
+    "forwardImageDigest": "sha256:57979db6a41a1a924ac6c3e733ab272c9d1aaf5f33d976feaaf306ec7e02f592",
+    "recoverySourceSha": "e8164ba6e2cc3eee46a183b752ea39188ce2e9b7",
+    "recoveryImageDigest": "sha256:cf65b66f539bc5be05daea247a30e4728ec33fe82c43d05544dba1b8fcecc73c",
+    "productionSqlApplied": true,
+    "customerTransition": true,
+    "activeLegacySecrets": 0,
+    "legacyMigration": "disabled",
+    "receiptDirectory": "artifacts/phase3-production-cutover-9fb90560",
+    "verifiedSourceEquivalence": "outputs/phase3-staging-20261024/source-equivalence.json",
+    "newCiRuns": 0,
+    "oldStagingRepeated": false,
+    "productionRecovery": "ACTUAL_ENCRYPTED_POST_V3_BACKUP_RESTORED_AND_EXACT_CUSTODY_STATE_MATCHES_RECOVERY_IMAGE_DECRYPTED_SOURCE",
+    "readinessAfterActualCredentialExpiry": "PASS_BOTH_UNRESTARTED_NORMAL_API_PROCESSES",
+    "remainingCompatibilityDisposition": "Four encrypted legacy Supabase bundle fields require explicit reconnect. No bundle generation invented.",
+    "billingContinuity": "PAID_UPGRADE_VERIFIED_RETAINED_PROMO_AND_30_USD_PERSONAL_ALLOCATION_ALERTS_NOT_CAPS",
+    "concurrentRolloutResolution": {
+      "status": "PASS_APPROVED_MANAGED_CUSTODY_RESTORED_CONCURRENT_ROLLOUT_CONTAINED",
+      "atUtc": "2026-10-24T20:46:53.6917428Z",
+      "sourceSha": "d24ab25384ec34005d68753dd54134059393e39f",
+      "platformDigest": "sha256:57979db6a41a1a924ac6c3e733ab272c9d1aaf5f33d976feaaf306ec7e02f592",
+      "machines": [
+        "7845746ce20008",
+        "e820730b296098"
+      ],
+      "concurrentSource": "519045ac34a456cbd4f91fae23757d587d16f54e",
+      "concurrentRun": 40130535075,
+      "approvalComment": "Owner-approved connected-app release follow-up, PR849",
+      "credentialsRevisionsTombstonesUnchanged": true,
+      "credentialAuthorityDigest": "0fabe614249ce8e5b251d831dfb7a615",
+      "githubPairDigest": "a153d76480be6bd4621937bc50dec823",
+      "activeLegacySecrets": 0,
+      "interlock": "ONLY_FLY_PRODUCTION_DEPLOY_WORKFLOW_DISABLED",
+      "interlockWorkflowId": 302401484,
+      "mainCommitsPreserved": true,
+      "frontendAndValidationWorkflowsNotDisabled": true,
+      "pendingDeploymentsCanceled": 0,
+      "containmentStartedMeasurementUtc": "2026-10-24T20:40:59.9493953Z",
+      "containmentMinutesConservative": 5.9,
+      "containmentClockIsConservative": true,
+      "renewalEvidenceReused": "Both unchanged pinned images/processes passed actual600s renewal before unrelated rollout. Exact image/config restored and fresh startup/readiness/auth verified."
+    },
+    "finalDeploymentInterlock": "Fly production deployment workflow302401484 disabled after separately owner-reviewed PR849 overwrote pinned release. Production reviewer rule retained, frontend and validation workflows continue.",
+    "renewalEvidenceReuseAfterIncident": "Prior real600s renewal is bound to exact unchanged d24 image and WIF configuration. Re-applied identical approved configuration, with fresh startup/readiness/authentication verification after unrelated rollout."
+  },
+  "productionEffects": true,
+  "founderAcceptance": false,
+  "phase4Admission": false,
+  "phase4Suspended": true,
+  "mainMerged": false,
+  "sourceBindingNote": "CI source remains exact9fb and testedff09 integration. Application runtime is byte-equivalent to pinned d24 apart from preserved metadata. Current evidence-only command009 status overlay is uncommitted, not relabelled as a newly tested software commit."
+}

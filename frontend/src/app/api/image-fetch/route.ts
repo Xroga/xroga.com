@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import {imageProxyHeaders} from '@/lib/untrustedProxyResponse';
 
 /** Same-origin proxy so clipboard copy can fetch image bytes without CORS blocks. */
 export async function GET(request: Request) {
@@ -19,15 +20,20 @@ export async function GET(request: Request) {
     if (!res.ok) {
       return NextResponse.json({ error: `Upstream ${res.status}` }, { status: 502 });
     }
-    const blob = await res.arrayBuffer();
     const contentType = res.headers.get('content-type') ?? 'image/png';
+    if(!/^image\/[a-z0-9.+-]+(?:\s*;|$)/i.test(contentType)){
+      await res.body?.cancel();
+      return NextResponse.json({error:'The upstream response is not an image.'},{status:415,headers:imageProxyHeaders});
+    }
+    const blob = await res.arrayBuffer();
     return new NextResponse(blob, {
       headers: {
+        ...imageProxyHeaders,
         'Content-Type': contentType.split(';')[0] ?? 'image/png',
         'Cache-Control': 'private, max-age=3600',
       },
     });
-  } catch (err) {
-    return NextResponse.json({ error: (err as Error).message }, { status: 502 });
+  } catch {
+    return NextResponse.json({ error: 'The image could not be retrieved.' }, { status: 502,headers:imageProxyHeaders });
   }
 }

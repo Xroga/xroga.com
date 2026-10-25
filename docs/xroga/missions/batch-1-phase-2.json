@@ -1,0 +1,335 @@
+{
+  "version": "1.0",
+  "missionId": "XB01-P2",
+  "baseSha": "8a1a0bfa7878603dd488db98568577b2fb1896da",
+  "requirementIds": [
+    "XB01-C007"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "high",
+  "scope": "Founder-approved Phase2 only. All ten original007 criteria, finite73 packets, tenant/parent/account/worker lineage and genuine proof. No008/009/010 implementation or production authority.",
+  "changedFiles": [
+    "frontend/src/lib/untrustedProxyConfig.test.ts",
+    "frontend/src/lib/untrustedProxyResponsePolicy.mjs",
+    "frontend/next.config.mjs",
+    "frontend/src/lib/untrustedProxyRoutes.test.ts",
+    ".github/workflows/command3-auth-browser.yml",
+    "frontend/e2e/proxy-origin-local.spec.ts",
+    "frontend/src/lib/untrustedProxyResponse.test.ts",
+    "frontend/src/lib/untrustedProxyResponse.ts",
+    "frontend/src/app/api/image-fetch/route.ts",
+    "frontend/src/app/api/browser-view/route.ts",
+    "backend/src/ai/routingOutcomes.receipt.test.ts",
+    "backend/src/ai/routingOutcomes.ts",
+    "backend/src/security/budgetOwner.local.integration.ts",
+    "backend/src/ai/budgetOwnerBoundary.test.ts",
+    "backend/src/services/BillingService.budget.test.ts",
+    "backend/src/ai/providerBudget.test.ts",
+    "backend/src/ai/quota.failure.test.ts",
+    "backend/src/ai/providerBudget.ts",
+    "backend/src/ai/quota.ts",
+    "supabase/migrations/20261020000200_build_project_parent_admission.sql",
+    "backend/src/security/buildProjectReceipt.local.integration.ts",
+    "backend/src/services/storage/projectFiles.receipt.test.ts",
+    "backend/src/services/memory/buildProjectStore.failure.test.ts",
+    "backend/src/services/memory/buildProjectStore.receipt.test.ts",
+    "backend/src/services/storage/projectFiles.ts",
+    "backend/src/services/memory/buildProjectStore.ts",
+    "supabase/migrations/20261020000100_operations_automation_finalization.sql",
+    "backend/src/operations/automationFinalization.local.integration.ts",
+    "backend/src/operations/automationAdmission.test.ts",
+    "backend/src/operations/actionIntent.local.integration.ts",
+    "frontend/src/components/homepage-next/s03/s03.test.ts",
+    "supabase/migrations/20261019000900_operations_internal_effect_admission.sql",
+    "backend/src/operations/operationsService.owner.test.ts",
+    "backend/src/operations/internalControlReceipt.test.ts",
+    "backend/src/operations/internalEffect.local.integration.ts",
+    "backend/src/operations/operationsService.ts",
+    "backend/src/security/legacyBuildHistory.local.integration.ts",
+    "backend/src/services/memory/buildPersistence.authority.test.ts",
+    "backend/src/services/memory/buildPersistence.ts",
+    "backend/src/services/memory/buildMemory.ts",
+    "scripts/ci/prepare-pr-integration.mjs",
+    "scripts/ci/prepare-pr-integration.test.mjs",
+    "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts",
+    "backend/src/services/integrations/supabaseProvision.ts",
+    "backend/src/security/deliveryEvidenceRead.local.integration.ts",
+    "backend/src/security/quotaEvidence.local.integration.ts",
+    "supabase/migrations/20261019000800_universal_plan_spec_owner.sql",
+    "backend/src/security/universalOwnerReads.local.integration.ts",
+    "backend/src/middleware/runtimePreviewGateway.ts",
+    "backend/src/security/previewConsumer.local.integration.ts",
+    "backend/src/security/learningOwnerReads.local.integration.ts",
+    "backend/src/security/connectedMemoryConsumer.local.integration.ts",
+    "backend/src/ai/memoryReadAuthority.test.ts",
+    "backend/src/ai/sessionMemory.ts",
+    "backend/src/ai/projectMemory.ts",
+    "backend/src/ai/webBudget.ts",
+    "backend/src/security/webAccounting.local.integration.ts",
+    "supabase/migrations/20261019000700_web_usage_cycle_owner.sql",
+    "frontend/e2e/command3-auth.spec.ts",
+    "backend/src/security/platformBenchmark.local.integration.ts",
+    "backend/src/ai/measuredEvidence.ts",
+    "backend/src/services/integrations/credentialStorageBucket.ts",
+    "frontend/src/app/(shell)/layout.tsx",
+    "frontend/src/app/(workspace)/layout.tsx",
+    "frontend/src/app/onboarding/page.tsx",
+    "supabase/migrations/20261019000600_current_profile_setup.sql",
+    "backend/src/security/githubConsumer.local.integration.ts",
+    "backend/src/security/serviceRoleGuard.test.ts",
+    "scripts/security/caller-reviews.mjs",
+    "scripts/security/caller-reviews.closure.test.mjs",
+    ".github/workflows/xroga-tenant-security.yml",
+    "backend/src/security/frontendScope.local.integration.ts",
+    "backend/src/security/confirmationMetadata.local.integration.ts",
+    "backend/src/security/platformHealth.local.integration.ts",
+    "backend/src/security/credentialReadMatrix.local.integration.ts",
+    "backend/src/services/integrations/githubTokenStore.writerContext.test.ts",
+    "backend/src/operations/readMatrix.local.integration.ts",
+    "backend/src/growth/growthService.campaignReceipt.test.ts",
+    "backend/src/growth/campaignReceipt.local.integration.ts",
+    "backend/src/growth/inputSnapshot.test.ts",
+    "backend/src/growth/sharedWriteAdmission.test.ts",
+    "backend/src/growth/sharedWriteAdmission.local.integration.ts",
+    "supabase/migrations/20261019000500_growth_shared_write_admission.sql",
+    "backend/src/routes/projects.collectionDetail.test.ts",
+    "backend/src/middleware/admin.ts",
+    "backend/src/middleware/admin.test.ts",
+    "backend/src/security/adminReads.local.integration.ts",
+    "backend/src/organicIntelligence/organicIntelligence.test.ts",
+    "backend/src/security/serviceRoleGuard.ts",
+    "backend/src/security/communityPublicException.test.ts",
+    "backend/src/synthesis/projectRuntime/store.ts",
+    "backend/src/synthesis/projectRuntime/secretWriteReceipt.test.ts",
+    "backend/src/security/runtimeSecretRead.local.integration.ts",
+    "backend/src/security/oauthWrapperOwnership.local.integration.ts",
+    "backend/src/ai/pipeline.ts",
+    "backend/src/ai/runStore.ts",
+    "backend/src/security/workerProjectAdmission.test.ts",
+    "backend/src/security/workerProjectAdmission.local.integration.ts",
+    "supabase/migrations/20261019000300_worker_database_project_admission.sql",
+    "backend/src/routes/swarm.ts",
+    "backend/src/security/ownership.ts",
+    "backend/src/security/ownership.test.ts",
+    "backend/src/security/tenantIsolation.integration.test.ts",
+    "backend/src/security/tenantIsolation.local.integration.ts",
+    "backend/src/security/chatBoundary.local.integration.ts",
+    "docs/xroga/batch-1/phases/PHASE-2-ACCESS-MATRIX.md",
+    "frontend/src/app/api/release/route.ts",
+    "frontend/src/lib/releaseIdentity.ts",
+    "frontend/src/lib/releaseIdentity.test.ts",
+    "backend/src/ai/universal/resumeProjectContext.test.ts",
+    "backend/src/growth/growthService.ts",
+    "backend/src/growth/growthService.identity.test.ts",
+    "backend/src/growth/identityParentAdmission.test.ts",
+    "backend/src/growth/identity.local.integration.ts",
+    "backend/src/growth/eventParentAdmission.test.ts",
+    "backend/src/growth/eventReplay.test.ts",
+    "backend/src/growth/eventReplay.local.integration.ts",
+    "backend/src/growth/growthService.boundary.test.ts",
+    "backend/src/growth/growthService.referralBoundary.test.ts",
+    "supabase/migrations/20261019000100_growth_event_parent_admission.sql",
+    "backend/src/security/provisioningReceipt.local.integration.ts",
+    "backend/src/services/integrations/githubTokenStore.ts",
+    "backend/src/services/integrations/userProviderKeys.ts",
+    "backend/src/services/integrations/supabaseBundle.authority.test.ts",
+    "backend/src/services/integrations/supabaseBundle.test.ts",
+    "backend/src/security/supabaseBundle.local.integration.ts",
+    "backend/src/services/integrations/absentCredentialAuthority.test.ts",
+    "backend/src/services/integrations/githubAuth.revocation.test.ts",
+    "backend/src/services/integrations/credentialMirrorRace.test.ts",
+    "backend/src/ai/buildOutcomeMemory.ts",
+    "backend/src/ai/buildOutcomeMemory.test.ts",
+    "backend/src/ai/buildOutcomeOwnership.test.ts",
+    "backend/src/security/buildOutcomeAttempt.local.integration.ts",
+    "scripts/security/full-supabase-history.mjs",
+    "scripts/security/schema-catalog.mjs",
+    "scripts/security/schema-catalog.test.mjs",
+    "scripts/security/audit-tenant-policies.mjs",
+    "scripts/security/audit-tenant-policies.test.mjs",
+    "docs/xroga/security/disposable-catalog-reference.json",
+    "scripts/security/tenant-rls.database.test.mjs",
+    "supabase/migrations/20261018002000_browser_table_privileges.sql",
+    "supabase/migrations/20261018002100_legacy_server_table_rls.sql",
+    "supabase/migrations/20261018002200_growth_identity_parent_admission.sql",
+    "scripts/ci/run-baseline.mjs",
+    ".github/workflows/unit-tests.yml",
+    "scripts/xroga/phase-one.mjs",
+    "scripts/xroga/phase-one.test.mjs",
+    "scripts/xroga/phase-two.mjs",
+    "scripts/xroga/phase-two.test.mjs",
+    "docs/xroga/batch-1/phases/PHASE-2-ACCEPTANCE.md"
+  ],
+  "decisions": {
+    "keep": [
+      "Phase1 source/evidence and frozen371 identities",
+      "Canonical context, resource ownership, worker attempt fences, budget and approval systems"
+    ],
+    "extend": [
+      "Source-bound semantic proof and actual migration/catalog evidence",
+      "Existing owner/run association and endpoint admission"
+    ],
+    "replace": [
+      "Run-only telemetry association with exact owner/run binding",
+      "Ambiguous disposable source labels with actual checkout attestation"
+    ],
+    "deprecate": [
+      "Treating a historical pending-CI note as a new vulnerability",
+      "Treating test names or source review counts as whole-workflow acceptance"
+    ]
+  },
+  "schemaImpact": {
+    "changed": true,
+    "migrations": [
+      "supabase/migrations/20261020000200_build_project_parent_admission.sql",
+      "supabase/migrations/20261020000100_operations_automation_finalization.sql",
+      "supabase/migrations/20261019000900_operations_internal_effect_admission.sql",
+      "supabase/migrations/20261019000800_universal_plan_spec_owner.sql",
+      "supabase/migrations/20261019000700_web_usage_cycle_owner.sql",
+      "supabase/migrations/20261019000600_current_profile_setup.sql",
+      "supabase/migrations/20261019000500_growth_shared_write_admission.sql",
+      "supabase/migrations/20261018002000_browser_table_privileges.sql",
+      "supabase/migrations/20261018002100_legacy_server_table_rls.sql",
+      "supabase/migrations/20261018002200_growth_identity_parent_admission.sql",
+      "supabase/migrations/20261019000100_growth_event_parent_admission.sql",
+      "supabase/migrations/20261019000200_provider_budget_cycle_parent.sql",
+      "supabase/migrations/20261019000300_worker_database_project_admission.sql"
+    ],
+    "rollout": "Disposable CI only. A composite web-accounting cycle/owner FK serializes current-parent writes, preserves null-cycle deletion and stops on existing invalid rows without rewriting them. No-argument current-subject setup projection retains restrictive public profile columns and policies. Shared growth admission retains existing locks. No new tables, data rewrite or production DDL. Preserve browser grants/RLS, worker guards and safe cancellation. Composite universal plan/spec owner/project FK likewise serializes current-parent writes, preserves optional spec deletion and refuses invalid history without rewrite. Disposable only.",
+    "rollback": "Withhold affected accounting/setup entry points before withdrawing their FK/projection. Do not re-enable cross-owner cycle attribution or grant private onboarding to public readers. Preserve restrictive grants, RLS and verified growth/worker fences. Any production rollout or privilege/constraint rollback requires separate approval. Preserve the universal parent FK. Any withdrawal requires first withholding its sensitive plan entry point and separate production approval. Retain the new internal admission helper and atomic completion coupling. Withhold affected internal capabilities before separately approved withdrawal. No table rewrite or production change is authorized. Retain the automation finalization RPC and its canonical admitted-run checks. Withhold affected signals before withdrawal. No live schema/data change is authorized. Keep canonical project save, additive build wrapper, file parent locks and browser-owner guard. No live schema/data operation authorized."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": false,
+      "description": "Existing server authentication retained, no login/MFA/role bypass."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "Original007 code source0aa0c700 passes all ten structured criteria with636 independently proven boundaries. Seven manual entries reconcile only against that proof. Final metadata HEAD still requires its own authenticated CI and original complete gate."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No canonical authority replacement or new grant. Phase3 remains unstarted."
+    },
+    "credentials": {
+      "changed": true,
+      "description": "Earlier Phase2 orphan-mirror fixes restrict credential read admission when canonical authority is absent. No live token, key or vault change. Credential custody remains a separate original009 requirement."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No provider call, publishing, message or external effect. Phase4 remains unstarted."
+    },
+    "cost": {
+      "changed": false,
+      "description": "Zero additional spend, existing standard public CI and local/disposable tests only."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No payment, plan or production billing operation."
+    }
+  },
+  "tests": [
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/lib/untrustedProxyResponse.test.ts frontend/src/lib/untrustedProxyRoutes.test.ts frontend/src/lib/untrustedProxyConfig.test.ts backend/src/security/serviceRoleGuard.test.ts",
+      "scope": "Response sandbox, opaque application origin, active image isolation, escaping and uncallable review-only global key. Actual browser/Auth proof remains mandatory.",
+      "negative": true,
+      "reference": "frontend/e2e/proxy-origin-local.spec.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/ai/routingOutcomes.receipt.test.ts backend/src/ai/routingPersistence.test.ts backend/src/ai/buildOutcomeOwnership.test.ts backend/src/security/serviceRoleGuard.test.ts",
+      "scope": "Issued routing ownership, exact optional persistence and private cache boundaries. Actual database security cases remain mandatory.",
+      "negative": true,
+      "reference": "backend/src/security/buildOutcomeAttempt.local.integration.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/ai/budgetOwnerBoundary.test.ts backend/src/ai/quota.failure.test.ts backend/src/ai/providerBudget.test.ts backend/src/services/BillingService.budget.test.ts",
+      "scope": "Original issued ownership and exact budget receipt tests. Actual database integration requires new source CI.",
+      "negative": true,
+      "reference": "backend/src/security/budgetOwner.local.integration.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/services/memory/buildProjectStore.receipt.test.ts backend/src/services/memory/buildProjectStore.failure.test.ts backend/src/services/storage/projectFiles.receipt.test.ts",
+      "scope": "Original issued-context, exact project/message/file receipts, immutable inputs, ownership filters and uncertain private-object retention. New actual parent-race and transactional rollback cases require disposable CI.",
+      "negative": true,
+      "reference": "backend/src/security/buildProjectReceipt.local.integration.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/operations/automationAdmission.test.ts",
+      "scope": "Exact canonical action receipt, original run key, evaluating replay and fail-closed finalization. Actual new-source current-parent race and atomic link/audit witnesses remain mandatory.",
+      "negative": true,
+      "reference": "backend/src/operations/automationFinalization.local.integration.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/operations/internalControlReceipt.test.ts backend/src/operations/operationsService.owner.test.ts",
+      "scope": "Original actor/admitted intent, exact target and atomic completion receipts. Actual disposable 11-capability, current-authority races, completion rollback and lost-response recovery remain mandatory.",
+      "negative": true,
+      "reference": "backend/src/operations/internalEffect.local.integration.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/services/memory/buildPersistence.authority.test.ts",
+      "scope": "Original-issued-context denial and exact legacy history receipt/outage negatives. Real owner/project/run concurrency remains independently pending.",
+      "negative": true,
+      "reference": "backend/src/services/memory/buildPersistence.authority.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/services/integrations/supabaseProvision.readinessContext.test.ts",
+      "scope": "Dormant readiness export rejects every non-issued context before any credential/database/network access. Real same-owner account proof remains in the disposable consumer case.",
+      "negative": true,
+      "reference": "backend/src/services/integrations/supabaseProvision.readinessContext.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/growth/sharedWriteAdmission.test.ts backend/src/routes/projects.collectionDetail.test.ts",
+      "scope": "Shared current-authority write invariant and exact receipt controls across five enabled growth methods. Project detail distinguishes database failure from absent ownership, with existing file/code controls preserved.",
+      "negative": true,
+      "reference": "backend/src/growth/sharedWriteAdmission.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/ai/buildOutcomeOwnership.test.ts backend/src/ai/buildOutcomeMemory.test.ts",
+      "scope": "Owner/run positive and foreign-evidence denial, including a reproduced pre-fix failing test",
+      "negative": true,
+      "reference": "backend/src/ai/buildOutcomeOwnership.test.ts"
+    },
+    {
+      "command": "node --test scripts/xroga/phase-one.test.mjs scripts/xroga/phase-two.test.mjs scripts/security/schema-catalog.test.mjs",
+      "scope": "Frozen input preservation, finite current mapping, no fabricated certification and exact CI source attestation",
+      "negative": true,
+      "reference": "scripts/xroga/phase-two.test.mjs"
+    },
+    {
+      "command": "node --import tsx --test src/security/tenantIsolation.local.integration.ts",
+      "scope": "Real disposable owner/run evidence, tenant and concurrency regression",
+      "negative": true,
+      "reference": "backend/src/security/buildOutcomeAttempt.local.integration.ts"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Existing tenant context, owned resources and attempt-fenced stores only. No new orchestration, relation engine or vault.",
+    "rfc": null
+  },
+  "rollout": "Draft PR803 only, no merge or deploy. Full source-bound acceptance required before Phase2 verification.",
+  "rollback": "Withhold the five affected growth endpoints before withdrawing current-authority admission. Never re-enable demonstrated unguarded writes as a rollback. The shared routine is additive and can remain installed. No table/data rewrite or backfill. Preserve Phase1, prior receipts, customer state and existing worker fences.",
+  "knownGaps": [
+    "Final metadata HEAD requires its own eleven successful workflows, source-bound collection and original007 complete gate. Earlier code receipts cannot certify a later SHA.",
+    "Original73 frozen packets and371 historical identities are preserved. Semantic review activity is not security certification.",
+    "ActualR2 and production parity are separately unverified",
+    "Authority/custody/egress implementation stays Phases3/4"
+  ],
+  "placeholderClaimsRemaining": [],
+  "evidenceRefs": [
+    "docs/xroga/batch-1/phases/PHASE-2-ACCEPTANCE.md",
+    "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Original007-010 acceptance and production approval remain mandatory"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

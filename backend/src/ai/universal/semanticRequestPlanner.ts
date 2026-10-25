@@ -22,9 +22,9 @@ import {
 
 import {
   getUsage,
-  recordUsage,
   usageToTokenUsage,
 } from '../quota.js';
+import { recordCompletedProviderUsage as recordUsage, isPostCompletionAccountingError } from '../postCompletionAccounting.js';
 
 import {
   universalCapabilityRegistry,
@@ -486,6 +486,9 @@ export async function executeHedgedPlannerFallback<T>(
             result.modelId,
         };
       } catch (error) {
+        if (isPostCompletionAccountingError(error)) {
+          for (const active of controllers.values()) active.abort();
+        }
         return {
           ok: false,
 
@@ -612,7 +615,14 @@ export async function executeHedgedPlannerFallback<T>(
     );
   }
 
+  if (beforeHedge !== 'hedge' && !beforeHedge.ok && isPostCompletionAccountingError(beforeHedge.error)) {
+    if (hedgeTimer) clearTimeout(hedgeTimer);
+    throw beforeHedge.error;
+  }
+
   const fallback =
+    // An accounting failure after completion cannot authorize another model.
+    // If the hedge was already running, its own completion is still accounted.
     run(
       routes[1]!,
     );
@@ -631,6 +641,8 @@ export async function executeHedgedPlannerFallback<T>(
 
     const fallbackOutcome =
       await fallback;
+
+    if (!fallbackOutcome.ok && isPostCompletionAccountingError(fallbackOutcome.error)) throw fallbackOutcome.error;
 
     if (
       fallbackOutcome.ok
@@ -672,6 +684,8 @@ export async function executeHedgedPlannerFallback<T>(
       ],
     );
 
+  if (!first.ok && isPostCompletionAccountingError(first.error)) throw first.error;
+
   if (
     first.ok
   ) {
@@ -685,6 +699,8 @@ export async function executeHedgedPlannerFallback<T>(
     routes[0]
       ? await fallback
       : await primary;
+
+  if (!other.ok && isPostCompletionAccountingError(other.error)) throw other.error;
 
   if (
     other.ok
@@ -1992,6 +2008,7 @@ export async function planSemanticRequest(
         ),
     };
   } catch (error) {
+    if (isPostCompletionAccountingError(error)) throw error;
     if (
       totalController
         .signal

@@ -11,8 +11,8 @@ const NOTIFICATIONS = read('../components/notifications/SidebarNotificationCente
 
 test('primary navigation retains the requested order and does not duplicate old groups', () => {
   const table = NAV.slice(NAV.indexOf('const navItems: NavEntry[] = ['), NAV.indexOf('interface SidebarProps'));
-  const markers = ["label: 'Plugins'",
-    "id: 'automations'", "id: 'library'", "label: 'Publish'", "id: 'more'"];
+  const markers = ["label: 'Dashboard'", "id: 'automations'", "label: 'AI Employees'", "label: 'Plugins'",
+    "id: 'library'", "label: 'Publish'", "id: 'more'"];
   let last = -1;
   for (const marker of markers) {
     const pos = table.indexOf(marker);
@@ -51,9 +51,14 @@ test('compact width preserves stored preferences and popover accessibility', () 
   assert.match(FLYOUT, /requestAnimationFrame/);
 });
 
-test('sidebar utilities remain accessible and the eye names the chatbar', () => {
-  assert.match(NAV, /aria-label="Close sidebar"/);
-  assert.match(NAV, /<ThemeToggle/);
+test('utility controls retain accessible names without the retired global tooltip host', () => {
+  const utilities = NAV.slice(NAV.indexOf('className="xv-sidebar-utilities"'), NAV.indexOf('className="xv-sidebar-collapsed-actions"'));
+  assert.match(utilities, /<ThemeToggle \/>/);
+  assert.match(utilities, /aria-label="Notifications"/);
+  assert.match(utilities, /aria-label="Close sidebar"/);
+  assert.doesNotMatch(read('../components/layout/AppShell.tsx'), /CompactAppTooltip/);
+  assert.match(NAV, /className="xv-sidebar-utilities" aria-label="Sidebar utilities"/);
+  assert.match(read('../components/terminal/WorkspaceSearchButton.tsx'), /aria-label="Search workspace"/);
   assert.match(NAV, /<SidebarNotificationButton/);
   assert.match(LAUNCHER, /data-short-tip=\{chatbarHidden \? 'Show chatbar' : 'Hide chatbar'\}/);
   assert.doesNotMatch(NOTIFICATIONS, /title="Notifications"/);

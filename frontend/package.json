@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "postinstall": "node ../scripts/enforce-next-postcss.mjs",
-    "dev": "next dev",
-    "build": "next build",
+    "postinstall": "node ../scripts/enforce-next-postcss.mjs && node ../backend/scripts/security-dependency-patches.mjs --apply",
+    "dev": "node ../backend/scripts/security-dependency-patches.mjs --check && next dev",
+    "build": "node ../backend/scripts/security-dependency-patches.mjs --check && next build",
     "test": "cd .. && tsx --tsconfig frontend/tsconfig.json --test \"frontend/src/**/*.test.ts\"",
     "start": "next start",
     "lint": "next lint"
@@ -24,7 +24,7 @@
     "katex": "^0.17.0",
     "lucide-react": "^1.21.0",
     "motion": "^12.42.2",
-    "next": "15.5.21",
+    "next": "15.5.27",
     "ogl": "1.0.11",
     "pdf-lib": "^1.17.1",
     "pptxgenjs": "^4.0.1",
@@ -34,7 +34,7 @@
     "react-markdown": "^10.1.0",
     "recharts": "^3.10.1",
     "remark-gfm": "^4.0.1",
-    "sharp": "0.35.3",
+    "sharp": "0.35.5",
     "simple-icons": "^16.28.0",
     "tailwind-merge": "^3.6.0",
     "xroga": "file:..",
@@ -47,16 +47,17 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
-    "eslint-config-next": "15.5.21",
+    "eslint-config-next": "15.5.27",
     "jszip": "^3.10.2",
     "postcss": "8.5.24",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "5.9.3"
   },
   "overrides": {
+    "pptxgenjs": { "image-size": "2.0.4" },
     "next": {
       "postcss": "8.5.24",
-      "sharp": "0.35.3"
+      "sharp": "0.35.5"
     }
   }
 }

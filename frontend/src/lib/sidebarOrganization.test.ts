@@ -38,7 +38,10 @@ test('account-scoped migration enforces RLS and atomic pin swapping',()=>{
 test('real history, conditional pins, project paging, right-click, and contextual controls',()=>{
  assert.match(sidebar,/Pinned.*?/);
  assert.match(sidebar,/\{pinnedItems\.length>0\?/);
- assert.match(sidebar,/shownPins\+10/);
+ // Pagination uses a functional update, preventing stale double-click increments.
+ assert.match(sidebar,/onClick=\{\(\)=>setShownPins\(prev=>prev\+10\)\}/);
+ assert.match(sidebar,/pinnedItems\.slice\(0,shownPins\)/);
+ assert.match(sidebar,/shownPins>10[\s\S]*?setShownPins\(10\)/);
  assert.match(sidebar,/loadSidebarProjects\(accountId,offset,6\)/);
  assert.match(sidebar,/renderRow\('conversation'/);
  assert.match(sidebar,/onContextMenu=\{event=>openMenu/);

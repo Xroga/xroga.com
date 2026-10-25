@@ -58,7 +58,7 @@ jobs:
           fetch-depth: 2
       - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version-file: '.node-version'
           cache: npm
       - run: npm ci
       - run: npm run test:growth:technical
@@ -75,7 +75,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version-file: '.node-version'
           cache: npm
       - run: npm ci
       - name: Verify representative production URLs

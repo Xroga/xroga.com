@@ -1,163 +1,43 @@
+import { randomUUID } from 'node:crypto';
+import { isDeepStrictEqual } from 'node:util';
 import { getSupabaseAdmin } from '../../config/supabase.js';
-import { uploadToR2, buildR2Key, buildPlaybackUrl, downloadFromR2, type R2UploadResult } from '../../lib/r2.js';
-import { saveLocalMedia, readLocalMedia } from './localMediaCache.js';
-import { actorFromPersistedOwner, getMigrationLedger, getStorageService, storageReadOrder, storageWriteMode } from '../../storage/runtime.js';
-import { readStoredFileOrdered } from '../../storage/migration/readCompat.js';
-import { StorageError, type ObjectClass } from '../../storage/types.js';
+import { uploadToR2,buildR2Key } from '../../lib/r2.js';
+import { requireTenantContext,type TenantContext } from '../../security/tenantContext.js';
+import { requireOwnedProject } from '../../security/ownership.js';
+import { FileDeliveryError,digestBytes,privateFileUrl,storageMetadataSchema,MAX_PRIVATE_FILE_BYTES,type PrivateStorageMetadata } from './fileDeliveryPolicy.js';
 
-export interface StoredFile {
-  id: string;
-  fileName: string;
-  fileUrl: string;
-  fileType: 'code' | 'video' | 'image' | 'audio' | 'pdf' | 'other';
-  projectId?: string;
-  /** Canonical Xroga Drive object, present only when the verified private write succeeded. */
-  storageObjectId?: string;
-  /**
-   * True only when the bytes are in verified private storage. `false` means the legacy path (public R2 URL, data URL or
-   * ephemeral cache) is the only copy: callers must not present it as durable.
-   */
-  canonicalDurable?: boolean;
-}
-
-const CLASS_BY_FILE_TYPE: Record<StoredFile['fileType'], ObjectClass> = {
-  code: 'artifact', video: 'media', image: 'media', audio: 'media', pdf: 'artifact', other: 'artifact',
-};
-
-async function writeCanonical(userId: string, projectId: string | null, filename: string, content: Buffer | string, contentType: string, fileType: StoredFile['fileType']) {
-  const svc = getStorageService();
-  if (!svc) throw new StorageError('PROVIDER_UNAVAILABLE', 'Xroga Drive is not configured', 503);
-  // legacy signature (a user id, no request context); Batch 1's storeProjectFile(context, ...) replaces this path, and until then the id still passes canonical validation
-  return svc.putServerObject(actorFromPersistedOwner(userId), {
-    projectId, objectClass: CLASS_BY_FILE_TYPE[fileType], filename, contentType,
-    body: typeof content === 'string' ? Buffer.from(content) : content,
-  });
-}
-
-export async function storeProjectFile(
-  userId: string,
-  projectId: string,
-  filename: string,
-  content: Buffer | string,
-  contentType: string,
-  fileType: StoredFile['fileType']
-): Promise<StoredFile> {
-  const mode = storageWriteMode();
-  if (mode === 'r2') return storeProjectFileCanonicalOnly(userId, projectId, filename, content, contentType, fileType);
-
-  const key = buildR2Key(userId, filename);
-  let r2Result: R2UploadResult;
-  // dual: the canonical write runs alongside the legacy one. Its failure is recorded, never hidden, and never upgraded to "durable".
-  if (mode === 'dual' && !getStorageService()) throw new StorageError('PROVIDER_UNAVAILABLE', 'STORAGE_WRITE_MODE=dual but Xroga Drive is not configured', 503);
-  const canonical = mode === 'dual'
-    ? await writeCanonical(userId, projectId, filename, content, contentType, fileType).then((o) => o, (e) => { console.error('[Storage] canonical write failed in dual mode:', (e as Error).message); return null; })
-    : null;
-
+export interface StoredFile {id:string;fileName:string;fileUrl:string;fileType:'code'|'video'|'image'|'audio'|'pdf'|'other';projectId?:string}
+export async function storeProjectFile(context:TenantContext,projectId:string,filename:string,content:Buffer|string,contentType:string,fileType:StoredFile['fileType']): Promise<StoredFile> {
+  const {userId}=requireTenantContext(context);
+  content=Buffer.isBuffer(content)?Buffer.from(content):content;
+  await requireOwnedProject(context,projectId);
+  const id=randomUUID(),bytes=Buffer.isBuffer(content)?content:Buffer.from(content);
+  if(!filename.trim() || filename.length>200 || bytes.length>MAX_PRIVATE_FILE_BYTES || !['code','video','image','audio','pdf','other'].includes(fileType) || !storageMetadataSchema.safeParse({provider:'database',ownerId:userId,size:bytes.length,sha256:digestBytes(bytes),contentType}).success)throw new FileDeliveryError(400,'INVALID_FILE');
+  let metadata:PrivateStorageMetadata;
+  let inline:string|null=null;
+  if(typeof content==='string' && content.length<50000) {
+    // Explicit primary durable database storage, NOT an upload failure/local fallback.
+    inline=content;metadata={provider:'database',ownerId:userId,size:bytes.length,sha256:digestBytes(bytes),contentType};
+  } else {
+    const object=await uploadToR2(buildR2Key(userId,filename),bytes,contentType,userId);
+    metadata={...object,provider:'private_r2',ownerId:userId};
+  }
+  metadata=storageMetadataSchema.parse(metadata);
+  const fileUrl=privateFileUrl(projectId,id);
+  const row={id,project_id:projectId,file_name:filename,file_path:metadata.key??filename,file_type:fileType,file_url:fileUrl,content:inline,storage_metadata:metadata};
   try {
-    r2Result = await uploadToR2(key, content, contentType);
-  } catch (err) {
-    console.error('[Storage] R2 upload failed, using data URL fallback:', (err as Error).message);
-    const base64 = (typeof content === 'string' ? Buffer.from(content) : content).toString('base64');
-    r2Result = {
-      key,
-      publicUrl: `data:${contentType};base64,${base64}`,
-      bucket: 'local-fallback',
-    };
-  }
-
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from('project_files')
-    .insert({
-      project_id: projectId,
-      file_name: filename,
-      file_path: key,
-      file_type: fileType,
-      file_url: r2Result.publicUrl,
-      content: typeof content === 'string' && content.length < 50000 ? content : null,
-      ...(canonical ? { storage_object_id: canonical.id } : {}),
-    })
-    .select()
-    .single();
-
-  if (error || !data) {
-    throw new Error(`Failed to record project file: ${error?.message}`);
-  }
-
-  return {
-    id: data.id,
-    fileName: filename,
-    fileUrl: r2Result.publicUrl,
-    fileType,
-    projectId,
-    storageObjectId: canonical?.id,
-    canonicalDurable: canonical?.state === 'READY',
-  };
-}
-
-/** `STORAGE_WRITE_MODE=r2`: verified private storage or a hard failure. No data-URL, no /tmp cache, no public URL. */
-async function storeProjectFileCanonicalOnly(
-  userId: string, projectId: string, filename: string, content: Buffer | string, contentType: string, fileType: StoredFile['fileType'],
-): Promise<StoredFile> {
-  const obj = await writeCanonical(userId, projectId, filename, content, contentType, fileType);
-  if (obj.state !== 'READY') throw new StorageError('BAD_STATE', 'canonical write did not reach READY', 409);
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from('project_files')
-    .insert({
-      project_id: projectId, file_name: filename, file_path: null, file_type: fileType,
-      // stable reference, resolved through POST /api/drive/objects/:id/download-url (never a public URL)
-      file_url: `drive://${obj.id}`,
-      content: typeof content === 'string' && content.length < 50000 ? content : null,
-      storage_object_id: obj.id,
-    })
-    .select().single();
-  if (error || !data) throw new Error(`Failed to record project file: ${error?.message}`);
-  return { id: data.id, fileName: filename, fileUrl: `drive://${obj.id}`, fileType, projectId, storageObjectId: obj.id, canonicalDurable: true };
-}
-
-export async function storeUserFile(
-  userId: string,
-  filename: string,
-  content: Buffer | string,
-  contentType: string
-): Promise<{ fileUrl: string; playbackUrl: string; key: string }> {
-  const key = buildR2Key(userId, filename);
-  const playbackUrl = buildPlaybackUrl(key);
-  const buffer = typeof content === 'string' ? Buffer.from(content) : content;
-
-  try {
-    const result = await uploadToR2(key, buffer, contentType);
-    return { fileUrl: result.publicUrl, playbackUrl, key: result.key };
-  } catch (err) {
-    console.error('[Storage] R2 upload failed, using local cache:', (err as Error).message);
-    try {
-      await saveLocalMedia(key, buffer, contentType);
-      // HTTP stream URL works in browser and survives session storage (unlike data URLs)
-      return { fileUrl: playbackUrl, playbackUrl, key };
-    } catch (cacheErr) {
-      console.error('[Storage] Local cache failed:', (cacheErr as Error).message);
-      const base64 = buffer.toString('base64');
-      const dataUrl = `data:${contentType};base64,${base64}`;
-      return { fileUrl: dataUrl, playbackUrl: dataUrl, key };
+    const {data,error}=await getSupabaseAdmin().from('project_files').insert(row).select('id,project_id,file_name,file_path,file_type,file_url,content,storage_metadata').single();
+    if(error || !data || typeof data!=='object' || Array.isArray(data) || !isDeepStrictEqual(data,row)) throw new FileDeliveryError(503,'FILE_RECORD_WRITE_UNAVAILABLE');
+  } catch {
+    if(metadata.provider==='private_r2') {
+      // A missing receipt can follow a committed insert. Deleting now could
+      // destroy a referenced object, and a negative read cannot rule out a late commit.
+      console.warn('[private-files] persistence unconfirmed; uploaded object retained for reconciliation');
     }
+    throw new FileDeliveryError(503,'FILE_RECORD_WRITE_UNAVAILABLE');
   }
+  return {id,fileName:filename,fileUrl,fileType,projectId};
 }
-
-export async function readStoredFile(key: string, actor?: { userId: string }): Promise<{ buffer: Buffer; contentType: string }> {
-  const legacy = async () => {
-    try {
-      return await downloadFromR2(key);
-    } catch (r2Err) {
-      const local = await readLocalMedia(key);
-      if (local) return local;
-      throw r2Err;
-    }
-  };
-  const drive = getStorageService();
-  const ledger = getMigrationLedger();
-  // Callers that pass an actor get ownership + ordering enforcement; callers that do not keep the exact legacy behaviour.
-  if (!actor || !drive || !ledger) return legacy();
-  const r = await readStoredFileOrdered(key, actorFromPersistedOwner(actor.userId), { ledger, drive, readLegacy: legacy, order: storageReadOrder() });
-  return { buffer: r.buffer, contentType: r.contentType };
-}
+/** Retired unscoped media paths have no active callers; never fabricate durable delivery. */
+export async function storeUserFile(_userId:string,_filename:string,_content:Buffer|string,_contentType:string): Promise<{fileUrl:string;playbackUrl:string;key:string}> {throw new FileDeliveryError(503,'PROJECT_FILE_SCOPE_REQUIRED');}
+export async function readStoredFile(_key:string): Promise<{buffer:Buffer;contentType:string}> {throw new FileDeliveryError(404,'PROJECT_FILE_SCOPE_REQUIRED');}

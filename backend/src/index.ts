@@ -47,28 +47,19 @@ import mediaRouter from './routes/media.js';
 import driveRouter from './routes/drive.js';
 import browserRunsRouter from './routes/browserRuns.js';
 import { resolveStorageConfig } from './storage/runtime.js';
-import { probeDatabaseTls } from './storage/databaseTls.js';
-import { decideStartup } from './runtime/startupPolicy.js';
-import { apiProbes, runReadiness } from './runtime/readiness.js';
-import { redactText } from './runtime/safeLogging.js';
 import capabilitiesRouter from './routes/capabilities.js';
 import { adminMiddleware } from './middleware/admin.js';
-import { ensureGithubSchema } from './db/ensureGithubSchema.js';
-import { ensureTerminalSessionsSchema } from './db/ensureTerminalSessionsSchema.js';
-import { ensureMessageSharesSchema } from './db/ensureMessageSharesSchema.js';
-import { ensurePhase1Schema } from './db/ensurePhase1Schema.js';
 import {
   activeRunIds,
   currentRunWorkerId,
 } from './ai/runStore.js';
 import { failInFlightRuns, reconcileOrphanedRuns } from './ai/runReconciler.js';
-import { ensureShipLoopSchema } from './db/ensureShipLoopSchema.js';
 import { hydrateProviderHealth } from './ai/providerRuntime.js';
 import { modelKeyStatus, modelTransportStatus } from './ai/openaiCompat.js';
 import { publicHealthPayload } from './lib/safeHealth.js';
 import operationsRouter from './routes/operations.js';
 import growthRouter from './routes/growth.js';
-import { getSupabaseAdmin } from './config/supabase.js';
+import { probeDatabaseReadiness } from './security/serviceRoleGuard.js';
 import {
   configureRemoteSandboxProvider,
   configureFlyMachineSandboxProvider,
@@ -76,11 +67,15 @@ import {
 import projectRuntimeRouter from './routes/projectRuntime.js';
 import deliveryRouter from './routes/delivery.js';
 import voiceRouter from './routes/voice.js';
+import { initializeCredentialVaultForServer, credentialVaultReadinessMiddleware } from './services/integrations/credentialVaultStartup.js';
 import {
   attachRuntimePreviewWebSocketGateway,
   runtimePreviewGateway,
 } from './middleware/runtimePreviewGateway.js';
 
+// No HTTP/WebSocket admission or worker startup before managed custody readiness.
+// Missing/denied/expired workload identity stops startup without a crypto fallback.
+const credentialVaultReadiness = await initializeCredentialVaultForServer();
 const app = express();
 
 /*
@@ -100,8 +95,9 @@ app.use(
     crossOriginResourcePolicy: { policy: 'cross-origin' },
   })
 );
-// morgan writes request lines straight to stdout, bypassing console: route it through the same redactor (OAuth callbacks carry `code=` and `state=`).
-app.use(morgan('dev', { stream: { write: (line: string) => { process.stdout.write(redactText(line)); } } }));
+// Never record signed capability/OAuth/query credentials in request URLs.
+morgan.token('safe-path',req=>req.url?.split('?')[0]??'/');
+app.use(morgan(':method :safe-path :status :response-time ms'));
 
 const allowedOrigins = [
   process.env.FRONTEND_URL,
@@ -178,22 +174,18 @@ app.get('/health', (_req, res) => {
   res.json(publicHealthPayload());
 });
 
-app.get('/ready', async (_req, res) => {
-  // Fixed reason codes only (see runtime/readiness.ts): this endpoint is reachable without authentication.
-  const result = await runReadiness(apiProbes(process.env, {
-    database: async () => {
-      const { error } = await getSupabaseAdmin().from('profiles').select('id').limit(1);
-      if (error) throw error;
-    },
-    databaseTls: probeDatabaseTls,
-  }));
-  if (result.ready) {
-    const health = publicHealthPayload();
-    res.json({ status: 'ready', service: 'xroga-api', release: health.release, timestamp: new Date().toISOString() });
+app.get('/ready', credentialVaultReadinessMiddleware(credentialVaultReadiness), async (_req, res) => {
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    res.status(503).json({ status: 'not_ready', reason: 'database_not_configured' });
     return;
   }
-  const failing = result.checks.find((c) => c.status === 'fail');
-  res.status(503).json({ status: 'not_ready', reason: failing?.reason ?? 'not_ready', checks: result.checks });
+  try {
+    await probeDatabaseReadiness();
+    const health = publicHealthPayload();
+    res.json({ status: 'ready', service: 'xroga-api', release: health.release, timestamp: new Date().toISOString() });
+  } catch {
+    res.status(503).json({ status: 'not_ready', reason: 'database_unavailable' });
+  }
 });
 
 app.get('/api/health', (_req, res) => {
@@ -306,28 +298,7 @@ server.listen(port, '0.0.0.0', () => {
     const storageCfg = resolveStorageConfig();
     if (storageCfg.problems.length) console.error('[storage] INVALID CONFIGURATION:', storageCfg.problems.join('; '));
   }
-  // Boot duties that WRITE to the database run only in a process positively identified as production (or local development).
-  // A staging, preview or unclassified service holding a live service-role key must not run DDL or fail production runs by starting.
-  const startup = decideStartup();
-  for (const note of startup.notes) console.warn(`[startup] ${note}`);
-  console.log(`[startup] environment=${startup.environment} (${startup.source}) schemaEnsure=${startup.duties.ensureSchemas} orphanReconcile=${startup.duties.reconcileOrphanedRuns}`);
-  if (startup.duties.ensureSchemas) {
-    void ensurePhase1Schema().catch((err) => {
-      console.warn('[phase1Schema] Startup ensure skipped:', (err as Error).message);
-    });
-    void ensureGithubSchema().catch((err) => {
-      console.warn('[githubSchema] Startup ensure skipped:', (err as Error).message);
-    });
-    void ensureTerminalSessionsSchema().catch((err) => {
-      console.warn('[terminalSessionsSchema] Startup ensure skipped:', (err as Error).message);
-    });
-    void ensureMessageSharesSchema().catch((err) => {
-      console.warn('[messageSharesSchema] Startup ensure skipped:', (err as Error).message);
-    });
-    void ensureShipLoopSchema().catch((err) => {
-      console.warn('[shipLoopSchema] Startup ensure skipped:', (err as Error).message);
-    });
-  }
+  // Schema changes belong to the migration gate, never request/startup credentials.
   // Provider health survives this restart (§15). Without it a circuit opened against a
   // failing provider was forgotten on every deploy, and the model went straight back into
   // rotation — a breaker that resets exactly when a bad deploy lands protects nothing.
@@ -343,11 +314,9 @@ server.listen(port, '0.0.0.0', () => {
     });
   // Reconcile only stale durable worker leases. During a rolling deploy the outgoing
   // API may still own a long build, so a row being old and `running` is not enough.
-  if (startup.duties.reconcileOrphanedRuns) {
-    void reconcileOrphanedRuns().catch((err) => {
-      console.warn('[runReconciler] Startup reconcile skipped:', (err as Error).message);
-    });
-  }
+  void reconcileOrphanedRuns().catch((err) => {
+    console.warn('[runReconciler] Startup reconcile skipped:', (err as Error).message);
+  });
   // Registers a hosted isolation worker only if an operator configured one. With no
   // XROGA_SANDBOX_WORKER_URL this does nothing and costs nothing: the container
   // providers are tried and, failing those, executable validation refuses rather than
