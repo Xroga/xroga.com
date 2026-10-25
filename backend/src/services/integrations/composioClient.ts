@@ -12,7 +12,8 @@ const DEFAULT_TIMEOUT_MS = 15_000;
 const EXECUTE_TIMEOUT_MS = 30_000;
 const MAX_RESPONSE_SIZE = 8_000_000;
 const MAX_SEARCH_RESULTS = 20;
-const MAX_TOOLKIT_PAGE_SIZE = 100;
+// Composio's session toolkit endpoint rejects limit values above 50.
+const MAX_TOOLKIT_PAGE_SIZE = 50;
 const MAX_CATALOG_PAGE_SIZE = 250;
 const MAX_TRIGGER_PAGE_SIZE = 50;
 const COMPOSIO_CACHE_TTL_MS = 5 * 60 * 1_000;

@@ -1,0 +1,71 @@
+{
+  "version": "1.0",
+  "missionId": "LIVE-AI-ACCOUNTING-COMPOSIO-REPAIR-20261025",
+  "baseSha": "c14c3e1186e758c013a6b6207abf99c502201a2b",
+  "requirementIds": [
+    "XR-FAMILY-cost-budget",
+    "XR-FAMILY-composio-dynamic-tools",
+    "XR-ORIGINAL-F041"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "medium",
+  "scope": "Restore verified AI usage receipts and constrain Composio session toolkit pagination to its accepted maximum. This does not claim universal app automation or Cloud Run production cutover.",
+  "changedFiles": [
+    "backend/src/services/integrations/composioClient.ts",
+    "backend/src/services/integrations/composioClient.pagination.test.ts",
+    "supabase/migrations/20261025010000_ai_usage_receipt_service_grant.sql",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/runtime-contract.md",
+    "docs/xroga/secret-inventory.md",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/missions/live-ai-accounting-composio-repair-20261025.json"
+  ],
+  "decisions": {
+    "keep": ["Existing atomic usage RPC, Composio adapter, and protected release pathway"],
+    "extend": ["Column-scoped service-role receipt grant and bounded session-toolkit listing"],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": true,
+    "migrations": ["supabase/migrations/20261025010000_ai_usage_receipt_service_grant.sql"],
+    "rollout": "The exact column-scoped grant was applied to the existing production table after a rollback-only role probe failed. Apply the forward migration to other environments in order and verify no broader table UPDATE grant appears.",
+    "rollback": "Do not revoke the receipt grant while the current atomic accounting function is serving traffic; that would fail closed again. Revert only alongside an independently verified alternative receipt writer."
+  },
+  "securityImpact": {
+    "auth": {"changed": true, "description": "Only service_role gains UPDATE on accounting_receipt_id; authenticated remains denied."},
+    "tenant": {"changed": false, "description": "No tenant scope or row policy change."},
+    "approval": {"changed": false, "description": "No external action approval policy change."},
+    "credentials": {"changed": false, "description": "No credential material appears in source or migration."},
+    "egress": {"changed": false, "description": "Same Composio endpoint and session, with a smaller page size."},
+    "cost": {"changed": false, "description": "No pricing or budget rule change."},
+    "billing": {"changed": false, "description": "No payment or subscription authority change."}
+  },
+  "tests": [
+    {"command": "Rollback-only service_role SQL probe plus privilege readback", "scope": "Verified receipt update succeeds, cost_usd update remains denied, and authenticated receipt update remains denied on production schema.", "negative": true, "reference": "supabase/migrations/20261025010000_ai_usage_receipt_service_grant.sql"},
+    {"command": "npx tsx --test backend/src/services/integrations/composioClient.pagination.test.ts", "scope": "Connected toolkit listing uses the accepted limit 50 with requested toolkit and connected filter.", "negative": false, "reference": "backend/src/services/integrations/composioClient.pagination.test.ts"},
+    {"command": "npm run build --workspace=backend", "scope": "Backend dependency patch checks and TypeScript build passed locally; canonical Node 22 and full CI remain pending.", "negative": false, "reference": "backend/src/services/integrations/composioClient.ts"},
+    {"command": "node scripts/xroga/inventory.mjs --check", "scope": "Generated inventory includes the new test and migration; passing deterministic check required before merge.", "negative": false, "reference": "docs/xroga/current-state.json"},
+    {"command": "node scripts/xroga/validate-requirements-ledger.mjs", "scope": "Source-manifest hashes reflect the reviewed adapter and generated repository inventory.", "negative": false, "reference": "docs/xroga/research/source-manifest.json"},
+    {"command": "node scripts/xroga/check-runtime-config.mjs", "scope": "Runtime inventory and source hashes remain consistent with the changed adapter.", "negative": false, "reference": "docs/xroga/dependency-inventory.json"}
+  ],
+  "architecture": {"change": "extends_canonical", "reason": "Repairs existing accounting ACL and existing Composio page size without a new control plane.", "rfc": null},
+  "rollout": "Keep Fly as live API and Cloud Run IAM-private. Finish source-bound CI, protected deployment and authenticated app task checks before any traffic cutover.",
+  "rollback": "Revert the Composio page-size source change only if its new request fails. Preserve the receipt grant until a verified replacement receipt path exists; use the prior compatible API image for deployment rollback, not a legacy vault reader.",
+  "knownGaps": ["Composio repair is not deployed or authenticated-E2E verified yet", "Cloud Run remains private staging and is not the production API", "Full app automation and migration acceptance gates remain open"],
+  "placeholderClaimsRemaining": ["Authenticated connected-app read result and protected deployment verification remain pending"],
+  "evidenceRefs": ["backend/src/services/integrations/composioClient.pagination.test.ts", "supabase/migrations/20261025010000_ai_usage_receipt_service_grant.sql"],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": ["Protected deploy and authenticated app workflow checks have not passed", "Cloud Run cutover safety and credential migration evidence remain incomplete"],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}
