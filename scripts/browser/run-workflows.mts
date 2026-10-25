@@ -128,7 +128,7 @@ const workflows: Record<string, () => Promise<void>> = {
   async W09() {
     const stop = killFirstAttempt(1_200);
     const read = await run(alice, { goal: 'survive a worker crash', startUrl: `${Q}/`, allowedOrigins: [Q], limits: limits(),
-      plan: { steps: [{ op: 'waitFor', selector: '.quote', timeoutMs: 15_000 }, { op: 'click', selector: 'li.next > a' }, { op: 'waitFor', urlPrefix: `${Q}/page/2`, timeoutMs: 15_000 }, { op: 'screenshot', name: 'w09.png' }], expect: [{ kind: 'artifact', name: 'w09.png' }, { kind: 'finalUrlPrefix', prefix: `${Q}/page/2` }] } });
+      plan: { steps: [{ op: 'pause', ms: 3_000 }, { op: 'waitFor', selector: '.quote', timeoutMs: 15_000 }, { op: 'click', selector: 'li.next > a' }, { op: 'waitFor', urlPrefix: `${Q}/page/2`, timeoutMs: 15_000 }, { op: 'screenshot', name: 'w09.png' }], expect: [{ kind: 'artifact', name: 'w09.png' }, { kind: 'finalUrlPrefix', prefix: `${Q}/page/2` }] } });
     stop();
     record('W09a', 'read-only task: container killed, fenced retry completes', 'completed on attempt 2', read.status === 'completed' && read.attempts === 2, read);
     const stop2 = killFirstAttempt(1_200);
