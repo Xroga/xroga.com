@@ -189,6 +189,7 @@ interface ComposioCatalogToolkitResponse {
   no_auth?: boolean;
   auth_guide_url?: string;
   deprecated?: unknown;
+  is_deprecated?: boolean;
   meta?: {
     created_at?: string;
     updated_at?: string;
@@ -1196,7 +1197,9 @@ function mapCatalogToolkit(
         ? Math.max(0, item.meta.tools_count)
         : 0,
     version: item.meta?.version,
-    deprecated: Boolean(item.deprecated),
+    // Composio also uses `deprecated` for a legacy metadata object containing
+    // toolkitId/proxy details. Only actual boolean flags mean retired.
+    deprecated: item.is_deprecated === true || item.deprecated === true,
   };
 
   return {

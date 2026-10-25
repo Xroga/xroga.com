@@ -22826,12 +22826,13 @@
       "id": "surface:ff19abf99ae89c9897b4",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessConnectionIntent.ts",
-      "sha256": "9e1df0ca0d797ec09debbccbb81f0e8ffb8d9eba13bd6fab4706cce46ac5620e",
+      "sha256": "898f15cf0791fed9e63d58e1e305c8df877202ad24ef9eba97aaede16bd22858",
       "symbols": [
         "anchored",
         "combined",
         "connectionSearchTerms",
         "frequencies",
+        "linkCommand",
         "match",
         "parts",
         "ranked",
@@ -23176,7 +23177,7 @@
       "id": "surface:8c25c7e0b5b0dd66676d",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "d7aa3473f1347001b35fe7e49e5ced241099bd027fef102814dee728780bd659",
+      "sha256": "a57065553c769bfb9e768c6fb76502850883635ca4fddf50ffa1054a089bfadf",
       "symbols": [
         "COMPOSIO_API_BASE",
         "COMPOSIO_CACHE_TTL_MS",
@@ -23394,6 +23395,7 @@
         "backend/src/services/integrations/businessActionConfirmations.ts:11",
         "backend/src/services/integrations/businessAutomations.ts:3",
         "backend/src/services/integrations/businessRead.ts:24",
+        "backend/src/services/integrations/composioClient.catalogDeprecation.test.ts:3",
         "backend/src/services/integrations/composioClient.pagination.test.ts:3"
       ],
       "reachable": true,
@@ -23419,6 +23421,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
+        "backend/src/services/integrations/composioClient.catalogDeprecation.test.ts",
         "backend/src/services/integrations/composioClient.pagination.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -113204,7 +113207,7 @@
     {
       "id": "test-suite:5ef50aeef675b48bb591",
       "sourcePath": "backend/src/services/integrations/businessConnectionIntent.test.ts",
-      "declaredTests": 4,
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -113218,6 +113221,13 @@
     {
       "id": "test-suite:257776d2099c7e1ba181",
       "sourcePath": "backend/src/services/integrations/businessWorkflowRuns.context.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:9964d27b7bed05bdbb77",
+      "sourcePath": "backend/src/services/integrations/composioClient.catalogDeprecation.test.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
