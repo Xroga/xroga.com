@@ -67,6 +67,8 @@ test('unfenced model protocol is recovered without showing raw JSON', () => {
 test('requested standalone JSON is preserved as text', () => {
   const json = JSON.stringify({ type: 'source-list', title: 'Requested payload', sources: [] });
   assert.equal(enhanceAiResponse(json, 'json-request').content, json);
+  const codeSample = `Here is the JSON example.\n\`\`\`json\n${json}\n\`\`\``;
+  assert.equal(enhanceAiResponse(codeSample, 'json-code').content, codeSample);
 });
 
 test('validated utility blocks become interactive response output', () => {

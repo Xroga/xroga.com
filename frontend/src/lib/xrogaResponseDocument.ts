@@ -24,8 +24,19 @@ function extractUnfencedProtocol(content: string, documentId: string): { content
   const kept: string[] = [];
   const blocks: XrogaBlock[] = [];
   let hasNarrative = false;
+  let codeFence: string | null = null;
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index] ?? '';
+    const fence = /^\s*(`{3,}|~{3,})/.exec(line)?.[1] ?? null;
+    if (fence) {
+      codeFence = codeFence === null ? fence[0]! : codeFence === fence[0] ? null : codeFence;
+      kept.push(line);
+      continue;
+    }
+    if (codeFence) {
+      kept.push(line);
+      continue;
+    }
     const marker = /(?:^|[ \t])xroga-ui[ \t]*$/i.exec(line);
     const candidate = marker ? lines[index + 1]?.trim() : line.trim();
     const looksLikeBlock = candidate?.startsWith('{') && candidate.includes('"type"');
