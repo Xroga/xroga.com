@@ -1,0 +1,139 @@
+{
+  "version": "1.0",
+  "missionId": "XROGA-ZERO-FLY-20261025",
+  "baseSha": "c14c3e1186e758c013a6b6207abf99c502201a2b",
+  "requirementIds": [
+    "XB01-C009"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "high",
+  "scope": "Complete founder-authorized infrastructure migration from Fly to Google Cloud. Preserve canonical orchestration, accepted Phase3, Supabase, R2 and separate Batch1.5. No unrelated Phase4 work.",
+  "changedFiles": [
+    "docs/xroga/missions/zero-fly-migration-20261025.json",
+    "docs/xroga/infrastructure/zero-fly-migration-20261025.md",
+    "backend/src/services/integrations/credentialVaultStartup.ts",
+    "backend/src/services/integrations/credentialVaultStartup.test.ts",
+    "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
+    "backend/src/services/integrations/googleCloudKmsCryptoProvider.test.ts",
+    "scripts/infrastructure/inventory-fly.mjs",
+    "scripts/infrastructure/inventory-fly.test.mjs",
+    "Dockerfile.api",
+    ".github/workflows/api-build-check.yml",
+    "infra/google/cloudbuild.api.yaml",
+    "scripts/infrastructure/cloud-run-release-gate.mjs",
+    "scripts/infrastructure/cloud-run-release-gate.test.mjs",
+    "scripts/infrastructure/gce-isolation-probe.sh"
+  ],
+  "decisions": {
+    "keep": [
+      "Canonical scheduler, ownership, reservation/settlement, confirmations, Supabase and R2",
+      "Accepted Phase3 ciphertext, revisions, tombstones, key versions and recovery evidence",
+      "Frontend features and independent Batch1.5 branches"
+    ],
+    "extend": [
+      "Existing provider seams with native Google identity and verified Google execution"
+    ],
+    "replace": [
+      "Active Fly infrastructure and deployment dependencies with verified Google equivalents"
+    ],
+    "deprecate": [
+      "Fly operational resources only after replacement verification and founder retirement decision"
+    ]
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No production SQL. Preserve main workflow migration for mandatory isolated fresh/upgrade validation. Previously accepted production schema effects must not be replayed automatically.",
+    "rollback": "No database operation. Preserve ciphertext, revisions and tombstones."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "Infrastructure migration preserves existing security semantics. Native identity, isolated execution, bounded costs and callback parity require explicit negative and live verification before traffic changes."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "Infrastructure migration preserves existing security semantics. Native identity, isolated execution, bounded costs and callback parity require explicit negative and live verification before traffic changes."
+    },
+    "approval": {
+      "changed": true,
+      "description": "Infrastructure migration preserves existing security semantics. Native identity, isolated execution, bounded costs and callback parity require explicit negative and live verification before traffic changes."
+    },
+    "credentials": {
+      "changed": true,
+      "description": "Infrastructure migration preserves existing security semantics. Native identity, isolated execution, bounded costs and callback parity require explicit negative and live verification before traffic changes."
+    },
+    "egress": {
+      "changed": true,
+      "description": "Infrastructure migration preserves existing security semantics. Native identity, isolated execution, bounded costs and callback parity require explicit negative and live verification before traffic changes."
+    },
+    "cost": {
+      "changed": true,
+      "description": "Infrastructure migration preserves existing security semantics. Native identity, isolated execution, bounded costs and callback parity require explicit negative and live verification before traffic changes."
+    },
+    "billing": {
+      "changed": true,
+      "description": "Infrastructure migration preserves existing security semantics. Native identity, isolated execution, bounded costs and callback parity require explicit negative and live verification before traffic changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "node --import tsx --test backend/src/services/integrations/credentialVaultStartup.test.ts",
+      "scope": "Reject operator credentials and mixed identity in native Google runtime before provider construction. Retain existing fail-closed custody tests.",
+      "negative": true,
+      "reference": "backend/src/services/integrations/credentialVaultStartup.test.ts"
+    },
+    {
+      "command": "node --test scripts/infrastructure/inventory-fly.test.mjs",
+      "scope": "Detect tracked Fly references without disclosing values, preserve evidence visibility and exclude unrelated Scrapfly integration",
+      "negative": true,
+      "reference": "scripts/infrastructure/inventory-fly.test.mjs"
+    },
+    {
+      "command": "node --import tsx --test backend/src/services/integrations/googleCloudKmsCryptoProvider.test.ts backend/src/services/integrations/flyGoogleWorkloadIdentity.test.ts",
+      "scope": "Verify native metadata-only client selection, exact key/AAD failure behavior and unchanged Fly federation during transition",
+      "negative": true,
+      "reference": "backend/src/services/integrations/googleCloudKmsCryptoProvider.test.ts"
+    },
+    {
+      "command": "node --test scripts/infrastructure/cloud-run-release-gate.test.mjs",
+      "scope": "Deny mutable or foreign images, static/mixed identity, mutable secrets, CPU throttling, unbounded scale, stale source, failed readiness and missing Google recovery. Preflight is never live cutover acceptance.",
+      "negative": true,
+      "reference": "scripts/infrastructure/cloud-run-release-gate.test.mjs"
+    },
+    {
+      "command": "Run scripts/infrastructure/gce-isolation-probe.sh on one disposable e2-medium VM in existing xroga-verify-net with no SA or ingress and native 1800-second DELETE deadline",
+      "scope": "Real synthetic Chromium and container network/metadata, non-root, read-only, memory and process isolation proof. Estimated charge below 0.10 USD from available promotional credits. No customer data, IAM or firewall mutation. Does not prove provider integration or Preview.",
+      "negative": true,
+      "reference": "scripts/infrastructure/gce-isolation-probe.sh"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Replace infrastructure adapters while retaining the canonical scheduler and execution graph. No second orchestrator.",
+    "rfc": null
+  },
+  "rollout": "Follow dependency-ordered Google migration record. Keep Fly live until Google parity and recovery pass. Review exact IAM and bounded cost before consequential changes. No unrelated merge.",
+  "rollback": "Keep verified Fly forward and managed-compatible recovery available until Google-hosted immutable recovery is tested. Preserve production ciphertext, revisions, tombstones and all required KMS versions. No legacy-only rollback.",
+  "knownGaps": [
+    "Google execution and Preview replacements, full configuration parity, deployment interlock and current cost evidence remain pending"
+  ],
+  "placeholderClaimsRemaining": [
+    "No zero-Fly completion or new production deployment claim"
+  ],
+  "evidenceRefs": [
+    "docs/xroga/infrastructure/zero-fly-migration-20261025.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Native runtime, execution, Preview, recovery and traffic parity not yet verified"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}
