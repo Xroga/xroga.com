@@ -1,0 +1,54 @@
+{
+  "version": "1.0",
+  "missionId": "CLOUD-RUN-AUTOMATION-SCHEDULER-20261025",
+  "baseSha": "a48842b780eb125c75cbe37cf432e3597d534217",
+  "requirementIds": ["XR-FAMILY-schedulers", "XR-FAMILY-composio-dynamic-tools"],
+  "state": "CODE_COMPLETE",
+  "risk": "high",
+  "scope": "Wake the existing database-backed interval automation processor on scale-to-zero Cloud Run using a signed Cloud Scheduler HTTP POST. No user rule is enabled and no Gmail mail is sent by this change.",
+  "changedFiles": [
+    "backend/.env.example",
+    "backend/src/index.ts",
+    "backend/src/routes/businessAutomationScheduler.ts",
+    "backend/src/routes/businessAutomationScheduler.test.ts",
+    "docs/xroga/blockers.md",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/runtime-contract.md",
+    "docs/xroga/secret-inventory.md",
+    "docs/xroga/missions/cloud-run-automation-scheduler-20261025.json"
+  ],
+  "decisions": {
+    "keep": ["Existing automation rules, conditional database claim, event ledger and canonical workflow-run creation"],
+    "extend": ["Google-signed scheduler tick into the existing processor and explicit cloud-vs-process timer mode"],
+    "replace": ["Unreliable in-process timer on Cloud Run only"],
+    "deprecate": []
+  },
+  "schemaImpact": {"changed": false, "migrations": [], "rollout": "No database schema or row changes. The production table currently has zero enabled interval and trigger rules.", "rollback": "No schema rollback. Pause the Scheduler job and restore the prior API image or timer mode."},
+  "securityImpact": {
+    "auth": {"changed": true, "description": "Internal POST requires a Google-signed ID token with exact audience, verified email, issuer and dedicated service account identity; missing config fails closed."},
+    "tenant": {"changed": false, "description": "The existing processor reads persisted rule owners, never a request-supplied user ID."},
+    "approval": {"changed": false, "description": "Scheduler does not enable rules or bypass existing workflow action approvals."},
+    "credentials": {"changed": true, "description": "No key file or new secret. Cloud Scheduler mints short-lived OIDC tokens for a dedicated least-privilege service account."},
+    "egress": {"changed": true, "description": "A scheduled HTTPS POST invokes only the Cloud Run API internal tick path."},
+    "cost": {"changed": true, "description": "User approved Cloud Scheduler service and possible charges; each tick is bounded by the existing ten-rule batch."},
+    "billing": {"changed": false, "description": "No product payment or billing change."}
+  },
+  "tests": [
+    {"command": "npx tsx --test backend/src/routes/businessAutomationScheduler.test.ts", "scope": "Missing token/config, wrong issuer or email, unverified email and signature verification failure are denied; exact identity accepted.", "negative": true, "reference": "backend/src/routes/businessAutomationScheduler.test.ts"},
+    {"command": "npm run build --workspace=backend", "scope": "Backend TypeScript compilation and pinned dependency checks.", "negative": false, "reference": "backend/src/routes/businessAutomationScheduler.ts"},
+    {"command": "Signed Cloud Scheduler force-run and anonymous endpoint denial", "scope": "Pending deployed live proof; no user automation rules will be enabled for this check.", "negative": true, "reference": "backend/src/routes/businessAutomationScheduler.ts"}
+  ],
+  "architecture": {"change": "extends_canonical", "reason": "Cloud Scheduler is only a wake-up signal to the existing processor, not a second planner, workflow scheduler or executor.", "rfc": null},
+  "rollout": "Merge after source-bound CI. Deploy pinned merge SHA to Cloud Run manually, configure the dedicated OIDC job, prove an unsigned request is denied and a signed tick succeeds, then set cloud scheduler mode. Do not switch xroga.com frontend traffic or activate rules here.",
+  "rollback": "Pause the Cloud Scheduler job and switch XROGA_AUTOMATION_SCHEDULER_MODE away from cloud, or roll back to the previous ready Cloud Run revision. Preserve automation rows and event history.",
+  "knownGaps": ["Source-bound CI and live signed invocation pending", "No user automation is enabled, so this cannot prove app action delivery", "Event-trigger automations still need a Composio webhook signing secret", "Authenticated Gmail test awaits a dedicated connected test account and exact mail approval"],
+  "placeholderClaimsRemaining": ["Cloud Scheduler signed invocation and real Gmail automation are not yet verified"],
+  "evidenceRefs": ["backend/src/routes/businessAutomationScheduler.test.ts", "backend/src/services/integrations/businessAutomations.ts"],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {"state": "BLOCKED", "blockers": ["Source-bound CI and signed live Scheduler invocation pending", "No authorized Gmail test connection or message yet"], "authenticatedE2e": "BLOCKED", "stagedSecurity": "BLOCKED", "liveUrl": null, "deployedSha": null}
+}

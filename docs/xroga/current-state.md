@@ -7,7 +7,7 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 ## Counts
 
 - surfaces: 1501
-- routeRegistrations: 277
+- routeRegistrations: 278
 - routes: 232
 - reachableRoutes: 232
 - queues: 4
@@ -91,4 +91,5 @@ The JSON includes every discovered registration, source module, scheduler, migra
 - Computed route paths, runtime registrations, Docker/worker commands and dynamic nonliteral imports require explicit manual reconciliation.
 - No production credentials or customer data were read; live behavior remains unverified in this command.
 - Static imports do not prove provider availability or authorization correctness.
+- Unresolved local import backend/src/index.ts:32 -> ./routes/businessAutomationScheduler.js
 - Unresolved local import scripts/render-software-art.mjs:17 -> ../node_modules/playwright/index.mjs

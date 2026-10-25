@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "54077316e8a0d80488c8ee9739707caef15e2122",
+  "source_sha": "a48842b780eb125c75cbe37cf432e3597d534217",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -4331,7 +4331,8 @@
         "VERCEL_OAUTH_CALLBACK_URL",
         "VERCEL_OAUTH_CLIENT_ID",
         "VERCEL_OAUTH_CLIENT_SECRET",
-        "VERCEL_OAUTH_SCOPES"
+        "VERCEL_OAUTH_SCOPES",
+        "XROGA_AUTOMATION_SCHEDULER_MODE"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -7116,7 +7117,8 @@
         "NODE_ENV",
         "PORT",
         "SUPABASE_SERVICE_ROLE_KEY",
-        "SUPABASE_URL"
+        "SUPABASE_URL",
+        "XROGA_AUTOMATION_SCHEDULER_MODE"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -11671,6 +11673,26 @@
       ]
     },
     {
+      "name": "XROGA_AUTOMATION_SCHEDULER_MODE",
+      "consuming_sources": [
+        "backend/src/index.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-localhost",
+        "endpoint-xrogaaicom-vercel-app"
+      ]
+    },
+    {
       "name": "XROGA_CIRCUIT_FAILURE_THRESHOLD",
       "consuming_sources": [
         "backend/src/ai/providerRuntime.ts",
@@ -13366,7 +13388,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "52011dec213912e1f274a0f8797c08bd2965f5b5c631e13d25ec6a621d94d96f"
+      "sha256": "430506c7881d0c22a325c8c6348d9345587a92fc1ae302187da07440b5bac08f"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -19715,42 +19737,42 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 100,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 101,
       "credentialsInUrl": false
     },
     {
-      "hostname": "www.xroga.com",
+      "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 102,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xrogaaicom.vercel.app",
+      "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 103,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "xrogaaicom.vercel.app",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 104,
       "credentialsInUrl": false
     },
     {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 105,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 193,
+      "line": 195,
       "credentialsInUrl": false
     },
     {

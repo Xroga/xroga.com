@@ -24,4 +24,5 @@ Source SHA: `8ce54f2421039d724571bb727ecce234bcc02a03`. These are pre-existing f
 - Computed route paths, runtime registrations, Docker/worker commands and dynamic nonliteral imports require explicit manual reconciliation.
 - No production credentials or customer data were read; live behavior remains unverified in this command.
 - Static imports do not prove provider availability or authorization correctness.
+- Unresolved local import backend/src/index.ts:32 -> ./routes/businessAutomationScheduler.js
 - Unresolved local import scripts/render-software-art.mjs:17 -> ../node_modules/playwright/index.mjs
