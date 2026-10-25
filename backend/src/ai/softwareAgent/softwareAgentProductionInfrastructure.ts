@@ -18,7 +18,7 @@ import type {
 } from '../../services/integrations/githubDeploy.js';
 
 import {
-  executeSandboxed,
+  executeCanonicalSandboxed,
 } from '../../sandbox/sandboxRuntime.js';
 
 import {
@@ -431,7 +431,7 @@ export function createDefaultSoftwareAgentProductionInfrastructure():
         );
 
       const result =
-        await executeSandboxed({
+        await executeCanonicalSandboxed('software-agent-command',{
           files:
             [
               ...input.files,

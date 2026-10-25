@@ -87,6 +87,14 @@ export function captureAdmittedRunAttempt(runId: string, userId: string): Admitt
   return attempt;
 }
 
+/** Internal adapter entry point. Identity comes only from this canonical
+ * asynchronous worker scope, never from request files or a supplied user ID. */
+export function captureCurrentRunAttempt():AdmittedRunAttempt {
+  const record=attemptScope.getStore()?.record;
+  if(!record)throw Object.assign(new Error('Execution attempt authority is missing.'),{code:'RUN_STATE_CONFLICT'});
+  return captureAdmittedRunAttempt(record.id,record.userId);
+}
+
 /** A captured capability is identity, not a permanent grant to dispatch work. */
 export async function assertCurrentRunAttempt(attempt: AdmittedRunAttempt): Promise<void> {
   const original = requireAdmittedRunAttempt(attempt);

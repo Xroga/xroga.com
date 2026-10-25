@@ -230,3 +230,28 @@ a repeated live Google experiment or a project-wide spending cap. Evidence is
 No IAM, VM, Job, network, deployment or production mutation was performed.
 The accepted live native execution proof remains preserved. Real caller
 staging, uncertain-outcome reconciliation and the other migration gates remain.
+
+## 2026-10-26, canonical one-shot Google execution
+
+The four inspected execution seams now issue an opaque sandbox binding from
+the current canonical run attempt and owner-bound durable source. Explicit
+Google mode refuses raw requests before probing providers and cannot select a
+Fly fallback. Compile setup and denied-network verification run sequentially
+in one quota-bound workspace. Native stage receipts determine the compile
+verdict, rather than untrusted process output. The retained browser digest has
+an explicitly verified driver-version mapping.
+
+Cancellation, authority-read timeout, ownership denial and missing durable
+allocation/stage receipts prevent further dispatch and verified completion.
+Owned cleanup runs after success and failure. Unverified cleanup is explicit.
+Three focused negative SDK tests reproduced swallowed sandbox denials. The
+existing executor abort latch now preserves those fatal denials across SDK
+tool-error handling. Consequential-action confirmation remains unchanged.
+
+Focused positive and negative tests and backend type checking passed. Exact
+source identities and local receipts are in
+`docs/xroga/evidence/zero-fly/canonical-sandbox-source-20261026.json`.
+These synthetic tests do not certify upstream caller groups or live Google
+integration. No production, IAM, deployment, main or Phase 4 changes occurred.
+Next are real Preview integration and durable background transport through the
+existing canonical pipeline. The original live and 13-workflow proof is retained.

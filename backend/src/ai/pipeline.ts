@@ -3465,6 +3465,8 @@ publicationReason:
     swarmActivity: 'Sandbox production build',
     swarmTodos: todos('compile'),
   });
+  executionState.currentWorkingSnapshot=nextFiles.map(file=>({...file}));
+  await executionStore.save(executionState);
   let compile = await compileValidateProject(nextFiles, { signal: opts.signal });
   if (!compile.skipped && !compile.ok) {
     qa = {
@@ -3647,6 +3649,8 @@ publicationReason:
         );
       }
       // Re-compile after fix pass
+      executionState.currentWorkingSnapshot=nextFiles.map(file=>({...file}));
+      await executionStore.save(executionState);
       compile = await compileValidateProject(nextFiles, { signal: opts.signal });
       if (!compile.skipped && !compile.ok) {
         qa = {

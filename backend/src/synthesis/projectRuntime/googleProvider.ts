@@ -171,12 +171,12 @@ export class GoogleProjectRuntimeProvider implements ProjectRuntimeProvider {
   }
   async exec(session:ProjectRuntimeSession,input:ProviderRuntimeCommand){
     const payload=this.command(session,input,input.timeoutMs??120000);
-    const result=await this.call<{exitCode:unknown;stdout:unknown;stderr:unknown;timedOut:unknown;durationMs:unknown}>(session,'exec',{operation:'exec',...payload},payload.timeoutMs);
+    const result=await this.call<{exitCode:unknown;stdout:unknown;stderr:unknown;timedOut:unknown;killedForLimit:unknown;durationMs:unknown}>(session,'exec',{operation:'exec',...payload},payload.timeoutMs);
     if((result.exitCode!==null&&!Number.isInteger(result.exitCode))||typeof result.stdout!=='string'
-      ||typeof result.stderr!=='string'||typeof result.timedOut!=='boolean'||typeof result.durationMs!=='number'
+      ||typeof result.stderr!=='string'||typeof result.timedOut!=='boolean'||typeof result.killedForLimit!=='boolean'||typeof result.durationMs!=='number'
       ||!Number.isFinite(result.durationMs)||result.durationMs<0)fail('GCE_EXECUTION_RECEIPT_INVALID');
     return {exitCode:result.exitCode as number|null,stdout:result.stdout as string,stderr:result.stderr as string,
-      timedOut:result.timedOut as boolean,durationMs:result.durationMs as number};
+      timedOut:result.timedOut as boolean,killedForLimit:result.killedForLimit as boolean,durationMs:result.durationMs as number};
   }
   async startProcess(session:ProjectRuntimeSession,input:ProviderRuntimeProcessStartInput){
     const payload=this.command(session,input,600000);

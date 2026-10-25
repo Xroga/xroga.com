@@ -23,7 +23,7 @@ function fixture(){
    dispatches++;operations.push(structuredClone(operation));
    const result=reply??(operation.operation==='write_files'?{written:(operation.files as {path:string}[]).map(f=>f.path)}
     :operation.operation==='read_file'?{content:'owned-content'}:operation.operation==='delete_files'?{deleted:operation.paths}
-    :operation.operation==='exec'?{exitCode:0,stdout:'ok',stderr:'',timedOut:false,durationMs:12}
+    :operation.operation==='exec'?{exitCode:0,stdout:'ok',stderr:'',timedOut:false,killedForLimit:false,durationMs:12}
     :operation.operation==='start'?{pid:42,logPath:'docker:xroga-process-'+'b'.repeat(32)}
     :operation.operation==='stop'?{stopped:true}:{logs:'owned-logs'});
    return result as T;
