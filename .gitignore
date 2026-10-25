@@ -69,3 +69,4 @@ artifacts/batch-01-local-security/
 artifacts/ci-*/
 artifacts/font-toolchain-packages/
 artifacts/font-sources/
+.task-scratch/
