@@ -23176,7 +23176,7 @@
       "id": "surface:8c25c7e0b5b0dd66676d",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "a8808e9020015ba1e7b538a52a9caf58556525b2e01ad5443b7de5fd6b5298db",
+      "sha256": "d7aa3473f1347001b35fe7e49e5ced241099bd027fef102814dee728780bd659",
       "symbols": [
         "COMPOSIO_API_BASE",
         "COMPOSIO_CACHE_TTL_MS",
@@ -23393,7 +23393,8 @@
         "backend/src/services/integrations/businessAction.ts:33",
         "backend/src/services/integrations/businessActionConfirmations.ts:11",
         "backend/src/services/integrations/businessAutomations.ts:3",
-        "backend/src/services/integrations/businessRead.ts:24"
+        "backend/src/services/integrations/businessRead.ts:24",
+        "backend/src/services/integrations/composioClient.pagination.test.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -23417,7 +23418,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/e2e/xrogaGoldenJourneys.test.ts"
+        "backend/src/e2e/xrogaGoldenJourneys.test.ts",
+        "backend/src/services/integrations/composioClient.pagination.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -104035,6 +104037,13 @@
       "version": "20261024200940",
       "order": 144,
       "sha256": "7ce147828be75693255e6ecc04c89b0430636964f8c34d28279528ddc60c17e8"
+    },
+    {
+      "id": "migration:61df2db94e14979ea9ee",
+      "sourcePath": "supabase/migrations/20261025010000_ai_usage_receipt_service_grant.sql",
+      "version": "20261025010000",
+      "order": 145,
+      "sha256": "b3d9d11aa50ea84a91fad15e6f1ebc3113dbaa784d54a1c566c2e0f218e16e3e"
     }
   ],
   "workflows": [
@@ -113209,6 +113218,13 @@
     {
       "id": "test-suite:257776d2099c7e1ba181",
       "sourcePath": "backend/src/services/integrations/businessWorkflowRuns.context.test.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:e328e6d90556a4d5e91c",
+      "sourcePath": "backend/src/services/integrations/composioClient.pagination.test.ts",
       "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
