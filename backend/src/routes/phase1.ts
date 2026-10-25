@@ -31,6 +31,7 @@ import {
 
 import {
   enforceExplicitBusinessWorkflowControls,
+  enforceSingleExplicitBusinessActionControls,
   enforceExplicitExecutionControls,
   enforceExplicitPublicResearchControls,
   planExplicitProjectBuild,
@@ -570,9 +571,12 @@ router.post(
 
       return res.json(
         enforceExplicitPublicResearchControls(
-          enforceExplicitBusinessWorkflowControls(
-            enforceExplicitExecutionControls(
-              plan,
+          enforceSingleExplicitBusinessActionControls(
+            enforceExplicitBusinessWorkflowControls(
+              enforceExplicitExecutionControls(
+                plan,
+                message,
+              ),
               message,
             ),
             message,

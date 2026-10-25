@@ -6,6 +6,7 @@ import {
   enforceExplicitBusinessWorkflowControls,
   enforceExplicitExecutionControls,
   enforceExplicitPublicResearchControls,
+  enforceSingleExplicitBusinessActionControls,
   executeHedgedPlannerFallback,
   interpreterModelOrder,
   planExplicitProjectBuild,
@@ -49,6 +50,37 @@ function goal(overrides: Partial<GoalContract> = {}): GoalContract {
 }
 
 describe('semantic request dispatch', () => {
+  it('does not treat a prohibition on reading other mail as a requested Gmail read', () => {
+    const mixed = {
+      goalContract: goal({ semanticIntent: 'MIXED', requiredCapabilities: ['business.read', 'business.action'] }),
+      dispatch: 'chat' as const, capabilityIds: ['business.read', 'business.action'],
+      rationale: 'planner selected a read and write', blockers: [], usage: {} as never,
+    };
+    for (const message of [
+      'Create one unsent Gmail draft to me with subject test. Do not read any other messages.',
+      'Draft, but do not send, an email to me with subject test and body hello.',
+    ]) {
+      const corrected = enforceSingleExplicitBusinessActionControls(mixed, message);
+      assert.deepEqual(corrected.capabilityIds, ['business.action']);
+      assert.equal(corrected.goalContract.semanticIntent, 'EXTERNAL_ACTION');
+    }
+  });
+
+  it('preserves affirmative connected-app reads before or after an action', () => {
+    const mixed = {
+      goalContract: goal({ semanticIntent: 'MIXED', requiredCapabilities: ['business.read', 'business.action'] }),
+      dispatch: 'chat' as const, capabilityIds: ['business.read', 'business.action'],
+      rationale: 'mixed request', blockers: [], usage: {} as never,
+    };
+    for (const message of [
+      'Create a draft and verify it exists.',
+      'Create a draft; then read it.',
+      'Find a customer and email them a quote.',
+    ]) {
+      assert.equal(enforceSingleExplicitBusinessActionControls(mixed, message), mixed);
+    }
+  });
+
   it('preserves read and action capabilities for an explicit multi-app request', () => {
     const previousKey = process.env.COMPOSIO_API_KEY;
     process.env.COMPOSIO_API_KEY = 'test-key';
