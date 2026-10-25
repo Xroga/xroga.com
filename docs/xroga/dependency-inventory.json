@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "9fb905602455672784b7f26edc054bcc7cbeb7bf",
+  "source_sha": "78be39511c77b2bb47e0bed0a747a795ccc19df5",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -14278,7 +14278,7 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "a8808e9020015ba1e7b538a52a9caf58556525b2e01ad5443b7de5fd6b5298db"
+      "sha256": "d7aa3473f1347001b35fe7e49e5ced241099bd027fef102814dee728780bd659"
     },
     {
       "path": "backend/src/services/integrations/composioNamespace.ts",
@@ -27646,28 +27646,28 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 677,
+      "line": 678,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1213,
+      "line": 1214,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1242,
+      "line": 1243,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1855,
+      "line": 1856,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
