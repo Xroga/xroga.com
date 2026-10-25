@@ -10,7 +10,14 @@ export function validateCurrentMigrationAdditions(additions,files,readMigration)
     xroga_sidebar_legacy_title_backup:[sidebar,sidebar],xroga_sidebar_sections:[sidebar,parents],
     business_automation_events:['20261024200940_connected_app_workflows.sql','20261024200940_connected_app_workflows.sql'],
     business_automation_rules:['20261024200940_connected_app_workflows.sql','20261024200940_connected_app_workflows.sql'],
-    business_workflow_runs:['20261024200940_connected_app_workflows.sql','20261024200940_connected_app_workflows.sql']};
+    business_workflow_runs:['20261024200940_connected_app_workflows.sql','20261024200940_connected_app_workflows.sql'],
+    storage_objects:['20261022000000_storage_drive_foundation.sql','20261022000000_storage_drive_foundation.sql'],
+    storage_usage:['20261022000000_storage_drive_foundation.sql','20261022000000_storage_drive_foundation.sql'],
+    storage_reservations:['20261022000000_storage_drive_foundation.sql','20261022000000_storage_drive_foundation.sql'],
+    storage_audit_events:['20261022000000_storage_drive_foundation.sql','20261022000000_storage_drive_foundation.sql'],
+    storage_migration_jobs:['20261022000000_storage_drive_foundation.sql','20261022000000_storage_drive_foundation.sql'],
+    storage_migration_items:['20261022000000_storage_drive_foundation.sql','20261022000000_storage_drive_foundation.sql'],
+    worker_task_leases:['20261024000000_worker_task_leases.sql','20261024000000_worker_task_leases.sql']};
   assert.deepEqual(additions.tables.map(t=>`${t.schema}.${t.table_name}`),Object.keys(reviewed).map(name=>'public.'+name));
   for(const entry of additions.tables){
     assert.deepEqual([entry.migration,entry.authorizationMigration],reviewed[entry.table_name],'Only the explicitly reviewed creation and ownership migrations apply');

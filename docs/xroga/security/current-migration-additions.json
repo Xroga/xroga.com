@@ -97,6 +97,90 @@
       "authorizationSha256": "7ce147828be75693255e6ecc04c89b0430636964f8c34d28279528ddc60c17e8",
       "schema": "public",
       "boundary": "Server-owned workflow/automation checkpoints. RLS enabled, no anon/authenticated grants, service_role only. Server callers must independently verify actor and exact owner. Automation defaults disabled and consequential steps require existing confirmation."
+    },
+    {
+      "schema": "public",
+      "table_name": "storage_objects",
+      "migration": "20261022000000_storage_drive_foundation.sql",
+      "migrationSha256": "f042c652a2b230a913d15b8c4283abc2180090df5cbaa37d6041de755528c627",
+      "authorizationMigration": "20261022000000_storage_drive_foundation.sql",
+      "authorizationSha256": "f042c652a2b230a913d15b8c4283abc2180090df5cbaa37d6041de755528c627",
+      "boundary": "RLS enabled and forced. Authenticated users hold column-limited SELECT (no bucket, object key or upload id) through the owner-only policy storage_objects_owner_read: owner_user_id = auth.uid() and state = READY. No browser INSERT, UPDATE or DELETE. Anonymous access denied. service_role holds full access for the API and workers.",
+      "tests": "backend/src/storage/postgresRepository.integration.test.ts; backend/src/storage/schemaUpgrade.integration.test.ts",
+      "evidence": "Batch 1.5 migration, merged without being applied to production. Real-Postgres integration tests (Phase 1 and Phase 2, on a disposable database) exercise the schema, grants and functions. The disposable full-history run on this branch verifies it installs and that every public table has RLS. Not production schema parity or certification by inventory.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "storage_usage",
+      "migration": "20261022000000_storage_drive_foundation.sql",
+      "migrationSha256": "f042c652a2b230a913d15b8c4283abc2180090df5cbaa37d6041de755528c627",
+      "authorizationMigration": "20261022000000_storage_drive_foundation.sql",
+      "authorizationSha256": "f042c652a2b230a913d15b8c4283abc2180090df5cbaa37d6041de755528c627",
+      "boundary": "RLS enabled and forced. No grant to anon, authenticated or PUBLIC. service_role only (the API and workers). Quota counters are written only through service-role SECURITY functions whose EXECUTE is revoked from public, anon and authenticated.",
+      "tests": "backend/src/storage/postgresRepository.integration.test.ts",
+      "evidence": "Batch 1.5 migration, merged without being applied to production. Real-Postgres integration tests (Phase 1 and Phase 2, on a disposable database) exercise the schema, grants and functions. The disposable full-history run on this branch verifies it installs and that every public table has RLS. Not production schema parity or certification by inventory.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "storage_reservations",
+      "migration": "20261022000000_storage_drive_foundation.sql",
+      "migrationSha256": "f042c652a2b230a913d15b8c4283abc2180090df5cbaa37d6041de755528c627",
+      "authorizationMigration": "20261022000000_storage_drive_foundation.sql",
+      "authorizationSha256": "f042c652a2b230a913d15b8c4283abc2180090df5cbaa37d6041de755528c627",
+      "boundary": "RLS enabled and forced. No grant to anon, authenticated or PUBLIC. service_role only (the API and workers). Reservations are written only through service-role functions.",
+      "tests": "backend/src/storage/postgresRepository.integration.test.ts",
+      "evidence": "Batch 1.5 migration, merged without being applied to production. Real-Postgres integration tests (Phase 1 and Phase 2, on a disposable database) exercise the schema, grants and functions. The disposable full-history run on this branch verifies it installs and that every public table has RLS. Not production schema parity or certification by inventory.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "storage_audit_events",
+      "migration": "20261022000000_storage_drive_foundation.sql",
+      "migrationSha256": "f042c652a2b230a913d15b8c4283abc2180090df5cbaa37d6041de755528c627",
+      "authorizationMigration": "20261022000000_storage_drive_foundation.sql",
+      "authorizationSha256": "f042c652a2b230a913d15b8c4283abc2180090df5cbaa37d6041de755528c627",
+      "boundary": "RLS enabled and forced. No grant to anon, authenticated or PUBLIC. service_role only (the API and workers). Append-only audit trail for storage operations.",
+      "tests": "backend/src/storage/postgresRepository.integration.test.ts",
+      "evidence": "Batch 1.5 migration, merged without being applied to production. Real-Postgres integration tests (Phase 1 and Phase 2, on a disposable database) exercise the schema, grants and functions. The disposable full-history run on this branch verifies it installs and that every public table has RLS. Not production schema parity or certification by inventory.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "storage_migration_jobs",
+      "migration": "20261022000000_storage_drive_foundation.sql",
+      "migrationSha256": "f042c652a2b230a913d15b8c4283abc2180090df5cbaa37d6041de755528c627",
+      "authorizationMigration": "20261022000000_storage_drive_foundation.sql",
+      "authorizationSha256": "f042c652a2b230a913d15b8c4283abc2180090df5cbaa37d6041de755528c627",
+      "boundary": "RLS enabled and forced. No grant to anon, authenticated or PUBLIC. service_role only (the API and workers). Legacy-to-Drive migration job ledger; claimed only through a service-role function.",
+      "tests": "backend/src/storage/schemaUpgrade.integration.test.ts",
+      "evidence": "Batch 1.5 migration, merged without being applied to production. Real-Postgres integration tests (Phase 1 and Phase 2, on a disposable database) exercise the schema, grants and functions. The disposable full-history run on this branch verifies it installs and that every public table has RLS. Not production schema parity or certification by inventory.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "storage_migration_items",
+      "migration": "20261022000000_storage_drive_foundation.sql",
+      "migrationSha256": "f042c652a2b230a913d15b8c4283abc2180090df5cbaa37d6041de755528c627",
+      "authorizationMigration": "20261022000000_storage_drive_foundation.sql",
+      "authorizationSha256": "f042c652a2b230a913d15b8c4283abc2180090df5cbaa37d6041de755528c627",
+      "boundary": "RLS enabled and forced. No grant to anon, authenticated or PUBLIC. service_role only (the API and workers). Per-file migration ledger.",
+      "tests": "backend/src/storage/schemaUpgrade.integration.test.ts",
+      "evidence": "Batch 1.5 migration, merged without being applied to production. Real-Postgres integration tests (Phase 1 and Phase 2, on a disposable database) exercise the schema, grants and functions. The disposable full-history run on this branch verifies it installs and that every public table has RLS. Not production schema parity or certification by inventory.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "worker_task_leases",
+      "migration": "20261024000000_worker_task_leases.sql",
+      "migrationSha256": "57e01a1361a0a2f6704ffbab73cecb8b5dc4df4ca86f3fdee7f8fa0e99aea7f9",
+      "authorizationMigration": "20261024000000_worker_task_leases.sql",
+      "authorizationSha256": "57e01a1361a0a2f6704ffbab73cecb8b5dc4df4ca86f3fdee7f8fa0e99aea7f9",
+      "boundary": "RLS enabled and forced. No grant to anon, authenticated or PUBLIC. service_role only (the API and workers). Fenced worker leases; acquire, renew and release are service-role functions.",
+      "tests": "backend/src/workers/postgresLeaseStore.integration.test.ts",
+      "evidence": "Batch 1.5 migration, merged without being applied to production. Real-Postgres integration tests (Phase 1 and Phase 2, on a disposable database) exercise the schema, grants and functions. The disposable full-history run on this branch verifies it installs and that every public table has RLS. Not production schema parity or certification by inventory.",
+      "productionChanges": false
     }
   ]
 }

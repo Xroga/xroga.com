@@ -201,6 +201,136 @@
       "reason": "Pre-existing helper requires an isolated TEST founder AAL2 session. Missing configuration is BLOCKED, not passing authenticated coverage. No new skip is introduced; the independent authenticated-browser CI remains failing until TEST configuration and auth-realm isolation pass.",
       "issue_or_command": "XB01-C003 platform/browser baseline",
       "review_date": "2026-11-13"
+    },
+    {
+      "id": "3beb681574bb759b8ca69ebc07000cdb375ed6481d82f716a501d66a11f0bd1b",
+      "path": "backend/src/storage/databaseTls.test.ts",
+      "title": "database TLS against a real TLS handshake",
+      "condition": "haveOpenssl ? false : 'openssl is not installed'",
+      "owner": "Xroga engineering",
+      "reason": "Needs the openssl binary to generate a throw-away certificate; the test runs where openssl is installed.",
+      "issue_or_command": "Batch 1.5 storage-phase1 workflow (manual dispatch) and the phase3 browser host scripts",
+      "review_date": "2026-12-15"
+    },
+    {
+      "id": "5a2647acb52fd618f0498bc96c3135b0eb17dab013058ef97abe5365f08a08a7",
+      "path": "backend/src/storage/migration/largeObject.stream.test.ts",
+      "title": "large-object migration: real 1 GiB+ crossing",
+      "condition": "enabled ? false : 'set XROGA_LARGE_TEST=1 (needs ~1.2 GiB free temp disk)'",
+      "owner": "Xroga engineering",
+      "reason": "Opt-in real 1 GiB+ crossing; needs about 1.2 GiB of free temp disk. Run on demand with XROGA_LARGE_TEST=1.",
+      "issue_or_command": "Batch 1.5 storage-phase1 workflow (manual dispatch) and the phase3 browser host scripts",
+      "review_date": "2026-12-15"
+    },
+    {
+      "id": "1a760d8f399f8653f5a538766ecd0b4bedbc6be9a59249c396c1589c9b7deaf8",
+      "path": "backend/src/storage/migration/postgresMigration.integration.test.ts",
+      "title": "migration engine against real PostgreSQL ledger + metadata",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Needs a disposable PostgreSQL (STORAGE_TEST_DATABASE_URL) or the synthetic S3 emulator; skipped without it and run with REQUIRE_PHASE1_FIXTURES=1 by the storage-phase1 workflow.",
+      "issue_or_command": "Batch 1.5 storage-phase1 workflow (manual dispatch) and the phase3 browser host scripts",
+      "review_date": "2026-12-15"
+    },
+    {
+      "id": "e7ce498033b38d7f9ed446aa873e05e4552e59353f1c21b8e542de2a620010e5",
+      "path": "backend/src/storage/migration/runOutputArtifacts.integration.test.ts",
+      "title": "run-output artifact adapter (real PostgreSQL)",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Needs a disposable PostgreSQL (STORAGE_TEST_DATABASE_URL) or the synthetic S3 emulator; skipped without it and run with REQUIRE_PHASE1_FIXTURES=1 by the storage-phase1 workflow.",
+      "issue_or_command": "Batch 1.5 storage-phase1 workflow (manual dispatch) and the phase3 browser host scripts",
+      "review_date": "2026-12-15"
+    },
+    {
+      "id": "7e60ad60ef32893de0b882d8032920034fcbfbcc149d3434206842ba50078b6d",
+      "path": "backend/src/storage/postgresRepository.integration.test.ts",
+      "title": "Xroga Drive against real PostgreSQL (migration + RLS + atomic quota)",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Needs a disposable PostgreSQL (STORAGE_TEST_DATABASE_URL) or the synthetic S3 emulator; skipped without it and run with REQUIRE_PHASE1_FIXTURES=1 by the storage-phase1 workflow.",
+      "issue_or_command": "Batch 1.5 storage-phase1 workflow (manual dispatch) and the phase3 browser host scripts",
+      "review_date": "2026-12-15"
+    },
+    {
+      "id": "5fcbb693c1e2f0ff9202a0932cc313dad1d3f608f05c295679ad3a5b6f01f134",
+      "path": "backend/src/storage/r2.provider.integration.test.ts",
+      "title": "Cloudflare R2 provider verification (REAL endpoint)",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Runs only against a real private Cloudflare R2 test bucket with founder-provided credentials; never in default CI.",
+      "issue_or_command": "Batch 1.5 storage-phase1 workflow (manual dispatch) and the phase3 browser host scripts",
+      "review_date": "2026-12-15"
+    },
+    {
+      "id": "69f1f4fb6a0e8f1fe993af67a30f9114ac9f340cae4302d98e85bae1b2055588",
+      "path": "backend/src/storage/r2ObjectStore.wire.integration.test.ts",
+      "title": "R2ObjectStore over the AWS SDK wire protocol (S3 emulator, SYNTHETIC)",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Needs a disposable PostgreSQL (STORAGE_TEST_DATABASE_URL) or the synthetic S3 emulator; skipped without it and run with REQUIRE_PHASE1_FIXTURES=1 by the storage-phase1 workflow.",
+      "issue_or_command": "Batch 1.5 storage-phase1 workflow (manual dispatch) and the phase3 browser host scripts",
+      "review_date": "2026-12-15"
+    },
+    {
+      "id": "4649230c835ca95e2d136ae12bd9b8b00d54f3251e671d4ce3582081dfdf96dc",
+      "path": "backend/src/storage/schemaUpgrade.integration.test.ts",
+      "title": "migration upgrade, idempotency, hardening and rollback on real PostgreSQL",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Needs a disposable PostgreSQL (STORAGE_TEST_DATABASE_URL) or the synthetic S3 emulator; skipped without it and run with REQUIRE_PHASE1_FIXTURES=1 by the storage-phase1 workflow.",
+      "issue_or_command": "Batch 1.5 storage-phase1 workflow (manual dispatch) and the phase3 browser host scripts",
+      "review_date": "2026-12-15"
+    },
+    {
+      "id": "ff2dface36cba8f9a6ee372716ba9b39590bbd33f70e0eb63a2a145d6b0f6c96",
+      "path": "backend/src/workers/chromiumProxy.browser.test.ts",
+      "title": "real Chromium under the production launch policy",
+      "condition": "process.env.XROGA_SKIP_BROWSER_TESTS ? 'XROGA_SKIP_BROWSER_TESTS is set' : undefined",
+      "owner": "Xroga engineering",
+      "reason": "Needs a real Chromium (PHASE2_BROWSERS_PATH) and, on Windows, is skipped; run by the storage-phase1 workflow and on the browser hosts.",
+      "issue_or_command": "Batch 1.5 storage-phase1 workflow (manual dispatch) and the phase3 browser host scripts",
+      "review_date": "2026-12-15"
+    },
+    {
+      "id": "69805bb35eb6f7287b53c9cd6334bc897cecf355937dadeffefafe19a4830664",
+      "path": "backend/src/workers/chromiumProxy.browser.test.ts",
+      "title": "real Chromium under the production launch policy",
+      "condition": "skipReason",
+      "owner": "Xroga engineering",
+      "reason": "Needs a real Chromium (PHASE2_BROWSERS_PATH) and, on Windows, is skipped; run by the storage-phase1 workflow and on the browser hosts.",
+      "issue_or_command": "Batch 1.5 storage-phase1 workflow (manual dispatch) and the phase3 browser host scripts",
+      "review_date": "2026-12-15"
+    },
+    {
+      "id": "433471597699b529d41675352cae8e8cb5379e875809812da04b7f3e5fd87613",
+      "path": "backend/src/workers/chromiumProxy.browser.test.ts",
+      "title": "TLS errors are never ignored: an in-scope host presenting an untrusted certificate fails in the browser",
+      "condition": "'openssl not available to generate the untrusted certificate'",
+      "owner": "Xroga engineering",
+      "reason": "Needs the openssl binary to generate a throw-away certificate; the test runs where openssl is installed.",
+      "issue_or_command": "Batch 1.5 storage-phase1 workflow (manual dispatch) and the phase3 browser host scripts",
+      "review_date": "2026-12-15"
+    },
+    {
+      "id": "a892dbc2eb6cd0d5d23257f354cab6f16a59fadf4a41d79ee567ee8e6fd1e3c8",
+      "path": "backend/src/workers/postgresLeaseStore.integration.test.ts",
+      "title": "worker task leases against real PostgreSQL",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Needs a disposable PostgreSQL (STORAGE_TEST_DATABASE_URL) or the synthetic S3 emulator; skipped without it and run with REQUIRE_PHASE1_FIXTURES=1 by the storage-phase1 workflow.",
+      "issue_or_command": "Batch 1.5 storage-phase1 workflow (manual dispatch) and the phase3 browser host scripts",
+      "review_date": "2026-12-15"
+    },
+    {
+      "id": "9384efe760ff1fda73dcfe4a8de410bd98e85419e56b4f4eecde9348a7d41907",
+      "path": "backend/src/workers/processTree.test.ts",
+      "title": "sweeps orphans left behind by a child that exited normally",
+      "condition": "process.platform === 'win32' ? 'POSIX process groups only' : false",
+      "owner": "Xroga engineering",
+      "reason": "POSIX process groups only; Windows cannot run it.",
+      "issue_or_command": "Batch 1.5 storage-phase1 workflow (manual dispatch) and the phase3 browser host scripts",
+      "review_date": "2026-12-15"
     }
   ]
 }
