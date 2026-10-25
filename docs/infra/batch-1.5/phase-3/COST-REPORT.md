@@ -39,23 +39,36 @@ Sampling note: the sampler polls `docker stats` every ~0.25 s and a browser cont
 | R2 storage: about 0.1 MB screenshot at $0.015 / GB-month | $0.0000015 per month retained | same | ESTIMATE (size from W02/W15 artifacts) |
 | Egress | requests and page loads are inbound (free); outbound bytes per job are a few KB of HTTP requests | same | ESTIMATE, not metered per job |
 | **Deterministic outcome, total at full utilisation** | **about $0.00009** | **about $0.00007** | |
-| Stagehand model tokens per AI outcome | see §4 | see §4 | MEASURED when W03 runs |
+| Stagehand model tokens per AI outcome | about $0.0009 (W03) | same | MEASURED |
 
 Utilisation dominates. An always-on host costs $53.8 (amd64) or $61.0 (arm64) a month whether it runs one job or a million. At 10,000 outcomes a month the host is about $0.005 per outcome. At 100,000 it is about $0.0005. The marginal figures above are the floor.
 
 ## 4. Model cost (Stagehand AI steps)
-Route: Xroga's existing canonical model routing (`resolveEndpoint`) and ledger (`providerBudget.ts`). Default model `glm_5_3_flash` (Zhipu, $0.15 / 1M input, $0.50 / 1M output, from `ai/models.ts`). Every call is reserved before it is sent and settled with the provider's reported usage. A call without reported usage is refused. The test runner holds a hard run-wide cap of $0.50 (500,000 micro-USD).
+Route: Xroga's canonical model routing (`resolveEndpoint`) and ledger (`providerBudget.ts`). The founder's existing OpenRouter key reaches exactly one model under
+the provider policy, `deepseek_v4_flash` (`deepseek/deepseek-v4-flash`). GLM-5.3 Flash is bound to Zhipu by `providerPolicy.ts` and was not routed through
+OpenRouter (founder decision 2026-10-25: use DeepSeek V4 Flash, no policy change). Every call is reserved before it is sent and settled with the provider's reported
+usage; a call without reported usage is refused. The runner holds a hard run-wide cap of $0.50 and the OpenRouter key has its own $0.60 limit.
 
-| Receipt | Calls | Input tokens | Output tokens | Measured cost | Label |
+Final-source receipts (`evidence/local/final-suite-LOCAL_DOCKER.json`, source `d3b5f9c3`):
+
+| Receipt | Calls | Input tokens | Output tokens | Measured cost (ledger) | Label |
 |---|---|---|---|---|---|
-| W03 / W12e / MODELPROBE | pending the founder's local env file | | | | NOT_TESTED |
+| W03 Stagehand extract, observe, act on a real site | 4 | 8,326 | 740 | $0.000882 | MEASURED |
+| W12e model extraction from the hostile page | 2 | 965 | 261 | $0.000134 | MEASURED |
+| PRODUCT-001 planner (goal to plan) plus the planned run | | | | $0.000254 | MEASURED |
+| MODELPROBE structured output plus tool call | 2 | | | $0.000037 | MEASURED |
+| **Whole final suite** | | | | **$0.001307** | MEASURED |
+
+Cost per AI-assisted verified outcome: about **$0.0009** in model tokens (W03, the heaviest plan) plus the host and storage floor from §3, so about $0.001 in total.
+
+OpenRouter's own account of the key after every Phase 3 model run (including the two W03 runs that timed out before the fix, and the diagnostic run): **$0.0017** used, $0.598 of $0.60 remaining.
 
 ## 5. Actual Phase 3 spend so far (cash vs credit)
 | Item | Amount | Paid from |
 |---|---|---|
 | Two GCE verification VMs, 4 h each (auto-deleted at the 4 h limit; disks, addresses and the SSH firewall rule confirmed removed 2026-10-25) | at most $0.64 at list price (0.0747 + 0.0847 per hour, 4 h) | Google Cloud free-trial credit; $0 cash |
 | Cloudflare Worker testbed (workers.dev, free tier, no bindings) | $0 | free tier |
-| Model tokens | $0 so far | none spent |
+| Model tokens (OpenRouter, DeepSeek V4 Flash, all Phase 3 runs) | $0.0017 (provider-reported) | the founder's existing OpenRouter balance |
 | R2 test bucket (W07: a few Class A/B operations, objects deleted) | under $0.0001; inside the R2 free tier | free tier |
 
 Final figures are restated in `BATCH-1.5-PHASE-3-FINAL-ACCEPTANCE.md` after teardown.

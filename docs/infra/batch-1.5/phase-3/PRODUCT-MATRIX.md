@@ -4,6 +4,8 @@ Phase 3's scope is the browser (INFRA-007/008). PRODUCT-001, -009, -010 and -012
 truthfully: what existed, whether Phase 3 changed them, and what evidence exists. None of the twelve is production-verified by this phase, because nothing in
 Phase 3 is deployed.
 
+Final update 2026-10-25: rows 001, 009 and 012 carry the final-source receipts.
+
 Status vocabulary: `PASS_GCE` (real run on Compute Engine on both architectures), `PASS_LOCAL` (real run on the developer Docker host), `PARTIAL`,
 `NOT_TESTED`, `NOT_IMPLEMENTED`, `OUT_OF_PHASE_3_SCOPE` (unchanged by this phase; evidence belongs to the owning workstream).
 
@@ -14,9 +16,9 @@ Status vocabulary: `PASS_GCE` (real run on Compute Engine on both architectures)
 | Implementation | `POST/GET/DELETE /api/browser/runs` → `runBrowserTask` (issued `TenantContext`) → one `browser_automation` task on `ExecutionScheduler` → `browserTaskHandler` (lease, admission, plan parse, postconditions, Drive evidence) → `RemoteBrowserWorker` (HMAC) → host coordinator → `ContainerBrowserWorker` (hardened container + per-job egress proxy) → Playwright, with local Stagehand for AI steps through the canonical model route. Browser Studio panel `BrowserRun.tsx` runs a deterministic capture or a model-planned goal and shows postconditions, evidence and failures |
 | Infrastructure | Compute Engine browser host (Docker); Drive (R2 + Supabase metadata); an existing model provider for AI steps |
 | Tests | route tests (7); suite receipt `PRODUCT-001` (deterministic capture over the production router, then a model-planned goal); W01 to W15 underneath |
-| Evidence | deterministic half: PASS_LOCAL (`PRODUCT-001` receipt, 2026-10-24); the same deterministic path on GCE inside W01/W02/W04/W15 on both architectures |
-| Blockers | the model-planned half needs the founder's local env file with an existing model key |
-| Status | **PARTIAL** until the model-planned run passes |
+| Evidence | both halves PASS_LOCAL on the final source `d3b5f9c3` (`evidence/local/final-suite-LOCAL_DOCKER.json`): deterministic capture, then a goal planned by `deepseek_v4_flash` through the canonical route and executed with verified postconditions (model spend $0.000254). The deterministic path is also PASS_GCE on both architectures inside W01/W02/W04/W15 (earlier image) |
+| Blockers | the final image (with the Stagehand attach fix) has not run on Compute Engine |
+| Status | **PASS_LOCAL** |
 
 ## PRODUCT-009: Combined browser, app and employee workflow
 | Field | Record |
@@ -25,9 +27,9 @@ Status vocabulary: `PASS_GCE` (real run on Compute Engine on both architectures)
 | Implementation | suite receipt `PRODUCT-009`: a read-only Xroga Connect session discovers a Google Sheets read tool, reads cell A1 of a synthetic spreadsheet; the value drives a browser run on the canonical scheduler; the combined report (app provenance, browser postconditions, screenshot reference) is stored as a private Drive artifact and read back by SHA-256; another tenant is denied; the follow-up app write is STAGED for review and never executed |
 | Infrastructure | Composio (one synthetic identity `xroga-phase3-synthetic-p009`), browser host, Drive/R2 |
 | Tests | `PRODUCT-009` receipt |
-| Evidence | not yet run |
-| Blockers | `COMPOSIO_API_KEY` in the env file; the founder connects one throwaway Google account and creates one spreadsheet. The AI Employee leg cannot be tested: it does not exist |
-| Status | **NOT_TESTED** (at best PARTIAL once run, because the employee leg is NOT_IMPLEMENTED) |
+| Evidence | PASS_LOCAL (`evidence/local/product-009-LOCAL_DOCKER.json`, 2026-10-25): `GOOGLESHEETS_VALUES_GET` (risk `read`) returned `inspirational` from A1 of the founder's synthetic sheet through a read-only Xroga Connect session; the browser run on `/tag/inspirational/` verified 4 postconditions and extracted 10 quotes; the combined report is READY in the private R2 bucket with matching SHA-256; another tenant is denied; the follow-up sheet write is `STAGED_FOR_REVIEW`, `executed: false`. The spreadsheet id is redacted in the committed receipt |
+| Blockers | the AI Employee leg cannot be tested: there is no AI Employee backend (baseline NOT_IMPLEMENTED, outside Phase 3) |
+| Status | **PARTIAL**: app and browser legs PASS_LOCAL; employee leg NOT_IMPLEMENTED |
 
 ## PRODUCT-010: Concurrent chat and background execution
 | Field | Record |
