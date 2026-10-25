@@ -23176,7 +23176,7 @@
       "id": "surface:8c25c7e0b5b0dd66676d",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "d7aa3473f1347001b35fe7e49e5ced241099bd027fef102814dee728780bd659",
+      "sha256": "a57065553c769bfb9e768c6fb76502850883635ca4fddf50ffa1054a089bfadf",
       "symbols": [
         "COMPOSIO_API_BASE",
         "COMPOSIO_CACHE_TTL_MS",
