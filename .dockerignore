@@ -1,6 +1,8 @@
 # Portable API build context, only the backend is needed.
 frontend/
 node_modules/
+.local-task-storage/
+scripts/local/
 **/node_modules/
 .git/
 .github/

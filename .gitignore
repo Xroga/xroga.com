@@ -72,3 +72,7 @@ artifacts/font-sources/
 
 # Local bytecode from the isolated Google execution controller tests.
 backend/src/sandbox/google/__pycache__/
+
+# Owned local development jobs, bounded logs and preserved local receipts.
+/.local-task-storage/
+scripts/local/__pycache__/
