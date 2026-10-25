@@ -96,7 +96,8 @@ export class GceSshTransport {
   constructor(private readonly control: Pick<GceMachineControl,'resolve'|'configuration'>,
     private readonly api: GceApi = attachedGceIdentity(),
     private readonly command: NativeCommand = nativeSshCommand,
-    private readonly keyFactory: () => Promise<EphemeralSshKey> = temporaryNativeSshKey) {}
+    private readonly keyFactory: () => Promise<EphemeralSshKey> = temporaryNativeSshKey,
+    private readonly propagateKey: () => Promise<void> = () => new Promise(resolve=>setTimeout(resolve,5000))) {}
 
   async run<T>(handle: GceExecutionHandle, operation: Readonly<Record<string, unknown>>, timeoutMs: number): Promise<T> {
     if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 600000) throw new GceControlError('INVALID_NATIVE_SSH_TIMEOUT');
@@ -130,6 +131,13 @@ export class GceSshTransport {
       const primary = valid.filter(value => value.primary===true);
       const accounts = primary.length ? primary : valid;
       if(accounts.length!==1)throw new GceControlError('NATIVE_OS_LOGIN_PRINCIPAL_AMBIGUOUS');
+      // Google documents propagation before using a newly imported key. This is
+      // one admission delay, never a retry after a denied SSH operation.
+      await this.propagateKey();
+      const admittedTarget=await this.control.resolve(handle);
+      if(admittedTarget.privateIp!==target.privateIp || admittedTarget.sshHostKey!==target.sshHostKey)
+        throw new GceControlError('NATIVE_SSH_TARGET_CHANGED_DURING_ADMISSION');
+      if(BigInt(expiry)<=BigInt(Date.now())*1000n)throw new GceControlError('NATIVE_OS_LOGIN_KEY_EXPIRY_INVALID');
       // Trust a host key retrieved through the authenticated Compute API only.
       // No accept-new, disabled checking, ssh-keyscan or developer known_hosts.
       const alias = 'xroga-'+handle.instanceId;
