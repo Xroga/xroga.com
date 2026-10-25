@@ -68,3 +68,7 @@ Do not suppress failures, focus tests, invent evidence, auto-grant roles or weak
 Founder preview access requires server-validated confirmed `hello@xroga.com`, server-owned owner role and AAL2. A hidden link/client toggle is not authorization. Existing admin/owner API access is broader and is not founder exclusivity; withheld diagnostics remain integration pending until separately enforced/tested.
 
 Only use the confirmed existing GitHub/Vercel/Fly/Supabase release pathway. No DNS/provider migration, destructive DB operation, new charges, production test users or secret exposure. Merge/deploy only after mandatory gates and required approvals; a pushed SHA/build is not live proof. Keep a resumable tracker/checkpoint when external gates remain blocked.
+
+## Storage hygiene (permanent, all agents)
+
+Every task follows Create -> Execute -> Verify -> Clean up -> Report. Check free disk space before and after storage-heavy steps, keep disposable output under `.task-scratch/<task-id>/`, and clean up after success and failure with `node scripts/dev/task-cleanup.mjs run <task-id> -- <command>`. Never prune Docker, delete volumes, WSL disks, shared caches or unrelated files without explicit founder approval. Full policy: `docs/xroga/DEV_STORAGE_HYGIENE.md`.
