@@ -87,28 +87,19 @@ describe('offline migration check (the pull-request replacement for the live dry
   });
 });
 
-describe('the migration workflow keeps secrets and the Production environment away from pull requests', () => {
+describe("the migration workflow never mutates a database (main's validation-only gate)", () => {
   const wf = readFileSync(join(repoRoot, '.github/workflows/supabase-migrate.yml'), 'utf8');
-  const jobs = wf.split(/^jobs:\s*$/m)[1] ?? '';
-  const block = (id: string) => { const m = new RegExp(`^  ${id}:\\n([\\s\\S]*?)(?=^  [a-z][\\w-]*:\\n|(?![\\s\\S]))`, 'm').exec(jobs); return m ? m[1]! : ''; };
+  const code = wf.replace(/#[^\n]*/g, '');
 
-  it('the pull-request job exists, has no environment, no secret, and runs only the offline check', () => {
-    const pr = block('validate-migrations');
-    assert.ok(pr.length > 0, 'validate-migrations job present');
-    assert.match(pr, /if:\s*github\.event_name == 'pull_request'/);
-    assert.ok(!/^\s*environment:/m.test(pr), 'no environment (so no Preview secrets)');
-    assert.ok(!/secrets\./.test(pr), 'no secret reference');
-    assert.match(pr, /node scripts\/check-supabase-migrations\.mjs/);
-    assert.ok(!/apply-supabase-migrations/.test(pr), 'never the live runner');
-    assert.match(pr, /permissions:\s*\n\s+contents:\s*read/);
+  it('has no environment, no secret reference and no write permission, so no event can reach a database', () => {
+    assert.ok(!/^\s*environment:/m.test(code), 'no GitHub Environment');
+    assert.ok(!/secrets\./.test(code), 'no secret reference');
+    assert.match(code, /permissions:\s*\n\s+contents:\s*read/);
   });
 
-  it('the live job never runs on a pull request and keeps the Production environment', () => {
-    const live = block('migrate');
-    assert.ok(live.length > 0);
-    assert.match(live, /if:\s*github\.event_name != 'pull_request'/);
-    assert.match(live, /environment:\s*Production/);
-    assert.ok(!/Preview/.test(wf.replace(/#[^\n]*/g, '')), 'the Preview environment is no longer used by any job');
-    assert.ok(!/--dry-run/.test(wf.replace(/#[^\n]*/g, '')), 'no live dry run remains');
+  it('only validates: it never runs the live migration runner or a dry run', () => {
+    assert.match(code, /node scripts\/ci\/validate-migrations\.mjs/);
+    assert.ok(!/run:\s*node scripts\/apply-supabase-migrations/.test(code), 'the live runner is not invoked');
+    assert.ok(!/--dry-run/.test(code), 'no live dry run');
   });
 });

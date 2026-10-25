@@ -118519,7 +118519,7 @@
     {
       "id": "test-suite:03c640f4b373e1d73f37",
       "sourcePath": "backend/src/runtime/bootGuard.test.ts",
-      "declaredTests": 8,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },

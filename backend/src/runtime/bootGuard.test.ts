@@ -3,50 +3,26 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 
 /**
- * index.ts starts a server when imported, so the boot wiring cannot be exercised as a unit. This test pins the wiring itself: every
- * database-writing boot duty must sit inside the block that checks the policy decision, so a later edit cannot quietly move a call outside it.
+ * index.ts starts a server when imported, so the boot wiring cannot be exercised as a unit. This test pins the wiring itself.
+ * Main's contract (kept in the Batch 1.5 integration): boot runs no schema DDL, /ready answers from the credential-vault and database
+ * probes, and request logging never records query strings. The startup-policy and readiness evaluators in this directory are libraries
+ * that are deliberately not wired into index.ts yet: they recognise production only by the Fly app name, so wiring them is part of the
+ * Google Cloud cutover (docs/infra/batch-1.5/DEPLOYMENT-HOLD.md).
  */
 const source = readFileSync(new URL('../index.ts', import.meta.url), 'utf8');
 
-/** the text between the braces of the block opened by the first occurrence of `guard` */
-function blockOf(guard: string): { start: number; end: number } {
-  const at = source.indexOf(guard);
-  assert.ok(at >= 0, `missing guard: ${guard}`);
-  const open = source.indexOf('{', at);
-  let depth = 0;
-  for (let i = open; i < source.length; i++) {
-    if (source[i] === '{') depth++;
-    else if (source[i] === '}' && --depth === 0) return { start: open, end: i };
-  }
-  throw new Error('unbalanced braces');
-}
-
-const calls = (re: RegExp): number[] => [...source.matchAll(re)].map((m) => m.index!);
-
-describe('boot duties are gated by the startup policy', () => {
-  it('every schema-ensure call is inside `if (startup.duties.ensureSchemas)`', () => {
-    const block = blockOf('if (startup.duties.ensureSchemas)');
-    const found = calls(/\bensure\w*Schema\(\)/g);
-    assert.ok(found.length >= 5, 'the five schema-ensure calls still exist');
-    for (const at of found) assert.ok(at > block.start && at < block.end, `ensure*Schema call at ${at} is outside the policy guard`);
+describe('boot duties follow main\'s contract', () => {
+  it('boot runs no schema-ensure DDL (schema changes belong to the migration gate)', () => {
+    assert.equal([...source.matchAll(/\bensure\w*Schema\(/g)].length, 0);
   });
 
-  it('orphaned-run reconciliation is inside `if (startup.duties.reconcileOrphanedRuns)`', () => {
-    const block = blockOf('if (startup.duties.reconcileOrphanedRuns)');
-    const found = calls(/\breconcileOrphanedRuns\(/g);
-    assert.equal(found.length, 1, 'exactly one boot call site');
-    assert.ok(found[0]! > block.start && found[0]! < block.end);
+  it('orphaned-run reconciliation has exactly one boot call site, as on main', () => {
+    assert.equal([...source.matchAll(/\breconcileOrphanedRuns\(/g)].length, 1);
   });
 
-  it('the decision is made before any duty runs', () => {
-    const decided = source.indexOf('decideStartup()');
-    assert.ok(decided > 0);
-    assert.ok(decided < source.indexOf('if (startup.duties.ensureSchemas)'));
-    assert.ok(decided < source.indexOf('if (startup.duties.reconcileOrphanedRuns)'));
-  });
-
-  it('/ready uses the shared evaluator, so it can never report ready on a missing mandatory dependency', () => {
-    assert.match(source, /app\.get\('\/ready'[\s\S]{0,400}runReadiness\(apiProbes\(/);
+  it('/ready answers from the credential-vault and database probes', () => {
+    assert.match(source, /app\.get\('\/ready',\s*credentialVaultReadinessMiddleware\(/);
+    assert.match(source, /app\.get\('\/ready'[\s\S]{0,700}probeDatabaseReadiness\(\)/);
   });
 });
 
@@ -57,7 +33,8 @@ describe('credential-safe logging is installed before anything can log', () => {
     assert.equal(imports[1], './runtime/installSafeLogging.js');
   });
 
-  it('HTTP request logging goes through the redactor (morgan bypasses console)', () => {
-    assert.match(source, /morgan\('dev',\s*\{\s*stream:\s*\{\s*write:[^}]*redactText\(/);
+  it('HTTP request logging records the path without its query string', () => {
+    assert.match(source, /morgan\.token\('safe-path'/);
+    assert.ok(!/morgan\('dev'/.test(source), 'no raw morgan dev format (it prints the full URL, including OAuth codes)');
   });
 });
