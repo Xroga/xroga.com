@@ -36,6 +36,13 @@ def tree(path):
    if p.is_dir():stack.append(p)
    else:rows.append(p)
  return rows
+
+def temporary_usage(path):
+ # Downloaders rename and unlink temporary files during a scan. Retry an
+ # unstable measurement on the next poll, retaining the disk-free guard.
+ # Permission failures, unsafe paths and other errors must still stop the job.
+ try:return sum(p.stat().st_size for p in tree(path))
+ except FileNotFoundError:return None
 def safe_remove(path,root,apply):
  path=safe_path(path,root);files=tree(path) if path.is_dir() else [path]
  for f in files:
@@ -175,6 +182,7 @@ class RotatingOutput:
 def run_job(cfg,args):
  if not args.command:raise ValueError('Supply a trusted executable after --')
  command=args.command[1:] if args.command[0]=='--' else args.command
+ if not pathlib.Path(command[0]).is_absolute():raise ValueError('Executable path must be absolute')
  exe=pathlib.Path(command[0]).resolve()
  if not exe.is_file() or exe.suffix.lower()!='.exe':raise ValueError('Use an absolute .exe path, not a shell command string')
  cwd=pathlib.Path(args.cwd).resolve();identifier=str(uuid.uuid4());directory=MANAGED/'jobs'/identifier;tmp=directory/'tmp';tmp.mkdir(parents=True)
@@ -206,7 +214,8 @@ def run_job(cfg,args):
     if shutil.disk_usage(BASE).free<cfg['minimumFreeGiB']*1024**3:reason='DISK_FREE_FLOOR';break
     if time.monotonic()-getattr(log,'lastTempCheck',0)>2:
      log.lastTempCheck=time.monotonic()
-     if sum(p.stat().st_size for p in tree(tmp))>cfg['jobTempMaxGiB']*1024**3:reason='TEMPORARY_STORAGE_LIMIT';break
+     usage=temporary_usage(tmp)
+     if usage is not None and usage>cfg['jobTempMaxGiB']*1024**3:reason='TEMPORARY_STORAGE_LIMIT';break
     time.sleep(.2)
   except BaseException as e:reason=type(e).__name__ if not isinstance(e,RuntimeError) else str(e)
   finally:

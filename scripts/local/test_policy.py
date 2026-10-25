@@ -61,6 +61,13 @@ class PolicyTests(unittest.TestCase):
   writer=m.RotatingOutput(self.base/'logs',1024,3)
   for _ in range(100):writer.append(b'x'*8192)
   writer.close();self.assertEqual(writer.total,819200);self.assertLessEqual(sum(p.stat().st_size for p in (self.base/'logs').iterdir()),3072)
+ def test_storage_monitor_tolerates_file_rename_but_not_permission_failure(self):
+  from types import SimpleNamespace
+  missing=SimpleNamespace(stat=lambda: (_ for _ in ()).throw(FileNotFoundError()))
+  with patch.object(m,'tree',return_value=[missing]):self.assertIsNone(m.temporary_usage(self.base))
+  denied=SimpleNamespace(stat=lambda: (_ for _ in ()).throw(PermissionError()))
+  with patch.object(m,'tree',return_value=[denied]):
+   with self.assertRaises(PermissionError):m.temporary_usage(self.base)
  def test_docker_volume_or_foreign_owner_prevents_removal(self):
   d,tmp=self.job()
   for mode in ['volume','foreign']:
