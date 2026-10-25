@@ -29342,7 +29342,7 @@
       "id": "surface:cdda29bd35ad869495ee",
       "subsystem": "file_storage",
       "sourcePath": "backend/src/storage/migration/cliContext.ts",
-      "sha256": "5bda9e920cbb27d2cd2e69c50d6f42de2ff7873a757e9c04b090d89bb1dd2d28",
+      "sha256": "08baeffc5fa11e6099b90833c862ed2d1748be9a6aab49b3dedac06e27929b4c",
       "symbols": [
         "BuiltContext",
         "accountId",
@@ -46743,7 +46743,7 @@
       "id": "surface:a9749aac4039da6c87be",
       "subsystem": "browser_sandbox",
       "sourcePath": "frontend/src/components/automations/BrowserStudio.tsx",
-      "sha256": "8ea5c2c924e7b6315adfccd0ceeaef051adc7cba53f7bcbd53727e16b2426c49",
+      "sha256": "ae4d38a2e0c346de084541cac59d47ea7458f7473ffadb32aa27a162f1433532",
       "symbols": [
         "BrowserStudio",
         "parsed",
@@ -109946,14 +109946,14 @@
     {
       "id": "workflow:e98bb23501189d64a1ce",
       "sourcePath": ".github/workflows/fly-deploy.yml",
-      "sha256": "dfdcb8c9ef93c3e34c2c0eaf38aa3e7377a808910ae0b85c6351d3d10ebf99e0",
+      "sha256": "881906774f4500edfe772507c5f88fc7373e400381931fe9f884f7b102665376",
       "sourceEntrypoints": [],
       "hasSchedule": false
     },
     {
       "id": "workflow:5c7b527e67952c0c1c13",
       "sourcePath": ".github/workflows/fly-sandbox-browser-verification.yml",
-      "sha256": "da0de446d7584110a6449d93ded105fe28d4250329f5e1175bb02f9a47a9e950",
+      "sha256": "f67bf1d79f246e8d934123a3aae529a0f7187606334a04fca1bc4a621843f253",
       "sourceEntrypoints": [
         "backend/src/scripts/verifyFlySandboxBrowser.ts"
       ],

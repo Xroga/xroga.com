@@ -1,19 +1,18 @@
 name: Deploy to Fly.io
 
+# DEPLOYMENT HOLD (Google Cloud migration).
+# Xroga is moving from Fly.io to Google Cloud; Codex owns that migration. The running Fly service is preserved until the Google replacement is
+# verified. A push to main therefore must NOT deploy to Fly: the push trigger is removed on purpose. Validation is unaffected (api-build-check,
+# unit-tests, supabase-migrate validation and the other required checks are separate workflows and still run).
+# A manual dispatch remains possible for a deliberate recovery or rollback release and requires typing the confirmation below.
+# Lift or replace this hold only through the reviewed Google release gate. See docs/infra/batch-1.5/DEPLOYMENT-HOLD.md.
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'backend/**'
-      - 'scripts/verify-agent-v2-production.mjs'
-      - 'Dockerfile.api'
-      - 'fly.api.toml'
-      - 'package.json'
-      - 'package-lock.json'
-      - '.github/workflows/fly-deploy.yml'
-
   workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Fly.io is on hold during the Google Cloud migration. Type RELEASE_TO_FLY to deploy anyway (recovery or rollback only).'
+        required: true
+        type: string
 
 concurrency:
   group: fly-deploy-xroga-api
@@ -21,6 +20,7 @@ concurrency:
 
 jobs:
   deploy:
+    if: github.event_name == 'workflow_dispatch' && inputs.confirm == 'RELEASE_TO_FLY'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     environment: Production

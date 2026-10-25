@@ -59,6 +59,7 @@ flowchart LR
   endpoint_chrome_google_com["Source-defined endpoint chrome.google.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_chromewebstore_googleapis_com["Source-defined endpoint chromewebstore.googleapis.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_cloudkms_googleapis_com["Source-defined endpoint cloudkms.googleapis.com — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_coordinator["Source-defined endpoint coordinator — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_design_intuit_com["Source-defined endpoint design.intuit.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_dev_whop_com["Source-defined endpoint dev.whop.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_developer_android_com["Source-defined endpoint developer.android.com — CONFIGURED_BUT_UNVERIFIED"]
@@ -112,6 +113,7 @@ flowchart LR
   endpoint_lovable_dev["Source-defined endpoint lovable.dev — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_mailchimp_com["Source-defined endpoint mailchimp.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_mcp_example_com["Source-defined endpoint mcp.example.com — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_memory_invalid["Source-defined endpoint memory.invalid — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_mixpanel_com["Source-defined endpoint mixpanel.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_neon_com["Source-defined endpoint neon.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_nextjs_org["Source-defined endpoint nextjs.org — CONFIGURED_BUT_UNVERIFIED"]
@@ -126,6 +128,7 @@ flowchart LR
   endpoint_public_example_invalid["Source-defined endpoint public.example.invalid — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_railway_app["Source-defined endpoint railway.app — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_react_dev["Source-defined endpoint react.dev — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_registry_npmjs_org["Source-defined endpoint registry.npmjs.org — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_schema_org["Source-defined endpoint schema.org — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_scs_owasp_org["Source-defined endpoint scs.owasp.org — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_sentry_io["Source-defined endpoint sentry.io — CONFIGURED_BUT_UNVERIFIED"]
@@ -238,6 +241,7 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_chrome_google_com
   api -. "source host/reference; unverified" .-> endpoint_chromewebstore_googleapis_com
   api -. "source host/reference; unverified" .-> endpoint_cloudkms_googleapis_com
+  api -. "source host/reference; unverified" .-> endpoint_coordinator
   frontend -. "source host/reference; unverified" .-> endpoint_design_intuit_com
   frontend -. "source host/reference; unverified" .-> endpoint_dev_whop_com
   frontend -. "source host/reference; unverified" .-> endpoint_developer_android_com
@@ -291,6 +295,7 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_lovable_dev
   frontend -. "source host/reference; unverified" .-> endpoint_mailchimp_com
   frontend -. "source host/reference; unverified" .-> endpoint_mcp_example_com
+  api -. "source host/reference; unverified" .-> endpoint_memory_invalid
   frontend -. "source host/reference; unverified" .-> endpoint_mixpanel_com
   frontend -. "source host/reference; unverified" .-> endpoint_neon_com
   frontend -. "source host/reference; unverified" .-> endpoint_nextjs_org
@@ -305,6 +310,7 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_public_example_invalid
   frontend -. "source host/reference; unverified" .-> endpoint_railway_app
   frontend -. "source host/reference; unverified" .-> endpoint_react_dev
+  api -. "source host/reference; unverified" .-> endpoint_registry_npmjs_org
   frontend -. "source host/reference; unverified" .-> endpoint_schema_org
   frontend -. "source host/reference; unverified" .-> endpoint_scs_owasp_org
   frontend -. "source host/reference; unverified" .-> endpoint_sentry_io

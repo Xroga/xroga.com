@@ -26,7 +26,7 @@ function legacyR2Config(env: NodeJS.ProcessEnv) {
 }
 
 export function supabaseStorageClient(env: NodeJS.ProcessEnv): SupabaseStorageLike {
-  const missing = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'].filter((k) => !env[k]);
+  const missing = [['SUPABASE_URL', env.SUPABASE_URL], ['SUPABASE_SERVICE_ROLE_KEY', env.SUPABASE_SERVICE_ROLE_KEY]].filter(([, v]) => !v).map(([k]) => k as string);
   if (missing.length) throw new BlockedError(missing);
   const sb = createClient(env.SUPABASE_URL as string, env.SUPABASE_SERVICE_ROLE_KEY as string, { auth: { persistSession: false, autoRefreshToken: false } });
   return {

@@ -100,7 +100,8 @@ export function BrowserStudio({
         <button className={styles.primary}>Add browser task to chatbar</button>
       </form>
       {error && <p role="alert">{error}</p>}
-      <BrowserRun goal={task[1]} />
+      {/* Hidden until the self-hosted browser host is activated (a separate, approved cutover): without it /api/browser/runs answers 503. */}
+      {process.env.NEXT_PUBLIC_XROGA_BROWSER_RUNS === "1" && <BrowserRun goal={task[1]} />}
       <div className={styles.browserGrid} data-evidence={panel}>
         <aside className={styles.panel}>
           <h3>Task / status</h3>
