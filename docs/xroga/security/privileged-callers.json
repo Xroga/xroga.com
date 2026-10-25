@@ -8,16 +8,16 @@
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 183,
-    "persistenceCandidates": 744,
+    "persistenceCandidates": 780,
     "ownerPredicateCandidates": 191,
-    "reviewRequired": 62,
+    "reviewRequired": 98,
     "reviewedCandidates": 682,
-    "unresolvedSafetyCandidates": 87,
+    "unresolvedSafetyCandidates": 123,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 18
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 62,
+    "REVIEW_REQUIRED": 98,
     "SCOPED_BOUNDARY": 453,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 164,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 111,
-    "unresolvedCandidateBoundaries": 633,
+    "unresolvedCandidateBoundaries": 669,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3656,6 +3656,118 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "d9ca1dc70978e28dc077"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "25f92140516038e231c5"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "501dcc9f20f0c760a50b"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4b202d05e0dd61185918"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "719082dae91a6b31fab0"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "d83d7181f29c570da8ac"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "d96edcbc3fc58b2b9502"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "69aa7c146a9cd0162f96"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "1b5d093b123a50090eee"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "e33f2f0978414f4a235c"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "16ea52222525c65c9480"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "5adb44194f73f004a3bf"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "d4c1e7a2b71b95be712d"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "3fc03a700d69f5d8528f"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "cc921eded0ffe4223512"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "738931bf82f38130f4bf"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "956c1a0e680d52394ff4"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "0736d78a2cd4443e0433"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "1da44c46d1003b51f1dc"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "f68aef24852c8fe44108"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "308ac3e2c97f451f45c4"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "2176bd20d97b76a7a08e"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4752ae00c9ea1a29d920"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "30a4f1e3802f98ab0d10"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "3940fae3b2d5678ea982"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "3b9a4438438d6b84a150"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "b1842381746daad93b44"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "2c69ef5998ffefb521bc"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "8831772e1415698008d8"
       },
       {
@@ -3737,6 +3849,38 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "0e4c41c7ca91a4914c3f"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "2729f713267978277ba6"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "a67d6de884df72fb9c2a"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "eb7d65790579121f23f5"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "63e27e1f6b29fe5d4d0b"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "1dd90cc3d900680504cd"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "9ca710dbe1da35d53901"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "52d6b7d63d4f0ffcddef"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "7170f645d8883b5fcc3e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4128,6 +4272,118 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "d9ca1dc70978e28dc077"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "25f92140516038e231c5"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "501dcc9f20f0c760a50b"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "4b202d05e0dd61185918"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "719082dae91a6b31fab0"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "d83d7181f29c570da8ac"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "d96edcbc3fc58b2b9502"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "69aa7c146a9cd0162f96"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "1b5d093b123a50090eee"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "e33f2f0978414f4a235c"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "16ea52222525c65c9480"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "5adb44194f73f004a3bf"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "d4c1e7a2b71b95be712d"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "3fc03a700d69f5d8528f"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "cc921eded0ffe4223512"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "738931bf82f38130f4bf"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "956c1a0e680d52394ff4"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "0736d78a2cd4443e0433"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "1da44c46d1003b51f1dc"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "f68aef24852c8fe44108"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "308ac3e2c97f451f45c4"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "2176bd20d97b76a7a08e"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "4752ae00c9ea1a29d920"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "30a4f1e3802f98ab0d10"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "3940fae3b2d5678ea982"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "3b9a4438438d6b84a150"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "b1842381746daad93b44"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "2c69ef5998ffefb521bc"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "8831772e1415698008d8"
       },
       {
@@ -4137,6 +4393,38 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "4309e81e72c6705aade9"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "2729f713267978277ba6"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "a67d6de884df72fb9c2a"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "eb7d65790579121f23f5"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "63e27e1f6b29fe5d4d0b"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "1dd90cc3d900680504cd"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "9ca710dbe1da35d53901"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "52d6b7d63d4f0ffcddef"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "7170f645d8883b5fcc3e"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6429,10 +6717,10 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 744,
+    "currentCallers": 780,
     "structuredVerified": 111,
-    "structuredUnproven": 633,
-    "manualUnresolved": 87,
+    "structuredUnproven": 669,
+    "manualUnresolved": 123,
     "manualUnsupported": 546,
     "agreedVerified": 111,
     "proofAwaitingManualReconciliation": 0
@@ -20350,6 +20638,314 @@
       }
     },
     {
+      "id": "d9ca1dc70978e28dc077",
+      "path": "backend/src/storage/artifactSink.ts",
+      "line": 21,
+      "enclosing": "persistArtifactToDrive",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "5bb207831a9f32a0e48ece32a103d56b099287d90d77dbbb4d74d6ecb5b57717"
+    },
+    {
+      "id": "25f92140516038e231c5",
+      "path": "backend/src/storage/databaseTls.ts",
+      "line": 153,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "97013fc40e66c54a1d12817aea17edf7dcaf335a794a75ffa0d3fa47e6025806"
+    },
+    {
+      "id": "501dcc9f20f0c760a50b",
+      "path": "backend/src/storage/integrity.ts",
+      "line": 16,
+      "enclosing": "hexToBase64",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "806b328b5ba79b843c3d23d78f1ede114698fa038639ac8b42cd270ceda50708"
+    },
+    {
+      "id": "4b202d05e0dd61185918",
+      "path": "backend/src/storage/memoryObjectStore.ts",
+      "line": 147,
+      "enclosing": "putStream",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "87f7712aa47d7a5ef6542c5ee3ad9fa1a140fabb8cb6ad268e09f26e1c3b93e8"
+    },
+    {
+      "id": "719082dae91a6b31fab0",
+      "path": "backend/src/storage/memoryObjectStore.ts",
+      "line": 184,
+      "enclosing": "uploadPart",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "87f7712aa47d7a5ef6542c5ee3ad9fa1a140fabb8cb6ad268e09f26e1c3b93e8"
+    },
+    {
+      "id": "d83d7181f29c570da8ac",
+      "path": "backend/src/storage/memoryObjectStore.ts",
+      "line": 231,
+      "enclosing": "corrupt",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "87f7712aa47d7a5ef6542c5ee3ad9fa1a140fabb8cb6ad268e09f26e1c3b93e8"
+    },
+    {
+      "id": "d96edcbc3fc58b2b9502",
+      "path": "backend/src/storage/memoryObjectStore.ts",
+      "line": 239,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "87f7712aa47d7a5ef6542c5ee3ad9fa1a140fabb8cb6ad268e09f26e1c3b93e8"
+    },
+    {
+      "id": "69aa7c146a9cd0162f96",
+      "path": "backend/src/storage/memoryObjectStore.ts",
+      "line": 239,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "87f7712aa47d7a5ef6542c5ee3ad9fa1a140fabb8cb6ad268e09f26e1c3b93e8"
+    },
+    {
+      "id": "1b5d093b123a50090eee",
+      "path": "backend/src/storage/migration/approvals.ts",
+      "line": 38,
+      "enclosing": "signApproval",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "725627ba3811963c74b1119307d5511d7d0d6322f0ebe2593a386cd76ae8054a"
+    },
+    {
+      "id": "e33f2f0978414f4a235c",
+      "path": "backend/src/storage/migration/approvals.ts",
+      "line": 59,
+      "enclosing": "verifyApproval",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "725627ba3811963c74b1119307d5511d7d0d6322f0ebe2593a386cd76ae8054a"
+    },
+    {
+      "id": "16ea52222525c65c9480",
+      "path": "backend/src/storage/migration/approvals.ts",
+      "line": 60,
+      "enclosing": "verifyApproval",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "725627ba3811963c74b1119307d5511d7d0d6322f0ebe2593a386cd76ae8054a"
+    },
+    {
+      "id": "5adb44194f73f004a3bf",
+      "path": "backend/src/storage/migration/cliContext.ts",
+      "line": 34,
+      "enclosing": "supabaseStorageClient",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "08baeffc5fa11e6099b90833c862ed2d1748be9a6aab49b3dedac06e27929b4c"
+    },
+    {
+      "id": "d4c1e7a2b71b95be712d",
+      "path": "backend/src/storage/migration/cliContext.ts",
+      "line": 39,
+      "enclosing": "supabaseStorageClient",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "08baeffc5fa11e6099b90833c862ed2d1748be9a6aab49b3dedac06e27929b4c"
+    },
+    {
+      "id": "3fc03a700d69f5d8528f",
+      "path": "backend/src/storage/migration/cliContext.ts",
+      "line": 41,
+      "enclosing": "supabaseStorageClient",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "08baeffc5fa11e6099b90833c862ed2d1748be9a6aab49b3dedac06e27929b4c"
+    },
+    {
+      "id": "cc921eded0ffe4223512",
+      "path": "backend/src/storage/migration/sources.ts",
+      "line": 131,
+      "enclosing": "inlineBytes",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "959cbd437cdf706a550b58722ea5526207416ffa3d20c939df3231104078d579"
+    },
+    {
+      "id": "738931bf82f38130f4bf",
+      "path": "backend/src/storage/migration/sources.ts",
+      "line": 131,
+      "enclosing": "inlineBytes",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "959cbd437cdf706a550b58722ea5526207416ffa3d20c939df3231104078d579"
+    },
+    {
+      "id": "956c1a0e680d52394ff4",
+      "path": "backend/src/storage/migration/sources.ts",
+      "line": 133,
+      "enclosing": "inlineBytes",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "959cbd437cdf706a550b58722ea5526207416ffa3d20c939df3231104078d579"
+    },
+    {
+      "id": "0736d78a2cd4443e0433",
+      "path": "backend/src/storage/migration/sources.ts",
+      "line": 191,
+      "enclosing": "inlineArtifactBytes",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "959cbd437cdf706a550b58722ea5526207416ffa3d20c939df3231104078d579"
+    },
+    {
+      "id": "1da44c46d1003b51f1dc",
+      "path": "backend/src/storage/migration/sources.ts",
+      "line": 191,
+      "enclosing": "inlineArtifactBytes",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "959cbd437cdf706a550b58722ea5526207416ffa3d20c939df3231104078d579"
+    },
+    {
+      "id": "f68aef24852c8fe44108",
+      "path": "backend/src/storage/migration/sources.ts",
+      "line": 193,
+      "enclosing": "inlineArtifactBytes",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "959cbd437cdf706a550b58722ea5526207416ffa3d20c939df3231104078d579"
+    },
+    {
+      "id": "308ac3e2c97f451f45c4",
+      "path": "backend/src/storage/r2ObjectStore.ts",
+      "line": 145,
+      "enclosing": "putStream",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d283594a4569b5ddc8710c5d717b2291bd3ebbf79d9c3d2d73a61c3117e9f622"
+    },
+    {
+      "id": "2176bd20d97b76a7a08e",
+      "path": "backend/src/storage/storageService.ts",
+      "line": 421,
+      "enclosing": "ingestLegacyMultipart",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "3abd744f7180cb4309cef9dd07c838b4db0ee5fd9bbf7b95fd15a84f9a81fdf7"
+    },
+    {
+      "id": "4752ae00c9ea1a29d920",
+      "path": "backend/src/storage/storageService.ts",
+      "line": 492,
+      "enclosing": "readObjectBytes",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "3abd744f7180cb4309cef9dd07c838b4db0ee5fd9bbf7b95fd15a84f9a81fdf7"
+    },
+    {
+      "id": "30a4f1e3802f98ab0d10",
+      "path": "backend/src/storage/testing/fileObjectStore.ts",
+      "line": 81,
+      "enclosing": "putStream",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "24daaf454535be6f0e426d1c913f572086ddafec69906329032a4da9a56c4983"
+    },
+    {
+      "id": "3940fae3b2d5678ea982",
+      "path": "backend/src/storage/testing/tlsFixture.ts",
+      "line": 75,
+      "enclosing": "fatal",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "1140f9cf84b76cdf438c2c613ebaa48c50801b7dd2f35d7b197cf061481a5c77"
+    },
+    {
+      "id": "3b9a4438438d6b84a150",
+      "path": "backend/src/storage/testing/tlsFixture.ts",
+      "line": 75,
+      "enclosing": "fatal",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "1140f9cf84b76cdf438c2c613ebaa48c50801b7dd2f35d7b197cf061481a5c77"
+    },
+    {
+      "id": "b1842381746daad93b44",
+      "path": "backend/src/storage/testing/tlsFixture.ts",
+      "line": 76,
+      "enclosing": "fatal",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "\u0000",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "1140f9cf84b76cdf438c2c613ebaa48c50801b7dd2f35d7b197cf061481a5c77"
+    },
+    {
+      "id": "2c69ef5998ffefb521bc",
+      "path": "backend/src/storage/testing/tlsFixture.ts",
+      "line": 102,
+      "enclosing": "startStubPostgres",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "1140f9cf84b76cdf438c2c613ebaa48c50801b7dd2f35d7b197cf061481a5c77"
+    },
+    {
       "id": "371f13126c4ab7aab2dc",
       "path": "backend/src/synthesis/delivery/projectDeliveryService.ts",
       "line": 194,
@@ -21650,6 +22246,94 @@
           }
         ]
       }
+    },
+    {
+      "id": "2729f713267978277ba6",
+      "path": "backend/src/workers/browserCoordinator.ts",
+      "line": 52,
+      "enclosing": "verifyRequest",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c02b326f507a85c521fc20ae2b0e49318b1d9c6eb121f3cba8d28f3d2227bfa2"
+    },
+    {
+      "id": "a67d6de884df72fb9c2a",
+      "path": "backend/src/workers/browserCoordinator.ts",
+      "line": 112,
+      "enclosing": "createCoordinatorServer",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c02b326f507a85c521fc20ae2b0e49318b1d9c6eb121f3cba8d28f3d2227bfa2"
+    },
+    {
+      "id": "eb7d65790579121f23f5",
+      "path": "backend/src/workers/browserCoordinator.ts",
+      "line": 194,
+      "enclosing": "run",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c02b326f507a85c521fc20ae2b0e49318b1d9c6eb121f3cba8d28f3d2227bfa2"
+    },
+    {
+      "id": "63e27e1f6b29fe5d4d0b",
+      "path": "backend/src/workers/browserTaskHandler.ts",
+      "line": 197,
+      "enclosing": "createBrowserTaskHandler",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "e691a6a06f6539f86215bcc9f5d78084cc794473d3399602251186442bf41e90"
+    },
+    {
+      "id": "1dd90cc3d900680504cd",
+      "path": "backend/src/workers/browserTaskHandler.ts",
+      "line": 218,
+      "enclosing": "createBrowserTaskHandler",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "e691a6a06f6539f86215bcc9f5d78084cc794473d3399602251186442bf41e90"
+    },
+    {
+      "id": "9ca710dbe1da35d53901",
+      "path": "backend/src/workers/containerBrowserWorker.ts",
+      "line": 177,
+      "enclosing": "converse",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "fbc9ea0804887cd66aa18ffdcac905d8b5f1fe1d2345761533b0e7665bca5742"
+    },
+    {
+      "id": "52d6b7d63d4f0ffcddef",
+      "path": "backend/src/workers/egressProxy.ts",
+      "line": 74,
+      "enclosing": "authorised",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "29e977db658433c30d19e3fe3f9268056997be1bbcc1cd9b4a7bf5a3d813d02c"
+    },
+    {
+      "id": "7170f645d8883b5fcc3e",
+      "path": "backend/src/workers/egressProxy.ts",
+      "line": 75,
+      "enclosing": "authorised",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "29e977db658433c30d19e3fe3f9268056997be1bbcc1cd9b4a7bf5a3d813d02c"
     },
     {
       "id": "b605ee8256acf51c3655",

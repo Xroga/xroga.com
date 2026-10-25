@@ -1,0 +1,22 @@
+{
+  "evidenceClass": "DIAGNOSTIC",
+  "note": "seccomp UNCONFINED on purpose, to attribute a failure; this configuration is never an acceptance configuration",
+  "at": "2026-10-24T14:14:18.430Z",
+  "native": {
+    "image": "xroga-browser-worker:phase2-probe",
+    "platform": "native",
+    "arch": "x64",
+    "verdict": "SANDBOX_ON",
+    "reason": null,
+    "timedOut": false
+  },
+  "emulated": {
+    "image": "xroga-browser-worker:phase2-probe-arm64",
+    "platform": "linux/arm64",
+    "arch": "arm64",
+    "verdict": "BLOCKED",
+    "reason": "browserType.launch: Target page, context or browser has been closed | Browser logs: | Chromium sandboxing failed!",
+    "timedOut": false
+  },
+  "interpretation": "The same flags start the sandbox natively and fail under emulation even with no seccomp profile in the way: the failure is not caused by the derived profile. Whether real hardware passes is still unproven."
+}

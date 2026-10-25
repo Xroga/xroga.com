@@ -1,6 +1,6 @@
 # Deployment topology — read-only truth
 
-Source SHA: `9fb905602455672784b7f26edc054bcc7cbeb7bf`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
+Source SHA: `acc5076d245c98197a42b4deb880a22f518f2e1c`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -63,6 +63,7 @@ Source SHA: `9fb905602455672784b7f26edc054bcc7cbeb7bf`; source/config hashes are
 | endpoint-chrome-google-com | Source-defined endpoint chrome.google.com | CONFIGURED_BUT_UNVERIFIED | chrome.google.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-chromewebstore-googleapis-com | Source-defined endpoint chromewebstore.googleapis.com | CONFIGURED_BUT_UNVERIFIED | chromewebstore.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-cloudkms-googleapis-com | Source-defined endpoint cloudkms.googleapis.com | CONFIGURED_BUT_UNVERIFIED | cloudkms.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-coordinator | Source-defined endpoint coordinator | CONFIGURED_BUT_UNVERIFIED | coordinator | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-design-intuit-com | Source-defined endpoint design.intuit.com | CONFIGURED_BUT_UNVERIFIED | design.intuit.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-dev-whop-com | Source-defined endpoint dev.whop.com | CONFIGURED_BUT_UNVERIFIED | dev.whop.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-developer-android-com | Source-defined endpoint developer.android.com | CONFIGURED_BUT_UNVERIFIED | developer.android.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -116,6 +117,7 @@ Source SHA: `9fb905602455672784b7f26edc054bcc7cbeb7bf`; source/config hashes are
 | endpoint-lovable-dev | Source-defined endpoint lovable.dev | CONFIGURED_BUT_UNVERIFIED | lovable.dev | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-mailchimp-com | Source-defined endpoint mailchimp.com | CONFIGURED_BUT_UNVERIFIED | mailchimp.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-mcp-example-com | Source-defined endpoint mcp.example.com | CONFIGURED_BUT_UNVERIFIED | mcp.example.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-memory-invalid | Source-defined endpoint memory.invalid | CONFIGURED_BUT_UNVERIFIED | memory.invalid | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-mixpanel-com | Source-defined endpoint mixpanel.com | CONFIGURED_BUT_UNVERIFIED | mixpanel.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-neon-com | Source-defined endpoint neon.com | CONFIGURED_BUT_UNVERIFIED | neon.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-nextjs-org | Source-defined endpoint nextjs.org | CONFIGURED_BUT_UNVERIFIED | nextjs.org | NOT_INDEPENDENTLY_VERIFIED |
@@ -130,6 +132,7 @@ Source SHA: `9fb905602455672784b7f26edc054bcc7cbeb7bf`; source/config hashes are
 | endpoint-public-example-invalid | Source-defined endpoint public.example.invalid | CONFIGURED_BUT_UNVERIFIED | public.example.invalid | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-railway-app | Source-defined endpoint railway.app | CONFIGURED_BUT_UNVERIFIED | railway.app | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-react-dev | Source-defined endpoint react.dev | CONFIGURED_BUT_UNVERIFIED | react.dev | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-registry-npmjs-org | Source-defined endpoint registry.npmjs.org | CONFIGURED_BUT_UNVERIFIED | registry.npmjs.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-schema-org | Source-defined endpoint schema.org | CONFIGURED_BUT_UNVERIFIED | schema.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-scs-owasp-org | Source-defined endpoint scs.owasp.org | CONFIGURED_BUT_UNVERIFIED | scs.owasp.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-sentry-io | Source-defined endpoint sentry.io | CONFIGURED_BUT_UNVERIFIED | sentry.io | NOT_INDEPENDENTLY_VERIFIED |
@@ -214,7 +217,7 @@ Frontend release 3b2bad and API release 41665b legitimately differ: the initial 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-742 scoped memory/filesystem candidates are retained for semantic review. Static collections and scratch writes are not automatically unsafe fallbacks; the candidate inventory is not blanket durability certification. All consequential persistence/authority callers require the later security gates. Production/Preview environment protection and main rulesets were inspected as empty; user-mandated release gates still apply. Cloud Run/Jobs/Cloudflare Workers hosting remains proposed; no migration is authorized.
+810 scoped memory/filesystem candidates are retained for semantic review. Static collections and scratch writes are not automatically unsafe fallbacks; the candidate inventory is not blanket durability certification. All consequential persistence/authority callers require the later security gates. Production/Preview environment protection and main rulesets were inspected as empty; user-mandated release gates still apply. Cloud Run/Jobs/Cloudflare Workers hosting remains proposed; no migration is authorized.
 
 ## Boundaries
 

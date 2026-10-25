@@ -1,0 +1,8 @@
+{
+  "acceptOk": true,
+  "bridgeShown": true,
+  "permissiveShown": false,
+  "failedChecks": [],
+  "out": "out/host-evidence-xroga-verify-amd64-20261024T180020Z/egress-isolation.json"
+}
+exit=4

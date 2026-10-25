@@ -1,0 +1,63 @@
+# cmd: npx tsx --test src/storage/r2ObjectStore.wire.integration.test.ts
+TAP version 13
+# Subtest: R2ObjectStore over the AWS SDK wire protocol (S3 emulator, SYNTHETIC)
+    # Subtest: presigned PUT → complete (head, range, stream, SHA-256) → presigned GET → delete, over real HTTP
+    ok 1 - presigned PUT → complete (head, range, stream, SHA-256) → presigned GET → delete, over real HTTP
+      ---
+      duration_ms: 72.447235
+      type: 'test'
+      ...
+    # Subtest: server-side put with checksum, list and delete (pagination is NOT exercised: s3rver returns 500 for truncated listings)
+    ok 2 - server-side put with checksum, list and delete (pagination is NOT exercised: s3rver returns 500 for truncated listings)
+      ---
+      duration_ms: 41.117129
+      type: 'test'
+      ...
+    # Subtest: multipart: create, upload parts, complete, whole-object SHA-256 (parts sent with SDK commands: s3rver rejects presigned part URLs, whose shape is verified offline in r2ObjectStore.test.ts)
+    ok 3 - multipart: create, upload parts, complete, whole-object SHA-256 (parts sent with SDK commands: s3rver rejects presigned part URLs, whose shape is verified offline in r2ObjectStore.test.ts)
+      ---
+      duration_ms: 117.609339
+      type: 'test'
+      ...
+    # Subtest: abort multipart is idempotent and a missing object reads as null
+    ok 4 - abort multipart is idempotent and a missing object reads as null
+      ---
+      duration_ms: 5.78244
+      type: 'test'
+      ...
+    # Subtest: [APPLICATION] duplicate multipart completion is idempotent and a stale upload id is harmless
+    ok 5 - [APPLICATION] duplicate multipart completion is idempotent and a stale upload id is harmless
+      ---
+      duration_ms: 80.145761
+      type: 'test'
+      ...
+    # Subtest: [APPLICATION] wrong ETag, missing part and extra part are refused before the provider is asked to assemble anything
+    ok 6 - [APPLICATION] wrong ETag, missing part and extra part are refused before the provider is asked to assemble anything
+      ---
+      duration_ms: 32.657139
+      type: 'test'
+      ...
+    # Subtest: [APPLICATION] an unreachable provider is translated to a retryable 503 and leaves the object state unchanged
+    ok 7 - [APPLICATION] an unreachable provider is translated to a retryable 503 and leaves the object state unchanged
+      ---
+      duration_ms: 3.213213
+      type: 'test'
+      ...
+    1..7
+ok 1 - R2ObjectStore over the AWS SDK wire protocol (S3 emulator, SYNTHETIC)
+  ---
+  duration_ms: 353.772599
+  type: 'suite'
+  ...
+1..1
+# tests 7
+# suites 1
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 587.138586
+
+
+# exit: 0

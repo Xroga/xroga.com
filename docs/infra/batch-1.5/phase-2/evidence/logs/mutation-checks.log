@@ -1,0 +1,18 @@
+CAUGHT | service: skip declared-checksum comparison | # pass 48 # fail 1 
+CAUGHT | service: no tenant/owner check on object access | # pass 47 # fail 2 
+CAUGHT | service: skip BOTH size verifications | # pass 47 # fail 2 
+CAUGHT | memory repo: commit replay double counts | # pass 48 # fail 1 
+CAUGHT | migration: skip source-vs-destination hash comparison | # pass 22 # fail 1 
+CAUGHT | approvals: signature not verified | # pass 11 # fail 1 
+CAUGHT | approvals: plan digest not compared | # pass 11 # fail 1 
+CAUGHT | approvals: environment not compared | # pass 11 # fail 1 
+CAUGHT | config: invalid STORAGE_WRITE_MODE silently accepted | # pass 18 # fail 1 
+CAUGHT | provider errors: ECONNREFUSED not transient | # pass 5 # fail 1 
+CAUGHT | db tls: certificate verification off for remote hosts | # pass 16 # fail 8 
+CAUGHT | db tls: loopback decided by searching the URL text (the Phase 1 bug) | # pass 21 # fail 3 
+CAUGHT | db tls: sslmode=no-verify / disable accepted | # pass 22 # fail 2 
+CAUGHT | db tls: raw URL handed to pg (lets sslmode override ssl) | # pass 23 # fail 1 
+CAUGHT | db tls: Supabase suffix without a dot boundary | # pass 23 # fail 1 
+CAUGHT | db tls: pinned-root fingerprint not checked | # pass 23 # fail 1 
+CAUGHT | db tls: several certificates accepted as the pinned root | # pass 23 # fail 1 
+restored: working tree clean for mutated files

@@ -1,0 +1,59 @@
+{
+  "evidenceClass": "ARM64_HOST_TESTED",
+  "reapedAtStart": {
+    "containers": 0,
+    "networks": 0
+  },
+  "modelId": "glm_5_3_flash",
+  "modelSpendMicros": 0,
+  "modelRunCapMicros": 500000,
+  "sourceSha": "1857158c31eb5ffcc3691f3a6c36aeff3fac6e03",
+  "browserImage": "xroga-browser-worker:phase3",
+  "imageId": "sha256:042dd55703bb1316d066fb6cfb5394491c9faa8d0cc4f63dbacfe1ee6687a9ed",
+  "at": "2026-10-24T22:11:00.031Z",
+  "passed": 1,
+  "total": 1,
+  "receipts": [
+    {
+      "id": "W15",
+      "title": "load and reliability measurements (sequential and concurrent)",
+      "expected": "every run verified, nothing left behind",
+      "actual": "11/11 verified",
+      "pass": true,
+      "details": {
+        "status": "11/11 verified",
+        "metrics": {
+          "runs": 11,
+          "sequential": 8,
+          "concurrent": 3,
+          "verifiedOutcomes": 11,
+          "completionRate": 1,
+          "endToEndMs": {
+            "first": 2531,
+            "p50": 2679,
+            "p95": 5208,
+            "max": 5208
+          },
+          "inContainerBrowserMs": {
+            "p50": 1001,
+            "max": 2180
+          },
+          "startupFailures": 0,
+          "retriedAttempts": 0,
+          "peakBrowserContainerMemMiB": 197.9,
+          "peakBrowserContainerCpuPct": 64.75,
+          "sampledBrowserContainers": 3,
+          "peakProxyContainerMemMiB": 14.75,
+          "sampledProxyContainers": 11,
+          "samplerTicks": 19,
+          "modelCostMicrosPerVerifiedOutcome": 0,
+          "note": "Infrastructure cost per verified outcome is computed in the cost report from the host price and these measured durations; model cost is 0 because these runs use no AI steps."
+        },
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { SwarmRunSummary } from "@/lib/api";
 import { Status } from "./Activity";
 import styles from "./automations.module.css";
+import { BrowserRun } from "./BrowserRun";
 const templates = [
   [
     "Research Websites",
@@ -99,6 +100,8 @@ export function BrowserStudio({
         <button className={styles.primary}>Add browser task to chatbar</button>
       </form>
       {error && <p role="alert">{error}</p>}
+      {/* Hidden until the self-hosted browser host is activated (a separate, approved cutover): without it /api/browser/runs answers 503. */}
+      {process.env.NEXT_PUBLIC_XROGA_BROWSER_RUNS === "1" && <BrowserRun goal={task[1]} />}
       <div className={styles.browserGrid} data-evidence={panel}>
         <aside className={styles.panel}>
           <h3>Task / status</h3>

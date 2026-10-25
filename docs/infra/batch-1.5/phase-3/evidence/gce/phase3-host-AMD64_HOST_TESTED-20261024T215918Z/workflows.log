@@ -1,0 +1,33 @@
+reaped at start: 0 containers, 0 networks
+PASS W01a redirect followed, final destination verified: expected completed, outcome verified; got completed
+PASS W01b redirect to an out-of-scope origin is refused: expected not completed (RESULT_OUT_OF_SCOPE or WORKER_FAILED); got failed (RESULT_OUT_OF_SCOPE)
+PASS W02 deterministic click, wait, extraction; evidence READY in Drive: expected completed, outcome verified, 1 READY artifact; got completed
+PASS W04 multi-page with selector recovery (first alternatives absent): expected completed, outcome verified; got completed
+PASS W06a authorised test-session sign-in with an issued write grant: expected completed, outcome verified; got completed
+PASS W06b secure teardown: the next job has no cookies from the last: expected completed, session shows Login; got completed
+PASS W06c a consequential submit without an issued grant is refused before running: expected refused (RUN_INVALID); got refused (RUN_INVALID)
+PASS W08a graceful cancellation mid-job; browser and network removed: expected cancelled, nothing left behind; got cancelled (CANCELLED)
+PASS W08b timeout kills the browser processes and reclaims the job: expected not completed (JOB_TIMEOUT), nothing left behind; got failed (JOB_TIMEOUT)
+PASS W09a read-only task: container killed, fenced retry completes: expected completed on attempt 2; got completed
+PASS W09b consequential task is not retried after a crash; reported, not repeated: expected not completed, attempts = 1; got failed (WORKER_FAILED)
+PASS W10 two tenants concurrently: both complete, no cookie or run leakage: expected both completed, B not signed in, B cannot load A's runs; got completed/completed
+PASS W13a AI step with no model route fails closed (no paid fallback): expected not completed (WORKER_FAILED); got failed (WORKER_FAILED)
+PASS W13b AI step refused by the model route, no fallback: fails closed: expected not completed; got failed (WORKER_FAILED)
+PASS W13c AI step refused, Playwright-only fallback where semantically safe: expected completed with a recorded fallback; got completed
+NOT_TESTED MODELPROBE capability probe of the configured models: no founder-provided env file
+NOT_TESTED W03 real-model local Stagehand observe, act, extract: no founder-provided env file with an existing model key
+PASS W05a download from the owned site: published checksum equals the stored artifact: expected completed; Drive object sha256 equals the published sha; got completed
+PASS W05b upload with an issued grant; the site confirms the exact bytes: expected completed, received sha equals sent sha; got completed
+PASS W05c upload without an issued grant is refused before running: expected refused (RUN_INVALID); got refused (RUN_INVALID)
+PASS W06x session expiry enforced by the browser; no silent re-login (re-authentication handed back to the user): expected completed: Signed in, then Signed out after expiry; got completed
+NOT_TESTED W07 screenshot to real private R2 with read-back SHA-256: no founder-provided R2 credential file
+PASS W12a hostile page read deterministically; nothing on it is obeyed: expected completed, no consequential action, still on the page; got completed
+PASS W12b phishing link to another origin is refused: expected not completed (RESULT_OUT_OF_SCOPE); got failed (RESULT_OUT_OF_SCOPE)
+PASS W12c redirect to the cloud metadata address is refused: expected not completed; got failed (RESULT_OUT_OF_SCOPE)
+PASS W12d a grant id written on the page cannot authorise a consequential step: expected refused (RUN_INVALID); got refused (RUN_INVALID)
+NOT_TESTED W12e real-model extraction from the hostile page ignores its instructions: no founder-provided env file with an existing model key
+PASS PRODUCT-010 API stays responsive while a browser run continues in the background; status and cancellation work: expected p95 ping < 250 ms, status visible as running, cancel ends the run; got cancelled
+PASS W15 load and reliability measurements (sequential and concurrent): expected every run verified, nothing left behind; got 11/11 verified
+
+25/29 receipts PASS; written to /home/xroga/xroga/out/phase3-host-AMD64_HOST_TESTED-20261024T215918Z/workflows.json; sha256 9b23b61e6a5cdcda
+exit=1

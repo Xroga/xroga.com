@@ -1,0 +1,144 @@
+{
+  "evidenceClass": "DIAG",
+  "reapedAtStart": {
+    "containers": 0,
+    "networks": 0
+  },
+  "modelId": "deepseek_v4_flash",
+  "modelSpendMicros": 895,
+  "modelRunCapMicros": 500000,
+  "sourceSha": "f7f0737d906bc36d4825d91a9712cdda9818991e",
+  "browserImage": "xroga-browser-worker:phase3",
+  "imageId": "sha256:e58a853df952a3939771309eeb49547ea03c24908baf7ac1ed0266505931597b",
+  "at": "2026-10-25T11:00:44.613Z",
+  "passed": 2,
+  "total": 2,
+  "receipts": [
+    {
+      "id": "W03",
+      "title": "real-model Stagehand observe, act, extract with schema and grounded postconditions",
+      "expected": "completed, outcome verified, measured model cost within the job budget",
+      "actual": "completed",
+      "pass": true,
+      "details": {
+        "runId": "f46a80f2-57b4-4a15-b7c8-eed2ba8b3469",
+        "status": "completed",
+        "attempts": 1,
+        "code": null,
+        "outcomeVerified": true,
+        "postconditions": [
+          "extracted:true",
+          "extracted:true",
+          "finalUrlPrefix:true",
+          "artifact:true",
+          "noConsequentialAction:true"
+        ],
+        "extracted": {
+          "facts": {
+            "firstAuthor": "Albert Einstein",
+            "quoteCount": 10
+          },
+          "nextTargets": [
+            {
+              "selector": "xpath=/html[1]/body[1]/div[1]/div[2]/div[1]/nav[1]/ul[1]/li[1]/a[1]",
+              "description": "Link labeled 'Next' to go to the next page of quotes.",
+              "method": "click"
+            }
+          ]
+        },
+        "metrics": {
+          "fallbacks": [],
+          "elapsedMs": 20263,
+          "redirects": 0,
+          "pages": 0,
+          "consequentialActions": 0,
+          "llmCalls": 4,
+          "modelUsage": {
+            "calls": 4,
+            "inputTokens": 8326,
+            "outputTokens": 809,
+            "costMicros": 895,
+            "refused": 0
+          }
+        },
+        "evidence": [
+          "browser_run",
+          "drive_artifact",
+          "browser_outcome",
+          "model_usage"
+        ],
+        "elapsedMs": 34373,
+        "ledger": "in-memory test ledger (canonical code path, not the production database)",
+        "ledgerReceipts": [
+          {
+            "op": "reserve",
+            "micros": 1177
+          },
+          {
+            "op": "settle",
+            "inputTokens": 2383,
+            "outputTokens": 14,
+            "micros": 233
+          },
+          {
+            "op": "reserve",
+            "micros": 1000
+          },
+          {
+            "op": "settle",
+            "inputTokens": 409,
+            "outputTokens": 28,
+            "micros": 96
+          },
+          {
+            "op": "reserve",
+            "micros": 1180
+          },
+          {
+            "op": "settle",
+            "inputTokens": 2524,
+            "outputTokens": 39,
+            "micros": 267
+          },
+          {
+            "op": "reserve",
+            "micros": 1250
+          },
+          {
+            "op": "settle",
+            "inputTokens": 3010,
+            "outputTokens": 38,
+            "micros": 299
+          }
+        ],
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W03b",
+      "title": "out-of-budget real-model step fails closed with zero provider spend",
+      "expected": "not completed, zero model cost",
+      "actual": "failed (WORKER_FAILED)",
+      "pass": true,
+      "details": {
+        "runId": "2af18c40-71dc-46e7-a8df-48c0a5e58f30",
+        "status": "failed",
+        "attempts": 2,
+        "code": "WORKER_FAILED",
+        "outcomeVerified": null,
+        "postconditions": [],
+        "extracted": null,
+        "metrics": null,
+        "evidence": [],
+        "elapsedMs": 13373,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    }
+  ]
+}

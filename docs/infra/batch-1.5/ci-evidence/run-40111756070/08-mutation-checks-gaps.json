@@ -1,0 +1,71 @@
+{
+  "at": "2026-10-22T09:12:21.178Z",
+  "results": [
+    {
+      "name": "multipart: stored parts trusted without comparing MD5 to the source",
+      "verdict": "CAUGHT",
+      "pass": 16,
+      "fail": 1
+    },
+    {
+      "name": "multipart: provider part ETag not compared to the MD5 of what was sent",
+      "verdict": "CAUGHT",
+      "pass": 16,
+      "fail": 1
+    },
+    {
+      "name": "multipart: stream-length AND part-count checks both removed (mutually redundant guards)",
+      "verdict": "CAUGHT",
+      "pass": 16,
+      "fail": 1
+    },
+    {
+      "name": "engine: large objects no longer routed to multipart",
+      "verdict": "CAUGHT",
+      "pass": 9,
+      "fail": 8
+    },
+    {
+      "name": "engine: source not re-checked after the copy (changed-source acceptance)",
+      "verdict": "CAUGHT",
+      "pass": 16,
+      "fail": 1
+    },
+    {
+      "name": "engine: adapter block reason flattened",
+      "verdict": "CAUGHT",
+      "pass": 2,
+      "fail": 1
+    },
+    {
+      "name": "engine: permanent destination NOT_FOUND retried instead of BLOCKED",
+      "verdict": "CAUGHT",
+      "pass": 2,
+      "fail": 1
+    },
+    {
+      "name": "run-output: credential NAME detection disabled",
+      "verdict": "CAUGHT",
+      "pass": 0,
+      "fail": 3
+    },
+    {
+      "name": "run-output: non-terminal runs included",
+      "verdict": "CAUGHT",
+      "pass": 2,
+      "fail": 1
+    },
+    {
+      "name": "run-output: declared-size mismatch accepted",
+      "verdict": "CAUGHT",
+      "pass": 2,
+      "fail": 1
+    },
+    {
+      "name": "run-output: duplicate ids not blocked",
+      "verdict": "CAUGHT",
+      "pass": 2,
+      "fail": 1
+    }
+  ]
+}

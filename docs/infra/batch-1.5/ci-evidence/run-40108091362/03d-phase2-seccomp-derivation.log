@@ -1,0 +1,5 @@
+# cmd: node deploy/browser-worker/derive-seccomp.mjs --check
+seccomp-chromium.json matches its derivation
+
+
+# exit: 0

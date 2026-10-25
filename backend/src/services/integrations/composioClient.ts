@@ -12,7 +12,8 @@ const DEFAULT_TIMEOUT_MS = 15_000;
 const EXECUTE_TIMEOUT_MS = 30_000;
 const MAX_RESPONSE_SIZE = 8_000_000;
 const MAX_SEARCH_RESULTS = 20;
-const MAX_TOOLKIT_PAGE_SIZE = 100;
+// Composio's session toolkit endpoint rejects limit values above 50.
+const MAX_TOOLKIT_PAGE_SIZE = 50;
 const MAX_CATALOG_PAGE_SIZE = 250;
 const MAX_TRIGGER_PAGE_SIZE = 50;
 const COMPOSIO_CACHE_TTL_MS = 5 * 60 * 1_000;
@@ -188,6 +189,7 @@ interface ComposioCatalogToolkitResponse {
   no_auth?: boolean;
   auth_guide_url?: string;
   deprecated?: unknown;
+  is_deprecated?: boolean;
   meta?: {
     created_at?: string;
     updated_at?: string;
@@ -1195,7 +1197,9 @@ function mapCatalogToolkit(
         ? Math.max(0, item.meta.tools_count)
         : 0,
     version: item.meta?.version,
-    deprecated: Boolean(item.deprecated),
+    // Composio also uses `deprecated` for a legacy metadata object containing
+    // toolkitId/proxy details. Only actual boolean flags mean retired.
+    deprecated: item.is_deprecated === true || item.deprecated === true,
   };
 
   return {

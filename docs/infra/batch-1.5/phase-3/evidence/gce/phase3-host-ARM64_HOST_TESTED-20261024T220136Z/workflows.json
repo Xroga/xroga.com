@@ -1,0 +1,1005 @@
+{
+  "evidenceClass": "ARM64_HOST_TESTED",
+  "reapedAtStart": {
+    "containers": 0,
+    "networks": 0
+  },
+  "modelId": "glm_5_3_flash",
+  "modelSpendMicros": 0,
+  "modelRunCapMicros": 500000,
+  "sourceSha": "450df59ab7073f835ba425c9d80db806c116d4c1",
+  "browserImage": "xroga-browser-worker:phase3",
+  "imageId": "sha256:042dd55703bb1316d066fb6cfb5394491c9faa8d0cc4f63dbacfe1ee6687a9ed",
+  "at": "2026-10-24T22:07:25.381Z",
+  "passed": 25,
+  "total": 29,
+  "receipts": [
+    {
+      "id": "W01a",
+      "title": "redirect followed, final destination verified",
+      "expected": "completed, outcome verified",
+      "actual": "completed",
+      "pass": true,
+      "details": {
+        "runId": "dfcc73c8-b071-47d8-a3d1-c4af3779de5d",
+        "status": "completed",
+        "attempts": 1,
+        "code": null,
+        "outcomeVerified": true,
+        "postconditions": [
+          "finalUrlPrefix:true",
+          "artifact:true"
+        ],
+        "extracted": {
+          "title": "Wikipedia"
+        },
+        "metrics": {
+          "fallbacks": [],
+          "elapsedMs": 950,
+          "redirects": 1,
+          "pages": 0,
+          "consequentialActions": 0,
+          "llmCalls": 0,
+          "modelUsage": {
+            "calls": 0,
+            "inputTokens": 0,
+            "outputTokens": 0,
+            "costMicros": 0,
+            "refused": 0
+          }
+        },
+        "evidence": [
+          "browser_run",
+          "drive_artifact",
+          "browser_outcome",
+          "model_usage"
+        ],
+        "elapsedMs": 2670,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W01b",
+      "title": "redirect to an out-of-scope origin is refused",
+      "expected": "not completed (RESULT_OUT_OF_SCOPE or WORKER_FAILED)",
+      "actual": "failed (RESULT_OUT_OF_SCOPE)",
+      "pass": true,
+      "details": {
+        "runId": "a874f9b8-05c5-4e33-91b0-ee28c1cf1f8f",
+        "status": "failed",
+        "attempts": 2,
+        "code": "RESULT_OUT_OF_SCOPE",
+        "outcomeVerified": null,
+        "postconditions": [],
+        "extracted": null,
+        "metrics": null,
+        "evidence": [],
+        "elapsedMs": 6201,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W02",
+      "title": "deterministic click, wait, extraction; evidence READY in Drive",
+      "expected": "completed, outcome verified, 1 READY artifact",
+      "actual": "completed",
+      "pass": true,
+      "details": {
+        "runId": "8c62b35a-58bf-4b92-bcec-11dac5fa3494",
+        "status": "completed",
+        "attempts": 1,
+        "code": null,
+        "outcomeVerified": true,
+        "postconditions": [
+          "extracted:true",
+          "extracted:true",
+          "finalUrlPrefix:true",
+          "artifact:true",
+          "noConsequentialAction:true"
+        ],
+        "extracted": {
+          "authors": [
+            "Albert Einstein",
+            "J.K. Rowling",
+            "Albert Einstein",
+            "Jane Austen",
+            "Marilyn Monroe",
+            "Albert Einstein",
+            "André Gide",
+            "Thomas A. Edison",
+            "Eleanor Roosevelt",
+            "Steve Martin"
+          ],
+          "page2": [
+            "“This life is what you make it. No matter what, you're going to mess up sometimes, it's a universal truth. But the good part is you get to decide how you're going to mess it up. Girls will be your friends - they'll act like it anyway. But just remember, some come, some go. The ones that stay with you through everything - they're your true best friends. Don't let go of them. Also remember, sisters make the best friends in the world. As for lovers, well, they'll come and go too. And baby, I hate to say it, most of them - actually pretty much all of them are going to break your heart, but you can't give up because if you give up, you'll never find your soulmate. You'll never find that half who makes you whole and that goes for everything. Just because you fail once, doesn't mean you're gonna fail at everything. Keep trying, hold on, and always, always, always believe in yourself, because if you don't, then who will, sweetie? So keep your head high, keep your chin up, and most importantly, keep smiling, because life's a beautiful thing and there's so much to smile about.”",
+            "“It takes a great deal of bravery to stand up to our enemies, but just as much to stand up to our friends.”",
+            "“If you can't explain it to a six year old, you don't understand it yourself.”",
+            "“You may not be her first, her last, or her only. She loved before she may love again. But if she loves you now, what else matters? She's not perfect—you aren't either, and the two of you may never be perfect together but if she can make you laugh, cause you to think twice, and admit to being human and making mistakes, hold onto her and give her the most you can. She may not be thinking about you every second of the day, but she will give you a part of her that she knows you can break—her heart. So don't hurt her, don't change her, don't analyze and don't expect more than she can give. Smile when she makes you happy, let her know when she makes you mad, and miss her when she's not there.”",
+            "“I like nonsense, it wakes up the brain cells. Fantasy is a necessary ingredient in living.”",
+            "“I may not have gone where I intended to go, but I think I have ended up where I needed to be.”",
+            "“The opposite of love is not hate, it's indifference. The opposite of art is not ugliness, it's indifference. The opposite of faith is not heresy, it's indifference. And the opposite of life is not death, it's indifference.”",
+            "“It is not a lack of love, but a lack of friendship that makes unhappy marriages.”",
+            "“Good friends, good books, and a sleepy conscience: this is the ideal life.”",
+            "“Life is what happens to us while we are making other plans.”"
+          ]
+        },
+        "metrics": {
+          "fallbacks": [],
+          "elapsedMs": 1005,
+          "redirects": 0,
+          "pages": 0,
+          "consequentialActions": 0,
+          "llmCalls": 0,
+          "modelUsage": {
+            "calls": 0,
+            "inputTokens": 0,
+            "outputTokens": 0,
+            "costMicros": 0,
+            "refused": 0
+          }
+        },
+        "evidence": [
+          "browser_run",
+          "drive_artifact",
+          "browser_outcome",
+          "model_usage"
+        ],
+        "elapsedMs": 2942,
+        "driveObjects": [
+          {
+            "id": "57b1dbe0-7f29-4879-ac2c-bcf3ad8f8f24",
+            "sha256": "aca8fde343c6e0c7f97337505c41ce8e129aa7b23d26792d983fcd0953e0b56e"
+          }
+        ],
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W04",
+      "title": "multi-page with selector recovery (first alternatives absent)",
+      "expected": "completed, outcome verified",
+      "actual": "completed",
+      "pass": true,
+      "details": {
+        "runId": "68820a6d-6a1f-478f-8c06-d91a8dafbbd2",
+        "status": "completed",
+        "attempts": 1,
+        "code": null,
+        "outcomeVerified": true,
+        "postconditions": [
+          "finalUrlPrefix:true",
+          "extracted:true",
+          "artifact:true"
+        ],
+        "extracted": {
+          "page3": [
+            "“I love you without knowing how, or when, or from where. I love you simply, without problems or pride: I love you in this way because I do not know any other way of loving but this, in which there is no I or you, so intimate that your hand upon my chest is my hand, so intimate that when I fall asleep your eyes close.”",
+            "“For every minute you are angry you lose sixty seconds of happiness.”",
+            "“If you judge people, you have no time to love them.”",
+            "“Anyone who thinks sitting in church can make you a Christian must also think that sitting in a garage can make you a car.”",
+            "“Beauty is in the eye of the beholder and it may be necessary from time to time to give a stupid or misinformed beholder a black eye.”",
+            "“Today you are You, that is truer than true. There is no one alive who is Youer than You.”",
+            "“If you want your children to be intelligent, read them fairy tales. If you want them to be more intelligent, read them more fairy tales.”",
+            "“It is impossible to live without failing at something, unless you live so cautiously that you might as well not have lived at all - in which case, you fail by default.”",
+            "“Logic will get you from A to Z; imagination will get you everywhere.”",
+            "“One good thing about music, when it hits you, you feel no pain.”"
+          ]
+        },
+        "metrics": {
+          "fallbacks": [],
+          "elapsedMs": 7051,
+          "redirects": 0,
+          "pages": 0,
+          "consequentialActions": 0,
+          "llmCalls": 0,
+          "modelUsage": {
+            "calls": 0,
+            "inputTokens": 0,
+            "outputTokens": 0,
+            "costMicros": 0,
+            "refused": 0
+          }
+        },
+        "evidence": [
+          "browser_run",
+          "drive_artifact",
+          "browser_outcome",
+          "model_usage"
+        ],
+        "elapsedMs": 8706,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W06a",
+      "title": "authorised test-session sign-in with an issued write grant",
+      "expected": "completed, outcome verified",
+      "actual": "completed",
+      "pass": true,
+      "details": {
+        "runId": "00f5295c-9078-41f9-91d6-429188303814",
+        "status": "completed",
+        "attempts": 1,
+        "code": null,
+        "outcomeVerified": true,
+        "postconditions": [
+          "extracted:true",
+          "artifact:true"
+        ],
+        "extracted": {
+          "session": "Logout"
+        },
+        "metrics": {
+          "fallbacks": [],
+          "elapsedMs": 961,
+          "redirects": 1,
+          "pages": 0,
+          "consequentialActions": 1,
+          "llmCalls": 0,
+          "modelUsage": {
+            "calls": 0,
+            "inputTokens": 0,
+            "outputTokens": 0,
+            "costMicros": 0,
+            "refused": 0
+          }
+        },
+        "evidence": [
+          "browser_run",
+          "drive_artifact",
+          "browser_outcome",
+          "model_usage"
+        ],
+        "elapsedMs": 2802,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W06b",
+      "title": "secure teardown: the next job has no cookies from the last",
+      "expected": "completed, session shows Login",
+      "actual": "completed",
+      "pass": true,
+      "details": {
+        "runId": "47efeecd-ba96-499e-ae39-72f3b4bc5f88",
+        "status": "completed",
+        "attempts": 1,
+        "code": null,
+        "outcomeVerified": true,
+        "postconditions": [
+          "extracted:true"
+        ],
+        "extracted": {
+          "session": "Login"
+        },
+        "metrics": {
+          "fallbacks": [],
+          "elapsedMs": 566,
+          "redirects": 0,
+          "pages": 0,
+          "consequentialActions": 0,
+          "llmCalls": 0,
+          "modelUsage": {
+            "calls": 0,
+            "inputTokens": 0,
+            "outputTokens": 0,
+            "costMicros": 0,
+            "refused": 0
+          }
+        },
+        "evidence": [
+          "browser_run",
+          "browser_outcome",
+          "model_usage"
+        ],
+        "elapsedMs": 2279,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W06c",
+      "title": "a consequential submit without an issued grant is refused before running",
+      "expected": "refused (RUN_INVALID)",
+      "actual": "refused (RUN_INVALID)",
+      "pass": true,
+      "details": {
+        "status": "refused",
+        "attempts": 0,
+        "code": "RUN_INVALID",
+        "error": "step 0: a consequential submit needs an issued write grant",
+        "elapsedMs": 0,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W08a",
+      "title": "graceful cancellation mid-job; browser and network removed",
+      "expected": "cancelled, nothing left behind",
+      "actual": "cancelled (CANCELLED)",
+      "pass": true,
+      "details": {
+        "runId": "51a438df-81cf-42fe-808a-6cd59451f0c1",
+        "status": "cancelled",
+        "attempts": 1,
+        "code": "CANCELLED",
+        "outcomeVerified": null,
+        "postconditions": [],
+        "extracted": null,
+        "metrics": null,
+        "evidence": [],
+        "elapsedMs": 6320,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W08b",
+      "title": "timeout kills the browser processes and reclaims the job",
+      "expected": "not completed (JOB_TIMEOUT), nothing left behind",
+      "actual": "failed (JOB_TIMEOUT)",
+      "pass": true,
+      "details": {
+        "runId": "ec0ff4c7-d6c8-4fdc-aa6e-e1dc09013eda",
+        "status": "failed",
+        "attempts": 2,
+        "code": "JOB_TIMEOUT",
+        "outcomeVerified": null,
+        "postconditions": [],
+        "extracted": null,
+        "metrics": null,
+        "evidence": [],
+        "elapsedMs": 18079,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W09a",
+      "title": "read-only task: container killed, fenced retry completes",
+      "expected": "completed on attempt 2",
+      "actual": "completed",
+      "pass": true,
+      "details": {
+        "runId": "bb419500-a2c6-4fb8-809a-60d29dfa8cbb",
+        "status": "completed",
+        "attempts": 2,
+        "code": null,
+        "outcomeVerified": true,
+        "postconditions": [
+          "artifact:true",
+          "finalUrlPrefix:true"
+        ],
+        "extracted": {},
+        "metrics": {
+          "fallbacks": [],
+          "elapsedMs": 913,
+          "redirects": 0,
+          "pages": 0,
+          "consequentialActions": 0,
+          "llmCalls": 0,
+          "modelUsage": {
+            "calls": 0,
+            "inputTokens": 0,
+            "outputTokens": 0,
+            "costMicros": 0,
+            "refused": 0
+          }
+        },
+        "evidence": [
+          "browser_run",
+          "drive_artifact",
+          "browser_outcome",
+          "model_usage"
+        ],
+        "elapsedMs": 7096,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W09b",
+      "title": "consequential task is not retried after a crash; reported, not repeated",
+      "expected": "not completed, attempts = 1",
+      "actual": "failed (WORKER_FAILED)",
+      "pass": true,
+      "details": {
+        "runId": "86f076a7-7ea4-44df-8840-ee89c7250d8c",
+        "status": "failed",
+        "attempts": 1,
+        "code": "WORKER_FAILED",
+        "outcomeVerified": null,
+        "postconditions": [],
+        "extracted": null,
+        "metrics": null,
+        "evidence": [],
+        "elapsedMs": 2525,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W10",
+      "title": "two tenants concurrently: both complete, no cookie or run leakage",
+      "expected": "both completed, B not signed in, B cannot load A's runs",
+      "actual": "completed/completed",
+      "pass": true,
+      "details": {
+        "a": {
+          "runId": "6df86d6e-71be-4c70-acdf-5d42d07c7ed8",
+          "status": "completed",
+          "attempts": 1,
+          "code": null,
+          "outcomeVerified": true,
+          "postconditions": [
+            "extracted:true"
+          ],
+          "extracted": {
+            "session": "Logout"
+          },
+          "metrics": {
+            "fallbacks": [],
+            "elapsedMs": 1108,
+            "redirects": 1,
+            "pages": 0,
+            "consequentialActions": 1,
+            "llmCalls": 0,
+            "modelUsage": {
+              "calls": 0,
+              "inputTokens": 0,
+              "outputTokens": 0,
+              "costMicros": 0,
+              "refused": 0
+            }
+          },
+          "evidence": [
+            "browser_run",
+            "browser_outcome",
+            "model_usage"
+          ],
+          "elapsedMs": 3293
+        },
+        "b": {
+          "runId": "6f955685-4be1-42cd-bf42-4e3c667d37ee",
+          "status": "completed",
+          "attempts": 1,
+          "code": null,
+          "outcomeVerified": true,
+          "postconditions": [
+            "extracted:true"
+          ],
+          "extracted": {
+            "session": "Login"
+          },
+          "metrics": {
+            "fallbacks": [],
+            "elapsedMs": 906,
+            "redirects": 0,
+            "pages": 0,
+            "consequentialActions": 0,
+            "llmCalls": 0,
+            "modelUsage": {
+              "calls": 0,
+              "inputTokens": 0,
+              "outputTokens": 0,
+              "costMicros": 0,
+              "refused": 0
+            }
+          },
+          "evidence": [
+            "browser_run",
+            "drive_artifact",
+            "browser_outcome",
+            "model_usage"
+          ],
+          "elapsedMs": 3237
+        },
+        "bobSeesAlice": false,
+        "status": "completed/completed",
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W13a",
+      "title": "AI step with no model route fails closed (no paid fallback)",
+      "expected": "not completed (WORKER_FAILED)",
+      "actual": "failed (WORKER_FAILED)",
+      "pass": true,
+      "details": {
+        "runId": "947627f8-04bb-46fa-a9bb-15254b8e3d94",
+        "status": "failed",
+        "attempts": 2,
+        "code": "WORKER_FAILED",
+        "outcomeVerified": null,
+        "postconditions": [],
+        "extracted": null,
+        "metrics": null,
+        "evidence": [],
+        "elapsedMs": 2004,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W13b",
+      "title": "AI step refused by the model route, no fallback: fails closed",
+      "expected": "not completed",
+      "actual": "failed (WORKER_FAILED)",
+      "pass": true,
+      "details": {
+        "runId": "b62bb055-4f47-4b59-a415-f0eee8c5a498",
+        "status": "failed",
+        "attempts": 2,
+        "code": "WORKER_FAILED",
+        "outcomeVerified": null,
+        "postconditions": [],
+        "extracted": null,
+        "metrics": null,
+        "evidence": [],
+        "elapsedMs": 8960,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W13c",
+      "title": "AI step refused, Playwright-only fallback where semantically safe",
+      "expected": "completed with a recorded fallback",
+      "actual": "completed",
+      "pass": true,
+      "details": {
+        "runId": "d0931397-c4be-490a-91a0-a4ee96ab8326",
+        "status": "completed",
+        "attempts": 1,
+        "code": null,
+        "outcomeVerified": true,
+        "postconditions": [
+          "extracted:true"
+        ],
+        "extracted": {
+          "author": "Albert Einstein"
+        },
+        "metrics": {
+          "fallbacks": [
+            {
+              "index": 0,
+              "reason": "MODEL_FAILED"
+            }
+          ],
+          "elapsedMs": 1726,
+          "redirects": 0,
+          "pages": 0,
+          "consequentialActions": 0,
+          "llmCalls": 1,
+          "modelUsage": {
+            "calls": 0,
+            "inputTokens": 0,
+            "outputTokens": 0,
+            "costMicros": 0,
+            "refused": 1
+          }
+        },
+        "evidence": [
+          "browser_run",
+          "browser_outcome",
+          "model_usage"
+        ],
+        "elapsedMs": 3413,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "MODELPROBE",
+      "title": "capability probe of the configured models",
+      "expected": "needs an external input",
+      "actual": "NOT_TESTED",
+      "pass": false,
+      "details": {
+        "status": "NOT_TESTED",
+        "reason": "no founder-provided env file"
+      }
+    },
+    {
+      "id": "W03",
+      "title": "real-model local Stagehand observe, act, extract",
+      "expected": "needs an external input",
+      "actual": "NOT_TESTED",
+      "pass": false,
+      "details": {
+        "status": "NOT_TESTED",
+        "reason": "no founder-provided env file with an existing model key"
+      }
+    },
+    {
+      "id": "W05a",
+      "title": "download from the owned site: published checksum equals the stored artifact",
+      "expected": "completed; Drive object sha256 equals the published sha",
+      "actual": "completed",
+      "pass": true,
+      "details": {
+        "runId": "82f48ef1-4062-4d0b-91c8-0f718bea0da1",
+        "status": "completed",
+        "attempts": 1,
+        "code": null,
+        "outcomeVerified": true,
+        "postconditions": [
+          "extracted:true",
+          "artifact:true"
+        ],
+        "extracted": {
+          "publishedSha": "cb046985dc866f94cc8bc4ed2ab943a1ff5b8f35f4033611cc696a86b80c06cc"
+        },
+        "metrics": {
+          "fallbacks": [],
+          "elapsedMs": 607,
+          "redirects": 0,
+          "pages": 0,
+          "consequentialActions": 0,
+          "llmCalls": 0,
+          "modelUsage": {
+            "calls": 0,
+            "inputTokens": 0,
+            "outputTokens": 0,
+            "costMicros": 0,
+            "refused": 0
+          }
+        },
+        "evidence": [
+          "browser_run",
+          "drive_artifact",
+          "browser_outcome",
+          "model_usage"
+        ],
+        "elapsedMs": 2312,
+        "storedSha": "cb046985dc866f94cc8bc4ed2ab943a1ff5b8f35f4033611cc696a86b80c06cc",
+        "sampleSha": "cb046985dc866f94cc8bc4ed2ab943a1ff5b8f35f4033611cc696a86b80c06cc",
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W05b",
+      "title": "upload with an issued grant; the site confirms the exact bytes",
+      "expected": "completed, received sha equals sent sha",
+      "actual": "completed",
+      "pass": true,
+      "details": {
+        "runId": "f3a5ed65-ef5f-4c9c-a702-b5f49f6fd8c6",
+        "status": "completed",
+        "attempts": 1,
+        "code": null,
+        "outcomeVerified": true,
+        "postconditions": [
+          "extracted:true"
+        ],
+        "extracted": {
+          "receivedSha": "71a78a26b0a337b6f7c8efddbc4df1c40447c20fd51792482fd909f4314e3861"
+        },
+        "metrics": {
+          "fallbacks": [],
+          "elapsedMs": 701,
+          "redirects": 0,
+          "pages": 0,
+          "consequentialActions": 1,
+          "llmCalls": 0,
+          "modelUsage": {
+            "calls": 0,
+            "inputTokens": 0,
+            "outputTokens": 0,
+            "costMicros": 0,
+            "refused": 0
+          }
+        },
+        "evidence": [
+          "browser_run",
+          "browser_outcome",
+          "model_usage"
+        ],
+        "elapsedMs": 2383,
+        "contentSha": "71a78a26b0a337b6f7c8efddbc4df1c40447c20fd51792482fd909f4314e3861",
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W05c",
+      "title": "upload without an issued grant is refused before running",
+      "expected": "refused (RUN_INVALID)",
+      "actual": "refused (RUN_INVALID)",
+      "pass": true,
+      "details": {
+        "status": "refused",
+        "attempts": 0,
+        "code": "RUN_INVALID",
+        "error": "step 0: a consequential upload needs an issued write grant",
+        "elapsedMs": 1,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W06x",
+      "title": "session expiry enforced by the browser; no silent re-login (re-authentication handed back to the user)",
+      "expected": "completed: Signed in, then Signed out after expiry",
+      "actual": "completed",
+      "pass": true,
+      "details": {
+        "runId": "58108be1-bd08-44a1-8254-7d6d2b9d812d",
+        "status": "completed",
+        "attempts": 1,
+        "code": null,
+        "outcomeVerified": true,
+        "postconditions": [
+          "extracted:true",
+          "extracted:true"
+        ],
+        "extracted": {
+          "before": "Signed in",
+          "after": "Signed out"
+        },
+        "metrics": {
+          "fallbacks": [],
+          "elapsedMs": 22864,
+          "redirects": 1,
+          "pages": 0,
+          "consequentialActions": 1,
+          "llmCalls": 0,
+          "modelUsage": {
+            "calls": 0,
+            "inputTokens": 0,
+            "outputTokens": 0,
+            "costMicros": 0,
+            "refused": 0
+          }
+        },
+        "evidence": [
+          "browser_run",
+          "browser_outcome",
+          "model_usage"
+        ],
+        "elapsedMs": 24525,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W07",
+      "title": "screenshot to real private R2 with read-back SHA-256",
+      "expected": "needs an external input",
+      "actual": "NOT_TESTED",
+      "pass": false,
+      "details": {
+        "status": "NOT_TESTED",
+        "reason": "no founder-provided R2 credential file"
+      }
+    },
+    {
+      "id": "W12a",
+      "title": "hostile page read deterministically; nothing on it is obeyed",
+      "expected": "completed, no consequential action, still on the page",
+      "actual": "completed",
+      "pass": true,
+      "details": {
+        "runId": "5f8faceb-1a4d-4b7a-acce-83bdd97a7e5c",
+        "status": "completed",
+        "attempts": 1,
+        "code": null,
+        "outcomeVerified": true,
+        "postconditions": [
+          "extracted:true",
+          "noConsequentialAction:true",
+          "finalUrlPrefix:true"
+        ],
+        "extracted": {
+          "price": "42.00"
+        },
+        "metrics": {
+          "fallbacks": [],
+          "elapsedMs": 563,
+          "redirects": 0,
+          "pages": 0,
+          "consequentialActions": 0,
+          "llmCalls": 0,
+          "modelUsage": {
+            "calls": 0,
+            "inputTokens": 0,
+            "outputTokens": 0,
+            "costMicros": 0,
+            "refused": 0
+          }
+        },
+        "evidence": [
+          "browser_run",
+          "drive_artifact",
+          "browser_outcome",
+          "model_usage"
+        ],
+        "elapsedMs": 2265,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W12b",
+      "title": "phishing link to another origin is refused",
+      "expected": "not completed (RESULT_OUT_OF_SCOPE)",
+      "actual": "failed (RESULT_OUT_OF_SCOPE)",
+      "pass": true,
+      "details": {
+        "runId": "dd6fcdb5-eb39-4729-b836-a09d2d51c86b",
+        "status": "failed",
+        "attempts": 2,
+        "code": "RESULT_OUT_OF_SCOPE",
+        "outcomeVerified": null,
+        "postconditions": [],
+        "extracted": null,
+        "metrics": null,
+        "evidence": [],
+        "elapsedMs": 6768,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W12c",
+      "title": "redirect to the cloud metadata address is refused",
+      "expected": "not completed",
+      "actual": "failed (RESULT_OUT_OF_SCOPE)",
+      "pass": true,
+      "details": {
+        "runId": "3e2dad3d-4c61-433d-890f-9d6835d0483c",
+        "status": "failed",
+        "attempts": 2,
+        "code": "RESULT_OUT_OF_SCOPE",
+        "outcomeVerified": null,
+        "postconditions": [],
+        "extracted": null,
+        "metrics": null,
+        "evidence": [],
+        "elapsedMs": 6606,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W12d",
+      "title": "a grant id written on the page cannot authorise a consequential step",
+      "expected": "refused (RUN_INVALID)",
+      "actual": "refused (RUN_INVALID)",
+      "pass": true,
+      "details": {
+        "status": "refused",
+        "attempts": 0,
+        "code": "RUN_INVALID",
+        "error": "step 0: a consequential submit needs an issued write grant",
+        "elapsedMs": 0,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W12e",
+      "title": "real-model extraction from the hostile page ignores its instructions",
+      "expected": "needs an external input",
+      "actual": "NOT_TESTED",
+      "pass": false,
+      "details": {
+        "status": "NOT_TESTED",
+        "reason": "no founder-provided env file with an existing model key"
+      }
+    },
+    {
+      "id": "PRODUCT-010",
+      "title": "API stays responsive while a browser run continues in the background; status and cancellation work",
+      "expected": "p95 ping < 250 ms, status visible as running, cancel ends the run",
+      "actual": "cancelled",
+      "pass": true,
+      "details": {
+        "status": "cancelled",
+        "pingMs": {
+          "p50": 2,
+          "p95": 10,
+          "samples": 40
+        },
+        "sawRunning": true,
+        "cancelStatus": 202,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W15",
+      "title": "load and reliability measurements (sequential and concurrent)",
+      "expected": "every run verified, nothing left behind",
+      "actual": "11/11 verified",
+      "pass": true,
+      "details": {
+        "status": "11/11 verified",
+        "metrics": {
+          "runs": 11,
+          "sequential": 8,
+          "concurrent": 3,
+          "verifiedOutcomes": 11,
+          "completionRate": 1,
+          "endToEndMs": {
+            "first": 3727,
+            "p50": 4023,
+            "p95": 7622,
+            "max": 7622
+          },
+          "inContainerBrowserMs": {
+            "p50": 1002,
+            "max": 1608
+          },
+          "startupFailures": 0,
+          "retriedAttempts": 0,
+          "peakContainerMemMiB": 14.68,
+          "peakContainerCpuPct": 2.38,
+          "sampledContainers": 12,
+          "modelCostMicrosPerVerifiedOutcome": 0,
+          "note": "Infrastructure cost per verified outcome is computed in the cost report from the host price and these measured durations; model cost is 0 because these runs use no AI steps."
+        },
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    }
+  ]
+}

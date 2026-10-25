@@ -1,0 +1,83 @@
+{
+  "baselineSha": "80d1f417338b4c5b95a07fc956604a1652cef7c7",
+  "countsAndSizes": "UNKNOWN (no live access)",
+  "sources": [
+    {
+      "id": "OBJ-1",
+      "location": "r2:xroga-assets users/{userId}/",
+      "class_": "RECOVERABLE_LEGACY",
+      "module": "backend/src/lib/r2.ts",
+      "migrationPriority": "P1"
+    },
+    {
+      "id": "OBJ-2",
+      "location": "postgres:project_files.file_url data:",
+      "class_": "RECOVERABLE_LEGACY",
+      "module": "backend/src/services/storage/projectFiles.ts",
+      "migrationPriority": "P1"
+    },
+    {
+      "id": "OBJ-3",
+      "location": "postgres:project_files.content",
+      "class_": "DATABASE_METADATA",
+      "module": "backend/src/services/storage/projectFiles.ts",
+      "migrationPriority": "P2"
+    },
+    {
+      "id": "OBJ-4",
+      "location": "postgres:swarm_runs.output",
+      "class_": "RECOVERABLE_LEGACY",
+      "module": "backend/src/ai/runStore.ts",
+      "migrationPriority": "P3"
+    },
+    {
+      "id": "OBJ-5",
+      "location": "supabase-storage:avatars",
+      "class_": "RECOVERABLE_LEGACY",
+      "module": "supabase/migrations/003_production_setup.sql",
+      "migrationPriority": "P3"
+    },
+    {
+      "id": "OBJ-6",
+      "location": "fly-machine:/tmp/xroga-media",
+      "class_": "EPHEMERAL_CACHE",
+      "module": "backend/src/services/storage/localMediaCache.ts",
+      "migrationPriority": "P2-optin"
+    },
+    {
+      "id": "STATE-3",
+      "location": "redis:REDIS_URL",
+      "class_": "UNKNOWN",
+      "module": "backend/src/config/jobQueues.ts",
+      "migrationPriority": "P-INFRA-006"
+    },
+    {
+      "id": "SEC-1",
+      "location": "supabase-storage:xroga-github-tokens",
+      "class_": "SECRET_PLAINTEXT_IN_PRIVATE_BUCKET (not ENCRYPTED_SECRET)",
+      "module": "backend/src/services/integrations/githubTokenStore.ts",
+      "migrationPriority": "NEVER-AS-OBJECT"
+    },
+    {
+      "id": "SEC-3",
+      "location": "postgres:user_integrations",
+      "class_": "ENCRYPTED_SECRET (key custody weak: service-role-key fallback)",
+      "module": "backend/src/services/integrations/userProviderKeys.ts",
+      "migrationPriority": "INFRA-004"
+    },
+    {
+      "id": "BKP-1",
+      "location": "supabase:backups",
+      "class_": "BACKUP",
+      "module": "(dashboard)",
+      "migrationPriority": "UNKNOWN"
+    },
+    {
+      "id": "FLY-1",
+      "location": "fly:volumes",
+      "class_": "UNKNOWN",
+      "module": "fly.api.toml",
+      "migrationPriority": "UNKNOWN"
+    }
+  ]
+}

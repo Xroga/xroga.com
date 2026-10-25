@@ -1,0 +1,198 @@
+{
+  "phase": "B1.5-PHASE-1-CLOSURE",
+  "verdict": "B15_PHASE1_VERIFIED",
+  "branch": "claude/xroga-batch-1-5",
+  "evidenceSourceSha": {
+    "localStrictRunner": "cb9196678bad037e2e2fc3f763477cee2151c15c",
+    "githubActionsRun": "cb9196678bad037e2e2fc3f763477cee2151c15c",
+    "provider": "cb9196678bad037e2e2fc3f763477cee2151c15c"
+  },
+  "startingMainSha": "80d1f417338b4c5b95a07fc956604a1652cef7c7",
+  "pushed": true,
+  "mainModified": false,
+  "codexBranchModified": false,
+  "productionModified": false,
+  "additionalSpendUsd": 0,
+  "gates": [
+    {
+      "gate": "A",
+      "result": "PASS",
+      "scope": "source baseline + browser architecture decision",
+      "externalUnknowns": [
+        "live Fly/Supabase/Redis counts"
+      ]
+    },
+    {
+      "gate": "B",
+      "result": "PASS",
+      "classification": "PROVIDER_VERIFIED + LOCAL_TESTED",
+      "provider": "real R2 bucket xroga-drive-test: private (no custom domain, public dev URL disabled), unsigned GET refused (400 InvalidArgument), tampered signature 403, expired URL 403, r2.dev not served, CORS allows only the configured origin, signed content-type/length/checksum enforced (object never created by tampering)",
+      "local": [
+        "forced RLS",
+        "column grants",
+        "tenant isolation",
+        "no secret/URL leakage"
+      ],
+      "caveats": [
+        "RLS proven on disposable PostgreSQL 16, not on the live Supabase project",
+        "CORS observed through real preflight requests, not a browser engine"
+      ]
+    },
+    {
+      "gate": "C",
+      "result": "PASS",
+      "classification": "LOCAL_TESTED + PROVIDER_VERIFIED (multipart, listing/pagination)"
+    },
+    {
+      "gate": "D",
+      "result": "PASS",
+      "classification": "PROVIDER_VERIFIED",
+      "provider": "read-back SHA-256 on real R2 for single and multipart objects, re-read from a fresh client, tamper attempts never produce READY, abandoned multipart aborted, cleanup left 0 objects and 0 in-flight uploads",
+      "caveats": [
+        "one bucket, one region (APAC), tiny volumes; no long-term durability claim"
+      ]
+    },
+    {
+      "gate": "E",
+      "result": "PASS",
+      "classification": "LOCAL_TESTED_REAL_POSTGRES",
+      "caveat": "behaviour behind a transaction pooler not run"
+    },
+    {
+      "gate": "F",
+      "result": "PASS",
+      "classification": "LOCAL_TESTED (+ server-side multipart copy proven on real R2)",
+      "closedGaps": [
+        "objects > 1 GiB (real 1 GiB+5 B crossing, 65 parts, +130 MiB RSS)",
+        "run-output artifacts (adapter; production writer currently emits metadata-only descriptors)"
+      ],
+      "approvals": "Ed25519 signed, scoped, expiring",
+      "liveMigration": false
+    },
+    {
+      "gate": "G",
+      "result": "PASS",
+      "waiting": "WAITING_FOR_BATCH1_ACCEPTED_INTERFACE:TenantContext"
+    },
+    {
+      "gate": "H",
+      "result": "PASS",
+      "classification": "GITHUB_ACTIONS",
+      "run": "https://github.com/Xroga/xroga.com/actions/runs/39772935026",
+      "runConclusion": "success",
+      "sha": "cb9196678bad037e2e2fc3f763477cee2151c15c",
+      "note": "only the storage-phase1 workflow triggers on a push to this branch; no PR opened; earlier runs were cancelled (two) or failed (one) for CI-infrastructure reasons, each reproduced first and fixed: (1) the runner collected test output through pipes so a lingering grandchild blocked spawnSync (now a file plus a 15-minute step timeout); (2) a cluster-wide role-creation race in the Supabase test stand-in under parallel test files on an empty database (old fixture failed 3 of 3, new passed 3 of 3)"
+    }
+  ],
+  "tests": {
+    "runnerOverall": "PASS",
+    "runnerPlatform": "GitHub Actions ubuntu-latest, Node 22, PostgreSQL 16 service container + s3rver (also reproduced in a 2-CPU Linux container and on Windows 11)",
+    "fixtures": {
+      "postgres": "READY",
+      "s3Emulator": "READY",
+      "r2Provider": "NOT_AUTHORISED"
+    },
+    "steps": [
+      {
+        "id": "01-typecheck",
+        "status": "PASS",
+        "tests": 0,
+        "pass": 0,
+        "fail": 0
+      },
+      {
+        "id": "02-unit-and-adapters",
+        "status": "PASS",
+        "tests": 154,
+        "pass": 154,
+        "fail": 0
+      },
+      {
+        "id": "02b-large-object-1GiB-SYNTHETIC",
+        "status": "PASS",
+        "tests": 1,
+        "pass": 1,
+        "fail": 0
+      },
+      {
+        "id": "03-postgres-real-sql",
+        "status": "PASS",
+        "tests": 25,
+        "pass": 25,
+        "fail": 0
+      },
+      {
+        "id": "04-s3-wire-emulator-SYNTHETIC",
+        "status": "PASS",
+        "tests": 7,
+        "pass": 7,
+        "fail": 0
+      },
+      {
+        "id": "05-r2-provider-REAL",
+        "status": "NOT_RUN",
+        "tests": null,
+        "pass": null,
+        "fail": null
+      },
+      {
+        "id": "06-full-backend-suite",
+        "status": "PASS_WITH_BASELINE_FAILURES",
+        "tests": 2903,
+        "pass": 2888,
+        "fail": 5
+      }
+    ],
+    "injectedDefects": "15/15 (original) + 11/11 (gap closures)",
+    "realR2": "9/9 provider tests PASS (17 observations, report 09-r2-provider-report.json)",
+    "baselineFailures": "5 in CI: organicIntelligence x3 + content-engine x2, all identical on pristine main (Windows and Linux); a 6th (compileCommand, POSIX-only) fails on pristine main in a container with npm .bin on PATH and is allow-listed with its cause; the branch changes 0 files under backend/src/ai or backend/src/organicIntelligence"
+  },
+  "evidenceClass": {
+    "sql": "LOCAL_TESTED",
+    "logic": "LOCAL_TESTED",
+    "s3Wire": "SYNTHETIC",
+    "cloudflareR2": "PROVIDER_VERIFIED",
+    "githubActions": "SUCCESS",
+    "production": "NOT_STARTED"
+  },
+  "defectsFixedInClosure": [
+    "transient error classification",
+    "silent invalid config default",
+    "dual-mode quiet legacy",
+    "forgeable migration approvals",
+    "SQL search_path/FORCE RLS",
+    "raw provider error on read",
+    "runner reported success with skipped fixtures"
+  ],
+  "securityFindings": [
+    {
+      "id": "SEC-OAUTH-1",
+      "severity": "HIGH",
+      "summary": "GitHub/Vercel OAuth tokens plaintext in DB columns and in a private Storage bucket mirror",
+      "doc": "oauth-token-finding.md",
+      "touchedLiveData": false
+    }
+  ],
+  "externalDependencies": [
+    "GitHub write access or bundle import",
+    "one isolated R2 bucket + scoped token + CORS (r2-provider-verification-request.md)",
+    "confirm Preview env secrets before any PR",
+    "Batch 1 TenantContext in main",
+    "owner signed approvals for live stages"
+  ],
+  "closure": "2026-10-22 (desktop session)",
+  "remote": {
+    "url": "https://github.com/Xroga/xroga.com",
+    "branch": "claude/xroga-batch-1-5",
+    "ciSha": "cb9196678bad037e2e2fc3f763477cee2151c15c",
+    "ciRun": "https://github.com/Xroga/xroga.com/actions/runs/39772935026",
+    "ciConclusion": "success"
+  },
+  "measuredSpend": {
+    "cloudflareBillableUsage": "$0.00 (dashboard, Oct 8 - Nov 8 period)",
+    "r2ClassAOps": 115,
+    "r2ClassBOps": 108,
+    "r2StorageAfterCleanup": "0 B",
+    "githubActions": "public repository"
+  }
+}

@@ -23,6 +23,13 @@ test('ordinary app actions do not turn into connection requests', () => {
   assert.equal(connectionSearchTerms('Send an email from Gmail to Alice'), null);
   assert.equal(connectionSearchTerms('Find contacts in my CRM and add them to Sheets'), null);
   assert.equal(connectionSearchTerms('Do not connect my Slack account'), null);
+  assert.equal(connectionSearchTerms('Find the official NASA Artemis II mission page and give its title and source link.'), null);
+  assert.equal(connectionSearchTerms('Give me a link to the official Gmail help page.'), null);
+});
+
+test('explicit link commands still reach app connection discovery', () => {
+  assert.ok(connectionSearchTerms('Link Gmail to my Xroga account')?.includes('gmail'));
+  assert.ok(connectionSearchTerms('Please link my Slack account')?.includes('slack'));
 });
 
 test('the named connection target outranks an app mentioned in the task context', () => {

@@ -1,0 +1,2 @@
+seccomp-chromium.json matches its derivation
+exit=0

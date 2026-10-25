@@ -3,21 +3,16 @@ name: Fly sandbox browser verification
 # Proves that browser verification actually works where production will run it: a disposable
 # Fly Machine in the sandbox app, using the pinned Playwright image.
 #
-# It runs on this branch as well as on main, deliberately. A `workflow_dispatch`-only workflow
-# cannot be dispatched until it exists on the default branch — which would mean merging the
-# change before the evidence for merging it exists. Running on push closes that circle.
+# HOLD (Google Cloud migration): this workflow creates disposable Fly Machines, which are new Fly resources. Xroga is moving off Fly.io
+# (Codex owns the migration), so the push triggers are removed; it can still be dispatched by hand and then requires the confirmation below.
+# See docs/infra/batch-1.5/DEPLOYMENT-HOLD.md.
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-      - 'feat/xroga-production-browser-verification'
-    paths:
-      - 'backend/src/synthesis/**'
-      - 'backend/src/sandbox/**'
-      - 'backend/src/scripts/verifyFlySandboxBrowser.ts'
-      - 'fly.api.toml'
-      - '.github/workflows/fly-sandbox-browser-verification.yml'
+    inputs:
+      confirm:
+        description: 'Fly.io is on hold during the Google Cloud migration. Type CREATE_FLY_MACHINE to run this verification anyway.'
+        required: true
+        type: string
 
 concurrency:
   group: fly-sandbox-browser-verification
@@ -25,6 +20,7 @@ concurrency:
 
 jobs:
   verify:
+    if: github.event_name == 'workflow_dispatch' && inputs.confirm == 'CREATE_FLY_MACHINE'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     # Where XROGA_SANDBOX_FLY_TOKEN lives. Without this the job has no isolation credential and
