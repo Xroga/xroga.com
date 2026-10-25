@@ -117,3 +117,40 @@ removed. The next exact single recheck request is preserved in the workspace's
 same narrow roles, private resources, one VM and $0.25 ceiling. Fresh action-time
 confirmation is required before recreating that security-sensitive access.
 Production, customer credentials/data, Fly resources and Phase 4 remain unchanged.
+
+## Approved native recheck, October 26 Pakistan time
+
+The founder approved the exact new single-execution window. Its independent
+ledger preserves the earlier failed execution without overwriting it.
+Execution `xroga-gce-transport-verify-20261025-tvhzv` ran source
+`78e28fab94b77746d742e5cc33481804afb41cdc` and immutable digest
+`sha256:4190b3474dcc2ff113a0defd87eae30acf88a4a408808a06266d58b568e637b5`.
+Cloud Run reports one successful task, zero configured retries and completion
+at `2026-10-25T19:08:42.112959Z`.
+
+The actual receipt verifies native service identity, the exact worker source,
+foreign physical-owner denial before SSH, and seven real Node checks: non-root,
+read-only root, metadata denial, external-network denial, platform-secret absence,
+memory limit and process limit. The revised admission path now passes. The
+original discarded stderr still prevents a definitive claim about its historical
+failure cause. No repeated KMS experiment, full CI run or new image build occurred.
+
+The Job, worker, auto-deleted boot disk, firewall, execution subnet and all four
+temporary IAM bindings are independently removed. The remaining control subnet
+`xroga-api-private`, ID `4594549406886522110`, and VPC `xroga-verify-net`, ID
+`8264173866930401105`, cannot yet be deleted because Google retains internal
+address `serverless-ipv4-cloudrun-1792955156502262487`. Google's
+[Direct VPC documentation](https://docs.cloud.google.com/run/docs/configuring/vpc-direct-vpc)
+requires waiting 1–2 hours after deletion before subnet cleanup.
+
+A bounded cleanup-only watcher checks these exact identities and refuses changed
+resources, unknown dependencies or new access. It creates nothing and stops by
+the original access expiry. Two hourly follow-ups verify the result and finish
+only the already approved residual cleanup if needed. Network cleanup is PENDING,
+not accepted as complete. The native recheck proof is
+`docs/xroga/evidence/zero-fly/native-transport-recheck-78e28fab-20261026.json`.
+
+Full native provider/caller integration, workspace operations, Preview,
+configuration parity, background execution, Google-compatible recovery and
+production cutover remain separate migration obligations. No production, Fly,
+customer-data or Phase 4 operation was performed by this window.

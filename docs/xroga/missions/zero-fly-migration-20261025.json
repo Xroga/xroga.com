@@ -49,7 +49,8 @@
     "scripts/local/run-task.mjs",
     "scripts/local/run-task.test.mjs",
     "docs/xroga/LOCAL_STORAGE_CLEANUP.md",
-    "docs/xroga/evidence/zero-fly/local-cleanup-and-main-integration-20261025.json"
+    "docs/xroga/evidence/zero-fly/local-cleanup-and-main-integration-20261025.json",
+    "docs/xroga/evidence/zero-fly/native-transport-recheck-78e28fab-20261026.json"
   ],
   "decisions": {
     "keep": [
@@ -161,7 +162,7 @@
     },
     {
       "command": "node dist/scripts/verifyGceExecution.js in the explicitly named private synthetic Cloud Run verification Job",
-      "scope": "The former single execution verified native identity, authenticated worker source and foreign physical-owner denial, then failed isolated Node dispatch. Preserve its partial source-bound receipt. Current immutable image awaits a new exact access-window confirmation. No DB, customer key, model or production traffic operation.",
+      "scope": "The separately approved single recheck tvhzv passed real native service identity, authenticated worker source, foreign physical-owner denial and seven isolated Node checks at exact source78e28fab/image4190b347. Job, worker, disk, firewall, execution subnet and four temporary bindings are removed. Control subnet/VPC await Google-managed address release. This is infrastructure transport proof, not whole-caller integration, production cutover or zero-Fly acceptance.",
       "negative": true,
       "reference": "backend/src/scripts/verifyGceExecution.ts"
     },
@@ -194,7 +195,8 @@
   "evidenceRefs": [
     "docs/xroga/infrastructure/zero-fly-migration-20261025.md",
     "docs/xroga/evidence/zero-fly/native-transport-f90abe82-20261025.json",
-    "docs/xroga/evidence/zero-fly/local-cleanup-and-main-integration-20261025.json"
+    "docs/xroga/evidence/zero-fly/local-cleanup-and-main-integration-20261025.json",
+    "docs/xroga/evidence/zero-fly/native-transport-recheck-78e28fab-20261026.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
