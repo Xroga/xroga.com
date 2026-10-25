@@ -39,7 +39,7 @@ case "${1:-}" in
     "$G" compute instances create "xroga-verify-$a" --project "$P" --zone "$ZONE" --machine-type "${TYPE[$a]}" \
       --image-project ubuntu-os-cloud --image-family "${FAMILY[$a]}" --boot-disk-size 20GB --boot-disk-type pd-balanced --boot-disk-auto-delete \
       --subnet "$SUBNET" --no-service-account --no-scopes --labels "$LABEL" \
-      --max-run-duration 4h --instance-termination-action DELETE \
+      --max-run-duration "${MAX_RUN:-4h}" --instance-termination-action DELETE \
       --metadata "block-project-ssh-keys=true,enable-oslogin=false,ssh-keys=xroga:$(cat "$SSH_PUBKEY_FILE")"
     "$G" compute instances describe "xroga-verify-$a" --zone "$ZONE" --project "$P" --format='value(networkInterfaces[0].accessConfigs[0].natIP)'
     ;;
