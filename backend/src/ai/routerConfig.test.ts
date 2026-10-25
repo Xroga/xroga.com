@@ -10,17 +10,17 @@ describe('router administrator configuration', () => {
       XROGA_ROUTING_MODE: 'cost',
       XROGA_MAX_REPAIR_ATTEMPTS: '4',
       XROGA_PER_TASK_TOKEN_CAP: '12000',
-      XROGA_PROVIDER_BUDGETS_JSON: '{"zhipu":4.5}',
+      XROGA_PROVIDER_BUDGETS_JSON: '{"openrouter":4.5}',
       XROGA_MODEL_FALLBACK_ORDER: 'deepseek_v4_flash,glm_5_3',
       XROGA_FORCE_RESEARCH_TASK_CLASSES: 'api_discovery,documentation_lookup',
     };
     const config = getRouterAdminConfig(env);
     assert.deepEqual(config.allowedModels, ['glm_5_3', 'deepseek_v4_flash']);
-    assert.equal(config.enabledProviders.includes('moonshot'), false);
+    assert.deepEqual(config.enabledProviders, ['openrouter']);
     assert.equal(config.defaultMode, 'cost');
     assert.equal(config.maxRepairAttempts, 4);
     assert.equal(config.perTaskTokenCap, 12000);
-    assert.equal(config.providerBudgetUsd.zhipu, 4.5);
+    assert.equal(config.providerBudgetUsd.openrouter, 4.5);
     assert.deepEqual(config.fallbackOrder, ['deepseek_v4_flash', 'glm_5_3']);
   });
 

@@ -6,8 +6,6 @@ export type CodingFamily =
   | 'deepseek';
 
 export type CodingTransport =
-  | 'moonshot'
-  | 'zhipu'
   | 'openrouter';
 
 export type CostTier =
@@ -19,21 +17,16 @@ export type CostTier =
  *
  * This is a hard provider boundary:
  *
- * Kimi     -> Moonshot
- * GLM      -> Zhipu / Z.ai
- * DeepSeek -> OpenRouter
+ * Every engineering family uses the OpenRouter transport and its approved endpoints.
  */
 export const FAMILY_TRANSPORT: Record<
   CodingFamily,
   CodingTransport
 > = {
-  kimi: 'moonshot',
-  glm: 'zhipu',
+  kimi: 'openrouter',
+  glm: 'openrouter',
   deepseek: 'openrouter',
 };
-
-export const OPENROUTER_CODING_FAMILY: CodingFamily =
-  'deepseek';
 
 export interface CodingModelTier {
   readonly modelId: string;
@@ -197,15 +190,7 @@ export function assertTransportPolicy(
     );
   }
 
-  if (
-    transport === 'openrouter' &&
-    family !==
-      OPENROUTER_CODING_FAMILY
-  ) {
-    throw new TransportPolicyError(
-      `OpenRouter carries ${OPENROUTER_CODING_FAMILY} coding models only; "${modelId}" is ${family}.`,
-    );
-  }
+  // Endpoint-level provider allowlisting is enforced at the completion boundary.
 }
 
 export interface ModelEvidence {

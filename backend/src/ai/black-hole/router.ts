@@ -94,7 +94,6 @@ const STARTING_CHAINS: Record<
   coding: [
     'glm_5_3_flash',
     'glm_5_3',
-    'kimi_k3',
   ],
 
   long_horizon: [
@@ -103,8 +102,7 @@ const STARTING_CHAINS: Record<
     'glm_5_3_flash',
   ],
 
-  // GLM-5.3 Flash is the confirmed multimodal
-  // GLM route. Regular 5.3 remains text-only.
+  // GLM Flash image calls use only its live-verified OpenInference endpoint.
   vision: [
     'glm_5_3_flash',
   ],

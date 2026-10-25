@@ -1,15 +1,14 @@
 /**
- * Fly.io secret names for the active Xroga AI stack:
+ * Server-side secret names for the active Xroga AI stack:
  *
- * OPENROUTER_API_KEY → DeepSeek V4 Flash ONLY
- * KIMI_API_KEY       → Moonshot official
- * GLM_API_KEY        → Z.ai / Zhipu official
+ * OPENROUTER_API_KEY → all four approved engineering models
+ * KIMI_API_KEY / GLM_API_KEY → legacy aliases, not needed by active model routing
  * XAI_API_KEY        → xAI official (Grok + native X Search)
  * PARALLEL_API_KEY   → Parallel official (Search / Extract / Responses)
  *
  * Important:
  *
- * - DeepSeek runs only through OpenRouter.
+ * - All active engineering models run only through OpenRouter.
  * - Normal public-web intelligence runs only through Parallel.
  * - Native X/Twitter intelligence runs through xAI X Search.
  * - One XAI_API_KEY covers Grok inference + x_search.
@@ -232,8 +231,8 @@ const ALIASES: Record<string, string[]> = {
   // -------------------------------------------------------------------------
 
   /**
-   * DeepSeek direct API is not part of the active coding stack.
-   * DeepSeek uses OPENROUTER_API_KEY.
+   * Direct vendor APIs are not part of the active coding stack.
+   * Approved engineering models use OPENROUTER_API_KEY.
    *
    * These aliases remain temporarily because old media/legacy code may
    * still check them.
@@ -300,17 +299,9 @@ export function getDeployKeyStatus(): Record<string, boolean> {
  */
 export function getAiStackKeyStatus(): Record<string, boolean> {
   return {
-    // DeepSeek via OpenRouter only.
+    // All active engineering models use this one key.
     OPENROUTER_API_KEY:
       hasSecret('OPENROUTER_API_KEY'),
-
-    // Moonshot / Kimi.
-    KIMI_API_KEY:
-      hasSecret('KIMI_API_KEY'),
-
-    // Z.ai / GLM.
-    GLM_API_KEY:
-      hasSecret('GLM_API_KEY'),
 
     // Grok + native X Search.
     XAI_API_KEY:

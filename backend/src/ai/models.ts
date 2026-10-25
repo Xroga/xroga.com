@@ -1,12 +1,8 @@
 /**
  * Xroga multi-model stack — monthly per-user budgets and routing roles.
  *
- * Fly.io secrets:
- *   OPENROUTER_API_KEY  → DeepSeek V4 Flash ONLY
- *   KIMI_API_KEY        → Kimi K3 (Moonshot official)
- *   GLM_API_KEY         → GLM-5.3 / GLM-5.3 Flash (Zhipu / BigModel official)
- *
- * DEEPSEEK_API_KEY is unused — DeepSeek runs only via OpenRouter.
+ * All active engineering models use OPENROUTER_API_KEY. Direct vendor credentials are
+ * deliberately not consulted by this catalog or the completion transport.
  */
 
 export type ModelId =
@@ -15,7 +11,7 @@ export type ModelId =
   | 'glm_5_3_flash'
   | 'deepseek_v4_flash';
 
-export type ProviderKind = 'openrouter' | 'moonshot' | 'zhipu';
+export type ProviderKind = 'openrouter';
 
 /**
  * The canonical description of one model.
@@ -41,7 +37,7 @@ export interface ModelDef {
   modelIdEnv: string;
   provider: ProviderKind;
   baseUrl: string;
-  secretKey: 'OPENROUTER_API_KEY' | 'KIMI_API_KEY' | 'GLM_API_KEY';
+  secretKey: 'OPENROUTER_API_KEY';
   /** Monthly USD budget allocation */
   budgetUsd: number;
   /** Monthly token pool (input + output combined target) */
@@ -85,19 +81,19 @@ export const MODELS: Record<ModelId, ModelDef> = {
     modelIdEnv: 'KIMI_MODEL_ID',
     label: 'Xroga Apex',
     role: 'Flagship — complex reasoning, full-stack, crypto, long-horizon coding',
-    apiModel: 'kimi-k3',
-    provider: 'moonshot',
-    baseUrl: 'https://api.moonshot.ai/v1',
-    secretKey: 'KIMI_API_KEY',
+    apiModel: 'moonshotai/kimi-k3',
+    provider: 'openrouter',
+    baseUrl: OPENROUTER_BASE_URL,
+    secretKey: 'OPENROUTER_API_KEY',
     budgetUsd: 0.75,
     monthlyTokens: 272_222,
     inputTokens: 136_111,
     outputTokens: 136_111,
-    inputUsdPer1M: 3.0,
-    outputUsdPer1M: 15.0,
-    contextWindow: 1_000_000,
+    // Conservative ceilings across Relace and Sail Research, not a promise of actual spend.
+    inputUsdPer1M: 1.2,
+    outputUsdPer1M: 8.1113,
+    contextWindow: 1_048_576,
     modalities: { text: true, images: false },
-    imagesEnv: 'KIMI_VISION_ENABLED',
     tagline: 'Chief Architect',
   },
   glm_5_3: {
@@ -106,22 +102,19 @@ export const MODELS: Record<ModelId, ModelDef> = {
     label: 'Xroga Horizon',
     role:
       'Senior engineering — serious development, debugging, architecture and long-horizon repository work',
-    apiModel: 'glm-5.3',
-    provider: 'zhipu',
-
-    // Keep the already-working GLM transport during this migration.
-    baseUrl: 'https://open.bigmodel.cn/api/paas/v4',
-
-    secretKey: 'GLM_API_KEY',
+    apiModel: 'z-ai/glm-5.3',
+    provider: 'openrouter',
+    baseUrl: OPENROUTER_BASE_URL,
+    secretKey: 'OPENROUTER_API_KEY',
 
     budgetUsd: 6,
     monthlyTokens: 1_500_000,
     inputTokens: 750_000,
     outputTokens: 750_000,
 
-    inputUsdPer1M: 1.4,
-    outputUsdPer1M: 4.4,
-    contextWindow: 1_000_000,
+    inputUsdPer1M: 0.5,
+    outputUsdPer1M: 2.0,
+    contextWindow: 1_048_576,
 
     modalities: {
       text: true,
@@ -137,13 +130,10 @@ export const MODELS: Record<ModelId, ModelDef> = {
     label: 'Xroga Horizon Flash',
     role:
       'Primary development and synthesis — fast coding, documents, multimodal analysis and high-volume implementation',
-    apiModel: 'glm-5.3-flash',
-    provider: 'zhipu',
-
-    // Same transport as the existing GLM route.
-    baseUrl: 'https://open.bigmodel.cn/api/paas/v4',
-
-    secretKey: 'GLM_API_KEY',
+    apiModel: 'z-ai/glm-5.3-flash',
+    provider: 'openrouter',
+    baseUrl: OPENROUTER_BASE_URL,
+    secretKey: 'OPENROUTER_API_KEY',
 
     // Majority of the GLM family envelope goes to the normal route.
     budgetUsd: 8.5,
@@ -152,12 +142,13 @@ export const MODELS: Record<ModelId, ModelDef> = {
     outputTokens: 1_750_000,
 
     // Conservative accounting rates.
-    inputUsdPer1M: 0.15,
-    outputUsdPer1M: 0.50,
-    contextWindow: 1_000_000,
+    inputUsdPer1M: 0.066466,
+    outputUsdPer1M: 0.0701,
+    contextWindow: 1_048_576,
 
     modalities: {
       text: true,
+      // OpenInference was probed with a real PNG. Relace remains excluded for image calls.
       images: true,
     },
 
@@ -168,7 +159,7 @@ export const MODELS: Record<ModelId, ModelDef> = {
     modelIdEnv: 'DEEPSEEK_FLASH_MODEL_ID',
     label: 'Xroga Pulse',
     role: 'Fast converter + high-volume chat and simple tasks',
-    apiModel: 'deepseek/deepseek-v4-flash',
+    apiModel: 'deepseek/deepseek-v4.1-flash',
     provider: 'openrouter',
     baseUrl: OPENROUTER_BASE_URL,
     secretKey: 'OPENROUTER_API_KEY',
@@ -177,8 +168,8 @@ export const MODELS: Record<ModelId, ModelDef> = {
     inputTokens: 450_000,
     outputTokens: 450_000,
     inputUsdPer1M: 0.09,
-    outputUsdPer1M: 0.18,
-    contextWindow: 1_000_000,
+    outputUsdPer1M: 0.25,
+    contextWindow: 1_048_576,
     modalities: { text: true, images: false },
     tagline: 'Converter & Volume',
   },
@@ -265,7 +256,8 @@ export interface ResolvedModelSpec {
 export type ModelConfigurationIssue =
   | 'missing_provider_identifier'
   | 'missing_pricing'
-  | 'missing_context_window';
+  | 'missing_context_window'
+  | 'unapproved_provider_identifier';
 
 function positiveNumber(raw: string | undefined): number | null {
   if (!raw?.trim()) return null;
@@ -302,7 +294,10 @@ export function modelConfigurationIssues(
   const def = MODELS[id];
   const keys = operatorConfigKeys(def);
   const issues: ModelConfigurationIssue[] = [];
-  if (!(env[keys.modelId]?.trim() || def.apiModel)) issues.push('missing_provider_identifier');
+  if (!def.apiModel) issues.push('missing_provider_identifier');
+  if (env[keys.modelId]?.trim() && env[keys.modelId]?.trim() !== def.apiModel) {
+    issues.push('unapproved_provider_identifier');
+  }
   const input = def.inputUsdPer1M ?? positiveNumber(env[keys.inputPrice]);
   const output = def.outputUsdPer1M ?? positiveNumber(env[keys.outputPrice]);
   if (input === null || output === null) issues.push('missing_pricing');
@@ -331,7 +326,7 @@ export function resolveModelSpec(
   const keys = operatorConfigKeys(def);
   return {
     id,
-    apiModel: (env[keys.modelId]?.trim() || def.apiModel)!,
+    apiModel: def.apiModel!,
     provider: def.provider,
     baseUrl: def.baseUrl,
     secretKey: def.secretKey,

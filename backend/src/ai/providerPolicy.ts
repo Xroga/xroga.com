@@ -26,9 +26,9 @@ import type { ModelId } from './models.js';
  * transport is a compile-time error.
  */
 export const CODING_MODEL_TRANSPORT = {
-  kimi_k3: 'moonshot',
-  glm_5_3: 'zhipu',
-  glm_5_3_flash: 'zhipu',
+  kimi_k3: 'openrouter',
+  glm_5_3: 'openrouter',
+  glm_5_3_flash: 'openrouter',
   deepseek_v4_flash: 'openrouter',
 } as const satisfies Record<ModelId, string>;
 
