@@ -1,0 +1,4 @@
+commit=744067de414aa574f79d8e1d4ea36ce88a020ff9
+tree=clean
+host=xroga-verify-arm64
+arch=aarch64

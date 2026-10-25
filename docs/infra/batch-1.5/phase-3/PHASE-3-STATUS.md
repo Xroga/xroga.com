@@ -1,4 +1,4 @@
-# Batch 1.5 Phase 3: status (final checkpoint 2026-10-25)
+# Batch 1.5 Phase 3: status (final, 2026-10-25: PASS)
 
 Branch `claude/xroga-b15-phase3-20261024`, from the accepted Phase 2 checkpoint `6977a147`. Scope: `AUTHORITATIVE-SCOPE.md` (verbatim founder amendment and master,
 OCI replaced by Google Compute Engine per the founder's 2026-10-24 decision). Nothing here is merged to `main` or deployed.
@@ -22,4 +22,4 @@ The verdict, the evidence and the open items are in `BATCH-1.5-PHASE-3-FINAL-ACC
 ## Defect found and fixed in the final verification
 W03 (real model) timed out on its AI click: Stagehand 4's `act()` runs inside the world its extension injects at navigation, and the worker attached Stagehand only at
 the first AI step, after the start page had loaded. Fixed in `d3b5f9c3` by attaching first when a plan has AI steps. W03 then passed, and the full suite, the DevTools
-attack battery and PRODUCT-009 were rerun on the rebuilt image.
+attack battery and PRODUCT-009 were rerun on the rebuilt image, and the host battery, DevTools battery and workflow suite then ran on that final image on Compute Engine (amd64 and arm64).

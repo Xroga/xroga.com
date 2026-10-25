@@ -17,8 +17,8 @@ Status vocabulary: `PASS_GCE` (real run on Compute Engine on both architectures)
 | Infrastructure | Compute Engine browser host (Docker); Drive (R2 + Supabase metadata); an existing model provider for AI steps |
 | Tests | route tests (7); suite receipt `PRODUCT-001` (deterministic capture over the production router, then a model-planned goal); W01 to W15 underneath |
 | Evidence | both halves PASS_LOCAL on the final source `d3b5f9c3` (`evidence/local/final-suite-LOCAL_DOCKER.json`): deterministic capture, then a goal planned by `deepseek_v4_flash` through the canonical route and executed with verified postconditions (model spend $0.000254). The deterministic path is also PASS_GCE on both architectures inside W01/W02/W04/W15 (earlier image) |
-| Blockers | the final image (with the Stagehand attach fix) has not run on Compute Engine |
-| Status | **PASS_LOCAL** |
+| Blockers | none |
+| Status | **PASS_GCE** (final image, both architectures; planned leg also PASS_LOCAL) |
 
 ## PRODUCT-009: Combined browser, app and employee workflow
 | Field | Record |
@@ -47,9 +47,9 @@ Status vocabulary: `PASS_GCE` (real run on Compute Engine on both architectures)
 | Previously existing | Drive foundation from Phase 1/2 (`putServerObject`: READY only after read-back SHA-256) |
 | Implementation | every browser artifact goes through `putServerObject` under a deterministic per-task name; retries reuse an already stored object; the report and screenshot are owner-scoped |
 | Tests | W02, W05a, W15 (in-memory Drive: READY with read-back SHA-256 on every artifact); W07 (real private R2: READY, other tenant denied, an unsigned read of the real S3 endpoint refused, deleted and confirmed absent by HEAD) |
-| Evidence | in-memory Drive path PASS_GCE on both architectures; real private R2 bucket `xroga-drive-test`: W07 PASS_LOCAL (`evidence/local/w07-r2-LOCAL_DOCKER.json`, 2026-10-25, source `39d46391` + the strengthened W07 check). Bucket privacy confirmed off-suite with wrangler: r2.dev public URL disabled, no custom domains |
-| Blockers | none for the branch. The R2 leg ran on the local Docker host, because the GCE VMs had already auto-deleted when the token arrived; the browser path itself is PASS_GCE |
-| Status | **PASS_LOCAL** (real R2), with the browser-to-Drive path PASS_GCE |
+| Evidence | W07 on the real private R2 bucket from both final-image GCE VMs (`evidence/gce/final-image/`), plus the in-memory Drive path on both architectures; also W07 PASS_LOCAL (`evidence/local/w07-r2-LOCAL_DOCKER.json`, 2026-10-25, source `39d46391` + the strengthened W07 check). Bucket privacy confirmed off-suite with wrangler: r2.dev public URL disabled, no custom domains |
+| Blockers | none |
+| Status | **PASS_GCE** (real R2 from both final-image VMs, 2026-10-25); also PASS_LOCAL |
 
 ## The other eight (unchanged by Phase 3)
 | ID | Outcome | Previously existing (baseline `../product-capability-baseline.md` and `main`) | Phase 3 change | Status in Phase 3 |

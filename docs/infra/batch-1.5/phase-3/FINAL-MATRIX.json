@@ -3,9 +3,9 @@
   "generatedAt": "2026-10-25",
   "branch": "claude/xroga-b15-phase3-20261024",
   "baseCheckpoint": "6977a147 (Phase 2 accepted)",
-  "finalCodeSource": "d3b5f9c3",
-  "recommendation": "BATCH_1_5_PHASE_3_BLOCKED",
-  "recommendationReason": "Every executed receipt passes, but the final browser image (Stagehand attach fix in d3b5f9c3) has only LOCAL evidence; the GCE evidence is on the previous image (450df59a). One founder-approved GCE rerun of the final image unblocks PASS.",
+  "finalCodeSource": "37069f73 (code); GCE final-image evidence at 744067de plus W09 rerun at 37069f73; the only difference is the W09a test plan",
+  "recommendation": "BATCH_1_5_PHASE_3_PASS",
+  "recommendationReason": "All mandatory gates have passing evidence on the final corrected image on Compute Engine (both architectures) except two items that Phase 3 cannot resolve by design and that are recorded as PARTIAL, not passed: browser-task rows in Supabase execution_runs (needs a deployment the founder has not approved) and the PRODUCT-009 AI Employee leg (no AI Employee backend exists).",
   "evidenceClasses": {
     "GCE": {
       "hosts": [
@@ -24,6 +24,18 @@
     },
     "UNIT": {
       "ci": "Unit tests workflow on the branch"
+    },
+    "GCE_FINAL_IMAGE": {
+      "hosts": [
+        "e2-standard-2 amd64",
+        "t2a-standard-2 arm64"
+      ],
+      "zone": "us-central1-a",
+      "source": "744067de (W09 rerun 37069f73)",
+      "dir": "evidence/gce/final-image/",
+      "host_battery": "HOST_ACCEPTED 32/32 both",
+      "devtools": "PASS both",
+      "suite": "amd64 31/32 (PRODUCT-009 intentionally not run); arm64 30/32 (PRODUCT-009 not run; W09a test-timing flaw, rerun PASS)"
     }
   },
   "browserGates": [
@@ -35,7 +47,7 @@
     {
       "id": "BROWSER-02",
       "title": "Local Stagehand/Playwright, pinned, licence-checked",
-      "status": "PASS_LOCAL"
+      "status": "PASS_GCE"
     },
     {
       "id": "BROWSER-03",
@@ -55,17 +67,17 @@
     {
       "id": "BROWSER-06",
       "title": "Deterministic and AI workflows with postconditions",
-      "status": "PASS_GCE (deterministic), PASS_LOCAL (AI)"
+      "status": "PASS_GCE"
     },
     {
       "id": "BROWSER-07",
       "title": "Redirect/SSRF/rebinding/metadata/prompt-injection defences",
-      "status": "PASS_GCE (W12e PASS_LOCAL)"
+      "status": "PASS_GCE"
     },
     {
       "id": "BROWSER-08",
       "title": "Artifacts in private R2, session metadata in Supabase",
-      "status": "PARTIAL (R2 PASS_LOCAL; execution_runs for browser tasks NOT_TESTED, needs deployment)"
+      "status": "PARTIAL (R2 PASS_GCE on the final image; execution_runs for browser tasks NOT_TESTED, needs an approved deployment)"
     },
     {
       "id": "BROWSER-09",
@@ -75,7 +87,7 @@
     {
       "id": "BROWSER-10",
       "title": "Measured resources and cost per verified outcome",
-      "status": "PASS_GCE (host), PASS_LOCAL (model)"
+      "status": "PASS_GCE"
     },
     {
       "id": "BROWSER-11",
@@ -85,7 +97,7 @@
     {
       "id": "BROWSER-12",
       "title": "PRODUCT-001/009 integrated with 010/012",
-      "status": "PARTIAL (PRODUCT-009 employee leg NOT_IMPLEMENTED)"
+      "status": "PARTIAL (PRODUCT-001, 010, 012 PASS; PRODUCT-009 app and browser legs PASS_LOCAL, AI Employee leg NOT_IMPLEMENTED)"
     }
   ],
   "workflows": [
@@ -114,9 +126,9 @@
         "W03",
         "W03b"
       ],
-      "gce": "NOT_RUN",
+      "gce": "PASS (final image)",
       "local": "PASS",
-      "status": "PASS_LOCAL"
+      "status": "PASS_GCE"
     },
     {
       "id": "W04",
@@ -156,9 +168,9 @@
       "receipts": [
         "W07"
       ],
-      "gce": "NOT_RUN",
+      "gce": "PASS (final image)",
       "local": "PASS",
-      "status": "PASS_LOCAL"
+      "status": "PASS_GCE"
     },
     {
       "id": "W08",
@@ -176,7 +188,7 @@
         "W09a",
         "W09b"
       ],
-      "gce": "PASS",
+      "gce": "PASS (arm64 original run hit a test-timing flaw; rerun PASS on both)",
       "local": "PASS",
       "status": "PASS_GCE"
     },
@@ -195,7 +207,7 @@
       "receipts": [
         "host battery egress checks"
       ],
-      "gce": "PASS",
+      "gce": "PASS (HOST_ACCEPTED 32/32, final image)",
       "local": "NOT_REPEATED (proxy unchanged)",
       "status": "PASS_GCE"
     },
@@ -208,9 +220,9 @@
         "W12d",
         "W12e"
       ],
-      "gce": "PASS (a-d)",
+      "gce": "PASS (a-e, final image)",
       "local": "PASS (a-e)",
-      "status": "PASS_GCE (W12e PASS_LOCAL)"
+      "status": "PASS_GCE"
     },
     {
       "id": "W13",
@@ -229,9 +241,9 @@
       "receipts": [
         "host battery HOST_ACCEPTED 32/32"
       ],
-      "gce": "PASS",
+      "gce": "PASS (HOST_ACCEPTED 32/32, final image)",
       "local": "DevTools battery PASS",
-      "status": "PASS_GCE (previous image)"
+      "status": "PASS_GCE"
     },
     {
       "id": "W15",
@@ -247,7 +259,7 @@
     {
       "id": "PRODUCT-001",
       "title": "Browser Automation end to end",
-      "status": "PASS_LOCAL"
+      "status": "PASS_GCE (final image); also PASS_LOCAL"
     },
     {
       "id": "PRODUCT-002",
@@ -302,7 +314,7 @@
     {
       "id": "PRODUCT-012",
       "title": "Verified artifact storage and retrieval",
-      "status": "PASS_LOCAL (real R2); browser-to-Drive path PASS_GCE"
+      "status": "PASS_GCE (real R2, final image); also PASS_LOCAL"
     }
   ],
   "security": {
@@ -325,21 +337,24 @@
     },
     "aiOutcomeModelUsd": 0.0009,
     "finalSuiteModelUsd": 0.001307,
-    "phase3ModelSpendProviderReportedUsd": 0.0017,
-    "gceCreditUsdMax": 0.64,
-    "cashUsd": 0.0017
+    "phase3ModelSpendProviderReportedUsd": 0.0022,
+    "gceCreditUsdMax": 0.72,
+    "cashUsd": 0.0022,
+    "gceFinalRunUsd": 0.082,
+    "gceFirstRunUsdMax": 0.64
   },
   "cleanup": {
-    "gceVms": "deleted (4 h limit), disks and addresses none, SSH firewall rule deleted",
-    "r2TestObjects": "deleted and confirmed absent",
-    "testbedWorker": "kept until the founder decides on the GCE rerun (it needs the testbed), then deleted",
-    "cloudflareLogin": "revoked at the same time",
-    "gcloudCredential": "revoked at the same time"
+    "gceVms": "both runs: deleted; final readback: 0 instances, 0 disks, 0 addresses, 0 xroga firewall rules, 0 xroga subnets, only the default network",
+    "r2": "bucket xroga-drive-test is empty (readback)",
+    "testbedWorker": "deleted (404 confirmed)",
+    "cloudflareLogin": "revoked at close",
+    "gcloudCredential": "revoked at close",
+    "vmKeyFiles": "shredded before VM deletion"
   },
   "openItems": [
-    "GCE rerun of the final image on both architectures (needs a new founder approval for two temporary VMs, about 1 h, about $0.16/h credit)",
-    "execution_runs persistence for browser tasks: parity check P5, verified only after a founder-approved deployment",
-    "PRODUCT-009 employee leg: no AI Employee backend exists (PRODUCT-002/003, a later batch)"
+    "execution_runs persistence for browser tasks: verified only after a founder-approved deployment (parity check P5)",
+    "PRODUCT-009 AI Employee leg: no AI Employee backend exists (PRODUCT-002/003, later batch)",
+    "merge to main: awaits explicit founder approval; frontend CI failures clear on rebase"
   ],
   "ci": {
     "run": 40187643238,

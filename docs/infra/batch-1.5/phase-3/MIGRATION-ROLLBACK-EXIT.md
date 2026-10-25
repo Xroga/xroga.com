@@ -15,13 +15,13 @@ The new self-hosted path is additive: its own route (`/api/browser/runs`), its o
 ## 2. Parity checklist (all must be PASS before any cutover)
 | # | Check | Evidence source | State at this checkpoint |
 |---|---|---|---|
-| P1 | All 15 workflows PASS on the release image on Compute Engine (both architectures) | `phase3-host-run.sh` output, `FINAL-MATRIX.json` | see final acceptance |
-| P2 | W11/W14 host battery PASS on the release image (sandbox, seccomp, caps, read-only root, egress, weakened controls) | `host-battery/` in the GCE run | see final acceptance |
-| P3 | Real-model W03 and W12e within the approved model budget, through the canonical ledger | `workflows.json` model receipts | see final acceptance |
-| P4 | Private R2 evidence READY with read-back SHA-256, other tenant denied (W07) | `workflows.json` W07 | see final acceptance |
+| P1 | All 15 workflows PASS on the release image on Compute Engine (both architectures) | `evidence/gce/final-image/`, `FINAL-MATRIX.json` | PASS |
+| P2 | W11/W14 host battery PASS on the release image (sandbox, seccomp, caps, read-only root, egress, weakened controls) | `host-evidence-*` in the final-image GCE run | PASS (HOST_ACCEPTED 32/32 both) |
+| P3 | Real-model W03 and W12e within the approved model budget, through the canonical ledger | `workflows.json` model receipts | PASS ($0.0022 of $0.50) |
+| P4 | Private R2 evidence READY with read-back SHA-256, other tenant denied (W07) | `workflows.json` W07 | PASS |
 | P5 | Supabase `execution_runs` metadata written by the deployed API | needs deployment approval | NOT_TESTED |
 | P6 | Build-pipeline browser verification unaffected | `verifyFlySandboxBrowser.ts` on the deployed API after merge | NOT_TESTED until merge |
-| P7 | Cost per verified outcome measured, not modelled | `COST-REPORT.md` | see cost report |
+| P7 | Cost per verified outcome measured, not modelled | `COST-REPORT.md` | PASS |
 
 ## 3. Cutover sequence (each step separately approved)
 1. **Merge** the Phase 3 branch after review. Effect: the API gains the route and stays `503` because no worker URL is configured. Two migrations from Phase 2 also apply (founder decision recorded in the Phase 2 handoff).

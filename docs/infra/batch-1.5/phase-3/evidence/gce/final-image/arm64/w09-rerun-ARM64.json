@@ -1,0 +1,86 @@
+{
+  "evidenceClass": "ARM64_HOST_TESTED",
+  "reapedAtStart": {
+    "containers": 0,
+    "networks": 0
+  },
+  "modelId": "deepseek_v4_flash",
+  "modelSpendMicros": 0,
+  "modelRunCapMicros": 500000,
+  "sourceSha": "37069f7333adcf65035ce8aaad229b5de7941e7c",
+  "browserImage": "xroga-browser-worker:phase3",
+  "imageId": "sha256:e6a29ef8780d046ad2f2150e4fc284e6143fba99107f35a31ea2eca92ca49a32",
+  "at": "2026-10-25T11:45:24.383Z",
+  "passed": 2,
+  "total": 2,
+  "receipts": [
+    {
+      "id": "W09a",
+      "title": "read-only task: container killed, fenced retry completes",
+      "expected": "completed on attempt 2",
+      "actual": "completed",
+      "pass": true,
+      "details": {
+        "runId": "23384397-dbf2-452e-bd21-51e8be9538d0",
+        "status": "completed",
+        "attempts": 2,
+        "code": null,
+        "outcomeVerified": true,
+        "postconditions": [
+          "artifact:true",
+          "finalUrlPrefix:true"
+        ],
+        "extracted": {},
+        "metrics": {
+          "fallbacks": [],
+          "elapsedMs": 3810,
+          "redirects": 0,
+          "pages": 0,
+          "consequentialActions": 0,
+          "llmCalls": 0,
+          "modelUsage": {
+            "calls": 0,
+            "inputTokens": 0,
+            "outputTokens": 0,
+            "costMicros": 0,
+            "refused": 0
+          }
+        },
+        "evidence": [
+          "browser_run",
+          "drive_artifact",
+          "browser_outcome",
+          "model_usage"
+        ],
+        "elapsedMs": 10078,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    },
+    {
+      "id": "W09b",
+      "title": "consequential task is not retried after a crash; reported, not repeated",
+      "expected": "not completed, attempts = 1",
+      "actual": "failed (WORKER_FAILED)",
+      "pass": true,
+      "details": {
+        "runId": "ca584370-60b8-4694-9ac0-fd87e5686392",
+        "status": "failed",
+        "attempts": 1,
+        "code": "WORKER_FAILED",
+        "outcomeVerified": null,
+        "postconditions": [],
+        "extracted": null,
+        "metrics": null,
+        "evidence": [],
+        "elapsedMs": 2502,
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    }
+  ]
+}

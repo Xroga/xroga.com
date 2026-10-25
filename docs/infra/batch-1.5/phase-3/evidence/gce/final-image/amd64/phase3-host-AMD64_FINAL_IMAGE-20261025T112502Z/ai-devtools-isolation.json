@@ -1,0 +1,52 @@
+{
+  "evidenceClass": "AMD64_FINAL_IMAGE",
+  "at": "2026-10-25T11:27:11.829Z",
+  "sourceSha": "744067de414aa574f79d8e1d4ea36ce88a020ff9",
+  "image": "sha256:8a95c516ba2fb5fdbfa62a0c09b31f802cc848c0711225432a2f48b414c948c3",
+  "launchArgs": [
+    "--disable-dev-shm-usage",
+    "--mute-audio",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--disable-sync",
+    "--remote-debugging-port=52830",
+    "--enable-unsafe-extension-debugging",
+    "--remote-allow-origins=chrome-extension://pgfpmmndcidciloohojhmoamdjjeifdf"
+  ],
+  "bypass": "<-loopback>,127.0.0.1:52830",
+  "real": {
+    "port": 52830,
+    "nodeClientConnects": true,
+    "pageOrigin": "https://example.com",
+    "page": {
+      "jsonVersion": "blocked:TypeError",
+      "jsonList": "blocked:TypeError",
+      "otherLoopbackPort": "blocked:TypeError",
+      "loopbackNameWithDevtoolsPort": "blocked:TypeError",
+      "websocket": "refused"
+    }
+  },
+  "weak": {
+    "port": 52830,
+    "nodeClientConnects": true,
+    "pageOrigin": "https://example.com",
+    "page": {
+      "jsonVersion": "blocked:TypeError",
+      "jsonList": "blocked:TypeError",
+      "otherLoopbackPort": "blocked:TypeError",
+      "loopbackNameWithDevtoolsPort": "blocked:TypeError",
+      "websocket": "opened"
+    }
+  },
+  "checks": {
+    "nodeClientConnects": true,
+    "pageCannotReadJsonVersion": true,
+    "pageCannotReadJsonList": true,
+    "pageCannotReachOtherLoopbackPort": true,
+    "pageCannotReachDevtoolsViaLoopbackName": true,
+    "pageWebSocketRefused": true,
+    "weakenedControlLetsPageIn": true
+  },
+  "pass": true
+}

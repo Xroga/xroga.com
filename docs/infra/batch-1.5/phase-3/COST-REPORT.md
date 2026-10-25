@@ -61,14 +61,16 @@ Final-source receipts (`evidence/local/final-suite-LOCAL_DOCKER.json`, source `d
 
 Cost per AI-assisted verified outcome: about **$0.0009** in model tokens (W03, the heaviest plan) plus the host and storage floor from §3, so about $0.001 in total.
 
-OpenRouter's own account of the key after every Phase 3 model run (including the two W03 runs that timed out before the fix, and the diagnostic run): **$0.0017** used, $0.598 of $0.60 remaining.
+OpenRouter's own account of the key after every Phase 3 model run (including the two W03 runs that timed out before the fix, the diagnostic run and the two final-image suites on Compute Engine, about $0.0013 of ledger cost each): **$0.0022** used, $0.598 of $0.60 remaining.
 
 ## 5. Actual Phase 3 spend so far (cash vs credit)
 | Item | Amount | Paid from |
 |---|---|---|
-| Two GCE verification VMs, 4 h each (auto-deleted at the 4 h limit; disks, addresses and the SSH firewall rule confirmed removed 2026-10-25) | at most $0.64 at list price (0.0747 + 0.0847 per hour, 4 h) | Google Cloud free-trial credit; $0 cash |
+| First pair of GCE VMs, up to 4 h each (auto-deleted at the limit) | at most $0.64 at list price | Google Cloud free-trial credit; $0 cash |
+| Final-image pair of GCE VMs, about 0.5 h each (created 11:18 and 11:19 UTC, deleted 11:50 UTC 2026-10-25; readback: no instances, disks, addresses, firewall rules or subnets left) | about $0.08 at list price | Google Cloud free-trial credit; $0 cash |
+| **Compute Engine total** | **at most $0.72 at list price** | credit |
 | Cloudflare Worker testbed (workers.dev, free tier, no bindings) | $0 | free tier |
-| Model tokens (OpenRouter, DeepSeek V4 Flash, all Phase 3 runs) | $0.0017 (provider-reported) | the founder's existing OpenRouter balance |
+| Model tokens (OpenRouter, DeepSeek V4 Flash, all Phase 3 runs including both final-image GCE suites) | $0.0022 (provider-reported; $0.598 of the key's $0.60 remains) | the founder's existing OpenRouter balance |
 | R2 test bucket (W07: a few Class A/B operations, objects deleted) | under $0.0001; inside the R2 free tier | free tier |
 
 Final figures are restated in `BATCH-1.5-PHASE-3-FINAL-ACCEPTANCE.md` after teardown.
