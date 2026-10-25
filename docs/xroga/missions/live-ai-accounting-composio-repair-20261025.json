@@ -16,6 +16,7 @@
     "supabase/migrations/20261025010000_ai_usage_receipt_service_grant.sql",
     "docs/xroga/current-state.json",
     "docs/xroga/current-state.md",
+    "docs/xroga/research/source-manifest.json",
     "docs/xroga/missions/live-ai-accounting-composio-repair-20261025.json"
   ],
   "decisions": {
@@ -43,7 +44,8 @@
     {"command": "Rollback-only service_role SQL probe plus privilege readback", "scope": "Verified receipt update succeeds, cost_usd update remains denied, and authenticated receipt update remains denied on production schema.", "negative": true, "reference": "supabase/migrations/20261025010000_ai_usage_receipt_service_grant.sql"},
     {"command": "npx tsx --test backend/src/services/integrations/composioClient.pagination.test.ts", "scope": "Connected toolkit listing uses the accepted limit 50 with requested toolkit and connected filter.", "negative": false, "reference": "backend/src/services/integrations/composioClient.pagination.test.ts"},
     {"command": "npm run build --workspace=backend", "scope": "Backend dependency patch checks and TypeScript build passed locally; canonical Node 22 and full CI remain pending.", "negative": false, "reference": "backend/src/services/integrations/composioClient.ts"},
-    {"command": "node scripts/xroga/inventory.mjs --check", "scope": "Generated inventory includes the new test and migration; passing deterministic check required before merge.", "negative": false, "reference": "docs/xroga/current-state.json"}
+    {"command": "node scripts/xroga/inventory.mjs --check", "scope": "Generated inventory includes the new test and migration; passing deterministic check required before merge.", "negative": false, "reference": "docs/xroga/current-state.json"},
+    {"command": "node scripts/xroga/validate-requirements-ledger.mjs", "scope": "Source-manifest hashes reflect the reviewed adapter and generated repository inventory.", "negative": false, "reference": "docs/xroga/research/source-manifest.json"}
   ],
   "architecture": {"change": "extends_canonical", "reason": "Repairs existing accounting ACL and existing Composio page size without a new control plane.", "rfc": null},
   "rollout": "Keep Fly as live API and Cloud Run IAM-private. Finish source-bound CI, protected deployment and authenticated app task checks before any traffic cutover.",
