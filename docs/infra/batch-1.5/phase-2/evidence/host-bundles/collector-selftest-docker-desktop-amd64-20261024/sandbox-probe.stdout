@@ -1,0 +1,16 @@
+{
+  "hardened": "SANDBOX_ON",
+  "hardenedConformance": true,
+  "control": "BLOCKED",
+  "variantsDetected": [
+    "root-user:true",
+    "writable-root:true",
+    "capabilities-kept:true",
+    "privilege-escalation-allowed:true",
+    "no-resource-limits:true",
+    "tmpfs-executable:true"
+  ],
+  "cleanupOk": true,
+  "out": "out/host-evidence-Abdullah-20261024T155627Z/sandbox-probe.json"
+}
+exit=0

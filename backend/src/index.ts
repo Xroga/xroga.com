@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import './runtime/installSafeLogging.js';
 import { createServer } from 'http';
 import express from 'express';
 import cors from 'cors';
@@ -44,6 +45,9 @@ import { metricsMiddleware, getMetricsText } from './middleware/metricsMiddlewar
 import { getSupabaseCounterText } from './lib/supabaseCallCounters.js';
 import { phase1AuthMiddleware } from './middleware/phase1Auth.js';
 import mediaRouter from './routes/media.js';
+import driveRouter from './routes/drive.js';
+import browserRunsRouter from './routes/browserRuns.js';
+import { resolveStorageConfig } from './storage/runtime.js';
 import capabilitiesRouter from './routes/capabilities.js';
 import { adminMiddleware } from './middleware/admin.js';
 import {
@@ -237,6 +241,8 @@ app.use('/api/profile', authMiddleware, profileRouter);
 // Showcase template export writes to a user's repository, so it is auth-gated.
 app.use('/api/showcase', authMiddleware, showcaseRouter);
 app.use('/api/media', authMiddleware, mediaRouter);
+app.use('/api/drive', authMiddleware, driveRouter);
+app.use('/api/browser/runs', authMiddleware, browserRunsRouter);
 app.use('/api/capabilities', authMiddleware, capabilitiesRouter);
 app.use('/api/debug', authMiddleware, debugRouter);
 app.use('/api/wellbeing', authMiddleware, wellbeingRouter);
@@ -291,6 +297,10 @@ server.listen(port, '0.0.0.0', () => {
   console.log('[AI] Routes:', JSON.stringify(modelTransportStatus()));
   if (!process.env.SUPABASE_URL) {
     console.warn('WARNING: SUPABASE_URL is not set — authenticated routes will fail');
+  }
+  { // an invalid storage switch must be loud at boot; writes then fail closed (see storage/runtime.ts)
+    const storageCfg = resolveStorageConfig();
+    if (storageCfg.problems.length) console.error('[storage] INVALID CONFIGURATION:', storageCfg.problems.join('; '));
   }
   // Schema changes belong to the migration gate, never request/startup credentials.
   // Provider health survives this restart (§15). Without it a circuit opened against a

@@ -1,0 +1,28 @@
+{
+  "workflow": "W02 deterministic Playwright: click, wait, extraction with checkable postconditions (and W04 multi-page)",
+  "job": {
+    "allowedOrigins": ["https://quotes.toscrape.com"],
+    "startUrl": "https://quotes.toscrape.com/",
+    "limits": { "maxDurationMs": 120000, "maxNavigations": 20, "maxRedirects": 3, "maxPages": 2, "maxResponseBytes": 20000000, "maxArtifactBytes": 10000000, "maxModelCostMicros": 0 }
+  },
+  "plan": {
+    "steps": [
+      { "op": "extractText", "selector": "h1 a", "name": "siteTitle" },
+      { "op": "extractText", "selector": ".quote .author", "name": "page1Authors", "all": true },
+      { "op": "click", "selector": "li.next > a" },
+      { "op": "waitFor", "urlPrefix": "https://quotes.toscrape.com/page/2", "timeoutMs": 15000 },
+      { "op": "extractText", "selector": ".quote .text", "name": "page2Quotes", "all": true },
+      { "op": "click", "selector": "li.next > a" },
+      { "op": "waitFor", "urlPrefix": "https://quotes.toscrape.com/page/3", "timeoutMs": 15000 },
+      { "op": "screenshot", "name": "page3.png" }
+    ],
+    "expect": [
+      { "kind": "extracted", "name": "siteTitle", "equals": "Quotes to Scrape" },
+      { "kind": "extracted", "name": "page1Authors", "minItems": 10, "contains": "Albert Einstein" },
+      { "kind": "extracted", "name": "page2Quotes", "minItems": 10 },
+      { "kind": "finalUrlPrefix", "prefix": "https://quotes.toscrape.com/page/3" },
+      { "kind": "artifact", "name": "page3.png", "mediaType": "image/png", "minBytes": 1000 },
+      { "kind": "noConsequentialAction" }
+    ]
+  }
+}

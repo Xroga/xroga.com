@@ -1,0 +1,12 @@
+{
+  "workflow": "W03 plumbing check (stub model): Stagehand attached locally to the policy-launched Chromium; model requests reach the host",
+  "job": {
+    "allowedOrigins": ["https://quotes.toscrape.com"],
+    "startUrl": "https://quotes.toscrape.com/",
+    "limits": { "maxDurationMs": 180000, "maxNavigations": 20, "maxRedirects": 3, "maxPages": 2, "maxResponseBytes": 20000000, "maxArtifactBytes": 10000000, "maxModelCostMicros": 100000 }
+  },
+  "plan": {
+    "steps": [ { "op": "aiObserve", "instruction": "find the link to the next page of quotes", "name": "nextTargets" } ],
+    "expect": []
+  }
+}

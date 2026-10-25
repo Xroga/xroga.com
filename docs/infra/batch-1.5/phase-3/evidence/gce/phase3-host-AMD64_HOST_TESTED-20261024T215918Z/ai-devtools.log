@@ -1,0 +1,28 @@
+{
+  "pass": true,
+  "checks": {
+    "nodeClientConnects": true,
+    "pageCannotReadJsonVersion": true,
+    "pageCannotReadJsonList": true,
+    "pageCannotReachOtherLoopbackPort": true,
+    "pageCannotReachDevtoolsViaLoopbackName": true,
+    "pageWebSocketRefused": true,
+    "weakenedControlLetsPageIn": true
+  },
+  "real": {
+    "jsonVersion": "blocked:TypeError",
+    "jsonList": "blocked:TypeError",
+    "otherLoopbackPort": "blocked:TypeError",
+    "loopbackNameWithDevtoolsPort": "blocked:TypeError",
+    "websocket": "refused"
+  },
+  "weak": {
+    "jsonVersion": "blocked:TypeError",
+    "jsonList": "blocked:TypeError",
+    "otherLoopbackPort": "blocked:TypeError",
+    "loopbackNameWithDevtoolsPort": "blocked:TypeError",
+    "websocket": "opened"
+  },
+  "errors": []
+}
+exit=0

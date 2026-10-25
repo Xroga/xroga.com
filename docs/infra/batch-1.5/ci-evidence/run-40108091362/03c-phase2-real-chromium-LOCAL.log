@@ -1,0 +1,57 @@
+# cmd: npx tsx --test --test-reporter=tap src/workers/chromiumProxy.browser.test.ts
+TAP version 13
+# Subtest: real Chromium under the production launch policy
+    # Subtest: the live browser processes carry the policy flags: proxy set, no --no-sandbox, no network DevTools port
+    ok 1 - the live browser processes carry the policy flags: proxy set, no --no-sandbox, no network DevTools port
+      ---
+      duration_ms: 80.484683
+      type: 'test'
+      ...
+    # Subtest: a host outside the job scope is refused by the proxy before any DNS lookup
+    ok 2 - a host outside the job scope is refused by the proxy before any DNS lookup
+      ---
+      duration_ms: 55.28776
+      type: 'test'
+      ...
+    # Subtest: loopback is not reachable from the browser: an internal service on 127.0.0.1 is never hit
+    ok 3 - loopback is not reachable from the browser: an internal service on 127.0.0.1 is never hit
+      ---
+      duration_ms: 173.59531
+      type: 'test'
+      ...
+    # Subtest: cloud metadata addresses are unreachable
+    ok 4 - cloud metadata addresses are unreachable
+      ---
+      duration_ms: 105.162359
+      type: 'test'
+      ...
+    # Subtest: TLS errors are never ignored: an in-scope host presenting an untrusted certificate fails in the browser
+    ok 5 - TLS errors are never ignored: an in-scope host presenting an untrusted certificate fails in the browser
+      ---
+      duration_ms: 58.398617
+      type: 'test'
+      ...
+    # Subtest: killing the browser root takes down its whole process tree and leaves no listener behind
+    ok 6 - killing the browser root takes down its whole process tree and leaves no listener behind
+      ---
+      duration_ms: 122.625559
+      type: 'test'
+      ...
+    1..6
+ok 1 - real Chromium under the production launch policy
+  ---
+  duration_ms: 2339.052647
+  type: 'suite'
+  ...
+1..1
+# tests 6
+# suites 1
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3070.317002
+
+
+# exit: 0

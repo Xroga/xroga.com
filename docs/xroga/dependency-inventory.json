@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "bb47def0d8476bd57a4db85325d52325b09e4d13",
+  "source_sha": "acc5076d245c98197a42b4deb880a22f518f2e1c",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -33,6 +33,7 @@
         "NEXT_PUBLIC_VERCEL_ENV",
         "NEXT_PUBLIC_XROGA_AUTH_BASE_URL",
         "NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF",
+        "NEXT_PUBLIC_XROGA_BROWSER_RUNS",
         "VERCEL_ENV",
         "VERCEL_GIT_COMMIT_SHA"
       ],
@@ -269,6 +270,7 @@
       "region": "auto default jurisdiction in S3 adapter; actual account/private bucket not verified",
       "auth_mechanism": "Bucket-scoped S3 plus separate metadata-read token and dedicated account-bound application link key; values not retrieved",
       "secret_names": [
+        "CLOUDFLARE_ACCOUNT_ID",
         "CLOUDFLARE_R2_ACCESS_KEY",
         "CLOUDFLARE_R2_ACCOUNT_ID",
         "CLOUDFLARE_R2_BUCKET",
@@ -2526,6 +2528,40 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-coordinator",
+      "provider": "Source-defined endpoint coordinator",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/workers/browserCoordinator.ts"
+      ],
+      "hostnames": [
+        "coordinator"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/workers/browserCoordinator.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-design-intuit-com",
       "provider": "Source-defined endpoint design.intuit.com",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -3445,7 +3481,9 @@
       "resource_id": null,
       "region": "Not verified",
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
-      "secret_names": [],
+      "secret_names": [
+        "NEXT_PUBLIC_XROGA_BROWSER_RUNS"
+      ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
       ],
@@ -4503,6 +4541,40 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-memory-invalid",
+      "provider": "Source-defined endpoint memory.invalid",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/storage/memoryObjectStore.ts"
+      ],
+      "hostnames": [
+        "memory.invalid"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/storage/memoryObjectStore.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-mixpanel-com",
       "provider": "Source-defined endpoint mixpanel.com",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -4993,6 +5065,40 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "frontend/src/lib/seoExpansionContent.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-registry-npmjs-org",
+      "provider": "Source-defined endpoint registry.npmjs.org",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/workers/imagePins.ts"
+      ],
+      "hostnames": [
+        "registry.npmjs.org"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/workers/imagePins.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -7150,6 +7256,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "frontend/src/components/automations/BrowserRun.tsx",
         "frontend/src/components/automations/BrowserStudio.tsx"
       ],
       "hostnames": [
@@ -7158,7 +7265,9 @@
       "resource_id": null,
       "region": "Not verified",
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
-      "secret_names": [],
+      "secret_names": [
+        "NEXT_PUBLIC_XROGA_BROWSER_RUNS"
+      ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
       ],
@@ -7171,6 +7280,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "frontend/src/components/automations/BrowserRun.tsx",
         "frontend/src/components/automations/BrowserStudio.tsx"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -7200,10 +7310,19 @@
         "backend/src/lib/promptResponseCache.ts",
         "backend/src/lib/resilience/circuitBreaker.ts",
         "backend/src/organicIntelligence/intelligence.ts",
+        "backend/src/routes/browserRuns.ts",
         "backend/src/routes/businessAutomationWebhook.ts",
+        "backend/src/runtime/readiness.ts",
         "backend/src/services/integrations/businessAutomations.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
-        "backend/src/synthesis/livePreview/signing.ts"
+        "backend/src/storage/databaseTls.ts",
+        "backend/src/storage/migration/cliContext.ts",
+        "backend/src/storage/policy.ts",
+        "backend/src/storage/r2ObjectStore.ts",
+        "backend/src/storage/runtime.ts",
+        "backend/src/storage/testing/pgFixture.ts",
+        "backend/src/synthesis/livePreview/signing.ts",
+        "backend/src/workers/proxySidecar.ts"
       ],
       "hostnames": [],
       "resource_id": null,
@@ -7233,6 +7352,7 @@
         "DID_API_KEY",
         "FAL_API_KEY",
         "FAL_KEY",
+        "FLY_MACHINE_ID",
         "GEMINI_CODE_API_KEY",
         "GLM_5_3_CONTEXT_WINDOW",
         "GLM_5_3_FLASH_CONTEXT_WINDOW",
@@ -7265,6 +7385,7 @@
         "KLING_SECRET_KEY",
         "LANG",
         "LC_ALL",
+        "LEGACY_R2_PREFIX",
         "LEGACY_WHOLE_PROJECT_BUILDER_ENABLED",
         "LEMON_SQUEEZY_API_KEY",
         "MINIMAX_GROUP_ID",
@@ -7288,6 +7409,16 @@
         "SHELL",
         "STABILITY_API_KEY",
         "STABILITY_KEY",
+        "STORAGE_DB_SSL_CA",
+        "STORAGE_MAX_OBJECT_BYTES",
+        "STORAGE_MIGRATION_APPROVER_PUBKEY",
+        "STORAGE_MIGRATION_ENV",
+        "STORAGE_MULTIPART_PART_BYTES",
+        "STORAGE_QUOTA_BYTES",
+        "STORAGE_READ_ORDER",
+        "STORAGE_SINGLE_PUT_MAX_BYTES",
+        "STORAGE_TEST_DATABASE_URL",
+        "STORAGE_WRITE_MODE",
         "STRIPE_SECRET_KEY",
         "TERM",
         "TMPDIR",
@@ -7299,20 +7430,40 @@
         "UPSTASH_VECTOR_REST_URL",
         "VERCEL_TOKEN",
         "XROGA_ALLOWED_MODELS",
+        "XROGA_BROWSER_AI_MODEL",
+        "XROGA_BROWSER_COORDINATOR_SECRET",
+        "XROGA_BROWSER_PLANNER_MODEL",
+        "XROGA_BROWSER_WORKER_URL",
         "XROGA_CIRCUIT_FAILURE_THRESHOLD",
+        "XROGA_CREDENTIAL_KMS_PROVIDER",
         "XROGA_DEV_CREDENTIAL_KEK",
         "XROGA_DISABLED_PROVIDERS",
+        "XROGA_DRIVE_PRESIGN_SIGN_LENGTH",
+        "XROGA_DRIVE_R2_ACCESS_KEY_ID",
+        "XROGA_DRIVE_R2_ACCOUNT_ID",
+        "XROGA_DRIVE_R2_BUCKET",
+        "XROGA_DRIVE_R2_SECRET_ACCESS_KEY",
         "XROGA_FORCE_RESEARCH_TASK_CLASSES",
         "XROGA_GOOGLE_CLOUD_KMS_KEY_NAME",
         "XROGA_LEGACY_CREDENTIAL_MIGRATION",
         "XROGA_MAX_REPAIR_ATTEMPTS",
         "XROGA_MODEL_FALLBACK_ORDER",
+        "XROGA_OCI_KMS_AUTH_MODE",
+        "XROGA_OCI_KMS_ENDPOINT",
+        "XROGA_OCI_KMS_KEY_ID",
+        "XROGA_OCI_KMS_KEY_VERSION",
+        "XROGA_OCI_KMS_PRINCIPAL_ID",
         "XROGA_PER_TASK_TOKEN_CAP",
         "XROGA_PLAN_ROUTING_MODES_JSON",
         "XROGA_PREVIEW_BASE_DOMAIN",
         "XROGA_PREVIEW_SCHEME",
         "XROGA_PROVIDER_BUDGETS_JSON",
+        "XROGA_PROXY_JOB",
+        "XROGA_PROXY_PASSWORD",
+        "XROGA_PROXY_PORT",
+        "XROGA_PROXY_USERNAME",
         "XROGA_REQUIRE_HIGH_RISK_REVIEW",
+        "XROGA_REQUIRE_MANAGED_CUSTODY",
         "XROGA_ROUTING_MODE",
         "XROGA_SOFTWARE_AGENT_V2",
         "XROGA_SOFTWARE_AGENT_V2_SHADOW",
@@ -7347,10 +7498,19 @@
         "backend/src/lib/promptResponseCache.ts",
         "backend/src/lib/resilience/circuitBreaker.ts",
         "backend/src/organicIntelligence/intelligence.ts",
+        "backend/src/routes/browserRuns.ts",
         "backend/src/routes/businessAutomationWebhook.ts",
+        "backend/src/runtime/readiness.ts",
         "backend/src/services/integrations/businessAutomations.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
-        "backend/src/synthesis/livePreview/signing.ts"
+        "backend/src/storage/databaseTls.ts",
+        "backend/src/storage/migration/cliContext.ts",
+        "backend/src/storage/policy.ts",
+        "backend/src/storage/r2ObjectStore.ts",
+        "backend/src/storage/runtime.ts",
+        "backend/src/storage/testing/pgFixture.ts",
+        "backend/src/synthesis/livePreview/signing.ts",
+        "backend/src/workers/proxySidecar.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -7734,9 +7894,31 @@
       ]
     },
     {
+      "name": "CLOUDFLARE_ACCOUNT_ID",
+      "consuming_sources": [
+        "backend/src/storage/migration/cliContext.ts",
+        "backend/src/storage/r2ObjectStore.ts",
+        "backend/src/storage/runtime.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "PUBLIC_IDENTIFIER",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "r2"
+      ]
+    },
+    {
       "name": "CLOUDFLARE_R2_ACCESS_KEY",
       "consuming_sources": [
-        "backend/src/lib/r2.ts"
+        "backend/src/lib/r2.ts",
+        "backend/src/storage/migration/cliContext.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -7755,7 +7937,10 @@
     {
       "name": "CLOUDFLARE_R2_ACCOUNT_ID",
       "consuming_sources": [
-        "backend/src/lib/r2.ts"
+        "backend/src/lib/r2.ts",
+        "backend/src/storage/migration/cliContext.ts",
+        "backend/src/storage/r2ObjectStore.ts",
+        "backend/src/storage/runtime.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -7774,7 +7959,10 @@
     {
       "name": "CLOUDFLARE_R2_BUCKET",
       "consuming_sources": [
-        "backend/src/lib/r2.ts"
+        "backend/src/lib/r2.ts",
+        "backend/src/storage/migration/cliContext.ts",
+        "backend/src/storage/r2ObjectStore.ts",
+        "backend/src/storage/runtime.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -7836,7 +8024,8 @@
     {
       "name": "CLOUDFLARE_R2_SECRET_KEY",
       "consuming_sources": [
-        "backend/src/lib/r2.ts"
+        "backend/src/lib/r2.ts",
+        "backend/src/storage/migration/cliContext.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -7917,7 +8106,9 @@
       "name": "DATABASE_URL",
       "consuming_sources": [
         "backend/src/lib/capabilityRegistry.ts",
-        "backend/src/lib/postgresConnect.ts"
+        "backend/src/lib/postgresConnect.ts",
+        "backend/src/storage/migration/cliContext.ts",
+        "backend/src/storage/runtime.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -8362,6 +8553,7 @@
     {
       "name": "FLY_APP_NAME",
       "consuming_sources": [
+        "backend/src/runtime/startupPolicy.ts",
         "backend/src/sandbox/flyMachineSandbox.ts",
         "backend/src/scripts/verifyFlySandboxBrowser.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
@@ -8381,6 +8573,25 @@
       ],
       "dependency_ids": [
         "api"
+      ]
+    },
+    {
+      "name": "FLY_MACHINE_ID",
+      "consuming_sources": [
+        "backend/src/routes/browserRuns.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
       ]
     },
     {
@@ -9283,6 +9494,25 @@
       ]
     },
     {
+      "name": "LEGACY_R2_PREFIX",
+      "consuming_sources": [
+        "backend/src/storage/migration/cliContext.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "LEGACY_WHOLE_PROJECT_BUILDER_ENABLED",
       "consuming_sources": [
         "backend/src/ai/legacyBuilderAdapter.ts"
@@ -9784,12 +10014,34 @@
       ]
     },
     {
+      "name": "NEXT_PUBLIC_XROGA_BROWSER_RUNS",
+      "consuming_sources": [
+        "frontend/src/components/automations/BrowserStudio.tsx"
+      ],
+      "environments": [
+        "frontend build/browser/SSR"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "frontend",
+        "endpoint-example-com",
+        "endpoint-your-website-com"
+      ]
+    },
+    {
       "name": "NODE_ENV",
       "consuming_sources": [
         "backend/src/ai/providerBudget.ts",
         "backend/src/ai/runStore.ts",
         "backend/src/index.ts",
         "backend/src/routes/github.ts",
+        "backend/src/runtime/startupPolicy.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/services/integrations/cryptoProvider.ts",
         "backend/src/services/integrations/ociKmsCryptoProvider.ts",
@@ -10319,6 +10571,197 @@
       ]
     },
     {
+      "name": "STORAGE_DB_SSL_CA",
+      "consuming_sources": [
+        "backend/src/storage/databaseTls.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "STORAGE_MAX_OBJECT_BYTES",
+      "consuming_sources": [
+        "backend/src/storage/policy.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "STORAGE_MIGRATION_APPROVER_PUBKEY",
+      "consuming_sources": [
+        "backend/src/storage/migration/cliContext.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "STORAGE_MIGRATION_ENV",
+      "consuming_sources": [
+        "backend/src/storage/migration/cliContext.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "STORAGE_MULTIPART_PART_BYTES",
+      "consuming_sources": [
+        "backend/src/storage/policy.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "STORAGE_QUOTA_BYTES",
+      "consuming_sources": [
+        "backend/src/storage/runtime.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "STORAGE_READ_ORDER",
+      "consuming_sources": [
+        "backend/src/runtime/readiness.ts",
+        "backend/src/storage/runtime.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "STORAGE_SINGLE_PUT_MAX_BYTES",
+      "consuming_sources": [
+        "backend/src/storage/policy.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "STORAGE_TEST_DATABASE_URL",
+      "consuming_sources": [
+        "backend/src/storage/testing/pgFixture.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "STORAGE_WRITE_MODE",
+      "consuming_sources": [
+        "backend/src/storage/runtime.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "STRIPE_PAYMENT_LINK",
       "consuming_sources": [
         "backend/src/errors/InsufficientActionsError.ts",
@@ -10466,7 +10909,9 @@
     {
       "name": "SUPABASE_DB_PASSWORD",
       "consuming_sources": [
-        "backend/src/lib/postgresConnect.ts"
+        "backend/src/lib/postgresConnect.ts",
+        "backend/src/storage/migration/cliContext.ts",
+        "backend/src/storage/runtime.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -10504,7 +10949,9 @@
     {
       "name": "SUPABASE_DB_URL",
       "consuming_sources": [
-        "backend/src/lib/postgresConnect.ts"
+        "backend/src/lib/postgresConnect.ts",
+        "backend/src/storage/migration/cliContext.ts",
+        "backend/src/storage/runtime.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -10677,6 +11124,8 @@
         "backend/src/middleware/auth.ts",
         "backend/src/routes/dashboard.ts",
         "backend/src/routes/swarm.ts",
+        "backend/src/runtime/readiness.ts",
+        "backend/src/runtime/startupPolicy.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
         "backend/src/security/oauthSession.local.integration.ts",
         "backend/src/security/providerKeyRevision.local.integration.ts",
@@ -10684,6 +11133,7 @@
         "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/BillingService.ts",
         "backend/src/services/integrations/userProviderKeys.ts",
+        "backend/src/storage/migration/cliContext.ts",
         "backend/src/synthesis/livePreview/signing.ts",
         "backend/src/synthesis/projectRuntime/secretManager.ts",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts"
@@ -10753,6 +11203,7 @@
         "backend/src/operations/operationsProviderBudget.local.integration.ts",
         "backend/src/operations/readMatrix.local.integration.ts",
         "backend/src/operations/verificationTarget.local.integration.ts",
+        "backend/src/runtime/readiness.ts",
         "backend/src/security/adminReads.local.integration.ts",
         "backend/src/security/budgetOwner.local.integration.ts",
         "backend/src/security/buildOutcomeAttempt.local.integration.ts",
@@ -10807,6 +11258,7 @@
         "backend/src/services/billingBudget.local.integration.ts",
         "backend/src/services/billingOwnership.local.integration.ts",
         "backend/src/services/billingRoutes.local.integration.ts",
+        "backend/src/storage/migration/cliContext.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
@@ -11738,6 +12190,82 @@
       ]
     },
     {
+      "name": "XROGA_BROWSER_AI_MODEL",
+      "consuming_sources": [
+        "backend/src/routes/browserRuns.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_BROWSER_COORDINATOR_SECRET",
+      "consuming_sources": [
+        "backend/src/routes/browserRuns.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_BROWSER_PLANNER_MODEL",
+      "consuming_sources": [
+        "backend/src/routes/browserRuns.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_BROWSER_WORKER_URL",
+      "consuming_sources": [
+        "backend/src/routes/browserRuns.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_CIRCUIT_FAILURE_THRESHOLD",
       "consuming_sources": [
         "backend/src/ai/providerRuntime.ts",
@@ -11759,8 +12287,28 @@
       ]
     },
     {
+      "name": "XROGA_CREDENTIAL_KMS_PROVIDER",
+      "consuming_sources": [
+        "backend/src/runtime/readiness.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_DEPLOYMENT_ENVIRONMENT",
       "consuming_sources": [
+        "backend/src/runtime/startupPolicy.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
@@ -11780,6 +12328,7 @@
     {
       "name": "XROGA_DEV_CREDENTIAL_KEK",
       "consuming_sources": [
+        "backend/src/runtime/readiness.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts"
       ],
       "environments": [
@@ -11807,6 +12356,105 @@
       "secret_class": "RUNTIME_CONFIGURATION",
       "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
       "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_DRIVE_PRESIGN_SIGN_LENGTH",
+      "consuming_sources": [
+        "backend/src/storage/r2ObjectStore.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_DRIVE_R2_ACCESS_KEY_ID",
+      "consuming_sources": [
+        "backend/src/storage/r2ObjectStore.ts",
+        "backend/src/storage/runtime.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_DRIVE_R2_ACCOUNT_ID",
+      "consuming_sources": [
+        "backend/src/storage/r2ObjectStore.ts",
+        "backend/src/storage/runtime.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "PUBLIC_IDENTIFIER",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_DRIVE_R2_BUCKET",
+      "consuming_sources": [
+        "backend/src/storage/r2ObjectStore.ts",
+        "backend/src/storage/runtime.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_DRIVE_R2_SECRET_ACCESS_KEY",
+      "consuming_sources": [
+        "backend/src/storage/r2ObjectStore.ts",
+        "backend/src/storage/runtime.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
       "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
       "mechanisms": [
         "STATIC_ENV_READER"
@@ -11881,6 +12529,7 @@
     {
       "name": "XROGA_GOOGLE_CLOUD_KMS_KEY_NAME",
       "consuming_sources": [
+        "backend/src/runtime/readiness.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts"
       ],
       "environments": [
@@ -11978,6 +12627,101 @@
       "name": "XROGA_MODEL_FALLBACK_ORDER",
       "consuming_sources": [
         "backend/src/ai/routerConfig.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_OCI_KMS_AUTH_MODE",
+      "consuming_sources": [
+        "backend/src/runtime/readiness.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_OCI_KMS_ENDPOINT",
+      "consuming_sources": [
+        "backend/src/runtime/readiness.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_OCI_KMS_KEY_ID",
+      "consuming_sources": [
+        "backend/src/runtime/readiness.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_OCI_KMS_KEY_VERSION",
+      "consuming_sources": [
+        "backend/src/runtime/readiness.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_OCI_KMS_PRINCIPAL_ID",
+      "consuming_sources": [
+        "backend/src/runtime/readiness.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -12109,6 +12853,82 @@
       ]
     },
     {
+      "name": "XROGA_PROXY_JOB",
+      "consuming_sources": [
+        "backend/src/workers/proxySidecar.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_PROXY_PASSWORD",
+      "consuming_sources": [
+        "backend/src/workers/proxySidecar.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_PROXY_PORT",
+      "consuming_sources": [
+        "backend/src/workers/proxySidecar.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_PROXY_USERNAME",
+      "consuming_sources": [
+        "backend/src/workers/proxySidecar.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_RELEASE_SHA",
       "consuming_sources": [
         "backend/src/lib/safeHealth.ts",
@@ -12134,6 +12954,25 @@
       "name": "XROGA_REQUIRE_HIGH_RISK_REVIEW",
       "consuming_sources": [
         "backend/src/ai/routerConfig.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_REQUIRE_MANAGED_CUSTODY",
+      "consuming_sources": [
+        "backend/src/runtime/readiness.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -12407,6 +13246,7 @@
     {
       "name": "XROGA_TEST_CREDENTIAL_KEK",
       "consuming_sources": [
+        "backend/src/runtime/readiness.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts"
       ],
       "environments": [
@@ -12576,6 +13416,11 @@
       "role": "Existing runtime/build/verification configuration"
     },
     {
+      "path": ".github/workflows/storage-phase1.yml",
+      "presence": "PRESENT",
+      "role": "Existing runtime/build/verification configuration"
+    },
+    {
       "path": ".github/workflows/supabase-migrate.yml",
       "presence": "PRESENT",
       "role": "Existing runtime/build/verification configuration"
@@ -12641,11 +13486,11 @@
     },
     {
       "path": ".github/workflows/fly-deploy.yml",
-      "sha256": "dfdcb8c9ef93c3e34c2c0eaf38aa3e7377a808910ae0b85c6351d3d10ebf99e0"
+      "sha256": "881906774f4500edfe772507c5f88fc7373e400381931fe9f884f7b102665376"
     },
     {
       "path": ".github/workflows/fly-sandbox-browser-verification.yml",
-      "sha256": "da0de446d7584110a6449d93ded105fe28d4250329f5e1175bb02f9a47a9e950"
+      "sha256": "f67bf1d79f246e8d934123a3aae529a0f7187606334a04fca1bc4a621843f253"
     },
     {
       "path": ".github/workflows/growth-technical-publishing.yml",
@@ -12658,6 +13503,10 @@
     {
       "path": ".github/workflows/seo-audit.yml",
       "sha256": "6da0bdb5a8947b6ab42445db2fd8ffb6b0f871e46d8dc3e6f12d9355c246a000"
+    },
+    {
+      "path": ".github/workflows/storage-phase1.yml",
+      "sha256": "52622aca1b9c900732274ae8c0f486ff0e331cfa1aaa8f4ee1820bfdd81c5ac6"
     },
     {
       "path": ".github/workflows/supabase-migrate.yml",
@@ -13433,7 +14282,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "430506c7881d0c22a325c8c6348d9345587a92fc1ae302187da07440b5bac08f"
+      "sha256": "ae363e1344a93b441ec9a10dade0c53ba67bd39e34958cc9332849636082741b"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -13856,6 +14705,10 @@
       "sha256": "a7ab9896df1a729f603a742a1951fd81357562d86ed289bcce64deca45a75f15"
     },
     {
+      "path": "backend/src/routes/browserRuns.ts",
+      "sha256": "0b123cffa6d286d7b01e1e686c372986473d21773b3f8cff4885eaf6254d4d3f"
+    },
+    {
       "path": "backend/src/routes/businessAutomationScheduler.ts",
       "sha256": "d775beaa5fc78872dbb4a1a5ac6087f122499e96fe9416f49a751d054f3851e6"
     },
@@ -13890,6 +14743,10 @@
     {
       "path": "backend/src/routes/delivery.ts",
       "sha256": "eba82946835afde6a4697b9ca07c9b1babc2d6d879883cd0c585cf8e56e0488d"
+    },
+    {
+      "path": "backend/src/routes/drive.ts",
+      "sha256": "82e83b1911f78196329573dcd7086312ce047d9e3ccff349f661598313475cfd"
     },
     {
       "path": "backend/src/routes/github.ts",
@@ -14006,6 +14863,22 @@
     {
       "path": "backend/src/routes/wellbeing.ts",
       "sha256": "df2b8050438c3115b91f2b704b17306a34f62f19900e417b52de382db9b775ed"
+    },
+    {
+      "path": "backend/src/runtime/installSafeLogging.ts",
+      "sha256": "f56bde23aae1bbfd33374eb1f672434fef5bddda5c909a4cdbece65a4e854dde"
+    },
+    {
+      "path": "backend/src/runtime/readiness.ts",
+      "sha256": "2752785ee6aebd4d77892a9c0b52382581e4cb318dcc4101d1e810118bc26427"
+    },
+    {
+      "path": "backend/src/runtime/safeLogging.ts",
+      "sha256": "ba46784a23fed2535e5f795b7a0933844fdf8e4f743a9873b9d5e78be281136b"
+    },
+    {
+      "path": "backend/src/runtime/startupPolicy.ts",
+      "sha256": "e3c6d7ad91ccde602cd040a33c689bdab4dfd7c6d852a4a664ae87306710c6ac"
     },
     {
       "path": "backend/src/sandbox/flyMachineSandbox.ts",
@@ -14600,6 +15473,122 @@
       "sha256": "8486898ec1017c24118b9dec0b103c7ad54e453f2df7aa59d47772e6a890a642"
     },
     {
+      "path": "backend/src/storage/artifactSink.ts",
+      "sha256": "5bb207831a9f32a0e48ece32a103d56b099287d90d77dbbb4d74d6ecb5b57717"
+    },
+    {
+      "path": "backend/src/storage/certs/supabaseRoot2021.ts",
+      "sha256": "89cbad03b0424d6f4baf272c1f1f99f1b1b06596eea66f58172a0fca2e8331db"
+    },
+    {
+      "path": "backend/src/storage/databaseTls.ts",
+      "sha256": "97013fc40e66c54a1d12817aea17edf7dcaf335a794a75ffa0d3fa47e6025806"
+    },
+    {
+      "path": "backend/src/storage/integrity.ts",
+      "sha256": "806b328b5ba79b843c3d23d78f1ede114698fa038639ac8b42cd270ceda50708"
+    },
+    {
+      "path": "backend/src/storage/keys.ts",
+      "sha256": "7bf9fa78c663e5f60a8800621a6065a6536429619a71fd8193ca7c17a31e5530"
+    },
+    {
+      "path": "backend/src/storage/memoryObjectStore.ts",
+      "sha256": "87f7712aa47d7a5ef6542c5ee3ad9fa1a140fabb8cb6ad268e09f26e1c3b93e8"
+    },
+    {
+      "path": "backend/src/storage/migration/approvals.ts",
+      "sha256": "725627ba3811963c74b1119307d5511d7d0d6322f0ebe2593a386cd76ae8054a"
+    },
+    {
+      "path": "backend/src/storage/migration/cli.ts",
+      "sha256": "4430dbf098d9fc8177b8088e62e3d90ab45e19578351b2f9f1d9f17cae74530b"
+    },
+    {
+      "path": "backend/src/storage/migration/cliContext.ts",
+      "sha256": "08baeffc5fa11e6099b90833c862ed2d1748be9a6aab49b3dedac06e27929b4c"
+    },
+    {
+      "path": "backend/src/storage/migration/engine.ts",
+      "sha256": "e1ceaec9dece80c7410457d7c9acaebf9d533577f62881a11ad64da3ca9bbf9d"
+    },
+    {
+      "path": "backend/src/storage/migration/ledger.ts",
+      "sha256": "5204dc1379401a32644a9e7c73e77fae91a869c6f2b08269e9784706c1444b6a"
+    },
+    {
+      "path": "backend/src/storage/migration/postgresLedger.ts",
+      "sha256": "c470c2273316194ea3183e3d5dd5fa813efcae6c67ba4b039020232269536e72"
+    },
+    {
+      "path": "backend/src/storage/migration/readCompat.ts",
+      "sha256": "8da84df32501a4dd052acebd0f11fce5e4f216fa778a34b58f2c438eefa53f6e"
+    },
+    {
+      "path": "backend/src/storage/migration/sources.ts",
+      "sha256": "959cbd437cdf706a550b58722ea5526207416ffa3d20c939df3231104078d579"
+    },
+    {
+      "path": "backend/src/storage/migration/types.ts",
+      "sha256": "9933b42c10476240132f68b396c61f7281a44d43f04f0c87b12ee6619afe8f3a"
+    },
+    {
+      "path": "backend/src/storage/objectStore.ts",
+      "sha256": "dc33f6645b866b10bc44a7ea77024e74bc525a35bf8a0f0791320619529d4f6e"
+    },
+    {
+      "path": "backend/src/storage/policy.ts",
+      "sha256": "779c606fe6ccbc1a397a4eb7bf5cf233fa5aa578c47d5c7ebd3859edc983e5d3"
+    },
+    {
+      "path": "backend/src/storage/postgresRepository.ts",
+      "sha256": "64c2c976d7f36144d3cf6a8f05d6c983c836821ee1d92a24a96dcdaff7881033"
+    },
+    {
+      "path": "backend/src/storage/r2ObjectStore.ts",
+      "sha256": "d283594a4569b5ddc8710c5d717b2291bd3ebbf79d9c3d2d73a61c3117e9f622"
+    },
+    {
+      "path": "backend/src/storage/repository.ts",
+      "sha256": "d5f26fe029cf300f7e93ebc6fa8041b7cc8daaeebec636b604e00bf8a3be44fd"
+    },
+    {
+      "path": "backend/src/storage/runtime.ts",
+      "sha256": "087bec8f0ab60210f9e5a3f6a6f7a32aa47f0288de9cdaeeba044f217348d1cc"
+    },
+    {
+      "path": "backend/src/storage/storageService.ts",
+      "sha256": "3abd744f7180cb4309cef9dd07c838b4db0ee5fd9bbf7b95fd15a84f9a81fdf7"
+    },
+    {
+      "path": "backend/src/storage/testing/approvals.ts",
+      "sha256": "8125b5e868225be6f44ef6f2bc0baa8c35bbfcb40f18ceba099baa16c32cb57b"
+    },
+    {
+      "path": "backend/src/storage/testing/fileObjectStore.ts",
+      "sha256": "24daaf454535be6f0e426d1c913f572086ddafec69906329032a4da9a56c4983"
+    },
+    {
+      "path": "backend/src/storage/testing/generatedSource.ts",
+      "sha256": "b2dcf4a996edb3129e08f77a481325d0b87fe9fa93ef1a28a661ede6df15140b"
+    },
+    {
+      "path": "backend/src/storage/testing/harness.ts",
+      "sha256": "2ef7ad42f19f35ca51b965dfac28ca34f1a5a94c585b1a42ae3b972195539cd0"
+    },
+    {
+      "path": "backend/src/storage/testing/pgFixture.ts",
+      "sha256": "6529f5a704bde01daea5f785541aefd61149d068d5f49c53142847c6d20ccc02"
+    },
+    {
+      "path": "backend/src/storage/testing/tlsFixture.ts",
+      "sha256": "1140f9cf84b76cdf438c2c613ebaa48c50801b7dd2f35d7b197cf061481a5c77"
+    },
+    {
+      "path": "backend/src/storage/types.ts",
+      "sha256": "19f8e67c22ba62ac9cbb2b2b07db3d7ead65bdc11c7d40cdc97a3789c57225fc"
+    },
+    {
       "path": "backend/src/synthesis/acceptanceCompiler.ts",
       "sha256": "03fea0b1903ee684b5d6df5170c763f56fef1221c3a5a2c794238f81b61e7106"
     },
@@ -14950,6 +15939,82 @@
     {
       "path": "backend/src/types/index.ts",
       "sha256": "38b7acfeef14671c49714336ee8bea15c3b9458cabf56f7019b975c306e263b7"
+    },
+    {
+      "path": "backend/src/workers/admission.ts",
+      "sha256": "9679143c7b92982db8f9ec4830185c13f781b136cfbce5b0d618cf31e57cbfa2"
+    },
+    {
+      "path": "backend/src/workers/browserCapability.ts",
+      "sha256": "f932953aa5acb43d66eff567571b5518ddda212d25fed42c6100cf9fe5ccf7da"
+    },
+    {
+      "path": "backend/src/workers/browserCoordinator.ts",
+      "sha256": "c02b326f507a85c521fc20ae2b0e49318b1d9c6eb121f3cba8d28f3d2227bfa2"
+    },
+    {
+      "path": "backend/src/workers/browserJob.ts",
+      "sha256": "a4ab560d58ca35954f5836797f253dc354ba3cfea1b3d4a727a16dd1d93f7ffb"
+    },
+    {
+      "path": "backend/src/workers/browserModelGateway.ts",
+      "sha256": "d28b6c3a3d01c191566a78b72e2c2c5990cbc4bba17fdaf9a46fdeaf01fd3e60"
+    },
+    {
+      "path": "backend/src/workers/browserPlan.ts",
+      "sha256": "248d6e26a3c561be808112a5738dd588066f7dbf2abc0f5c739b99d6d1490834"
+    },
+    {
+      "path": "backend/src/workers/browserPlanner.ts",
+      "sha256": "d708dcef9048fd1e5332461b672ff7a20ef6647f80f91dcd614c65f5c6100446"
+    },
+    {
+      "path": "backend/src/workers/browserTaskHandler.ts",
+      "sha256": "e691a6a06f6539f86215bcc9f5d78084cc794473d3399602251186442bf41e90"
+    },
+    {
+      "path": "backend/src/workers/chromiumLaunch.ts",
+      "sha256": "d64c0fa6659817acf8ebd51ec92206dd683b78e5d6ea0ebef9b279d5120d3715"
+    },
+    {
+      "path": "backend/src/workers/containerBrowserWorker.ts",
+      "sha256": "fbc9ea0804887cd66aa18ffdcac905d8b5f1fe1d2345761533b0e7665bca5742"
+    },
+    {
+      "path": "backend/src/workers/containerSpec.ts",
+      "sha256": "6294949263fa3bc7b3081bea5a901bf654698ad0f30828d1ce551f6559555bba"
+    },
+    {
+      "path": "backend/src/workers/egressProxy.ts",
+      "sha256": "29e977db658433c30d19e3fe3f9268056997be1bbcc1cd9b4a7bf5a3d813d02c"
+    },
+    {
+      "path": "backend/src/workers/imagePins.ts",
+      "sha256": "d15ca2eab37feb3b0cc9c0c4c1f4749322f8796344d5eacf15db4ff8bb52a2a7"
+    },
+    {
+      "path": "backend/src/workers/leaseStore.contract.ts",
+      "sha256": "b8c736f8e527c2914842979fbe610e983a8d934595f4b705d445e4f0c9282e29"
+    },
+    {
+      "path": "backend/src/workers/leaseStore.ts",
+      "sha256": "e99c3c282cf759fe2f5d29523214f9902fd7d4211648a8cc3bcb9c799a6af71c"
+    },
+    {
+      "path": "backend/src/workers/postgresLeaseStore.ts",
+      "sha256": "dd48bbb43ea6a49cb7fb74dbd29fcc3038529c8cf5116d76b69c4b7b1ea87986"
+    },
+    {
+      "path": "backend/src/workers/processTree.ts",
+      "sha256": "41febffb1ac3fa86601857282e085217db7dcaf7d5b1490482db1b49a21742a5"
+    },
+    {
+      "path": "backend/src/workers/proxySidecar.ts",
+      "sha256": "363fecf2f4f0a75c4a009a79e07f01d9dad5fa3a913fd9114b4386e3bea6af7c"
+    },
+    {
+      "path": "backend/src/workers/resumeRecovery.ts",
+      "sha256": "f15237f379f5de64935cbc6c17d8b4ce001d2ccd4251f7271e355ffbb81113d7"
     },
     {
       "path": "fly.api.toml",
@@ -15604,8 +16669,12 @@
       "sha256": "48fad7fbe60dcf3be7149f1ebe70eb5a29a24224da29c9fa8cb6b73f7ae2876d"
     },
     {
+      "path": "frontend/src/components/automations/BrowserRun.tsx",
+      "sha256": "26f5b83a8cf896045d347fec0fd733ea4926d51bdb980f31f870b2ec3f463928"
+    },
+    {
       "path": "frontend/src/components/automations/BrowserStudio.tsx",
-      "sha256": "58e2e086808843a05aba558ef02bd6ecb543ed862cdd5b9e7561007a4221ebe9"
+      "sha256": "ae4d38a2e0c346de084541cac59d47ea7458f7473ffadb32aa27a162f1433532"
     },
     {
       "path": "frontend/src/components/automations/ConnectedAppAutomations.tsx",
@@ -19786,34 +20855,6 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 101,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
-      "line": 102,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "www.xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
-      "line": 103,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xrogaaicom.vercel.app",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
-      "line": 104,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga-api.fly.dev",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 105,
       "credentialsInUrl": false
     },
@@ -19821,7 +20862,35 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 195,
+      "line": 106,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "www.xroga.com",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 107,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xrogaaicom.vercel.app",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 108,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 109,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 199,
       "credentialsInUrl": false
     },
     {
@@ -21708,6 +22777,27 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "memory.invalid",
+      "protocol": "https:",
+      "path": "backend/src/storage/memoryObjectStore.ts",
+      "line": 46,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "memory.invalid",
+      "protocol": "https:",
+      "path": "backend/src/storage/memoryObjectStore.ts",
+      "line": 56,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "memory.invalid",
+      "protocol": "https:",
+      "path": "backend/src/storage/memoryObjectStore.ts",
+      "line": 171,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/synthesis/browserVerificationAdapter.ts",
@@ -21873,6 +22963,20 @@
       "protocol": "https:",
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
       "line": 34,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "coordinator",
+      "protocol": "http:",
+      "path": "backend/src/workers/browserCoordinator.ts",
+      "line": 82,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "registry.npmjs.org",
+      "protocol": "https:",
+      "path": "backend/src/workers/imagePins.ts",
+      "line": 44,
       "credentialsInUrl": false
     },
     {
@@ -22179,15 +23283,22 @@
     {
       "hostname": "your-website.com",
       "protocol": "https:",
+      "path": "frontend/src/components/automations/BrowserRun.tsx",
+      "line": 90,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "your-website.com",
+      "protocol": "https:",
       "path": "frontend/src/components/automations/BrowserStudio.tsx",
-      "line": 94,
+      "line": 95,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.com",
       "protocol": "https:",
       "path": "frontend/src/components/automations/BrowserStudio.tsx",
-      "line": 119,
+      "line": 122,
       "credentialsInUrl": false
     },
     {
@@ -27436,6 +28547,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/routes/browserRuns.ts",
+      "line": 57,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/routes/capabilities.ts",
       "line": 46,
       "scope": "MODULE_LIFETIME",
@@ -27522,6 +28640,20 @@
     {
       "path": "backend/src/routes/voice.ts",
       "line": 45,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/runtime/safeLogging.ts",
+      "line": 48,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/runtime/safeLogging.ts",
+      "line": 74,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28174,6 +29306,279 @@
       "path": "backend/src/services/userProvisioningCache.ts",
       "line": 36,
       "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/memoryObjectStore.ts",
+      "line": 18,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/memoryObjectStore.ts",
+      "line": 19,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/memoryObjectStore.ts",
+      "line": 23,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/memoryObjectStore.ts",
+      "line": 164,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/migration/cli.ts",
+      "line": 10,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/migration/cli.ts",
+      "line": 61,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/migration/cli.ts",
+      "line": 63,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/migration/ledger.ts",
+      "line": 40,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/migration/ledger.ts",
+      "line": 41,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/migration/ledger.ts",
+      "line": 111,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/migration/sources.ts",
+      "line": 15,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/migration/sources.ts",
+      "line": 218,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/migration/sources.ts",
+      "line": 220,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/policy.ts",
+      "line": 34,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/policy.ts",
+      "line": 35,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/policy.ts",
+      "line": 41,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/r2ObjectStore.ts",
+      "line": 42,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/r2ObjectStore.ts",
+      "line": 82,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/r2ObjectStore.ts",
+      "line": 90,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/r2ObjectStore.ts",
+      "line": 164,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/repository.ts",
+      "line": 76,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/repository.ts",
+      "line": 77,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/repository.ts",
+      "line": 78,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/repository.ts",
+      "line": 80,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/runtime.ts",
+      "line": 48,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/storageService.ts",
+      "line": 191,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/storageService.ts",
+      "line": 376,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/storageService.ts",
+      "line": 378,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/storageService.ts",
+      "line": 386,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/storageService.ts",
+      "line": 539,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/testing/fileObjectStore.ts",
+      "line": 14,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/testing/fileObjectStore.ts",
+      "line": 32,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/testing/fileObjectStore.ts",
+      "line": 40,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/testing/fileObjectStore.ts",
+      "line": 42,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/testing/fileObjectStore.ts",
+      "line": 56,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/testing/fileObjectStore.ts",
+      "line": 79,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/testing/tlsFixture.ts",
+      "line": 42,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/testing/tlsFixture.ts",
+      "line": 47,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/storage/testing/tlsFixture.ts",
+      "line": 96,
+      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
@@ -29081,6 +30486,181 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/workers/admission.ts",
+      "line": 46,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/admission.ts",
+      "line": 47,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/browserCoordinator.ts",
+      "line": 35,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/browserCoordinator.ts",
+      "line": 71,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/browserCoordinator.ts",
+      "line": 96,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/browserJob.ts",
+      "line": 68,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/browserJob.ts",
+      "line": 71,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/browserJob.ts",
+      "line": 103,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/browserModelGateway.ts",
+      "line": 49,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/browserModelGateway.ts",
+      "line": 85,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/browserPlan.ts",
+      "line": 25,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/browserPlan.ts",
+      "line": 254,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/browserPlan.ts",
+      "line": 261,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/browserTaskHandler.ts",
+      "line": 190,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/chromiumLaunch.ts",
+      "line": 55,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/chromiumLaunch.ts",
+      "line": 73,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/chromiumLaunch.ts",
+      "line": 160,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/chromiumLaunch.ts",
+      "line": 166,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/containerBrowserWorker.ts",
+      "line": 51,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/containerSpec.ts",
+      "line": 55,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/containerSpec.ts",
+      "line": 122,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/egressProxy.ts",
+      "line": 83,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/egressProxy.ts",
+      "line": 88,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/leaseStore.ts",
+      "line": 71,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/resumeRecovery.ts",
+      "line": 32,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "frontend/src/app/(shell)/dashboard/operations/OperationsCentreClient.tsx",
       "line": 67,
       "scope": "MODULE_LIFETIME",
@@ -29126,6 +30706,13 @@
       "path": "frontend/src/components/about/AboutFaq.tsx",
       "line": 44,
       "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/components/automations/BrowserRun.tsx",
+      "line": 17,
+      "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },

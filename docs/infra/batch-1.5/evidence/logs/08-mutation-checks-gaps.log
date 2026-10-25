@@ -1,0 +1,11 @@
+CAUGHT                             | multipart: stored parts trusted without comparing MD5 to the source | pass=16 fail=1
+CAUGHT                             | multipart: provider part ETag not compared to the MD5 of what was sent | pass=16 fail=1
+CAUGHT                             | multipart: stream-length AND part-count checks both removed (mutually redundant guards) | pass=16 fail=1
+CAUGHT                             | engine: large objects no longer routed to multipart | pass=9 fail=8
+CAUGHT                             | engine: source not re-checked after the copy (changed-source acceptance) | pass=16 fail=1
+CAUGHT                             | engine: adapter block reason flattened | pass=2 fail=1
+CAUGHT                             | engine: permanent destination NOT_FOUND retried instead of BLOCKED | pass=2 fail=1
+CAUGHT                             | run-output: credential NAME detection disabled | pass=0 fail=3
+CAUGHT                             | run-output: non-terminal runs included | pass=2 fail=1
+CAUGHT                             | run-output: declared-size mismatch accepted | pass=2 fail=1
+CAUGHT                             | run-output: duplicate ids not blocked | pass=2 fail=1

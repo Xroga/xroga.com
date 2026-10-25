@@ -1,0 +1,78 @@
+# Phase 1 → Phase 2 handoff
+
+Phase 2 (INFRA-004/005/006) is **not started**. This lists the exact seams that exist now, so nothing needs to be redesigned.
+
+## Ready interfaces
+| Interface | File | Phase 2 use |
+|---|---|---|
+| `StorageActor { userId, tenantId }` | `backend/src/storage/types.ts` | replace `actorFromUserId` (`storage/runtime.ts`) with the accepted Batch 1 `TenantContext` mapping; every ownership check is already keyed on `tenantId` and the DB column exists |
+| `ObjectStore` (provider ops only) | `storage/objectStore.ts` | Oracle workers use the same `R2ObjectStore`; a Backblaze B2 backup target is another implementation, no service change |
+| `StorageService.putServerObject / ingestLegacy / readObjectBytes / verifyStoredObject` | `storage/storageService.ts` | worker-produced artifacts, evidence and screenshots go through `putServerObject`; bytes are READY only after read-back SHA-256 |
+| `persistArtifactToDrive` | `storage/artifactSink.ts` | durable sink for `UniversalOutputEnvelope.artifacts` (replaces the local-FS `ArtifactWorkspace` URI) |
+| `QuotaResolver` | `storageService.ts` | plug the real entitlement lookup; do **not** activate 500 MB / 20 GB without approval |
+| `MigrationLedger`, `SourceAdapter`, `MigrationEngine` | `storage/migration/*` | add adapters (e.g. `swarm_runs` artifacts, Fly volume objects) without touching the engine; run engine from an Oracle worker instead of a laptop |
+| `runPhase` + `scripts/storage/*.mts` | `migration/cli.ts` | same entry points under OCI; receipts are redacted JSON |
+| `ApprovalClaims` / `verifyApproval` (Ed25519) | `migration/approvals.ts` | the template for any Phase 2 consequential stage: signed, scoped, expiring; verifier holds only a public key. The OCI Vault can hold the approver *public* key; the private key stays with the human approver |
+| `resolveStorageConfig` | `storage/runtime.ts` | single validator for the storage switches; reuse it for OCI-side config so invalid values fail closed identically |
+| Evidence runner | `docs/infra/batch-1.5/evidence/run-phase1-tests.mjs` | strict fixture handling, baseline allow-list, `results.json`; extend with Oracle/KMS steps rather than writing a second runner |
+| R2 provider suite | `storage/r2.provider.integration.test.ts` (`npm run test:storage-provider`) | becomes the Oracle-side smoke test for the same bucket |
+| `STORAGE_WRITE_MODE`, `STORAGE_READ_ORDER` | `storage/runtime.ts` | cutover switches; default `legacy` |
+| `storage_migration_claim` (lease + `SKIP LOCKED`) | migration SQL | the *pattern* for INFRA-006 durable claims/leases; do not fork it into a second scheduler |
+
+## What each Phase 2 item should reuse (and must not rebuild)
+| Phase 2 item | Reuse | Do not |
+|---|---|---|
+| OCI CredentialVault (INFRA-004) | Batch 1 CredentialVault once accepted; `SECRET_BUCKETS` denylist; SEC-1..3 in `data-location-inventory.md` as the migration list | migrate tokens through the object pipeline; keep `USER_SECRETS_ENCRYPTION_KEY → SUPABASE_SERVICE_ROLE_KEY` fallback |
+| Oracle API (INFRA-005) | `/api/drive` router is host-agnostic; needs `XROGA_DRIVE_R2_*` + `DATABASE_URL` as OCI secrets; health: `GET /api/drive/objects` → 200/503 | change DNS or callbacks without approval |
+| Oracle workers / scheduler (INFRA-006) | `putServerObject` for outputs; ledger-style leases; BullMQ/Redis untouched (provider/persistence still `UNKNOWN`) | add a second task graph |
+| AI Employees / workflows / browser / sandbox | storage is ready to receive evidence; **those capabilities themselves are NOT_IMPLEMENTED or UI-only today** (`product-capability-baseline.md`) | treat the homepage demo as capability |
+
+## R2 object service API (what Oracle code calls)
+`StorageService` (in-process, no raw R2 admin surface): `initiateUpload`, `signUploadParts`, `completeUpload`, `getDownload`, `getObjectMeta`, `listObjects`, `readObjectBytes`, `deleteObject`, `putServerObject`, `ingestLegacy`, `verifyStoredObject`, `reconcile`. HTTP: `/api/drive/*` (authenticated; 503 `STORAGE_NOT_CONFIGURED` when off).
+
+## Dependencies Phase 2 inherits
+| Area | State |
+|---|---|
+| CredentialVault / KMS | **Batch 1 vault not in `main`.** Plaintext OAuth tokens (`oauth-token-finding.md`) are the first migration target; Drive must keep refusing the token bucket |
+| Redis/BullMQ | provider and persistence **UNKNOWN**; untouched |
+| Supabase | migration `20261022000000_storage_drive_foundation.sql` not applied anywhere; needs `rolbypassrls=true` for the API role (forced RLS); rollback script exists |
+| Batch 1 | `TenantContext` → replace `actorFromUserId`; `requireLegacyCredentialMigrationWindow` pattern (Codex) is the model for retiring legacy paths |
+| Provider approvals | one R2 test bucket/token (`r2-provider-verification-request.md`); production bucket, CORS, secrets, `STORAGE_WRITE_MODE`, each migration stage = separate signed approvals |
+
+## Known risks carried into Phase 2
+1. Signed-constraint enforcement at R2 unknown → server read-back is the only integrity control until observed.
+2. Already-issued presigned URLs outlive revocation until expiry (≤ 5 min GET / 15 min PUT).
+3. `Preview` environment secrets in `supabase-migrate.yml` may be production's — check before any PR.
+4. (closed in the 2026-10-22 closure) Objects > 1 GiB migrate through the bounded multipart path; proven on synthetic data only, not on real R2.
+5. `reconcile()` is batch-limited per run.
+6. Full backend suite has 5 pre-existing failures in CI (3 `organicIntelligence` STALE_FACT + 2 content-engine), identical on pristine `main`; the strict runner allow-lists them by name with causes (`evidence/baseline-failures.json`). A 6th (`compileCommand`, POSIX-only) appears in a container with npm `.bin` on PATH.
+7. **Database TLS must be fixed before deploying Drive against the real Supabase database:** the storage pool does not verify the server certificate unless `STORAGE_DB_SSL_CA` is set (backend-wide convention; default unchanged). Supply the Supabase CA and make verification the default in Phase 2.
+
+## Preconditions before Phase 2 can be verified
+1. ~~GitHub write access and first remote CI~~ — done: branch pushed, `storage-phase1` passed (run 39772935026, `ci-evidence/`).
+2. ~~R2 provider suite~~ — done: 9/9 on a private test bucket. Open: revoke the temporary token, delete the local secrets file, delete the empty test bucket; the production Drive bucket, its CORS and token are still to be created separately (owner approval).
+3. Batch 1 `TenantContext` accepted into `main` → one controlled integration checkpoint.
+4. Read-only cloud facts (checklist A) → replace the `UNKNOWN` counts.
+
+## Warnings carried forward
+- Opening a PR runs `supabase-migrate.yml` in the `Preview` environment against this branch's migration; merging to `main` applies it to production. Neither has happened.
+- The migration is additive and reversible by not using it; nothing depends on it until `STORAGE_WRITE_MODE` is changed.
+
+
+## Browser hosting decision carried into Phase 2 and Phase 3 (founder, 2026-10-22)
+Final stack: **Oracle OCI Compute + self-hosted Chromium + Playwright + local-mode Stagehand + Xroga BrowserWorker** (full text: `browser-architecture-decision.md`). Cloudflare stays edge + private R2; Cloudflare Browser Run / Rendering and hosted Browserbase are **not** browser targets; the coding-sandbox decision is unchanged. Not started in Phase 1.
+
+| Phase | Item | What it must deliver for the browser |
+|---|---|---|
+| 2 | INFRA-005 | separate trusted-API and restricted browser-worker images; pinned Chromium/Playwright/Stagehand; non-root, sandbox ON (else BLOCKED), seccomp, dropped caps, CPU/RAM/process limits, private CDP, egress policy incl. metadata/RFC1918/rebinding; AMD64/ARM64 proof before choosing a shape |
+| 2 | INFRA-006 | browser-job payload (tenant/user/project/run/attempt/allowed URLs/limits), lease fencing, cancellation of Chromium process trees, checkpoints, budget, tenant fairness, durable progress — on the existing scheduler, no competing orchestrator |
+| 3 | INFRA-007 | the real Chromium + Playwright + local Stagehand path behind the existing BrowserWorker interface; 15 functional/adversarial workflows from the amendment; evidence to Drive (R2) + Supabase metadata |
+| 3 | INFRA-008 | PRODUCT-001/-009 (with -010/-012), telemetry, measured cost per verified outcome, rollback, Fly/Browserbase-browser exit checklist |
+
+Phase 1 contracts these rely on (all LOCAL_TESTED): `StorageService.putServerObject` for screenshots/recordings (READY only after read-back SHA-256), `drive://` descriptors, tenant-bound object ids, quota reservation, and the injected `ObjectStore` seam. Browser page text and Stagehand output are untrusted and can never create authorisation grants.
+
+## Gap closures (2026-10-22 closure pass)
+- **Objects > 1 GiB:** `StorageService.ingestLegacyMultipart` + engine routing. Memory bounded by the part window (measured +130 MiB RSS for a 1 GiB+5 B object, 65 parts); upload id persisted; resume verifies stored parts by MD5 against the bytes the source produces now; completion always followed by the unchanged read-back SHA-256. Synthetic only.
+- **Artifacts embedded in run output:** `RunOutputArtifactsSource` — only `xroga.output` descriptors with inline bytes are eligible. Finding: today's production envelope writer emits metadata-only descriptors, so little or nothing is migratable; the adapter is ready for when inline bytes exist and classifies everything else with a reason.
+- **Permanent destination refusals** (`NOT_FOUND`/`INVALID_REQUEST`, e.g. a run pointing at another user's project) are now BLOCKED rather than retried.
+- **DB TLS:** `STORAGE_DB_SSL_CA` enables certificate verification for the storage pool; without it behaviour matches the rest of the backend (encrypted, not verified) — residual risk recorded in `security-review.md`.

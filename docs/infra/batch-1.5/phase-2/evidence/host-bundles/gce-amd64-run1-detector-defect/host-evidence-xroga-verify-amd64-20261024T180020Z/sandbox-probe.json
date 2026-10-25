@@ -1,0 +1,348 @@
+{
+  "evidenceClass": "AMD64_HOST_TESTED",
+  "notOci": true,
+  "platform": "host default",
+  "quick": false,
+  "claim": "Under the reviewed container spec the probe observes a conforming container and Chromium starts with its sandbox ON, with no browser process left behind; under Docker's default seccomp profile the sandbox does not start; each of six weakened variants is detected by the probe by name.",
+  "at": "2026-10-24T18:00:51.265Z",
+  "host": {
+    "docker": "29.1.3",
+    "os": "Ubuntu 24.04.5 LTS",
+    "kernel": "7.0.0-1014-gcp",
+    "arch": "x86_64",
+    "securityOptions": [
+      "name=apparmor",
+      "name=seccomp,profile=builtin",
+      "name=cgroupns"
+    ]
+  },
+  "image": {
+    "name": "xroga-browser-worker:phase2-probe",
+    "id": "sha256:88e7276e7940494267775e6e3d445cd98478e4fdeae6479a4c31013167893988",
+    "architecture": "amd64"
+  },
+  "inputs": {
+    "containerSpecSha256": "59baef8f93bfc8f10f120d524a76200aa611c16c8f8cd0335056d873e7a7645e",
+    "seccompProfileSha256": "4065c77710bfcaca9e12f89420626713bc824f6fb3afa73905ba4fa2cf683bf9",
+    "dockerfileSha256": "af8e2d2062f4680b7e6943a01a9a5d0ecb5713446be77877bce8c6ef9a9307f8",
+    "probeSha256": "024d55b387a7bf10207174ceab69dae77664ce692dc3c6f161e36283fb7f84b1",
+    "packageJsonSha256": "f44f2a82a5ec825036ce82fd96c7f0795e6507a023846b028c9a9ff858cce335",
+    "packageLockSha256": "eef7da61fd19491b8a146bec2ce7f0d099f82387078fc22484265b765418b573"
+  },
+  "runFlags": [
+    "--rm",
+    "--user",
+    "10001:10001",
+    "--read-only",
+    "--security-opt",
+    "no-new-privileges:true",
+    "--security-opt",
+    "seccomp=<repo>/deploy/browser-worker/seccomp-chromium.json",
+    "--cap-drop",
+    "ALL",
+    "--ipc",
+    "private",
+    "--network",
+    "xroga-browser-internal",
+    "--tmpfs",
+    "/tmp:rw,nosuid,nodev,noexec,size=512m",
+    "--tmpfs",
+    "/run/xroga/profiles:rw,nosuid,nodev,noexec,size=1024m",
+    "--shm-size",
+    "256m",
+    "--memory",
+    "2048m",
+    "--memory-swap",
+    "2048m",
+    "--cpus",
+    "2",
+    "--pids-limit",
+    "512",
+    "--env",
+    "HOME=/tmp",
+    "--env",
+    "NODE_ENV=production"
+  ],
+  "hardened": {
+    "name": "hardened",
+    "exitCode": 0,
+    "ms": 3077,
+    "verdict": "SANDBOX_ON",
+    "report": {
+      "probe": "xroga-browser-sandbox",
+      "at": "2026-10-24T18:00:24.136Z",
+      "arch": "x64",
+      "node": "v24.18.0",
+      "uid": 10001,
+      "gid": 10001,
+      "self": {
+        "capEff": "0000000000000000",
+        "capBnd": "0000000000000000",
+        "noNewPrivs": "1",
+        "seccomp": "2"
+      },
+      "maxUserNamespaces": "28082",
+      "conformance": {
+        "ok": true,
+        "checks": {
+          "runsAsExpectedNonRootUser": true,
+          "noCapabilities": true,
+          "noNewPrivileges": true,
+          "seccompFilterActive": true,
+          "rootFilesystemReadOnly": true,
+          "noDockerSocket": true,
+          "ownPidNamespace": true,
+          "memoryLimitMatches": true,
+          "pidsLimitMatches": true,
+          "cpuLimitMatches": true,
+          "sharedMemoryBounded": true,
+          "tmpfsIsNosuidNodevNoexec": true
+        },
+        "observed": {
+          "memoryMax": "2147483648",
+          "pidsMax": "512",
+          "cpuMax": "200000 100000",
+          "shmBytes": 268435456,
+          "interfaces": [
+            "lo",
+            "eth0"
+          ],
+          "defaultRoute": false,
+          "tmpfsOptions": {
+            "/tmp": "rw,nosuid,nodev,noexec,relatime,size=524288k,inode64",
+            "/run/xroga/profiles": "rw,nosuid,nodev,noexec,relatime,size=1048576k,inode64"
+          }
+        }
+      },
+      "launched": true,
+      "chromium": "151.0.7922.34",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+      "processes": [
+        {
+          "pid": 18,
+          "type": "browser",
+          "capEff": "0000000000000000",
+          "capBnd": "0000000000000000",
+          "noNewPrivs": "1",
+          "seccomp": "2",
+          "pidNs": "pid:[4026532278]",
+          "userNs": "user:[4026531837]"
+        },
+        {
+          "pid": 21,
+          "type": "zygote",
+          "capEff": "0000000000000000",
+          "capBnd": "0000000000000000",
+          "noNewPrivs": "1",
+          "seccomp": "2",
+          "pidNs": "pid:[4026532278]",
+          "userNs": "user:[4026531837]"
+        },
+        {
+          "pid": 22,
+          "type": "zygote",
+          "capEff": "0000000000000000",
+          "capBnd": "000001ffffffffff",
+          "noNewPrivs": "1",
+          "seccomp": "2",
+          "pidNs": "pid:[4026532411]",
+          "userNs": "user:[4026532408]"
+        },
+        {
+          "pid": 24,
+          "type": "zygote",
+          "capEff": "0000000000200000",
+          "capBnd": "000001ffffffffff",
+          "noNewPrivs": "1",
+          "seccomp": "2",
+          "pidNs": "pid:[4026532411]",
+          "userNs": "user:[4026532408]"
+        },
+        {
+          "pid": 41,
+          "type": "gpu-process",
+          "capEff": "0000000000000000",
+          "capBnd": "0000000000000000",
+          "noNewPrivs": "1",
+          "seccomp": "2",
+          "pidNs": "pid:[4026532278]",
+          "userNs": "user:[4026531837]"
+        },
+        {
+          "pid": 52,
+          "type": "utility",
+          "capEff": "0000000000000000",
+          "capBnd": "0000000000000000",
+          "noNewPrivs": "1",
+          "seccomp": "2",
+          "pidNs": "pid:[4026532278]",
+          "userNs": "user:[4026531837]"
+        },
+        {
+          "pid": 65,
+          "type": "renderer",
+          "capEff": "0000000000000000",
+          "capBnd": "000001ffffffffff",
+          "noNewPrivs": "1",
+          "seccomp": "2",
+          "pidNs": "pid:[4026532409]",
+          "userNs": "user:[4026532408]"
+        }
+      ],
+      "noSandboxFlagAnywhere": false,
+      "renderersSeccompFiltered": true,
+      "renderersInOwnPidNamespace": true,
+      "verdict": "SANDBOX_ON",
+      "cleanup": {
+        "chromiumProcessesRemaining": 0,
+        "ok": true
+      }
+    }
+  },
+  "control": {
+    "name": "control",
+    "exitCode": 3,
+    "ms": 2848,
+    "verdict": "BLOCKED",
+    "report": {
+      "probe": "xroga-browser-sandbox",
+      "at": "2026-10-24T18:00:27.181Z",
+      "arch": "x64",
+      "node": "v24.18.0",
+      "uid": 10001,
+      "gid": 10001,
+      "self": {
+        "capEff": "0000000000000000",
+        "capBnd": "0000000000000000",
+        "noNewPrivs": "1",
+        "seccomp": "2"
+      },
+      "maxUserNamespaces": "28082",
+      "conformance": {
+        "ok": true,
+        "checks": {
+          "runsAsExpectedNonRootUser": true,
+          "noCapabilities": true,
+          "noNewPrivileges": true,
+          "seccompFilterActive": true,
+          "rootFilesystemReadOnly": true,
+          "noDockerSocket": true,
+          "ownPidNamespace": true,
+          "memoryLimitMatches": true,
+          "pidsLimitMatches": true,
+          "cpuLimitMatches": true,
+          "sharedMemoryBounded": true,
+          "tmpfsIsNosuidNodevNoexec": true
+        },
+        "observed": {
+          "memoryMax": "2147483648",
+          "pidsMax": "512",
+          "cpuMax": "200000 100000",
+          "shmBytes": 268435456,
+          "interfaces": [
+            "lo",
+            "eth0"
+          ],
+          "defaultRoute": false,
+          "tmpfsOptions": {
+            "/tmp": "rw,nosuid,nodev,noexec,relatime,size=524288k,inode64",
+            "/run/xroga/profiles": "rw,nosuid,nodev,noexec,relatime,size=1048576k,inode64"
+          }
+        }
+      },
+      "launched": false,
+      "verdict": "BLOCKED",
+      "reason": "browserType.launch: Target page, context or browser has been closed | Browser logs: | Chromium sandboxing failed!",
+      "timedOut": false,
+      "cleanup": {
+        "chromiumProcessesRemaining": 0,
+        "ok": true
+      }
+    }
+  },
+  "weakenedVariants": [
+    {
+      "id": "root-user",
+      "description": "container started as root (--user 0:0)",
+      "mustFail": "runsAsExpectedNonRootUser",
+      "failedChecks": [
+        "runsAsExpectedNonRootUser"
+      ],
+      "detected": true,
+      "probeVerdict": "BLOCKED",
+      "exitCode": 3
+    },
+    {
+      "id": "writable-root",
+      "description": "root filesystem writable (no --read-only)",
+      "mustFail": "rootFilesystemReadOnly",
+      "failedChecks": [
+        "rootFilesystemReadOnly"
+      ],
+      "detected": true,
+      "probeVerdict": "SANDBOX_ON",
+      "exitCode": 4
+    },
+    {
+      "id": "capabilities-kept",
+      "description": "default capabilities kept (no --cap-drop ALL)",
+      "mustFail": "noCapabilities",
+      "failedChecks": [
+        "noCapabilities"
+      ],
+      "detected": true,
+      "probeVerdict": "SANDBOX_ON",
+      "exitCode": 4
+    },
+    {
+      "id": "privilege-escalation-allowed",
+      "description": "no-new-privileges removed",
+      "mustFail": "noNewPrivileges",
+      "failedChecks": [
+        "noNewPrivileges"
+      ],
+      "detected": true,
+      "probeVerdict": "SANDBOX_ON",
+      "exitCode": 4
+    },
+    {
+      "id": "no-resource-limits",
+      "description": "memory, swap, cpu and pid limits removed",
+      "mustFail": "memoryLimitMatches",
+      "failedChecks": [
+        "memoryLimitMatches",
+        "pidsLimitMatches",
+        "cpuLimitMatches"
+      ],
+      "detected": true,
+      "probeVerdict": "SANDBOX_ON",
+      "exitCode": 4
+    },
+    {
+      "id": "tmpfs-executable",
+      "description": "/tmp without noexec",
+      "mustFail": "tmpfsIsNosuidNodevNoexec",
+      "failedChecks": [
+        "tmpfsIsNosuidNodevNoexec"
+      ],
+      "detected": true,
+      "probeVerdict": "SANDBOX_ON",
+      "exitCode": 4
+    }
+  ],
+  "cleanup": {
+    "leftoverContainers": [],
+    "leftoverNetworks": [],
+    "ok": true
+  },
+  "verdicts": {
+    "hardenedOk": true,
+    "controlOk": true,
+    "variantsOk": true,
+    "cleanupOk": true
+  },
+  "limits": [
+    "Proves the sandbox can be established and the container conforms under these flags on THIS host, not on any other (the OCI host and an ARM64 shape are separate runs).",
+    "The kernel setting that matters is unprivileged user namespaces (user.max_user_namespaces > 0); the report records it."
+  ]
+}

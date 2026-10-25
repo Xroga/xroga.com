@@ -1,0 +1,373 @@
+{
+  "schema": "xroga.batch-1.5.phase-3.final-matrix/1",
+  "generatedAt": "2026-10-25",
+  "branch": "claude/xroga-b15-phase3-20261024",
+  "baseCheckpoint": "6977a147 (Phase 2 accepted)",
+  "finalCodeSource": "37069f73 (code); GCE final-image evidence at 744067de plus W09 rerun at 37069f73; the only difference is the W09a test plan",
+  "recommendation": "BATCH_1_5_PHASE_3_PASS",
+  "recommendationReason": "All mandatory gates have passing evidence on the final corrected image on Compute Engine (both architectures) except two items that Phase 3 cannot resolve by design and that are recorded as PARTIAL, not passed: browser-task rows in Supabase execution_runs (needs a deployment the founder has not approved) and the PRODUCT-009 AI Employee leg (no AI Employee backend exists).",
+  "evidenceClasses": {
+    "GCE": {
+      "hosts": [
+        "e2-standard-2 amd64",
+        "t2a-standard-2 arm64"
+      ],
+      "zone": "us-central1-a",
+      "source": "450df59a (W15 rerun 1857158c)",
+      "dir": "evidence/gce/"
+    },
+    "LOCAL": {
+      "host": "developer Docker host",
+      "source": "d3b5f9c3",
+      "image": "sha256:e58a853df952",
+      "dir": "evidence/local/"
+    },
+    "UNIT": {
+      "ci": "Unit tests workflow on the branch"
+    },
+    "GCE_FINAL_IMAGE": {
+      "hosts": [
+        "e2-standard-2 amd64",
+        "t2a-standard-2 arm64"
+      ],
+      "zone": "us-central1-a",
+      "source": "744067de (W09 rerun 37069f73)",
+      "dir": "evidence/gce/final-image/",
+      "host_battery": "HOST_ACCEPTED 32/32 both",
+      "devtools": "PASS both",
+      "suite": "amd64 31/32 (PRODUCT-009 intentionally not run); arm64 30/32 (PRODUCT-009 not run; W09a test-timing flaw, rerun PASS)"
+    }
+  },
+  "browserGates": [
+    {
+      "id": "BROWSER-01",
+      "title": "Compute Engine-hosted Chromium, no hosted provider",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "BROWSER-02",
+      "title": "Local Stagehand/Playwright, pinned, licence-checked",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "BROWSER-03",
+      "title": "Non-root, sandboxed, capability-reduced, private CDP, network policy",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "BROWSER-04",
+      "title": "Tenant/account/profile isolation, scoped credentials",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "BROWSER-05",
+      "title": "Canonical scheduler, leases, authorization, approvals, budgets, retries, cancellation",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "BROWSER-06",
+      "title": "Deterministic and AI workflows with postconditions",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "BROWSER-07",
+      "title": "Redirect/SSRF/rebinding/metadata/prompt-injection defences",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "BROWSER-08",
+      "title": "Artifacts in private R2, session metadata in Supabase",
+      "status": "PARTIAL (R2 PASS_GCE on the final image; execution_runs for browser tasks NOT_TESTED, needs an approved deployment)"
+    },
+    {
+      "id": "BROWSER-09",
+      "title": "Concurrency, crash, orphan cleanup, retry, backpressure",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "BROWSER-10",
+      "title": "Measured resources and cost per verified outcome",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "BROWSER-11",
+      "title": "Legacy retained until parity, rollback, approved cutover",
+      "status": "PASS (plan; cutover not executed by design)"
+    },
+    {
+      "id": "BROWSER-12",
+      "title": "PRODUCT-001/009 integrated with 010/012",
+      "status": "PARTIAL (PRODUCT-001, 010, 012 PASS; PRODUCT-009 app and browser legs PASS_LOCAL, AI Employee leg NOT_IMPLEMENTED)"
+    }
+  ],
+  "workflows": [
+    {
+      "id": "W01",
+      "receipts": [
+        "W01a",
+        "W01b"
+      ],
+      "gce": "PASS",
+      "local": "PASS",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "W02",
+      "receipts": [
+        "W02"
+      ],
+      "gce": "PASS",
+      "local": "PASS",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "W03",
+      "receipts": [
+        "W03",
+        "W03b"
+      ],
+      "gce": "PASS (final image)",
+      "local": "PASS",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "W04",
+      "receipts": [
+        "W04",
+        "W13c"
+      ],
+      "gce": "PASS",
+      "local": "PASS",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "W05",
+      "receipts": [
+        "W05a",
+        "W05b",
+        "W05c"
+      ],
+      "gce": "PASS",
+      "local": "PASS",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "W06",
+      "receipts": [
+        "W06a",
+        "W06b",
+        "W06c",
+        "W06x"
+      ],
+      "gce": "PASS",
+      "local": "PASS",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "W07",
+      "receipts": [
+        "W07"
+      ],
+      "gce": "PASS (final image)",
+      "local": "PASS",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "W08",
+      "receipts": [
+        "W08a",
+        "W08b"
+      ],
+      "gce": "PASS",
+      "local": "PASS",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "W09",
+      "receipts": [
+        "W09a",
+        "W09b"
+      ],
+      "gce": "PASS (arm64 original run hit a test-timing flaw; rerun PASS on both)",
+      "local": "PASS",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "W10",
+      "receipts": [
+        "W10",
+        "PRODUCT-010"
+      ],
+      "gce": "PASS",
+      "local": "PASS",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "W11",
+      "receipts": [
+        "host battery egress checks"
+      ],
+      "gce": "PASS (HOST_ACCEPTED 32/32, final image)",
+      "local": "NOT_REPEATED (proxy unchanged)",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "W12",
+      "receipts": [
+        "W12a",
+        "W12b",
+        "W12c",
+        "W12d",
+        "W12e"
+      ],
+      "gce": "PASS (a-e, final image)",
+      "local": "PASS (a-e)",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "W13",
+      "receipts": [
+        "W13a",
+        "W13b",
+        "W13c",
+        "W03b"
+      ],
+      "gce": "PASS",
+      "local": "PASS",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "W14",
+      "receipts": [
+        "host battery HOST_ACCEPTED 32/32"
+      ],
+      "gce": "PASS (HOST_ACCEPTED 32/32, final image)",
+      "local": "DevTools battery PASS",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "W15",
+      "receipts": [
+        "W15"
+      ],
+      "gce": "PASS 11/11",
+      "local": "PASS 11/11",
+      "status": "PASS_GCE"
+    }
+  ],
+  "product": [
+    {
+      "id": "PRODUCT-001",
+      "title": "Browser Automation end to end",
+      "status": "PASS_GCE (final image); also PASS_LOCAL"
+    },
+    {
+      "id": "PRODUCT-002",
+      "title": "AI Employee assignment execution",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "PRODUCT-003",
+      "title": "AI Employee recurring schedule and recovery",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "PRODUCT-004",
+      "title": "Native app integration",
+      "status": "OUT_OF_PHASE_3_SCOPE"
+    },
+    {
+      "id": "PRODUCT-005",
+      "title": "Composio and MCP tool execution",
+      "status": "OUT_OF_PHASE_3_SCOPE (read execution exercised in PRODUCT-009)"
+    },
+    {
+      "id": "PRODUCT-006",
+      "title": "OAuth/connection lifecycle",
+      "status": "OUT_OF_PHASE_3_SCOPE (one connection created for the synthetic identity)"
+    },
+    {
+      "id": "PRODUCT-007",
+      "title": "Multi-step app workflow",
+      "status": "OUT_OF_PHASE_3_SCOPE"
+    },
+    {
+      "id": "PRODUCT-008",
+      "title": "Scheduled/event-triggered automation",
+      "status": "OUT_OF_PHASE_3_SCOPE"
+    },
+    {
+      "id": "PRODUCT-009",
+      "title": "Combined browser, app and employee workflow",
+      "status": "PARTIAL (app and browser legs PASS_LOCAL; employee leg NOT_IMPLEMENTED)"
+    },
+    {
+      "id": "PRODUCT-010",
+      "title": "Concurrent chat and background execution",
+      "status": "PASS_GCE"
+    },
+    {
+      "id": "PRODUCT-011",
+      "title": "Coding worker and sandbox integration",
+      "status": "OUT_OF_PHASE_3_SCOPE"
+    },
+    {
+      "id": "PRODUCT-012",
+      "title": "Verified artifact storage and retrieval",
+      "status": "PASS_GCE (real R2, final image); also PASS_LOCAL"
+    }
+  ],
+  "security": {
+    "hostBattery": "HOST_ACCEPTED 32/32 on amd64 and arm64 (GCE)",
+    "devtoolsAttackBattery": "PASS on GCE (both) and LOCAL final image; weakened control detected",
+    "promptInjection": "W12a-e PASS",
+    "secretsInEvidence": "none (checked against the local key files before commit)",
+    "publicRepoRedactions": [
+      "founder test spreadsheet id"
+    ]
+  },
+  "costs": {
+    "hostPerHourUsd": {
+      "amd64": 0.0747,
+      "arm64": 0.0847
+    },
+    "deterministicOutcomeUsd": {
+      "amd64": 9e-05,
+      "arm64": 7e-05
+    },
+    "aiOutcomeModelUsd": 0.0009,
+    "finalSuiteModelUsd": 0.001307,
+    "phase3ModelSpendProviderReportedUsd": 0.0022,
+    "gceCreditUsdMax": 0.72,
+    "cashUsd": 0.0022,
+    "gceFinalRunUsd": 0.082,
+    "gceFirstRunUsdMax": 0.64
+  },
+  "cleanup": {
+    "gceVms": "both runs: deleted; final readback: 0 instances, 0 disks, 0 addresses, 0 xroga firewall rules, 0 xroga subnets, only the default network",
+    "r2": "bucket xroga-drive-test is empty (readback)",
+    "testbedWorker": "deleted (404 confirmed)",
+    "cloudflareLogin": "revoked at close",
+    "gcloudCredential": "revoked at close",
+    "vmKeyFiles": "shredded before VM deletion"
+  },
+  "openItems": [
+    "execution_runs persistence for browser tasks: verified only after a founder-approved deployment (parity check P5)",
+    "PRODUCT-009 AI Employee leg: no AI Employee backend exists (PRODUCT-002/003, later batch)",
+    "merge to main: awaits explicit founder approval; frontend CI failures clear on rebase"
+  ],
+  "ci": {
+    "run": 40190755203,
+    "headSha": "de8667de",
+    "backend": {
+      "tests": 3194,
+      "fail": 0
+    },
+    "frontend": {
+      "tests": 1135,
+      "fail": 46,
+      "identicalByNameToMainBase": "519045ac run 40130535064",
+      "mainRunGreen": "c14c3e11"
+    }
+  }
+}
