@@ -21,7 +21,7 @@ export function parseProtectedPlatformConfiguration(raw: Uint8Array, environment
   if(!values.length || values.length>256)return deny();
   const result: Record<string,string>=Object.create(null);
   for(const [name,value] of values) {
-    if(!/^[A-Za-z_][A-Za-z0-9_]{0,127}$/.test(name) || forbidden.test(name)
+    if(!/^[A-Za-z_][A-Za-z0-9_]{0,127}$/.test(name) || forbidden.test(name) || name==='XROGA_PROJECT_RUNTIME_PROVIDER'
       || ['__proto__','constructor','prototype'].includes(name.toLowerCase())
       || typeof value!=='string' || !value.length || value.includes('\0')
       || environment[name]!==undefined)return deny();

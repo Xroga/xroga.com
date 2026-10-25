@@ -143,6 +143,7 @@ const process =
       const logs =
         await createProjectRuntimeManager(
           userId,
+          requireTenantContext(req.tenantContext),
         ).logs(
           session.sessionId,
           process.processId,
@@ -209,6 +210,7 @@ router.post(
       const result =
         await startOrRefreshLivePreview({
           userId,
+          authority:requireTenantContext(req.tenantContext),
 
           project:
             revision.project,
@@ -284,6 +286,7 @@ router.post(
       const runtime =
         createProjectRuntimeManager(
           userId,
+          requireTenantContext(req.tenantContext),
         );
 
       if(!await loadProjectRuntimeSession(store,userId,projectId,revision.project.runtime.sessionId))resourceNotFound();
@@ -398,6 +401,7 @@ router.get(
       const runtime =
         createProjectRuntimeManager(
           userId,
+          requireTenantContext(req.tenantContext),
         );
 
       let runtimeRunning =

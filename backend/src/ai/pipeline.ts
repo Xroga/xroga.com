@@ -1925,8 +1925,13 @@ publicationReason:
     if (
       softwareProject
     ) {
+      const priorPreview=await new SupabaseProjectRuntimeStore(captureAdmittedRunAttempt(runId,opts.userId))
+        .loadLatestRevision(opts.userId,softwareProject.projectId);
+      softwareProject={...softwareProject,runtime:priorPreview?.project.runtime??null};
+      await persistWorkerSoftwareProjectRevision(opts.userId,softwareProject);
       const livePreview =
         await startOrRefreshLivePreview({
+          authority:captureAdmittedRunAttempt(runId,opts.userId),
           userId:
             opts.userId,
 

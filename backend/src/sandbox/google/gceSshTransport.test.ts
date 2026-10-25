@@ -152,3 +152,12 @@ test('physical ownership revoked during OS Login admission prevents the SSH disp
   await assert.rejects(f.transport.run(f.handle,{operation:'exec'},5000),{message:'GCE_RUNTIME_IDENTITY_OR_OWNER_MISMATCH'});
   assert.equal(f.commands.length,0);assert.ok(f.cleaned);assert.equal(f.calls.at(-1)!.method,'DELETE');
 });
+
+test('canonical authority revoked during OS Login admission prevents dispatch and revokes the key',async()=>{
+  const f=await fixture();let checks=0;
+  await assert.rejects(f.transport.run(f.handle,{operation:'exec'},5000,async()=>{
+    if(++checks===2)throw new GceControlError('CANONICAL_AUTHORITY_REVOKED');
+  }),{message:'CANONICAL_AUTHORITY_REVOKED'});
+  assert.equal(checks,2);assert.equal(f.commands.length,0);assert.ok(f.cleaned);
+  assert.equal(f.calls.at(-1)!.method,'DELETE');
+});

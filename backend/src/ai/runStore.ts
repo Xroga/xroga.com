@@ -87,6 +87,22 @@ export function captureAdmittedRunAttempt(runId: string, userId: string): Admitt
   return attempt;
 }
 
+/** A captured capability is identity, not a permanent grant to dispatch work. */
+export async function assertCurrentRunAttempt(attempt: AdmittedRunAttempt): Promise<void> {
+  const original = requireAdmittedRunAttempt(attempt);
+  const sameGeneration = () => {
+    const current = captureAdmittedRunAttempt(original.runId, original.userId);
+    if (current.workerId !== original.workerId || current.generation !== original.generation) {
+      throw Object.assign(new Error('Execution attempt authority changed.'), {code:'RUN_STATE_CONFLICT'});
+    }
+  };
+  sameGeneration();
+  if (await isRunCancellationRequested(original.runId, original.userId,{requireRunning:true})) {
+    throw Object.assign(new Error('Execution attempt was cancelled.'), {code:'RUN_STATE_CONFLICT'});
+  }
+  sameGeneration();
+}
+
 function mutableAttempt(runId: string): SwarmRunRecord | undefined {
   const record = runs.get(runId);
   const scope = attemptScope.getStore();
@@ -1157,6 +1173,7 @@ export async function requestRunCancellation(
 export async function isRunCancellationRequested(
   runId: string,
   userId: string,
+  options: {requireRunning?:boolean} = {},
 ): Promise<boolean> {
   const hot =
     runs.get(runId);
@@ -1197,6 +1214,7 @@ export async function isRunCancellationRequested(
 
     if (error || !data || data.id !== runId || data.user_id !== userId ||
         !['running', 'complete', 'completed', 'error', 'cancelled'].includes(data.status) ||
+        (options.requireRunning && !['running','cancelled'].includes(data.status)) ||
         (scope && (scope.record !== runs.get(runId) || scope.record !== hot))) {
       throw new Error('Run authority is unavailable.');
     }

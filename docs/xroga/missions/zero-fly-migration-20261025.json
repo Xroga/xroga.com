@@ -50,7 +50,30 @@
     "scripts/local/run-task.test.mjs",
     "docs/xroga/LOCAL_STORAGE_CLEANUP.md",
     "docs/xroga/evidence/zero-fly/local-cleanup-and-main-integration-20261025.json",
-    "docs/xroga/evidence/zero-fly/native-transport-recheck-78e28fab-20261026.json"
+    "docs/xroga/evidence/zero-fly/native-transport-recheck-78e28fab-20261026.json",
+    "backend/src/ai/pipeline.ts",
+    "backend/src/ai/runStore.ts",
+    "backend/src/middleware/runtimePreviewGateway.ts",
+    "backend/src/routes/projectRuntime.ts",
+    "backend/src/synthesis/livePreview/access.ts",
+    "backend/src/synthesis/livePreview/agentBridge.ts",
+    "backend/src/synthesis/livePreview/coordinator.ts",
+    "backend/src/synthesis/livePreview/plan.ts",
+    "backend/src/synthesis/projectRuntime/manager.ts",
+    "backend/src/ai/runStore.dispatchAdmission.test.ts",
+    "backend/src/sandbox/google/runtime_workspace_test.py",
+    "backend/src/synthesis/livePreview/admissionWatch.test.ts",
+    "backend/src/synthesis/livePreview/admissionWatch.ts",
+    "backend/src/synthesis/livePreview/googleTarget.test.ts",
+    "backend/src/synthesis/livePreview/googleTarget.ts",
+    "backend/src/synthesis/projectRuntime/googleAuthority.test.ts",
+    "backend/src/synthesis/projectRuntime/googleAuthority.ts",
+    "backend/src/synthesis/projectRuntime/googleFactory.test.ts",
+    "backend/src/synthesis/projectRuntime/googleFactory.ts",
+    "backend/src/synthesis/projectRuntime/googleProvider.test.ts",
+    "backend/src/synthesis/projectRuntime/googleProvider.ts",
+    "docs/xroga/evidence/zero-fly/workspace-linux-unit-20261026.json",
+    "docs/xroga/evidence/zero-fly/project-runtime-source-checkpoint-20261026.json"
   ],
   "decisions": {
     "keep": [
@@ -162,7 +185,7 @@
     },
     {
       "command": "node dist/scripts/verifyGceExecution.js in the explicitly named private synthetic Cloud Run verification Job",
-      "scope": "The separately approved single recheck tvhzv passed real native service identity, authenticated worker source, foreign physical-owner denial and seven isolated Node checks at exact source78e28fab/image4190b347. Job, worker, disk, firewall, execution subnet and four temporary bindings are removed. Control subnet/VPC await Google-managed address release. This is infrastructure transport proof, not whole-caller integration, production cutover or zero-Fly acceptance.",
+      "scope": "The separately approved single recheck tvhzv passed real native service identity, authenticated worker source, foreign physical-owner denial and seven isolated Node checks at exact source78e28fab/image4190b347. Job, worker, disk, firewall, execution subnet and four temporary bindings are removed. Control subnet/VPC cleanup completed at 2026-10-25T20:17:00Z and was independently read back absent. Historical transport evidence remains unchanged. This is infrastructure transport proof, not whole-caller integration, production cutover or zero-Fly acceptance.",
       "negative": true,
       "reference": "backend/src/scripts/verifyGceExecution.ts"
     },
@@ -177,6 +200,48 @@
       "scope": "Six cleanup-dispatch tests plus thirteen unchanged baseline negative fixtures. Preserve Windows automatic wrapping, CI command order, frontend test collection, failure exits and trailing argument propagation.",
       "negative": true,
       "reference": "scripts/local/run-task.test.mjs"
+    },
+    {
+      "command": "node --import tsx --test backend/src/synthesis/projectRuntime/googleProvider.test.ts",
+      "scope": "Synthetic native project provider allocation, persisted binding, workspace receipts, ownership denial, cleanup and no dispatch after revocation. Not live caller proof.",
+      "negative": true,
+      "reference": "backend/src/synthesis/projectRuntime/googleProvider.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/synthesis/projectRuntime/googleAuthority.test.ts",
+      "scope": "Opaque issued identity, owner/project/run/source provenance, canonical patch/deletion checks and durable session revocation.",
+      "negative": true,
+      "reference": "backend/src/synthesis/projectRuntime/googleAuthority.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/synthesis/projectRuntime/googleFactory.test.ts",
+      "scope": "Explicit native selection, no raw-user or cloned-context fallback, attached identity response and immutable toolchain catalog.",
+      "negative": true,
+      "reference": "backend/src/synthesis/projectRuntime/googleFactory.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/synthesis/livePreview/googleTarget.test.ts",
+      "scope": "Signed-grant routing seam resolves only authenticated private Compute addresses and exact owned active ports. Not live browser E2E.",
+      "negative": true,
+      "reference": "backend/src/synthesis/livePreview/googleTarget.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/synthesis/livePreview/admissionWatch.test.ts",
+      "scope": "Serialized connection admission checks, expiry, denied/failed/stalled authority reads and cleanup without reconnection.",
+      "negative": true,
+      "reference": "backend/src/synthesis/livePreview/admissionWatch.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/ai/runStore.dispatchAdmission.test.ts",
+      "scope": "Reproduced terminal durable run accepted as active before repair. Fresh dispatch now requires running owner/worker/generation and rejects cancellation or store failure.",
+      "negative": true,
+      "reference": "backend/src/ai/runStore.dispatchAdmission.test.ts"
+    },
+    {
+      "command": "python3 -B -m unittest runtime_control_test runtime_workspace_test",
+      "scope": "Linux real filesystem tests for path traversal, symlink/special-file escape, bounded data, atomic replacement, expiry and temporary-file cleanup. No cloud resource or Docker operation.",
+      "negative": true,
+      "reference": "backend/src/sandbox/google/runtime_workspace_test.py"
     }
   ],
   "architecture": {
@@ -187,7 +252,12 @@
   "rollout": "Follow dependency-ordered Google migration record. Keep Fly live until Google parity and recovery pass. Review exact IAM and bounded cost before consequential changes. No unrelated merge.",
   "rollback": "Keep verified Fly forward and managed-compatible recovery available until Google-hosted immutable recovery is tested. Preserve production ciphertext, revisions, tombstones and all required KMS versions. No legacy-only rollback.",
   "knownGaps": [
-    "Google execution and Preview replacements, full configuration parity, deployment interlock and current cost evidence remain pending"
+    "Native project provider and Preview address/connection admission are implemented but real caller staging, frontend HTTP/WebSocket/reconnect/start/stop and deployment networking remain unverified.",
+    "One-shot sandbox callers and persistent browser worker hosting still need Google integration. Python/Rust images must be explicitly admitted and preloaded before claiming toolchain parity.",
+    "Cloud Run background dispatch must persist requests and integrate with canonical run leases/checkpoints. Current in-process route behavior is not restart-safe transport.",
+    "Configuration/callback parity, current costs, final integration, immutable forward/recovery verification and production traffic cutover remain required.",
+    "Earlier two native temporary access windows are consumed and fully cleaned. New security-sensitive access needs a concrete action-time confirmation, not reuse of prior windows.",
+    "Global allocation admission across multiple Cloud Run processes and uncertain creation outcomes require explicit reconciliation before enabling production workers."
   ],
   "placeholderClaimsRemaining": [
     "No zero-Fly completion or new production deployment claim"
@@ -196,7 +266,9 @@
     "docs/xroga/infrastructure/zero-fly-migration-20261025.md",
     "docs/xroga/evidence/zero-fly/native-transport-f90abe82-20261025.json",
     "docs/xroga/evidence/zero-fly/local-cleanup-and-main-integration-20261025.json",
-    "docs/xroga/evidence/zero-fly/native-transport-recheck-78e28fab-20261026.json"
+    "docs/xroga/evidence/zero-fly/native-transport-recheck-78e28fab-20261026.json",
+    "docs/xroga/evidence/zero-fly/workspace-linux-unit-20261026.json",
+    "docs/xroga/evidence/zero-fly/project-runtime-source-checkpoint-20261026.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,

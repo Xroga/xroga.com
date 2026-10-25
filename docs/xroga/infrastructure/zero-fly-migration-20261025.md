@@ -154,3 +154,58 @@ Full native provider/caller integration, workspace operations, Preview,
 configuration parity, background execution, Google-compatible recovery and
 production cutover remain separate migration obligations. No production, Fly,
 customer-data or Phase 4 operation was performed by this window.
+
+## 2026-10-26, native project runtime source integration
+
+The residual verification control subnet and VPC were deleted at
+2026-10-25T20:17:00Z. Independent readback at 21:06:58Z confirmed absence.
+The completed cleanup is recorded in the durable migration checkpoint and
+`outputs/fly-to-gcp-20261025/native-recheck-final-cleanup-readback.json` outside
+Git. The previous native proof and all original Phase 3 evidence remain intact.
+
+The existing project runtime manager now has an explicitly selected Google GCE
+provider. Preview HTTP request callers supply their issued tenant context.
+Pipeline and SoftwareAgent Preview callers supply the existing opaque worker
+generation. Raw user IDs and copied context objects cannot enable Google
+execution. Canonical source is persisted before remote workspace transfer.
+Admission refreshes owner/project/run lineage, source fingerprint, durable
+session binding and cancellation before operations and again after OS Login.
+Native restore denial never triggers replacement allocation. Explicit restart
+and known TTL expiry retire an owned handle before fresh creation admission.
+
+Workspace RPCs use bounded batches and descriptor-relative Linux file access.
+They reject traversal, symlinks, special files and expired authority. Writes are
+atomic and temporary files are removed on failure. No cloud resource, Docker
+operation or customer data was used for the 16 passing Linux filesystem tests.
+The original isolation runtime semantics remain unchanged. The portable API
+build workflow now includes these Linux tests without adding a deployment step.
+
+Google Preview targets come from authenticated Compute lookup, never a stored
+address or request parameter. The signed grant and durable owner/session/port
+binding are rechecked after admission. HTTP streams and WebSocket connections
+have bounded admission watches, immediate expiry timers and no automatic
+reconnection after denial. Unit fixtures verify these helpers, not the live
+frontend-to-backend workflow.
+
+Two focused negative reproductions exposed concrete gaps. A terminal durable
+run could still pass a dispatch check while its hot row appeared running. A VM
+whose boot admission failed could remain until its hard deletion deadline.
+Fresh dispatch now requires a running durable worker generation. Allocation
+handles are persisted before boot admission, and verified owned allocations are
+deleted on boot/persistence failure. Failed cleanup remains explicit. Unknown
+creation outcomes still require reconciliation and the native hard deadline.
+
+Tests and source hashes are retained in
+`docs/xroga/evidence/zero-fly/project-runtime-source-checkpoint-20261026.json`
+and `workspace-linux-unit-20261026.json` in that directory. These are source and
+filesystem evidence only. Production traffic, IAM, customer data, Fly resources,
+main and Phase 4 were not changed. No accepted cloud experiment or full CI suite
+was repeated.
+
+Release remains blocked on real caller staging, private Preview networking and
+frontend E2E, one-shot sandbox/browser callers, globally bounded allocation under
+multiple API/worker processes, durable background dispatch, complete required
+configuration/callback parity, verified forward/recovery images and controlled
+traffic cutover. Missing Python/Rust image admission fails explicitly and must
+be completed before claiming toolchain parity. The two prior temporary access
+windows are consumed. They do not authorize new persistent grants.

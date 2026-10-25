@@ -26,7 +26,11 @@ import {
 import {
   getLivePreviewGrant,
 } from '../synthesis/livePreview/store.js';
-import { authorizedPreviewTarget } from '../synthesis/livePreview/access.js';
+import { authorizedPreviewTarget,authorizedPreviewSession } from '../synthesis/livePreview/access.js';
+import {watchPreviewAdmission} from '../synthesis/livePreview/admissionWatch.js';
+import {googleProjectRuntimeSelected,googleExecutionConfiguration,verifyAttachedGoogleIdentity} from '../synthesis/projectRuntime/googleFactory.js';
+import {GceMachineControl} from '../sandbox/google/gceMachineControl.js';
+import {googlePreviewTarget} from '../synthesis/livePreview/googleTarget.js';
 
 import {
   parseLivePreviewHost,
@@ -34,6 +38,8 @@ import {
 } from '../synthesis/livePreview/signing.js';
 
 interface PreviewTarget {
+  readonly expiresAt:number;
+  readonly revalidate:()=>Promise<boolean>;
   readonly host:
     string;
 
@@ -96,19 +102,45 @@ export async function resolveTarget(
     return null;
   }
 
+  const store=new SupabaseProjectRuntimeStore();
   const session =
-    await new SupabaseProjectRuntimeStore()
+    await store
       .loadSession(
         grant.userId,
         grant.sessionId,
       );
 
-  const target = authorizedPreviewTarget(grant, session);
-  if (!target) return null;
+  let target;
+  if(googleProjectRuntimeSelected()) {
+    const revision=await store.loadLatestRevision(grant.userId,grant.projectId);
+    if(!revision||revision.userId!==grant.userId||revision.runId!==grant.runId)return null;
+    const configuration=googleExecutionConfiguration();
+    target=await googlePreviewTarget(grant,session,new GceMachineControl(configuration),()=>verifyAttachedGoogleIdentity(configuration.serviceAccount));
+    // Admission may wait on the control plane. Recheck revocation and durable
+    // handle after that wait, before either HTTP or WebSocket connection.
+    const current=await getLivePreviewGrant(parsed.previewId);
+    const currentSession=await store.loadSession(grant.userId,grant.sessionId);
+    if(!current||JSON.stringify(current)!==JSON.stringify(grant)||!currentSession
+      ||JSON.stringify(currentSession)!==JSON.stringify(session)||!authorizedPreviewSession(current,currentSession))return null;
+  }else target=authorizedPreviewTarget(grant,session);
+  if (!target||!session) return null;
 
   return {
     host: target.host,
     port: target.port,
+    expiresAt:Math.min(Date.parse(grant.expiresAt),session.expiresAt?Date.parse(session.expiresAt):Infinity),
+    revalidate:async()=>{
+      const current=await getLivePreviewGrant(parsed.previewId);
+      const active=await store.loadSession(grant.userId,grant.sessionId);
+      if(!current||JSON.stringify(current)!==JSON.stringify(grant)||!authorizedPreviewSession(current,active)
+        ||active.providerId!==session.providerId||active.image!==session.image
+        ||JSON.stringify(active.providerState)!==JSON.stringify(session.providerState))return false;
+      if(googleProjectRuntimeSelected()) {
+        const revision=await store.loadLatestRevision(grant.userId,grant.projectId);
+        if(!revision||revision.userId!==grant.userId||revision.runId!==grant.runId)return false;
+      }
+      return verifyLivePreviewSignature(current,parsed.signature);
+    },
 
     publicHost:
       hostname,
@@ -351,6 +383,11 @@ function proxyHttp(
   req.pipe(
     upstream,
   );
+  const stopAdmissionWatch=watchPreviewAdmission(target.revalidate,()=>{
+    upstream.destroy();res.destroy();
+  },target.expiresAt);
+  res.once('close',stopAdmissionWatch);
+  upstream.once('close',stopAdmissionWatch);
 }
 
 export async function runtimePreviewGateway(
@@ -653,8 +690,10 @@ export function attachRuntimePreviewWebSocketGateway(
                   },
                 );
 
+                let stopAdmissionWatch:()=>void=()=>{};
                 const closeBoth =
                   () => {
+                    stopAdmissionWatch();
                     if (
                       client.readyState ===
                         WebSocket.OPEN ||
@@ -673,6 +712,11 @@ export function attachRuntimePreviewWebSocketGateway(
                       upstream.close();
                     }
                   };
+
+                stopAdmissionWatch=watchPreviewAdmission(target.revalidate,()=>{
+                  // Terminate denied channels without a close-handshake delay.
+                  client.terminate();upstream.terminate();
+                },target.expiresAt);
 
                 client.on(
                   'close',

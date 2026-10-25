@@ -1,6 +1,7 @@
 import type {
   ProjectFile,
 } from '../../ai/patches.js';
+import {googleProjectRuntimeSelected,googleRuntimeImageFor} from '../projectRuntime/googleFactory.js';
 
 import {
   detectComposition,
@@ -833,7 +834,7 @@ export function planLivePreview(
 
   const image =
     relevant
-      ? sandboxImageFor(
+      ? googleProjectRuntimeSelected()?googleRuntimeImageFor(relevant.adapterId):sandboxImageFor(
           relevant,
         )
       : null;

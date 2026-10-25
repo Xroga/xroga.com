@@ -68,6 +68,27 @@ test('bounded instance creation uses no SA, no automatic restart and native hard
   assert.ok(request.url.includes('requestId='));
 });
 
+test('failed boot admission deletes the already allocated owned VM without reprovisioning',async()=>{
+  const f=fixture();const original=f.api.request.bind(f.api);
+  f.api.request=async<T>(options:Parameters<GceApi['request']>[0])=>{
+    if(options.url.includes('/getGuestAttributes'))throw Object.assign(new Error('PRIVATE_BOOT_CANARY'),{response:{status:403}});
+    return original<T>(options);
+  };
+  await assert.rejects(f.control.create(f.creation),{message:'GCE_CONTROL_PERMISSION_DENIED'});
+  assert.equal(f.calls.filter(call=>call.method==='POST').length,1);
+  assert.equal(f.calls.filter(call=>call.method==='DELETE').length,1);
+});
+
+test('allocation is recorded before boot admission and failed persistence triggers owned cleanup',async()=>{
+  const f=fixture();let recorded=0;
+  await assert.rejects(f.control.create(f.creation,async handle=>{
+    recorded++;assert.equal(handle.instanceId,f.handle.instanceId);
+    assert.equal(f.calls.some(call=>call.url.includes('/getGuestAttributes')),false);
+    throw new Error('PRIVATE_ALLOCATION_STORE_CANARY');
+  }),{message:'GCE_ALLOCATION_ADMISSION_FAILED'});
+  assert.equal(recorded,1);assert.equal(f.calls.filter(call=>call.method==='DELETE').length,1);
+});
+
 test('foreign or malformed ownership and expired handles are denied before any cloud request', async () => {
   for(const patch of [{ownerBinding:''},{projectBinding:'raw-user-id'},{instanceId:'not-an-id'},
     {runtimeId:'-'.repeat(36)},{expiresAtEpoch:0}]) {

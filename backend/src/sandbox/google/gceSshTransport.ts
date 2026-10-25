@@ -41,7 +41,7 @@ export const nativeSshCommand: NativeCommand = (binary, args, input, timeoutMs) 
   const deny = () => { if (failed) return; failed=true; child.kill('SIGKILL'); reject(new GceControlError('NATIVE_SSH_TRANSPORT_UNAVAILABLE')); };
   const timer = setTimeout(deny, timeoutMs);
   child.once('error', deny);
-  child.stdout.on('data', (value: Buffer) => {bytes+=value.length;if(bytes>1_000_000)deny();else chunks.push(value);});
+  child.stdout.on('data', (value: Buffer) => {bytes+=value.length;if(bytes>6*1024*1024)deny();else chunks.push(value);});
   // Bound diagnostic input, then discard it after classifying a nonzero exit.
   // Raw stderr can contain source or credentials and never leaves this function.
   child.stderr.on('data', (value: Buffer) => {
@@ -90,7 +90,9 @@ const workerDenials = new Set(['RUNTIME_BINDING_MISMATCH','RUNTIME_EXPIRED','INV
   'INVALID_COMMAND','INVALID_ENVIRONMENT','UNKNOWN_NETWORK_POLICY','IMAGE_NOT_ADMITTED','INVALID_EXECUTION_TIMEOUT',
   'INVALID_PROCESS_PORT','PORT_REQUIRES_PREVIEW_NETWORK','UNKNOWN_RESTART_POLICY','INVALID_PROCESS_REFERENCE',
   'DOCKER_CONTROL_FAILED','INVALID_BOUND_RESOURCE_LIMITS','PROCESS_NOT_OWNED_OR_RUNNING','NETWORK_GUARD_UNAVAILABLE',
-  'PROCESS_START_FAILED','PROCESS_LOGS_FAILED','REQUEST_TOO_LARGE','EXECUTION_CONTROL_UNAVAILABLE']);
+  'PROCESS_START_FAILED','PROCESS_LOGS_FAILED','REQUEST_TOO_LARGE','EXECUTION_CONTROL_UNAVAILABLE',
+  'INVALID_WORKSPACE_PATH','INVALID_WORKSPACE_FILES','WORKSPACE_TRANSFER_LIMIT','UNSAFE_WORKSPACE_ENTRY',
+  'WORKSPACE_IO_FAILED','WORKSPACE_NOT_UTF8','WORKSPACE_HOST_UNSUPPORTED']);
 
 export class GceSshTransport {
   constructor(private readonly control: Pick<GceMachineControl,'resolve'|'configuration'>,
@@ -99,13 +101,15 @@ export class GceSshTransport {
     private readonly keyFactory: () => Promise<EphemeralSshKey> = temporaryNativeSshKey,
     private readonly propagateKey: () => Promise<void> = () => new Promise(resolve=>setTimeout(resolve,5000))) {}
 
-  async run<T>(handle: GceExecutionHandle, operation: Readonly<Record<string, unknown>>, timeoutMs: number): Promise<T> {
+  async run<T>(handle: GceExecutionHandle, operation: Readonly<Record<string, unknown>>, timeoutMs: number,
+    admit?: () => Promise<void>): Promise<T> {
     if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 600000) throw new GceControlError('INVALID_NATIVE_SSH_TIMEOUT');
     const payload = JSON.stringify({...operation,binding:{runtimeId:handle.runtimeId,
       ownerBinding:handle.ownerBinding,projectBinding:handle.projectBinding}});
     if(Buffer.byteLength(payload)>4*1024*1024)throw new GceControlError('NATIVE_SSH_REQUEST_TOO_LARGE');
     // This rechecks current VM ownership, instance identity, image and expiry.
     // A denial never becomes another identity, a new VM or another transport.
+    await admit?.();
     const target = await this.control.resolve(handle);
     const key = await this.keyFactory();
     const account = this.control.configuration.serviceAccount;
@@ -138,6 +142,7 @@ export class GceSshTransport {
       if(admittedTarget.privateIp!==target.privateIp || admittedTarget.sshHostKey!==target.sshHostKey)
         throw new GceControlError('NATIVE_SSH_TARGET_CHANGED_DURING_ADMISSION');
       if(BigInt(expiry)<=BigInt(Date.now())*1000n)throw new GceControlError('NATIVE_OS_LOGIN_KEY_EXPIRY_INVALID');
+      await admit?.();
       // Trust a host key retrieved through the authenticated Compute API only.
       // No accept-new, disabled checking, ssh-keyscan or developer known_hosts.
       const alias = 'xroga-'+handle.instanceId;

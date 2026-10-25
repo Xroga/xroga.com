@@ -30,6 +30,10 @@ export class GceControlError extends Error {
   constructor(readonly code: string) { super(code); this.name = 'GceControlError'; }
 }
 
+export class GceAllocationCleanupPendingError extends GceControlError {
+  constructor(readonly allocation:GceExecutionHandle){super('GCE_ALLOCATION_CLEANUP_PENDING');}
+}
+
 const fail = (code: string): never => { throw new GceControlError(code); };
 const digest = (value: string): string => createHash('sha256').update(value).digest('hex');
 const hash = (value: string): string => digest(value).slice(0, 40);
@@ -160,15 +164,27 @@ export class GceMachineControl {
     if (!/^xroga-exec-[a-f0-9]{32}$/.test(name)) fail('INVALID_GCE_EXECUTION_REFERENCE');
     return `/zones/${this.configuration.zone}/instances/${name}`;
   }
-  async create(input: CreateGceExecution): Promise<GceExecutionHandle> {
+  async probe(): Promise<void> {
+    const image=await this.call<{id?:string;status?:string}>('GET',`/global/images/${this.configuration.imageName}`);
+    if(image.id!==this.configuration.imageId || image.status!=='READY')fail('GCE_BASE_IMAGE_IDENTITY_MISMATCH');
+    await this.call('GET',`/zones/${this.configuration.zone}/instances?maxResults=1&fields=items(name)`);
+  }
+  async create(input: CreateGceExecution,onAllocated?:(handle:GceExecutionHandle)=>Promise<void>): Promise<GceExecutionHandle> {
     executionBinding(input);
     const previous=GceMachineControl.allocationTail;
     let release!: () => void;
     GceMachineControl.allocationTail=new Promise<void>(resolve=>{release=resolve;});
     await previous;
-    try {return await this.createBounded(input);} finally {release();}
+    let allocated:GceExecutionHandle|undefined;
+    try {return await this.createBounded(input,async handle=>{
+      allocated=structuredClone(handle);await onAllocated?.(structuredClone(handle));
+    });}catch(error){
+      if(allocated){try{await this.destroy(allocated);}catch{throw new GceAllocationCleanupPendingError(allocated);}}
+      if(error instanceof GceControlError)throw error;
+      return fail('GCE_ALLOCATION_ADMISSION_FAILED');
+    }finally {release();}
   }
-  private async createBounded(input: CreateGceExecution): Promise<GceExecutionHandle> {
+  private async createBounded(input: CreateGceExecution,onAllocated:(handle:GceExecutionHandle)=>Promise<void>): Promise<GceExecutionHandle> {
     const scope = executionBinding(input);
     const image = await this.call<{id?: string; status?: string}>('GET', `/global/images/${this.configuration.imageName}`);
     if (image.id !== this.configuration.imageId || image.status !== 'READY') fail('GCE_BASE_IMAGE_IDENTITY_MISMATCH');
@@ -212,6 +228,7 @@ export class GceMachineControl {
         const machine = await this.call<Instance>('GET', this.path(name));
         if (!id(machine.id)) return fail('INVALID_GCE_INSTANCE_IDENTITY');
         const handle = {name, instanceId:machine.id, ...scope, expiresAtEpoch};
+        await onAllocated(handle);
         for (let boot=0; boot<180; boot++) {
           try { await this.resolve(handle); return handle; }
           catch (error) {

@@ -12,6 +12,7 @@ import re
 import selectors
 import shlex
 import signal
+import stat
 import subprocess
 import sys
 import time
@@ -21,6 +22,8 @@ BINDING_FILE = pathlib.Path('/opt/xroga/runtime-binding.json')
 WORKSPACE = pathlib.Path('/opt/xroga/work')
 MAX_INPUT = 4 * 1024 * 1024
 MAX_CAPTURE = 80000
+MAX_WORKSPACE_TRANSFER = 2 * 1024 * 1024
+WORKSPACE_OPERATIONS = ['write_files', 'read_file', 'read_files', 'stat_files', 'delete_files']
 
 
 class Refused(Exception):
@@ -38,7 +41,9 @@ def validate(request, binding):
             ['runtimeId', 'ownerBinding', 'projectBinding']}, 'RUNTIME_BINDING_MISMATCH')
     require(binding.get('expiresAtEpoch', 0) > time.time(), 'RUNTIME_EXPIRED')
     operation = request.get('operation')
-    require(operation in ['probe', 'exec', 'start', 'stop', 'logs'], 'UNKNOWN_OPERATION')
+    require(operation in ['probe', 'exec', 'start', 'stop', 'logs', *WORKSPACE_OPERATIONS], 'UNKNOWN_OPERATION')
+    if operation in WORKSPACE_OPERATIONS:
+        validate_workspace_request(request)
     if operation in ['exec', 'start']:
         command = request.get('command')
         require(isinstance(command, list) and 0 < len(command) <= 128
@@ -61,6 +66,183 @@ def validate(request, binding):
     if operation in ['stop', 'logs']:
         require(type(request.get('pid')) is int and request['pid'] > 0, 'INVALID_PROCESS_REFERENCE')
     return operation
+
+
+def workspace_parts(value):
+    require(isinstance(value, str) and value and '\0' not in value and '\\' not in value
+            and ':' not in value,
+            'INVALID_WORKSPACE_PATH')
+    try:
+        require(len(value.encode('utf-8')) <= 2048, 'INVALID_WORKSPACE_PATH')
+    except UnicodeError:
+        raise Refused('INVALID_WORKSPACE_PATH') from None
+    parts = value.split('/')
+    require(len(parts) <= 128 and all(part not in ['', '.', '..']
+            and len(part.encode('utf-8', errors='replace')) <= 255 for part in parts),
+            'INVALID_WORKSPACE_PATH')
+    return parts
+
+
+def validate_workspace_request(request):
+    operation = request['operation']
+    if operation == 'read_file':
+        workspace_parts(request.get('path'))
+        return
+    values = request.get('files' if operation == 'write_files' else 'paths')
+    require(isinstance(values, list) and len(values) <= 1000, 'INVALID_WORKSPACE_FILES')
+    seen = set()
+    total = 0
+    for value in values:
+        if operation == 'write_files':
+            require(isinstance(value, dict) and isinstance(value.get('content'), str), 'INVALID_WORKSPACE_FILES')
+            path = value.get('path')
+            try:
+                total += len(value['content'].encode('utf-8'))
+            except UnicodeError:
+                raise Refused('INVALID_WORKSPACE_FILES') from None
+            require(total <= MAX_WORKSPACE_TRANSFER, 'WORKSPACE_TRANSFER_LIMIT')
+        else:
+            path = value
+        workspace_parts(path)
+        require(path not in seen, 'INVALID_WORKSPACE_FILES')
+        seen.add(path)
+
+
+def workspace_operation(request, binding):
+    """Descriptor-relative I/O. No shell, symlink traversal or host-path fallback.
+
+    The workspace has its own bounded filesystem and is the only writable mount
+    visible to workload containers. Holding every parent descriptor prevents a
+    concurrent rename/symlink swap from redirecting privileged host file access.
+    """
+    require(os.name == 'posix' and hasattr(os, 'O_NOFOLLOW'), 'WORKSPACE_HOST_UNSUPPORTED')
+    directory_flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
+    root_fd = None
+
+    def live():
+        require(binding['expiresAtEpoch'] > time.time(), 'RUNTIME_EXPIRED')
+
+    def regular(parent, name):
+        try:
+            value = os.stat(name, dir_fd=parent, follow_symlinks=False)
+        except FileNotFoundError:
+            return None
+        require(stat.S_ISREG(value.st_mode) and value.st_nlink == 1, 'UNSAFE_WORKSPACE_ENTRY')
+        return value
+
+    def parent_descriptor(parts, create):
+        parent = os.dup(root_fd)
+        try:
+            for part in parts[:-1]:
+                if create:
+                    try:
+                        os.mkdir(part, mode=0o700, dir_fd=parent)
+                        if os.geteuid() == 0:
+                            os.chown(part, owner.st_uid, owner.st_gid, dir_fd=parent, follow_symlinks=False)
+                    except FileExistsError:
+                        pass
+                try:
+                    child = os.open(part, directory_flags, dir_fd=parent)
+                except FileNotFoundError:
+                    os.close(parent)
+                    return None
+                except OSError:
+                    raise Refused('UNSAFE_WORKSPACE_ENTRY') from None
+                os.close(parent)
+                parent = child
+                require(os.fstat(parent).st_dev == owner.st_dev, 'UNSAFE_WORKSPACE_ENTRY')
+            return parent
+        except BaseException:
+            os.close(parent)
+            raise
+
+    try:
+        root_fd = os.open(WORKSPACE, directory_flags)
+        owner = os.fstat(root_fd)
+        require(not owner.st_mode & 0o022, 'UNSAFE_WORKSPACE_ENTRY')
+        operation = request['operation']
+        if operation in ['read_file', 'read_files', 'stat_files']:
+            paths = [request['path']] if operation == 'read_file' else request['paths']
+            files = []
+            total = 0
+            for path in paths:
+                parts = workspace_parts(path)
+                parent = parent_descriptor(parts, False)
+                content = None
+                size = None
+                if parent is not None:
+                    try:
+                        live()
+                        entry = regular(parent, parts[-1])
+                        if entry is not None:
+                            require(entry.st_size <= MAX_WORKSPACE_TRANSFER, 'WORKSPACE_TRANSFER_LIMIT')
+                            size = entry.st_size
+                            if operation != 'stat_files':
+                                fd = os.open(parts[-1], os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC, dir_fd=parent)
+                                with os.fdopen(fd, 'rb') as source:
+                                    opened = os.fstat(source.fileno())
+                                    require(stat.S_ISREG(opened.st_mode) and opened.st_nlink == 1, 'UNSAFE_WORKSPACE_ENTRY')
+                                    raw = source.read(MAX_WORKSPACE_TRANSFER+1)
+                                total += len(raw)
+                                require(total <= MAX_WORKSPACE_TRANSFER, 'WORKSPACE_TRANSFER_LIMIT')
+                                try:
+                                    content = raw.decode('utf-8', errors='strict')
+                                except UnicodeError:
+                                    raise Refused('WORKSPACE_NOT_UTF8') from None
+                    finally:
+                        os.close(parent)
+                live()
+                files.append({'path':path, 'size':size} if operation == 'stat_files' else {'path':path, 'content':content})
+            result = {'content':files[0]['content']} if operation == 'read_file' else {'files':files}
+            require(len(json.dumps(result).encode()) <= MAX_INPUT, 'WORKSPACE_TRANSFER_LIMIT')
+            return result
+        changed = []
+        values = request.get('files', []) if operation == 'write_files' else request['paths']
+        for value in values:
+            live()
+            path = value['path'] if operation == 'write_files' else value
+            parts = workspace_parts(path)
+            parent = parent_descriptor(parts, operation == 'write_files')
+            if parent is None:
+                continue
+            temporary = None
+            try:
+                entry = regular(parent, parts[-1])
+                if operation == 'delete_files':
+                    if entry is not None:
+                        live()
+                        os.unlink(parts[-1], dir_fd=parent)
+                        changed.append(path)
+                else:
+                    temporary = '.xroga-write-' + uuid.uuid4().hex
+                    fd = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW | os.O_CLOEXEC,
+                                 0o600, dir_fd=parent)
+                    with os.fdopen(fd, 'wb') as target:
+                        target.write(value['content'].encode('utf-8'))
+                        target.flush()
+                        if os.geteuid() == 0:
+                            os.fchown(target.fileno(), owner.st_uid, owner.st_gid)
+                        os.fsync(target.fileno())
+                    live()
+                    os.replace(temporary, parts[-1], src_dir_fd=parent, dst_dir_fd=parent)
+                    temporary = None
+                    changed.append(path)
+                os.fsync(parent)
+            finally:
+                if temporary is not None:
+                    try:
+                        os.unlink(temporary, dir_fd=parent)
+                    except FileNotFoundError:
+                        pass
+                os.close(parent)
+        return {'written' if operation == 'write_files' else 'deleted':changed}
+    except Refused:
+        raise
+    except OSError:
+        raise Refused('WORKSPACE_IO_FAILED') from None
+    finally:
+        if root_fd is not None:
+            os.close(root_fd)
 
 
 def docker(args, timeout=15):
@@ -150,6 +332,8 @@ def execute(request, binding):
 
 def dispatch(request, binding):
     operation = validate(request, binding)
+    if operation in WORKSPACE_OPERATIONS:
+        return workspace_operation(request, binding)
     # Refuse bridge execution if bootstrap did not install the metadata/private
     # egress guard. Never turn a missing firewall into an unrestricted fallback.
     if operation == 'probe' or request.get('networkPolicy') in ['registry-only', 'preview']:
