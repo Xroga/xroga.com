@@ -1,0 +1,73 @@
+{
+  "evidenceClass": "LOCAL_DOCKER",
+  "reapedAtStart": {
+    "containers": 0,
+    "networks": 0
+  },
+  "modelId": "glm_5_3_flash",
+  "modelSpendMicros": 0,
+  "modelRunCapMicros": 500000,
+  "sourceSha": "39d4639133d73e19acf31f7f840908736a5d8e7e",
+  "browserImage": "xroga-browser-worker:phase3",
+  "imageId": "sha256:2c88b570976a634380c38820808b7ddac4124bf86255ccf92c79851b537e1e4e",
+  "at": "2026-10-25T10:15:15.694Z",
+  "passed": 1,
+  "total": 1,
+  "receipts": [
+    {
+      "id": "W07",
+      "title": "real private R2: READY only after read-back SHA-256; owner-only; not public; disposable object deleted",
+      "expected": "completed, READY, other tenant denied, unsigned read refused, deleted from R2",
+      "actual": "completed",
+      "pass": true,
+      "details": {
+        "runId": "6999c537-1aaa-4aa3-a27e-f3bd88ece7ef",
+        "status": "completed",
+        "attempts": 1,
+        "code": null,
+        "outcomeVerified": true,
+        "postconditions": [
+          "artifact:true"
+        ],
+        "extracted": {},
+        "metrics": {
+          "fallbacks": [],
+          "elapsedMs": 1632,
+          "redirects": 0,
+          "pages": 0,
+          "consequentialActions": 0,
+          "llmCalls": 0,
+          "modelUsage": {
+            "calls": 0,
+            "inputTokens": 0,
+            "outputTokens": 0,
+            "costMicros": 0,
+            "refused": 0
+          }
+        },
+        "evidence": [
+          "browser_run",
+          "drive_artifact",
+          "browser_outcome",
+          "model_usage"
+        ],
+        "elapsedMs": 7339,
+        "object": {
+          "id": "cb6221d3-fbe2-4b8c-a37f-7778da9272d3",
+          "sha256": "9860c6ea6e1861fc29737825b644440a76b9bd413d58cb18590165f4fc56331c",
+          "state": "READY"
+        },
+        "otherTenantDenied": true,
+        "presentBeforeDelete": true,
+        "unsignedStatus": 400,
+        "deleted": true,
+        "goneAfterDelete": true,
+        "bucket": "xroga-drive-test",
+        "cleanup": {
+          "containers": 0,
+          "networks": 0
+        }
+      }
+    }
+  ]
+}

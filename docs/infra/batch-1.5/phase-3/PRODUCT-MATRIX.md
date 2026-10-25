@@ -44,10 +44,10 @@ Status vocabulary: `PASS_GCE` (real run on Compute Engine on both architectures)
 |---|---|
 | Previously existing | Drive foundation from Phase 1/2 (`putServerObject`: READY only after read-back SHA-256) |
 | Implementation | every browser artifact goes through `putServerObject` under a deterministic per-task name; retries reuse an already stored object; the report and screenshot are owner-scoped |
-| Tests | W02, W05a, W15 (in-memory Drive: READY with read-back SHA-256 on every artifact); W07 (real private R2: READY, other tenant denied, not publicly readable, deleted) |
-| Evidence | in-memory Drive path PASS_GCE on both architectures; real R2 not yet run |
-| Blockers | the founder's 7-day R2 token for `xroga-drive-test` |
-| Status | **PARTIAL** until W07 passes on real R2 |
+| Tests | W02, W05a, W15 (in-memory Drive: READY with read-back SHA-256 on every artifact); W07 (real private R2: READY, other tenant denied, an unsigned read of the real S3 endpoint refused, deleted and confirmed absent by HEAD) |
+| Evidence | in-memory Drive path PASS_GCE on both architectures; real private R2 bucket `xroga-drive-test`: W07 PASS_LOCAL (`evidence/local/w07-r2-LOCAL_DOCKER.json`, 2026-10-25, source `39d46391` + the strengthened W07 check). Bucket privacy confirmed off-suite with wrangler: r2.dev public URL disabled, no custom domains |
+| Blockers | none for the branch. The R2 leg ran on the local Docker host, because the GCE VMs had already auto-deleted when the token arrived; the browser path itself is PASS_GCE |
+| Status | **PASS_LOCAL** (real R2), with the browser-to-Drive path PASS_GCE |
 
 ## The other eight (unchanged by Phase 3)
 | ID | Outcome | Previously existing (baseline `../product-capability-baseline.md` and `main`) | Phase 3 change | Status in Phase 3 |

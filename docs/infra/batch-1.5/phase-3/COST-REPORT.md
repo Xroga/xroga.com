@@ -53,9 +53,9 @@ Route: Xroga's existing canonical model routing (`resolveEndpoint`) and ledger (
 ## 5. Actual Phase 3 spend so far (cash vs credit)
 | Item | Amount | Paid from |
 |---|---|---|
-| Two GCE verification VMs, about 0.75 h each at the time of writing (auto-delete at 4 h) | about $0.12 at list price | Google Cloud free-trial credit; $0 cash |
+| Two GCE verification VMs, 4 h each (auto-deleted at the 4 h limit; disks, addresses and the SSH firewall rule confirmed removed 2026-10-25) | at most $0.64 at list price (0.0747 + 0.0847 per hour, 4 h) | Google Cloud free-trial credit; $0 cash |
 | Cloudflare Worker testbed (workers.dev, free tier, no bindings) | $0 | free tier |
 | Model tokens | $0 so far | none spent |
-| R2 test bucket | $0 so far | none spent |
+| R2 test bucket (W07: a few Class A/B operations, objects deleted) | under $0.0001; inside the R2 free tier | free tier |
 
 Final figures are restated in `BATCH-1.5-PHASE-3-FINAL-ACCEPTANCE.md` after teardown.

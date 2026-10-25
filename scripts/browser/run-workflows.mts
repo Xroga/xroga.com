@@ -339,12 +339,17 @@ workflows.W07 = async () => {
     plan: { steps: [{ op: 'screenshot', name: 'w07.png', fullPage: true }], expect: [{ kind: 'artifact', name: 'w07.png', mediaType: 'image/png', minBytes: 1_000 }] } }, deps);
   const obj = (await r2Drive.listObjects(h.alice, { projectId: project })).find((o) => o.filename.endsWith('w07.png'));
   const bobDenied = obj ? await r2Drive.getObjectMeta(h.bob, obj.id).then(() => false, () => true) : false;
-  const publicUrl = obj ? `https://${cfg.bucket}.r2.dev/${(repo as any).objects?.get?.(obj.id)?.objectKey ?? ''}` : '';
-  const publicStatus = obj ? await fetch(publicUrl).then((x) => x.status, () => 0) : 0;
+  const key = obj ? repo.objects.get(obj.id)?.objectKey ?? '' : '';
+  const store = new R2ObjectStore(cfg);
+  const presentBeforeDelete = key ? (await store.head(cfg.bucket, key)) !== null : false;
+  // an unsigned GET against the bucket's real S3 endpoint must be refused (the r2.dev URL and custom domains are checked off-suite with wrangler)
+  const unsignedStatus = key ? await fetch(`https://${cfg.accountId}.r2.cloudflarestorage.com/${cfg.bucket}/${key}`).then((x) => x.status, () => 0) : 0;
   let deleted = false;
   if (obj) deleted = await r2Drive.deleteObject(h.alice, obj.id).then(() => true, () => false);
-  record('W07', 'real private R2: READY only after read-back SHA-256; owner-only; not public; disposable object deleted', 'completed, READY, other tenant denied, not publicly readable, deleted',
-    r.status === 'completed' && obj?.state === 'READY' && bobDenied && publicStatus !== 200 && deleted, { ...r, object: obj && { id: obj.id, sha256: obj.sha256, bytes: obj.sizeBytes, state: obj.state }, otherTenantDenied: bobDenied, publicStatus, deleted, bucket: cfg.bucket });
+  const goneAfterDelete = key ? (await store.head(cfg.bucket, key)) === null : false;
+  record('W07', 'real private R2: READY only after read-back SHA-256; owner-only; not public; disposable object deleted', 'completed, READY, other tenant denied, unsigned read refused, deleted from R2',
+    r.status === 'completed' && obj?.state === 'READY' && bobDenied && presentBeforeDelete && [400, 401, 403].includes(unsignedStatus) && deleted && goneAfterDelete,
+    { ...r, object: obj && { id: obj.id, sha256: obj.sha256, bytes: obj.sizeBytes, state: obj.state }, otherTenantDenied: bobDenied, presentBeforeDelete, unsignedStatus, deleted, goneAfterDelete, bucket: cfg.bucket });
 };
 
 workflows.W12 = async () => {
