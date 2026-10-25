@@ -30,6 +30,7 @@ import guestChatRouter from './routes/guestChat.js';
 import phase1BusinessPreflightRouter from './routes/phase1BusinessPreflight.js';
 import businessAutomationsRouter from './routes/businessAutomations.js';
 import businessAutomationWebhookRouter from './routes/businessAutomationWebhook.js';
+import businessAutomationSchedulerRouter from './routes/businessAutomationScheduler.js';
 import { startBusinessAutomationScheduler } from './services/integrations/businessAutomations.js';
 import dashboardRouter from './routes/dashboard.js';
 import tasksRouter from './routes/tasks.js';
@@ -135,6 +136,7 @@ app.use(cors(corsOptions));
 // Whop Standard Webhooks signatures cover the untouched raw body.
 app.use('/api/billing/webhook', billingWebhookRouter);
 app.use('/api/integrations/composio/webhook', businessAutomationWebhookRouter);
+app.use('/internal/business-automations', businessAutomationSchedulerRouter);
 
 // Guest preview is deliberately much smaller than authenticated upload/build
 // requests. Parse it first with a strict body ceiling so an anonymous caller never
@@ -285,7 +287,9 @@ attachRuntimePreviewWebSocketGateway(
 );
 
 server.listen(port, '0.0.0.0', () => {
-  stopBusinessAutomationScheduler = startBusinessAutomationScheduler();
+  if (process.env.XROGA_AUTOMATION_SCHEDULER_MODE !== 'cloud') {
+    stopBusinessAutomationScheduler = startBusinessAutomationScheduler();
+  }
   console.log(`Server running on port ${port}`);
   console.log(`Environment: ${process.env.NODE_ENV ?? 'development'}`);
   console.log('[AI] Converter→Builder online — DeepSeek@OpenRouter + Kimi/GLM/Grok official + Tavily');

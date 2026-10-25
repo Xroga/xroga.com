@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "0f00e3e32e8e3bd86b91345693fdad5d04e37952",
+  "source_sha": "acc5076d245c98197a42b4deb880a22f518f2e1c",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -819,6 +819,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "backend/src/routes/businessAutomationScheduler.ts",
         "backend/src/services/publish/chromeWebStore.ts"
       ],
       "hostnames": [
@@ -829,7 +830,10 @@
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
       "secret_names": [
         "FRONTEND_URL",
-        "NODE_ENV"
+        "NODE_ENV",
+        "XROGA_AUTOMATION_SCHEDULER_AUDIENCE",
+        "XROGA_AUTOMATION_SCHEDULER_MODE",
+        "XROGA_AUTOMATION_SCHEDULER_SERVICE_ACCOUNT"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -843,6 +847,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "backend/src/routes/businessAutomationScheduler.ts",
         "backend/src/services/publish/chromeWebStore.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -4369,7 +4374,8 @@
         "VERCEL_OAUTH_CALLBACK_URL",
         "VERCEL_OAUTH_CLIENT_ID",
         "VERCEL_OAUTH_CLIENT_SECRET",
-        "VERCEL_OAUTH_SCOPES"
+        "VERCEL_OAUTH_SCOPES",
+        "XROGA_AUTOMATION_SCHEDULER_MODE"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -7222,7 +7228,8 @@
         "NODE_ENV",
         "PORT",
         "SUPABASE_SERVICE_ROLE_KEY",
-        "SUPABASE_URL"
+        "SUPABASE_URL",
+        "XROGA_AUTOMATION_SCHEDULER_MODE"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -12123,6 +12130,66 @@
       ]
     },
     {
+      "name": "XROGA_AUTOMATION_SCHEDULER_AUDIENCE",
+      "consuming_sources": [
+        "backend/src/routes/businessAutomationScheduler.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-accounts-google-com"
+      ]
+    },
+    {
+      "name": "XROGA_AUTOMATION_SCHEDULER_MODE",
+      "consuming_sources": [
+        "backend/src/index.ts",
+        "backend/src/routes/businessAutomationScheduler.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-accounts-google-com",
+        "endpoint-localhost",
+        "endpoint-xrogaaicom-vercel-app"
+      ]
+    },
+    {
+      "name": "XROGA_AUTOMATION_SCHEDULER_SERVICE_ACCOUNT",
+      "consuming_sources": [
+        "backend/src/routes/businessAutomationScheduler.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-accounts-google-com"
+      ]
+    },
+    {
       "name": "XROGA_BROWSER_AI_MODEL",
       "consuming_sources": [
         "backend/src/routes/browserRuns.ts"
@@ -14215,7 +14282,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "212f27adbb2c41dd294a815895db4c279b6a459cec9cc9298a8cfa5145bfd786"
+      "sha256": "ae363e1344a93b441ec9a10dade0c53ba67bd39e34958cc9332849636082741b"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -14640,6 +14707,10 @@
     {
       "path": "backend/src/routes/browserRuns.ts",
       "sha256": "0b123cffa6d286d7b01e1e686c372986473d21773b3f8cff4885eaf6254d4d3f"
+    },
+    {
+      "path": "backend/src/routes/businessAutomationScheduler.ts",
+      "sha256": "d775beaa5fc78872dbb4a1a5ac6087f122499e96fe9416f49a751d054f3851e6"
     },
     {
       "path": "backend/src/routes/businessAutomationWebhook.ts",
@@ -20784,42 +20855,42 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 104,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 105,
       "credentialsInUrl": false
     },
     {
-      "hostname": "www.xroga.com",
+      "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 106,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xrogaaicom.vercel.app",
+      "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 107,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "xrogaaicom.vercel.app",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 108,
       "credentialsInUrl": false
     },
     {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 109,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 197,
+      "line": 199,
       "credentialsInUrl": false
     },
     {
@@ -21226,6 +21297,13 @@
       "protocol": "https:",
       "path": "backend/src/organicIntelligence/authority/engine.ts",
       "line": 303,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "accounts.google.com",
+      "protocol": "https:",
+      "path": "backend/src/routes/businessAutomationScheduler.ts",
+      "line": 23,
       "credentialsInUrl": false
     },
     {
