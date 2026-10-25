@@ -22,7 +22,22 @@
     "infra/google/cloudbuild.api.yaml",
     "scripts/infrastructure/cloud-run-release-gate.mjs",
     "scripts/infrastructure/cloud-run-release-gate.test.mjs",
-    "scripts/infrastructure/gce-isolation-probe.sh"
+    "scripts/infrastructure/gce-isolation-probe.sh",
+    "backend/src/sandbox/google/runtime_control.py",
+    "backend/src/sandbox/google/runtime_control_test.py",
+    "backend/src/sandbox/google/gceMachineControl.ts",
+    "backend/src/sandbox/google/gceMachineControl.test.ts",
+    "backend/src/sandbox/google/gceSshTransport.ts",
+    "backend/src/sandbox/google/gceSshTransport.test.ts",
+    "backend/src/config/platformEnvironment.ts",
+    "backend/src/config/platformEnvironment.test.ts",
+    "backend/src/loadPlatformEnvironment.ts",
+    "backend/src/index.ts",
+    ".dockerignore",
+    ".gitignore",
+    "backend/src/scripts/verifyGceExecution.ts",
+    "infra/google/execution-verification-scope.json",
+    "docs/xroga/infrastructure/native-execution-verification-approval.md"
   ],
   "decisions": {
     "keep": [
@@ -106,6 +121,36 @@
       "scope": "Real synthetic Chromium and container network/metadata, non-root, read-only, memory and process isolation proof. Estimated charge below 0.10 USD from available promotional credits. No customer data, IAM or firewall mutation. Does not prove provider integration or Preview.",
       "negative": true,
       "reference": "scripts/infrastructure/gce-isolation-probe.sh"
+    },
+    {
+      "command": "python backend/src/sandbox/google/runtime_control_test.py",
+      "scope": "Reject cross-runtime/owner/project bindings, expiry, mutable images, hostile environment names, resource escalation and missing network guard before Docker dispatch. Credential-free tests do not claim live provider integration.",
+      "negative": true,
+      "reference": "backend/src/sandbox/google/runtime_control_test.py"
+    },
+    {
+      "command": "node --import tsx --test backend/src/sandbox/google/gceMachineControl.test.ts",
+      "scope": "Negative immutable image, source identity, owner binding, TTL, resource, native identity and deletion tests before any real execution-controller permission grant.",
+      "negative": true,
+      "reference": "backend/src/sandbox/google/gceMachineControl.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/sandbox/google/gceSshTransport.test.ts",
+      "scope": "Deny ownership, OS Login, malformed and interrupted operations without retries. Assert credentials use encrypted SSH stdin, strict verified host keys, short-lived key cleanup and explicit failed-revocation reporting. Fixtures are not live SSH evidence.",
+      "negative": true,
+      "reference": "backend/src/sandbox/google/gceSshTransport.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/config/platformEnvironment.test.ts",
+      "scope": "Validate protected Google platform bundle atomically before provider imports. Reject mixed sources, foreign/static identity, runtime injection, wrong mount and malformed configuration with redacted errors.",
+      "negative": true,
+      "reference": "backend/src/config/platformEnvironment.test.ts"
+    },
+    {
+      "command": "node dist/scripts/verifyGceExecution.js in the explicitly named private synthetic Cloud Run verification Job",
+      "scope": "New native identity and OS Login transport verification only. Requires exact IAM and private-network setup. No DB, customer key, model or production traffic operation. Not executed yet.",
+      "negative": true,
+      "reference": "backend/src/scripts/verifyGceExecution.ts"
     }
   ],
   "architecture": {

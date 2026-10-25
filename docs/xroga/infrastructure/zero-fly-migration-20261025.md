@@ -47,3 +47,13 @@ The portable API Dockerfile now requires a full source SHA and emits the OCI rev
 The existing automatic Cloud Build trigger `acb94fe0-ea2f-4a7b-a403-98c25b093a5f` was disabled through the supported console control. Console and CLI readback both confirm `disabled: true`. No running service or traffic changed. Earlier API attempts returned `INVALID_ARGUMENT`; they were not counted as success.
 
 The authenticated credit ledger on October 25 shows $299.32 remaining from the paid-account upgrade credit, expiring January 22, 2027. This is not a permanent free tier or a hard spending limit. The account remains linked and billing-enabled. Recurring always-CPU, execution, registry, secrets, networking and storage costs still require a complete cost model before cutover.
+
+## Native execution transport checkpoint
+
+The next implementation slice adds Compute resource validation, native-only identity, bounded no-SA workers, OS Login with expiring SSH keys, authenticated host-key pinning and encrypted stdin transport. The physical controller refuses owner/image/source/expiry drift, mutable images, capacity exhaustion and provider denials before workload dispatch. It does not issue product actor authority, reserve product budgets or replace the canonical scheduler. The protected configuration loader validates a versioned Google Secret Manager bundle atomically before provider imports, without moving any live secret yet.
+
+Twenty focused TypeScript tests and six Python protocol tests pass. A new test first reproduced an accidental five-minute timeout restriction, then verified the existing ten-minute command contract and rejection beyond that limit. Backend type checking and the real mission-policy checker pass. These tests are credential-free fixtures, not live OS Login evidence. Neither the new controller nor its Job harness is registered with production.
+
+The next exact access scope is documented in `native-execution-verification-approval.md` and `infra/google/execution-verification-scope.json`. No Compute/OS Login grants, new subnet, firewall or Job have been applied. Existing Google image build and recovery retention, and the completed real GCE host/Chromium experiment, remain valid evidence and are not repeated.
+
+PR #852 head `0f00e3e32e8e3bd86b91345693fdad5d04e37952` removes automatic triggers from both Fly workflows and requires explicit manual confirmations. Both workflows remain `disabled_manually` in GitHub. Coordination was recorded in [PR #852](https://github.com/Xroga/xroga.com/pull/852#issuecomment-6398193332). No Batch 1.5 branch was changed or merged. The separate Google auto-deployment trigger remains held.
