@@ -68,10 +68,11 @@ export function routesFromFiles(files: readonly ProjectFile[]): string[] {
 function probeScript(paths: readonly string[], port: number): string {
   return [
     `const paths=${JSON.stringify(paths)};`,
-    `(async()=>{const out=[];for(const p of paths){try{`,
-    `const r=await fetch('http://[::1]:${port}'+p,{redirect:'follow',signal:AbortSignal.timeout(8000)});`,
-    `const t=await r.text();out.push({path:p,status:r.status,bytes:t.length,text:t.slice(0,4000)});`,
-    `}catch(e){out.push({path:p,status:null,bytes:0,text:''})}}`,
+    // A dev server may listen on IPv6 or IPv4 loopback only, so both are tried; the first that answers is used.
+    `(async()=>{const out=[];const hosts=['[::1]','127.0.0.1'];for(const p of paths){let done=false;for(const h of hosts){try{`,
+    `const r=await fetch('http://'+h+':${port}'+p,{redirect:'follow',signal:AbortSignal.timeout(8000)});`,
+    `const t=await r.text();out.push({path:p,status:r.status,bytes:t.length,text:t.slice(0,4000)});done=true;break;`,
+    `}catch(e){}}if(!done)out.push({path:p,status:null,bytes:0,text:''})}`,
     `console.log('XROGA_READINESS '+JSON.stringify(out));process.exit(0)})()`,
   ].join('');
 }

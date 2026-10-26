@@ -76,6 +76,7 @@ export function makeServices(users: ReadonlyArray<{ id: string; github?: { token
   const hosting = new HostingService({
     phase2, builder, vercel, sleep: async () => {}, pollIntervalMs: 1, maxPolls: 10, tokenFor: async (userId) => tokens.vercel.get(userId) ?? null,
     appEnvironment: (userId, projectId) => data.appEnvironment(userId, projectId),
+    databaseStatus: (userId, projectId) => data.databaseStatus(userId, projectId),
     filesFor: (project, revision) => githubService.filesFor(project, revision),
     githubCommitFor: async (userId, projectId, revisionId) => (await githubService.binding(userId, projectId))?.commits.find((commit) => commit.revisionId === revisionId)?.commitSha ?? null,
     remoteQa: async () => remote.result,

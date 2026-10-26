@@ -38,6 +38,8 @@ export interface HostingDeps extends OperationDeps {
   readonly appEnvironment: (userId: string, projectId: string) => Promise<Record<string, string> | null>;
   /** The verified source files for a revision (the same set the export and GitHub use). */
   readonly filesFor: (project: BuilderProject, revision: BuilderRevision) => ProjectFile[];
+  /** Whether the app needs a customer database schema and whether it has been applied. Production is blocked until it has. */
+  readonly databaseStatus?: (userId: string, projectId: string) => Promise<{ required: boolean; applied: boolean }>;
   /** The GitHub commit that holds this revision, when it has been exported. Provenance only. */
   readonly githubCommitFor: (userId: string, projectId: string, revisionId: string) => Promise<string | null>;
   /** Real-browser tests against a deployed URL. Never run with real user data. */
@@ -308,6 +310,10 @@ export class HostingService {
       throw new BuilderError('conflict', 'Production needs a successful, verified preview first.');
     }
     const receipt = preview.receipt as { project: { id: string; name: string }; deployment: { id: string; url: string; target: string }; source: { revisionId: string; revisionNumber: number; contentSha256: string }; remote: RemoteVerification };
+    const database = await this.deps.databaseStatus?.(userId, projectId);
+    if (database?.required && !database.applied) {
+      throw new BuilderError('conflict', 'Production is blocked: this app needs its database schema, and it has not been applied to your Supabase project yet. Review and apply it first, then publish.');
+    }
     if (receipt.remote.status !== 'passed') {
       throw new BuilderError('conflict', `Production is blocked: the remote browser tests on this preview have not passed (${receipt.remote.status.replace(/_/g, ' ')}). ${receipt.remote.reason}`);
     }

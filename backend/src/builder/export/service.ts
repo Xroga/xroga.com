@@ -1,6 +1,7 @@
 import type { Phase2Store } from '../phase2Store.js';
 import type { BuilderService } from '../service.js';
 import { BuilderError } from '../types.js';
+import { databaseArtifacts } from '../data/schema.js';
 import { buildSourceArchive, type BuiltArchive } from './archive.js';
 
 /**
@@ -17,7 +18,7 @@ export class ExportService {
     const revision = input.revisionId ? await this.deps.builder.revisionFiles(userId, projectId, input.revisionId) : (await this.deps.builder.headFiles(userId, project)).revision;
     if (!revision) throw new BuilderError('not_found', 'The project has no source revision to export.');
     // Throws (and returns nothing) if the archive cannot be read back and verified.
-    const archive = buildSourceArchive({ projectId, title: project.title, revision, starter: project.starter });
+    const archive = buildSourceArchive({ projectId, title: project.title, revision, starter: project.starter, extraFiles: databaseArtifacts(project.spec, revision.files) });
     const saved = await this.deps.phase2.saveVerification(userId, projectId, {
       revisionId: revision.id, runId: input.runId, kind: 'export', status: 'passed', executedChecks: archive.manifest.files.length,
       summary: { sha256: archive.sha256, bytes: archive.bytes, fileCount: archive.manifest.files.length, excluded: archive.manifest.excluded.length, revisionNumber: revision.revisionNumber },

@@ -103,7 +103,7 @@ export function setupInstructions(files: readonly ProjectFile[], title: string):
   return `${lines.filter((line, index, all) => !(line === '' && all[index - 1] === '')).join('\n')}\n`;
 }
 
-export function buildSourceArchive(input: { readonly projectId: string; readonly title: string; readonly revision: BuilderRevision; readonly starter: StarterProvenance }): BuiltArchive {
+export function buildSourceArchive(input: { readonly projectId: string; readonly title: string; readonly revision: BuilderRevision; readonly starter: StarterProvenance; /** Generated delivery files (for example the reviewed database migration) that are not part of the stored revision. */ readonly extraFiles?: readonly ProjectFile[] }): BuiltArchive {
   const { revision } = input;
   // Defense in depth: the same checks that guard storage are applied again before anything leaves Xroga.
   assertSnapshotAcceptable(revision.files);
@@ -115,6 +115,13 @@ export function buildSourceArchive(input: { readonly projectId: string; readonly
     if (reason) excluded.push({ path: file.path, reason });
     else included.push({ path: file.path, content: file.content });
   }
+  const present = new Set(included.map((file) => file.path));
+  for (const extra of input.extraFiles ?? []) {
+    if (present.has(extra.path) || excluded.some((item) => item.path === extra.path)) continue;
+    if (classifyExportPath(extra.path)) throw new BuilderError('invalid_input', `A generated delivery file is not exportable: ${extra.path}`);
+    included.push({ path: extra.path, content: extra.content });
+  }
+  included.sort((a, b) => (a.path < b.path ? -1 : 1));
   if (included.length === 0) throw new BuilderError('invalid_input', 'There are no source files to export.');
   for (const reserved of [EXPORT_MANIFEST_PATH, EXPORT_SETUP_PATH]) {
     if (included.some((file) => file.path === reserved)) throw new BuilderError('invalid_input', `The project contains a file named ${reserved}, which is reserved for the export.`);

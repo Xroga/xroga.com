@@ -134,6 +134,7 @@ export function phase2ServicesFor(tenant: TenantContext): Phase2Services {
   const hosting = new HostingService({
     phase2, builder, vercel: createRestVercelPort(), tokenFor: (userId) => getVercelToken(userId),
     appEnvironment: (userId, projectId) => data.appEnvironment(userId, projectId),
+    databaseStatus: (userId, projectId) => data.databaseStatus(userId, projectId),
     filesFor: (project, revision) => github.filesFor(project, revision),
     githubCommitFor: async (userId, projectId, revisionId) => (await github.binding(userId, projectId))?.commits.find((commit) => commit.revisionId === revisionId)?.commitSha ?? null,
     remoteQa: async ({ userId, projectId, revision, baseUrl }): Promise<RemoteVerification> => {

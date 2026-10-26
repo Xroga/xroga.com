@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 
 import type { ProjectFile } from '../../ai/patches.js';
 import { buildSourceArchive, EXPORT_MANIFEST_PATH, readZip } from '../export/archive.js';
+import { databaseArtifacts } from '../data/schema.js';
 import { recoverInterrupted } from '../operations.js';
 import type { Phase2Store } from '../phase2Store.js';
 import type { BuilderService } from '../service.js';
@@ -117,7 +118,7 @@ export class GitHubExportService {
 
   /** The files that go to GitHub: exactly the verified export, minus the Xroga manifest. */
   filesFor(project: BuilderProject, revision: BuilderRevision): ProjectFile[] {
-    const archive = buildSourceArchive({ projectId: project.id, title: project.title, revision, starter: project.starter });
+    const archive = buildSourceArchive({ projectId: project.id, title: project.title, revision, starter: project.starter, extraFiles: databaseArtifacts(project.spec, revision.files) });
     const files = readZip(archive.buffer).filter((entry) => entry.path !== EXPORT_MANIFEST_PATH).map((entry) => ({ path: entry.path, content: entry.data.toString('utf8') }));
     if (!files.some((file) => file.path === '.gitignore') && files.some((file) => file.path === 'package.json')) {
       files.push({ path: '.gitignore', content: 'node_modules/\n.next/\ndist/\nbuild/\n.env\n.env.*\n!.env.example\n*.log\n.DS_Store\n' });
