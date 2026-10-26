@@ -15633,6 +15633,37 @@
           "marker": "export function createOciWorkloadFederation"
         }
       ]
+    },
+    {
+      "path": "backend/src/ai/fixedCostBudget.ts",
+      "sourceSha256": "a2a589cc9545d67ee0e23527de088e3fc03bdc0a5478bcb973d0ab0c0e0a15ea",
+      "callIds": [
+        "5c955beaccaaebb6f2a6",
+        "e186f6d94116b16aaed7",
+        "f5dd8a516db72cd3a8ec",
+        "bfe12cd9fe25130e6deb",
+        "b7ce8e6ac42bd509de51",
+        "9767f9c999f998f5254e",
+        "2d01f8c955c4e88b2ba1",
+        "18d298564ce26ff6b06c"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The only production consumer is composioInstant.ts, which runs only after a current single-use authority permit bound to the verified user, the exact tool and the exact arguments has been asserted. Every function takes the verified user id of that call and sends it as the owner to the existing fixed service-only reserve, settle and release routines. No request body, query or model output supplies an owner, reservation id, route or amount: the route is the constant composio:instant, the amount is the configured per-call ceiling, and the reservation id comes back from the reservation call and is validated against the owner.",
+      "reason": "These sites reuse the unchanged reserve_xroga_provider_budget, settle_xroga_provider_budget, release_xroga_provider_budget and ensure_xroga_free_cycle routines that providerBudget.ts already uses, with a free-text route and zero token counts. Reservation validates the returned owner, idempotency key, route, purpose, status, amount and price version; settlement validates owner, reservation id, route, price version, reserved and settled amounts and call count, and refuses an amount above the reservation. Release matches the reservation id and owner in the routine. Verified against an in-memory ledger that mirrors the entitlement ceiling; the durable path is NOT exercised against a real database in this change and the paid Instant feature is disabled by default with no public route. No schema change.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/composioPlatform.test.ts",
+          "marker": "reserves the ceiling in the budget ledger, runs on the Instant account, and settles to the exact reported charge"
+        },
+        {
+          "path": "backend/src/services/integrations/composioPlatform.test.ts",
+          "marker": "a charge above the ceiling holds the reservation and pauses Instant"
+        },
+        {
+          "path": "backend/src/services/integrations/composioPlatform.test.ts",
+          "marker": "one user cannot spend another user"
+        }
+      ]
     }
   ]
 }

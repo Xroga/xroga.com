@@ -11,7 +11,7 @@
   "scope": "Audit of the existing Composio integration against the official v3.1 documentation, and an opt-in, default-off extension: explicit instant:false on every session with verification and repair of stored sessions, firewall hooks, multi-account with ownership proof, a gated remote workbench, and budget-ledger-bound paid Instant execution. No Composio call was made; nothing is enabled in production.",
   "changedFiles": [
     "backend/.env.example",
-    "backend/src/ai/providerBudget.ts",
+    "backend/src/ai/fixedCostBudget.ts",
     "backend/src/e2e/xrogaGoldenJourneys.test.ts",
     "backend/src/routes/businessAutomations.ts",
     "backend/src/routes/composioAccountsRoutes.test.ts",
@@ -29,7 +29,8 @@
     "backend/src/services/integrations/composioTriggers.test.ts",
     "backend/src/services/integrations/composioWorkbench.ts",
     "docs/infra/composio/COMPOSIO-PLATFORM-STATUS.md",
-    "docs/xroga/missions/composio-platform-expansion-20261026.json"
+    "docs/xroga/missions/composio-platform-expansion-20261026.json",
+    "docs/xroga/security/caller-reviews.json"
   ],
   "decisions": {
     "keep": [
@@ -40,7 +41,7 @@
     ],
     "extend": [
       "Session creation and verification gain a pure policy module (instant, hooks, workbench, multi-account)",
-      "Provider budget ledger gains fixed-cost reservation functions that reuse the same reservation RPCs",
+      "New fixedCostBudget.ts module reuses the existing reserve, settle and release routines for per-call spend; providerBudget.ts is unchanged",
       "Account selection for reads, actions and triggers when multi-account is enabled"
     ],
     "replace": [
