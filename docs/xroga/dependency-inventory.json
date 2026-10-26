@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "89ac512a84ce61a2ff86d10107cf521c38e54e71",
+  "source_sha": "60cefca2ddc25fa3cc789e629083dbebc77d4188",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -7248,6 +7248,7 @@
         "backend/src/routes/businessAutomationWebhook.ts",
         "backend/src/runtime/readiness.ts",
         "backend/src/services/integrations/businessAutomations.ts",
+        "backend/src/services/integrations/composioCallback.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/storage/databaseTls.ts",
         "backend/src/storage/migration/cliContext.ts",
@@ -7368,6 +7369,7 @@
         "XROGA_BROWSER_PLANNER_MODEL",
         "XROGA_BROWSER_WORKER_URL",
         "XROGA_CIRCUIT_FAILURE_THRESHOLD",
+        "XROGA_COMPOSIO_CALLBACK_ORIGINS",
         "XROGA_CREDENTIAL_KMS_PROVIDER",
         "XROGA_DEEPSEEK_V4_FLASH_MAX_INPUT_USD_PER_1M",
         "XROGA_DEEPSEEK_V4_FLASH_MAX_OUTPUT_USD_PER_1M",
@@ -7443,6 +7445,7 @@
         "backend/src/routes/businessAutomationWebhook.ts",
         "backend/src/runtime/readiness.ts",
         "backend/src/services/integrations/businessAutomations.ts",
+        "backend/src/services/integrations/composioCallback.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/storage/databaseTls.ts",
         "backend/src/storage/migration/cliContext.ts",
@@ -8545,8 +8548,7 @@
         "backend/src/index.ts",
         "backend/src/lib/platformReady.ts",
         "backend/src/routes/github.ts",
-        "backend/src/routes/integrations.ts",
-        "backend/src/routes/phase1.ts",
+        "backend/src/services/integrations/composioCallback.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/services/publish/chromeWebStore.ts",
@@ -12197,6 +12199,25 @@
       ]
     },
     {
+      "name": "XROGA_COMPOSIO_CALLBACK_ORIGINS",
+      "consuming_sources": [
+        "backend/src/services/integrations/composioCallback.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_CREDENTIAL_KMS_PROVIDER",
       "consuming_sources": [
         "backend/src/runtime/readiness.ts"
@@ -14840,7 +14861,7 @@
     },
     {
       "path": "backend/src/routes/integrations.ts",
-      "sha256": "eeefed3d188f0880eac39d78ab305ca6d8eec94dd0c43cc7d39322c0835c1b7e"
+      "sha256": "40f09c5f1d9ff348d3ffced70187ee671bebf1c48da1c32184ae0057688a34ef"
     },
     {
       "path": "backend/src/routes/marketplace.ts",
@@ -14864,7 +14885,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sha256": "7b06621b69ac97ba6f1b6fe56dec83a759dc0f941abfc8cf518c4a74daa7f08e"
+      "sha256": "73890ce0879e6b51fd0825e6cb5937ef9988d6850646aae1b29cf859d53595ba"
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
@@ -15272,7 +15293,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "sha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
       "path": "backend/src/services/integrations/businessConnectionIntent.ts",
@@ -15288,15 +15309,23 @@
     },
     {
       "path": "backend/src/services/integrations/businessWorkflow.ts",
-      "sha256": "a1aeb614b3b6e3214b2eec5994f61c42d3cbd75e121a7327898eec1237629a86"
+      "sha256": "7703e4127aeea6f3ce6a734cb71e07b78861800faa9ebcce18570bcf9accfb5b"
+    },
+    {
+      "path": "backend/src/services/integrations/businessWorkflowPlanner.ts",
+      "sha256": "a6c29a73471ae9b63bf6b1afe13d7f48fe156f3eea038a55d0c7ecad36191ce6"
     },
     {
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "sha256": "076c0205cc129e2a5ff83f0bc57d21bb4faf8a18e5769223f07943115b22d30d"
+      "sha256": "c38c71d00578d48ec5ab8d726bc59297d24eeb7b015bd1e2a0821fd22f32aafe"
+    },
+    {
+      "path": "backend/src/services/integrations/composioCallback.ts",
+      "sha256": "685ec90e2a0781a457ca53bf3ab502aa858c6096ab8a9b54347be031e3768d1f"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "ea60f949492f5f5b5c56aed798b88e07e2f5d4a7ae19b16572d610fd868bb27d"
+      "sha256": "3687d96b59fa19c6f6fe7170d501bb1283859cc4c2af40b9126d39b62143e510"
     },
     {
       "path": "backend/src/services/integrations/composioNamespace.ts",
@@ -16172,7 +16201,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/integrations/connect/callback/page.tsx",
-      "sha256": "76b8d7a5fded5989082e85355fe30362e13635acdfad7796c07f3cb978c056fa"
+      "sha256": "e99b80b3ea8d0e06b7c0818ccfbd5bde201839e418471a98521be5d7881bc38e"
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/integrations/github/callback/page.tsx",
@@ -16248,7 +16277,7 @@
     },
     {
       "path": "frontend/src/app/(shell)/dashboard/workflows/[id]/page.tsx",
-      "sha256": "9436bc0dc5393a6ae1458e8b44d5e703e58f1d8e34c41084626e8815879f55c4"
+      "sha256": "464359c21cb118abec1126f9013de08119b86ac1a8616c6266f84998c95126d8"
     },
     {
       "path": "frontend/src/app/(shell)/error.tsx",
@@ -21384,20 +21413,6 @@
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/routes/integrations.ts",
-      "line": 2023,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/routes/phase1.ts",
-      "line": 175,
-      "credentialsInUrl": false
-    },
-    {
       "hostname": "api.supabase.com",
       "protocol": "https:",
       "path": "backend/src/routes/supabaseOAuth.ts",
@@ -22277,6 +22292,13 @@
       "protocol": "https:",
       "path": "backend/src/services/billingRoutes.local.integration.ts",
       "line": 40,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/composioCallback.ts",
+      "line": 10,
       "credentialsInUrl": false
     },
     {
@@ -28645,6 +28667,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/routes/phase1.ts",
+      "line": 785,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
       "line": 104,
       "scope": "FUNCTION_LOCAL",
@@ -28827,6 +28856,13 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/services/integrations/businessAutomations.ts",
+      "line": 44,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/services/integrations/businessConnectionIntent.ts",
       "line": 9,
       "scope": "FUNCTION_LOCAL",
@@ -28878,6 +28914,13 @@
     {
       "path": "backend/src/services/integrations/businessRead.ts",
       "line": 1023,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/composioCallback.ts",
+      "line": 13,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
