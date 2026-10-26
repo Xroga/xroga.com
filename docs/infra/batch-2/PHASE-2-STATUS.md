@@ -56,6 +56,7 @@ Run from the repository root with `node node_modules/tsx/dist/cli.mjs --test $(f
 | Area | Tests |
 |---|---|
 | QA plan, runner, evidence | `qa/qa.test.ts` (13), `qa/qa.browser.integration.test.ts` (6, real Chromium) |
+| QA service environment: no browser is not-run, unavailable engine stops repair, one QA run per project | `qa/qaService.test.ts` (4) |
 | Repair lifecycle | `qa/repair.integration.test.ts` (9, real Chromium and server) |
 | Iteration, restore, diff, intent | `iteration.test.ts` (18) |
 | Export | `export/archive.test.ts` (13) |

@@ -31,6 +31,7 @@
     "backend/src/builder/qa/playwrightQaDriver.ts",
     "backend/src/builder/qa/qa.browser.integration.test.ts",
     "backend/src/builder/qa/qa.test.ts",
+    "backend/src/builder/qa/qaService.test.ts",
     "backend/src/builder/qa/qaService.ts",
     "backend/src/builder/qa/repair.integration.test.ts",
     "backend/src/builder/qa/repair.ts",
