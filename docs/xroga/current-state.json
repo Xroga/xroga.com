@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-openrouter-only",
-    "sha": "ef2bd27b9064fcc6b8f85b57ee9c05a1746e85ff",
-    "sourceTimestampUtc": "2026-10-26T16:15:31+05:00",
-    "auditStartedUtc": "2026-10-26T15:37:03.457Z",
+    "sha": "56f787ddcd700f0cac1eda2a39ecd7db52e0cfc4",
+    "sourceTimestampUtc": "2026-10-26T20:57:34+05:00",
+    "auditStartedUtc": "2026-10-26T16:01:35.047Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -3706,7 +3706,7 @@
       "id": "surface:7c58cd6e4502f716f05c",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/intelligentRouter.ts",
-      "sha256": "dee2c2e8d12c56589227a8e73ce5a131d294e003bc6fb1d6cb11b70fb01b3a7c",
+      "sha256": "d9876af2bda837d8353247d6c1b63653fe6f81a0e35334a14eb431b31bd2c200",
       "symbols": [
         "CLASS_TO_CAPABILITY",
         "ComplexityAssessment",
@@ -23588,6 +23588,7 @@
       ],
       "callers": [
         "backend/src/routes/phase1.ts:62",
+        "backend/src/services/integrations/businessAccounting.failure.test.ts:7",
         "backend/src/services/integrations/businessReadChoice.test.ts:4",
         "backend/src/services/integrations/businessWorkflowRuns.ts:5"
       ],
@@ -23605,6 +23606,7 @@
         "backend/src/services/integrations/businessRead.ts#boundedEvidence"
       ],
       "testCoverage": [
+        "backend/src/services/integrations/businessAccounting.failure.test.ts",
         "backend/src/services/integrations/businessReadChoice.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -32025,7 +32027,7 @@
       "id": "surface:993b88dc6689b6abbae9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/coherentImplementation.ts",
-      "sha256": "3b856fb21bf9958d230998f9b2a268503faac48f1528594ad908ea84af55d701",
+      "sha256": "e939ce03c3e29f6b06c97cb08c0da8dbf274b2352f0f2706176b3c841b5087b5",
       "symbols": [
         "BUNDLE_SYSTEM",
         "BuilderModelCallTelemetry",
@@ -32050,7 +32052,7 @@
         "allowed",
         "arrayStart",
         "attempted",
-        "attemptedProviders",
+        "attemptedModels",
         "bodies",
         "byPath",
         "callWithTelemetry",
@@ -32081,6 +32083,7 @@
         "expected",
         "failure",
         "failures",
+        "fallbackCost",
         "file",
         "files",
         "first",
@@ -32109,6 +32112,7 @@
         "metadata",
         "metadataStart",
         "missingPaths",
+        "model",
         "nested",
         "normalizeContentRecords",
         "normalizeManifestRecords",
@@ -32198,7 +32202,8 @@
       "tenantBoundary": [],
       "approvalBoundary": [],
       "costBoundary": [
-        "backend/src/synthesis/coherentImplementation.ts#costUsdForTokens"
+        "backend/src/synthesis/coherentImplementation.ts#costUsdForTokens",
+        "backend/src/synthesis/coherentImplementation.ts#fallbackCost"
       ],
       "evidenceBoundary": [],
       "testCoverage": [
