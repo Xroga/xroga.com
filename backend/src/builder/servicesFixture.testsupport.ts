@@ -38,7 +38,7 @@ const okPage = (): QaPage => {
   screenshot: async () => Buffer.from('x'), drainDiagnostics: () => ({ consoleErrors: [], pageErrors: [], failedRequests: [] }), close: async () => {},
   };
 };
-const okDriver: QaDriver = { name: 'fake', browserVersion: async () => 'fake-1', open: async () => okPage(), close: async () => {} };
+export const okDriver: QaDriver = { name: 'fake', browserVersion: async () => 'fake-1', open: async () => okPage(), close: async () => {} };
 
 export function makeServices(users: ReadonlyArray<{ id: string; github?: { token: string; login: string; id: number }; supabase?: { token: string; projects: Array<{ ref: string; name: string }> }; vercel?: { token: string; id: string; username: string } }>, options: { runBuild?: BuildRunner } = {}): ServicesFixture {
   const store = new InMemoryBuilderStore();

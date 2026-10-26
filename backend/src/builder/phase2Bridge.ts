@@ -18,6 +18,7 @@ import { createRestVercelPort } from './hosting/restPort.js';
 import { deliveryByRevision } from './delivery.js';
 import { SupabasePhase2Store } from './phase2Store.js';
 import { openPlaywrightQaDriver } from './qa/playwrightQaDriver.js';
+import { remoteQaFromEnv } from './qa/remoteQa.js';
 import { QaService, type QaTarget, type RepairRunner } from './qa/qaService.js';
 import { BuilderService } from './service.js';
 import { hashSnapshot } from './snapshot.js';
@@ -148,9 +149,11 @@ export function phase2ServicesFor(tenant: TenantContext): Phase2Services {
   const store = new SupabaseBuilderStore(context);
   const phase2 = new SupabasePhase2Store(context, store);
   const builder = new BuilderService({ store, runBuild: canonicalBuildRunner, preview: canonicalPreviewPort });
+  const remote = remoteQaFromEnv();
   const qa = new QaService({
     builder, store, phase2, target: canonicalQaTarget(), repair: repairRunnerFor(context, builder), budgetAllows: (userId) => budgetAllowsRepair(userId),
     openDriver: (baseUrl) => openQaDriver(baseUrl),
+    ...(remote ? { remote } : {}),
   });
   const preview: PreviewControl = {
     async restart(userId, projectId) {

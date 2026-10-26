@@ -17,6 +17,21 @@ import { useBuilderProjectStore } from '@/store/useBuilderProjectStore';
  * - Any failure (not signed in, unsupported product, builder not enabled) falls back safely;
  *   nothing is claimed that did not happen.
  */
+export async function syncBuilderConversation(conversationId: string): Promise<void> {
+  if (!BUILDER_ENABLED) return;
+  const store = useBuilderProjectStore.getState();
+  if (store.conversationId === conversationId) return;
+  // Unbind first so the previous chat's project is never shown, or built into, while the lookup is in flight.
+  store.bindConversation(conversationId, null);
+  try {
+    const { project } = await builderApi.forConversation(conversationId);
+    // Ignore a late answer for a chat the user has already left.
+    if (useBuilderProjectStore.getState().conversationId === conversationId) useBuilderProjectStore.getState().bindConversation(conversationId, project?.id ?? null);
+  } catch {
+    // Not found or offline: the chat simply has no project yet. Nothing is claimed.
+  }
+}
+
 export async function resolveBuilderProject(input: {
   prompt: string;
   isNewProduct: boolean;
@@ -25,6 +40,8 @@ export async function resolveBuilderProject(input: {
   conversationId?: string | null;
 }): Promise<string | undefined> {
   if (!BUILDER_ENABLED || input.hasRepositoryTarget) return undefined;
+  // The project belongs to the chat it was started in: a different chat starts with no project, and a reopened chat finds its own.
+  if (input.conversationId) await syncBuilderConversation(input.conversationId);
   const store = useBuilderProjectStore.getState();
   let createNew = input.isNewProduct;
   if (store.projectId && !input.isNewProduct) {

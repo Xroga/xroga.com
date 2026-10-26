@@ -1,4 +1,5 @@
 import { requireTenantContext, type TenantContext } from '../security/tenantContext.js';
+import { requestRunCancellation } from '../ai/runStore.js';
 import { canonicalBuildRunner, canonicalPreviewPort } from './canonical.js';
 import { phase2ServicesFor } from './phase2Bridge.js';
 import { BuilderService, type BuilderRunBinding } from './service.js';
@@ -12,7 +13,7 @@ import { BuilderError } from './types.js';
  */
 export function builderServiceFor(tenant: TenantContext): BuilderService {
   const context = requireTenantContext(tenant);
-  return new BuilderService({ store: new SupabaseBuilderStore(context), runBuild: canonicalBuildRunner, preview: canonicalPreviewPort });
+  return new BuilderService({ store: new SupabaseBuilderStore(context), runBuild: canonicalBuildRunner, preview: canonicalPreviewPort, cancelEngineRun: async (userId, runId) => { await requestRunCancellation(runId, userId); } });
 }
 
 export async function builderProjectExists(tenant: TenantContext, projectId: string): Promise<boolean> {
@@ -52,13 +53,14 @@ export async function closeBuilderRun(tenant: TenantContext, run: BuilderRunBind
   const context = requireTenantContext(tenant);
   const store = new SupabaseBuilderStore(context);
   try {
+    // Every write below is guarded by the run slot: a run the user already cancelled, or a newer build, keeps its own state.
     if (result.cancelled) {
-      await store.setState(context.userId, run.projectId, 'cancelled', 'The build was cancelled.', null);
+      await store.setStateForRun(context.userId, run.projectId, run.runId, 'cancelled', 'The build was cancelled.', null);
       return;
     }
     const saved = run.saved();
     if (!saved && !run.noChange()) {
-      await store.setState(context.userId, run.projectId, result.blocked ? 'blocked' : 'failed', (result.reason ?? 'The build did not produce a saved revision.').slice(0, 300), null);
+      await store.setStateForRun(context.userId, run.projectId, run.runId, result.blocked ? 'blocked' : 'failed', (result.reason ?? 'The build did not produce a saved revision.').slice(0, 300), null);
       return;
     }
     await builderServiceFor(context).completeRun(

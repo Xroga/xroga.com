@@ -7,6 +7,7 @@ import { BuilderError, type BuilderProject, type BuilderRevision, type Verificat
 import { deriveQaPlan } from './plan.js';
 import { buildRepairPacket, DEFAULT_MAX_REPAIR_ATTEMPTS, runRepairLoop, type RepairLoopResult, type RepairPacket, type RepairPorts } from './repair.js';
 import { passedCheckIds, runQa, type QaEnvironment } from './runner.js';
+import type { RemoteQaExecutor } from './remoteQa.js';
 import type { QaDriver, QaPlan, QaReport } from './types.js';
 
 /** Where the application for a revision is running, or null when it cannot be (no runtime). */
@@ -32,6 +33,11 @@ export interface QaServiceDeps {
   readonly phase2: Phase2Store;
   readonly target: QaTarget;
   readonly openDriver: (baseUrl: string) => Promise<QaDriver>;
+  /**
+   * The isolated browser host. When present, the plan is executed there and the in-process driver is never used, so generated pages
+   * never run inside this process. Its answers are sealed (recomputed from the plan) before they are recorded.
+   */
+  readonly remote?: RemoteQaExecutor;
   readonly repair: RepairRunner;
   /** Whether the project's budget allows another model-backed repair attempt. */
   readonly budgetAllows: (userId: string, projectId: string) => Promise<boolean>;
@@ -98,6 +104,15 @@ export class QaService {
   }
 
   private async executeAgainst(target: { baseUrl: string; environment: QaEnvironment }, plan: QaPlan, options: { only?: ReadonlySet<string>; previouslyPassed?: ReadonlySet<string>; signal?: AbortSignal }): Promise<QaReport> {
+    if (this.deps.remote) {
+      try {
+        return await this.deps.remote.run({ baseUrl: target.baseUrl, plan, environment: target.environment, only: options.only, previouslyPassed: options.previouslyPassed, signal: options.signal });
+      } catch (error) {
+        // The isolated host is down, unreachable or refused: not run, never a pass and never a server error. Anything else is a bug.
+        if ((error as { code?: string }).code !== 'BROWSER_UNAVAILABLE') throw error;
+        return this.notRun(plan, error instanceof Error ? error.message : 'The isolated browser host is not available.');
+      }
+    }
     let driver: QaDriver;
     try {
       driver = await this.deps.openDriver(target.baseUrl);

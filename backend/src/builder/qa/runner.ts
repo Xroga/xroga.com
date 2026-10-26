@@ -184,7 +184,7 @@ async function runCheck(check: QaCheck, driver: QaDriver, budget: { screenshots:
   }
 }
 
-function summarize(checks: readonly QaCheckResult[]): { status: QaStatus; reason: string } {
+export function summarizeChecks(checks: readonly QaCheckResult[]): { status: QaStatus; reason: string } {
   const executed = checks.filter((check) => check.executed);
   if (executed.length === 0) return { status: 'pending_runtime', reason: 'No check was executed: there was no running application to test.' };
   const failed = checks.filter((check) => check.status === 'failed');
@@ -214,7 +214,7 @@ export async function runQa(input: RunQaInput): Promise<QaReport> {
   } finally {
     await input.driver.close().catch(() => undefined);
   }
-  const summary = summarize(results);
+  const summary = summarizeChecks(results);
   return {
     version: 1,
     status: summary.status,

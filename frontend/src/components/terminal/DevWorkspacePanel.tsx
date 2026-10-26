@@ -263,13 +263,15 @@ export function DevWorkspacePanel({
   const setActiveTab = useProjectWorkspaceStore((s) => s.setActiveTab);
   const builderProjectId = useBuilderProjectStore((s) => s.projectId);
   const setBuilderProjectId = useBuilderProjectStore((s) => s.setProjectId);
-  // Reopening the workspace (another device, cleared storage, another tab) restores the most recent project from the server.
+  const boundConversation = useBuilderProjectStore((s) => s.conversationId);
+  // With no chat bound yet (another device, cleared storage, another tab) the most recent project is restored from the server.
+  // Once a chat is bound, its project is the one the chat is building: a new chat has none, and must not inherit another chat's.
   useEffect(() => {
-    if (!BUILDER_ENABLED || builderProjectId) return;
+    if (!BUILDER_ENABLED || builderProjectId || boundConversation) return;
     let live = true;
     builderApi.list().then(({ projects }) => { if (live && projects.length > 0) setBuilderProjectId(projects[0].id); }).catch(() => undefined);
     return () => { live = false; };
-  }, [builderProjectId, setBuilderProjectId]);
+  }, [builderProjectId, boundConversation, setBuilderProjectId]);
   const tabs = BUILDER_ENABLED && builderProjectId ? [PROJECT_TAB, ...TABS] : TABS;
   const projectFiles = useProjectWorkspaceStore((s) => s.projectFiles);
   const openFilePath = useProjectWorkspaceStore((s) => s.openFilePath);

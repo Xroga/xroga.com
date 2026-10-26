@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { AlertTriangle, CheckCircle2, CircleDashed, Loader2, RefreshCw, XCircle } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, CircleDashed, Loader2, RefreshCw, Square, XCircle } from 'lucide-react';
 
 import {
   BUILDER_STATE_LABEL,
@@ -60,6 +60,7 @@ export function BuilderProjectPanel({ projectId, onOpenPreview }: { projectId: s
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<PanelTab>('overview');
   const [deliveredCount, setDeliveredCount] = useState(0);
+  const [stopping, setStopping] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -90,6 +91,20 @@ export function BuilderProjectPanel({ projectId, onOpenPreview }: { projectId: s
     const timer = window.setInterval(() => void load(), active ? 3_000 : 30_000);
     return () => window.clearInterval(timer);
   }, [load, active]);
+
+  const stop = async () => {
+    setStopping(true);
+    try {
+      await builderApi.cancel(projectId);
+      setError(null);
+    } catch (caught) {
+      // Not saved: the build is still running and Stop can be pressed again. Never show "stopped" for a stop that was not recorded.
+      setError(caught instanceof BuilderApiError && caught.message ? caught.message : 'Stopping the build could not be saved. Try again.');
+    } finally {
+      setStopping(false);
+      void load();
+    }
+  };
 
   if (loading && !state) {
     return (
@@ -125,6 +140,12 @@ export function BuilderProjectPanel({ projectId, onOpenPreview }: { projectId: s
         <span className={cn('shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-medium', STATE_TONE[project.state] ?? 'text-[var(--foreground)] border-[var(--card-border)]')}>
           {BUILDER_STATE_LABEL[project.state]}
         </span>
+        {active ? (
+          <button type="button" onClick={() => void stop()} disabled={stopping} className="flex shrink-0 items-center gap-1 rounded-full border border-red-400/40 px-2 py-0.5 text-[11px] font-medium text-red-400 disabled:opacity-60" aria-label="Stop the build" data-testid="builder-stop">
+            {stopping ? <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" /> : <Square className="h-3 w-3" aria-hidden="true" />}
+            Stop
+          </button>
+        ) : null}
         <button type="button" onClick={() => void load()} className="p-1 rounded text-[var(--muted)] hover:text-[var(--foreground)]" aria-label="Refresh project status">
           <RefreshCw className="h-3.5 w-3.5" />
         </button>
