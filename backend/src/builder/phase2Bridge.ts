@@ -36,6 +36,23 @@ import { BuilderError } from './types.js';
  * and never a pass.
  */
 
+/**
+ * Browser QA drives a real Chromium against GENERATED code. In production that must not happen inside the customer-facing API
+ * container: generated pages are untrusted. So outside development and tests the in-process browser is off unless an operator
+ * deliberately enables it for a deployment that is isolated for that purpose (a dedicated worker), and QA is then honestly
+ * reported as not run. XROGA_BUILDER_INPROCESS_QA=1 is that deliberate switch.
+ */
+export function inProcessQaAllowed(env: NodeJS.ProcessEnv = process.env): boolean {
+  return env.NODE_ENV !== 'production' || env.XROGA_BUILDER_INPROCESS_QA === '1';
+}
+
+export function openQaDriver(baseUrl: string, env: NodeJS.ProcessEnv = process.env, open: typeof openPlaywrightQaDriver = openPlaywrightQaDriver) {
+  if (!inProcessQaAllowed(env)) {
+    return Promise.reject(Object.assign(new Error('Browser tests are not enabled in this environment: they need an isolated browser host, so nothing was tested.'), { code: 'BROWSER_UNAVAILABLE' }));
+  }
+  return open({ baseUrl });
+}
+
 /** Finds, or restarts, the running application for a revision. Null when there is no runtime to test. */
 export function canonicalQaTarget(): QaTarget {
   return {
@@ -133,7 +150,7 @@ export function phase2ServicesFor(tenant: TenantContext): Phase2Services {
   const builder = new BuilderService({ store, runBuild: canonicalBuildRunner, preview: canonicalPreviewPort });
   const qa = new QaService({
     builder, store, phase2, target: canonicalQaTarget(), repair: repairRunnerFor(context, builder), budgetAllows: (userId) => budgetAllowsRepair(userId),
-    openDriver: (baseUrl) => openPlaywrightQaDriver({ baseUrl }),
+    openDriver: (baseUrl) => openQaDriver(baseUrl),
   });
   const preview: PreviewControl = {
     async restart(userId, projectId) {

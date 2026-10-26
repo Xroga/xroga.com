@@ -78,3 +78,16 @@ describe('audit: verification is earned by a passed browser test, and results ne
     assert.equal((await f.services.qa.latest(ALICE, project.id))?.verificationId, local.summary.verificationId);
   });
 });
+
+describe('audit: untrusted generated pages are not driven inside the production API container unless an operator opts in', () => {
+  it('is on in development and tests, off in production unless XROGA_BUILDER_INPROCESS_QA=1, and off means "not run"', async () => {
+    const { inProcessQaAllowed, openQaDriver } = await import('./phase2Bridge.js');
+    assert.equal(inProcessQaAllowed({ NODE_ENV: 'test' } as NodeJS.ProcessEnv), true);
+    assert.equal(inProcessQaAllowed({ NODE_ENV: 'development' } as NodeJS.ProcessEnv), true);
+    assert.equal(inProcessQaAllowed({ NODE_ENV: 'production' } as NodeJS.ProcessEnv), false);
+    assert.equal(inProcessQaAllowed({ NODE_ENV: 'production', XROGA_BUILDER_INPROCESS_QA: '1' } as NodeJS.ProcessEnv), true);
+    let opened = false;
+    await assert.rejects(openQaDriver('http://127.0.0.1:1', { NODE_ENV: 'production' } as NodeJS.ProcessEnv, (async () => { opened = true; return {} as never; }) as never), (error: { code?: string }) => error.code === 'BROWSER_UNAVAILABLE');
+    assert.equal(opened, false, 'no browser was launched');
+  });
+});
