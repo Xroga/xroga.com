@@ -52,6 +52,39 @@ test('actual OpenAI-compatible request pins the primary, then only the approved 
   } finally { resetModelRuntimeHealth(); }
 });
 
+test('GLM Flash compact requests preserve mandatory reasoning and use only approved providers', async () => {
+  const flashModel = 'z-ai/glm-5.3-flash';
+  const flashEndpoints = [
+    { status: 0, tag: 'relace', provider_name: 'Relace', model_id: flashModel,
+      context_length: 202_752, pricing: { prompt: '0.0000000413', completion: '0.0000000758', input_cache_read: '0.00000002' },
+      supported_parameters: ['temperature', 'reasoning', 'max_tokens', 'tools'] },
+    { status: 0, tag: 'open-inference/fp4', provider_name: 'OpenInference', model_id: flashModel,
+      context_length: 202_752, pricing: { prompt: '0.000000110038', completion: '0.00000001', input_cache_read: '0.00000002' },
+      supported_parameters: ['temperature', 'reasoning', 'max_tokens', 'tools', 'response_format'] },
+  ];
+  for (const failPrimary of [false, true]) {
+    const calls: Array<{ provider: { only: string[]; order: string[]; allow_fallbacks: boolean }; reasoning?: unknown }> = [];
+    const fetcher: typeof fetch = async (input, init) => {
+      if (requestUrl(input).endsWith('/endpoints')) return Response.json({ data: { endpoints: flashEndpoints } });
+      const body = JSON.parse(String(init?.body)) as typeof calls[number];
+      calls.push(body);
+      assert.equal(body.reasoning, undefined);
+      assert.deepEqual(body.provider.only, body.provider.order);
+      assert.equal(body.provider.allow_fallbacks, false);
+      if (failPrimary && calls.length === 1) return unavailable();
+      return Response.json({ id: 'flash-completion', object: 'chat.completion', created: 1,
+        model: flashModel, provider: failPrimary ? 'OpenInference' : 'Relace',
+        choices: [{ index: 0, message: { role: 'assistant', content: '15' }, finish_reason: 'stop' }],
+        usage: { prompt_tokens: 25, completion_tokens: 37, cost: 0.0000038 } });
+    };
+    const result = await chatCompletion('glm_5_3_flash', [{ role: 'user', content: 'What is 7 + 8?' }],
+      { maxTokens: 220, reasoningMode: 'none', credentialOverride: 'test-key', fetcher });
+    assert.equal(result.text, '15');
+    assert.deepEqual(calls.map(call => call.provider.only[0]), failPrimary
+      ? ['relace', 'open-inference/fp4'] : ['relace']);
+  }
+});
+
 test('both endpoint failures remain within the approved pair and model fallback is bounded', async () => {
   const calls: string[] = [];
   try {

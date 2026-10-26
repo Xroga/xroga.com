@@ -79,6 +79,13 @@ export function providerReasoningControls(
   return {};
 }
 
+function modelReasoningControls(modelId: ModelId, provider: string, mode?: ReasoningMode): Record<string, unknown> {
+  // Both approved GLM Flash endpoints require reasoning. Sending effort=none is a
+  // provider 400; omitting the override keeps the approved, price-capped route usable.
+  if (modelId === 'glm_5_3_flash' && mode === 'none') return {};
+  return providerReasoningControls(provider, mode);
+}
+
 export function requireNonEmptyModelText(text: string, modelId: ModelId): string {
   const normalized = text.trim();
   if (normalized) return normalized;
@@ -239,9 +246,6 @@ export async function chatCompletion(
     let lastError: unknown;
     for (const candidate of approved) {
       if (opts.signal?.aborted) throw opts.signal.reason ?? new Error('Request cancelled');
-      // This endpoint requires reasoning; requesting none is a known 400, so use the
-      // approved fallback instead of paying for a guaranteed rejected request.
-      if (opts.reasoningMode === 'none' && modelId === 'glm_5_3_flash' && candidate.tag === 'relace') continue;
       attempts.push(candidate.tag);
       try {
         const response = await withTemperatureFallback(opts.temperature ?? 0.4, (temperature) =>
@@ -250,7 +254,7 @@ export async function chatCompletion(
             messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
             max_tokens: opts.maxTokens ?? 8192,
             ...(temperature === undefined ? {} : { temperature }),
-            ...providerReasoningControls(endpoint.provider, opts.reasoningMode),
+            ...modelReasoningControls(modelId, endpoint.provider, opts.reasoningMode),
             ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
             provider: pinnedProviderRequest(candidate, modelId),
             usage: { include: true },
@@ -386,7 +390,6 @@ export async function chatCompletionStream(
     let lastError: unknown;
     for (const candidate of approved) {
       if (opts.signal?.aborted) throw opts.signal.reason ?? new Error('Request cancelled');
-      if (opts.reasoningMode === 'none' && modelId === 'glm_5_3_flash' && candidate.tag === 'relace') continue;
       attempts.push(candidate.tag);
       let text = '';
       let providerRequestId: string | undefined;
@@ -403,7 +406,7 @@ export async function chatCompletionStream(
             messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
             max_tokens: opts.maxTokens ?? 8192,
             ...(temperature === undefined ? {} : { temperature }),
-            ...providerReasoningControls(endpoint.provider, opts.reasoningMode),
+            ...modelReasoningControls(modelId, endpoint.provider, opts.reasoningMode),
             ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
             stream: true,
             stream_options: { include_usage: true },

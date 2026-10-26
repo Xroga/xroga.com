@@ -6,7 +6,7 @@ import { APPROVED_OPENROUTER_ENDPOINTS, modelPriceCaps, pinnedProviderRequest,
 
 const rows = [
   { status: 0, tag: 'baidu/fp8', provider_name: 'Baidu', model_id: 'deepseek/deepseek-v4.1-flash',
-    context_length: 1_048_576, pricing: { prompt: '0.0000000537', completion: '0.0000002148', input_cache_read: '0.000000001074' },
+    context_length: 1_048_576, pricing: { prompt: '0.0000003', completion: '0.0000012', input_cache_read: '0.000000006' },
     supported_parameters: ['tools', 'response_format', 'structured_outputs'] },
   { status: 0, tag: 'sail-research/fp4', provider_name: 'Sail Research', model_id: 'deepseek/deepseek-v4.1-flash',
     context_length: 1_048_576, pricing: { prompt: '0.00000009', completion: '0.00000025', input_cache_read: '0.000000006' },
@@ -18,7 +18,7 @@ const rows = [
     context_length: 1_048_576, pricing: { prompt: '0.000000110038', completion: '0.00000001', input_cache_read: '0.00000002242' },
     supported_parameters: ['tools', 'response_format'] },
   { status: 0, tag: 'wafer/us', provider_name: 'Wafer', model_id: 'z-ai/glm-5.3',
-    context_length: 1_048_576, pricing: { prompt: '0.000000079', completion: '0.0000014', input_cache_read: '0.000000078' },
+    context_length: 1_048_576, pricing: { prompt: '0.0000000699', completion: '0.0000014', input_cache_read: '0.0000000689' },
     supported_parameters: ['tools', 'response_format'] },
   { status: 0, tag: 'sail-research/us', provider_name: 'Sail Research', model_id: 'z-ai/glm-5.3',
     context_length: 1_048_576, pricing: { prompt: '0.0000005', completion: '0.000002', input_cache_read: '0.00000008' },
@@ -41,11 +41,11 @@ test('the only four configured models use OpenRouter with exact audited IDs', ()
   assert.equal(Object.keys(APPROVED_OPENROUTER_ENDPOINTS).length, 4);
 });
 
-test('live-verified cheaper Baidu DeepSeek endpoint is primary and Sail is the only fallback', async () => {
+test('Baidu DeepSeek is excluded above cap and Sail is the only eligible endpoint', async () => {
   const endpoints = await validatedOpenRouterEndpoints('deepseek_v4_flash', { fetcher: catalog });
-  assert.deepEqual(endpoints.map(endpoint => endpoint.tag), ['baidu/fp8', 'sail-research/fp4']);
+  assert.deepEqual(endpoints.map(endpoint => endpoint.tag), ['sail-research/fp4']);
   assert.deepEqual(pinnedProviderRequest(endpoints[0]!, 'deepseek_v4_flash'), {
-    order: ['baidu/fp8'], only: ['baidu/fp8'], allow_fallbacks: false,
+    order: ['sail-research/fp4'], only: ['sail-research/fp4'], allow_fallbacks: false,
     require_parameters: true, max_price: { prompt: 0.09, completion: 0.25 },
   });
 });
@@ -60,7 +60,7 @@ test('unavailable primary is not enabled from the live endpoint catalog', async 
 test('Wafer cheap endpoint is first; Sail Research is the only fallback', async () => {
   const endpoints = await validatedOpenRouterEndpoints('glm_5_3', { fetcher: catalog });
   assert.deepEqual(endpoints.map(endpoint => endpoint.tag), ['wafer/us', 'sail-research/us']);
-  assert.equal(endpoints[0]?.inputUsdPer1M, 0.079);
+  assert.equal(endpoints[0]?.inputUsdPer1M, 0.0699);
   assert.equal(endpoints[1]?.outputUsdPer1M, 2);
   assert.deepEqual(pinnedProviderRequest(endpoints[0]!, 'glm_5_3'), {
     order: ['wafer/us'], only: ['wafer/us'], allow_fallbacks: false,
