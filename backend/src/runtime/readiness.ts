@@ -10,7 +10,7 @@
  */
 import { resolveDatabaseUrls } from '../lib/postgresConnect.js';
 import { DatabaseTlsError, planDatabaseConnection, type DatabaseConnectionPlan, type TlsProbeResult } from '../storage/databaseTls.js';
-import { resolveStorageConfig } from '../storage/runtime.js';
+import { resolveStorageConfig, resolveStorageQuota } from '../storage/runtime.js';
 import { resolveDeploymentEnvironment } from './startupPolicy.js';
 
 export interface ReadinessProbe {
@@ -119,6 +119,16 @@ export function apiProbes(env: NodeJS.ProcessEnv, deps: ApiProbeDeps): Readiness
       }
       return null;
     },
+  });
+
+  // Reported, never blocking: unlimited storage is a legitimate decision, but it must be visible rather than assumed.
+  probes.push({
+    name: 'storage_quota', required: false,
+    run: async () => (driveEnabled && resolveStorageQuota(env).quota === null && !storage.problems.length ? 'storage_quota_not_enforced' : null),
+  });
+  probes.push({
+    name: 'storage_housekeeping', required: false,
+    run: async () => (driveEnabled && env.XROGA_STORAGE_RECONCILE_MODE !== 'cloud' ? 'storage_reconcile_not_scheduled' : null),
   });
 
   if (truthy(env.XROGA_REQUIRE_MANAGED_CUSTODY)) {
