@@ -4,11 +4,13 @@ import { universalCapabilityRegistry } from '../../capabilities/index.js';
 import {
   dispatchForGoal,
   enforceExplicitBusinessWorkflowControls,
+  enforceExplicitConnectedAppReadControls,
   enforceExplicitExecutionControls,
   enforceExplicitPublicResearchControls,
   enforceSingleExplicitBusinessActionControls,
   executeHedgedPlannerFallback,
   interpreterModelOrder,
+  isExplicitConnectedAppReadRequest,
   planExplicitProjectBuild,
   plannerContractCoherenceError,
   protocolSocialResponse,
@@ -50,6 +52,78 @@ function goal(overrides: Partial<GoalContract> = {}): GoalContract {
 }
 
 describe('semantic request dispatch', () => {
+  it('routes an explicit connected-account read away from generic answers and public search', () => {
+    const previousKey = process.env.COMPOSIO_API_KEY;
+    process.env.COMPOSIO_API_KEY = 'test-key';
+    try {
+      const message = 'Using my connected Gmail, count unread inbox messages. Do not change or send anything.';
+      assert.equal(isExplicitConnectedAppReadRequest(message), true);
+      const corrected = enforceExplicitConnectedAppReadControls({
+        goalContract: goal({ semanticIntent: 'INVESTIGATE', requiredCapabilities: ['research.public-web', 'conversation.respond'] }),
+        dispatch: 'chat', capabilityIds: ['research.public-web', 'conversation.respond'],
+        rationale: 'model chose public search', blockers: [], usage: {} as never,
+      }, message);
+      assert.deepEqual(corrected.capabilityIds, ['conversation.respond', 'business.read']);
+      assert.deepEqual(corrected.goalContract.requiredCapabilities, corrected.capabilityIds);
+      assert.equal(corrected.dispatch, 'chat');
+    } finally {
+      if (previousKey === undefined) delete process.env.COMPOSIO_API_KEY;
+      else process.env.COMPOSIO_API_KEY = previousKey;
+    }
+  });
+
+  it('does not read a connected account for an ordinary how-to question or negated read', () => {
+    for (const message of [
+      'Explain how to count unread messages in my connected Gmail.',
+      'Using my connected Gmail, do not read messages; explain the available actions.',
+    ]) assert.equal(isExplicitConnectedAppReadRequest(message), false);
+    assert.equal(isExplicitConnectedAppReadRequest(
+      'Using my connected Gmail, count unread inbox messages, but do not read message bodies.',
+    ), true);
+    assert.equal(isExplicitConnectedAppReadRequest(
+      'What is the unread message count in my connected Gmail?',
+    ), true);
+  });
+
+  it('preserves public research and a connected-app action as separate required capabilities', () => {
+    const previousKey = process.env.PARALLEL_API_KEY;
+    process.env.PARALLEL_API_KEY = 'test-key';
+    try {
+      const corrected = enforceExplicitPublicResearchControls({
+        goalContract: goal({ semanticIntent: 'EXTERNAL_ACTION', requiredCapabilities: ['business.action'] }),
+        dispatch: 'chat', capabilityIds: ['business.action'],
+        rationale: 'model dropped web search', blockers: [], usage: {} as never,
+      }, 'Search the web for current leads and email the results to me');
+      assert.deepEqual(corrected.capabilityIds, ['business.action', 'research.public-web']);
+      assert.equal(corrected.dispatch, 'chat');
+    } finally {
+      if (previousKey === undefined) delete process.env.PARALLEL_API_KEY;
+      else process.env.PARALLEL_API_KEY = previousKey;
+    }
+  });
+
+  it('preserves public research and an explicit connected-account read', () => {
+    const previous = { composio: process.env.COMPOSIO_API_KEY, parallel: process.env.PARALLEL_API_KEY };
+    process.env.COMPOSIO_API_KEY = 'test-key';
+    process.env.PARALLEL_API_KEY = 'test-key';
+    try {
+      const message = 'Search the web for Gmail label documentation, then count unread messages in my connected Gmail.';
+      const initial = {
+        goalContract: goal({ requiredCapabilities: ['conversation.respond'] }),
+        dispatch: 'chat' as const, capabilityIds: ['conversation.respond'],
+        rationale: 'model dropped both tools', blockers: [], usage: {} as never,
+      };
+      const corrected = enforceExplicitPublicResearchControls(enforceExplicitConnectedAppReadControls(initial, message), message);
+      assert.deepEqual(corrected.capabilityIds, ['conversation.respond', 'business.read', 'research.public-web']);
+      assert.equal(corrected.dispatch, 'chat');
+    } finally {
+      if (previous.composio === undefined) delete process.env.COMPOSIO_API_KEY;
+      else process.env.COMPOSIO_API_KEY = previous.composio;
+      if (previous.parallel === undefined) delete process.env.PARALLEL_API_KEY;
+      else process.env.PARALLEL_API_KEY = previous.parallel;
+    }
+  });
+
   it('does not treat a prohibition on reading other mail as a requested Gmail read', () => {
     const mixed = {
       goalContract: goal({ semanticIntent: 'MIXED', requiredCapabilities: ['business.read', 'business.action'] }),

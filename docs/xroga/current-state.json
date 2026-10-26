@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-universal-connected-apps",
-    "sha": "b499999a7e5d5fb1fa52e68ce55d0a0cc3e734b2",
-    "sourceTimestampUtc": "2026-10-26T23:13:13+05:00",
-    "auditStartedUtc": "2026-10-26T18:16:57.485Z",
+    "sha": "76aa9491c1c6e8e92df61c768c2585b50d4b63b9",
+    "sourceTimestampUtc": "2026-10-26T23:17:27+05:00",
+    "auditStartedUtc": "2026-10-26T18:46:04.434Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -10115,11 +10115,11 @@
         "backend/src/ai/black-hole/webIntelligence.test.ts:6",
         "backend/src/ai/pipeline.ts:154",
         "backend/src/ai/universal/goalContract.test.ts:3",
-        "backend/src/ai/universal/semanticRequestPlanner.test.ts:24",
+        "backend/src/ai/universal/semanticRequestPlanner.test.ts:26",
         "backend/src/ai/universal/semanticRequestPlanner.ts:37",
         "backend/src/ai/universal/universalContracts.test.ts:4",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:14",
-        "backend/src/routes/phase1.ts:40",
+        "backend/src/routes/phase1.ts:42",
         "backend/src/routes/phase1BusinessPreflight.ts:4",
         "backend/src/security/deliveryEvidenceRead.local.integration.ts:5",
         "backend/src/synthesis/canonicalFoundation.test.ts:4",
@@ -10423,7 +10423,7 @@
       ],
       "callers": [
         "backend/src/ai/universal/repositoryChatEvidence.test.ts:3",
-        "backend/src/routes/phase1.ts:54"
+        "backend/src/routes/phase1.ts:56"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -10474,7 +10474,7 @@
         "backend/src/ai/universal/runtimeFailure.test.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.ts:54",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:17",
-        "backend/src/routes/phase1.ts:49"
+        "backend/src/routes/phase1.ts:51"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -10564,7 +10564,7 @@
       ],
       "callers": [
         "backend/src/ai/universal/semanticHistory.test.ts:3",
-        "backend/src/routes/phase1.ts:58"
+        "backend/src/routes/phase1.ts:60"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -10588,7 +10588,7 @@
       "id": "surface:2caccad5e3c57290edad",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "2eb800214c0870ac92974ab1df42608b2cae7ec7bb0af2483086002cb5d1f642",
+      "sha256": "2d642367d5d34781d40b1d08e13a12074d88130004c26ee6b4d917ad2ecb71ea",
       "symbols": [
         "PlannerRouteOutcome",
         "SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS",
@@ -10624,11 +10624,13 @@
         "dispatchForGoal",
         "effectiveGoal",
         "enforceExplicitBusinessWorkflowControls",
+        "enforceExplicitConnectedAppReadControls",
         "enforceExplicitExecutionControls",
         "enforceExplicitPublicResearchControls",
         "enforceSingleExplicitBusinessActionControls",
         "error",
         "executeHedgedPlannerFallback",
+        "explicitPublicSearch",
         "explicitSearch",
         "failures",
         "fallback",
@@ -10648,12 +10650,14 @@
         "hedgeTimer",
         "interpretationInput",
         "interpreterModelOrder",
+        "isExplicitConnectedAppReadRequest",
         "lastStructuredFailure",
         "maximumOutputTokens",
         "messages",
         "models",
         "negatedSearch",
         "normalized",
+        "operations",
         "ordered",
         "other",
         "outcome",
@@ -10663,10 +10667,12 @@
         "planSemanticRequest",
         "planned",
         "plannerContractCoherenceError",
+        "prefix",
         "primary",
         "protocolSocialResponse",
         "readiness",
         "relayAbort",
+        "request",
         "requiredAuthorities",
         "requiredCapabilities",
         "researchReady",
@@ -19706,7 +19712,7 @@
       "id": "surface:ab58061e67cd2f877ad4",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "sha256": "73890ce0879e6b51fd0825e6cb5937ef9988d6850646aae1b29cf859d53595ba",
+      "sha256": "8d59d1a4f048c8856faa39485c190d13bf45d499a899c3193d742dedd4ee1ca9",
       "symbols": [
         "ToolUiConnectionCandidate",
         "ToolUiDescriptor",
@@ -23137,7 +23143,7 @@
       ],
       "callers": [
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:9",
-        "backend/src/routes/phase1.ts:66",
+        "backend/src/routes/phase1.ts:68",
         "backend/src/security/authority/digest.test.ts:5",
         "backend/src/security/businessAuthority.local.integration.ts:9",
         "backend/src/security/confirmationMetadata.local.integration.ts:7",
@@ -23262,7 +23268,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/phase1.ts:96",
+        "backend/src/routes/phase1.ts:98",
         "backend/src/security/businessAuthority.local.integration.ts:8",
         "backend/src/security/confirmationMetadata.local.integration.ts:6",
         "backend/src/services/integrations/businessAction.digest.test.ts:5",
@@ -23484,7 +23490,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/phase1.ts:78",
+        "backend/src/routes/phase1.ts:80",
         "backend/src/routes/phase1BusinessPreflight.ts:9"
       ],
       "reachable": true,
@@ -23600,7 +23606,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/phase1.ts:62",
+        "backend/src/routes/phase1.ts:64",
         "backend/src/services/integrations/businessAccounting.failure.test.ts:7",
         "backend/src/services/integrations/businessReadChoice.test.ts:4",
         "backend/src/services/integrations/businessWorkflowRuns.ts:5"
@@ -23667,7 +23673,7 @@
       ],
       "callers": [
         "backend/src/ai/universal/semanticRequestPlanner.ts:62",
-        "backend/src/routes/phase1.ts:71",
+        "backend/src/routes/phase1.ts:73",
         "backend/src/services/integrations/businessAutomations.ts:4",
         "backend/src/services/integrations/businessWorkflow.test.ts:4",
         "backend/src/services/integrations/businessWorkflowPlanner.ts:6",
@@ -23729,7 +23735,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/phase1.ts:75",
+        "backend/src/routes/phase1.ts:77",
         "backend/src/services/integrations/businessAutomations.ts:5",
         "backend/src/services/integrations/businessWorkflow.test.ts:5"
       ],
@@ -23815,7 +23821,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/phase1.ts:80",
+        "backend/src/routes/phase1.ts:82",
         "backend/src/services/integrations/businessAutomations.ts:6",
         "backend/src/services/integrations/businessWorkflowRuns.context.test.ts:4"
       ],
@@ -23882,7 +23888,7 @@
       ],
       "callers": [
         "backend/src/routes/integrations.ts:65",
-        "backend/src/routes/phase1.ts:76",
+        "backend/src/routes/phase1.ts:78",
         "backend/src/services/integrations/composioCallback.test.ts:3"
       ],
       "reachable": true,
@@ -24121,7 +24127,7 @@
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:13",
         "backend/src/routes/businessAutomations.ts:3",
         "backend/src/routes/integrations.ts:40",
-        "backend/src/routes/phase1.ts:90",
+        "backend/src/routes/phase1.ts:92",
         "backend/src/routes/phase1BusinessPreflight.ts:7",
         "backend/src/services/integrations/businessAction.ts:33",
         "backend/src/services/integrations/businessActionConfirmations.ts:11",
@@ -25412,7 +25418,7 @@
         "backend/src/routes/github.ts:558",
         "backend/src/routes/github.ts:626",
         "backend/src/routes/integrations.ts:36",
-        "backend/src/routes/phase1.ts:44",
+        "backend/src/routes/phase1.ts:46",
         "backend/src/routes/supabaseOAuth.ts:39",
         "backend/src/routes/vercel.ts:22",
         "backend/src/security/githubConsumer.local.integration.ts:9",
@@ -103805,9 +103811,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:624daa4ed3124ff6ec81",
+      "id": "registration:47565b5f7edf3678203f",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 382,
+      "line": 384,
       "receiver": "router",
       "method": "post",
       "path": "/plan",
@@ -103817,9 +103823,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:54d31e8279a13effdb1a",
+      "id": "registration:084b0f22087b589bc563",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 618,
+      "line": 623,
       "receiver": "router",
       "method": "post",
       "path": "/chat",
@@ -103829,9 +103835,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a681ea179c8a1051b591",
+      "id": "registration:9610b303e54ea511f969",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1702,
+      "line": 1715,
       "receiver": "router",
       "method": "post",
       "path": "/business-apps/:toolkit/connect-link",
@@ -103841,9 +103847,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b15247ecb9a876122a1e",
+      "id": "registration:6955bab4b291a8febe52",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1824,
+      "line": 1837,
       "receiver": "router",
       "method": "get",
       "path": "/business-workflows/:id",
@@ -103853,9 +103859,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b69d6e4606284e061de0",
+      "id": "registration:c3c510fbaf3ff3c81d40",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1834,
+      "line": 1847,
       "receiver": "router",
       "method": "post",
       "path": "/business-workflows/:id/resume",
@@ -103865,9 +103871,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b75d1f636eb31489c9ce",
+      "id": "registration:de0cee294f1ec0e8777c",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1845,
+      "line": 1858,
       "receiver": "router",
       "method": "post",
       "path": "/business-workflows/:id/cancel",
@@ -103877,9 +103883,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:993a573d571b85118069",
+      "id": "registration:8710ceb5704f721dde54",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1862,
+      "line": 1875,
       "receiver": "router",
       "method": "get",
       "path": "/business-actions/confirmations/:id",
@@ -103889,9 +103895,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:fa2581cd910751c14984",
+      "id": "registration:368411bc4f3e3871ebfd",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1928,
+      "line": 1941,
       "receiver": "router",
       "method": "post",
       "path": "/business-actions/confirmations/:id/confirm",
@@ -103901,9 +103907,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:fe4a3fd990ebc35451b9",
+      "id": "registration:bcd3a8a427c10aae0e62",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2019,
+      "line": 2032,
       "receiver": "router",
       "method": "post",
       "path": "/business-actions/confirmations/:id/cancel",
@@ -103913,9 +103919,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:8e29ec7ff60431db26d3",
+      "id": "registration:0795a08ef8f9305b4d7d",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2099,
+      "line": 2112,
       "receiver": "router",
       "method": "get",
       "path": "/usage",
@@ -103925,9 +103931,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:1d7304f74ae22b7398c2",
+      "id": "registration:e8857fc2773e19ca21a9",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2170,
+      "line": 2183,
       "receiver": "router",
       "method": "get",
       "path": "/economics",
@@ -103937,9 +103943,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:0c47c93b1be3ed92ccc8",
+      "id": "registration:4aff5c101278c4f6f726",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2229,
+      "line": 2242,
       "receiver": "router",
       "method": "post",
       "path": "/emergency-tokens",
@@ -103949,9 +103955,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:89e7804f2f3d4a4bf58f",
+      "id": "registration:b0fb4ac638a79a4ff873",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2254,
+      "line": 2267,
       "receiver": "router",
       "method": "get",
       "path": "/health",
@@ -103961,9 +103967,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:dd6ace3cf634b86ccd58",
+      "id": "registration:48999ae9819ec684a0e5",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2276,
+      "line": 2289,
       "receiver": "router",
       "method": "get",
       "path": "/quota-check",
@@ -105384,10 +105390,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a437ac6536e9dcca3e3a",
-      "registrationId": "registration:624daa4ed3124ff6ec81",
+      "id": "route:a45d1317e463c312a506",
+      "registrationId": "registration:47565b5f7edf3678203f",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 382,
+      "line": 384,
       "method": "POST",
       "path": "/api/phase1/plan",
       "mountChain": [
@@ -105401,10 +105407,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:432b4784c08b4bf1bf13",
-      "registrationId": "registration:54d31e8279a13effdb1a",
+      "id": "route:c1be39f33e06b900c5a7",
+      "registrationId": "registration:084b0f22087b589bc563",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 618,
+      "line": 623,
       "method": "POST",
       "path": "/api/phase1/chat",
       "mountChain": [
@@ -105418,10 +105424,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:0d1360f5729a03d73087",
-      "registrationId": "registration:a681ea179c8a1051b591",
+      "id": "route:1ec8b851b11ee5bb7a72",
+      "registrationId": "registration:9610b303e54ea511f969",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1702,
+      "line": 1715,
       "method": "POST",
       "path": "/api/phase1/business-apps/:toolkit/connect-link",
       "mountChain": [
@@ -105435,10 +105441,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:bd75764405569c039af2",
-      "registrationId": "registration:b15247ecb9a876122a1e",
+      "id": "route:529a57be2c2837823af5",
+      "registrationId": "registration:6955bab4b291a8febe52",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1824,
+      "line": 1837,
       "method": "GET",
       "path": "/api/phase1/business-workflows/:id",
       "mountChain": [
@@ -105452,10 +105458,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:1bcca597dfee3c4a93c9",
-      "registrationId": "registration:b69d6e4606284e061de0",
+      "id": "route:e50a7e0e305dfddb580e",
+      "registrationId": "registration:c3c510fbaf3ff3c81d40",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1834,
+      "line": 1847,
       "method": "POST",
       "path": "/api/phase1/business-workflows/:id/resume",
       "mountChain": [
@@ -105469,10 +105475,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:2247baa0b985d022dad1",
-      "registrationId": "registration:b75d1f636eb31489c9ce",
+      "id": "route:a83f081561d8df389f21",
+      "registrationId": "registration:de0cee294f1ec0e8777c",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1845,
+      "line": 1858,
       "method": "POST",
       "path": "/api/phase1/business-workflows/:id/cancel",
       "mountChain": [
@@ -105486,10 +105492,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:89e904b1d18774deab67",
-      "registrationId": "registration:993a573d571b85118069",
+      "id": "route:b1cff94c8c804796b3ca",
+      "registrationId": "registration:8710ceb5704f721dde54",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1862,
+      "line": 1875,
       "method": "GET",
       "path": "/api/phase1/business-actions/confirmations/:id",
       "mountChain": [
@@ -105503,10 +105509,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:4afcbeb6bfa451af29eb",
-      "registrationId": "registration:fa2581cd910751c14984",
+      "id": "route:6eea254ab32ec9efce48",
+      "registrationId": "registration:368411bc4f3e3871ebfd",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 1928,
+      "line": 1941,
       "method": "POST",
       "path": "/api/phase1/business-actions/confirmations/:id/confirm",
       "mountChain": [
@@ -105520,10 +105526,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:878d9646dd61d2883875",
-      "registrationId": "registration:fe4a3fd990ebc35451b9",
+      "id": "route:562353cef055ed2365bd",
+      "registrationId": "registration:bcd3a8a427c10aae0e62",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2019,
+      "line": 2032,
       "method": "POST",
       "path": "/api/phase1/business-actions/confirmations/:id/cancel",
       "mountChain": [
@@ -105537,10 +105543,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:09eb177b6768880caf06",
-      "registrationId": "registration:8e29ec7ff60431db26d3",
+      "id": "route:5bfef8feea1dc9b128ca",
+      "registrationId": "registration:0795a08ef8f9305b4d7d",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2099,
+      "line": 2112,
       "method": "GET",
       "path": "/api/phase1/usage",
       "mountChain": [
@@ -105554,10 +105560,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:c4e938662e16677df36f",
-      "registrationId": "registration:1d7304f74ae22b7398c2",
+      "id": "route:66aff4fe13f158abaf89",
+      "registrationId": "registration:e8857fc2773e19ca21a9",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2170,
+      "line": 2183,
       "method": "GET",
       "path": "/api/phase1/economics",
       "mountChain": [
@@ -105571,10 +105577,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:6c964f219e0619bb4581",
-      "registrationId": "registration:0c47c93b1be3ed92ccc8",
+      "id": "route:d65c77a58c249064a5d0",
+      "registrationId": "registration:4aff5c101278c4f6f726",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2229,
+      "line": 2242,
       "method": "POST",
       "path": "/api/phase1/emergency-tokens",
       "mountChain": [
@@ -105588,10 +105594,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:2e86011df9f18a2a1878",
-      "registrationId": "registration:89e7804f2f3d4a4bf58f",
+      "id": "route:739353afa5748c357068",
+      "registrationId": "registration:b0fb4ac638a79a4ff873",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2254,
+      "line": 2267,
       "method": "GET",
       "path": "/api/phase1/health",
       "mountChain": [
@@ -105605,10 +105611,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b8567139ac65928f2bd2",
-      "registrationId": "registration:dd6ace3cf634b86ccd58",
+      "id": "route:5bddc9fa93615047aa89",
+      "registrationId": "registration:48999ae9819ec684a0e5",
       "sourcePath": "backend/src/routes/phase1.ts",
-      "line": 2276,
+      "line": 2289,
       "method": "GET",
       "path": "/api/phase1/quota-check",
       "mountChain": [
@@ -118049,7 +118055,7 @@
     {
       "id": "test-suite:4c7f0731a324fb7d047d",
       "sourcePath": "backend/src/ai/universal/semanticRequestPlanner.test.ts",
-      "declaredTests": 38,
+      "declaredTests": 42,
       "skipLocations": [],
       "focusLocations": []
     },

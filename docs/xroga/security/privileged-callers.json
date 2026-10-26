@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "678f1ed49b36803f3fb2c0a98ab561ff577fb23e11d63730f8ff0abc77a99831",
+  "reviewRegistrySha256": "92459b191892ee3d296055210b872633fdac09fbbc2f1ae05e012bfeace20a88",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -2940,7 +2940,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ea43de8273c9cc416a2f"
+        "id": "832192939f82e5dc650d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5520,7 +5520,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "ea43de8273c9cc416a2f"
+        "id": "832192939f82e5dc650d"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -13604,15 +13604,15 @@
       }
     },
     {
-      "id": "ea43de8273c9cc416a2f",
+      "id": "832192939f82e5dc650d",
       "path": "backend/src/routes/phase1.ts",
-      "line": 177,
+      "line": 179,
       "enclosing": "toolUiLink",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "73890ce0879e6b51fd0825e6cb5937ef9988d6850646aae1b29cf859d53595ba",
+      "sourceSha256": "8d59d1a4f048c8856faa39485c190d13bf45d499a899c3193d742dedd4ee1ca9",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",

@@ -31,8 +31,10 @@ import {
 
 import {
   enforceExplicitBusinessWorkflowControls,
+  enforceExplicitConnectedAppReadControls,
   enforceExplicitExecutionControls,
   enforceExplicitPublicResearchControls,
+  isExplicitConnectedAppReadRequest,
   planExplicitProjectBuild,
   planSemanticRequest,
 } from '../ai/universal/semanticRequestPlanner.js';
@@ -560,8 +562,11 @@ router.post(
       return res.json(
         enforceExplicitPublicResearchControls(
           enforceExplicitBusinessWorkflowControls(
-            enforceExplicitExecutionControls(
-              plan,
+            enforceExplicitConnectedAppReadControls(
+              enforceExplicitExecutionControls(
+                plan,
+                message,
+              ),
               message,
             ),
             message,
@@ -758,6 +763,14 @@ router.post(
           .includes(
             'business.action',
           );
+
+      if (isExplicitConnectedAppReadRequest(message) && !requiresBusinessRead) {
+        throw new RuntimeFailure(
+          'PLANNER_SCHEMA_INVALID',
+          'This connected-account read reached an answer-only plan. No account data was read. Please retry so Xroga can prepare a verified app read.',
+          { status: 409, retryable: true },
+        );
+      }
 
       if (
         requiresBusinessAction &&

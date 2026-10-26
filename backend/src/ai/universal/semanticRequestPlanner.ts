@@ -206,7 +206,7 @@ export function enforceExplicitPublicResearchControls(
   const followedByAppAction =
     /\b(?:and|then|also)\s+(?:please\s+)?(?:send|email|message|create|schedule|book|update|edit|delete|remove|publish|post|upload|invite|refund|transfer|pay)\b/i.test(message);
 
-  if (explicitSearch && !negatedSearch && followedByAppAction && plan.dispatch === 'chat') {
+  if (explicitSearch && !negatedSearch && followedByAppAction && plan.dispatch === 'chat' && !plan.capabilityIds.includes('business.action')) {
     const blockers = ['Public-web research followed by a connected-app action needs a reviewed multi-source workflow; no action was executed.'];
     return {
       ...plan,
@@ -214,6 +214,53 @@ export function enforceExplicitPublicResearchControls(
       blockers,
       rationale: 'Do not silently drop either task or pass untrusted web results into an external action.',
       goalContract: goalContractSchema.parse({ ...plan.goalContract, blockers }),
+      directResponse: undefined,
+    };
+  }
+
+  if (explicitSearch && !negatedSearch && followedByAppAction && plan.dispatch === 'chat') {
+    const capabilityIds = [...new Set([...plan.capabilityIds, 'research.public-web'])];
+    const researchReady = universalCapabilityRegistry.get('research.public-web')?.health() === 'available';
+    const blockers = researchReady ? [] : ['Public web research is unavailable because its provider is not configured.'];
+    return {
+      ...plan,
+      capabilityIds,
+      dispatch: researchReady ? 'chat' : 'blocked',
+      blockers,
+      rationale: 'Preserved both the requested public research and the connected-app action.',
+      goalContract: goalContractSchema.parse({
+        ...plan.goalContract,
+        semanticIntent: 'MIXED',
+        requiredCapabilities: capabilityIds,
+        requiredAuthorities: [
+          ...new Set(capabilityIds.flatMap((id) => universalCapabilityRegistry.get(id)?.requiredAuthorities ?? [])),
+        ],
+        blockers,
+      }),
+      directResponse: undefined,
+    };
+  }
+
+  if (explicitSearch && !negatedSearch && plan.dispatch === 'chat' &&
+      plan.capabilityIds.includes('business.read') && isExplicitConnectedAppReadRequest(message)) {
+    const capabilityIds = [...new Set([...plan.capabilityIds, 'research.public-web'])];
+    const researchReady = universalCapabilityRegistry.get('research.public-web')?.health() === 'available';
+    const blockers = researchReady ? [] : ['Public web research is unavailable because its provider is not configured.'];
+    return {
+      ...plan,
+      capabilityIds,
+      dispatch: researchReady ? 'chat' : 'blocked',
+      blockers,
+      rationale: 'Preserved both the requested public research and connected-account read.',
+      goalContract: goalContractSchema.parse({
+        ...plan.goalContract,
+        semanticIntent: 'MIXED',
+        requiredCapabilities: capabilityIds,
+        requiredAuthorities: [
+          ...new Set(capabilityIds.flatMap((id) => universalCapabilityRegistry.get(id)?.requiredAuthorities ?? [])),
+        ],
+        blockers,
+      }),
       directResponse: undefined,
     };
   }
@@ -268,6 +315,63 @@ export function enforceExplicitPublicResearchControls(
     capabilityIds,
     rationale: 'The user explicitly requested public web research, not a connected-app read.',
     blockers,
+    directResponse: undefined,
+  };
+}
+
+/** A request to inspect the user's connected account must not become a
+ * generic answer or public-web search when the semantic model omits the app
+ * capability. Keep this deliberately narrow; ordinary questions about how
+ * an integration works do not authorize reading account data. */
+export function isExplicitConnectedAppReadRequest(message: string): boolean {
+  const request = message.trim();
+  if (/^(?:how (?:do|can|to)|explain|teach)\b/i.test(request)) return false;
+  if (!/\b(?:my|our)\s+connected\s+[a-z][a-z0-9 ._-]{0,40}\b/i.test(request)) return false;
+  const operations = request.matchAll(/\b(?:count|how many|list|show|read|summarize|search|find|fetch|retrieve|check|inspect|review)\b/gi);
+  return [...operations].some((match) => {
+    const prefix = request.slice(Math.max(0, (match.index ?? 0) - 35), match.index);
+    return !/\b(?:do not|don't|without|avoid|never)\s+(?:\w+\s+){0,3}$/i.test(prefix);
+  });
+}
+
+export function enforceExplicitConnectedAppReadControls(
+  plan: SemanticRequestPlan,
+  message: string,
+): SemanticRequestPlan {
+  if (
+    plan.dispatch !== 'chat' ||
+    !isExplicitConnectedAppReadRequest(message) ||
+    (plan.capabilityIds.includes('business.read') && plan.goalContract.requiredCapabilities.includes('business.read')) ||
+    [...plan.capabilityIds, ...plan.goalContract.requiredCapabilities].some(
+      (id) => id === 'software.implement' || id === 'repository.read' || id === 'repository.write',
+    )
+  ) return plan;
+
+  const explicitPublicSearch = /\b(?:web searches?|internet searches?|search (?:the )?(?:web|internet)|browse (?:the )?(?:web|internet)|research online)\b/i.test(message);
+  const capabilityIds = [
+    ...new Set([
+      ...plan.capabilityIds.filter((id) => id !== 'research.public-web' || explicitPublicSearch),
+      'business.read',
+    ]),
+  ];
+  const available = universalCapabilityRegistry.get('business.read')?.health() === 'available';
+  const blockers = available ? [] : ['Connected-app reads are unavailable because Xroga Connect is not configured.'];
+  const goalContract = goalContractSchema.parse({
+    ...plan.goalContract,
+    semanticIntent: plan.capabilityIds.includes('business.action') ? 'MIXED' : 'INVESTIGATE',
+    requiredCapabilities: capabilityIds,
+    requiredAuthorities: [
+      ...new Set(capabilityIds.flatMap((id) => universalCapabilityRegistry.get(id)?.requiredAuthorities ?? [])),
+    ],
+    blockers,
+  });
+  return {
+    ...plan,
+    goalContract,
+    dispatch: available ? 'chat' : 'blocked',
+    capabilityIds,
+    blockers,
+    rationale: 'An explicit connected-account read requires a verified app result, not a generic answer.',
     directResponse: undefined,
   };
 }
