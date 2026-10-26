@@ -32,6 +32,7 @@ import businessAutomationsRouter from './routes/businessAutomations.js';
 import businessAutomationWebhookRouter from './routes/businessAutomationWebhook.js';
 import businessAutomationSchedulerRouter from './routes/businessAutomationScheduler.js';
 import storageReconcileRouter from './routes/storageReconcileScheduler.js';
+import browserRunInternalRouter from './routes/browserRunInternal.js';
 import { startBusinessAutomationScheduler } from './services/integrations/businessAutomations.js';
 import dashboardRouter from './routes/dashboard.js';
 import tasksRouter from './routes/tasks.js';
@@ -139,6 +140,7 @@ app.use('/api/billing/webhook', billingWebhookRouter);
 app.use('/api/integrations/composio/webhook', businessAutomationWebhookRouter);
 app.use('/internal/business-automations', businessAutomationSchedulerRouter);
 app.use('/internal/storage', storageReconcileRouter);
+app.use('/internal/browser', express.json({ limit: '4kb' }), browserRunInternalRouter);
 
 // Guest preview is deliberately much smaller than authenticated upload/build
 // requests. Parse it first with a strict body ceiling so an anonymous caller never

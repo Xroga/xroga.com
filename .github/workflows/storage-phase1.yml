@@ -18,6 +18,7 @@ on:
       - 'backend/src/security/**'
       - 'backend/src/index.ts'
       - 'supabase/migrations/20261024000000_worker_task_leases.sql'
+      - 'supabase/migrations/20261026100000_browser_runs_durable.sql'
       - 'deploy/browser-worker/**'
       - 'supabase/migrations/20261022000000_storage_drive_foundation.sql'
       - 'scripts/storage/**'

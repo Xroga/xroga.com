@@ -19,7 +19,9 @@ import type { AdmissionController } from './admission.js';
 import { BROWSER_JOB_CEILINGS, parseBrowserJob, type BrowserJob, type BrowserJobLimits } from './browserJob.js';
 import { parseBrowserPlan, type BrowserPlan } from './browserPlan.js';
 import { createBrowserTaskHandler, type BrowserWorkerPort } from './browserTaskHandler.js';
-import type { LeaseStore } from './leaseStore.js';
+import type { Lease, LeaseStore } from './leaseStore.js';
+import { isTerminalRunStatus, type BrowserRunRecord, type BrowserRunStore } from './browserRunStore.js';
+import { recoverRunWithLeases } from './resumeRecovery.js';
 
 /** Defaults are deliberately small; a request may ask for less or (up to the ceilings) more. No model spend unless asked for. */
 export const BROWSER_RUN_DEFAULTS: Readonly<BrowserJobLimits> = Object.freeze({
@@ -55,7 +57,7 @@ export interface BrowserCapabilityDeps {
 }
 
 export class BrowserRunError extends Error {
-  constructor(readonly status: 400 | 401 | 404, readonly code: 'RUN_INVALID' | 'TENANT_AUTH_REQUIRED' | 'PROJECT_NOT_FOUND', message: string) { super(message); this.name = 'BrowserRunError'; }
+  constructor(readonly status: 400 | 401 | 404 | 429, readonly code: 'RUN_INVALID' | 'TENANT_AUTH_REQUIRED' | 'PROJECT_NOT_FOUND' | 'RUN_LIMIT', message: string) { super(message); this.name = 'BrowserRunError'; }
 }
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -75,11 +77,10 @@ function taskFor(goal: string, plan: BrowserPlan, limits: BrowserJobLimits): Exe
   };
 }
 
-/**
- * Validates the request against the issued context, then runs it on the canonical scheduler. Returns the finished task (completed only
- * if every postcondition verified and the evidence is durably stored).
- */
-export async function runBrowserTask(context: TenantContext, request: BrowserRunRequest, deps: BrowserCapabilityDeps, signal?: AbortSignal) {
+interface BuiltRun { actor: StorageActor; runId: string; runProject: string; driveProject: string | null; limits: BrowserJobLimits; plan: BrowserPlan; state: ReturnType<typeof createCanonicalExecutionState>; request: BrowserRunRequest }
+
+/** Validates the request against the issued context and builds the run. Nothing is stored or started here. */
+async function buildRun(context: TenantContext, request: BrowserRunRequest, deps: BrowserCapabilityDeps): Promise<BuiltRun> {
   let actor: StorageActor;
   try { actor = actorFromTenantContext(requireTenantContext(context)); } catch { throw new BrowserRunError(401, 'TENANT_AUTH_REQUIRED', 'sign in again and retry'); }
   if (typeof request.goal !== 'string' || !request.goal.trim() || request.goal.length > 2_000) throw new BrowserRunError(400, 'RUN_INVALID', 'goal must be 1-2000 characters');
@@ -105,16 +106,104 @@ export async function runBrowserTask(context: TenantContext, request: BrowserRun
     try { plan = await deps.planner!(request.goal, job, !!request.allowAiSteps); } catch (e) { throw new BrowserRunError(400, 'RUN_INVALID', (e as Error).message.slice(0, 300)); }
   }
   const trustedPlan = plan!;
+  const state = createCanonicalExecutionState({ projectId: runProject, runId, requiredCapabilities: ['browser_automation'], tasks: [taskFor(request.goal, trustedPlan, limits)] });
+  return { actor, runId, runProject, driveProject, limits, plan: trustedPlan, state, request };
+}
 
-  const handler = createBrowserTaskHandler({
+function handlerFor(actor: StorageActor, spec: { allowedOrigins: string[]; startUrl: string; limits: BrowserJobLimits; plan: BrowserPlan; driveProject: string | null }, deps: BrowserCapabilityDeps) {
+  return createBrowserTaskHandler({
     actor, drive: deps.drive, leases: deps.leases, worker: deps.worker, workerId: deps.workerId, admission: deps.admission,
     // the run's own project key is authorised by construction (it is the issued user's); a Drive project is re-checked every time
     authorise: async (a, projectId) => (projectId === `user:${actor.userId}` ? a.userId === actor.userId : deps.authoriseProject(a, projectId)),
-    scopeFor: () => ({ allowedOrigins: request.allowedOrigins, startUrl: request.startUrl, limits }),
-    planFor: () => trustedPlan,
-    driveProjectFor: () => driveProject,
+    scopeFor: () => ({ allowedOrigins: spec.allowedOrigins, startUrl: spec.startUrl, limits: spec.limits }),
+    planFor: () => spec.plan,
+    driveProjectFor: () => spec.driveProject,
   });
-  const state = createCanonicalExecutionState({ projectId: runProject, runId, requiredCapabilities: ['browser_automation'], tasks: [taskFor(request.goal, trustedPlan, limits)] });
-  const finished = await new ExecutionScheduler(deps.storeFor(actor.userId)).run(state, { browser_automation: handler }, signal);
-  return { runId, task: finished.tasks[0]!, state: finished };
+}
+
+/**
+ * Validates the request against the issued context, then runs it on the canonical scheduler in THIS process. Returns the finished task
+ * (completed only if every postcondition verified and the evidence is durably stored). The durable path is `prepareBrowserRun` and
+ * `executeBrowserRun`, which let any instance run, cancel and recover a stored run.
+ */
+export async function runBrowserTask(context: TenantContext, request: BrowserRunRequest, deps: BrowserCapabilityDeps, signal?: AbortSignal) {
+  const built = await buildRun(context, request, deps);
+  const handler = handlerFor(built.actor, { allowedOrigins: request.allowedOrigins, startUrl: request.startUrl, limits: built.limits, plan: built.plan, driveProject: built.driveProject }, deps);
+  const finished = await new ExecutionScheduler(deps.storeFor(built.actor.userId)).run(built.state, { browser_automation: handler }, signal);
+  return { runId: built.runId, task: finished.tasks[0]!, state: finished };
+}
+
+/** Per-tenant ceiling on runs that are queued or running anywhere (all instances), enforced from the durable record. */
+export const BROWSER_MAX_ACTIVE_PER_TENANT = 4;
+
+/**
+ * Validates and PERSISTS a run as `queued`. Nothing executes here: a dispatcher hands the run id to a worker, which loads the record.
+ * The spec stored is the validated, server-parsed one, never the request body.
+ */
+export async function prepareBrowserRun(context: TenantContext, request: BrowserRunRequest, deps: BrowserCapabilityDeps & { runs: BrowserRunStore }): Promise<{ runId: string }> {
+  const built = await buildRun(context, request, deps);
+  if (await deps.runs.countActive(built.actor.tenantId) >= BROWSER_MAX_ACTIVE_PER_TENANT) throw new BrowserRunError(429, 'RUN_LIMIT', 'too many browser runs are active; wait for one to finish');
+  await deps.runs.create({ tenantId: built.actor.tenantId, userId: built.actor.userId, state: built.state, spec: { goal: request.goal, startUrl: request.startUrl, allowedOrigins: request.allowedOrigins, limits: built.limits as unknown as Record<string, number>, plan: built.plan, driveProject: built.driveProject } });
+  return { runId: built.runId };
+}
+
+export type ExecuteOutcome = 'finished' | 'already_finished' | 'held_by_live_worker' | 'not_found';
+
+const CANCEL_POLL_MS = 2_000;
+const EXECUTE_LEASE_TASK = 'execute';
+const EXECUTE_LEASE_TTL_MS = 60_000;
+
+/**
+ * Runs a stored run to its end on this instance. Safe to call twice and from two instances: an execution lease on the run admits
+ * one executor (the task handler holds its own task lease as well); a finished run is reported, never rerun. A run found `running` after its worker died resumes through the lease-aware recovery,
+ * which never starts a second copy of a task a live worker still holds. The durable cancel flag is polled, so a cancel set on another
+ * instance reaches the browser.
+ */
+export async function executeBrowserRun(runId: string, deps: BrowserCapabilityDeps & { runs: BrowserRunStore }, options: { signal?: AbortSignal; cancelPollMs?: number } = {}): Promise<ExecuteOutcome> {
+  const record = await deps.runs.loadInternal(runId);
+  if (!record) return 'not_found';
+  if (isTerminalRunStatus(record.status)) return 'already_finished';
+
+  const task = record.state.tasks[0];
+  if (!task) return 'already_finished';
+  // One executor per run across every instance: an execution lease on the run itself (the task has its own lease inside the handler).
+  const executeLease = await deps.leases.acquire({ tenantId: record.tenantId, runId, taskId: EXECUTE_LEASE_TASK }, deps.workerId, EXECUTE_LEASE_TTL_MS);
+  if (!executeLease) return 'held_by_live_worker';
+  let lease = executeLease;
+  try {
+    // A previous worker may have died inside the task; until its task lease expires the task is not ours to resume.
+    // Re-read under the lease: another executor may have finished the run between the first read and the lease.
+    const fresh = await deps.runs.loadInternal(runId);
+    if (!fresh || isTerminalRunStatus(fresh.status)) return 'already_finished';
+    if (await deps.leases.holder({ tenantId: record.tenantId, runId, taskId: task.id })) return 'held_by_live_worker';
+    return await executeWithLease(fresh, runId, deps, options, () => lease, (next) => { lease = next; });
+  } finally {
+    await deps.leases.release(lease).catch(() => undefined);
+  }
+}
+
+async function executeWithLease(record: BrowserRunRecord, runId: string, deps: BrowserCapabilityDeps & { runs: BrowserRunStore }, options: { signal?: AbortSignal; cancelPollMs?: number }, current: () => Lease, setLease: (l: Lease) => void): Promise<ExecuteOutcome> {
+  const actor: StorageActor = { userId: record.userId, tenantId: record.tenantId };
+  const spec = record.spec;
+  const handler = handlerFor(actor, { allowedOrigins: spec.allowedOrigins, startUrl: spec.startUrl, limits: spec.limits as unknown as BrowserJobLimits, plan: spec.plan as BrowserPlan, driveProject: spec.driveProject }, deps);
+
+  const abort = new AbortController();
+  const outer = options.signal;
+  const forward = () => abort.abort();
+  if (outer) { if (outer.aborted) abort.abort(); else outer.addEventListener('abort', forward, { once: true }); }
+  const poll = async () => { try { if (await deps.runs.isCancelRequested(runId)) abort.abort(); } catch { /* a transient read failure must not stop a healthy run; the next poll retries */ } };
+  await poll();
+  const timer = setInterval(() => { void poll(); }, options.cancelPollMs ?? CANCEL_POLL_MS);
+  timer.unref?.();
+  // keep the execution lease alive; a lost lease means another instance took over, so this one stops
+  const renewer = setInterval(() => { deps.leases.renew(current(), EXECUTE_LEASE_TTL_MS).then(setLease, () => abort.abort()); }, EXECUTE_LEASE_TTL_MS / 3);
+  renewer.unref?.();
+  try {
+    const resumed = await recoverRunWithLeases(record.state, deps.leases, record.tenantId);
+    await new ExecutionScheduler(deps.runs.stateStore(record.userId)).run(resumed.state, { browser_automation: handler }, abort.signal);
+    return 'finished';
+  } finally {
+    clearInterval(timer); clearInterval(renewer);
+    outer?.removeEventListener('abort', forward);
+  }
 }

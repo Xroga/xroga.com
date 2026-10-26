@@ -7,21 +7,20 @@ import assert from 'node:assert/strict';
 import type { AddressInfo } from 'node:net';
 import { after, before, describe, it } from 'node:test';
 import express from 'express';
-import { InMemoryExecutionStateStore } from '../ai/executionRuntime.js';
 import { createTenantContext, type TenantContext } from '../security/tenantContext.js';
 import { harness, type Harness } from '../storage/testing/harness.js';
 import { MemoryLeaseStore } from '../workers/leaseStore.js';
-import type { BrowserCapabilityDeps } from '../workers/browserCapability.js';
+import { executeBrowserRun } from '../workers/browserCapability.js';
+import { InProcessDispatcher } from '../workers/browserRunDispatch.js';
+import { MemoryBrowserRunStore } from '../workers/browserRunStore.js';
 import type { BrowserWorkerPort, BrowserWorkerResult } from '../workers/browserTaskHandler.js';
-import { createBrowserRunsRouter } from './browserRuns.js';
+import { createBrowserRunsRouter, type BrowserRunRuntime } from './browserRuns.js';
 
 let h: Harness; let base = ''; let server: ReturnType<ReturnType<typeof express>['listen']>;
 let configured = true;
 let behaviour: 'ok' | 'wrongValue' | 'hang' = 'ok';
 let hangAborted = false;
-// one store per user, as the canonical SupabaseExecutionStateStore is scoped by user_id
-const stores = new Map<string, InMemoryExecutionStateStore>();
-const storeFor = (userId: string) => { if (!stores.has(userId)) stores.set(userId, new InMemoryExecutionStateStore()); return stores.get(userId)!; };
+const runs = new MemoryBrowserRunStore();
 
 const worker: BrowserWorkerPort = {
   run: async (job, ctx): Promise<BrowserWorkerResult> => {
@@ -33,10 +32,11 @@ const worker: BrowserWorkerPort = {
 
 before(async () => {
   h = harness();
-  const deps: BrowserCapabilityDeps = {
-    worker, leases: new MemoryLeaseStore(), drive: h.svc, storeFor, workerId: 'test',
-    authoriseProject: async (actor, projectId) => h.svc.listObjects(actor, { projectId, limit: 1 }).then(() => true, () => false),
-  };
+  const deps = {
+    worker, leases: new MemoryLeaseStore(), drive: h.svc, storeFor: (userId: string) => runs.stateStore(userId), workerId: 'test', runs,
+    authoriseProject: async (actor: { userId: string; tenantId: string }, projectId: string) => h.svc.listObjects(actor, { projectId, limit: 1 }).then(() => true, () => false),
+  } as Omit<BrowserRunRuntime, 'dispatcher'>;
+  const runtime: BrowserRunRuntime = { ...deps, dispatcher: new InProcessDispatcher((runId) => executeBrowserRun(runId, deps), (_id, e) => { throw e; }) };
   const app = express();
   app.use(express.json());
   app.use((req, _res, next) => {
@@ -45,7 +45,7 @@ before(async () => {
     if (as) (req as unknown as { tenantContext: TenantContext }).tenantContext = req.header('x-test-forge') ? ({ userId: as, tenantId: as } as TenantContext) : createTenantContext({ userId: as, via: 'local_jwt' });
     next();
   });
-  app.use('/api/browser/runs', createBrowserRunsRouter(() => (configured ? deps : null)));
+  app.use('/api/browser/runs', createBrowserRunsRouter(() => (configured ? runtime : null)));
   await new Promise<void>((r) => { server = app.listen(0, '127.0.0.1', () => r()); });
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/api/browser/runs`;
 });
