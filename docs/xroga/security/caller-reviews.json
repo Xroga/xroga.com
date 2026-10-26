@@ -3448,9 +3448,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+      "sourceSha256": "82f7738b595257e701be5b860f4c63c0f547b9606d9cbd04beb4d1bac489388e",
       "callIds": [
-        "01d5efe9b761bc670212"
+        "7e0d1998e01481a5ccb3"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3480,9 +3480,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+      "sourceSha256": "82f7738b595257e701be5b860f4c63c0f547b9606d9cbd04beb4d1bac489388e",
       "callIds": [
-        "944a58bb15dca85b3ddd"
+        "0160b6609a2e9ebd19fc"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -15631,6 +15631,55 @@
         {
           "path": "backend/src/services/integrations/ociWorkloadFederation.ts",
           "marker": "export function createOciWorkloadFederation"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/builder/store.ts",
+      "sourceSha256": "0bbfbd58855576b8c1a972ca65b427757276bed1bcc92024e6d7d80096a5e8d3",
+      "callIds": [
+        "e6af9ebe37766dcac377",
+        "474bd2e798217e899b01",
+        "d330765021ecce8599a2",
+        "d79a9369a05ed49ff20c",
+        "ff1107db358a438b1265",
+        "11c8013ce539fab1a7a1",
+        "efb144f7cc438dbf708c",
+        "7324485970116797ec27",
+        "074654d9d9abe7add548"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "SupabaseBuilderStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context. The privileged client is obtained through getTenantSupabaseAdmin(context).",
+      "reason": "Every read, update and list on builder_projects and builder_revisions in this class carries an explicit .eq(user_id, owner) predicate where the owner is the verified issued tenant identity, never a request body value. A foreign project or revision id returns no row, surfaced as not found.",
+      "evidence": [
+        {
+          "path": "backend/src/builder/store.ts",
+          "marker": "return getTenantSupabaseAdmin(this.tenant);"
+        },
+        {
+          "path": "backend/src/builder/store.ts",
+          "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new BuilderError"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/builder/store.ts",
+      "sourceSha256": "0bbfbd58855576b8c1a972ca65b427757276bed1bcc92024e6d7d80096a5e8d3",
+      "callIds": [
+        "eeb84db9be0083af0d58",
+        "31802dc42ac6d6e98d89"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The insert sets user_id from the verified issued tenant owner, and the append function receives that owner as p_user_id and locks the project row filtered by both id and user_id before writing anything.",
+      "reason": "The project insert has no read predicate because it creates a row owned by the verified identity (unique on user_id and request_key). The append_builder_revision function is executable by service_role only and returns null for a project not owned by p_user_id, so a foreign project id cannot be written to.",
+      "evidence": [
+        {
+          "path": "backend/src/builder/store.ts",
+          "marker": "return getTenantSupabaseAdmin(this.tenant);"
+        },
+        {
+          "path": "backend/src/builder/store.ts",
+          "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new BuilderError"
         }
       ]
     }

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "acc5076d245c98197a42b4deb880a22f518f2e1c",
+  "source_sha": "5906b7836f8b7c07e35ef56b1f74a1a9be4c140d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -34,6 +34,7 @@
         "NEXT_PUBLIC_XROGA_AUTH_BASE_URL",
         "NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF",
         "NEXT_PUBLIC_XROGA_BROWSER_RUNS",
+        "NEXT_PUBLIC_XROGA_BUILDER",
         "VERCEL_ENV",
         "VERCEL_GIT_COMMIT_SHA"
       ],
@@ -10035,6 +10036,25 @@
       ]
     },
     {
+      "name": "NEXT_PUBLIC_XROGA_BUILDER",
+      "consuming_sources": [
+        "frontend/src/lib/builderApi.ts"
+      ],
+      "environments": [
+        "frontend build/browser/SSR"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "frontend"
+      ]
+    },
+    {
       "name": "NODE_ENV",
       "consuming_sources": [
         "backend/src/ai/providerBudget.ts",
@@ -13366,6 +13386,11 @@
       "role": "Existing runtime/build/verification configuration"
     },
     {
+      "path": ".github/workflows/builder-phase1.yml",
+      "presence": "PRESENT",
+      "role": "Existing runtime/build/verification configuration"
+    },
+    {
       "path": ".github/workflows/chat-turn-rail-browser.yml",
       "presence": "PRESENT",
       "role": "Existing runtime/build/verification configuration"
@@ -13463,6 +13488,10 @@
     {
       "path": ".github/workflows/backend-health-verification.yml",
       "sha256": "6b192da03d3ad1d56d56f378e759cf38d3561ef34a7915972612f3a2fd85f270"
+    },
+    {
+      "path": ".github/workflows/builder-phase1.yml",
+      "sha256": "3af02258ff2d87d37b9190a69356fbe5bcc703abb6ee8e868edd21a38c0dc38b"
     },
     {
       "path": ".github/workflows/chat-turn-rail-browser.yml",
@@ -13786,7 +13815,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
+      "sha256": "82f7738b595257e701be5b860f4c63c0f547b9606d9cbd04beb4d1bac489388e"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -14093,6 +14122,50 @@
       "sha256": "ba3155b0f8323d4ee53cfb8ff9c3205e6b8d1e2ff8ee66c29a4c9122cc8a9ebe"
     },
     {
+      "path": "backend/src/builder/canonical.ts",
+      "sha256": "6173a5dec6f80b526ed0a0c1809a85f5e02d0a96c095fc38e37301793ae67e7c"
+    },
+    {
+      "path": "backend/src/builder/pipelineBinding.ts",
+      "sha256": "69cbbd19934fa25f089c7e9d174123ae9d94aaf4508b6ca01733979059f87cfe"
+    },
+    {
+      "path": "backend/src/builder/previewLifecycle.ts",
+      "sha256": "d001170db1ee331b1219b83d43c806d2ca2449af37b3994aa8fb7aef3cd9eaa1"
+    },
+    {
+      "path": "backend/src/builder/readiness.ts",
+      "sha256": "b2142aeabe617a45441b0de9c278ea4552b97276143c2992ea0d95cf473ee758"
+    },
+    {
+      "path": "backend/src/builder/service.ts",
+      "sha256": "39a84d009dfc064fd0d2f83ed446a2015a6106f86637b903470f374b088d6cd8"
+    },
+    {
+      "path": "backend/src/builder/snapshot.ts",
+      "sha256": "0292619f1488edc3cd89f62d073eacbc6ffcf110f2bdc06f02a46fca6f8b1d8a"
+    },
+    {
+      "path": "backend/src/builder/spec.ts",
+      "sha256": "63d346a576f086369873823fe5927a248ac8ef3a94bea95c067c704c7fa4596b"
+    },
+    {
+      "path": "backend/src/builder/starters.ts",
+      "sha256": "4fefca48c65f0864997d3e008b24cff948bf238ba0fc67e7e700f65f0bed8a48"
+    },
+    {
+      "path": "backend/src/builder/store.ts",
+      "sha256": "0bbfbd58855576b8c1a972ca65b427757276bed1bcc92024e6d7d80096a5e8d3"
+    },
+    {
+      "path": "backend/src/builder/swarmBridge.ts",
+      "sha256": "5e6e571a92ca00792d36a2496f9cab4e77656ae2cc7ba839f7f62e52b01ea6c0"
+    },
+    {
+      "path": "backend/src/builder/types.ts",
+      "sha256": "7228d40773c20c49599219bfe75316dfb41c9060aa2b9842bfa26d1ec08ab88b"
+    },
+    {
       "path": "backend/src/capabilities/generated.ts",
       "sha256": "3bba3fa47291b2fc42dda9941eb031aa51d91e31ef57f587e3927b7fb1041f24"
     },
@@ -14282,7 +14355,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "ae363e1344a93b441ec9a10dade0c53ba67bd39e34958cc9332849636082741b"
+      "sha256": "e0a57a73015d45b8f05a78237a6bd3876872876b000754d2a98d1e66d2a91374"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -14709,6 +14782,10 @@
       "sha256": "0b123cffa6d286d7b01e1e686c372986473d21773b3f8cff4885eaf6254d4d3f"
     },
     {
+      "path": "backend/src/routes/builder.ts",
+      "sha256": "1266f2e519080e5ad924002549b7aaa37640ddf4c2472217ddb2ba85472d118f"
+    },
+    {
       "path": "backend/src/routes/businessAutomationScheduler.ts",
       "sha256": "d775beaa5fc78872dbb4a1a5ac6087f122499e96fe9416f49a751d054f3851e6"
     },
@@ -14834,7 +14911,7 @@
     },
     {
       "path": "backend/src/routes/swarm.ts",
-      "sha256": "7ae4bf0e05640eefccbaf8868183fc5b4301788e58a022a3b1dd42955fd59478"
+      "sha256": "dd5c964e1eaace0e51032e5ce1c9a2dd1b23be2439de049a5de4d84303e1bd11"
     },
     {
       "path": "backend/src/routes/tasks.ts",
@@ -18353,6 +18430,10 @@
       "sha256": "98d2217fe87699a76279f4dd3448acaed34b19cbb733e064a82b7b3cc92c4f1c"
     },
     {
+      "path": "frontend/src/components/terminal/BuilderProjectPanel.tsx",
+      "sha256": "59d484e69c02e7199db012d88a863cb68ee765cf2fa8779e3689a3eea045d4d1"
+    },
+    {
       "path": "frontend/src/components/terminal/CapacityUnavailableCard.tsx",
       "sha256": "aa27e01a5432de7628147a79eb2ac36d473d5f4ab2dc1d676863c9240bcdcc62"
     },
@@ -18402,7 +18483,7 @@
     },
     {
       "path": "frontend/src/components/terminal/DevWorkspacePanel.tsx",
-      "sha256": "1581572619608594e56a0a4cf70e5cd6930d086bc92e62dfe2048ca401438a5e"
+      "sha256": "c19928333adc9a57e59246319068e528c1dd99e390d02c7de061130a74916c0d"
     },
     {
       "path": "frontend/src/components/terminal/EngineeringArtifactView.tsx",
@@ -18838,7 +18919,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "f47f5e34bccb821eddbf94b687e5da95307534ce29e01bb7dfc64f85ddae9bfe"
+      "sha256": "c78e2850907cb39f30cb3f3bd642c8d1265455ba0aee020cfb0e53f8c5abc4d9"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -18886,7 +18967,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "01f9c3e1d62a2c3f13bd3fc900aeb3d0123692b89f529c88ddad9133409cd686"
+      "sha256": "d49d21510ef7efac3e446c6705372572a35086e6565b3617f5bfd6dcb7b20bd3"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -18931,6 +19012,14 @@
     {
       "path": "frontend/src/lib/buildScaffoldPaths.ts",
       "sha256": "e0501ec4514e1a84b5017d851630ea9f347743e18e570d9740fde4906f8a53cd"
+    },
+    {
+      "path": "frontend/src/lib/builderApi.ts",
+      "sha256": "ad35cf91d97e42b86611f7f7da1dc7e1b79ecf81f56996142325d44fe11b169f"
+    },
+    {
+      "path": "frontend/src/lib/builderChat.ts",
+      "sha256": "2b93772a5c4a79e282eb428317161d0e490cef516fe0deecba4356d7ff9240c8"
     },
     {
       "path": "frontend/src/lib/capabilityPageArt.ts",
@@ -19757,6 +19846,10 @@
       "sha256": "24c56eeecd9ebc8fa59c1922ec87f25d8587c091f7354d5df1ed667ffab848f3"
     },
     {
+      "path": "frontend/src/store/useBuilderProjectStore.ts",
+      "sha256": "b30a782c188f6f88c9899f636e2b317ab08aac6f07b00698ef866923558c73d3"
+    },
+    {
       "path": "frontend/src/store/useCompanionStore.ts",
       "sha256": "d9e0d5fadf8199b3f81e95766eada27b4c50b41a6c4af36ffe9fed8ac5b83a20"
     },
@@ -19782,7 +19875,7 @@
     },
     {
       "path": "frontend/src/store/useProjectWorkspaceStore.ts",
-      "sha256": "6c3a61c1a189ffaf370ae43bf2233eb72df537835366c2de07719a0f0459f6ca"
+      "sha256": "f26081c820a35237cd1e90ebccc221de1bb0e66415c2257e3628731750265a8f"
     },
     {
       "path": "frontend/src/store/useThemeStore.ts",
@@ -20701,7 +20794,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4010,
+      "line": 4026,
       "credentialsInUrl": false
     },
     {
@@ -20855,42 +20948,42 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 105,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 106,
       "credentialsInUrl": false
     },
     {
-      "hostname": "www.xroga.com",
+      "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 107,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xrogaaicom.vercel.app",
+      "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 108,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "xrogaaicom.vercel.app",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 109,
       "credentialsInUrl": false
     },
     {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 110,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 199,
+      "line": 200,
       "credentialsInUrl": false
     },
     {
@@ -24768,7 +24861,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3940,
+      "line": 3949,
       "credentialsInUrl": false
     },
     {
@@ -26889,56 +26982,56 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 531,
+      "line": 532,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 561,
+      "line": 562,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1110,
+      "line": 1111,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1468,
+      "line": 1475,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2203,
+      "line": 2219,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3780,
+      "line": 3796,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3960,
+      "line": 3976,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4924,
+      "line": 4940,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -27563,6 +27656,55 @@
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
       "line": 1900,
       "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/readiness.ts",
+      "line": 53,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/snapshot.ts",
+      "line": 29,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/snapshot.ts",
+      "line": 62,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/snapshot.ts",
+      "line": 63,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/spec.ts",
+      "line": 99,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/store.ts",
+      "line": 72,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/store.ts",
+      "line": 73,
+      "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
@@ -28625,7 +28767,7 @@
     },
     {
       "path": "backend/src/routes/swarm.ts",
-      "line": 31,
+      "line": 33,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31369,14 +31511,14 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1993,
+      "line": 1994,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2026,
+      "line": 2027,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31936,28 +32078,28 @@
     },
     {
       "path": "frontend/src/store/useProjectWorkspaceStore.ts",
-      "line": 1021,
+      "line": 1022,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/store/useProjectWorkspaceStore.ts",
-      "line": 1223,
+      "line": 1224,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/store/useProjectWorkspaceStore.ts",
-      "line": 1352,
+      "line": 1353,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/store/useProjectWorkspaceStore.ts",
-      "line": 1410,
+      "line": 1411,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

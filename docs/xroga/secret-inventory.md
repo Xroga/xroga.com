@@ -1,6 +1,6 @@
 # Environment/secret NAME inventory
 
-Source SHA: `acc5076d245c98197a42b4deb880a22f518f2e1c`. Values are prohibited, including public credential values. 254 named readers/aliases/derived keys; 21 explicitly reviewed bindings.
+Source SHA: `5906b7836f8b7c07e35ef56b1f74a1a9be4c140d`. Values are prohibited, including public credential values. 255 named readers/aliases/derived keys; 21 explicitly reviewed bindings.
 
 | Name | Class | Requiredness | Consuming source | Validation status |
 | --- | --- | --- | --- | --- |
@@ -118,6 +118,7 @@ Source SHA: `acc5076d245c98197a42b4deb880a22f518f2e1c`. Values are prohibited, i
 | NEXT_PUBLIC_XROGA_AUTH_BASE_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend/src/lib/supabase/config.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend/src/lib/supabase/config.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | NEXT_PUBLIC_XROGA_BROWSER_RUNS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend/src/components/automations/BrowserStudio.tsx | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| NEXT_PUBLIC_XROGA_BUILDER | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | frontend/src/lib/builderApi.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | NODE_ENV | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/ai/providerBudget.ts, backend/src/ai/runStore.ts, backend/src/index.ts, backend/src/routes/github.ts, backend/src/runtime/startupPolicy.ts, backend/src/services/integrations/credentialVaultRuntime.ts, backend/src/services/integrations/cryptoProvider.ts, backend/src/services/integrations/ociKmsCryptoProvider.ts, backend/src/services/integrations/userProviderKeys.ts, backend/src/services/integrations/vercelAuth.ts, backend/src/services/publish/chromeWebStore.ts, backend/src/synthesis/livePreview/signing.ts, backend/src/synthesis/projectRuntime/secretManager.ts, frontend/src/app/share/[token]/page.tsx, frontend/src/components/dashboard/ApiConnectionBanner.tsx, frontend/src/components/homepage-next/phase1/useOrchestration.ts, frontend/src/components/homepage-next/s04/useScene.ts, frontend/src/lib/api.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | OPENAI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/config/envSecrets.ts, backend/src/lib/capabilityRegistry.ts, backend/src/lib/platformReady.ts, backend/src/routes/voice.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | OPENAI_TRANSCRIBE_MODEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/routes/voice.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
