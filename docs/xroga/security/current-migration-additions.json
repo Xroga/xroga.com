@@ -205,6 +205,30 @@
       "tests": "backend/src/builder/store.integration.test.ts",
       "evidence": "Batch 2 Phase 1 migration, not applied to production. Real-PostgreSQL tests run in the builder-phase1 workflow on a disposable database (uniqueness, gapless numbering, replay, conflict, 12-way concurrency, foreign owner, browser-role grants). Not production schema parity or certification by inventory.",
       "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "builder_verifications",
+      "migration": "20261026010000_builder_phase2.sql",
+      "migrationSha256": "100554d72f9722e429cf80cd356f31f2659177833a1bf63fdddee36829b8cb48",
+      "authorizationMigration": "20261026010000_builder_phase2.sql",
+      "authorizationSha256": "100554d72f9722e429cf80cd356f31f2659177833a1bf63fdddee36829b8cb48",
+      "boundary": "RLS enabled. Authenticated SELECT only, restricted to user_id = auth.uid(); no browser INSERT, UPDATE or DELETE and no anon access. Written only by the server with an explicit owner predicate. Unique (revision, run, kind) makes a retried verification record once. Evidence never contains credentials.",
+      "tests": "backend/src/builder/phase2Store.integration.test.ts",
+      "evidence": "Batch 2 Phase 2 migration, not applied to production. Real-PostgreSQL tests run in the builder-phase1 workflow on a disposable database. Not production schema parity or certification by inventory.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "builder_external_operations",
+      "migration": "20261026010000_builder_phase2.sql",
+      "migrationSha256": "100554d72f9722e429cf80cd356f31f2659177833a1bf63fdddee36829b8cb48",
+      "authorizationMigration": "20261026010000_builder_phase2.sql",
+      "authorizationSha256": "100554d72f9722e429cf80cd356f31f2659177833a1bf63fdddee36829b8cb48",
+      "boundary": "RLS enabled. Authenticated SELECT only, restricted to user_id = auth.uid(); no browser writes and no anon access. Operation identity is persisted before any provider call (unique per user, project, provider, action and key). Status moves by compare-and-set; a partial unique index admits one executing operation per project and provider; approval timestamps are required for approved, executing and succeeded states.",
+      "tests": "backend/src/builder/phase2Store.integration.test.ts",
+      "evidence": "Batch 2 Phase 2 migration, not applied to production. Real-PostgreSQL tests run in the builder-phase1 workflow on a disposable database. Not production schema parity or certification by inventory.",
+      "productionChanges": false
     }
   ]
 }

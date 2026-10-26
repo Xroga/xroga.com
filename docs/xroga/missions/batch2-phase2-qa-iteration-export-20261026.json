@@ -1,0 +1,197 @@
+{
+  "version": "1.0",
+  "missionId": "BATCH2-PHASE2-QA-ITERATION-EXPORT-20261026",
+  "baseSha": "f7f8bece697c1728d98bc94962f2ffa8901734c7",
+  "requirementIds": [
+    "XR-MISSION-036",
+    "XR-HIST-b9676b930b0fa4b6"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "high",
+  "scope": "Batch 2 Phase 2 (Milestones D to F): deterministic browser QA with evidence, bounded repair through the canonical path, same-project iteration with safe restore and diff, verified source export, and customer-owned GitHub export with explicit approval. Disabled by default; nothing is applied, deployed or enabled and no external account was touched.",
+  "changedFiles": [
+    ".github/workflows/builder-phase1.yml",
+    "backend/src/builder/builder.test.ts",
+    "backend/src/builder/diff.ts",
+    "backend/src/builder/export/archive.test.ts",
+    "backend/src/builder/export/archive.ts",
+    "backend/src/builder/export/service.ts",
+    "backend/src/builder/github/fakeGitHub.testsupport.ts",
+    "backend/src/builder/github/github.test.ts",
+    "backend/src/builder/github/port.ts",
+    "backend/src/builder/github/restPort.test.ts",
+    "backend/src/builder/github/restPort.ts",
+    "backend/src/builder/github/service.ts",
+    "backend/src/builder/intent.ts",
+    "backend/src/builder/iteration.test.ts",
+    "backend/src/builder/phase2Bridge.ts",
+    "backend/src/builder/phase2Store.integration.test.ts",
+    "backend/src/builder/phase2Store.ts",
+    "backend/src/builder/qa/plan.ts",
+    "backend/src/builder/qa/playwrightQaDriver.ts",
+    "backend/src/builder/qa/qa.browser.integration.test.ts",
+    "backend/src/builder/qa/qa.test.ts",
+    "backend/src/builder/qa/qaService.ts",
+    "backend/src/builder/qa/repair.integration.test.ts",
+    "backend/src/builder/qa/repair.ts",
+    "backend/src/builder/qa/runner.ts",
+    "backend/src/builder/qa/types.ts",
+    "backend/src/builder/service.ts",
+    "backend/src/builder/swarmBridge.ts",
+    "backend/src/builder/types.ts",
+    "backend/src/routes/builder.ts",
+    "backend/src/routes/builderPhase2.test.ts",
+    "backend/src/routes/builderPhase2.ts",
+    "backend/src/synthesis/playwrightDriver.ts",
+    "docs/infra/batch-2/PHASE-2-STATUS.md",
+    "docs/xroga/missions/batch2-phase2-qa-iteration-export-20261026.json",
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/current-migration-additions.json",
+    "docs/xroga/security/privileged-callers.json",
+    "docs/xroga/security/rls-audit.md",
+    "frontend/src/components/terminal/BuilderProjectPanel.tsx",
+    "frontend/src/components/terminal/builder/BuilderDelivery.tsx",
+    "frontend/src/components/terminal/builder/BuilderHistory.tsx",
+    "frontend/src/components/terminal/builder/BuilderTests.tsx",
+    "frontend/src/lib/builderApi.ts",
+    "frontend/src/lib/builderApiPhase2.ts",
+    "frontend/src/lib/builderChat.ts",
+    "scripts/security/schema-catalog.mjs",
+    "scripts/security/schema-catalog.test.mjs",
+    "supabase/migrations/20261026010000_builder_phase2.sql",
+    "tests/ci/known-skips.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Canonical scheduler, tryUniversalBuild, SoftwareAgent/Cline, live-preview coordinator and project runtime",
+      "Existing Playwright loader and Chromium discovery",
+      "Existing vault-held GitHub token and authorized GitHub transport",
+      "Phase 1 durable projects and revisions",
+      "Codex Google migration work untouched"
+    ],
+    "extend": [
+      "Browser QA, repair loop, restore/diff and export around the existing builder projects",
+      "playwrightDriver exports its Chromium loader and discovery for the QA driver"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": true,
+    "migrations": [
+      "supabase/migrations/20261026010000_builder_phase2.sql"
+    ],
+    "rollout": "Additive migration (two tables). Depends on the Phase 1 migration. Not applied by this change; apply through the verified migration workflow after review.",
+    "rollback": "DROP TABLE public.builder_external_operations, public.builder_verifications. Nothing else references them."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "New Phase 2 routes require the issued tenant context; project, revision, verification and operation ids are resolved against the verified owner and a foreign id returns 404."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "New owner-scoped tables with RLS (owner SELECT only for the browser role); every store method filters by the verified owner."
+    },
+    "approval": {
+      "changed": true,
+      "description": "Every external GitHub change goes prepare, approve (quoting the plan digest, expiring) and execute, with a database-arbitrated single in-flight operation. Approval is never inferred from model text."
+    },
+    "credentials": {
+      "changed": true,
+      "description": "GitHub tokens are read only from the existing vault at execution time and never stored in plans, receipts, logs or responses. Exports and pushes refuse credential files and credential-like content."
+    },
+    "egress": {
+      "changed": true,
+      "description": "The QA browser is restricted to the application origin and records blocked requests; navigation is limited to paths on the application."
+    },
+    "cost": {
+      "changed": true,
+      "description": "Repairs run through the existing budget reservation with a pre-check and a bounded attempt count. No external billable resource is created without approval."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No payment or subscription path changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/builder/qa/qa.test.ts",
+      "scope": "Plan derivation and runner semantics: never passed without execution, regression flags, classification.",
+      "negative": true,
+      "reference": "backend/src/builder/qa/qa.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/builder/qa/qa.browser.integration.test.ts backend/src/builder/qa/repair.integration.test.ts",
+      "scope": "Real Chromium against real HTTP servers: defects detected, repair guarded, regression caught, origin lock, no-runtime is pending.",
+      "negative": true,
+      "reference": "backend/src/builder/qa/repair.integration.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/builder/export/archive.test.ts",
+      "scope": "Archive integrity: tamper, traversal, completeness, credential exclusion.",
+      "negative": true,
+      "reference": "backend/src/builder/export/archive.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/builder/github/github.test.ts backend/src/builder/github/restPort.test.ts",
+      "scope": "GitHub approval, retries, wrong account, revoked token, divergence, tenant isolation, adapter contract.",
+      "negative": true,
+      "reference": "backend/src/builder/github/github.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/routes/builderPhase2.test.ts",
+      "scope": "HTTP layer: identity required, cross-tenant 404, approval flow.",
+      "negative": true,
+      "reference": "backend/src/routes/builderPhase2.test.ts"
+    },
+    {
+      "command": "builder-phase1 workflow (disposable PostgreSQL, real Chromium)",
+      "scope": "The Phase 2 migration SQL and the browser tests in CI.",
+      "negative": true,
+      "reference": "backend/src/builder/phase2Store.integration.test.ts"
+    },
+    {
+      "command": "node scripts/xroga/inventory.mjs --check",
+      "scope": "Generated source inventory consistency.",
+      "negative": false,
+      "reference": "docs/xroga/current-state.json"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Adds QA, restore, export and GitHub around the existing canonical path. No scheduler, runtime, browser stack, agent framework or authentication system is added.",
+    "rfc": null
+  },
+  "rollout": "Merge only after review and your authorization. Then apply both builder migrations, enable the canonical engine for builder projects, deploy to the Google runtime and set NEXT_PUBLIC_XROGA_BUILDER=1, each as a separate approved step.",
+  "rollback": "Disable NEXT_PUBLIC_XROGA_BUILDER; routes are inert without a project. Remove the schema with the rollback statements above.",
+  "knownGaps": [
+    "No live QA of a generated app and no live repair run: they need the Google runtime and the enabled canonical engine",
+    "Persistence checks need a disposable test database in the QA environment",
+    "GitHub is verified against an in-memory GitHub and request-level contract tests; live creation is pending an approved test account",
+    "Phase 3 (Supabase, Vercel, golden acceptance) is not started"
+  ],
+  "placeholderClaimsRemaining": [
+    "Live browser QA and repair of a generated application on the Google runtime are unverified",
+    "Live GitHub repository creation is unverified"
+  ],
+  "evidenceRefs": [
+    "docs/infra/batch-2/PHASE-2-STATUS.md",
+    "backend/src/builder/qa/repair.integration.test.ts"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Migrations not applied and canonical engine not enabled",
+      "No Google runtime provider deployed (PR #856) for live QA and repair",
+      "No approved GitHub test account for live repository creation",
+      "Authenticated end-to-end and staged security proof not run for this change"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

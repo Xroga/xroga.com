@@ -341,6 +341,36 @@
       "reason": "Needs a disposable PostgreSQL (STORAGE_TEST_DATABASE_URL); skipped without it and run by the builder-phase1 workflow, which provides one.",
       "issue_or_command": "Batch 2 Phase 1 builder-phase1 workflow (branch push or manual dispatch)",
       "review_date": "2026-12-15"
+    },
+    {
+      "id": "64f4f4ceb9f6015e9aa7835907aec038fd578103b3fa5be88b4c1cb1cc460b96",
+      "path": "backend/src/builder/phase2Store.integration.test.ts",
+      "title": "builder Phase 2 tables against real PostgreSQL",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Needs a disposable PostgreSQL (STORAGE_TEST_DATABASE_URL); skipped without it and run by the builder-phase1 workflow, which provides one.",
+      "issue_or_command": "Batch 2 builder-phase1 workflow (branch push or manual dispatch)",
+      "review_date": "2026-12-15"
+    },
+    {
+      "id": "c68f5d6a8b0aadced797dffcdf9fa8354f6eaa93980c0656c3a1baa6ed04854d",
+      "path": "backend/src/builder/qa/qa.browser.integration.test.ts",
+      "title": "browser QA against a real application",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Needs a launchable Chromium; skipped where none exists and run by the builder-phase1 workflow, which installs a pinned Playwright Chromium.",
+      "issue_or_command": "Batch 2 builder-phase1 workflow (branch push or manual dispatch)",
+      "review_date": "2026-12-15"
+    },
+    {
+      "id": "ea9eede84766022954f54185cac5eb0f88a4879098d65b2531476749a0af6952",
+      "path": "backend/src/builder/qa/repair.integration.test.ts",
+      "title": "QA-driven repair lifecycle (real browser)",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Needs a launchable Chromium; skipped where none exists and run by the builder-phase1 workflow, which installs a pinned Playwright Chromium.",
+      "issue_or_command": "Batch 2 builder-phase1 workflow (branch push or manual dispatch)",
+      "review_date": "2026-12-15"
     }
   ]
 }
