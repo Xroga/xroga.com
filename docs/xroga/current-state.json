@@ -23639,7 +23639,7 @@
       "id": "surface:0756eaaa034fcdc72577",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessWorkflow.ts",
-      "sha256": "8ec5b3d8675c959024aa34d8c8d5d16f55144e01e4a0e4d4861240802cee1d13",
+      "sha256": "caacde7f4559e82ca62fa4bb312905be045a5dd643759b43f3d017361f9a4db5",
       "symbols": [
         "ACTION_VERBS",
         "BusinessWorkflowStep",
@@ -119611,7 +119611,7 @@
     {
       "id": "test-suite:b64d08deac9922c347cc",
       "sourcePath": "backend/src/services/integrations/businessWorkflow.test.ts",
-      "declaredTests": 10,
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },

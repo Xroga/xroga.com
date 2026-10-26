@@ -43,6 +43,13 @@ test('keeps comma-separated read, spreadsheet write, and email as three dependen
   ], new Set(['read', 'action'])), null);
 });
 
+test('passes a created artifact to the later request for its link', () => {
+  assert.deepEqual(splitExplicitBusinessWorkflow('Create a spreadsheet for this project and email me its link'), [
+    { kind: 'action', request: 'Create a spreadsheet for this project', dependsOnPrevious: false },
+    { kind: 'action', request: 'email me its link', dependsOnPrevious: true },
+  ]);
+});
+
 test('does not turn a public search, ordinary sentence, or ambiguous clause into an app workflow', () => {
   assert.equal(splitExplicitBusinessWorkflow('Search the web for flights and send me options'), null);
   assert.equal(splitExplicitBusinessWorkflow('Explain Gmail and calendar integrations'), null);
