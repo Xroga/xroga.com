@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "acc5076d245c98197a42b4deb880a22f518f2e1c",
+  "source_sha": "87f7eb4c039028dbb3bb77b9cf0bb51c34e55361",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -7314,6 +7314,8 @@
         "backend/src/routes/businessAutomationWebhook.ts",
         "backend/src/runtime/readiness.ts",
         "backend/src/services/integrations/businessAutomations.ts",
+        "backend/src/services/integrations/composioInstant.ts",
+        "backend/src/services/integrations/composioPolicy.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/storage/databaseTls.ts",
         "backend/src/storage/migration/cliContext.ts",
@@ -7435,6 +7437,13 @@
         "XROGA_BROWSER_PLANNER_MODEL",
         "XROGA_BROWSER_WORKER_URL",
         "XROGA_CIRCUIT_FAILURE_THRESHOLD",
+        "XROGA_COMPOSIO_FIREWALL",
+        "XROGA_COMPOSIO_FIREWALL_CONDITIONS",
+        "XROGA_COMPOSIO_INSTANT",
+        "XROGA_COMPOSIO_INSTANT_ALLOWLIST",
+        "XROGA_COMPOSIO_INSTANT_MAX_CALL_USD",
+        "XROGA_COMPOSIO_MULTI_ACCOUNT",
+        "XROGA_COMPOSIO_WORKBENCH",
         "XROGA_CREDENTIAL_KMS_PROVIDER",
         "XROGA_DEV_CREDENTIAL_KEK",
         "XROGA_DISABLED_PROVIDERS",
@@ -7502,6 +7511,8 @@
         "backend/src/routes/businessAutomationWebhook.ts",
         "backend/src/runtime/readiness.ts",
         "backend/src/services/integrations/businessAutomations.ts",
+        "backend/src/services/integrations/composioInstant.ts",
+        "backend/src/services/integrations/composioPolicy.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/storage/databaseTls.ts",
         "backend/src/storage/migration/cliContext.ts",
@@ -10037,6 +10048,7 @@
     {
       "name": "NODE_ENV",
       "consuming_sources": [
+        "backend/src/ai/fixedCostBudget.ts",
         "backend/src/ai/providerBudget.ts",
         "backend/src/ai/runStore.ts",
         "backend/src/index.ts",
@@ -11103,6 +11115,7 @@
         "backend/src/ai/buildOutcomeMemory.ts",
         "backend/src/ai/buildOutcomeRoutingMemory.ts",
         "backend/src/ai/buildStrategyMemory.ts",
+        "backend/src/ai/fixedCostBudget.ts",
         "backend/src/ai/measuredEvidence.ts",
         "backend/src/ai/pipeline.ts",
         "backend/src/ai/projectMemory.ts",
@@ -12271,6 +12284,139 @@
         "backend/src/ai/providerRuntime.ts",
         "backend/src/ai/routerConfig.ts",
         "backend/src/lib/resilience/circuitBreaker.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_COMPOSIO_FIREWALL",
+      "consuming_sources": [
+        "backend/src/services/integrations/composioPolicy.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_COMPOSIO_FIREWALL_CONDITIONS",
+      "consuming_sources": [
+        "backend/src/services/integrations/composioPolicy.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_COMPOSIO_INSTANT",
+      "consuming_sources": [
+        "backend/src/services/integrations/composioPolicy.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_COMPOSIO_INSTANT_ALLOWLIST",
+      "consuming_sources": [
+        "backend/src/services/integrations/composioInstant.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_COMPOSIO_INSTANT_MAX_CALL_USD",
+      "consuming_sources": [
+        "backend/src/services/integrations/composioInstant.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_COMPOSIO_MULTI_ACCOUNT",
+      "consuming_sources": [
+        "backend/src/services/integrations/composioPolicy.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_COMPOSIO_WORKBENCH",
+      "consuming_sources": [
+        "backend/src/services/integrations/composioPolicy.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -13717,6 +13863,10 @@
       "sha256": "3d6481d14d7298373b85104b61aed0c5acfb26327a5244946090d6969a0035eb"
     },
     {
+      "path": "backend/src/ai/fixedCostBudget.ts",
+      "sha256": "a2a589cc9545d67ee0e23527de088e3fc03bdc0a5478bcb973d0ab0c0e0a15ea"
+    },
+    {
       "path": "backend/src/ai/githubShippingPlan.ts",
       "sha256": "d7b3f43854713015f53852233aff7551cff0ef9103566694ed9c37a2f9799a11"
     },
@@ -14718,7 +14868,7 @@
     },
     {
       "path": "backend/src/routes/businessAutomations.ts",
-      "sha256": "32496bf9cf506e551a51c0136f55290ce9be48529232ebdb8d8d25fc216aefd5"
+      "sha256": "6f2efeb8fa14204805554999ef27d388e496cf94ef838e9026e8669412de0175"
     },
     {
       "path": "backend/src/routes/capabilities.ts",
@@ -14731,6 +14881,10 @@
     {
       "path": "backend/src/routes/community.ts",
       "sha256": "b21f3f0bbcb40f91926076e94fee44555a4cdbba0bcde0d8eda5313eb9559cd6"
+    },
+    {
+      "path": "backend/src/routes/composioAccountsRoutes.ts",
+      "sha256": "911f8ae6e4b1c899f890a23c290491bf3e96176517dc2771676d3680281892a8"
     },
     {
       "path": "backend/src/routes/dashboard.ts",
@@ -14766,7 +14920,7 @@
     },
     {
       "path": "backend/src/routes/integrations.ts",
-      "sha256": "eeefed3d188f0880eac39d78ab305ca6d8eec94dd0c43cc7d39322c0835c1b7e"
+      "sha256": "23a0c353a4b349e8ab0d726268651f2a5ff086d26ee4caa7e456bf81b3af034b"
     },
     {
       "path": "backend/src/routes/marketplace.ts",
@@ -14950,7 +15104,7 @@
     },
     {
       "path": "backend/src/security/businessAuthority.local.integration.ts",
-      "sha256": "9b3195e648555bc2b3815d4b835202d649ed95d93a81c87ebfc1950fda57dff1"
+      "sha256": "454e7438362e369fb23f5e524d38f9ddbd8cfe1dc6bbf7f42dd44b5aad76f87e"
     },
     {
       "path": "backend/src/security/businessConfirmationClaim.local.integration.ts",
@@ -14970,7 +15124,7 @@
     },
     {
       "path": "backend/src/security/connectedAccountRoutes.local.integration.ts",
-      "sha256": "7f2eeaa7692db6e1ce438d3574a40228da92d77287612163db88a1a2e894dd2f"
+      "sha256": "85cff9383b0afac6638e35c6e173aaa57606491db3c8427f71ac35008bcdbd87"
     },
     {
       "path": "backend/src/security/connectedMemoryConsumer.local.integration.ts",
@@ -15198,7 +15352,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "sha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
       "path": "backend/src/services/integrations/businessConnectionIntent.ts",
@@ -15221,16 +15375,32 @@
       "sha256": "076c0205cc129e2a5ff83f0bc57d21bb4faf8a18e5769223f07943115b22d30d"
     },
     {
+      "path": "backend/src/services/integrations/composioAccounts.ts",
+      "sha256": "4309d01748c5f104754985f98ec493f8253ae7a8c06d46c2b46a21004c14123b"
+    },
+    {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "a57065553c769bfb9e768c6fb76502850883635ca4fddf50ffa1054a089bfadf"
+      "sha256": "8ee74feeb602cfadd03c84bebd96fa967e37a9efb83182f29c6e509f8acabb6b"
+    },
+    {
+      "path": "backend/src/services/integrations/composioInstant.ts",
+      "sha256": "da83df6d8a85962a0d0d443c4e24002de1cc9c29684729c66bf47319579fbc54"
     },
     {
       "path": "backend/src/services/integrations/composioNamespace.ts",
       "sha256": "00cf7ae9d090526049bf09cf6727f538e702b2f5e8b9124ee98a88d1a5a31de1"
     },
     {
+      "path": "backend/src/services/integrations/composioPolicy.ts",
+      "sha256": "cefdfab3217f727c1ae6c8d97532f67dcac12656b6f77ab1a9388bf2a42c388f"
+    },
+    {
       "path": "backend/src/services/integrations/composioSkillGuidance.ts",
       "sha256": "b0c8c8093c1aec39c90a4502b68102de3c7f3738d15b4b4d3fea53801101f739"
+    },
+    {
+      "path": "backend/src/services/integrations/composioWorkbench.ts",
+      "sha256": "4e4be984247140691ee7b1bc6891897ec334049ccb8f301d4f70b9cc503009df"
     },
     {
       "path": "backend/src/services/integrations/credentialEnvelope.ts",
@@ -21380,7 +21550,7 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/integrations.ts",
-      "line": 2023,
+      "line": 2025,
       "credentialsInUrl": false
     },
     {
@@ -22276,7 +22446,7 @@
       "hostname": "backend.composio.dev",
       "protocol": "https:",
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 9,
+      "line": 17,
       "credentialsInUrl": false
     },
     {
@@ -26643,6 +26813,20 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/ai/fixedCostBudget.ts",
+      "line": 45,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/fixedCostBudget.ts",
+      "line": 46,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/ai/htmlTruncation.ts",
       "line": 27,
       "scope": "MODULE_LIFETIME",
@@ -28856,28 +29040,35 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 679,
+      "line": 701,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1217,
+      "line": 1239,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1246,
+      "line": 1268,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1859,
+      "line": 1886,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/composioPolicy.ts",
+      "line": 74,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
