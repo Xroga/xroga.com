@@ -12,7 +12,26 @@ import {
 const SECRET_PATH = /(^|\/)(\.env(\..*)?|\.npmrc|id_rsa|id_ed25519|.*\.pem|.*\.p12|credentials\.json)$/i;
 const ALLOWED_ENV_EXAMPLE = /(^|\/)\.env\.(example|sample|template)$/i;
 const SECRET_CONTENT =
-  /(sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----|sbp_[a-f0-9]{30,}|SUPABASE_SERVICE_ROLE_KEY\s*=\s*eyJ)/;
+  /(sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|-----BEGIN (RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----|sbp_[a-f0-9]{30,}|sb_secret_[A-Za-z0-9_-]{20,}|SUPABASE_SERVICE_ROLE_KEY\s*=\s*eyJ|AKIA[0-9A-Z]{16}|(?:sk|rk)_live_[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9-]{20,}|AIza[0-9A-Za-z_-]{35})/;
+const JWT = /eyJ[A-Za-z0-9_-]{10,}\.(eyJ[A-Za-z0-9_-]{10,})\.[A-Za-z0-9_-]{10,}/g;
+
+/**
+ * A Supabase service-role key is a JWT whose payload says role "service_role". The anon (public) key is also a JWT and is
+ * legitimate in source, so a token is judged by what it claims, not by its shape.
+ */
+export function containsServiceRoleJwt(content: string): boolean {
+  for (const match of content.matchAll(JWT)) {
+    try {
+      const payload = JSON.parse(Buffer.from(match[1], 'base64url').toString('utf8')) as { role?: unknown };
+      if (payload.role === 'service_role') return true;
+    } catch {
+      // not a JWT after all
+    }
+  }
+  return false;
+}
+
+export const looksLikeSecret = (content: string): boolean => SECRET_CONTENT.test(content) || containsServiceRoleJwt(content);
 
 export function isSafeProjectPath(path: string): boolean {
   if (!path || path.length > 300 || path.startsWith('/') || path.includes('\\') || path.includes('\0')) return false;
@@ -35,7 +54,7 @@ export function assertSnapshotAcceptable(files: readonly ProjectFile[]): void {
     if (SECRET_PATH.test(file.path) && !ALLOWED_ENV_EXAMPLE.test(file.path)) {
       throw new BuilderError('invalid_input', `Refusing to store a credential-bearing file: ${file.path}`);
     }
-    if (SECRET_CONTENT.test(file.content)) {
+    if (looksLikeSecret(file.content)) {
       throw new BuilderError('invalid_input', `Refusing to store source containing credential material: ${file.path}`);
     }
     bytes += Buffer.byteLength(file.content, 'utf8');

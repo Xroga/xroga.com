@@ -136,6 +136,9 @@ export class GitHubExportService {
     const files = this.filesFor(project, revision); // also proves the source is exportable and secret-free
     const connection = await this.connection(userId);
     if (!connection) throw new BuilderError('conflict', 'GitHub is not connected. Connect your GitHub account first.');
+    // One repository per project: later versions are pushed to it as new commits. A second repository would be silently ignored.
+    const existingBinding = await this.binding(userId, projectId);
+    if (existingBinding) throw new BuilderError('conflict', `This project already has a GitHub repository (${existingBinding.repository.owner}/${existingBinding.repository.name}). Sync the new version to it instead of creating another.`);
     // The owner must be an account the connected user can act for, as GitHub reports it, not as the client claims.
     const owners = await this.deps.github.listOwners(connection.token, connection.viewer);
     const owner = owners.find((candidate) => candidate.login.toLowerCase() === input.owner.toLowerCase());

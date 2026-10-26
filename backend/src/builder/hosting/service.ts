@@ -324,12 +324,17 @@ export class HostingService {
     const connection = await this.connection(userId);
     if (!connection) throw new BuilderError('conflict', 'Vercel is not connected. Reconnect it first.');
     const previewPlan = preview.plan as PreviewPlan;
+    // The release must be made by the same Vercel account that built and tested the preview.
+    if (connection.viewer.id !== previewPlan.viewer.id) throw new BuilderError('conflict', 'The connected Vercel account is not the one that built and tested this preview. Reconnect that account, or deploy a new preview.');
     const plan: PromotionPlan = {
       provider: 'vercel', action: 'promote_production', viewer: connection.viewer, scope: previewPlan.scope, previewOperationId: preview.id, deploymentId: receipt.deployment.id, vercelProjectId: receipt.project.id,
       projectName: receipt.project.name, revision: { id: revision.id, number: revision.revisionNumber, contentSha256: revision.contentSha256 }, previewUrl: receipt.deployment.url,
       productionUrl: `https://${receipt.project.name}.vercel.app`, remoteTests: receipt.remote, confirmationPhrase: `publish ${receipt.project.name}`,
       warnings: [
+        ...(previewPlan.project.mode === 'existing' ? [`This replaces whatever is currently live in your existing Vercel project "${receipt.project.name}".`] : []),
         'This makes your app PUBLIC on the internet at its Vercel production address.',
+        'The remote browser tests are read-only: they did not submit forms, sign in or save data, so those flows have not been tested on the deployed app.',
+        'The production address is expected to be the Vercel-provided one for this project. After publishing, the receipt records exactly what answered there.',
         'It uses the same public database address as the preview. Real visitors will create real records in your own database.',
         'Xroga does not set up custom domains or email. Only the Vercel-provided address is used.',
       ],

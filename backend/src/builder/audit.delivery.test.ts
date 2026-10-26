@@ -53,3 +53,40 @@ describe('audit: a database-backed project leaves Xroga complete', () => {
     assert.equal(promotion.created, true);
   });
 });
+
+describe('audit: credentials in generated source are refused before they can be stored or leave Xroga', () => {
+  const jwt = (role: string) => `${Buffer.from('{"alg":"HS256","typ":"JWT"}').toString('base64url')}.${Buffer.from(JSON.stringify({ iss: 'supabase', role, ref: 'abcdefghij' })).toString('base64url')}.${'a'.repeat(43)}`;
+
+  it('refuses a service-role JWT, Supabase secret key, AWS, Stripe and Slack keys, and allows the public anon key', async () => {
+    const { looksLikeSecret, assertSnapshotAcceptable } = await import('./snapshot.js');
+    for (const secret of [jwt('service_role'), 'sb_secret_' + 'a'.repeat(30), 'AKIA' + 'A'.repeat(16), 'sk_live_' + 'a'.repeat(24), 'xoxb-' + '1'.repeat(24), `const key = "${jwt('service_role')}";`]) {
+      assert.equal(looksLikeSecret(secret), true, secret.slice(0, 20));
+      assert.throws(() => assertSnapshotAcceptable([{ path: 'lib/config.ts', content: secret }]), BuilderError);
+    }
+    assert.equal(looksLikeSecret(`const anon = "${jwt('anon')}";`), false, 'the anon key is public by design');
+    assert.equal(looksLikeSecret('const note = "eyJ.not.a.token";'), false);
+  });
+});
+
+describe('audit: one GitHub repository per project, and a release only by the account that tested the preview', () => {
+  it('a second repository for the same project is refused; sync is the way to add versions', async () => {
+    const f = world();
+    const { project } = await f.builder.createProject(ALICE, { prompt: SITE, requestKey: 'audit-onerepo-0001' });
+    const first = await f.services.github.prepareCreate(ALICE, project.id, { operationKey: 'audit-repo-one-0001', owner: 'alice', repositoryName: 'one-repo' });
+    await f.services.github.approve(ALICE, project.id, first.operation.id, { digest: first.operation.planDigest });
+    await f.services.github.execute(ALICE, project.id, first.operation.id);
+    await assert.rejects(f.services.github.prepareCreate(ALICE, project.id, { operationKey: 'audit-repo-two-0001', owner: 'alice', repositoryName: 'two-repo' }), (error) => error instanceof BuilderError && /already has a GitHub repository/.test(error.message));
+  });
+
+  it('production is refused when the connected Vercel account is not the one that built the preview', async () => {
+    const f = world();
+    const { project } = await f.builder.createProject(ALICE, { prompt: SITE, requestKey: 'audit-viewer-0001' });
+    const preview = await f.services.hosting.preparePreview(ALICE, project.id, { operationKey: 'audit-viewer-prev-1', scopeId: null, projectName: 'viewer-app' });
+    await f.services.hosting.approve(ALICE, project.id, preview.operation.id, preview.operation.planDigest);
+    await f.services.hosting.executePreview(ALICE, project.id, preview.operation.id);
+    // The customer disconnects and connects a different Vercel account.
+    f.vercel.addAccount('vc-other', { id: 'user_other', username: 'someone-else' });
+    f.tokens.vercel.set(ALICE, 'vc-other');
+    await assert.rejects(f.services.hosting.preparePromotion(ALICE, project.id, { operationKey: 'audit-viewer-prod-1', previewOperationId: preview.operation.id }), (error) => error instanceof BuilderError && /not the one that built/.test(error.message));
+  });
+});
