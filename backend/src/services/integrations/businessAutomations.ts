@@ -45,7 +45,7 @@ function explicitSteps(request: string): BusinessWorkflowStep[] {
 export async function createBusinessAutomationRule(userId: string, input: {
   name: string;
   request: string;
-  schedule: { kind: 'interval'; intervalSeconds: number } | { kind: 'trigger'; toolkit: string; triggerSlug: string; triggerConfig: Record<string, unknown> };
+  schedule: { kind: 'interval'; intervalSeconds: number } | { kind: 'trigger'; toolkit: string; triggerSlug: string; triggerConfig: Record<string, unknown>; connectedAccountId?: string };
 }): Promise<BusinessAutomationRule> {
   const name = input.name.trim();
   const request = input.request.trim();

@@ -23,7 +23,7 @@ export function registerConnectedAccountRouteTests(getUsers:()=>readonly {id:str
         return original(input,init);
       }
       const path=url.pathname,body=init?.body?JSON.parse(String(init.body)):{};
-      const config=(user:string)=>({user_id:`xroga:${user}`,workbench:{enable:false,enable_proxy_execution:false},execute:{enable_multi_execute:false},tags:['readOnlyHint']});
+      const config=(user:string)=>({user_id:`xroga:${user}`,workbench:{enable:false,enable_proxy_execution:false},execute:{enable_multi_execute:false}, instant: false,tags:['readOnlyHint']});
       if(path.endsWith('/session')&&init?.method==='POST'){
         createdFor.push(body.user_id);assert.ok([`xroga:${owner.id}`,`xroga:${other.id}`].includes(body.user_id));
         const id=body.user_id===`xroga:${owner.id}`?session:otherSession;

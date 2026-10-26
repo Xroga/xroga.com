@@ -5,6 +5,14 @@ export { xrogaCustomToolkitPrefix, canUserAccessComposioToolkit, canUserAccessCo
 import { canonicalAuthorityValue, preparedActionDigest } from '../../security/authority/digest.js';
 import { assertAuthorityPermit, consumeAuthorityPermit } from '../../security/authority/enforce.js';
 import type { AuthorityDispatchBinding, AuthorityPermit } from '../../security/authority/types.js';
+import { cleanAlias, resolveComposioAccountSelection } from './composioAccounts.js';
+import {
+  buildSessionBody,
+  evaluateSessionConfig,
+  readComposioCapabilityFlags,
+  repairBody,
+  type ComposioSessionIntent,
+} from './composioPolicy.js';
 
 const COMPOSIO_API_BASE = 'https://backend.composio.dev/api/v3.1';
 
@@ -33,18 +41,22 @@ export type XrogaConnectToolRisk =
 export class ComposioClientError extends Error {
   readonly status: number;
   readonly code: string;
+  /** Short, sanitized policy detail (for example the firewall hook that fired). Never provider content. */
+  readonly detail?: string;
 
   constructor(
     message: string,
     options: {
       status?: number;
       code?: string;
+      detail?: string;
     } = {},
   ) {
     super(message);
     this.name = 'ComposioClientError';
     this.status = options.status ?? 502;
     this.code = options.code ?? 'COMPOSIO_ERROR';
+    if (options.detail) this.detail = options.detail;
   }
 }
 
@@ -57,12 +69,18 @@ interface ComposioTagsConfig {
 
 interface ComposioWorkbenchConfig {
   enable?: boolean;
+  tool_execution_enabled?: boolean;
+  enable_tool_execution?: boolean;
   proxy_execution_enabled?: boolean;
   enable_proxy_execution?: boolean;
 }
 
-interface ComposioSessionConfig {
+export interface ComposioSessionConfig {
   user_id?: string;
+  /** `false` when paid Instant accounts are disabled for this session. */
+  instant?: unknown;
+  hooks?: Array<Record<string, unknown>> | null;
+  multi_account?: { enable?: boolean; require_explicit_selection?: boolean } | null;
   tags?: string[] | ComposioTagsConfig;
   search?: {
     enable?: boolean;
@@ -76,6 +94,8 @@ interface ComposioSessionConfig {
 
 export interface ComposioSession {
   session_id: string;
+  /** Increments on every PATCH; sent back as expected_config_version for optimistic concurrency. */
+  config_version?: number;
   config?: ComposioSessionConfig;
   warnings?: Array<{
     code?: string;
@@ -121,6 +141,8 @@ interface ComposioSearchResponse {
     has_active_connection?: boolean;
     status_message?: string;
     account_selection?: string;
+    /** PRIVATE (the user's own) or SHARED (reachable by other users through an ACL). */
+    account_type?: string;
   }>;
   tool_schemas?: Record<string, ComposioToolSchema>;
 }
@@ -1330,7 +1352,7 @@ function validateCallbackUrl(value: string): string {
   return url.toString();
 }
 
-async function composioRequest<T>(
+export async function composioRequest<T>(
   path: string,
   options: {
     method?: string;
@@ -1425,6 +1447,14 @@ async function composioRequest<T>(
         message = 'Xroga Connect is temporarily unavailable. Please try again shortly.';
       }
 
+      if (response.status === 402) {
+        // Composio answers 402 when an Instant (paid) call cannot be funded. It never falls back to another account.
+        throw new ComposioClientError('Paid Instant execution is not available: the provider balance is exhausted.', {
+          status: 402,
+          code: 'COMPOSIO_INSTANT_BALANCE_EXHAUSTED',
+        });
+      }
+
       throw new ComposioClientError(message, {
         status: response.status >= 500 ? 502 : response.status,
         code: 'COMPOSIO_UPSTREAM_ERROR',
@@ -1496,43 +1526,40 @@ async function getCurrentSessionConfig(
   return current?.config ?? session.config;
 }
 
-function validateSafeRuntimeConfig(
+function policyError(violation: { code: string; message: string }): ComposioClientError {
+  return new ComposioClientError(violation.message, { status: 403, code: violation.code });
+}
+
+/**
+ * Verifies the stored session configuration against Xroga's policy. A violation that can be repaired by
+ * only NARROWING access (paid Instant off, required firewall hooks on) is repaired with one PATCH and
+ * read back; anything else, or a repair that did not take, fails closed.
+ */
+async function enforceSessionPolicy(
+  sessionId: string,
+  session: ComposioSession,
   config: ComposioSessionConfig | undefined,
-): void {
-  const sandbox = config?.sandbox ?? config?.workbench;
-
-  if (sandbox?.enable === true) {
-    throw new ComposioClientError(
-      'Xroga Connect rejected a session with sandbox access enabled.',
-      {
-        status: 403,
-        code: 'COMPOSIO_SANDBOX_BLOCKED',
+  intent: ComposioSessionIntent,
+): Promise<ComposioSessionConfig | undefined> {
+  const flags = readComposioCapabilityFlags();
+  const violations = evaluateSessionConfig(config, intent, flags);
+  if (violations.length === 0) return config;
+  const repair = repairBody(violations);
+  if (!repair) throw policyError(violations[0]);
+  const repaired = await composioRequest<ComposioSession>(
+    `/tool_router/session/${encodeURIComponent(sessionId)}`,
+    {
+      method: 'PATCH',
+      body: {
+        ...repair,
+        ...(typeof session.config_version === 'number' ? { expected_config_version: session.config_version } : {}),
       },
-    );
-  }
-
-  if (
-    sandbox?.proxy_execution_enabled === true ||
-    sandbox?.enable_proxy_execution === true
-  ) {
-    throw new ComposioClientError(
-      'Xroga Connect rejected a session with proxy execution enabled.',
-      {
-        status: 403,
-        code: 'COMPOSIO_PROXY_EXECUTION_BLOCKED',
-      },
-    );
-  }
-
-  if (config?.execute?.enable_multi_execute === true) {
-    throw new ComposioClientError(
-      'Xroga Connect rejected a session with multi-execution enabled.',
-      {
-        status: 403,
-        code: 'COMPOSIO_MULTI_EXECUTE_BLOCKED',
-      },
-    );
-  }
+    },
+  );
+  const after = repaired.config ?? config;
+  const remaining = evaluateSessionConfig(after, intent, flags);
+  if (remaining.length > 0) throw policyError(remaining[0]);
+  return after;
 }
 
 function validateReadOnlyConfig(
@@ -1563,30 +1590,16 @@ function validateReadOnlyConfig(
 
 async function createComposioSession(
   userId: string,
-  mode: XrogaConnectMode,
+  mode: ComposioSessionIntent,
+  extras: { instant?: { toolkits: readonly string[]; tools?: Readonly<Record<string, readonly string[]>> }; connectedAccounts?: Readonly<Record<string, readonly string[]>> } = {},
 ): Promise<ComposioSession> {
-  const body: Record<string, unknown> = {
-    user_id: composioUserId(userId),
-    workbench: {
-      enable: false,
-      enable_proxy_execution: false,
-    },
-    search: {
-      enable: true,
-    },
-    execute: {
-      enable_multi_execute: false,
-    },
-    manage_connections: {
-      enable: true,
-      enable_wait_for_connections: false,
-      enable_connection_removal: false,
-    },
-  };
-
-  if (mode === 'read') {
-    body.tags = [READ_ONLY_TAG];
-  }
+  const body = buildSessionBody({
+    composioUserId: composioUserId(userId),
+    intent: mode,
+    flags: readComposioCapabilityFlags(),
+    readOnlyTag: READ_ONLY_TAG,
+    ...extras,
+  });
 
   const session = await composioRequest<ComposioSession>(
     '/tool_router/session',
@@ -1615,6 +1628,19 @@ export async function createReadOnlyComposioSession(
   return createComposioSession(userId, 'read');
 }
 
+/** A session whose paid Instant accounts may serve only the named toolkits and tools. Needs Instant to be enabled by Xroga. */
+export async function createInstantComposioSession(
+  userId: string,
+  scope: { toolkits: readonly string[]; tools?: Readonly<Record<string, readonly string[]>> },
+): Promise<ComposioSession> {
+  return createComposioSession(userId, 'instant', { instant: scope });
+}
+
+/** A session with the remote workbench on and tool and proxy execution from scripts off. Needs the workbench to be enabled by Xroga. */
+export async function createWorkbenchComposioSession(userId: string): Promise<ComposioSession> {
+  return createComposioSession(userId, 'workbench');
+}
+
 export async function createActionComposioSession(
   userId: string,
 ): Promise<ComposioSession> {
@@ -1634,7 +1660,7 @@ export async function getComposioSession(
 export async function assertComposioSession(
   userId: string,
   sessionId: string,
-  mode: XrogaConnectMode,
+  mode: ComposioSessionIntent,
 ): Promise<ComposioSession> {
   const clean = cleanSessionId(sessionId);
   const session = await getComposioSession(clean);
@@ -1670,15 +1696,15 @@ export async function assertComposioSession(
     );
   }
 
-  validateSafeRuntimeConfig(currentConfig);
+  const enforced = await enforceSessionPolicy(clean, session, currentConfig, mode);
 
   if (mode === 'read') {
-    validateReadOnlyConfig(currentConfig);
+    validateReadOnlyConfig(enforced);
   }
 
   return {
     ...session,
-    config: currentConfig ?? session.config,
+    config: enforced ?? session.config,
   };
 }
 
@@ -1789,7 +1815,8 @@ export async function searchComposioTools(
     .map((status) => ({
       toolkit: status.toolkit,
       description: status.description,
-      connected: Boolean(status.has_active_connection),
+      // A SHARED connection serves several users. Xroga never pins one to a session, so it is never "connected" for a user here.
+      connected: Boolean(status.has_active_connection) && String(status.account_type ?? 'PRIVATE').toUpperCase() !== 'SHARED',
       statusMessage: status.status_message,
     }));
 
@@ -2267,7 +2294,7 @@ export async function listComposioTriggerTypes(
 /** Register an event only for a connected, allowed toolkit owned by this user. */
 export async function upsertComposioTriggerForUser(
   userId: string,
-  input: { toolkit: string; triggerSlug: string; triggerConfig: Record<string, unknown> },
+  input: { toolkit: string; triggerSlug: string; triggerConfig: Record<string, unknown>; connectedAccountId?: string },
 ): Promise<string> {
   const toolkit = cleanToolkit(input.toolkit);
   const triggerSlug = input.triggerSlug.trim().toUpperCase();
@@ -2285,9 +2312,16 @@ export async function upsertComposioTriggerForUser(
   if (!connected.some((item) => item.connected && item.toolkit.trim().toLowerCase() === toolkit)) {
     throw new ComposioClientError('Connect this app before enabling its trigger.', { status: 409, code: 'COMPOSIO_TRIGGER_CONNECTION_REQUIRED' });
   }
+  // Composio watches "the first active connection" when none is named. With several accounts that can be the wrong one,
+  // so with multi-account on the user's chosen account (proven to be theirs) is pinned explicitly.
+  const selection = await resolveComposioAccountSelection(userId, { toolkit, requestedAccountId: input.connectedAccountId });
   const result = await composioRequest<{ trigger_id?: string }>(`/trigger_instances/${encodeURIComponent(triggerSlug)}/upsert`, {
     method: 'POST',
-    body: { user_id: composioUserId(userId), trigger_config: input.triggerConfig },
+    body: {
+      user_id: composioUserId(userId),
+      ...(selection.accountId ? { connected_account_id: selection.accountId } : {}),
+      trigger_config: input.triggerConfig,
+    },
   });
   if (!result.trigger_id?.startsWith('ti_')) throw new ComposioClientError('Composio did not return a trigger instance.', { status: 502, code: 'COMPOSIO_TRIGGER_CREATE_FAILED' });
   return result.trigger_id;
@@ -2358,6 +2392,8 @@ export async function createComposioConnectionLink(
     toolkit: string;
     callbackUrl: string;
     mode?: XrogaConnectMode;
+    /** A name for the new account, such as `work-gmail`. Only with multi-account on. */
+    alias?: string;
   },
 ): Promise<{
   toolkit: string;
@@ -2382,6 +2418,7 @@ export async function createComposioConnectionLink(
       body: {
         toolkit,
         callback_url: callbackUrl,
+        ...(input.alias && readComposioCapabilityFlags().multiAccount ? { alias: cleanAlias(input.alias) } : {}),
       },
     },
   );
@@ -2414,6 +2451,8 @@ async function executeDiscoveredComposioTool(
     useCase: string;
     toolSlug: string;
     arguments: Record<string, unknown>;
+    /** Which of the user's connected accounts to run as. Required only when several are connected and multi-account is on. */
+    connectedAccountId?: string;
     mode: XrogaConnectMode;
     authorityPermit?: AuthorityPermit;
     authorityBinding?: AuthorityDispatchBinding;
@@ -2455,6 +2494,10 @@ async function executeDiscoveredComposioTool(
   }
 
   let account: string | undefined;
+  if (input.mode === 'read' && allowedTool) {
+    const selection = await resolveComposioAccountSelection(userId, { toolkit: allowedTool.toolkit.trim().toLowerCase(), requestedAccountId: input.connectedAccountId });
+    if (selection.accountId) account = selection.accountId;
+  }
   if (input.mode === 'action') {
     const binding = input.authorityBinding;
     if (!binding || !allowedTool || toolSlug.startsWith('COMPOSIO_')) {
@@ -2466,7 +2509,9 @@ async function executeDiscoveredComposioTool(
     assertAuthorityPermit(input.authorityPermit, actualBinding);
     const accounts = await listComposioToolkits(userId, { sessionId, mode: 'action', toolkits: [toolkit] });
     const current = accounts.find(item => item.toolkit.trim().toLowerCase() === toolkit);
-    const accountId = current?.noAuth ? `no-auth:${toolkit}` : current?.connectedAccountId;
+    // With multi-account on, the account is the one the user chose, proven to be theirs. Otherwise Composio's single account.
+    const selection = await resolveComposioAccountSelection(userId, { toolkit, requestedAccountId: input.connectedAccountId });
+    const accountId = selection.accountId ?? (current?.noAuth ? `no-auth:${toolkit}` : current?.connectedAccountId);
     if (!current?.connected || !accountId || accountId !== binding.connectedAccountId) {
       throw new ComposioClientError('The connected application account changed. Prepare the action again.', {
         status: 409, code: 'COMPOSIO_ACTION_ACCOUNT_CHANGED',
@@ -2491,6 +2536,24 @@ async function executeDiscoveredComposioTool(
       timeoutMs: EXECUTE_TIMEOUT_MS,
     },
   );
+  return interpretComposioExecuteResponse(response);
+}
+
+/**
+ * Turns a raw session execute response into Xroga's safe DTO, or throws. Shared by every execution path
+ * so a firewall block, an input request, a failure reported with HTTP 200 and a credential in the output
+ * are handled identically everywhere.
+ */
+export function interpretComposioExecuteResponse(response: ComposioExecuteResponse | null | undefined): ComposioExecuteResponse {
+  if (response && typeof response === 'object' && !Array.isArray(response) && response.result_type === 'blocked') {
+    // A firewall hook blocked the call (before_execute) or the result (after_execute). Report the policy, never the content.
+    const reason = (response as { block_reason?: unknown }).block_reason;
+    throw new ComposioClientError('Blocked by session policy.', {
+      status: 403,
+      code: 'COMPOSIO_FIREWALL_BLOCKED',
+      ...(typeof reason === 'string' ? { detail: reason.replace(/[^\w .:-]/g, ' ').slice(0, 120) } : {}),
+    });
+  }
   // v3.1 can report input_required or failed with HTTP 200. Neither is a
   // completed effect. Never answer a provider approval request automatically.
   // Legacy inline responses with explicit data remain wire-compatible.
@@ -2520,6 +2583,7 @@ export async function executeComposioReadTool(
     useCase: string;
     toolSlug: string;
     arguments: Record<string, unknown>;
+    connectedAccountId?: string;
   },
 ): Promise<ComposioExecuteResponse> {
   const toolSlug = cleanToolSlug(input.toolSlug);
@@ -2548,6 +2612,7 @@ export async function executeComposioActionTool(
     useCase: string;
     toolSlug: string;
     arguments: Record<string, unknown>;
+    connectedAccountId?: string;
     authorization: {
       confirmed: true;
     };
@@ -2574,6 +2639,7 @@ export async function executeComposioActionTool(
     useCase: input.useCase,
     toolSlug: input.toolSlug,
     arguments: input.arguments,
+    ...(input.connectedAccountId ? { connectedAccountId: input.connectedAccountId } : {}),
     mode: 'action',
     authorityPermit: input.authorityPermit,
     authorityBinding: input.authorityBinding,

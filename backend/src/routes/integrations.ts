@@ -1,3 +1,4 @@
+import { composioAccountsRouter } from './composioAccountsRoutes.js';
 import {
   Router,
   type Response,
@@ -1990,6 +1991,7 @@ router.post(
           .regex(
             /^[A-Za-z0-9_-]+$/,
           ),
+        alias: z.string().trim().min(2).max(40).optional(),
       });
 
     const parsed =
@@ -2040,7 +2042,7 @@ router.post(
             toolkit:
               parsed.data
                 .toolkit,
-
+            ...(parsed.data.alias ? { alias: parsed.data.alias } : {}),
             callbackUrl,
           },
         );
@@ -2100,6 +2102,12 @@ router.post(
             z.unknown(),
           )
           .default({}),
+
+        connectedAccountId: z
+          .string()
+          .trim()
+          .regex(/^[A-Za-z0-9_-]{4,64}$/)
+          .optional(),
       });
 
     const parsed =
@@ -2138,6 +2146,8 @@ router.post(
     }
   },
 );
+
+router.use('/xroga-connect/accounts', composioAccountsRouter);
 
 /**
  * Live-AI proxy stays retired —

@@ -24,7 +24,7 @@ test('connected toolkit lookup stays within Composio session page limit', async 
         user_id: 'xroga:test-user',
         tags: ['readOnlyHint'],
         workbench: { enable: false, enable_proxy_execution: false },
-        execute: { enable_multi_execute: false },
+        execute: { enable_multi_execute: false }, instant: false,
       },
     });
   }) as typeof fetch;

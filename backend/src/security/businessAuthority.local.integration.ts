@@ -79,7 +79,7 @@ export function registerBusinessAuthorityTests(admin: SupabaseClient, getUsers: 
       if (url.pathname.includes('/tools/')) return response({ slug: seeded.prepared.toolSlug, toolkit: { slug: 'slack' }, tags: ['destructiveHint'], scopes: [] });
       if (url.pathname.endsWith('/search')) return response({ tool_schemas: { fixture: { tool_slug: seeded.prepared.toolSlug, toolkit: 'slack', input_schema: { type: 'object' } } } });
       if (url.pathname.endsWith('/toolkits')) return response({ items: [{ slug: 'slack', name: 'Slack', connected_account: { id: 'synthetic-account-A', status: 'ACTIVE' } }] });
-      if (url.pathname.endsWith(`/${seeded.prepared.sessionId}`)) return response({ session_id: seeded.prepared.sessionId, config: { user_id: `xroga:${f.userId}`, workbench: { enable: false, enable_proxy_execution: false }, execute: { enable_multi_execute: false } } });
+      if (url.pathname.endsWith(`/${seeded.prepared.sessionId}`)) return response({ session_id: seeded.prepared.sessionId, config: { user_id: `xroga:${f.userId}`, workbench: { enable: false, enable_proxy_execution: false }, execute: { enable_multi_execute: false }, instant: false } });
       assert.fail('Unexpected provider path, never forwarded');
     });
     await assert.rejects(confirmBusinessAction({ ...actor }, seeded.row.id), { code: 'TENANT_AUTH_REQUIRED' });

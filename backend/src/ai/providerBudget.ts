@@ -588,6 +588,110 @@ export async function withProviderReservation<T extends ProviderUsageResult>(inp
   }
 }
 
+/**
+ * Fixed-cost external calls (for example a paid Composio Instant tool) use the SAME reservation ledger
+ * as model calls: one reservation against the owner's unlocked entitlement before the call, settled to
+ * the exact charge afterwards, released if the call fails before it could have been charged. The route
+ * is a free-text label in the ledger (not a model id) and token counts are zero. The settled amount can
+ * never exceed what was reserved, so a provider that charges more than the reservation is detected and
+ * held for reconciliation instead of silently overspending.
+ */
+export async function reserveFixedCostBudget(input: {
+  userId: string;
+  route: string;
+  reservationMicroUsd: number;
+  idempotencyKey?: string;
+  purpose?: BudgetPurpose;
+}): Promise<ProviderReservation> {
+  if (!/^[a-z0-9][a-z0-9:._-]{2,63}$/.test(input.route)) throw new Error('Invalid ledger route');
+  const amount = asSafeInteger(input.reservationMicroUsd);
+  if (amount <= 0) throw new Error('Invalid provider accounting amount');
+  const purpose = input.purpose ?? 'daily_work';
+  const idempotencyKey = input.idempotencyKey ?? randomUUID();
+
+  if (hasDurableStore()) {
+    const rpc = () => getSupabaseAdmin().rpc('reserve_xroga_provider_budget', {
+      p_user_id: input.userId, p_idempotency_key: idempotencyKey, p_purpose: purpose, p_internal_route: input.route,
+      p_price_version: PROVIDER_PRICE_VERSION, p_estimated_input_tokens: 0, p_maximum_output_tokens: 0, p_reservation_micro_usd: amount,
+    });
+    let result = await rpc();
+    if (result.error && /active_billing_cycle_required/i.test(result.error.message)) {
+      await getSupabaseAdmin().rpc('ensure_xroga_free_cycle', { p_user_id: input.userId });
+      result = await rpc();
+    }
+    if (result.error) {
+      const status = await getProviderEntitlementStatus(input.userId).catch(() => null);
+      throw capacityUnavailableError(status?.availableNowPercent != null && status.availableNowPercent <= 0, status?.nextUnlockAt ?? null);
+    }
+    const row = result.data as Record<string, unknown> | null;
+    if (!row || Array.isArray(row) || typeof row.id !== 'string' || !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(row.id)
+      || row.user_id !== input.userId || row.idempotency_key !== idempotencyKey || row.internal_route !== input.route
+      || row.purpose !== purpose || row.status !== 'reserved' || !exactAccountingCount(row.reserved_micro_usd, amount)
+      || row.price_version !== PROVIDER_PRICE_VERSION) throw new Error('Provider reservation evidence is invalid');
+    return { id: row.id, reservedMicroUsd: amount, priceVersion: row.price_version };
+  }
+
+  const existing = [...memoryReservations.entries()].find(([, row]) => row.userId === input.userId && row.idempotencyKey === idempotencyKey);
+  if (existing) {
+    if (existing[1].status !== 'reserved' || existing[1].amount !== amount || (existing[1].modelId as string) !== input.route) throw new Error('Provider reservation evidence is invalid');
+    return { id: existing[0], reservedMicroUsd: amount, priceVersion: PROVIDER_PRICE_VERSION };
+  }
+  const cycle = memoryCycles.get(input.userId) ?? {
+    kind: 'free' as const, startsAt: new Date(), endsAt: new Date(Date.now() + 30 * 86_400_000), pacing: 'balanced_month' as const,
+    acceleratedUnlockMicroUsd: 0, settled: 0, reserved: 0, entitlement: FREE_PROVIDER_ENTITLEMENT_MICRO_USD,
+  };
+  memoryCycles.set(input.userId, cycle);
+  const unlocked = unlockedEntitlementMicroUsd({
+    startsAt: cycle.startsAt, now: new Date(), pacing: cycle.pacing, purpose,
+    acceleratedUnlockMicroUsd: cycle.acceleratedUnlockMicroUsd, entitlementMicroUsd: cycle.entitlement,
+  });
+  if (cycle.settled + cycle.reserved + amount > unlocked) {
+    throw capacityUnavailableError(true, nextCycleUnlock(cycle.startsAt, new Date(), cycle.endsAt));
+  }
+  cycle.reserved += amount;
+  const id = randomUUID();
+  memoryReservations.set(id, { userId: input.userId, idempotencyKey, amount, status: 'reserved',
+    modelId: input.route as unknown as ModelId, purpose, estimatedInputTokens: 0, maximumOutputTokens: 0 });
+  return { id, reservedMicroUsd: amount, priceVersion: PROVIDER_PRICE_VERSION };
+}
+
+export async function settleFixedCostBudget(input: {
+  userId: string;
+  route: string;
+  reservation: ProviderReservation;
+  actualMicroUsd: number;
+  providerRequestId?: string;
+  calls?: number;
+}): Promise<void> {
+  const actual = asSafeInteger(input.actualMicroUsd);
+  const calls = input.calls ?? 1;
+  requireUsageCounts(calls);
+  if (!Number.isSafeInteger(input.reservation.reservedMicroUsd) || input.reservation.reservedMicroUsd < 0) throw new Error('Provider reservation evidence is invalid');
+  if (actual > input.reservation.reservedMicroUsd) throw new Error('Provider cost exceeded the conservative reservation');
+  if (hasDurableStore()) {
+    const { data, error } = await getSupabaseAdmin().rpc('settle_xroga_provider_budget', {
+      p_user_id: input.userId, p_reservation_id: input.reservation.id, p_actual_micro_usd: actual,
+      p_provider_request_id: input.providerRequestId ?? '', p_actual_input_tokens: 0, p_cached_input_tokens: 0, p_output_tokens: 0,
+      p_reasoning_tokens: 0, p_tool_calls: calls, p_search_calls: 0,
+    });
+    if (error) throw new Error('Provider reservation settlement failed');
+    const row = data as Record<string, unknown> | null;
+    if (!row || Array.isArray(row) || row.id !== input.reservation.id || row.user_id !== input.userId || row.status !== 'settled'
+      || row.internal_route !== input.route || row.price_version !== input.reservation.priceVersion
+      || !exactAccountingCount(row.reserved_micro_usd, input.reservation.reservedMicroUsd) || !exactAccountingCount(row.settled_micro_usd, actual)
+      || row.provider_request_id !== (input.providerRequestId?.trim() || null) || !exactAccountingCount(row.tool_calls, calls)) {
+      throw new Error('Provider settlement evidence is inconsistent or unavailable');
+    }
+    return;
+  }
+  const row = memoryReservations.get(input.reservation.id);
+  const cycle = memoryCycles.get(input.userId);
+  if (!row || row.userId !== input.userId || !cycle || row.status !== 'reserved') return;
+  cycle.reserved -= row.amount;
+  cycle.settled += actual;
+  row.status = 'settled';
+}
+
 export function resetProviderBudgetMemoryForTests(): void {
   memoryCycles.clear();
   memoryReservations.clear();

@@ -1,0 +1,142 @@
+{
+  "version": "1.0",
+  "missionId": "COMPOSIO-PLATFORM-EXPANSION-20261026",
+  "baseSha": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+  "requirementIds": [
+    "XR-MISSION-027",
+    "XR-FAMILY-composio-dynamic-tools"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "high",
+  "scope": "Audit of the existing Composio integration against the official v3.1 documentation, and an opt-in, default-off extension: explicit instant:false on every session with verification and repair of stored sessions, firewall hooks, multi-account with ownership proof, a gated remote workbench, and budget-ledger-bound paid Instant execution. No Composio call was made; nothing is enabled in production.",
+  "changedFiles": [
+    "backend/.env.example",
+    "backend/src/ai/providerBudget.ts",
+    "backend/src/e2e/xrogaGoldenJourneys.test.ts",
+    "backend/src/routes/businessAutomations.ts",
+    "backend/src/routes/composioAccountsRoutes.test.ts",
+    "backend/src/routes/composioAccountsRoutes.ts",
+    "backend/src/routes/integrations.ts",
+    "backend/src/security/businessAuthority.local.integration.ts",
+    "backend/src/security/connectedAccountRoutes.local.integration.ts",
+    "backend/src/services/integrations/businessAutomations.ts",
+    "backend/src/services/integrations/composioAccounts.ts",
+    "backend/src/services/integrations/composioClient.pagination.test.ts",
+    "backend/src/services/integrations/composioClient.ts",
+    "backend/src/services/integrations/composioInstant.ts",
+    "backend/src/services/integrations/composioPlatform.test.ts",
+    "backend/src/services/integrations/composioPolicy.ts",
+    "backend/src/services/integrations/composioTriggers.test.ts",
+    "backend/src/services/integrations/composioWorkbench.ts",
+    "docs/infra/composio/COMPOSIO-PLATFORM-STATUS.md",
+    "docs/xroga/missions/composio-platform-expansion-20261026.json",
+    "scripts/_cx_mission.mjs"
+  ],
+  "decisions": {
+    "keep": [
+      "Existing REST v3.1 client, session ownership assertion, discovery re-check and authority-permit action path",
+      "Existing signed webhook receiver and trigger flow",
+      "Canonical scheduler, tenant context and provider budget ledger",
+      "Codex Google migration work untouched"
+    ],
+    "extend": [
+      "Session creation and verification gain a pure policy module (instant, hooks, workbench, multi-account)",
+      "Provider budget ledger gains fixed-cost reservation functions that reuse the same reservation RPCs",
+      "Account selection for reads, actions and triggers when multi-account is enabled"
+    ],
+    "replace": [
+      "validateSafeRuntimeConfig is replaced by the policy module, which checks a superset of the same rules"
+    ],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No schema change. The existing reserve and settle budget RPCs are reused with a free-text route label and zero token counts.",
+    "rollback": "Revert the change; nothing is persisted outside the existing ledger rows written only when Instant is explicitly enabled."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "New accounts routes sit behind the existing integrations authentication; identity comes only from the verified request user."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "Connected-account listing is filtered by the caller Composio user id and PRIVATE accounts only; a request-supplied account id is used only if it is in that fresh list; SHARED connections are never treated as connected."
+    },
+    "approval": {
+      "changed": true,
+      "description": "Instant and Workbench execution each need a current single-use authority permit bound to the exact tool and arguments or code; both are off by default and have no user-facing route."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No new credential is stored or logged. Provider output is redacted by the existing redaction path and bounded."
+    },
+    "egress": {
+      "changed": true,
+      "description": "Workbench sessions request egress restricted to Composio at creation (not verifiable by read-back); the default workbench stays disabled."
+    },
+    "cost": {
+      "changed": true,
+      "description": "Paid Instant is explicitly disabled on every session and can run only with a configured per-call ceiling, an allowlist and a ledger reservation made before the call."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No payment or subscription path changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/services/integrations/composioPlatform.test.ts",
+      "scope": "Session policy, stored-session verification and repair, firewall block handling, multi-account isolation, Instant ceiling and ledger behaviour, workbench gating.",
+      "negative": true,
+      "reference": "backend/src/services/integrations/composioPlatform.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/services/integrations/composioTriggers.test.ts backend/src/routes/composioAccountsRoutes.test.ts",
+      "scope": "Webhook signature vectors from the documented algorithm, trigger account pinning, accounts routes.",
+      "negative": true,
+      "reference": "backend/src/services/integrations/composioTriggers.test.ts"
+    },
+    {
+      "command": "node scripts/xroga/inventory.mjs --check",
+      "scope": "Generated source inventory consistency.",
+      "negative": false,
+      "reference": "docs/xroga/current-state.json"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Extends the existing Composio client, authority permits and provider budget ledger. No scheduler, agent framework, SDK dependency or authentication system is added.",
+    "rfc": null
+  },
+  "rollout": "Merge only after review and your authorization. Then, as separate approved steps: provide a Composio test project key, run the live checks listed in the status document, and only then consider enabling any flag.",
+  "rollback": "Leave every XROGA_COMPOSIO_* variable unset (the default). Revert the change to remove the code.",
+  "knownGaps": [
+    "No live Composio call was made: every wire shape comes from the published documentation and a stub",
+    "The stored hooks read-back shape and the egress restriction read-back are not documented precisely",
+    "No user-facing Instant or Workbench route and no accounts UI",
+    "A held Instant reservation is released by an operator after comparing Composio execution logs"
+  ],
+  "placeholderClaimsRemaining": [
+    "Live Composio behaviour for sessions, hooks, Instant, multi-account and the workbench is unverified"
+  ],
+  "evidenceRefs": [
+    "docs/infra/composio/COMPOSIO-PLATFORM-STATUS.md",
+    "backend/src/services/integrations/composioPlatform.test.ts"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "No approved Composio test project and API key for live verification",
+      "Instant and Firewall require Composio project and plan settings that need approval",
+      "Authenticated end-to-end and staged security proof not run for this change"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

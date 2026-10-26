@@ -49,7 +49,7 @@ function providerStub(t: TestContext, mode: Mode = 'success', connected = false,
     if(path.includes('/tools/'))return response({slug,toolkit:{slug:'slack'},tags:[slug===TOOL?'destructiveHint':'readOnlyHint'],input_parameters:{type:'object'},scopes:['fixture.message.delete']});
     if(path.endsWith('/search'))return response({tool_schemas:mode==='empty'?{}:{fixture:{tool_slug:slug,toolkit:'slack',description:'Synthetic fixture only',input_schema:{type:'object'}}}});
     if(path.endsWith('/toolkits'))return response({items:[{slug:'slack',name:'Slack',connected_account:connected?{id:'fixture-account-A',status:'ACTIVE'}:null}]});
-    if(path.endsWith('/session')||path.endsWith(`/${SESSION}`))return response({session_id:SESSION,config:{user_id:`xroga:${OWNER}`,workbench:{enable:false,enable_proxy_execution:false},execute:{enable_multi_execute:false},tags:['readOnlyHint']}});
+    if(path.endsWith('/session')||path.endsWith(`/${SESSION}`))return response({session_id:SESSION,config:{user_id:`xroga:${OWNER}`,workbench:{enable:false,enable_proxy_execution:false},execute:{enable_multi_execute:false}, instant: false,tags:['readOnlyHint']}});
     assert.fail('Unexpected adapter path: no call is forwarded');
   });
   return paths;
