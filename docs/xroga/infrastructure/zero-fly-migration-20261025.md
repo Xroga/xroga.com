@@ -265,3 +265,31 @@ grants remain parseable during migration. Worker redirects no longer retain a
 private port. Final pre-connection admission is bounded and fails closed.
 Negative and passing receipts are in `docs/xroga/evidence/zero-fly/preview-routing-source-20261026.json`.
 This does not certify Google-hosted Preview, production DNS or TLS deployment.
+
+## 2026-10-26, durable canonical background transport
+
+The existing API now has an OIDC-only internal dispatch route. Cloud Tasks
+carries a persisted delivery UUID only. A pinned one-task/no-retry Cloud Run
+Job executes the original pipeline under a database-issued opaque claim and
+original run fencing. No second planner, scheduler or dispatcher service is
+added. The existing authenticated scheduler tick repairs pending delivery and
+reconciles stale runs without reopening failures or replaying consequential work.
+
+The service-only expand migration uses row locks, one current delivery per run,
+two launch slots and bounded unknown-launch leases. Explicit resume supersedes
+old deliveries. A fresh start without a checkpoint is allowed only for a queued
+run proven never to have admitted a worker. Existing attempts retain canonical
+checkpoint recovery. Original cancellation, attempt finalization and result
+fencing passed nine real PostgreSQL17 assertions, including separate-client
+claim and allocation races. Disposable containers, images and SQL sources were
+removed. A PostgreSQL initialization race in the verification harness was fixed
+by waiting for the final server process.
+
+HTTP observers use fresh owner-bound state and require the actual fenced result.
+Disconnects leave the Job running, and a false result remains false. Backend
+type checking passed against unchanged source inputs. Source and negative
+receipts are indexed in `docs/xroga/evidence/zero-fly/background-source-checkpoint-20261026.json`.
+Production SQL and Google Job activation have not occurred. Current-target
+Supabase upgrade, real Google lifecycle/recovery, Preview and release verification
+remain mandatory. Drain queued and active work before changing paired API/Job
+source or recovery configuration. Retain data and delivery history on rollback.

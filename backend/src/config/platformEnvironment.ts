@@ -3,7 +3,7 @@ import { isAbsolute } from 'node:path';
 
 type Environment = Record<string,string|undefined>;
 const deny = (): never => {throw new Error('Protected platform configuration is invalid.');};
-const forbidden = /^(?:FLY_|XROGA_.*(?:FLY|WIF)|GOOGLE_APPLICATION_CREDENTIALS$|GOOGLE_CREDENTIALS$|CLOUDSDK_|GCE_METADATA_|K_SERVICE$|K_REVISION$|K_CONFIGURATION$|PORT$|NODE_OPTIONS$|NODE_PATH$|LD_|DYLD_|PATH$|HOME$|SHELL$|BASH_ENV$|ENV$|XROGA_RELEASE_SHA$|XROGA_CREDENTIAL_KMS_PROVIDER$|XROGA_GOOGLE_CLOUD_(?:KMS_KEY_NAME|AUTH_MODE)$|XROGA_PLATFORM_CONFIG_FILE$|XROGA_GCE_|XROGA_GOOGLE_PROJECT_ID$|XROGA_GOOGLE_RUNTIME_SERVICE_ACCOUNT$|XROGA_RUNTIME_ROLE$)/i;
+const forbidden = /^(?:FLY_|XROGA_.*(?:FLY|WIF)|GOOGLE_APPLICATION_CREDENTIALS$|GOOGLE_CREDENTIALS$|CLOUDSDK_|GCE_METADATA_|K_SERVICE$|K_REVISION$|K_CONFIGURATION$|PORT$|NODE_OPTIONS$|NODE_PATH$|LD_|DYLD_|PATH$|HOME$|SHELL$|BASH_ENV$|ENV$|XROGA_RELEASE_SHA$|XROGA_CREDENTIAL_KMS_PROVIDER$|XROGA_GOOGLE_CLOUD_(?:KMS_KEY_NAME|AUTH_MODE)$|XROGA_PLATFORM_CONFIG_FILE$|XROGA_GCE_|CLOUD_RUN_|XROGA_BACKGROUND_EXECUTION_PROVIDER$|XROGA_GOOGLE_(?:DISPATCH|TASK_QUEUE|WORKER_)|XROGA_GOOGLE_PROJECT_ID$|XROGA_GOOGLE_RUNTIME_SERVICE_ACCOUNT$|XROGA_RUNTIME_ROLE$)/i;
 
 /** Validate the complete bundle before making any value visible to imports.
  * Native identity, release identity and control-plane settings stay outside it.
@@ -37,7 +37,7 @@ export function loadProtectedPlatformEnvironment(environment: Environment = proc
   }): number {
   const path=environment.XROGA_PLATFORM_CONFIG_FILE;
   if(!path)return 0; // Existing explicit environment-based installs remain supported during transition.
-  if(!isAbsolute(path) || (environment.K_SERVICE && path!=='/secrets/xroga-platform/config.json'))return deny();
+  if(!isAbsolute(path) || ((environment.K_SERVICE||environment.CLOUD_RUN_JOB) && path!=='/secrets/xroga-platform/config.json'))return deny();
   let raw: Uint8Array;
   try {raw=read(path);} catch {return deny();}
   const values=parseProtectedPlatformConfiguration(raw,environment);

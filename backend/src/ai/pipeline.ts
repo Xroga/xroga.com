@@ -83,6 +83,7 @@ import { reviewBuildOutput } from './qa.js';
 import {
   completeRun,
   createRunDurable,
+  adoptQueuedRunDurable,
   captureAdmittedRunAttempt,
   failRun,
   resumeRunDurable,
@@ -1137,6 +1138,7 @@ export async function runChatPipeline(opts: {
  * Converter → Builder (+ QA + GitHub/Vercel) with real streaming and surgical updates.
  */
 export async function runBuildPipeline(opts: {
+  deliveryClaim?:import('../workers/googleDeliveryStore.js').CanonicalDeliveryClaim;
   runId?: string;
   userId: string;
   tenantContext: TenantContext;
@@ -1217,7 +1219,10 @@ export async function runBuildPipeline(opts: {
   // Carry the verified UUID to the decisive database worker admission boundary.
   const admittedDatabaseProjectId=opts.projectId&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(opts.projectId)?opts.projectId:undefined;
 
-if (
+if(opts.deliveryClaim){
+  if(opts.deliveryClaim.runId!==runId||opts.deliveryClaim.userId!==opts.userId)throw new Error('Queued execution authority mismatch.');
+  await adoptQueuedRunDurable(opts.deliveryClaim);
+}else if (
   meta?.resumeRun
 ) {
   await resumeRunDurable(

@@ -104,7 +104,28 @@
     "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
     "backend/src/synthesis/livePreview/signing.ts",
     "backend/src/synthesis/livePreview/signingDns.test.ts",
-    "docs/xroga/evidence/zero-fly/preview-routing-source-20261026.json"
+    "docs/xroga/evidence/zero-fly/preview-routing-source-20261026.json",
+    ".github/workflows/xroga-tenant-security.yml",
+    "backend/src/routes/businessAutomationScheduler.ts",
+    "backend/src/routes/swarm.ts",
+    "backend/src/security/serviceRoleGuard.ts",
+    "backend/src/ai/runStore.queuedAdmission.test.ts",
+    "backend/src/lib/googleServiceToken.ts",
+    "backend/src/scripts/runCanonicalWorker.ts",
+    "backend/src/workers/googleDeliveryMaintenance.ts",
+    "backend/src/workers/googleDeliveryStore.test.ts",
+    "backend/src/workers/googleDeliveryStore.ts",
+    "backend/src/workers/googleDispatch.test.ts",
+    "backend/src/workers/googleDispatch.ts",
+    "backend/src/workers/googleDispatchHandler.test.ts",
+    "backend/src/workers/googleDispatchHandler.ts",
+    "backend/src/workers/googleSwarmQueue.test.ts",
+    "backend/src/workers/googleSwarmQueue.ts",
+    "docs/xroga/evidence/zero-fly/google-delivery-sql-final-20261026.json",
+    "docs/xroga/evidence/zero-fly/google-delivery-sql-negative-20261026.json",
+    "scripts/infrastructure/test-google-delivery-postgres.py",
+    "supabase/migrations/20261026000000_google_canonical_deliveries.sql",
+    "docs/xroga/evidence/zero-fly/background-source-checkpoint-20261026.json"
   ],
   "decisions": {
     "keep": [
@@ -124,10 +145,12 @@
     ]
   },
   "schemaImpact": {
-    "changed": false,
-    "migrations": [],
-    "rollout": "No production SQL. Preserve main workflow migration for mandatory isolated fresh/upgrade validation. Previously accepted production schema effects must not be replayed automatically.",
-    "rollback": "No database operation. Preserve ciphertext, revisions and tombstones."
+    "changed": true,
+    "migrations": [
+      "supabase/migrations/20261026000000_google_canonical_deliveries.sql"
+    ],
+    "rollout": "Expand-only service-owned delivery table and fixed RPCs. Validate the current target upgrade and authenticated caller flow before production application. Do not replay historical migrations. PostgreSQL17 synthetic transport proof is not full Supabase or live Google acceptance.",
+    "rollback": "Drain admission and queued/running workers before changing the paired API/Job source. Retain delivery rows, original canonical checkpoints and ciphertext. No table drop, legacy custody fallback or customer credential rewrite."
   },
   "securityImpact": {
     "auth": {
@@ -279,6 +302,12 @@
       "scope": "Two real Node processes against a synthetic HTTP Compute API with deliberately stale empty inventories. One bounded slot wins, the other is denied, and only the winning instance is deleted. Not live GCP proof.",
       "negative": true,
       "reference": "backend/src/sandbox/google/gceAllocationRace.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/workers/googleDispatch.test.ts backend/src/workers/googleDeliveryStore.test.ts backend/src/workers/googleDispatchHandler.test.ts backend/src/workers/googleSwarmQueue.test.ts backend/src/ai/runStore.queuedAdmission.test.ts",
+      "scope": "Opaque native claim, owner/generation and quota denial, source-pinned dispatch, observer disconnect and accurate completion. Focused fixtures do not replace live Google/Supabase tests.",
+      "negative": true,
+      "reference": "backend/src/workers/googleDeliveryStore.test.ts"
     }
   ],
   "architecture": {
@@ -290,11 +319,10 @@
   "rollback": "Keep verified Fly forward and managed-compatible recovery available until Google-hosted immutable recovery is tested. Preserve production ciphertext, revisions, tombstones and all required KMS versions. No legacy-only rollback.",
   "knownGaps": [
     "Native project provider and Preview address/connection admission are implemented but real caller staging, frontend HTTP/WebSocket/reconnect/start/stop and deployment networking remain unverified.",
-    "One-shot sandbox callers and persistent browser worker hosting still need Google integration. Python/Rust images must be explicitly admitted and preloaded before claiming toolchain parity.",
-    "Cloud Run background dispatch must persist requests and integrate with canonical run leases/checkpoints. Current in-process route behavior is not restart-safe transport.",
     "Configuration/callback parity, current costs, final integration, immutable forward/recovery verification and production traffic cutover remain required.",
     "Earlier two native temporary access windows are consumed and fully cleaned. New security-sensitive access needs a concrete action-time confirmation, not reuse of prior windows.",
-    "Bounded physical slot naming passes separate-process HTTP fixture contention. Real Google caller integration and uncertain creation outcomes still need verification/reconciliation before production activation."
+    "Bounded physical slot naming passes separate-process HTTP fixture contention. Real Google caller integration and uncertain creation outcomes still need verification/reconciliation before production activation.",
+    "One-shot native callers and Cloud Tasks/Jobs handoff are source-integrated with focused and synthetic SQL proof. Real native caller, durable Job lifecycle and termination recovery verification remain required. Persistent browser-worker hosting and Python/Rust image admission/preload are still incomplete."
   ],
   "placeholderClaimsRemaining": [
     "No zero-Fly completion or new production deployment claim"
@@ -306,7 +334,13 @@
     "docs/xroga/evidence/zero-fly/native-transport-recheck-78e28fab-20261026.json",
     "docs/xroga/evidence/zero-fly/workspace-linux-unit-20261026.json",
     "docs/xroga/evidence/zero-fly/project-runtime-source-checkpoint-20261026.json",
-    "docs/xroga/evidence/zero-fly/allocation-slots-source-20261026.json"
+    "docs/xroga/evidence/zero-fly/allocation-slots-source-20261026.json",
+    "docs/xroga/evidence/zero-fly/canonical-sandbox-source-20261026.json",
+    "docs/xroga/evidence/zero-fly/retained-browser-image-20261025.json",
+    "docs/xroga/evidence/zero-fly/preview-routing-source-20261026.json",
+    "docs/xroga/evidence/zero-fly/google-delivery-sql-final-20261026.json",
+    "docs/xroga/evidence/zero-fly/google-delivery-sql-negative-20261026.json",
+    "docs/xroga/evidence/zero-fly/background-source-checkpoint-20261026.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
