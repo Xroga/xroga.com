@@ -273,7 +273,16 @@ def container_arguments(request, binding, name):
     # Bootstrap separately denies metadata and private-network egress on bridge.
     for key, value in request.get('environment', {}).items():
         args += ['--env', key + '=' + value]
-    args += ['--env', 'HOME=/tmp', request['image'], *request['command']]
+    # Separate setup and verification containers share only the bounded workspace.
+    # Keep non-root dependency installs there rather than in the disposable /tmp.
+    # Append fixed values after caller environment so these paths cannot redirect
+    # installation into a host or image directory. Preserve the image's PATH.
+    args += ['--env', 'HOME=/work/.xroga-home',
+             '--env', 'PYTHONUSERBASE=/work/.xroga-home/python',
+             '--env', 'CARGO_HOME=/work/.xroga-home/cargo', request['image'],
+             'sh', '-c', 'umask 077; mkdir -p "$HOME" || exit; '
+             'export PATH="$PYTHONUSERBASE/bin:$PATH"; exec "$@"',
+             'xroga-runtime', *request['command']]
     return args
 
 

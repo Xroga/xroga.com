@@ -45,6 +45,21 @@ class RuntimeControlTests(unittest.TestCase):
         with self.assertRaisesRegex(control.Refused,'RUNTIME_EXPIRED'):
             control.validate(request,binding)
 
+    def test_dependency_home_is_shared_and_command_arguments_are_not_shell_source(self):
+        request,binding=self.fixture()
+        request['environment']={'HOME':'/tmp', 'PYTHONUSERBASE':'/tmp/python', 'CARGO_HOME':'/tmp/cargo'}
+        request['command']=['python','-c','print("literal $(touch /work/canary); argument")']
+        args=control.container_arguments(request,binding,'synthetic-container')
+        image=args.index(request['image'])
+        env=[args[i+1] for i,value in enumerate(args[:image]) if value=='--env']
+        for key,value in [('HOME','/work/.xroga-home'),('PYTHONUSERBASE','/work/.xroga-home/python'),
+                          ('CARGO_HOME','/work/.xroga-home/cargo')]:
+            self.assertEqual([entry for entry in env if entry.startswith(key+'=')][-1],key+'='+value)
+        self.assertEqual(args[image+1:image+3],['sh','-c'])
+        self.assertIn('exec "$@"',args[image+3])
+        self.assertNotIn(request['command'][-1],args[image+3])
+        self.assertEqual(args[image+4:],['xroga-runtime',*request['command']])
+
     def test_unknown_image_timeout_network_and_environment_are_denied(self):
         for key,value in [('image','node:latest'),('timeoutMs',0),('timeoutMs',600001),
                           ('networkPolicy','host'),('command',['node','bad\0argument']),
