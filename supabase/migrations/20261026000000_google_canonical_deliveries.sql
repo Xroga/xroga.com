@@ -1,7 +1,7 @@
 -- Delivery transport for the existing Swarm pipeline. No task graph, planner,
 -- credential authority or automatic consequential-operation retry is added.
 -- Apply only after isolated fresh/upgrade and ownership/concurrency proof.
-CREATE TABLE public.google_canonical_deliveries (
+CREATE TABLE IF NOT EXISTS public.google_canonical_deliveries (
   id UUID PRIMARY KEY,
   run_id UUID NOT NULL REFERENCES public.swarm_runs(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -19,13 +19,13 @@ CREATE TABLE public.google_canonical_deliveries (
   result_follow_ups JSONB,
   created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp()
 );
-CREATE INDEX google_canonical_deliveries_run ON public.google_canonical_deliveries(run_id,created_at DESC);
-CREATE UNIQUE INDEX google_canonical_deliveries_current ON public.google_canonical_deliveries(run_id) WHERE state<>'superseded';
+CREATE INDEX IF NOT EXISTS google_canonical_deliveries_run ON public.google_canonical_deliveries(run_id,created_at DESC);
+CREATE UNIQUE INDEX IF NOT EXISTS google_canonical_deliveries_current ON public.google_canonical_deliveries(run_id) WHERE state<>'superseded';
 ALTER TABLE public.google_canonical_deliveries ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON public.google_canonical_deliveries FROM PUBLIC,anon,authenticated;
 GRANT SELECT,INSERT,UPDATE ON public.google_canonical_deliveries TO service_role;
 
-CREATE FUNCTION public.enqueue_google_canonical_run(p_delivery UUID,p_run UUID,p_owner UUID,p_project UUID,p_input JSONB,p_source TEXT)
+CREATE OR REPLACE FUNCTION public.enqueue_google_canonical_run(p_delivery UUID,p_run UUID,p_owner UUID,p_project UUID,p_input JSONB,p_source TEXT)
 RETURNS JSONB LANGUAGE plpgsql SECURITY INVOKER SET search_path=public AS $$
 DECLARE r public.swarm_runs%ROWTYPE; d public.google_canonical_deliveries%ROWTYPE; inserted_count INTEGER; allow_fresh BOOLEAN;
 BEGIN
@@ -70,7 +70,7 @@ $$;
 -- Only the private OIDC dispatcher calls this. It reserves launch capacity,
 -- not actor authority. Unknown launch outcomes retain their lease and are not
 -- immediately retried. Five attempts is an absolute per-delivery ceiling.
-CREATE FUNCTION public.reserve_google_canonical_launch(p_delivery UUID,p_source TEXT,p_token UUID)
+CREATE OR REPLACE FUNCTION public.reserve_google_canonical_launch(p_delivery UUID,p_source TEXT,p_token UUID)
 RETURNS JSONB LANGUAGE plpgsql SECURITY INVOKER SET search_path=public AS $$
 DECLARE d public.google_canonical_deliveries%ROWTYPE; r public.swarm_runs%ROWTYPE; active_count INTEGER; run_key UUID;
 BEGIN
@@ -96,7 +96,7 @@ BEGIN
 END;
 $$;
 
-CREATE FUNCTION public.record_google_canonical_launch(p_delivery UUID,p_token UUID,p_operation TEXT)
+CREATE OR REPLACE FUNCTION public.record_google_canonical_launch(p_delivery UUID,p_token UUID,p_operation TEXT)
 RETURNS BOOLEAN LANGUAGE plpgsql SECURITY INVOKER SET search_path=public AS $$
 BEGIN
   IF p_delivery IS NULL OR p_token IS NULL OR p_operation IS NULL OR p_operation !~ '^projects/[a-z0-9-]+/locations/[a-z0-9-]+/operations/[a-zA-Z0-9_-]+$' THEN RAISE EXCEPTION 'DELIVERY_INVALID'; END IF;
@@ -110,7 +110,7 @@ $$;
 -- empty generation predicate allow one worker, including duplicate Job starts.
 -- Cancellation or an orphan reconciliation wins the same row lock and denies
 -- subsequent claims. No failed/complete run is automatically reopened here.
-CREATE FUNCTION public.claim_google_canonical_run(p_delivery UUID,p_source TEXT,p_worker TEXT,p_generation UUID)
+CREATE OR REPLACE FUNCTION public.claim_google_canonical_run(p_delivery UUID,p_source TEXT,p_worker TEXT,p_generation UUID)
 RETURNS JSONB LANGUAGE plpgsql SECURITY INVOKER SET search_path=public AS $$
 DECLARE d public.google_canonical_deliveries%ROWTYPE; r public.swarm_runs%ROWTYPE; run_key UUID;
 BEGIN
@@ -131,7 +131,7 @@ BEGIN
 END;
 $$;
 
-CREATE FUNCTION public.record_google_canonical_result(p_delivery UUID,p_owner UUID,p_worker TEXT,p_generation UUID,p_success BOOLEAN,p_follow_ups JSONB)
+CREATE OR REPLACE FUNCTION public.record_google_canonical_result(p_delivery UUID,p_owner UUID,p_worker TEXT,p_generation UUID,p_success BOOLEAN,p_follow_ups JSONB)
 RETURNS BOOLEAN LANGUAGE plpgsql SECURITY INVOKER SET search_path=public AS $$
 DECLARE r public.swarm_runs%ROWTYPE; d public.google_canonical_deliveries%ROWTYPE; run_key UUID;
 BEGIN

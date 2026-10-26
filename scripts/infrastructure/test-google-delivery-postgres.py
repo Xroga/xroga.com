@@ -107,6 +107,10 @@ def main():
         assert sql("SELECT has_table_privilege('authenticated','public.google_canonical_deliveries','SELECT') OR has_function_privilege('anon','public.claim_google_canonical_run(uuid,text,text,uuid)','EXECUTE');")=='f'
         result['checks'].append('anon/authenticated table and claim execution denied')
         first=receipt(service(enqueue(1)));assert first['deliveryId']==identifier(1)
+        before_reapply=sql('SELECT row_to_json(d)::text FROM public.google_canonical_deliveries d ORDER BY id;')
+        sql(paths[0].read_text())
+        assert sql('SELECT row_to_json(d)::text FROM public.google_canonical_deliveries d ORDER BY id;')==before_reapply
+        result['checks'].append('migration reapplication preserves queued input, owner, generation and result rows')
         assert receipt(service(enqueue(1).replace(identifier(1),identifier(91))))['deliveryId']==identifier(1)
         foreign=command(['docker','exec','-i','--user','postgres',name,'psql','-X','-qAt','-v','ON_ERROR_STOP=1','-U','postgres'],
             'SET ROLE service_role;'+enqueue(1).replace(OWNER,'44444444-4444-4444-8444-444444444444'))

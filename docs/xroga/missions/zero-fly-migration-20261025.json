@@ -125,7 +125,19 @@
     "docs/xroga/evidence/zero-fly/google-delivery-sql-negative-20261026.json",
     "scripts/infrastructure/test-google-delivery-postgres.py",
     "supabase/migrations/20261026000000_google_canonical_deliveries.sql",
-    "docs/xroga/evidence/zero-fly/background-source-checkpoint-20261026.json"
+    "docs/xroga/evidence/zero-fly/background-source-checkpoint-20261026.json",
+    "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
+    "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/requirements-ledger.json",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/research/source-reconciliation.md",
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/privileged-callers.json",
+    "docs/xroga/security/rls-audit.md",
+    "docs/xroga/evidence/zero-fly/google-delivery-sql-reapply-20261026.json",
+    "docs/xroga/evidence/zero-fly/integration-caller-rebinding-20261026.json"
   ],
   "decisions": {
     "keep": [
@@ -308,6 +320,12 @@
       "scope": "Opaque native claim, owner/generation and quota denial, source-pinned dispatch, observer disconnect and accurate completion. Focused fixtures do not replace live Google/Supabase tests.",
       "negative": true,
       "reference": "backend/src/workers/googleDeliveryStore.test.ts"
+    },
+    {
+      "command": "python3 scripts/infrastructure/test-google-delivery-postgres.py with pinned PostgreSQL17 image",
+      "scope": "Ten isolated real PostgreSQL checks including row-preserving migration reapplication. Fixes actual PR856 full-history reapply failure. No hosted schema or live Google proof.",
+      "negative": true,
+      "reference": "docs/xroga/evidence/zero-fly/google-delivery-sql-reapply-20261026.json"
     }
   ],
   "architecture": {
@@ -340,7 +358,9 @@
     "docs/xroga/evidence/zero-fly/preview-routing-source-20261026.json",
     "docs/xroga/evidence/zero-fly/google-delivery-sql-final-20261026.json",
     "docs/xroga/evidence/zero-fly/google-delivery-sql-negative-20261026.json",
-    "docs/xroga/evidence/zero-fly/background-source-checkpoint-20261026.json"
+    "docs/xroga/evidence/zero-fly/background-source-checkpoint-20261026.json",
+    "docs/xroga/evidence/zero-fly/google-delivery-sql-reapply-20261026.json",
+    "docs/xroga/evidence/zero-fly/integration-caller-rebinding-20261026.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,

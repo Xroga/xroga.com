@@ -3058,27 +3058,27 @@
       "id": "B1-P2-b8b2050b4efeeb5b",
       "family": "projects-files-runtime",
       "sourcePath": "backend/src/ai/executionRuntime.ts",
-      "sourceSha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d",
+      "sourceSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2",
       "baselineCallerIds": [
         "6cb302dec6a7d693df42",
         "09b6dc142ebd7f16df10"
       ],
       "currentCallerIds": [
-        "6cb302dec6a7d693df42",
-        "09b6dc142ebd7f16df10"
+        "b0890e13b2718629037e",
+        "1b90517b37251b8ee7c7"
       ],
       "mapping": [
         {
           "baselineCallerId": "6cb302dec6a7d693df42",
           "currentCallerIds": [
-            "6cb302dec6a7d693df42"
+            "b0890e13b2718629037e"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "09b6dc142ebd7f16df10",
           "currentCallerIds": [
-            "09b6dc142ebd7f16df10"
+            "1b90517b37251b8ee7c7"
           ],
           "change": "RETAINED"
         }
@@ -3088,7 +3088,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-b8b2050b4efeeb5b",
-        "sourceSha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d",
+        "sourceSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2",
         "executionStatus": "IN_PROGRESS",
         "finding": "UNCHANGED_EXECUTION_RECOVERY_OWNER_AND_PRODUCER_PROOF_RECONCILED",
         "actorTrace": "Only production constructors occur inside runBuildPipeline after original issued actor and user match. Resume loads exact server owner/run, validates stored and embedded lineage and current database project before durable worker admission. New writes additionally require captured original attempt. No body owner can choose another checkpoint.",
@@ -3127,6 +3127,21 @@
             "Bind final-source receipts, preserve separate checkpoint writes and other worker callers",
             "Do not infer whole worker or provider-effect completion from checkpoint reads"
           ]
+        },
+        "preGoogleMigrationSourceBinding": {
+          "path": "backend/src/ai/executionRuntime.ts",
+          "sha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d"
+        },
+        "googleMigrationReview": {
+          "changedSources": [
+            "backend/src/ai/executionRuntime.ts"
+          ],
+          "scope": "CURRENT_SOURCE_REVIEW_NOT_INHERITED_CALLER_CERTIFICATION",
+          "finding": "Canonical execution preserves original issued actor and attempt. Queued transport adopts only the private database claim, checks current owner/project and rolls back failed admission. Sandbox authority denial now propagates rather than becoming a recoverable task failure. Original historical proof remains bound to its recorded SHA. Newly added handoff and transport require independent exact-source integrated database and live Google proof.",
+          "evidence": [
+            "docs/xroga/evidence/zero-fly/background-source-checkpoint-20261026.json",
+            "docs/xroga/evidence/zero-fly/canonical-sandbox-source-20261026.json"
+          ]
         }
       },
       "actor": {
@@ -3145,7 +3160,7 @@
         {
           "path": "backend/src/ai/executionRuntime.ts",
           "marker": "restoreOwnerBoundExecutionState",
-          "sourceSha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d",
+          "sourceSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -3970,14 +3985,14 @@
         {
           "path": "backend/src/synthesis/livePreview/access.ts",
           "marker": "session.userId !== grant.userId",
-          "sourceSha256": "c01a9bdbac40ebe84699b83bcb815b27a41d1644322ff36396a29074ba23b74f",
+          "sourceSha256": "ea6d98a6a976c705e48a848529ffed999bb66e2c241817dffb83fd6470c38cad",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.ts",
           "marker": "const target = authorizedPreviewTarget(grant, session);",
-          "sourceSha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106",
+          "sourceSha256": "bb7a949de090035d6ea96ef6b82f623a524b4241bde302f09669123e71002404",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6618,7 +6633,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "loadSessionHistory(opts.userId",
-          "sourceSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+          "sourceSha256": "1d9a3270328aba5440b285a095b385de62466488dc76b6921cbc5a9d163876d1",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6745,7 +6760,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "const saved = await setProjectMemoryDurable({",
-          "sourceSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+          "sourceSha256": "1d9a3270328aba5440b285a095b385de62466488dc76b6921cbc5a9d163876d1",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -7832,14 +7847,14 @@
       "id": "B1-P2-f8cb123dcb4c4a53",
       "family": "other-source-bound-boundaries",
       "sourcePath": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
       "baselineCallerIds": [
         "d84df34ff692e4fb31c1",
         "bda2ddc16c7864ef18d8"
       ],
       "currentCallerIds": [
         "d84df34ff692e4fb31c1",
-        "5c97508c3ec30ba78c4e"
+        "cfcd9a8afee3dabccf13"
       ],
       "mapping": [
         {
@@ -7852,7 +7867,7 @@
         {
           "baselineCallerId": "bda2ddc16c7864ef18d8",
           "currentCallerIds": [
-            "5c97508c3ec30ba78c4e"
+            "cfcd9a8afee3dabccf13"
           ],
           "change": "RETAINED"
         }
@@ -7862,7 +7877,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-f8cb123dcb4c4a53",
-        "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+        "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
         "executionStatus": "IN_PROGRESS",
         "finding": "UNAVAILABLE_REVIEW_ONLY_CONSTRUCTOR_POLICY_AND_INDEPENDENT_RECIPIENT_PROOF_PENDING",
         "originalCriteria": [
@@ -7870,7 +7885,7 @@
           4,
           10
         ],
-        "actorTrace": "Tenant construction still requires original issued context. Named global construction still accepts only the same17 actual data-operation keys. A separate explicit review-only constructor exception now documents its real receiving-path proof obligations, while its key is excluded from the accepted type and rejected at runtime before SDK construction. It grants no query or additional runtime capability. All actual receivers require independent proof, and neither SDK handle is an RLS sandbox.",
+        "actorTrace": "Tenant construction still requires the original issued context and global construction an exact registered operation. Google canonical delivery adds a fixed private dispatcher and native Job handoff registration. Its SQL source/owner/generation locks, launch limits, OIDC and native Job checks remain independent receiving-path obligations. The authenticated scheduler may sweep ten pending IDs and reconcile stale runs. These changes do not certify this shared constructor or arbitrary recipients. The review-only key is still denied before SDK construction. Both SDK handles remain privileged rather than RLS sandboxes.",
         "invariant": "No foreign subject or telemetry association may replace the admitted owner. Bounded internal bootstrap never exposes private identities through an endpoint or another owner terminal evidence. Factory construction never substitutes for receiver-level authorization.",
         "evidence": [
           {
@@ -7918,6 +7933,10 @@
             "Prove every actual shared-constructor recipient before factory closure",
             "Preserve later authority, credential custody and egress obligations"
           ]
+        },
+        "beforeGoogleDeliveryBinding": {
+          "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+          "actorTrace": "Tenant construction still requires original issued context. Named global construction still accepts only the same17 actual data-operation keys. A separate explicit review-only constructor exception now documents its real receiving-path proof obligations, while its key is excluded from the accepted type and rejected at runtime before SDK construction. It grants no query or additional runtime capability. All actual receivers require independent proof, and neither SDK handle is an RLS sandbox."
         }
       },
       "actor": {
@@ -8165,7 +8184,7 @@
       "id": "B1-P2-24934749677f47d8",
       "family": "worker-state",
       "sourcePath": "backend/src/ai/runStore.ts",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
       "baselineCallerIds": [
         "72d1173732e44759c7d0",
         "6c170d46c524d271ecf8",
@@ -8177,69 +8196,69 @@
         "5ab24c997d1e653f7c8a"
       ],
       "currentCallerIds": [
-        "cb05c4e7cb4f3b73155f",
-        "eeb2bd25e4456d58a465",
-        "8796931131b8f3173ef9",
-        "24e9a07a40a70d9bd103",
-        "e81906b392bf21ef067d",
-        "3e4ef8e15d7b836d3557",
-        "b47a9af1f31012f1a675",
-        "9a5ebc5d27638e21a19f"
+        "f280dbf81344931da30f",
+        "06708d2c84b319622b11",
+        "ac5a1c58a85da7a69076",
+        "1df986c6dad802e3813b",
+        "ae9a98ddd675f4a5288c",
+        "109b247634f32645ac05",
+        "0f4cd46668bdefa4e8e9",
+        "63358e8789c46a7bbb09"
       ],
       "mapping": [
         {
           "baselineCallerId": "72d1173732e44759c7d0",
           "currentCallerIds": [
-            "cb05c4e7cb4f3b73155f"
+            "f280dbf81344931da30f"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "6c170d46c524d271ecf8",
           "currentCallerIds": [
-            "eeb2bd25e4456d58a465"
+            "06708d2c84b319622b11"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "e0aa5a734250805488a8",
           "currentCallerIds": [
-            "8796931131b8f3173ef9"
+            "ac5a1c58a85da7a69076"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "1a529d92aa80b6c6c159",
           "currentCallerIds": [
-            "24e9a07a40a70d9bd103"
+            "1df986c6dad802e3813b"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "1d8b0198237de162e7c8",
           "currentCallerIds": [
-            "e81906b392bf21ef067d"
+            "ae9a98ddd675f4a5288c"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "a382df5bb9ba28546a20",
           "currentCallerIds": [
-            "3e4ef8e15d7b836d3557"
+            "109b247634f32645ac05"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "d86c7dc76cda33115c93",
           "currentCallerIds": [
-            "b47a9af1f31012f1a675"
+            "0f4cd46668bdefa4e8e9"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "5ab24c997d1e653f7c8a",
           "currentCallerIds": [
-            "9a5ebc5d27638e21a19f"
+            "63358e8789c46a7bbb09"
           ],
           "change": "RETAINED"
         }
@@ -8249,7 +8268,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-24934749677f47d8",
-        "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+        "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
         "executionStatus": "IN_PROGRESS",
         "finding": "DEMONSTRATED_WORKER_PROJECT_WAIT_ADMISSION_FIXED_REAL_DATABASE_PROOF_AT_D9B13E09",
         "actualVerification": {
@@ -8265,11 +8284,13 @@
         "relatedSourceBindings": [
           {
             "path": "backend/src/ai/pipeline.ts",
-            "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
+            "sha256": "1d9a3270328aba5440b285a095b385de62466488dc76b6921cbc5a9d163876d1",
+            "preGoogleMigrationSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
           },
           {
             "path": "backend/src/routes/swarm.ts",
-            "sha256": "7ae4bf0e05640eefccbaf8868183fc5b4301788e58a022a3b1dd42955fd59478"
+            "sha256": "38b1350f04641b110436d4d202a93c5645b0bacb6b7844f9e9cf7df65227943a",
+            "preGoogleMigrationSha256": "7ae4bf0e05640eefccbaf8868183fc5b4301788e58a022a3b1dd42955fd59478"
           },
           {
             "path": "supabase/migrations/20261019000300_worker_database_project_admission.sql",
@@ -8340,6 +8361,23 @@
             "Bind final-source121-migration fresh/upgrade/reapply and five-wait receipts, preserving the now passing d9 proof",
             "Reconcile authenticated producer through current-parent and existing scheduler/attempt writers before whole007.5 acceptance",
             "Other worker writers and provider-account consumers remain independent, no authority or vault implementation"
+          ]
+        },
+        "preGoogleMigrationSourceBinding": {
+          "path": "backend/src/ai/runStore.ts",
+          "sha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46"
+        },
+        "googleMigrationReview": {
+          "changedSources": [
+            "backend/src/ai/runStore.ts",
+            "backend/src/ai/pipeline.ts",
+            "backend/src/routes/swarm.ts"
+          ],
+          "scope": "CURRENT_SOURCE_REVIEW_NOT_INHERITED_CALLER_CERTIFICATION",
+          "finding": "Canonical execution preserves original issued actor and attempt. Queued transport adopts only the private database claim, checks current owner/project and rolls back failed admission. Sandbox authority denial now propagates rather than becoming a recoverable task failure. Original historical proof remains bound to its recorded SHA. Newly added handoff and transport require independent exact-source integrated database and live Google proof.",
+          "evidence": [
+            "docs/xroga/evidence/zero-fly/background-source-checkpoint-20261026.json",
+            "docs/xroga/evidence/zero-fly/canonical-sandbox-source-20261026.json"
           ]
         }
       },
