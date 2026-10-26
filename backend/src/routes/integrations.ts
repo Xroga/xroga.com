@@ -62,6 +62,7 @@ import {
   searchComposioTools,
   syncUserCustomMcpToolkit,
 } from '../services/integrations/composioClient.js';
+import { composioCallbackUrl } from '../services/integrations/composioCallback.js';
 
 const router = Router();
 
@@ -2016,19 +2017,11 @@ router.post(
       return;
     }
 
-    const frontendUrl =
-      process.env
-        .FRONTEND_URL
-        ?.trim() ||
-      'https://xroga.com';
-
-    const callbackUrl =
-      `${frontendUrl.replace(
-        /\/$/,
-        '',
-      )}/dashboard/integrations/connect/callback`;
-
     try {
+      const callbackUrl = composioCallbackUrl({
+        toolkit: parsed.data.toolkit,
+        requestOrigin: req.get('origin'),
+      });
       const result =
         await createComposioConnectionLink(
           req.userId!,

@@ -70,7 +70,10 @@ import {
 
 import {
   splitExplicitBusinessWorkflow,
+  type BusinessWorkflowStep,
 } from '../services/integrations/businessWorkflow.js';
+import { mayNeedSemanticBusinessWorkflow, planBusinessWorkflow } from '../services/integrations/businessWorkflowPlanner.js';
+import { composioCallbackUrl } from '../services/integrations/composioCallback.js';
 
 import { connectionCardMarkdown } from '../services/integrations/businessConnectionUi.js';
 
@@ -166,23 +169,6 @@ type ToolUiDescriptor =
       expiresAt: string;
     };
 
-function composioCallbackUrl():
-  string {
-  const base =
-    process.env
-      .FRONTEND_URL
-      ?.trim() ||
-    'https://xroga.com';
-
-  return (
-    `${base.replace(
-      /\/$/,
-      '',
-    )}` +
-    '/dashboard/integrations/connect/callback'
-  );
-}
-
 function toolUiLink(
   descriptor:
     ToolUiDescriptor,
@@ -228,15 +214,16 @@ function displayToolkitName(
 function businessWorkflowProgressMarkdown(progress: BusinessWorkflowProgress): string {
   const parts: string[] = [];
   const { run } = progress;
+  parts.push(`Workflow progress: ${run.stepIndex} of ${run.stepCount} steps completed. Next: ${run.steps[run.stepIndex]?.request ?? 'none'}.`);
   for (const outcome of run.outcomes) {
     const excerpt = outcome.data.slice(0, 3_000).replace(/`/g, 'ʼ');
-    parts.push(`**${outcome.request}** — ${outcome.kind === 'read' ? 'read from' : 'completed in'} ${displayToolkitName(outcome.toolkit)}.\n\n\`\`\`text\n${excerpt}\n\`\`\``);
+    parts.push(`**${outcome.request}** — ${outcome.kind === 'action' ? 'completed in' : 'read from'} ${displayToolkitName(outcome.toolkit)}.\n\n\`\`\`text\n${excerpt}\n\`\`\``);
   }
   const pending = progress.pendingRead ?? progress.pendingAction;
   if (pending?.status === 'connection_required') {
-    parts.push(connectionCardMarkdown({ mode: progress.pendingRead ? 'read' : 'action', task: run.request, message: pending.message, candidates: [pending.candidate] }));
+    parts.push(connectionCardMarkdown({ mode: progress.pendingRead ? 'read' : 'action', task: run.steps[run.stepIndex]?.request ?? run.request, message: pending.message, candidates: [pending.candidate] }));
   } else if (pending?.status === 'provider_choice') {
-    parts.push(connectionCardMarkdown({ mode: progress.pendingRead ? 'read' : 'action', task: run.request, message: pending.message, candidates: pending.candidates }));
+    parts.push(connectionCardMarkdown({ mode: progress.pendingRead ? 'read' : 'action', task: run.steps[run.stepIndex]?.request ?? run.request, message: pending.message, candidates: pending.candidates }));
   } else if (pending?.status === 'unavailable') {
     parts.push(pending.message);
   }
@@ -258,6 +245,8 @@ function businessWorkflowProgressMarkdown(progress: BusinessWorkflowProgress): s
   } else if (run.status === 'setup_required') {
     parts.push(run.failureCode === 'READ_RESULT_TOO_LARGE'
       ? 'The app returned too many records to pass safely to the next action. Narrow the request and start a new workflow.'
+      : run.failureCode === 'WEB_EVIDENCE_UNAVAILABLE'
+      ? 'The public-web search returned no verifiable sources. No later app action was prepared. Narrow the request and start a new workflow.'
       : 'Connect or choose the app above, then resume this saved workflow. No pending action was executed.');
   } else if (run.status === 'completed') {
     parts.push('All requested workflow steps completed.');
@@ -785,15 +774,26 @@ router.post(
         );
       }
 
-      const explicitWorkflow = semanticGoal.data.requiredCapabilities.every((capability) =>
-          capability === 'business.action' ||
-          capability === 'business.read' ||
-          capability === 'conversation.respond',
-        )
-        ? splitExplicitBusinessWorkflow(message)
+      const workflowCapabilities = semanticGoal.data.requiredCapabilities;
+      const workflowEligible = workflowCapabilities.some((capability) =>
+          capability === 'business.action' || capability === 'business.read',
+        ) && workflowCapabilities.every((capability) =>
+          capability === 'business.action' || capability === 'business.read' ||
+          capability === 'research.public-web' || capability === 'conversation.respond',
+        );
+      const workflowCandidate = workflowEligible && mayNeedSemanticBusinessWorkflow(message);
+      const allowedWorkflowKinds = new Set<BusinessWorkflowStep['kind']>([
+        ...(workflowCapabilities.some((capability) => capability === 'business.read' || capability === 'business.action') ? ['read' as const] : []),
+        ...(workflowCapabilities.includes('business.action') ? ['action' as const] : []),
+        ...(workflowCapabilities.includes('research.public-web') ? ['web' as const] : []),
+      ]);
+      const workflowSteps = workflowEligible
+        ? (splitExplicitBusinessWorkflow(message) ?? (workflowCandidate
+          ? await planBusinessWorkflow({ userId, message, allowedKinds: allowedWorkflowKinds })
+          : null))
         : null;
 
-      if (explicitWorkflow) {
+      if (workflowSteps && workflowSteps.every((step) => allowedWorkflowKinds.has(step.kind))) {
         if (attachments?.length) {
           throw new RuntimeFailure(
             'CAPABILITY_UNSUPPORTED',
@@ -803,7 +803,7 @@ router.post(
         }
         let workflow;
         try {
-          workflow = await createBusinessWorkflowRun(requireTenantContext(req.tenantContext), message, explicitWorkflow);
+          workflow = await createBusinessWorkflowRun(requireTenantContext(req.tenantContext), message, workflowSteps);
         } catch (error) {
           throw businessRuntimeFailure(error, 'Xroga Connect could not start the multi-app workflow. Check its status before retrying because an earlier step may already have completed.');
         }
@@ -819,6 +819,14 @@ router.post(
           businessActionConfirmationRequired: workflow.run.status === 'awaiting_confirmation',
           businessWorkflowRunId: workflow.run.id,
         });
+      }
+
+      if (workflowCandidate) {
+        throw new RuntimeFailure(
+          'CAPABILITY_UNSUPPORTED',
+          'Xroga could not safely separate every requested connected-app step. No app action was executed. Please specify the tasks and their targets more clearly.',
+          { status: 422, retryable: false },
+        );
       }
 
       /*
@@ -1775,7 +1783,7 @@ router.post(
             toolkit,
 
             callbackUrl:
-              composioCallbackUrl(),
+              composioCallbackUrl({ toolkit, requestOrigin: req.get('origin') }),
 
             mode,
           },

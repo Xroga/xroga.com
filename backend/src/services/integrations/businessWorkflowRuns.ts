@@ -3,14 +3,15 @@ import { getTenantSupabaseAdmin } from '../../security/serviceRoleGuard.js';
 import { prepareBusinessAction, type BusinessActionPreparationOutcome, type BusinessActionReferenceEvidence, type BusinessActionExecutionOutcome } from './businessAction.js';
 import { cancelBusinessActionConfirmation, createBusinessActionConfirmation, type SafeBusinessActionConfirmation } from './businessActionConfirmations.js';
 import { readBusinessData, type BusinessReadOutcome } from './businessRead.js';
-import type { BusinessWorkflowStep } from './businessWorkflow.js';
+import { runWebIntelligence } from '../../ai/black-hole/webIntelligence.js';
+import { MAX_BUSINESS_WORKFLOW_STEPS, type BusinessWorkflowStep } from './businessWorkflow.js';
 
 type RunStatus = 'running' | 'executing' | 'awaiting_confirmation' | 'setup_required' | 'completed' | 'failed' | 'cancelled';
 
 interface StepOutcome {
   stepIndex: number;
   request: string;
-  kind: 'read' | 'action';
+  kind: BusinessWorkflowStep['kind'];
   toolkit: string;
   toolSlug: string;
   data: string;
@@ -36,6 +37,7 @@ export type BusinessWorkflowRunView = {
   status: RunStatus;
   stepIndex: number;
   stepCount: number;
+  steps: BusinessWorkflowStep[];
   outcomes: StepOutcome[];
   confirmationId: string | null;
   failureCode: string | null;
@@ -55,6 +57,7 @@ function view(row: RunRow): BusinessWorkflowRunView {
     status: row.status,
     stepIndex: row.step_index,
     stepCount: row.steps.length,
+    steps: row.steps,
     outcomes: row.outcomes,
     confirmationId: row.current_confirmation_id,
     failureCode: row.failure_code,
@@ -68,10 +71,12 @@ function validRun(row: unknown): row is RunRow {
     && typeof value.user_id === 'string'
     && Array.isArray(value.steps)
     && value.steps.length >= 2
-    && value.steps.length <= 4
+    && value.steps.length <= MAX_BUSINESS_WORKFLOW_STEPS
     && value.steps.every((step) => step && typeof step === 'object'
-      && (step.kind === 'read' || step.kind === 'action')
+      && (step.kind === 'read' || step.kind === 'action' || step.kind === 'web')
       && typeof step.request === 'string'
+      && step.request.length >= 5
+      && step.request.length <= 500
       && typeof step.dependsOnPrevious === 'boolean')
     && Array.isArray(value.outcomes)
     && Number.isInteger(value.step_index)
@@ -108,8 +113,8 @@ async function updateRun(context: TenantContext, row: RunRow, values: Partial<Ru
 function previousEvidence(row: RunRow, step: BusinessWorkflowStep): BusinessActionReferenceEvidence[] | undefined {
   if (!step.dependsOnPrevious) return undefined;
   const earlier = row.outcomes.filter((outcome) => outcome.stepIndex < row.step_index);
-  const wantsReadResults = /\b(?:results?|found|matching|search(?:ed)?|leads?|clients?)\b/i.test(step.request);
-  const relevant = wantsReadResults ? earlier.filter((outcome) => outcome.kind === 'read') : earlier.slice(-1);
+  const wantsReadResults = /\b(?:results?|summary|options|findings|report|information|data|details|found|matching|search(?:ed)?|leads?|clients?)\b/i.test(step.request);
+  const relevant = wantsReadResults ? earlier.filter((outcome) => outcome.kind === 'read' || outcome.kind === 'web') : earlier.slice(-1);
   if (!relevant.length || relevant.length > 3 || relevant.some((outcome) => outcome.data.length > 8_000)) {
     throw new Error('The dependent action needs an exact, bounded previous result before it can be prepared.');
   }
@@ -127,6 +132,22 @@ async function advance(context: TenantContext, row: RunRow): Promise<BusinessWor
   while (current.status === 'running' && current.step_index < current.steps.length) {
     const step = current.steps[current.step_index]!;
     try {
+      if (step.kind === 'web') {
+        const result = await runWebIntelligence({ userId: current.user_id, prompt: step.request });
+        if (result.action === 'none' || result.sourceCount < 1 || !result.evidence.trim()) {
+          current = await updateRun(context, current, { status: 'setup_required', failure_code: 'WEB_EVIDENCE_UNAVAILABLE' });
+          return { run: view(current) };
+        }
+        if (result.evidence.length > 8_000 && current.steps.slice(current.step_index + 1).some((item) => item.dependsOnPrevious)) {
+          current = await updateRun(context, current, { status: 'setup_required', failure_code: 'READ_RESULT_TOO_LARGE' });
+          return { run: view(current) };
+        }
+        current = await updateRun(context, current, {
+          outcomes: [...current.outcomes, { stepIndex: current.step_index, request: step.request, kind: 'web', toolkit: 'public_web', toolSlug: 'XROGA_PUBLIC_WEB_RESEARCH', data: result.evidence.slice(0, 8_000) }],
+          step_index: current.step_index + 1,
+        });
+        continue;
+      }
       if (step.kind === 'read') {
         const eventEvidence = current.outcomes.filter((item) => item.stepIndex === -1).map((item) => ({ sourceRequest: item.request, toolkit: item.toolkit, toolSlug: item.toolSlug, data: item.data }));
         const result = await readBusinessData({ userId: current.user_id, useCase: step.request, referenceEvidence: eventEvidence });
@@ -182,7 +203,7 @@ export async function createBusinessWorkflowRun(
   initialEvidence?: { toolkit: string; toolSlug: string; data: string },
 ): Promise<BusinessWorkflowProgress> {
   const { userId } = requireTenantContext(context);
-  if (steps.length < 2 || steps.length > 4 || !steps.some((step) => step.kind === 'action')) throw new Error('A connected-app workflow needs two to four explicit steps, including an action.');
+  if (steps.length < 2 || steps.length > MAX_BUSINESS_WORKFLOW_STEPS) throw new Error('A connected-app workflow needs two to six source-bound steps.');
   if (initialEvidence && initialEvidence.data.length > 8_000) throw new Error('The trigger payload is too large for a bounded workflow.');
   const outcomes: StepOutcome[] = initialEvidence ? [{ stepIndex: -1, request: 'Authorized app trigger event', kind: 'read', toolkit: initialEvidence.toolkit, toolSlug: initialEvidence.toolSlug, data: initialEvidence.data }] : [];
   const { data, error } = await getTenantSupabaseAdmin(context)
@@ -256,7 +277,7 @@ export async function resumeBusinessWorkflowAfterSetup(context: TenantContext, r
     if (!resumed) throw new Error('The confirmed action no longer belongs to this workflow.');
     return resumed;
   }
-  if (row.status !== 'setup_required' || row.failure_code === 'READ_RESULT_TOO_LARGE') throw new Error('This workflow is not waiting for a connection or app choice.');
+  if (row.status !== 'setup_required' || row.failure_code === 'READ_RESULT_TOO_LARGE' || row.failure_code === 'WEB_EVIDENCE_UNAVAILABLE') throw new Error('This workflow is not waiting for a connection or app choice.');
   return advance(context, await updateRun(context, row, { status: 'running' }));
 }
 
