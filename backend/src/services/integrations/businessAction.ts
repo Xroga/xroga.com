@@ -54,6 +54,25 @@ const MAX_SCHEMA_CHARS = 7_500;
 const MAX_ARGUMENT_CHARS = 24_000;
 const MAX_RESULT_CHARS = 60_000;
 
+/** A direct Gmail send must never be silently replaced by saving a draft. */
+export function isExplicitGmailSendIntent(useCase: string): boolean {
+  if (!/\bgmail\b|\bGMAIL_SEND_EMAIL\b/i.test(useCase)) return false;
+  if (/\bsend\s+(?:(?:my|an?|the|existing|gmail)\s+)*draft\b/i.test(useCase)) return false;
+  return /\bGMAIL_SEND_EMAIL\b/i.test(useCase)
+    || /^(?:please\s+)?(?:send|email)\b/i.test(useCase.trim())
+    || /\b(?:I|we)\s+(?:want|need|would\s+like)\s+to\s+send\b/i.test(useCase)
+    || /\buse\s+(?:my\s+)?(?:connected\s+)?gmail\s+to\s+send\b/i.test(useCase);
+}
+
+export function actionCandidatesForIntent<T extends { slug: string; risk: XrogaConnectToolRisk }>(
+  tools: T[], useCase: string,
+): T[] {
+  const directGmailSend = isExplicitGmailSendIntent(useCase);
+  return tools.filter((tool) => tool.risk !== 'read')
+    .filter((tool) => !directGmailSend || tool.slug === 'GMAIL_SEND_EMAIL')
+    .slice(0, MAX_TOOL_CANDIDATES);
+}
+
 /** Financial mutations always need a separate, exact-action confirmation. */
 export function isFinancialAction(useCase: string, toolSlug: string): boolean {
   const action = `${useCase} ${toolSlug}`;
@@ -1122,7 +1141,7 @@ export async function prepareBusinessAction(
     );
   }
 
-  const discovery =
+  let discovery =
     await searchComposioActionTools(
       input.userId,
       {
@@ -1130,6 +1149,14 @@ export async function prepareBusinessAction(
           useCase,
       },
     );
+
+  const directGmailSend = isExplicitGmailSendIntent(useCase);
+  if (directGmailSend && !discovery.tools.some((tool) => tool.slug === 'GMAIL_SEND_EMAIL')) {
+    discovery = await searchComposioActionTools(input.userId, {
+      query: 'GMAIL_SEND_EMAIL send a new Gmail email immediately with recipient, subject and body',
+      sessionId: discovery.sessionId,
+    });
+  }
 
   /*
    * The action lane should not choose
@@ -1140,17 +1167,7 @@ export async function prepareBusinessAction(
    * required until metadata proves a
    * safer classification.
    */
-  const actionCandidates =
-    discovery.tools
-      .filter(
-        (tool) =>
-          tool.risk !==
-          'read',
-      )
-      .slice(
-        0,
-        MAX_TOOL_CANDIDATES,
-      );
+  const actionCandidates = actionCandidatesForIntent(discovery.tools, useCase);
 
   if (
     !actionCandidates.length

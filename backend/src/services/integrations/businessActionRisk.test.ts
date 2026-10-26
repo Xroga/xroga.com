@@ -1,6 +1,28 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { isFinancialAction, requiresBusinessActionConfirmation } from './businessAction.js';
+import { actionCandidatesForIntent, isExplicitGmailSendIntent, isFinancialAction, requiresBusinessActionConfirmation } from './businessAction.js';
+
+test('an explicit Gmail send cannot be silently changed into a draft', () => {
+  const request = 'Send exactly one email using my connected Gmail account to a@example.com.';
+  assert.equal(isExplicitGmailSendIntent(request), true);
+  assert.deepEqual(actionCandidatesForIntent([
+    { slug: 'GMAIL_CREATE_EMAIL_DRAFT', risk: 'write' as const },
+    { slug: 'GMAIL_SEND_EMAIL', risk: 'write' as const },
+    { slug: 'GMAIL_LIST_MESSAGES', risk: 'read' as const },
+  ], request).map((tool) => tool.slug), ['GMAIL_SEND_EMAIL']);
+  assert.deepEqual(actionCandidatesForIntent([
+    { slug: 'GMAIL_CREATE_EMAIL_DRAFT', risk: 'write' as const },
+  ], request), []);
+});
+
+test('draft requests and unrelated app actions retain their own tools', () => {
+  assert.equal(isExplicitGmailSendIntent('Send my existing Gmail draft'), false);
+  assert.equal(isExplicitGmailSendIntent('Draft an email in Gmail to send later'), false);
+  assert.equal(isExplicitGmailSendIntent('Send a Slack message'), false);
+  assert.deepEqual(actionCandidatesForIntent([
+    { slug: 'GMAIL_CREATE_EMAIL_DRAFT', risk: 'write' as const },
+  ], 'Draft an email in Gmail to send later').map((tool) => tool.slug), ['GMAIL_CREATE_EMAIL_DRAFT']);
+});
 
 test('financial connected-app mutations require confirmation regardless of permission mode', () => {
   assert.equal(isFinancialAction('Swap 1 ETH for USDT', 'EXCHANGE_EXECUTE'), true);
