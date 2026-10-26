@@ -233,7 +233,10 @@ function modelScore(
     score -= blendedCost * 6;
     score += model.typicalLatency === 'fast' ? 10 : model.typicalLatency === 'medium' ? 3 : 0;
   }
-  if (mode === 'balanced') score -= blendedCost;
+  // A small capability-prior difference must not route ordinary work to the
+  // flagship at dozens of times the token cost. Complex work keeps the
+  // capability-first weighting and can still select it when justified.
+  if (mode === 'balanced') score -= blendedCost * (complexity.level === 'low' || complexity.level === 'medium' ? 2 : 1);
   if (mode === 'intelligence') score += model.strengths.architecture + model.strengths.review;
   if (complexity.level === 'high' || complexity.level === 'critical') {
     score += model.strengths.repository_analysis * 2;

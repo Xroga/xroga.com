@@ -37,7 +37,7 @@ describe(
 
         assert.equal(
           usd,
-          18,
+          9.3113,
         );
       },
     );
@@ -54,7 +54,7 @@ describe(
 
         assert.equal(
           usd,
-          0.27,
+          0.34,
         );
       },
     );

@@ -703,33 +703,33 @@ export async function implementCoherently(input: {
   const context = repositoryContext(existingFiles, objective);
   const failures: string[] = [];
   const unavailable = new Set<string>();
-  const attemptedProviders = new Set<string>();
+  const attemptedModels = new Set<string>();
   let realAttempts = 0;
   let protocolCorrection: string | null = null;
 
-  // Keep the router's primary choice. For its single independent fallback, prefer an
-  // approved transport that documents a direct-output/no-reasoning request. A provider
-  // without that control remains eligible only when no controlled alternative exists;
-  // otherwise it can spend the entire bounded window on private reasoning and never emit
-  // the file protocol this stage requires.
+  // Keep the router's primary choice. For its single model-level fallback, prefer
+  // an approved direct-output route, then the lowest configured token ceiling.
   const [primary, ...fallbacks] = input.candidates;
   const directOutputScore = (candidate: ModelCandidate): number => {
     const provider = MODELS[candidate.modelId as ModelId]?.provider;
     return provider && Object.keys(providerReasoningControls(provider, 'none')).length ? 0 : 1;
   };
+  const fallbackCost = (candidate: ModelCandidate): number => {
+    const model = MODELS[candidate.modelId as ModelId];
+    return (model?.inputUsdPer1M ?? Infinity) + (model?.outputUsdPer1M ?? Infinity);
+  };
   const candidates = primary
     ? [primary, ...fallbacks.map((candidate, index) => ({ candidate, index }))
-      .sort((left, right) => directOutputScore(left.candidate) - directOutputScore(right.candidate) || left.index - right.index)
+      .sort((left, right) => directOutputScore(left.candidate) - directOutputScore(right.candidate) || fallbackCost(left.candidate) - fallbackCost(right.candidate) || left.index - right.index)
       .map(({ candidate }) => candidate)]
     : [];
 
   for (const candidate of candidates) {
     if (unavailable.has(candidate.modelId)) continue;
     const provider = MODELS[candidate.modelId as ModelId]?.provider ?? `unknown:${candidate.modelId}`;
-    // The fallback budget is a provider budget, not a model-name budget. Two models on
-    // one transport share the same outage, request-contract incompatibility and queue, so
-    // spending both permitted attempts there is not a fallback at all.
-    if (attemptedProviders.has(provider)) continue;
+    // OpenRouter is the sole transport, but distinct models use independent upstream
+    // endpoints. A failed model may therefore fall back to another approved model.
+    if (attemptedModels.has(candidate.modelId)) continue;
     if (realAttempts >= MAX_COHERENT_PROVIDER_ATTEMPTS) break;
     try {
       assertCodingModel(candidate.modelId, 'coherent universal implementation');
@@ -737,7 +737,7 @@ export async function implementCoherently(input: {
       failures.push(`${candidate.modelId}: ${classifyBuilderFailure(error)}`);
       continue;
     }
-    attemptedProviders.add(provider);
+    attemptedModels.add(candidate.modelId);
     realAttempts += 1;
     input.onProgress?.({ stage: 'bundle', modelId: candidate.modelId });
     const messages: ChatMessage[] = [
