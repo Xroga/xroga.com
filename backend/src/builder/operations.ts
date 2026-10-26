@@ -69,8 +69,19 @@ export class OperationRunner {
     return operation;
   }
 
-  async approve(userId: string, projectId: string, operationId: string, input: { digest: string }): Promise<ExternalOperation> {
+  /**
+   * An operation belongs to exactly one provider and a small set of actions. Approving, cancelling or running one
+   * through a different provider's or action's endpoint is refused as "not found", so a route that was meant for a
+   * preview can never approve a production release, and one provider's endpoint can never touch another's operation.
+   */
+  async requireScoped(userId: string, projectId: string, operationId: string, expected: { provider: ExternalProvider; actions: readonly ExternalAction[] }): Promise<ExternalOperation> {
     const operation = await this.require(userId, projectId, operationId);
+    if (operation.provider !== expected.provider || !expected.actions.includes(operation.action)) throw new BuilderError('not_found', 'Operation not found.');
+    return operation;
+  }
+
+  async approve(userId: string, projectId: string, operationId: string, input: { digest: string }, expected: { provider: ExternalProvider; actions: readonly ExternalAction[] }): Promise<ExternalOperation> {
+    const operation = await this.requireScoped(userId, projectId, operationId, expected);
     if (input.digest !== operation.planDigest || digestOf(operation.plan) !== operation.planDigest) {
       throw new BuilderError('conflict', 'The approval does not match the plan that was prepared. Review the plan and approve it again.');
     }
@@ -84,7 +95,8 @@ export class OperationRunner {
     return moved;
   }
 
-  async cancel(userId: string, projectId: string, operationId: string): Promise<ExternalOperation> {
+  async cancel(userId: string, projectId: string, operationId: string, expected: { provider: ExternalProvider; actions: readonly ExternalAction[] }): Promise<ExternalOperation> {
+    await this.requireScoped(userId, projectId, operationId, expected);
     const moved = await this.deps.phase2.transitionOperation(userId, projectId, operationId, ['prepared', 'approved', 'failed', 'ambiguous'], 'cancelled', { failure: 'Cancelled by the user.' });
     if (!moved) throw new BuilderError('conflict', 'This operation can no longer be cancelled.');
     return moved;

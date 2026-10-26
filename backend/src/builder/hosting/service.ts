@@ -163,11 +163,12 @@ export class HostingService {
   }
 
   approve(userId: string, projectId: string, operationId: string, digest: string) {
-    return this.ops.approve(userId, projectId, operationId, { digest });
+    // A preview approval can never approve a production release: that has its own approvePromotion with a typed confirmation.
+    return this.ops.approve(userId, projectId, operationId, { digest }, { provider: 'vercel', actions: ['prepare_preview', 'deploy_preview'] });
   }
 
   cancel(userId: string, projectId: string, operationId: string) {
-    return this.ops.cancel(userId, projectId, operationId);
+    return this.ops.cancel(userId, projectId, operationId, { provider: 'vercel', actions: ['prepare_preview', 'deploy_preview', 'promote_production'] });
   }
 
   operations(userId: string, projectId: string) {
@@ -314,7 +315,7 @@ export class HostingService {
     if (operation.provider !== 'vercel' || operation.action !== 'promote_production') throw new BuilderError('not_found', 'Operation not found.');
     const plan = operation.plan as PromotionPlan;
     if (input.confirmation.trim() !== plan.confirmationPhrase) throw new BuilderError('conflict', `To publish, type exactly: ${plan.confirmationPhrase}`);
-    return this.ops.approve(userId, projectId, operationId, { digest: input.digest });
+    return this.ops.approve(userId, projectId, operationId, { digest: input.digest }, { provider: 'vercel', actions: ['promote_production'] });
   }
 
   async executePromotion(userId: string, projectId: string, operationId: string): Promise<ExternalOperation> {

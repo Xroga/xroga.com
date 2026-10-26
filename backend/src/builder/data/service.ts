@@ -107,11 +107,11 @@ export class SupabaseDataService {
   }
 
   approve(userId: string, projectId: string, operationId: string, digest: string) {
-    return this.ops.approve(userId, projectId, operationId, { digest });
+    return this.ops.approve(userId, projectId, operationId, { digest }, { provider: 'supabase', actions: ['bind_supabase_project', 'apply_migration'] });
   }
 
   cancel(userId: string, projectId: string, operationId: string) {
-    return this.ops.cancel(userId, projectId, operationId);
+    return this.ops.cancel(userId, projectId, operationId, { provider: 'supabase', actions: ['bind_supabase_project', 'apply_migration'] });
   }
 
   operations(userId: string, projectId: string) {

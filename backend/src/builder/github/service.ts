@@ -178,7 +178,7 @@ export class GitHubExportService {
 
   /** The user's explicit approval. Must quote the digest of the plan they were shown. */
   async approve(userId: string, projectId: string, operationId: string, input: { digest: string }): Promise<ExternalOperation> {
-    const operation = await this.requireOperation(userId, projectId, operationId);
+    const operation = await this.requireGitHubOperation(userId, projectId, operationId);
     if (input.digest !== operation.planDigest || planDigest(operation.plan) !== operation.planDigest) throw new BuilderError('conflict', 'The approval does not match the plan that was prepared. Review the plan and approve it again.');
     const expires = new Date(this.now().getTime() + APPROVAL_TTL_MS).toISOString();
     const moved = await this.deps.phase2.transitionOperation(userId, projectId, operationId, ['prepared', 'failed', 'ambiguous'], 'approved', { approvedAt: this.now().toISOString(), approvalExpiresAt: expires, failure: null });
@@ -191,6 +191,7 @@ export class GitHubExportService {
   }
 
   async cancel(userId: string, projectId: string, operationId: string): Promise<ExternalOperation> {
+    await this.requireGitHubOperation(userId, projectId, operationId);
     const moved = await this.deps.phase2.transitionOperation(userId, projectId, operationId, ['prepared', 'approved', 'failed', 'ambiguous'], 'cancelled', { failure: 'Cancelled by the user.' });
     if (!moved) throw new BuilderError('conflict', 'This operation can no longer be cancelled.');
     return moved;
@@ -200,6 +201,13 @@ export class GitHubExportService {
     await this.deps.builder.requireProject(userId, projectId);
     const operation = await this.deps.phase2.getOperation(userId, projectId, id);
     if (!operation) throw new BuilderError('not_found', 'Operation not found.');
+    return operation;
+  }
+
+  /** Only this service's own operations: another provider's operation is "not found" here, never approved, cancelled or executed. */
+  private async requireGitHubOperation(userId: string, projectId: string, id: string): Promise<ExternalOperation> {
+    const operation = await this.requireOperation(userId, projectId, id);
+    if (operation.provider !== 'github') throw new BuilderError('not_found', 'Operation not found.');
     return operation;
   }
 
@@ -223,7 +231,7 @@ export class GitHubExportService {
   /** Performs an approved operation. Idempotent: a finished operation returns its receipt without any provider call. */
   async execute(userId: string, projectId: string, operationId: string): Promise<ExternalOperation> {
     await recoverInterrupted(this.deps.phase2, userId, projectId, this.now());
-    const operation = await this.requireOperation(userId, projectId, operationId);
+    const operation = await this.requireGitHubOperation(userId, projectId, operationId);
     if (operation.status === 'succeeded') return operation;
     if (operation.status === 'executing') throw new BuilderError('conflict', 'This operation is already running.');
     if (operation.status !== 'approved') throw new BuilderError('conflict', `This operation is ${operation.status}. It needs your explicit approval before it can run.`);
