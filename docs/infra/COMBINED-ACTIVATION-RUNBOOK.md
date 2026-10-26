@@ -2,7 +2,7 @@
 
 Prepared in advance. **Nothing in this document has been run, and nothing may be run until (a) Codex has completed and verified the Fly.io to Google Cloud migration and (b) each release below is separately authorised.** No step deploys, applies SQL to a hosted database, creates a paid resource or touches a customer account by itself.
 
-Related drafts: Batch 1.5 audit fixes #861; Batch 2 #857, #858, #859 and the audit overlay; Composio #860 (separate, optional, off by default); Codex migration #856 (not touched).
+Last updated 2026-10-27 (durable browser runs, Drive screen, strict quota, Builder stop control, chat continuity, isolated QA host). Related drafts: Batch 1.5 audit fixes #861; Batch 2 #857, #858, #859 and the audit overlay; Composio #860 (separate, optional, off by default); Codex migration #856 (not touched).
 
 ## 0. Preconditions (all must be true)
 
@@ -13,7 +13,7 @@ Related drafts: Batch 1.5 audit fixes #861; Batch 2 #857, #858, #859 and the aud
 | 0.3 | `main` contains Batch 1.5 (#852) and every audit PR you chose to accept (#861, and the Batch 2 stack in order #857, #858, #859, audit overlay) | `git log`, CI green on each merge commit |
 | 0.4 | Cloud Run sets `NODE_ENV=production` and `XROGA_DEPLOYMENT_ENVIRONMENT=production` (production) or `staging` (staging) explicitly; the service name does not contain staging, preview, sandbox, dev or test for production | `startupPolicy` classifies it (tested); the credential vault refuses a development provider only when `NODE_ENV` says production |
 | 0.5 | The cutover wiring of the startup policy and readiness evaluator has been applied (`docs/infra/batch-1.5/cutover-startup-readiness.patch`, with `runtime/bootGuard.test.ts` updated in the same change) | `/ready` reports `environment`, `database` and `storage` checks |
-| 0.6 | A decision on where browser QA runs (section 3.4) | recorded |
+| 0.6 | An isolated browser QA host exists for production Builder QA (section 3, rule 2; `qaHostMain.ts`), or the decision to leave production QA as "not run" is recorded | The host answers `/healthz`; a signed QA request from the API returns a sealed report |
 | 0.7 | Backups: a point-in-time recovery or a verified dump of the production database immediately before each migration step | Operator evidence |
 | 0.8 | Disposable accounts for the live verification in section 4 (never a customer's) | A GitHub account, a Supabase organisation and a Vercel team created for testing, with spending limits |
 
@@ -25,17 +25,20 @@ Related drafts: Batch 1.5 audit fixes #861; Batch 2 #857, #858, #859 and the aud
 |---|---|---|---|
 | 1 | `supabase/migrations/20261022000000_storage_drive_foundation.sql` | `public.projects`, `public.project_files` | `docs/infra/batch-1.5/rollback/20261022000000_storage_drive_foundation.down.sql` |
 | 2 | `supabase/migrations/20261024000000_worker_task_leases.sql` | none | `docs/infra/batch-1.5/rollback/20261024000000_worker_task_leases.down.sql` |
+| 3 | `supabase/migrations/20261026100000_browser_runs_durable.sql` (PR #861) | none | `docs/infra/batch-1.5/rollback/20261026100000_browser_runs_durable.down.sql` (only when no browser run is queued or running) |
 
-Both are additive and idempotent (`create ... if not exists`, `create or replace`, `drop ... if exists`). Apply through the verified migration workflow; `supabase-migrate.yml` on `main` only validates, so hosted application is an operator step. Verify afterwards: every public table has RLS; `anon` and `authenticated` have no grants on the lease table; the Drive state-transition trigger exists.
+All three are additive and idempotent (`create ... if not exists`, `create or replace`, `drop ... if exists`). Apply through the verified migration workflow; `supabase-migrate.yml` on `main` only validates, so hosted application is an operator step. Verify afterwards: every public table has RLS; `anon` and `authenticated` have no grants on the lease table; the Drive state-transition trigger exists.
 
 ### A2. Configuration (secrets in the host secret store, never in chat)
 
 | Capability | Variables | Safe default |
 |---|---|---|
-| Drive storage | `XROGA_DRIVE_R2_*` credentials and `XROGA_DRIVE_R2_BUCKET` (a dedicated private bucket), a storage database URL, `STORAGE_WRITE_MODE` (`legacy`, `dual`, `r2`), `STORAGE_READ_ORDER`, `STORAGE_QUOTA_BYTES` | Unset: legacy behaviour, Drive off. An invalid value fails closed. **Set a quota before enabling**: unset means tracked, not enforced |
+| Drive storage | `XROGA_DRIVE_R2_*` credentials and `XROGA_DRIVE_R2_BUCKET` (a dedicated private bucket), a storage database URL, `STORAGE_WRITE_MODE` (`legacy`, `dual`, `r2`), `STORAGE_READ_ORDER`, `STORAGE_QUOTA_BYTES` | Unset: legacy behaviour, Drive off. An invalid value fails closed, **including a malformed quota** (`10GB` is an error, not "unlimited"). **Set a quota before enabling**: unset means tracked, not enforced, and `/ready` reports `storage_quota_not_enforced` |
+| Drive screen (PR #861, new scope) | frontend `NEXT_PUBLIC_XROGA_DRIVE=1`; the R2 bucket's CORS must allow `PUT` from the app origin and **expose the `ETag` header** | Unset: `/drive` answers 404. Without the CORS settings uploads from the browser fail with a clear message |
 | Scheduled Drive housekeeping (PR #861) | `XROGA_STORAGE_RECONCILE_MODE=cloud`, `XROGA_STORAGE_RECONCILE_AUDIENCE`, `XROGA_STORAGE_RECONCILE_SERVICE_ACCOUNT`, plus a Cloud Scheduler job POSTing to `/internal/storage/reconcile` with an ID token for that service account | Unset: route answers 503 |
 | Guest rate limiting on Cloud Run | `XROGA_TRUSTED_PROXY_HOPS` only if more than one trusted proxy sits in front | 1 |
 | Browser worker | `XROGA_BROWSER_WORKER_URL` (https), `XROGA_BROWSER_COORDINATOR_SECRET`, optionally `XROGA_BROWSER_AI_MODEL`, `XROGA_BROWSER_PLANNER_MODEL`; frontend `NEXT_PUBLIC_XROGA_BROWSER_RUNS=1` | Unset: the route answers 503 and the UI is hidden |
+| Durable browser runs (PR #861) | `XROGA_BROWSER_DISPATCH=cloud-tasks` with `XROGA_BROWSER_TASKS_PROJECT`, `_LOCATION`, `_QUEUE`, `XROGA_BROWSER_EXECUTE_URL`, `XROGA_BROWSER_EXECUTE_SERVICE_ACCOUNT`, `XROGA_BROWSER_EXECUTE_AUDIENCE`; `XROGA_BROWSER_INTERNAL_MODE=cloud`, `XROGA_BROWSER_RECOVER_SERVICE_ACCOUNT`, `XROGA_BROWSER_RECOVER_AUDIENCE`; a Cloud Tasks queue, two service accounts and a Cloud Scheduler job for `/internal/browser/recover` (billable: created only by the authorised release) | Unset: runs execute in the accepting process (single always-allocated instance only). A half-configured `cloud-tasks` setting answers 503 instead of silently doing that. See `docs/infra/batch-1.5/DURABILITY-AND-DRIVE-UI.md` |
 | Managed custody | `XROGA_REQUIRE_MANAGED_CUSTODY`, `XROGA_CREDENTIAL_KMS_PROVIDER` and that provider's variables | per Batch 1 |
 
 ### A3. Order of activation and smoke tests
@@ -43,7 +46,7 @@ Both are additive and idempotent (`create ... if not exists`, `create or replace
 1. Deploy the Google release with every Batch 1.5 switch at its safe default. Smoke: `/health`, `/ready` (database, environment, storage), a normal chat turn, a legacy file read. **Expected: identical behaviour to before.**
 2. Enable Drive in `dual` for one staging tenant. Smoke: upload, download (checksum equal), another tenant is refused (403/404), quota refusal, project revocation takes effect, the object appears `READY`, nothing public.
 3. Run the scheduled reconcile once by hand (Cloud Scheduler "force run"). Expect counts only; an abandoned test upload is cleaned.
-4. Enable the browser worker for the staging tenant. Smoke: a simple run completes with Drive evidence and verified postconditions; **a request carrying a `writeGrant` is refused with 400**; a run is cancellable on any instance (see open item 8 in the Batch 1.5 audit: do not enable multi-instance browser runs until its architecture decision is made).
+4. Enable the browser worker for the staging tenant. Smoke: a simple run completes with Drive evidence and verified postconditions; **a request carrying a `writeGrant` is refused with 400**; **on more than one instance**: start a run on one, cancel it from another (the flag is durable), stop the executing instance mid-run and confirm the recovery sweep resumes it, and confirm a fifth concurrent run for one tenant is refused with 429.
 5. Promote to production tenant by tenant; flip `r2` only after `dual` has run clean and a migration job has its signed approvals.
 
 **Rollback (any stage):** set the switch back to its safe default (`STORAGE_WRITE_MODE=legacy`, unset `XROGA_BROWSER_WORKER_URL`, unset `NEXT_PUBLIC_XROGA_BROWSER_RUNS`); routes become inert; no data is deleted. Only if a migration must be undone: the matching `.down.sql`, after a dump.
@@ -68,7 +71,9 @@ Rollbacks: drop the tables of orders 2 and 1 (nothing else references them); for
 | Backend routes under `/api/builder/*` | Always mounted behind authentication; inert without a project |
 | `UNIVERSAL_AGENT_ENABLED` (and `UNIVERSAL_AGENT_PERCENTAGE` or `UNIVERSAL_AGENT_ALLOWLIST`) | The canonical engine. Off means a Builder build is reported as **blocked** (`BUILDER_ENGINE_DISABLED`) and never falls back to the legacy generator. Enable for an allowlist of test projects first |
 | `NEXT_PUBLIC_XROGA_BUILDER=1` (frontend) | Shows the Project tab and routes chat build requests into projects. Build and deploy the frontend with it only after the backend is ready |
-| `XROGA_BUILDER_INPROCESS_QA=1` | Allows the in-process Chromium for QA in production. **Leave unset** unless QA runs on an isolated deployment for that purpose; unset means QA reports "not run" in production |
+| `XROGA_BUILDER_QA_HOST_URL` (https) and `XROGA_BUILDER_QA_HOST_SECRET` (32 bytes or more, must be set together) | The supported production path for browser QA: the plan is sent to the isolated QA host and its answer is sealed before it is recorded. A host that is down or lying can only make QA "not run" or "failed". The in-process browser is never used when this is set |
+| QA host (a separate deployment, `backend/src/builder/qa/qaHostMain.ts`) | `XROGA_QA_HOST_SECRET` (the same value), `XROGA_QA_HOST_ALLOWED_SUFFIXES` (the https preview host suffixes it may test; empty allows nothing), `XROGA_QA_HOST_MAX_CONCURRENT`. Holds no database credential or user token; needs Chromium and no route to anything private. Created by the Google runtime release, not by this code |
+| `XROGA_BUILDER_INPROCESS_QA=1` | Allows the in-process Chromium for QA in production. **Leave unset**: it is the fallback for a dedicated isolated deployment only; unset (and no QA host) means QA reports "not run" in production |
 | Sandbox provider variables | As defined by the Google runtime release (PR #856) |
 
 ### B3. Activation order and smoke tests (staging, one tenant, then production allowlist)
@@ -76,9 +81,10 @@ Rollbacks: drop the tables of orders 2 and 1 (nothing else references them); for
 1. Migrations applied and verified; routes up; flags off. Smoke: `GET /api/builder/projects` returns an empty list for an authenticated user and 401 without identity.
 2. Engine on for the test tenant. Smoke: create a project from a plain request; the build produces a saved revision; the project is **PARTIAL** until a browser test passes.
 3. Preview on the Google runtime. Smoke: "Start preview from latest version" returns ready; the preview opens through the signed gateway; a foreign tenant cannot open it; an expired link is refused; stop and restart work.
-4. Browser QA (decision 0.6). Smoke: tests execute against the running app; a seeded defect fails with a screenshot; the project becomes VERIFIED only after a pass.
+4. Browser QA on the isolated host (decision 0.6). Smoke: tests execute against the running app and the report names the driver `remote:...`; a seeded defect fails with a screenshot; the project becomes VERIFIED only after a pass; stop the host and confirm QA reports "not run" (never a pass); point a request at an address outside the allowed suffixes and confirm 403.
 5. Repair: break a page deliberately; "Test and fix automatically" repairs within 3 attempts, re-tests, and records the revision it fixed. Budget exhaustion stops it.
-6. Follow-up and history: "add a search filter" changes the **same** project; history shows both revisions; restore creates a new revision and re-tests it.
+6. Follow-up and history: "add a search filter" changes the **same** project; history shows both revisions; restore creates a new revision and re-tests it. **Chat continuity:** reopen the chat (or open it in another browser) and confirm the same project is shown and the next change request continues it; start a new chat and confirm it does not inherit that project.
+6a. **Stop:** start a build, press Stop in the Project tab, and confirm the state becomes Cancelled, no revision appears afterwards, a second Stop changes nothing, and another user's Stop request is refused with 404. Make the stop request fail (for example a database outage on staging) and confirm the UI reports that it was not saved.
 7. Export: ZIP downloads, checksums match its manifest, contains no `.env` and (for a database app) the migration.
 8. Delivery with disposable accounts (section 4). Nothing external happens without prepare, approve and execute.
 9. Production regression: the whole existing suite, plus the golden journeys.
@@ -88,7 +94,7 @@ Rollbacks: drop the tables of orders 2 and 1 (nothing else references them); for
 ## 3. Cross-batch rules to hold during activation
 
 1. **Storage:** the Builder stores source in Postgres (transactional revisions), not Drive. Drive and the Builder do not share objects; a project deleted in Drive does not delete builder revisions and the reverse is true.
-2. **Browser:** Batch 1.5's browser worker is a remote, authorised host with Drive evidence. Builder QA drives generated pages and must not run in the customer-facing API container in production. Choose one: (a) run QA on a dedicated isolated deployment with `XROGA_BUILDER_INPROCESS_QA=1`, or (b) extend QA to use the browser host (not built). Until then production QA is "not run".
+2. **Browser:** Batch 1.5's browser worker is a remote, authorised host with Drive evidence. Builder QA drives generated pages and must not run in the customer-facing API container in production. It does not: with `XROGA_BUILDER_QA_HOST_URL` set the plan is executed on the isolated QA host (built, tested against a fake browser and over real HTTP; **the host deployment and a real run against a generated app are PENDING the Google runtime**). Without it production QA is honestly "not run", never a pass. The QA host is a separate deployment from the Batch 1.5 browser worker, because it executes declarative QA plans, not browser jobs.
 3. **Budget:** repairs go through the existing provider budget reservation; nothing else in Batch 2 spends Xroga money. Delivery costs (Vercel builds, Supabase) are the customer's and are stated in each approval plan.
 4. **Tenancy:** every Builder route resolves the project against the verified owner; the new tables are owner-`SELECT` only for the browser role and written only by the server with an explicit owner predicate.
 5. **Order:** Batch 1.5 must be live and stable first; Batch 2 does not depend on Drive, but its isolation and preview depend on the Google runtime.
@@ -112,9 +118,9 @@ Record the date, commit, account ids and results in `docs/infra/batch-2/LIVE-VER
 
 - [ ] Migrations applied in order, with a verified dump before each; RLS verified on every new table; rollback statements rehearsed on a disposable copy.
 - [ ] Codex's Google release live and verified; the startup/readiness wiring applied; `/ready` reports environment, database and storage.
-- [ ] Batch 1.5 smoke tests passed (A3 steps 1 to 5); quota set; the scheduled reconcile ran once.
+- [ ] Batch 1.5 smoke tests passed (A3 steps 1 to 5); quota set; the scheduled reconcile ran once; browser runs verified across two instances (cancel, recovery, ceiling); the Drive screen uploads a small and a multipart file from a real browser (bucket CORS exposes `ETag`).
 - [ ] The canonical engine enabled for an allowlist only; Builder UI flag on for the same allowlist.
-- [ ] Preview, QA (with the chosen isolated host), repair, follow-up, restore and export smoke tests passed.
+- [ ] Preview, QA (on the isolated host), repair, follow-up, restore, Stop, chat continuity and export smoke tests passed.
 - [ ] L1 to L8 passed on disposable accounts and recorded.
 - [ ] No credential appears in any log, response, stored plan or receipt (grep the staging logs for the test tokens).
 - [ ] The full backend, frontend and golden suites green on the exact release commit.

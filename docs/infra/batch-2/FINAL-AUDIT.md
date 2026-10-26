@@ -76,10 +76,34 @@ Evidence labels: **FIXED + TESTED**, **REAL-DEPENDENCY VERIFIED** (real Chromium
 
 | Item | Why it is not fixed here |
 |---|---|
-| The chat is not associated with a project (`conversation_id` stays null) | The chat context has no stable conversation id; the workspace restores the most recent project instead |
-| No builder cancel control, stale-run window of one hour | Cancel is the existing chat abort; a heartbeat and a shorter window need the Google worker model |
+| ~~The chat is not associated with a project~~ | **Resolved in section 7.** An earlier version of this table said the chat has no stable conversation id. That was wrong: `sessionIdRef` is a per-chat id that is persisted with the saved chat and restored when it is reopened |
+| ~~No builder cancel control~~ | **Resolved in section 7** (cancel route, Stop control, durable compare-and-set). The stale-run window of one hour is unchanged: a shorter window needs a heartbeat from the Google worker model |
 | `PreviewPort.launch` and `BuilderService.generate` are used only by tests | Kept: the direct build path is the reference behaviour the chat path is tested against |
 | The validation ladder (install, typecheck, lint, build) | Run by the canonical pipeline, not by the Builder; not re-proven here |
 | Supabase: create a new project; escalated approval for destructive SQL; auth callback URL configuration | Not implemented; destructive SQL is refused outright; the UI does not claim them |
 | Vercel: production URL is the expected `https://<name>.vercel.app`; timeouts of deployment and env calls are not reconciled; GitHub default branch is assumed `main`; `read:org` is not in the existing GitHub OAuth scope so organisation owners may not list | Need live provider verification before changing; listed in the live procedure |
-| The in-process browser must move to an isolated host for production | Needs the Google runtime and Batch 1.5's browser worker; until then QA is off in production unless explicitly enabled (defect 13) |
+| ~~The in-process browser must move to an isolated host for production~~ | **The supported path is built (section 7); the host deployment and a real run are PENDING the Google runtime.** Until the host exists QA is "not run" in production (defect 13), never a pass |
+
+## 7. Follow-up round (2026-10-27): stop control, chat continuity, isolated QA
+
+All three were listed as open above. Classification against the original Batch 2 specification is in `docs/infra/COMPLETION-MATRIX-2026-10-27.md`.
+
+### 7.1 Builder cancellation
+
+- `POST /api/builder/projects/:id/cancel` (owner only, 404 for another tenant, idempotent). The engine is asked to stop first, through the same persisted cancellation the chat Stop uses (every API instance polls it every 1.5 s), and a failure to save that request is reported as 503 with nothing changed, so Stop can be retried. Then one compare-and-set (`cancelRun`) records `cancelled` and releases the run slot.
+- Run-slot guarded writes: `setStateForRun` only writes while the run still holds the slot, and `commit` refuses to add a revision once the slot is gone. A cancelled run therefore cannot overwrite the cancelled state, add a revision, or clear the slot of the build that replaced it. This also closes a pre-existing gap: a stale run's close-out used to clear a newer run's slot.
+- UI: a Stop button in the Project tab while a build is running. It shows the server's recorded state after the call, and a failed stop says it was not saved.
+- Known limit: a QA run already in flight (a separate, detached activity) is not cancelled by Stop; its result may still update the state through `setStateIfIdle`, because it concerns a saved revision.
+- Evidence: `builder/cancel.test.ts` (8 tests, including the late-finish, replaced-run, other-tenant and unsaved-stop cases and the HTTP route). TESTED with the in-memory store; the Supabase `cancelRun` and `setStateForRun` use the same conditional-update pattern as `claimRun` and have no separate real-PostgreSQL test (they are PostgREST filters, not SQL functions).
+
+### 7.2 Chat continuity
+
+- The chat session id is sent as the project's `conversationId` when a project is created, `GET /api/builder/conversations/:id/project` finds it again (owner scoped), and the workspace re-binds whenever the chat changes. A reopened chat shows and continues its own project; a new chat starts without one instead of inheriting the last project; the "most recent project" fallback applies only while no chat is bound.
+- Evidence: `builder/conversation.test.ts` (5 tests incl. the route), `lib/builderContinuity.test.ts` (wiring). TESTED. Not exercised in a real browser session.
+
+### 7.3 Isolated browser QA
+
+- `qa/remoteQa.ts`: `RemoteQaClient` (API side), `createQaHostRouter` and `qaHostMain.ts` (host side), reusing the browser coordinator's HMAC scheme (single-use nonce, 60 s window, body hash). The host fails closed on addresses (https preview suffixes only, no IP literals, no credentials), validates the plan as declarative data (no code ops) and caps concurrency.
+- The answer is sealed against the plan (`sealRemoteReport`): titles, categories, viewports and the required flag come from the plan; unreported checks are pending; counts and overall status are recomputed with the local runner's own function; regressions are computed by the API; screenshots and diagnostics are bounded. A host that is down, refused, lying or partial can only make QA not run or failed.
+- Evidence: `qa/remoteQa.test.ts` (17 tests, including real HTTP between client and host and the full `QaService` path), `qa/qaHostMain.test.ts`. TESTED with a fake browser. REAL-DEPENDENCY for the browser itself stays the existing `qa.browser.integration.test.ts`.
+- PENDING: deploying the host, giving it a route to a preview on the Google runtime, and a real run against a generated application.
