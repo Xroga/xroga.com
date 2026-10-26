@@ -2321,11 +2321,11 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
+          "sha256": "82f7738b595257e701be5b860f4c63c0f547b9606d9cbd04beb4d1bac489388e"
         },
         {
           "path": "backend/src/routes/swarm.ts",
-          "sha256": "7ae4bf0e05640eefccbaf8868183fc5b4301788e58a022a3b1dd42955fd59478"
+          "sha256": "dd5c964e1eaace0e51032e5ce1c9a2dd1b23be2439de049a5de4d84303e1bd11"
         },
         {
           "path": "supabase/migrations/20261019000300_worker_database_project_admission.sql",
@@ -3233,6 +3233,11 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "type": "ONE_LINE_ROUTING_CONTEXT_ADDITION_ONLY_OTHER_ADMISSION_AND_UNIVERSAL_PRODUCER_BYTES_UNCHANGED",
+          "result": "SOURCE_TRACED"
+        },
+        {
+          "path": "backend/src/ai/pipeline.ts",
+          "type": "BATCH2_PHASE1_ADDITIVE_BUILDER_BINDING_OPTION_ADMISSION_OWNERSHIP_ATTEMPT_AND_LEASE_CODE_UNCHANGED_BINDING_SUPPLIED_ONLY_BY_SWARM_ROUTE_AFTER_OWNER_VERIFICATION",
           "result": "SOURCE_TRACED"
         }
       ],
