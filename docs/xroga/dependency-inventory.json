@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "3eea650ae1308a0a681e4b3e4bd244b2b0734cf5",
+  "source_sha": "eb856b16353e2e7338b72417ecb6ddc4b23dbf0e",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -3555,6 +3555,40 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-example-test",
+      "provider": "Source-defined endpoint example.test",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/builder/qa/plan.ts"
+      ],
+      "hostnames": [
+        "example.test"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/builder/qa/plan.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-exp-host",
       "provider": "Source-defined endpoint exp.host",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -3964,6 +3998,7 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "backend/src/ai/pipeline.ts",
+        "backend/src/builder/github/fakeGitHub.testsupport.ts",
         "backend/src/routes/github.ts",
         "backend/src/services/integrations/githubAtomicTransport.ts",
         "backend/src/services/integrations/githubDeploy.ts",
@@ -4022,6 +4057,7 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/ai/pipeline.ts",
+        "backend/src/builder/github/fakeGitHub.testsupport.ts",
         "backend/src/routes/github.ts",
         "backend/src/services/integrations/githubAtomicTransport.ts",
         "backend/src/services/integrations/githubDeploy.ts",
@@ -13491,7 +13527,7 @@
     },
     {
       "path": ".github/workflows/builder-phase1.yml",
-      "sha256": "3af02258ff2d87d37b9190a69356fbe5bcc703abb6ee8e868edd21a38c0dc38b"
+      "sha256": "11af4c67196b5936aeaa23a01d7e8203b0ab6d52166680a53d370cc8ae181e84"
     },
     {
       "path": ".github/workflows/chat-turn-rail-browser.yml",
@@ -14126,6 +14162,46 @@
       "sha256": "6173a5dec6f80b526ed0a0c1809a85f5e02d0a96c095fc38e37301793ae67e7c"
     },
     {
+      "path": "backend/src/builder/diff.ts",
+      "sha256": "333a2ff95cc3d7f5551d0142528636041ed12c89c76974f7257e944aeb22609a"
+    },
+    {
+      "path": "backend/src/builder/export/archive.ts",
+      "sha256": "401ca64dd6589e950fee084cf53e690ccacc0f0dde6d4266397548da22d89115"
+    },
+    {
+      "path": "backend/src/builder/export/service.ts",
+      "sha256": "93b65b638f25cc84a40f189e04b15bc022a7eaf4000247a1646185153072d7bf"
+    },
+    {
+      "path": "backend/src/builder/github/fakeGitHub.testsupport.ts",
+      "sha256": "5e39f238a9dacb85635968597e55310ec40314052d023cdbbd7f85ad0fa33e48"
+    },
+    {
+      "path": "backend/src/builder/github/port.ts",
+      "sha256": "808cf9438c826f489c7a1ede53582a12f0e0236a59cc2564935c4a8fb90e889e"
+    },
+    {
+      "path": "backend/src/builder/github/restPort.ts",
+      "sha256": "9789bc1736f6ff2b09f7d577629b1dade6830c24bb7721336570e5733744d5c8"
+    },
+    {
+      "path": "backend/src/builder/github/service.ts",
+      "sha256": "35d2c0bcd8aee3355c5a11e946b747ba3f4bca0ed2d06c366171e7cc0c1cc54e"
+    },
+    {
+      "path": "backend/src/builder/intent.ts",
+      "sha256": "65d97d7c426da2b5e5465605189c00cc78f6bbf55496e275fbecb5d149dedc62"
+    },
+    {
+      "path": "backend/src/builder/phase2Bridge.ts",
+      "sha256": "41008b84d92ab8e16c28475d93dc4bb1529015c5c571a84348a21100fe2db46b"
+    },
+    {
+      "path": "backend/src/builder/phase2Store.ts",
+      "sha256": "4e07d9b95cc6ca561b12ebd5fc8386f8bfc9a08c43f4a34d95b98315eca0e6a3"
+    },
+    {
       "path": "backend/src/builder/pipelineBinding.ts",
       "sha256": "69cbbd19934fa25f089c7e9d174123ae9d94aaf4508b6ca01733979059f87cfe"
     },
@@ -14134,12 +14210,36 @@
       "sha256": "d001170db1ee331b1219b83d43c806d2ca2449af37b3994aa8fb7aef3cd9eaa1"
     },
     {
+      "path": "backend/src/builder/qa/plan.ts",
+      "sha256": "5808ab3e36b64aaa1b41956772895f0ea6ff839ef19b6536cd460e994356182d"
+    },
+    {
+      "path": "backend/src/builder/qa/playwrightQaDriver.ts",
+      "sha256": "d02da5896788cb3cb3552c220ef6614e4a1332720270ec89fdfa950f88364ae5"
+    },
+    {
+      "path": "backend/src/builder/qa/qaService.ts",
+      "sha256": "274784d5be3a1d3741b28227b55a55e029f0ad22f999bba7e5142ce777b772db"
+    },
+    {
+      "path": "backend/src/builder/qa/repair.ts",
+      "sha256": "38f3f30484d10800c6d32f56281a732ce5a67ffd56371ca3a952aff79ef0fde9"
+    },
+    {
+      "path": "backend/src/builder/qa/runner.ts",
+      "sha256": "4e28c09db066559c181f27715725ed9d22b0bdca6c0d0d68e780f168ff24b9ca"
+    },
+    {
+      "path": "backend/src/builder/qa/types.ts",
+      "sha256": "95922ee6be41e4b819e94f280acddb7f171ce191dca813d5a9379fb62e32846e"
+    },
+    {
       "path": "backend/src/builder/readiness.ts",
       "sha256": "b2142aeabe617a45441b0de9c278ea4552b97276143c2992ea0d95cf473ee758"
     },
     {
       "path": "backend/src/builder/service.ts",
-      "sha256": "3e5070ab24acd450d7faae4bfe86d2b0c63e49a49901c0525964d34f1f148f6e"
+      "sha256": "719fd7a3aeff6805f785b28f1813cfd663b0a6bd261da9a87ece124c93b5c82d"
     },
     {
       "path": "backend/src/builder/snapshot.ts",
@@ -14159,11 +14259,11 @@
     },
     {
       "path": "backend/src/builder/swarmBridge.ts",
-      "sha256": "074851d6fa7645f9043e910b1041e5de3d66e8b19e11a61fde48f0cc5e8bcea9"
+      "sha256": "f738b626401508c64a6ffad544627e980a149fa7ae6a31917e207b8c9bb6e976"
     },
     {
       "path": "backend/src/builder/types.ts",
-      "sha256": "7228d40773c20c49599219bfe75316dfb41c9060aa2b9842bfa26d1ec08ab88b"
+      "sha256": "bb4ebaa858292811bc6561be1df6374029e1c573138614074325f2aebd15e975"
     },
     {
       "path": "backend/src/capabilities/generated.ts",
@@ -14783,7 +14883,11 @@
     },
     {
       "path": "backend/src/routes/builder.ts",
-      "sha256": "1266f2e519080e5ad924002549b7aaa37640ddf4c2472217ddb2ba85472d118f"
+      "sha256": "cca589797c1679fd6bb46365a653f2ac0ca14159c3fedc1983bbe6eee916d7c4"
+    },
+    {
+      "path": "backend/src/routes/builderPhase2.ts",
+      "sha256": "286dc018ef3eba611c5b2104d28dbdb921fbf530b74eceb1a7f7b87ad4c95615"
     },
     {
       "path": "backend/src/routes/businessAutomationScheduler.ts",
@@ -15823,7 +15927,7 @@
     },
     {
       "path": "backend/src/synthesis/playwrightDriver.ts",
-      "sha256": "583bd198a2b0cfb9dd91e8f22c029984ba757e32deba689d396ef40c8a83e95a"
+      "sha256": "2767402afaa09f2e3f6a5610bd4c2621541357eb0c314cdcb4d3dce1f48e1cac"
     },
     {
       "path": "backend/src/synthesis/productBlueprints.ts",
@@ -18431,7 +18535,7 @@
     },
     {
       "path": "frontend/src/components/terminal/BuilderProjectPanel.tsx",
-      "sha256": "59d484e69c02e7199db012d88a863cb68ee765cf2fa8779e3689a3eea045d4d1"
+      "sha256": "69e8ec3a0e4b45567d5e5827ee84669e6acab5304073723d628839a58a082ae5"
     },
     {
       "path": "frontend/src/components/terminal/CapacityUnavailableCard.tsx",
@@ -18738,6 +18842,18 @@
       "sha256": "aa3541bab9beba30adcc495dae9cbf798133440ce85e2da45814de6a74dd21ad"
     },
     {
+      "path": "frontend/src/components/terminal/builder/BuilderDelivery.tsx",
+      "sha256": "a318150907ce793a9836d457eb91e5ba7a8c4a54a693a3c0c24302e14ffce479"
+    },
+    {
+      "path": "frontend/src/components/terminal/builder/BuilderHistory.tsx",
+      "sha256": "501711ec05bfd55b200a50a1c23266964f2c32320d385f2e322eed66b42a3e19"
+    },
+    {
+      "path": "frontend/src/components/terminal/builder/BuilderTests.tsx",
+      "sha256": "0ddbf0e65f9be7b0ee32fc756aead95c47ae3140280d2c8630814eb4472611fa"
+    },
+    {
       "path": "frontend/src/components/ui/AnchoredPortalPopover.tsx",
       "sha256": "bbf912e427695bb228ed93f236710a94ea7bda6ac66172b5197cdb85941f7ab3"
     },
@@ -19015,11 +19131,15 @@
     },
     {
       "path": "frontend/src/lib/builderApi.ts",
-      "sha256": "ad35cf91d97e42b86611f7f7da1dc7e1b79ecf81f56996142325d44fe11b169f"
+      "sha256": "ecaa2f6a92710aee508fcfe6a66aada6c43d27949dccf1e334f78fe0b679a6b1"
+    },
+    {
+      "path": "frontend/src/lib/builderApiPhase2.ts",
+      "sha256": "156773d4a422c09d867e0dfd2a0cfa0400107742b405bb34a5d88ee151b2c6da"
     },
     {
       "path": "frontend/src/lib/builderChat.ts",
-      "sha256": "2b93772a5c4a79e282eb428317161d0e490cef516fe0deecba4356d7ff9240c8"
+      "sha256": "7be3fcebff010c2b2e4b2286419975a0e3034408e3636f581f20ed02da3a8115"
     },
     {
       "path": "frontend/src/lib/capabilityPageArt.ts",
@@ -20802,6 +20922,20 @@
       "protocol": "https:",
       "path": "backend/src/ai/research.ts",
       "line": 98,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "backend/src/builder/github/fakeGitHub.testsupport.ts",
+      "line": 94,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "example.test",
+      "protocol": "https:",
+      "path": "backend/src/builder/qa/plan.ts",
+      "line": 57,
       "credentialsInUrl": false
     },
     {
@@ -27655,6 +27789,167 @@
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
       "line": 1900,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/diff.ts",
+      "line": 92,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/diff.ts",
+      "line": 93,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/diff.ts",
+      "line": 94,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/export/archive.ts",
+      "line": 23,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/export/archive.ts",
+      "line": 70,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/export/archive.ts",
+      "line": 219,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/export/archive.ts",
+      "line": 243,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/export/archive.ts",
+      "line": 251,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/github/fakeGitHub.testsupport.ts",
+      "line": 35,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/github/fakeGitHub.testsupport.ts",
+      "line": 36,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/github/fakeGitHub.testsupport.ts",
+      "line": 60,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/github/fakeGitHub.testsupport.ts",
+      "line": 94,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/github/fakeGitHub.testsupport.ts",
+      "line": 94,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/github/fakeGitHub.testsupport.ts",
+      "line": 96,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/github/fakeGitHub.testsupport.ts",
+      "line": 118,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/github/fakeGitHub.testsupport.ts",
+      "line": 122,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/github/restPort.ts",
+      "line": 109,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/github/restPort.ts",
+      "line": 148,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/qa/plan.ts",
+      "line": 38,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/qa/repair.ts",
+      "line": 42,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/qa/repair.ts",
+      "line": 43,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/qa/repair.ts",
+      "line": 178,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/qa/runner.ts",
+      "line": 232,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -4938,6 +4938,12 @@
         "backend/src/ai/patches.test.ts",
         "backend/src/ai/qa.test.ts",
         "backend/src/builder/builder.test.ts",
+        "backend/src/builder/export/archive.test.ts",
+        "backend/src/builder/github/github.test.ts",
+        "backend/src/builder/iteration.test.ts",
+        "backend/src/builder/qa/qa.browser.integration.test.ts",
+        "backend/src/builder/qa/qa.test.ts",
+        "backend/src/builder/qa/repair.integration.test.ts",
         "backend/src/builder/runtime.integration.test.ts",
         "backend/src/lib/adaptiveEngine.test.ts",
         "backend/src/synthesis/browserGateVerification.test.ts",
@@ -5533,6 +5539,7 @@
         "backend/src/ai/repositoryHydrationAuthority.test.ts:3",
         "backend/src/ai/repositoryReadFailure.test.ts:3",
         "backend/src/ai/universal/resumeProjectContext.test.ts:54",
+        "backend/src/builder/phase2Bridge.ts:2",
         "backend/src/routes/phase1.ts:14",
         "backend/src/routes/swarm.ts:6",
         "backend/src/security/workerProjectAdmission.test.ts:5"
@@ -5975,6 +5982,7 @@
         "backend/src/ai/repoSummarize.ts:18",
         "backend/src/ai/softwareAgent/xrogaAgentModel.ts:14",
         "backend/src/ai/universal/semanticRequestPlanner.ts:12",
+        "backend/src/builder/phase2Bridge.ts:1",
         "backend/src/operations/benchmarkAdapter.ts:36",
         "backend/src/operations/operationsProviderBudget.local.integration.ts:6",
         "backend/src/routes/billing.ts:5",
@@ -10932,6 +10940,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/phase2Bridge.ts:18",
         "backend/src/builder/swarmBridge.ts:2"
       ],
       "reachable": true,
@@ -10945,6 +10954,784 @@
         "backend/src/builder/canonical.ts#verifyAppReadiness"
       ],
       "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:2f380ca1c3d2b9c275fb",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/builder/diff.ts",
+      "sha256": "333a2ff95cc3d7f5551d0142528636041ed12c89c76974f7257e944aeb22609a",
+      "symbols": [
+        "CONTEXT",
+        "FileDiff",
+        "MAX_FILES",
+        "MAX_LINES_PER_SIDE",
+        "MAX_PATCH_LINES",
+        "Op",
+        "RevisionDiff",
+        "a",
+        "additions",
+        "b",
+        "deletions",
+        "describeChanges",
+        "diffRevisions",
+        "endAfter",
+        "endBefore",
+        "files",
+        "gap",
+        "i",
+        "index",
+        "j",
+        "k",
+        "keep",
+        "lineDiff",
+        "lines",
+        "linesOf",
+        "names",
+        "next",
+        "now",
+        "omitted",
+        "ops",
+        "parts",
+        "patch",
+        "path",
+        "paths",
+        "prior",
+        "render",
+        "show",
+        "start",
+        "status",
+        "table",
+        "text",
+        "tooLarge",
+        "totals",
+        "truncated",
+        "was"
+      ],
+      "imports": [
+        "../ai/patches.js"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/builder/iteration.test.ts:6",
+        "backend/src/builder/service.ts:9"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/builder/iteration.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:636f83ffe0ca065ab742",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/builder/export/archive.ts",
+      "sha256": "401ca64dd6589e950fee084cf53e690ccacc0f0dde6d4266397548da22d89115",
+      "symbols": [
+        "ArchiveVerdict",
+        "BuiltArchive",
+        "ENV_EXAMPLE",
+        "EXCLUDED_EXACT",
+        "EXCLUDED_PREFIXES",
+        "EXPORT_MANIFEST_PATH",
+        "EXPORT_SETUP_PATH",
+        "ExcludedReason",
+        "ExportExclusion",
+        "ExportManifest",
+        "MAX_EXPORT_BYTES",
+        "SECRET_FILE",
+        "ZipEntry",
+        "archiveFiles",
+        "archiveName",
+        "base",
+        "buffer",
+        "buildSourceArchive",
+        "built",
+        "byPath",
+        "centralOffset",
+        "centralSize",
+        "classifyExportPath",
+        "commentLength",
+        "compressedSize",
+        "count",
+        "crc",
+        "cursor",
+        "data",
+        "dataStart",
+        "declared",
+        "declaredPaths",
+        "entries",
+        "entry",
+        "env",
+        "eocd",
+        "error",
+        "excluded",
+        "excludedPaths",
+        "exported",
+        "extraLength",
+        "file",
+        "included",
+        "index",
+        "item",
+        "lines",
+        "localOffset",
+        "lower",
+        "manifest",
+        "manifestEntry",
+        "method",
+        "nameLength",
+        "names",
+        "parsed",
+        "path",
+        "pkg",
+        "problems",
+        "raw",
+        "readZip",
+        "reason",
+        "reserved",
+        "scripts",
+        "setupInstructions",
+        "sha256",
+        "size",
+        "sourceEntries",
+        "usesNext",
+        "verdict",
+        "verifyArchive"
+      ],
+      "imports": [
+        "../../ai/patches.js",
+        "../../services/scaffolds/packageBuildZip.js",
+        "../snapshot.js",
+        "../types.js",
+        "node:crypto",
+        "node:zlib"
+      ],
+      "runtimeImports": [
+        "backend/src/builder/snapshot.ts",
+        "backend/src/builder/types.ts",
+        "backend/src/services/scaffolds/packageBuildZip.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/builder/export/archive.test.ts:10",
+        "backend/src/builder/export/service.ts:4",
+        "backend/src/builder/github/service.ts:4",
+        "backend/src/routes/builderPhase2.test.ts:8"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto",
+        "node:zlib"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/builder/export/archive.ts#verifyArchive"
+      ],
+      "testCoverage": [
+        "backend/src/builder/export/archive.test.ts",
+        "backend/src/routes/builderPhase2.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:d2179257b69ba367c144",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/builder/export/service.ts",
+      "sha256": "93b65b638f25cc84a40f189e04b15bc022a7eaf4000247a1646185153072d7bf",
+      "symbols": [
+        "ExportService",
+        "archive",
+        "project",
+        "revision",
+        "saved"
+      ],
+      "imports": [
+        "../phase2Store.js",
+        "../service.js",
+        "../types.js",
+        "./archive.js"
+      ],
+      "runtimeImports": [
+        "backend/src/builder/export/archive.ts",
+        "backend/src/builder/types.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/builder/phase2Bridge.ts:9",
+        "backend/src/routes/builderPhase2.test.ts:7"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/routes/builderPhase2.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:c8beffca3f23ecf75fcd",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/builder/github/fakeGitHub.testsupport.ts",
+      "sha256": "5e39f238a9dacb85635968597e55310ec40314052d023cdbbd7f85ad0fa33e48",
+      "symbols": [
+        "FakeCommit",
+        "FakeFailures",
+        "FakeGitHub",
+        "FakeRepo",
+        "FakeUser",
+        "expected",
+        "head",
+        "initial",
+        "matches",
+        "ownerId",
+        "repo",
+        "sha",
+        "stored",
+        "user"
+      ],
+      "imports": [
+        "../../ai/patches.js",
+        "./port.js",
+        "./restPort.js"
+      ],
+      "runtimeImports": [
+        "backend/src/builder/github/port.ts",
+        "backend/src/builder/github/restPort.ts"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/builder/github/github.test.ts:10",
+        "backend/src/routes/builderPhase2.test.ts:9"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/builder/github/github.test.ts",
+        "backend/src/routes/builderPhase2.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:9170b537e5d7630e4beb",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/builder/github/port.ts",
+      "sha256": "808cf9438c826f489c7a1ede53582a12f0e0236a59cc2564935c4a8fb90e889e",
+      "symbols": [
+        "GitHubFailure",
+        "GitHubOwner",
+        "GitHubPort",
+        "GitHubPortError",
+        "GitHubRepo",
+        "GitHubViewer",
+        "PushResult",
+        "validBranchName",
+        "validRepositoryName"
+      ],
+      "imports": [
+        "../../ai/patches.js"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/builder/github/fakeGitHub.testsupport.ts:3",
+        "backend/src/builder/github/restPort.test.ts:4",
+        "backend/src/builder/github/restPort.ts:6",
+        "backend/src/builder/github/service.ts:8"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/builder/github/restPort.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:081a7c3748ed828bd0ab",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/builder/github/restPort.ts",
+      "sha256": "9789bc1736f6ff2b09f7d577629b1dade6830c24bb7721336570e5733744d5c8",
+      "symbols": [
+        "BLOB_CONCURRENCY",
+        "GitHubTransport",
+        "base",
+        "blobShas",
+        "body",
+        "call",
+        "commit",
+        "commitResponse",
+        "createRestGitHubPort",
+        "created",
+        "data",
+        "extra",
+        "failureFor",
+        "file",
+        "gitBlobSha",
+        "head",
+        "header",
+        "json",
+        "listing",
+        "org",
+        "owners",
+        "parsed",
+        "path",
+        "queue",
+        "ref",
+        "refResponse",
+        "remote",
+        "remoteShas",
+        "repo",
+        "response",
+        "scopes",
+        "status",
+        "stored",
+        "storedCommit",
+        "toRepo",
+        "tree",
+        "treeResponse",
+        "user",
+        "worker"
+      ],
+      "imports": [
+        "../../ai/patches.js",
+        "../../services/integrations/githubDeploy.js",
+        "../../services/integrations/githubRepoCreation.js",
+        "./port.js",
+        "node:crypto"
+      ],
+      "runtimeImports": [
+        "backend/src/builder/github/port.ts",
+        "backend/src/services/integrations/githubDeploy.ts",
+        "backend/src/services/integrations/githubRepoCreation.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/builder/github/fakeGitHub.testsupport.ts:2",
+        "backend/src/builder/github/restPort.test.ts:5",
+        "backend/src/builder/phase2Bridge.ts:11"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/builder/github/restPort.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:f23963ddfa1269798b31",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/builder/github/service.ts",
+      "sha256": "35d2c0bcd8aee3355c5a11e946b747ba3f4bca0ed2d06c366171e7cc0c1cc54e",
+      "symbols": [
+        "APPROVAL_TTL_MS",
+        "COST_NOTE",
+        "GitHubBinding",
+        "GitHubDeps",
+        "GitHubExportService",
+        "GitHubPlan",
+        "GitHubTargets",
+        "MAX_REPOSITORY_DESCRIPTION",
+        "archive",
+        "binding",
+        "branch",
+        "canCreatePrivate",
+        "claimed",
+        "commits",
+        "connection",
+        "created",
+        "creation",
+        "current",
+        "done",
+        "error",
+        "existing",
+        "expires",
+        "fail",
+        "files",
+        "found",
+        "last",
+        "markerFor",
+        "message",
+        "moved",
+        "notes",
+        "operation",
+        "operations",
+        "owner",
+        "owners",
+        "plan",
+        "planDigest",
+        "project",
+        "push",
+        "receipt",
+        "repo",
+        "repository",
+        "revision",
+        "stable",
+        "token",
+        "viewer",
+        "visibility",
+        "warnings"
+      ],
+      "imports": [
+        "../../ai/patches.js",
+        "../export/archive.js",
+        "../phase2Store.js",
+        "../service.js",
+        "../types.js",
+        "./port.js",
+        "node:crypto"
+      ],
+      "runtimeImports": [
+        "backend/src/builder/export/archive.ts",
+        "backend/src/builder/github/port.ts",
+        "backend/src/builder/types.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/builder/github/github.test.ts:11",
+        "backend/src/builder/phase2Bridge.ts:10",
+        "backend/src/routes/builderPhase2.test.ts:10"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "backend/src/builder/github/service.ts#APPROVAL_TTL_MS",
+        "backend/src/builder/github/service.ts#planDigest"
+      ],
+      "costBoundary": [
+        "backend/src/builder/github/service.ts#COST_NOTE"
+      ],
+      "evidenceBoundary": [
+        "backend/src/builder/github/service.ts#receipt"
+      ],
+      "testCoverage": [
+        "backend/src/builder/github/github.test.ts",
+        "backend/src/routes/builderPhase2.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:aaa335a79e753b5cbd77",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/builder/intent.ts",
+      "sha256": "65d97d7c426da2b5e5465605189c00cc78f6bbf55496e275fbecb5d149dedc62",
+      "symbols": [
+        "BuilderIntent",
+        "CHANGE_VERB",
+        "EXPLICIT_NEW",
+        "NEW_PRODUCT",
+        "PROJECT_REFERENCE",
+        "QUESTION",
+        "classifyBuilderIntent",
+        "text"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/builder/iteration.test.ts:7",
+        "backend/src/routes/builderPhase2.ts:6"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/builder/iteration.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:83858c253ee3c7f3255c",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/builder/phase2Bridge.ts",
+      "sha256": "41008b84d92ab8e16c28475d93dc4bb1529015c5c571a84348a21100fe2db46b",
+      "symbols": [
+        "Phase2Services",
+        "active",
+        "base",
+        "binding",
+        "budgetAllowsRepair",
+        "builder",
+        "candidate",
+        "canonicalQaTarget",
+        "context",
+        "error",
+        "github",
+        "latest",
+        "phase2",
+        "phase2ServicesFor",
+        "qa",
+        "repairRunnerFor",
+        "result",
+        "sameSource",
+        "started",
+        "status",
+        "store"
+      ],
+      "imports": [
+        "../ai/pipeline.js",
+        "../ai/providerBudget.js",
+        "../security/tenantContext.js",
+        "../services/integrations/githubAuth.js",
+        "../services/integrations/githubDeploy.js",
+        "../synthesis/livePreview/coordinator.js",
+        "../synthesis/projectRuntime/index.js",
+        "../synthesis/softwareProject.js",
+        "./canonical.js",
+        "./export/service.js",
+        "./github/restPort.js",
+        "./github/service.js",
+        "./phase2Store.js",
+        "./qa/playwrightQaDriver.js",
+        "./qa/qaService.js",
+        "./service.js",
+        "./snapshot.js",
+        "./store.js",
+        "./types.js"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/pipeline.ts",
+        "backend/src/ai/providerBudget.ts",
+        "backend/src/builder/canonical.ts",
+        "backend/src/builder/export/service.ts",
+        "backend/src/builder/github/restPort.ts",
+        "backend/src/builder/github/service.ts",
+        "backend/src/builder/phase2Store.ts",
+        "backend/src/builder/qa/playwrightQaDriver.ts",
+        "backend/src/builder/qa/qaService.ts",
+        "backend/src/builder/service.ts",
+        "backend/src/builder/snapshot.ts",
+        "backend/src/builder/store.ts",
+        "backend/src/builder/types.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/services/integrations/githubAuth.ts",
+        "backend/src/services/integrations/githubDeploy.ts",
+        "backend/src/synthesis/livePreview/coordinator.ts",
+        "backend/src/synthesis/projectRuntime/index.ts",
+        "backend/src/synthesis/softwareProject.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/builder/swarmBridge.ts:3",
+        "backend/src/routes/builderPhase2.ts:7"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [
+        "backend/src/builder/phase2Bridge.ts#budgetAllowsRepair"
+      ],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/routes/builderPhase2.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:29a407a8c0343e333aa6",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/builder/phase2Store.ts",
+      "sha256": "4e07d9b95cc6ca561b12ebd5fc8386f8bfc9a08c43f4a34d95b98315eca0e6a3",
+      "symbols": [
+        "CreateOperationInput",
+        "InMemoryPhase2Store",
+        "OPERATION_COLUMNS",
+        "OperationPatch",
+        "OperationRow",
+        "Phase2Store",
+        "REPORT_LIMIT_BYTES",
+        "SaveVerificationInput",
+        "SupabasePhase2Store",
+        "VERIFICATION_META",
+        "VerificationRow",
+        "assertReportSize",
+        "clone",
+        "current",
+        "existing",
+        "find",
+        "index",
+        "inserted",
+        "next",
+        "now",
+        "operation",
+        "owner",
+        "query",
+        "raced",
+        "record",
+        "resolveExisting",
+        "row",
+        "storageFailure",
+        "stripReport",
+        "toOperation",
+        "toVerification",
+        "update"
+      ],
+      "imports": [
+        "../security/serviceRoleGuard.js",
+        "../security/tenantContext.js",
+        "./store.js",
+        "./types.js",
+        "node:crypto"
+      ],
+      "runtimeImports": [
+        "backend/src/builder/types.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/builder/github/github.test.ts:6",
+        "backend/src/builder/phase2Bridge.ts:12",
+        "backend/src/builder/qa/repair.integration.test.ts:8",
+        "backend/src/routes/builderPhase2.test.ts:12"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "builder_external_operations",
+        "builder_verifications"
+      ],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [
+        "backend/src/builder/phase2Store.ts:205 (user_id)",
+        "backend/src/builder/phase2Store.ts:212 (user_id)",
+        "backend/src/builder/phase2Store.ts:221 (user_id)",
+        "backend/src/builder/phase2Store.ts:229 (user_id)",
+        "backend/src/builder/phase2Store.ts:249 (user_id)",
+        "backend/src/builder/phase2Store.ts:256 (user_id)",
+        "backend/src/builder/phase2Store.ts:269 (user_id)"
+      ],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/builder/phase2Store.ts#SaveVerificationInput",
+        "backend/src/builder/phase2Store.ts#VERIFICATION_META",
+        "backend/src/builder/phase2Store.ts#VerificationRow",
+        "backend/src/builder/phase2Store.ts#toVerification"
+      ],
+      "testCoverage": [
+        "backend/src/builder/github/github.test.ts",
+        "backend/src/builder/qa/repair.integration.test.ts",
+        "backend/src/routes/builderPhase2.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -11003,7 +11790,7 @@
       ],
       "callers": [
         "backend/src/builder/builder.test.ts:6",
-        "backend/src/builder/service.ts:8"
+        "backend/src/builder/service.ts:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -11015,6 +11802,480 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/builder/builder.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:5c18eacf2620f7454d0d",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/builder/qa/plan.ts",
+      "sha256": "5808ab3e36b64aaa1b41956772895f0ea6ff839ef19b6536cd460e994356182d",
+      "symbols": [
+        "FormInfo",
+        "MAX_CHECKS",
+        "SAFE_ID",
+        "SYNTHETIC",
+        "add",
+        "anchorTargets",
+        "attrs",
+        "block",
+        "checks",
+        "compiled",
+        "cssAttr",
+        "deriveQaPlan",
+        "fields",
+        "file",
+        "fill",
+        "forms",
+        "formsIn",
+        "found",
+        "id",
+        "input",
+        "internalLinks",
+        "link",
+        "links",
+        "markup",
+        "match",
+        "name",
+        "protectedRoute",
+        "route",
+        "routeOfComponent",
+        "routes",
+        "segments",
+        "selector",
+        "slug",
+        "target",
+        "type",
+        "wantsValidation"
+      ],
+      "imports": [
+        "../../ai/patches.js",
+        "../../synthesis/webVerificationGate.js",
+        "../readiness.js",
+        "../types.js",
+        "./types.js"
+      ],
+      "runtimeImports": [
+        "backend/src/builder/readiness.ts",
+        "backend/src/synthesis/webVerificationGate.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/builder/qa/qa.browser.integration.test.ts:9",
+        "backend/src/builder/qa/qa.test.ts:6",
+        "backend/src/builder/qa/qaService.ts:7"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:example.test"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/builder/qa/qa.browser.integration.test.ts",
+        "backend/src/builder/qa/qa.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:85a002b5fc3c8d5a687b",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/builder/qa/playwrightQaDriver.ts",
+      "sha256": "d02da5896788cb3cb3552c220ef6614e4a1332720270ec89fdfa950f88364ae5",
+      "symbols": [
+        "NAVIGATION_TIMEOUT_MS",
+        "PlaywrightQaOptions",
+        "PwBrowser",
+        "PwContext",
+        "PwLocator",
+        "PwPage",
+        "PwRequest",
+        "PwResponse",
+        "QaBrowserUnavailable",
+        "STEP_TIMEOUT_MS",
+        "VIEWPORTS",
+        "base",
+        "browser",
+        "chromium",
+        "context",
+        "copy",
+        "diagnostics",
+        "error",
+        "executable",
+        "openPlaywrightQaDriver",
+        "page",
+        "parsed",
+        "qaPage",
+        "response",
+        "sameOrigin",
+        "settle",
+        "spec",
+        "url"
+      ],
+      "imports": [
+        "../../synthesis/playwrightDriver.js",
+        "./types.js"
+      ],
+      "runtimeImports": [
+        "backend/src/synthesis/playwrightDriver.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/builder/phase2Bridge.ts:13",
+        "backend/src/builder/qa/qa.browser.integration.test.ts:10",
+        "backend/src/builder/qa/repair.integration.test.ts:12"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/builder/qa/qa.browser.integration.test.ts",
+        "backend/src/builder/qa/repair.integration.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:bbfaa8438f1bbee4cd88",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/builder/qa/qaService.ts",
+      "sha256": "274784d5be3a1d3741b28227b55a55e029f0ad22f999bba7e5142ce777b772db",
+      "symbols": [
+        "QaService",
+        "QaServiceDeps",
+        "QaSummary",
+        "QaTarget",
+        "RepairRunner",
+        "baseRunId",
+        "counter",
+        "driver",
+        "failed",
+        "finalState",
+        "full",
+        "fullyPassed",
+        "latest",
+        "now",
+        "plan",
+        "ports",
+        "previous",
+        "project",
+        "reason",
+        "record",
+        "records",
+        "report",
+        "result",
+        "runId",
+        "saved",
+        "summarize",
+        "target",
+        "verificationStatus"
+      ],
+      "imports": [
+        "../phase2Store.js",
+        "../service.js",
+        "../store.js",
+        "../types.js",
+        "./plan.js",
+        "./repair.js",
+        "./runner.js",
+        "./types.js",
+        "node:crypto"
+      ],
+      "runtimeImports": [
+        "backend/src/builder/qa/plan.ts",
+        "backend/src/builder/qa/repair.ts",
+        "backend/src/builder/qa/runner.ts",
+        "backend/src/builder/types.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/builder/phase2Bridge.ts:14",
+        "backend/src/builder/qa/repair.integration.test.ts:13",
+        "backend/src/routes/builderPhase2.test.ts:13"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/builder/qa/qaService.ts#verificationStatus"
+      ],
+      "testCoverage": [
+        "backend/src/builder/qa/repair.integration.test.ts",
+        "backend/src/routes/builderPhase2.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:837359085215087bb309",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/builder/qa/repair.ts",
+      "sha256": "38f3f30484d10800c6d32f56281a732ce5a67ffd56371ca3a952aff79ef0fde9",
+      "symbols": [
+        "DEFAULT_MAX_REPAIR_ATTEMPTS",
+        "MAX_PACKET_BYTES",
+        "MAX_PACKET_FILES",
+        "RepairAttemptRecord",
+        "RepairLoopResult",
+        "RepairLoopStatus",
+        "RepairPacket",
+        "RepairPorts",
+        "affected",
+        "after",
+        "always",
+        "assertNonDestructiveRepair",
+        "attempt",
+        "attempts",
+        "before",
+        "buildRepairPacket",
+        "buildRepairPrompt",
+        "byPath",
+        "bytes",
+        "candidate",
+        "diff",
+        "done",
+        "error",
+        "evidence",
+        "failed",
+        "failedIds",
+        "failure",
+        "file",
+        "head",
+        "lastSignature",
+        "match",
+        "max",
+        "normalized",
+        "packet",
+        "path",
+        "refused",
+        "report",
+        "rerun",
+        "result",
+        "route",
+        "runRepairLoop",
+        "segment",
+        "selectRelevantFiles",
+        "selected",
+        "signature",
+        "size",
+        "text",
+        "verdict",
+        "wanted"
+      ],
+      "imports": [
+        "../../ai/patches.js",
+        "../../synthesis/repairLoop.js",
+        "../snapshot.js",
+        "../types.js",
+        "./runner.js",
+        "./types.js"
+      ],
+      "runtimeImports": [
+        "backend/src/builder/qa/runner.ts",
+        "backend/src/builder/snapshot.ts",
+        "backend/src/builder/types.ts",
+        "backend/src/synthesis/repairLoop.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/builder/qa/qaService.ts:8"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/builder/qa/repair.ts#evidence"
+      ],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:50e5a756503c2d2a9c1d",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/builder/qa/runner.ts",
+      "sha256": "4e28c09db066559c181f27715725ed9d22b0bdca6c0d0d68e780f168ff24b9ca",
+      "symbols": [
+        "FEEDBACK_SELECTOR",
+        "QaAssertion",
+        "QaEnvironment",
+        "RunQaInput",
+        "after",
+        "base",
+        "before",
+        "bounded",
+        "browser",
+        "budget",
+        "carried",
+        "check",
+        "classify",
+        "clip",
+        "denied",
+        "describeQa",
+        "describeStep",
+        "describedStep",
+        "diagnostics",
+        "error",
+        "evidence",
+        "executed",
+        "failed",
+        "feedback",
+        "image",
+        "merged",
+        "now",
+        "page",
+        "passedCheckIds",
+        "pending",
+        "response",
+        "results",
+        "runCheck",
+        "runQa",
+        "runStep",
+        "screenshot",
+        "selected",
+        "showsError",
+        "showsSignIn",
+        "started",
+        "startedAt",
+        "state",
+        "step",
+        "summarize",
+        "summary",
+        "text"
+      ],
+      "imports": [
+        "./types.js"
+      ],
+      "runtimeImports": [
+        "backend/src/builder/qa/types.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/builder/qa/qa.browser.integration.test.ts:11",
+        "backend/src/builder/qa/qa.test.ts:7",
+        "backend/src/builder/qa/qaService.ts:9",
+        "backend/src/builder/qa/repair.ts:5"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [
+        "backend/src/builder/qa/runner.ts#budget"
+      ],
+      "evidenceBoundary": [
+        "backend/src/builder/qa/runner.ts#evidence"
+      ],
+      "testCoverage": [
+        "backend/src/builder/qa/qa.browser.integration.test.ts",
+        "backend/src/builder/qa/qa.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:775a3204afb0e7c20db0",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/builder/qa/types.ts",
+      "sha256": "95922ee6be41e4b819e94f280acddb7f171ce191dca813d5a9379fb62e32846e",
+      "symbols": [
+        "MAX_DIAGNOSTIC_LENGTH",
+        "MAX_DIAGNOSTIC_LINES",
+        "MAX_SCREENSHOTS_PER_REPORT",
+        "MAX_SCREENSHOT_BYTES",
+        "QaCategory",
+        "QaCheck",
+        "QaCheckResult",
+        "QaCheckStatus",
+        "QaDriver",
+        "QaEvidence",
+        "QaFailureClass",
+        "QaPage",
+        "QaPlan",
+        "QaReport",
+        "QaRequirement",
+        "QaStatus",
+        "QaStep",
+        "QaViewport"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/builder/qa/runner.ts:1"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/builder/qa/types.ts#QaEvidence"
+      ],
+      "testCoverage": [
+        "backend/src/builder/qa/qa.test.ts",
+        "backend/src/routes/builderPhase2.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -11062,6 +12323,7 @@
       "callers": [
         "backend/src/builder/builder.test.ts:7",
         "backend/src/builder/canonical.ts:11",
+        "backend/src/builder/qa/plan.ts:3",
         "backend/src/builder/runtime.integration.test.ts:10"
       ],
       "reachable": true,
@@ -11089,7 +12351,7 @@
       "id": "surface:0349146c468fe4e18282",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/service.ts",
-      "sha256": "3e5070ab24acd450d7faae4bfe86d2b0c63e49a49901c0525964d34f1f148f6e",
+      "sha256": "719fd7a3aeff6805f785b28f1813cfd663b0a6bd261da9a87ece124c93b5c82d",
       "symbols": [
         "BuildRunner",
         "BuildRunnerInput",
@@ -11102,6 +12364,7 @@
         "PreviewLaunchResult",
         "PreviewPort",
         "STALE_RUN_MS",
+        "before",
         "blocked",
         "buildTimeline",
         "built",
@@ -11112,6 +12375,8 @@
         "existing",
         "facts",
         "failedLike",
+        "from",
+        "fromId",
         "head",
         "holder",
         "kept",
@@ -11133,6 +12398,8 @@
         "selection",
         "set",
         "step",
+        "target",
+        "to",
         "updated",
         "verified"
       ],
@@ -11141,7 +12408,9 @@
         "../ai/softwareAgent/runEvents.js",
         "../synthesis/productionAdapters.js",
         "../synthesis/universalEntrypoint.js",
+        "./diff.js",
         "./previewLifecycle.js",
+        "./snapshot.js",
         "./spec.js",
         "./starters.js",
         "./store.js",
@@ -11149,7 +12418,9 @@
         "node:crypto"
       ],
       "runtimeImports": [
+        "backend/src/builder/diff.ts",
         "backend/src/builder/previewLifecycle.ts",
+        "backend/src/builder/snapshot.ts",
         "backend/src/builder/spec.ts",
         "backend/src/builder/starters.ts",
         "backend/src/builder/store.ts",
@@ -11160,8 +12431,13 @@
       ],
       "callers": [
         "backend/src/builder/builder.test.ts:9",
-        "backend/src/builder/swarmBridge.ts:3",
-        "backend/src/routes/builder.test.ts:7"
+        "backend/src/builder/github/github.test.ts:7",
+        "backend/src/builder/iteration.test.ts:8",
+        "backend/src/builder/phase2Bridge.ts:15",
+        "backend/src/builder/qa/repair.integration.test.ts:9",
+        "backend/src/builder/swarmBridge.ts:4",
+        "backend/src/routes/builder.test.ts:7",
+        "backend/src/routes/builderPhase2.test.ts:15"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -11178,7 +12454,11 @@
       ],
       "testCoverage": [
         "backend/src/builder/builder.test.ts",
-        "backend/src/routes/builder.test.ts"
+        "backend/src/builder/github/github.test.ts",
+        "backend/src/builder/iteration.test.ts",
+        "backend/src/builder/qa/repair.integration.test.ts",
+        "backend/src/routes/builder.test.ts",
+        "backend/src/routes/builderPhase2.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -11226,6 +12506,11 @@
       "callers": [
         "backend/src/builder/builder.test.ts:10",
         "backend/src/builder/canonical.ts:10",
+        "backend/src/builder/export/archive.test.ts:7",
+        "backend/src/builder/export/archive.ts:6",
+        "backend/src/builder/phase2Bridge.ts:16",
+        "backend/src/builder/qa/repair.ts:3",
+        "backend/src/builder/service.ts:8",
         "backend/src/builder/starters.ts:4",
         "backend/src/builder/store.ts:6"
       ],
@@ -11240,7 +12525,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/builder/builder.test.ts"
+        "backend/src/builder/builder.test.ts",
+        "backend/src/builder/export/archive.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -11299,6 +12585,9 @@
       ],
       "callers": [
         "backend/src/builder/builder.test.ts:8",
+        "backend/src/builder/export/archive.test.ts:6",
+        "backend/src/builder/qa/qa.browser.integration.test.ts:8",
+        "backend/src/builder/qa/qa.test.ts:5",
         "backend/src/builder/runtime.integration.test.ts:11",
         "backend/src/builder/service.ts:7"
       ],
@@ -11315,6 +12604,9 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/builder/builder.test.ts",
+        "backend/src/builder/export/archive.test.ts",
+        "backend/src/builder/qa/qa.browser.integration.test.ts",
+        "backend/src/builder/qa/qa.test.ts",
         "backend/src/builder/runtime.integration.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -11360,8 +12652,9 @@
       ],
       "callers": [
         "backend/src/builder/builder.test.ts:11",
+        "backend/src/builder/export/archive.test.ts:8",
         "backend/src/builder/runtime.integration.test.ts:12",
-        "backend/src/builder/service.ts:9"
+        "backend/src/builder/service.ts:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -11373,6 +12666,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/builder/builder.test.ts",
+        "backend/src/builder/export/archive.test.ts",
         "backend/src/builder/runtime.integration.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -11440,9 +12734,14 @@
       ],
       "callers": [
         "backend/src/builder/builder.test.ts:12",
-        "backend/src/builder/service.ts:10",
-        "backend/src/builder/swarmBridge.ts:4",
-        "backend/src/routes/builder.test.ts:8"
+        "backend/src/builder/github/github.test.ts:8",
+        "backend/src/builder/iteration.test.ts:9",
+        "backend/src/builder/phase2Bridge.ts:17",
+        "backend/src/builder/qa/repair.integration.test.ts:10",
+        "backend/src/builder/service.ts:12",
+        "backend/src/builder/swarmBridge.ts:5",
+        "backend/src/routes/builder.test.ts:8",
+        "backend/src/routes/builderPhase2.test.ts:16"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -11469,7 +12768,11 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/builder/builder.test.ts",
-        "backend/src/routes/builder.test.ts"
+        "backend/src/builder/github/github.test.ts",
+        "backend/src/builder/iteration.test.ts",
+        "backend/src/builder/qa/repair.integration.test.ts",
+        "backend/src/routes/builder.test.ts",
+        "backend/src/routes/builderPhase2.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -11482,7 +12785,7 @@
       "id": "surface:0576bf3489c187a1470e",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/swarmBridge.ts",
-      "sha256": "074851d6fa7645f9043e910b1041e5de3d66e8b19e11a61fde48f0cc5e8bcea9",
+      "sha256": "f738b626401508c64a6ffad544627e980a149fa7ae6a31917e207b8c9bb6e976",
       "symbols": [
         "BuilderRunResult",
         "builderProjectExists",
@@ -11497,12 +12800,14 @@
       "imports": [
         "../security/tenantContext.js",
         "./canonical.js",
+        "./phase2Bridge.js",
         "./service.js",
         "./store.js",
         "./types.js"
       ],
       "runtimeImports": [
         "backend/src/builder/canonical.ts",
+        "backend/src/builder/phase2Bridge.ts",
         "backend/src/builder/service.ts",
         "backend/src/builder/store.ts",
         "backend/src/builder/types.ts",
@@ -11535,7 +12840,7 @@
       "id": "surface:bd7f38d93d1a0ea6942e",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/types.ts",
-      "sha256": "7228d40773c20c49599219bfe75316dfb41c9060aa2b9842bfa26d1ec08ab88b",
+      "sha256": "bb4ebaa858292811bc6561be1df6374029e1c573138614074325f2aebd15e975",
       "symbols": [
         "BuildSpec",
         "BuilderError",
@@ -11543,12 +12848,17 @@
         "BuilderProjectState",
         "BuilderRevision",
         "ChangeSummary",
+        "ExternalOperation",
+        "ExternalOperationStatus",
         "MAX_SNAPSHOT_BYTES",
         "MAX_SNAPSHOT_FILES",
         "PreviewLifecycle",
         "RevisionOrigin",
         "RevisionVerification",
-        "StarterProvenance"
+        "StarterProvenance",
+        "VerificationKind",
+        "VerificationRecord",
+        "VerificationStatus"
       ],
       "imports": [
         "../ai/patches.js"
@@ -11559,13 +12869,24 @@
       ],
       "callers": [
         "backend/src/builder/builder.test.ts:13",
-        "backend/src/builder/service.ts:11",
+        "backend/src/builder/export/archive.ts:7",
+        "backend/src/builder/export/service.ts:3",
+        "backend/src/builder/github/github.test.ts:9",
+        "backend/src/builder/github/service.ts:7",
+        "backend/src/builder/iteration.test.ts:10",
+        "backend/src/builder/phase2Bridge.ts:19",
+        "backend/src/builder/phase2Store.ts:6",
+        "backend/src/builder/qa/qaService.ts:6",
+        "backend/src/builder/qa/repair.integration.test.ts:11",
+        "backend/src/builder/qa/repair.ts:4",
+        "backend/src/builder/service.ts:13",
         "backend/src/builder/snapshot.ts:4",
         "backend/src/builder/spec.ts:5",
         "backend/src/builder/starters.ts:3",
         "backend/src/builder/store.ts:12",
-        "backend/src/builder/swarmBridge.ts:5",
-        "backend/src/routes/builder.ts:6"
+        "backend/src/builder/swarmBridge.ts:6",
+        "backend/src/routes/builder.ts:6",
+        "backend/src/routes/builderPhase2.ts:8"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -11575,10 +12896,17 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [
-        "backend/src/builder/types.ts#RevisionVerification"
+        "backend/src/builder/types.ts#RevisionVerification",
+        "backend/src/builder/types.ts#VerificationKind",
+        "backend/src/builder/types.ts#VerificationRecord",
+        "backend/src/builder/types.ts#VerificationStatus"
       ],
       "testCoverage": [
-        "backend/src/builder/builder.test.ts"
+        "backend/src/builder/builder.test.ts",
+        "backend/src/builder/export/archive.test.ts",
+        "backend/src/builder/github/github.test.ts",
+        "backend/src/builder/iteration.test.ts",
+        "backend/src/builder/qa/repair.integration.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -18991,7 +20319,7 @@
       "id": "surface:4a749cbfb48190d1393c",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/builder.ts",
-      "sha256": "1266f2e519080e5ad924002549b7aaa37640ddf4c2472217ddb2ba85472d118f",
+      "sha256": "cca589797c1679fd6bb46365a653f2ac0ca14159c3fedc1983bbe6eee916d7c4",
       "symbols": [
         "BuilderServiceFactory",
         "STATUS",
@@ -19017,11 +20345,13 @@
         "../middleware/auth.js",
         "../security/tenantContext.js",
         "../security/tenantErrors.js",
+        "./builderPhase2.js",
         "express"
       ],
       "runtimeImports": [
         "backend/src/builder/swarmBridge.ts",
         "backend/src/builder/types.ts",
+        "backend/src/routes/builderPhase2.ts",
         "backend/src/security/tenantContext.ts",
         "backend/src/security/tenantErrors.ts"
       ],
@@ -19030,7 +20360,8 @@
       ],
       "callers": [
         "backend/src/index.ts:50",
-        "backend/src/routes/builder.test.ts:10"
+        "backend/src/routes/builder.test.ts:10",
+        "backend/src/routes/builderPhase2.test.ts:18"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -19045,7 +20376,90 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/routes/builder.test.ts"
+        "backend/src/routes/builder.test.ts",
+        "backend/src/routes/builderPhase2.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:18308761a6b13a22efcc",
+      "subsystem": "backend_routes",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "sha256": "286dc018ef3eba611c5b2104d28dbdb921fbf530b74eceb1a7f7b87ad4c95615",
+      "symbols": [
+        "OPERATION_KEY",
+        "Phase2ServicesFactory",
+        "STATUS",
+        "UUID",
+        "abortOnClose",
+        "against",
+        "archive",
+        "body",
+        "controller",
+        "createBuilderPhase2Router",
+        "digest",
+        "error",
+        "fail",
+        "handle",
+        "id",
+        "intent",
+        "maxAttempts",
+        "operationKey",
+        "projectId",
+        "prompt",
+        "requested",
+        "result",
+        "revisionId",
+        "router",
+        "tenant",
+        "text",
+        "visibility"
+      ],
+      "imports": [
+        "../builder/intent.js",
+        "../builder/phase2Bridge.js",
+        "../builder/types.js",
+        "../middleware/auth.js",
+        "../security/tenantContext.js",
+        "../security/tenantErrors.js",
+        "express",
+        "node:crypto"
+      ],
+      "runtimeImports": [
+        "backend/src/builder/intent.ts",
+        "backend/src/builder/phase2Bridge.ts",
+        "backend/src/builder/types.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/security/tenantErrors.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/routes/builder.ts:9"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "express",
+        "node:crypto"
+      ],
+      "authBoundary": [
+        "backend/src/routes/builderPhase2.ts#AuthRequest"
+      ],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "backend/src/routes/builderPhase2.ts#digest"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/routes/builderPhase2.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -23042,6 +24456,7 @@
         "backend/src/ai/routingOutcomes.ts:2",
         "backend/src/ai/runReconciler.ts:1",
         "backend/src/ai/usageAccounting.ts:1",
+        "backend/src/builder/phase2Store.ts:3",
         "backend/src/builder/store.ts:4",
         "backend/src/index.ts:64",
         "backend/src/middleware/admin.ts:2",
@@ -23138,6 +24553,8 @@
         "backend/src/ai/runStore.ts:11",
         "backend/src/ai/universal/resumeProjectContext.test.ts:6",
         "backend/src/ai/usageAccounting.test.ts:4",
+        "backend/src/builder/phase2Bridge.ts:3",
+        "backend/src/builder/phase2Store.ts:4",
         "backend/src/builder/store.ts:5",
         "backend/src/builder/swarmBridge.ts:1",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:10",
@@ -23151,6 +24568,8 @@
         "backend/src/routes/browserRuns.ts:16",
         "backend/src/routes/builder.test.ts:9",
         "backend/src/routes/builder.ts:8",
+        "backend/src/routes/builderPhase2.test.ts:17",
+        "backend/src/routes/builderPhase2.ts:10",
         "backend/src/routes/drive.test.ts:2",
         "backend/src/routes/github.oauth.test.ts:6",
         "backend/src/routes/github.ts:5",
@@ -23293,6 +24712,7 @@
         "backend/src/routes/admin.test.ts",
         "backend/src/routes/browserRuns.test.ts",
         "backend/src/routes/builder.test.ts",
+        "backend/src/routes/builderPhase2.test.ts",
         "backend/src/routes/drive.test.ts",
         "backend/src/routes/github.oauth.test.ts",
         "backend/src/routes/profile.deletionIdentity.test.ts",
@@ -23387,6 +24807,7 @@
         "backend/src/ai/runStore.ts:12",
         "backend/src/routes/browserRuns.ts:15",
         "backend/src/routes/builder.ts:7",
+        "backend/src/routes/builderPhase2.ts:9",
         "backend/src/routes/drive.ts:8",
         "backend/src/routes/projectRuntime.ts:9",
         "backend/src/routes/swarm.ts:5",
@@ -25505,6 +26926,7 @@
         "backend/src/ai/pipeline.ts:160",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:13",
         "backend/src/ai/universal/semanticRequestPlanner.ts:58",
+        "backend/src/builder/phase2Bridge.ts:4",
         "backend/src/routes/github.settings.test.ts:17",
         "backend/src/routes/github.ts:8",
         "backend/src/security/tenantIsolation.local.integration.ts:40",
@@ -25946,6 +27368,8 @@
         "backend/src/ai/pipeline.ts:104",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:17",
         "backend/src/ai/softwareAgent/xrogaProductionAdapters.ts:1",
+        "backend/src/builder/github/restPort.ts:4",
+        "backend/src/builder/phase2Bridge.ts:5",
         "backend/src/routes/github.ts:370",
         "backend/src/routes/github.ts:417",
         "backend/src/routes/github.ts:440",
@@ -26152,6 +27576,7 @@
       ],
       "callers": [
         "backend/src/ai/p0Regressions.test.ts:35",
+        "backend/src/builder/github/restPort.ts:5",
         "backend/src/services/integrations/githubDeploy.ts:17",
         "backend/src/services/integrations/githubRepoCreation.test.ts:3"
       ],
@@ -29015,6 +30440,8 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:186",
+        "backend/src/builder/export/archive.test.ts:5",
+        "backend/src/builder/export/archive.ts:5",
         "backend/src/services/publish/nonWebShip.ts:11",
         "backend/src/services/scaffolds/scaffolds.test.ts:8",
         "backend/src/synthesis/delivery/projectDelivery.ts:9"
@@ -29030,6 +30457,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/builder/export/archive.test.ts",
         "backend/src/services/scaffolds/scaffolds.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -31671,6 +33099,7 @@
       "runtimeImports": [],
       "entryPoints": [],
       "callers": [
+        "backend/src/builder/phase2Store.integration.test.ts:9",
         "backend/src/builder/store.integration.test.ts:9",
         "backend/src/storage/migration/postgresMigration.integration.test.ts:10",
         "backend/src/storage/migration/runOutputArtifacts.integration.test.ts:11",
@@ -31693,6 +33122,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/builder/phase2Store.integration.test.ts",
         "backend/src/builder/store.integration.test.ts",
         "backend/src/storage/migration/postgresMigration.integration.test.ts",
         "backend/src/storage/migration/runOutputArtifacts.integration.test.ts",
@@ -34270,6 +35700,7 @@
       "callers": [
         "backend/src/ai/pipeline.ts:148",
         "backend/src/builder/canonical.ts:5",
+        "backend/src/builder/phase2Bridge.ts:6",
         "backend/src/routes/projectRuntime.ts:17",
         "backend/src/security/runtimeProjectBinding.test.ts:5",
         "backend/src/synthesis/livePreview/agentBridge.ts:40",
@@ -34757,7 +36188,7 @@
       "id": "surface:932b1d278c32a472396c",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/playwrightDriver.ts",
-      "sha256": "583bd198a2b0cfb9dd91e8f22c029984ba757e32deba689d396ef40c8a83e95a",
+      "sha256": "2767402afaa09f2e3f6a5610bd4c2621541357eb0c314cdcb4d3dce1f48e1cac",
       "symbols": [
         "BrowserUnavailableError",
         "CHROMIUM_MODULES",
@@ -34828,12 +36259,17 @@
         "node:path"
       ],
       "runtimeImports": [],
-      "entryPoints": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
       "callers": [
+        "backend/src/builder/qa/playwrightQaDriver.ts:1",
+        "backend/src/builder/qa/qa.browser.integration.test.ts:7",
+        "backend/src/builder/qa/repair.integration.test.ts:7",
         "backend/src/synthesis/inSandboxBrowser.integration.test.ts:32",
         "backend/src/synthesis/playwrightDriver.integration.test.ts:6"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "node:fs",
@@ -34850,14 +36286,16 @@
         "backend/src/synthesis/playwrightDriver.ts#runPlaywrightVerification"
       ],
       "testCoverage": [
+        "backend/src/builder/qa/qa.browser.integration.test.ts",
+        "backend/src/builder/qa/repair.integration.test.ts",
         "backend/src/synthesis/inSandboxBrowser.integration.test.ts",
         "backend/src/synthesis/playwrightDriver.integration.test.ts"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -35562,6 +37000,7 @@
       ],
       "callers": [
         "backend/src/builder/canonical.ts:8",
+        "backend/src/builder/phase2Bridge.ts:7",
         "backend/src/middleware/runtimePreviewGateway.ts:22",
         "backend/src/routes/delivery.ts:13",
         "backend/src/routes/projectRuntime.ts:12",
@@ -36200,11 +37639,14 @@
       "runtimeImports": [
         "backend/src/synthesis/runtime/registry.ts"
       ],
-      "entryPoints": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
       "callers": [
+        "backend/src/builder/qa/repair.ts:2",
         "backend/src/synthesis/repairAndFrameworks.test.ts:15"
       ],
-      "reachable": false,
+      "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
       "authBoundary": [],
@@ -36215,11 +37657,11 @@
       "testCoverage": [
         "backend/src/synthesis/repairAndFrameworks.test.ts"
       ],
-      "state": "DEAD_OR_UNREACHABLE",
-      "confidence": "LOW",
-      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -37532,6 +38974,7 @@
       "callers": [
         "backend/src/ai/pipeline.ts:138",
         "backend/src/builder/canonical.ts:3",
+        "backend/src/builder/phase2Bridge.ts:8",
         "backend/src/security/deliveryEvidenceRead.local.integration.ts:8",
         "backend/src/synthesis/canonicalFoundation.test.ts:18",
         "backend/src/synthesis/delivery/projectDelivery.test.ts:20",
@@ -37908,6 +39351,8 @@
       "testCoverage": [
         "backend/src/ai/providerPolicy.test.ts",
         "backend/src/builder/builder.test.ts",
+        "backend/src/builder/github/github.test.ts",
+        "backend/src/builder/iteration.test.ts",
         "backend/src/synthesis/universalEntrypoint.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -38582,6 +40027,7 @@
         "backend/src/scripts/verifyFlySandboxBrowser.ts"
       ],
       "callers": [
+        "backend/src/builder/qa/plan.ts:2",
         "backend/src/scripts/verifyFlySandboxBrowser.ts:31",
         "backend/src/synthesis/browserGateVerification.test.ts:21",
         "backend/src/synthesis/browserRepairLoop.test.ts:5",
@@ -72547,24 +73993,32 @@
       "id": "surface:fc7df3b8d9533185c8de",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/BuilderProjectPanel.tsx",
-      "sha256": "59d484e69c02e7199db012d88a863cb68ee765cf2fa8779e3689a3eea045d4d1",
+      "sha256": "69e8ec3a0e4b45567d5e5827ee84669e6acab5304073723d628839a58a082ae5",
       "symbols": [
         "BuilderProjectPanel",
         "PREVIEW_LABEL",
+        "PanelTab",
         "STATE_TONE",
         "StepIcon",
+        "TAB_LABEL",
         "active",
         "caught",
         "load",
         "timer"
       ],
       "imports": [
+        "./builder/BuilderDelivery",
+        "./builder/BuilderHistory",
+        "./builder/BuilderTests",
         "@/lib/builderApi",
         "@/lib/utils",
         "lucide-react",
         "react"
       ],
       "runtimeImports": [
+        "frontend/src/components/terminal/builder/BuilderDelivery.tsx",
+        "frontend/src/components/terminal/builder/BuilderHistory.tsx",
+        "frontend/src/components/terminal/builder/BuilderTests.tsx",
         "frontend/src/lib/builderApi.ts",
         "frontend/src/lib/utils.ts"
       ],
@@ -77732,6 +79186,167 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:ac37752e3dd32f9768dd",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/terminal/builder/BuilderDelivery.tsx",
+      "sha256": "a318150907ce793a9836d457eb91e5ba7a8c4a54a693a3c0c24302e14ffce479",
+      "symbols": [
+        "BuilderDelivery",
+        "STATUS_TEXT",
+        "approveAndRun",
+        "cancel",
+        "download",
+        "error",
+        "guarded",
+        "link",
+        "load",
+        "open",
+        "prepare",
+        "result",
+        "slug",
+        "triggerDownload",
+        "url"
+      ],
+      "imports": [
+        "@/lib/builderApi",
+        "@/lib/builderApiPhase2",
+        "lucide-react",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/builderApi.ts",
+        "frontend/src/lib/builderApiPhase2.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/terminal/BuilderProjectPanel.tsx:15"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:a2238b1051a3bcdc06b8",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/terminal/builder/BuilderHistory.tsx",
+      "sha256": "501711ec05bfd55b200a50a1c23266964f2c32320d385f2e322eed66b42a3e19",
+      "symbols": [
+        "BuilderHistory",
+        "ORIGIN_LABEL",
+        "error",
+        "restore",
+        "result",
+        "selected",
+        "show"
+      ],
+      "imports": [
+        "@/lib/builderApi",
+        "@/lib/builderApiPhase2",
+        "@/lib/utils",
+        "lucide-react",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/builderApi.ts",
+        "frontend/src/lib/builderApiPhase2.ts",
+        "frontend/src/lib/utils.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/terminal/BuilderProjectPanel.tsx:16"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:3facbfbe4fdd3be082c1",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/terminal/builder/BuilderTests.tsx",
+      "sha256": "0ddbf0e65f9be7b0ee32fc756aead95c47ae3140280d2c8630814eb4472611fa",
+      "symbols": [
+        "BuilderTests",
+        "Icon",
+        "REPAIR_LABEL",
+        "caught",
+        "failed",
+        "fix",
+        "load",
+        "result",
+        "run"
+      ],
+      "imports": [
+        "@/lib/builderApi",
+        "@/lib/builderApiPhase2",
+        "@/lib/utils",
+        "lucide-react",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/builderApi.ts",
+        "frontend/src/lib/builderApiPhase2.ts",
+        "frontend/src/lib/utils.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/terminal/BuilderProjectPanel.tsx:17"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:c8ff52357b76eb8bcf96",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/ui/AnchoredPortalPopover.tsx",
@@ -81381,6 +82996,7 @@
         "frontend/src/hooks/useBackgroundBuildJobs.ts:4",
         "frontend/src/hooks/useBuildCompletionAlerts.ts:4",
         "frontend/src/lib/builderApi.ts:4",
+        "frontend/src/lib/builderApiPhase2.ts:4",
         "frontend/src/lib/cloudTerminalSessions.ts:6",
         "frontend/src/lib/community.ts:1",
         "frontend/src/lib/formatAiMarkdown.tsx:21",
@@ -81901,7 +83517,7 @@
       "id": "surface:6d125e40598ad06e474b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/builderApi.ts",
-      "sha256": "ad35cf91d97e42b86611f7f7da1dc7e1b79ecf81f56996142325d44fe11b169f",
+      "sha256": "ecaa2f6a92710aee508fcfe6a66aada6c43d27949dccf1e334f78fe0b679a6b1",
       "symbols": [
         "BUILDER_ENABLED",
         "BUILDER_STATE_LABEL",
@@ -81935,7 +83551,79 @@
       "callers": [
         "frontend/src/components/terminal/BuilderProjectPanel.tsx:6",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:43",
+        "frontend/src/components/terminal/builder/BuilderDelivery.tsx:6",
+        "frontend/src/components/terminal/builder/BuilderHistory.tsx:8",
+        "frontend/src/components/terminal/builder/BuilderTests.tsx:6",
+        "frontend/src/lib/builderApiPhase2.ts:5",
         "frontend/src/lib/builderChat.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:e3db39ea0a320487989b",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/builderApiPhase2.ts",
+      "sha256": "156773d4a422c09d867e0dfd2a0cfa0400107742b405bb34a5d88ee151b2c6da",
+      "symbols": [
+        "FileDiff",
+        "GitHubOperation",
+        "GitHubOwner",
+        "GitHubPlan",
+        "GitHubState",
+        "GitHubTargets",
+        "Prepared",
+        "QA_STATUS_LABEL",
+        "QaCheckResult",
+        "QaReport",
+        "QaStatus",
+        "QaSummary",
+        "RepairResult",
+        "RevisionDiff",
+        "accessToken",
+        "builderPhase2Api",
+        "disposition",
+        "download",
+        "json",
+        "newOperationKey",
+        "random",
+        "response"
+      ],
+      "imports": [
+        "@/lib/api",
+        "@/lib/builderApi",
+        "@/lib/supabase/client"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/api.ts",
+        "frontend/src/lib/builderApi.ts",
+        "frontend/src/lib/supabase/client.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/dashboard/automations/page.tsx",
+        "frontend/src/app/(shell)/dashboard/projects/page.tsx",
+        "frontend/src/app/(shell)/layout.tsx",
+        "frontend/src/app/(workspace)/layout.tsx",
+        "frontend/src/app/(workspace)/workspace/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/terminal/builder/BuilderDelivery.tsx:7",
+        "frontend/src/components/terminal/builder/BuilderHistory.tsx:7",
+        "frontend/src/components/terminal/builder/BuilderTests.tsx:7",
+        "frontend/src/lib/builderChat.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -81957,18 +83645,22 @@
       "id": "surface:5a4fd8fff7f7a25154e4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/builderChat.ts",
-      "sha256": "2b93772a5c4a79e282eb428317161d0e490cef516fe0deecba4356d7ff9240c8",
+      "sha256": "7be3fcebff010c2b2e4b2286419975a0e3034408e3636f581f20ed02da3a8115",
       "symbols": [
+        "createNew",
+        "decision",
         "key",
         "resolveBuilderProject",
         "store"
       ],
       "imports": [
         "@/lib/builderApi",
+        "@/lib/builderApiPhase2",
         "@/store/useBuilderProjectStore"
       ],
       "runtimeImports": [
         "frontend/src/lib/builderApi.ts",
+        "frontend/src/lib/builderApiPhase2.ts",
         "frontend/src/store/useBuilderProjectStore.ts"
       ],
       "entryPoints": [
@@ -90435,6 +92127,7 @@
         "frontend/src/hooks/useAvatarUpdate.ts:3",
         "frontend/src/lib/api.ts:3",
         "frontend/src/lib/builderApi.ts:3",
+        "frontend/src/lib/builderApiPhase2.ts:3",
         "frontend/src/lib/feedbackStorage.ts:1",
         "frontend/src/lib/projectDeliveryApi.ts:7",
         "frontend/src/lib/projectRuntimeApi.ts:3",
@@ -92518,6 +94211,8 @@
         "frontend/src/components/terminal/WebSourcesPanel.tsx:5",
         "frontend/src/components/terminal/WorkspaceLauncher.tsx:8",
         "frontend/src/components/terminal/XrogaVoiceControl.tsx:7",
+        "frontend/src/components/terminal/builder/BuilderHistory.tsx:9",
+        "frontend/src/components/terminal/builder/BuilderTests.tsx:8",
         "frontend/src/components/ui/AnimatedIcon.tsx:6",
         "frontend/src/components/ui/AppStoreInline.tsx:6",
         "frontend/src/components/ui/AppStoreSidebarButtons.tsx:6",
@@ -94422,7 +96117,7 @@
       ],
       "callers": [
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:44",
-        "frontend/src/lib/builderChat.ts:4"
+        "frontend/src/lib/builderChat.ts:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -98663,7 +100358,7 @@
       "id": "surface:a741178549139c6d7626",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/schema-catalog.mjs",
-      "sha256": "c9ab029854e7e8bfc1e2495a17ad6dd5c1f70acf26a44347aba5ba46aa53f968",
+      "sha256": "eb92a855dd3059dd8e01e73975fedb089d60dd234d5eccd4f056091d694a9b4d",
       "symbols": [
         "assertDisposableSource",
         "collectSchemaCatalog",
@@ -102881,9 +104576,23 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:5af7e02ed4fd9dabc603",
+      "id": "registration:ccd955c998abf839986c",
       "sourcePath": "backend/src/routes/builder.ts",
       "line": 44,
+      "receiver": "router",
+      "method": "use",
+      "path": null,
+      "handlers": [
+        "createBuilderPhase2Router()"
+      ],
+      "scope": "function",
+      "functionName": "createBuilderRouter",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:56f195ce11ef6cab67f3",
+      "sourcePath": "backend/src/routes/builder.ts",
+      "line": 46,
       "receiver": "router",
       "method": "post",
       "path": "/projects",
@@ -102893,9 +104602,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:078357955c6cfd9a2fc0",
+      "id": "registration:e300908331748d85901f",
       "sourcePath": "backend/src/routes/builder.ts",
-      "line": 57,
+      "line": 59,
       "receiver": "router",
       "method": "get",
       "path": "/projects",
@@ -102905,9 +104614,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:6898a86828f98292e3ca",
+      "id": "registration:22af04839d53ab5ae78f",
       "sourcePath": "backend/src/routes/builder.ts",
-      "line": 66,
+      "line": 68,
       "receiver": "router",
       "method": "get",
       "path": "/projects/:projectId",
@@ -102917,9 +104626,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:a986d6e68a97d5846391",
+      "id": "registration:5a59c58ab0b5b38354a3",
       "sourcePath": "backend/src/routes/builder.ts",
-      "line": 75,
+      "line": 77,
       "receiver": "router",
       "method": "get",
       "path": "/projects/:projectId/revisions",
@@ -102929,9 +104638,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:3ea81f5b0e11db82c722",
+      "id": "registration:c72c20e6db8d611d4b7d",
       "sourcePath": "backend/src/routes/builder.ts",
-      "line": 84,
+      "line": 86,
       "receiver": "router",
       "method": "get",
       "path": "/projects/:projectId/revisions/:revisionId",
@@ -102941,9 +104650,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:7c5bdb6f636e125ac89f",
+      "id": "registration:f0a5477f9ca28a109a0e",
       "sourcePath": "backend/src/routes/builder.ts",
-      "line": 95,
+      "line": 97,
       "receiver": "router",
       "method": "get",
       "path": "/projects/:projectId/files",
@@ -102951,6 +104660,216 @@
       "scope": "function",
       "functionName": "createBuilderRouter",
       "inlineResponse": true
+    },
+    {
+      "id": "registration:d312ed3604dbb7081aca",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 68,
+      "receiver": "router",
+      "method": "post",
+      "path": "/intent",
+      "handlers": [
+        "handle()"
+      ],
+      "scope": "function",
+      "functionName": "createBuilderPhase2Router",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:3749da2e2045f74a7cd2",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 84,
+      "receiver": "router",
+      "method": "get",
+      "path": "/projects/:projectId/revisions/:revisionId/diff",
+      "handlers": [
+        "handle()"
+      ],
+      "scope": "function",
+      "functionName": "createBuilderPhase2Router",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:3f227621d6b3fa50175a",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 89,
+      "receiver": "router",
+      "method": "post",
+      "path": "/projects/:projectId/revisions/:revisionId/restore",
+      "handlers": [
+        "handle()"
+      ],
+      "scope": "function",
+      "functionName": "createBuilderPhase2Router",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:c922afa0849ecbd634ea",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 94,
+      "receiver": "router",
+      "method": "post",
+      "path": "/projects/:projectId/qa",
+      "handlers": [
+        "handle()"
+      ],
+      "scope": "function",
+      "functionName": "createBuilderPhase2Router",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:1aae89a9aade8f7e8a2b",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 99,
+      "receiver": "router",
+      "method": "post",
+      "path": "/projects/:projectId/verify-and-repair",
+      "handlers": [
+        "handle()"
+      ],
+      "scope": "function",
+      "functionName": "createBuilderPhase2Router",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:9620fe1cb4be0950daf5",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 107,
+      "receiver": "router",
+      "method": "get",
+      "path": "/projects/:projectId/qa",
+      "handlers": [
+        "handle()"
+      ],
+      "scope": "function",
+      "functionName": "createBuilderPhase2Router",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:188823433f65a83614b0",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 114,
+      "receiver": "router",
+      "method": "get",
+      "path": "/projects/:projectId/qa/:verificationId",
+      "handlers": [
+        "handle()"
+      ],
+      "scope": "function",
+      "functionName": "createBuilderPhase2Router",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:203b41b0fb4a0e49c502",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 119,
+      "receiver": "router",
+      "method": "get",
+      "path": "/projects/:projectId/export.zip",
+      "handlers": [
+        "handle()"
+      ],
+      "scope": "function",
+      "functionName": "createBuilderPhase2Router",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:0b337e6c08e1ceb2e2b4",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 132,
+      "receiver": "router",
+      "method": "get",
+      "path": "/github/targets",
+      "handlers": [
+        "handle()"
+      ],
+      "scope": "function",
+      "functionName": "createBuilderPhase2Router",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:8d6475ed3d056ceebea9",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 136,
+      "receiver": "router",
+      "method": "get",
+      "path": "/projects/:projectId/github",
+      "handlers": [
+        "handle()"
+      ],
+      "scope": "function",
+      "functionName": "createBuilderPhase2Router",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:b1d8ff59f9af19b5dfd5",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 141,
+      "receiver": "router",
+      "method": "post",
+      "path": "/projects/:projectId/github/prepare",
+      "handlers": [
+        "handle()"
+      ],
+      "scope": "function",
+      "functionName": "createBuilderPhase2Router",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:e5c592f43b5825365d2a",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 152,
+      "receiver": "router",
+      "method": "post",
+      "path": "/projects/:projectId/github/sync/prepare",
+      "handlers": [
+        "handle()"
+      ],
+      "scope": "function",
+      "functionName": "createBuilderPhase2Router",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:637f7b4f7d5b653a7154",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 158,
+      "receiver": "router",
+      "method": "post",
+      "path": "/projects/:projectId/github/operations/:operationId/approve",
+      "handlers": [
+        "handle()"
+      ],
+      "scope": "function",
+      "functionName": "createBuilderPhase2Router",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:4d38cea49f46e27eb115",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 164,
+      "receiver": "router",
+      "method": "post",
+      "path": "/projects/:projectId/github/operations/:operationId/execute",
+      "handlers": [
+        "handle()"
+      ],
+      "scope": "function",
+      "functionName": "createBuilderPhase2Router",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:38a946fbe097c3d1ed60",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 168,
+      "receiver": "router",
+      "method": "post",
+      "path": "/projects/:projectId/github/operations/:operationId/cancel",
+      "handlers": [
+        "handle()"
+      ],
+      "scope": "function",
+      "functionName": "createBuilderPhase2Router",
+      "inlineResponse": false
     },
     {
       "id": "registration:da1c0db0f3c2a37d2f5b",
@@ -108138,10 +110057,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:b63d9a750db209bc04ae",
-      "registrationId": "registration:5af7e02ed4fd9dabc603",
+      "id": "route:a7e6b83a0195f0a8218d",
+      "registrationId": "registration:56f195ce11ef6cab67f3",
       "sourcePath": "backend/src/routes/builder.ts",
-      "line": 44,
+      "line": 46,
       "method": "POST",
       "path": "/api/builder/projects",
       "mountChain": [
@@ -108155,10 +110074,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:518bd7b883a96e929fe6",
-      "registrationId": "registration:078357955c6cfd9a2fc0",
+      "id": "route:8d273a07540ec9258583",
+      "registrationId": "registration:e300908331748d85901f",
       "sourcePath": "backend/src/routes/builder.ts",
-      "line": 57,
+      "line": 59,
       "method": "GET",
       "path": "/api/builder/projects",
       "mountChain": [
@@ -108172,10 +110091,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:0dc6557f51b658086ece",
-      "registrationId": "registration:6898a86828f98292e3ca",
+      "id": "route:d3c349712afdcfb34096",
+      "registrationId": "registration:22af04839d53ab5ae78f",
       "sourcePath": "backend/src/routes/builder.ts",
-      "line": 66,
+      "line": 68,
       "method": "GET",
       "path": "/api/builder/projects/:projectId",
       "mountChain": [
@@ -108189,10 +110108,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:896948912029cf48a2b6",
-      "registrationId": "registration:a986d6e68a97d5846391",
+      "id": "route:8ae388f6e488ae904c08",
+      "registrationId": "registration:5a59c58ab0b5b38354a3",
       "sourcePath": "backend/src/routes/builder.ts",
-      "line": 75,
+      "line": 77,
       "method": "GET",
       "path": "/api/builder/projects/:projectId/revisions",
       "mountChain": [
@@ -108206,10 +110125,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:598a37eec4bff8180ac3",
-      "registrationId": "registration:3ea81f5b0e11db82c722",
+      "id": "route:7a3977fbad494b01435c",
+      "registrationId": "registration:c72c20e6db8d611d4b7d",
       "sourcePath": "backend/src/routes/builder.ts",
-      "line": 84,
+      "line": 86,
       "method": "GET",
       "path": "/api/builder/projects/:projectId/revisions/:revisionId",
       "mountChain": [
@@ -108223,10 +110142,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:42e38b7acc43c3446e65",
-      "registrationId": "registration:7c5bdb6f636e125ac89f",
+      "id": "route:cacc6d5765aef626eafa",
+      "registrationId": "registration:f0a5477f9ca28a109a0e",
       "sourcePath": "backend/src/routes/builder.ts",
-      "line": 95,
+      "line": 97,
       "method": "GET",
       "path": "/api/builder/projects/:projectId/files",
       "mountChain": [
@@ -109861,6 +111780,201 @@
       "reachable": true,
       "state": "IMPLEMENTED_AND_REACHABLE",
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
+    },
+    {
+      "id": "route-unmounted:03e80482eab95856a881",
+      "registrationId": "registration:d312ed3604dbb7081aca",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 68,
+      "method": "POST",
+      "path": "/intent",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:8d1781497d02a38ebb36",
+      "registrationId": "registration:3749da2e2045f74a7cd2",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 84,
+      "method": "GET",
+      "path": "/projects/:projectId/revisions/:revisionId/diff",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:ba352fa5b6e0b1c0cf3a",
+      "registrationId": "registration:3f227621d6b3fa50175a",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 89,
+      "method": "POST",
+      "path": "/projects/:projectId/revisions/:revisionId/restore",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:06f3b0ee1d97f7ae520f",
+      "registrationId": "registration:c922afa0849ecbd634ea",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 94,
+      "method": "POST",
+      "path": "/projects/:projectId/qa",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:9ad0bdc7c769990b386e",
+      "registrationId": "registration:1aae89a9aade8f7e8a2b",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 99,
+      "method": "POST",
+      "path": "/projects/:projectId/verify-and-repair",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:bb37a65baff25f97bf7a",
+      "registrationId": "registration:9620fe1cb4be0950daf5",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 107,
+      "method": "GET",
+      "path": "/projects/:projectId/qa",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:c4d341d27f563aef3d14",
+      "registrationId": "registration:188823433f65a83614b0",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 114,
+      "method": "GET",
+      "path": "/projects/:projectId/qa/:verificationId",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:e34782899ae18f612c12",
+      "registrationId": "registration:203b41b0fb4a0e49c502",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 119,
+      "method": "GET",
+      "path": "/projects/:projectId/export.zip",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:4fbc63876b3222a1149f",
+      "registrationId": "registration:0b337e6c08e1ceb2e2b4",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 132,
+      "method": "GET",
+      "path": "/github/targets",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:69dda6dd69f7fb619562",
+      "registrationId": "registration:8d6475ed3d056ceebea9",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 136,
+      "method": "GET",
+      "path": "/projects/:projectId/github",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:13723ed390d77983b95d",
+      "registrationId": "registration:b1d8ff59f9af19b5dfd5",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 141,
+      "method": "POST",
+      "path": "/projects/:projectId/github/prepare",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:f2248dad647bb90efd1e",
+      "registrationId": "registration:e5c592f43b5825365d2a",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 152,
+      "method": "POST",
+      "path": "/projects/:projectId/github/sync/prepare",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:cf3c0cdce49c6b494967",
+      "registrationId": "registration:637f7b4f7d5b653a7154",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 158,
+      "method": "POST",
+      "path": "/projects/:projectId/github/operations/:operationId/approve",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:016bc29886baffbce409",
+      "registrationId": "registration:4d38cea49f46e27eb115",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 164,
+      "method": "POST",
+      "path": "/projects/:projectId/github/operations/:operationId/execute",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:4313ef2d28133ee085d6",
+      "registrationId": "registration:38a946fbe097c3d1ed60",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 168,
+      "method": "POST",
+      "path": "/projects/:projectId/github/operations/:operationId/cancel",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     }
   ],
   "queues": [
@@ -111199,6 +113313,13 @@
       "version": "20261026000000",
       "order": 148,
       "sha256": "cc64fa986eb87d9a8b2e9adcb7ccdc3230dcd8926a5d7255209d03770cffd744"
+    },
+    {
+      "id": "migration:f4a79238439ab85fd0c7",
+      "sourcePath": "supabase/migrations/20261026010000_builder_phase2.sql",
+      "version": "20261026010000",
+      "order": 149,
+      "sha256": "100554d72f9722e429cf80cd356f31f2659177833a1bf63fdddee36829b8cb48"
     }
   ],
   "workflows": [
@@ -111232,7 +113353,7 @@
     {
       "id": "workflow:61c79996988bb0bc60bd",
       "sourcePath": ".github/workflows/builder-phase1.yml",
-      "sha256": "3af02258ff2d87d37b9190a69356fbe5bcc703abb6ee8e868edd21a38c0dc38b",
+      "sha256": "11af4c67196b5936aeaa23a01d7e8203b0ab6d52166680a53d370cc8ae181e84",
       "sourceEntrypoints": [],
       "hasSchedule": false
     },
@@ -111511,6 +113632,26 @@
       "line": 195,
       "kind": "SIMULATE",
       "reachable": false,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:2b8d79338babe9746c26",
+      "sourcePath": "backend/src/builder/github/fakeGitHub.testsupport.ts",
+      "line": 7,
+      "kind": "SIMULATE",
+      "reachable": false,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:ec407bdbe374c4b3e985",
+      "sourcePath": "backend/src/builder/github/port.ts",
+      "line": 6,
+      "kind": "SIMULATE",
+      "reachable": true,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -117723,9 +119864,16 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:4b9dd9f1dd148ab52c8f",
+      "id": "frontend-call:55728f93e044140118bf",
       "sourcePath": "frontend/src/lib/builderApi.ts",
       "line": 69,
+      "callee": "fetch",
+      "reachable": true
+    },
+    {
+      "id": "frontend-call:9057aad27eb539ea3b4c",
+      "sourcePath": "frontend/src/lib/builderApiPhase2.ts",
+      "line": 119,
       "callee": "fetch",
       "reachable": true
     },
@@ -119027,6 +121175,62 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:d383866bf75707b9c922",
+      "sourcePath": "backend/src/builder/export/archive.test.ts",
+      "declaredTests": 15,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:f2b230bd0a8b6a851d45",
+      "sourcePath": "backend/src/builder/github/github.test.ts",
+      "declaredTests": 31,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:69f6fc23755fbf341cfc",
+      "sourcePath": "backend/src/builder/github/restPort.test.ts",
+      "declaredTests": 19,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:5bd6fc8418a756b3895d",
+      "sourcePath": "backend/src/builder/iteration.test.ts",
+      "declaredTests": 22,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:4c723fa75bf2f47450c6",
+      "sourcePath": "backend/src/builder/phase2Store.integration.test.ts",
+      "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:95135eb14efd50923d20",
+      "sourcePath": "backend/src/builder/qa/qa.browser.integration.test.ts",
+      "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:211f66b5db0fe0e8b6fb",
+      "sourcePath": "backend/src/builder/qa/qa.test.ts",
+      "declaredTests": 15,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:58b379ef269b30f3c20d",
+      "sourcePath": "backend/src/builder/qa/repair.integration.test.ts",
+      "declaredTests": 10,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:758955171cca79403d63",
       "sourcePath": "backend/src/builder/runtime.integration.test.ts",
       "declaredTests": 8,
@@ -119718,6 +121922,13 @@
       "id": "test-suite:ecac67b9305f35693872",
       "sourcePath": "backend/src/routes/builder.test.ts",
       "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:ff1fe8c2340ebcecf0c6",
+      "sourcePath": "backend/src/routes/builderPhase2.test.ts",
+      "declaredTests": 13,
       "skipLocations": [],
       "focusLocations": []
     },
