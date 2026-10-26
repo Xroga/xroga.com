@@ -1,6 +1,6 @@
 # Runtime/dependency contract
 
-Source SHA: `9a62f15e05e67664dac1be346861824d58c5c8e6`. Existing runtime semantics are preserved; this audit does not create another provider router, scheduler, vault or backend.
+Source SHA: `efead888bc1726ef2d7cb60bff73f3d4f0207e1d`. Existing runtime semantics are preserved; this audit does not create another provider router, scheduler, vault or backend.
 
 ## Runtime classes
 

@@ -11089,9 +11089,8 @@
       "id": "surface:0349146c468fe4e18282",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/service.ts",
-      "sha256": "39a84d009dfc064fd0d2f83ed446a2015a6106f86637b903470f374b088d6cd8",
+      "sha256": "3e5070ab24acd450d7faae4bfe86d2b0c63e49a49901c0525964d34f1f148f6e",
       "symbols": [
-        "ACTIVE_STATES",
         "BuildRunner",
         "BuildRunnerInput",
         "BuilderDeps",
@@ -11099,14 +11098,18 @@
         "BuilderService",
         "BuilderState",
         "CanonicalVerdict",
+        "MAX_PROJECTS_PER_OWNER",
         "PreviewLaunchResult",
         "PreviewPort",
+        "STALE_RUN_MS",
         "blocked",
         "buildTimeline",
         "built",
+        "claimed",
         "commit",
         "current",
         "error",
+        "existing",
         "facts",
         "failedLike",
         "head",
@@ -11383,7 +11386,7 @@
       "id": "surface:d99ae49579eb8b9fd671",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/store.ts",
-      "sha256": "0bbfbd58855576b8c1a972ca65b427757276bed1bcc92024e6d7d80096a5e8d3",
+      "sha256": "ca2dafba1e393054908c8a5f07bff8418859773a1850099b386150fda538a477",
       "symbols": [
         "AppendRevisionInput",
         "AppendRevisionResult",
@@ -11396,8 +11399,10 @@
         "REVISION_META_COLUMNS",
         "RevisionRow",
         "SupabaseBuilderStore",
+        "active",
         "assertRequestKey",
         "changeSummary",
+        "claimed",
         "clone",
         "contentSha256",
         "existing",
@@ -11449,14 +11454,15 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/builder/store.ts:249 (user_id)",
-        "backend/src/builder/store.ts:258 (user_id)",
-        "backend/src/builder/store.ts:267 (user_id)",
+        "backend/src/builder/store.ts:265 (user_id)",
         "backend/src/builder/store.ts:274 (user_id)",
         "backend/src/builder/store.ts:283 (user_id)",
-        "backend/src/builder/store.ts:315 (user_id)",
-        "backend/src/builder/store.ts:322 (user_id)",
-        "backend/src/builder/store.ts:332 (user_id)"
+        "backend/src/builder/store.ts:290 (user_id)",
+        "backend/src/builder/store.ts:299 (user_id)",
+        "backend/src/builder/store.ts:309 (user_id)",
+        "backend/src/builder/store.ts:349 (user_id)",
+        "backend/src/builder/store.ts:356 (user_id)",
+        "backend/src/builder/store.ts:366 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -11476,7 +11482,7 @@
       "id": "surface:0576bf3489c187a1470e",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/swarmBridge.ts",
-      "sha256": "5e6e571a92ca00792d36a2496f9cab4e77656ae2cc7ba839f7f62e52b01ea6c0",
+      "sha256": "074851d6fa7645f9043e910b1041e5de3d66e8b19e11a61fde48f0cc5e8bcea9",
       "symbols": [
         "BuilderRunResult",
         "builderProjectExists",
@@ -21228,7 +21234,7 @@
       "id": "surface:10d425da4453da6d649f",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/swarm.ts",
-      "sha256": "dd5c964e1eaace0e51032e5ce1c9a2dd1b23be2439de049a5de4d84303e1bd11",
+      "sha256": "28eb717f8690a357e355ac7eab65c35a36112017caecb10fbb1510b1da2abea0",
       "symbols": [
         "ac",
         "activeBuildControllers",
@@ -105365,7 +105371,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c95cf077c0c7bd98821b",
+      "id": "registration:cfc5eba9328b5234b4a7",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 53,
       "receiver": "router",
@@ -105377,7 +105383,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b61a346ac3a13f66c77d",
+      "id": "registration:a9e5b1437fcd923b48ac",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 375,
       "receiver": "router",
@@ -105389,7 +105395,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:efbe14433253dbbde921",
+      "id": "registration:604ccb77bf8e8ebe03a4",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 391,
       "receiver": "router",
@@ -105401,7 +105407,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:296bb7f360dd58762745",
+      "id": "registration:eea2e688370ab997f3d0",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 428,
       "receiver": "router",
@@ -105413,7 +105419,7 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:1d9ee45d47baec1a8f41",
+      "id": "registration:bd619f5fec86109c6662",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 485,
       "receiver": "router",
@@ -105427,7 +105433,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:afd54663a7c95638e86c",
+      "id": "registration:26cb70945ba36ea4b472",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 486,
       "receiver": "router",
@@ -105961,8 +105967,8 @@
       "reason": "Router factory invoked by an imported default export; terminal middleware traced, behavior must still be tested."
     },
     {
-      "id": "route:8ce99a29f54c3a6f0068",
-      "registrationId": "registration:c95cf077c0c7bd98821b",
+      "id": "route:412ad067bfe1e340f965",
+      "registrationId": "registration:cfc5eba9328b5234b4a7",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 53,
       "method": "POST",
@@ -105978,8 +105984,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:4c0341234d0aa98e49f5",
-      "registrationId": "registration:b61a346ac3a13f66c77d",
+      "id": "route:46157db6aeb520e909f7",
+      "registrationId": "registration:a9e5b1437fcd923b48ac",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 375,
       "method": "GET",
@@ -105995,8 +106001,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:f28896963b76372e8c02",
-      "registrationId": "registration:efbe14433253dbbde921",
+      "id": "route:47bcf098e1e583733b91",
+      "registrationId": "registration:604ccb77bf8e8ebe03a4",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 391,
       "method": "GET",
@@ -106012,8 +106018,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:559ef479e0de15e56590",
-      "registrationId": "registration:296bb7f360dd58762745",
+      "id": "route:e856c3e547499b573a4a",
+      "registrationId": "registration:eea2e688370ab997f3d0",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 428,
       "method": "POST",
@@ -106029,8 +106035,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:1718017cada2d6de8b5d",
-      "registrationId": "registration:1d9ee45d47baec1a8f41",
+      "id": "route:d1e3e1372fa3cc619fe3",
+      "registrationId": "registration:bd619f5fec86109c6662",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 485,
       "method": "POST",
@@ -106046,8 +106052,8 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:f1fdf650654f449cedb9",
-      "registrationId": "registration:afd54663a7c95638e86c",
+      "id": "route:dddb1a30c68f1284d956",
+      "registrationId": "registration:26cb70945ba36ea4b472",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 486,
       "method": "PATCH",
@@ -109950,7 +109956,7 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:78863741d275b081247b",
+      "id": "schedule:35a21804d966e6158875",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 147,
       "kind": "setInterval",
@@ -109959,7 +109965,7 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:6cfe88c1f8ecd281d41b",
+      "id": "schedule:cf807018a8bb4452a89c",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 157,
       "kind": "setInterval",
@@ -111660,7 +111666,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:5c3375247ac81bb47c58",
+      "id": "finding:e80ccac3174615c82359",
       "sourcePath": "backend/src/routes/swarm.ts",
       "line": 476,
       "kind": "STUB",
@@ -119016,7 +119022,7 @@
     {
       "id": "test-suite:9c8f19792bf12d2488df",
       "sourcePath": "backend/src/builder/builder.test.ts",
-      "declaredTests": 35,
+      "declaredTests": 38,
       "skipLocations": [],
       "focusLocations": []
     },

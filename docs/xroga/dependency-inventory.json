@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "9a62f15e05e67664dac1be346861824d58c5c8e6",
+  "source_sha": "efead888bc1726ef2d7cb60bff73f3d4f0207e1d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -14139,7 +14139,7 @@
     },
     {
       "path": "backend/src/builder/service.ts",
-      "sha256": "39a84d009dfc064fd0d2f83ed446a2015a6106f86637b903470f374b088d6cd8"
+      "sha256": "3e5070ab24acd450d7faae4bfe86d2b0c63e49a49901c0525964d34f1f148f6e"
     },
     {
       "path": "backend/src/builder/snapshot.ts",
@@ -14155,11 +14155,11 @@
     },
     {
       "path": "backend/src/builder/store.ts",
-      "sha256": "0bbfbd58855576b8c1a972ca65b427757276bed1bcc92024e6d7d80096a5e8d3"
+      "sha256": "ca2dafba1e393054908c8a5f07bff8418859773a1850099b386150fda538a477"
     },
     {
       "path": "backend/src/builder/swarmBridge.ts",
-      "sha256": "5e6e571a92ca00792d36a2496f9cab4e77656ae2cc7ba839f7f62e52b01ea6c0"
+      "sha256": "074851d6fa7645f9043e910b1041e5de3d66e8b19e11a61fde48f0cc5e8bcea9"
     },
     {
       "path": "backend/src/builder/types.ts",
@@ -14911,7 +14911,7 @@
     },
     {
       "path": "backend/src/routes/swarm.ts",
-      "sha256": "dd5c964e1eaace0e51032e5ce1c9a2dd1b23be2439de049a5de4d84303e1bd11"
+      "sha256": "28eb717f8690a357e355ac7eab65c35a36112017caecb10fbb1510b1da2abea0"
     },
     {
       "path": "backend/src/routes/tasks.ts",
@@ -27696,14 +27696,14 @@
     },
     {
       "path": "backend/src/builder/store.ts",
-      "line": 72,
+      "line": 78,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/builder/store.ts",
-      "line": 73,
+      "line": 79,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
