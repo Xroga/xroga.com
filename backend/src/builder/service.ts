@@ -5,6 +5,7 @@ import type { SoftwareRunEvent } from '../ai/softwareAgent/runEvents.js';
 import type { CommitFn } from '../synthesis/productionAdapters.js';
 import type { UniversalBuildOutcome } from '../synthesis/universalEntrypoint.js';
 import { deriveBuildSpec } from './spec.js';
+import { hashSnapshot } from './snapshot.js';
 import { derivePreviewLifecycle, type PreviewFacts, type PreviewLifecycleView } from './previewLifecycle.js';
 import { materializeStarter, selectStarter } from './starters.js';
 import { assertRequestKey, type AppendRevisionResult, type BuilderStore } from './store.js';
@@ -64,6 +65,8 @@ export interface BuilderRunBinding {
   readonly project: BuilderProject;
   /** The revision this run saved, or null when nothing was committed. */
   readonly saved: () => BuilderRevision | null;
+  /** True when the run committed source identical to the current revision, so no revision was created. */
+  readonly noChange: () => boolean;
 }
 
 export interface BuilderDeps {
@@ -150,7 +153,11 @@ export class BuilderService {
    * and returns the binding the canonical pipeline builds against. The commit hook saves a
    * durable revision only when the canonical validation has accepted the result.
    */
-  async beginRun(userId: string, projectId: string, input: { runId?: string; origin?: RevisionOrigin }): Promise<BuilderRunBinding> {
+  async beginRun(
+    userId: string,
+    projectId: string,
+    input: { runId?: string; origin?: RevisionOrigin; /** Throws to refuse a result before it becomes a revision. */ guard?: (committed: readonly ProjectFile[], head: readonly ProjectFile[]) => void },
+  ): Promise<BuilderRunBinding> {
     const runId = input.runId ?? randomUUID();
     const claimed = await this.deps.store.claimRun(userId, projectId, runId, new Date(Date.now() - STALE_RUN_MS));
     if (!claimed) throw new BuilderError('not_found', 'Project not found.');
@@ -158,8 +165,14 @@ export class BuilderService {
     const project = claimed.project;
     const { revision: head, files } = await this.headFiles(userId, project);
     const origin: RevisionOrigin = input.origin ?? (head && head.origin === 'starter' ? 'generation' : 'followup');
-    const holder: { saved: Extract<AppendRevisionResult, { kind: 'created' | 'replayed' }> | null } = { saved: null };
+    const holder: { saved: Extract<AppendRevisionResult, { kind: 'created' | 'replayed' }> | null; noChange: boolean } = { saved: null, noChange: false };
     const commit: CommitFn = async ({ files: committedFiles }) => {
+      input.guard?.(committedFiles, files);
+      if (head && hashSnapshot(committedFiles) === head.contentSha256) {
+        // Identical to the current source: nothing changed, so no revision is created.
+        holder.noChange = true;
+        return { commitSha: head.id };
+      }
       const result = await this.deps.store.appendRevision(userId, projectId, {
         runId,
         origin,
@@ -182,6 +195,7 @@ export class BuilderService {
       commit,
       project,
       saved: () => holder.saved?.revision ?? null,
+      noChange: () => holder.noChange,
     };
   }
 
