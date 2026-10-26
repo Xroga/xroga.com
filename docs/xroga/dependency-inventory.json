@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "0b26fb8fca188cd4fef022e4d2e722f0534cf230",
+  "source_sha": "1ba2ce02e67ce76e2efa8202045161193500768f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16284,7 +16284,7 @@
     },
     {
       "path": "backend/src/workers/browserCapability.ts",
-      "sha256": "37b817ea46ff36812f1e953d68975e33cd8fa613e2a59d959b872e033201f10e"
+      "sha256": "cd4c5866310b11d5a3255667c9fbb56945484733d64cbc5de8c73337085feac0"
     },
     {
       "path": "backend/src/workers/browserCoordinator.ts",

@@ -38114,7 +38114,7 @@
       "id": "surface:ef2205cc157e5f9e82a2",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/workers/browserCapability.ts",
-      "sha256": "37b817ea46ff36812f1e953d68975e33cd8fa613e2a59d959b872e033201f10e",
+      "sha256": "cd4c5866310b11d5a3255667c9fbb56945484733d64cbc5de8c73337085feac0",
       "symbols": [
         "BROWSER_MAX_ACTIVE_PER_TENANT",
         "BROWSER_RUN_DEFAULTS",
@@ -109443,7 +109443,7 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:b5bfc879feb2f366ae39",
+      "id": "schedule:8a155f4496d25ac6b727",
       "sourcePath": "backend/src/workers/browserCapability.ts",
       "line": 196,
       "kind": "setInterval",
@@ -109452,7 +109452,7 @@
       "state": "IMPLEMENTED_BUT_UNVERIFIED"
     },
     {
-      "id": "schedule:659db0fb72d26169aaa7",
+      "id": "schedule:c870706320c29a1c773a",
       "sourcePath": "backend/src/workers/browserCapability.ts",
       "line": 199,
       "kind": "setInterval",
