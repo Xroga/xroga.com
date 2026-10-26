@@ -29,8 +29,7 @@
     "backend/src/services/integrations/composioTriggers.test.ts",
     "backend/src/services/integrations/composioWorkbench.ts",
     "docs/infra/composio/COMPOSIO-PLATFORM-STATUS.md",
-    "docs/xroga/missions/composio-platform-expansion-20261026.json",
-    "scripts/_cx_mission.mjs"
+    "docs/xroga/missions/composio-platform-expansion-20261026.json"
   ],
   "decisions": {
     "keep": [
