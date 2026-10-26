@@ -15636,20 +15636,22 @@
     },
     {
       "path": "backend/src/builder/store.ts",
-      "sourceSha256": "a03b6e6bb8f403642ad9edb7cd7478fdeb55170421f4eea2873379dc3bce9951",
+      "sourceSha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
       "callIds": [
-        "bbcddde50fb0e4efbb92",
-        "cd69564dbd27d9486660",
-        "aa89e4a362a4a55a3f58",
-        "1c6333045f9c721f55eb",
-        "ee361244f6589cf9713d",
-        "3a1d1f6866605197b62a",
-        "1caf6465cd6fbf363530",
-        "01b005990d2f0e3a7020",
-        "45dbd7b594907ee40fac",
-        "bd5b7abbaf1f45ab3fba",
-        "6a94ff8465300e79b2ba",
-        "9cc899e3641fc414bd8c"
+        "51d39f5c3f760ecb39f5",
+        "1a6139bdddedeb5a1795",
+        "9f2490f1e3f534dfadad",
+        "6886c922a4c101968be1",
+        "e1edc10f1751f85083d1",
+        "900357d31249946fc433",
+        "af707c4841d7baa8e560",
+        "8d5d6a62f2c9f72ef31b",
+        "d125622c64a6be11b20d",
+        "fd54c15c376787e27b0e",
+        "ab049c75d5786382eeb0",
+        "827cb3fd74d0a30e8688",
+        "b78ccfdb63b6748ca8b3",
+        "7b4686fd0573bfc6f051"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "SupabaseBuilderStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context. The privileged client is obtained through getTenantSupabaseAdmin(context).",
@@ -15667,10 +15669,10 @@
     },
     {
       "path": "backend/src/builder/store.ts",
-      "sourceSha256": "a03b6e6bb8f403642ad9edb7cd7478fdeb55170421f4eea2873379dc3bce9951",
+      "sourceSha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
       "callIds": [
-        "2ed1879f2de59398fa28",
-        "67b67242de5bfd63a9b7"
+        "ba63cf83b819157deec5",
+        "aad7490a26c83a07f018"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The insert sets user_id from the verified issued tenant owner, and the append function receives that owner as p_user_id and locks the project row filtered by both id and user_id before writing anything.",

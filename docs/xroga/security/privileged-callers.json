@@ -1,24 +1,24 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "6e188cc551a73543879806258789d382613d9ad1a7a6904c656deba845ad81f5",
+  "reviewRegistrySha256": "b82264be09a71f153ab39712d48e1950c488a553061a77d3449bf355b332bd62",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 185,
-    "persistenceCandidates": 814,
-    "ownerPredicateCandidates": 209,
+    "persistenceCandidates": 816,
+    "ownerPredicateCandidates": 211,
     "reviewRequired": 102,
-    "reviewedCandidates": 712,
+    "reviewedCandidates": 714,
     "unresolvedSafetyCandidates": 127,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 18
   },
   "outcomes": {
     "REVIEW_REQUIRED": 102,
-    "SCOPED_BOUNDARY": 477,
+    "SCOPED_BOUNDARY": 479,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 170,
     "REVIEWED_GAP": 25
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 109,
-    "unresolvedCandidateBoundaries": 705,
+    "unresolvedCandidateBoundaries": 707,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -2796,59 +2796,67 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "bbcddde50fb0e4efbb92"
+        "id": "51d39f5c3f760ecb39f5"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "cd69564dbd27d9486660"
+        "id": "1a6139bdddedeb5a1795"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "2ed1879f2de59398fa28"
+        "id": "ba63cf83b819157deec5"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "aa89e4a362a4a55a3f58"
+        "id": "9f2490f1e3f534dfadad"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "1c6333045f9c721f55eb"
+        "id": "6886c922a4c101968be1"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ee361244f6589cf9713d"
+        "id": "e1edc10f1751f85083d1"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "3a1d1f6866605197b62a"
+        "id": "900357d31249946fc433"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6a94ff8465300e79b2ba"
+        "id": "ab049c75d5786382eeb0"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "9cc899e3641fc414bd8c"
+        "id": "b78ccfdb63b6748ca8b3"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "1caf6465cd6fbf363530"
+        "id": "7b4686fd0573bfc6f051"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "67b67242de5bfd63a9b7"
+        "id": "827cb3fd74d0a30e8688"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "01b005990d2f0e3a7020"
+        "id": "af707c4841d7baa8e560"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "45dbd7b594907ee40fac"
+        "id": "aad7490a26c83a07f018"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "bd5b7abbaf1f45ab3fba"
+        "id": "8d5d6a62f2c9f72ef31b"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "d125622c64a6be11b20d"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "fd54c15c376787e27b0e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -5148,59 +5156,67 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "bbcddde50fb0e4efbb92"
+        "id": "51d39f5c3f760ecb39f5"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "cd69564dbd27d9486660"
+        "id": "1a6139bdddedeb5a1795"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "2ed1879f2de59398fa28"
+        "id": "ba63cf83b819157deec5"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "aa89e4a362a4a55a3f58"
+        "id": "9f2490f1e3f534dfadad"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "1c6333045f9c721f55eb"
+        "id": "6886c922a4c101968be1"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "ee361244f6589cf9713d"
+        "id": "e1edc10f1751f85083d1"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "3a1d1f6866605197b62a"
+        "id": "900357d31249946fc433"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "6a94ff8465300e79b2ba"
+        "id": "ab049c75d5786382eeb0"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "9cc899e3641fc414bd8c"
+        "id": "b78ccfdb63b6748ca8b3"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "1caf6465cd6fbf363530"
+        "id": "7b4686fd0573bfc6f051"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "67b67242de5bfd63a9b7"
+        "id": "827cb3fd74d0a30e8688"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "01b005990d2f0e3a7020"
+        "id": "af707c4841d7baa8e560"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "45dbd7b594907ee40fac"
+        "id": "aad7490a26c83a07f018"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "bd5b7abbaf1f45ab3fba"
+        "id": "8d5d6a62f2c9f72ef31b"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "d125622c64a6be11b20d"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "fd54c15c376787e27b0e"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -7029,11 +7045,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 814,
+    "currentCallers": 816,
     "structuredVerified": 109,
-    "structuredUnproven": 705,
+    "structuredUnproven": 707,
     "manualUnresolved": 127,
-    "manualUnsupported": 578,
+    "manualUnsupported": 580,
     "agreedVerified": 109,
     "proofAwaitingManualReconciliation": 0
   },
@@ -10053,7 +10069,7 @@
       "target": "x",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "fe96ae77ce12ba3236e04ff41dca94508ff8f2e0d39ce0f831e05d3c67b7ac54"
+      "sourceSha256": "9ca15512e040a0eecdc144de6251a06aaaff48b04fbd9972df8a7b7a2799342d"
     },
     {
       "id": "9905906f8e76a94e6b6a",
@@ -10067,15 +10083,15 @@
       "sourceSha256": "dde214801c137e21ea94b7f8e3d5e32ad8646f787bcf7483513e2c55caecc7bf"
     },
     {
-      "id": "bbcddde50fb0e4efbb92",
+      "id": "51d39f5c3f760ecb39f5",
       "path": "backend/src/builder/store.ts",
-      "line": 273,
+      "line": 299,
       "enclosing": "db",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a03b6e6bb8f403642ad9edb7cd7478fdeb55170421f4eea2873379dc3bce9951",
+      "sourceSha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
       "semanticReview": {
         "authority": "SupabaseBuilderStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context. The privileged client is obtained through getTenantSupabaseAdmin(context).",
         "reason": "Every read, update and list on builder_projects and builder_revisions in this class carries an explicit .eq(user_id, owner) predicate where the owner is the verified issued tenant identity, never a request body value. A foreign project or revision id returns no row, surfaced as not found.",
@@ -10092,15 +10108,15 @@
       }
     },
     {
-      "id": "cd69564dbd27d9486660",
+      "id": "1a6139bdddedeb5a1795",
       "path": "backend/src/builder/store.ts",
-      "line": 285,
+      "line": 311,
       "enclosing": "createProject",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_projects",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a03b6e6bb8f403642ad9edb7cd7478fdeb55170421f4eea2873379dc3bce9951",
+      "sourceSha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
       "semanticReview": {
         "authority": "SupabaseBuilderStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context. The privileged client is obtained through getTenantSupabaseAdmin(context).",
         "reason": "Every read, update and list on builder_projects and builder_revisions in this class carries an explicit .eq(user_id, owner) predicate where the owner is the verified issued tenant identity, never a request body value. A foreign project or revision id returns no row, surfaced as not found.",
@@ -10117,15 +10133,15 @@
       }
     },
     {
-      "id": "2ed1879f2de59398fa28",
+      "id": "ba63cf83b819157deec5",
       "path": "backend/src/builder/store.ts",
-      "line": 288,
+      "line": 314,
       "enclosing": "createProject",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_projects",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a03b6e6bb8f403642ad9edb7cd7478fdeb55170421f4eea2873379dc3bce9951",
+      "sourceSha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
       "semanticReview": {
         "authority": "The insert sets user_id from the verified issued tenant owner, and the append function receives that owner as p_user_id and locks the project row filtered by both id and user_id before writing anything.",
         "reason": "The project insert has no read predicate because it creates a row owned by the verified identity (unique on user_id and request_key). The append_builder_revision function is executable by service_role only and returns null for a project not owned by p_user_id, so a foreign project id cannot be written to.",
@@ -10142,15 +10158,15 @@
       }
     },
     {
-      "id": "aa89e4a362a4a55a3f58",
+      "id": "9f2490f1e3f534dfadad",
       "path": "backend/src/builder/store.ts",
-      "line": 294,
+      "line": 320,
       "enclosing": "createProject",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_projects",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a03b6e6bb8f403642ad9edb7cd7478fdeb55170421f4eea2873379dc3bce9951",
+      "sourceSha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
       "semanticReview": {
         "authority": "SupabaseBuilderStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context. The privileged client is obtained through getTenantSupabaseAdmin(context).",
         "reason": "Every read, update and list on builder_projects and builder_revisions in this class carries an explicit .eq(user_id, owner) predicate where the owner is the verified issued tenant identity, never a request body value. A foreign project or revision id returns no row, surfaced as not found.",
@@ -10167,15 +10183,15 @@
       }
     },
     {
-      "id": "1c6333045f9c721f55eb",
+      "id": "6886c922a4c101968be1",
       "path": "backend/src/builder/store.ts",
-      "line": 303,
+      "line": 329,
       "enclosing": "getProject",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_projects",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a03b6e6bb8f403642ad9edb7cd7478fdeb55170421f4eea2873379dc3bce9951",
+      "sourceSha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
       "semanticReview": {
         "authority": "SupabaseBuilderStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context. The privileged client is obtained through getTenantSupabaseAdmin(context).",
         "reason": "Every read, update and list on builder_projects and builder_revisions in this class carries an explicit .eq(user_id, owner) predicate where the owner is the verified issued tenant identity, never a request body value. A foreign project or revision id returns no row, surfaced as not found.",
@@ -10192,15 +10208,15 @@
       }
     },
     {
-      "id": "ee361244f6589cf9713d",
+      "id": "e1edc10f1751f85083d1",
       "path": "backend/src/builder/store.ts",
-      "line": 310,
+      "line": 336,
       "enclosing": "listProjects",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_projects",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a03b6e6bb8f403642ad9edb7cd7478fdeb55170421f4eea2873379dc3bce9951",
+      "sourceSha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
       "semanticReview": {
         "authority": "SupabaseBuilderStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context. The privileged client is obtained through getTenantSupabaseAdmin(context).",
         "reason": "Every read, update and list on builder_projects and builder_revisions in this class carries an explicit .eq(user_id, owner) predicate where the owner is the verified issued tenant identity, never a request body value. A foreign project or revision id returns no row, surfaced as not found.",
@@ -10217,15 +10233,15 @@
       }
     },
     {
-      "id": "3a1d1f6866605197b62a",
+      "id": "900357d31249946fc433",
       "path": "backend/src/builder/store.ts",
-      "line": 319,
+      "line": 345,
       "enclosing": "setState",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_projects",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a03b6e6bb8f403642ad9edb7cd7478fdeb55170421f4eea2873379dc3bce9951",
+      "sourceSha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
       "semanticReview": {
         "authority": "SupabaseBuilderStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context. The privileged client is obtained through getTenantSupabaseAdmin(context).",
         "reason": "Every read, update and list on builder_projects and builder_revisions in this class carries an explicit .eq(user_id, owner) predicate where the owner is the verified issued tenant identity, never a request body value. A foreign project or revision id returns no row, surfaced as not found.",
@@ -10242,15 +10258,15 @@
       }
     },
     {
-      "id": "6a94ff8465300e79b2ba",
+      "id": "ab049c75d5786382eeb0",
       "path": "backend/src/builder/store.ts",
-      "line": 326,
+      "line": 352,
       "enclosing": "setStateIfIdle",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_projects",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a03b6e6bb8f403642ad9edb7cd7478fdeb55170421f4eea2873379dc3bce9951",
+      "sourceSha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
       "semanticReview": {
         "authority": "SupabaseBuilderStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context. The privileged client is obtained through getTenantSupabaseAdmin(context).",
         "reason": "Every read, update and list on builder_projects and builder_revisions in this class carries an explicit .eq(user_id, owner) predicate where the owner is the verified issued tenant identity, never a request body value. A foreign project or revision id returns no row, surfaced as not found.",
@@ -10267,15 +10283,65 @@
       }
     },
     {
-      "id": "9cc899e3641fc414bd8c",
+      "id": "b78ccfdb63b6748ca8b3",
       "path": "backend/src/builder/store.ts",
-      "line": 340,
+      "line": 366,
+      "enclosing": "setStateForRun",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "builder_projects",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
+      "semanticReview": {
+        "authority": "SupabaseBuilderStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context. The privileged client is obtained through getTenantSupabaseAdmin(context).",
+        "reason": "Every read, update and list on builder_projects and builder_revisions in this class carries an explicit .eq(user_id, owner) predicate where the owner is the verified issued tenant identity, never a request body value. A foreign project or revision id returns no row, surfaced as not found.",
+        "evidence": [
+          {
+            "path": "backend/src/builder/store.ts",
+            "marker": "return getTenantSupabaseAdmin(this.tenant);"
+          },
+          {
+            "path": "backend/src/builder/store.ts",
+            "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new BuilderError"
+          }
+        ]
+      }
+    },
+    {
+      "id": "7b4686fd0573bfc6f051",
+      "path": "backend/src/builder/store.ts",
+      "line": 385,
+      "enclosing": "cancelRun",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "builder_projects",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
+      "semanticReview": {
+        "authority": "SupabaseBuilderStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context. The privileged client is obtained through getTenantSupabaseAdmin(context).",
+        "reason": "Every read, update and list on builder_projects and builder_revisions in this class carries an explicit .eq(user_id, owner) predicate where the owner is the verified issued tenant identity, never a request body value. A foreign project or revision id returns no row, surfaced as not found.",
+        "evidence": [
+          {
+            "path": "backend/src/builder/store.ts",
+            "marker": "return getTenantSupabaseAdmin(this.tenant);"
+          },
+          {
+            "path": "backend/src/builder/store.ts",
+            "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new BuilderError"
+          }
+        ]
+      }
+    },
+    {
+      "id": "827cb3fd74d0a30e8688",
+      "path": "backend/src/builder/store.ts",
+      "line": 402,
       "enclosing": "markPreviewReadiness",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_projects",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a03b6e6bb8f403642ad9edb7cd7478fdeb55170421f4eea2873379dc3bce9951",
+      "sourceSha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
       "semanticReview": {
         "authority": "SupabaseBuilderStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context. The privileged client is obtained through getTenantSupabaseAdmin(context).",
         "reason": "Every read, update and list on builder_projects and builder_revisions in this class carries an explicit .eq(user_id, owner) predicate where the owner is the verified issued tenant identity, never a request body value. A foreign project or revision id returns no row, surfaced as not found.",
@@ -10292,15 +10358,15 @@
       }
     },
     {
-      "id": "1caf6465cd6fbf363530",
+      "id": "af707c4841d7baa8e560",
       "path": "backend/src/builder/store.ts",
-      "line": 349,
+      "line": 411,
       "enclosing": "claimRun",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_projects",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a03b6e6bb8f403642ad9edb7cd7478fdeb55170421f4eea2873379dc3bce9951",
+      "sourceSha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
       "semanticReview": {
         "authority": "SupabaseBuilderStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context. The privileged client is obtained through getTenantSupabaseAdmin(context).",
         "reason": "Every read, update and list on builder_projects and builder_revisions in this class carries an explicit .eq(user_id, owner) predicate where the owner is the verified issued tenant identity, never a request body value. A foreign project or revision id returns no row, surfaced as not found.",
@@ -10317,15 +10383,15 @@
       }
     },
     {
-      "id": "67b67242de5bfd63a9b7",
+      "id": "aad7490a26c83a07f018",
       "path": "backend/src/builder/store.ts",
-      "line": 368,
+      "line": 430,
       "enclosing": "appendRevision",
       "kind": "RPC_CANDIDATE",
       "target": "append_builder_revision",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a03b6e6bb8f403642ad9edb7cd7478fdeb55170421f4eea2873379dc3bce9951",
+      "sourceSha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
       "semanticReview": {
         "authority": "The insert sets user_id from the verified issued tenant owner, and the append function receives that owner as p_user_id and locks the project row filtered by both id and user_id before writing anything.",
         "reason": "The project insert has no read predicate because it creates a row owned by the verified identity (unique on user_id and request_key). The append_builder_revision function is executable by service_role only and returns null for a project not owned by p_user_id, so a foreign project id cannot be written to.",
@@ -10342,15 +10408,15 @@
       }
     },
     {
-      "id": "01b005990d2f0e3a7020",
+      "id": "8d5d6a62f2c9f72ef31b",
       "path": "backend/src/builder/store.ts",
-      "line": 389,
+      "line": 451,
       "enclosing": "getRevision",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_revisions",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a03b6e6bb8f403642ad9edb7cd7478fdeb55170421f4eea2873379dc3bce9951",
+      "sourceSha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
       "semanticReview": {
         "authority": "SupabaseBuilderStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context. The privileged client is obtained through getTenantSupabaseAdmin(context).",
         "reason": "Every read, update and list on builder_projects and builder_revisions in this class carries an explicit .eq(user_id, owner) predicate where the owner is the verified issued tenant identity, never a request body value. A foreign project or revision id returns no row, surfaced as not found.",
@@ -10367,15 +10433,15 @@
       }
     },
     {
-      "id": "45dbd7b594907ee40fac",
+      "id": "d125622c64a6be11b20d",
       "path": "backend/src/builder/store.ts",
-      "line": 396,
+      "line": 458,
       "enclosing": "listRevisions",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_revisions",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a03b6e6bb8f403642ad9edb7cd7478fdeb55170421f4eea2873379dc3bce9951",
+      "sourceSha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
       "semanticReview": {
         "authority": "SupabaseBuilderStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context. The privileged client is obtained through getTenantSupabaseAdmin(context).",
         "reason": "Every read, update and list on builder_projects and builder_revisions in this class carries an explicit .eq(user_id, owner) predicate where the owner is the verified issued tenant identity, never a request body value. A foreign project or revision id returns no row, surfaced as not found.",
@@ -10392,15 +10458,15 @@
       }
     },
     {
-      "id": "bd5b7abbaf1f45ab3fba",
+      "id": "fd54c15c376787e27b0e",
       "path": "backend/src/builder/store.ts",
-      "line": 406,
+      "line": 468,
       "enclosing": "setRevisionVerification",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_revisions",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "a03b6e6bb8f403642ad9edb7cd7478fdeb55170421f4eea2873379dc3bce9951",
+      "sourceSha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066",
       "semanticReview": {
         "authority": "SupabaseBuilderStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context. The privileged client is obtained through getTenantSupabaseAdmin(context).",
         "reason": "Every read, update and list on builder_projects and builder_revisions in this class carries an explicit .eq(user_id, owner) predicate where the owner is the verified issued tenant identity, never a request body value. A foreign project or revision id returns no row, surfaced as not found.",
