@@ -74,10 +74,13 @@ test('ambiguous confirmation messages never select or execute a latest action ac
 
 test('connection-status questions bypass tool discovery without treating connection requests as status checks', () => {
   assert.equal(connectionStatusTarget('check gmail app is connected with xroga'), 'gmail');
+  assert.equal(connectionStatusTarget('Check whether Gmail is connected to my Xroga account. Report only connected or not connected and the app name. Do not read messages, send mail, create drafts, or change anything.'), 'Gmail');
   assert.equal(connectionStatusTarget('Is my Google Calendar connected?'), 'Google Calendar');
   assert.equal(connectionStatusTarget('Which apps are connected?'), '*');
   assert.equal(connectionStatusTarget('Connect my Gmail account'), null);
   assert.equal(connectionStatusTarget('Send an email from Gmail'), null);
   assert.equal(connectionStatusTarget('Check Gmail is connected and send an email to Jane'), null);
+  assert.equal(connectionStatusTarget('Check Gmail is connected. Then send an email to Jane.'), null);
+  assert.equal(connectionStatusTarget('Check Gmail is connected. Report only status and send an email to Jane.'), null);
   assert.equal(connectionStatusTarget('Which apps are connected, then create a calendar event'), null);
 });
