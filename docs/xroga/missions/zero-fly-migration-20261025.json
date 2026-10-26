@@ -152,7 +152,9 @@
     "docs/xroga/deployment-topology.md",
     "docs/xroga/deployment-topology.mmd",
     "docs/xroga/runtime-contract.md",
-    "docs/xroga/secret-inventory.md"
+    "docs/xroga/secret-inventory.md",
+    "backend/src/synthesis/projectRuntime/types.ts",
+    "docs/xroga/evidence/zero-fly/live-preview-readiness-20261026.json"
   ],
   "decisions": {
     "keep": [
@@ -382,7 +384,8 @@
     "docs/xroga/evidence/zero-fly/background-source-checkpoint-20261026.json",
     "docs/xroga/evidence/zero-fly/google-delivery-sql-reapply-20261026.json",
     "docs/xroga/evidence/zero-fly/integration-caller-rebinding-20261026.json",
-    "docs/xroga/evidence/zero-fly/hosted-delivery-schema-20261026.json"
+    "docs/xroga/evidence/zero-fly/hosted-delivery-schema-20261026.json",
+    "docs/xroga/evidence/zero-fly/live-preview-readiness-20261026.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,

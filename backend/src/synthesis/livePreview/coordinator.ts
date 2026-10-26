@@ -202,6 +202,8 @@ async function waitForProcess(
     sessionId:
       string;
 
+    processId: string;
+
     plan:
       LivePreviewLaunchPlan;
   },
@@ -227,6 +229,12 @@ async function waitForProcess(
     attempt +=
       1
   ) {
+    const providerReady=await input.runtime.probeProcess(input.sessionId,input.processId);
+    if(providerReady!==null){
+      if(providerReady)return true;
+      await new Promise<void>(resolve=>setTimeout(resolve,500));
+      continue;
+    }
     const result =
       await input.runtime
         .exec(
@@ -1165,6 +1173,8 @@ if (
       const ready =
         await waitForProcess({
           runtime,
+
+          processId: previewProcess.processId,
 
           sessionId:
             session

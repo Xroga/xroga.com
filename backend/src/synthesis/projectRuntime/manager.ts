@@ -626,6 +626,15 @@ export class ProjectRuntimeManager {
     return updated;
   }
 
+  async probeProcess(sessionId: string, processId: string): Promise<boolean | null> {
+    const session = await this.session(sessionId);
+    const provider = this.provider(session.providerId);
+    if (!provider.probeProcess) return null;
+    const process = session.processes.find(item => item.processId === processId);
+    if (!process || process.status !== 'running') throw new Error('Runtime process is unavailable.');
+    return provider.probeProcess(session, process);
+  }
+
   async exec(
     sessionId:
       string,

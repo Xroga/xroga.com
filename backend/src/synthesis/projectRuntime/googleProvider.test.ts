@@ -3,7 +3,7 @@ import test from 'node:test';
 import {GoogleProjectRuntimeProvider, googleWorkspaceFiles} from './googleProvider.js';
 import {executionBinding, type GceExecutionHandle, type CreateGceExecution} from '../../sandbox/google/gceMachineControl.js';
 import type {GoogleProjectRuntimeOptions} from './googleProvider.js';
-import type {ProviderRuntimeCreateInput} from './types.js';
+import type {ProviderRuntimeCreateInput,ProjectRuntimeProcessRecord} from './types.js';
 
 // Transport/control are synthetic fixtures. They do not certify a live caller.
 function fixture(){
@@ -84,4 +84,30 @@ test('foreign durable handle or changed infrastructure cannot restore, read or d
  await assert.rejects(f.provider.readFile(foreign,'src/index.ts'),{message:'GCE_SESSION_REFERENCE_INVALID'});
  await assert.rejects(f.provider.destroy(foreign),{message:'GCE_SESSION_REFERENCE_INVALID'});
  assert.equal(f.destroys,0);
+});
+
+test('Preview readiness probes the admitted worker endpoint, never a new container loopback',async()=>{
+ const f=fixture();const session=await f.provider.create(f.input);
+ const process={processId:'preview',pid:42,port:3000,status:'running',logPath:'docker:xroga-process-'+'b'.repeat(32)} as ProjectRuntimeProcessRecord;
+ Object.assign(session,{processes:[process]});let requests=0;
+ Object.assign(f.options,{request:async(url:string,init:RequestInit)=>{requests++;assert.equal(url,'http://10.90.0.2:3000/');assert.equal(init.redirect,'error');return new Response('ok');}});
+ const provider=f.provider;
+ const before=f.dispatches;assert.equal(await provider.probeProcess(session,process),true);
+ assert.equal(requests,1);assert.equal(f.dispatches,before);
+ f.deny();await assert.rejects(provider.probeProcess(session,process));assert.equal(requests,1);
+});
+
+test('Preview readiness rejects substituted processes and addresses before HTTP and revocation after HTTP',async()=>{
+ for(const mode of ['foreign-process','pid','port','stopped','metadata','public','resolve-denial','revoke-during-fetch','temporary-http']){
+  const f=fixture();const session=await f.provider.create(f.input);
+  const process={processId:'preview',pid:42,port:3000,status:'running',logPath:'docker:xroga-process-'+'b'.repeat(32)} as ProjectRuntimeProcessRecord;
+  Object.assign(session,{processes:[structuredClone(process)]});let requests=0;
+  Object.assign(f.options,{request:async()=>{requests++;if(mode==='revoke-during-fetch')f.deny();return new Response('synthetic',{status:mode==='temporary-http'?503:200});}});
+  if(mode==='foreign-process')Object.assign(process,{processId:'foreign'});if(mode==='pid')Object.assign(process,{pid:999});
+  if(mode==='port')Object.assign(process,{port:8080});if(mode==='stopped')Object.assign(session.processes[0]!,{status:'stopped'});
+  if(mode==='metadata'||mode==='public')f.options.control.resolve=async()=>({privateIp:mode==='metadata'?'169.254.169.254':'8.8.8.8',sshHostKey:'synthetic'});
+  if(mode==='resolve-denial')f.options.control.resolve=async()=>{throw new Error('denied');};
+  if(mode==='temporary-http'){assert.equal(await f.provider.probeProcess(session,process),false);assert.equal(requests,1);}
+  else{await assert.rejects(f.provider.probeProcess(session,process));assert.equal(requests,mode==='revoke-during-fetch'?1:0,mode);}
+ }
 });

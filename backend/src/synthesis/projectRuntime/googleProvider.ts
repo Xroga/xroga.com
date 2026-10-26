@@ -46,6 +46,7 @@ export interface GoogleProjectRuntimeOptions {
   /** Existing session store records allocation before workspace/credential dispatch. */
   persistAllocation: (session:ProjectRuntimeSession)=>Promise<void>;
   nativeIdentity: ()=>Promise<void>;
+  request?: typeof fetch;
 }
 
 /** Physical provider under the existing runtime manager, never a scheduler or
@@ -177,6 +178,25 @@ export class GoogleProjectRuntimeProvider implements ProjectRuntimeProvider {
       ||!Number.isFinite(result.durationMs)||result.durationMs<0)fail('GCE_EXECUTION_RECEIPT_INVALID');
     return {exitCode:result.exitCode as number|null,stdout:result.stdout as string,stderr:result.stderr as string,
       timedOut:result.timedOut as boolean,killedForLimit:result.killedForLimit as boolean,durationMs:result.durationMs as number};
+  }
+  async probeProcess(session:ProjectRuntimeSession,process:ProjectRuntimeProcessRecord):Promise<boolean>{
+    const captured=structuredClone(session);const handle=this.handle(captured);
+    const saved=captured.processes.find(item=>item.processId===process.processId);
+    if(captured.status!=='running'||!saved||saved.status!=='running'||saved.port!==3000
+      ||saved.pid!==process.pid||saved.logPath!==process.logPath||process.port!==3000)fail('GCE_PREVIEW_PROCESS_NOT_ADMITTED');
+    const admit=this.admission(captured,'read');await admit();
+    const target=await this.options.control.resolve(handle);
+    if(!/^10\.90\.0\.(?:[2-9]|[1-5][0-9]|6[0-2])$/.test(target.privateIp))fail('GCE_PREVIEW_ADDRESS_NOT_ADMITTED');
+    await admit();
+    // A separate command container has a different localhost namespace. Probe
+    // the same fixed private endpoint used by the signed Preview gateway.
+    let ready=false;
+    try{
+      const response=await (this.options.request??fetch)(`http://${target.privateIp}:3000/`,
+        {redirect:'error',signal:AbortSignal.timeout(5000)});
+      ready=response.status<500;await response.body?.cancel();
+    }catch{ready=false;}
+    await admit();return ready;
   }
   async startProcess(session:ProjectRuntimeSession,input:ProviderRuntimeProcessStartInput){
     const payload=this.command(session,input,600000);
