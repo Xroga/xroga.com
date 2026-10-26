@@ -4937,11 +4937,13 @@
         "backend/src/ai/patchWorkspace.test.ts",
         "backend/src/ai/patches.test.ts",
         "backend/src/ai/qa.test.ts",
+        "backend/src/builder/audit.preview.test.ts",
         "backend/src/builder/builder.test.ts",
         "backend/src/builder/export/archive.test.ts",
         "backend/src/builder/github/github.test.ts",
         "backend/src/builder/golden.browser.integration.test.ts",
         "backend/src/builder/iteration.test.ts",
+        "backend/src/builder/journey.test.ts",
         "backend/src/builder/qa/qa.browser.integration.test.ts",
         "backend/src/builder/qa/qa.test.ts",
         "backend/src/builder/qa/repair.integration.test.ts",
@@ -10886,16 +10888,18 @@
       "id": "surface:76fa33edd61545407353",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/canonical.ts",
-      "sha256": "6173a5dec6f80b526ed0a0c1809a85f5e02d0a96c095fc38e37301793ae67e7c",
+      "sha256": "a147ca7a33679ae61f94727663fe2ea60ad86614ebd56f0d3e9eff26da9095d5",
       "symbols": [
         "binding",
         "canonicalBuildRunner",
         "canonicalPreviewPort",
         "grant",
+        "http",
         "latest",
         "none",
         "parent",
         "plan",
+        "ports",
         "probe",
         "process",
         "processRunning",
@@ -11240,7 +11244,7 @@
       "id": "surface:eb962119ea48d1a54962",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/data/schema.ts",
-      "sha256": "9ce979d825c9ad47d2360e5e7b69b65ba3e8ceb2e1dcb96a3a6e61c6de9ab807",
+      "sha256": "e421a6e5af2cef64e70c5ffd9bf734a53e5e865fb745023cb8bdbd1588041b50",
       "symbols": [
         "BOOKING",
         "BOOKING_RE",
@@ -11253,9 +11257,14 @@
         "TASKS_RE",
         "chooseSchemaArchetype",
         "common",
+        "databaseArtifacts",
         "generateSchema",
+        "have",
         "id",
         "markTables",
+        "migration",
+        "out",
+        "schema",
         "schemaFor",
         "schemaMarker",
         "text",
@@ -11273,6 +11282,8 @@
         "backend/src/builder/data/schema.integration.test.ts:11",
         "backend/src/builder/data/schema.test.ts:5",
         "backend/src/builder/data/service.ts:7",
+        "backend/src/builder/export/service.ts:4",
+        "backend/src/builder/github/service.ts:5",
         "backend/src/builder/golden.test.ts:6"
       ],
       "reachable": true,
@@ -11300,7 +11311,7 @@
       "id": "surface:ac42fb9f6ebb84a1c9e4",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/data/service.ts",
-      "sha256": "9196412d20c5ac26e88e4afba8ea71e391f21a6a38927a6687ae444a346a0b21",
+      "sha256": "eb4766bdf70ad1654b8c7984c472e832e6babc18c58d62279fdd3873883d230e",
       "symbols": [
         "BindPlan",
         "MigrationPlan",
@@ -11325,6 +11336,7 @@
         "plan",
         "problems",
         "project",
+        "required",
         "review",
         "schema",
         "table",
@@ -11512,7 +11524,7 @@
       "id": "surface:636f83ffe0ca065ab742",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/export/archive.ts",
-      "sha256": "401ca64dd6589e950fee084cf53e690ccacc0f0dde6d4266397548da22d89115",
+      "sha256": "918438de91ae99feafdb798d8f85843b32796637b83c28aa9908782b33d416b5",
       "symbols": [
         "ArchiveVerdict",
         "BuiltArchive",
@@ -11554,6 +11566,7 @@
         "excluded",
         "excludedPaths",
         "exported",
+        "extra",
         "extraLength",
         "file",
         "included",
@@ -11570,6 +11583,7 @@
         "parsed",
         "path",
         "pkg",
+        "present",
         "problems",
         "raw",
         "readZip",
@@ -11601,9 +11615,11 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/audit.delivery.test.ts:4",
         "backend/src/builder/export/archive.test.ts:10",
-        "backend/src/builder/export/service.ts:4",
+        "backend/src/builder/export/service.ts:5",
         "backend/src/builder/github/service.ts:4",
+        "backend/src/builder/journey.test.ts:6",
         "backend/src/routes/builderPhase2.test.ts:8"
       ],
       "reachable": true,
@@ -11620,7 +11636,9 @@
         "backend/src/builder/export/archive.ts#verifyArchive"
       ],
       "testCoverage": [
+        "backend/src/builder/audit.delivery.test.ts",
         "backend/src/builder/export/archive.test.ts",
+        "backend/src/builder/journey.test.ts",
         "backend/src/routes/builderPhase2.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -11634,7 +11652,7 @@
       "id": "surface:d2179257b69ba367c144",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/export/service.ts",
-      "sha256": "93b65b638f25cc84a40f189e04b15bc022a7eaf4000247a1646185153072d7bf",
+      "sha256": "49742f1e4bc7b07d12bdfd2d4abd3d5f157c665182d2247c08c2062baf893cb6",
       "symbols": [
         "ExportService",
         "archive",
@@ -11643,12 +11661,14 @@
         "saved"
       ],
       "imports": [
+        "../data/schema.js",
         "../phase2Store.js",
         "../service.js",
         "../types.js",
         "./archive.js"
       ],
       "runtimeImports": [
+        "backend/src/builder/data/schema.ts",
         "backend/src/builder/export/archive.ts",
         "backend/src/builder/types.ts"
       ],
@@ -11760,7 +11780,7 @@
         "backend/src/builder/github/fakeGitHub.testsupport.ts:3",
         "backend/src/builder/github/restPort.test.ts:4",
         "backend/src/builder/github/restPort.ts:6",
-        "backend/src/builder/github/service.ts:9"
+        "backend/src/builder/github/service.ts:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -11870,7 +11890,7 @@
       "id": "surface:f23963ddfa1269798b31",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/github/service.ts",
-      "sha256": "75cafc2802f313b8c7610fc7ac35b6e855925fdd65508b1239eedf86f79e6139",
+      "sha256": "3c8a0edf63738fd5d3cfcb37d5f000fe5f1aecc9913c6ecd2a151412af1fe8c2",
       "symbols": [
         "APPROVAL_TTL_MS",
         "COST_NOTE",
@@ -11893,6 +11913,7 @@
         "done",
         "error",
         "existing",
+        "existingBinding",
         "expires",
         "fail",
         "files",
@@ -11922,6 +11943,7 @@
       ],
       "imports": [
         "../../ai/patches.js",
+        "../data/schema.js",
         "../export/archive.js",
         "../operations.js",
         "../phase2Store.js",
@@ -11931,6 +11953,7 @@
         "node:crypto"
       ],
       "runtimeImports": [
+        "backend/src/builder/data/schema.ts",
         "backend/src/builder/export/archive.ts",
         "backend/src/builder/github/port.ts",
         "backend/src/builder/operations.ts",
@@ -12137,7 +12160,7 @@
       "id": "surface:d084f6a5c32bea9d4bbb",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/hosting/service.ts",
-      "sha256": "0223bb159c425eb43b392e49d5768046457c107bbe3ae6530b77ddfe82748dad",
+      "sha256": "fe31ca1c3f9b596e7ab2bf94b7ab982979dd3475f2122825695046b1619f4090",
       "symbols": [
         "COST_NOTE",
         "DEFAULT_MAX_POLLS",
@@ -12151,6 +12174,7 @@
         "RemoteVerification",
         "attempt",
         "connection",
+        "database",
         "deployment",
         "environment",
         "error",
@@ -12168,6 +12192,7 @@
         "name",
         "operation",
         "operations",
+        "owned",
         "parsed",
         "partial",
         "plan",
@@ -12180,6 +12205,7 @@
         "receipt",
         "remote",
         "results",
+        "reuse",
         "revision",
         "route",
         "routes",
@@ -12259,6 +12285,7 @@
       ],
       "callers": [
         "backend/src/builder/iteration.test.ts:7",
+        "backend/src/builder/journey.test.ts:7",
         "backend/src/routes/builderPhase2.ts:6"
       ],
       "reachable": true,
@@ -12270,7 +12297,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/builder/iteration.test.ts"
+        "backend/src/builder/iteration.test.ts",
+        "backend/src/builder/journey.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -12283,7 +12311,7 @@
       "id": "surface:1168be21153aaeae5516",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/operations.ts",
-      "sha256": "aa584a994bb145c9a5464eb2e8446297796c9e34406d045b5f2b0e0be8933785",
+      "sha256": "7e9df14f5ee0e60c150dd8202eeed70b85631da5bcf7b53b1439247db0801d28",
       "symbols": [
         "APPROVAL_TTL_MS",
         "OperationDeps",
@@ -12317,7 +12345,7 @@
       "callers": [
         "backend/src/builder/data/data.test.ts:5",
         "backend/src/builder/data/service.ts:3",
-        "backend/src/builder/github/service.ts:5",
+        "backend/src/builder/github/service.ts:6",
         "backend/src/builder/golden.test.ts:7",
         "backend/src/builder/hosting/hosting.test.ts:4",
         "backend/src/builder/hosting/service.ts:3"
@@ -12351,9 +12379,10 @@
       "id": "surface:83858c253ee3c7f3255c",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/phase2Bridge.ts",
-      "sha256": "986b16689c93e89a8d81b0a9c7ad0a95b6e35f920b1187876491ff898ee9b43f",
+      "sha256": "be3f29ff5706c1db6e5279bb6b175ee3c70c865abc8739b3be00284bf01be47b",
       "symbols": [
         "Phase2Services",
+        "PreviewControl",
         "active",
         "base",
         "binding",
@@ -12367,11 +12396,15 @@
         "github",
         "hosting",
         "httpProbe",
+        "inProcessQaAllowed",
         "latest",
         "marker",
+        "openQaDriver",
         "parsed",
         "phase2",
         "phase2ServicesFor",
+        "preview",
+        "project",
         "protectedBySso",
         "provenance",
         "qa",
@@ -12383,7 +12416,9 @@
         "started",
         "status",
         "store",
-        "text"
+        "target",
+        "text",
+        "verdict"
       ],
       "imports": [
         "../ai/pipeline.js",
@@ -12445,6 +12480,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/audit.verification.test.ts:84",
         "backend/src/builder/swarmBridge.ts:3",
         "backend/src/routes/builderPhase2.ts:7",
         "backend/src/routes/builderPhase3.ts:4"
@@ -12462,6 +12498,7 @@
       ],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/builder/audit.verification.test.ts",
         "backend/src/routes/builderPhase2.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -12709,6 +12746,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/audit.verification.test.ts:4",
         "backend/src/builder/golden.browser.integration.test.ts:8",
         "backend/src/builder/qa/qa.browser.integration.test.ts:9",
         "backend/src/builder/qa/qa.test.ts:6",
@@ -12725,6 +12763,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/builder/audit.verification.test.ts",
         "backend/src/builder/golden.browser.integration.test.ts",
         "backend/src/builder/qa/qa.browser.integration.test.ts",
         "backend/src/builder/qa/qa.test.ts"
@@ -12811,7 +12850,7 @@
       "id": "surface:bbfaa8438f1bbee4cd88",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/qa/qaService.ts",
-      "sha256": "4aae6a921e64a3a6a2b48d9438ffb59ae8580b422aab38f8fcc0aa5e406da140",
+      "sha256": "f94210ac5d2b62a7da7e852d521404cbd5f85f2e2a25fda12f632599cf1150d4",
       "symbols": [
         "QaService",
         "QaServiceDeps",
@@ -12996,7 +13035,7 @@
       "id": "surface:50e5a756503c2d2a9c1d",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/qa/runner.ts",
-      "sha256": "4e28c09db066559c181f27715725ed9d22b0bdca6c0d0d68e780f168ff24b9ca",
+      "sha256": "591361deea519856c24c80fc239240fc29dbe253275f6125b681ee141d56eb9b",
       "symbols": [
         "FEEDBACK_SELECTOR",
         "QaAssertion",
@@ -13055,6 +13094,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/audit.verification.test.ts:5",
         "backend/src/builder/golden.browser.integration.test.ts:11",
         "backend/src/builder/qa/qa.browser.integration.test.ts:11",
         "backend/src/builder/qa/qa.test.ts:7",
@@ -13074,6 +13114,7 @@
         "backend/src/builder/qa/runner.ts#evidence"
       ],
       "testCoverage": [
+        "backend/src/builder/audit.verification.test.ts",
         "backend/src/builder/golden.browser.integration.test.ts",
         "backend/src/builder/qa/qa.browser.integration.test.ts",
         "backend/src/builder/qa/qa.test.ts"
@@ -13144,7 +13185,7 @@
       "id": "surface:d344898f401969621e7c",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/readiness.ts",
-      "sha256": "b2142aeabe617a45441b0de9c278ea4552b97276143c2992ea0d95cf473ee758",
+      "sha256": "07f00ae887207284e2238f9c2a43e250c6afb0bf5ddd29515b6e7dbe1d6a926f",
       "symbols": [
         "ERROR_MARKERS",
         "ExecResult",
@@ -13208,7 +13249,7 @@
       "id": "surface:0349146c468fe4e18282",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/service.ts",
-      "sha256": "719fd7a3aeff6805f785b28f1813cfd663b0a6bd261da9a87ece124c93b5c82d",
+      "sha256": "2cedab622fc7569d7e847bb20cbe90e84988f9615731f6028f0cacb26dd34152",
       "symbols": [
         "BuildRunner",
         "BuildRunnerInput",
@@ -13287,6 +13328,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/audit.preview.test.ts:6",
         "backend/src/builder/builder.test.ts:9",
         "backend/src/builder/data/data.test.ts:6",
         "backend/src/builder/github/github.test.ts:7",
@@ -13314,11 +13356,14 @@
         "backend/src/builder/service.ts#verified"
       ],
       "testCoverage": [
+        "backend/src/builder/audit.preview.test.ts",
+        "backend/src/builder/audit.verification.test.ts",
         "backend/src/builder/builder.test.ts",
         "backend/src/builder/data/data.test.ts",
         "backend/src/builder/github/github.test.ts",
         "backend/src/builder/hosting/hosting.test.ts",
         "backend/src/builder/iteration.test.ts",
+        "backend/src/builder/journey.test.ts",
         "backend/src/builder/qa/qaService.test.ts",
         "backend/src/builder/qa/repair.integration.test.ts",
         "backend/src/routes/builder.test.ts",
@@ -13335,7 +13380,7 @@
       "id": "surface:d342d83ce1086354d886",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/servicesFixture.testsupport.ts",
-      "sha256": "645c6b833fa779bf4571c97373f36256685258c8b96476c5548f3dd40b752d37",
+      "sha256": "fe96ae77ce12ba3236e04ff41dca94508ff8f2e0d39ce0f831e05d3c67b7ac54",
       "symbols": [
         "ServicesFixture",
         "builder",
@@ -13343,10 +13388,14 @@
         "github",
         "githubService",
         "hosting",
+        "href",
         "makeServices",
         "okDriver",
         "okPage",
+        "path",
         "phase2",
+        "preview",
+        "project",
         "provenance",
         "qa",
         "remote",
@@ -13372,7 +13421,8 @@
         "./qa/qaService.js",
         "./qa/types.js",
         "./service.js",
-        "./store.js"
+        "./store.js",
+        "./types.js"
       ],
       "runtimeImports": [
         "backend/src/builder/data/fakeSupabase.testsupport.ts",
@@ -13386,12 +13436,17 @@
         "backend/src/builder/phase2Store.ts",
         "backend/src/builder/qa/qaService.ts",
         "backend/src/builder/service.ts",
-        "backend/src/builder/store.ts"
+        "backend/src/builder/store.ts",
+        "backend/src/builder/types.ts"
       ],
       "entryPoints": [],
       "callers": [
+        "backend/src/builder/audit.delivery.test.ts:5",
+        "backend/src/builder/audit.test.ts:4",
+        "backend/src/builder/audit.verification.test.ts:7",
         "backend/src/builder/golden.browser.integration.test.ts:12",
         "backend/src/builder/golden.test.ts:8",
+        "backend/src/builder/journey.test.ts:8",
         "backend/src/routes/builderPhase2.test.ts:18",
         "backend/src/routes/builderPhase3.test.ts:7"
       ],
@@ -13408,8 +13463,12 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/builder/audit.delivery.test.ts",
+        "backend/src/builder/audit.test.ts",
+        "backend/src/builder/audit.verification.test.ts",
         "backend/src/builder/golden.browser.integration.test.ts",
         "backend/src/builder/golden.test.ts",
+        "backend/src/builder/journey.test.ts",
         "backend/src/routes/builderPhase2.test.ts",
         "backend/src/routes/builderPhase3.test.ts"
       ],
@@ -13424,13 +13483,15 @@
       "id": "surface:e8f56d40c08bd1bc11d4",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/snapshot.ts",
-      "sha256": "0292619f1488edc3cd89f62d073eacbc6ffcf110f2bdc06f02a46fca6f8b1d8a",
+      "sha256": "dde214801c137e21ea94b7f8e3d5e32ad8646f787bcf7483513e2c55caecc7bf",
       "symbols": [
         "ALLOWED_ENV_EXAMPLE",
+        "JWT",
         "SECRET_CONTENT",
         "SECRET_PATH",
         "assertSnapshotAcceptable",
         "bytes",
+        "containsServiceRoleJwt",
         "created",
         "deleted",
         "diffSnapshots",
@@ -13438,9 +13499,12 @@
         "hash",
         "hashSnapshot",
         "isSafeProjectPath",
+        "looksLikeSecret",
+        "match",
         "modified",
         "next",
         "path",
+        "payload",
         "prior",
         "seen",
         "snapshotBytes"
@@ -13457,6 +13521,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/audit.delivery.test.ts:61",
         "backend/src/builder/builder.test.ts:10",
         "backend/src/builder/canonical.ts:10",
         "backend/src/builder/export/archive.test.ts:7",
@@ -13478,6 +13543,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/builder/audit.delivery.test.ts",
         "backend/src/builder/builder.test.ts",
         "backend/src/builder/export/archive.test.ts"
       ],
@@ -13537,6 +13603,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/audit.verification.test.ts:8",
         "backend/src/builder/builder.test.ts:8",
         "backend/src/builder/data/schema.test.ts:4",
         "backend/src/builder/export/archive.test.ts:6",
@@ -13557,6 +13624,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/builder/audit.verification.test.ts",
         "backend/src/builder/builder.test.ts",
         "backend/src/builder/data/schema.test.ts",
         "backend/src/builder/export/archive.test.ts",
@@ -13639,7 +13707,7 @@
       "id": "surface:d99ae49579eb8b9fd671",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/store.ts",
-      "sha256": "ca2dafba1e393054908c8a5f07bff8418859773a1850099b386150fda538a477",
+      "sha256": "a03b6e6bb8f403642ad9edb7cd7478fdeb55170421f4eea2873379dc3bce9951",
       "symbols": [
         "AppendRevisionInput",
         "AppendRevisionResult",
@@ -13692,6 +13760,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/audit.preview.test.ts:7",
         "backend/src/builder/builder.test.ts:12",
         "backend/src/builder/data/data.test.ts:7",
         "backend/src/builder/github/github.test.ts:8",
@@ -13701,7 +13770,7 @@
         "backend/src/builder/qa/qaService.test.ts:6",
         "backend/src/builder/qa/repair.integration.test.ts:10",
         "backend/src/builder/service.ts:12",
-        "backend/src/builder/servicesFixture.testsupport.ts:14",
+        "backend/src/builder/servicesFixture.testsupport.ts:15",
         "backend/src/builder/swarmBridge.ts:5",
         "backend/src/routes/builder.test.ts:8",
         "backend/src/routes/builderPhase2.test.ts:16"
@@ -13716,20 +13785,23 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/builder/store.ts:265 (user_id)",
-        "backend/src/builder/store.ts:274 (user_id)",
-        "backend/src/builder/store.ts:283 (user_id)",
-        "backend/src/builder/store.ts:290 (user_id)",
-        "backend/src/builder/store.ts:299 (user_id)",
-        "backend/src/builder/store.ts:309 (user_id)",
+        "backend/src/builder/store.ts:285 (user_id)",
+        "backend/src/builder/store.ts:294 (user_id)",
+        "backend/src/builder/store.ts:303 (user_id)",
+        "backend/src/builder/store.ts:310 (user_id)",
+        "backend/src/builder/store.ts:319 (user_id)",
+        "backend/src/builder/store.ts:326 (user_id)",
+        "backend/src/builder/store.ts:340 (user_id)",
         "backend/src/builder/store.ts:349 (user_id)",
-        "backend/src/builder/store.ts:356 (user_id)",
-        "backend/src/builder/store.ts:366 (user_id)"
+        "backend/src/builder/store.ts:389 (user_id)",
+        "backend/src/builder/store.ts:396 (user_id)",
+        "backend/src/builder/store.ts:406 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/builder/audit.preview.test.ts",
         "backend/src/builder/builder.test.ts",
         "backend/src/builder/data/data.test.ts",
         "backend/src/builder/github/github.test.ts",
@@ -13751,12 +13823,13 @@
       "id": "surface:0576bf3489c187a1470e",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/swarmBridge.ts",
-      "sha256": "f738b626401508c64a6ffad544627e980a149fa7ae6a31917e207b8c9bb6e976",
+      "sha256": "5323b1f398b5a719a02f686025b2e1fb4ee79f0062a139df77be991d837f0c21",
       "symbols": [
         "BuilderRunResult",
         "builderProjectExists",
         "builderServiceFor",
         "closeBuilderRun",
+        "closedRuns",
         "context",
         "error",
         "openBuilderRun",
@@ -13806,7 +13879,7 @@
       "id": "surface:bd7f38d93d1a0ea6942e",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/builder/types.ts",
-      "sha256": "3276ac27f09a8cd43010ffd5e93afc0a71813ae959c92ad57feabbcfa06ff562",
+      "sha256": "27d3f9313bf3235b15cc5f9a34ee76590ee6039cfb28778a7f6243f4a6f34240",
       "symbols": [
         "BuildSpec",
         "BuilderError",
@@ -13836,6 +13909,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/builder/audit.delivery.test.ts:6",
+        "backend/src/builder/audit.test.ts:5",
         "backend/src/builder/builder.test.ts:13",
         "backend/src/builder/data/data.test.ts:8",
         "backend/src/builder/data/env.ts:1",
@@ -13843,11 +13918,12 @@
         "backend/src/builder/export/archive.ts:7",
         "backend/src/builder/export/service.ts:3",
         "backend/src/builder/github/github.test.ts:9",
-        "backend/src/builder/github/service.ts:8",
+        "backend/src/builder/github/service.ts:9",
         "backend/src/builder/golden.test.ts:9",
         "backend/src/builder/hosting/hosting.test.ts:8",
         "backend/src/builder/hosting/service.ts:5",
         "backend/src/builder/iteration.test.ts:10",
+        "backend/src/builder/journey.test.ts:10",
         "backend/src/builder/operations.ts:5",
         "backend/src/builder/phase2Bridge.ts:26",
         "backend/src/builder/phase2Store.ts:6",
@@ -13856,6 +13932,7 @@
         "backend/src/builder/qa/repair.integration.test.ts:11",
         "backend/src/builder/qa/repair.ts:4",
         "backend/src/builder/service.ts:13",
+        "backend/src/builder/servicesFixture.testsupport.ts:14",
         "backend/src/builder/snapshot.ts:4",
         "backend/src/builder/spec.ts:5",
         "backend/src/builder/starters.ts:5",
@@ -13879,6 +13956,8 @@
         "backend/src/builder/types.ts#VerificationStatus"
       ],
       "testCoverage": [
+        "backend/src/builder/audit.delivery.test.ts",
+        "backend/src/builder/audit.test.ts",
         "backend/src/builder/builder.test.ts",
         "backend/src/builder/data/data.test.ts",
         "backend/src/builder/export/archive.test.ts",
@@ -13886,6 +13965,7 @@
         "backend/src/builder/golden.test.ts",
         "backend/src/builder/hosting/hosting.test.ts",
         "backend/src/builder/iteration.test.ts",
+        "backend/src/builder/journey.test.ts",
         "backend/src/builder/qa/qaService.test.ts",
         "backend/src/builder/qa/repair.integration.test.ts"
       ],
@@ -21375,7 +21455,7 @@
       "id": "surface:18308761a6b13a22efcc",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "sha256": "286dc018ef3eba611c5b2104d28dbdb921fbf530b74eceb1a7f7b87ad4c95615",
+      "sha256": "73d193b5be2061478b988f2f985c8cd85858aa7ed8eeb1a900a87a207575a868",
       "symbols": [
         "OPERATION_KEY",
         "Phase2ServicesFactory",
@@ -40413,9 +40493,11 @@
       ],
       "testCoverage": [
         "backend/src/ai/providerPolicy.test.ts",
+        "backend/src/builder/audit.preview.test.ts",
         "backend/src/builder/builder.test.ts",
         "backend/src/builder/github/github.test.ts",
         "backend/src/builder/iteration.test.ts",
+        "backend/src/builder/journey.test.ts",
         "backend/src/synthesis/universalEntrypoint.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -75056,7 +75138,7 @@
       "id": "surface:fc7df3b8d9533185c8de",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/BuilderProjectPanel.tsx",
-      "sha256": "c10882a8bc592ff5a4ced8b540c3b70d275a04e922c7d468d9107e14c2d9d4da",
+      "sha256": "93b5e0ae80a1734a2c16cb6ba8c4cc5c48295300e71a0c4a0e952b945ce34c90",
       "symbols": [
         "BuilderProjectPanel",
         "PREVIEW_LABEL",
@@ -75078,6 +75160,7 @@
         "./builder/BuilderTests",
         "@/lib/builderApi",
         "@/lib/utils",
+        "@/store/useBuilderProjectStore",
         "lucide-react",
         "react"
       ],
@@ -75089,7 +75172,8 @@
         "frontend/src/components/terminal/builder/BuilderProvenance.tsx",
         "frontend/src/components/terminal/builder/BuilderTests.tsx",
         "frontend/src/lib/builderApi.ts",
-        "frontend/src/lib/utils.ts"
+        "frontend/src/lib/utils.ts",
+        "frontend/src/store/useBuilderProjectStore.ts"
       ],
       "entryPoints": [
         "frontend/src/app/(workspace)/workspace/page.tsx"
@@ -75833,7 +75917,7 @@
       "id": "surface:b8d1b0d4b81701631055",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/DevWorkspacePanel.tsx",
-      "sha256": "c19928333adc9a57e59246319068e528c1dd99e390d02c7de061130a74916c0d",
+      "sha256": "e69a5ccef8fd7f50f362bcfd7d4cc7050ba30cf148fa4037b0ac37139095c930",
       "symbols": [
         "DevWorkspacePanel",
         "PROJECT_TAB",
@@ -75856,6 +75940,7 @@
         "lastChanges",
         "lastFileTrail",
         "lastUpdateAt",
+        "live",
         "name",
         "openFilePath",
         "openFilePaths",
@@ -75868,6 +75953,7 @@
         "runtimeUrl",
         "sandboxDoc",
         "setActiveTab",
+        "setBuilderProjectId",
         "setOpenFilePath",
         "setWorkspaceOpen",
         "status",
@@ -80258,7 +80344,7 @@
       "id": "surface:30d1cd09ce59a5713f6b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/builder/BuilderDatabase.tsx",
-      "sha256": "3afad16684167d137c3ca702d2d5f0de6723011d644103b744659ec84b5910e5",
+      "sha256": "fd684c05f180af0131cd35321141c8b860968893bdb87dbfcd7a2c458c231260",
       "symbols": [
         "BuilderDatabase",
         "Pending",
@@ -80289,7 +80375,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/BuilderProjectPanel.tsx:15"
+        "frontend/src/components/terminal/BuilderProjectPanel.tsx:16"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80314,7 +80400,7 @@
       "id": "surface:ac37752e3dd32f9768dd",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/builder/BuilderDelivery.tsx",
-      "sha256": "a318150907ce793a9836d457eb91e5ba7a8c4a54a693a3c0c24302e14ffce479",
+      "sha256": "3afe31c3c7a5faef73a02cd1d76849e969b9ade17c340eae2e3bbed3b95be414",
       "symbols": [
         "BuilderDelivery",
         "STATUS_TEXT",
@@ -80346,7 +80432,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/BuilderProjectPanel.tsx:16"
+        "frontend/src/components/terminal/BuilderProjectPanel.tsx:17"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80397,7 +80483,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/BuilderProjectPanel.tsx:17"
+        "frontend/src/components/terminal/BuilderProjectPanel.tsx:18"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80422,11 +80508,12 @@
       "id": "surface:d979e03132893e2884c7",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/builder/BuilderHosting.tsx",
-      "sha256": "dfb07936dd1af29aa814c030c15e1fdb2f2c7f816e96e9cadff58d2af8260273",
+      "sha256": "e536f1e106471b9ca2991fb5bf617270fb13bd0d966115297451b66279f56cde",
       "symbols": [
         "BuilderHosting",
         "STATUS_TEXT",
         "cancel",
+        "connected",
         "error",
         "guarded",
         "latestPreview",
@@ -80435,9 +80522,15 @@
         "open",
         "preparePreview",
         "prepareProduction",
+        "previewIsOld",
         "previewUrl",
+        "previewedRevision",
+        "previousScopeId",
+        "productionCard",
+        "productionIsOld",
         "productionUrl",
         "publish",
+        "publishedRevision",
         "remote",
         "remoteStatus",
         "result",
@@ -80459,7 +80552,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/BuilderProjectPanel.tsx:18"
+        "frontend/src/components/terminal/BuilderProjectPanel.tsx:19"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80509,7 +80602,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/BuilderProjectPanel.tsx:19"
+        "frontend/src/components/terminal/BuilderProjectPanel.tsx:20"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80534,7 +80627,7 @@
       "id": "surface:3facbfbe4fdd3be082c1",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/terminal/builder/BuilderTests.tsx",
-      "sha256": "aa6af047e02b27da46fca08d07f1eee9b58400bc62f9d38a178f7ea84340a78b",
+      "sha256": "fd391ef4fb052676fba61f54e8297d7f7f4f63dfaeb1124e9b3109b7ed3a22a7",
       "symbols": [
         "BuilderTests",
         "Icon",
@@ -80543,6 +80636,7 @@
         "failed",
         "fix",
         "load",
+        "restartPreview",
         "result",
         "run"
       ],
@@ -80562,7 +80656,7 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/terminal/BuilderProjectPanel.tsx:20"
+        "frontend/src/components/terminal/BuilderProjectPanel.tsx:21"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -84795,7 +84889,7 @@
         "frontend/src/components/terminal/builder/BuilderTests.tsx:6",
         "frontend/src/lib/builderApiPhase2.ts:5",
         "frontend/src/lib/builderApiPhase3.ts:3",
-        "frontend/src/lib/builderChat.ts:3"
+        "frontend/src/lib/builderChat.ts:5"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -84817,7 +84911,7 @@
       "id": "surface:e3db39ea0a320487989b",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/builderApiPhase2.ts",
-      "sha256": "be69b888c42d22151791f761547d924b84c68a4195a775182c53e92c0c0f4059",
+      "sha256": "14c5c4bd11f8e0678d4dc86ac4e8759887f127ae155a2ea986cd8b6414dc6c6e",
       "symbols": [
         "FileDiff",
         "GitHubOperation",
@@ -84865,7 +84959,7 @@
         "frontend/src/components/terminal/builder/BuilderHistory.tsx:7",
         "frontend/src/components/terminal/builder/BuilderHosting.tsx:7",
         "frontend/src/components/terminal/builder/BuilderTests.tsx:7",
-        "frontend/src/lib/builderChat.ts:4"
+        "frontend/src/lib/builderChat.ts:6"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -84949,10 +85043,11 @@
       "id": "surface:5a4fd8fff7f7a25154e4",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/builderChat.ts",
-      "sha256": "7be3fcebff010c2b2e4b2286419975a0e3034408e3636f581f20ed02da3a8115",
+      "sha256": "a43028b120b43f4d7a2dd32357268d9dc51e31b2cd75ff714919b87e2b68aac9",
       "symbols": [
         "createNew",
         "decision",
+        "error",
         "key",
         "resolveBuilderProject",
         "store"
@@ -84960,7 +85055,8 @@
       "imports": [
         "@/lib/builderApi",
         "@/lib/builderApiPhase2",
-        "@/store/useBuilderProjectStore"
+        "@/store/useBuilderProjectStore",
+        "react-hot-toast"
       ],
       "runtimeImports": [
         "frontend/src/lib/builderApi.ts",
@@ -84979,7 +85075,9 @@
       ],
       "reachable": true,
       "persistenceDependencies": [],
-      "externalProviderDependencies": [],
+      "externalProviderDependencies": [
+        "react-hot-toast"
+      ],
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
@@ -95476,7 +95574,7 @@
         "frontend/src/components/terminal/BlackHoleVButton.tsx:5",
         "frontend/src/components/terminal/BuildCodeSandbox.tsx:7",
         "frontend/src/components/terminal/BuildTodoList.tsx:4",
-        "frontend/src/components/terminal/BuilderProjectPanel.tsx:14",
+        "frontend/src/components/terminal/BuilderProjectPanel.tsx:15",
         "frontend/src/components/terminal/CapacityUnavailableCard.tsx:5",
         "frontend/src/components/terminal/ChatBarActionsMenu.tsx:13",
         "frontend/src/components/terminal/ChatBarButtons.tsx:3",
@@ -97421,8 +97519,9 @@
         "frontend/src/app/(workspace)/workspace/page.tsx"
       ],
       "callers": [
+        "frontend/src/components/terminal/BuilderProjectPanel.tsx:14",
         "frontend/src/components/terminal/DevWorkspacePanel.tsx:44",
-        "frontend/src/lib/builderChat.ts:5"
+        "frontend/src/lib/builderChat.ts:7"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -106009,7 +106108,7 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:3f227621d6b3fa50175a",
+      "id": "registration:3ac8b2b390becbc81859",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
       "line": 89,
       "receiver": "router",
@@ -106023,9 +106122,23 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:c922afa0849ecbd634ea",
+      "id": "registration:3b8fa71e486a710e312b",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 94,
+      "line": 99,
+      "receiver": "router",
+      "method": "post",
+      "path": "/projects/:projectId/preview/restart",
+      "handlers": [
+        "handle()"
+      ],
+      "scope": "function",
+      "functionName": "createBuilderPhase2Router",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:a03c1c87eac051826e97",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 104,
       "receiver": "router",
       "method": "post",
       "path": "/projects/:projectId/qa",
@@ -106037,9 +106150,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:1aae89a9aade8f7e8a2b",
+      "id": "registration:c56fbaded26b933800f2",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 99,
+      "line": 109,
       "receiver": "router",
       "method": "post",
       "path": "/projects/:projectId/verify-and-repair",
@@ -106051,9 +106164,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:9620fe1cb4be0950daf5",
+      "id": "registration:1c20e1cc5261e7fbc46b",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 107,
+      "line": 117,
       "receiver": "router",
       "method": "get",
       "path": "/projects/:projectId/qa",
@@ -106065,9 +106178,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:188823433f65a83614b0",
+      "id": "registration:1a52ddc122e11d189ece",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 114,
+      "line": 124,
       "receiver": "router",
       "method": "get",
       "path": "/projects/:projectId/qa/:verificationId",
@@ -106079,9 +106192,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:203b41b0fb4a0e49c502",
+      "id": "registration:8dbac1258373fad560f3",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 119,
+      "line": 129,
       "receiver": "router",
       "method": "get",
       "path": "/projects/:projectId/export.zip",
@@ -106093,9 +106206,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:0b337e6c08e1ceb2e2b4",
+      "id": "registration:a35efd59ae15724bec90",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 132,
+      "line": 142,
       "receiver": "router",
       "method": "get",
       "path": "/github/targets",
@@ -106107,9 +106220,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:8d6475ed3d056ceebea9",
+      "id": "registration:665faf9a1f826904a6f7",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 136,
+      "line": 146,
       "receiver": "router",
       "method": "get",
       "path": "/projects/:projectId/github",
@@ -106121,9 +106234,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:b1d8ff59f9af19b5dfd5",
+      "id": "registration:3fbdb9b56aa41fc292d2",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 141,
+      "line": 151,
       "receiver": "router",
       "method": "post",
       "path": "/projects/:projectId/github/prepare",
@@ -106135,9 +106248,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:e5c592f43b5825365d2a",
+      "id": "registration:d392081e1db66d898e77",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 152,
+      "line": 162,
       "receiver": "router",
       "method": "post",
       "path": "/projects/:projectId/github/sync/prepare",
@@ -106149,9 +106262,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:637f7b4f7d5b653a7154",
+      "id": "registration:22d389839e30c370514d",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 158,
+      "line": 168,
       "receiver": "router",
       "method": "post",
       "path": "/projects/:projectId/github/operations/:operationId/approve",
@@ -106163,9 +106276,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:4d38cea49f46e27eb115",
+      "id": "registration:362ef9775950349ee4c9",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 164,
+      "line": 174,
       "receiver": "router",
       "method": "post",
       "path": "/projects/:projectId/github/operations/:operationId/execute",
@@ -106177,9 +106290,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:38a946fbe097c3d1ed60",
+      "id": "registration:37ab775afe43144725ac",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 168,
+      "line": 178,
       "receiver": "router",
       "method": "post",
       "path": "/projects/:projectId/github/operations/:operationId/cancel",
@@ -113379,8 +113492,8 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:ba352fa5b6e0b1c0cf3a",
-      "registrationId": "registration:3f227621d6b3fa50175a",
+      "id": "route-unmounted:3c18755e51ca455ea5d1",
+      "registrationId": "registration:3ac8b2b390becbc81859",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
       "line": 89,
       "method": "POST",
@@ -113392,10 +113505,23 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:06f3b0ee1d97f7ae520f",
-      "registrationId": "registration:c922afa0849ecbd634ea",
+      "id": "route-unmounted:4c87742b8269b347ef24",
+      "registrationId": "registration:3b8fa71e486a710e312b",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 94,
+      "line": 99,
+      "method": "POST",
+      "path": "/projects/:projectId/preview/restart",
+      "mountChain": [],
+      "authBoundary": [],
+      "reachable": false,
+      "state": "DEAD_OR_UNREACHABLE",
+      "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
+    },
+    {
+      "id": "route-unmounted:0507479bc5205c1ec1c1",
+      "registrationId": "registration:a03c1c87eac051826e97",
+      "sourcePath": "backend/src/routes/builderPhase2.ts",
+      "line": 104,
       "method": "POST",
       "path": "/projects/:projectId/qa",
       "mountChain": [],
@@ -113405,10 +113531,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:9ad0bdc7c769990b386e",
-      "registrationId": "registration:1aae89a9aade8f7e8a2b",
+      "id": "route-unmounted:22f7a8c8a322760d5756",
+      "registrationId": "registration:c56fbaded26b933800f2",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 99,
+      "line": 109,
       "method": "POST",
       "path": "/projects/:projectId/verify-and-repair",
       "mountChain": [],
@@ -113418,10 +113544,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:bb37a65baff25f97bf7a",
-      "registrationId": "registration:9620fe1cb4be0950daf5",
+      "id": "route-unmounted:1fb0312d75f83519abdb",
+      "registrationId": "registration:1c20e1cc5261e7fbc46b",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 107,
+      "line": 117,
       "method": "GET",
       "path": "/projects/:projectId/qa",
       "mountChain": [],
@@ -113431,10 +113557,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:c4d341d27f563aef3d14",
-      "registrationId": "registration:188823433f65a83614b0",
+      "id": "route-unmounted:3f1cd7e4db4018b61a1f",
+      "registrationId": "registration:1a52ddc122e11d189ece",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 114,
+      "line": 124,
       "method": "GET",
       "path": "/projects/:projectId/qa/:verificationId",
       "mountChain": [],
@@ -113444,10 +113570,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:e34782899ae18f612c12",
-      "registrationId": "registration:203b41b0fb4a0e49c502",
+      "id": "route-unmounted:2f9cb64611bfcc2e55b3",
+      "registrationId": "registration:8dbac1258373fad560f3",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 119,
+      "line": 129,
       "method": "GET",
       "path": "/projects/:projectId/export.zip",
       "mountChain": [],
@@ -113457,10 +113583,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:4fbc63876b3222a1149f",
-      "registrationId": "registration:0b337e6c08e1ceb2e2b4",
+      "id": "route-unmounted:d4b1d7e255416a8b6113",
+      "registrationId": "registration:a35efd59ae15724bec90",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 132,
+      "line": 142,
       "method": "GET",
       "path": "/github/targets",
       "mountChain": [],
@@ -113470,10 +113596,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:69dda6dd69f7fb619562",
-      "registrationId": "registration:8d6475ed3d056ceebea9",
+      "id": "route-unmounted:53e98c1c32f5ba314b24",
+      "registrationId": "registration:665faf9a1f826904a6f7",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 136,
+      "line": 146,
       "method": "GET",
       "path": "/projects/:projectId/github",
       "mountChain": [],
@@ -113483,10 +113609,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:13723ed390d77983b95d",
-      "registrationId": "registration:b1d8ff59f9af19b5dfd5",
+      "id": "route-unmounted:5a8120828f130b024b22",
+      "registrationId": "registration:3fbdb9b56aa41fc292d2",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 141,
+      "line": 151,
       "method": "POST",
       "path": "/projects/:projectId/github/prepare",
       "mountChain": [],
@@ -113496,10 +113622,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:f2248dad647bb90efd1e",
-      "registrationId": "registration:e5c592f43b5825365d2a",
+      "id": "route-unmounted:0f7d3bbd99d41d99e8e6",
+      "registrationId": "registration:d392081e1db66d898e77",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 152,
+      "line": 162,
       "method": "POST",
       "path": "/projects/:projectId/github/sync/prepare",
       "mountChain": [],
@@ -113509,10 +113635,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:cf3c0cdce49c6b494967",
-      "registrationId": "registration:637f7b4f7d5b653a7154",
+      "id": "route-unmounted:92c5c6b2fe018b5f479c",
+      "registrationId": "registration:22d389839e30c370514d",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 158,
+      "line": 168,
       "method": "POST",
       "path": "/projects/:projectId/github/operations/:operationId/approve",
       "mountChain": [],
@@ -113522,10 +113648,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:016bc29886baffbce409",
-      "registrationId": "registration:4d38cea49f46e27eb115",
+      "id": "route-unmounted:082920eed2ff36119b07",
+      "registrationId": "registration:362ef9775950349ee4c9",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 164,
+      "line": 174,
       "method": "POST",
       "path": "/projects/:projectId/github/operations/:operationId/execute",
       "mountChain": [],
@@ -113535,10 +113661,10 @@
       "reason": "No mount chain from backend/src/index.ts; not treated as a reachable endpoint."
     },
     {
-      "id": "route-unmounted:4313ef2d28133ee085d6",
-      "registrationId": "registration:38a946fbe097c3d1ed60",
+      "id": "route-unmounted:b8c51f9adfe1dac6df4d",
+      "registrationId": "registration:37ab775afe43144725ac",
       "sourcePath": "backend/src/routes/builderPhase2.ts",
-      "line": 168,
+      "line": 178,
       "method": "POST",
       "path": "/projects/:projectId/github/operations/:operationId/cancel",
       "mountChain": [],
@@ -115132,6 +115258,13 @@
       "version": "20261026020000",
       "order": 150,
       "sha256": "80aad5ff43a0d1fd3c3664941e587257a44617cd77e852c71bb3600da62606b1"
+    },
+    {
+      "id": "migration:5405002f46cf78eee721",
+      "sourcePath": "supabase/migrations/20261026030000_builder_preview_readiness.sql",
+      "version": "20261026030000",
+      "order": 151,
+      "sha256": "40e36c6eebc84058f4e655a37d707c02c9f6d2eae4de918a64e89bc750519263"
     }
   ],
   "workflows": [
@@ -115165,7 +115298,7 @@
     {
       "id": "workflow:61c79996988bb0bc60bd",
       "sourcePath": ".github/workflows/builder-phase1.yml",
-      "sha256": "e8b7e2f40cee8f844244607f28427edc05422e7b3794af4997058a6d02bd7c04",
+      "sha256": "2c302d8811cb1e9dc78cd4f4782b313be5402014600e09dd6917b5877daa17b3",
       "sourceEntrypoints": [],
       "hasSchedule": false
     },
@@ -115479,9 +115612,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:41b3360ee76a219364e0",
+      "id": "finding:ead59e372fbd5d96a711",
       "sourcePath": "backend/src/builder/data/schema.ts",
-      "line": 182,
+      "line": 184,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -118019,9 +118152,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:58b433b5734dd03fbb38",
+      "id": "finding:3ad33f486ae3aa0d0247",
       "sourcePath": "frontend/src/components/terminal/DevWorkspacePanel.tsx",
-      "line": 392,
+      "line": 400,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -123020,6 +123153,34 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:0ed6f73056a2fadca31b",
+      "sourcePath": "backend/src/builder/audit.delivery.test.ts",
+      "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:3a3dab327f67e6a75359",
+      "sourcePath": "backend/src/builder/audit.preview.test.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:1bec6a399cd03d0abff9",
+      "sourcePath": "backend/src/builder/audit.test.ts",
+      "declaredTests": 6,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:bef66b14cc5168963755",
+      "sourcePath": "backend/src/builder/audit.verification.test.ts",
+      "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:9c8f19792bf12d2488df",
       "sourcePath": "backend/src/builder/builder.test.ts",
       "declaredTests": 38,
@@ -123111,6 +123272,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:93fa25fb6180cff6405a",
+      "sourcePath": "backend/src/builder/journey.test.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:4c723fa75bf2f47450c6",
       "sourcePath": "backend/src/builder/phase2Store.integration.test.ts",
       "declaredTests": 9,
@@ -123155,7 +123323,7 @@
     {
       "id": "test-suite:8571d5c89abe127a7946",
       "sourcePath": "backend/src/builder/store.integration.test.ts",
-      "declaredTests": 8,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -123850,7 +124018,7 @@
     {
       "id": "test-suite:6cb70cbc2ce87b1d9052",
       "sourcePath": "backend/src/routes/builderPhase3.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -126368,6 +126536,13 @@
     {
       "id": "test-suite:3facaf2902c4b18e4d22",
       "sourcePath": "frontend/src/lib/avatarPersistence.test.ts",
+      "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:5d61f72e5d124072f44d",
+      "sourcePath": "frontend/src/lib/builderApiContract.test.ts",
       "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
