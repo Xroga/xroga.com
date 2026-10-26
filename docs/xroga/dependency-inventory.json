@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "acc5076d245c98197a42b4deb880a22f518f2e1c",
+  "source_sha": "e35a09a4d497577ee362a8402275d97425c7a594",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -7312,7 +7312,9 @@
         "backend/src/organicIntelligence/intelligence.ts",
         "backend/src/routes/browserRuns.ts",
         "backend/src/routes/businessAutomationWebhook.ts",
+        "backend/src/routes/guestChat.ts",
         "backend/src/runtime/readiness.ts",
+        "backend/src/runtime/startupPolicy.ts",
         "backend/src/services/integrations/businessAutomations.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/storage/databaseTls.ts",
@@ -7383,6 +7385,8 @@
         "KLING_API_KEY",
         "KLING_API_SECRET",
         "KLING_SECRET_KEY",
+        "K_REVISION",
+        "K_SERVICE",
         "LANG",
         "LC_ALL",
         "LEGACY_R2_PREFIX",
@@ -7468,6 +7472,7 @@
         "XROGA_SOFTWARE_AGENT_V2",
         "XROGA_SOFTWARE_AGENT_V2_SHADOW",
         "XROGA_TEST_CREDENTIAL_KEK",
+        "XROGA_TRUSTED_PROXY_HOPS",
         "ZHIPU_API_KEY"
       ],
       "inbound_callers": [
@@ -7500,7 +7505,9 @@
         "backend/src/organicIntelligence/intelligence.ts",
         "backend/src/routes/browserRuns.ts",
         "backend/src/routes/businessAutomationWebhook.ts",
+        "backend/src/routes/guestChat.ts",
         "backend/src/runtime/readiness.ts",
+        "backend/src/runtime/startupPolicy.ts",
         "backend/src/services/integrations/businessAutomations.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/storage/databaseTls.ts",
@@ -8553,6 +8560,7 @@
     {
       "name": "FLY_APP_NAME",
       "consuming_sources": [
+        "backend/src/routes/guestChat.ts",
         "backend/src/runtime/startupPolicy.ts",
         "backend/src/sandbox/flyMachineSandbox.ts",
         "backend/src/scripts/verifyFlySandboxBrowser.ts",
@@ -9450,6 +9458,45 @@
       "mechanisms": [
         "DECLARED_SECRET_ALIAS",
         "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "K_REVISION",
+      "consuming_sources": [
+        "backend/src/routes/browserRuns.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "K_SERVICE",
+      "consuming_sources": [
+        "backend/src/routes/guestChat.ts",
+        "backend/src/runtime/startupPolicy.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
       ],
       "dependency_ids": [
         "runtime-controls-and-conditional-aliases"
@@ -13264,6 +13311,25 @@
       ]
     },
     {
+      "name": "XROGA_TRUSTED_PROXY_HOPS",
+      "consuming_sources": [
+        "backend/src/routes/guestChat.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "YOUTUBE_API_KEY",
       "consuming_sources": [
         "backend/src/config/envSecrets.ts",
@@ -13506,7 +13572,7 @@
     },
     {
       "path": ".github/workflows/storage-phase1.yml",
-      "sha256": "52622aca1b9c900732274ae8c0f486ff0e331cfa1aaa8f4ee1820bfdd81c5ac6"
+      "sha256": "f8a0406be90aa5b49d4e1920a4989526cb1e227532aae7f5989928df916631d2"
     },
     {
       "path": ".github/workflows/supabase-migrate.yml",
@@ -14282,7 +14348,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "ae363e1344a93b441ec9a10dade0c53ba67bd39e34958cc9332849636082741b"
+      "sha256": "b7e5717aac2dccf5fe1631692d433660630337e1631a18041fa74faa83d2261e"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -14706,7 +14772,7 @@
     },
     {
       "path": "backend/src/routes/browserRuns.ts",
-      "sha256": "0b123cffa6d286d7b01e1e686c372986473d21773b3f8cff4885eaf6254d4d3f"
+      "sha256": "a3a524695a9e87a93e4f42ec70a7816729d05e2bed3d3b7bc0bf91320aa805fb"
     },
     {
       "path": "backend/src/routes/businessAutomationScheduler.ts",
@@ -14758,7 +14824,7 @@
     },
     {
       "path": "backend/src/routes/guestChat.ts",
-      "sha256": "66db2da449ef1541c41333501630b0065ff880a18a181d76fa2d408354341b77"
+      "sha256": "55c05733454f26cecc0a0b07b5d88465300dd73397e8414ab8269d95c5108acc"
     },
     {
       "path": "backend/src/routes/influencer.ts",
@@ -14829,6 +14895,10 @@
       "sha256": "cbd8ac78b470eb2eb6b2cb0295a1e5377b05e74266d19a778b7940b3eae59890"
     },
     {
+      "path": "backend/src/routes/storageReconcileScheduler.ts",
+      "sha256": "e8a04089f48c8c5a9868da40fdaaee78ea39933fa60e35da5a3b8f0c9c92b5f4"
+    },
+    {
       "path": "backend/src/routes/supabaseOAuth.ts",
       "sha256": "031fb52e095ac060d1637487e7370f50fa268ac7b6b0728602d158717d931293"
     },
@@ -14878,7 +14948,7 @@
     },
     {
       "path": "backend/src/runtime/startupPolicy.ts",
-      "sha256": "e3c6d7ad91ccde602cd040a33c689bdab4dfd7c6d852a4a664ae87306710c6ac"
+      "sha256": "23523e0d510950be13498e5ca959159a0a75df81d7cf3eab1ca6e83e48c8bf4b"
     },
     {
       "path": "backend/src/sandbox/flyMachineSandbox.ts",
@@ -15554,7 +15624,7 @@
     },
     {
       "path": "backend/src/storage/runtime.ts",
-      "sha256": "087bec8f0ab60210f9e5a3f6a6f7a32aa47f0288de9cdaeeba044f217348d1cc"
+      "sha256": "72909703d4f13a8058a99e471c8ae52011df547eb045ce191e61b9ae035be2ef"
     },
     {
       "path": "backend/src/storage/storageService.ts",
@@ -20855,42 +20925,42 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 105,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 106,
       "credentialsInUrl": false
     },
     {
-      "hostname": "www.xroga.com",
+      "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 107,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xrogaaicom.vercel.app",
+      "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 108,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "xrogaaicom.vercel.app",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 109,
       "credentialsInUrl": false
     },
     {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 110,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 199,
+      "line": 201,
       "credentialsInUrl": false
     },
     {
@@ -28548,7 +28618,7 @@
     },
     {
       "path": "backend/src/routes/browserRuns.ts",
-      "line": 57,
+      "line": 61,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28604,7 +28674,7 @@
     },
     {
       "path": "backend/src/routes/guestChat.ts",
-      "line": 436,
+      "line": 449,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
