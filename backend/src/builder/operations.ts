@@ -12,6 +12,8 @@ import { BuilderError, type ExternalAction, type ExternalOperation, type Externa
  */
 
 export const APPROVAL_TTL_MS = 15 * 60 * 1000;
+/** Longer than any single provider operation (a deployment poll is bounded at about ten minutes). */
+export const STALE_EXECUTING_MS = 20 * 60 * 1000;
 
 const stable = (value: unknown): string => {
   if (Array.isArray(value)) return `[${value.map(stable).join(',')}]`;
@@ -23,6 +25,21 @@ const stable = (value: unknown): string => {
 
 export const digestOf = (plan: unknown): string => createHash('sha256').update(stable(plan)).digest('hex');
 export const markerFor = (projectId: string, operationKey: string): string => `xroga-op:${createHash('sha256').update(`${projectId}:${operationKey}`).digest('hex').slice(0, 12)}`;
+
+/**
+ * A process that dies mid-operation leaves its row `executing`, which would hold the single in-flight
+ * slot for the project forever. An operation that has not moved for longer than any real provider call
+ * can take is moved to `ambiguous`: nothing is assumed about the provider, a retry reconciles by marker.
+ */
+export async function recoverInterrupted(phase2: Phase2Store, userId: string, projectId: string, now: Date): Promise<number> {
+  let recovered = 0;
+  for (const operation of await phase2.listOperations(userId, projectId)) {
+    if (operation.status !== 'executing' || now.getTime() - new Date(operation.updatedAt).getTime() < STALE_EXECUTING_MS) continue;
+    const moved = await phase2.transitionOperation(userId, projectId, operation.id, ['executing'], 'ambiguous', { failure: 'The operation was interrupted before a result was recorded. Approve it again to check what happened and finish safely.' });
+    if (moved) recovered += 1;
+  }
+  return recovered;
+}
 
 export interface OperationDeps {
   readonly phase2: Phase2Store;
@@ -78,6 +95,7 @@ export class OperationRunner {
    * operation, or the finished one for a replay (`replay: true`) without claiming anything.
    */
   async claim(userId: string, projectId: string, operationId: string, expected: { provider: ExternalProvider; action: ExternalAction }): Promise<{ operation: ExternalOperation; replay: boolean }> {
+    await recoverInterrupted(this.deps.phase2, userId, projectId, this.now());
     const operation = await this.require(userId, projectId, operationId);
     if (operation.provider !== expected.provider || operation.action !== expected.action) throw new BuilderError('not_found', 'Operation not found.');
     if (operation.status === 'succeeded') return { operation, replay: true };
@@ -106,6 +124,7 @@ export class OperationRunner {
 
   async list(userId: string, projectId: string, provider: ExternalProvider): Promise<ExternalOperation[]> {
     await this.deps.builder.requireProject(userId, projectId);
+    await recoverInterrupted(this.deps.phase2, userId, projectId, this.now());
     return (await this.deps.phase2.listOperations(userId, projectId)).filter((operation) => operation.provider === provider);
   }
 

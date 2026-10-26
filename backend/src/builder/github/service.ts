@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 
 import type { ProjectFile } from '../../ai/patches.js';
 import { buildSourceArchive, EXPORT_MANIFEST_PATH, readZip } from '../export/archive.js';
+import { recoverInterrupted } from '../operations.js';
 import type { Phase2Store } from '../phase2Store.js';
 import type { BuilderService } from '../service.js';
 import { BuilderError, type BuilderProject, type BuilderRevision, type ExternalOperation } from '../types.js';
@@ -204,6 +205,7 @@ export class GitHubExportService {
 
   async operations(userId: string, projectId: string): Promise<ExternalOperation[]> {
     await this.deps.builder.requireProject(userId, projectId);
+    await recoverInterrupted(this.deps.phase2, userId, projectId, this.now());
     return this.deps.phase2.listOperations(userId, projectId);
   }
 
@@ -220,6 +222,7 @@ export class GitHubExportService {
 
   /** Performs an approved operation. Idempotent: a finished operation returns its receipt without any provider call. */
   async execute(userId: string, projectId: string, operationId: string): Promise<ExternalOperation> {
+    await recoverInterrupted(this.deps.phase2, userId, projectId, this.now());
     const operation = await this.requireOperation(userId, projectId, operationId);
     if (operation.status === 'succeeded') return operation;
     if (operation.status === 'executing') throw new BuilderError('conflict', 'This operation is already running.');
