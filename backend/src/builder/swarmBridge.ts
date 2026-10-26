@@ -32,6 +32,8 @@ export function openBuilderRun(tenant: TenantContext, projectId: string, runId: 
 export interface BuilderRunResult {
   readonly ok: boolean;
   readonly cancelled?: boolean;
+  /** The canonical engine is not enabled: reported as blocked, not failed. */
+  readonly blocked?: boolean;
   readonly reason?: string;
 }
 
@@ -50,7 +52,7 @@ export async function closeBuilderRun(tenant: TenantContext, run: BuilderRunBind
     }
     const saved = run.saved();
     if (!saved) {
-      await store.setState(context.userId, run.projectId, 'failed', (result.reason ?? 'The build did not produce a saved revision.').slice(0, 300), null);
+      await store.setState(context.userId, run.projectId, result.blocked ? 'blocked' : 'failed', (result.reason ?? 'The build did not produce a saved revision.').slice(0, 300), null);
       return;
     }
     await builderServiceFor(context).completeRun(

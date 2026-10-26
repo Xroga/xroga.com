@@ -6,7 +6,7 @@ import type { UniversalBuildOutcome } from '../synthesis/universalEntrypoint.js'
 import { derivePreviewLifecycle, type PreviewFacts } from './previewLifecycle.js';
 import { parseReadiness, routesFromFiles, verifyAppReadiness } from './readiness.js';
 import { deriveBuildSpec } from './spec.js';
-import { BuilderService, type BuildRunner, type PreviewPort } from './service.js';
+import { BuilderService, MAX_PROJECTS_PER_OWNER, type BuildRunner, type PreviewPort } from './service.js';
 import { assertSnapshotAcceptable, diffSnapshots, hashSnapshot } from './snapshot.js';
 import { STARTER_REGISTRY, materializeStarter, selectStarter } from './starters.js';
 import { InMemoryBuilderStore } from './store.js';
@@ -257,6 +257,37 @@ describe('build generation', () => {
     await assert.rejects(service.generate(OWNER_A, project.id, {}), (e) => e instanceof BuilderError && e.code === 'conflict');
     release();
     assert.equal((await first).project.state, 'verified');
+  });
+
+  it('lets only one of many simultaneous requests claim the build slot', async () => {
+    const { store, project } = await setup(runner([]));
+    const stale = new Date(Date.now() - 60 * 60 * 1000);
+    const results = await Promise.all(Array.from({ length: 10 }, (_, i) => store.claimRun(OWNER_A, project.id, `run-claim-${i}-0000`, stale)));
+    assert.equal(results.filter((r) => r?.kind === 'claimed').length, 1);
+    assert.equal(results.filter((r) => r?.kind === 'busy').length, 9);
+    assert.equal(await store.claimRun(OWNER_B, project.id, 'run-foreign-0000', stale), null);
+  });
+
+  it('replaces a crashed run that stopped touching the project, but not a live one', async () => {
+    const { store, service, project } = await setup(runner([{ path: 'index.html', content: '<h1>after crash</h1>' }]), readyPreview(true));
+    await store.claimRun(OWNER_A, project.id, 'crashed-run-0001', new Date(0));
+    await assert.rejects(service.beginRun(OWNER_A, project.id, { runId: 'new-run-000002' }), (e) => e instanceof BuilderError && e.code === 'conflict');
+    // The same run may re-enter (resume); a run older than the stale window is replaced.
+    await assert.doesNotReject(service.beginRun(OWNER_A, project.id, { runId: 'crashed-run-0001' }));
+    const past = new Date(Date.now() + 2 * 60 * 60 * 1000);
+    const taken = await store.claimRun(OWNER_A, project.id, 'new-run-000002', past);
+    assert.equal(taken?.kind, 'claimed');
+  });
+
+  it('caps the number of projects per owner but still returns an existing one on retry', async () => {
+    const store = new InMemoryBuilderStore();
+    const service = new BuilderService({ store, runBuild: runner([]) });
+    const { spec } = deriveBuildSpec(SITE);
+    const seed = materializeStarter(selectStarter(spec), { prompt: SITE, title: spec.title });
+    for (let i = 0; i < MAX_PROJECTS_PER_OWNER; i++) await store.createProject(OWNER_A, { requestKey: `bulk-key-${String(i).padStart(4, '0')}`, title: 't', spec, starter: seed.provenance });
+    await assert.rejects(service.createProject(OWNER_A, { prompt: SITE, requestKey: 'one-too-many-1' }), (e) => e instanceof BuilderError && e.code === 'budget_exhausted');
+    const again = await service.createProject(OWNER_A, { prompt: SITE, requestKey: 'bulk-key-0001' });
+    assert.equal(again.created, false);
   });
 
   it('follow-up changes extend the same project and keep earlier revisions readable', async () => {

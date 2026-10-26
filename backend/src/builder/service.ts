@@ -86,7 +86,10 @@ export interface CanonicalVerdict {
   readonly files: readonly ProjectFile[];
 }
 
-const ACTIVE_STATES: readonly BuilderProjectState[] = ['generating', 'verifying'];
+/** A build that has not touched its project for this long is treated as crashed and can be replaced. */
+export const STALE_RUN_MS = 60 * 60 * 1000;
+/** Upper bound on projects per owner, so a client cannot create rows without limit. */
+export const MAX_PROJECTS_PER_OWNER = 200;
 
 export class BuilderService {
   constructor(private readonly deps: BuilderDeps) {}
@@ -101,6 +104,10 @@ export class BuilderService {
     const { spec } = deriveBuildSpec(input.prompt);
     const selection = selectStarter(spec);
     const seed = materializeStarter(selection, { prompt: input.prompt, title: spec.title });
+    const existing = await this.deps.store.listProjects(userId, MAX_PROJECTS_PER_OWNER);
+    if (existing.length >= MAX_PROJECTS_PER_OWNER && !existing.some((candidate) => candidate.requestKey === input.requestKey)) {
+      throw new BuilderError('budget_exhausted', `A maximum of ${MAX_PROJECTS_PER_OWNER} projects is allowed.`);
+    }
     const { project, created } = await this.deps.store.createProject(userId, {
       requestKey: input.requestKey,
       title: spec.title,
@@ -144,14 +151,13 @@ export class BuilderService {
    * durable revision only when the canonical validation has accepted the result.
    */
   async beginRun(userId: string, projectId: string, input: { runId?: string; origin?: RevisionOrigin }): Promise<BuilderRunBinding> {
-    const project = await this.requireProject(userId, projectId);
-    if (ACTIVE_STATES.includes(project.state) && project.activeRunId && project.activeRunId !== input.runId) {
-      throw new BuilderError('conflict', 'A build is already running for this project.');
-    }
     const runId = input.runId ?? randomUUID();
+    const claimed = await this.deps.store.claimRun(userId, projectId, runId, new Date(Date.now() - STALE_RUN_MS));
+    if (!claimed) throw new BuilderError('not_found', 'Project not found.');
+    if (claimed.kind === 'busy') throw new BuilderError('conflict', 'A build is already running for this project.');
+    const project = claimed.project;
     const { revision: head, files } = await this.headFiles(userId, project);
     const origin: RevisionOrigin = input.origin ?? (head && head.origin === 'starter' ? 'generation' : 'followup');
-    await this.deps.store.setState(userId, projectId, 'generating', 'Xroga is building the application.', runId);
     const holder: { saved: Extract<AppendRevisionResult, { kind: 'created' | 'replayed' }> | null } = { saved: null };
     const commit: CommitFn = async ({ files: committedFiles }) => {
       const result = await this.deps.store.appendRevision(userId, projectId, {

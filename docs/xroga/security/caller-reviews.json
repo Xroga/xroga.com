@@ -15636,17 +15636,18 @@
     },
     {
       "path": "backend/src/builder/store.ts",
-      "sourceSha256": "0bbfbd58855576b8c1a972ca65b427757276bed1bcc92024e6d7d80096a5e8d3",
+      "sourceSha256": "ca2dafba1e393054908c8a5f07bff8418859773a1850099b386150fda538a477",
       "callIds": [
-        "e6af9ebe37766dcac377",
-        "474bd2e798217e899b01",
-        "d330765021ecce8599a2",
-        "d79a9369a05ed49ff20c",
-        "ff1107db358a438b1265",
-        "11c8013ce539fab1a7a1",
-        "efb144f7cc438dbf708c",
-        "7324485970116797ec27",
-        "074654d9d9abe7add548"
+        "1ed4c93d1d2252799103",
+        "a03a814dd5e1bb46d78a",
+        "e83957111fa59e197a6f",
+        "858cc9587f95f11b3451",
+        "e9055cd3f971b703fed1",
+        "6664342f254e9517f6a9",
+        "3a0109a731f9459915b3",
+        "6ac855f73998aeabbdfc",
+        "75b295fb0d465a20ee4a",
+        "c2d64e71abb4961304f5"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "SupabaseBuilderStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context. The privileged client is obtained through getTenantSupabaseAdmin(context).",
@@ -15664,10 +15665,10 @@
     },
     {
       "path": "backend/src/builder/store.ts",
-      "sourceSha256": "0bbfbd58855576b8c1a972ca65b427757276bed1bcc92024e6d7d80096a5e8d3",
+      "sourceSha256": "ca2dafba1e393054908c8a5f07bff8418859773a1850099b386150fda538a477",
       "callIds": [
-        "eeb84db9be0083af0d58",
-        "31802dc42ac6d6e98d89"
+        "46a6989a561482c75519",
+        "a804f3845253e3f48d89"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The insert sets user_id from the verified issued tenant owner, and the append function receives that owner as p_user_id and locks the project row filtered by both id and user_id before writing anything.",

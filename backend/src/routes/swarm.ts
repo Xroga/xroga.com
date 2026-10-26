@@ -102,7 +102,7 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
       const { route: _internalRoute, ...publicResult } = result;
       return res.json(publicAiPayload(publicResult));
     } catch (err) {
-      if (builderRun) await closeBuilderRun(requireTenantContext(req.tenantContext), builderRun, { ok: false, cancelled: (err as { code?: string }).code === 'BUILD_CANCELLED', reason: (err as Error).message });
+      if (builderRun) await closeBuilderRun(requireTenantContext(req.tenantContext), builderRun, { ok: false, cancelled: (err as { code?: string }).code === 'BUILD_CANCELLED', blocked: (err as { code?: string }).code === 'BUILDER_ENGINE_DISABLED', reason: (err as Error).message });
       if(err instanceof TenantAccessError)return res.status(err.status).json({error:err.message,code:err.code});
       const e = err as Error & { code?: string };
       if (e.code === 'OUT_OF_TOKENS' || e.code === 'PAID_PROVIDER_CAPACITY_UNAVAILABLE') {
@@ -330,7 +330,7 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
     const nextUnlockAt = code === 'CAPACITY_UNAVAILABLE' ? e.nextUnlockAt ?? undefined : undefined;
 
     if (builderRun && !resumeControlError) {
-      await closeBuilderRun(requireTenantContext(req.tenantContext), builderRun, { ok: false, cancelled: code === 'BUILD_CANCELLED', reason: e.message });
+      await closeBuilderRun(requireTenantContext(req.tenantContext), builderRun, { ok: false, cancelled: code === 'BUILD_CANCELLED', blocked: e.code === 'BUILDER_ENGINE_DISABLED', reason: e.message });
     }
     let failurePersisted = false;
     if (!resumeControlError) {

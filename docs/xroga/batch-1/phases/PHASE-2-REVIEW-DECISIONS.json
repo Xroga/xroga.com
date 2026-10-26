@@ -2325,7 +2325,7 @@
         },
         {
           "path": "backend/src/routes/swarm.ts",
-          "sha256": "dd5c964e1eaace0e51032e5ce1c9a2dd1b23be2439de049a5de4d84303e1bd11"
+          "sha256": "28eb717f8690a357e355ac7eab65c35a36112017caecb10fbb1510b1da2abea0"
         },
         {
           "path": "supabase/migrations/20261019000300_worker_database_project_admission.sql",

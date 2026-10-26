@@ -51,6 +51,12 @@ export interface BuilderStore {
   getProject(userId: string, projectId: string): Promise<BuilderProject | null>;
   listProjects(userId: string, limit?: number): Promise<BuilderProject[]>;
   setState(userId: string, projectId: string, state: BuilderProjectState, reason: string, activeRunId?: string | null): Promise<BuilderProject | null>;
+  /**
+   * Atomically takes the single build slot. Succeeds when no build is active, the active build is
+   * this same run, or the active build has not been touched since `staleBefore` (a crashed run).
+   * Two simultaneous callers can never both claim it.
+   */
+  claimRun(userId: string, projectId: string, runId: string, staleBefore: Date): Promise<{ kind: 'claimed'; project: BuilderProject } | { kind: 'busy' } | null>;
   appendRevision(userId: string, projectId: string, input: AppendRevisionInput): Promise<AppendRevisionResult | null>;
   getRevision(userId: string, projectId: string, revisionId: string): Promise<BuilderRevision | null>;
   listRevisions(userId: string, projectId: string): Promise<Array<Omit<BuilderRevision, 'files'>>>;
@@ -124,6 +130,16 @@ export class InMemoryBuilderStore implements BuilderStore {
     };
     this.projects.set(projectId, next);
     return clone(next);
+  }
+
+  async claimRun(userId: string, projectId: string, runId: string, staleBefore: Date) {
+    const project = this.projects.get(projectId);
+    if (!project || project.userId !== userId) return null;
+    const active = (project.state === 'generating' || project.state === 'verifying') && project.activeRunId !== null;
+    if (active && project.activeRunId !== runId && project.updatedAt >= staleBefore.toISOString()) return { kind: 'busy' as const };
+    const next: BuilderProject = { ...project, state: 'generating', stateReason: 'Xroga is building the application.', activeRunId: runId, updatedAt: new Date().toISOString() };
+    this.projects.set(projectId, next);
+    return { kind: 'claimed' as const, project: clone(next) };
   }
 
   async appendRevision(userId: string, projectId: string, input: AppendRevisionInput): Promise<AppendRevisionResult | null> {
@@ -283,6 +299,24 @@ export class SupabaseBuilderStore implements BuilderStore {
     const { data, error } = await this.db().from('builder_projects').update(patch).eq('user_id', owner).eq('id', projectId).select(PROJECT_COLUMNS).maybeSingle();
     if (error) storageFailure('update the project state', error);
     return data ? toProject(data as ProjectRow) : null;
+  }
+
+  async claimRun(userId: string, projectId: string, runId: string, staleBefore: Date) {
+    const owner = this.owner(userId);
+    if (!/^[A-Za-z0-9-]{8,64}$/.test(runId)) throw new BuilderError('invalid_input', 'Invalid run identity.');
+    const now = new Date().toISOString();
+    // One conditional UPDATE: the database arbitrates, so concurrent claimers cannot both win.
+    const claimed = await this.db()
+      .from('builder_projects')
+      .update({ state: 'generating', state_reason: 'Xroga is building the application.', active_run_id: runId, updated_at: now })
+      .eq('user_id', owner)
+      .eq('id', projectId)
+      .or(`active_run_id.is.null,active_run_id.eq.${runId},state.not.in.(generating,verifying),updated_at.lt.${staleBefore.toISOString()}`)
+      .select(PROJECT_COLUMNS)
+      .maybeSingle();
+    if (claimed.error) storageFailure('start the build', claimed.error);
+    if (claimed.data) return { kind: 'claimed' as const, project: toProject(claimed.data as ProjectRow) };
+    return (await this.getProject(owner, projectId)) ? { kind: 'busy' as const } : null;
   }
 
   async appendRevision(userId: string, projectId: string, input: AppendRevisionInput): Promise<AppendRevisionResult | null> {
