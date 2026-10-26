@@ -76,7 +76,8 @@ const steps = [
   { id: '03d-phase2-seccomp-derivation', cmd: ['node', 'deploy/browser-worker/derive-seccomp.mjs', '--check'], cwd: '.', required: true, kind: 'exit' },
   { id: '04-s3-wire-emulator-SYNTHETIC', cmd: ['npx', 'tsx', '--test', ...wireTests], cwd: 'backend', required: true, fixture: 's3Emulator' },
   { id: '05-r2-provider-REAL', cmd: ['npx', 'tsx', '--test', ...providerTests], cwd: 'backend', required: false, fixture: 'r2Provider', needs: 'AUTHORISED' },
-  { id: '06-full-backend-suite', cmd: ['npm', 'test'], cwd: 'backend', required: true, kind: 'full' },
+  // The whole backend suite needs more than the 15 minute default on a hosted runner (the `unit` workflow takes about 27 minutes); it fails on pristine main for that reason alone.
+  { id: '06-full-backend-suite', cmd: ['npm', 'test'], cwd: 'backend', required: true, kind: 'full', timeoutMs: 38 * 60_000 },
 ];
 
 const baseline = JSON.parse(readFileSync(path.join(here, 'baseline-failures.json'), 'utf8')).tests;
@@ -93,7 +94,7 @@ for (const s of steps) {
   // background process behind stalls the job after all tests have finished (proven in a Linux container: pipes 6.0 s vs file 0.0 s).
   const rawPath = path.join(out, `${s.id}.raw`);
   const fd = openSync(rawPath, 'w');
-  const p = sh(s.cmd[0], s.cmd.slice(1), { cwd: path.join(root, s.cwd), stdio: ['ignore', fd, fd], timeout: Number(env.PHASE1_STEP_TIMEOUT_MS) || 15 * 60_000, killSignal: 'SIGKILL', env: { ...process.env, ...(s.env ?? {}) } });
+  const p = sh(s.cmd[0], s.cmd.slice(1), { cwd: path.join(root, s.cwd), stdio: ['ignore', fd, fd], timeout: s.timeoutMs ?? (Number(env.PHASE1_STEP_TIMEOUT_MS) || 15 * 60_000), killSignal: 'SIGKILL', env: { ...process.env, ...(s.env ?? {}) } });
   closeSync(fd);
   p.stdout = readFileSync(rawPath, 'utf8'); p.stderr = ''; rmSync(rawPath, { force: true });
   const timedOut = p.error?.code === 'ETIMEDOUT'; // a hung step fails with its partial output instead of stalling the whole job
@@ -102,7 +103,7 @@ for (const s of steps) {
   const n = (k) => Number((text.match(new RegExp(`^# ${k} (\\d+)`, 'm')) ?? [])[1] ?? 0);
   Object.assign(r, { exit: p.status, tests: n('tests'), pass: n('pass'), fail: n('fail'), skipped: n('skipped'), suiteSkips: (text.match(/# SKIP/g) ?? []).length });
   const failed = [...text.matchAll(/^\s*not ok \d+ - (.+)$/gm)].map((m) => m[1].trim()).filter((v, i, a) => a.indexOf(v) === i);
-  if (timedOut) { r.status = 'FAIL'; r.timedOut = true; r.failedTests = ['STEP TIMED OUT after ' + (Number(env.PHASE1_STEP_TIMEOUT_MS) || 15 * 60_000) / 1000 + 's (see log tail)']; }
+  if (timedOut) { r.status = 'FAIL'; r.timedOut = true; r.failedTests = ['STEP TIMED OUT after ' + (s.timeoutMs ?? (Number(env.PHASE1_STEP_TIMEOUT_MS) || 15 * 60_000)) / 1000 + 's (see log tail)']; }
   else if (s.kind === 'tsc' || s.kind === 'exit') r.status = p.status === 0 ? 'PASS' : 'FAIL';
   else if (s.kind === 'full') {
     const topLevel = [...text.matchAll(/^not ok \d+ - (.+)$/gm)].map((m) => m[1].trim());
