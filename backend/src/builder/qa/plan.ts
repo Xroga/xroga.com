@@ -92,7 +92,29 @@ function routeOfComponent(path: string, routes: readonly string[]): string | nul
   return routes.includes(route) ? route : null;
 }
 
-export function deriveQaPlan(spec: BuildSpec, files: readonly ProjectFile[]): QaPlan {
+export interface QaPlanOptions {
+  /**
+   * Only checks that cannot write data: page loads, layout, navigation and anonymous access. Used
+   * against a deployment that is connected to a customer's real database, where a form submission
+   * would create real records.
+   */
+  readonly readOnly?: boolean;
+}
+
+/** Categories and steps that can change data in the application under test. */
+const WRITES = new Set<QaCheck['category']>(['forms', 'persistence', 'criterion']);
+
+export function deriveQaPlan(spec: BuildSpec, files: readonly ProjectFile[], options: QaPlanOptions = {}): QaPlan {
+  const plan = deriveFullQaPlan(spec, files);
+  if (!options.readOnly) return plan;
+  return {
+    ...plan,
+    checks: plan.checks.filter((check) => !WRITES.has(check.category)),
+    notChecked: [...plan.notChecked, { criterion: 'Form submissions and saved data', reason: 'Not tested against a live deployment: submitting forms there would create real records in your database. These are tested before deployment.' }],
+  };
+}
+
+function deriveFullQaPlan(spec: BuildSpec, files: readonly ProjectFile[]): QaPlan {
   const checks: QaCheck[] = [];
   const routes = routesFromFiles(files);
   const add = (check: QaCheck) => {

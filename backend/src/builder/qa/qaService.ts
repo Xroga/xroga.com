@@ -139,6 +139,20 @@ export class QaService {
     return { report, summary: summarize(report, record) };
   }
 
+  /**
+   * Browser tests against a DEPLOYED application (a Vercel preview). Read-only by construction:
+   * the deployment may be connected to a customer's real database, so nothing that writes is run.
+   * The result is recorded against the revision it tested.
+   */
+  async runRemote(userId: string, projectId: string, input: { revisionId: string; baseUrl: string; runId?: string }): Promise<QaReport> {
+    const project = await this.deps.builder.requireProject(userId, projectId);
+    const revision = await this.deps.builder.revisionFiles(userId, projectId, input.revisionId);
+    const plan = deriveQaPlan(project.spec, revision.files, { readOnly: true });
+    const report = await this.executeAgainst({ baseUrl: input.baseUrl, environment: { database: false } }, plan, {});
+    await this.record(userId, project, revision, input.runId ?? randomUUID(), report);
+    return report;
+  }
+
   /** The checks that passed on the revision this one descends from, for regression detection. */
   private async previousPassed(userId: string, projectId: string, revision: BuilderRevision): Promise<ReadonlySet<string> | undefined> {
     if (!revision.parentRevisionId) return undefined;

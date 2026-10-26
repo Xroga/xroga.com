@@ -9,6 +9,13 @@ import { createSoftwareProject } from '../synthesis/softwareProject.js';
 import { ExportService } from './export/service.js';
 import { GitHubExportService } from './github/service.js';
 import { createRestGitHubPort } from './github/restPort.js';
+import { getSupabaseOAuthAccessToken } from '../services/integrations/supabaseAuth.js';
+import { getVercelToken } from '../services/integrations/vercelAuth.js';
+import { createRestSupabasePort } from './data/restPort.js';
+import { SupabaseDataService } from './data/service.js';
+import { HostingService, type HttpProbeResult, type RemoteVerification } from './hosting/service.js';
+import { createRestVercelPort } from './hosting/restPort.js';
+import { deliveryByRevision } from './delivery.js';
 import { SupabasePhase2Store } from './phase2Store.js';
 import { openPlaywrightQaDriver } from './qa/playwrightQaDriver.js';
 import { QaService, type QaTarget, type RepairRunner } from './qa/qaService.js';
@@ -92,6 +99,25 @@ export interface Phase2Services {
   readonly qa: QaService;
   readonly github: GitHubExportService;
   readonly exporter: ExportService;
+  readonly data: SupabaseDataService;
+  readonly hosting: HostingService;
+  /** What reached each provider for each revision, from verified receipts only. */
+  provenance(userId: string, projectId: string): Promise<ReturnType<typeof deliveryByRevision>>;
+}
+
+/** Real HTTP check of a deployed URL. Never follows credentials anywhere; reads at most a few KB. */
+export async function httpProbe(url: string): Promise<HttpProbeResult> {
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'https:') return { status: null, bytes: 0, protectedBySso: false, errorMarker: 'Only https deployments are probed.' };
+    const response = await fetch(parsed, { redirect: 'follow', signal: AbortSignal.timeout(20_000), headers: { 'User-Agent': 'xroga-delivery-check' } });
+    const text = (await response.text().catch(() => '')).slice(0, 4000);
+    const protectedBySso = response.status === 401 && /vercel[^]{0,400}(authentication|sso|sign)/i.test(text);
+    const marker = ['Application error', 'Internal Server Error', 'Unhandled Runtime Error', 'Failed to compile'].find((candidate) => text.includes(candidate)) ?? null;
+    return { status: response.status, bytes: text.length, protectedBySso, errorMarker: marker };
+  } catch {
+    return { status: null, bytes: 0, protectedBySso: false, errorMarker: null };
+  }
 }
 
 export function phase2ServicesFor(tenant: TenantContext): Phase2Services {
@@ -104,5 +130,26 @@ export function phase2ServicesFor(tenant: TenantContext): Phase2Services {
     openDriver: (baseUrl) => openPlaywrightQaDriver({ baseUrl }),
   });
   const github = new GitHubExportService({ phase2, builder, github: createRestGitHubPort(ghFetch), tokenFor: (userId) => getGitHubToken(userId) });
-  return { builder, qa, github, exporter: new ExportService({ builder, phase2 }) };
+  const data = new SupabaseDataService({ phase2, builder, supabase: createRestSupabasePort(), tokenFor: (userId) => getSupabaseOAuthAccessToken(userId) });
+  const hosting = new HostingService({
+    phase2, builder, vercel: createRestVercelPort(), tokenFor: (userId) => getVercelToken(userId),
+    appEnvironment: (userId, projectId) => data.appEnvironment(userId, projectId),
+    filesFor: (project, revision) => github.filesFor(project, revision),
+    githubCommitFor: async (userId, projectId, revisionId) => (await github.binding(userId, projectId))?.commits.find((commit) => commit.revisionId === revisionId)?.commitSha ?? null,
+    remoteQa: async ({ userId, projectId, revision, baseUrl }): Promise<RemoteVerification> => {
+      try {
+        const report = await qa.runRemote(userId, projectId, { revisionId: revision.id, baseUrl });
+        return { status: report.status, executedChecks: report.executedChecks, failedChecks: report.failedChecks, reason: report.reason };
+      } catch {
+        return { status: 'pending_runtime', executedChecks: 0, failedChecks: 0, reason: 'The remote browser tests could not be run from this environment.' };
+      }
+    },
+    probe: httpProbe,
+  });
+  const provenance = async (userId: string, projectId: string) => {
+    await builder.requireProject(userId, projectId);
+    const [github1, supabase, vercel, revisions] = await Promise.all([github.operations(userId, projectId), data.operations(userId, projectId), hosting.operations(userId, projectId), builder.history(userId, projectId)]);
+    return deliveryByRevision([...github1, ...supabase, ...vercel], revisions);
+  };
+  return { builder, qa, github, exporter: new ExportService({ builder, phase2 }), data, hosting, provenance };
 }

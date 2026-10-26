@@ -57,6 +57,8 @@ export class QaBrowserUnavailable extends Error {
 export interface PlaywrightQaOptions {
   /** Origin of the running application, e.g. the signed preview origin. Only this origin is reachable. */
   readonly baseUrl: string;
+  /** Headers sent with every request to the application origin only (never to other hosts). */
+  readonly extraHeaders?: Readonly<Record<string, string>>;
 }
 
 export async function openPlaywrightQaDriver(options: PlaywrightQaOptions): Promise<QaDriver> {
@@ -95,6 +97,7 @@ export async function openPlaywrightQaDriver(options: PlaywrightQaOptions): Prom
         serviceWorkers: 'block',
         acceptDownloads: false,
         permissions: [],
+        ...(options.extraHeaders ? { extraHTTPHeaders: { ...options.extraHeaders } } : {}),
       });
       const diagnostics = { consoleErrors: [] as string[], pageErrors: [] as string[], failedRequests: [] as string[] };
       await context.route('**/*', async (route) => {
