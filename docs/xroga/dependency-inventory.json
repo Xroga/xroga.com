@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2accd699add41b99ca42b4a2a90f4a37f6e2e266",
+  "source_sha": "0b26fb8fca188cd4fef022e4d2e722f0534cf230",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -19704,11 +19704,11 @@
     },
     {
       "path": "frontend/src/lib/publicMarketing.ts",
-      "sha256": "8b28444ec0a5b5c17df53a299fce24b4d6ea4ec9d0e2fdd20dfa370d72851d12"
+      "sha256": "020281baaedc2433064c1ba4fa738456977272ab9545be67770f8f8618a48fd0"
     },
     {
       "path": "frontend/src/lib/publicUrlInventory.ts",
-      "sha256": "10045f980419f86f278c95232fed472957d28ddf618274956506e57ab3528d7b"
+      "sha256": "30c3a17e1f6737f0226ba1ce6b5652631eb8ba487ef2b2ad8f4255e1a927ab87"
     },
     {
       "path": "frontend/src/lib/publish/types.ts",
@@ -32046,7 +32046,7 @@
     },
     {
       "path": "frontend/src/lib/publicMarketing.ts",
-      "line": 43,
+      "line": 44,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

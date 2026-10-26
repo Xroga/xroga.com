@@ -87142,7 +87142,7 @@
       "id": "surface:756700cae3b8fde0ce44",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/publicMarketing.ts",
-      "sha256": "8b28444ec0a5b5c17df53a299fce24b4d6ea4ec9d0e2fdd20dfa370d72851d12",
+      "sha256": "020281baaedc2433064c1ba4fa738456977272ab9545be67770f8f8618a48fd0",
       "symbols": [
         "IMAGE_BACKGROUND_PATHS",
         "MARKETING_THEME",
@@ -87190,7 +87190,7 @@
       "id": "surface:4a1f5385bc6d8ba1e88e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/publicUrlInventory.ts",
-      "sha256": "10045f980419f86f278c95232fed472957d28ddf618274956506e57ab3528d7b",
+      "sha256": "30c3a17e1f6737f0226ba1ce6b5652631eb8ba487ef2b2ad8f4255e1a927ab87",
       "symbols": [
         "INDEXABLE_PUBLIC_URLS",
         "PUBLIC_URL_INVENTORY",
@@ -98202,7 +98202,7 @@
       "id": "surface:a741178549139c6d7626",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/schema-catalog.mjs",
-      "sha256": "2805d1d09927098ccf5b3e192e6d4ab498482a26b4eca353453c116e5608d9c0",
+      "sha256": "70a768771571d003db8df5aacacd034b1c417defc665975ac32cbfa896653b9b",
       "symbols": [
         "assertDisposableSource",
         "collectSchemaCatalog",
