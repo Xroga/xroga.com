@@ -22,6 +22,11 @@ const IMAGE_GEN_PROMPT =
 const BROWSER_AUTOMATION =
   /\b(automate|browser|scrape|fill form|linkedin jobs|apply to)\b/i;
 
+// Explicitly connected apps own their tasks even when the output is an image
+// or a browser-like workflow. The backend still checks the real app session.
+const EXPLICIT_CONNECTED_APP =
+  /\b(?:using|with|via)\s+(?:my|our|the)\s+connected\b/i;
+
 /** Extra guard — catch product builds that slip past isWebsiteBuildPrompt into Phase 1 essays. */
 function looksLikeProductBuild(prompt: string): boolean {
   const t = prompt.trim();
@@ -54,6 +59,10 @@ export function shouldRouteToPhase1(
   }
   // Greetings / "hi" / thanks → Phase 1 light chat (fast). Never send to build swarm.
   if (isTrivialPrompt(prompt)) return true;
+  // A named connected-app request is not an image/code build just because its
+  // output is a logo, design, or other artifact. Explicit software builds keep
+  // their repository route.
+  if (EXPLICIT_CONNECTED_APP.test(prompt) && !requiresGitHubForBuild(prompt)) return true;
   // Builds must NEVER hit Phase 1 — it answers with long how-to essays instead of shipping code.
   if (looksLikeProductBuild(prompt) || isWebsiteBuildPrompt(prompt)) return false;
   if (isVideoGenerationPrompt(prompt)) return false;

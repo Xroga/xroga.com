@@ -27,9 +27,9 @@ import { BlackHoleVButton } from './BlackHoleVButton';
 import toast from 'react-hot-toast';
 import { checkRepoWorkspaceReady } from '@/lib/repoWorkspaceGate';
 import { ensureSelectedRepoFolder } from '@/lib/repoSessionsIndex';
-import { isGeneralAdviceOrKnowledgePrompt, isWebsiteBuildPrompt } from '@/lib/chatMemory';
+import { isGeneralAdviceOrKnowledgePrompt } from '@/lib/chatMemory';
 import { shouldRouteToPhase1 } from '@/lib/phase1Routing';
-import { requiresGitHubForBuild } from '@/lib/messageHelpers';
+import { requiresRepoWorkspaceForPrompt } from '@/lib/requiresRepoWorkspaceForPrompt';
 import { composerMaxHeightForViewport } from '@/lib/chatComposerSizing';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 import { useWorkspaceAuthGate } from '@/components/workspace/WorkspaceAuthGate';
@@ -236,15 +236,17 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
     // Sandbox website/landing/chatbot/crypto builds must not be blocked by a flaky GitHub status
     // when the user already selected a repo in the footer (or when building a simple site).
     const p = (promptText || draftRef.current || prompt || '').trim();
+    const requiresRepo = requiresRepoWorkspaceForPrompt(p);
     // Advice / Q&A / research must never be blocked by the Connect-GitHub modal
     if (
       p &&
       (isGeneralAdviceOrKnowledgePrompt(p) ||
+        !requiresRepo ||
         shouldRouteToPhase1(p, [], undefined, { completedWebsiteBuild: false }))
     ) {
       return true;
     }
-    if (p && (isWebsiteBuildPrompt(p) || requiresGitHubForBuild(p))) {
+    if (p && requiresRepo) {
       const selected = (await import('@/lib/repoContext')).getSelectedRepoContext();
       if (selected?.repo?.includes('/')) {
         ensureSelectedRepoFolder();
@@ -266,7 +268,7 @@ export function TerminalChatBar({ starter = false }: { starter?: boolean }) {
       return true;
     }
     // Website builds can run in sandbox without GitHub — never brick the user on Connect modal
-    if (p && (isWebsiteBuildPrompt(p) || requiresGitHubForBuild(p))) {
+    if (p && requiresRepo) {
       console.warn('[TerminalChatBar] allowing sandbox build without repo gate');
       return true;
     }
