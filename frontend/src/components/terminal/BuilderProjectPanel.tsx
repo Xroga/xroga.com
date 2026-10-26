@@ -11,6 +11,7 @@ import {
   type BuilderRevisionSummary,
   type BuilderState,
 } from '@/lib/builderApi';
+import { useBuilderProjectStore } from '@/store/useBuilderProjectStore';
 import { cn } from '@/lib/utils';
 import { BuilderDatabase } from './builder/BuilderDatabase';
 import { BuilderDelivery } from './builder/BuilderDelivery';
@@ -67,7 +68,13 @@ export function BuilderProjectPanel({ projectId, onOpenPreview }: { projectId: s
       setRevisions(history.revisions);
       setError(null);
     } catch (caught) {
-      setError(caught instanceof BuilderApiError && caught.status === 404 ? 'This project was not found.' : 'The project status could not be loaded.');
+      if (caught instanceof BuilderApiError && caught.status === 404) {
+        // Not this account's project (shared browser) or deleted: stop pointing the workspace at it.
+        useBuilderProjectStore.getState().setProjectId(null);
+        setError('This project was not found.');
+      } else {
+        setError('The project status could not be loaded.');
+      }
     } finally {
       setLoading(false);
     }
@@ -192,7 +199,7 @@ export function BuilderProjectPanel({ projectId, onOpenPreview }: { projectId: s
       {tab === 'deliver' ? (
         <div className="space-y-4">
           <BuilderDatabase projectId={projectId} onChanged={() => setDeliveredCount((count) => count + 1)} />
-          <BuilderHosting projectId={projectId} title={project.title} onChanged={() => setDeliveredCount((count) => count + 1)} />
+          <BuilderHosting projectId={projectId} title={project.title} headRevisionNumber={project.currentRevisionNumber} onChanged={() => setDeliveredCount((count) => count + 1)} />
           <BuilderProvenance projectId={projectId} refreshKey={deliveredCount} />
         </div>
       ) : null}

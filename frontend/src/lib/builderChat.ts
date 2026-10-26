@@ -1,6 +1,8 @@
 'use client';
 
-import { BUILDER_ENABLED, builderApi } from '@/lib/builderApi';
+import toast from 'react-hot-toast';
+
+import { BUILDER_ENABLED, BuilderApiError, builderApi } from '@/lib/builderApi';
 import { builderPhase2Api } from '@/lib/builderApiPhase2';
 import { useBuilderProjectStore } from '@/store/useBuilderProjectStore';
 
@@ -31,9 +33,17 @@ export async function resolveBuilderProject(input: {
       if (decision.intent === 'followup' && decision.projectId) return decision.projectId;
       if (decision.intent === 'other') return undefined;
       createNew = decision.intent === 'new_product';
-    } catch {
-      // If the decision cannot be made, keep working on the same project rather than creating a duplicate.
-      return store.projectId;
+    } catch (error) {
+      // The stored project is not this user's, or no longer exists (a shared browser, a deleted project): forget it rather than
+      // sending an id the server will refuse for the whole message.
+      if (error instanceof BuilderApiError && error.status === 404) {
+        store.setProjectId(null);
+        createNew = input.isNewProduct;
+        if (!createNew) return undefined;
+      } else {
+        // If the decision cannot be made, keep working on the same project rather than creating a duplicate.
+        return store.projectId ?? undefined;
+      }
     }
   }
   if (!createNew) return store.projectId ?? undefined;
@@ -42,7 +52,11 @@ export async function resolveBuilderProject(input: {
     const { project } = await builderApi.create({ prompt: input.prompt, requestKey: key, conversationId: input.conversationId ?? null });
     store.setProjectId(project.id);
     return project.id;
-  } catch {
+  } catch (error) {
+    // Not silent: the user is told when the project builder refused the request, then the existing path continues.
+    if (error instanceof BuilderApiError && (error.status === 422 || error.status === 400) && error.message) {
+      toast(error.message, { duration: 6000 });
+    }
     return undefined;
   }
 }
