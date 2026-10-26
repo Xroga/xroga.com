@@ -34293,7 +34293,7 @@
       "id": "surface:76ce9a21485f65e9bc65",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/livePreview/coordinator.ts",
-      "sha256": "ee53e189404d87293ac5d6de275e588442ad3e84d97ccd8ab68bc43d96c4958a",
+      "sha256": "bc1bb6127395d40779ee293662ead3de803c07b687d063b281b79c5e283613d0",
       "symbols": [
         "LivePreviewEventEmitter",
         "attempt",
@@ -34329,6 +34329,7 @@
         "processId",
         "processManager",
         "project",
+        "providerReady",
         "ready",
         "representationMessage",
         "result",
@@ -35840,7 +35841,7 @@
       "id": "surface:4b16092e16ca8d048ea1",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/googleProvider.ts",
-      "sha256": "429d49818a2781c7b95510c2133629fc631b2e6d3f57f4ed0c585313edd4db53",
+      "sha256": "4c3bf1adc0abaeb4675e6754c1c8640ab75986c38dc27c5d38156552388c4ae4",
       "symbols": [
         "Control",
         "GoogleProjectRuntimeOptions",
@@ -35879,6 +35880,8 @@
         "pending",
         "publicEnvironment",
         "read",
+        "ready",
+        "response",
         "result",
         "saved",
         "seen",
@@ -35886,6 +35889,7 @@
         "session",
         "size",
         "stat",
+        "target",
         "value",
         "wire"
       ],
@@ -35995,7 +35999,7 @@
       "id": "surface:ca5b423e9d8cf5e5167b",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/manager.ts",
-      "sha256": "809383af9e8a1f0a987658c84d1795d0557c58faf40aa1cd39db31bafced9bb8",
+      "sha256": "c3f35202bc34ea9fc7c9114429130c7c3a137b527cef9ef2d4ef473f48086423",
       "symbols": [
         "ProjectRuntimeManager",
         "ProjectRuntimeUnavailableError",
@@ -36448,7 +36452,7 @@
       "id": "surface:f32bc6f66d06656f548d",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/types.ts",
-      "sha256": "c0b716c3b8392d45b15cb52ebde868349538e1f404246bf1cbb85807ac665a89",
+      "sha256": "9e7585fc46bab8484c438e80307c681f11de56f89b3cf59d3e8c2bf735a8a972",
       "symbols": [
         "PROJECT_RUNTIME_SCHEMA_VERSION",
         "ProjectRuntimeBinding",
@@ -122179,7 +122183,7 @@
     {
       "id": "test-suite:270057edc4c647c96939",
       "sourcePath": "backend/src/synthesis/projectRuntime/googleProvider.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
