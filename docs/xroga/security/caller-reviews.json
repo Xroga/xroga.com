@@ -15636,18 +15636,20 @@
     },
     {
       "path": "backend/src/builder/store.ts",
-      "sourceSha256": "ca2dafba1e393054908c8a5f07bff8418859773a1850099b386150fda538a477",
+      "sourceSha256": "a03b6e6bb8f403642ad9edb7cd7478fdeb55170421f4eea2873379dc3bce9951",
       "callIds": [
-        "1ed4c93d1d2252799103",
-        "a03a814dd5e1bb46d78a",
-        "e83957111fa59e197a6f",
-        "858cc9587f95f11b3451",
-        "e9055cd3f971b703fed1",
-        "6664342f254e9517f6a9",
-        "3a0109a731f9459915b3",
-        "6ac855f73998aeabbdfc",
-        "75b295fb0d465a20ee4a",
-        "c2d64e71abb4961304f5"
+        "bbcddde50fb0e4efbb92",
+        "cd69564dbd27d9486660",
+        "aa89e4a362a4a55a3f58",
+        "1c6333045f9c721f55eb",
+        "ee361244f6589cf9713d",
+        "3a1d1f6866605197b62a",
+        "1caf6465cd6fbf363530",
+        "01b005990d2f0e3a7020",
+        "45dbd7b594907ee40fac",
+        "bd5b7abbaf1f45ab3fba",
+        "6a94ff8465300e79b2ba",
+        "9cc899e3641fc414bd8c"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "SupabaseBuilderStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context. The privileged client is obtained through getTenantSupabaseAdmin(context).",
@@ -15665,10 +15667,10 @@
     },
     {
       "path": "backend/src/builder/store.ts",
-      "sourceSha256": "ca2dafba1e393054908c8a5f07bff8418859773a1850099b386150fda538a477",
+      "sourceSha256": "a03b6e6bb8f403642ad9edb7cd7478fdeb55170421f4eea2873379dc3bce9951",
       "callIds": [
-        "46a6989a561482c75519",
-        "a804f3845253e3f48d89"
+        "2ed1879f2de59398fa28",
+        "67b67242de5bfd63a9b7"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The insert sets user_id from the verified issued tenant owner, and the append function receives that owner as p_user_id and locks the project row filtered by both id and user_id before writing anything.",
@@ -15702,10 +15704,10 @@
     },
     {
       "path": "backend/src/builder/export/archive.ts",
-      "sourceSha256": "401ca64dd6589e950fee084cf53e690ccacc0f0dde6d4266397548da22d89115",
+      "sourceSha256": "918438de91ae99feafdb798d8f85843b32796637b83c28aa9908782b33d416b5",
       "callIds": [
-        "bdeccba318b0562fd267",
-        "221f8d1426f1d74def35"
+        "b6c0bd022543dc7d2aaa",
+        "3fa9300bc6f63a34baab"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected each receiver and surrounding expression in this module. These calls use the built-in Array, Buffer or similar conversion, not a database, object storage or provider transport.",

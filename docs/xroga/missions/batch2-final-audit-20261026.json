@@ -46,6 +46,7 @@
     "docs/infra/batch-2/PHASE-2-STATUS.md",
     "docs/infra/batch-2/PHASE-3-STATUS.md",
     "docs/xroga/missions/batch2-final-audit-20261026.json",
+    "docs/xroga/security/caller-reviews.json",
     "frontend/src/components/terminal/BuilderProjectPanel.tsx",
     "frontend/src/components/terminal/DevWorkspacePanel.tsx",
     "frontend/src/components/terminal/builder/BuilderDatabase.tsx",
