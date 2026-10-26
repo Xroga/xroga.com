@@ -137,7 +137,14 @@
     "docs/xroga/security/privileged-callers.json",
     "docs/xroga/security/rls-audit.md",
     "docs/xroga/evidence/zero-fly/google-delivery-sql-reapply-20261026.json",
-    "docs/xroga/evidence/zero-fly/integration-caller-rebinding-20261026.json"
+    "docs/xroga/evidence/zero-fly/integration-caller-rebinding-20261026.json",
+    "backend/src/runtime/bootGuard.test.ts",
+    "backend/src/runtime/safeLogging.test.ts",
+    "docs/xroga/security/current-migration-additions.json",
+    "scripts/security/schema-catalog.mjs",
+    "scripts/security/schema-catalog.test.mjs",
+    "scripts/security/full-supabase-history.mjs",
+    "docs/xroga/evidence/zero-fly/hosted-delivery-schema-20261026.json"
   ],
   "decisions": {
     "keep": [
@@ -326,6 +333,12 @@
       "scope": "Ten isolated real PostgreSQL checks including row-preserving migration reapplication. Fixes actual PR856 full-history reapply failure. No hosted schema or live Google proof.",
       "negative": true,
       "reference": "docs/xroga/evidence/zero-fly/google-delivery-sql-reapply-20261026.json"
+    },
+    {
+      "command": "Existing isolated Supabase staging apply_migration and rolled-back synthetic service-only RPC proof",
+      "scope": "Actual hosted upgrade on existing empty staging project, enqueue/owner/duplicate/cancellation denial and browser privileges. Auth/users/profiles/runs/deliveries/integrations/storage remain empty after rollback. Not authenticated HTTP or live Google proof.",
+      "negative": true,
+      "reference": "docs/xroga/evidence/zero-fly/hosted-delivery-schema-20261026.json"
     }
   ],
   "architecture": {
@@ -360,7 +373,8 @@
     "docs/xroga/evidence/zero-fly/google-delivery-sql-negative-20261026.json",
     "docs/xroga/evidence/zero-fly/background-source-checkpoint-20261026.json",
     "docs/xroga/evidence/zero-fly/google-delivery-sql-reapply-20261026.json",
-    "docs/xroga/evidence/zero-fly/integration-caller-rebinding-20261026.json"
+    "docs/xroga/evidence/zero-fly/integration-caller-rebinding-20261026.json",
+    "docs/xroga/evidence/zero-fly/hosted-delivery-schema-20261026.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,

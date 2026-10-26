@@ -12662,7 +12662,7 @@
       "id": "surface:c20200a666b149a045e3",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/index.ts",
-      "sha256": "0aa1af84d280845c0b3ccd3351d22260d1fda03423482e7915858d8f70d324c8",
+      "sha256": "78639a14bca3873d1143bcb3e03bd92ae58a2553e256d9f89f825b8d6fc57719",
       "symbols": [
         "active",
         "allowedOrigins",
@@ -15428,7 +15428,7 @@
       "id": "surface:e3f4df1301693b67e20b",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/loadPlatformEnvironment.ts",
-      "sha256": "5e85dd7c06c5c42f846a0df0aaf480a4d9c350dc1c4639388539837f2036da00",
+      "sha256": "a76f5c53983e13a0a282859ba6c834b58f99dfcd2f42340ceba7a46396960809",
       "symbols": [],
       "imports": [
         "./config/platformEnvironment.js"
@@ -15440,8 +15440,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:1",
-        "backend/src/scripts/runCanonicalWorker.ts:3"
+        "backend/src/index.ts:2",
+        "backend/src/scripts/runCanonicalWorker.ts:4"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -21231,8 +21231,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/index.ts:3",
-        "backend/src/scripts/runCanonicalWorker.ts:4"
+        "backend/src/index.ts:1",
+        "backend/src/scripts/runCanonicalWorker.ts:3"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -22287,7 +22287,7 @@
       "id": "surface:7bc8939729d3985b5f35",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/scripts/runCanonicalWorker.ts",
-      "sha256": "b1df763560fe294de80ec2fa8682e417fc0d2e86a0aaa4bc4d76a001827fb26c",
+      "sha256": "00178d5ca32c4b0b42024edae3e1670e50281329aafaa5c586733468ddc6d05c",
       "symbols": [
         "assistantMessageId",
         "cancellationCheck",
@@ -99098,7 +99098,7 @@
       "id": "surface:b5fb9b6d0970672ddebe",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/full-supabase-history.mjs",
-      "sha256": "fa5a40d96a246723057c5383c2b9e342831c0f180a13bf377150b647fe349d33",
+      "sha256": "09b8e794eb5d3fe98e17f76372ccad5e8c33302ec66191662d60b4614fc6f696",
       "symbols": [
         "actual",
         "additions",
@@ -99109,6 +99109,7 @@
         "catalog",
         "connect",
         "db",
+        "delivery",
         "error",
         "evidence",
         "file",
@@ -99117,6 +99118,7 @@
         "filesBefore",
         "foreign",
         "foreignSeries",
+        "functions",
         "inventoried",
         "inventory",
         "name",
@@ -99396,7 +99398,7 @@
       "id": "surface:a741178549139c6d7626",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/schema-catalog.mjs",
-      "sha256": "2805d1d09927098ccf5b3e192e6d4ab498482a26b4eca353453c116e5608d9c0",
+      "sha256": "c0437b58a7afae2b38e08b2da6688824477372f7d6a619c2b79917fd861f3c0a",
       "symbols": [
         "assertDisposableSource",
         "collectSchemaCatalog",
@@ -120526,7 +120528,7 @@
     {
       "id": "test-suite:3a8d6c698cbf0d0bfa6d",
       "sourcePath": "backend/src/runtime/safeLogging.test.ts",
-      "declaredTests": 14,
+      "declaredTests": 15,
       "skipLocations": [],
       "focusLocations": []
     },

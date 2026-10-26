@@ -293,3 +293,38 @@ Production SQL and Google Job activation have not occurred. Current-target
 Supabase upgrade, real Google lifecycle/recovery, Preview and release verification
 remain mandatory. Drain queued and active work before changing paired API/Job
 source or recovery configuration. Retain data and delivery history on rollback.
+
+
+## 2026-10-26, integration and hosted schema correction
+
+PR #856 is the migration integration PR against main bc669f8. Main already
+contains merged Batch 1.5. Its separate branch and Phase 4 remain untouched.
+The first integration run reproduced non-repeatable Google delivery DDL and
+stale source bindings. The correction passes ten real PostgreSQL checks,
+including preservation of queued rows on reapply. Existing scoped reviews were
+rebound only after exact enclosing-function comparison. Changed cancellation
+semantics remain explicitly unverified by those historical receipts.
+
+The next full-history run passes upgrade/reapply, then correctly rejects the
+unlisted new table. The explicit reviewed additions catalog now includes the
+exact migration hash and service-only boundary. The original table inventory,
+rejection of unknown tables and acceptance rules are retained. Full-history
+verification additionally checks Google delivery table and function denial.
+
+The complete backend regression exposed the old boot-order assumption. Safe
+logging now loads before protected configuration, dotenv and provider modules
+in API and canonical Job entrypoints. Focused tests verify import order and
+redaction of credentials loaded after logger installation.
+
+Existing free staging project dqxnatoessviphudbhei was resumed, verified empty,
+and upgraded with the exact expand migration. Hosted synthetic owner enqueue,
+foreign-owner denial, duplicate worker denial and original cancellation pass.
+The transaction rolled back, and all six relevant data counts remain zero.
+Receipt: `docs/xroga/evidence/zero-fly/hosted-delivery-schema-20261026.json`.
+This changes no production SQL and supplies no live Google caller certificate.
+
+Fresh Google inventory shows Cloud Tasks disabled, no central1 Jobs, and no
+project-level runtime Compute grants. Both old temporary native test windows
+are consumed and cleaned. New runtime access must be specifically confirmed
+before live Preview and canonical Job activation. The current API and Fly
+production traffic remain unchanged. No retirement is yet safe to claim.

@@ -1,7 +1,7 @@
 // Reproducible first-party Job entrypoint. No HTTP server, assistant CLI,
 // personal identity, second task graph or automatic provider retry loop.
-import '../loadPlatformEnvironment.js';
 import '../runtime/installSafeLogging.js';
+import '../loadPlatformEnvironment.js';
 import {GoogleDeliveryStore,requireCanonicalDeliveryClaim} from '../workers/googleDeliveryStore.js';
 import {googleDispatchConfiguration} from '../workers/googleDispatch.js';
 import {initializeCredentialVaultForServer} from '../services/integrations/credentialVaultStartup.js';

@@ -118,6 +118,16 @@ describe('credential-safe console', () => {
     assert.ok(lines.at(-1)!.includes('42'), 'format arguments still work');
   });
 
+  it('redacts credentials loaded into the environment after installation', () => {
+    const { lines, sink } = capture();
+    const runtimeEnv = env({});
+    const restore = installCredentialSafeConsole(sink, runtimeEnv);
+    runtimeEnv.PROVIDER_API_KEY = 'late-loaded-opaque-credential-123456789';
+    sink.log(runtimeEnv.PROVIDER_API_KEY);
+    restore();
+    assert.ok(!lines.join('').includes('late-loaded-opaque-credential-123456789'));
+  });
+
   it('is idempotent and restorable', () => {
     const { lines, sink } = capture();
     const r1 = installCredentialSafeConsole(sink, env({}));
