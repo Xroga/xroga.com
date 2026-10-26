@@ -56,6 +56,8 @@ export interface BuilderStore {
    * late test result can never overwrite a newer build's state or release its slot. Null when the project is busy or not found.
    */
   setStateIfIdle(userId: string, projectId: string, state: BuilderProjectState, reason: string): Promise<BuilderProject | null>;
+  /** Records the strict readiness result for a revision of the preview ('ready' | 'failed'), or clears it. */
+  markPreviewReadiness(userId: string, projectId: string, result: { revisionId: string; ready: boolean } | null): Promise<void>;
   /**
    * Atomically takes the single build slot. Succeeds when no build is active, the active build is
    * this same run, or the active build has not been touched since `staleBefore` (a crashed run).
@@ -97,6 +99,7 @@ export class InMemoryBuilderStore implements BuilderStore {
       productType: input.spec.productType,
       state: 'created',
       stateReason: 'Project created.',
+      previewReadiness: null,
       spec: clone(input.spec),
       starter: clone(input.starter),
       conversationId: input.conversationId ?? null,
@@ -141,6 +144,12 @@ export class InMemoryBuilderStore implements BuilderStore {
     const project = this.projects.get(projectId);
     if (!project || project.userId !== userId || project.activeRunId !== null) return null;
     return this.setState(userId, projectId, state, reason);
+  }
+
+  async markPreviewReadiness(userId: string, projectId: string, result: { revisionId: string; ready: boolean } | null) {
+    const project = this.projects.get(projectId);
+    if (!project || project.userId !== userId) return;
+    this.projects.set(projectId, { ...project, previewReadiness: result ? `${result.revisionId}:${result.ready ? 'ready' : 'failed'}` : null });
   }
 
   async claimRun(userId: string, projectId: string, runId: string, staleBefore: Date) {
@@ -217,7 +226,7 @@ export class InMemoryBuilderStore implements BuilderStore {
 interface ProjectRow {
   id: string; user_id: string; request_key: string; title: string; product_type: string; state: BuilderProjectState;
   state_reason: string; spec: BuildSpec; starter: StarterProvenance; conversation_id: string | null; active_run_id: string | null;
-  current_revision_id: string | null; current_revision_number: number; created_at: string; updated_at: string;
+  current_revision_id: string | null; current_revision_number: number; preview_readiness: string | null; created_at: string; updated_at: string;
 }
 
 interface RevisionRow {
@@ -227,7 +236,7 @@ interface RevisionRow {
 }
 
 const PROJECT_COLUMNS =
-  'id,user_id,request_key,title,product_type,state,state_reason,spec,starter,conversation_id,active_run_id,current_revision_id,current_revision_number,created_at,updated_at';
+  'id,user_id,request_key,title,product_type,state,state_reason,spec,starter,conversation_id,active_run_id,current_revision_id,current_revision_number,preview_readiness,created_at,updated_at';
 const REVISION_META_COLUMNS =
   'id,project_id,user_id,revision_number,parent_revision_id,run_id,origin,content_sha256,file_count,total_bytes,change_summary,verification_status,created_at';
 
@@ -236,7 +245,7 @@ function toProject(row: ProjectRow): BuilderProject {
     id: row.id, userId: row.user_id, requestKey: row.request_key, title: row.title, productType: row.product_type,
     state: row.state, stateReason: row.state_reason, spec: row.spec, starter: row.starter, conversationId: row.conversation_id,
     activeRunId: row.active_run_id, currentRevisionId: row.current_revision_id, currentRevisionNumber: row.current_revision_number,
-    createdAt: row.created_at, updatedAt: row.updated_at,
+    previewReadiness: row.preview_readiness ?? null, createdAt: row.created_at, updatedAt: row.updated_at,
   };
 }
 
@@ -324,6 +333,12 @@ export class SupabaseBuilderStore implements BuilderStore {
       .maybeSingle();
     if (error) storageFailure('update the project state', error);
     return data ? toProject(data as ProjectRow) : null;
+  }
+
+  async markPreviewReadiness(userId: string, projectId: string, result: { revisionId: string; ready: boolean } | null) {
+    const owner = this.owner(userId);
+    const { error } = await this.db().from('builder_projects').update({ preview_readiness: result ? `${result.revisionId}:${result.ready ? 'ready' : 'failed'}` : null }).eq('user_id', owner).eq('id', projectId);
+    if (error) storageFailure('record the preview check', error);
   }
 
   async claimRun(userId: string, projectId: string, runId: string, staleBefore: Date) {

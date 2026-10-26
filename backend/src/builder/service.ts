@@ -263,6 +263,8 @@ export class BuilderService {
     } catch {
       launch = { started: false, strictReady: null, reason: 'The isolated runtime could not be started.' };
     }
+    // Record what was observed, against the revision it was observed for. The preview state is derived from this, not from the project's overall state.
+    if (launch.started && launch.strictReady !== null) await this.deps.store.markPreviewReadiness(userId, projectId, { revisionId: saved.id, ready: launch.strictReady }).catch(() => undefined);
     if (launch.started && launch.strictReady === true) {
       // Verified only after browser QA passes on this revision (recorded by the QA service). Until then it is honestly partial.
       await set('partial', `The application is running and every page responds. Browser tests have not passed on this version yet. ${launch.reason}`, null);
@@ -351,8 +353,8 @@ export class BuilderService {
       facts
         ? {
             ...facts,
-            // Only a recorded strict check can say the pages respond; liveness facts cannot.
-            strictReady: project.state === 'verified' ? true : project.state === 'partial' && facts.requested ? false : facts.strictReady,
+            // Only a recorded strict check can say the pages respond; liveness facts cannot. The record names the revision it tested.
+            strictReady: head && project.previewReadiness === `${head.id}:ready` ? true : head && project.previewReadiness === `${head.id}:failed` ? false : facts.strictReady,
             stale: Boolean(head && facts.workspaceSha256 && facts.workspaceSha256 !== head.contentSha256),
           }
         : { requested: false, coordinatorStatus: null, runtimeRunning: false, processRunning: false, strictReady: null, grantExpiresAt: null, grantRevokedAt: null, stale: false },
