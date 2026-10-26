@@ -62,7 +62,7 @@ export class BuilderApiError extends Error {
   }
 }
 
-async function request<T>(path: string, init?: { method?: string; body?: unknown }): Promise<T> {
+export async function request<T>(path: string, init?: { method?: string; body?: unknown }): Promise<T> {
   const { data } = await createClient().auth.getSession();
   const accessToken = data.session?.access_token;
   if (!accessToken) throw new BuilderApiError(401, 'UNAUTHORIZED', 'Sign in required.');

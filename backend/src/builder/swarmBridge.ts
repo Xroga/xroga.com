@@ -1,5 +1,6 @@
 import { requireTenantContext, type TenantContext } from '../security/tenantContext.js';
 import { canonicalBuildRunner, canonicalPreviewPort } from './canonical.js';
+import { phase2ServicesFor } from './phase2Bridge.js';
 import { BuilderService, type BuilderRunBinding } from './service.js';
 import { SupabaseBuilderStore } from './store.js';
 import { BuilderError } from './types.js';
@@ -61,6 +62,11 @@ export async function closeBuilderRun(tenant: TenantContext, run: BuilderRunBind
       { outcome: result.ok ? 'completed' : 'failed', verified: result.ok, reason: result.reason ?? 'Canonical validation accepted the build.', files: [] },
       (revision) => canonicalPreviewPort.verify({ userId: context.userId, projectId: run.projectId, revision }),
     );
+    // Rerun the browser tests against the new revision. Best effort and detached: a failure here
+    // never changes the build result, and the outcome is recorded against the revision it tested.
+    if (result.ok) {
+      void phase2ServicesFor(context).qa.runQa(context.userId, run.projectId).catch(() => undefined);
+    }
   } catch {
     // The project keeps its last recorded state; nothing is reported as verified.
   }

@@ -1,6 +1,7 @@
 'use client';
 
 import { BUILDER_ENABLED, builderApi } from '@/lib/builderApi';
+import { builderPhase2Api } from '@/lib/builderApiPhase2';
 import { useBuilderProjectStore } from '@/store/useBuilderProjectStore';
 
 /**
@@ -8,10 +9,11 @@ import { useBuilderProjectStore } from '@/store/useBuilderProjectStore';
  *
  * - A new web product request creates a durable project (idempotent on the message key, so a retry
  *   never creates a second one) and builds into it.
- * - A follow-up in the same workspace continues the SAME project instead of creating another.
+ * - Inside an existing project the server classifies the message: a change request continues the
+ *   SAME project, and only an explicit request for something separate creates another.
  * - Requests that target a GitHub repository keep the existing repository path untouched.
- * - Any failure (not signed in, unsupported product, builder not enabled) falls back to the
- *   existing path; nothing is claimed that did not happen.
+ * - Any failure (not signed in, unsupported product, builder not enabled) falls back safely;
+ *   nothing is claimed that did not happen.
  */
 export async function resolveBuilderProject(input: {
   prompt: string;
@@ -22,7 +24,19 @@ export async function resolveBuilderProject(input: {
 }): Promise<string | undefined> {
   if (!BUILDER_ENABLED || input.hasRepositoryTarget) return undefined;
   const store = useBuilderProjectStore.getState();
-  if (!input.isNewProduct) return store.projectId ?? undefined;
+  let createNew = input.isNewProduct;
+  if (store.projectId && !input.isNewProduct) {
+    try {
+      const decision = await builderPhase2Api.intent({ prompt: input.prompt, projectId: store.projectId });
+      if (decision.intent === 'followup' && decision.projectId) return decision.projectId;
+      if (decision.intent === 'other') return undefined;
+      createNew = decision.intent === 'new_product';
+    } catch {
+      // If the decision cannot be made, keep working on the same project rather than creating a duplicate.
+      return store.projectId;
+    }
+  }
+  if (!createNew) return store.projectId ?? undefined;
   try {
     const key = `chat:${input.messageKey}`.replace(/[^A-Za-z0-9_.:-]/g, '').slice(0, 128);
     const { project } = await builderApi.create({ prompt: input.prompt, requestKey: key, conversationId: input.conversationId ?? null });
