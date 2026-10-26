@@ -63,6 +63,9 @@ describe('semantic request dispatch', () => {
       const corrected = enforceSingleExplicitBusinessActionControls(mixed, message);
       assert.deepEqual(corrected.capabilityIds, ['business.action']);
       assert.equal(corrected.goalContract.semanticIntent, 'EXTERNAL_ACTION');
+      const atApiBoundary = enforceExplicitBusinessWorkflowControls(mixed, message);
+      assert.deepEqual(atApiBoundary.capabilityIds, ['business.action']);
+      assert.equal(atApiBoundary.goalContract.semanticIntent, 'EXTERNAL_ACTION');
     }
   });
 

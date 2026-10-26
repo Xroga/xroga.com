@@ -287,7 +287,7 @@ export function enforceExplicitBusinessWorkflowControls(
   ) return plan;
 
   const steps = splitExplicitBusinessWorkflow(message);
-  if (!steps) return plan;
+  if (!steps) return enforceSingleExplicitBusinessActionControls(plan, message);
 
   const capabilities = [
     ...new Set([
