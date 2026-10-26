@@ -62,3 +62,12 @@ test('a new dynamic expression in an already reviewed file still requires explic
   const result = resolveDynamicBindings({readers: [], dynamic: [{path: 'backend/src/ai/models.ts', line: 1, expression: 'untrusted.userKey'}]});
   assert.equal(result[0].status, 'REQUIRES_BINDING_REVIEW');
 });
+test('OpenRouter price caps resolve only finite audited model and input/output names', () => {
+  const known = resolveDynamicBindings({readers: [], dynamic: [{path: 'backend/src/ai/openRouterRouting.ts', line: 70, expression: '`${prefix}_${key}_USD_PER_1M`'}]})[0];
+  assert.equal(known.status, 'RESOLVED_FINITE_CATALOG');
+  assert.equal(known.names.length, 8);
+  assert.ok(known.names.includes('XROGA_GLM_5_3_FLASH_MAX_INPUT_USD_PER_1M'));
+  assert.ok(known.names.includes('XROGA_KIMI_K3_MAX_OUTPUT_USD_PER_1M'));
+  const unknown = resolveDynamicBindings({readers: [], dynamic: [{path: 'backend/src/ai/openRouterRouting.ts', line: 70, expression: 'untrusted.userKey'}]})[0];
+  assert.equal(unknown.status, 'REQUIRES_BINDING_REVIEW');
+});

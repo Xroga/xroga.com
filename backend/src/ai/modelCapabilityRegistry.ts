@@ -146,7 +146,6 @@ const FALLBACKS: Record<
 
   glm_5_3_flash: [
     'glm_5_3',
-    'kimi_k3',
   ],
 
   deepseek_v4_flash: [
@@ -215,7 +214,10 @@ export function getRuntimeModelRegistry(): RuntimeModelCapability[] {
           ...admin.fallbackOrder.filter((fallback) => fallback !== id),
           ...FALLBACKS[id],
         ]),
-      ].filter((fallback) => (isCodingModel(id) ? isCodingModel(fallback) : true)),
+      ].filter((fallback) => (isCodingModel(id) ? isCodingModel(fallback) : true)
+        // A failed inexpensive request is not authority to charge for Kimi. Selecting
+        // Kimi for a difficult task remains possible through the task router itself.
+        && (!(id === 'glm_5_3_flash' || id === 'deepseek_v4_flash') || fallback !== 'kimi_k3')),
       supports: {
         text: true,
         // Read from the canonical catalogue, not guessed from the id.

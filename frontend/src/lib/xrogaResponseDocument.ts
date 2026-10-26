@@ -19,11 +19,69 @@ function compactWhitespace(value: string): string {
   return value.replace(/\n{3,}/g, '\n\n').trim();
 }
 
+function extractUnfencedProtocol(content: string, documentId: string): { content: string; blocks: XrogaBlock[] } {
+  const lines = content.split('\n');
+  const kept: string[] = [];
+  const blocks: XrogaBlock[] = [];
+  let hasNarrative = false;
+  let codeFence: string | null = null;
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index] ?? '';
+    const fence = /^\s*(`{3,}|~{3,})/.exec(line)?.[1] ?? null;
+    if (fence) {
+      codeFence = codeFence === null ? fence[0]! : codeFence === fence[0] ? null : codeFence;
+      kept.push(line);
+      continue;
+    }
+    if (codeFence) {
+      kept.push(line);
+      continue;
+    }
+    const marker = /(?:^|[ \t])xroga-ui[ \t]*$/i.exec(line);
+    const candidate = marker ? lines[index + 1]?.trim() : line.trim();
+    const looksLikeBlock = candidate?.startsWith('{') && candidate.includes('"type"');
+    if (looksLikeBlock && (marker || hasNarrative) && candidate!.length <= MAX_PROTOCOL_CHARS) {
+      try {
+        const decoded = JSON.parse(candidate!) as unknown;
+        if (decoded && typeof decoded === 'object' && !Array.isArray(decoded)
+          && modelBlockCapabilitySet.has((decoded as { type?: string }).type ?? '')) {
+          const block = canonicalRichBlock(decoded, documentId, blocks.length);
+          if (block && blocks.length < MAX_RICH_BLOCKS) {
+            blocks.push(block);
+            if (marker) {
+              kept.push(line.slice(0, marker.index).trimEnd());
+              index += 1;
+            }
+            continue;
+          }
+        }
+      } catch {
+        // A partially streamed, explicitly marked block stays hidden until complete.
+        if (marker) {
+          kept.push(line.slice(0, marker.index).trimEnd());
+          break;
+        }
+      }
+    }
+    if (marker) {
+      kept.push(line.slice(0, marker.index).trimEnd());
+      if (candidate?.startsWith('{') && candidate.endsWith('}')) {
+        index += 1;
+        continue;
+      }
+      break;
+    }
+    kept.push(line);
+    if (line.trim()) hasNarrative = true;
+  }
+  return { content: compactWhitespace(kept.join('\n')), blocks };
+}
+
 /** Hide the private data protocol while the answer is streaming, including an unfinished fence. */
 export function stripXrogaUiProtocol(content: string): string {
   const complete = content.replace(XROGA_UI_FENCE, '');
   const open = complete.search(/```xroga-ui\b/i);
-  return compactWhitespace(open >= 0 ? complete.slice(0, open) : complete);
+  return extractUnfencedProtocol(open >= 0 ? complete.slice(0, open) : complete, 'stream').content;
 }
 
 function containsUnsafeKey(value: unknown, depth = 0): boolean {
@@ -217,8 +275,9 @@ export function enhanceAiResponse(content: string, documentId: string): Enhanced
   const source = typeof content === 'string' ? content : '';
   const protocolBlocks = parseProtocolBlocks(source, documentId);
   const withoutProtocol = stripXrogaUiProtocol(source);
+  const looseBlocks = extractUnfencedProtocol(source.replace(XROGA_UI_FENCE, ''), documentId).blocks;
   const markdown = tableBlocksFromMarkdown(withoutProtocol, documentId);
-  const richBlocks = [...markdown.blocks, ...protocolBlocks].slice(0, MAX_RICH_BLOCKS);
+  const richBlocks = [...markdown.blocks, ...protocolBlocks, ...looseBlocks].slice(0, MAX_RICH_BLOCKS);
   if (!richBlocks.length) return { content: withoutProtocol || source.trim() };
 
   const narrative = compactWhitespace(markdown.content);

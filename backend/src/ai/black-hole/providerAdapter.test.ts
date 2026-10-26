@@ -21,10 +21,10 @@ test('GLM-5.3 Flash is the active vision model', () => {
 });
 
 test('K3 vision is off until an operator verifies it', () => {
-  // Not a guess in either direction: the shipped default is off because Moonshot's contract
-  // has not been confirmed, and the operator switch exists because it plausibly will be.
+  // No OpenRouter K3 vision endpoint has been verified; an old vendor switch
+  // cannot override the configured endpoint's explicit text-only capability.
   assert.equal(supportsImages('kimi_k3', VISION_OFF), false);
-  assert.equal(supportsImages('kimi_k3', VISION_ON), true);
+  assert.equal(supportsImages('kimi_k3', VISION_ON), false);
 });
 
 test('a text-only model never reports image support', () => {

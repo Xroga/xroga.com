@@ -39,12 +39,12 @@ test('Grok is private to X retrieval and absent from the generic registry', () =
   assert.equal(blackHoleAvailability('grok_4_3'), 'unknown_model');
 });
 
-test('configured model identifiers honour active environment overrides', () => {
+test('unapproved model identifier overrides fail closed', () => {
   const env = { GLM_5_3_MODEL_ID: 'operator-glm-5.3' } as NodeJS.ProcessEnv;
-  assert.equal(providerModelIdentifier('glm_5_3', env), 'operator-glm-5.3');
+  assert.equal(providerModelIdentifier('glm_5_3', env), null);
 });
 
-test('vision belongs only to the confirmed multimodal engineering route', () => {
+test('only the GLM Flash route has a verified image-capable approved endpoint', () => {
   assert.equal(blackHoleModel('glm_5_3_flash')?.capabilities.vision, true);
   assert.equal(blackHoleModel('glm_5_3')?.capabilities.vision, false);
   assert.equal(blackHoleModel('deepseek_v4_flash')?.capabilities.vision, false);

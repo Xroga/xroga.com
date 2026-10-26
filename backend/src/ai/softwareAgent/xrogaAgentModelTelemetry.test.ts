@@ -48,12 +48,12 @@ test(
 
     assert.equal(
       telemetry.requestedProvider,
-      'moonshot',
+      'openrouter',
     );
 
     assert.equal(
       telemetry.actualProvider,
-      'moonshot',
+      'openrouter',
     );
 
     assert.equal(
@@ -124,7 +124,7 @@ test(
 
     assert.equal(
       telemetry.requestedProvider,
-      'moonshot',
+      'openrouter',
     );
 
     assert.equal(
@@ -134,7 +134,7 @@ test(
 
     assert.equal(
       telemetry.actualProvider,
-      'zhipu',
+      'openrouter',
     );
 
     assert.equal(

@@ -34,7 +34,13 @@ function displayToolkitName(
 
 /** Only a question about connection state belongs on this direct read path. */
 export function connectionStatusTarget(message: string): string | null {
-  const normalized = message.trim().replace(/[?.!]+$/, '').trim();
+  const [question, ...instructions] = message.trim().split(/[?.!]+/).map((part) => part.trim()).filter(Boolean);
+  // Permit only read-only presentation/negative constraints after the status
+  // question. A second requested action must stay in the normal planner.
+  if (instructions.some((part) => !/^(?:do not|don't)\b/i.test(part)
+    && (!/^(?:report|reply|answer|respond)\s+only\b/i.test(part)
+      || /\b(?:send|draft|create|delete|edit|update|schedule|post|purchase|pay|book)\b/i.test(part)))) return null;
+  const normalized = question ?? '';
   if (!/\b(?:connected|linked)\b/i.test(normalized)) return null;
 
   if (
@@ -44,7 +50,7 @@ export function connectionStatusTarget(message: string): string | null {
   }
 
   const match = normalized.match(
-    /^(?:(?:can you|please)\s+)?(?:check|verify|tell me if|tell me whether|is|are)\s+(?:if\s+|whether\s+)?(.+?)\s+(?:(?:is|are)\s+)?(?:currently\s+)?(?:connected|linked)(?:\s+(?:to|with)\s+xroga)?$/i,
+    /^(?:(?:can you|please)\s+)?(?:check|verify|tell me if|tell me whether|is|are)\s+(?:if\s+|whether\s+)?(.+?)\s+(?:(?:is|are)\s+)?(?:currently\s+)?(?:connected|linked)(?:\s+(?:to|with)\s+(?:(?:my|the|our)\s+)?xroga(?:\s+account)?)?$/i,
   );
   if (!match) return null;
 

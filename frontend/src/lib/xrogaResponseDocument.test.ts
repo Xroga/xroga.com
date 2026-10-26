@@ -49,6 +49,28 @@ test('validated xroga-ui blocks become live rich output without leaking protocol
   assert.doesNotMatch(JSON.stringify(result.output), /xroga-ui/);
 });
 
+test('unfenced model protocol is recovered without showing raw JSON', () => {
+  const sourceList = JSON.stringify({ type: 'source-list', title: 'Sources', sources: [{ id: 's1', title: 'NASA', url: 'https://www.nasa.gov/mission/artemis-ii/' }] });
+  const marked = enhanceAiResponse(`Official page found. xroga-ui\n${sourceList}\nMore context.`, 'loose-marked');
+  assert.equal(marked.content, 'Official page found.\nMore context.');
+  assert.deepEqual(marked.output?.blocks.map((block) => block.type), ['narrative', 'source-list']);
+
+  const unmarked = enhanceAiResponse(`Official page found.\n${sourceList}`, 'loose-unmarked');
+  assert.equal(unmarked.content, 'Official page found.');
+  assert.deepEqual(unmarked.output?.blocks.map((block) => block.type), ['narrative', 'source-list']);
+  assert.equal(stripXrogaUiProtocol('Official page found. xroga-ui\n{"type":"source-list"'), 'Official page found.');
+  const unsafe = `Safe answer. xroga-ui\n${JSON.stringify({ type: 'source-list', title: 'Bad', sources: [], onClick: 'run()' })}\nStill safe.`;
+  assert.equal(enhanceAiResponse(unsafe, 'loose-unsafe').content, 'Safe answer.\nStill safe.');
+  assert.equal(enhanceAiResponse(unsafe, 'loose-unsafe').output, undefined);
+});
+
+test('requested standalone JSON is preserved as text', () => {
+  const json = JSON.stringify({ type: 'source-list', title: 'Requested payload', sources: [] });
+  assert.equal(enhanceAiResponse(json, 'json-request').content, json);
+  const codeSample = `Here is the JSON example.\n\`\`\`json\n${json}\n\`\`\``;
+  assert.equal(enhanceAiResponse(codeSample, 'json-code').content, codeSample);
+});
+
 test('validated utility blocks become interactive response output', () => {
   const response = [
     'Adjust the inputs to explore the estimate.',

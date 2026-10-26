@@ -5,7 +5,6 @@ import {
   CODING_MODEL_TIERS,
   FAMILY_TRANSPORT,
   MIN_EVIDENCE_SAMPLES,
-  OPENROUTER_CODING_FAMILY,
   SUFFICIENT_VALIDATION_RATE,
   TransportPolicyError,
   assertTransportPolicy,
@@ -22,8 +21,8 @@ test(
     assert.deepEqual(
       FAMILY_TRANSPORT,
       {
-        kimi: 'moonshot',
-        glm: 'zhipu',
+        kimi: 'openrouter',
+        glm: 'openrouter',
         deepseek:
           'openrouter',
       },
@@ -32,33 +31,19 @@ test(
 );
 
 test(
-  'OpenRouter carries DeepSeek and nothing else',
+  'OpenRouter carries every approved coding family',
   () => {
-    assert.equal(
-      OPENROUTER_CODING_FAMILY,
-      'deepseek',
-    );
-
     for (
       const tier of
       CODING_MODEL_TIERS
     ) {
-      if (
-        FAMILY_TRANSPORT[
-          tier.family
-        ] === 'openrouter'
-      ) {
-        assert.equal(
-          tier.family,
-          'deepseek',
-        );
-      }
+      assert.equal(FAMILY_TRANSPORT[tier.family], 'openrouter');
     }
   },
 );
 
 test(
-  'Kimi and GLM are refused on OpenRouter',
+  'direct-vendor transports are refused',
   () => {
     for (
       const modelId of [
@@ -71,7 +56,7 @@ test(
         () =>
           assertTransportPolicy(
             modelId,
-            'openrouter',
+            'zhipu',
           ),
         TransportPolicyError,
       );
@@ -86,7 +71,7 @@ test(
       () =>
         assertTransportPolicy(
           'kimi_k3',
-          'moonshot',
+          'openrouter',
         ),
     );
 
@@ -94,7 +79,7 @@ test(
       () =>
         assertTransportPolicy(
           'glm_5_3',
-          'zhipu',
+          'openrouter',
         ),
     );
 
@@ -102,7 +87,7 @@ test(
       () =>
         assertTransportPolicy(
           'glm_5_3_flash',
-          'zhipu',
+          'openrouter',
         ),
     );
 

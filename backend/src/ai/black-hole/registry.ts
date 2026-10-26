@@ -45,7 +45,7 @@ import type { ModelAvailability } from '../providerCostTiers.js';
 import { MODELS, resolveModelSpec, type ModelId } from '../models.js';
 
 /** The real transports Black Hole ∞ speaks. Named per provider, never per model family. */
-export type BlackHoleProvider = 'moonshot' | 'glm_official' | 'openrouter' | 'xai';
+export type BlackHoleProvider = 'openrouter';
 
 /**
  * What a model is technically able to do.
@@ -167,10 +167,10 @@ const codingCapabilities = (
 export const BLACK_HOLE_MODELS: readonly BlackHoleModelDefinition[] = [
   {
     id: 'kimi_k3',
-    provider: 'moonshot',
-    providerModel: 'kimi-k3',
+    provider: 'openrouter',
+    providerModel: 'moonshotai/kimi-k3',
     providerModelEnv: 'KIMI_MODEL_ID',
-    credentialEnv: 'KIMI_API_KEY',
+    credentialEnv: 'OPENROUTER_API_KEY',
     capabilities: codingCapabilities({ deepReasoning: true, longContext: true, vision: true }),
     authority: ENGINEERING_AUTHORITY,
     contextWindow: 1_000_000,
@@ -180,16 +180,16 @@ export const BLACK_HOLE_MODELS: readonly BlackHoleModelDefinition[] = [
   },
   {
   id: 'glm_5_3',
-  provider: 'glm_official',
+  provider: 'openrouter',
 
   providerModel:
-    'glm-5.3',
+    'z-ai/glm-5.3',
 
   providerModelEnv:
     'GLM_5_3_MODEL_ID',
 
   credentialEnv:
-    'GLM_API_KEY',
+    'OPENROUTER_API_KEY',
 
   capabilities:
     codingCapabilities({
@@ -220,16 +220,16 @@ export const BLACK_HOLE_MODELS: readonly BlackHoleModelDefinition[] = [
 
 {
   id: 'glm_5_3_flash',
-  provider: 'glm_official',
+  provider: 'openrouter',
 
   providerModel:
-    'glm-5.3-flash',
+    'z-ai/glm-5.3-flash',
 
   providerModelEnv:
     'GLM_5_3_FLASH_MODEL_ID',
 
   credentialEnv:
-    'GLM_API_KEY',
+    'OPENROUTER_API_KEY',
 
   capabilities:
     codingCapabilities({
@@ -260,7 +260,7 @@ export const BLACK_HOLE_MODELS: readonly BlackHoleModelDefinition[] = [
   {
     id: 'deepseek_v4_flash',
     provider: 'openrouter',
-    providerModel: 'deepseek/deepseek-v4-flash',
+    providerModel: 'deepseek/deepseek-v4.1-flash',
     providerModelEnv: 'DEEPSEEK_FLASH_MODEL_ID',
     credentialEnv: 'OPENROUTER_API_KEY',
     capabilities: codingCapabilities(),

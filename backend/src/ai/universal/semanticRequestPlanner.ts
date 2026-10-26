@@ -287,7 +287,7 @@ export function enforceExplicitBusinessWorkflowControls(
   ) return plan;
 
   const steps = splitExplicitBusinessWorkflow(message);
-  if (!steps) return plan;
+  if (!steps) return enforceSingleExplicitBusinessActionControls(plan, message);
 
   const capabilities = [
     ...new Set([
@@ -315,6 +315,47 @@ export function enforceExplicitBusinessWorkflowControls(
     blockers,
     rationale: 'Preserved all explicit connected-app tasks in the user request.',
     directResponse: undefined,
+  };
+}
+
+/**
+ * A planner can mistake a prohibition such as "do not read any other mail"
+ * for a requested app read. Only remove that incidental read when the message
+ * starts with one explicit mutation and contains no affirmative read step.
+ * Actual read-then-act requests stay on the workflow/approval boundary.
+ */
+export function enforceSingleExplicitBusinessActionControls(
+  plan: SemanticRequestPlan,
+  message: string,
+): SemanticRequestPlan {
+  const capabilities = plan.goalContract.requiredCapabilities;
+  if (
+    plan.dispatch !== 'chat' ||
+    !capabilities.includes('business.read') ||
+    !capabilities.includes('business.action') ||
+    capabilities.some((id) =>
+      id !== 'business.read' && id !== 'business.action' && id !== 'conversation.respond'
+    ) ||
+    splitExplicitBusinessWorkflow(message) ||
+    !/^(?:please\s+)?(?:create|draft|send|email|message|schedule|book|update|edit|delete|remove|cancel|publish|post|upload|invite|add|set|archive|reply|refund|transfer|pay|share)\b/i.test(message.trim()) ||
+    /(?:^|[.;]\s*|,\s*|\b(?:and|then|also)\s+)(?:please\s+)?(?:find|search|list|show|check|look up|lookup|fetch|retrieve|read|summarize|inspect|review|verify|get)\b/i.test(message)
+  ) return plan;
+
+  const requiredCapabilities = capabilities.filter((id) => id !== 'business.read');
+  return {
+    ...plan,
+    capabilityIds: plan.capabilityIds.filter((id) => id !== 'business.read'),
+    goalContract: goalContractSchema.parse({
+      ...plan.goalContract,
+      semanticIntent: 'EXTERNAL_ACTION',
+      requiredCapabilities,
+      requiredAuthorities: [
+        ...new Set(requiredCapabilities.flatMap(
+          (id) => universalCapabilityRegistry.get(id)?.requiredAuthorities ?? [],
+        )),
+      ],
+    }),
+    rationale: 'The explicit single app mutation has no affirmative connected-app read step.',
   };
 }
 

@@ -4,6 +4,7 @@ import { test } from 'node:test';
 import ts from 'typescript';
 import { generateStructured } from '../../ai/black-hole/structuredOutput.js';
 import { isPostCompletionAccountingError, recordCompletedProviderUsage } from '../../ai/postCompletionAccounting.js';
+import { normalizedReadToolArguments } from './businessRead.js';
 
 // Execute the actual private selector source with synthetic boundary adapters.
 // This avoids adding production injection hooks or calling a paid provider.
@@ -23,6 +24,7 @@ for (const [file, name] of [['businessRead.ts', 'selectToolAndArguments'], ['bus
     const adapters = {
       buildCandidatePayload: () => [{ toolSlug: 'FIXTURE_TOOL' }], selectPlannerRoutes: () => ['kimi_k3', 'glm_5_3'],
       generateStructured, isPlainRecord: (value: unknown) => !!value && typeof value === 'object', validateArguments: () => true,
+      normalizedReadToolArguments,
       estimateMessageTokens: () => 1,
       withProviderReservation: async (input: { execute: () => Promise<unknown> }) => input.execute(),
       chatCompletion: async (modelId: string) => { providerCalls++; return { modelId, inputTokens: 2, outputTokens: 1, text: malformed && providerCalls === 1 ? 'invalid JSON' : valid }; },

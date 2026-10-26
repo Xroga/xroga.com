@@ -25,15 +25,13 @@ import {
  *
  * Engineering authority:
  *
- * Kimi     → Moonshot
- * GLM      → Zhipu / Z.ai official
- * DeepSeek → OpenRouter
+ * Every active engineering model uses the OpenRouter transport.
  *
  * Research models never gain project-writing authority.
  */
 
 test(
-  'only Moonshot, Zhipu and OpenRouter models may perform coding',
+  'only the four approved OpenRouter models may perform coding',
   () => {
     assert.deepEqual(
       Object.keys(
@@ -60,8 +58,6 @@ test(
     ) {
       assert.ok(
         [
-          'moonshot',
-          'zhipu',
           'openrouter',
         ].includes(
           transport,
@@ -79,21 +75,21 @@ test(
       requiredCodingTransport(
         'kimi_k3',
       ),
-      'moonshot',
+      'openrouter',
     );
 
     assert.equal(
       requiredCodingTransport(
         'glm_5_3',
       ),
-      'zhipu',
+      'openrouter',
     );
 
     assert.equal(
       requiredCodingTransport(
         'glm_5_3_flash',
       ),
-      'zhipu',
+      'openrouter',
     );
 
     assert.equal(
@@ -106,34 +102,13 @@ test(
 );
 
 test(
-  'Kimi and currently registered GLM models are never routed through OpenRouter',
+  'every active model resolves only through OpenRouter',
   () => {
-    assert.ok(
-      !MODELS.kimi_k3.baseUrl.includes(
-        'openrouter',
-      ),
-      MODELS.kimi_k3.baseUrl,
-    );
-
-    assert.ok(
-      !MODELS.glm_5_3.baseUrl.includes(
-        'openrouter',
-      ),
-      MODELS.glm_5_3.baseUrl,
-    );
-
-    assert.ok(
-      !MODELS.glm_5_3_flash.baseUrl.includes('openrouter'),
-      MODELS.glm_5_3_flash.baseUrl,
-    );
-
-    assert.ok(
-      MODELS.deepseek_v4_flash
-        .baseUrl
-        .includes(
-          'openrouter',
-        ),
-    );
+    for (const model of Object.values(MODELS)) {
+      assert.equal(model.provider, 'openrouter');
+      assert.equal(model.baseUrl, 'https://openrouter.ai/api/v1');
+      assert.equal(model.secretKey, 'OPENROUTER_API_KEY');
+    }
   },
 );
 
@@ -375,7 +350,7 @@ test(
     }
 
     assert.ok(
-      chainsChecked >= 8,
+      chainsChecked >= 7,
       `expected to check real chains, checked ${chainsChecked}`,
     );
   },

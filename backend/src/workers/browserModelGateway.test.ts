@@ -73,9 +73,9 @@ describe('browser model gateway (Stagehand ClientLLM through the canonical ledge
     assert.equal(unmeasured.ledger.released.length, 1); assert.equal(unmeasured.ledger.settled.length, 0);
   });
 
-  it('uses JSON mode plus the schema in the prompt for providers without strict json_schema (GLM, Kimi)', async () => {
+  it('can use JSON mode plus the schema in the prompt when an endpoint lacks strict json_schema', async () => {
     const bodies: any[] = [];
-    const gw = createBrowserModelGateway({ modelId: 'glm_5_3_flash', reserve: async (i) => ({ id: 'r', reservedMicroUsd: estimateProviderReservationMicroUsd(i), priceVersion: 't' }), settle: async () => {}, release: async () => {},
+    const gw = createBrowserModelGateway({ modelId: 'glm_5_3_flash', structuredMode: 'json_object', reserve: async (i) => ({ id: 'r', reservedMicroUsd: estimateProviderReservationMicroUsd(i), priceVersion: 't' }), settle: async () => {}, release: async () => {},
       client: () => ({ model: 'glm', create: async (b) => { bodies.push(b); return ok('```json\n{"elements":[]}\n```'); } }) });
     const r = await gw.generate({ messages: [{ role: 'user', content: { type: 'text', text: 'observe' } }], responseFormat: { type: 'json_schema', name: 'Observe', schema: { type: 'object', required: ['elements'] } } }, { job: job(), remainingMicros: 2_000_000, signal });
     assert.deepEqual(bodies[0].response_format, { type: 'json_object' });

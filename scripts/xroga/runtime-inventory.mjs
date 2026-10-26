@@ -35,6 +35,8 @@ export function resolveDynamicBindings(discovery) {
   const identifiers = declaredKeys(modelSource, ['modelIdEnv']);
   const modelKeys = sorted([...declaredKeys(modelSource, ['secretKey', 'imagesEnv']), ...identifiers,
     ...identifiers.flatMap(name => ['INPUT_USD_PER_1M', 'OUTPUT_USD_PER_1M', 'CONTEXT_WINDOW'].map(suffix => `${name.replace(/_MODEL_ID$/, '')}_${suffix}`))]);
+  const openRouterPriceCapKeys = sorted(declaredKeys(modelSource, ['id']).flatMap(id =>
+    ['INPUT', 'OUTPUT'].map(side => `XROGA_${id.toUpperCase()}_MAX_${side}_USD_PER_1M`)));
   const capabilityKeys = declaredKeys('backend/src/lib/capabilityRegistry.ts', ['requiredCredentials']);
   const sandboxKeys = declaredKeys('backend/src/sandbox/sandboxEnvironment.ts', [], ['ALLOWED_PASSTHROUGH']);
   const aliasKeys = discovery.readers.filter(row => row.mechanism === 'DECLARED_SECRET_ALIAS').map(row => row.name);
@@ -43,6 +45,9 @@ export function resolveDynamicBindings(discovery) {
     if (/^(?:backend\/src\/(?:ai\/(?:models|modelCapabilityRegistry|openaiCompat|providerCostTiers)|lib\/adaptiveOrchestrator|operations\/benchmarkAdapter)\.ts)$/.test(binding.path)) {
       names = modelKeys; sources = [modelSource, 'backend/src/ai/providerCostTiers.ts'];
       policy = 'Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts.'; status = 'RESOLVED_FINITE_CATALOG';
+    } else if (binding.path === 'backend/src/ai/openRouterRouting.ts') {
+      names = openRouterPriceCapKeys; sources = [modelSource, binding.path];
+      policy = 'Finite MODELS ids derive INPUT/OUTPUT price-cap names; each value may only tighten its audited model ceiling.'; status = 'RESOLVED_FINITE_CATALOG';
     } else if (binding.path.endsWith('/config/envSecrets.ts') || binding.path.endsWith('/lib/platformReady.ts')) {
       names = sorted([...aliasKeys, ...discovery.readers.filter(row => row.mechanism === 'SECRET_HELPER_CALL').map(row => row.name)]);
       sources = ['backend/src/config/envSecrets.ts', 'backend/src/lib/platformReady.ts'];
@@ -58,6 +63,7 @@ export function resolveDynamicBindings(discovery) {
       'backend/src/ai/modelCapabilityRegistry.ts': ['def.secretKey'],
       'backend/src/ai/models.ts': ['keys.modelId', 'keys.inputPrice', 'keys.outputPrice', 'keys.contextWindow', 'def.imagesEnv'],
       'backend/src/ai/openaiCompat.ts': ['def.secretKey'], 'backend/src/ai/providerCostTiers.ts': ['tier.modelIdEnv'],
+      'backend/src/ai/openRouterRouting.ts': ['`${prefix}_${key}_USD_PER_1M`'],
       'backend/src/config/envSecrets.ts': ['key', 'primary'], 'backend/src/lib/adaptiveOrchestrator.ts': ['def.secretKey'],
       'backend/src/lib/capabilityRegistry.ts': ['name'], 'backend/src/lib/platformReady.ts': ['key'],
       'backend/src/operations/benchmarkAdapter.ts': ['definition.secretKey'],

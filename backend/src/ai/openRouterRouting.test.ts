@@ -1,0 +1,136 @@
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import { MODELS } from './models.js';
+import { APPROVED_OPENROUTER_ENDPOINTS, modelPriceCaps, pinnedProviderRequest,
+  retryOtherApprovedEndpoint, validatedOpenRouterEndpoints } from './openRouterRouting.js';
+
+const rows = [
+  { status: 0, tag: 'baidu/fp8', provider_name: 'Baidu', model_id: 'deepseek/deepseek-v4.1-flash',
+    context_length: 1_048_576, pricing: { prompt: '0.0000003', completion: '0.0000012', input_cache_read: '0.000000006' },
+    supported_parameters: ['tools', 'response_format', 'structured_outputs'] },
+  { status: 0, tag: 'sail-research/fp4', provider_name: 'Sail Research', model_id: 'deepseek/deepseek-v4.1-flash',
+    context_length: 1_048_576, pricing: { prompt: '0.00000009', completion: '0.00000025', input_cache_read: '0.000000006' },
+    supported_parameters: ['tools', 'response_format', 'structured_outputs'] },
+  { status: 0, tag: 'relace', provider_name: 'Relace', model_id: 'z-ai/glm-5.3-flash',
+    context_length: 1_048_576, pricing: { prompt: '0.0000000413', completion: '0.0000000758', input_cache_read: '0.00000003' },
+    supported_parameters: ['tools'] },
+  { status: 0, tag: 'open-inference/fp4', provider_name: 'OpenInference', model_id: 'z-ai/glm-5.3-flash',
+    context_length: 1_048_576, pricing: { prompt: '0.000000110038', completion: '0.00000001', input_cache_read: '0.00000002242' },
+    supported_parameters: ['tools', 'response_format'] },
+  { status: 0, tag: 'wafer/us', provider_name: 'Wafer', model_id: 'z-ai/glm-5.3',
+    context_length: 1_048_576, pricing: { prompt: '0.0000000699', completion: '0.0000014', input_cache_read: '0.0000000689' },
+    supported_parameters: ['tools', 'response_format'] },
+  { status: 0, tag: 'sail-research/us', provider_name: 'Sail Research', model_id: 'z-ai/glm-5.3',
+    context_length: 1_048_576, pricing: { prompt: '0.0000005', completion: '0.000002', input_cache_read: '0.00000008' },
+    supported_parameters: ['tools', 'response_format'] },
+  { status: 0, tag: 'wafer/fp4', provider_name: 'Wafer', model_id: 'z-ai/glm-5.3',
+    context_length: 1_048_576, pricing: { prompt: '0.000000179', completion: '0.0000014', input_cache_read: '0.000000178' },
+    supported_parameters: ['tools', 'response_format'] },
+  { status: 0, tag: 'unapproved', provider_name: 'Someone Else', model_id: 'z-ai/glm-5.3',
+    context_length: 1_048_576, pricing: { prompt: '0', completion: '0', input_cache_read: '0' },
+    supported_parameters: ['tools', 'response_format'] },
+];
+const catalog = async () => Response.json({ data: { endpoints: rows } });
+
+test('the only four configured models use OpenRouter with exact audited IDs', () => {
+  assert.deepEqual(Object.values(MODELS).map(model => model.apiModel).sort(), [
+    'deepseek/deepseek-v4.1-flash', 'moonshotai/kimi-k3', 'z-ai/glm-5.3', 'z-ai/glm-5.3-flash',
+  ]);
+  assert.ok(Object.values(MODELS).every(model => model.provider === 'openrouter'
+    && model.secretKey === 'OPENROUTER_API_KEY'));
+  assert.equal(Object.keys(APPROVED_OPENROUTER_ENDPOINTS).length, 4);
+});
+
+test('Baidu DeepSeek is excluded above cap and Sail is the only eligible endpoint', async () => {
+  const endpoints = await validatedOpenRouterEndpoints('deepseek_v4_flash', { fetcher: catalog });
+  assert.deepEqual(endpoints.map(endpoint => endpoint.tag), ['sail-research/fp4']);
+  assert.deepEqual(pinnedProviderRequest(endpoints[0]!, 'deepseek_v4_flash'), {
+    order: ['sail-research/fp4'], only: ['sail-research/fp4'], allow_fallbacks: false,
+    require_parameters: true, max_price: { prompt: 0.09, completion: 0.25 },
+  });
+});
+
+test('unavailable primary is not enabled from the live endpoint catalog', async () => {
+  const unavailableBaidu = async () => Response.json({ data: { endpoints: rows.map(row =>
+    row.tag === 'baidu/fp8' ? { ...row, status: -5 } : row) } });
+  const endpoints = await validatedOpenRouterEndpoints('deepseek_v4_flash', { fetcher: unavailableBaidu });
+  assert.deepEqual(endpoints.map(endpoint => endpoint.tag), ['sail-research/fp4']);
+});
+
+test('Wafer cheap endpoint is first; Sail Research is the only fallback', async () => {
+  const endpoints = await validatedOpenRouterEndpoints('glm_5_3', { fetcher: catalog });
+  assert.deepEqual(endpoints.map(endpoint => endpoint.tag), ['wafer/us', 'sail-research/us']);
+  assert.equal(endpoints[0]?.inputUsdPer1M, 0.0699);
+  assert.equal(endpoints[1]?.outputUsdPer1M, 2);
+  assert.deepEqual(pinnedProviderRequest(endpoints[0]!, 'glm_5_3'), {
+    order: ['wafer/us'], only: ['wafer/us'], allow_fallbacks: false,
+    require_parameters: true, max_price: { prompt: 0.5, completion: 2 },
+  });
+});
+
+test('raised or exceeded prices fail closed, including the expensive Wafer variant', async () => {
+  assert.throws(() => modelPriceCaps('glm_5_3', { XROGA_GLM_5_3_MAX_INPUT_USD_PER_1M: '4' }),
+    /price ceiling/);
+  const endpoints = await validatedOpenRouterEndpoints('glm_5_3', {
+    fetcher: catalog, env: { XROGA_GLM_5_3_MAX_INPUT_USD_PER_1M: '0.1' },
+  });
+  assert.deepEqual(endpoints.map(endpoint => endpoint.tag), ['wafer/us']);
+  await assert.rejects(validatedOpenRouterEndpoints('glm_5_3', {
+    fetcher: async () => Response.json({ data: { endpoints: rows.map(row => ({ ...row,
+      pricing: { ...row.pricing, completion: '0.000009' } })) } }),
+  }), /No approved compatible endpoint/);
+});
+
+test('the approved GLM Flash ceilings admit both exact endpoints and still reject price drift', async () => {
+  assert.deepEqual(modelPriceCaps('glm_5_3_flash'), {
+    inputUsdPer1M: 0.11004, outputUsdPer1M: 0.0758,
+  });
+  const endpoints = await validatedOpenRouterEndpoints('glm_5_3_flash', { fetcher: catalog, tools: true });
+  assert.deepEqual(endpoints.map(endpoint => endpoint.tag), ['relace', 'open-inference/fp4']);
+  assert.deepEqual(pinnedProviderRequest(endpoints[0]!, 'glm_5_3_flash'), {
+    order: ['relace'], only: ['relace'], allow_fallbacks: false,
+    require_parameters: true, max_price: { prompt: 0.11004, completion: 0.0758 },
+  });
+  assert.deepEqual((await validatedOpenRouterEndpoints('glm_5_3_flash',
+    { fetcher: catalog, json: true })).map(endpoint => endpoint.tag), ['open-inference/fp4']);
+  await assert.rejects(validatedOpenRouterEndpoints('glm_5_3_flash', {
+    fetcher: catalog,
+    env: {
+      XROGA_GLM_5_3_FLASH_MAX_INPUT_USD_PER_1M: '0.066466',
+      XROGA_GLM_5_3_FLASH_MAX_OUTPUT_USD_PER_1M: '0.0701',
+    },
+  }), /No approved compatible endpoint/);
+  const aboveCap = async () => Response.json({ data: { endpoints: rows.map(row => {
+    if (row.tag === 'relace' && row.model_id === 'z-ai/glm-5.3-flash') {
+      return { ...row, pricing: { ...row.pricing, completion: '0.000000075801' } };
+    }
+    if (row.tag === 'open-inference/fp4' && row.model_id === 'z-ai/glm-5.3-flash') {
+      return { ...row, pricing: { ...row.pricing, prompt: '0.000000110041' } };
+    }
+    return row;
+  }) } });
+  await assert.rejects(validatedOpenRouterEndpoints('glm_5_3_flash', { fetcher: aboveCap }),
+    /No approved compatible endpoint/);
+});
+
+test('unsupported image and structured/tool capability requests do not hit incompatible endpoints', async () => {
+  await assert.rejects(validatedOpenRouterEndpoints('glm_5_3', { images: true, fetcher: catalog }),
+    /Image input has not been verified/);
+  assert.deepEqual((await validatedOpenRouterEndpoints('glm_5_3_flash',
+    { images: true, fetcher: catalog })).map(endpoint => endpoint.tag), ['open-inference/fp4']);
+  const endpoints = await validatedOpenRouterEndpoints('glm_5_3', { json: true, tools: true, fetcher: catalog });
+  assert.deepEqual(endpoints.map(endpoint => endpoint.tag), ['wafer/us', 'sail-research/us']);
+  const noJson = async () => Response.json({ data: { endpoints: rows.map(row => ({ ...row,
+    supported_parameters: ['tools'] })) } });
+  await assert.rejects(validatedOpenRouterEndpoints('glm_5_3', { json: true, fetcher: noJson }),
+    /No approved compatible endpoint/);
+});
+
+test('only transient provider errors permit the second approved endpoint', () => {
+  assert.equal(retryOtherApprovedEndpoint(Object.assign(new Error('limited'), { status: 429 })), true);
+  assert.equal(retryOtherApprovedEndpoint(Object.assign(new Error('endpoint unavailable'), { status: 404 })), true);
+  assert.equal(retryOtherApprovedEndpoint(Object.assign(new Error('bad request'), { status: 400 })), false);
+  assert.equal(retryOtherApprovedEndpoint(Object.assign(new Error('paid empty response'),
+    { code: 'BILLED_EMPTY_PROVIDER_RESPONSE' })), false);
+  assert.equal(retryOtherApprovedEndpoint(new Error('arbitrary')), false);
+});

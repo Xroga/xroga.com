@@ -379,6 +379,16 @@ function validateArguments(
   }
 }
 
+/** Model transports may call a tool's arguments `input`; never accept both. */
+export function normalizedReadToolArguments(value: unknown): Record<string, unknown> | null {
+  if (!isPlainRecord(value)) return null;
+  const hasArguments = Object.hasOwn(value, 'arguments');
+  const hasInput = Object.hasOwn(value, 'input');
+  if (hasArguments === hasInput) return null;
+  const args = hasArguments ? value.arguments : value.input;
+  return validateArguments(args) ? args : null;
+}
+
 function schemaForModel(
   schema:
     | Record<
@@ -559,7 +569,7 @@ async function selectToolAndArguments(
                   value.toolSlug;
 
                 const args =
-                  value.arguments;
+                  normalizedReadToolArguments(value);
 
                 if (
                   typeof toolSlug !==
@@ -576,16 +586,12 @@ async function selectToolAndArguments(
                   };
                 }
 
-                if (
-                  !validateArguments(
-                    args,
-                  )
-                ) {
+                if (args === null) {
                   return {
                     valid: false,
 
                     error:
-                      'arguments must be a small safe JSON object.',
+                      'arguments or input must be one small safe JSON object.',
                   };
                 }
 

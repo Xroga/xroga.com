@@ -62,6 +62,17 @@ test('cached input is conservatively accounted until a provider-specific rate is
   assert.equal(cached, uncached);
 });
 
+test('approved GLM Flash prices remain bounded by the existing durable budget accounting', () => {
+  const cost = actualProviderCostMicroUsd({
+    modelId: 'glm_5_3_flash', inputTokens: 1_000_000, outputTokens: 1_000_000,
+  });
+  assert.equal(cost, 185_840);
+  assert.throws(() => actualProviderCostMicroUsd({
+    modelId: 'glm_5_3_flash', inputTokens: 1_000_000, outputTokens: 1_000_000,
+    actualCostUsd: 0.18585,
+  }), /approved price ceiling/);
+});
+
 test('balanced month unlocks cycle-relative daily and complexity portions', () => {
   const startsAt = new Date('2026-07-01T12:00:00.000Z');
   assert.equal(unlockedEntitlementMicroUsd({ startsAt, now: startsAt, pacing: 'balanced_month', purpose: 'daily_work' }), 1_775_000);

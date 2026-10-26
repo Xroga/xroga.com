@@ -67,27 +67,15 @@ export function computePlatformReady(): {
     },
     {
       id: 'ai_openrouter',
-      label: 'OpenRouter (DeepSeek)',
+      label: 'OpenRouter (all active AI models)',
       ok: has('OPENROUTER_API_KEY'),
       required: true,
     },
     {
-      id: 'ai_kimi',
-      label: 'Kimi / Moonshot',
-      ok: has('KIMI_API_KEY'),
-      required: true,
-    },
-    {
-      id: 'ai_glm',
-      label: 'GLM / Zhipu',
-      ok: has('GLM_API_KEY'),
-      required: true,
-    },
-    {
       id: 'ai_grok',
-      label: 'Grok / xAI',
+      label: 'X search / xAI (optional retrieval)',
       ok: has('XAI_API_KEY'),
-      required: true,
+      required: false,
     },
     {
   id: 'research',

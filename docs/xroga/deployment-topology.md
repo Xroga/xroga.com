@@ -1,6 +1,6 @@
 # Deployment topology — read-only truth
 
-Source SHA: `acc5076d245c98197a42b4deb880a22f518f2e1c`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
+Source SHA: `89ac512a84ce61a2ff86d10107cf521c38e54e71`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -38,7 +38,6 @@ Source SHA: `acc5076d245c98197a42b4deb880a22f518f2e1c`; source/config hashes are
 | endpoint-api-lemonsqueezy-com | Source-defined endpoint api.lemonsqueezy.com | CONFIGURED_BUT_UNVERIFIED | api.lemonsqueezy.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-lumalabs-ai | Source-defined endpoint api.lumalabs.ai | CONFIGURED_BUT_UNVERIFIED | api.lumalabs.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-minimax-io | Source-defined endpoint api.minimax.io | CONFIGURED_BUT_UNVERIFIED | api.minimax.io | NOT_INDEPENDENTLY_VERIFIED |
-| endpoint-api-moonshot-ai | Source-defined endpoint api.moonshot.ai | CONFIGURED_BUT_UNVERIFIED | api.moonshot.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-netlify-com | Source-defined endpoint api.netlify.com | CONFIGURED_BUT_UNVERIFIED | api.netlify.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-openai-com | Source-defined endpoint api.openai.com | CONFIGURED_BUT_UNVERIFIED | api.openai.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-parallel-ai | Source-defined endpoint api.parallel.ai | CONFIGURED_BUT_UNVERIFIED | api.parallel.ai | NOT_INDEPENDENTLY_VERIFIED |
@@ -122,7 +121,6 @@ Source SHA: `acc5076d245c98197a42b4deb880a22f518f2e1c`; source/config hashes are
 | endpoint-neon-com | Source-defined endpoint neon.com | CONFIGURED_BUT_UNVERIFIED | neon.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-nextjs-org | Source-defined endpoint nextjs.org | CONFIGURED_BUT_UNVERIFIED | nextjs.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-oauth2-googleapis-com | Source-defined endpoint oauth2.googleapis.com | CONFIGURED_BUT_UNVERIFIED | oauth2.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
-| endpoint-open-bigmodel-cn | Source-defined endpoint open.bigmodel.cn | CONFIGURED_BUT_UNVERIFIED | open.bigmodel.cn | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-openrouter-ai | Source-defined endpoint openrouter.ai | CONFIGURED_BUT_UNVERIFIED | openrouter.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-packaging-python-org | Source-defined endpoint packaging.python.org | CONFIGURED_BUT_UNVERIFIED | packaging.python.org | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-play-google-com | Source-defined endpoint play.google.com | CONFIGURED_BUT_UNVERIFIED | play.google.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -217,7 +215,7 @@ Frontend release 3b2bad and API release 41665b legitimately differ: the initial 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-810 scoped memory/filesystem candidates are retained for semantic review. Static collections and scratch writes are not automatically unsafe fallbacks; the candidate inventory is not blanket durability certification. All consequential persistence/authority callers require the later security gates. Production/Preview environment protection and main rulesets were inspected as empty; user-mandated release gates still apply. Cloud Run/Jobs/Cloudflare Workers hosting remains proposed; no migration is authorized.
+813 scoped memory/filesystem candidates are retained for semantic review. Static collections and scratch writes are not automatically unsafe fallbacks; the candidate inventory is not blanket durability certification. All consequential persistence/authority callers require the later security gates. Production/Preview environment protection and main rulesets were inspected as empty; user-mandated release gates still apply. Cloud Run/Jobs/Cloudflare Workers hosting remains proposed; no migration is authorized.
 
 ## Boundaries
 

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "acc5076d245c98197a42b4deb880a22f518f2e1c",
+  "source_sha": "89ac512a84ce61a2ff86d10107cf521c38e54e71",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -1558,40 +1558,6 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/lib/hailuo.ts"
-      ],
-      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
-      "evidence_ids": []
-    },
-    {
-      "dependency_id": "endpoint-api-moonshot-ai",
-      "provider": "Source-defined endpoint api.moonshot.ai",
-      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
-      "environment": "PRODUCTION",
-      "state": "CONFIGURED_BUT_UNVERIFIED",
-      "runtime_owner": "backend/API or explicitly proposed component",
-      "config_sources": [
-        "backend/src/ai/models.ts"
-      ],
-      "hostnames": [
-        "api.moonshot.ai"
-      ],
-      "resource_id": null,
-      "region": "Not verified",
-      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
-      "secret_names": [],
-      "inbound_callers": [
-        "api or named source callers; operational reachability not inferred"
-      ],
-      "outbound_dependencies": [],
-      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
-      "timeout": "Adapter-specific; no fabricated central timeout",
-      "retry_policy": "Source-specific; no live retry test claimed",
-      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
-      "data_classification": "User data may be involved; tenant scope requires independent checks",
-      "failure_mode": "Safe user-facing failure required; internal details restricted",
-      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
-      "observability_source": [
-        "backend/src/ai/models.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -4714,40 +4680,6 @@
       "evidence_ids": []
     },
     {
-      "dependency_id": "endpoint-open-bigmodel-cn",
-      "provider": "Source-defined endpoint open.bigmodel.cn",
-      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
-      "environment": "PRODUCTION",
-      "state": "CONFIGURED_BUT_UNVERIFIED",
-      "runtime_owner": "backend/API or explicitly proposed component",
-      "config_sources": [
-        "backend/src/ai/models.ts"
-      ],
-      "hostnames": [
-        "open.bigmodel.cn"
-      ],
-      "resource_id": null,
-      "region": "Not verified",
-      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
-      "secret_names": [],
-      "inbound_callers": [
-        "api or named source callers; operational reachability not inferred"
-      ],
-      "outbound_dependencies": [],
-      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
-      "timeout": "Adapter-specific; no fabricated central timeout",
-      "retry_policy": "Source-specific; no live retry test claimed",
-      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
-      "data_classification": "User data may be involved; tenant scope requires independent checks",
-      "failure_mode": "Safe user-facing failure required; internal details restricted",
-      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
-      "observability_source": [
-        "backend/src/ai/models.ts"
-      ],
-      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
-      "evidence_ids": []
-    },
-    {
       "dependency_id": "endpoint-openrouter-ai",
       "provider": "Source-defined endpoint openrouter.ai",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -4755,7 +4687,8 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "backend/src/ai/models.ts"
+        "backend/src/ai/models.ts",
+        "backend/src/ai/openRouterRouting.ts"
       ],
       "hostnames": [
         "openrouter.ai"
@@ -4776,7 +4709,8 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "backend/src/ai/models.ts"
+        "backend/src/ai/models.ts",
+        "backend/src/ai/openRouterRouting.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -7378,7 +7312,6 @@
         "KIMI_INPUT_USD_PER_1M",
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
         "KLING_ACCESS_KEY",
         "KLING_API_KEY",
         "KLING_API_SECRET",
@@ -7436,6 +7369,8 @@
         "XROGA_BROWSER_WORKER_URL",
         "XROGA_CIRCUIT_FAILURE_THRESHOLD",
         "XROGA_CREDENTIAL_KMS_PROVIDER",
+        "XROGA_DEEPSEEK_V4_FLASH_MAX_INPUT_USD_PER_1M",
+        "XROGA_DEEPSEEK_V4_FLASH_MAX_OUTPUT_USD_PER_1M",
         "XROGA_DEV_CREDENTIAL_KEK",
         "XROGA_DISABLED_PROVIDERS",
         "XROGA_DRIVE_PRESIGN_SIGN_LENGTH",
@@ -7444,7 +7379,13 @@
         "XROGA_DRIVE_R2_BUCKET",
         "XROGA_DRIVE_R2_SECRET_ACCESS_KEY",
         "XROGA_FORCE_RESEARCH_TASK_CLASSES",
+        "XROGA_GLM_5_3_FLASH_MAX_INPUT_USD_PER_1M",
+        "XROGA_GLM_5_3_FLASH_MAX_OUTPUT_USD_PER_1M",
+        "XROGA_GLM_5_3_MAX_INPUT_USD_PER_1M",
+        "XROGA_GLM_5_3_MAX_OUTPUT_USD_PER_1M",
         "XROGA_GOOGLE_CLOUD_KMS_KEY_NAME",
+        "XROGA_KIMI_K3_MAX_INPUT_USD_PER_1M",
+        "XROGA_KIMI_K3_MAX_OUTPUT_USD_PER_1M",
         "XROGA_LEGACY_CREDENTIAL_MIGRATION",
         "XROGA_MAX_REPAIR_ATTEMPTS",
         "XROGA_MODEL_FALLBACK_ORDER",
@@ -8941,11 +8882,7 @@
     {
       "name": "GLM_API_KEY",
       "consuming_sources": [
-        "backend/src/ai/models.ts",
-        "backend/src/ai/openaiCompat.ts",
-        "backend/src/ai/providerCostTiers.ts",
         "backend/src/config/envSecrets.ts",
-        "backend/src/lib/capabilityRegistry.ts",
         "backend/src/lib/platformReady.ts"
       ],
       "environments": [
@@ -8957,8 +8894,7 @@
       "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
       "mechanisms": [
         "DECLARED_SECRET_ALIAS",
-        "REVIEWED_DYNAMIC_BINDING",
-        "SECRET_HELPER_CALL"
+        "REVIEWED_DYNAMIC_BINDING"
       ],
       "dependency_ids": [
         "runtime-controls-and-conditional-aliases"
@@ -9246,11 +9182,7 @@
     {
       "name": "KIMI_API_KEY",
       "consuming_sources": [
-        "backend/src/ai/models.ts",
-        "backend/src/ai/openaiCompat.ts",
-        "backend/src/ai/providerCostTiers.ts",
         "backend/src/config/envSecrets.ts",
-        "backend/src/lib/capabilityRegistry.ts",
         "backend/src/lib/platformReady.ts"
       ],
       "environments": [
@@ -9262,8 +9194,7 @@
       "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
       "mechanisms": [
         "DECLARED_SECRET_ALIAS",
-        "REVIEWED_DYNAMIC_BINDING",
-        "SECRET_HELPER_CALL"
+        "REVIEWED_DYNAMIC_BINDING"
       ],
       "dependency_ids": [
         "runtime-controls-and-conditional-aliases"
@@ -9331,26 +9262,6 @@
     },
     {
       "name": "KIMI_OUTPUT_USD_PER_1M",
-      "consuming_sources": [
-        "backend/src/ai/models.ts",
-        "backend/src/ai/providerCostTiers.ts"
-      ],
-      "environments": [
-        "backend/operator or inherited system context"
-      ],
-      "secret_class": "RUNTIME_CONFIGURATION",
-      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
-      "requiredness": "OPTIONAL_OR_DEFAULTED",
-      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
-      "mechanisms": [
-        "REVIEWED_DYNAMIC_BINDING"
-      ],
-      "dependency_ids": [
-        "runtime-controls-and-conditional-aliases"
-      ]
-    },
-    {
-      "name": "KIMI_VISION_ENABLED",
       "consuming_sources": [
         "backend/src/ai/models.ts",
         "backend/src/ai/providerCostTiers.ts"
@@ -11877,7 +11788,6 @@
       "name": "XAI_API_KEY",
       "consuming_sources": [
         "backend/src/ai/black-hole/webIntelligence.ts",
-        "backend/src/ai/openaiCompat.ts",
         "backend/src/ai/research.ts",
         "backend/src/ai/universal/semanticRequestPlanner.ts",
         "backend/src/capabilities/modules/xResearch.ts",
@@ -12306,6 +12216,46 @@
       ]
     },
     {
+      "name": "XROGA_DEEPSEEK_V4_FLASH_MAX_INPUT_USD_PER_1M",
+      "consuming_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/openRouterRouting.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_DEEPSEEK_V4_FLASH_MAX_OUTPUT_USD_PER_1M",
+      "consuming_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/openRouterRouting.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_DEPLOYMENT_ENVIRONMENT",
       "consuming_sources": [
         "backend/src/runtime/startupPolicy.ts",
@@ -12527,6 +12477,86 @@
       ]
     },
     {
+      "name": "XROGA_GLM_5_3_FLASH_MAX_INPUT_USD_PER_1M",
+      "consuming_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/openRouterRouting.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_GLM_5_3_FLASH_MAX_OUTPUT_USD_PER_1M",
+      "consuming_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/openRouterRouting.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_GLM_5_3_MAX_INPUT_USD_PER_1M",
+      "consuming_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/openRouterRouting.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_GLM_5_3_MAX_OUTPUT_USD_PER_1M",
+      "consuming_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/openRouterRouting.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_GOOGLE_CLOUD_KMS_KEY_NAME",
       "consuming_sources": [
         "backend/src/runtime/readiness.ts",
@@ -12563,6 +12593,46 @@
       ],
       "dependency_ids": [
         "endpoint-127-0-0-1"
+      ]
+    },
+    {
+      "name": "XROGA_KIMI_K3_MAX_INPUT_USD_PER_1M",
+      "consuming_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/openRouterRouting.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_KIMI_K3_MAX_OUTPUT_USD_PER_1M",
+      "consuming_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/openRouterRouting.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
       ]
     },
     {
@@ -13594,7 +13664,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/registry.ts",
-      "sha256": "85e33ca93321794aa28e722e4e9c2a239964d39675f23d39f139325cb38f8a11"
+      "sha256": "7530eeff07a30b06f5755d103c7ba99060a8a2d5c9e7c956f97648d317139058"
     },
     {
       "path": "backend/src/ai/black-hole/repairRouting.ts",
@@ -13610,7 +13680,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/router.ts",
-      "sha256": "8484d94bc11e62c4123052112586eb988fad34774e58355867870b46df6a0927"
+      "sha256": "1e2258005cc5c9c9587ff0ba2014a523c93c4b89be66f6e724418f4831442420"
     },
     {
       "path": "backend/src/ai/black-hole/structuredOutput.ts",
@@ -13726,7 +13796,7 @@
     },
     {
       "path": "backend/src/ai/intelligentRouter.ts",
-      "sha256": "dee2c2e8d12c56589227a8e73ce5a131d294e003bc6fb1d6cb11b70fb01b3a7c"
+      "sha256": "d9876af2bda837d8353247d6c1b63653fe6f81a0e35334a14eb431b31bd2c200"
     },
     {
       "path": "backend/src/ai/intentReasoning.ts",
@@ -13758,15 +13828,19 @@
     },
     {
       "path": "backend/src/ai/modelCapabilityRegistry.ts",
-      "sha256": "a24e948bc83804e407e128107120a42fc9e650a1f6f8d87d29326a048131789f"
+      "sha256": "4cdf7500baece71312d74a46c461c25dc6549f017f9187f8ac37a43a519e476b"
     },
     {
       "path": "backend/src/ai/models.ts",
-      "sha256": "ce06bc3f842d59758d5adea1a144c184dda2a3ee4748a59895ce887b7111d952"
+      "sha256": "e94be6ea9836355cd8fb788ca3c644aa74886f4975178d0f0e3b40329d5d5e63"
+    },
+    {
+      "path": "backend/src/ai/openRouterRouting.ts",
+      "sha256": "463e0e429ce844b454f42c08405a6ff8a38eb49fdaadee52b086611946b9e259"
     },
     {
       "path": "backend/src/ai/openaiCompat.ts",
-      "sha256": "41ef0899e797d9813bdbdee6f86a27c0739bcc92f1df49da5a9285a52b8a8fbb"
+      "sha256": "68be25f0357a3008ade10083a3ecc5c05999cded5317896ef2db7aa0127ed33c"
     },
     {
       "path": "backend/src/ai/parallelWeb.ts",
@@ -13806,11 +13880,11 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876"
+      "sha256": "d8fdb214fbe0be3e11259a10a3932e1c3a8e48ee967aa8397f6cf599fc59115e"
     },
     {
       "path": "backend/src/ai/providerCostTiers.ts",
-      "sha256": "3652078660990ae6f4b199122efad180c0329f8a0514fc9e21cb8afdb1bc6099"
+      "sha256": "1d384c224e542deb2d4192259e22688f6da2159b796ddf7267665da2b4efcb35"
     },
     {
       "path": "backend/src/ai/providerHealthStore.ts",
@@ -13818,11 +13892,11 @@
     },
     {
       "path": "backend/src/ai/providerPolicy.ts",
-      "sha256": "cc8813f2aa654dc180ad120690603f4cf742d03d8141bf44f6803b7cf79e3066"
+      "sha256": "e4170d759868621346ffcc8b711bb97e2ffc31fe4137516daccda783766ab1a9"
     },
     {
       "path": "backend/src/ai/providerRuntime.ts",
-      "sha256": "5adc2426b03c4b2626a20b18c72b3a1f6ff17a04bed513aa443746dbfc789fb8"
+      "sha256": "a0dcca7aa8ad1279087d4d8b32e3f0b187c899ce70c08e1ffcfdf29cdc5bdfa2"
     },
     {
       "path": "backend/src/ai/qa.ts",
@@ -14074,7 +14148,7 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "sha256": "17462981dde40052b3639d88e77c44f0e4a6e910a5f5e8c843ea5e1de8d7532c"
+      "sha256": "2eb800214c0870ac92974ab1df42608b2cae7ec7bb0af2483086002cb5d1f642"
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
@@ -14174,7 +14248,7 @@
     },
     {
       "path": "backend/src/config/envSecrets.ts",
-      "sha256": "0f2b22341650c44abf4aa358940422cd27e9232a8f513d958f3fb4ed29b05eb0"
+      "sha256": "d5458d366c36ae0fc6e57c141c9f0edcc74126e2ade33f071342a942eac93c14"
     },
     {
       "path": "backend/src/config/galacticPlans.ts",
@@ -14282,7 +14356,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "ae363e1344a93b441ec9a10dade0c53ba67bd39e34958cc9332849636082741b"
+      "sha256": "c146ace0c19b0cc6b263561a74a73900dccded703e6a70d3ce4e7e93ce09ba10"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -14306,7 +14380,7 @@
     },
     {
       "path": "backend/src/lib/capabilityRegistry.ts",
-      "sha256": "8cfe682e03b3fe69ccba06655abb1f5e072caf2b3784ac165be30a814c448bf5"
+      "sha256": "30c6e22737d4af71c8ad11074562ae7eaccbd94c07e58be93ff7914dc04bab91"
     },
     {
       "path": "backend/src/lib/changeSafety.ts",
@@ -14378,7 +14452,7 @@
     },
     {
       "path": "backend/src/lib/platformReady.ts",
-      "sha256": "a2bb220517179a11593a78ca82af5beec5fbd42501cf751c11d6bebd801a9245"
+      "sha256": "e88df3ea43ee06b5972bc58f8f5b5b278c66c774aa17bf12418740837fa63936"
     },
     {
       "path": "backend/src/lib/postgresConnect.ts",
@@ -14794,7 +14868,7 @@
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
-      "sha256": "6b5aed371ac33564837c5595a035098cd030bfcfb5557e607baa1c0ca45a680b"
+      "sha256": "46ed1470348a37358dca9ccacbeb513dca65283e4911dd13a401600e2baa918b"
     },
     {
       "path": "backend/src/routes/profile.ts",
@@ -14950,7 +15024,7 @@
     },
     {
       "path": "backend/src/security/businessAuthority.local.integration.ts",
-      "sha256": "9b3195e648555bc2b3815d4b835202d649ed95d93a81c87ebfc1950fda57dff1"
+      "sha256": "3f7c766d6c3e871d71f205a86c29e2a8983acdbf313a6d3539d4c4a406ba495b"
     },
     {
       "path": "backend/src/security/businessConfirmationClaim.local.integration.ts",
@@ -15190,7 +15264,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "497aba008da6cd137ea54ae39785851dac10cba82c93abae2ecf22e36c9701e0"
+      "sha256": "b8c0ac8ff79fb95d268c8cdd4407706ad62fb3789d93755955645962dcb1c4b8"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -15210,7 +15284,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "sha256": "c937f347655d535369d985fc983709a63dbdce5abcb6bda706c5300b886c21f8"
+      "sha256": "8aaa8d592ab4c18f70489e500e1df524cc32c93260f051e24d1e3d30d265c474"
     },
     {
       "path": "backend/src/services/integrations/businessWorkflow.ts",
@@ -15222,7 +15296,7 @@
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "sha256": "a57065553c769bfb9e768c6fb76502850883635ca4fddf50ffa1054a089bfadf"
+      "sha256": "ea60f949492f5f5b5c56aed798b88e07e2f5d4a7ae19b16572d610fd868bb27d"
     },
     {
       "path": "backend/src/services/integrations/composioNamespace.ts",
@@ -15638,7 +15712,7 @@
     },
     {
       "path": "backend/src/synthesis/coherentImplementation.ts",
-      "sha256": "3b856fb21bf9958d230998f9b2a268503faac48f1528594ad908ea84af55d701"
+      "sha256": "e939ce03c3e29f6b06c97cb08c0da8dbf274b2352f0f2706176b3c841b5087b5"
     },
     {
       "path": "backend/src/synthesis/delivery/projectDelivery.ts",
@@ -17802,7 +17876,7 @@
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
-      "sha256": "bc6fbd1bbd15e214e94bcdad507ab1a05863c6200b43606db8280924750137f9"
+      "sha256": "ad57d88aa22acba8b0bd746bc1f4ceeb5a0e0e64d0db1ec8dc57a829dc26dcdc"
     },
     {
       "path": "frontend/src/components/integrations/PluginMarketplace.tsx",
@@ -19730,7 +19804,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaResponseDocument.ts",
-      "sha256": "0e658010d74320234ae17b5a00b8b1bb70498c31ac76639e57d66b78ab6e1286"
+      "sha256": "6410a669c4d3009d484bb558e039a98ccad3562f9ad9df3be67de8d9e04b97dc"
     },
     {
       "path": "frontend/src/lib/xrogaRichResultFixtures.ts",
@@ -19806,7 +19880,7 @@
     },
     {
       "path": "scripts/xroga/runtime-inventory.mjs",
-      "sha256": "0b8cb7cf2748bfbc51fbdb77af14e70a2b0d5396bc9959b009b7495d560a7070"
+      "sha256": "dced8989cd292a62db94adaaa0d6d2a007e5bcf35f866fa1662d85c48dc9af81"
     },
     {
       "path": "scripts/xroga/runtime-schema.mjs",
@@ -19820,7 +19894,7 @@
   "dynamic_bindings": [
     {
       "path": "backend/src/ai/modelCapabilityRegistry.ts",
-      "line": 160,
+      "line": 159,
       "expression": "def.secretKey",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -19836,13 +19910,10 @@
         "GLM_5_3_INPUT_USD_PER_1M",
         "GLM_5_3_MODEL_ID",
         "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
         "KIMI_CONTEXT_WINDOW",
         "KIMI_INPUT_USD_PER_1M",
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
         "OPENROUTER_API_KEY"
       ],
       "evidence_sources": [
@@ -19853,7 +19924,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 305,
+      "line": 298,
       "expression": "keys.modelId",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -19869,13 +19940,10 @@
         "GLM_5_3_INPUT_USD_PER_1M",
         "GLM_5_3_MODEL_ID",
         "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
         "KIMI_CONTEXT_WINDOW",
         "KIMI_INPUT_USD_PER_1M",
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
         "OPENROUTER_API_KEY"
       ],
       "evidence_sources": [
@@ -19886,7 +19954,37 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 306,
+      "line": 298,
+      "expression": "keys.modelId",
+      "status": "RESOLVED_FINITE_CATALOG",
+      "names": [
+        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
+        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
+        "DEEPSEEK_FLASH_MODEL_ID",
+        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_CONTEXT_WINDOW",
+        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
+        "GLM_5_3_FLASH_MODEL_ID",
+        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
+        "GLM_5_3_INPUT_USD_PER_1M",
+        "GLM_5_3_MODEL_ID",
+        "GLM_5_3_OUTPUT_USD_PER_1M",
+        "KIMI_CONTEXT_WINDOW",
+        "KIMI_INPUT_USD_PER_1M",
+        "KIMI_MODEL_ID",
+        "KIMI_OUTPUT_USD_PER_1M",
+        "OPENROUTER_API_KEY"
+      ],
+      "evidence_sources": [
+        "backend/src/ai/models.ts",
+        "backend/src/ai/providerCostTiers.ts"
+      ],
+      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
+    },
+    {
+      "path": "backend/src/ai/models.ts",
+      "line": 301,
       "expression": "keys.inputPrice",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -19902,13 +20000,10 @@
         "GLM_5_3_INPUT_USD_PER_1M",
         "GLM_5_3_MODEL_ID",
         "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
         "KIMI_CONTEXT_WINDOW",
         "KIMI_INPUT_USD_PER_1M",
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
         "OPENROUTER_API_KEY"
       ],
       "evidence_sources": [
@@ -19919,7 +20014,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 307,
+      "line": 302,
       "expression": "keys.outputPrice",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -19935,13 +20030,10 @@
         "GLM_5_3_INPUT_USD_PER_1M",
         "GLM_5_3_MODEL_ID",
         "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
         "KIMI_CONTEXT_WINDOW",
         "KIMI_INPUT_USD_PER_1M",
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
         "OPENROUTER_API_KEY"
       ],
       "evidence_sources": [
@@ -19952,7 +20044,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 309,
+      "line": 304,
       "expression": "keys.contextWindow",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -19968,13 +20060,10 @@
         "GLM_5_3_INPUT_USD_PER_1M",
         "GLM_5_3_MODEL_ID",
         "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
         "KIMI_CONTEXT_WINDOW",
         "KIMI_INPUT_USD_PER_1M",
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
         "OPENROUTER_API_KEY"
       ],
       "evidence_sources": [
@@ -19985,7 +20074,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 319,
+      "line": 314,
       "expression": "def.imagesEnv",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -20001,13 +20090,10 @@
         "GLM_5_3_INPUT_USD_PER_1M",
         "GLM_5_3_MODEL_ID",
         "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
         "KIMI_CONTEXT_WINDOW",
         "KIMI_INPUT_USD_PER_1M",
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
         "OPENROUTER_API_KEY"
       ],
       "evidence_sources": [
@@ -20018,40 +20104,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 334,
-      "expression": "keys.modelId",
-      "status": "RESOLVED_FINITE_CATALOG",
-      "names": [
-        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
-        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
-        "DEEPSEEK_FLASH_MODEL_ID",
-        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
-        "GLM_5_3_FLASH_MODEL_ID",
-        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_INPUT_USD_PER_1M",
-        "GLM_5_3_MODEL_ID",
-        "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
-        "KIMI_CONTEXT_WINDOW",
-        "KIMI_INPUT_USD_PER_1M",
-        "KIMI_MODEL_ID",
-        "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
-      ],
-      "evidence_sources": [
-        "backend/src/ai/models.ts",
-        "backend/src/ai/providerCostTiers.ts"
-      ],
-      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
-    },
-    {
-      "path": "backend/src/ai/models.ts",
-      "line": 338,
+      "line": 333,
       "expression": "keys.inputPrice",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -20067,13 +20120,10 @@
         "GLM_5_3_INPUT_USD_PER_1M",
         "GLM_5_3_MODEL_ID",
         "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
         "KIMI_CONTEXT_WINDOW",
         "KIMI_INPUT_USD_PER_1M",
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
         "OPENROUTER_API_KEY"
       ],
       "evidence_sources": [
@@ -20084,7 +20134,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 339,
+      "line": 334,
       "expression": "keys.outputPrice",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -20100,13 +20150,10 @@
         "GLM_5_3_INPUT_USD_PER_1M",
         "GLM_5_3_MODEL_ID",
         "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
         "KIMI_CONTEXT_WINDOW",
         "KIMI_INPUT_USD_PER_1M",
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
         "OPENROUTER_API_KEY"
       ],
       "evidence_sources": [
@@ -20117,7 +20164,7 @@
     },
     {
       "path": "backend/src/ai/models.ts",
-      "line": 340,
+      "line": 335,
       "expression": "keys.contextWindow",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -20133,13 +20180,10 @@
         "GLM_5_3_INPUT_USD_PER_1M",
         "GLM_5_3_MODEL_ID",
         "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
         "KIMI_CONTEXT_WINDOW",
         "KIMI_INPUT_USD_PER_1M",
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
         "OPENROUTER_API_KEY"
       ],
       "evidence_sources": [
@@ -20149,41 +20193,29 @@
       "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
     },
     {
-      "path": "backend/src/ai/openaiCompat.ts",
-      "line": 177,
-      "expression": "def.secretKey",
+      "path": "backend/src/ai/openRouterRouting.ts",
+      "line": 70,
+      "expression": "`${prefix}_${key}_USD_PER_1M`",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
-        "DEEPSEEK_FLASH_CONTEXT_WINDOW",
-        "DEEPSEEK_FLASH_INPUT_USD_PER_1M",
-        "DEEPSEEK_FLASH_MODEL_ID",
-        "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_CONTEXT_WINDOW",
-        "GLM_5_3_FLASH_INPUT_USD_PER_1M",
-        "GLM_5_3_FLASH_MODEL_ID",
-        "GLM_5_3_FLASH_OUTPUT_USD_PER_1M",
-        "GLM_5_3_INPUT_USD_PER_1M",
-        "GLM_5_3_MODEL_ID",
-        "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
-        "KIMI_CONTEXT_WINDOW",
-        "KIMI_INPUT_USD_PER_1M",
-        "KIMI_MODEL_ID",
-        "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
-        "OPENROUTER_API_KEY"
+        "XROGA_DEEPSEEK_V4_FLASH_MAX_INPUT_USD_PER_1M",
+        "XROGA_DEEPSEEK_V4_FLASH_MAX_OUTPUT_USD_PER_1M",
+        "XROGA_GLM_5_3_FLASH_MAX_INPUT_USD_PER_1M",
+        "XROGA_GLM_5_3_FLASH_MAX_OUTPUT_USD_PER_1M",
+        "XROGA_GLM_5_3_MAX_INPUT_USD_PER_1M",
+        "XROGA_GLM_5_3_MAX_OUTPUT_USD_PER_1M",
+        "XROGA_KIMI_K3_MAX_INPUT_USD_PER_1M",
+        "XROGA_KIMI_K3_MAX_OUTPUT_USD_PER_1M"
       ],
       "evidence_sources": [
         "backend/src/ai/models.ts",
-        "backend/src/ai/providerCostTiers.ts"
+        "backend/src/ai/openRouterRouting.ts"
       ],
-      "policy": "Finite MODELS/CODING_MODEL_TIERS fields; operatorConfigKeys derives suffixes. Conditional pricing/context variables are not claims of current provider facts."
+      "policy": "Finite MODELS ids derive INPUT/OUTPUT price-cap names; each value may only tighten its audited model ceiling."
     },
     {
       "path": "backend/src/ai/providerCostTiers.ts",
-      "line": 153,
+      "line": 146,
       "expression": "tier.modelIdEnv",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -20199,13 +20231,10 @@
         "GLM_5_3_INPUT_USD_PER_1M",
         "GLM_5_3_MODEL_ID",
         "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
         "KIMI_CONTEXT_WINDOW",
         "KIMI_INPUT_USD_PER_1M",
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
         "OPENROUTER_API_KEY"
       ],
       "evidence_sources": [
@@ -20216,7 +20245,7 @@
     },
     {
       "path": "backend/src/config/envSecrets.ts",
-      "line": 263,
+      "line": 262,
       "expression": "key",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -20292,7 +20321,7 @@
     },
     {
       "path": "backend/src/config/envSecrets.ts",
-      "line": 277,
+      "line": 276,
       "expression": "primary",
       "status": "RESOLVED_FINITE_CATALOG",
       "names": [
@@ -20384,13 +20413,10 @@
         "GLM_5_3_INPUT_USD_PER_1M",
         "GLM_5_3_MODEL_ID",
         "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
         "KIMI_CONTEXT_WINDOW",
         "KIMI_INPUT_USD_PER_1M",
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
         "OPENROUTER_API_KEY"
       ],
       "evidence_sources": [
@@ -20408,8 +20434,6 @@
         "BROWSERBASE_API_KEY",
         "DATABASE_URL",
         "FAL_KEY",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
         "LEMON_SQUEEZY_API_KEY",
         "MONGODB_URI",
         "NEON_DATABASE_URL",
@@ -20600,13 +20624,10 @@
         "GLM_5_3_INPUT_USD_PER_1M",
         "GLM_5_3_MODEL_ID",
         "GLM_5_3_OUTPUT_USD_PER_1M",
-        "GLM_API_KEY",
-        "KIMI_API_KEY",
         "KIMI_CONTEXT_WINDOW",
         "KIMI_INPUT_USD_PER_1M",
         "KIMI_MODEL_ID",
         "KIMI_OUTPUT_USD_PER_1M",
-        "KIMI_VISION_ENABLED",
         "OPENROUTER_API_KEY"
       ],
       "evidence_sources": [
@@ -20659,35 +20680,21 @@
       "hostname": "openrouter.ai",
       "protocol": "https:",
       "path": "backend/src/ai/models.ts",
-      "line": 74,
+      "line": 70,
       "credentialsInUrl": false
     },
     {
-      "hostname": "api.moonshot.ai",
+      "hostname": "openrouter.ai",
       "protocol": "https:",
-      "path": "backend/src/ai/models.ts",
-      "line": 90,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "open.bigmodel.cn",
-      "protocol": "https:",
-      "path": "backend/src/ai/models.ts",
-      "line": 113,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "open.bigmodel.cn",
-      "protocol": "https:",
-      "path": "backend/src/ai/models.ts",
-      "line": 144,
+      "path": "backend/src/ai/openRouterRouting.ts",
+      "line": 107,
       "credentialsInUrl": false
     },
     {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/ai/openaiCompat.ts",
-      "line": 106,
+      "line": 120,
       "credentialsInUrl": false
     },
     {
@@ -26343,7 +26350,7 @@
     },
     {
       "path": "backend/src/ai/black-hole/router.ts",
-      "line": 200,
+      "line": 198,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26665,28 +26672,28 @@
     },
     {
       "path": "backend/src/ai/intelligentRouter.ts",
-      "line": 259,
+      "line": 262,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/intelligentRouter.ts",
-      "line": 375,
+      "line": 378,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/intelligentRouter.ts",
-      "line": 417,
+      "line": 420,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/intelligentRouter.ts",
-      "line": 433,
+      "line": 436,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26728,7 +26735,21 @@
     },
     {
       "path": "backend/src/ai/modelCapabilityRegistry.ts",
-      "line": 214,
+      "line": 213,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/openRouterRouting.ts",
+      "line": 54,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/openRouterRouting.ts",
+      "line": 127,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26959,21 +26980,21 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 56,
+      "line": 59,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 57,
+      "line": 60,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/providerCostTiers.ts",
-      "line": 93,
+      "line": 86,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -27533,35 +27554,42 @@
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 402,
+      "line": 353,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 421,
+      "line": 443,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1509,
+      "line": 462,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1607,
+      "line": 1550,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
-      "line": 1900,
+      "line": 1648,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/universal/semanticRequestPlanner.ts",
+      "line": 1941,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28618,7 +28646,7 @@
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
-      "line": 98,
+      "line": 104,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28779,21 +28807,21 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 659,
+      "line": 678,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1169,
+      "line": 1186,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1195,
+      "line": 1212,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28835,49 +28863,49 @@
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 520,
+      "line": 530,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 992,
+      "line": 998,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessRead.ts",
-      "line": 1017,
+      "line": 1023,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 679,
+      "line": 683,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1217,
+      "line": 1221,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1246,
+      "line": 1250,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
-      "line": 1859,
+      "line": 1872,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30893,7 +30921,7 @@
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 868,
+      "line": 851,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31901,14 +31929,14 @@
     },
     {
       "path": "frontend/src/lib/xrogaResponseDocument.ts",
-      "line": 142,
+      "line": 200,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/lib/xrogaResponseDocument.ts",
-      "line": 161,
+      "line": 219,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

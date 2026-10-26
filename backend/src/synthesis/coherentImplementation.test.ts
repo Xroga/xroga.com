@@ -166,7 +166,7 @@ test('a continuation cannot repeat completed files or widen the validated manife
   assert.equal(mergeCoherentContinuation(first, frame('src/c.ts', 'outside')).status, 'invalid');
 });
 
-test('a provider failure uses one direct-output-capable fallback and never spends both attempts on one transport', async () => {
+test('a failed OpenRouter model uses one cheaper approved model fallback', async () => {
   const paths = ['index.html'];
   const complete = fakeCompletion((modelId) => {
     if (modelId === 'glm_5_3_flash') {

@@ -88,7 +88,7 @@ test('AREA 1 — a coding model whose registry entry drifts to another transport
   // `requiredCodingTransport` had no production caller and nothing failed.
   const definition = MODELS.kimi_k3 as { provider: string };
   const original = definition.provider;
-  definition.provider = 'openrouter';
+  definition.provider = 'moonshot';
   try {
     assert.throws(() => resolveEndpoint('kimi_k3'), ProviderPolicyError);
   } finally {
