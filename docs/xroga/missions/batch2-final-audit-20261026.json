@@ -1,0 +1,175 @@
+{
+  "version": "1.0",
+  "missionId": "BATCH2-FINAL-AUDIT-20261026",
+  "baseSha": "b0f9b8ce10a9cab6d5a61ba18ad242300b34d33d",
+  "requirementIds": [
+    "XR-MISSION-036",
+    "XR-HIST-b9676b930b0fa4b6"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "high",
+  "scope": "Final audit of Batch 2 Phases 1 to 3 together: a whole-journey test, a frontend/backend contract test, and fixes for 17 confirmed defects including an approval bypass on production release, a cross-phase GitHub break, verification before any browser test passed, and an aborted QA run reported as passed. Nothing is applied, deployed or enabled and no external account was touched.",
+  "changedFiles": [
+    ".github/workflows/builder-phase1.yml",
+    "backend/src/builder/audit.delivery.test.ts",
+    "backend/src/builder/audit.preview.test.ts",
+    "backend/src/builder/audit.test.ts",
+    "backend/src/builder/audit.verification.test.ts",
+    "backend/src/builder/builder.test.ts",
+    "backend/src/builder/canonical.ts",
+    "backend/src/builder/data/schema.ts",
+    "backend/src/builder/data/service.ts",
+    "backend/src/builder/export/archive.ts",
+    "backend/src/builder/export/service.ts",
+    "backend/src/builder/github/service.ts",
+    "backend/src/builder/golden.test.ts",
+    "backend/src/builder/hosting/service.ts",
+    "backend/src/builder/journey.test.ts",
+    "backend/src/builder/operations.ts",
+    "backend/src/builder/phase2Bridge.ts",
+    "backend/src/builder/qa/qaService.ts",
+    "backend/src/builder/qa/runner.ts",
+    "backend/src/builder/readiness.ts",
+    "backend/src/builder/service.ts",
+    "backend/src/builder/servicesFixture.testsupport.ts",
+    "backend/src/builder/snapshot.ts",
+    "backend/src/builder/store.integration.test.ts",
+    "backend/src/builder/store.ts",
+    "backend/src/builder/swarmBridge.ts",
+    "backend/src/builder/types.ts",
+    "backend/src/routes/builderPhase2.test.ts",
+    "backend/src/routes/builderPhase2.ts",
+    "backend/src/routes/builderPhase3.test.ts",
+    "docs/infra/COMBINED-ACTIVATION-RUNBOOK.md",
+    "docs/infra/batch-2/FINAL-AUDIT.md",
+    "docs/infra/batch-2/PHASE-1-STATUS.md",
+    "docs/infra/batch-2/PHASE-2-STATUS.md",
+    "docs/infra/batch-2/PHASE-3-STATUS.md",
+    "docs/xroga/missions/batch2-final-audit-20261026.json",
+    "frontend/src/components/terminal/BuilderProjectPanel.tsx",
+    "frontend/src/components/terminal/DevWorkspacePanel.tsx",
+    "frontend/src/components/terminal/builder/BuilderDatabase.tsx",
+    "frontend/src/components/terminal/builder/BuilderDelivery.tsx",
+    "frontend/src/components/terminal/builder/BuilderHosting.tsx",
+    "frontend/src/components/terminal/builder/BuilderTests.tsx",
+    "frontend/src/lib/builderApiContract.test.ts",
+    "frontend/src/lib/builderApiPhase2.ts",
+    "frontend/src/lib/builderApiPhase3.test.ts",
+    "frontend/src/lib/builderChat.ts",
+    "supabase/migrations/20261026030000_builder_preview_readiness.sql"
+  ],
+  "decisions": {
+    "keep": [
+      "Phases 1 to 3 as separate reviewable drafts",
+      "Canonical scheduler, engine, runtime and budget ledger",
+      "Source stored in Postgres through the transactional revision RPC",
+      "Codex Google migration work untouched"
+    ],
+    "extend": [
+      "Operation approval is scoped to provider and action",
+      "Verification state is earned by a passed browser test",
+      "Preview readiness is recorded per revision"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": true,
+    "migrations": [
+      "supabase/migrations/20261026030000_builder_preview_readiness.sql"
+    ],
+    "rollout": "Additive nullable column on builder_projects with a CHECK on its shape. Depends on the Phase 1 migration. Not applied by this change.",
+    "rollback": "ALTER TABLE public.builder_projects DROP COLUMN IF EXISTS preview_readiness;"
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "New preview restart route requires the issued tenant context; a foreign project id returns 404."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No tenant boundary changes; every new query carries the verified owner."
+    },
+    "approval": {
+      "changed": true,
+      "description": "An operation can only be approved, cancelled or run through its own provider and action, closing a path that approved a production release with the plan digest alone."
+    },
+    "credentials": {
+      "changed": true,
+      "description": "The credential scan now also rejects Supabase secret keys, service-role JWTs (by role claim), AWS, Stripe and Slack keys before source is stored or exported."
+    },
+    "egress": {
+      "changed": true,
+      "description": "In production the in-process browser is off unless an operator opts in, so generated pages are not driven inside the privileged API container."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No cost changes."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No payment path changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/builder/journey.test.ts backend/src/builder/audit.test.ts backend/src/builder/audit.verification.test.ts backend/src/builder/audit.delivery.test.ts backend/src/builder/audit.preview.test.ts",
+      "scope": "Whole journey across the three phases and a regression test for every audit defect.",
+      "negative": true,
+      "reference": "backend/src/builder/journey.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json --test frontend/src/lib/builderApiContract.test.ts",
+      "scope": "Every Builder client call is a served route with the same method; panels are rendered; the router is authenticated.",
+      "negative": false,
+      "reference": "frontend/src/lib/builderApiContract.test.ts"
+    },
+    {
+      "command": "builder-phase1 workflow (disposable PostgreSQL, real Chromium)",
+      "scope": "The new migration and column, and the existing real-database and browser tests.",
+      "negative": true,
+      "reference": "backend/src/builder/store.integration.test.ts"
+    },
+    {
+      "command": "node scripts/xroga/inventory.mjs --check",
+      "scope": "Generated source inventory consistency.",
+      "negative": false,
+      "reference": "docs/xroga/current-state.json"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Tightens the existing approval lifecycle, QA and state handling. No scheduler, runtime, browser stack, agent framework or authentication system is added.",
+    "rfc": null
+  },
+  "rollout": "Merge in order with the Batch 2 stack after review and your authorization; follow docs/infra/COMBINED-ACTIVATION-RUNBOOK.md. Nothing is activated by merging.",
+  "rollback": "Disable NEXT_PUBLIC_XROGA_BUILDER; routes are inert without a project. Drop the nullable column with the statement above.",
+  "knownGaps": [
+    "No live Google runtime, model build, GitHub, Supabase or Vercel verification",
+    "The in-process browser must move to an isolated host before production QA is on",
+    "No chat-to-project association and no builder cancel control",
+    "Vercel production address is the expected one; timeouts of deployment and env calls are not reconciled"
+  ],
+  "placeholderClaimsRemaining": [
+    "Live provider and Google-runtime behaviour is unverified"
+  ],
+  "evidenceRefs": [
+    "docs/infra/batch-2/FINAL-AUDIT.md",
+    "docs/infra/COMBINED-ACTIVATION-RUNBOOK.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Google runtime (PR #856) not deployed",
+      "Migrations not applied and engine not enabled",
+      "No approved disposable GitHub, Supabase or Vercel accounts for live verification",
+      "Authenticated end-to-end and staged security proof not run for this change"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

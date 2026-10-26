@@ -1,5 +1,7 @@
 # Batch 2, Phase 2: Browser QA and repair, same-project development, source export and GitHub
 
+> **Updated by the final audit** (`FINAL-AUDIT.md`): a project is now VERIFIED only after a browser test passes on its head revision (a build with a ready preview is PARTIAL), and the preview state is derived from the recorded readiness of the head revision. Where this document says otherwise, the final audit is current.
+
 Builds on the Phase 1 checkpoint `f7f8bece697c1728d98bc94962f2ffa8901734c7` (PR #857). Branch `claude/batch2-phase2-qa-iteration-export`.
 Scope: Milestones D, E and F of the Batch 2 specification. Nothing here is deployed, applied to a database, enabled in production, or merged. No GitHub repository was created and no external account was touched.
 
