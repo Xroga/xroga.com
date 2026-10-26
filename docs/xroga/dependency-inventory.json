@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "44455b7555abea1ed509d06a9ccd1f8ac941b2a6",
+  "source_sha": "906c55a8460461fe3ec57dee7ba9f2f26cbe1b07",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16764,7 +16764,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/coordinator.ts",
-      "sha256": "ee53e189404d87293ac5d6de275e588442ad3e84d97ccd8ab68bc43d96c4958a"
+      "sha256": "bc1bb6127395d40779ee293662ead3de803c07b687d063b281b79c5e283613d0"
     },
     {
       "path": "backend/src/synthesis/livePreview/googleTarget.ts",
@@ -16852,7 +16852,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/googleProvider.ts",
-      "sha256": "429d49818a2781c7b95510c2133629fc631b2e6d3f57f4ed0c585313edd4db53"
+      "sha256": "4c3bf1adc0abaeb4675e6754c1c8640ab75986c38dc27c5d38156552388c4ae4"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/index.ts",
@@ -16860,7 +16860,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/manager.ts",
-      "sha256": "809383af9e8a1f0a987658c84d1795d0557c58faf40aa1cd39db31bafced9bb8"
+      "sha256": "c3f35202bc34ea9fc7c9114429130c7c3a137b527cef9ef2d4ef473f48086423"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/processManager.ts",
@@ -16880,7 +16880,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/types.ts",
-      "sha256": "c0b716c3b8392d45b15cb52ebde868349538e1f404246bf1cbb85807ac665a89"
+      "sha256": "9e7585fc46bab8484c438e80307c681f11de56f89b3cf59d3e8c2bf735a8a972"
     },
     {
       "path": "backend/src/synthesis/reliability/canonicalResume.ts",
@@ -31365,21 +31365,21 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/googleProvider.ts",
-      "line": 92,
+      "line": 93,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/googleProvider.ts",
-      "line": 149,
+      "line": 150,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/googleProvider.ts",
-      "line": 154,
+      "line": 155,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
