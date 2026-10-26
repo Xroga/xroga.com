@@ -8,16 +8,16 @@
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 183,
-    "persistenceCandidates": 781,
+    "persistenceCandidates": 783,
     "ownerPredicateCandidates": 191,
-    "reviewRequired": 99,
+    "reviewRequired": 101,
     "reviewedCandidates": 682,
-    "unresolvedSafetyCandidates": 124,
+    "unresolvedSafetyCandidates": 126,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 18
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 99,
+    "REVIEW_REQUIRED": 101,
     "SCOPED_BOUNDARY": 453,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 164,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 111,
-    "unresolvedCandidateBoundaries": 670,
+    "unresolvedCandidateBoundaries": 672,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3968,6 +3968,14 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "895c29e4087fcd99bdbe"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "6b6da5f598661dafa90b"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "a68e53a94294615ebff8"
       },
       {
@@ -4469,6 +4477,14 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "6a5f707e725aad757a40"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "895c29e4087fcd99bdbe"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "6b6da5f598661dafa90b"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6725,10 +6741,10 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 781,
+    "currentCallers": 783,
     "structuredVerified": 111,
-    "structuredUnproven": 670,
-    "manualUnresolved": 124,
+    "structuredUnproven": 672,
+    "manualUnresolved": 126,
     "manualUnsupported": 546,
     "agreedVerified": 111,
     "proofAwaitingManualReconciliation": 0
@@ -23668,6 +23684,28 @@
           }
         ]
       }
+    },
+    {
+      "id": "895c29e4087fcd99bdbe",
+      "path": "frontend/src/lib/driveUpload.ts",
+      "line": 104,
+      "enclosing": "uploadFile",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "4f6ab06b0811d9ff99edba989134caec7e937bf5854354668839ff1d6ab2e91e"
+    },
+    {
+      "id": "6b6da5f598661dafa90b",
+      "path": "frontend/src/lib/driveUpload.ts",
+      "line": 113,
+      "enclosing": "uploadFile",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "4f6ab06b0811d9ff99edba989134caec7e937bf5854354668839ff1d6ab2e91e"
     },
     {
       "id": "a428381cd3d08363ea1c",

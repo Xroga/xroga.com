@@ -21147,7 +21147,7 @@
       "id": "surface:5950fbfbab6e00d87f25",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/runtime/readiness.ts",
-      "sha256": "2752785ee6aebd4d77892a9c0b52382581e4cb318dcc4101d1e810118bc26427",
+      "sha256": "6251773680dcad7e4d6e526ba71747b87ac5132ba98b9885d84ea71923bf222f",
       "symbols": [
         "ApiProbeDeps",
         "CODE",
@@ -21194,7 +21194,9 @@
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
-      "costBoundary": [],
+      "costBoundary": [
+        "backend/src/runtime/readiness.ts#resolveStorageQuota"
+      ],
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/runtime/readiness.test.ts"
@@ -30484,7 +30486,7 @@
       "id": "surface:baeb3b7f0965203b7e51",
       "subsystem": "file_storage",
       "sourcePath": "backend/src/storage/runtime.ts",
-      "sha256": "72909703d4f13a8058a99e471c8ae52011df547eb045ce191e61b9ae035be2ef",
+      "sha256": "eea38d7458b200d83916d29c27d36242535774f6c40501656088773a77dbd699",
       "symbols": [
         "ResolvedStorageConfig",
         "StorageConfigError",
@@ -30506,11 +30508,12 @@
         "pool",
         "problems",
         "quota",
-        "quotaEnv",
+        "raw",
         "rawMode",
         "rawOrder",
         "readOrder",
         "resolveStorageConfig",
+        "resolveStorageQuota",
         "service",
         "setStorageServiceForTests",
         "storageReadOrder",
@@ -30551,6 +30554,7 @@
         "backend/src/runtime/readiness.ts:13",
         "backend/src/storage/config.matrix.test.ts:4",
         "backend/src/storage/migration/cliContext.ts:2",
+        "backend/src/storage/quotaConfig.test.ts:4",
         "backend/src/workers/browserCapability.ts:15",
         "scripts/storage/inventory-storage.mts:7"
       ],
@@ -30564,11 +30568,12 @@
       "approvalBoundary": [],
       "costBoundary": [
         "backend/src/storage/runtime.ts#quota",
-        "backend/src/storage/runtime.ts#quotaEnv"
+        "backend/src/storage/runtime.ts#resolveStorageQuota"
       ],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/storage/config.matrix.test.ts"
+        "backend/src/storage/config.matrix.test.ts",
+        "backend/src/storage/quotaConfig.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -41553,6 +41558,48 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:c92c32405f42049f8e6d",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/app/(shell)/drive/page.tsx",
+      "sha256": "f6393053ff29337b90d15d4f5794c0fb78140b2c3a846787e2e2df619dae21e7",
+      "symbols": [
+        "DrivePage",
+        "metadata"
+      ],
+      "imports": [
+        "@/components/drive/DrivePanel",
+        "@/lib/driveApi",
+        "next",
+        "next/navigation"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/drive/DrivePanel.tsx",
+        "frontend/src/lib/driveApi.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/drive/page.tsx"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "next",
+        "next/navigation"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:59afc2cc6437c839176a",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/(shell)/error.tsx",
@@ -50883,6 +50930,72 @@
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:97b93971e76249353a65",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/drive/DrivePanel.tsx",
+      "sha256": "1b5d6112718c0d3668510f20f0004d8ae42f4ebe7a34f6f672f76578ecaf7103",
+      "symbols": [
+        "DrivePanel",
+        "PAGE",
+        "STATE_LABEL",
+        "STATE_TONE",
+        "Transfer",
+        "anchor",
+        "caught",
+        "controller",
+        "download",
+        "file",
+        "files",
+        "formatBytes",
+        "input",
+        "key",
+        "link",
+        "load",
+        "remove",
+        "start",
+        "unit",
+        "units",
+        "update",
+        "value"
+      ],
+      "imports": [
+        "@/lib/driveApi",
+        "@/lib/driveUpload",
+        "@/lib/utils",
+        "lucide-react",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/driveApi.ts",
+        "frontend/src/lib/driveUpload.ts",
+        "frontend/src/lib/utils.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/drive/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/app/(shell)/drive/page.tsx:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
@@ -80707,6 +80820,7 @@
         "frontend/src/app/(shell)/dashboard/tasks/page.tsx",
         "frontend/src/app/(shell)/dashboard/upgrade/page.tsx",
         "frontend/src/app/(shell)/dashboard/workflows/[id]/page.tsx",
+        "frontend/src/app/(shell)/drive/page.tsx",
         "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/settings/page.tsx",
@@ -80822,6 +80936,7 @@
         "frontend/src/hooks/useBuildCompletionAlerts.ts:4",
         "frontend/src/lib/cloudTerminalSessions.ts:6",
         "frontend/src/lib/community.ts:1",
+        "frontend/src/lib/driveApi.ts:3",
         "frontend/src/lib/formatAiMarkdown.tsx:21",
         "frontend/src/lib/githubConnect.ts:31",
         "frontend/src/lib/hydrateLandingOutput.ts:2",
@@ -82718,6 +82833,128 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:6876b913c5ccd0a33785",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/driveApi.ts",
+      "sha256": "4c3744ed5a8e5b4c7ef700ac1d6dbc325623b8ca36672f36f0cd666d6b9f0f4e",
+      "symbols": [
+        "DRIVE_ENABLED",
+        "DriveApi",
+        "DriveDownload",
+        "DriveObject",
+        "DriveObjectState",
+        "InitiatedUpload",
+        "SignedPart",
+        "SignedRequest",
+        "code",
+        "driveApi",
+        "driveErrorMessage",
+        "query",
+        "suffix"
+      ],
+      "imports": [
+        "@/lib/api"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/api.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/drive/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/app/(shell)/drive/page.tsx:5",
+        "frontend/src/components/drive/DrivePanel.tsx:6"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/driveUpload.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:efa5dbd9e02092a21691",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/lib/driveUpload.ts",
+      "sha256": "4f6ab06b0811d9ff99edba989134caec7e937bf5854354668839ff1d6ab2e91e",
+      "symbols": [
+        "MAX_CLIENT_HASH_BYTES",
+        "SIGN_BATCH",
+        "UploadError",
+        "UploadFailureCode",
+        "UploadOptions",
+        "UploadProgress",
+        "UploaderDeps",
+        "aborted",
+        "attempt",
+        "attempts",
+        "body",
+        "concurrency",
+        "digest",
+        "error",
+        "etag",
+        "etags",
+        "failed",
+        "initiated",
+        "numbers",
+        "offset",
+        "part",
+        "queue",
+        "response",
+        "send",
+        "sendPart",
+        "sent",
+        "sha256",
+        "sha256Hex",
+        "sleep",
+        "start",
+        "total",
+        "uploadFile",
+        "wait"
+      ],
+      "imports": [
+        "@/lib/driveApi"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/(shell)/drive/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/drive/DrivePanel.tsx:7",
+        "frontend/src/lib/driveUpload.test.ts:5"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "frontend/src/lib/driveUpload.ts#digest"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/driveUpload.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:0d6d58f255612710d4e7",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/emailValidation.ts",
@@ -82859,6 +83096,7 @@
         "frontend/src/app/(shell)/dashboard/tasks/page.tsx",
         "frontend/src/app/(shell)/dashboard/upgrade/page.tsx",
         "frontend/src/app/(shell)/dashboard/workflows/[id]/page.tsx",
+        "frontend/src/app/(shell)/drive/page.tsx",
         "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/settings/page.tsx",
@@ -84415,6 +84653,7 @@
         "frontend/src/app/(shell)/dashboard/tasks/page.tsx",
         "frontend/src/app/(shell)/dashboard/upgrade/page.tsx",
         "frontend/src/app/(shell)/dashboard/workflows/[id]/page.tsx",
+        "frontend/src/app/(shell)/drive/page.tsx",
         "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/settings/page.tsx",
@@ -87167,6 +87406,7 @@
         "frontend/src/app/(shell)/dashboard/tasks/page.tsx",
         "frontend/src/app/(shell)/dashboard/upgrade/page.tsx",
         "frontend/src/app/(shell)/dashboard/workflows/[id]/page.tsx",
+        "frontend/src/app/(shell)/drive/page.tsx",
         "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/settings/page.tsx",
@@ -89464,6 +89704,7 @@
         "frontend/src/app/(shell)/dashboard/tasks/page.tsx",
         "frontend/src/app/(shell)/dashboard/upgrade/page.tsx",
         "frontend/src/app/(shell)/dashboard/workflows/[id]/page.tsx",
+        "frontend/src/app/(shell)/drive/page.tsx",
         "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/settings/page.tsx",
@@ -89719,6 +89960,7 @@
         "frontend/src/app/(shell)/dashboard/tasks/page.tsx",
         "frontend/src/app/(shell)/dashboard/upgrade/page.tsx",
         "frontend/src/app/(shell)/dashboard/workflows/[id]/page.tsx",
+        "frontend/src/app/(shell)/drive/page.tsx",
         "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/settings/page.tsx",
@@ -89847,6 +90089,7 @@
         "frontend/src/app/(shell)/dashboard/tasks/page.tsx",
         "frontend/src/app/(shell)/dashboard/upgrade/page.tsx",
         "frontend/src/app/(shell)/dashboard/workflows/[id]/page.tsx",
+        "frontend/src/app/(shell)/drive/page.tsx",
         "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/settings/page.tsx",
@@ -90201,6 +90444,7 @@
         "frontend/src/app/(shell)/dashboard/tasks/page.tsx",
         "frontend/src/app/(shell)/dashboard/upgrade/page.tsx",
         "frontend/src/app/(shell)/dashboard/workflows/[id]/page.tsx",
+        "frontend/src/app/(shell)/drive/page.tsx",
         "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/settings/page.tsx",
@@ -90796,6 +91040,7 @@
         "frontend/src/app/(shell)/dashboard/tasks/page.tsx",
         "frontend/src/app/(shell)/dashboard/upgrade/page.tsx",
         "frontend/src/app/(shell)/dashboard/workflows/[id]/page.tsx",
+        "frontend/src/app/(shell)/drive/page.tsx",
         "frontend/src/app/(shell)/error.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/settings/page.tsx",
@@ -91647,6 +91892,7 @@
         "frontend/src/app/(shell)/dashboard/referrals/page.tsx",
         "frontend/src/app/(shell)/dashboard/tasks/page.tsx",
         "frontend/src/app/(shell)/dashboard/upgrade/page.tsx",
+        "frontend/src/app/(shell)/drive/page.tsx",
         "frontend/src/app/(shell)/layout.tsx",
         "frontend/src/app/(shell)/settings/page.tsx",
         "frontend/src/app/(workspace)/dashboard/page.tsx",
@@ -91704,6 +91950,7 @@
         "frontend/src/components/dashboard/WorkspaceResumeList.tsx:12",
         "frontend/src/components/dashboard/WorkspaceShowcaseStarts.tsx:18",
         "frontend/src/components/dashboard/WorkspaceStarterIdeas.tsx:9",
+        "frontend/src/components/drive/DrivePanel.tsx:8",
         "frontend/src/components/game-builder/GameFaq.tsx:6",
         "frontend/src/components/icons/GitHubIcon.tsx:3",
         "frontend/src/components/icons/animated/ActivityIcon.tsx:3",
@@ -110547,7 +110794,7 @@
     {
       "id": "workflow:f74b5aa88274576db367",
       "sourcePath": ".github/workflows/storage-phase1.yml",
-      "sha256": "bbada3590978455b0745800f2d64f3d0624e5ad8d33b5686b8de82f9a3ef4533",
+      "sha256": "26ab504ab6bb8ee4a4e633da9d0d30f8c5f55c6909b32a307284c164e1adb3bf",
       "sourceEntrypoints": [
         "docs/infra/batch-1.5/evidence/run-phase1-tests.mjs"
       ],
@@ -119116,7 +119363,7 @@
     {
       "id": "test-suite:b326eee5a64c64435571",
       "sourcePath": "backend/src/runtime/readiness.test.ts",
-      "declaredTests": 21,
+      "declaredTests": 23,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -120381,6 +120628,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:6a2d9d22169af1f06d75",
+      "sourcePath": "backend/src/storage/quotaConfig.test.ts",
+      "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:36ea0888bc1e3e894def",
       "sourcePath": "backend/src/storage/r2.provider.integration.test.ts",
       "declaredTests": 10,
@@ -121558,6 +121812,20 @@
       "id": "test-suite:b4d2b6601e8836dba607",
       "sourcePath": "frontend/src/lib/customMcp.test.ts",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:923db200928945d81e84",
+      "sourcePath": "frontend/src/lib/driveApiContract.test.ts",
+      "declaredTests": 6,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:da8224e63e4c91138318",
+      "sourcePath": "frontend/src/lib/driveUpload.test.ts",
+      "declaredTests": 10,
       "skipLocations": [],
       "focusLocations": []
     },

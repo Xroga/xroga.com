@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2f7c9a5ea56942c40af39dcb896056c2df0cabd0",
+  "source_sha": "2accd699add41b99ca42b4a2a90f4a37f6e2e266",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -34,6 +34,7 @@
         "NEXT_PUBLIC_XROGA_AUTH_BASE_URL",
         "NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF",
         "NEXT_PUBLIC_XROGA_BROWSER_RUNS",
+        "NEXT_PUBLIC_XROGA_DRIVE",
         "VERCEL_ENV",
         "VERCEL_GIT_COMMIT_SHA"
       ],
@@ -7555,6 +7556,7 @@
         "XROGA_ROUTING_MODE",
         "XROGA_SOFTWARE_AGENT_V2",
         "XROGA_SOFTWARE_AGENT_V2_SHADOW",
+        "XROGA_STORAGE_RECONCILE_MODE",
         "XROGA_TEST_CREDENTIAL_KEK",
         "XROGA_TRUSTED_PROXY_HOPS",
         "ZHIPU_API_KEY"
@@ -10163,6 +10165,25 @@
         "frontend",
         "endpoint-example-com",
         "endpoint-your-website-com"
+      ]
+    },
+    {
+      "name": "NEXT_PUBLIC_XROGA_DRIVE",
+      "consuming_sources": [
+        "frontend/src/lib/driveApi.ts"
+      ],
+      "environments": [
+        "frontend build/browser/SSR"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "frontend"
       ]
     },
     {
@@ -13515,6 +13536,25 @@
       ]
     },
     {
+      "name": "XROGA_STORAGE_RECONCILE_MODE",
+      "consuming_sources": [
+        "backend/src/runtime/readiness.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_TEST_CREDENTIAL_KEK",
       "consuming_sources": [
         "backend/src/runtime/readiness.ts",
@@ -13796,7 +13836,7 @@
     },
     {
       "path": ".github/workflows/storage-phase1.yml",
-      "sha256": "bbada3590978455b0745800f2d64f3d0624e5ad8d33b5686b8de82f9a3ef4533"
+      "sha256": "26ab504ab6bb8ee4a4e633da9d0d30f8c5f55c6909b32a307284c164e1adb3bf"
     },
     {
       "path": ".github/workflows/supabase-migrate.yml",
@@ -15168,7 +15208,7 @@
     },
     {
       "path": "backend/src/runtime/readiness.ts",
-      "sha256": "2752785ee6aebd4d77892a9c0b52382581e4cb318dcc4101d1e810118bc26427"
+      "sha256": "6251773680dcad7e4d6e526ba71747b87ac5132ba98b9885d84ea71923bf222f"
     },
     {
       "path": "backend/src/runtime/safeLogging.ts",
@@ -15852,7 +15892,7 @@
     },
     {
       "path": "backend/src/storage/runtime.ts",
-      "sha256": "72909703d4f13a8058a99e471c8ae52011df547eb045ce191e61b9ae035be2ef"
+      "sha256": "eea38d7458b200d83916d29c27d36242535774f6c40501656088773a77dbd699"
     },
     {
       "path": "backend/src/storage/storageService.ts",
@@ -16481,6 +16521,10 @@
     {
       "path": "frontend/src/app/(shell)/dashboard/workflows/[id]/page.tsx",
       "sha256": "9436bc0dc5393a6ae1458e8b44d5e703e58f1d8e34c41084626e8815879f55c4"
+    },
+    {
+      "path": "frontend/src/app/(shell)/drive/page.tsx",
+      "sha256": "f6393053ff29337b90d15d4f5794c0fb78140b2c3a846787e2e2df619dae21e7"
     },
     {
       "path": "frontend/src/app/(shell)/error.tsx",
@@ -17261,6 +17305,10 @@
     {
       "path": "frontend/src/components/docs/DocsDirectory.tsx",
       "sha256": "9e630589b9c885f0f6a8b65a8cdc60d710c67f45f1f77d36675ae2b41e2618f1"
+    },
+    {
+      "path": "frontend/src/components/drive/DrivePanel.tsx",
+      "sha256": "1b5d6112718c0d3668510f20f0004d8ae42f4ebe7a34f6f672f76578ecaf7103"
     },
     {
       "path": "frontend/src/components/errors/OfflineOverlay.tsx",
@@ -19337,6 +19385,14 @@
     {
       "path": "frontend/src/lib/docsContent.ts",
       "sha256": "56684d1ba4a7c958472c49662accf1cdb0269e65f397e36de1e5cc8244d75831"
+    },
+    {
+      "path": "frontend/src/lib/driveApi.ts",
+      "sha256": "4c3744ed5a8e5b4c7ef700ac1d6dbc325623b8ca36672f36f0cd666d6b9f0f4e"
+    },
+    {
+      "path": "frontend/src/lib/driveUpload.ts",
+      "sha256": "4f6ab06b0811d9ff99edba989134caec7e937bf5854354668839ff1d6ab2e91e"
     },
     {
       "path": "frontend/src/lib/emailValidation.ts",
@@ -29792,7 +29848,7 @@
     },
     {
       "path": "backend/src/storage/runtime.ts",
-      "line": 48,
+      "line": 60,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31789,6 +31845,13 @@
       "path": "frontend/src/lib/currency.ts",
       "line": 4,
       "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "frontend/src/lib/driveUpload.ts",
+      "line": 76,
+      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
