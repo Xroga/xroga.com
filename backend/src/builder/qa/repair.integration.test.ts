@@ -188,6 +188,20 @@ describe('QA-driven repair lifecycle (real browser)', { skip }, () => {
     await assert.rejects(qa.report(OTHER, project.id, mine[0].id), BuilderError);
   });
 
+  it('after a follow-up change, reruns the checks and flags what used to pass and now fails as a regression', async () => {
+    const { qa, project, builder } = await setup(GOOD_HTML, () => fixIt());
+    const before = await qa.runQa(OWNER, project.id, { runId: 'before-change-0001' });
+    assert.equal(before.report.status, 'passed');
+    const run = await builder.beginRun(OWNER, project.id, { runId: 'follow-up-run-0001', origin: 'followup' });
+    await run.commit({ files: [{ path: 'index.html', content: REGRESSING_HTML }], message: 'add a wide banner' });
+    await builder.completeRun(OWNER, run, { outcome: 'completed', verified: true, reason: 'ok', files: [] }, async () => ({ started: false, strictReady: null, reason: 'preview not run' }));
+    const after = await qa.runQa(OWNER, project.id, { runId: 'after-change-0001' });
+    assert.equal(after.report.status, 'failed');
+    const regressed = after.report.checks.filter((check) => check.regression);
+    assert.ok(regressed.length > 0 && regressed.every((check) => check.category === 'responsive'));
+    assert.notEqual(after.summary.revisionId, before.summary.revisionId, 'each result is bound to the revision it tested');
+  });
+
   it('records a plain QA run against the current revision and replays an identical run once', async () => {
     const { qa, project, phase2 } = await setup(GOOD_HTML, () => fixIt());
     const first = await qa.runQa(OWNER, project.id, { runId: 'plain-qa-run-0001' });

@@ -6,6 +6,7 @@ import type { CommitFn } from '../synthesis/productionAdapters.js';
 import type { UniversalBuildOutcome } from '../synthesis/universalEntrypoint.js';
 import { deriveBuildSpec } from './spec.js';
 import { hashSnapshot } from './snapshot.js';
+import { diffRevisions } from './diff.js';
 import { derivePreviewLifecycle, type PreviewFacts, type PreviewLifecycleView } from './previewLifecycle.js';
 import { materializeStarter, selectStarter } from './starters.js';
 import { assertRequestKey, type AppendRevisionResult, type BuilderStore } from './store.js';
@@ -67,6 +68,8 @@ export interface BuilderRunBinding {
   readonly saved: () => BuilderRevision | null;
   /** True when the run committed source identical to the current revision, so no revision was created. */
   readonly noChange: () => boolean;
+  /** The project's recorded state before this run claimed it. */
+  readonly previous: { readonly state: BuilderProjectState; readonly reason: string };
 }
 
 export interface BuilderDeps {
@@ -159,6 +162,7 @@ export class BuilderService {
     input: { runId?: string; origin?: RevisionOrigin; /** Throws to refuse a result before it becomes a revision. */ guard?: (committed: readonly ProjectFile[], head: readonly ProjectFile[]) => void },
   ): Promise<BuilderRunBinding> {
     const runId = input.runId ?? randomUUID();
+    const before = await this.requireProject(userId, projectId);
     const claimed = await this.deps.store.claimRun(userId, projectId, runId, new Date(Date.now() - STALE_RUN_MS));
     if (!claimed) throw new BuilderError('not_found', 'Project not found.');
     if (claimed.kind === 'busy') throw new BuilderError('conflict', 'A build is already running for this project.');
@@ -196,6 +200,7 @@ export class BuilderService {
       project,
       saved: () => holder.saved?.revision ?? null,
       noChange: () => holder.noChange,
+      previous: { state: before.state, reason: before.stateReason },
     };
   }
 
@@ -217,6 +222,11 @@ export class BuilderService {
       return this.getState(userId, projectId);
     }
     let saved = run.saved();
+    if (saved === null && run.noChange()) {
+      // The run found nothing to change. The project is exactly as it was before.
+      await set(run.previous.state === 'generating' || run.previous.state === 'verifying' ? 'partial' : run.previous.state, run.previous.reason, null);
+      return this.getState(userId, projectId);
+    }
     const verified = saved !== null && canonical.verified;
     if (!saved && canonical.files.length > 0) {
       // Keep the work product so it survives, explicitly marked as not verified.
@@ -288,6 +298,46 @@ export class BuilderService {
         return preview.launch({ userId, project: run.project, revision, outcome, runId: run.runId, onEvent: input.onEvent });
       },
     );
+  }
+
+  /**
+   * Restores an earlier revision as a NEW revision on top of the current head (history is never
+   * rewritten, so the version being replaced stays available). Restoring source does not touch
+   * anything outside Xroga: databases, repositories and deployments are left exactly as they are.
+   */
+  async restoreRevision(userId: string, projectId: string, revisionId: string, input: { runId?: string } = {}) {
+    const target = await this.revisionFiles(userId, projectId, revisionId);
+    const before = await this.requireProject(userId, projectId);
+    const run = await this.beginRun(userId, projectId, { runId: input.runId, origin: 'restore' });
+    try {
+      await run.commit({ files: target.files, message: `Restore revision ${target.revisionNumber}` });
+      const saved = run.saved();
+      if (!saved && !run.noChange()) throw new BuilderError('storage_failed', 'The restored source could not be saved.');
+      if (saved) {
+        await this.deps.store.setState(userId, projectId, 'partial', `Restored revision ${target.revisionNumber} as revision ${saved.revisionNumber}. Run the browser tests to verify it.`, null);
+      } else {
+        // Already the current source: put the project back exactly as it was.
+        await this.deps.store.setState(userId, projectId, before.state, before.stateReason, null);
+      }
+      return {
+        restoredFrom: target.revisionNumber,
+        revision: saved,
+        unchanged: !saved,
+        notice: 'Only the project source was restored. Any external database, GitHub repository or deployment is unchanged.',
+        state: await this.getState(userId, projectId),
+      };
+    } catch (error) {
+      await this.deps.store.setState(userId, projectId, before.state, before.stateReason, null).catch(() => undefined);
+      throw error;
+    }
+  }
+
+  /** File-level diff between two revisions (or a revision and its parent). */
+  async diff(userId: string, projectId: string, toRevisionId: string, fromRevisionId?: string) {
+    const to = await this.revisionFiles(userId, projectId, toRevisionId);
+    const fromId = fromRevisionId ?? to.parentRevisionId;
+    const from = fromId ? await this.revisionFiles(userId, projectId, fromId) : null;
+    return { from: from ? { id: from.id, revisionNumber: from.revisionNumber } : null, to: { id: to.id, revisionNumber: to.revisionNumber }, ...diffRevisions(from?.files ?? [], to.files) };
   }
 
   async getState(userId: string, projectId: string): Promise<BuilderState> {
