@@ -12,12 +12,15 @@ import {
   type BuilderState,
 } from '@/lib/builderApi';
 import { cn } from '@/lib/utils';
+import { BuilderDatabase } from './builder/BuilderDatabase';
 import { BuilderDelivery } from './builder/BuilderDelivery';
 import { BuilderHistory } from './builder/BuilderHistory';
+import { BuilderHosting } from './builder/BuilderHosting';
+import { BuilderProvenance } from './builder/BuilderProvenance';
 import { BuilderTests } from './builder/BuilderTests';
 
-type PanelTab = 'overview' | 'history' | 'tests' | 'export';
-const TAB_LABEL: Record<PanelTab, string> = { overview: 'Overview', history: 'Versions', tests: 'Tests', export: 'Export' };
+type PanelTab = 'overview' | 'history' | 'tests' | 'export' | 'deliver';
+const TAB_LABEL: Record<PanelTab, string> = { overview: 'Overview', history: 'Versions', tests: 'Tests', export: 'Export', deliver: 'Deliver' };
 
 const PREVIEW_LABEL: Record<BuilderPreviewLifecycle, string> = {
   not_started: 'Not started',
@@ -55,6 +58,7 @@ export function BuilderProjectPanel({ projectId, onOpenPreview }: { projectId: s
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<PanelTab>('overview');
+  const [deliveredCount, setDeliveredCount] = useState(0);
 
   const load = useCallback(async () => {
     try {
@@ -185,6 +189,13 @@ export function BuilderProjectPanel({ projectId, onOpenPreview }: { projectId: s
       {tab === 'history' ? <BuilderHistory projectId={projectId} revisions={revisions} currentRevisionId={project.currentRevisionId} onChanged={() => void load()} /> : null}
       {tab === 'tests' ? <BuilderTests projectId={projectId} onChanged={() => void load()} /> : null}
       {tab === 'export' ? <BuilderDelivery projectId={projectId} title={project.title} onChanged={() => void load()} /> : null}
+      {tab === 'deliver' ? (
+        <div className="space-y-4">
+          <BuilderDatabase projectId={projectId} onChanged={() => setDeliveredCount((count) => count + 1)} />
+          <BuilderHosting projectId={projectId} title={project.title} onChanged={() => setDeliveredCount((count) => count + 1)} />
+          <BuilderProvenance projectId={projectId} refreshKey={deliveredCount} />
+        </div>
+      ) : null}
 
       <p className="text-[10px] text-[var(--muted)]">
         Starter {project.starter.starterId}@{project.starter.starterVersion} ({project.starter.license}). Your source is saved on Xroga and survives the preview ending.
