@@ -1,0 +1,125 @@
+{
+  "version": "1.0",
+  "missionId": "BATCH15-AUDIT-FIXES-20261026",
+  "baseSha": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+  "requirementIds": [
+    "XR-FAMILY-schedulers",
+    "XR-FAMILY-composio-dynamic-tools"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "high",
+  "scope": "Final audit of Batch 1.5 against its specifications: refuse a client-supplied browser write grant, make the guest rate-limit key unspoofable on Google Cloud, give Cloud Run workers unique ids, stop caching transient Drive failures, schedule Drive reconciliation behind a signed internal route, and make the startup policy Cloud Run aware (still deliberately not wired; the cutover patch is saved). Nothing is applied, deployed or enabled.",
+  "changedFiles": [
+    ".github/workflows/storage-phase1.yml",
+    "backend/src/index.ts",
+    "backend/src/routes/browserRuns.test.ts",
+    "backend/src/routes/browserRuns.ts",
+    "backend/src/routes/guestChat.test.ts",
+    "backend/src/routes/guestChat.ts",
+    "backend/src/routes/storageReconcileScheduler.test.ts",
+    "backend/src/routes/storageReconcileScheduler.ts",
+    "backend/src/runtime/startupPolicy.test.ts",
+    "backend/src/runtime/startupPolicy.ts",
+    "backend/src/storage/runtime.ts",
+    "docs/infra/batch-1.5/AUDIT-2026-10-26.md",
+    "docs/infra/batch-1.5/cutover-startup-readiness.patch",
+    "docs/xroga/missions/batch15-audit-fixes-20261026.json"
+  ],
+  "decisions": {
+    "keep": [
+      "The deliberate decision not to wire startup policy and readiness before the Google cutover (bootGuard.test.ts)",
+      "Existing Drive, lease and browser-worker architecture",
+      "Codex migration work untouched"
+    ],
+    "extend": [
+      "A signed internal storage reconcile route using the existing Cloud Scheduler ID-token verifier",
+      "startupPolicy recognises Cloud Run explicitly"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": false,
+    "migrations": [],
+    "rollout": "No schema change.",
+    "rollback": "Revert the change."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "The scheduled reconcile route requires a Google-signed ID token for one named service account and audience and is off by default. The browser-runs route refuses a client-supplied write grant."
+    },
+    "tenant": {
+      "changed": false,
+      "description": "No tenant boundary changes; the reconcile response carries counts only."
+    },
+    "approval": {
+      "changed": true,
+      "description": "Consequential browser steps can only be authorised by a grant the server issues; a request can no longer carry one."
+    },
+    "credentials": {
+      "changed": false,
+      "description": "No credential handling changes."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No egress changes."
+    },
+    "cost": {
+      "changed": false,
+      "description": "No cost changes. The reconcile call is bounded to 200 rows and never scans the bucket."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No billing path changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/routes/browserRuns.test.ts backend/src/routes/guestChat.test.ts backend/src/routes/storageReconcileScheduler.test.ts backend/src/runtime/startupPolicy.test.ts",
+      "scope": "Forged write grant refused, guest address not spoofable, scheduled reconcile authentication and bounds, Cloud Run environment classification.",
+      "negative": true,
+      "reference": "backend/src/routes/storageReconcileScheduler.test.ts"
+    },
+    {
+      "command": "node scripts/xroga/inventory.mjs --check",
+      "scope": "Generated source inventory consistency.",
+      "negative": false,
+      "reference": "docs/xroga/current-state.json"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Extends existing routes, the existing scheduler authentication and the existing startup policy. No new service, scheduler or runtime.",
+    "rfc": null
+  },
+  "rollout": "Merge only after review and your authorization, as part of the coordinated Batch 1.5 activation. Set the XROGA_STORAGE_RECONCILE_* variables and create the Cloud Scheduler job only as a separate approved step.",
+  "rollback": "Leave XROGA_STORAGE_RECONCILE_MODE unset (the default); revert the change to remove the code.",
+  "knownGaps": [
+    "Browser runs execute in the request process: cross-instance cancel, stall under request-based CPU and unwired lease recovery need a Google architecture decision",
+    "No frontend for Xroga Drive",
+    "Startup policy and readiness wiring is saved as a patch for the cutover release",
+    "Nothing was verified on a live Cloud Run service or hosted database"
+  ],
+  "placeholderClaimsRemaining": [
+    "Live Google Cloud behaviour of Batch 1.5 is unverified"
+  ],
+  "evidenceRefs": [
+    "docs/infra/batch-1.5/AUDIT-2026-10-26.md",
+    "backend/src/routes/browserRuns.test.ts"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Google Cloud migration (Codex) not complete and verified",
+      "Migrations not applied",
+      "Authenticated end-to-end and staged security proof not run for this change"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

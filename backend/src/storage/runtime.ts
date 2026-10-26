@@ -105,7 +105,9 @@ export function getStorageService(): StorageService | null {
     });
   } catch (err) {
     console.warn('[storage] Xroga Drive not available:', (err as Error).message);
-    service = null;
+    // Not cached: a transient failure (a secret not mounted yet, a briefly unreachable database) must not disable Drive until restart.
+    service = undefined;
+    return null;
   }
   return service;
 }

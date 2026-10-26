@@ -8,7 +8,7 @@ name: storage-phase1
 
 on:
   push:
-    branches: ['claude/xroga-batch-1-5', 'claude/xroga-b15-phase2-20261024']
+    branches: ['claude/xroga-batch-1-5', 'claude/xroga-b15-phase2-20261024', 'claude/batch15-audit-fixes']
     paths:
       - 'backend/src/storage/**'
       - 'backend/src/routes/drive*'

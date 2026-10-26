@@ -8,6 +8,7 @@
  * Refuses with 503 when the browser host or private evidence storage is not configured: there is no hosted-browser fallback and no
  * run without durable evidence. Identity comes only from the issued TenantContext.
  */
+import { randomUUID } from 'node:crypto';
 import { Router, type Response } from 'express';
 import { z } from 'zod';
 import type { AuthRequest } from '../middleware/auth.js';
@@ -33,19 +34,22 @@ const body = z.object({
   projectId: z.string().uuid().nullish(),
 }).strict();
 
+/** Unique per process on any platform: Cloud Run containers all have pid 1, so a pid or a Fly machine id is not an identity. */
+const WORKER_ID = `api-${process.env.K_REVISION ?? process.env.FLY_MACHINE_ID ?? 'local'}-${randomUUID().slice(0, 8)}`;
 let production: BrowserCapabilityDeps | null | undefined;
 /** Built once from the environment; null when the host, its secret or Drive is missing. */
 function productionDeps(): BrowserCapabilityDeps | null {
-  if (production !== undefined) return production;
+  if (production !== undefined && production !== null) return production;
   const url = process.env.XROGA_BROWSER_WORKER_URL; const secret = process.env.XROGA_BROWSER_COORDINATOR_SECRET; const drive = getStorageService();
-  if (!url || !secret || !drive) { production = null; return production; }
+  // Not cached when something is missing: a cold start before a secret or Drive was ready must recover without a restart.
+  if (!url || !secret || !drive) return null;
   const aiModel = process.env.XROGA_BROWSER_AI_MODEL as ModelId | undefined;
   production = {
     worker: new RemoteBrowserWorker({ baseUrl: url, secret, ...(aiModel ? { gateway: createBrowserModelGateway({ modelId: aiModel }) } : {}) }),
     leases: new PostgresLeaseStore(createPool()), drive, storeFor: (userId) => new SupabaseExecutionStateStore(userId),
     // Drive's own owner check: listing a project the actor does not own throws
     authoriseProject: async (actor, projectId) => drive.listObjects(actor, { projectId, limit: 1 }).then(() => true, () => false),
-    workerId: `api-${process.env.FLY_MACHINE_ID ?? process.pid}`,
+    workerId: WORKER_ID,
     admission: new AdmissionController({ maxConcurrent: 4, maxPerTenant: 2, maxQueuedPerTenant: 4, maxQueuedTotal: 32 }),
     ...(process.env.XROGA_BROWSER_PLANNER_MODEL ? { planner: async (goal: string, job: Parameters<typeof planBrowserTask>[1], allowAi: boolean) => (await planBrowserTask(goal, job, { modelId: process.env.XROGA_BROWSER_PLANNER_MODEL as ModelId }, { allowAi })).plan } : {}),
   };
@@ -70,6 +74,12 @@ export function createBrowserRunsRouter(resolve: () => BrowserCapabilityDeps | n
       const deps = resolve();
       if (!deps) { res.status(503).json({ error: 'Browser automation is not configured on this deployment', code: 'BROWSER_WORKER_NOT_CONFIGURED' }); return; }
       const input = body.parse(req.body);
+      // Write grants (consequential submit and upload) are issued only by the server's canonical action-grant path. A plan arriving
+      // from a client is untrusted data: one that carries its own grant is refused outright, never parsed.
+      if (input.plan && Object.hasOwn(input.plan, 'writeGrant')) {
+        res.status(400).json({ error: 'A write grant is issued by the server and cannot be supplied in a request', code: 'RUN_INVALID' });
+        return;
+      }
       const abort = new AbortController();
       // validation happens synchronously inside runBrowserTask before the scheduler starts; report its refusals directly
       let started: (runId: string) => void = () => {}; let refused: (e: unknown) => void = () => {};

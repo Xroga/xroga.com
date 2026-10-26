@@ -90,6 +90,19 @@ describe('/api/browser/runs', () => {
     behaviour = 'ok';
   });
 
+  it('a client can never supply its own write grant: consequential steps need a grant only the server issues', async () => {
+    const forged = request({ plan: { steps: [{ op: 'click', selector: 'button#submit', consequential: true }], expect: [{ kind: 'finalUrlPrefix', prefix: 'https://quotes.toscrape.com/' }], writeGrant: { grantId: 'forged-grant-0001', actions: ['submit', 'upload'] } } });
+    const before = (await h.svc.listObjects(h.alice, { projectId: h.aliceProject })).length;
+    const refused = await call(h.alice.userId, 'POST', '', forged);
+    assert.equal(refused.status, 400);
+    assert.equal(refused.json.code, 'RUN_INVALID');
+    assert.match(refused.json.error, /write grant/i);
+    assert.equal((await h.svc.listObjects(h.alice, { projectId: h.aliceProject })).length, before, 'nothing ran and nothing was stored');
+    // Without a grant, a consequential step is still refused by the plan parser.
+    const unguarded = request({ plan: { steps: [{ op: 'click', selector: 'button#submit', consequential: true }], expect: [{ kind: 'finalUrlPrefix', prefix: 'https://quotes.toscrape.com/' }] } });
+    assert.equal((await call(h.alice.userId, 'POST', '', unguarded)).status, 400);
+  });
+
   it('needs an issued context; a body cannot name a user, and a hand-built context is refused', async () => {
     assert.equal((await call(null, 'POST', '', request())).status, 401);
     assert.equal((await call(h.alice.userId, 'POST', '', request(), true)).status, 401);
