@@ -3872,7 +3872,7 @@
       "id": "B1-P2-11526c9c3e6a8aa3",
       "family": "other-source-bound-boundaries",
       "sourcePath": "backend/src/synthesis/livePreview/store.ts",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "baselineCallerIds": [
         "260f546643a88434ec35",
         "72439f834416b3fd90eb",
@@ -3947,7 +3947,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-11526c9c3e6a8aa3",
-        "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+        "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
         "executionStatus": "IN_PROGRESS",
         "finding": "EXISTING_OWNERSHIP_PATH_TRACED_TARGETED_CONSUMER_PROOF_PREPARED",
         "actorTrace": "Actual authenticated runtime routes and admitted coordinator pass original owner/project/session. Signed global grant lookup is consumed only by the actual HTTP/WebSocket resolver, which checks signature, current revocation/expiry and the exact current owner/project/session/declared port before selecting an internal target. Revocation is owner-filtered before its first await.",
@@ -3962,7 +3962,8 @@
         "remaining": [
           "Execute the exact new disposable case and authenticate its complete successful source-bound run",
           "Reconcile exact proven callers in both existing record systems, retaining all other and later-phase scope"
-        ]
+        ],
+        "googleMigrationReview": "Google grant admission now validates the exact loaded owned active interactive session and declared port without requiring Fly address fields. Locked SQL and exact grant receipt checks remain unchanged. Native identity, immutable handle and private endpoint are still validated independently by the Google gateway. All eight persistence caller IDs are preserved. Focused regression passes 33/33. Live Google grant/HTTP/WebSocket acceptance remains pending. No disposition or acceptance promotion."
       },
       "actor": {
         "existingTrace": "Existing internal coordinator supplies the server owner. Creation copies scalar intent before session loading and binds the returned grant ID/owner/project/session/run/kind/port/expiry with no revocation. All mapped grant fields require valid types and finite timestamps. Latest reads verify returned owner/project/session and current expiry/revocation. Exact UUID global resolution verifies returned ID before the gateway independently validates signature and current session target. Revocation retains explicit owner/project/session filters.",
@@ -3985,7 +3986,7 @@
         {
           "path": "backend/src/synthesis/livePreview/access.ts",
           "marker": "session.userId !== grant.userId",
-          "sourceSha256": "ea6d98a6a976c705e48a848529ffed999bb66e2c241817dffb83fd6470c38cad",
+          "sourceSha256": "1d075c5c33135be8172ba77f104c110b8a4c6554661932fbeaa082093991bcd6",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -3999,7 +4000,7 @@
         {
           "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
           "marker": "preview grant input and returned capability stay bound",
-          "sourceSha256": "2e8aadb9aee19712c92fda66ef95e114f07ef9b678f46a46e3214d9b7647be5b",
+          "sourceSha256": "8a97f97f0cbf0455854526f3bd0c71ba33b55f6e51cafcbb3e0bdb7f752a8c80",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }

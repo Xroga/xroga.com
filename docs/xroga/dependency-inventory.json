@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "906c55a8460461fe3ec57dee7ba9f2f26cbe1b07",
+  "source_sha": "8708a103923e1f94778d967ef752359b80b2624e",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16748,7 +16748,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/access.ts",
-      "sha256": "ea6d98a6a976c705e48a848529ffed999bb66e2c241817dffb83fd6470c38cad"
+      "sha256": "1d075c5c33135be8172ba77f104c110b8a4c6554661932fbeaa082093991bcd6"
     },
     {
       "path": "backend/src/synthesis/livePreview/admissionWatch.ts",
@@ -16788,7 +16788,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "sha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4"
+      "sha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b"
     },
     {
       "path": "backend/src/synthesis/livePreview/types.ts",

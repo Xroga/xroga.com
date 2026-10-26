@@ -34071,8 +34071,9 @@
       "id": "surface:f3fdc77942588fe53f5f",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/livePreview/access.ts",
-      "sha256": "ea6d98a6a976c705e48a848529ffed999bb66e2c241817dffb83fd6470c38cad",
+      "sha256": "1d075c5c33135be8172ba77f104c110b8a4c6554661932fbeaa082093991bcd6",
       "symbols": [
+        "authorizedPreviewPermit",
         "authorizedPreviewSession",
         "authorizedPreviewTarget",
         "expiry"
@@ -34096,11 +34097,13 @@
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
       "authBoundary": [
+        "backend/src/synthesis/livePreview/access.ts#authorizedPreviewPermit",
         "backend/src/synthesis/livePreview/access.ts#authorizedPreviewSession",
         "backend/src/synthesis/livePreview/access.ts#authorizedPreviewTarget"
       ],
       "tenantBoundary": [],
       "approvalBoundary": [
+        "backend/src/synthesis/livePreview/access.ts#authorizedPreviewPermit",
         "backend/src/synthesis/livePreview/access.ts#authorizedPreviewSession",
         "backend/src/synthesis/livePreview/access.ts#authorizedPreviewTarget"
       ],
@@ -34676,7 +34679,7 @@
       "id": "surface:b1a640e240cb2100e3b5",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/livePreview/store.ts",
-      "sha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "symbols": [
         "candidate",
         "context",
@@ -34730,14 +34733,14 @@
         "node:crypto"
       ],
       "authBoundary": [
-        "backend/src/synthesis/livePreview/store.ts#authorizedPreviewTarget"
+        "backend/src/synthesis/livePreview/store.ts#authorizedPreviewPermit"
       ],
       "tenantBoundary": [
         "backend/src/synthesis/livePreview/store.ts:242 (user_id)",
         "backend/src/synthesis/livePreview/store.ts:327 (user_id)"
       ],
       "approvalBoundary": [
-        "backend/src/synthesis/livePreview/store.ts#authorizedPreviewTarget"
+        "backend/src/synthesis/livePreview/store.ts#authorizedPreviewPermit"
       ],
       "costBoundary": [],
       "evidenceBoundary": [],
@@ -122092,7 +122095,7 @@
     {
       "id": "test-suite:8004b3f7314c2a4066f1",
       "sourcePath": "backend/src/synthesis/livePreview/store.receipt.test.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

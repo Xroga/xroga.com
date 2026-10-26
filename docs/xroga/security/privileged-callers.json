@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "ca1748ad08e6e3d4263d67fda79f2c85b4416366e1787fd00399f3c75ad34159",
+  "reviewRegistrySha256": "a672f1967055bc267a1cfe6f4b673603aa09816e2ebdb4146ee9ed58fe65567b",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -597,6 +597,62 @@
       {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-dac017403f18a5d5"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-11526c9c3e6a8aa3"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -2805,6 +2861,14 @@
       {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-b4ad6b4325082a05"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-480ade112b06c3e5"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-480ade112b06c3e5"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -21637,9 +21701,9 @@
       "target": "create_project_preview_grant",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "semanticReview": {
-        "authority": "Internal coordinator supplies copied server owner/project/session/grant intent. Existing owner-bound session loader and authorizedPreviewTarget validate the private target. Service-only transaction locks exact current owner/session, compares full expected session JSON and identity/status/provider columns, requires running interactive session with the declared HTTP port, then checks database expiry after locking before inserting. Exact single returned capability receipt is required. Gateway independently revalidates signature, revocation and current session on resolution.",
+        "authority": "Internal coordinator supplies copied server owner/project/session/grant intent. Existing owner-bound session loader validates the exact running interactive session and declared HTTP port. Google grant creation uses provider-independent session admission, while other providers retain their existing target validation. The service-only SQL transaction locks the current owner/session, compares full session JSON and identity/status/provider columns, samples expiry after locking and requires the exact returned capability. Native Google identity, immutable owned handle and private endpoint remain independently mandatory at gateway resolution.",
         "reason": "Exact current-session grant insertion boundary VERIFIED at696322f0813a4e08b9d324e2bb653dfb2e2d657e, disposable39124146660:110 fresh/upgrade migrations,145 security tests and3 browser tests pass with zero failures/skips. Actual observed grant-write waits reject session state/status/port changes and expiry before insertion, foreign/browser denial and injected rollback pass. Runtime invocation, SQL and fixture unchanged. Only parent-bound admission/insertion closes. Complete coordinator/run provenance, canonical project lifecycle, revoke/create and in-flight socket semantics and signing-key custody remain unresolved. No live provider or whole-preview certification.",
         "evidence": [
           {
@@ -21662,7 +21726,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "semanticReview": {
         "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
         "reason": "Five exact owner-scoped preview factory/latest/revoke boundaries retain their already authenticated positive/negative831f proof. They are SCOPED_BOUNDARY, not global exceptions. The previous combined seven-site NARROW_EXCEPTION classification was rejected by the strict per-caller agreement gate. Correcting this manual kind does not certify a new source or remove any unresolved obligation. Original scope and history remain preserved.",
@@ -21691,7 +21755,7 @@
       "target": "project_preview_grants",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "semanticReview": {
         "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
         "reason": "Only the two exact signed runtime grant-resolution sites use the existing registered signed_runtime_preview_resolution exception and already authenticated831f proof. Five owner-scoped sites are now separately classified under the same original structured container. No new exception, gate relaxation, source certification or caller removal.",
@@ -21720,7 +21784,7 @@
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "semanticReview": {
         "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
         "reason": "Only the two exact signed runtime grant-resolution sites use the existing registered signed_runtime_preview_resolution exception and already authenticated831f proof. Five owner-scoped sites are now separately classified under the same original structured container. No new exception, gate relaxation, source certification or caller removal.",
@@ -21749,7 +21813,7 @@
       "target": "project_preview_grants",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "semanticReview": {
         "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
         "reason": "Five exact owner-scoped preview factory/latest/revoke boundaries retain their already authenticated positive/negative831f proof. They are SCOPED_BOUNDARY, not global exceptions. The previous combined seven-site NARROW_EXCEPTION classification was rejected by the strict per-caller agreement gate. Correcting this manual kind does not certify a new source or remove any unresolved obligation. Original scope and history remain preserved.",
@@ -21778,7 +21842,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "semanticReview": {
         "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
         "reason": "Five exact owner-scoped preview factory/latest/revoke boundaries retain their already authenticated positive/negative831f proof. They are SCOPED_BOUNDARY, not global exceptions. The previous combined seven-site NARROW_EXCEPTION classification was rejected by the strict per-caller agreement gate. Correcting this manual kind does not certify a new source or remove any unresolved obligation. Original scope and history remain preserved.",
@@ -21807,7 +21871,7 @@
       "target": "project_preview_grants",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "semanticReview": {
         "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
         "reason": "Five exact owner-scoped preview factory/latest/revoke boundaries retain their already authenticated positive/negative831f proof. They are SCOPED_BOUNDARY, not global exceptions. The previous combined seven-site NARROW_EXCEPTION classification was rejected by the strict per-caller agreement gate. Correcting this manual kind does not certify a new source or remove any unresolved obligation. Original scope and history remain preserved.",
@@ -21836,7 +21900,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "semanticReview": {
         "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
         "reason": "Five exact owner-scoped preview factory/latest/revoke boundaries retain their already authenticated positive/negative831f proof. They are SCOPED_BOUNDARY, not global exceptions. The previous combined seven-site NARROW_EXCEPTION classification was rejected by the strict per-caller agreement gate. Correcting this manual kind does not certify a new source or remove any unresolved obligation. Original scope and history remain preserved.",

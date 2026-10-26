@@ -2582,7 +2582,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "callIds": [
         "72439f834416b3fd90eb",
         "fd09b17779296225433f"
@@ -2613,7 +2613,7 @@
         "actorTrace": "Actual authenticated runtime routes and admitted coordinator pass original owner/project/session. Signed global grant lookup is consumed only by the actual HTTP/WebSocket resolver, which checks signature, current revocation/expiry and the exact current owner/project/session/declared port before selecting an internal target. Revocation is owner-filtered before its first await.",
         "completionCondition": "Actual default-consumer same-owner result, foreign namespace denial, unavailable authority rejection and unchanged exact persistence, plus authenticated source-bound regression. No disposition promotion before proof.",
         "fixture": "backend/src/security/previewConsumer.local.integration.ts",
-        "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+        "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
         "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
       },
       "historicalReview": {
@@ -2805,7 +2805,14 @@
           "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
         }
       },
-      "googleGatewayEvidenceNote": "Current Google gateway independently checks the signed grant and current project/session, resolves only the owned Google worker, and rechecks admission before connecting. Legacy target resolution remains only in the non-Google branch. These existing store operations are not proof of the new Google gateway live acceptance."
+      "googleGatewayEvidenceNote": "Current Google gateway independently checks the signed grant and current project/session, resolves only the owned Google worker, and rechecks admission before connecting. Legacy target resolution remains only in the non-Google branch. These existing store operations are not proof of the new Google gateway live acceptance.",
+      "googleGrantAdmissionReview": {
+        "scope": "Existing owner/session grant factory only. No caller or disposition promotion.",
+        "change": "Google capability admission checks the exact loaded owned, active, declared-port session. Legacy providers retain the existing target check. Service-only locked SQL and all returned-capability checks are unchanged. Native Google identity/immutable handle/private target checks remain mandatory in the gateway before connection.",
+        "evidence": "Native Google regression first reproduced RESOURCE_NOT_FOUND at store.ts:131. Focused suite 33/33 passes after repair, including foreign owner/project/session, stopped/expired session, undeclared port, forged private target, native identity denial and revocation.",
+        "liveStatus": "PENDING_CORRECTED_IMMUTABLE_IMAGE_AND_REQUIRED_SOURCE_GATES",
+        "historicalEvidence": "Original nested proofs, inputs, dispositions, lineage and uncertified later-phase scope remain unchanged."
+      }
     },
     {
       "path": "backend/src/routes/terminalSessions.ts",
@@ -7977,12 +7984,12 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "callIds": [
         "a6d30f02806fc550256d"
       ],
       "disposition": "SCOPED_BOUNDARY",
-      "authority": "Internal coordinator supplies copied server owner/project/session/grant intent. Existing owner-bound session loader and authorizedPreviewTarget validate the private target. Service-only transaction locks exact current owner/session, compares full expected session JSON and identity/status/provider columns, requires running interactive session with the declared HTTP port, then checks database expiry after locking before inserting. Exact single returned capability receipt is required. Gateway independently revalidates signature, revocation and current session on resolution.",
+      "authority": "Internal coordinator supplies copied server owner/project/session/grant intent. Existing owner-bound session loader validates the exact running interactive session and declared HTTP port. Google grant creation uses provider-independent session admission, while other providers retain their existing target validation. The service-only SQL transaction locks the current owner/session, compares full session JSON and identity/status/provider columns, samples expiry after locking and requires the exact returned capability. Native Google identity, immutable owned handle and private endpoint remain independently mandatory at gateway resolution.",
       "reason": "Exact current-session grant insertion boundary VERIFIED at696322f0813a4e08b9d324e2bb653dfb2e2d657e, disposable39124146660:110 fresh/upgrade migrations,145 security tests and3 browser tests pass with zero failures/skips. Actual observed grant-write waits reject session state/status/port changes and expiry before insertion, foreign/browser denial and injected rollback pass. Runtime invocation, SQL and fixture unchanged. Only parent-bound admission/insertion closes. Complete coordinator/run provenance, canonical project lifecycle, revoke/create and in-flight socket semantics and signing-key custody remain unresolved. No live provider or whole-preview certification.",
       "evidence": [
         {
@@ -7993,7 +8000,14 @@
           "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
           "marker": "preview grant input and returned capability stay bound"
         }
-      ]
+      ],
+      "googleGrantAdmissionReview": {
+        "scope": "Existing owner/session grant factory only. No caller or disposition promotion.",
+        "change": "Google capability admission checks the exact loaded owned, active, declared-port session. Legacy providers retain the existing target check. Service-only locked SQL and all returned-capability checks are unchanged. Native Google identity/immutable handle/private target checks remain mandatory in the gateway before connection.",
+        "evidence": "Native Google regression first reproduced RESOURCE_NOT_FOUND at store.ts:131. Focused suite 33/33 passes after repair, including foreign owner/project/session, stopped/expired session, undeclared port, forged private target, native identity denial and revocation.",
+        "liveStatus": "PENDING_CORRECTED_IMMUTABLE_IMAGE_AND_REQUIRED_SOURCE_GATES",
+        "historicalEvidence": "Original nested proofs, inputs, dispositions, lineage and uncertified later-phase scope remain unchanged."
+      }
     },
     {
       "path": "backend/src/security/ownedRunPersistence.ts",
@@ -8789,7 +8803,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "callIds": [
         "260f546643a88434ec35",
         "62f2c45d96306d0c651c",
@@ -8823,7 +8837,7 @@
         "actorTrace": "Actual authenticated runtime routes and admitted coordinator pass original owner/project/session. Signed global grant lookup is consumed only by the actual HTTP/WebSocket resolver, which checks signature, current revocation/expiry and the exact current owner/project/session/declared port before selecting an internal target. Revocation is owner-filtered before its first await.",
         "completionCondition": "Actual default-consumer same-owner result, foreign namespace denial, unavailable authority rejection and unchanged exact persistence, plus authenticated source-bound regression. No disposition promotion before proof.",
         "fixture": "backend/src/security/previewConsumer.local.integration.ts",
-        "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+        "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
         "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
       },
       "historicalReview": {
@@ -9015,7 +9029,14 @@
           "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
         }
       },
-      "googleGatewayEvidenceNote": "Current Google gateway independently checks the signed grant and current project/session, resolves only the owned Google worker, and rechecks admission before connecting. Legacy target resolution remains only in the non-Google branch. These existing store operations are not proof of the new Google gateway live acceptance."
+      "googleGatewayEvidenceNote": "Current Google gateway independently checks the signed grant and current project/session, resolves only the owned Google worker, and rechecks admission before connecting. Legacy target resolution remains only in the non-Google branch. These existing store operations are not proof of the new Google gateway live acceptance.",
+      "googleGrantAdmissionReview": {
+        "scope": "Existing owner/session grant factory only. No caller or disposition promotion.",
+        "change": "Google capability admission checks the exact loaded owned, active, declared-port session. Legacy providers retain the existing target check. Service-only locked SQL and all returned-capability checks are unchanged. Native Google identity/immutable handle/private target checks remain mandatory in the gateway before connection.",
+        "evidence": "Native Google regression first reproduced RESOURCE_NOT_FOUND at store.ts:131. Focused suite 33/33 passes after repair, including foreign owner/project/session, stopped/expired session, undeclared port, forged private target, native identity denial and revocation.",
+        "liveStatus": "PENDING_CORRECTED_IMMUTABLE_IMAGE_AND_REQUIRED_SOURCE_GATES",
+        "historicalEvidence": "Original nested proofs, inputs, dispositions, lineage and uncertified later-phase scope remain unchanged."
+      }
     },
     {
       "path": "backend/src/ai/routingOutcomes.ts",

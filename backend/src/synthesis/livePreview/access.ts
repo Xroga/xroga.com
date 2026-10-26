@@ -22,3 +22,13 @@ export function authorizedPreviewTarget(grant: LivePreviewGrant, session: Projec
     typeof app !== 'string' || !/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(app)) return null;
   return { host: `${machineId}.vm.${app}.internal`, port: grant.port! };
 }
+
+/** Capability admission binds an owned active session and its declared port.
+ * Google has no Fly routing fields. Its gateway separately verifies native
+ * identity, immutable owned handle and private address before connecting.
+ * Other providers retain their existing constrained target validation. */
+export function authorizedPreviewPermit(grant:LivePreviewGrant,session:ProjectRuntimeSession|null,now=Date.now()):boolean {
+  return session?.providerId==='google-gce'
+    ? authorizedPreviewSession(grant,session,now)
+    : authorizedPreviewTarget(grant,session,now)!==null;
+}

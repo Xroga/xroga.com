@@ -2842,7 +2842,7 @@
     },
     {
       "packetId": "B1-P2-11526c9c3e6a8aa3",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "executionStatus": "IN_PROGRESS",
       "finding": "EXISTING_OWNERSHIP_PATH_TRACED_TARGETED_CONSUMER_PROOF_PREPARED",
       "actorTrace": "Actual authenticated runtime routes and admitted coordinator pass original owner/project/session. Signed global grant lookup is consumed only by the actual HTTP/WebSocket resolver, which checks signature, current revocation/expiry and the exact current owner/project/session/declared port before selecting an internal target. Revocation is owner-filtered before its first await.",
@@ -2857,7 +2857,8 @@
       "remaining": [
         "Execute the exact new disposable case and authenticate its complete successful source-bound run",
         "Reconcile exact proven callers in both existing record systems, retaining all other and later-phase scope"
-      ]
+      ],
+      "googleMigrationReview": "Google grant admission now validates the exact loaded owned active interactive session and declared port without requiring Fly address fields. Locked SQL and exact grant receipt checks remain unchanged. Native identity, immutable handle and private endpoint are still validated independently by the Google gateway. All eight persistence caller IDs are preserved. Focused regression passes 33/33. Live Google grant/HTTP/WebSocket acceptance remains pending. No disposition or acceptance promotion."
     },
     {
       "packetId": "B1-P2-f1384a65c2d70a16",
