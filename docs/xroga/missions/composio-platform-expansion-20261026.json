@@ -12,6 +12,7 @@
   "changedFiles": [
     "backend/.env.example",
     "backend/src/ai/fixedCostBudget.ts",
+    "backend/src/e2e/composioMultiAccountActions.test.ts",
     "backend/src/e2e/xrogaGoldenJourneys.test.ts",
     "backend/src/routes/businessAutomations.ts",
     "backend/src/routes/composioAccountsRoutes.test.ts",
@@ -19,10 +20,12 @@
     "backend/src/routes/integrations.ts",
     "backend/src/security/businessAuthority.local.integration.ts",
     "backend/src/security/connectedAccountRoutes.local.integration.ts",
+    "backend/src/services/integrations/businessAction.ts",
     "backend/src/services/integrations/businessAutomations.ts",
     "backend/src/services/integrations/composioAccounts.ts",
     "backend/src/services/integrations/composioClient.pagination.test.ts",
     "backend/src/services/integrations/composioClient.ts",
+    "backend/src/services/integrations/composioDefaultAccounts.ts",
     "backend/src/services/integrations/composioInstant.ts",
     "backend/src/services/integrations/composioPlatform.test.ts",
     "backend/src/services/integrations/composioPolicy.ts",
@@ -30,7 +33,17 @@
     "backend/src/services/integrations/composioWorkbench.ts",
     "docs/infra/composio/COMPOSIO-PLATFORM-STATUS.md",
     "docs/xroga/missions/composio-platform-expansion-20261026.json",
-    "docs/xroga/security/caller-reviews.json"
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/current-migration-additions.json",
+    "frontend/src/components/integrations/ConnectedAccounts.tsx",
+    "frontend/src/components/integrations/PluginDetail.tsx",
+    "frontend/src/lib/connectedAccounts.test.ts",
+    "frontend/src/lib/pluginStep2.test.ts",
+    "frontend/src/lib/pluginStep4.test.ts",
+    "frontend/src/lib/xrogaConnect.ts",
+    "scripts/security/schema-catalog.mjs",
+    "scripts/security/schema-catalog.test.mjs",
+    "supabase/migrations/20261027000000_composio_default_accounts.sql"
   ],
   "decisions": {
     "keep": [
@@ -50,10 +63,12 @@
     "deprecate": []
   },
   "schemaImpact": {
-    "changed": false,
-    "migrations": [],
-    "rollout": "No schema change. The existing reserve and settle budget RPCs are reused with a free-text route label and zero token counts.",
-    "rollback": "Revert the change; nothing is persisted outside the existing ledger rows written only when Instant is explicitly enabled."
+    "changed": true,
+    "migrations": [
+      "supabase/migrations/20261027000000_composio_default_accounts.sql"
+    ],
+    "rollout": "Additive: one owner-RLS table holding only a Composio connected-account id. Not applied by this change; nothing reads it until XROGA_COMPOSIO_MULTI_ACCOUNT is enabled.",
+    "rollback": "DROP TABLE public.composio_default_accounts (nothing else references it)."
   },
   "securityImpact": {
     "auth": {
@@ -110,12 +125,14 @@
     "reason": "Extends the existing Composio client, authority permits and provider budget ledger. No scheduler, agent framework, SDK dependency or authentication system is added.",
     "rfc": null
   },
-  "rollout": "Merge only after review and your authorization. Then, as separate approved steps: provide a Composio test project key, run the live checks listed in the status document, and only then consider enabling any flag.",
+  "rollout": "Merge only after review and your authorization. Then, as separate approved steps: apply the migration to a disposable database and verify, provide a Composio test project key, run the live checks in the status document, and only then consider enabling any flag.",
   "rollback": "Leave every XROGA_COMPOSIO_* variable unset (the default). Revert the change to remove the code.",
   "knownGaps": [
     "No live Composio call was made: every wire shape comes from the published documentation and a stub",
     "The stored hooks read-back shape and the egress restriction read-back are not documented precisely",
-    "No user-facing Instant or Workbench route and no accounts UI",
+    "No user-facing Instant or Workbench route; Instant and Workbench have no caller",
+    "Chat does not ask which account to use: with several accounts and no saved default it stops and says to choose a default",
+    "The default-account table and the durable fixed-cost ledger are not exercised against a real PostgreSQL",
     "A held Instant reservation is released by an operator after comparing Composio execution logs"
   ],
   "placeholderClaimsRemaining": [

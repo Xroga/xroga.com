@@ -15664,6 +15664,31 @@
           "marker": "one user cannot spend another user"
         }
       ]
+    },
+    {
+      "path": "backend/src/services/integrations/composioDefaultAccounts.ts",
+      "sourceSha256": "2f07e4d3cf474fad4577eaf9a7ed20301f018a2c8a71410938355403202f5021",
+      "callIds": [
+        "2e179485422a357d7726",
+        "785dbca5bbddf007f99f",
+        "f6f40e96063c9ff973d8",
+        "efcea50ee89050f4365f",
+        "4d8476885f2e19e11458",
+        "3f02aab9fa8f58638b72"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Callers are composioAccounts.ts and the accounts routes behind the integrations authentication, always with the verified request user id. Every read, upsert and delete carries that user id and the toolkit as explicit predicates, after both are validated against a strict UUID and slug pattern. No request body, query or model output supplies the owner.",
+      "reason": "The table holds only a Composio connected-account id, a public identifier and not a credential. The stored id is never trusted on its own: before use composioAccounts.ts proves it is still one of the owner's own active private accounts at Composio, so a stale or tampered row can only fail closed. RLS allows the owner SELECT only; all writes are server-side. The migration is not applied and the feature is disabled until XROGA_COMPOSIO_MULTI_ACCOUNT is enabled. The Supabase path is NOT exercised against a real database in this change; scoping is verified against an in-memory store with identical predicates.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/composioPlatform.test.ts",
+          "marker": "uses the saved default when several accounts are connected"
+        },
+        {
+          "path": "backend/src/routes/composioAccountsRoutes.test.ts",
+          "marker": "saves a default account only from the caller"
+        }
+      ]
     }
   ]
 }

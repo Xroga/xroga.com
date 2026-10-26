@@ -29,21 +29,40 @@ Audit findings (verified against the official documentation listed in section 6)
 
 ## 2. Capability matrix
 
-All new behaviour is **off by default** and controlled by environment variables read at the moment of use (`composioPolicy.ts`).
+Five separate questions for every capability. **A capability is complete only when all five are yes.** None is complete today.
 
-| Capability | Composio official feature | Xroga before | Xroga now | Default | Evidence |
+- **Backend:** code exists and is wired into Xroga's own architecture (authentication, tenant context, authority permits, budget ledger).
+- **Frontend:** a signed-in user can actually use or see it.
+- **Automated:** tests run in CI against a stubbed HTTP layer reproducing the documented wire format (not Composio itself).
+- **Real provider:** run against the real Composio API with an approved test project. **Nothing has been.**
+- **Production:** safe to enable for real users today.
+
+All new behaviour is **off by default**, controlled by environment variables read at the moment of use (`composioPolicy.ts`).
+
+| Capability | Backend | Frontend | Automated | Real provider | Production ready |
 |---|---|---|---|---|---|
-| Smart Tool Discovery | Session search (`COMPOSIO_SEARCH_TOOLS` / `POST .../session/{id}/search`) with `use_case`, `tool_schemas`, `toolkit_connection_statuses` | IMPLEMENTED (search, filtering, namespace isolation, discovery re-check before every execution) | Extended: `SHARED` connections never count as connected (A6) | On | LOCALLY VERIFIED (existing tests plus `composioPlatform.test.ts`) |
-| Sessions and authentication | Tool Router sessions, connect links, `manage_connections`, connected accounts | IMPLEMENTED (single account) | Policy verified on every use; legacy sessions repaired; `config_version` used for optimistic concurrency; connection removal stays off | On | LOCALLY VERIFIED |
-| Multi-account | `multi_account`, `connected_accounts`, aliases, `account` parameter on execute | Not modelled | List (`GET /connected_accounts` filtered by `user_ids`), alias (`PATCH /connected_accounts/{id}`), explicit selection on read, action and trigger creation, optional alias on connect link, routes under `/api/integrations/xroga-connect/accounts`. An account id from a request is used only if it is in the caller's fresh, PRIVATE-only, ACTIVE-only list | **Off** (`XROGA_COMPOSIO_MULTI_ACCOUNT=enabled`) | LOCALLY VERIFIED (`composioPlatform.test.ts`, `composioAccountsRoutes.test.ts`, `composioTriggers.test.ts`) |
-| Firewall | Session `hooks`: `condition_check` and `prompt_injection_check`, `before_execute` / `after_execute`, paid plan, usage-priced | Not modelled | Exact hook list attached at creation and on repair; stored hooks compared field by field; blocked results become a policy error with no provider content. Operator conditions from `XROGA_COMPOSIO_FIREWALL_CONDITIONS` | **Off** (`XROGA_COMPOSIO_FIREWALL=prompt_injection` and/or conditions) | LOCALLY VERIFIED. The read-back shape of `config.hooks` is not documented precisely (section 5) |
-| Workbench | Remote Python sandbox via `COMPOSIO_REMOTE_WORKBENCH`, persistent, 180 s limit, not ZDR, will be metered | Rejected outright | Gated service function `executeComposioWorkbench`: needs flag, a dedicated session where scripts cannot call tools or proxy provider APIs and egress is restricted, a single-use authority permit bound to the exact code, 20,000 character code cap, bounded and redacted output. Shell tool not offered | **Off** (`XROGA_COMPOSIO_WORKBENCH=enabled`). No user-facing route | LOCALLY VERIFIED. Egress restriction cannot be read back (section 5) |
-| Instant | Paid tools on Composio provider accounts, billed per call to Composio balance; no built-in cap; async balance check; `instant` session object; `instant_charge` on execute | Not modelled (and silently possible, see A1) | Disabled in every session unless an Instant call is made through `executeComposioInstantTool`: flag, hard per-call ceiling (never above 5 USD), operator allowlist of exact tools, authority permit bound to tool and arguments, reservation of the ceiling in the **existing provider budget ledger** before the call and settlement to the exact reported charge, breaker on overrun or unreported charge, reservation held after a timeout. No user-facing route | **Off** (`XROGA_COMPOSIO_INSTANT=enabled` plus `XROGA_COMPOSIO_INSTANT_MAX_CALL_USD` plus `XROGA_COMPOSIO_INSTANT_ALLOWLIST`) | LOCALLY VERIFIED |
-| Triggers and webhooks | Trigger types, `trigger_instances/{slug}/upsert`, signed V3 webhook | IMPLEMENTED | Trigger creation can pin `connected_account_id` (multi-account). Verification re-proved against the documented algorithm | On | LOCALLY VERIFIED |
-| MCP | Session MCP URL, custom MCP toolkits | Custom MCP toolkits IMPLEMENTED | Unchanged. The session `mcp.url` Composio returns is not used: Xroga executes through its own authority-checked path, not by handing an MCP endpoint to a model | n/a | Audit only |
-| Permissions / approvals | Session `experimental.permissions`, `tags.require_approval` (both marked experimental) | Xroga's own authority permits | Not adopted. Experimental in Composio, and Xroga's permit system already gives exact-account, exact-arguments, single-use approval | n/a | NOT IMPLEMENTED, by design |
-| Custom tools / toolkits in session | `experimental.custom_tools` | Custom MCP | Not adopted (experimental) | n/a | NOT IMPLEMENTED |
-| Preload / fast mode / session configs | `preload`, `experimental.fast_mode`, `session_config_id` | n/a | Not adopted. `preload` widens what a model sees; the others are experimental | n/a | NOT IMPLEMENTED |
+| Smart Tool Discovery (session search) | Yes. Existing: search, namespace filtering, discovery re-check before every execution; now `SHARED` connections never count as connected | Yes (existing plugin search and action search) | Yes | No | Existing behaviour is already live; the `SHARED` change is unverified against the real API |
+| Sessions and authentication | Yes. Policy verified on every use, legacy sessions repaired, `config_version` concurrency, connection removal off | Existing connect flow | Yes | No | **No**: the new session policy (`instant: false`, stored-config verification) has not run against the real API. First live check: `instant: false` accepted and echoed |
+| Multi-account | Yes. List, name, saved default (migration, **not applied**), explicit selection on reads, prepared actions (approval bound to the chosen account, run as exactly it) and trigger creation | **Yes**: Connected accounts panel in the plugin detail view (list, rename, connect another with a name, make default). Renders only when enabled. Chat does not ask "which account?"; with several accounts and no default it stops and says to choose a default | Yes | No | **No**: needs the migration applied, a live check that `multi_account` and `connected_accounts` behave as documented, and the flag. Off by default |
+| Firewall | Yes. Exact hooks attached, compared field by field, blocked results become a policy error | **No**: an operator setting, no user-facing surface by design. A blocked action shows "Blocked by session policy" through the existing error path | Yes | No | **No**: needs a paid Composio plan; the hook read-back shape is not documented precisely |
+| Workbench | Service function only, authority-permit gated | **No** (no route) | Yes | No | **No**: no route, no ledger (Composio will meter it), not covered by Composio's zero-data-retention. Keep disabled |
+| Instant (paid) | Service function only. Explicitly disabled on every session. Ceiling, allowlist, permit, ledger reservation, breaker | **No** (no route) | Yes (in-memory ledger; the durable path is not run against a database) | No | **No**: needs approval, a funded Composio balance, the project setting, and a billing and approval product decision. Keep disabled |
+| Triggers and webhooks | Yes. Existing; trigger creation can pin the chosen account; signature scheme re-proved against the documented algorithm | Existing automations UI (no account chooser on trigger creation) | Yes | No | Existing behaviour is live; multi-account pinning is not |
+| MCP | Existing custom MCP toolkits. The session `mcp.url` Composio returns is deliberately not used | Existing Custom MCP manager | Existing tests | No | Existing behaviour only |
+| Composio-side permissions / approvals, custom tools, preload, fast mode | Not adopted: experimental at Composio; Xroga's authority permits already give exact, single-use approval | n/a | n/a | n/a | n/a |
+
+### Integration review (is each capability inside Xroga's architecture?)
+
+| Capability | Authentication and tenant isolation | Scheduler / execution path | Authorization and approval | Cost control | Verdict |
+|---|---|---|---|---|---|
+| Discovery, sessions | Verified owner id; session ownership asserted on every use | Existing chat and workflow preparation and execution | Existing | None needed | Integrated |
+| Multi-account | Caller's own PRIVATE active accounts only; ids from requests proven against a fresh list; default stored per owner and re-proved | Prepare and dispatch (via the existing prepare, permit and execute path) | Approval is bound to the exact account | None | Integrated for actions, reads and triggers. **Not** integrated: a conversational "which account?" question, and an account chooser on trigger creation |
+| Firewall | Session-level | Applies to every session Xroga creates | Not an approval feature | Usage-priced by Composio, opt-in | Integrated, no UI by design |
+| Instant | Verified owner id on every ledger call | Runs only through its own gated function, **not** through chat or workflows | Single-use permit bound to tool and arguments | Ceiling, allowlist, ledger reservation, breaker | **Not integrated into any user path**: it has no caller. That is deliberate while it stays disabled |
+| Workbench | Verified owner id; dedicated session | Same: no caller | Single-use permit bound to the exact code | None (not billed yet) | **Not integrated into any user path**, deliberately |
+| Triggers | Webhook signed and replay-checked; owner from `xroga:<uuid>` metadata | Existing automation processor | Existing | None | Integrated |
+
+**Full Composio integration is not claimed.** It would require: live verification of every item above with an approved test project; the migration applied; a product and billing decision, an approval UI and a spend report before Instant is reachable; the same for Workbench; and a conversational account question in chat.
 
 ## 3. SDK and API compatibility report
 
@@ -112,6 +131,20 @@ Composio documents: headers `webhook-id`, `webhook-timestamp`, `webhook-signatur
 - **`user_id` on connected accounts is deprecated** by Composio and may disappear. Xroga filters by `user_ids` at Composio and treats a present, different `user_id` as foreign, but never depends on it being present.
 - **No user-facing Instant or Workbench route.** They are service functions that need an authority permit prepared by a caller. Adding a UI needs product decisions on who may approve spend and code execution, and the prepared-action flow in `businessAction.ts` (about 1,600 lines) was not extended in this change.
 - **The Instant breaker is per process**, by design (a restart is a deliberate operator reset). It is not shared across instances.
-- **Frontend:** the accounts routes exist; no UI was added in this change. The connect flow accepts an optional alias and the execute and trigger inputs accept `connectedAccountId`.
+- **Frontend:** a Connected accounts panel exists in the plugin detail view (list, rename, connect another, make default) and renders only when multi-account is enabled. There is no UI for Instant, Workbench or Firewall, by design, and no account chooser on trigger creation.
 - **Pre-existing local test failures:** `githubAuth.revocation` and several credential-vault tests fail on a developer machine without production KMS configuration, identically on `main`; they are environment-dependent and unrelated to this change.
 - Requires approval before any live step: a Composio test project and API key, enabling Instant at the project level, a paid plan for Firewall.
+
+## 9. Live tests that are genuinely blocked (none can run without approval)
+
+Each needs an approved Composio test project and API key unless stated.
+
+1. `POST /tool_router/session` accepts `instant: false` and the stored `config.instant` echoes `false` (the legacy-session repair depends on this).
+2. `PATCH /tool_router/session/{id}` with `instant: false` and `expected_config_version` is accepted, and a stale version returns 409.
+3. Firewall: `hooks` accepted on create and PATCH; the shape of `config.hooks` in the response (the comparison accepts `applies_to` or `appliesTo`); a blocked call returns `result_type: "blocked"` with `block_reason`. Needs a **paid plan**.
+4. Multi-account: `multi_account` and `connected_accounts` accepted; `GET /connected_accounts?user_ids&toolkit_slugs&statuses` filters as documented and omits SHARED accounts; `PATCH /connected_accounts/{id}` accepts `alias`; the `account` parameter on execute selects the account; the `alias` field on the connect link is accepted. Needs two real provider accounts.
+5. Trigger instance upsert accepts `connected_account_id`.
+6. Instant: `account: "instant_account"`, `instant_charge` on the response and HTTP 402 behaviour. Needs the **project Instant setting enabled and a funded balance**, so it spends money; requires explicit approval and a tiny ceiling.
+7. Workbench: `COMPOSIO_REMOTE_WORKBENCH` argument names and the 180 s limit; that `enable_tool_execution: false` is honoured; whether egress restriction holds. Runs code in a third-party sandbox.
+8. The durable fixed-cost ledger path and the default-account table against a **real PostgreSQL** (needs the migration applied to a disposable database; this change cannot do that locally).
+9. End-to-end chat with two real accounts through the Connected accounts panel in a browser.
