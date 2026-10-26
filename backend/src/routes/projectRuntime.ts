@@ -8,6 +8,7 @@ import type {
 import { requireTenantContext } from '../security/tenantContext.js';
 import { runtimeAccessFailure, resourceNotFound } from '../security/tenantErrors.js';
 import { loadProjectRuntimeSession } from '../security/runtimeProjectBinding.js';
+import { projectRuntimeProcessRunning } from '../synthesis/livePreview/processState.js';
 
 import {
   createProjectRuntimeManager,
@@ -466,37 +467,11 @@ router.get(
         if (
           process
         ) {
-          const probe =
-            await runtime
-              .exec(
-                session.sessionId,
-                {
-                  command:
-                    'kill',
-
-                  args: [
-                    '-0',
-                    String(
-                      process.pid,
-                    ),
-                  ],
-
-                  networkPolicy:
-                    'none',
-
-                  timeoutMs:
-                    5_000,
-                },
-              )
-              .catch(
-                () =>
-                  null,
-              );
+          const running = await projectRuntimeProcessRunning(runtime,session.sessionId,process)
+            .catch(() => false);
 
           if (
-            probe
-              ?.exitCode ===
-            0
+            running
           ) {
             processId =
               process.processId;

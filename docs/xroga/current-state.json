@@ -20160,7 +20160,7 @@
       "id": "surface:3d74dc318d6d51f5d44e",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "sha256": "7fc1c300afabfee450890527579f2adf19679825424d897bac326115d5e08abe",
+      "sha256": "cfd97ee11bbcf0e6dacca99dd31b25282196288ea8acb923b171d5884f751396",
       "symbols": [
         "binding",
         "error",
@@ -20169,7 +20169,6 @@
         "logs",
         "plan",
         "preview",
-        "probe",
         "process",
         "processId",
         "project",
@@ -20180,6 +20179,7 @@
         "revision",
         "router",
         "runnable",
+        "running",
         "runtime",
         "runtimeRunning",
         "session",
@@ -20193,6 +20193,7 @@
         "../security/tenantErrors.js",
         "../synthesis/livePreview/coordinator.js",
         "../synthesis/livePreview/plan.js",
+        "../synthesis/livePreview/processState.js",
         "../synthesis/livePreview/signing.js",
         "../synthesis/livePreview/status.js",
         "../synthesis/livePreview/store.js",
@@ -20206,6 +20207,7 @@
         "backend/src/security/tenantErrors.ts",
         "backend/src/synthesis/livePreview/coordinator.ts",
         "backend/src/synthesis/livePreview/plan.ts",
+        "backend/src/synthesis/livePreview/processState.ts",
         "backend/src/synthesis/livePreview/signing.ts",
         "backend/src/synthesis/livePreview/status.ts",
         "backend/src/synthesis/livePreview/store.ts",
@@ -34372,7 +34374,7 @@
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:149",
-        "backend/src/routes/projectRuntime.ts:17",
+        "backend/src/routes/projectRuntime.ts:18",
         "backend/src/security/runtimeProjectBinding.test.ts:5",
         "backend/src/synthesis/livePreview/agentBridge.ts:40",
         "backend/src/synthesis/livePreview/index.ts:9"
@@ -34546,7 +34548,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/projectRuntime.ts:30",
+        "backend/src/routes/projectRuntime.ts:31",
         "backend/src/synthesis/livePreview/coordinator.ts:40",
         "backend/src/synthesis/livePreview/index.ts:7",
         "backend/src/synthesis/livePreview/livePreview.test.ts:16"
@@ -34561,6 +34563,44 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/synthesis/livePreview/livePreview.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:e1cd95a6002a4ddf7a57",
+      "subsystem": "ai_execution",
+      "sourcePath": "backend/src/synthesis/livePreview/processState.ts",
+      "sha256": "76e27c00f2018b1393b2f93e61beed19279890fa062081581bcf0a0c7a7f4661",
+      "symbols": [
+        "RuntimeProcessProbe",
+        "native",
+        "projectRuntimeProcessRunning",
+        "result"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/routes/projectRuntime.ts:11",
+        "backend/src/synthesis/livePreview/processState.test.ts:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/synthesis/livePreview/processState.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -34606,7 +34646,7 @@
       ],
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:35",
-        "backend/src/routes/projectRuntime.ts:26",
+        "backend/src/routes/projectRuntime.ts:27",
         "backend/src/security/previewConsumer.local.integration.ts:9",
         "backend/src/synthesis/livePreview/coordinator.ts:36",
         "backend/src/synthesis/livePreview/index.ts:5",
@@ -34654,7 +34694,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/projectRuntime.ts:39",
+        "backend/src/routes/projectRuntime.ts:40",
         "backend/src/synthesis/livePreview/status.test.ts:8"
       ],
       "reachable": true,
@@ -34717,7 +34757,7 @@
       ],
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:26",
-        "backend/src/routes/projectRuntime.ts:21",
+        "backend/src/routes/projectRuntime.ts:22",
         "backend/src/security/previewConsumer.local.integration.ts:8",
         "backend/src/security/previewGrantAdmission.local.integration.ts:9",
         "backend/src/security/tenantIsolation.local.integration.ts:52",
@@ -34778,7 +34818,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/projectRuntime.ts:34",
+        "backend/src/routes/projectRuntime.ts:35",
         "backend/src/synthesis/livePreview/coordinator.ts:44",
         "backend/src/synthesis/livePreview/index.ts:1"
       ],
@@ -35977,7 +36017,7 @@
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:22",
         "backend/src/routes/delivery.ts:13",
-        "backend/src/routes/projectRuntime.ts:12",
+        "backend/src/routes/projectRuntime.ts:13",
         "backend/src/synthesis/delivery/projectDeliveryService.ts:15",
         "backend/src/synthesis/livePreview/agentBridge.ts:28",
         "backend/src/synthesis/livePreview/coordinator.ts:19"
@@ -105562,9 +105602,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:0d1c2cc91d83ddd894c3",
+      "id": "registration:773e03a8f6e038cdcfc5",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 53,
+      "line": 54,
       "receiver": "router",
       "method": "get",
       "path": "/:projectId/logs",
@@ -105574,9 +105614,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:28b06b3e06f7722cb970",
+      "id": "registration:5220a6386c3a30ad6ee3",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 164,
+      "line": 165,
       "receiver": "router",
       "method": "post",
       "path": "/:projectId/restart",
@@ -105586,9 +105626,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:d0b7285ff89328fb42f5",
+      "id": "registration:bb708162e4d24fe5727f",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 245,
+      "line": 246,
       "receiver": "router",
       "method": "post",
       "path": "/:projectId/stop",
@@ -105598,9 +105638,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:b0db0ce2f24a3f2fe3d2",
+      "id": "registration:62b6cd4267aef1659c7a",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 345,
+      "line": 346,
       "receiver": "router",
       "method": "get",
       "path": "/:projectId",
@@ -106459,10 +106499,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:3d0f479e71580f769426",
-      "registrationId": "registration:0d1c2cc91d83ddd894c3",
+      "id": "route:f5250120d29d34d897c7",
+      "registrationId": "registration:773e03a8f6e038cdcfc5",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 53,
+      "line": 54,
       "method": "GET",
       "path": "/api/project-runtime/:projectId/logs",
       "mountChain": [
@@ -106476,10 +106516,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:f421fda48b5ffd6baf21",
-      "registrationId": "registration:28b06b3e06f7722cb970",
+      "id": "route:06125fcb1f97229e28ee",
+      "registrationId": "registration:5220a6386c3a30ad6ee3",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 164,
+      "line": 165,
       "method": "POST",
       "path": "/api/project-runtime/:projectId/restart",
       "mountChain": [
@@ -106493,10 +106533,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:697a9c64f2406fe8ba80",
-      "registrationId": "registration:d0b7285ff89328fb42f5",
+      "id": "route:16827ff7887e0bd49cbe",
+      "registrationId": "registration:bb708162e4d24fe5727f",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 245,
+      "line": 246,
       "method": "POST",
       "path": "/api/project-runtime/:projectId/stop",
       "mountChain": [
@@ -106510,10 +106550,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:c518677ecf302ac95a91",
-      "registrationId": "registration:b0db0ce2f24a3f2fe3d2",
+      "id": "route:b48fa530d5e067ced68b",
+      "registrationId": "registration:62b6cd4267aef1659c7a",
       "sourcePath": "backend/src/routes/projectRuntime.ts",
-      "line": 345,
+      "line": 346,
       "method": "GET",
       "path": "/api/project-runtime/:projectId",
       "mountChain": [
@@ -122075,6 +122115,13 @@
       "id": "test-suite:9c127a67c9d68cb9ff25",
       "sourcePath": "backend/src/synthesis/livePreview/livePreview.test.ts",
       "declaredTests": 10,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:4a42482f76b0518a733f",
+      "sourcePath": "backend/src/synthesis/livePreview/processState.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

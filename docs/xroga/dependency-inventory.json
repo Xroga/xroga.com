@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8708a103923e1f94778d967ef752359b80b2624e",
+  "source_sha": "88c8ee810b078fd74902ff34d131e3ea949865c6",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15828,7 +15828,7 @@
     },
     {
       "path": "backend/src/routes/projectRuntime.ts",
-      "sha256": "7fc1c300afabfee450890527579f2adf19679825424d897bac326115d5e08abe"
+      "sha256": "cfd97ee11bbcf0e6dacca99dd31b25282196288ea8acb923b171d5884f751396"
     },
     {
       "path": "backend/src/routes/projects.ts",
@@ -16777,6 +16777,10 @@
     {
       "path": "backend/src/synthesis/livePreview/plan.ts",
       "sha256": "472074fb978ec43a120a40227d6560b80ef592e0b90476a9b104f86c7e235b14"
+    },
+    {
+      "path": "backend/src/synthesis/livePreview/processState.ts",
+      "sha256": "76e27c00f2018b1393b2f93e61beed19279890fa062081581bcf0a0c7a7f4661"
     },
     {
       "path": "backend/src/synthesis/livePreview/signing.ts",
