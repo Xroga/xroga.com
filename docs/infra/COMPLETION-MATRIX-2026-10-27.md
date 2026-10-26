@@ -53,4 +53,16 @@ The twelve Batch 2 acceptance targets keep the statuses in `batch-2/FINAL-AUDIT.
 
 ## Final CI state
 
-Filled in when the checks for the exact head commits finish; see the PR pages. A check that is red is recorded here with its cause, not described as passing.
+Exact heads: #861 `3b718db8`, #862 `4c19c738` (both still drafts, nothing merged).
+
+| PR | Result |
+|---|---|
+| #862 | All checks pass: unit, integrated-candidate, deterministic-golden, disposable-policy-database, static-contracts, structured-mission-policy, Vercel. production-discovery is skipped by design |
+| #861 | All pull-request checks pass: unit, integrated-candidate, authenticated-browser, build, deterministic-golden, disposable-policy-database, static-contracts, structured-mission-policy, migration-source validation, Vercel. oci-managed-custody and production-discovery are skipped by design |
+| #861 `storage-phase1` (branch push) | **Fails only at step 06, the whole backend suite**, which times out in that job even at 38 minutes. It also fails on pristine `main` (run 40373053674). Every Batch 1.5 step passes on the head: typecheck, 171 unit and adapter tests, large-object, 25 real PostgreSQL, 266 worker and runtime tests, 20 worker real-PostgreSQL tests (including the new browser-run store), real Chromium, seccomp, S3 emulator. The same full suite passes in the `unit` job. Not relaxed: the gate is left as it is and is a pre-existing environment limit |
+
+Combined integration on these exact heads (merge made locally in a scratch worktree, aborted, nothing pushed): backend and frontend typecheck clean; 701 backend tests (700 pass, 1 skip by design) and 1209 frontend tests pass; tenant audit, requirements ledger and skip governance pass. The four hand-resolved files were merged by keeping both sides in order: the reviewed-table map, the additions list and the skip register (40 entries), with the table count pinned at 20 (19 + browser_runs). Generated registers were regenerated, not hand-merged.
+
+## What genuinely remains external
+
+Codex's verified Google migration, then: Cloud Tasks and Scheduler delivery for browser runs, the isolated QA host and a real QA run, real R2 (bucket CORS, Drive upload, reconcile), the Google runtime preview and sandbox, real model builds, and live GitHub, Supabase and Vercel checks on disposable accounts (runbook section 4). Product decisions: set the quota (proposed 500 MB global default) and design plan-aware Pro limits.
