@@ -12,10 +12,10 @@ const rows = [
     context_length: 1_048_576, pricing: { prompt: '0.00000009', completion: '0.00000025', input_cache_read: '0.000000006' },
     supported_parameters: ['tools', 'response_format', 'structured_outputs'] },
   { status: 0, tag: 'relace', provider_name: 'Relace', model_id: 'z-ai/glm-5.3-flash',
-    context_length: 1_048_576, pricing: { prompt: '0.0000000513', completion: '0.0000000701', input_cache_read: '0.00000003' },
+    context_length: 1_048_576, pricing: { prompt: '0.0000000413', completion: '0.0000000758', input_cache_read: '0.00000003' },
     supported_parameters: ['tools'] },
   { status: 0, tag: 'open-inference/fp4', provider_name: 'OpenInference', model_id: 'z-ai/glm-5.3-flash',
-    context_length: 1_048_576, pricing: { prompt: '0.000000066466', completion: '0.000000069786', input_cache_read: '0.000000017825' },
+    context_length: 1_048_576, pricing: { prompt: '0.000000110038', completion: '0.00000001', input_cache_read: '0.00000002242' },
     supported_parameters: ['tools', 'response_format'] },
   { status: 0, tag: 'wafer/us', provider_name: 'Wafer', model_id: 'z-ai/glm-5.3',
     context_length: 1_048_576, pricing: { prompt: '0.000000079', completion: '0.0000014', input_cache_read: '0.000000078' },
@@ -79,6 +79,38 @@ test('raised or exceeded prices fail closed, including the expensive Wafer varia
     fetcher: async () => Response.json({ data: { endpoints: rows.map(row => ({ ...row,
       pricing: { ...row.pricing, completion: '0.000009' } })) } }),
   }), /No approved compatible endpoint/);
+});
+
+test('the approved GLM Flash ceilings admit both exact endpoints and still reject price drift', async () => {
+  assert.deepEqual(modelPriceCaps('glm_5_3_flash'), {
+    inputUsdPer1M: 0.11004, outputUsdPer1M: 0.0758,
+  });
+  const endpoints = await validatedOpenRouterEndpoints('glm_5_3_flash', { fetcher: catalog, tools: true });
+  assert.deepEqual(endpoints.map(endpoint => endpoint.tag), ['relace', 'open-inference/fp4']);
+  assert.deepEqual(pinnedProviderRequest(endpoints[0]!, 'glm_5_3_flash'), {
+    order: ['relace'], only: ['relace'], allow_fallbacks: false,
+    require_parameters: true, max_price: { prompt: 0.11004, completion: 0.0758 },
+  });
+  assert.deepEqual((await validatedOpenRouterEndpoints('glm_5_3_flash',
+    { fetcher: catalog, json: true })).map(endpoint => endpoint.tag), ['open-inference/fp4']);
+  await assert.rejects(validatedOpenRouterEndpoints('glm_5_3_flash', {
+    fetcher: catalog,
+    env: {
+      XROGA_GLM_5_3_FLASH_MAX_INPUT_USD_PER_1M: '0.066466',
+      XROGA_GLM_5_3_FLASH_MAX_OUTPUT_USD_PER_1M: '0.0701',
+    },
+  }), /No approved compatible endpoint/);
+  const aboveCap = async () => Response.json({ data: { endpoints: rows.map(row => {
+    if (row.tag === 'relace' && row.model_id === 'z-ai/glm-5.3-flash') {
+      return { ...row, pricing: { ...row.pricing, completion: '0.000000075801' } };
+    }
+    if (row.tag === 'open-inference/fp4' && row.model_id === 'z-ai/glm-5.3-flash') {
+      return { ...row, pricing: { ...row.pricing, prompt: '0.000000110041' } };
+    }
+    return row;
+  }) } });
+  await assert.rejects(validatedOpenRouterEndpoints('glm_5_3_flash', { fetcher: aboveCap }),
+    /No approved compatible endpoint/);
 });
 
 test('unsupported image and structured/tool capability requests do not hit incompatible endpoints', async () => {

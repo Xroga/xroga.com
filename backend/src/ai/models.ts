@@ -142,8 +142,8 @@ export const MODELS: Record<ModelId, ModelDef> = {
     outputTokens: 1_750_000,
 
     // Conservative accounting rates.
-    inputUsdPer1M: 0.066466,
-    outputUsdPer1M: 0.0701,
+    inputUsdPer1M: 0.11004,
+    outputUsdPer1M: 0.0758,
     contextWindow: 1_048_576,
 
     modalities: {
