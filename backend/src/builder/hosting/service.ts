@@ -128,6 +128,21 @@ export class HostingService {
     return { project, revision };
   }
 
+  /**
+   * Vercel projects that an earlier Xroga operation for THIS builder project created (or deployed into), by id.
+   * A retry, or a newer version of the same app, may reuse such a project. A project that merely has the same name
+   * is never adopted: it could be the customer's own.
+   */
+  private async ownedProjects(userId: string, projectId: string): Promise<Map<string, string>> {
+    const owned = new Map<string, string>();
+    for (const operation of await this.ops.list(userId, projectId, 'vercel')) {
+      if (operation.action !== 'deploy_preview') continue;
+      const project = (operation.receipt as { project?: { id?: unknown; name?: unknown } } | null)?.project;
+      if (typeof project?.id === 'string' && typeof project.name === 'string') owned.set(project.id, project.name);
+    }
+    return owned;
+  }
+
   async preparePreview(userId: string, projectId: string, input: { operationKey: string; scopeId: string | null; projectName?: string; existingProject?: boolean; revisionId?: string }) {
     const { project, revision } = await this.head(userId, projectId, input.revisionId);
     const files = this.deps.filesFor(project, revision); // proves the source is exportable and secret-free
@@ -136,10 +151,13 @@ export class HostingService {
     // The scope must be an account or team the connected user can act for, as Vercel reports it.
     const scope = (await this.deps.vercel.scopes(connection.token, connection.viewer)).find((candidate) => candidate.id === input.scopeId);
     if (!scope) throw new BuilderError('invalid_input', 'That Vercel account or team is not available to your connected account.');
-    const name = input.projectName ?? `${PROJECT_NAME_SLUG(project.title)}-${markerFor(projectId, input.operationKey).slice(-6)}`;
+    const owned = await this.ownedProjects(userId, projectId);
+    // With no name given, a newer version goes to the project Xroga already made for this app.
+    const name = input.projectName ?? [...owned.values()].pop() ?? `${PROJECT_NAME_SLUG(project.title)}-${markerFor(projectId, input.operationKey).slice(-6)}`;
     if (!VERCEL_PROJECT_NAME.test(name)) throw new BuilderError('invalid_input', 'That Vercel project name is not valid.');
-    const mode = input.existingProject ? 'existing' : 'create';
     const existing = await this.deps.vercel.getProject(connection.token, scope, name);
+    const reuse = Boolean(existing && owned.has(existing.id));
+    const mode = input.existingProject || reuse ? 'existing' : 'create';
     if (mode === 'create' && existing) throw new BuilderError('conflict', `A Vercel project named "${name}" already exists in that account. Choose another name, or select it as an existing project.`);
     if (mode === 'existing') {
       if (!existing) throw new BuilderError('not_found', `There is no Vercel project named "${name}" in that account.`);
@@ -219,7 +237,11 @@ export class HostingService {
 
       let vercelProject: VercelProject | null = await this.deps.vercel.getProject(token, scope, plan.project.name);
       if (plan.project.mode === 'create') {
-        if (vercelProject) return await fail('failed', `A Vercel project named "${plan.project.name}" already exists and was not created by this deployment. Nothing was changed.`);
+        // A project that an earlier attempt of THIS app created (it carries a receipt with its id) is resumed, not refused.
+        if (vercelProject && (await this.ownedProjects(userId, projectId)).has(vercelProject.id)) {
+          // adopt: continue into the same project
+        } else if (vercelProject) return await fail('failed', `A Vercel project named "${plan.project.name}" already exists and was not created by this deployment. Nothing was changed.`);
+        else {
         try {
           vercelProject = await this.deps.vercel.createProject(token, scope, { name: plan.project.name, framework: plan.framework });
         } catch (error) {
@@ -228,6 +250,7 @@ export class HostingService {
             vercelProject = await this.deps.vercel.getProject(token, scope, plan.project.name).catch(() => null);
             if (!vercelProject) return await fail('ambiguous', 'Vercel did not confirm whether the project was created. Check your Vercel account, then retry.');
           } else throw error;
+        }
         }
       }
       if (!vercelProject) return await fail('failed', 'The Vercel project could not be found. Nothing was changed.');

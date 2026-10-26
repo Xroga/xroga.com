@@ -63,3 +63,41 @@ describe('audit: an operation can only be approved, cancelled or run through its
     await assert.rejects(f.services.hosting.approve(ALICE, projectId, repo.operation.id, repo.operation.planDigest), (error) => error instanceof BuilderError && error.code === 'not_found');
   });
 });
+
+describe('audit: a Vercel preview can be retried and redeployed without orphaning the project it created', () => {
+  const deploy = async (f: ServicesFixture, projectId: string, key: string, extra: { projectName?: string } = {}) => {
+    const prepared = await f.services.hosting.preparePreview(ALICE, projectId, { operationKey: key, scopeId: null, ...extra });
+    await f.services.hosting.approve(ALICE, projectId, prepared.operation.id, prepared.operation.planDigest);
+    return { prepared, executed: await f.services.hosting.executePreview(ALICE, projectId, prepared.operation.id).catch((error) => error as Error) };
+  };
+
+  it('retrying after the build failed resumes the project that attempt created', async () => {
+    const f = world();
+    const { project } = await f.builder.createProject(ALICE, { prompt: SAAS, requestKey: 'audit-retry-0001' });
+    f.vercel.failures = { deployment: 'error' };
+    const first = await deploy(f, project.id, 'audit-retry-prev-1', { projectName: 'retry-app' });
+    assert.ok(first.executed instanceof Error, 'the build failed');
+    assert.equal(f.vercel.projects.size, 1, 'the project exists');
+    f.vercel.failures = {};
+    await f.services.hosting.approve(ALICE, project.id, first.prepared.operation.id, first.prepared.operation.planDigest);
+    const retried = await f.services.hosting.executePreview(ALICE, project.id, first.prepared.operation.id);
+    assert.equal(retried.status, 'succeeded', 'the retry adopted its own project instead of refusing');
+    assert.equal(f.vercel.projects.size, 1, 'no second project was created');
+  });
+
+  it('a newer version goes to the same project, and a same-named project the customer already owns is never adopted', async () => {
+    const f = world();
+    const { project } = await f.builder.createProject(ALICE, { prompt: SAAS, requestKey: 'audit-redeploy-0001' });
+    const first = await deploy(f, project.id, 'audit-redeploy-p1', { projectName: 'redeploy-app' });
+    assert.equal((first.executed as { status: string }).status, 'succeeded');
+    const second = await f.services.hosting.preparePreview(ALICE, project.id, { operationKey: 'audit-redeploy-p2', scopeId: null });
+    assert.equal(second.plan.project.name, 'redeploy-app');
+    assert.equal(second.plan.project.mode, 'existing');
+
+    // A project of the customer's with that name that Xroga did not create stays off limits.
+    const g = world();
+    const { project: other } = await g.builder.createProject(ALICE, { prompt: SAAS, requestKey: 'audit-redeploy-0002' });
+    await g.vercel.createProject('vc-a', { kind: 'personal', id: null, slug: 'alice', name: 'alice' }, { name: 'their-own-app', framework: null });
+    await assert.rejects(g.services.hosting.preparePreview(ALICE, other.id, { operationKey: 'audit-redeploy-p3', scopeId: null, projectName: 'their-own-app' }), /already exists/);
+  });
+});
