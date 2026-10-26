@@ -156,6 +156,7 @@ import { currentPublicProductTruth } from './universal/productTruth.js';
 import { RuntimeFailure } from './universal/runtimeFailure.js';
 import { resolveStructuredGoalContract } from './universal/semanticRequestPlanner.js';
 import { atomicGitHubCommit, type UniversalCommitRecord } from '../synthesis/universalCommit.js';
+import type { BuilderPipelineBinding } from '../builder/pipelineBinding.js';
 import { getGitHubToken } from '../services/integrations/githubAuth.js';
 import {
   detectScaffoldFeatures,
@@ -1145,6 +1146,8 @@ export async function runBuildPipeline(opts: {
   projectId?: string;
   clientMeta?: BuildClientMeta | Record<string, unknown>;
   attachments?: ChatAttachment[];
+  /** AI Product Builder project this run builds. Set by trusted server code after ownership is verified. */
+  builder?: BuilderPipelineBinding;
   onProgress?: ProgressFn;
   onDelta?: DeltaFn;
   /** Fired as soon as generated files exist — UI must show code before ship finishes. */
@@ -1324,7 +1327,9 @@ if (
   // Reads the user's repository over the GitHub API — routinely the longest single
   // wait before the build starts, and previously invisible.
   emit({ ...startupProgress('repository'), swarmTodos: todosForBuild('route', 'omit') });
-  const prior = await withProgressHeartbeat(
+  const prior = opts.builder
+    ? { files: opts.builder.files.map((file) => ({ path: file.path, content: file.content })), fromMemory: false, source: 'none' as const }
+    : await withProgressHeartbeat(
     {
       everyMs: 10_000,
       emit: (elapsedMs) =>
@@ -1345,7 +1350,7 @@ if (
     repositorySource: prior.source,
   });
   emit({ ...startupProgress('route'), swarmTodos: todosForBuild('route', 'omit') });
-  const isUpdate = Boolean(meta?.buildUpdate && prior.files.length);
+  const isUpdate = Boolean((meta?.buildUpdate || opts.builder) && prior.files.length);
   const providerKeyName = (modelId: ModelId): string => {
     return MODELS[modelId].provider;
   };
@@ -1362,7 +1367,9 @@ if (
       ? { ...model, configured: true, credentialSource: 'user' as const }
       : model,
   );
-  const resolvedProjectId = meta?.githubTargetRepo?.includes('/')
+  const resolvedProjectId = opts.builder
+    ? opts.builder.projectId
+    : meta?.githubTargetRepo?.includes('/')
     ? projectContextKey({
         repo: meta.githubTargetRepo,
         branch: meta.githubTargetBranch || 'main',
@@ -1784,7 +1791,16 @@ const universalRequestPrompt =
       }
     : {}
 ),
+    // A builder project saves a durable revision instead of writing to a GitHub repository.
+    ...(opts.builder ? { commit: opts.builder.commit } : {}),
   });
+  if (!universal && opts.builder) {
+    // Never fall through to the legacy generator for a builder project: it has no builder
+    // persistence and would report a build that no durable revision backs.
+    const disabled = new Error('The canonical engineering engine is not enabled for this project.') as Error & { code?: string };
+    disabled.code = 'BUILDER_ENGINE_DISABLED';
+    throw disabled;
+  }
   if (universal) {
     const {
       result,

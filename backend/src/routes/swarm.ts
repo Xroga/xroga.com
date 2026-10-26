@@ -4,6 +4,8 @@ import type { AuthRequest } from '../middleware/auth.js';
 import { requireTenantContext, requireResourceOwner } from '../security/tenantContext.js';
 import { TenantAccessError } from '../security/tenantErrors.js';
 import { runBuildPipeline } from '../ai/pipeline.js';
+import { builderProjectExists, closeBuilderRun, openBuilderRun } from '../builder/swarmBridge.js';
+import type { BuilderRunBinding } from '../builder/service.js';
 import { initSSE, sendSSE, endSSE } from '../lib/sse.js';
 import { slimOutputForSse } from '../lib/slimOutputForSse.js';
 import { bindBuildStreamDisconnect } from '../lib/buildStreamLifecycle.js';
@@ -73,10 +75,20 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
       ? (req.body.clientMeta as Record<string, unknown>)
       : undefined;
   const wantStream = req.body?.stream !== false;
+  // AI Product Builder: build against a durable builder project. Ownership is verified from the
+  // issued identity before anything runs; the id in the body is never trusted on its own.
+  const builderProjectId = typeof req.body?.builderProjectId === 'string' && req.body.builderProjectId ? req.body.builderProjectId : undefined;
+  if (builderProjectId && !(await builderProjectExists(requireTenantContext(req.tenantContext), builderProjectId))) {
+    return res.status(404).json({ error: 'Project not found.', code: 'PROJECT_NOT_FOUND' });
+  }
 
   if (!wantStream) {
+    let builderRun: BuilderRunBinding | null = null;
     try {
+      const plainRunId = randomUUID();
+      builderRun = builderProjectId ? await openBuilderRun(requireTenantContext(req.tenantContext), builderProjectId, plainRunId) : null;
       const result = await runBuildPipeline({
+        ...(builderRun ? { runId: plainRunId, builder: builderRun } : {}),
         userId,
         tenantContext:requireTenantContext(req.tenantContext),
         prompt: prompt.trim(),
@@ -85,10 +97,12 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
         clientMeta,
         attachments,
       });
+      if (builderRun) await closeBuilderRun(requireTenantContext(req.tenantContext), builderRun, { ok: result.success });
       await persistRunState(result.runId);
       const { route: _internalRoute, ...publicResult } = result;
       return res.json(publicAiPayload(publicResult));
     } catch (err) {
+      if (builderRun) await closeBuilderRun(requireTenantContext(req.tenantContext), builderRun, { ok: false, cancelled: (err as { code?: string }).code === 'BUILD_CANCELLED', reason: (err as Error).message });
       if(err instanceof TenantAccessError)return res.status(err.status).json({error:err.message,code:err.code});
       const e = err as Error & { code?: string };
       if (e.code === 'OUT_OF_TOKENS' || e.code === 'PAID_PROVIDER_CAPACITY_UNAVAILABLE') {
@@ -161,7 +175,9 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
     clearInterval(keepalive);
   });
 
+  let builderRun: BuilderRunBinding | null = null;
   try {
+    builderRun = builderProjectId ? await openBuilderRun(requireTenantContext(req.tenantContext), builderProjectId, runId) : null;
     sendSSE(res, {
       event: 'start',
       data: { runId, message: 'Xroga AI execution started', engine: 'xroga' },
@@ -183,6 +199,7 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
       projectId,
       clientMeta,
       attachments,
+      ...(builderRun ? { builder: builderRun } : {}),
       onProgress: (event) => {
         const recorded = appendRunEvent(runId, 'progress', event as Record<string, unknown>);
         if (streamConnected && !res.writableEnded) {
@@ -227,6 +244,7 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
     }
 
     const output = result.output as Record<string, unknown>;
+    if (builderRun) await closeBuilderRun(requireTenantContext(req.tenantContext), builderRun, { ok: result.success });
     if (cancellationAuthorityFailed) throw new Error('Run authority is unavailable. Retry after service recovery.');
     const terminalStatus = await persistTerminalNotificationAuthority(runId, userId);
     if (terminalStatus === 'cancelled') throw Object.assign(new Error('Build cancelled'), { code: 'BUILD_CANCELLED' });
@@ -311,6 +329,9 @@ router.post('/execute', (req: AuthRequest, res) => withRunAttempt(async () => {
     // along so the run knows when to say "try again" without naming a dollar amount.
     const nextUnlockAt = code === 'CAPACITY_UNAVAILABLE' ? e.nextUnlockAt ?? undefined : undefined;
 
+    if (builderRun && !resumeControlError) {
+      await closeBuilderRun(requireTenantContext(req.tenantContext), builderRun, { ok: false, cancelled: code === 'BUILD_CANCELLED', reason: e.message });
+    }
     let failurePersisted = false;
     if (!resumeControlError) {
       failRun(runId, e.message || 'Build failed', code === 'BUILD_CANCELLED' ? 'cancelled' : 'error', {
