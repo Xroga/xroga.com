@@ -3,12 +3,12 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-universal-connected-apps",
-    "sha": "60cefca2ddc25fa3cc789e629083dbebc77d4188",
-    "sourceTimestampUtc": "2026-10-26T23:00:39+05:00",
-    "auditStartedUtc": "2026-10-26T18:01:06.824Z",
+    "sha": "2d7314d12b45cc2f7778010b5eb373d4de5a3963",
+    "sourceTimestampUtc": "2026-10-26T23:03:37+05:00",
+    "auditStartedUtc": "2026-10-26T18:11:55.292Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
-    "node": "v22.21.1",
+    "node": "v24.18.0",
     "npm": "11.16.0",
     "lockfiles": [
       "backend/package-lock.json",

@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "54baf43d6e0c35221f5be4a684f227db7d3be18613af06357e89d03f8070865a",
+  "reviewRegistrySha256": "678f1ed49b36803f3fb2c0a98ab561ff577fb23e11d63730f8ff0abc77a99831",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -2940,7 +2940,7 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "29043e1b2d0f9c86568b"
+        "id": "ea43de8273c9cc416a2f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3016,91 +3016,91 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a4aa9524164f67249167"
+        "id": "0b73b22b3b43e9eb3a94"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "86df87a3cf10ba9fffd1"
+        "id": "3a9638091026082fa883"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ce548e8dd4d9cc826a19"
+        "id": "8cf388f29b0b810fd8d2"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "281adea3c92b21b38cf2"
+        "id": "294ed67873e4faa549fc"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "2c4c9810ff2f73829faa"
+        "id": "f1a49d8550d53fa657ad"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "df3fa48afa3313d403aa"
+        "id": "4712fb38739e63762821"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "e239278c655bb120b3a0"
+        "id": "a75721a5abdd5a24da9d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a3b1cadbaff6ba819d56"
+        "id": "34b755bc6597e56db426"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "f947a7dc71451be6cdc8"
+        "id": "2998113942334d31051b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "fb426a64b945f2d61c80"
+        "id": "78207a80d50c86de5959"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c24e3dae4e0d1e7543e9"
+        "id": "6eb6a20e92fa25dbcc2f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "e1f105dbf216eeda20d4"
+        "id": "b87a8a9264ff14d2ac7a"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "65289a9f3290a7fcf5b8"
+        "id": "ab9ac68f7fa0957b1e7d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "70c982b7b3f4f41daaab"
+        "id": "515380afb218ec403127"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "5cb619fb9627bcfd0789"
+        "id": "74ff429cedb564ae06d4"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "688688cf3680ee3f0617"
+        "id": "98ed362729da86ed5a6a"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "e91a6717e92b62825640"
+        "id": "675739c71be5b45e94f3"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "0934c4297284d3107a4f"
+        "id": "ec7fc8718abb85c5abed"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "995ad22e9036ba82ad09"
+        "id": "ab12a4fe332fb96c2793"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "b602dd7f3c7339c6b07a"
+        "id": "b3ff0ae931a092741bc0"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "5433a90b42e2c556b563"
+        "id": "33335464dcf2a0aad745"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "85651a90e4853f6f744b"
+        "id": "029fd665c36fd04ff64d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3108,51 +3108,51 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "e8946886f33111495f43"
+        "id": "6888a0d30d42442cca0f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "9680461141ee27df8f1e"
+        "id": "e84cfdf369e8a4fa6166"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "52cbf82d23aa39fb1097"
+        "id": "14eb934c3dc3e878b5a5"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "e6bf012f03760d8f4b31"
+        "id": "74f21a6031fec1ac7018"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "490979161b19420c4239"
+        "id": "324a8ec4786f9efa5121"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "29cf27028ea46a9578c0"
+        "id": "ddb203703c5b51ec773f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "5b5711be2b3ac6415486"
+        "id": "613e171b0c4ae3a6a42c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "11ea2cbac7f96bd2e36a"
+        "id": "42c097401694a96a8ebd"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "8d86e4661d14be0bf0b7"
+        "id": "233fe0d38be6b68b68f3"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "1ff9f74251496a7a1448"
+        "id": "3161e585fcb72c9de77f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6481fdc8dc50150114d3"
+        "id": "730202c05110d42d92bb"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "04b45db3696d90ee1107"
+        "id": "6c299607930aa3b58341"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4072,91 +4072,91 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "a4aa9524164f67249167"
+        "id": "0b73b22b3b43e9eb3a94"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "86df87a3cf10ba9fffd1"
+        "id": "3a9638091026082fa883"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "ce548e8dd4d9cc826a19"
+        "id": "8cf388f29b0b810fd8d2"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "281adea3c92b21b38cf2"
+        "id": "294ed67873e4faa549fc"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "2c4c9810ff2f73829faa"
+        "id": "f1a49d8550d53fa657ad"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "df3fa48afa3313d403aa"
+        "id": "4712fb38739e63762821"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "e239278c655bb120b3a0"
+        "id": "a75721a5abdd5a24da9d"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "a3b1cadbaff6ba819d56"
+        "id": "34b755bc6597e56db426"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "f947a7dc71451be6cdc8"
+        "id": "2998113942334d31051b"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "fb426a64b945f2d61c80"
+        "id": "78207a80d50c86de5959"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "c24e3dae4e0d1e7543e9"
+        "id": "6eb6a20e92fa25dbcc2f"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "e1f105dbf216eeda20d4"
+        "id": "b87a8a9264ff14d2ac7a"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "65289a9f3290a7fcf5b8"
+        "id": "ab9ac68f7fa0957b1e7d"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "70c982b7b3f4f41daaab"
+        "id": "515380afb218ec403127"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "5cb619fb9627bcfd0789"
+        "id": "74ff429cedb564ae06d4"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "688688cf3680ee3f0617"
+        "id": "98ed362729da86ed5a6a"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "e91a6717e92b62825640"
+        "id": "675739c71be5b45e94f3"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "0934c4297284d3107a4f"
+        "id": "ec7fc8718abb85c5abed"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "995ad22e9036ba82ad09"
+        "id": "ab12a4fe332fb96c2793"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "b602dd7f3c7339c6b07a"
+        "id": "b3ff0ae931a092741bc0"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "5433a90b42e2c556b563"
+        "id": "33335464dcf2a0aad745"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "85651a90e4853f6f744b"
+        "id": "029fd665c36fd04ff64d"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -4164,51 +4164,51 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "e8946886f33111495f43"
+        "id": "6888a0d30d42442cca0f"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "9680461141ee27df8f1e"
+        "id": "e84cfdf369e8a4fa6166"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "52cbf82d23aa39fb1097"
+        "id": "14eb934c3dc3e878b5a5"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "e6bf012f03760d8f4b31"
+        "id": "74f21a6031fec1ac7018"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "490979161b19420c4239"
+        "id": "324a8ec4786f9efa5121"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "29cf27028ea46a9578c0"
+        "id": "ddb203703c5b51ec773f"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "5b5711be2b3ac6415486"
+        "id": "613e171b0c4ae3a6a42c"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "11ea2cbac7f96bd2e36a"
+        "id": "42c097401694a96a8ebd"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "8d86e4661d14be0bf0b7"
+        "id": "233fe0d38be6b68b68f3"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "1ff9f74251496a7a1448"
+        "id": "3161e585fcb72c9de77f"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "6481fdc8dc50150114d3"
+        "id": "730202c05110d42d92bb"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "04b45db3696d90ee1107"
+        "id": "6c299607930aa3b58341"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -5520,7 +5520,7 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "29043e1b2d0f9c86568b"
+        "id": "ea43de8273c9cc416a2f"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -13604,15 +13604,15 @@
       }
     },
     {
-      "id": "29043e1b2d0f9c86568b",
+      "id": "ea43de8273c9cc416a2f",
       "path": "backend/src/routes/phase1.ts",
-      "line": 191,
+      "line": 177,
       "enclosing": "toolUiLink",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "7b06621b69ac97ba6f1b6fe56dec83a759dc0f941abfc8cf518c4a74daa7f08e",
+      "sourceSha256": "73890ce0879e6b51fd0825e6cb5937ef9988d6850646aae1b29cf859d53595ba",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in toolUiLink. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations. Phase3 extends the existing confirmation boundary with issued-actor canonical authority and final dispatch admission. Prior receipts certify the accepted Phase2 snapshot only. Current-source database and integrated regression proof is required, not inferred from this source-position refresh.",
@@ -15792,246 +15792,246 @@
       }
     },
     {
-      "id": "a4aa9524164f67249167",
+      "id": "0b73b22b3b43e9eb3a94",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 64,
+      "line": 71,
       "enclosing": "createBusinessAutomationRule",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_automation_rules",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "86df87a3cf10ba9fffd1",
+      "id": "3a9638091026082fa883",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 64,
+      "line": 71,
       "enclosing": "createBusinessAutomationRule",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "ce548e8dd4d9cc826a19",
+      "id": "8cf388f29b0b810fd8d2",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 84,
+      "line": 91,
       "enclosing": "listBusinessAutomationRules",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_automation_rules",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "281adea3c92b21b38cf2",
+      "id": "294ed67873e4faa549fc",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 84,
+      "line": 91,
       "enclosing": "listBusinessAutomationRules",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "2c4c9810ff2f73829faa",
+      "id": "f1a49d8550d53fa657ad",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 95,
+      "line": 102,
       "enclosing": "listBusinessAutomationEvents",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_automation_events",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "df3fa48afa3313d403aa",
+      "id": "4712fb38739e63762821",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 95,
+      "line": 102,
       "enclosing": "listBusinessAutomationEvents",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "e239278c655bb120b3a0",
+      "id": "a75721a5abdd5a24da9d",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 108,
+      "line": 115,
       "enclosing": "setBusinessAutomationEnabled",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_automation_rules",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "a3b1cadbaff6ba819d56",
+      "id": "34b755bc6597e56db426",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 108,
+      "line": 115,
       "enclosing": "setBusinessAutomationEnabled",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "f947a7dc71451be6cdc8",
+      "id": "2998113942334d31051b",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 120,
+      "line": 127,
       "enclosing": "setBusinessAutomationEnabled",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_automation_rules",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "fb426a64b945f2d61c80",
+      "id": "78207a80d50c86de5959",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 120,
+      "line": 127,
       "enclosing": "setBusinessAutomationEnabled",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "c24e3dae4e0d1e7543e9",
+      "id": "6eb6a20e92fa25dbcc2f",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 132,
+      "line": 139,
       "enclosing": "claimEvent",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_automation_events",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "e1f105dbf216eeda20d4",
+      "id": "b87a8a9264ff14d2ac7a",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 132,
+      "line": 139,
       "enclosing": "claimEvent",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "65289a9f3290a7fcf5b8",
+      "id": "ab9ac68f7fa0957b1e7d",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 147,
+      "line": 154,
       "enclosing": "launchRule",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_automation_events",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "70c982b7b3f4f41daaab",
+      "id": "515380afb218ec403127",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 147,
+      "line": 154,
       "enclosing": "launchRule",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "5cb619fb9627bcfd0789",
+      "id": "74ff429cedb564ae06d4",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 153,
+      "line": 160,
       "enclosing": "launchRule",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_automation_events",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "688688cf3680ee3f0617",
+      "id": "98ed362729da86ed5a6a",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 153,
+      "line": 160,
       "enclosing": "launchRule",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "e91a6717e92b62825640",
+      "id": "675739c71be5b45e94f3",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 163,
+      "line": 170,
       "enclosing": "processDueBusinessAutomations",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_automation_rules",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "0934c4297284d3107a4f",
+      "id": "ec7fc8718abb85c5abed",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 163,
+      "line": 170,
       "enclosing": "processDueBusinessAutomations",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "995ad22e9036ba82ad09",
+      "id": "ab12a4fe332fb96c2793",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 175,
+      "line": 182,
       "enclosing": "processDueBusinessAutomations",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_automation_rules",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "b602dd7f3c7339c6b07a",
+      "id": "b3ff0ae931a092741bc0",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 175,
+      "line": 182,
       "enclosing": "processDueBusinessAutomations",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "5433a90b42e2c556b563",
+      "id": "33335464dcf2a0aad745",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 196,
+      "line": 203,
       "enclosing": "handleBusinessAutomationTrigger",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_automation_rules",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
-      "id": "85651a90e4853f6f744b",
+      "id": "029fd665c36fd04ff64d",
       "path": "backend/src/services/integrations/businessAutomations.ts",
-      "line": 196,
+      "line": 203,
       "enclosing": "handleBusinessAutomationTrigger",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "86d3a0640c5ff6f8f637812d4ba892d970f4d644618c4ff3395cc1cefeb838fa"
     },
     {
       "id": "57b0ef9d8f154a7f4305",
@@ -16045,136 +16045,136 @@
       "sourceSha256": "46292c23bcf09c0cb90f949a7779a59fd3a888574ddd3078180dfecae1c39fe1"
     },
     {
-      "id": "e8946886f33111495f43",
+      "id": "6888a0d30d42442cca0f",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "line": 83,
+      "line": 88,
       "enclosing": "loadRun",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_workflow_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "076c0205cc129e2a5ff83f0bc57d21bb4faf8a18e5769223f07943115b22d30d"
+      "sourceSha256": "c38c71d00578d48ec5ab8d726bc59297d24eeb7b015bd1e2a0821fd22f32aafe"
     },
     {
-      "id": "9680461141ee27df8f1e",
+      "id": "e84cfdf369e8a4fa6166",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "line": 83,
+      "line": 88,
       "enclosing": "loadRun",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "076c0205cc129e2a5ff83f0bc57d21bb4faf8a18e5769223f07943115b22d30d"
+      "sourceSha256": "c38c71d00578d48ec5ab8d726bc59297d24eeb7b015bd1e2a0821fd22f32aafe"
     },
     {
-      "id": "52cbf82d23aa39fb1097",
+      "id": "14eb934c3dc3e878b5a5",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "line": 95,
+      "line": 100,
       "enclosing": "updateRun",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_workflow_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "076c0205cc129e2a5ff83f0bc57d21bb4faf8a18e5769223f07943115b22d30d"
+      "sourceSha256": "c38c71d00578d48ec5ab8d726bc59297d24eeb7b015bd1e2a0821fd22f32aafe"
     },
     {
-      "id": "e6bf012f03760d8f4b31",
+      "id": "74f21a6031fec1ac7018",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "line": 95,
+      "line": 100,
       "enclosing": "updateRun",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "076c0205cc129e2a5ff83f0bc57d21bb4faf8a18e5769223f07943115b22d30d"
+      "sourceSha256": "c38c71d00578d48ec5ab8d726bc59297d24eeb7b015bd1e2a0821fd22f32aafe"
     },
     {
-      "id": "490979161b19420c4239",
+      "id": "324a8ec4786f9efa5121",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "line": 188,
+      "line": 209,
       "enclosing": "createBusinessWorkflowRun",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_workflow_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "076c0205cc129e2a5ff83f0bc57d21bb4faf8a18e5769223f07943115b22d30d"
+      "sourceSha256": "c38c71d00578d48ec5ab8d726bc59297d24eeb7b015bd1e2a0821fd22f32aafe"
     },
     {
-      "id": "29cf27028ea46a9578c0",
+      "id": "ddb203703c5b51ec773f",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "line": 188,
+      "line": 209,
       "enclosing": "createBusinessWorkflowRun",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "076c0205cc129e2a5ff83f0bc57d21bb4faf8a18e5769223f07943115b22d30d"
+      "sourceSha256": "c38c71d00578d48ec5ab8d726bc59297d24eeb7b015bd1e2a0821fd22f32aafe"
     },
     {
-      "id": "5b5711be2b3ac6415486",
+      "id": "613e171b0c4ae3a6a42c",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "line": 208,
+      "line": 229,
       "enclosing": "resumeBusinessWorkflowAfterConfirmation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_workflow_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "076c0205cc129e2a5ff83f0bc57d21bb4faf8a18e5769223f07943115b22d30d"
+      "sourceSha256": "c38c71d00578d48ec5ab8d726bc59297d24eeb7b015bd1e2a0821fd22f32aafe"
     },
     {
-      "id": "11ea2cbac7f96bd2e36a",
+      "id": "42c097401694a96a8ebd",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "line": 208,
+      "line": 229,
       "enclosing": "resumeBusinessWorkflowAfterConfirmation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "076c0205cc129e2a5ff83f0bc57d21bb4faf8a18e5769223f07943115b22d30d"
+      "sourceSha256": "c38c71d00578d48ec5ab8d726bc59297d24eeb7b015bd1e2a0821fd22f32aafe"
     },
     {
-      "id": "8d86e4661d14be0bf0b7",
+      "id": "233fe0d38be6b68b68f3",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "line": 233,
+      "line": 254,
       "enclosing": "resumeBusinessWorkflowAfterSetup",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_action_confirmations",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "076c0205cc129e2a5ff83f0bc57d21bb4faf8a18e5769223f07943115b22d30d"
+      "sourceSha256": "c38c71d00578d48ec5ab8d726bc59297d24eeb7b015bd1e2a0821fd22f32aafe"
     },
     {
-      "id": "1ff9f74251496a7a1448",
+      "id": "3161e585fcb72c9de77f",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "line": 233,
+      "line": 254,
       "enclosing": "resumeBusinessWorkflowAfterSetup",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "076c0205cc129e2a5ff83f0bc57d21bb4faf8a18e5769223f07943115b22d30d"
+      "sourceSha256": "c38c71d00578d48ec5ab8d726bc59297d24eeb7b015bd1e2a0821fd22f32aafe"
     },
     {
-      "id": "6481fdc8dc50150114d3",
+      "id": "730202c05110d42d92bb",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "line": 274,
+      "line": 295,
       "enclosing": "cancelBusinessWorkflowForConfirmation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "business_workflow_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "076c0205cc129e2a5ff83f0bc57d21bb4faf8a18e5769223f07943115b22d30d"
+      "sourceSha256": "c38c71d00578d48ec5ab8d726bc59297d24eeb7b015bd1e2a0821fd22f32aafe"
     },
     {
-      "id": "04b45db3696d90ee1107",
+      "id": "6c299607930aa3b58341",
       "path": "backend/src/services/integrations/businessWorkflowRuns.ts",
-      "line": 274,
+      "line": 295,
       "enclosing": "cancelBusinessWorkflowForConfirmation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "076c0205cc129e2a5ff83f0bc57d21bb4faf8a18e5769223f07943115b22d30d"
+      "sourceSha256": "c38c71d00578d48ec5ab8d726bc59297d24eeb7b015bd1e2a0821fd22f32aafe"
     },
     {
       "id": "2697b20e243c70e7d302",
