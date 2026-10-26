@@ -109,15 +109,16 @@ export class QaService {
     return runQa({ plan, driver, environment: target.environment, baseHost: new URL(target.baseUrl).host, only: options.only, previouslyPassed: options.previouslyPassed, signal: options.signal });
   }
 
-  private async record(userId: string, project: BuilderProject, revision: BuilderRevision, runId: string, report: QaReport): Promise<VerificationRecord> {
+  private async record(userId: string, project: BuilderProject, revision: BuilderRevision, runId: string, report: QaReport, options: { relabelRevision?: boolean; remote?: boolean } = {}): Promise<VerificationRecord> {
     const saved = await this.deps.phase2.saveVerification(userId, project.id, {
       revisionId: revision.id, runId, kind: 'browser_qa', status: report.status, executedChecks: report.executedChecks,
-      summary: { passed: report.passedChecks, failed: report.failedChecks, pending: report.pendingChecks, reason: report.reason, driver: report.environment.driver, browser: report.environment.browser },
+      summary: { passed: report.passedChecks, failed: report.failedChecks, pending: report.pendingChecks, reason: report.reason, driver: report.environment.driver, browser: report.environment.browser, ...(options.remote ? { remote: true } : {}) },
       report,
     });
     if (!saved) throw new BuilderError('storage_failed', 'The QA result could not be stored; it is not recorded as verified.');
-    // Evidence is only attached to the revision it tested.
-    await this.deps.store.setRevisionVerification(userId, project.id, revision.id, verificationStatus(report.status));
+    // Evidence is only attached to the revision it tested. A read-only remote run tested a narrower set of checks than the
+    // local run, so it never relabels the revision (it is recorded as its own verification and shown as such).
+    if (options.relabelRevision !== false) await this.deps.store.setRevisionVerification(userId, project.id, revision.id, verificationStatus(report.status));
     return saved.record;
   }
 
@@ -133,8 +134,11 @@ export class QaService {
     const previous = await this.previousPassed(userId, projectId, revision);
     const report = await this.execute(userId, project, revision, plan, { previouslyPassed: previous, signal: input.signal });
     const record = await this.record(userId, project, revision, runId, report);
+    // Never over a build in flight: a late result must not overwrite a newer build's state or release its slot.
     if (report.status === 'failed') {
-      await this.deps.store.setState(userId, projectId, 'partial', `Browser QA failed: ${report.reason}`, null);
+      await this.deps.store.setStateIfIdle(userId, projectId, 'partial', `Browser QA failed: ${report.reason}`);
+    } else if (report.status === 'passed') {
+      await this.deps.store.setStateIfIdle(userId, projectId, 'verified', `Browser QA passed on revision ${revision.revisionNumber}.`);
     }
     return { report, summary: summarize(report, record) };
   }
@@ -149,7 +153,7 @@ export class QaService {
     const revision = await this.deps.builder.revisionFiles(userId, projectId, input.revisionId);
     const plan = deriveQaPlan(project.spec, revision.files, { readOnly: true });
     const report = await this.executeAgainst({ baseUrl: input.baseUrl, environment: { database: false } }, plan, {});
-    await this.record(userId, project, revision, input.runId ?? randomUUID(), report);
+    await this.record(userId, project, revision, input.runId ?? randomUUID(), report, { relabelRevision: false, remote: true });
     return report;
   }
 
@@ -166,7 +170,8 @@ export class QaService {
   /** Latest QA summary recorded against the current revision. */
   async latest(userId: string, projectId: string): Promise<QaSummary | null> {
     const { revision } = await this.headOf(userId, projectId);
-    const [record] = (await this.deps.phase2.listVerifications(userId, projectId, revision.id)).filter((row) => row.kind === 'browser_qa');
+    // The latest LOCAL run: a read-only run against a deployment tested fewer things and has its own place in the history.
+    const [record] = (await this.deps.phase2.listVerifications(userId, projectId, revision.id)).filter((row) => row.kind === 'browser_qa' && row.summary.remote !== true);
     if (!record) return null;
     const failed = Number(record.summary.failed ?? 0);
     return {
@@ -213,6 +218,7 @@ export class QaService {
         } finally {
           // A refused, failed or no-change attempt must not keep the project's build slot.
           await this.deps.store.setState(userId, projectId, 'partial', 'A repair attempt finished; the project is being verified.', null).catch(() => undefined);
+          // (the repair attempt's own run slot is released here, so this one is an unconditional write by design)
         }
       },
       budgetAllows: () => this.deps.budgetAllows(userId, projectId),
@@ -227,7 +233,7 @@ export class QaService {
       : result.finalReport.status === 'partial' && result.attempts.length === 0 && (result.status === 'passed')
         ? `Browser QA found no failures, but some required checks could not run: ${result.finalReport.reason}`
         : `Browser QA is not passing: ${result.reason}`;
-    await this.deps.store.setState(userId, projectId, finalState, reason, null);
+    await this.deps.store.setStateIfIdle(userId, projectId, finalState, reason);
     return result;
   }
 

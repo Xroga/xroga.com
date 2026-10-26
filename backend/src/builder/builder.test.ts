@@ -199,13 +199,14 @@ describe('build generation', () => {
     facts: async () => ({ requested: true, coordinatorStatus: 'ready', runtimeRunning: true, processRunning: true, strictReady: ready, grantExpiresAt: null, grantRevokedAt: null, workspaceSha256: null }),
   });
 
-  it('saves a durable verified revision and reports VERIFIED only after strict readiness', async () => {
+  it('saves a durable revision and is PARTIAL, never VERIFIED, until a browser test passes (even with a strictly ready preview)', async () => {
     const { service, project, store } = await setup(runner([{ path: 'index.html', content: '<h1>built</h1>' }]), readyPreview(true));
     const state = await service.generate(OWNER_A, project.id, { prompt: 'improve it' });
-    assert.equal(state.project.state, 'verified');
+    assert.equal(state.project.state, 'partial');
+    assert.match(state.project.stateReason, /Browser tests have not passed/);
     assert.equal(state.project.currentRevisionNumber, 2);
     const revisions = await store.listRevisions(OWNER_A, project.id);
-    assert.equal(revisions[0].verificationStatus, 'verified');
+    assert.equal(revisions[0].verificationStatus, 'partial');
     assert.equal(revisions[0].origin, 'generation');
     assert.ok(revisions[0].changeSummary.modified.includes('index.html') || revisions[0].changeSummary.created.includes('index.html'));
   });
@@ -256,7 +257,7 @@ describe('build generation', () => {
     await new Promise((resolve) => setTimeout(resolve, 5));
     await assert.rejects(service.generate(OWNER_A, project.id, {}), (e) => e instanceof BuilderError && e.code === 'conflict');
     release();
-    assert.equal((await first).project.state, 'verified');
+    assert.equal((await first).project.state, 'partial');
   });
 
   it('lets only one of many simultaneous requests claim the build slot', async () => {

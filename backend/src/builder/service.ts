@@ -254,7 +254,8 @@ export class BuilderService {
       await set(blocked ? 'blocked' : 'partial', canonical.reason || 'Source was saved but not verified.', null);
       return this.getState(userId, projectId);
     }
-    await this.deps.store.setRevisionVerification(userId, projectId, saved.id, 'verified');
+    // Canonical validation accepted the source, but no browser test has run against it yet: it is PARTIAL until one passes.
+    await this.deps.store.setRevisionVerification(userId, projectId, saved.id, 'partial');
     await set('verifying', 'Checking the running application.', runId);
     let launch: PreviewLaunchResult;
     try {
@@ -263,7 +264,8 @@ export class BuilderService {
       launch = { started: false, strictReady: null, reason: 'The isolated runtime could not be started.' };
     }
     if (launch.started && launch.strictReady === true) {
-      await set('verified', launch.reason, null);
+      // Verified only after browser QA passes on this revision (recorded by the QA service). Until then it is honestly partial.
+      await set('partial', `The application is running and every page responds. Browser tests have not passed on this version yet. ${launch.reason}`, null);
     } else {
       await set('partial', `Source saved and validated, but the live preview is not verified: ${launch.reason}`, null);
     }

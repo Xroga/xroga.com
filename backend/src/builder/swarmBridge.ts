@@ -43,7 +43,12 @@ export interface BuilderRunResult {
  * A saved revision exists only when the canonical validation accepted the result at commit time,
  * so "verified" here is derived from that, and then confirmed against the running preview.
  */
+const closedRuns = new WeakSet<BuilderRunBinding>();
+
 export async function closeBuilderRun(tenant: TenantContext, run: BuilderRunBinding, result: BuilderRunResult): Promise<void> {
+  // A run is closed once: a late cancellation after a successful close must not relabel a saved, tested project.
+  if (closedRuns.has(run)) return;
+  closedRuns.add(run);
   const context = requireTenantContext(tenant);
   const store = new SupabaseBuilderStore(context);
   try {
@@ -52,7 +57,7 @@ export async function closeBuilderRun(tenant: TenantContext, run: BuilderRunBind
       return;
     }
     const saved = run.saved();
-    if (!saved) {
+    if (!saved && !run.noChange()) {
       await store.setState(context.userId, run.projectId, result.blocked ? 'blocked' : 'failed', (result.reason ?? 'The build did not produce a saved revision.').slice(0, 300), null);
       return;
     }

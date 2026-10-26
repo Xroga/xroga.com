@@ -204,7 +204,11 @@ export async function runQa(input: RunQaInput): Promise<QaReport> {
   try {
     browser = await input.driver.browserVersion().catch(() => null);
     for (const check of selected) {
-      if (input.signal?.aborted) break;
+      if (input.signal?.aborted) {
+        // A cancelled run never reports a check it did not execute as passed: it is pending, so the run cannot be PASSED.
+        results.push({ id: check.id, title: check.title, category: check.category, viewport: check.viewport, required: check.required, status: 'pending', executed: false, failureClass: null, durationMs: 0, pendingReason: 'The run was cancelled before this check executed.', evidence: null, regression: false });
+        continue;
+      }
       results.push(await runCheck(check, input.driver, budget, input));
     }
   } finally {

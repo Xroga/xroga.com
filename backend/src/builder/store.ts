@@ -52,6 +52,11 @@ export interface BuilderStore {
   listProjects(userId: string, limit?: number): Promise<BuilderProject[]>;
   setState(userId: string, projectId: string, state: BuilderProjectState, reason: string, activeRunId?: string | null): Promise<BuilderProject | null>;
   /**
+   * Records a state only while no build holds the project's run slot (compare-and-set on the slot). QA and repair use it so a
+   * late test result can never overwrite a newer build's state or release its slot. Null when the project is busy or not found.
+   */
+  setStateIfIdle(userId: string, projectId: string, state: BuilderProjectState, reason: string): Promise<BuilderProject | null>;
+  /**
    * Atomically takes the single build slot. Succeeds when no build is active, the active build is
    * this same run, or the active build has not been touched since `staleBefore` (a crashed run).
    * Two simultaneous callers can never both claim it.
@@ -130,6 +135,12 @@ export class InMemoryBuilderStore implements BuilderStore {
     };
     this.projects.set(projectId, next);
     return clone(next);
+  }
+
+  async setStateIfIdle(userId: string, projectId: string, state: BuilderProjectState, reason: string) {
+    const project = this.projects.get(projectId);
+    if (!project || project.userId !== userId || project.activeRunId !== null) return null;
+    return this.setState(userId, projectId, state, reason);
   }
 
   async claimRun(userId: string, projectId: string, runId: string, staleBefore: Date) {
@@ -297,6 +308,20 @@ export class SupabaseBuilderStore implements BuilderStore {
     const patch: Record<string, unknown> = { state, state_reason: reason.slice(0, 500), updated_at: new Date().toISOString() };
     if (activeRunId !== undefined) patch.active_run_id = activeRunId;
     const { data, error } = await this.db().from('builder_projects').update(patch).eq('user_id', owner).eq('id', projectId).select(PROJECT_COLUMNS).maybeSingle();
+    if (error) storageFailure('update the project state', error);
+    return data ? toProject(data as ProjectRow) : null;
+  }
+
+  async setStateIfIdle(userId: string, projectId: string, state: BuilderProjectState, reason: string) {
+    const owner = this.owner(userId);
+    const { data, error } = await this.db()
+      .from('builder_projects')
+      .update({ state, state_reason: reason.slice(0, 500), updated_at: new Date().toISOString() })
+      .eq('user_id', owner)
+      .eq('id', projectId)
+      .is('active_run_id', null)
+      .select(PROJECT_COLUMNS)
+      .maybeSingle();
     if (error) storageFailure('update the project state', error);
     return data ? toProject(data as ProjectRow) : null;
   }
