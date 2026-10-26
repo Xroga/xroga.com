@@ -871,7 +871,7 @@ export function appendRunEvent(
   type: SwarmRunEvent['type'],
   data: Record<string, unknown>,
 ): SwarmRunEvent | null {
-  const rec = mutableAttempt(runId);
+  const rec = runningAttempt(runId);
 
   if (!rec) return null;
 
@@ -1658,4 +1658,12 @@ async function persistToSupabase(
     const { id, user_id, project_id, messages, created_at, worker_id, heartbeat_at, ...state } = { worker_id: null as string | null, heartbeat_at: null as string | null, ...row };
     await persistOwnedRunAttempt(supabase, context, id, RUN_WORKER_ID, generation, state);
   }
+}
+
+/** Terminal snapshots are immutable. Late progress must not change the exact
+ * state already acknowledged by the database worker-generation fence. Explicit
+ * failure enrichment and cancellation keep their existing separate contracts. */
+function runningAttempt(runId: string): SwarmRunRecord | undefined {
+  const record = mutableAttempt(runId);
+  return record?.status === 'running' ? record : undefined;
 }

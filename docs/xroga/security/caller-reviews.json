@@ -109,7 +109,7 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "callIds": [
         "6ed50f9fc731b3a94f89",
         "d6a2d0f1eafe32f09954"
@@ -137,11 +137,16 @@
         "structuredOrigin": null,
         "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
         "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+      },
+      "terminalProgressReview": {
+        "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
+        "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
+        "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
       }
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "callIds": [
         "bc1c802d7afea2658481",
         "69147b3a0b1c10adba2a"
@@ -169,6 +174,11 @@
         "structuredOrigin": null,
         "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
         "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+      },
+      "terminalProgressReview": {
+        "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
+        "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
+        "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
       }
     },
     {
@@ -7148,7 +7158,7 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "callIds": [
         "f280dbf81344931da30f",
         "06708d2c84b319622b11",
@@ -7196,11 +7206,16 @@
         "structuredOrigin": null,
         "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
         "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+      },
+      "terminalProgressReview": {
+        "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
+        "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
+        "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
       }
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "callIds": [
         "613a8526c208ac2754f6",
         "c026c348ff7a940e10e9"
@@ -7224,6 +7239,11 @@
         "structuredOrigin": null,
         "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
         "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+      },
+      "terminalProgressReview": {
+        "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
+        "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
+        "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
       }
     },
     {
@@ -8071,7 +8091,7 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "callIds": [
         "e772b4943b42c4a2d452"
       ],
@@ -8101,6 +8121,11 @@
         "structuredOrigin": null,
         "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
         "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+      },
+      "terminalProgressReview": {
+        "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
+        "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
+        "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
       }
     },
     {

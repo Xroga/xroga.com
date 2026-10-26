@@ -14,7 +14,7 @@ This inventory records static source and call-path evidence. A mounted endpoint 
 - migrations: 148
 - workflows: 20
 - testSuites: 820
-- declaredTests: 5823
+- declaredTests: 5824
 - classifiedMarkers: 384
 - reachableMarkers: 324
 - absentRequiredPaths: 5

@@ -7149,7 +7149,7 @@
       "id": "surface:ec198557da445d2b1385",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/runStore.ts",
-      "sha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "symbols": [
         "AdmittedRunAttempt",
         "MAX_EVENTS_PER_RUN",
@@ -7237,6 +7237,7 @@
         "resumed",
         "row",
         "run",
+        "runningAttempt",
         "runs",
         "sameGeneration",
         "saveConversation",
@@ -119480,7 +119481,7 @@
     {
       "id": "test-suite:7a0388a7fd01df5bfd42",
       "sourcePath": "backend/src/ai/runStore.test.ts",
-      "declaredTests": 5,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },

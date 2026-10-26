@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "a672f1967055bc267a1cfe6f4b673603aa09816e2ebdb4146ee9ed58fe65567b",
+  "reviewRegistrySha256": "b691c9b1c69c819a3af3fc33ff18665f7077743f5b73f1739a18b8dd3b1a0007",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
@@ -8990,7 +8990,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Private heartbeat timer runs only for locally owned run IDs and captured original generation. Only production creation/resume consumers are the existing pipeline's durable calls, using server actor and owner-checked resume. History hydration never claims local worker identity. This factory passes only issued owner context, server process worker ID and original generation to the dedicated heartbeat helper, with no caller-selected table or mutation payload.",
         "reason": "Source tracing plus actual helper boundary verified at696322f0 disposable39124146660. Focused original-timer test observes the persisted worker/generation, one exact heartbeat call, and safe handling of empty/outage/thrown storage with no provider retry or private diagnostics. Actual DB current-generation/foreign/cancelled and row-lock clock tests pass. Only fixed heartbeat client use is closed. All other run-store writes and external worker/liveness/cancellation semantics retain independent reviews and gaps.",
@@ -9019,7 +9019,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "The changed current-project binding now passes actual disposable39171571259 atd9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce:121 migration histories,164 security tests,3 browser, zero failures/skips. New worker case verifies create/resume/cold restore, checkpoints/revision, foreign/browser denial, canonical safe cancellation after transfer, five observed project-lock waits, exact retained receipts and rollback. The e22 cancellation compatibility failure is preserved and corrected narrowly. These eight fixed calls are scoped, not the whole worker/scheduler/provider criterion. Existing issued actor, owner, generation and lease proof remains required and preserved.",
@@ -9052,7 +9052,7 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "The changed current-project binding now passes actual disposable39171571259 atd9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce:121 migration histories,164 security tests,3 browser, zero failures/skips. New worker case verifies create/resume/cold restore, checkpoints/revision, foreign/browser denial, canonical safe cancellation after transfer, five observed project-lock waits, exact retained receipts and rollback. The e22 cancellation compatibility failure is preserved and corrected narrowly. These eight fixed calls are scoped, not the whole worker/scheduler/provider criterion. Existing issued actor, owner, generation and lease proof remains required and preserved.",
@@ -9085,7 +9085,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "The changed current-project binding now passes actual disposable39171571259 atd9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce:121 migration histories,164 security tests,3 browser, zero failures/skips. New worker case verifies create/resume/cold restore, checkpoints/revision, foreign/browser denial, canonical safe cancellation after transfer, five observed project-lock waits, exact retained receipts and rollback. The e22 cancellation compatibility failure is preserved and corrected narrowly. These eight fixed calls are scoped, not the whole worker/scheduler/provider criterion. Existing issued actor, owner, generation and lease proof remains required and preserved.",
@@ -9118,7 +9118,7 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "The changed current-project binding now passes actual disposable39171571259 atd9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce:121 migration histories,164 security tests,3 browser, zero failures/skips. New worker case verifies create/resume/cold restore, checkpoints/revision, foreign/browser denial, canonical safe cancellation after transfer, five observed project-lock waits, exact retained receipts and rollback. The e22 cancellation compatibility failure is preserved and corrected narrowly. These eight fixed calls are scoped, not the whole worker/scheduler/provider criterion. Existing issued actor, owner, generation and lease proof remains required and preserved.",
@@ -9151,7 +9151,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "The changed current-project binding now passes actual disposable39171571259 atd9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce:121 migration histories,164 security tests,3 browser, zero failures/skips. New worker case verifies create/resume/cold restore, checkpoints/revision, foreign/browser denial, canonical safe cancellation after transfer, five observed project-lock waits, exact retained receipts and rollback. The e22 cancellation compatibility failure is preserved and corrected narrowly. These eight fixed calls are scoped, not the whole worker/scheduler/provider criterion. Existing issued actor, owner, generation and lease proof remains required and preserved.",
@@ -9184,7 +9184,7 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "The changed current-project binding now passes actual disposable39171571259 atd9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce:121 migration histories,164 security tests,3 browser, zero failures/skips. New worker case verifies create/resume/cold restore, checkpoints/revision, foreign/browser denial, canonical safe cancellation after transfer, five observed project-lock waits, exact retained receipts and rollback. The e22 cancellation compatibility failure is preserved and corrected narrowly. These eight fixed calls are scoped, not the whole worker/scheduler/provider criterion. Existing issued actor, owner, generation and lease proof remains required and preserved.",
@@ -9217,7 +9217,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Sole production caller routes/swarm.ts cancel handler is mounted behind authMiddleware in index.ts. It passes verified req.userId, never body owner, and checks owner-bound run admission. This exact service-only cancel_swarm_run_owned RPC atomically updates only the supplied owner/run in running state, clears worker generation and returns database-clock receipt. The wrapper validates exact owner/run/status/output/iteration before success. Scope is this fixed database transition, not arbitrary service-role callers.",
         "reason": "SCOPED_BOUNDARY evidence at aca4b684759a5922d063625b8af2949d00b336f8, disposable39108753363: real tests9/10/12 pass owner spoofing, stale receipt, anonymous/authenticated RPC denial, two independent concurrent claims with one transition and learning blocked on a resumed parent epoch. The route, RPC, wrapper and tests are unchanged at05e20e6d. Loopback receipt corruption/outage tests also pass. Narrow cancellation-transition acceptance only. Physical provider cancellation, full worker lifecycle, immediate JWT revocation and best-effort learning availability remain separate unresolved obligations.",
@@ -9238,7 +9238,7 @@
       "target": "cancel_swarm_run_owned",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Sole production caller routes/swarm.ts cancel handler is mounted behind authMiddleware in index.ts. It passes verified req.userId, never body owner, and checks owner-bound run admission. This exact service-only cancel_swarm_run_owned RPC atomically updates only the supplied owner/run in running state, clears worker generation and returns database-clock receipt. The wrapper validates exact owner/run/status/output/iteration before success. Scope is this fixed database transition, not arbitrary service-role callers.",
         "reason": "SCOPED_BOUNDARY evidence at aca4b684759a5922d063625b8af2949d00b336f8, disposable39108753363: real tests9/10/12 pass owner spoofing, stale receipt, anonymous/authenticated RPC denial, two independent concurrent claims with one transition and learning blocked on a resumed parent epoch. The route, RPC, wrapper and tests are unchanged at05e20e6d. Loopback receipt corruption/outage tests also pass. Narrow cancellation-transition acceptance only. Physical provider cancellation, full worker lifecycle, immediate JWT revocation and best-effort learning availability remain separate unresolved obligations.",
@@ -9259,7 +9259,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Sole production polling consumer runs inside the authenticated swarm execution's asynchronous attempt scope, captures original server actor/run, checks admission before polling and aborts on missing or stale authority. Query filters exact owner/run, validates returned identities and known status, matches admitted generation/worker and rechecks the local object after await. It reads status only and never grants a new worker lease or credential.",
         "reason": "Verified at5c7e8dcf disposable39110916568 real cancellation fixture checks original running/cancelled and foreign-owner denial. Focused cancellationRead, cancellationRace and authority tests prove substituted receipts, malformed state, outage and held response arriving after local resume fail closed. Closure is the fixed polling read/factory only, not guaranteed cancellation of already-started provider operations, remote revocation timing or whole-worker certification. Google migration adds requireRunning to reject terminal authority at dispatch. Owner and generation predicates remain, but changed cancellation function requires exact-source integration proof. Historical scoped disposition is retained only in preGooglePositionBinding.",
@@ -9284,7 +9284,7 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEWED_GAP",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Sole production polling consumer runs inside the authenticated swarm execution's asynchronous attempt scope, captures original server actor/run, checks admission before polling and aborts on missing or stale authority. Query filters exact owner/run, validates returned identities and known status, matches admitted generation/worker and rechecks the local object after await. It reads status only and never grants a new worker lease or credential.",
         "reason": "Verified at5c7e8dcf disposable39110916568 real cancellation fixture checks original running/cancelled and foreign-owner denial. Focused cancellationRead, cancellationRace and authority tests prove substituted receipts, malformed state, outage and held response arriving after local resume fail closed. Closure is the fixed polling read/factory only, not guaranteed cancellation of already-started provider operations, remote revocation timing or whole-worker certification. Google migration adds requireRunning to reject terminal authority at dispatch. Owner and generation predicates remain, but changed cancellation function requires exact-source integration proof. Historical scoped disposition is retained only in preGooglePositionBinding.",
@@ -9309,7 +9309,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Both production consumers are authMiddleware-mounted swarm history and dashboard ship-analytics handlers passing server req.userId. The sole privileged query filters that exact owner. Returned rows and hot cache entries must match owner, persisted IDs are checked and malformed statuses are excluded. Hydration never replaces an admitted local worker object. No write or external effect occurs at these two sites.",
         "reason": "Verified at5c7e8dcf1413e3e4cfa698f6926fea5b993d6e34 disposable39110916568, real historical-state test93 checks normalized legacy states, foreign cold reads and foreign history canary denial. Focused historyAdmission and persistedStatus tests cover substituted owner/invalid state and delayed read versus admitted local object. Only fixed read/factory boundaries closed. Cache freshness, account-deletion retention, immediate JWT revocation and entire worker lifecycle remain separate open obligations.",
@@ -9334,7 +9334,7 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Both production consumers are authMiddleware-mounted swarm history and dashboard ship-analytics handlers passing server req.userId. The sole privileged query filters that exact owner. Returned rows and hot cache entries must match owner, persisted IDs are checked and malformed statuses are excluded. Hydration never replaces an admitted local worker object. No write or external effect occurs at these two sites.",
         "reason": "Verified at5c7e8dcf1413e3e4cfa698f6926fea5b993d6e34 disposable39110916568, real historical-state test93 checks normalized legacy states, foreign cold reads and foreign history canary denial. Focused historyAdmission and persistedStatus tests cover substituted owner/invalid state and delayed read versus admitted local object. Only fixed read/factory boundaries closed. Cache freshness, account-deletion retention, immediate JWT revocation and entire worker lifecycle remain separate open obligations.",
@@ -9359,7 +9359,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "The changed current-project binding now passes actual disposable39171571259 atd9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce:121 migration histories,164 security tests,3 browser, zero failures/skips. New worker case verifies create/resume/cold restore, checkpoints/revision, foreign/browser denial, canonical safe cancellation after transfer, five observed project-lock waits, exact retained receipts and rollback. The e22 cancellation compatibility failure is preserved and corrected narrowly. These eight fixed calls are scoped, not the whole worker/scheduler/provider criterion. Existing issued actor, owner, generation and lease proof remains required and preserved.",
@@ -9392,7 +9392,7 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "The changed current-project binding now passes actual disposable39171571259 atd9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce:121 migration histories,164 security tests,3 browser, zero failures/skips. New worker case verifies create/resume/cold restore, checkpoints/revision, foreign/browser denial, canonical safe cancellation after transfer, five observed project-lock waits, exact retained receipts and rollback. The e22 cancellation compatibility failure is preserved and corrected narrowly. These eight fixed calls are scoped, not the whole worker/scheduler/provider criterion. Existing issued actor, owner, generation and lease proof remains required and preserved.",

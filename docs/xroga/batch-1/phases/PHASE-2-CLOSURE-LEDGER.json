@@ -8185,7 +8185,7 @@
       "id": "B1-P2-24934749677f47d8",
       "family": "worker-state",
       "sourcePath": "backend/src/ai/runStore.ts",
-      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "baselineCallerIds": [
         "72d1173732e44759c7d0",
         "6c170d46c524d271ecf8",
@@ -8269,7 +8269,7 @@
       "severity": "UNASSESSED_NOT_AN_EXPLOIT_COUNT",
       "semanticProgress": {
         "packetId": "B1-P2-24934749677f47d8",
-        "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+        "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
         "executionStatus": "IN_PROGRESS",
         "finding": "DEMONSTRATED_WORKER_PROJECT_WAIT_ADMISSION_FIXED_REAL_DATABASE_PROOF_AT_D9B13E09",
         "actualVerification": {
@@ -8380,6 +8380,11 @@
             "docs/xroga/evidence/zero-fly/background-source-checkpoint-20261026.json",
             "docs/xroga/evidence/zero-fly/canonical-sandbox-source-20261026.json"
           ]
+        },
+        "terminalProgressReview": {
+          "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
+          "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
+          "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
         }
       },
       "actor": {
