@@ -12073,6 +12073,7 @@
         "backend/src/services/ensureUserRecords.ts:7",
         "backend/src/services/integrations/businessActionConfirmations.ts:7",
         "backend/src/services/integrations/businessAutomations.ts:2",
+        "backend/src/services/integrations/composioDefaultAccounts.ts:1",
         "backend/src/services/integrations/githubAuth.ts:1",
         "backend/src/services/integrations/githubDeploy.ts:1",
         "backend/src/services/integrations/githubTokenStore.ts:1",
@@ -18683,12 +18684,14 @@
       "id": "surface:e2d3f688e30a5000a313",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/composioAccountsRoutes.ts",
-      "sha256": "911f8ae6e4b1c899f890a23c290491bf3e96176517dc2771676d3680281892a8",
+      "sha256": "3212ad300fb82b71a58004d358093ac696c1e809c985c7ad37d76b9078240316",
       "symbols": [
         "TOOLKIT",
         "account",
         "accountId",
+        "accounts",
         "composioAccountsRouter",
+        "createComposioAccountsRouter",
         "enabled",
         "error",
         "fail",
@@ -18701,6 +18704,7 @@
         "../middleware/auth.js",
         "../services/integrations/composioAccounts.js",
         "../services/integrations/composioClient.js",
+        "../services/integrations/composioDefaultAccounts.js",
         "../services/integrations/composioPolicy.js",
         "express",
         "zod"
@@ -18708,13 +18712,14 @@
       "runtimeImports": [
         "backend/src/services/integrations/composioAccounts.ts",
         "backend/src/services/integrations/composioClient.ts",
+        "backend/src/services/integrations/composioDefaultAccounts.ts",
         "backend/src/services/integrations/composioPolicy.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/composioAccountsRoutes.test.ts:7",
+        "backend/src/routes/composioAccountsRoutes.test.ts:8",
         "backend/src/routes/integrations.ts:1"
       ],
       "reachable": true,
@@ -21825,6 +21830,7 @@
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
+        "backend/src/e2e/composioMultiAccountActions.test.ts:6",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:12",
         "backend/src/operations/operationsEngine.ts:2",
         "backend/src/security/authority/digest.test.ts:4",
@@ -21855,6 +21861,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/e2e/composioMultiAccountActions.test.ts",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/security/authority/digest.test.ts",
         "backend/src/security/authority/enforce.test.ts",
@@ -21909,6 +21916,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/e2e/composioMultiAccountActions.test.ts:5",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:11",
         "backend/src/security/authority/enforce.test.ts:5",
         "backend/src/services/integrations/businessAction.ts:7",
@@ -21944,6 +21952,7 @@
         "backend/src/security/authority/enforce.ts#verifyClaim"
       ],
       "testCoverage": [
+        "backend/src/e2e/composioMultiAccountActions.test.ts",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/security/authority/enforce.test.ts",
         "backend/src/services/integrations/composioPlatform.test.ts"
@@ -22494,6 +22503,7 @@
         "backend/src/ai/runStore.ts:11",
         "backend/src/ai/universal/resumeProjectContext.test.ts:6",
         "backend/src/ai/usageAccounting.test.ts:4",
+        "backend/src/e2e/composioMultiAccountActions.test.ts:7",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:10",
         "backend/src/middleware/admin.test.ts:7",
         "backend/src/middleware/admin.ts:3",
@@ -22639,6 +22649,7 @@
         "backend/src/ai/routingOutcomes.receipt.test.ts",
         "backend/src/ai/universal/resumeProjectContext.test.ts",
         "backend/src/ai/usageAccounting.test.ts",
+        "backend/src/e2e/composioMultiAccountActions.test.ts",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/middleware/admin.test.ts",
         "backend/src/middleware/auth.tenantContext.remote.test.ts",
@@ -23047,7 +23058,7 @@
       "id": "surface:5a05332cd3011b3aa919",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "497aba008da6cd137ea54ae39785851dac10cba82c93abae2ecf22e36c9701e0",
+      "sha256": "2979a1579a1a28f7b5d50ac6b060c407c8147a8b7bb6b8bd1a1d5a138a781a85",
       "symbols": [
         "ActionToolChoice",
         "BusinessActionAuthorization",
@@ -23062,6 +23073,7 @@
         "MAX_TOOL_CANDIDATES",
         "MAX_USE_CASE_LENGTH",
         "account",
+        "accountChoice",
         "accountId",
         "action",
         "actionCandidates",
@@ -23146,7 +23158,9 @@
         "../../security/authority/enforce.js",
         "../../security/authority/risk.js",
         "../../security/authority/types.js",
+        "./composioAccounts.js",
         "./composioClient.js",
+        "./composioPolicy.js",
         "./composioSkillGuidance.js",
         "./pluginPermissionPolicy.js",
         "node:crypto"
@@ -23160,7 +23174,9 @@
         "backend/src/security/authority/digest.ts",
         "backend/src/security/authority/enforce.ts",
         "backend/src/security/authority/risk.ts",
+        "backend/src/services/integrations/composioAccounts.ts",
         "backend/src/services/integrations/composioClient.ts",
+        "backend/src/services/integrations/composioPolicy.ts",
         "backend/src/services/integrations/composioSkillGuidance.ts",
         "backend/src/services/integrations/pluginPermissionPolicy.ts"
       ],
@@ -23168,6 +23184,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/e2e/composioMultiAccountActions.test.ts:8",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:9",
         "backend/src/routes/phase1.ts:66",
         "backend/src/security/authority/digest.test.ts:5",
@@ -23214,6 +23231,7 @@
         "backend/src/services/integrations/businessAction.ts#verifyPlanDigest"
       ],
       "testCoverage": [
+        "backend/src/e2e/composioMultiAccountActions.test.ts",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts",
         "backend/src/security/authority/digest.test.ts",
         "backend/src/security/businessAuthority.local.integration.ts",
@@ -23803,7 +23821,7 @@
       "id": "surface:7c23ab5223e24e92fd20",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/composioAccounts.ts",
-      "sha256": "4309d01748c5f104754985f98ec493f8253ae7a8c06d46c2b46a21004c14123b",
+      "sha256": "9abae7f9826a2f5a5601e8e50637cefd5101768724f101724a45f3edcc4cc863",
       "symbols": [
         "ACCOUNT_ID",
         "ALIAS",
@@ -23816,22 +23834,27 @@
         "clean",
         "cleanAlias",
         "composioUserOf",
+        "getComposioDefaultAccount",
         "item",
         "listComposioConnectedAccounts",
         "owner",
         "query",
         "resolveComposioAccountSelection",
         "response",
+        "saved",
         "setComposioAccountAlias",
+        "setComposioDefaultAccount",
         "target",
         "toolkit"
       ],
       "imports": [
         "./composioClient.js",
+        "./composioDefaultAccounts.js",
         "./composioPolicy.js"
       ],
       "runtimeImports": [
         "backend/src/services/integrations/composioClient.ts",
+        "backend/src/services/integrations/composioDefaultAccounts.ts",
         "backend/src/services/integrations/composioPolicy.ts"
       ],
       "entryPoints": [
@@ -23839,6 +23862,7 @@
       ],
       "callers": [
         "backend/src/routes/composioAccountsRoutes.ts:6",
+        "backend/src/services/integrations/businessAction.ts:44",
         "backend/src/services/integrations/composioClient.ts:8",
         "backend/src/services/integrations/composioPlatform.test.ts:15"
       ],
@@ -24145,6 +24169,62 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:6295bdd0ccadb2998fcc",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "backend/src/services/integrations/composioDefaultAccounts.ts",
+      "sha256": "2f07e4d3cf474fad4577eaf9a7ed20301f018a2c8a71410938355403202f5021",
+      "symbols": [
+        "ACCOUNT",
+        "DefaultAccountStore",
+        "TOOLKIT",
+        "USER",
+        "check",
+        "id",
+        "key",
+        "memoryDefaultAccountStore",
+        "rows",
+        "supabaseDefaultAccountStore"
+      ],
+      "imports": [
+        "../../config/supabase.js"
+      ],
+      "runtimeImports": [
+        "backend/src/config/supabase.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/routes/composioAccountsRoutes.test.ts:7",
+        "backend/src/routes/composioAccountsRoutes.ts:7",
+        "backend/src/services/integrations/composioAccounts.ts:2",
+        "backend/src/services/integrations/composioPlatform.test.ts:16"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "composio_default_accounts"
+      ],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [
+        "backend/src/services/integrations/composioDefaultAccounts.ts:26 (user_id)",
+        "backend/src/services/integrations/composioDefaultAccounts.ts:46 (user_id)"
+      ],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/routes/composioAccountsRoutes.test.ts",
+        "backend/src/services/integrations/composioPlatform.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:2510e323fc4451de30ce",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/composioInstant.ts",
@@ -24214,7 +24294,7 @@
       ],
       "entryPoints": [],
       "callers": [
-        "backend/src/services/integrations/composioPlatform.test.ts:16"
+        "backend/src/services/integrations/composioPlatform.test.ts:17"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -24349,11 +24429,12 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/composioAccountsRoutes.ts:7",
-        "backend/src/services/integrations/composioAccounts.ts:2",
+        "backend/src/routes/composioAccountsRoutes.ts:8",
+        "backend/src/services/integrations/businessAction.ts:45",
+        "backend/src/services/integrations/composioAccounts.ts:3",
         "backend/src/services/integrations/composioClient.ts:9",
         "backend/src/services/integrations/composioInstant.ts:16",
-        "backend/src/services/integrations/composioPlatform.test.ts:25",
+        "backend/src/services/integrations/composioPlatform.test.ts:26",
         "backend/src/services/integrations/composioWorkbench.ts:12"
       ],
       "reachable": true,
@@ -24395,7 +24476,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/services/integrations/businessAction.ts:44",
+        "backend/src/services/integrations/businessAction.ts:46",
         "backend/src/services/integrations/businessRead.ts:33",
         "backend/src/services/integrations/composioSkillGuidance.test.ts:3"
       ],
@@ -24459,7 +24540,7 @@
       ],
       "entryPoints": [],
       "callers": [
-        "backend/src/services/integrations/composioPlatform.test.ts:33"
+        "backend/src/services/integrations/composioPlatform.test.ts:34"
       ],
       "reachable": false,
       "persistenceDependencies": [],
@@ -26428,7 +26509,7 @@
       "callers": [
         "backend/src/routes/integrations.ts:32",
         "backend/src/security/tenantIsolation.local.integration.ts:912",
-        "backend/src/services/integrations/businessAction.ts:46",
+        "backend/src/services/integrations/businessAction.ts:48",
         "backend/src/services/integrations/oauthPkceStore.revocation.test.ts:6"
       ],
       "reachable": true,
@@ -62631,6 +62712,70 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:446c3eac05c9677361d1",
+      "subsystem": "integrations_actions_credentials",
+      "sourcePath": "frontend/src/components/integrations/ConnectedAccounts.tsx",
+      "sha256": "10ecea17aaa9041e8045387a1f35ec9e8f01d71ad301b80ecaaa4c8e3e5845e7",
+      "symbols": [
+        "ALIAS",
+        "ConnectedAccounts",
+        "accountDisplayName",
+        "accounts",
+        "addAccount",
+        "alias",
+        "error",
+        "hasSeveral",
+        "isDefault",
+        "load",
+        "makeDefault",
+        "name",
+        "needsDefault",
+        "onMessage",
+        "popup",
+        "result",
+        "run",
+        "saveName",
+        "sessionId"
+      ],
+      "imports": [
+        "@/lib/xrogaConnect",
+        "lucide-react",
+        "react",
+        "react-hot-toast"
+      ],
+      "runtimeImports": [
+        "frontend/src/lib/xrogaConnect.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/(shell)/dashboard/integrations/[plugin]/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/integrations/PluginDetail.tsx:3",
+        "frontend/src/lib/connectedAccounts.test.ts:6"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "lucide-react",
+        "react",
+        "react-hot-toast"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/lib/connectedAccounts.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:60f2ec6c2083267a194d",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "frontend/src/components/integrations/ConnectedServicesSection.tsx",
@@ -63137,7 +63282,7 @@
       "callers": [
         "frontend/src/components/integrations/CustomMcpManager.tsx:17",
         "frontend/src/components/integrations/InstalledPluginsShelf.tsx:10",
-        "frontend/src/components/integrations/PluginDetail.tsx:21",
+        "frontend/src/components/integrations/PluginDetail.tsx:22",
         "frontend/src/components/integrations/PluginMarketplace.tsx:30"
       ],
       "reachable": true,
@@ -63162,7 +63307,7 @@
       "id": "surface:a947b2341f92bb70ef0b",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "sha256": "bc6fbd1bbd15e214e94bcdad507ab1a05863c6200b43606db8280924750137f9",
+      "sha256": "2be863d7593143d4ecd1b148d30a3b846e8523698a45bbec64d2b95bb475779f",
       "symbols": [
         "CapabilityGroup",
         "NativeSnapshot",
@@ -63187,6 +63332,7 @@
         "current",
         "currentToolkit",
         "cursor",
+        "ensureComposioSession",
         "error",
         "exploreUseCase",
         "fetchAllTools",
@@ -63235,6 +63381,7 @@
         "visible"
       ],
       "imports": [
+        "./ConnectedAccounts",
         "@/components/integrations/PluginBrandLogo",
         "@/components/integrations/PluginPermissionControl",
         "@/lib/api",
@@ -63249,6 +63396,7 @@
         "react-hot-toast"
       ],
       "runtimeImports": [
+        "frontend/src/components/integrations/ConnectedAccounts.tsx",
         "frontend/src/components/integrations/PluginBrandLogo.tsx",
         "frontend/src/components/integrations/PluginPermissionControl.tsx",
         "frontend/src/lib/api.ts",
@@ -63537,7 +63685,7 @@
         "frontend/src/app/(shell)/dashboard/integrations/[plugin]/page.tsx"
       ],
       "callers": [
-        "frontend/src/components/integrations/PluginDetail.tsx:22"
+        "frontend/src/components/integrations/PluginDetail.tsx:23"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -80946,7 +81094,7 @@
         "frontend/src/components/integrations/ConnectShipWizard.tsx:7",
         "frontend/src/components/integrations/CustomCredentialsSection.tsx:11",
         "frontend/src/components/integrations/GitHubConnect.tsx:9",
-        "frontend/src/components/integrations/PluginDetail.tsx:23",
+        "frontend/src/components/integrations/PluginDetail.tsx:24",
         "frontend/src/components/integrations/PluginMarketplace.tsx:33",
         "frontend/src/components/integrations/SupabaseConnectPanel.tsx:5",
         "frontend/src/components/layout/SidebarProjectHistory.tsx:21",
@@ -85518,7 +85666,7 @@
         "frontend/src/app/(shell)/dashboard/integrations/vercel/callback/page.tsx:6",
         "frontend/src/components/integrations/ConnectShipWizard.tsx:9",
         "frontend/src/components/integrations/CustomMcpManager.tsx:18",
-        "frontend/src/components/integrations/PluginDetail.tsx:38",
+        "frontend/src/components/integrations/PluginDetail.tsx:39",
         "frontend/src/components/integrations/PluginMarketplace.tsx:48",
         "frontend/src/components/integrations/SupabaseConnectPanel.tsx:6",
         "frontend/src/components/integrations/XrogaConnectPanel.tsx:26",
@@ -86484,7 +86632,7 @@
       "callers": [
         "frontend/src/components/integrations/InstalledPluginsShelf.tsx:11",
         "frontend/src/components/integrations/PluginBrandLogo.tsx:5",
-        "frontend/src/components/integrations/PluginDetail.tsx:24",
+        "frontend/src/components/integrations/PluginDetail.tsx:25",
         "frontend/src/components/integrations/PluginMarketplace.tsx:34",
         "frontend/src/components/terminal/IntegrationsModal.tsx:11",
         "frontend/src/lib/pluginCategoryUx.test.ts:6",
@@ -92978,7 +93126,7 @@
       "id": "surface:b706c46ac319bb606f7e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/xrogaConnect.ts",
-      "sha256": "319972849e4f186d88aca4e21df858aaf7c03cb524cd393a8ecdf8ec3f19cae2",
+      "sha256": "1b89955c4aaba4b4e2ad5b1f5f93a3cad436f22e8f8800c69c2c7560fedaf09e",
       "symbols": [
         "XrogaConnectAvailabilityMode",
         "XrogaConnectCatalogCategory",
@@ -92992,6 +93140,8 @@
         "XrogaConnectToolkit",
         "XrogaConnectTriggerPage",
         "XrogaConnectTriggerType",
+        "XrogaConnectedAccount",
+        "XrogaConnectedAccountsResult",
         "XrogaCustomMcpAuthMode",
         "XrogaCustomMcpCreateInput",
         "XrogaCustomMcpSyncResult",
@@ -93020,8 +93170,9 @@
       ],
       "callers": [
         "frontend/src/components/automations/Connections.tsx:5",
+        "frontend/src/components/integrations/ConnectedAccounts.tsx:7",
         "frontend/src/components/integrations/CustomMcpManager.tsx:22",
-        "frontend/src/components/integrations/PluginDetail.tsx:42",
+        "frontend/src/components/integrations/PluginDetail.tsx:43",
         "frontend/src/components/integrations/PluginMarketplace.tsx:52",
         "frontend/src/components/integrations/PluginPermissionControl.tsx:13",
         "frontend/src/components/integrations/XrogaConnectPanel.tsx:20",
@@ -93868,7 +94019,7 @@
         "frontend/src/components/dashboard/ActionMeterLarge.tsx:6",
         "frontend/src/components/dashboard/ActionSpendingView.tsx:3",
         "frontend/src/components/dashboard/QuickActions.tsx:5",
-        "frontend/src/components/integrations/PluginDetail.tsx:52",
+        "frontend/src/components/integrations/PluginDetail.tsx:53",
         "frontend/src/components/layout/HeaderActionMeter.tsx:5",
         "frontend/src/components/layout/MiniActionMeter.tsx:4",
         "frontend/src/components/layout/Sidebar.tsx:66",
@@ -98125,7 +98276,7 @@
       "id": "surface:a741178549139c6d7626",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/schema-catalog.mjs",
-      "sha256": "2805d1d09927098ccf5b3e192e6d4ab498482a26b4eca353453c116e5608d9c0",
+      "sha256": "2a7dd7b462c42fcf9512ccddb2f9b7e31a079ea5ddc8683675d45cbe4d6c3f91",
       "symbols": [
         "assertDisposableSource",
         "collectSchemaCatalog",
@@ -102684,27 +102835,39 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:5aeb73658089a075165e",
+      "id": "registration:cc5084065f6b5c06c52b",
       "sourcePath": "backend/src/routes/composioAccountsRoutes.ts",
-      "line": 27,
+      "line": 29,
       "receiver": "composioAccountsRouter",
       "method": "get",
       "path": "/",
       "handlers": [],
-      "scope": "module",
-      "functionName": "<module>",
+      "scope": "function",
+      "functionName": "createComposioAccountsRouter",
       "inlineResponse": true
     },
     {
-      "id": "registration:584b0175b748490f0653",
+      "id": "registration:9c904273be8e10436ece",
       "sourcePath": "backend/src/routes/composioAccountsRoutes.ts",
-      "line": 50,
+      "line": 53,
+      "receiver": "composioAccountsRouter",
+      "method": "put",
+      "path": "/default",
+      "handlers": [],
+      "scope": "function",
+      "functionName": "createComposioAccountsRouter",
+      "inlineResponse": true
+    },
+    {
+      "id": "registration:12cd711a168d4234e376",
+      "sourcePath": "backend/src/routes/composioAccountsRoutes.ts",
+      "line": 71,
       "receiver": "composioAccountsRouter",
       "method": "patch",
       "path": "/:accountId",
       "handlers": [],
-      "scope": "module",
-      "functionName": "<module>",
+      "scope": "function",
+      "functionName": "createComposioAccountsRouter",
       "inlineResponse": true
     },
     {
@@ -108539,10 +108702,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:a3ace9854bf2fd2866af",
-      "registrationId": "registration:5aeb73658089a075165e",
+      "id": "route:2d61e8028916933d9b48",
+      "registrationId": "registration:cc5084065f6b5c06c52b",
       "sourcePath": "backend/src/routes/composioAccountsRoutes.ts",
-      "line": 27,
+      "line": 29,
       "method": "GET",
       "path": "/api/integrations/xroga-connect/accounts",
       "mountChain": [
@@ -108552,15 +108715,33 @@
       "authBoundary": [
         "authMiddleware"
       ],
-      "reachable": true,
-      "state": "IMPLEMENTED_AND_REACHABLE",
-      "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
+      "reachable": false,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:797ff49032fb1a592538",
-      "registrationId": "registration:584b0175b748490f0653",
+      "id": "route:0b8860cabb28133c64c3",
+      "registrationId": "registration:9c904273be8e10436ece",
       "sourcePath": "backend/src/routes/composioAccountsRoutes.ts",
-      "line": 50,
+      "line": 53,
+      "method": "PUT",
+      "path": "/api/integrations/xroga-connect/accounts/default",
+      "mountChain": [
+        "backend/src/index.ts:251",
+        "backend/src/routes/integrations.ts:2150"
+      ],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": false,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "reason": "Registration is conditional or inside a function; execution must be verified."
+    },
+    {
+      "id": "route:a563660c7878097191ef",
+      "registrationId": "registration:12cd711a168d4234e376",
+      "sourcePath": "backend/src/routes/composioAccountsRoutes.ts",
+      "line": 71,
       "method": "PATCH",
       "path": "/api/integrations/xroga-connect/accounts/:accountId",
       "mountChain": [
@@ -108570,9 +108751,9 @@
       "authBoundary": [
         "authMiddleware"
       ],
-      "reachable": true,
-      "state": "IMPLEMENTED_AND_REACHABLE",
-      "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
+      "reachable": false,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
       "id": "route:073ee0759ec278cde0f4",
@@ -110539,6 +110720,13 @@
       "version": "20261025010000",
       "order": 147,
       "sha256": "b3d9d11aa50ea84a91fad15e6f1ebc3113dbaa784d54a1c566c2e0f218e16e3e"
+    },
+    {
+      "id": "migration:2cbf2d0b05e9ee5d9aac",
+      "sourcePath": "supabase/migrations/20261027000000_composio_default_accounts.sql",
+      "version": "20261027000000",
+      "order": 148,
+      "sha256": "e04434201ca147d6bf7ce594bd105136f45655f0144411ff31b085951d333a3b"
     }
   ],
   "workflows": [
@@ -112169,6 +112357,16 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
+      "id": "finding:9ca220accbbd682a6507",
+      "sourcePath": "frontend/src/components/integrations/ConnectedAccounts.tsx",
+      "line": 187,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
       "id": "finding:2e0611cb3803b01d5952",
       "sourcePath": "frontend/src/components/integrations/CustomCredentialsSection.tsx",
       "line": 106,
@@ -112289,9 +112487,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:dfcf5ee9258676c3400e",
+      "id": "finding:ddf844a1b76050508d58",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 1007,
+      "line": 1015,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -112299,9 +112497,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:77ae00c1e28f91a52f15",
+      "id": "finding:04ada65da2eb0fc97386",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 1008,
+      "line": 1016,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -112309,9 +112507,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:391ecc5a657b70368720",
+      "id": "finding:ff755c3875d90eab84f9",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 1158,
+      "line": 1166,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -115537,79 +115735,79 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:c9eb24c93e81a8783d9b",
+      "id": "frontend-call:4e9b4cd932920c49c542",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 403,
+      "line": 404,
       "callee": "api.github.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:9b7b2be937b975899524",
+      "id": "frontend-call:09d40d3a5898d617674e",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 413,
+      "line": 414,
       "callee": "api.vercel.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:50e6ba05fbbe8dbce3cc",
+      "id": "frontend-call:d3f2b741f1b174b0554d",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 426,
+      "line": 427,
       "callee": "api.supabase.status",
       "reachable": true
     },
     {
-      "id": "frontend-call:070c828e55764c3a353e",
+      "id": "frontend-call:f2daa822f9cf39f8aba0",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 515,
+      "line": 516,
       "callee": "fetchAllTools",
       "reachable": true
     },
     {
-      "id": "frontend-call:a80592e2e556ce94ce2a",
+      "id": "frontend-call:5c26cc5548ceadde0c54",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 517,
+      "line": 518,
       "callee": "fetchAllTriggers",
       "reachable": true
     },
     {
-      "id": "frontend-call:df505905a213b00eb10b",
+      "id": "frontend-call:3d059a30c8732f4716d3",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 672,
+      "line": 673,
       "callee": "api.github.oauthUrl",
       "reachable": true
     },
     {
-      "id": "frontend-call:f71f30efe6a9e93a8229",
+      "id": "frontend-call:2d71e89392a4076f7d7e",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 679,
+      "line": 680,
       "callee": "api.vercel.oauthUrl",
       "reachable": true
     },
     {
-      "id": "frontend-call:314d28f25b9e76e38300",
+      "id": "frontend-call:57106bbf6a7f892dafc6",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 687,
+      "line": 688,
       "callee": "api.supabase.oauthUrl",
       "reachable": true
     },
     {
-      "id": "frontend-call:42271821a93ee56a6c2c",
+      "id": "frontend-call:62fa32bdc0130b9812fc",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 788,
+      "line": 796,
       "callee": "api.github.disconnect",
       "reachable": true
     },
     {
-      "id": "frontend-call:5d48a86f3ccd1e76a816",
+      "id": "frontend-call:2d63751cf0d5bd38e008",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 789,
+      "line": 797,
       "callee": "api.vercel.disconnect",
       "reachable": true
     },
     {
-      "id": "frontend-call:a7c7f306425efb4c4eff",
+      "id": "frontend-call:db1e4fc3376aebf1f695",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 790,
+      "line": 798,
       "callee": "api.supabase.disconnect",
       "reachable": true
     },
@@ -118423,6 +118621,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:4828f1b4b5f4ed14daf7",
+      "sourcePath": "backend/src/e2e/composioMultiAccountActions.test.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:c9e64862eb7c7cfedf8a",
       "sourcePath": "backend/src/e2e/xrogaGoldenJourneys.test.ts",
       "declaredTests": 16,
@@ -119036,7 +119241,7 @@
     {
       "id": "test-suite:5d2fdba73e52deaab57e",
       "sourcePath": "backend/src/routes/composioAccountsRoutes.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -119890,7 +120095,7 @@
     {
       "id": "test-suite:d797da962c92363a2d68",
       "sourcePath": "backend/src/services/integrations/composioPlatform.test.ts",
-      "declaredTests": 46,
+      "declaredTests": 48,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -121632,6 +121837,13 @@
       "id": "test-suite:82afe52a2b55c1719fb8",
       "sourcePath": "frontend/src/lib/composerTools.test.ts",
       "declaredTests": 8,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:7395833887228235affa",
+      "sourcePath": "frontend/src/lib/connectedAccounts.test.ts",
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },

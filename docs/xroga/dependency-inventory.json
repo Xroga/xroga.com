@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "eed9ada56c98b61fe567301acafaa1f4e75d7e45",
+  "source_sha": "4ac697550772137719ff948321b74c88dfa9d9fd",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -14884,7 +14884,7 @@
     },
     {
       "path": "backend/src/routes/composioAccountsRoutes.ts",
-      "sha256": "911f8ae6e4b1c899f890a23c290491bf3e96176517dc2771676d3680281892a8"
+      "sha256": "3212ad300fb82b71a58004d358093ac696c1e809c985c7ad37d76b9078240316"
     },
     {
       "path": "backend/src/routes/dashboard.ts",
@@ -15344,7 +15344,7 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "sha256": "497aba008da6cd137ea54ae39785851dac10cba82c93abae2ecf22e36c9701e0"
+      "sha256": "2979a1579a1a28f7b5d50ac6b060c407c8147a8b7bb6b8bd1a1d5a138a781a85"
     },
     {
       "path": "backend/src/services/integrations/businessActionConfirmations.ts",
@@ -15376,11 +15376,15 @@
     },
     {
       "path": "backend/src/services/integrations/composioAccounts.ts",
-      "sha256": "4309d01748c5f104754985f98ec493f8253ae7a8c06d46c2b46a21004c14123b"
+      "sha256": "9abae7f9826a2f5a5601e8e50637cefd5101768724f101724a45f3edcc4cc863"
     },
     {
       "path": "backend/src/services/integrations/composioClient.ts",
       "sha256": "8ee74feeb602cfadd03c84bebd96fa967e37a9efb83182f29c6e509f8acabb6b"
+    },
+    {
+      "path": "backend/src/services/integrations/composioDefaultAccounts.ts",
+      "sha256": "2f07e4d3cf474fad4577eaf9a7ed20301f018a2c8a71410938355403202f5021"
     },
     {
       "path": "backend/src/services/integrations/composioInstant.ts",
@@ -17931,6 +17935,10 @@
       "sha256": "d08e7b485488e17c2bbf2c43de477269dd05b57395c422a5f8f068a08ac469eb"
     },
     {
+      "path": "frontend/src/components/integrations/ConnectedAccounts.tsx",
+      "sha256": "10ecea17aaa9041e8045387a1f35ec9e8f01d71ad301b80ecaaa4c8e3e5845e7"
+    },
+    {
       "path": "frontend/src/components/integrations/ConnectedServicesSection.tsx",
       "sha256": "30ccd35b0baf5ccb4f9a3376806416381c14edf4798772a58294efa72bebaaba"
     },
@@ -17972,7 +17980,7 @@
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
-      "sha256": "bc6fbd1bbd15e214e94bcdad507ab1a05863c6200b43606db8280924750137f9"
+      "sha256": "2be863d7593143d4ecd1b148d30a3b846e8523698a45bbec64d2b95bb475779f"
     },
     {
       "path": "frontend/src/components/integrations/PluginMarketplace.tsx",
@@ -19864,7 +19872,7 @@
     },
     {
       "path": "frontend/src/lib/xrogaConnect.ts",
-      "sha256": "319972849e4f186d88aca4e21df858aaf7c03cb524cd393a8ecdf8ec3f19cae2"
+      "sha256": "1b89955c4aaba4b4e2ad5b1f5f93a3cad436f22e8f8800c69c2c7560fedaf09e"
     },
     {
       "path": "frontend/src/lib/xrogaCsv.ts",
@@ -28963,21 +28971,21 @@
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 659,
+      "line": 661,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1169,
+      "line": 1174,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/businessAction.ts",
-      "line": 1195,
+      "line": 1200,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -29062,6 +29070,13 @@
     {
       "path": "backend/src/services/integrations/composioClient.ts",
       "line": 1886,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/composioDefaultAccounts.ts",
+      "line": 53,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31063,28 +31078,28 @@
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 384,
+      "line": 385,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 625,
+      "line": 626,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 642,
+      "line": 643,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 868,
+      "line": 876,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

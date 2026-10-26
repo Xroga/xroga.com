@@ -1,24 +1,24 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "320a300cd4ac44e52f4f5bc8cef55affd696164c794e71b1de66eee141b1e5a5",
+  "reviewRegistrySha256": "52b1b11350475897fee9b5b8f4e4a408abf36425f897964b23d3305ab20c632a",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 187,
-    "persistenceCandidates": 788,
-    "ownerPredicateCandidates": 191,
+    "privilegedFactorySites": 190,
+    "persistenceCandidates": 794,
+    "ownerPredicateCandidates": 195,
     "reviewRequired": 98,
-    "reviewedCandidates": 690,
+    "reviewedCandidates": 696,
     "unresolvedSafetyCandidates": 123,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 18
   },
   "outcomes": {
     "REVIEW_REQUIRED": 98,
-    "SCOPED_BOUNDARY": 461,
+    "SCOPED_BOUNDARY": 467,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 164,
     "REVIEWED_GAP": 25
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 111,
-    "unresolvedCandidateBoundaries": 677,
+    "unresolvedCandidateBoundaries": 683,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3188,6 +3188,30 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "2e179485422a357d7726"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "785dbca5bbddf007f99f"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "f6f40e96063c9ff973d8"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "efcea50ee89050f4365f"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4d8476885f2e19e11458"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "3f02aab9fa8f58638b72"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "2697b20e243c70e7d302"
       },
       {
@@ -5916,6 +5940,30 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "2e179485422a357d7726"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "785dbca5bbddf007f99f"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "f6f40e96063c9ff973d8"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "efcea50ee89050f4365f"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "4d8476885f2e19e11458"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "3f02aab9fa8f58638b72"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "2697b20e243c70e7d302"
       },
       {
@@ -6781,11 +6829,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 788,
+    "currentCallers": 794,
     "structuredVerified": 111,
-    "structuredUnproven": 677,
+    "structuredUnproven": 683,
     "manualUnresolved": 123,
-    "manualUnsupported": 554,
+    "manualUnsupported": 560,
     "agreedVerified": 111,
     "proofAwaitingManualReconciliation": 0
   },
@@ -16471,6 +16519,156 @@
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
       "sourceSha256": "076c0205cc129e2a5ff83f0bc57d21bb4faf8a18e5769223f07943115b22d30d"
+    },
+    {
+      "id": "2e179485422a357d7726",
+      "path": "backend/src/services/integrations/composioDefaultAccounts.ts",
+      "line": 26,
+      "enclosing": "get",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "composio_default_accounts",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "2f07e4d3cf474fad4577eaf9a7ed20301f018a2c8a71410938355403202f5021",
+      "semanticReview": {
+        "authority": "Callers are composioAccounts.ts and the accounts routes behind the integrations authentication, always with the verified request user id. Every read, upsert and delete carries that user id and the toolkit as explicit predicates, after both are validated against a strict UUID and slug pattern. No request body, query or model output supplies the owner.",
+        "reason": "The table holds only a Composio connected-account id, a public identifier and not a credential. The stored id is never trusted on its own: before use composioAccounts.ts proves it is still one of the owner's own active private accounts at Composio, so a stale or tampered row can only fail closed. RLS allows the owner SELECT only; all writes are server-side. The migration is not applied and the feature is disabled until XROGA_COMPOSIO_MULTI_ACCOUNT is enabled. The Supabase path is NOT exercised against a real database in this change; scoping is verified against an in-memory store with identical predicates.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "uses the saved default when several accounts are connected"
+          },
+          {
+            "path": "backend/src/routes/composioAccountsRoutes.test.ts",
+            "marker": "saves a default account only from the caller"
+          }
+        ]
+      }
+    },
+    {
+      "id": "785dbca5bbddf007f99f",
+      "path": "backend/src/services/integrations/composioDefaultAccounts.ts",
+      "line": 26,
+      "enclosing": "get",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "2f07e4d3cf474fad4577eaf9a7ed20301f018a2c8a71410938355403202f5021",
+      "semanticReview": {
+        "authority": "Callers are composioAccounts.ts and the accounts routes behind the integrations authentication, always with the verified request user id. Every read, upsert and delete carries that user id and the toolkit as explicit predicates, after both are validated against a strict UUID and slug pattern. No request body, query or model output supplies the owner.",
+        "reason": "The table holds only a Composio connected-account id, a public identifier and not a credential. The stored id is never trusted on its own: before use composioAccounts.ts proves it is still one of the owner's own active private accounts at Composio, so a stale or tampered row can only fail closed. RLS allows the owner SELECT only; all writes are server-side. The migration is not applied and the feature is disabled until XROGA_COMPOSIO_MULTI_ACCOUNT is enabled. The Supabase path is NOT exercised against a real database in this change; scoping is verified against an in-memory store with identical predicates.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "uses the saved default when several accounts are connected"
+          },
+          {
+            "path": "backend/src/routes/composioAccountsRoutes.test.ts",
+            "marker": "saves a default account only from the caller"
+          }
+        ]
+      }
+    },
+    {
+      "id": "f6f40e96063c9ff973d8",
+      "path": "backend/src/services/integrations/composioDefaultAccounts.ts",
+      "line": 39,
+      "enclosing": "set",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "composio_default_accounts",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "2f07e4d3cf474fad4577eaf9a7ed20301f018a2c8a71410938355403202f5021",
+      "semanticReview": {
+        "authority": "Callers are composioAccounts.ts and the accounts routes behind the integrations authentication, always with the verified request user id. Every read, upsert and delete carries that user id and the toolkit as explicit predicates, after both are validated against a strict UUID and slug pattern. No request body, query or model output supplies the owner.",
+        "reason": "The table holds only a Composio connected-account id, a public identifier and not a credential. The stored id is never trusted on its own: before use composioAccounts.ts proves it is still one of the owner's own active private accounts at Composio, so a stale or tampered row can only fail closed. RLS allows the owner SELECT only; all writes are server-side. The migration is not applied and the feature is disabled until XROGA_COMPOSIO_MULTI_ACCOUNT is enabled. The Supabase path is NOT exercised against a real database in this change; scoping is verified against an in-memory store with identical predicates.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "uses the saved default when several accounts are connected"
+          },
+          {
+            "path": "backend/src/routes/composioAccountsRoutes.test.ts",
+            "marker": "saves a default account only from the caller"
+          }
+        ]
+      }
+    },
+    {
+      "id": "efcea50ee89050f4365f",
+      "path": "backend/src/services/integrations/composioDefaultAccounts.ts",
+      "line": 39,
+      "enclosing": "set",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "2f07e4d3cf474fad4577eaf9a7ed20301f018a2c8a71410938355403202f5021",
+      "semanticReview": {
+        "authority": "Callers are composioAccounts.ts and the accounts routes behind the integrations authentication, always with the verified request user id. Every read, upsert and delete carries that user id and the toolkit as explicit predicates, after both are validated against a strict UUID and slug pattern. No request body, query or model output supplies the owner.",
+        "reason": "The table holds only a Composio connected-account id, a public identifier and not a credential. The stored id is never trusted on its own: before use composioAccounts.ts proves it is still one of the owner's own active private accounts at Composio, so a stale or tampered row can only fail closed. RLS allows the owner SELECT only; all writes are server-side. The migration is not applied and the feature is disabled until XROGA_COMPOSIO_MULTI_ACCOUNT is enabled. The Supabase path is NOT exercised against a real database in this change; scoping is verified against an in-memory store with identical predicates.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "uses the saved default when several accounts are connected"
+          },
+          {
+            "path": "backend/src/routes/composioAccountsRoutes.test.ts",
+            "marker": "saves a default account only from the caller"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4d8476885f2e19e11458",
+      "path": "backend/src/services/integrations/composioDefaultAccounts.ts",
+      "line": 46,
+      "enclosing": "clear",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "composio_default_accounts",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "2f07e4d3cf474fad4577eaf9a7ed20301f018a2c8a71410938355403202f5021",
+      "semanticReview": {
+        "authority": "Callers are composioAccounts.ts and the accounts routes behind the integrations authentication, always with the verified request user id. Every read, upsert and delete carries that user id and the toolkit as explicit predicates, after both are validated against a strict UUID and slug pattern. No request body, query or model output supplies the owner.",
+        "reason": "The table holds only a Composio connected-account id, a public identifier and not a credential. The stored id is never trusted on its own: before use composioAccounts.ts proves it is still one of the owner's own active private accounts at Composio, so a stale or tampered row can only fail closed. RLS allows the owner SELECT only; all writes are server-side. The migration is not applied and the feature is disabled until XROGA_COMPOSIO_MULTI_ACCOUNT is enabled. The Supabase path is NOT exercised against a real database in this change; scoping is verified against an in-memory store with identical predicates.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "uses the saved default when several accounts are connected"
+          },
+          {
+            "path": "backend/src/routes/composioAccountsRoutes.test.ts",
+            "marker": "saves a default account only from the caller"
+          }
+        ]
+      }
+    },
+    {
+      "id": "3f02aab9fa8f58638b72",
+      "path": "backend/src/services/integrations/composioDefaultAccounts.ts",
+      "line": 46,
+      "enclosing": "clear",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "2f07e4d3cf474fad4577eaf9a7ed20301f018a2c8a71410938355403202f5021",
+      "semanticReview": {
+        "authority": "Callers are composioAccounts.ts and the accounts routes behind the integrations authentication, always with the verified request user id. Every read, upsert and delete carries that user id and the toolkit as explicit predicates, after both are validated against a strict UUID and slug pattern. No request body, query or model output supplies the owner.",
+        "reason": "The table holds only a Composio connected-account id, a public identifier and not a credential. The stored id is never trusted on its own: before use composioAccounts.ts proves it is still one of the owner's own active private accounts at Composio, so a stale or tampered row can only fail closed. RLS allows the owner SELECT only; all writes are server-side. The migration is not applied and the feature is disabled until XROGA_COMPOSIO_MULTI_ACCOUNT is enabled. The Supabase path is NOT exercised against a real database in this change; scoping is verified against an in-memory store with identical predicates.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "uses the saved default when several accounts are connected"
+          },
+          {
+            "path": "backend/src/routes/composioAccountsRoutes.test.ts",
+            "marker": "saves a default account only from the caller"
+          }
+        ]
+      }
     },
     {
       "id": "2697b20e243c70e7d302",
