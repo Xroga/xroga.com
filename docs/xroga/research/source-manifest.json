@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2d7314d12b45cc2f7778010b5eb373d4de5a3963",
+  "source_sha": "b499999a7e5d5fb1fa52e68ce55d0a0cc3e734b2",
   "hash_policy": "Exact preserved attachment bytes; repository text uses Git-canonical LF bytes for portable hashes and byte counts",
   "sources": [
     {
@@ -5298,9 +5298,9 @@
       "source_id": "SRC-3d3190a1571aa705",
       "filename": "current-state.json",
       "path_or_url": "docs/xroga/current-state.json",
-      "sha256": "b3daa0181c4da52ce7e9b04854ef500b6599bd7d91a90379d9667f47c4ab6ad8",
+      "sha256": "07bae15aca22d5464a7f10e5d617190d759473d2121ac7972d378fb275686140",
       "byte_size": 4461514,
-      "modified_timestamp": "2026-10-26T18:11:55.846Z",
+      "modified_timestamp": "2026-10-26T18:16:57.744Z",
       "parse_status": "PARSED_JSON",
       "category": "REPOSITORY_DOCUMENT",
       "authority": "ADVISORY",
@@ -24941,9 +24941,9 @@
       "source_id": "SRC-c41f496bb7729ac3",
       "filename": "ignore-vercel-build.mjs",
       "path_or_url": "scripts/ci/ignore-vercel-build.mjs",
-      "sha256": "3a589e32e5496da3f7bc8307f526d6d219cb879e87a316b628927344c1266115",
-      "byte_size": 944,
-      "modified_timestamp": "2026-10-13T22:21:06.906Z",
+      "sha256": "e5910b47d7b237d35e3ce58eea1d688bc080ad0b5a425a727f490e53c1f677be",
+      "byte_size": 981,
+      "modified_timestamp": "2026-10-26T18:16:29.704Z",
       "parse_status": "AST_METADATA",
       "category": "SOURCE_CODE",
       "authority": "CURRENT_CODE",

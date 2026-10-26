@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-universal-connected-apps",
-    "sha": "2d7314d12b45cc2f7778010b5eb373d4de5a3963",
-    "sourceTimestampUtc": "2026-10-26T23:03:37+05:00",
-    "auditStartedUtc": "2026-10-26T18:11:55.292Z",
+    "sha": "b499999a7e5d5fb1fa52e68ce55d0a0cc3e734b2",
+    "sourceTimestampUtc": "2026-10-26T23:13:13+05:00",
+    "auditStartedUtc": "2026-10-26T18:16:57.485Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -95713,7 +95713,7 @@
       "id": "surface:c41f496bb7729ac3f725",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/ignore-vercel-build.mjs",
-      "sha256": "3a589e32e5496da3f7bc8307f526d6d219cb879e87a316b628927344c1266115",
+      "sha256": "e5910b47d7b237d35e3ce58eea1d688bc080ad0b5a425a727f490e53c1f677be",
       "symbols": [
         "blockedPreviewBranch",
         "result",
