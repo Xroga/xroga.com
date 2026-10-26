@@ -86,8 +86,18 @@ export function createBuilderPhase2Router(servicesFor: Phase2ServicesFactory = p
     res.json(await builder.diff(tenant.userId, id(req.params.projectId), id(req.params.revisionId), against));
   }));
 
-  router.post('/projects/:projectId/revisions/:revisionId/restore', handle(async (tenant, { builder }, req, res) => {
-    res.json(await builder.restoreRevision(tenant.userId, id(req.params.projectId), id(req.params.revisionId)));
+  router.post('/projects/:projectId/revisions/:revisionId/restore', handle(async (tenant, { builder, preview, qa }, req, res) => {
+    const projectId = id(req.params.projectId);
+    const result = await builder.restoreRevision(tenant.userId, projectId, id(req.params.revisionId));
+    res.json(result);
+    // Restored source is tested before it is reported ready: restart the preview from it and rerun the browser tests,
+    // best effort and detached. Until a test passes, the project stays PARTIAL.
+    if (!result.unchanged) void preview.restart(tenant.userId, projectId).then(() => qa.runQa(tenant.userId, projectId)).catch(() => undefined);
+  }));
+
+  // Starts (or restarts) the isolated preview from the latest SAVED version, so a destroyed or expired sandbox is recoverable.
+  router.post('/projects/:projectId/preview/restart', handle(async (tenant, { preview }, req, res) => {
+    res.json(await preview.restart(tenant.userId, id(req.params.projectId)));
   }));
 
   // ---- Browser QA and repair ----

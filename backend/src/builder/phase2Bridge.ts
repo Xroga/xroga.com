@@ -94,8 +94,14 @@ function repairRunnerFor(tenant: TenantContext, builder: BuilderService): Repair
   };
 }
 
+/** Starts (or restarts) the isolated preview from the project's latest SAVED version, then checks that its pages respond. */
+export interface PreviewControl {
+  restart(userId: string, projectId: string): Promise<{ readonly started: boolean; readonly ready: boolean; readonly reason: string; readonly revisionNumber: number }>;
+}
+
 export interface Phase2Services {
   readonly builder: BuilderService;
+  readonly preview: PreviewControl;
   readonly qa: QaService;
   readonly github: GitHubExportService;
   readonly exporter: ExportService;
@@ -129,6 +135,22 @@ export function phase2ServicesFor(tenant: TenantContext): Phase2Services {
     builder, store, phase2, target: canonicalQaTarget(), repair: repairRunnerFor(context, builder), budgetAllows: (userId) => budgetAllowsRepair(userId),
     openDriver: (baseUrl) => openPlaywrightQaDriver({ baseUrl }),
   });
+  const preview: PreviewControl = {
+    async restart(userId, projectId) {
+      const project = await builder.requireProject(userId, projectId);
+      const { revision } = await builder.headFiles(userId, project);
+      if (!revision) throw new BuilderError('not_found', 'The project has no saved version to preview.');
+      // Recreated from the durable source of the head revision, so an expired or destroyed sandbox is recoverable.
+      const target = await canonicalQaTarget().ensure({ userId, project, revision });
+      if (!target) {
+        await store.markPreviewReadiness(userId, projectId, { revisionId: revision.id, ready: false });
+        return { started: false, ready: false, reason: 'The isolated runtime could not start this version. Nothing is reported as running.', revisionNumber: revision.revisionNumber };
+      }
+      const verdict = await canonicalPreviewPort.verify({ userId, projectId, revision });
+      await store.markPreviewReadiness(userId, projectId, verdict.strictReady === null ? null : { revisionId: revision.id, ready: verdict.strictReady });
+      return { started: true, ready: verdict.strictReady === true, reason: verdict.reason, revisionNumber: revision.revisionNumber };
+    },
+  };
   const github = new GitHubExportService({ phase2, builder, github: createRestGitHubPort(ghFetch), tokenFor: (userId) => getGitHubToken(userId) });
   const data = new SupabaseDataService({ phase2, builder, supabase: createRestSupabasePort(), tokenFor: (userId) => getSupabaseOAuthAccessToken(userId) });
   const hosting = new HostingService({
@@ -152,5 +174,5 @@ export function phase2ServicesFor(tenant: TenantContext): Phase2Services {
     const [github1, supabase, vercel, revisions] = await Promise.all([github.operations(userId, projectId), data.operations(userId, projectId), hosting.operations(userId, projectId), builder.history(userId, projectId)]);
     return deliveryByRevision([...github1, ...supabase, ...vercel], revisions);
   };
-  return { builder, qa, github, exporter: new ExportService({ builder, phase2 }), data, hosting, provenance };
+  return { builder, preview, qa, github, exporter: new ExportService({ builder, phase2 }), data, hosting, provenance };
 }

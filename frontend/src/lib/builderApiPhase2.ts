@@ -128,6 +128,7 @@ async function download(path: string): Promise<{ blob: Blob; filename: string; s
 export const builderPhase2Api = {
   intent: (input: { prompt: string; projectId?: string | null }) => request<{ intent: 'new_product' | 'followup' | 'other'; projectId: string | null }>('/intent', { method: 'POST', body: input }),
   diff: (projectId: string, revisionId: string, against?: string) => request<RevisionDiff>(`/projects/${projectId}/revisions/${revisionId}/diff${against ? `?against=${against}` : ''}`),
+  restartPreview: (projectId: string) => request<{ started: boolean; ready: boolean; reason: string; revisionNumber: number }>(`/projects/${projectId}/preview/restart`, { method: 'POST', body: {} }),
   restore: (projectId: string, revisionId: string) => request<{ restoredFrom: number; unchanged: boolean; notice: string }>(`/projects/${projectId}/revisions/${revisionId}/restore`, { method: 'POST', body: {} }),
   runQa: (projectId: string) => request<{ report: QaReport; summary: QaSummary }>(`/projects/${projectId}/qa`, { method: 'POST', body: {} }),
   latestQa: (projectId: string) => request<{ latest: QaSummary | null }>(`/projects/${projectId}/qa?latest=1`),

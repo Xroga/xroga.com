@@ -11,6 +11,7 @@ import { InMemoryPhase2Store } from './phase2Store.js';
 import { QaService } from './qa/qaService.js';
 import type { QaDriver, QaPage } from './qa/types.js';
 import { BuilderService, type BuildRunner } from './service.js';
+import { BuilderError } from './types.js';
 import { InMemoryBuilderStore } from './store.js';
 
 /** A complete in-memory service set with every provider replaced by its faithful fake. Tests only. */
@@ -87,6 +88,16 @@ export function makeServices(users: ReadonlyArray<{ id: string; github?: { token
     const [a, b, c, revisions] = await Promise.all([githubService.operations(userId, projectId), data.operations(userId, projectId), hosting.operations(userId, projectId), builder.history(userId, projectId)]);
     return deliveryByRevision([...a, ...b, ...c], revisions);
   };
-  const services: Phase2Services = { builder, qa, github: githubService, exporter: new ExportService({ builder, phase2 }), data, hosting, provenance };
+  const preview = {
+    restart: async (userId: string, projectId: string) => {
+      const project = await builder.requireProject(userId, projectId);
+      const { revision } = await builder.headFiles(userId, project);
+      if (!revision) throw new BuilderError('not_found', 'The project has no saved version to preview.');
+      if (!runtime.available) return { started: false, ready: false, reason: 'The isolated runtime could not start this version. Nothing is reported as running.', revisionNumber: revision.revisionNumber };
+      await store.markPreviewReadiness(userId, projectId, { revisionId: revision.id, ready: true });
+      return { started: true, ready: true, reason: 'All routes responded successfully.', revisionNumber: revision.revisionNumber };
+    },
+  };
+  const services: Phase2Services = { builder, preview, qa, github: githubService, exporter: new ExportService({ builder, phase2 }), data, hosting, provenance };
   return { store, phase2, builder, services, github, supabase, vercel, tokens, runtime, remote };
 }
