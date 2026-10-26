@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-openrouter-only",
-    "sha": "56f787ddcd700f0cac1eda2a39ecd7db52e0cfc4",
-    "sourceTimestampUtc": "2026-10-26T20:57:34+05:00",
-    "auditStartedUtc": "2026-10-26T16:01:35.047Z",
+    "sha": "fa8621596956e24bc6538d544787ed55fee40f51",
+    "sourceTimestampUtc": "2026-10-26T21:04:56+05:00",
+    "auditStartedUtc": "2026-10-26T16:19:04.107Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -100259,7 +100259,7 @@
       "id": "surface:0508a95649266c86d55d",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/runtime-inventory.mjs",
-      "sha256": "0b8cb7cf2748bfbc51fbdb77af14e70a2b0d5396bc9959b009b7495d560a7070",
+      "sha256": "dced8989cd292a62db94adaaa0d6d2a007e5bcf35f866fa1662d85c48dc9af81",
       "symbols": [
         "aliasKeys",
         "bindings",
@@ -100293,6 +100293,7 @@
         "modelSource",
         "names",
         "node",
+        "openRouterPriceCapKeys",
         "policy",
         "read",
         "renderRuntimeOutputs",
@@ -122413,7 +122414,7 @@
     {
       "id": "test-suite:e4abbb3327d5dd30e800",
       "sourcePath": "scripts/xroga/runtime-config.test.mjs",
-      "declaredTests": 8,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },
