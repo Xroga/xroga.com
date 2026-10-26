@@ -4,10 +4,12 @@ import { after, afterEach, before, describe, it } from 'node:test';
 
 import express from 'express';
 
-import { composioAccountsRouter } from './composioAccountsRoutes.js';
+import { memoryDefaultAccountStore } from '../services/integrations/composioDefaultAccounts.js';
+import { createComposioAccountsRouter } from './composioAccountsRoutes.js';
 
 const USER = '11111111-1111-4111-8111-111111111111';
 const real = globalThis.fetch;
+const defaults = memoryDefaultAccountStore();
 
 describe('multi-account routes', () => {
   let server: ReturnType<typeof express.application.listen>;
@@ -24,7 +26,7 @@ describe('multi-account routes', () => {
       if (who) (req as unknown as { userId: string }).userId = who;
       next();
     });
-    app.use('/accounts', composioAccountsRouter);
+    app.use('/accounts', createComposioAccountsRouter(defaults));
     server = app.listen(0);
     base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/accounts`;
     // Only calls to Composio are intercepted; calls to this test server pass through.
@@ -42,6 +44,7 @@ describe('multi-account routes', () => {
     return new Promise((done) => server.close(done));
   });
   afterEach(() => {
+    defaults.rows.clear();
     upstream = [];
     items = [];
     delete process.env.XROGA_COMPOSIO_MULTI_ACCOUNT;
@@ -84,6 +87,31 @@ describe('multi-account routes', () => {
     const ok = await call('/ca_mine1', { method: 'PATCH', body: { toolkit: 'gmail', alias: 'work-gmail' } });
     assert.equal(ok.status, 200);
     assert.equal(ok.body.account.alias, 'work-gmail');
+  });
+
+  it('saves a default account only from the caller\'s own list, returns it with the list, and can clear it', async () => {
+    process.env.XROGA_COMPOSIO_MULTI_ACCOUNT = 'enabled';
+    items = [account('ca_mine1'), account('ca_mine2')];
+    const denied = await call('/default', { method: 'PUT', body: { toolkit: 'gmail', accountId: 'ca_someone_else' } });
+    assert.equal(denied.status, 403);
+    assert.equal(defaults.rows.size, 0);
+    const saved = await call('/default', { method: 'PUT', body: { toolkit: 'gmail', accountId: 'ca_mine2' } });
+    assert.deepEqual(saved.body, { ok: true, defaultAccountId: 'ca_mine2' });
+    const listed = await call('/?toolkit=gmail');
+    assert.equal(listed.body.defaultAccountId, 'ca_mine2');
+    // Another user sees no default and cannot read this one.
+    const other = await call('/?toolkit=gmail', { user: '22222222-2222-4222-8222-222222222222' });
+    assert.equal(other.body.defaultAccountId, null);
+    const cleared = await call('/default', { method: 'PUT', body: { toolkit: 'gmail', accountId: null } });
+    assert.deepEqual(cleared.body, { ok: true, defaultAccountId: null });
+    assert.equal((await call('/?toolkit=gmail')).body.defaultAccountId, null);
+  });
+
+  it('refuses a default while multi-account is off and malformed default requests', async () => {
+    assert.equal((await call('/default', { method: 'PUT', body: { toolkit: 'gmail', accountId: 'ca_mine1' } })).status, 403);
+    process.env.XROGA_COMPOSIO_MULTI_ACCOUNT = 'enabled';
+    assert.equal((await call('/default', { method: 'PUT', body: { toolkit: 'gmail', accountId: 'bad id' } })).status, 400);
+    assert.equal((await call('/default', { method: 'PUT', body: { accountId: 'ca_mine1' } })).status, 400);
   });
 
   it('rejects malformed input without calling Composio', async () => {

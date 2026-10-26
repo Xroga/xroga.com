@@ -12,7 +12,8 @@ import {
   createReadOnlyComposioSession,
   interpretComposioExecuteResponse,
 } from './composioClient.js';
-import { listComposioConnectedAccounts, resolveComposioAccountSelection, setComposioAccountAlias, type XrogaConnectedAccount } from './composioAccounts.js';
+import { getComposioDefaultAccount, listComposioConnectedAccounts, resolveComposioAccountSelection, setComposioAccountAlias, setComposioDefaultAccount, type XrogaConnectedAccount } from './composioAccounts.js';
+import { memoryDefaultAccountStore } from './composioDefaultAccounts.js';
 import {
   INSTANT_LEDGER_ROUTE,
   executeComposioInstantTool,
@@ -286,11 +287,45 @@ describe('multiple connected accounts keep tenants apart', () => {
       { id: 'ca_a', toolkit: 'gmail', alias: null, label: null, status: 'ACTIVE' },
       { id: 'ca_b', toolkit: 'gmail', alias: 'work-gmail', label: null, status: 'ACTIVE' },
     ];
-    await assert.rejects(resolveComposioAccountSelection(USER, { toolkit: 'gmail' }, list), { code: 'COMPOSIO_ACCOUNT_SELECTION_REQUIRED' });
-    await assert.rejects(resolveComposioAccountSelection(USER, { toolkit: 'gmail', requestedAccountId: 'ca_of_someone_else' }, list), { code: 'COMPOSIO_ACCOUNT_NOT_OWNED' });
-    assert.equal((await resolveComposioAccountSelection(USER, { toolkit: 'gmail', requestedAccountId: 'ca_b' }, list)).accountId, 'ca_b');
+    const defaults = memoryDefaultAccountStore();
+    await assert.rejects(resolveComposioAccountSelection(USER, { toolkit: 'gmail' }, list, defaults), { code: 'COMPOSIO_ACCOUNT_SELECTION_REQUIRED' });
+    await assert.rejects(resolveComposioAccountSelection(USER, { toolkit: 'gmail', requestedAccountId: 'ca_of_someone_else' }, list, defaults), { code: 'COMPOSIO_ACCOUNT_NOT_OWNED' });
+    assert.equal((await resolveComposioAccountSelection(USER, { toolkit: 'gmail', requestedAccountId: 'ca_b' }, list, defaults)).accountId, 'ca_b');
     const single = async () => [{ id: 'ca_a', toolkit: 'gmail', alias: null, label: null, status: 'ACTIVE' as const }];
-    assert.equal((await resolveComposioAccountSelection(USER, { toolkit: 'gmail' }, single)).accountId, 'ca_a');
+    assert.equal((await resolveComposioAccountSelection(USER, { toolkit: 'gmail' }, single, defaults)).accountId, 'ca_a');
+  });
+
+  it('uses the saved default when several accounts are connected, but only while it is still the caller\'s own account', async () => {
+    const list = async (): Promise<XrogaConnectedAccount[]> => [
+      { id: 'ca_a', toolkit: 'gmail', alias: null, label: null, status: 'ACTIVE' },
+      { id: 'ca_b', toolkit: 'gmail', alias: 'work-gmail', label: null, status: 'ACTIVE' },
+    ];
+    const defaults = memoryDefaultAccountStore();
+    assert.deepEqual(await setComposioDefaultAccount(USER, { toolkit: 'gmail', accountId: 'ca_b' }, list, defaults), { defaultAccountId: 'ca_b' });
+    assert.equal((await resolveComposioAccountSelection(USER, { toolkit: 'gmail' }, list, defaults)).accountId, 'ca_b');
+    assert.equal(await getComposioDefaultAccount(USER, { toolkit: 'gmail', accounts: await list() }, defaults), 'ca_b');
+    // An explicit choice still wins over the default.
+    assert.equal((await resolveComposioAccountSelection(USER, { toolkit: 'gmail', requestedAccountId: 'ca_a' }, list, defaults)).accountId, 'ca_a');
+    // The default belongs to its owner only.
+    assert.equal(await defaults.get(OTHER, 'gmail'), null);
+    await assert.rejects(resolveComposioAccountSelection(OTHER, { toolkit: 'gmail' }, list, defaults), { code: 'COMPOSIO_ACCOUNT_SELECTION_REQUIRED' });
+    // The saved account was disconnected: never used, the user is asked again.
+    defaults.rows.set(`${USER}\u0000gmail`, 'ca_gone');
+    await assert.rejects(resolveComposioAccountSelection(USER, { toolkit: 'gmail' }, list, defaults), { code: 'COMPOSIO_ACCOUNT_SELECTION_REQUIRED' });
+    assert.equal(await getComposioDefaultAccount(USER, { toolkit: 'gmail', accounts: await list() }, defaults), null);
+  });
+
+  it('refuses to save a default that is not the caller\'s own account, and can clear it', async () => {
+    const list = async (): Promise<XrogaConnectedAccount[]> => [{ id: 'ca_a', toolkit: 'gmail', alias: null, label: null, status: 'ACTIVE' }];
+    const defaults = memoryDefaultAccountStore();
+    await assert.rejects(setComposioDefaultAccount(USER, { toolkit: 'gmail', accountId: 'ca_someone_else' }, list, defaults), { code: 'COMPOSIO_ACCOUNT_NOT_OWNED' });
+    assert.equal(defaults.rows.size, 0);
+    await setComposioDefaultAccount(USER, { toolkit: 'gmail', accountId: 'ca_a' }, list, defaults);
+    assert.equal(defaults.rows.size, 1);
+    assert.deepEqual(await setComposioDefaultAccount(USER, { toolkit: 'gmail', accountId: null }, list, defaults), { defaultAccountId: null });
+    assert.equal(defaults.rows.size, 0);
+    delete process.env.XROGA_COMPOSIO_MULTI_ACCOUNT;
+    await assert.rejects(setComposioDefaultAccount(USER, { toolkit: 'gmail', accountId: 'ca_a' }, list, defaults), { code: 'COMPOSIO_MULTI_ACCOUNT_DISABLED' });
   });
 
   it('never accepts a request-supplied account id when multi-account is off', async () => {

@@ -1,4 +1,5 @@
 import { ComposioClientError, composioRequest } from './composioClient.js';
+import { supabaseDefaultAccountStore, type DefaultAccountStore } from './composioDefaultAccounts.js';
 import { readComposioCapabilityFlags } from './composioPolicy.js';
 
 /**
@@ -91,6 +92,7 @@ export async function resolveComposioAccountSelection(
   userId: string,
   input: { toolkit: string; requestedAccountId?: string | null },
   list: typeof listComposioConnectedAccounts = listComposioConnectedAccounts,
+  defaults: DefaultAccountStore = supabaseDefaultAccountStore,
 ): Promise<{ accountId: string | null; accounts: XrogaConnectedAccount[] }> {
   if (!readComposioCapabilityFlags().multiAccount) {
     // Never accept a request-supplied account id that has not been proven to be the caller's.
@@ -105,7 +107,10 @@ export async function resolveComposioAccountSelection(
     return { accountId: input.requestedAccountId, accounts };
   }
   if (accounts.length > 1) {
-    throw new ComposioClientError('Several accounts are connected for this app. Choose which one to use.', { status: 409, code: 'COMPOSIO_ACCOUNT_SELECTION_REQUIRED' });
+    // The user's saved default, but only if it is still one of their own active private accounts.
+    const saved = await defaults.get(userId, input.toolkit.trim().toLowerCase()).catch(() => null);
+    if (saved && accounts.some((account) => account.id === saved)) return { accountId: saved, accounts };
+    throw new ComposioClientError('Several accounts are connected for this app. Choose a default account for it in Connected accounts.', { status: 409, code: 'COMPOSIO_ACCOUNT_SELECTION_REQUIRED' });
   }
   return { accountId: accounts[0]?.id ?? null, accounts };
 }
@@ -128,4 +133,38 @@ export async function setComposioAccountAlias(
   }
   await composioRequest(`/connected_accounts/${encodeURIComponent(target.id)}`, { method: 'PATCH', body: { alias } });
   return { ...target, alias };
+}
+
+/** The default account for an app, but only if it is still one of the caller's own active private accounts. */
+export async function getComposioDefaultAccount(
+  userId: string,
+  input: { toolkit: string; accounts: readonly XrogaConnectedAccount[] },
+  defaults: DefaultAccountStore = supabaseDefaultAccountStore,
+): Promise<string | null> {
+  const saved = await defaults.get(userId, input.toolkit.trim().toLowerCase()).catch(() => null);
+  return saved && input.accounts.some((account) => account.id === saved) ? saved : null;
+}
+
+/** Saves (or clears, with null) the default account. The account must be in the caller's own fresh list. */
+export async function setComposioDefaultAccount(
+  userId: string,
+  input: { toolkit: string; accountId: string | null },
+  list: typeof listComposioConnectedAccounts = listComposioConnectedAccounts,
+  defaults: DefaultAccountStore = supabaseDefaultAccountStore,
+): Promise<{ defaultAccountId: string | null }> {
+  if (!readComposioCapabilityFlags().multiAccount) {
+    throw new ComposioClientError('Multiple accounts are not enabled.', { status: 403, code: 'COMPOSIO_MULTI_ACCOUNT_DISABLED' });
+  }
+  const toolkit = input.toolkit.trim().toLowerCase();
+  if (!TOOLKIT.test(toolkit)) throw new ComposioClientError('Invalid integration identifier.', { status: 400, code: 'INVALID_COMPOSIO_TOOLKIT' });
+  if (input.accountId === null) {
+    await defaults.clear(userId, toolkit);
+    return { defaultAccountId: null };
+  }
+  const accounts = await list(userId, { toolkit });
+  if (!accounts.some((account) => account.id === input.accountId)) {
+    throw new ComposioClientError('That connected account is not available to you.', { status: 403, code: 'COMPOSIO_ACCOUNT_NOT_OWNED' });
+  }
+  await defaults.set(userId, toolkit, input.accountId);
+  return { defaultAccountId: input.accountId };
 }

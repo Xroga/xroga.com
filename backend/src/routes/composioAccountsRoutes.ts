@@ -3,7 +3,8 @@ import { z } from 'zod';
 
 import type { AuthRequest } from '../middleware/auth.js';
 import { ComposioClientError, canUserAccessComposioToolkit } from '../services/integrations/composioClient.js';
-import { listComposioConnectedAccounts, setComposioAccountAlias } from '../services/integrations/composioAccounts.js';
+import { getComposioDefaultAccount, listComposioConnectedAccounts, setComposioAccountAlias, setComposioDefaultAccount } from '../services/integrations/composioAccounts.js';
+import { supabaseDefaultAccountStore, type DefaultAccountStore } from '../services/integrations/composioDefaultAccounts.js';
 import { readComposioCapabilityFlags } from '../services/integrations/composioPolicy.js';
 
 /**
@@ -12,7 +13,8 @@ import { readComposioCapabilityFlags } from '../services/integrations/composioPo
  * the integrations router. Identity comes only from the verified request user; an account id from the
  * body is only ever used if it appears in that user's own freshly fetched list.
  */
-export const composioAccountsRouter = Router();
+export function createComposioAccountsRouter(defaults: DefaultAccountStore = supabaseDefaultAccountStore): Router {
+const composioAccountsRouter = Router();
 
 const TOOLKIT = z.string().trim().min(2).max(80).regex(/^[A-Za-z0-9_-]+$/);
 
@@ -41,7 +43,26 @@ composioAccountsRouter.get('/', async (req: AuthRequest, res: Response) => {
     return;
   }
   try {
-    res.json({ ok: true, multiAccount: true, accounts: await listComposioConnectedAccounts(req.userId!, { toolkit }) });
+    const accounts = await listComposioConnectedAccounts(req.userId!, { toolkit });
+    res.json({ ok: true, multiAccount: true, accounts, defaultAccountId: await getComposioDefaultAccount(req.userId!, { toolkit, accounts }, defaults) });
+  } catch (error) {
+    fail(res, error);
+  }
+});
+
+composioAccountsRouter.put('/default', async (req: AuthRequest, res: Response) => {
+  const parsed = z.object({ toolkit: TOOLKIT, accountId: z.string().regex(/^[A-Za-z0-9_-]{4,64}$/).nullable() }).safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ ok: false, error: 'A toolkit and an account are required.' });
+    return;
+  }
+  const toolkit = parsed.data.toolkit.toLowerCase();
+  if (!canUserAccessComposioToolkit(req.userId!, toolkit)) {
+    res.status(404).json({ ok: false, error: 'Plugin not found.' });
+    return;
+  }
+  try {
+    res.json({ ok: true, ...(await setComposioDefaultAccount(req.userId!, { toolkit, accountId: parsed.data.accountId }, undefined, defaults)) });
   } catch (error) {
     fail(res, error);
   }
@@ -67,3 +88,8 @@ composioAccountsRouter.patch('/:accountId', async (req: AuthRequest, res: Respon
     fail(res, error);
   }
 });
+
+return composioAccountsRouter;
+}
+
+export const composioAccountsRouter = createComposioAccountsRouter();
