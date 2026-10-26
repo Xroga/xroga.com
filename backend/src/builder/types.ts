@@ -150,14 +150,24 @@ export interface VerificationRecord {
   readonly createdAt: string;
 }
 
+export type ExternalProvider = 'github' | 'supabase' | 'vercel';
+export type ExternalAction =
+  | 'create_repository'
+  | 'push_revision'
+  | 'bind_supabase_project'
+  | 'apply_migration'
+  | 'prepare_preview'
+  | 'deploy_preview'
+  | 'promote_production';
+
 export type ExternalOperationStatus = 'prepared' | 'approved' | 'executing' | 'succeeded' | 'failed' | 'ambiguous' | 'diverged' | 'cancelled';
 
 export interface ExternalOperation {
   readonly id: string;
   readonly projectId: string;
   readonly userId: string;
-  readonly provider: 'github';
-  readonly action: 'create_repository' | 'push_revision';
+  readonly provider: ExternalProvider;
+  readonly action: ExternalAction;
   readonly operationKey: string;
   readonly revisionId: string;
   readonly status: ExternalOperationStatus;

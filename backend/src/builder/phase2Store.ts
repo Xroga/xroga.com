@@ -5,7 +5,9 @@ import { requireTenantContext, type TenantContext } from '../security/tenantCont
 import type { BuilderStore } from './store.js';
 import {
   BuilderError,
+  type ExternalAction,
   type ExternalOperation,
+  type ExternalProvider,
   type ExternalOperationStatus,
   type VerificationKind,
   type VerificationRecord,
@@ -23,8 +25,8 @@ export interface SaveVerificationInput {
 }
 
 export interface CreateOperationInput {
-  readonly provider: 'github';
-  readonly action: 'create_repository' | 'push_revision';
+  readonly provider: ExternalProvider;
+  readonly action: ExternalAction;
   readonly operationKey: string;
   readonly revisionId: string;
   readonly plan: Record<string, unknown>;
@@ -148,7 +150,7 @@ interface VerificationRow {
   executed_checks: number; summary: Record<string, unknown>; report?: unknown; created_at: string;
 }
 interface OperationRow {
-  id: string; project_id: string; user_id: string; provider: 'github'; action: ExternalOperation['action']; operation_key: string; revision_id: string;
+  id: string; project_id: string; user_id: string; provider: ExternalProvider; action: ExternalAction; operation_key: string; revision_id: string;
   status: ExternalOperationStatus; plan: Record<string, unknown>; plan_digest: string; approved_at: string | null; approval_expires_at: string | null;
   receipt: Record<string, unknown> | null; failure: string | null; created_at: string; updated_at: string;
 }
