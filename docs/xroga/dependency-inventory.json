@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e59566db234b2a086f371efcd58fe5f03acddb9a",
+  "source_sha": "a03523e7c3731194b5ec2182e5554e57e4aa9326",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -534,6 +534,7 @@
       "state": "LOCAL_ONLY",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "backend/src/builder/servicesFixture.testsupport.ts",
         "backend/src/community/commentUpdate.local.integration.ts",
         "backend/src/community/postMutation.local.integration.ts",
         "backend/src/community/reads.local.integration.ts",
@@ -688,6 +689,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "backend/src/builder/servicesFixture.testsupport.ts",
         "backend/src/community/commentUpdate.local.integration.ts",
         "backend/src/community/postMutation.local.integration.ts",
         "backend/src/community/reads.local.integration.ts",
@@ -1789,6 +1791,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "backend/src/builder/data/restPort.ts",
         "backend/src/routes/supabaseOAuth.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/supabaseProvision.ts"
@@ -1817,6 +1820,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "backend/src/builder/data/restPort.ts",
         "backend/src/routes/supabaseOAuth.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/supabaseProvision.ts"
@@ -1832,6 +1836,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "backend/src/builder/hosting/restPort.ts",
         "backend/src/lib/vercel.ts",
         "backend/src/lib/vercelDomains.ts",
         "backend/src/lib/vercelEnv.ts",
@@ -1879,6 +1884,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "backend/src/builder/hosting/restPort.ts",
         "backend/src/lib/vercel.ts",
         "backend/src/lib/vercelDomains.ts",
         "backend/src/lib/vercelEnv.ts",
@@ -13527,7 +13533,7 @@
     },
     {
       "path": ".github/workflows/builder-phase1.yml",
-      "sha256": "11af4c67196b5936aeaa23a01d7e8203b0ab6d52166680a53d370cc8ae181e84"
+      "sha256": "e8b7e2f40cee8f844244607f28427edc05422e7b3794af4997058a6d02bd7c04"
     },
     {
       "path": ".github/workflows/chat-turn-rail-browser.yml",
@@ -14162,6 +14168,38 @@
       "sha256": "6173a5dec6f80b526ed0a0c1809a85f5e02d0a96c095fc38e37301793ae67e7c"
     },
     {
+      "path": "backend/src/builder/data/env.ts",
+      "sha256": "0f9da9d09bdef8f461361c1079122b215c5279c6be72c73eae70617f31385f45"
+    },
+    {
+      "path": "backend/src/builder/data/fakeSupabase.testsupport.ts",
+      "sha256": "244f03014f87a64d56e86476e3546dfaad18ee790f53ed418da15d089b8b6e45"
+    },
+    {
+      "path": "backend/src/builder/data/port.ts",
+      "sha256": "fb39f851ee8e71866b6359dffff4d0f8e36370eb54462d0a410baaaebd81d1a6"
+    },
+    {
+      "path": "backend/src/builder/data/restPort.ts",
+      "sha256": "3ad86c97a9e2bf83f0cfb2ab2238ad7862215ca436affbbd4cdbc8ec786ad0a8"
+    },
+    {
+      "path": "backend/src/builder/data/review.ts",
+      "sha256": "c1ccaca362215e6da6e5708f76dec650d3115ebbbcdb91a1018c8b52bbe30df5"
+    },
+    {
+      "path": "backend/src/builder/data/schema.ts",
+      "sha256": "9ce979d825c9ad47d2360e5e7b69b65ba3e8ceb2e1dcb96a3a6e61c6de9ab807"
+    },
+    {
+      "path": "backend/src/builder/data/service.ts",
+      "sha256": "9196412d20c5ac26e88e4afba8ea71e391f21a6a38927a6687ae444a346a0b21"
+    },
+    {
+      "path": "backend/src/builder/delivery.ts",
+      "sha256": "ba1c48e068cc8f0db68228bb548a6cd03b444e37271891c4958d81d0a34b9797"
+    },
+    {
       "path": "backend/src/builder/diff.ts",
       "sha256": "333a2ff95cc3d7f5551d0142528636041ed12c89c76974f7257e944aeb22609a"
     },
@@ -14187,19 +14225,39 @@
     },
     {
       "path": "backend/src/builder/github/service.ts",
-      "sha256": "35d2c0bcd8aee3355c5a11e946b747ba3f4bca0ed2d06c366171e7cc0c1cc54e"
+      "sha256": "75cafc2802f313b8c7610fc7ac35b6e855925fdd65508b1239eedf86f79e6139"
+    },
+    {
+      "path": "backend/src/builder/hosting/fakeVercel.testsupport.ts",
+      "sha256": "40515eea329872dff428088251527cbc265f5d9c653fce0c80a37a85bb402060"
+    },
+    {
+      "path": "backend/src/builder/hosting/port.ts",
+      "sha256": "71885513006f9b71d5c2398c8f87cbde8238514beb0034ca8753cce6402e9b2e"
+    },
+    {
+      "path": "backend/src/builder/hosting/restPort.ts",
+      "sha256": "e64e6cc2b0c4c822fdbcada1c0f9217686e3f10f7571a8010ae67f866838cd3e"
+    },
+    {
+      "path": "backend/src/builder/hosting/service.ts",
+      "sha256": "0223bb159c425eb43b392e49d5768046457c107bbe3ae6530b77ddfe82748dad"
     },
     {
       "path": "backend/src/builder/intent.ts",
       "sha256": "65d97d7c426da2b5e5465605189c00cc78f6bbf55496e275fbecb5d149dedc62"
     },
     {
+      "path": "backend/src/builder/operations.ts",
+      "sha256": "aa584a994bb145c9a5464eb2e8446297796c9e34406d045b5f2b0e0be8933785"
+    },
+    {
       "path": "backend/src/builder/phase2Bridge.ts",
-      "sha256": "41008b84d92ab8e16c28475d93dc4bb1529015c5c571a84348a21100fe2db46b"
+      "sha256": "986b16689c93e89a8d81b0a9c7ad0a95b6e35f920b1187876491ff898ee9b43f"
     },
     {
       "path": "backend/src/builder/phase2Store.ts",
-      "sha256": "4e07d9b95cc6ca561b12ebd5fc8386f8bfc9a08c43f4a34d95b98315eca0e6a3"
+      "sha256": "846d8157881a584b8addffcb4e368a631b107ccabd59afc9dfb03c3073c2fc2a"
     },
     {
       "path": "backend/src/builder/pipelineBinding.ts",
@@ -14211,15 +14269,15 @@
     },
     {
       "path": "backend/src/builder/qa/plan.ts",
-      "sha256": "5808ab3e36b64aaa1b41956772895f0ea6ff839ef19b6536cd460e994356182d"
+      "sha256": "96d5c6b838876afc10398d490e986d17fe4f4bef9e29411471af1adb97495d56"
     },
     {
       "path": "backend/src/builder/qa/playwrightQaDriver.ts",
-      "sha256": "d02da5896788cb3cb3552c220ef6614e4a1332720270ec89fdfa950f88364ae5"
+      "sha256": "88891b6242b0c817182552fbdad182bfccb7119a5323ea3cd2f0ee021fef3137"
     },
     {
       "path": "backend/src/builder/qa/qaService.ts",
-      "sha256": "0421a81fa03bfa7daf591a92c286ea53db661843d6a767582376920b8542a97d"
+      "sha256": "4aae6a921e64a3a6a2b48d9438ffb59ae8580b422aab38f8fcc0aa5e406da140"
     },
     {
       "path": "backend/src/builder/qa/repair.ts",
@@ -14242,6 +14300,10 @@
       "sha256": "719fd7a3aeff6805f785b28f1813cfd663b0a6bd261da9a87ece124c93b5c82d"
     },
     {
+      "path": "backend/src/builder/servicesFixture.testsupport.ts",
+      "sha256": "645c6b833fa779bf4571c97373f36256685258c8b96476c5548f3dd40b752d37"
+    },
+    {
       "path": "backend/src/builder/snapshot.ts",
       "sha256": "0292619f1488edc3cd89f62d073eacbc6ffcf110f2bdc06f02a46fca6f8b1d8a"
     },
@@ -14251,7 +14313,7 @@
     },
     {
       "path": "backend/src/builder/starters.ts",
-      "sha256": "4fefca48c65f0864997d3e008b24cff948bf238ba0fc67e7e700f65f0bed8a48"
+      "sha256": "a33f75e888f46f0c980976619f9a2ce3aebc85f29fcdfd03851efa2750c88f04"
     },
     {
       "path": "backend/src/builder/store.ts",
@@ -14263,7 +14325,7 @@
     },
     {
       "path": "backend/src/builder/types.ts",
-      "sha256": "bb4ebaa858292811bc6561be1df6374029e1c573138614074325f2aebd15e975"
+      "sha256": "3276ac27f09a8cd43010ffd5e93afc0a71813ae959c92ad57feabbcfa06ff562"
     },
     {
       "path": "backend/src/capabilities/generated.ts",
@@ -14883,11 +14945,15 @@
     },
     {
       "path": "backend/src/routes/builder.ts",
-      "sha256": "cca589797c1679fd6bb46365a653f2ac0ca14159c3fedc1983bbe6eee916d7c4"
+      "sha256": "921f9650c6f5d7797f3576cd1734f637150de019e7dcfe412a57f620698977b6"
     },
     {
       "path": "backend/src/routes/builderPhase2.ts",
       "sha256": "286dc018ef3eba611c5b2104d28dbdb921fbf530b74eceb1a7f7b87ad4c95615"
+    },
+    {
+      "path": "backend/src/routes/builderPhase3.ts",
+      "sha256": "c03dd96ca425b41013be1b8d2f350728d50a9b3424ca540a1bf6e732b738d958"
     },
     {
       "path": "backend/src/routes/businessAutomationScheduler.ts",
@@ -18535,7 +18601,7 @@
     },
     {
       "path": "frontend/src/components/terminal/BuilderProjectPanel.tsx",
-      "sha256": "69e8ec3a0e4b45567d5e5827ee84669e6acab5304073723d628839a58a082ae5"
+      "sha256": "c10882a8bc592ff5a4ced8b540c3b70d275a04e922c7d468d9107e14c2d9d4da"
     },
     {
       "path": "frontend/src/components/terminal/CapacityUnavailableCard.tsx",
@@ -18842,12 +18908,24 @@
       "sha256": "aa3541bab9beba30adcc495dae9cbf798133440ce85e2da45814de6a74dd21ad"
     },
     {
+      "path": "frontend/src/components/terminal/builder/BuilderDatabase.tsx",
+      "sha256": "3afad16684167d137c3ca702d2d5f0de6723011d644103b744659ec84b5910e5"
+    },
+    {
       "path": "frontend/src/components/terminal/builder/BuilderDelivery.tsx",
       "sha256": "a318150907ce793a9836d457eb91e5ba7a8c4a54a693a3c0c24302e14ffce479"
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderHistory.tsx",
       "sha256": "501711ec05bfd55b200a50a1c23266964f2c32320d385f2e322eed66b42a3e19"
+    },
+    {
+      "path": "frontend/src/components/terminal/builder/BuilderHosting.tsx",
+      "sha256": "dfb07936dd1af29aa814c030c15e1fdb2f2c7f816e96e9cadff58d2af8260273"
+    },
+    {
+      "path": "frontend/src/components/terminal/builder/BuilderProvenance.tsx",
+      "sha256": "35fab1af41d29da712d209128ec16dd4999d806217b16564b6a8ad22ab773fd3"
     },
     {
       "path": "frontend/src/components/terminal/builder/BuilderTests.tsx",
@@ -19136,6 +19214,10 @@
     {
       "path": "frontend/src/lib/builderApiPhase2.ts",
       "sha256": "be69b888c42d22151791f761547d924b84c68a4195a775182c53e92c0c0f4059"
+    },
+    {
+      "path": "frontend/src/lib/builderApiPhase3.ts",
+      "sha256": "f26cdfe5796b1b0797c84165f277c172b397b7f6dbf4e4a36e45d218408e7fb2"
     },
     {
       "path": "frontend/src/lib/builderChat.ts",
@@ -20925,6 +21007,13 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "api.supabase.com",
+      "protocol": "https:",
+      "path": "backend/src/builder/data/restPort.ts",
+      "line": 7,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/builder/github/fakeGitHub.testsupport.ts",
@@ -20932,10 +21021,24 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "api.vercel.com",
+      "protocol": "https:",
+      "path": "backend/src/builder/hosting/restPort.ts",
+      "line": 7,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "example.test",
       "protocol": "https:",
       "path": "backend/src/builder/qa/plan.ts",
       "line": 57,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/builder/servicesFixture.testsupport.ts",
+      "line": 66,
       "credentialsInUrl": false
     },
     {
@@ -27794,6 +27897,48 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/builder/data/fakeSupabase.testsupport.ts",
+      "line": 26,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/data/fakeSupabase.testsupport.ts",
+      "line": 34,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/data/review.ts",
+      "line": 118,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/data/review.ts",
+      "line": 119,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/delivery.ts",
+      "line": 46,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/delivery.ts",
+      "line": 47,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/builder/diff.ts",
       "line": 92,
       "scope": "FUNCTION_LOCAL",
@@ -27920,9 +28065,37 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/builder/hosting/fakeVercel.testsupport.ts",
+      "line": 27,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/hosting/fakeVercel.testsupport.ts",
+      "line": 28,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/hosting/fakeVercel.testsupport.ts",
+      "line": 30,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/builder/qa/plan.ts",
       "line": 38,
       "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/qa/plan.ts",
+      "line": 105,
+      "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
@@ -27964,6 +28137,27 @@
     {
       "path": "backend/src/builder/readiness.ts",
       "line": 53,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/servicesFixture.testsupport.ts",
+      "line": 44,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/servicesFixture.testsupport.ts",
+      "line": 44,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/servicesFixture.testsupport.ts",
+      "line": 44,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
