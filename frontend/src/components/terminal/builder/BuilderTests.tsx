@@ -15,6 +15,7 @@ const REPAIR_LABEL: Record<RepairResult['status'], string> = {
   stalled: 'Stopped: the same problem remained after consecutive fixes.',
   budget_exhausted: 'Stopped: your plan budget does not allow another fix right now.',
   pending_runtime: 'Not run: there is no running copy of the app to test.',
+  engine_unavailable: 'Not run: the automatic fixing engine is not available yet.',
   cancelled: 'Cancelled.',
 };
 

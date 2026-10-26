@@ -102,7 +102,7 @@ export function assertNonDestructiveRepair(committed: readonly ProjectFile[], he
   if (verdict.destructive) throw new BuilderError('invalid_input', `Repair refused: ${verdict.reason}`);
 }
 
-export type RepairLoopStatus = 'passed' | 'repaired' | 'unrepaired' | 'exhausted' | 'stalled' | 'budget_exhausted' | 'pending_runtime' | 'cancelled';
+export type RepairLoopStatus = 'passed' | 'repaired' | 'unrepaired' | 'exhausted' | 'stalled' | 'budget_exhausted' | 'pending_runtime' | 'engine_unavailable' | 'cancelled';
 
 export interface RepairAttemptRecord {
   readonly attempt: number;
@@ -161,6 +161,8 @@ export async function runRepairLoop(input: {
     try {
       result = await ports.repair({ packet, prompt: buildRepairPrompt(packet), head, guard: assertNonDestructiveRepair });
     } catch (error) {
+      // The engineering engine itself is unavailable: further attempts would fail the same way.
+      if (error instanceof BuilderError && error.code === 'unsupported') return done('engine_unavailable', error.message);
       const refused = error instanceof BuilderError && error.code === 'invalid_input';
       attempts.push({ attempt, outcome: refused ? 'refused' : 'failed', reason: error instanceof BuilderError ? error.message : 'The repair run failed.', revisionId: null, failedBefore: before, failedAfter: before });
       continue;

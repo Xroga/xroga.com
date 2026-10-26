@@ -45,7 +45,7 @@ export interface QaReport {
 }
 
 export interface RepairResult {
-  status: 'passed' | 'repaired' | 'unrepaired' | 'exhausted' | 'stalled' | 'budget_exhausted' | 'pending_runtime' | 'cancelled';
+  status: 'passed' | 'repaired' | 'unrepaired' | 'exhausted' | 'stalled' | 'budget_exhausted' | 'pending_runtime' | 'engine_unavailable' | 'cancelled';
   reason: string;
   attempts: Array<{ attempt: number; outcome: string; reason: string; revisionId: string | null }>;
   headRevisionNumber: number;

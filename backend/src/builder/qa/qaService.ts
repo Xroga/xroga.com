@@ -58,7 +58,21 @@ function summarize(report: QaReport, record: VerificationRecord): QaSummary {
 }
 
 export class QaService {
+  /** One QA or repair run per project at a time in this process, so a browser is never started twice for the same project. */
+  private readonly running = new Set<string>();
+
   constructor(private readonly deps: QaServiceDeps) {}
+
+  private async exclusive<T>(userId: string, projectId: string, run: () => Promise<T>): Promise<T> {
+    const key = `${userId}:${projectId}`;
+    if (this.running.has(key)) throw new BuilderError('conflict', 'Tests are already running for this project.');
+    this.running.add(key);
+    try {
+      return await run();
+    } finally {
+      this.running.delete(key);
+    }
+  }
 
   private async headOf(userId: string, projectId: string) {
     const project = await this.deps.builder.requireProject(userId, projectId);
@@ -70,15 +84,28 @@ export class QaService {
   /** Executes a plan against a revision's running application. Pending (never passed) when there is none. */
   private async execute(userId: string, project: BuilderProject, revision: BuilderRevision, plan: QaPlan, options: { only?: ReadonlySet<string>; previouslyPassed?: ReadonlySet<string>; signal?: AbortSignal }): Promise<QaReport> {
     const target = await this.deps.target.ensure({ userId, project, revision, signal: options.signal });
-    if (!target) {
-      const now = new Date().toISOString();
-      return {
-        version: 1, status: 'pending_runtime', executedChecks: 0, passedChecks: 0, failedChecks: 0, pendingChecks: plan.checks.length, notChecked: plan.notChecked,
-        checks: plan.checks.map((check) => ({ id: check.id, title: check.title, category: check.category, viewport: check.viewport, required: check.required, status: 'pending' as const, executed: false, failureClass: null, durationMs: 0, pendingReason: 'No running application is available for this revision.', evidence: null, regression: false })),
-        environment: { driver: 'none', browser: null, baseHost: null }, startedAt: now, finishedAt: now, reason: 'No check was executed: there was no running application to test.',
-      };
+    if (!target) return this.notRun(plan, 'No running application is available for this revision.');
+    return this.executeAgainst(target, plan, options);
+  }
+
+  private notRun(plan: QaPlan, reason: string): QaReport {
+    const now = new Date().toISOString();
+    return {
+      version: 1, status: 'pending_runtime', executedChecks: 0, passedChecks: 0, failedChecks: 0, pendingChecks: plan.checks.length, notChecked: plan.notChecked,
+      checks: plan.checks.map((check) => ({ id: check.id, title: check.title, category: check.category, viewport: check.viewport, required: check.required, status: 'pending' as const, executed: false, failureClass: null, durationMs: 0, pendingReason: reason, evidence: null, regression: false })),
+      environment: { driver: 'none', browser: null, baseHost: null }, startedAt: now, finishedAt: now, reason: `No check was executed: ${reason}`,
+    };
+  }
+
+  private async executeAgainst(target: { baseUrl: string; environment: QaEnvironment }, plan: QaPlan, options: { only?: ReadonlySet<string>; previouslyPassed?: ReadonlySet<string>; signal?: AbortSignal }): Promise<QaReport> {
+    let driver: QaDriver;
+    try {
+      driver = await this.deps.openDriver(target.baseUrl);
+    } catch (error) {
+      // No usable browser in this environment: that is "not run", never a pass and never a server error.
+      if ((error as { code?: string }).code !== 'BROWSER_UNAVAILABLE') throw error;
+      return this.notRun(plan, error instanceof Error ? error.message : 'No browser is available in this environment.');
     }
-    const driver = await this.deps.openDriver(target.baseUrl);
     return runQa({ plan, driver, environment: target.environment, baseHost: new URL(target.baseUrl).host, only: options.only, previouslyPassed: options.previouslyPassed, signal: options.signal });
   }
 
@@ -95,7 +122,11 @@ export class QaService {
   }
 
   /** Runs the QA plan against the project's current revision and records the evidence against it. */
-  async runQa(userId: string, projectId: string, input: { runId?: string; signal?: AbortSignal } = {}): Promise<{ report: QaReport; summary: QaSummary }> {
+  runQa(userId: string, projectId: string, input: { runId?: string; signal?: AbortSignal } = {}): Promise<{ report: QaReport; summary: QaSummary }> {
+    return this.exclusive(userId, projectId, () => this.runQaUnlocked(userId, projectId, input));
+  }
+
+  private async runQaUnlocked(userId: string, projectId: string, input: { runId?: string; signal?: AbortSignal }): Promise<{ report: QaReport; summary: QaSummary }> {
     const { project, revision } = await this.headOf(userId, projectId);
     const runId = input.runId ?? randomUUID();
     const plan = deriveQaPlan(project.spec, revision.files);
@@ -147,7 +178,11 @@ export class QaService {
    * verify again. The plan is fixed from the starting revision so a repair can never change what
    * is being asked of it.
    */
-  async verifyAndRepair(userId: string, projectId: string, input: { maxAttempts?: number; signal?: AbortSignal } = {}): Promise<RepairLoopResult> {
+  verifyAndRepair(userId: string, projectId: string, input: { maxAttempts?: number; signal?: AbortSignal } = {}): Promise<RepairLoopResult> {
+    return this.exclusive(userId, projectId, () => this.verifyAndRepairUnlocked(userId, projectId, input));
+  }
+
+  private async verifyAndRepairUnlocked(userId: string, projectId: string, input: { maxAttempts?: number; signal?: AbortSignal }): Promise<RepairLoopResult> {
     const { project, revision } = await this.headOf(userId, projectId);
     const plan = deriveQaPlan(project.spec, revision.files);
     const baseRunId = randomUUID();
