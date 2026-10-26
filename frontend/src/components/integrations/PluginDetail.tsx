@@ -1,5 +1,6 @@
 'use client';
 
+import { ConnectedAccounts } from './ConnectedAccounts';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -749,6 +750,13 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
       }
       throw error;
     }
+  }
+
+  async function ensureComposioSession(): Promise<string> {
+    if (sessionId) return sessionId;
+    const created = await xrogaConnect.session();
+    setSessionId(created.sessionId);
+    return created.sessionId;
   }
 
   async function handleConnect() {
@@ -1553,6 +1561,14 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
               </div>
             </dl>
           </section>
+
+          {composioConnected && (connectionToolkit?.toolkit || catalog?.slug) ? (
+            <ConnectedAccounts
+              toolkit={(connectionToolkit?.toolkit || catalog?.slug) as string}
+              appName={definition.name}
+              getSessionId={ensureComposioSession}
+            />
+          ) : null}
 
           {definition.source === 'native' && catalog ? (
             <section className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4">

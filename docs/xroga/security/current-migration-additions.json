@@ -181,6 +181,18 @@
       "tests": "backend/src/workers/postgresLeaseStore.integration.test.ts",
       "evidence": "Batch 1.5 migration, merged without being applied to production. Real-Postgres integration tests (Phase 1 and Phase 2, on a disposable database) exercise the schema, grants and functions. The disposable full-history run on this branch verifies it installs and that every public table has RLS. Not production schema parity or certification by inventory.",
       "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "composio_default_accounts",
+      "migration": "20261027000000_composio_default_accounts.sql",
+      "migrationSha256": "e04434201ca147d6bf7ce594bd105136f45655f0144411ff31b085951d333a3b",
+      "authorizationMigration": "20261027000000_composio_default_accounts.sql",
+      "authorizationSha256": "e04434201ca147d6bf7ce594bd105136f45655f0144411ff31b085951d333a3b",
+      "boundary": "RLS enabled. Authenticated SELECT only, restricted to user_id = auth.uid(); no browser INSERT, UPDATE or DELETE and no anon access. Written only by the server with an explicit owner predicate. Holds only a Composio connected-account id (a public identifier, never a credential); the server re-proves on every use that the id is still one of the owner's own active private accounts.",
+      "tests": "backend/src/services/integrations/composioPlatform.test.ts",
+      "evidence": "Composio multi-account migration, not applied to production and unused until XROGA_COMPOSIO_MULTI_ACCOUNT is enabled. Owner scoping and fail-closed use are verified against an in-memory store with the same scoping; the SQL itself is NOT exercised against a real PostgreSQL in this change. Not production schema parity or certification by inventory.",
+      "productionChanges": false
     }
   ]
 }

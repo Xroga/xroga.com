@@ -85,7 +85,9 @@ test('Step 2 detail routing is explicit and Connect remains a separate action', 
 test('Step 2 keeps connection removal conservative while Custom MCP now uses real lifecycle APIs', () => {
   const marketplace = source('frontend/src/components/integrations/PluginMarketplace.tsx');
   const detail = source('frontend/src/components/integrations/PluginDetail.tsx');
-  const runtime = source('backend/src/services/integrations/composioClient.ts');
+  // The session policy (connection removal, search, multi-execute) lives in composioPolicy.ts.
+  const runtime = `${source('backend/src/services/integrations/composioClient.ts')}
+${source('backend/src/services/integrations/composioPolicy.ts')}`;
 
   assert.match(runtime, /enable_connection_removal:\s*false/);
   assert.match(detail, /definition\.source !== 'native'/);

@@ -49,12 +49,13 @@ router.post('/business-automations', async (req: AuthRequest, res: Response) => 
   if (typeof body?.name !== 'string' || typeof body.request !== 'string' || !schedule) {
     return res.status(400).json({ error: 'Name, request, and schedule are required.' });
   }
-  let typedSchedule: { kind: 'interval'; intervalSeconds: number } | { kind: 'trigger'; toolkit: string; triggerSlug: string; triggerConfig: Record<string, unknown> };
+  let typedSchedule: { kind: 'interval'; intervalSeconds: number } | { kind: 'trigger'; toolkit: string; triggerSlug: string; triggerConfig: Record<string, unknown>; connectedAccountId?: string };
   if (schedule.kind === 'interval' && typeof schedule.intervalSeconds === 'number') {
     typedSchedule = { kind: 'interval', intervalSeconds: schedule.intervalSeconds };
   } else if (schedule.kind === 'trigger' && typeof schedule.toolkit === 'string' && typeof schedule.triggerSlug === 'string'
     && schedule.triggerConfig && typeof schedule.triggerConfig === 'object' && !Array.isArray(schedule.triggerConfig)) {
-    typedSchedule = { kind: 'trigger', toolkit: schedule.toolkit, triggerSlug: schedule.triggerSlug, triggerConfig: schedule.triggerConfig as Record<string, unknown> };
+    typedSchedule = { kind: 'trigger', toolkit: schedule.toolkit, triggerSlug: schedule.triggerSlug, triggerConfig: schedule.triggerConfig as Record<string, unknown>,
+      ...(typeof schedule.connectedAccountId === 'string' && /^[A-Za-z0-9_-]{4,64}$/.test(schedule.connectedAccountId) ? { connectedAccountId: schedule.connectedAccountId } : {}) };
   } else {
     return res.status(400).json({ error: 'Invalid interval or trigger configuration.' });
   }

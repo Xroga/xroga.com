@@ -94,7 +94,9 @@ test('every Plugin detail can load full live actions, triggers and Composio skil
 });
 
 test('Composio runtime remains server-authoritative and does not preload every tool', () => {
-  const composio = source('backend/src/services/integrations/composioClient.ts');
+  // The session policy (connection removal, search, multi-execute) lives in composioPolicy.ts.
+  const composio = `${source('backend/src/services/integrations/composioClient.ts')}
+${source('backend/src/services/integrations/composioPolicy.ts')}`;
 
   assert.match(composio, /search:\s*\{\s*enable:\s*true/);
   assert.match(composio, /enable_multi_execute:\s*false/);

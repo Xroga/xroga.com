@@ -15633,6 +15633,62 @@
           "marker": "export function createOciWorkloadFederation"
         }
       ]
+    },
+    {
+      "path": "backend/src/ai/fixedCostBudget.ts",
+      "sourceSha256": "a2a589cc9545d67ee0e23527de088e3fc03bdc0a5478bcb973d0ab0c0e0a15ea",
+      "callIds": [
+        "5c955beaccaaebb6f2a6",
+        "e186f6d94116b16aaed7",
+        "f5dd8a516db72cd3a8ec",
+        "bfe12cd9fe25130e6deb",
+        "b7ce8e6ac42bd509de51",
+        "9767f9c999f998f5254e",
+        "2d01f8c955c4e88b2ba1",
+        "18d298564ce26ff6b06c"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "The only production consumer is composioInstant.ts, which runs only after a current single-use authority permit bound to the verified user, the exact tool and the exact arguments has been asserted. Every function takes the verified user id of that call and sends it as the owner to the existing fixed service-only reserve, settle and release routines. No request body, query or model output supplies an owner, reservation id, route or amount: the route is the constant composio:instant, the amount is the configured per-call ceiling, and the reservation id comes back from the reservation call and is validated against the owner.",
+      "reason": "These sites reuse the unchanged reserve_xroga_provider_budget, settle_xroga_provider_budget, release_xroga_provider_budget and ensure_xroga_free_cycle routines that providerBudget.ts already uses, with a free-text route and zero token counts. Reservation validates the returned owner, idempotency key, route, purpose, status, amount and price version; settlement validates owner, reservation id, route, price version, reserved and settled amounts and call count, and refuses an amount above the reservation. Release matches the reservation id and owner in the routine. Verified against an in-memory ledger that mirrors the entitlement ceiling; the durable path is NOT exercised against a real database in this change and the paid Instant feature is disabled by default with no public route. No schema change.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/composioPlatform.test.ts",
+          "marker": "reserves the ceiling in the budget ledger, runs on the Instant account, and settles to the exact reported charge"
+        },
+        {
+          "path": "backend/src/services/integrations/composioPlatform.test.ts",
+          "marker": "a charge above the ceiling holds the reservation and pauses Instant"
+        },
+        {
+          "path": "backend/src/services/integrations/composioPlatform.test.ts",
+          "marker": "one user cannot spend another user"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/services/integrations/composioDefaultAccounts.ts",
+      "sourceSha256": "2f07e4d3cf474fad4577eaf9a7ed20301f018a2c8a71410938355403202f5021",
+      "callIds": [
+        "2e179485422a357d7726",
+        "785dbca5bbddf007f99f",
+        "f6f40e96063c9ff973d8",
+        "efcea50ee89050f4365f",
+        "4d8476885f2e19e11458",
+        "3f02aab9fa8f58638b72"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Callers are composioAccounts.ts and the accounts routes behind the integrations authentication, always with the verified request user id. Every read, upsert and delete carries that user id and the toolkit as explicit predicates, after both are validated against a strict UUID and slug pattern. No request body, query or model output supplies the owner.",
+      "reason": "The table holds only a Composio connected-account id, a public identifier and not a credential. The stored id is never trusted on its own: before use composioAccounts.ts proves it is still one of the owner's own active private accounts at Composio, so a stale or tampered row can only fail closed. RLS allows the owner SELECT only; all writes are server-side. The migration is not applied and the feature is disabled until XROGA_COMPOSIO_MULTI_ACCOUNT is enabled. The Supabase path is NOT exercised against a real database in this change; scoping is verified against an in-memory store with identical predicates.",
+      "evidence": [
+        {
+          "path": "backend/src/services/integrations/composioPlatform.test.ts",
+          "marker": "uses the saved default when several accounts are connected"
+        },
+        {
+          "path": "backend/src/routes/composioAccountsRoutes.test.ts",
+          "marker": "saves a default account only from the caller"
+        }
+      ]
     }
   ]
 }

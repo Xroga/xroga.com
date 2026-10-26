@@ -1,24 +1,24 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "6dae4466597fff1f88eca7d9bdc58e7e644794aae6b20487c22f5a43cd9d86fb",
+  "reviewRegistrySha256": "52b1b11350475897fee9b5b8f4e4a408abf36425f897964b23d3305ab20c632a",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 183,
-    "persistenceCandidates": 780,
-    "ownerPredicateCandidates": 191,
+    "privilegedFactorySites": 190,
+    "persistenceCandidates": 794,
+    "ownerPredicateCandidates": 195,
     "reviewRequired": 98,
-    "reviewedCandidates": 682,
+    "reviewedCandidates": 696,
     "unresolvedSafetyCandidates": 123,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 18
   },
   "outcomes": {
     "REVIEW_REQUIRED": 98,
-    "SCOPED_BOUNDARY": 453,
+    "SCOPED_BOUNDARY": 467,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 164,
     "REVIEWED_GAP": 25
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 111,
-    "unresolvedCandidateBoundaries": 669,
+    "unresolvedCandidateBoundaries": 683,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -2604,6 +2604,38 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "5c955beaccaaebb6f2a6"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "e186f6d94116b16aaed7"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "f5dd8a516db72cd3a8ec"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "bfe12cd9fe25130e6deb"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "b7ce8e6ac42bd509de51"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "9767f9c999f998f5254e"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "2d01f8c955c4e88b2ba1"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "18d298564ce26ff6b06c"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "1169e490665cdec7b3a3"
       },
       {
@@ -3016,91 +3048,91 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a4aa9524164f67249167"
+        "id": "7412800a24d001bf9c84"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "86df87a3cf10ba9fffd1"
+        "id": "d08b12ba441f1cf9cf43"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ce548e8dd4d9cc826a19"
+        "id": "bdde07a061b57f3d3a46"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "281adea3c92b21b38cf2"
+        "id": "59505ef145bd3f8c4f78"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "2c4c9810ff2f73829faa"
+        "id": "0ec86821ca2b0547f1c5"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "df3fa48afa3313d403aa"
+        "id": "851971df1da5f5600424"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "e239278c655bb120b3a0"
+        "id": "d6f52ec62240a07b0951"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "a3b1cadbaff6ba819d56"
+        "id": "6ebec83b81f06fb1dfaf"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "f947a7dc71451be6cdc8"
+        "id": "230812dab676a05983f3"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "fb426a64b945f2d61c80"
+        "id": "3a89b7602f1dbc402e6f"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "c24e3dae4e0d1e7543e9"
+        "id": "40ffbad6d025d11d5505"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "e1f105dbf216eeda20d4"
+        "id": "2f729d9a774070f97437"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "65289a9f3290a7fcf5b8"
+        "id": "b80bb74af53602a2a101"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "70c982b7b3f4f41daaab"
+        "id": "4b324a249004dea678f9"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "5cb619fb9627bcfd0789"
+        "id": "226308e0ed9c474c20d2"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "688688cf3680ee3f0617"
+        "id": "f9051a52fef9a68a6224"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "e91a6717e92b62825640"
+        "id": "313d63a3badf7ebc39a2"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "0934c4297284d3107a4f"
+        "id": "dd251505ba97e3270cca"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "995ad22e9036ba82ad09"
+        "id": "72dd8afe9fe60aefac91"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "b602dd7f3c7339c6b07a"
+        "id": "6daaf11c75957722add0"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "5433a90b42e2c556b563"
+        "id": "066fe4175155348d4b2a"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "85651a90e4853f6f744b"
+        "id": "be26d3660406cd264753"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3153,6 +3185,30 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "04b45db3696d90ee1107"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "2e179485422a357d7726"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "785dbca5bbddf007f99f"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "f6f40e96063c9ff973d8"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "efcea50ee89050f4365f"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "4d8476885f2e19e11458"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "3f02aab9fa8f58638b72"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4072,91 +4128,91 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "a4aa9524164f67249167"
+        "id": "7412800a24d001bf9c84"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "86df87a3cf10ba9fffd1"
+        "id": "d08b12ba441f1cf9cf43"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "ce548e8dd4d9cc826a19"
+        "id": "bdde07a061b57f3d3a46"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "281adea3c92b21b38cf2"
+        "id": "59505ef145bd3f8c4f78"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "2c4c9810ff2f73829faa"
+        "id": "0ec86821ca2b0547f1c5"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "df3fa48afa3313d403aa"
+        "id": "851971df1da5f5600424"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "e239278c655bb120b3a0"
+        "id": "d6f52ec62240a07b0951"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "a3b1cadbaff6ba819d56"
+        "id": "6ebec83b81f06fb1dfaf"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "f947a7dc71451be6cdc8"
+        "id": "230812dab676a05983f3"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "fb426a64b945f2d61c80"
+        "id": "3a89b7602f1dbc402e6f"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "c24e3dae4e0d1e7543e9"
+        "id": "40ffbad6d025d11d5505"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "e1f105dbf216eeda20d4"
+        "id": "2f729d9a774070f97437"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "65289a9f3290a7fcf5b8"
+        "id": "b80bb74af53602a2a101"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "70c982b7b3f4f41daaab"
+        "id": "4b324a249004dea678f9"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "5cb619fb9627bcfd0789"
+        "id": "226308e0ed9c474c20d2"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "688688cf3680ee3f0617"
+        "id": "f9051a52fef9a68a6224"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "e91a6717e92b62825640"
+        "id": "313d63a3badf7ebc39a2"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "0934c4297284d3107a4f"
+        "id": "dd251505ba97e3270cca"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "995ad22e9036ba82ad09"
+        "id": "72dd8afe9fe60aefac91"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "b602dd7f3c7339c6b07a"
+        "id": "6daaf11c75957722add0"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "5433a90b42e2c556b563"
+        "id": "066fe4175155348d4b2a"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "85651a90e4853f6f744b"
+        "id": "be26d3660406cd264753"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -4585,6 +4641,38 @@
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "840a0babdc3449f56be3"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "5c955beaccaaebb6f2a6"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "e186f6d94116b16aaed7"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "f5dd8a516db72cd3a8ec"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "bfe12cd9fe25130e6deb"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "b7ce8e6ac42bd509de51"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "9767f9c999f998f5254e"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "2d01f8c955c4e88b2ba1"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "18d298564ce26ff6b06c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -5852,6 +5940,30 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "2e179485422a357d7726"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "785dbca5bbddf007f99f"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "f6f40e96063c9ff973d8"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "efcea50ee89050f4365f"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "4d8476885f2e19e11458"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "3f02aab9fa8f58638b72"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "2697b20e243c70e7d302"
       },
       {
@@ -6717,11 +6829,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 780,
+    "currentCallers": 794,
     "structuredVerified": 111,
-    "structuredUnproven": 669,
+    "structuredUnproven": 683,
     "manualUnresolved": 123,
-    "manualUnsupported": 546,
+    "manualUnsupported": 560,
     "agreedVerified": 111,
     "proofAwaitingManualReconciliation": 0
   },
@@ -7121,6 +7233,238 @@
           {
             "path": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
             "marker": "real checkpoint fence rejects wrong owner epoch lineage"
+          }
+        ]
+      }
+    },
+    {
+      "id": "5c955beaccaaebb6f2a6",
+      "path": "backend/src/ai/fixedCostBudget.ts",
+      "line": 67,
+      "enclosing": "reserveFixedCostBudget",
+      "kind": "RPC_CANDIDATE",
+      "target": "reserve_xroga_provider_budget",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "a2a589cc9545d67ee0e23527de088e3fc03bdc0a5478bcb973d0ab0c0e0a15ea",
+      "semanticReview": {
+        "authority": "The only production consumer is composioInstant.ts, which runs only after a current single-use authority permit bound to the verified user, the exact tool and the exact arguments has been asserted. Every function takes the verified user id of that call and sends it as the owner to the existing fixed service-only reserve, settle and release routines. No request body, query or model output supplies an owner, reservation id, route or amount: the route is the constant composio:instant, the amount is the configured per-call ceiling, and the reservation id comes back from the reservation call and is validated against the owner.",
+        "reason": "These sites reuse the unchanged reserve_xroga_provider_budget, settle_xroga_provider_budget, release_xroga_provider_budget and ensure_xroga_free_cycle routines that providerBudget.ts already uses, with a free-text route and zero token counts. Reservation validates the returned owner, idempotency key, route, purpose, status, amount and price version; settlement validates owner, reservation id, route, price version, reserved and settled amounts and call count, and refuses an amount above the reservation. Release matches the reservation id and owner in the routine. Verified against an in-memory ledger that mirrors the entitlement ceiling; the durable path is NOT exercised against a real database in this change and the paid Instant feature is disabled by default with no public route. No schema change.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "reserves the ceiling in the budget ledger, runs on the Instant account, and settles to the exact reported charge"
+          },
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "a charge above the ceiling holds the reservation and pauses Instant"
+          },
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "one user cannot spend another user"
+          }
+        ]
+      }
+    },
+    {
+      "id": "e186f6d94116b16aaed7",
+      "path": "backend/src/ai/fixedCostBudget.ts",
+      "line": 67,
+      "enclosing": "reserveFixedCostBudget",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "a2a589cc9545d67ee0e23527de088e3fc03bdc0a5478bcb973d0ab0c0e0a15ea",
+      "semanticReview": {
+        "authority": "The only production consumer is composioInstant.ts, which runs only after a current single-use authority permit bound to the verified user, the exact tool and the exact arguments has been asserted. Every function takes the verified user id of that call and sends it as the owner to the existing fixed service-only reserve, settle and release routines. No request body, query or model output supplies an owner, reservation id, route or amount: the route is the constant composio:instant, the amount is the configured per-call ceiling, and the reservation id comes back from the reservation call and is validated against the owner.",
+        "reason": "These sites reuse the unchanged reserve_xroga_provider_budget, settle_xroga_provider_budget, release_xroga_provider_budget and ensure_xroga_free_cycle routines that providerBudget.ts already uses, with a free-text route and zero token counts. Reservation validates the returned owner, idempotency key, route, purpose, status, amount and price version; settlement validates owner, reservation id, route, price version, reserved and settled amounts and call count, and refuses an amount above the reservation. Release matches the reservation id and owner in the routine. Verified against an in-memory ledger that mirrors the entitlement ceiling; the durable path is NOT exercised against a real database in this change and the paid Instant feature is disabled by default with no public route. No schema change.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "reserves the ceiling in the budget ledger, runs on the Instant account, and settles to the exact reported charge"
+          },
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "a charge above the ceiling holds the reservation and pauses Instant"
+          },
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "one user cannot spend another user"
+          }
+        ]
+      }
+    },
+    {
+      "id": "f5dd8a516db72cd3a8ec",
+      "path": "backend/src/ai/fixedCostBudget.ts",
+      "line": 73,
+      "enclosing": "reserveFixedCostBudget",
+      "kind": "RPC_CANDIDATE",
+      "target": "ensure_xroga_free_cycle",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "a2a589cc9545d67ee0e23527de088e3fc03bdc0a5478bcb973d0ab0c0e0a15ea",
+      "semanticReview": {
+        "authority": "The only production consumer is composioInstant.ts, which runs only after a current single-use authority permit bound to the verified user, the exact tool and the exact arguments has been asserted. Every function takes the verified user id of that call and sends it as the owner to the existing fixed service-only reserve, settle and release routines. No request body, query or model output supplies an owner, reservation id, route or amount: the route is the constant composio:instant, the amount is the configured per-call ceiling, and the reservation id comes back from the reservation call and is validated against the owner.",
+        "reason": "These sites reuse the unchanged reserve_xroga_provider_budget, settle_xroga_provider_budget, release_xroga_provider_budget and ensure_xroga_free_cycle routines that providerBudget.ts already uses, with a free-text route and zero token counts. Reservation validates the returned owner, idempotency key, route, purpose, status, amount and price version; settlement validates owner, reservation id, route, price version, reserved and settled amounts and call count, and refuses an amount above the reservation. Release matches the reservation id and owner in the routine. Verified against an in-memory ledger that mirrors the entitlement ceiling; the durable path is NOT exercised against a real database in this change and the paid Instant feature is disabled by default with no public route. No schema change.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "reserves the ceiling in the budget ledger, runs on the Instant account, and settles to the exact reported charge"
+          },
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "a charge above the ceiling holds the reservation and pauses Instant"
+          },
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "one user cannot spend another user"
+          }
+        ]
+      }
+    },
+    {
+      "id": "bfe12cd9fe25130e6deb",
+      "path": "backend/src/ai/fixedCostBudget.ts",
+      "line": 73,
+      "enclosing": "reserveFixedCostBudget",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "a2a589cc9545d67ee0e23527de088e3fc03bdc0a5478bcb973d0ab0c0e0a15ea",
+      "semanticReview": {
+        "authority": "The only production consumer is composioInstant.ts, which runs only after a current single-use authority permit bound to the verified user, the exact tool and the exact arguments has been asserted. Every function takes the verified user id of that call and sends it as the owner to the existing fixed service-only reserve, settle and release routines. No request body, query or model output supplies an owner, reservation id, route or amount: the route is the constant composio:instant, the amount is the configured per-call ceiling, and the reservation id comes back from the reservation call and is validated against the owner.",
+        "reason": "These sites reuse the unchanged reserve_xroga_provider_budget, settle_xroga_provider_budget, release_xroga_provider_budget and ensure_xroga_free_cycle routines that providerBudget.ts already uses, with a free-text route and zero token counts. Reservation validates the returned owner, idempotency key, route, purpose, status, amount and price version; settlement validates owner, reservation id, route, price version, reserved and settled amounts and call count, and refuses an amount above the reservation. Release matches the reservation id and owner in the routine. Verified against an in-memory ledger that mirrors the entitlement ceiling; the durable path is NOT exercised against a real database in this change and the paid Instant feature is disabled by default with no public route. No schema change.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "reserves the ceiling in the budget ledger, runs on the Instant account, and settles to the exact reported charge"
+          },
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "a charge above the ceiling holds the reservation and pauses Instant"
+          },
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "one user cannot spend another user"
+          }
+        ]
+      }
+    },
+    {
+      "id": "b7ce8e6ac42bd509de51",
+      "path": "backend/src/ai/fixedCostBudget.ts",
+      "line": 119,
+      "enclosing": "settleFixedCostBudget",
+      "kind": "RPC_CANDIDATE",
+      "target": "settle_xroga_provider_budget",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "a2a589cc9545d67ee0e23527de088e3fc03bdc0a5478bcb973d0ab0c0e0a15ea",
+      "semanticReview": {
+        "authority": "The only production consumer is composioInstant.ts, which runs only after a current single-use authority permit bound to the verified user, the exact tool and the exact arguments has been asserted. Every function takes the verified user id of that call and sends it as the owner to the existing fixed service-only reserve, settle and release routines. No request body, query or model output supplies an owner, reservation id, route or amount: the route is the constant composio:instant, the amount is the configured per-call ceiling, and the reservation id comes back from the reservation call and is validated against the owner.",
+        "reason": "These sites reuse the unchanged reserve_xroga_provider_budget, settle_xroga_provider_budget, release_xroga_provider_budget and ensure_xroga_free_cycle routines that providerBudget.ts already uses, with a free-text route and zero token counts. Reservation validates the returned owner, idempotency key, route, purpose, status, amount and price version; settlement validates owner, reservation id, route, price version, reserved and settled amounts and call count, and refuses an amount above the reservation. Release matches the reservation id and owner in the routine. Verified against an in-memory ledger that mirrors the entitlement ceiling; the durable path is NOT exercised against a real database in this change and the paid Instant feature is disabled by default with no public route. No schema change.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "reserves the ceiling in the budget ledger, runs on the Instant account, and settles to the exact reported charge"
+          },
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "a charge above the ceiling holds the reservation and pauses Instant"
+          },
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "one user cannot spend another user"
+          }
+        ]
+      }
+    },
+    {
+      "id": "9767f9c999f998f5254e",
+      "path": "backend/src/ai/fixedCostBudget.ts",
+      "line": 119,
+      "enclosing": "settleFixedCostBudget",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "a2a589cc9545d67ee0e23527de088e3fc03bdc0a5478bcb973d0ab0c0e0a15ea",
+      "semanticReview": {
+        "authority": "The only production consumer is composioInstant.ts, which runs only after a current single-use authority permit bound to the verified user, the exact tool and the exact arguments has been asserted. Every function takes the verified user id of that call and sends it as the owner to the existing fixed service-only reserve, settle and release routines. No request body, query or model output supplies an owner, reservation id, route or amount: the route is the constant composio:instant, the amount is the configured per-call ceiling, and the reservation id comes back from the reservation call and is validated against the owner.",
+        "reason": "These sites reuse the unchanged reserve_xroga_provider_budget, settle_xroga_provider_budget, release_xroga_provider_budget and ensure_xroga_free_cycle routines that providerBudget.ts already uses, with a free-text route and zero token counts. Reservation validates the returned owner, idempotency key, route, purpose, status, amount and price version; settlement validates owner, reservation id, route, price version, reserved and settled amounts and call count, and refuses an amount above the reservation. Release matches the reservation id and owner in the routine. Verified against an in-memory ledger that mirrors the entitlement ceiling; the durable path is NOT exercised against a real database in this change and the paid Instant feature is disabled by default with no public route. No schema change.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "reserves the ceiling in the budget ledger, runs on the Instant account, and settles to the exact reported charge"
+          },
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "a charge above the ceiling holds the reservation and pauses Instant"
+          },
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "one user cannot spend another user"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2d01f8c955c4e88b2ba1",
+      "path": "backend/src/ai/fixedCostBudget.ts",
+      "line": 154,
+      "enclosing": "releaseFixedCostBudget",
+      "kind": "RPC_CANDIDATE",
+      "target": "release_xroga_provider_budget",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "a2a589cc9545d67ee0e23527de088e3fc03bdc0a5478bcb973d0ab0c0e0a15ea",
+      "semanticReview": {
+        "authority": "The only production consumer is composioInstant.ts, which runs only after a current single-use authority permit bound to the verified user, the exact tool and the exact arguments has been asserted. Every function takes the verified user id of that call and sends it as the owner to the existing fixed service-only reserve, settle and release routines. No request body, query or model output supplies an owner, reservation id, route or amount: the route is the constant composio:instant, the amount is the configured per-call ceiling, and the reservation id comes back from the reservation call and is validated against the owner.",
+        "reason": "These sites reuse the unchanged reserve_xroga_provider_budget, settle_xroga_provider_budget, release_xroga_provider_budget and ensure_xroga_free_cycle routines that providerBudget.ts already uses, with a free-text route and zero token counts. Reservation validates the returned owner, idempotency key, route, purpose, status, amount and price version; settlement validates owner, reservation id, route, price version, reserved and settled amounts and call count, and refuses an amount above the reservation. Release matches the reservation id and owner in the routine. Verified against an in-memory ledger that mirrors the entitlement ceiling; the durable path is NOT exercised against a real database in this change and the paid Instant feature is disabled by default with no public route. No schema change.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "reserves the ceiling in the budget ledger, runs on the Instant account, and settles to the exact reported charge"
+          },
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "a charge above the ceiling holds the reservation and pauses Instant"
+          },
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "one user cannot spend another user"
+          }
+        ]
+      }
+    },
+    {
+      "id": "18d298564ce26ff6b06c",
+      "path": "backend/src/ai/fixedCostBudget.ts",
+      "line": 154,
+      "enclosing": "releaseFixedCostBudget",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "a2a589cc9545d67ee0e23527de088e3fc03bdc0a5478bcb973d0ab0c0e0a15ea",
+      "semanticReview": {
+        "authority": "The only production consumer is composioInstant.ts, which runs only after a current single-use authority permit bound to the verified user, the exact tool and the exact arguments has been asserted. Every function takes the verified user id of that call and sends it as the owner to the existing fixed service-only reserve, settle and release routines. No request body, query or model output supplies an owner, reservation id, route or amount: the route is the constant composio:instant, the amount is the configured per-call ceiling, and the reservation id comes back from the reservation call and is validated against the owner.",
+        "reason": "These sites reuse the unchanged reserve_xroga_provider_budget, settle_xroga_provider_budget, release_xroga_provider_budget and ensure_xroga_free_cycle routines that providerBudget.ts already uses, with a free-text route and zero token counts. Reservation validates the returned owner, idempotency key, route, purpose, status, amount and price version; settlement validates owner, reservation id, route, price version, reserved and settled amounts and call count, and refuses an amount above the reservation. Release matches the reservation id and owner in the routine. Verified against an in-memory ledger that mirrors the entitlement ceiling; the durable path is NOT exercised against a real database in this change and the paid Instant feature is disabled by default with no public route. No schema change.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "reserves the ceiling in the budget ledger, runs on the Instant account, and settles to the exact reported charge"
+          },
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "a charge above the ceiling holds the reservation and pauses Instant"
+          },
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "one user cannot spend another user"
           }
         ]
       }
@@ -15792,7 +16136,7 @@
       }
     },
     {
-      "id": "a4aa9524164f67249167",
+      "id": "7412800a24d001bf9c84",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 64,
       "enclosing": "createBusinessAutomationRule",
@@ -15800,10 +16144,10 @@
       "target": "business_automation_rules",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "86df87a3cf10ba9fffd1",
+      "id": "d08b12ba441f1cf9cf43",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 64,
       "enclosing": "createBusinessAutomationRule",
@@ -15811,10 +16155,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "ce548e8dd4d9cc826a19",
+      "id": "bdde07a061b57f3d3a46",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 84,
       "enclosing": "listBusinessAutomationRules",
@@ -15822,10 +16166,10 @@
       "target": "business_automation_rules",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "281adea3c92b21b38cf2",
+      "id": "59505ef145bd3f8c4f78",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 84,
       "enclosing": "listBusinessAutomationRules",
@@ -15833,10 +16177,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "2c4c9810ff2f73829faa",
+      "id": "0ec86821ca2b0547f1c5",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 95,
       "enclosing": "listBusinessAutomationEvents",
@@ -15844,10 +16188,10 @@
       "target": "business_automation_events",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "df3fa48afa3313d403aa",
+      "id": "851971df1da5f5600424",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 95,
       "enclosing": "listBusinessAutomationEvents",
@@ -15855,10 +16199,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "e239278c655bb120b3a0",
+      "id": "d6f52ec62240a07b0951",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 108,
       "enclosing": "setBusinessAutomationEnabled",
@@ -15866,10 +16210,10 @@
       "target": "business_automation_rules",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "a3b1cadbaff6ba819d56",
+      "id": "6ebec83b81f06fb1dfaf",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 108,
       "enclosing": "setBusinessAutomationEnabled",
@@ -15877,10 +16221,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "f947a7dc71451be6cdc8",
+      "id": "230812dab676a05983f3",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 120,
       "enclosing": "setBusinessAutomationEnabled",
@@ -15888,10 +16232,10 @@
       "target": "business_automation_rules",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "fb426a64b945f2d61c80",
+      "id": "3a89b7602f1dbc402e6f",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 120,
       "enclosing": "setBusinessAutomationEnabled",
@@ -15899,10 +16243,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "c24e3dae4e0d1e7543e9",
+      "id": "40ffbad6d025d11d5505",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 132,
       "enclosing": "claimEvent",
@@ -15910,10 +16254,10 @@
       "target": "business_automation_events",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "e1f105dbf216eeda20d4",
+      "id": "2f729d9a774070f97437",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 132,
       "enclosing": "claimEvent",
@@ -15921,10 +16265,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "65289a9f3290a7fcf5b8",
+      "id": "b80bb74af53602a2a101",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 147,
       "enclosing": "launchRule",
@@ -15932,10 +16276,10 @@
       "target": "business_automation_events",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "70c982b7b3f4f41daaab",
+      "id": "4b324a249004dea678f9",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 147,
       "enclosing": "launchRule",
@@ -15943,10 +16287,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "5cb619fb9627bcfd0789",
+      "id": "226308e0ed9c474c20d2",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 153,
       "enclosing": "launchRule",
@@ -15954,10 +16298,10 @@
       "target": "business_automation_events",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "688688cf3680ee3f0617",
+      "id": "f9051a52fef9a68a6224",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 153,
       "enclosing": "launchRule",
@@ -15965,10 +16309,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "e91a6717e92b62825640",
+      "id": "313d63a3badf7ebc39a2",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 163,
       "enclosing": "processDueBusinessAutomations",
@@ -15976,10 +16320,10 @@
       "target": "business_automation_rules",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "0934c4297284d3107a4f",
+      "id": "dd251505ba97e3270cca",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 163,
       "enclosing": "processDueBusinessAutomations",
@@ -15987,10 +16331,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "995ad22e9036ba82ad09",
+      "id": "72dd8afe9fe60aefac91",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 175,
       "enclosing": "processDueBusinessAutomations",
@@ -15998,10 +16342,10 @@
       "target": "business_automation_rules",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "b602dd7f3c7339c6b07a",
+      "id": "6daaf11c75957722add0",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 175,
       "enclosing": "processDueBusinessAutomations",
@@ -16009,10 +16353,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "5433a90b42e2c556b563",
+      "id": "066fe4175155348d4b2a",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 196,
       "enclosing": "handleBusinessAutomationTrigger",
@@ -16020,10 +16364,10 @@
       "target": "business_automation_rules",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
-      "id": "85651a90e4853f6f744b",
+      "id": "be26d3660406cd264753",
       "path": "backend/src/services/integrations/businessAutomations.ts",
       "line": 196,
       "enclosing": "handleBusinessAutomationTrigger",
@@ -16031,7 +16375,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b28bd4ede683d1e1c1fdfe9dc8cb3475fd3f4793ca0261c93d40fb587cfdebb2"
+      "sourceSha256": "51116250752cf0d6431db3f171c7d2ea8e8f083dd79690b23841ad0bdb37fb7c"
     },
     {
       "id": "57b0ef9d8f154a7f4305",
@@ -16175,6 +16519,156 @@
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
       "sourceSha256": "076c0205cc129e2a5ff83f0bc57d21bb4faf8a18e5769223f07943115b22d30d"
+    },
+    {
+      "id": "2e179485422a357d7726",
+      "path": "backend/src/services/integrations/composioDefaultAccounts.ts",
+      "line": 26,
+      "enclosing": "get",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "composio_default_accounts",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "2f07e4d3cf474fad4577eaf9a7ed20301f018a2c8a71410938355403202f5021",
+      "semanticReview": {
+        "authority": "Callers are composioAccounts.ts and the accounts routes behind the integrations authentication, always with the verified request user id. Every read, upsert and delete carries that user id and the toolkit as explicit predicates, after both are validated against a strict UUID and slug pattern. No request body, query or model output supplies the owner.",
+        "reason": "The table holds only a Composio connected-account id, a public identifier and not a credential. The stored id is never trusted on its own: before use composioAccounts.ts proves it is still one of the owner's own active private accounts at Composio, so a stale or tampered row can only fail closed. RLS allows the owner SELECT only; all writes are server-side. The migration is not applied and the feature is disabled until XROGA_COMPOSIO_MULTI_ACCOUNT is enabled. The Supabase path is NOT exercised against a real database in this change; scoping is verified against an in-memory store with identical predicates.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "uses the saved default when several accounts are connected"
+          },
+          {
+            "path": "backend/src/routes/composioAccountsRoutes.test.ts",
+            "marker": "saves a default account only from the caller"
+          }
+        ]
+      }
+    },
+    {
+      "id": "785dbca5bbddf007f99f",
+      "path": "backend/src/services/integrations/composioDefaultAccounts.ts",
+      "line": 26,
+      "enclosing": "get",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "2f07e4d3cf474fad4577eaf9a7ed20301f018a2c8a71410938355403202f5021",
+      "semanticReview": {
+        "authority": "Callers are composioAccounts.ts and the accounts routes behind the integrations authentication, always with the verified request user id. Every read, upsert and delete carries that user id and the toolkit as explicit predicates, after both are validated against a strict UUID and slug pattern. No request body, query or model output supplies the owner.",
+        "reason": "The table holds only a Composio connected-account id, a public identifier and not a credential. The stored id is never trusted on its own: before use composioAccounts.ts proves it is still one of the owner's own active private accounts at Composio, so a stale or tampered row can only fail closed. RLS allows the owner SELECT only; all writes are server-side. The migration is not applied and the feature is disabled until XROGA_COMPOSIO_MULTI_ACCOUNT is enabled. The Supabase path is NOT exercised against a real database in this change; scoping is verified against an in-memory store with identical predicates.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "uses the saved default when several accounts are connected"
+          },
+          {
+            "path": "backend/src/routes/composioAccountsRoutes.test.ts",
+            "marker": "saves a default account only from the caller"
+          }
+        ]
+      }
+    },
+    {
+      "id": "f6f40e96063c9ff973d8",
+      "path": "backend/src/services/integrations/composioDefaultAccounts.ts",
+      "line": 39,
+      "enclosing": "set",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "composio_default_accounts",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "2f07e4d3cf474fad4577eaf9a7ed20301f018a2c8a71410938355403202f5021",
+      "semanticReview": {
+        "authority": "Callers are composioAccounts.ts and the accounts routes behind the integrations authentication, always with the verified request user id. Every read, upsert and delete carries that user id and the toolkit as explicit predicates, after both are validated against a strict UUID and slug pattern. No request body, query or model output supplies the owner.",
+        "reason": "The table holds only a Composio connected-account id, a public identifier and not a credential. The stored id is never trusted on its own: before use composioAccounts.ts proves it is still one of the owner's own active private accounts at Composio, so a stale or tampered row can only fail closed. RLS allows the owner SELECT only; all writes are server-side. The migration is not applied and the feature is disabled until XROGA_COMPOSIO_MULTI_ACCOUNT is enabled. The Supabase path is NOT exercised against a real database in this change; scoping is verified against an in-memory store with identical predicates.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "uses the saved default when several accounts are connected"
+          },
+          {
+            "path": "backend/src/routes/composioAccountsRoutes.test.ts",
+            "marker": "saves a default account only from the caller"
+          }
+        ]
+      }
+    },
+    {
+      "id": "efcea50ee89050f4365f",
+      "path": "backend/src/services/integrations/composioDefaultAccounts.ts",
+      "line": 39,
+      "enclosing": "set",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "2f07e4d3cf474fad4577eaf9a7ed20301f018a2c8a71410938355403202f5021",
+      "semanticReview": {
+        "authority": "Callers are composioAccounts.ts and the accounts routes behind the integrations authentication, always with the verified request user id. Every read, upsert and delete carries that user id and the toolkit as explicit predicates, after both are validated against a strict UUID and slug pattern. No request body, query or model output supplies the owner.",
+        "reason": "The table holds only a Composio connected-account id, a public identifier and not a credential. The stored id is never trusted on its own: before use composioAccounts.ts proves it is still one of the owner's own active private accounts at Composio, so a stale or tampered row can only fail closed. RLS allows the owner SELECT only; all writes are server-side. The migration is not applied and the feature is disabled until XROGA_COMPOSIO_MULTI_ACCOUNT is enabled. The Supabase path is NOT exercised against a real database in this change; scoping is verified against an in-memory store with identical predicates.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "uses the saved default when several accounts are connected"
+          },
+          {
+            "path": "backend/src/routes/composioAccountsRoutes.test.ts",
+            "marker": "saves a default account only from the caller"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4d8476885f2e19e11458",
+      "path": "backend/src/services/integrations/composioDefaultAccounts.ts",
+      "line": 46,
+      "enclosing": "clear",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "composio_default_accounts",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "2f07e4d3cf474fad4577eaf9a7ed20301f018a2c8a71410938355403202f5021",
+      "semanticReview": {
+        "authority": "Callers are composioAccounts.ts and the accounts routes behind the integrations authentication, always with the verified request user id. Every read, upsert and delete carries that user id and the toolkit as explicit predicates, after both are validated against a strict UUID and slug pattern. No request body, query or model output supplies the owner.",
+        "reason": "The table holds only a Composio connected-account id, a public identifier and not a credential. The stored id is never trusted on its own: before use composioAccounts.ts proves it is still one of the owner's own active private accounts at Composio, so a stale or tampered row can only fail closed. RLS allows the owner SELECT only; all writes are server-side. The migration is not applied and the feature is disabled until XROGA_COMPOSIO_MULTI_ACCOUNT is enabled. The Supabase path is NOT exercised against a real database in this change; scoping is verified against an in-memory store with identical predicates.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "uses the saved default when several accounts are connected"
+          },
+          {
+            "path": "backend/src/routes/composioAccountsRoutes.test.ts",
+            "marker": "saves a default account only from the caller"
+          }
+        ]
+      }
+    },
+    {
+      "id": "3f02aab9fa8f58638b72",
+      "path": "backend/src/services/integrations/composioDefaultAccounts.ts",
+      "line": 46,
+      "enclosing": "clear",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "2f07e4d3cf474fad4577eaf9a7ed20301f018a2c8a71410938355403202f5021",
+      "semanticReview": {
+        "authority": "Callers are composioAccounts.ts and the accounts routes behind the integrations authentication, always with the verified request user id. Every read, upsert and delete carries that user id and the toolkit as explicit predicates, after both are validated against a strict UUID and slug pattern. No request body, query or model output supplies the owner.",
+        "reason": "The table holds only a Composio connected-account id, a public identifier and not a credential. The stored id is never trusted on its own: before use composioAccounts.ts proves it is still one of the owner's own active private accounts at Composio, so a stale or tampered row can only fail closed. RLS allows the owner SELECT only; all writes are server-side. The migration is not applied and the feature is disabled until XROGA_COMPOSIO_MULTI_ACCOUNT is enabled. The Supabase path is NOT exercised against a real database in this change; scoping is verified against an in-memory store with identical predicates.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/composioPlatform.test.ts",
+            "marker": "uses the saved default when several accounts are connected"
+          },
+          {
+            "path": "backend/src/routes/composioAccountsRoutes.test.ts",
+            "marker": "saves a default account only from the caller"
+          }
+        ]
+      }
     },
     {
       "id": "2697b20e243c70e7d302",

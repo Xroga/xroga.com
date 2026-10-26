@@ -41,6 +41,8 @@ import {
   type XrogaConnectToolRisk,
 } from './composioClient.js';
 
+import { resolveComposioAccountSelection } from './composioAccounts.js';
+import { readComposioCapabilityFlags } from './composioPolicy.js';
 import { boundedComposioGuidance, rankToolsBySkill } from './composioSkillGuidance.js';
 
 import {
@@ -1094,6 +1096,9 @@ export async function prepareBusinessAction(
 
     /** Bounded results from preceding reads; only allowed for reviewed workflows. */
     referenceEvidence?: BusinessActionReferenceEvidence[];
+
+    /** Which of the user's connected accounts to act as, when several are connected. Proven to be theirs before use. */
+    connectedAccountId?: string;
   },
 ): Promise<BusinessActionPreparationOutcome> {
   const useCase =
@@ -1349,7 +1354,12 @@ export async function prepareBusinessAction(
 
   const requiresConfirmation = true;
   const account = toolkitMetadata.find(item => normalizeToolkit(item.toolkit) === normalizeToolkit(selected.toolkit));
-  const accountId = account?.noAuth ? `no-auth:${normalizeToolkit(selected.toolkit)}` : account?.connectedAccountId;
+  // With several accounts enabled, the account is the one the user chose (or their saved default), never merely the most recent.
+  // With the feature off this returns nothing and the single account Composio reports is used, exactly as before.
+  const accountChoice = account?.noAuth
+    ? { accountId: null }
+    : await resolveComposioAccountSelection(input.userId, { toolkit: normalizeToolkit(selected.toolkit), requestedAccountId: input.connectedAccountId });
+  const accountId = account?.noAuth ? `no-auth:${normalizeToolkit(selected.toolkit)}` : accountChoice.accountId ?? account?.connectedAccountId;
   if (!account?.connected || !accountId || selected.slug.startsWith('COMPOSIO_')) {
     throw new ComposioClientError('An exact connected application account is required.', {
       status: 409, code: 'BUSINESS_ACTION_ACCOUNT_REQUIRED',
@@ -1548,6 +1558,9 @@ export async function executePreparedBusinessAction(
 
         arguments:
           input.plan.arguments,
+
+        // Run as exactly the account that was approved. It is re-proved to be the user's own, and still current, at dispatch.
+        ...(readComposioCapabilityFlags().multiAccount && !binding.connectedAccountId.startsWith('no-auth:') ? { connectedAccountId: binding.connectedAccountId } : {}),
 
         authorization: {
           confirmed: true,

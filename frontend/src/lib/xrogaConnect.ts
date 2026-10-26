@@ -36,6 +36,23 @@ export interface XrogaConnectToolkit {
   noAuth?: boolean;
 }
 
+export interface XrogaConnectedAccount {
+  id: string;
+  toolkit: string;
+  alias: string | null;
+  /** Provider-identity label such as `gmail_red-castle`. */
+  label: string | null;
+  status: 'ACTIVE';
+}
+
+export interface XrogaConnectedAccountsResult {
+  ok: boolean;
+  /** False when Xroga has not enabled several accounts per app. */
+  multiAccount: boolean;
+  accounts: XrogaConnectedAccount[];
+  defaultAccountId?: string | null;
+}
+
 export interface XrogaConnectSkill {
   useCase?: string;
   primaryToolSlugs: string[];
@@ -419,6 +436,8 @@ export const xrogaConnect = {
   link: (
     sessionId: string,
     toolkit: string,
+    /** A name for the new account, such as `work-gmail`. Only used when several accounts are enabled. */
+    alias?: string,
   ) =>
     apiFetch<{
       ok: boolean;
@@ -430,8 +449,28 @@ export const xrogaConnect = {
       body: JSON.stringify({
         sessionId,
         toolkit,
+        ...(alias ? { alias } : {}),
       }),
     }),
+
+  accounts: {
+    list: (toolkit: string) =>
+      apiFetch<XrogaConnectedAccountsResult>(
+        `/api/integrations/xroga-connect/accounts?toolkit=${encodeURIComponent(toolkit)}`,
+      ),
+
+    rename: (toolkit: string, accountId: string, alias: string | null) =>
+      apiFetch<{ ok: boolean; account: XrogaConnectedAccount }>(
+        `/api/integrations/xroga-connect/accounts/${encodeURIComponent(accountId)}`,
+        { method: 'PATCH', body: JSON.stringify({ toolkit, alias }) },
+      ),
+
+    setDefault: (toolkit: string, accountId: string | null) =>
+      apiFetch<{ ok: boolean; defaultAccountId: string | null }>(
+        '/api/integrations/xroga-connect/accounts/default',
+        { method: 'PUT', body: JSON.stringify({ toolkit, accountId }) },
+      ),
+  },
 
   customMcp: {
     list: () =>
