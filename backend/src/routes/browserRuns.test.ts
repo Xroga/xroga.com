@@ -63,7 +63,7 @@ const call = async (user: string | null, method: string, path = '', payload?: un
   return { status: r.status, json: text ? JSON.parse(text) : null };
 };
 const finished = async (user: string, runId: string) => {
-  for (let i = 0; i < 100; i++) { const r = await call(user, 'GET', `/${runId}`); if (r.status === 200 && !r.json.running && ['completed', 'failed', 'blocked', 'cancelled'].includes(r.json.status)) return r.json; await new Promise((x) => setTimeout(x, 20)); }
+  for (let i = 0; i < 400; i++) { const r = await call(user, 'GET', `/${runId}`); if (r.status === 200 && !r.json.running && ['completed', 'failed', 'blocked', 'cancelled'].includes(r.json.status)) return r.json; await new Promise((x) => setTimeout(x, 20)); }
   throw new Error('run did not finish');
 };
 

@@ -149,7 +149,7 @@ export async function prepareBrowserRun(context: TenantContext, request: Browser
 
 export type ExecuteOutcome = 'finished' | 'already_finished' | 'held_by_live_worker' | 'not_found';
 
-const CANCEL_POLL_MS = 2_000;
+const CANCEL_POLL_MS = 500;
 const EXECUTE_LEASE_TASK = 'execute';
 const EXECUTE_LEASE_TTL_MS = 60_000;
 
