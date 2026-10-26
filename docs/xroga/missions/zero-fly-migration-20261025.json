@@ -144,7 +144,15 @@
     "scripts/security/schema-catalog.mjs",
     "scripts/security/schema-catalog.test.mjs",
     "scripts/security/full-supabase-history.mjs",
-    "docs/xroga/evidence/zero-fly/hosted-delivery-schema-20261026.json"
+    "docs/xroga/evidence/zero-fly/hosted-delivery-schema-20261026.json",
+    "backend/src/security/previewConsumer.local.integration.ts",
+    "scripts/xroga/runtime-inventory.mjs",
+    "scripts/xroga/runtime-config.test.mjs",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/deployment-topology.mmd",
+    "docs/xroga/runtime-contract.md",
+    "docs/xroga/secret-inventory.md"
   ],
   "decisions": {
     "keep": [

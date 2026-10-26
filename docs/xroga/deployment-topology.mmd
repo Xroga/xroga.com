@@ -59,6 +59,8 @@ flowchart LR
   endpoint_chrome_google_com["Source-defined endpoint chrome.google.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_chromewebstore_googleapis_com["Source-defined endpoint chromewebstore.googleapis.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_cloudkms_googleapis_com["Source-defined endpoint cloudkms.googleapis.com — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_cloudtasks_googleapis_com["Source-defined endpoint cloudtasks.googleapis.com — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_compute_googleapis_com["Source-defined endpoint compute.googleapis.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_coordinator["Source-defined endpoint coordinator — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_design_intuit_com["Source-defined endpoint design.intuit.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_dev_whop_com["Source-defined endpoint dev.whop.com — CONFIGURED_BUT_UNVERIFIED"]
@@ -114,12 +116,14 @@ flowchart LR
   endpoint_mailchimp_com["Source-defined endpoint mailchimp.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_mcp_example_com["Source-defined endpoint mcp.example.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_memory_invalid["Source-defined endpoint memory.invalid — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_metadata_google_internal["Source-defined endpoint metadata.google.internal — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_mixpanel_com["Source-defined endpoint mixpanel.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_neon_com["Source-defined endpoint neon.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_nextjs_org["Source-defined endpoint nextjs.org — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_oauth2_googleapis_com["Source-defined endpoint oauth2.googleapis.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_open_bigmodel_cn["Source-defined endpoint open.bigmodel.cn — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_openrouter_ai["Source-defined endpoint openrouter.ai — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_oslogin_googleapis_com["Source-defined endpoint oslogin.googleapis.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_packaging_python_org["Source-defined endpoint packaging.python.org — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_play_google_com["Source-defined endpoint play.google.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_pollinations_ai["Source-defined endpoint pollinations.ai — CONFIGURED_BUT_UNVERIFIED"]
@@ -129,6 +133,7 @@ flowchart LR
   endpoint_railway_app["Source-defined endpoint railway.app — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_react_dev["Source-defined endpoint react.dev — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_registry_npmjs_org["Source-defined endpoint registry.npmjs.org — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_run_googleapis_com["Source-defined endpoint run.googleapis.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_schema_org["Source-defined endpoint schema.org — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_scs_owasp_org["Source-defined endpoint scs.owasp.org — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_sentry_io["Source-defined endpoint sentry.io — CONFIGURED_BUT_UNVERIFIED"]
@@ -241,6 +246,8 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_chrome_google_com
   api -. "source host/reference; unverified" .-> endpoint_chromewebstore_googleapis_com
   api -. "source host/reference; unverified" .-> endpoint_cloudkms_googleapis_com
+  api -. "source host/reference; unverified" .-> endpoint_cloudtasks_googleapis_com
+  api -. "source host/reference; unverified" .-> endpoint_compute_googleapis_com
   api -. "source host/reference; unverified" .-> endpoint_coordinator
   frontend -. "source host/reference; unverified" .-> endpoint_design_intuit_com
   frontend -. "source host/reference; unverified" .-> endpoint_dev_whop_com
@@ -296,12 +303,14 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_mailchimp_com
   frontend -. "source host/reference; unverified" .-> endpoint_mcp_example_com
   api -. "source host/reference; unverified" .-> endpoint_memory_invalid
+  api -. "source host/reference; unverified" .-> endpoint_metadata_google_internal
   frontend -. "source host/reference; unverified" .-> endpoint_mixpanel_com
   frontend -. "source host/reference; unverified" .-> endpoint_neon_com
   frontend -. "source host/reference; unverified" .-> endpoint_nextjs_org
   api -. "source host/reference; unverified" .-> endpoint_oauth2_googleapis_com
   api -. "source host/reference; unverified" .-> endpoint_open_bigmodel_cn
   api -. "source host/reference; unverified" .-> endpoint_openrouter_ai
+  api -. "source host/reference; unverified" .-> endpoint_oslogin_googleapis_com
   frontend -. "source host/reference; unverified" .-> endpoint_packaging_python_org
   api -. "source host/reference; unverified" .-> endpoint_play_google_com
   frontend -. "source host/reference; unverified" .-> endpoint_pollinations_ai
@@ -311,6 +320,7 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_railway_app
   frontend -. "source host/reference; unverified" .-> endpoint_react_dev
   api -. "source host/reference; unverified" .-> endpoint_registry_npmjs_org
+  api -. "source host/reference; unverified" .-> endpoint_run_googleapis_com
   frontend -. "source host/reference; unverified" .-> endpoint_schema_org
   frontend -. "source host/reference; unverified" .-> endpoint_scs_owasp_org
   frontend -. "source host/reference; unverified" .-> endpoint_sentry_io

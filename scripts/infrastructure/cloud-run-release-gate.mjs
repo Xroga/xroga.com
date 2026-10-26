@@ -6,6 +6,8 @@ const sha = /^[a-f0-9]{40}$/;
 const digest = /^sha256:[a-f0-9]{64}$/;
 const forbidden = /^(?:FLY_|XROGA_.*(?:FLY|WIF)|GOOGLE_APPLICATION_CREDENTIALS$|GOOGLE_CREDENTIALS$|CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE$|GCE_METADATA_(?:HOST|IP)$)/;
 const requireCondition = (condition, code) => { if (!condition) throw new Error(code); };
+const onlyKeys = (value, allowed) => value && typeof value === 'object' && !Array.isArray(value)
+  && Object.keys(value).every(key => allowed.includes(key));
 
 /** Deterministic deployment preflight, not a substitute for authenticated live
  * tests, image provenance, owner approval or the original acceptance evaluator.
@@ -23,7 +25,10 @@ export function validateCloudRunRelease(actual, expected) {
     && new RegExp(`^[a-z][a-z0-9-]{5,29}@${expected.project}\\.iam\\.gserviceaccount\\.com$`).test(expected.serviceAccount), 'DEDICATED_NATIVE_IDENTITY_REQUIRED');
   requireCondition(typeof expected.keyName === 'string'
     && new RegExp(`^projects/${expected.project}/locations/[a-z0-9-]+/keyRings/[A-Za-z0-9_-]{1,63}/cryptoKeys/[A-Za-z0-9_-]{1,63}$`).test(expected.keyName), 'EXACT_KEY_REQUIRED');
-  requireCondition(Array.isArray(expected.secretBindings) && expected.secretBindings.length > 0
+  const bundle = expected.platformConfigBinding;
+  requireCondition(bundle === undefined || (onlyKeys(bundle, ['secret','version'])
+    && /^[A-Za-z0-9_-]+$/.test(bundle.secret ?? '') && /^[1-9][0-9]*$/.test(bundle.version ?? '')), 'PINNED_CONFIG_BUNDLE_REQUIRED');
+  requireCondition(Array.isArray(expected.secretBindings) && (expected.secretBindings.length > 0 || bundle)
     && new Set(expected.secretBindings.map(binding => binding.name)).size === expected.secretBindings.length
     && expected.secretBindings.every(binding => typeof binding.name === 'string' && /^[A-Z][A-Z0-9_]*$/.test(binding.name)
       && typeof binding.secret === 'string' && /^[A-Za-z0-9_-]+$/.test(binding.secret)
@@ -62,6 +67,36 @@ export function validateCloudRunRelease(actual, expected) {
     requireCondition(!Object.hasOwn(configured ?? {}, 'value')
       && configured?.valueFrom?.secretKeyRef?.name === binding.secret
       && configured.valueFrom.secretKeyRef.key === binding.version, 'SECRET_BINDING_MISMATCH');
+  }
+  const volumes = specification.volumes ?? [], mounts = container.volumeMounts ?? [];
+  requireCondition(Array.isArray(volumes) && Array.isArray(mounts), 'INVALID_SECRET_MOUNTS');
+  if (bundle) {
+    requireCondition(plain.XROGA_PLATFORM_CONFIG_FILE === '/secrets/xroga-platform/config.json', 'CONFIG_BUNDLE_PATH_MISMATCH');
+    const volume = volumes[0], mount = mounts[0], secret = volume?.secret, item = secret?.items?.[0];
+    requireCondition(volumes.length === 1 && onlyKeys(volume, ['name','secret']) && volume.name === 'xroga-platform'
+      && onlyKeys(secret, ['secretName','items','defaultMode']) && secret.secretName === bundle.secret
+      && (secret.defaultMode === undefined || secret.defaultMode === 292)
+      && Array.isArray(secret.items) && secret.items.length === 1 && onlyKeys(item, ['key','path','mode'])
+      && item.key === bundle.version && item.path === 'config.json' && item.mode === 292
+      && mounts.length === 1 && onlyKeys(mount, ['name','mountPath']) && mount.name === volume.name
+      && mount.mountPath === '/secrets/xroga-platform', 'CONFIG_BUNDLE_MOUNT_MISMATCH');
+  } else {
+    requireCondition(volumes.length === 0 && mounts.length === 0 && !env.has('XROGA_PLATFORM_CONFIG_FILE'), 'UNREVIEWED_SECRET_MOUNT');
+  }
+  // Secret lookup aliases must not redirect an otherwise correct local name to
+  // another project or credential. Provider-added unrelated annotations remain allowed.
+  const secretNames = new Set([...expected.secretBindings.map(binding => binding.secret), ...(bundle ? [bundle.secret] : [])]);
+  for (const annotations of [actual.service.metadata?.annotations, template.metadata?.annotations]) {
+    const aliases = annotations?.['run.googleapis.com/secrets'];
+    if (aliases === undefined) continue;
+    requireCondition(typeof aliases === 'string' && aliases.length > 0, 'INVALID_SECRET_ALIAS');
+    const seen = new Set();
+    for (const mapping of aliases.split(',')) {
+      const match = /^([A-Za-z0-9_-]+):projects\/([a-z0-9-]+)\/secrets\/([A-Za-z0-9_-]+)$/.exec(mapping.trim());
+      requireCondition(match && !seen.has(match[1]) && secretNames.has(match[1]) && match[1] === match[3]
+        && (match[2] === expected.project || (/^[0-9]+$/.test(expected.projectNumber ?? '') && match[2] === expected.projectNumber)), 'UNREVIEWED_SECRET_ALIAS');
+      seen.add(match[1]);
+    }
   }
   const annotations = template.metadata?.annotations ?? {};
   requireCondition(annotations['run.googleapis.com/cpu-throttling'] === 'false'

@@ -63,3 +63,50 @@ test('a weakened expected contract cannot select tags, foreign recovery or mutab
     assert.throws(()=>validateCloudRunRelease(actual,expected));
   }
 });
+
+function bundleFixture() {
+  const {actual,expected}=fixture();
+  expected.secretBindings=[];
+  expected.platformConfigBinding={secret:'synthetic-platform',version:'7'};
+  expected.plainEnvironment={XROGA_PLATFORM_CONFIG_FILE:'/secrets/xroga-platform/config.json'};
+  const spec=actual.service.spec.template.spec;
+  spec.containers[0].env.pop();
+  spec.containers[0].env.push({name:'XROGA_PLATFORM_CONFIG_FILE',value:'/secrets/xroga-platform/config.json'});
+  spec.volumes=[{name:'xroga-platform',secret:{secretName:'synthetic-platform',items:[{key:'7',path:'config.json',mode:292}]}}];
+  spec.containers[0].volumeMounts=[{name:'xroga-platform',mountPath:'/secrets/xroga-platform'}];
+  return {actual,expected};
+}
+
+test('only the exact pinned protected configuration volume can satisfy secret parity',()=>{
+  const {actual,expected}=bundleFixture();
+  assert.equal(validateCloudRunRelease(actual,expected).result,'PASS_NATIVE_API_PREFLIGHT_NOT_CUTOVER_ACCEPTANCE');
+  for(const mutate of [
+    ({actual})=>{actual.service.spec.template.spec.volumes[0].secret.items[0].key='latest';},
+    ({actual})=>{actual.service.spec.template.spec.volumes[0].secret.secretName='foreign';},
+    ({actual})=>{actual.service.spec.template.spec.volumes[0].secret.items[0].path='other.json';},
+    ({actual})=>{actual.service.spec.template.spec.containers[0].volumeMounts[0].mountPath='/tmp';},
+    ({actual})=>{actual.service.spec.template.spec.volumes.push({name:'unreviewed',secret:{secretName:'foreign'}});},
+    ({actual})=>{actual.service.spec.template.spec.containers[0].volumeMounts.push({name:'unreviewed',mountPath:'/tmp'});},
+    ({expected})=>{expected.platformConfigBinding.version='latest';},
+    ({expected})=>{expected.plainEnvironment.XROGA_PLATFORM_CONFIG_FILE='/tmp/config.json';},
+    ({actual})=>{actual.service.spec.template.metadata.annotations['run.googleapis.com/secrets']='synthetic-platform:projects/foreign-project/secrets/synthetic-platform';},
+    ({actual})=>{actual.service.spec.template.spec.volumes[0].secret.items[0].mode=420;},
+  ]){
+    const f=bundleFixture();mutate(f);assert.throws(()=>validateCloudRunRelease(f.actual,f.expected));
+  }
+});
+
+test('secret aliases may resolve only the reviewed local secret and project',()=>{
+  const {actual,expected}=bundleFixture();expected.projectNumber='123456789';
+  actual.service.spec.template.metadata.annotations['run.googleapis.com/secrets']='synthetic-platform:projects/123456789/secrets/synthetic-platform';
+  assert.doesNotThrow(()=>validateCloudRunRelease(actual,expected));
+  actual.service.spec.template.metadata.annotations['run.googleapis.com/secrets']+=',synthetic-platform:projects/123456789/secrets/synthetic-platform';
+  assert.throws(()=>validateCloudRunRelease(actual,expected));
+});
+
+test('unreviewed mounted secrets are rejected even when direct environment secret bindings match',()=>{
+  const {actual,expected}=fixture();
+  actual.service.spec.template.spec.volumes=[{name:'unreviewed',secret:{secretName:'foreign'}}];
+  actual.service.spec.template.spec.containers[0].volumeMounts=[{name:'unreviewed',mountPath:'/tmp'}];
+  assert.throws(()=>validateCloudRunRelease(actual,expected));
+});

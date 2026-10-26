@@ -22,6 +22,17 @@ test('canonical API build preserves compiled output and requires the pinned Git 
 
 const baseline = buildRuntimeInventory();
 const fixture = () => structuredClone(baseline);
+
+test('Google dynamic controls have exact reviewed bindings and new expressions remain blocked',()=>{
+  const image=baseline.dynamic_bindings.find(row=>row.path==='backend/src/synthesis/projectRuntime/googleFactory.ts');
+  assert.equal(image.status,'RESOLVED_FINITE_CATALOG');
+  assert.deepEqual(image.names,['XROGA_GCE_NODE_IMAGE','XROGA_GCE_PYTHON_IMAGE','XROGA_GCE_RUST_IMAGE']);
+  for(const path of ['backend/src/config/platformEnvironment.ts','backend/src/sandbox/google/gceMachineControl.ts','backend/src/services/integrations/googleCloudKmsCryptoProvider.ts']){
+    assert.ok(baseline.dynamic_bindings.some(row=>row.path===path&&row.status==='RESOLVED_CALLER_POLICY'));
+    const [unknown]=resolveDynamicBindings({readers:[],dynamic:[{path,expression:'unreviewedName',line:1}]});
+    assert.equal(unknown.status,'REQUIRES_BINDING_REVIEW');
+  }
+});
 test('actual API, queue, Supabase and storage definitions are canonical with all discovered names represented', () => {
   assert.match(validateRuntimeInventory(baseline, baseline.environment_names.map(row => row.name)).result, /^PASS/);
   for (const id of ['api', 'redis', 'supabase', 'r2']) assert.equal(baseline.dependencies.filter(row => row.dependency_id === id).length, 1);

@@ -97870,12 +97870,14 @@
       "id": "surface:0c85fc865feefae0e864",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/infrastructure/cloud-run-release-gate.mjs",
-      "sha256": "0787bb604d713c28c0b95f74402a494dfc8fbc077b4ceaf3d2c7bc627ff3c46b",
+      "sha256": "99ddc8ac1c07261fc209c079af59d228a1851630602ef6bb7c0632163ecfc1b0",
       "symbols": [
         "actual",
+        "aliases",
         "allowedNames",
         "annotations",
         "binding",
+        "bundle",
         "configured",
         "container",
         "digest",
@@ -97884,13 +97886,24 @@
         "error",
         "expected",
         "forbidden",
+        "item",
+        "mapping",
+        "match",
+        "mount",
+        "mounts",
+        "onlyKeys",
         "plain",
         "registry",
         "requireCondition",
+        "secret",
+        "secretNames",
+        "seen",
         "sha",
         "specification",
         "template",
-        "validateCloudRunRelease"
+        "validateCloudRunRelease",
+        "volume",
+        "volumes"
       ],
       "imports": [
         "node:fs",
@@ -101894,7 +101907,7 @@
       "id": "surface:0508a95649266c86d55d",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/runtime-inventory.mjs",
-      "sha256": "0b8cb7cf2748bfbc51fbdb77af14e70a2b0d5396bc9959b009b7495d560a7070",
+      "sha256": "028806d9087af1b3515423f957b88e803500cbf72ec5bd4e61be2bd89933c41a",
       "symbols": [
         "aliasKeys",
         "bindings",
@@ -124110,7 +124123,7 @@
     {
       "id": "test-suite:4b3535f16ce83b5dd546",
       "sourcePath": "scripts/infrastructure/cloud-run-release-gate.test.mjs",
-      "declaredTests": 3,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -124278,7 +124291,7 @@
     {
       "id": "test-suite:e4abbb3327d5dd30e800",
       "sourcePath": "scripts/xroga/runtime-config.test.mjs",
-      "declaredTests": 8,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },

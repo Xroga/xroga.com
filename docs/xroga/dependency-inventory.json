@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "acc5076d245c98197a42b4deb880a22f518f2e1c",
+  "source_sha": "44455b7555abea1ed509d06a9ccd1f8ac941b2a6",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -819,7 +819,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "backend/src/routes/businessAutomationScheduler.ts",
+        "backend/src/lib/googleServiceToken.ts",
         "backend/src/services/publish/chromeWebStore.ts"
       ],
       "hostnames": [
@@ -830,10 +830,7 @@
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
       "secret_names": [
         "FRONTEND_URL",
-        "NODE_ENV",
-        "XROGA_AUTOMATION_SCHEDULER_AUDIENCE",
-        "XROGA_AUTOMATION_SCHEDULER_MODE",
-        "XROGA_AUTOMATION_SCHEDULER_SERVICE_ACCOUNT"
+        "NODE_ENV"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -847,7 +844,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "backend/src/routes/businessAutomationScheduler.ts",
+        "backend/src/lib/googleServiceToken.ts",
         "backend/src/services/publish/chromeWebStore.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -2509,7 +2506,13 @@
       "resource_id": null,
       "region": "Not verified",
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
-      "secret_names": [],
+      "secret_names": [
+        "FLY_APP_NAME",
+        "K_REVISION",
+        "K_SERVICE",
+        "NODE_ENV",
+        "XROGA_GOOGLE_CLOUD_AUTH_MODE"
+      ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
       ],
@@ -2523,6 +2526,87 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-cloudtasks-googleapis-com",
+      "provider": "Source-defined endpoint cloudtasks.googleapis.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/workers/googleDispatch.ts"
+      ],
+      "hostnames": [
+        "cloudtasks.googleapis.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [
+        "XROGA_GCE_PROJECT",
+        "XROGA_GCE_SERVICE_ACCOUNT",
+        "XROGA_GOOGLE_CLOUD_KMS_KEY_NAME",
+        "XROGA_GOOGLE_DISPATCH_ACCOUNT",
+        "XROGA_GOOGLE_DISPATCH_REGION",
+        "XROGA_GOOGLE_DISPATCH_URL",
+        "XROGA_GOOGLE_TASK_QUEUE",
+        "XROGA_GOOGLE_WORKER_IMAGE",
+        "XROGA_GOOGLE_WORKER_JOB",
+        "XROGA_RELEASE_SHA"
+      ],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/workers/googleDispatch.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-compute-googleapis-com",
+      "provider": "Source-defined endpoint compute.googleapis.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/sandbox/google/gceMachineControl.ts"
+      ],
+      "hostnames": [
+        "compute.googleapis.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [
+        "XROGA_GOOGLE_CLOUD_AUTH_MODE"
+      ],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/sandbox/google/gceMachineControl.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -4575,6 +4659,57 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-metadata-google-internal",
+      "provider": "Source-defined endpoint metadata.google.internal",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/scripts/verifyGceExecution.ts",
+        "backend/src/synthesis/projectRuntime/googleFactory.ts"
+      ],
+      "hostnames": [
+        "metadata.google.internal"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [
+        "CLOUD_RUN_EXECUTION",
+        "CLOUD_RUN_JOB",
+        "XROGA_GCE_ADMITTED_IMAGES",
+        "XROGA_GCE_BASE_IMAGE",
+        "XROGA_GCE_BASE_IMAGE_ID",
+        "XROGA_GCE_DEFAULT_IMAGE",
+        "XROGA_GCE_MAX_INSTANCES",
+        "XROGA_GCE_PROJECT",
+        "XROGA_GCE_SERVICE_ACCOUNT",
+        "XROGA_GCE_SUBNET",
+        "XROGA_GCE_VERIFY_ONLY",
+        "XROGA_GCE_ZONE",
+        "XROGA_PROJECT_RUNTIME_PROVIDER",
+        "XROGA_RELEASE_SHA"
+      ],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/scripts/verifyGceExecution.ts",
+        "backend/src/synthesis/projectRuntime/googleFactory.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-mixpanel-com",
       "provider": "Source-defined endpoint mixpanel.com",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -4777,6 +4912,40 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/ai/models.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-oslogin-googleapis-com",
+      "provider": "Source-defined endpoint oslogin.googleapis.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/sandbox/google/gceSshTransport.ts"
+      ],
+      "hostnames": [
+        "oslogin.googleapis.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/sandbox/google/gceSshTransport.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -5099,6 +5268,51 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/workers/imagePins.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-run-googleapis-com",
+      "provider": "Source-defined endpoint run.googleapis.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/workers/googleDispatch.ts"
+      ],
+      "hostnames": [
+        "run.googleapis.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [
+        "XROGA_GCE_PROJECT",
+        "XROGA_GCE_SERVICE_ACCOUNT",
+        "XROGA_GOOGLE_CLOUD_KMS_KEY_NAME",
+        "XROGA_GOOGLE_DISPATCH_ACCOUNT",
+        "XROGA_GOOGLE_DISPATCH_REGION",
+        "XROGA_GOOGLE_DISPATCH_URL",
+        "XROGA_GOOGLE_TASK_QUEUE",
+        "XROGA_GOOGLE_WORKER_IMAGE",
+        "XROGA_GOOGLE_WORKER_JOB",
+        "XROGA_RELEASE_SHA"
+      ],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/workers/googleDispatch.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -6102,6 +6316,7 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "backend/src/lib/youtubeSearch.ts",
+        "backend/src/sandbox/google/gceMachineControl.ts",
         "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
         "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
         "backend/src/services/publish/chromeWebStore.ts"
@@ -6113,8 +6328,12 @@
       "region": "Not verified",
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
       "secret_names": [
+        "FLY_APP_NAME",
         "FRONTEND_URL",
+        "K_REVISION",
+        "K_SERVICE",
         "NODE_ENV",
+        "XROGA_GOOGLE_CLOUD_AUTH_MODE",
         "YOUTUBE_API_KEY"
       ],
       "inbound_callers": [
@@ -6130,6 +6349,7 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/lib/youtubeSearch.ts",
+        "backend/src/sandbox/google/gceMachineControl.ts",
         "backend/src/services/integrations/flyGoogleWorkloadIdentity.ts",
         "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
         "backend/src/services/publish/chromeWebStore.ts"
@@ -7302,6 +7522,7 @@
         "backend/src/ai/softwareAgent/softwareAgentFeatureFlags.ts",
         "backend/src/ai/universal/semanticRequestPlanner.ts",
         "backend/src/config/envSecrets.ts",
+        "backend/src/config/platformEnvironment.ts",
         "backend/src/config/universalAgentFlags.ts",
         "backend/src/growth/growthService.ts",
         "backend/src/lib/comfyui.ts",
@@ -7311,8 +7532,10 @@
         "backend/src/lib/resilience/circuitBreaker.ts",
         "backend/src/organicIntelligence/intelligence.ts",
         "backend/src/routes/browserRuns.ts",
+        "backend/src/routes/businessAutomationScheduler.ts",
         "backend/src/routes/businessAutomationWebhook.ts",
         "backend/src/runtime/readiness.ts",
+        "backend/src/scripts/runCanonicalWorker.ts",
         "backend/src/services/integrations/businessAutomations.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/storage/databaseTls.ts",
@@ -7322,6 +7545,7 @@
         "backend/src/storage/runtime.ts",
         "backend/src/storage/testing/pgFixture.ts",
         "backend/src/synthesis/livePreview/signing.ts",
+        "backend/src/workers/googleSwarmQueue.ts",
         "backend/src/workers/proxySidecar.ts"
       ],
       "hostnames": [],
@@ -7337,6 +7561,7 @@
         "BLACK_HOLE_CUTOVER_STAGE",
         "BLACK_HOLE_ROLLOUT_PERCENT",
         "BREVO_API_KEY",
+        "CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE",
         "COMFYUI_URL",
         "COMPOSIO_WEBHOOK_SECRET",
         "DEEPDUB_API_KEY",
@@ -7353,6 +7578,8 @@
         "FAL_API_KEY",
         "FAL_KEY",
         "FLY_MACHINE_ID",
+        "GCE_METADATA_HOST",
+        "GCE_METADATA_IP",
         "GEMINI_CODE_API_KEY",
         "GLM_5_3_CONTEXT_WINDOW",
         "GLM_5_3_FLASH_CONTEXT_WINDOW",
@@ -7363,6 +7590,8 @@
         "GLM_5_3_MODEL_ID",
         "GLM_5_3_OUTPUT_USD_PER_1M",
         "GLM_API_KEY",
+        "GOOGLE_APPLICATION_CREDENTIALS",
+        "GOOGLE_CREDENTIALS",
         "GROQ_CODE_API_KEY",
         "HAILUO_UID",
         "HAPPYSCRIBE_API_KEY",
@@ -7430,6 +7659,9 @@
         "UPSTASH_VECTOR_REST_URL",
         "VERCEL_TOKEN",
         "XROGA_ALLOWED_MODELS",
+        "XROGA_AUTOMATION_SCHEDULER_AUDIENCE",
+        "XROGA_AUTOMATION_SCHEDULER_SERVICE_ACCOUNT",
+        "XROGA_BACKGROUND_EXECUTION_PROVIDER",
         "XROGA_BROWSER_AI_MODEL",
         "XROGA_BROWSER_COORDINATOR_SECRET",
         "XROGA_BROWSER_PLANNER_MODEL",
@@ -7443,8 +7675,15 @@
         "XROGA_DRIVE_R2_ACCOUNT_ID",
         "XROGA_DRIVE_R2_BUCKET",
         "XROGA_DRIVE_R2_SECRET_ACCESS_KEY",
+        "XROGA_FLY_OIDC_IMAGE_DIGESTS",
+        "XROGA_FLY_OIDC_ISSUER",
+        "XROGA_FLY_OIDC_ORGANIZATION_ID",
         "XROGA_FORCE_RESEARCH_TASK_CLASSES",
-        "XROGA_GOOGLE_CLOUD_KMS_KEY_NAME",
+        "XROGA_GCE_NODE_IMAGE",
+        "XROGA_GCE_PYTHON_IMAGE",
+        "XROGA_GCE_RUST_IMAGE",
+        "XROGA_GOOGLE_WIF_AUDIENCE",
+        "XROGA_GOOGLE_WIF_SERVICE_ACCOUNT",
         "XROGA_LEGACY_CREDENTIAL_MIGRATION",
         "XROGA_MAX_REPAIR_ATTEMPTS",
         "XROGA_MODEL_FALLBACK_ORDER",
@@ -7455,6 +7694,7 @@
         "XROGA_OCI_KMS_PRINCIPAL_ID",
         "XROGA_PER_TASK_TOKEN_CAP",
         "XROGA_PLAN_ROUTING_MODES_JSON",
+        "XROGA_PLATFORM_CONFIG_FILE",
         "XROGA_PREVIEW_BASE_DOMAIN",
         "XROGA_PREVIEW_SCHEME",
         "XROGA_PROVIDER_BUDGETS_JSON",
@@ -7465,6 +7705,7 @@
         "XROGA_REQUIRE_HIGH_RISK_REVIEW",
         "XROGA_REQUIRE_MANAGED_CUSTODY",
         "XROGA_ROUTING_MODE",
+        "XROGA_RUNTIME_ROLE",
         "XROGA_SOFTWARE_AGENT_V2",
         "XROGA_SOFTWARE_AGENT_V2_SHADOW",
         "XROGA_TEST_CREDENTIAL_KEK",
@@ -7490,6 +7731,7 @@
         "backend/src/ai/softwareAgent/softwareAgentFeatureFlags.ts",
         "backend/src/ai/universal/semanticRequestPlanner.ts",
         "backend/src/config/envSecrets.ts",
+        "backend/src/config/platformEnvironment.ts",
         "backend/src/config/universalAgentFlags.ts",
         "backend/src/growth/growthService.ts",
         "backend/src/lib/comfyui.ts",
@@ -7499,8 +7741,10 @@
         "backend/src/lib/resilience/circuitBreaker.ts",
         "backend/src/organicIntelligence/intelligence.ts",
         "backend/src/routes/browserRuns.ts",
+        "backend/src/routes/businessAutomationScheduler.ts",
         "backend/src/routes/businessAutomationWebhook.ts",
         "backend/src/runtime/readiness.ts",
+        "backend/src/scripts/runCanonicalWorker.ts",
         "backend/src/services/integrations/businessAutomations.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/storage/databaseTls.ts",
@@ -7510,6 +7754,7 @@
         "backend/src/storage/runtime.ts",
         "backend/src/storage/testing/pgFixture.ts",
         "backend/src/synthesis/livePreview/signing.ts",
+        "backend/src/workers/googleSwarmQueue.ts",
         "backend/src/workers/proxySidecar.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -8042,6 +8287,65 @@
       ]
     },
     {
+      "name": "CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE",
+      "consuming_sources": [
+        "backend/src/sandbox/google/gceMachineControl.ts",
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "CLOUD_RUN_EXECUTION",
+      "consuming_sources": [
+        "backend/src/scripts/verifyGceExecution.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
+      "name": "CLOUD_RUN_JOB",
+      "consuming_sources": [
+        "backend/src/config/platformEnvironment.ts",
+        "backend/src/scripts/verifyGceExecution.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
       "name": "COMFYUI_URL",
       "consuming_sources": [
         "backend/src/lib/comfyui.ts"
@@ -8555,9 +8859,11 @@
       "consuming_sources": [
         "backend/src/runtime/startupPolicy.ts",
         "backend/src/sandbox/flyMachineSandbox.ts",
+        "backend/src/sandbox/google/gceMachineControl.ts",
         "backend/src/scripts/verifyFlySandboxBrowser.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/services/integrations/cryptoProvider.ts",
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
         "backend/src/services/integrations/ociKmsCryptoProvider.ts",
         "backend/src/synthesis/projectRuntime/flyProvider.ts"
       ],
@@ -8569,16 +8875,21 @@
       "requiredness": "OPTIONAL_OR_DEFAULTED",
       "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
       "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING",
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "api"
+        "api",
+        "endpoint-cloudkms-googleapis-com",
+        "endpoint-www-googleapis-com"
       ]
     },
     {
       "name": "FLY_MACHINE_ID",
       "consuming_sources": [
-        "backend/src/routes/browserRuns.ts"
+        "backend/src/routes/browserRuns.ts",
+        "backend/src/sandbox/google/gceMachineControl.ts",
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -8588,6 +8899,7 @@
       "requiredness": "OPTIONAL_OR_DEFAULTED",
       "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
       "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING",
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
@@ -8639,6 +8951,46 @@
         "endpoint-vercel-com",
         "endpoint-www-googleapis-com",
         "endpoint-xrogaaicom-vercel-app"
+      ]
+    },
+    {
+      "name": "GCE_METADATA_HOST",
+      "consuming_sources": [
+        "backend/src/sandbox/google/gceMachineControl.ts",
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "GCE_METADATA_IP",
+      "consuming_sources": [
+        "backend/src/sandbox/google/gceMachineControl.ts",
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
       ]
     },
     {
@@ -8959,6 +9311,46 @@
         "DECLARED_SECRET_ALIAS",
         "REVIEWED_DYNAMIC_BINDING",
         "SECRET_HELPER_CALL"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "GOOGLE_APPLICATION_CREDENTIALS",
+      "consuming_sources": [
+        "backend/src/sandbox/google/gceMachineControl.ts",
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "GOOGLE_CREDENTIALS",
+      "consuming_sources": [
+        "backend/src/sandbox/google/gceMachineControl.ts",
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
       ],
       "dependency_ids": [
         "runtime-controls-and-conditional-aliases"
@@ -9453,6 +9845,47 @@
       ],
       "dependency_ids": [
         "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "K_REVISION",
+      "consuming_sources": [
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-cloudkms-googleapis-com",
+        "endpoint-www-googleapis-com"
+      ]
+    },
+    {
+      "name": "K_SERVICE",
+      "consuming_sources": [
+        "backend/src/config/platformEnvironment.ts",
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-cloudkms-googleapis-com",
+        "endpoint-www-googleapis-com"
       ]
     },
     {
@@ -10042,8 +10475,10 @@
         "backend/src/index.ts",
         "backend/src/routes/github.ts",
         "backend/src/runtime/startupPolicy.ts",
+        "backend/src/scripts/runCanonicalWorker.ts",
         "backend/src/services/integrations/credentialVaultRuntime.ts",
         "backend/src/services/integrations/cryptoProvider.ts",
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
         "backend/src/services/integrations/ociKmsCryptoProvider.ts",
         "backend/src/services/integrations/userProviderKeys.ts",
         "backend/src/services/integrations/vercelAuth.ts",
@@ -10074,6 +10509,7 @@
         "endpoint-api-vercel-com",
         "endpoint-chrome-google-com",
         "endpoint-chromewebstore-googleapis-com",
+        "endpoint-cloudkms-googleapis-com",
         "endpoint-github-com",
         "endpoint-localhost",
         "endpoint-oauth2-googleapis-com",
@@ -12145,7 +12581,7 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-accounts-google-com"
+        "runtime-controls-and-conditional-aliases"
       ]
     },
     {
@@ -12165,7 +12601,6 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-accounts-google-com",
         "endpoint-localhost",
         "endpoint-xrogaaicom-vercel-app"
       ]
@@ -12186,7 +12621,27 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-accounts-google-com"
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_BACKGROUND_EXECUTION_PROVIDER",
+      "consuming_sources": [
+        "backend/src/scripts/runCanonicalWorker.ts",
+        "backend/src/workers/googleSwarmQueue.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
       ]
     },
     {
@@ -12289,7 +12744,8 @@
     {
       "name": "XROGA_CREDENTIAL_KMS_PROVIDER",
       "consuming_sources": [
-        "backend/src/runtime/readiness.ts"
+        "backend/src/runtime/readiness.ts",
+        "backend/src/scripts/runCanonicalWorker.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -12464,6 +12920,63 @@
       ]
     },
     {
+      "name": "XROGA_FLY_OIDC_IMAGE_DIGESTS",
+      "consuming_sources": [
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_FLY_OIDC_ISSUER",
+      "consuming_sources": [
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_FLY_OIDC_ORGANIZATION_ID",
+      "consuming_sources": [
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_FORCE_RESEARCH_TASK_CLASSES",
       "consuming_sources": [
         "backend/src/ai/routerConfig.ts"
@@ -12480,6 +12993,260 @@
       ],
       "dependency_ids": [
         "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_GCE_ADMITTED_IMAGES",
+      "consuming_sources": [
+        "backend/src/synthesis/projectRuntime/googleFactory.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
+      "name": "XROGA_GCE_BASE_IMAGE",
+      "consuming_sources": [
+        "backend/src/synthesis/projectRuntime/googleFactory.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
+      "name": "XROGA_GCE_BASE_IMAGE_ID",
+      "consuming_sources": [
+        "backend/src/synthesis/projectRuntime/googleFactory.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
+      "name": "XROGA_GCE_DEFAULT_IMAGE",
+      "consuming_sources": [
+        "backend/src/sandbox/google/googleSandbox.ts",
+        "backend/src/synthesis/projectRuntime/googleFactory.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
+      "name": "XROGA_GCE_MAX_INSTANCES",
+      "consuming_sources": [
+        "backend/src/synthesis/projectRuntime/googleFactory.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
+      "name": "XROGA_GCE_NODE_IMAGE",
+      "consuming_sources": [
+        "backend/src/synthesis/projectRuntime/googleFactory.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_GCE_PROJECT",
+      "consuming_sources": [
+        "backend/src/synthesis/projectRuntime/googleFactory.ts",
+        "backend/src/workers/googleDispatch.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-cloudtasks-googleapis-com",
+        "endpoint-metadata-google-internal",
+        "endpoint-run-googleapis-com"
+      ]
+    },
+    {
+      "name": "XROGA_GCE_PYTHON_IMAGE",
+      "consuming_sources": [
+        "backend/src/synthesis/projectRuntime/googleFactory.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_GCE_RUST_IMAGE",
+      "consuming_sources": [
+        "backend/src/synthesis/projectRuntime/googleFactory.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_GCE_SERVICE_ACCOUNT",
+      "consuming_sources": [
+        "backend/src/synthesis/projectRuntime/googleFactory.ts",
+        "backend/src/workers/googleDispatch.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-cloudtasks-googleapis-com",
+        "endpoint-metadata-google-internal",
+        "endpoint-run-googleapis-com"
+      ]
+    },
+    {
+      "name": "XROGA_GCE_SUBNET",
+      "consuming_sources": [
+        "backend/src/synthesis/projectRuntime/googleFactory.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
+      "name": "XROGA_GCE_VERIFY_ONLY",
+      "consuming_sources": [
+        "backend/src/scripts/verifyGceExecution.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
+      "name": "XROGA_GCE_ZONE",
+      "consuming_sources": [
+        "backend/src/synthesis/projectRuntime/googleFactory.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-metadata-google-internal"
       ]
     },
     {
@@ -12527,10 +13294,34 @@
       ]
     },
     {
+      "name": "XROGA_GOOGLE_CLOUD_AUTH_MODE",
+      "consuming_sources": [
+        "backend/src/sandbox/google/gceMachineControl.ts",
+        "backend/src/scripts/runCanonicalWorker.ts",
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-cloudkms-googleapis-com",
+        "endpoint-compute-googleapis-com",
+        "endpoint-www-googleapis-com"
+      ]
+    },
+    {
       "name": "XROGA_GOOGLE_CLOUD_KMS_KEY_NAME",
       "consuming_sources": [
         "backend/src/runtime/readiness.ts",
-        "backend/src/services/integrations/credentialVaultRuntime.ts"
+        "backend/src/services/integrations/credentialVaultRuntime.ts",
+        "backend/src/workers/googleDispatch.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -12543,7 +13334,166 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
+        "endpoint-cloudtasks-googleapis-com",
+        "endpoint-run-googleapis-com"
+      ]
+    },
+    {
+      "name": "XROGA_GOOGLE_DISPATCH_ACCOUNT",
+      "consuming_sources": [
+        "backend/src/workers/googleDispatch.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-cloudtasks-googleapis-com",
+        "endpoint-run-googleapis-com"
+      ]
+    },
+    {
+      "name": "XROGA_GOOGLE_DISPATCH_REGION",
+      "consuming_sources": [
+        "backend/src/workers/googleDispatch.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-cloudtasks-googleapis-com",
+        "endpoint-run-googleapis-com"
+      ]
+    },
+    {
+      "name": "XROGA_GOOGLE_DISPATCH_URL",
+      "consuming_sources": [
+        "backend/src/workers/googleDispatch.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-cloudtasks-googleapis-com",
+        "endpoint-run-googleapis-com"
+      ]
+    },
+    {
+      "name": "XROGA_GOOGLE_TASK_QUEUE",
+      "consuming_sources": [
+        "backend/src/workers/googleDispatch.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-cloudtasks-googleapis-com",
+        "endpoint-run-googleapis-com"
+      ]
+    },
+    {
+      "name": "XROGA_GOOGLE_WIF_AUDIENCE",
+      "consuming_sources": [
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
         "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_GOOGLE_WIF_SERVICE_ACCOUNT",
+      "consuming_sources": [
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "REVIEWED_DYNAMIC_BINDING"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_GOOGLE_WORKER_IMAGE",
+      "consuming_sources": [
+        "backend/src/workers/googleDispatch.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-cloudtasks-googleapis-com",
+        "endpoint-run-googleapis-com"
+      ]
+    },
+    {
+      "name": "XROGA_GOOGLE_WORKER_JOB",
+      "consuming_sources": [
+        "backend/src/workers/googleDispatch.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-cloudtasks-googleapis-com",
+        "endpoint-run-googleapis-com"
       ]
     },
     {
@@ -12776,6 +13726,25 @@
       ]
     },
     {
+      "name": "XROGA_PLATFORM_CONFIG_FILE",
+      "consuming_sources": [
+        "backend/src/config/platformEnvironment.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_PREVIEW_BASE_DOMAIN",
       "consuming_sources": [
         "backend/src/synthesis/livePreview/signing.ts"
@@ -12831,6 +13800,27 @@
       ],
       "dependency_ids": [
         "endpoint-127-0-0-1"
+      ]
+    },
+    {
+      "name": "XROGA_PROJECT_RUNTIME_PROVIDER",
+      "consuming_sources": [
+        "backend/src/scripts/runCanonicalWorker.ts",
+        "backend/src/synthesis/livePreview/signing.ts",
+        "backend/src/synthesis/projectRuntime/googleFactory.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-metadata-google-internal"
       ]
     },
     {
@@ -12932,6 +13922,8 @@
       "name": "XROGA_RELEASE_SHA",
       "consuming_sources": [
         "backend/src/lib/safeHealth.ts",
+        "backend/src/scripts/verifyGceExecution.ts",
+        "backend/src/workers/googleDispatch.ts",
         "frontend/src/app/api/release/route.ts",
         "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
@@ -12947,7 +13939,10 @@
       ],
       "dependency_ids": [
         "api",
-        "endpoint-127-0-0-1"
+        "endpoint-127-0-0-1",
+        "endpoint-cloudtasks-googleapis-com",
+        "endpoint-metadata-google-internal",
+        "endpoint-run-googleapis-com"
       ]
     },
     {
@@ -12992,6 +13987,25 @@
       "name": "XROGA_ROUTING_MODE",
       "consuming_sources": [
         "backend/src/ai/routerConfig.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_RUNTIME_ROLE",
+      "consuming_sources": [
+        "backend/src/scripts/runCanonicalWorker.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -13458,7 +14472,7 @@
     },
     {
       "path": ".github/workflows/api-build-check.yml",
-      "sha256": "1728c15c4a16d7cafff090232c887c7aa337259f07dd35e5d4ab177e512ace30"
+      "sha256": "08b90f683bf7ba7f91952801a29434b9b118469417df0ce6fe66ccd2d66d2af6"
     },
     {
       "path": ".github/workflows/backend-health-verification.yml",
@@ -13530,11 +14544,11 @@
     },
     {
       "path": ".github/workflows/xroga-tenant-security.yml",
-      "sha256": "48b77618e63bb78afbc744d3a467d0dcf02758f13f0aec8e3628a6e322539ce1"
+      "sha256": "6b3c3ce6dbb416b0bc3bca57c422ea970d34f83ef52a90c22e9a873c91060224"
     },
     {
       "path": "Dockerfile.api",
-      "sha256": "96da18d0f7f7c68ad7774f9a848ba0f0501e295ef8fb4caf868787227879b500"
+      "sha256": "c0e3624914c0c5a359dbf8ecdb951c7031513bf4766fe0eeb56668cf3a3720e1"
     },
     {
       "path": "backend/src/ai/architect.ts",
@@ -13682,11 +14696,11 @@
     },
     {
       "path": "backend/src/ai/compileCommand.ts",
-      "sha256": "8d75ab3a1963a9b7dcaae5b7cb97a281aaf9de9768148d82b647b18c4d6033c6"
+      "sha256": "c7c6d53574c4defbeac4c3e5bf1193c5b3ec4d1ca088b0d4dad71ab600b77e3b"
     },
     {
       "path": "backend/src/ai/compileValidate.ts",
-      "sha256": "cc50c3d5cb80a5aa02974d2c3803cc54515945ebad3f433f0870ee8fad259725"
+      "sha256": "fba32cb6703084fd6de14661d92f08baaccaecb1c987e666b72d80ed327032e8"
     },
     {
       "path": "backend/src/ai/contextPreparation.ts",
@@ -13710,7 +14724,7 @@
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "sha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d"
+      "sha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2"
     },
     {
       "path": "backend/src/ai/fileSelector.ts",
@@ -13786,7 +14800,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
+      "sha256": "1d9a3270328aba5440b285a095b385de62466488dc76b6921cbc5a9d163876d1"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -13862,7 +14876,7 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46"
+      "sha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28"
     },
     {
       "path": "backend/src/ai/runTrace.ts",
@@ -13890,7 +14904,7 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts",
-      "sha256": "2fc1a15c16954f115543f6d8c8a04090499bbab2f51dbe5b5600f428c6da5022"
+      "sha256": "c99fc2ca9f656441ec206e2a26b43996c1bca4b16b70073ee07118b942600a0e"
     },
     {
       "path": "backend/src/ai/softwareAgent/ProductionSoftwareAgentToolHost.ts",
@@ -13962,7 +14976,7 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts",
-      "sha256": "9351106b55a834755ebe6036de5c08a0c51ead0200477f845ee325d290259e95"
+      "sha256": "e7afc2df2a662d5a05c13dcae698361578bb700dc289a24f1ee47c461fac33f5"
     },
     {
       "path": "backend/src/ai/softwareAgent/softwareAgentPrompt.ts",
@@ -13998,7 +15012,7 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaTools.ts",
-      "sha256": "6f078f9256c7f1e35bd325f692ed0d16b0f860488282973fb0349a4eec9b3055"
+      "sha256": "315e5759a03ff8b4777ab8d9592e854c416a3632846c8eb97f8976aa69c2848d"
     },
     {
       "path": "backend/src/ai/startupProgress.ts",
@@ -14201,6 +15215,10 @@
       "sha256": "95e5e934a3d4225f146ee99689d5447478d18cba543341cec048c45e6e23526c"
     },
     {
+      "path": "backend/src/config/platformEnvironment.ts",
+      "sha256": "918b907a312d82416df6584ab2ae9f495761c2f7e41e2add750c50d5749ac638"
+    },
+    {
       "path": "backend/src/config/redis.ts",
       "sha256": "8bcde41166599b3ac04390af8a426baa3454d69731644a3cd31f12146e561030"
     },
@@ -14282,7 +15300,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "ae363e1344a93b441ec9a10dade0c53ba67bd39e34958cc9332849636082741b"
+      "sha256": "78639a14bca3873d1143bcb3e03bd92ae58a2553e256d9f89f825b8d6fc57719"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -14339,6 +15357,10 @@
     {
       "path": "backend/src/lib/gemini.ts",
       "sha256": "56b14770f7ea59661e110c6c02bab5cce47cd18b6c09864c7c2b9ca3d77640cf"
+    },
+    {
+      "path": "backend/src/lib/googleServiceToken.ts",
+      "sha256": "6dd98e24e7b2516527a47732c49defe6052bce19147c47d78b0f66ef64481b4a"
     },
     {
       "path": "backend/src/lib/hailuo.ts",
@@ -14497,6 +15519,10 @@
       "sha256": "8c0a400e7c2660b62693234c458edc2218b9e36587dd6214f5cfb4775cbe07e4"
     },
     {
+      "path": "backend/src/loadPlatformEnvironment.ts",
+      "sha256": "a76f5c53983e13a0a282859ba6c834b58f99dfcd2f42340ceba7a46396960809"
+    },
+    {
       "path": "backend/src/middleware/admin.ts",
       "sha256": "e6b0d50d8ef9df0b04edcc8abe8e500958c749512948fa9b2ad47997afc4dcaa"
     },
@@ -14518,7 +15544,7 @@
     },
     {
       "path": "backend/src/middleware/runtimePreviewGateway.ts",
-      "sha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106"
+      "sha256": "bb7a949de090035d6ea96ef6b82f623a524b4241bde302f09669123e71002404"
     },
     {
       "path": "backend/src/operations/actionAdmission.local.integration.ts",
@@ -14710,7 +15736,7 @@
     },
     {
       "path": "backend/src/routes/businessAutomationScheduler.ts",
-      "sha256": "d775beaa5fc78872dbb4a1a5ac6087f122499e96fe9416f49a751d054f3851e6"
+      "sha256": "9e6413bf04e21f5cfb466c19c48834c6ca3d43d62526b527bd9cd7b1176ec5ac"
     },
     {
       "path": "backend/src/routes/businessAutomationWebhook.ts",
@@ -14802,7 +15828,7 @@
     },
     {
       "path": "backend/src/routes/projectRuntime.ts",
-      "sha256": "35ff3482963728e1114ebd0602d2f89d6a476c17d3b8eb57fd2f090cfe6326bf"
+      "sha256": "7fc1c300afabfee450890527579f2adf19679825424d897bac326115d5e08abe"
     },
     {
       "path": "backend/src/routes/projects.ts",
@@ -14834,7 +15860,7 @@
     },
     {
       "path": "backend/src/routes/swarm.ts",
-      "sha256": "7ae4bf0e05640eefccbaf8868183fc5b4301788e58a022a3b1dd42955fd59478"
+      "sha256": "38b1350f04641b110436d4d202a93c5645b0bacb6b7844f9e9cf7df65227943a"
     },
     {
       "path": "backend/src/routes/tasks.ts",
@@ -14885,6 +15911,22 @@
       "sha256": "3bdef3facc61c0c324b73d3fd06d93cac3b764e9b3dcd0309874ed4bc7e86ca6"
     },
     {
+      "path": "backend/src/sandbox/google/executionBinding.ts",
+      "sha256": "d1c4b9bf871c64b1be55c93099c2319fb5b3475ddc1a43d77f01e1de7d170b25"
+    },
+    {
+      "path": "backend/src/sandbox/google/gceMachineControl.ts",
+      "sha256": "49922d76343461e65930d147af10a15f444880d82caf58297b5536b2a9e2ec35"
+    },
+    {
+      "path": "backend/src/sandbox/google/gceSshTransport.ts",
+      "sha256": "dceba5dfb4905ceedf0aca62c163e4bcaa104a4ae37d89a0cadb7be62df671a9"
+    },
+    {
+      "path": "backend/src/sandbox/google/googleSandbox.ts",
+      "sha256": "d5b72b4e7d5bb17a189a623d24f2523a3dda238a914b7597e6f6f287aefbc821"
+    },
+    {
       "path": "backend/src/sandbox/remoteSandbox.ts",
       "sha256": "6b53af8e7dd32c04c7fada22a07683ec904a53dbc0611f91fc99430d9435b4ee"
     },
@@ -14894,19 +15936,27 @@
     },
     {
       "path": "backend/src/sandbox/sandboxProviders.ts",
-      "sha256": "a2408c76adf38200f7b22868c52233a0893d57b2cc78115581fc9d40e699c5aa"
+      "sha256": "6cd05e7d462b454eb60543ccdd7fe0c289acf880d3dbebbc2b3d035249bd131f"
     },
     {
       "path": "backend/src/sandbox/sandboxRuntime.ts",
-      "sha256": "670289bf6032d26a6835832903d72f1c179a51bd751b4b260b7451cedc3bab3a"
+      "sha256": "b4934e095cc4797259cccfd160583b20879d20c608eda4423f63d33a30a940be"
     },
     {
       "path": "backend/src/sandbox/sandboxTypes.ts",
-      "sha256": "eaa3593e3296fc0e5aa3c67e363616af6b5296874239f24f1f15dec6183e1a80"
+      "sha256": "85bde00f4d9e89c07dba613cbd22ab5d0283dbcccd625ec7a0c9106c01818648"
+    },
+    {
+      "path": "backend/src/scripts/runCanonicalWorker.ts",
+      "sha256": "00178d5ca32c4b0b42024edae3e1670e50281329aafaa5c586733468ddc6d05c"
     },
     {
       "path": "backend/src/scripts/verifyFlySandboxBrowser.ts",
       "sha256": "949a6be9ad3a11c10719ab9e5785ec4662805a02d7bc69fbbaac5dcb81791296"
+    },
+    {
+      "path": "backend/src/scripts/verifyGceExecution.ts",
+      "sha256": "374af2ebc3e2bb1ffb7b24cdc9ad8454028644750a4b9e6318f4d45440ac7eaa"
     },
     {
       "path": "backend/src/security/adminReads.local.integration.ts",
@@ -15038,7 +16088,7 @@
     },
     {
       "path": "backend/src/security/previewConsumer.local.integration.ts",
-      "sha256": "be9d96528dc945a4158975f76bb15b2eb3681b989c2002902f4f026765b7ec59"
+      "sha256": "ef9d0d2361f4cde51194d7f6127c0fd64f70723dbbd7e40f14730973c704dae1"
     },
     {
       "path": "backend/src/security/previewGrantAdmission.local.integration.ts",
@@ -15106,7 +16156,7 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0"
+      "sha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88"
     },
     {
       "path": "backend/src/security/softwareCheckpointAttempt.local.integration.ts",
@@ -15250,7 +16300,7 @@
     },
     {
       "path": "backend/src/services/integrations/credentialVaultStartup.ts",
-      "sha256": "18d4a28324d7786e707727bb60f177e8a5d37c3fe5d45dca2c001836e07e7469"
+      "sha256": "67d56ea5e136a4066be7a2fa5571278f46c4950098a7890ac1808d29f0f66993"
     },
     {
       "path": "backend/src/services/integrations/cryptoProvider.ts",
@@ -15306,7 +16356,7 @@
     },
     {
       "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-      "sha256": "22d7137f89e80fbd6fe606697a5b6a4d0e0645301723531715e72bfe653d08c4"
+      "sha256": "eea7cedde9139157e2a7efe4dda176a0efaab39f2812423f4c142ab40d29ce50"
     },
     {
       "path": "backend/src/services/integrations/oauthPkceStore.ts",
@@ -15614,7 +16664,7 @@
     },
     {
       "path": "backend/src/synthesis/browserVerificationAdapter.ts",
-      "sha256": "4752d751645b906542ec9570fe2fe4f708658f15531d9f81b4f0d131cc1d7ee3"
+      "sha256": "8bac14a995dc5225f2da713b56f520091872c54b3d6cb4efbfe512566de65e21"
     },
     {
       "path": "backend/src/synthesis/buildContract.ts",
@@ -15674,7 +16724,7 @@
     },
     {
       "path": "backend/src/synthesis/inSandboxBrowser.ts",
-      "sha256": "3931bb4d6f01c9f92c2df68c2aff6ecc3084919e53f6863d2c026d83310144a3"
+      "sha256": "694f003f59f393730f0308e701b5e37f187400d1f424308fa1adb24d97d61447"
     },
     {
       "path": "backend/src/synthesis/incrementalImplementation.ts",
@@ -15698,11 +16748,15 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/access.ts",
-      "sha256": "c01a9bdbac40ebe84699b83bcb815b27a41d1644322ff36396a29074ba23b74f"
+      "sha256": "ea6d98a6a976c705e48a848529ffed999bb66e2c241817dffb83fd6470c38cad"
+    },
+    {
+      "path": "backend/src/synthesis/livePreview/admissionWatch.ts",
+      "sha256": "a393ccbbc60bc6b7b5c0a8a6289c29f61a3d54510717978735ce9f2b248c4f79"
     },
     {
       "path": "backend/src/synthesis/livePreview/agentBridge.ts",
-      "sha256": "91351a84eeba502a7f1bac07808e3271e3af9fe417eab48403dd49b9cc5203c0"
+      "sha256": "23ac19d169f97845546c9ed520cad1412701ae6e0419ce82a57b0e71f06f781f"
     },
     {
       "path": "backend/src/synthesis/livePreview/commandPlans.ts",
@@ -15710,7 +16764,11 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/coordinator.ts",
-      "sha256": "5351113e7c6517b68ac7b9b60a0de9007308014411a06470fb0cf20ff0f17e7c"
+      "sha256": "ee53e189404d87293ac5d6de275e588442ad3e84d97ccd8ab68bc43d96c4958a"
+    },
+    {
+      "path": "backend/src/synthesis/livePreview/googleTarget.ts",
+      "sha256": "177fb5ddf353f601a2c1bf52a16a94a99d278f27af9fcac0bf8bcc0b945626f6"
     },
     {
       "path": "backend/src/synthesis/livePreview/index.ts",
@@ -15722,7 +16780,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/signing.ts",
-      "sha256": "1e0568e6ae8c0b2e11f61ca12921d0d18f1ece6558848f6e342af6fcdd414999"
+      "sha256": "e14be684b9fc5bb00945b878b1c983a756e379c292bd2e9332aba8da2983a85c"
     },
     {
       "path": "backend/src/synthesis/livePreview/status.ts",
@@ -15766,7 +16824,7 @@
     },
     {
       "path": "backend/src/synthesis/productionAdapters.ts",
-      "sha256": "0243060876196a038d2cf44b99f56ff093edda89132ac92cf2e8d80113428b70"
+      "sha256": "6245e643eebbdb03bbd4fd1e3d51bd1d3017f0071833ad7c4331daffaafe9f11"
     },
     {
       "path": "backend/src/synthesis/projectRunState.ts",
@@ -15785,12 +16843,24 @@
       "sha256": "9474dbe5e7b780c55d291fdd2d5e51f21e893a9d13cfbafbd70f601bc3ad2d63"
     },
     {
+      "path": "backend/src/synthesis/projectRuntime/googleAuthority.ts",
+      "sha256": "c51445833477a3115e4a5e2eb2e2a1590a1e1090209a7c8b46006defbce25e76"
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/googleFactory.ts",
+      "sha256": "6d033c0e330807ef6b5959e27134f6a5b898410c8658dac5889e7dfe914da729"
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/googleProvider.ts",
+      "sha256": "429d49818a2781c7b95510c2133629fc631b2e6d3f57f4ed0c585313edd4db53"
+    },
+    {
       "path": "backend/src/synthesis/projectRuntime/index.ts",
       "sha256": "47c1a404fe82a24dda9e3709d18f51653e86e2e8162d44c2bd9616547c588c3e"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/manager.ts",
-      "sha256": "9d6d1fb373b181d391acd4492dea36fa7d381314fbe69aa5e438e28fcb618d86"
+      "sha256": "809383af9e8a1f0a987658c84d1795d0557c58faf40aa1cd39db31bafced9bb8"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/processManager.ts",
@@ -15854,7 +16924,7 @@
     },
     {
       "path": "backend/src/synthesis/runtime/registry.ts",
-      "sha256": "04a8eda7f87842ccba8d111d3f6666bde8339b11810d272328056f21d4ec4653"
+      "sha256": "887d7c8931682b4c147a06a53ad055c73fd2c10faef7f5c948e2bb4754544e6d"
     },
     {
       "path": "backend/src/synthesis/runtime/repositoryDiscovery.ts",
@@ -15882,7 +16952,7 @@
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "sha256": "ae9c0df005e5dd37b474169566b4911a24b911054bd9e192eee2d9f67ba3da53"
+      "sha256": "5c174d481c1bcf8af40a45740ac2ecbac7669ace0817a8d365cc9a1feec6575f"
     },
     {
       "path": "backend/src/synthesis/softwareProject.ts",
@@ -15987,6 +17057,26 @@
     {
       "path": "backend/src/workers/egressProxy.ts",
       "sha256": "29e977db658433c30d19e3fe3f9268056997be1bbcc1cd9b4a7bf5a3d813d02c"
+    },
+    {
+      "path": "backend/src/workers/googleDeliveryMaintenance.ts",
+      "sha256": "dd3bf3c4f9ebb36ee0aad88c030cd6d021111c54a9d0f73f1af8582414fc9871"
+    },
+    {
+      "path": "backend/src/workers/googleDeliveryStore.ts",
+      "sha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+    },
+    {
+      "path": "backend/src/workers/googleDispatch.ts",
+      "sha256": "ec0684dc7b71d8573c3a086eec68c0f54e313727144d1b1aaeab280ceb5a0268"
+    },
+    {
+      "path": "backend/src/workers/googleDispatchHandler.ts",
+      "sha256": "44c844f06c5b0e4bbce214b2d127a101ffb8dd019fc2d79f3a5c3e619da4e57d"
+    },
+    {
+      "path": "backend/src/workers/googleSwarmQueue.ts",
+      "sha256": "b86b0f51575cc3be197c3fa1a7c9f7f8d4f3eaf25847c4c1ea5f52679af9cd3a"
     },
     {
       "path": "backend/src/workers/imagePins.ts",
@@ -19806,7 +20896,7 @@
     },
     {
       "path": "scripts/xroga/runtime-inventory.mjs",
-      "sha256": "0b8cb7cf2748bfbc51fbdb77af14e70a2b0d5396bc9959b009b7495d560a7070"
+      "sha256": "028806d9087af1b3515423f957b88e803500cbf72ec5bd4e61be2bd89933c41a"
     },
     {
       "path": "scripts/xroga/runtime-schema.mjs",
@@ -20367,6 +21457,18 @@
       "policy": "Canonical aliases and actual literal helper callers, with model-field callers separately resolved. New nonliteral callers require review."
     },
     {
+      "path": "backend/src/config/platformEnvironment.ts",
+      "line": 44,
+      "expression": "name",
+      "status": "RESOLVED_CALLER_POLICY",
+      "names": [],
+      "evidence_sources": [
+        "backend/src/config/platformEnvironment.ts",
+        "backend/src/loadPlatformEnvironment.ts"
+      ],
+      "policy": "Server-owned versioned Secret Manager bundle only. Bounded UTF8 JSON, exact target/schema, validated names and values, denied native identity/release/control variables, and no existing environment overwrite. Dynamic assignment occurs only after complete validation. No client body, project file, developer session or finite credential namespace is inferred."
+    },
+    {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
       "line": 129,
       "expression": "def.secretKey",
@@ -20627,6 +21729,44 @@
       "policy": "Caller-supplied names are used solely for boolean configuration status, never returned values. No finite deployment namespace is fabricated; new callers require authorization review."
     },
     {
+      "path": "backend/src/sandbox/google/gceMachineControl.ts",
+      "line": 58,
+      "expression": "name",
+      "status": "RESOLVED_CALLER_POLICY",
+      "names": [
+        "CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE",
+        "FLY_APP_NAME",
+        "FLY_MACHINE_ID",
+        "GCE_METADATA_HOST",
+        "GCE_METADATA_IP",
+        "GOOGLE_APPLICATION_CREDENTIALS",
+        "GOOGLE_CREDENTIALS"
+      ],
+      "evidence_sources": [
+        "backend/src/sandbox/google/gceMachineControl.ts"
+      ],
+      "policy": "Negative native-identity admission only. Reads fixed forbidden credential/metadata/Fly names and rejects foreign configuration. GCE also scans existing names solely to reject Fly/WIF prefixes. Values are not returned, copied to workers or used as an alternate identity."
+    },
+    {
+      "path": "backend/src/sandbox/google/gceMachineControl.ts",
+      "line": 59,
+      "expression": "name",
+      "status": "RESOLVED_CALLER_POLICY",
+      "names": [
+        "CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE",
+        "FLY_APP_NAME",
+        "FLY_MACHINE_ID",
+        "GCE_METADATA_HOST",
+        "GCE_METADATA_IP",
+        "GOOGLE_APPLICATION_CREDENTIALS",
+        "GOOGLE_CREDENTIALS"
+      ],
+      "evidence_sources": [
+        "backend/src/sandbox/google/gceMachineControl.ts"
+      ],
+      "policy": "Negative native-identity admission only. Reads fixed forbidden credential/metadata/Fly names and rejects foreign configuration. GCE also scans existing names solely to reject Fly/WIF prefixes. Values are not returned, copied to workers or used as an alternate identity."
+    },
+    {
       "path": "backend/src/sandbox/sandboxEnvironment.ts",
       "line": 105,
       "expression": "name",
@@ -20645,6 +21785,45 @@
         "backend/src/sandbox/sandboxEnvironment.ts"
       ],
       "policy": "Finite inherited-variable allowlist. All other held secret values are compared only to refuse leakage, not forwarded."
+    },
+    {
+      "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
+      "line": 34,
+      "expression": "name",
+      "status": "RESOLVED_CALLER_POLICY",
+      "names": [
+        "CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE",
+        "FLY_APP_NAME",
+        "FLY_MACHINE_ID",
+        "GCE_METADATA_HOST",
+        "GCE_METADATA_IP",
+        "GOOGLE_APPLICATION_CREDENTIALS",
+        "GOOGLE_CREDENTIALS",
+        "XROGA_FLY_OIDC_IMAGE_DIGESTS",
+        "XROGA_FLY_OIDC_ISSUER",
+        "XROGA_FLY_OIDC_ORGANIZATION_ID",
+        "XROGA_GOOGLE_WIF_AUDIENCE",
+        "XROGA_GOOGLE_WIF_SERVICE_ACCOUNT"
+      ],
+      "evidence_sources": [
+        "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
+      ],
+      "policy": "Negative native-identity admission only. Reads fixed forbidden credential/metadata/Fly names and rejects foreign configuration. GCE also scans existing names solely to reject Fly/WIF prefixes. Values are not returned, copied to workers or used as an alternate identity."
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/googleFactory.ts",
+      "line": 28,
+      "expression": "'XROGA_GCE_'+key+'_IMAGE'",
+      "status": "RESOLVED_FINITE_CATALOG",
+      "names": [
+        "XROGA_GCE_NODE_IMAGE",
+        "XROGA_GCE_PYTHON_IMAGE",
+        "XROGA_GCE_RUST_IMAGE"
+      ],
+      "evidence_sources": [
+        "backend/src/synthesis/projectRuntime/googleFactory.ts"
+      ],
+      "policy": "Exact NODE/PYTHON/RUST suffix selected from the fixed adapter mapping. The configured immutable digest must independently belong to the admitted image catalog. Unknown adapters cannot choose environment names or a Fly fallback."
     }
   ],
   "source_endpoints": [
@@ -20701,7 +21880,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4010,
+      "line": 4024,
       "credentialsInUrl": false
     },
     {
@@ -20855,34 +22034,6 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 105,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
-      "line": 106,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "www.xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
-      "line": 107,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xrogaaicom.vercel.app",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
-      "line": 108,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga-api.fly.dev",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 109,
       "credentialsInUrl": false
     },
@@ -20890,7 +22041,35 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 199,
+      "line": 110,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "www.xroga.com",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 111,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xrogaaicom.vercel.app",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 112,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 113,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga.com",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 206,
       "credentialsInUrl": false
     },
     {
@@ -20975,6 +22154,13 @@
       "protocol": "https:",
       "path": "backend/src/lib/gemini.ts",
       "line": 18,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "accounts.google.com",
+      "protocol": "https:",
+      "path": "backend/src/lib/googleServiceToken.ts",
+      "line": 19,
       "credentialsInUrl": false
     },
     {
@@ -21300,13 +22486,6 @@
       "credentialsInUrl": false
     },
     {
-      "hostname": "accounts.google.com",
-      "protocol": "https:",
-      "path": "backend/src/routes/businessAutomationScheduler.ts",
-      "line": 23,
-      "credentialsInUrl": false
-    },
-    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
@@ -21451,6 +22630,34 @@
       "protocol": "https:",
       "path": "backend/src/sandbox/flyMachineSandbox.ts",
       "line": 99,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "www.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/sandbox/google/gceMachineControl.ts",
+      "line": 61,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "compute.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/sandbox/google/gceMachineControl.ts",
+      "line": 154,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "oslogin.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/sandbox/google/gceSshTransport.ts",
+      "line": 116,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "metadata.google.internal",
+      "protocol": "http:",
+      "path": "backend/src/scripts/verifyGceExecution.ts",
+      "line": 27,
       "credentialsInUrl": false
     },
     {
@@ -22360,21 +23567,28 @@
       "hostname": "www.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-      "line": 23,
+      "line": 40,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "www.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
+      "line": 41,
       "credentialsInUrl": false
     },
     {
       "hostname": "cloudkms.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-      "line": 29,
+      "line": 47,
       "credentialsInUrl": false
     },
     {
       "hostname": "cloudkms.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-      "line": 37,
+      "line": 55,
       "credentialsInUrl": false
     },
     {
@@ -22801,7 +24015,7 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/synthesis/browserVerificationAdapter.ts",
-      "line": 363,
+      "line": 368,
       "credentialsInUrl": false
     },
     {
@@ -22966,10 +24180,38 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "metadata.google.internal",
+      "protocol": "http:",
+      "path": "backend/src/synthesis/projectRuntime/googleFactory.ts",
+      "line": 35,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "coordinator",
       "protocol": "http:",
       "path": "backend/src/workers/browserCoordinator.ts",
       "line": 82,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "cloudtasks.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/workers/googleDispatch.ts",
+      "line": 66,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "run.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/workers/googleDispatch.ts",
+      "line": 83,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "run.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/workers/googleDispatch.ts",
+      "line": 95,
       "credentialsInUrl": false
     },
     {
@@ -26511,28 +27753,28 @@
     },
     {
       "path": "backend/src/ai/compileValidate.ts",
-      "line": 228,
+      "line": 234,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/compileValidate.ts",
-      "line": 242,
+      "line": 248,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/compileValidate.ts",
-      "line": 243,
+      "line": 249,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/compileValidate.ts",
-      "line": 250,
+      "line": 256,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26574,29 +27816,22 @@
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 156,
+      "line": 157,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 245,
+      "line": 246,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 363,
+      "line": 364,
       "scope": "INSTANCE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/executionRuntime.ts",
-      "line": 422,
-      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
@@ -26616,21 +27851,28 @@
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 468,
-      "scope": "INSTANCE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/executionRuntime.ts",
-      "line": 612,
+      "line": 425,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 613,
+      "line": 469,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/executionRuntime.ts",
+      "line": 617,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/executionRuntime.ts",
+      "line": 618,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26889,56 +28131,56 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 531,
+      "line": 532,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 561,
+      "line": 562,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1110,
+      "line": 1111,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1468,
+      "line": 1473,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2203,
+      "line": 2213,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3780,
+      "line": 3794,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3960,
+      "line": 3974,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4924,
+      "line": 4938,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -27120,13 +28362,6 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 45,
-      "scope": "MODULE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/ai/runStore.ts",
       "line": 46,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
@@ -27134,7 +28369,7 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 49,
+      "line": 47,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -27148,21 +28383,28 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 103,
+      "line": 51,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 106,
+      "line": 128,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "line": 1274,
+      "line": 131,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/ai/runStore.ts",
+      "line": 1335,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -27316,7 +28558,7 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaTools.ts",
-      "line": 477,
+      "line": 479,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -27813,7 +29055,7 @@
     },
     {
       "path": "backend/src/middleware/runtimePreviewGateway.ts",
-      "line": 119,
+      "line": 151,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28625,7 +29867,7 @@
     },
     {
       "path": "backend/src/routes/swarm.ts",
-      "line": 31,
+      "line": 33,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -28654,6 +29896,62 @@
     {
       "path": "backend/src/runtime/safeLogging.ts",
       "line": 74,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/sandbox/google/executionBinding.ts",
+      "line": 35,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/sandbox/google/executionBinding.ts",
+      "line": 75,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/sandbox/google/gceMachineControl.ts",
+      "line": 196,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/sandbox/google/gceSshTransport.ts",
+      "line": 69,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/sandbox/google/gceSshTransport.ts",
+      "line": 89,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/sandbox/google/gceSshTransport.ts",
+      "line": 150,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/sandbox/google/googleSandbox.ts",
+      "line": 10,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/sandbox/google/googleSandbox.ts",
+      "line": 67,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -29941,7 +31239,7 @@
     },
     {
       "path": "backend/src/synthesis/inSandboxBrowser.ts",
-      "line": 131,
+      "line": 135,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30018,7 +31316,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/coordinator.ts",
-      "line": 134,
+      "line": 136,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30046,21 +31344,56 @@
     },
     {
       "path": "backend/src/synthesis/productionAdapters.ts",
-      "line": 68,
+      "line": 69,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/googleAuthority.ts",
+      "line": 54,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/googleProvider.ts",
+      "line": 24,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/googleProvider.ts",
+      "line": 92,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/googleProvider.ts",
+      "line": 149,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/synthesis/projectRuntime/googleProvider.ts",
+      "line": 154,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/manager.ts",
-      "line": 460,
+      "line": 465,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/manager.ts",
-      "line": 551,
+      "line": 556,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30249,42 +31582,42 @@
     },
     {
       "path": "backend/src/synthesis/runtime/registry.ts",
-      "line": 94,
+      "line": 95,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/runtime/registry.ts",
-      "line": 97,
+      "line": 98,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/runtime/registry.ts",
-      "line": 117,
+      "line": 118,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/runtime/registry.ts",
-      "line": 149,
+      "line": 150,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/runtime/registry.ts",
-      "line": 155,
+      "line": 156,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/runtime/registry.ts",
-      "line": 174,
+      "line": 175,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30326,35 +31659,35 @@
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "line": 135,
+      "line": 138,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "line": 250,
+      "line": 253,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "line": 554,
+      "line": 557,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "line": 559,
+      "line": 562,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "line": 567,
+      "line": 570,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
