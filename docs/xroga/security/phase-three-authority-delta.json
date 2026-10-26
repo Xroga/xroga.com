@@ -81,67 +81,67 @@
     },
     {
       "previousCallerId": "046674e946dedc2dbd0a",
-      "currentCallerId": "1169e490665cdec7b3a3"
+      "currentCallerId": "4eae7629213535c4a419"
     },
     {
       "previousCallerId": "f7d8e33dac1c0de787f8",
-      "currentCallerId": "2fbd469f16851f3b71ab"
+      "currentCallerId": "779513ed72e27f751c4a"
     },
     {
       "previousCallerId": "2384f6f1c188f4f6ce83",
-      "currentCallerId": "6f058d1957df9ddef58e"
+      "currentCallerId": "999ec751dbf420dcf7bf"
     },
     {
       "previousCallerId": "03557d58e528c5852636",
-      "currentCallerId": "263d64635be54643daaf"
+      "currentCallerId": "d3177c94c6bdd9ce0937"
     },
     {
       "previousCallerId": "e2e547f8796cd0aad243",
-      "currentCallerId": "28c7a352253f65a4d63b"
+      "currentCallerId": "a6d6e564995244ee342d"
     },
     {
       "previousCallerId": "f602ab2d6bfebc170a02",
-      "currentCallerId": "ec7738731d0c6be00798"
+      "currentCallerId": "d77c86d907123f5f9653"
     },
     {
       "previousCallerId": "8a48ae3957449eee9587",
-      "currentCallerId": "0882d94061fd33117251"
+      "currentCallerId": "e7bb811c643807a28341"
     },
     {
       "previousCallerId": "685bdab3b4b31bd28d43",
-      "currentCallerId": "ba74f371a047c8305b9a"
+      "currentCallerId": "325b2a67809c4b33b34b"
     },
     {
       "previousCallerId": "9a847ab5769bb707c1f2",
-      "currentCallerId": "9e5ee446a0fb192d8f39"
+      "currentCallerId": "3bbbccc225f348f4eeb6"
     },
     {
       "previousCallerId": "e489f9a48f400005cb2d",
-      "currentCallerId": "3a904e92ac521ad89ef0"
+      "currentCallerId": "81b5593701da90af4d11"
     },
     {
       "previousCallerId": "d9435c22813b64a1f1f5",
-      "currentCallerId": "495469d5a798cf52f829"
+      "currentCallerId": "a4e96e08e15926cb8eab"
     },
     {
       "previousCallerId": "1d3ef9e110d2f000f590",
-      "currentCallerId": "4ac1c2be7bfccf034c8e"
+      "currentCallerId": "c605ab298a789128c864"
     },
     {
       "previousCallerId": "0b24ee0eecebdda0e6f3",
-      "currentCallerId": "a50ebf735a3e2d6e8587"
+      "currentCallerId": "2c429e31da389df99f6f"
     },
     {
       "previousCallerId": "ace18dec175b4875e7f7",
-      "currentCallerId": "e5f59ad9b6097a1bb115"
+      "currentCallerId": "1aed7789febb0c855599"
     },
     {
       "previousCallerId": "c07b5b1f63ae0e361ae7",
-      "currentCallerId": "8b8545e8ee1fbbfb3fbf"
+      "currentCallerId": "f3348a27b6102900104d"
     },
     {
       "previousCallerId": "fba07b765dafacccf133",
-      "currentCallerId": "60a088c3f2c03ec9402c"
+      "currentCallerId": "593ed205e168fc80806d"
     },
     {
       "previousCallerId": "cd8790e39c3283f05482",
@@ -941,48 +941,48 @@
       "sourceSha256": "6367add6bd41dc2683e35693276e5be33ba6dabdd11fd57501aa9ddc88686d0f"
     },
     {
-      "id": "8aa7e4818165f80a2954",
+      "id": "d9148a15653e30ab965c",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 419,
+      "line": 431,
       "enclosing": "reserveOperationsProviderBudget",
       "kind": "RPC_CANDIDATE",
       "target": "reserve_operations_provider_budget",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876"
+      "sourceSha256": "d8fdb214fbe0be3e11259a10a3932e1c3a8e48ee967aa8397f6cf599fc59115e"
     },
     {
-      "id": "0dc96ad35c877b5c6b81",
+      "id": "7b1d4eee8bbe9b1e61a7",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 419,
+      "line": 431,
       "enclosing": "reserveOperationsProviderBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876"
+      "sourceSha256": "d8fdb214fbe0be3e11259a10a3932e1c3a8e48ee967aa8397f6cf599fc59115e"
     },
     {
-      "id": "1e296c319fef476f484e",
+      "id": "f9cc6d4a56ad966135f3",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 431,
+      "line": 443,
       "enclosing": "reserveOperationsProviderBudget",
       "kind": "RPC_CANDIDATE",
       "target": "ensure_xroga_free_cycle",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876"
+      "sourceSha256": "d8fdb214fbe0be3e11259a10a3932e1c3a8e48ee967aa8397f6cf599fc59115e"
     },
     {
-      "id": "10d24b0a58511aa77d5a",
+      "id": "267fabd10a321f841639",
       "path": "backend/src/ai/providerBudget.ts",
-      "line": 431,
+      "line": 443,
       "enclosing": "reserveOperationsProviderBudget",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "33d078d8734d0ec27380a433811164c4b49eba62483e12f3c256e1a166e74876"
+      "sourceSha256": "d8fdb214fbe0be3e11259a10a3932e1c3a8e48ee967aa8397f6cf599fc59115e"
     },
     {
       "id": "7b7e6c777416feab8b85",
