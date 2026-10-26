@@ -206,7 +206,7 @@ export class GitHubExportService {
   async operations(userId: string, projectId: string): Promise<ExternalOperation[]> {
     await this.deps.builder.requireProject(userId, projectId);
     await recoverInterrupted(this.deps.phase2, userId, projectId, this.now());
-    return this.deps.phase2.listOperations(userId, projectId);
+    return (await this.deps.phase2.listOperations(userId, projectId)).filter((operation) => operation.provider === 'github');
   }
 
   /** The repository this project is bound to and which revision each commit holds. */

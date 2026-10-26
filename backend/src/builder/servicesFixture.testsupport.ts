@@ -10,7 +10,7 @@ import type { Phase2Services } from './phase2Bridge.js';
 import { InMemoryPhase2Store } from './phase2Store.js';
 import { QaService } from './qa/qaService.js';
 import type { QaDriver, QaPage } from './qa/types.js';
-import { BuilderService } from './service.js';
+import { BuilderService, type BuildRunner } from './service.js';
 import { InMemoryBuilderStore } from './store.js';
 
 /** A complete in-memory service set with every provider replaced by its faithful fake. Tests only. */
@@ -27,17 +27,22 @@ export interface ServicesFixture {
   readonly remote: { result: RemoteVerification; probe: HttpProbeResult };
 }
 
-const okPage = (): QaPage => ({
-  goto: async () => ({ status: 200 }), click: async () => {}, fill: async () => {}, reload: async () => {}, bodyText: async () => 'Welcome', isVisible: async () => true,
-  currentPath: () => '/', hasHorizontalOverflow: async () => false, hasViewportMeta: async () => true, formIsInvalid: async () => true, submitForm: async () => {},
+/** A page that follows links the way a browser does, so navigation checks are meaningful. */
+const okPage = (): QaPage => {
+  let path = '/';
+  return {
+  goto: async (target) => { path = String(target).split('#')[0] || '/'; return { status: 200 }; },
+  click: async (selector) => { const href = /href=["']?([^"'\]\s]+)/.exec(String(selector))?.[1]; if (href && href.startsWith('/')) path = href; }, fill: async () => {}, reload: async () => {}, bodyText: async () => 'Welcome', isVisible: async () => true,
+  currentPath: () => path, hasHorizontalOverflow: async () => false, hasViewportMeta: async () => true, formIsInvalid: async () => true, submitForm: async () => {},
   screenshot: async () => Buffer.from('x'), drainDiagnostics: () => ({ consoleErrors: [], pageErrors: [], failedRequests: [] }), close: async () => {},
-});
+  };
+};
 const okDriver: QaDriver = { name: 'fake', browserVersion: async () => 'fake-1', open: async () => okPage(), close: async () => {} };
 
-export function makeServices(users: ReadonlyArray<{ id: string; github?: { token: string; login: string; id: number }; supabase?: { token: string; projects: Array<{ ref: string; name: string }> }; vercel?: { token: string; id: string; username: string } }>): ServicesFixture {
+export function makeServices(users: ReadonlyArray<{ id: string; github?: { token: string; login: string; id: number }; supabase?: { token: string; projects: Array<{ ref: string; name: string }> }; vercel?: { token: string; id: string; username: string } }>, options: { runBuild?: BuildRunner } = {}): ServicesFixture {
   const store = new InMemoryBuilderStore();
   const phase2 = new InMemoryPhase2Store(store);
-  const builder = new BuilderService({ store, runBuild: async () => null });
+  const builder = new BuilderService({ store, runBuild: options.runBuild ?? (async () => null) });
   const github = new FakeGitHub();
   const supabase = new FakeSupabase();
   const vercel = new FakeVercel();
