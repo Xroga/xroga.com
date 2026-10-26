@@ -181,6 +181,18 @@
       "tests": "backend/src/workers/postgresLeaseStore.integration.test.ts",
       "evidence": "Batch 1.5 migration, merged without being applied to production. Real-Postgres integration tests (Phase 1 and Phase 2, on a disposable database) exercise the schema, grants and functions. The disposable full-history run on this branch verifies it installs and that every public table has RLS. Not production schema parity or certification by inventory.",
       "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "browser_runs",
+      "migration": "20261026100000_browser_runs_durable.sql",
+      "migrationSha256": "4d83bc79c35a7a0d701e575478bea64ae1dbabe4ce98e80582119679109dfb1b",
+      "authorizationMigration": "20261026100000_browser_runs_durable.sql",
+      "authorizationSha256": "4d83bc79c35a7a0d701e575478bea64ae1dbabe4ce98e80582119679109dfb1b",
+      "boundary": "RLS enabled. No grant to anon, authenticated or PUBLIC; service_role only (the API). Durable browser run record: validated spec, canonical state and cancel flag. Every API read and write is owner scoped by user_id; the signed internal endpoints load a run by id and then act only as the owner it names.",
+      "tests": "backend/src/workers/browserRunStore.integration.test.ts",
+      "evidence": "Batch 1.5 audit migration (PR #861), not applied to production. The real-PostgreSQL integration test runs the migration and asserts RLS and the absence of public grants on a disposable database; the disposable full-history run verifies it installs. Not production schema parity or certification by inventory.",
+      "productionChanges": false
     }
   ]
 }

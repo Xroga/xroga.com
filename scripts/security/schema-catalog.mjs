@@ -17,7 +17,8 @@ export function validateCurrentMigrationAdditions(additions,files,readMigration)
     storage_audit_events:['20261022000000_storage_drive_foundation.sql','20261022000000_storage_drive_foundation.sql'],
     storage_migration_jobs:['20261022000000_storage_drive_foundation.sql','20261022000000_storage_drive_foundation.sql'],
     storage_migration_items:['20261022000000_storage_drive_foundation.sql','20261022000000_storage_drive_foundation.sql'],
-    worker_task_leases:['20261024000000_worker_task_leases.sql','20261024000000_worker_task_leases.sql']};
+    worker_task_leases:['20261024000000_worker_task_leases.sql','20261024000000_worker_task_leases.sql'],
+    browser_runs:['20261026100000_browser_runs_durable.sql','20261026100000_browser_runs_durable.sql']};
   assert.deepEqual(additions.tables.map(t=>`${t.schema}.${t.table_name}`),Object.keys(reviewed).map(name=>'public.'+name));
   for(const entry of additions.tables){
     assert.deepEqual([entry.migration,entry.authorizationMigration],reviewed[entry.table_name],'Only the explicitly reviewed creation and ownership migrations apply');

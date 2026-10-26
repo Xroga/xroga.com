@@ -139,7 +139,7 @@ export function buildPublicUrlInventory(): PublicUrlRecord[] {
   if (tool) tool.manifestSource = 'content/manifests/production-readiness-checker.json';
 
   const nonIndexable: PublicUrlRecord[] = [
-    ['/workspace', 'PRIVATE'], ['/dashboard', 'PRIVATE'], ['/settings', 'PRIVATE'], ['/admin', 'PRIVATE'],
+    ['/workspace', 'PRIVATE'], ['/dashboard', 'PRIVATE'], ['/settings', 'PRIVATE'], ['/drive', 'PRIVATE'], ['/admin', 'PRIVATE'],
     ['/os-preview', 'PRIVATE'], ['/os-preview/[section]', 'PRIVATE'], ['/os-preview/journey', 'PRIVATE'], ['/os-preview/rich-results', 'PRIVATE'], ['/os-preview/access-denied', 'PRIVATE'], ['/os-preview/founder', 'PRIVATE'],
     ['/auth/login', 'PRIVATE'], ['/auth/signup', 'PRIVATE'], ['/auth/github/callback', 'PRIVATE'], ['/onboarding', 'PRIVATE'], ['/preview', 'PRIVATE'], ['/terminal', 'PRIVATE'],
     ['/image', 'PUBLIC_NOINDEX'], ['/cybersecurity', 'PUBLIC_NOINDEX'], ['/community/[postId]', 'PUBLIC_NOINDEX'], ['/ref/[code]', 'PUBLIC_NOINDEX'], ['/share/[token]', 'PUBLIC_NOINDEX'], ['/api', 'SYSTEM'], ['/robots.txt', 'SYSTEM'],
