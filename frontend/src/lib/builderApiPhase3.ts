@@ -13,7 +13,7 @@ export interface ExternalOperationView<Plan> {
   plan: Plan;
   planDigest: string;
   approvalExpiresAt: string | null;
-  receipt: Record<string, any> | null;
+  receipt: Record<string, unknown> | null;
   failure: string | null;
   createdAt: string;
 }
