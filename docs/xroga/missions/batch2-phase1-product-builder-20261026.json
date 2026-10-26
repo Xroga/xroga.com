@@ -1,0 +1,173 @@
+{
+  "version": "1.0",
+  "missionId": "BATCH2-PHASE1-PRODUCT-BUILDER-20261026",
+  "baseSha": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+  "requirementIds": [
+    "XR-MISSION-036",
+    "XR-HIST-b9676b930b0fa4b6"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "high",
+  "scope": "Batch 2 Phase 1 (Milestones A to C): durable AI Product Builder projects, approved starter registry with provenance, durable source revisions, strict preview readiness and a seven-state preview lifecycle, built on the canonical swarm, pipeline, universal engine and SoftwareAgent path. Disabled by default; nothing is applied, deployed or enabled.",
+  "changedFiles": [
+    ".github/workflows/builder-phase1.yml",
+    "backend/src/ai/pipeline.ts",
+    "backend/src/builder/builder.test.ts",
+    "backend/src/builder/canonical.ts",
+    "backend/src/builder/pipelineBinding.ts",
+    "backend/src/builder/previewLifecycle.ts",
+    "backend/src/builder/readiness.ts",
+    "backend/src/builder/runtime.integration.test.ts",
+    "backend/src/builder/service.ts",
+    "backend/src/builder/snapshot.ts",
+    "backend/src/builder/spec.ts",
+    "backend/src/builder/starters.ts",
+    "backend/src/builder/store.integration.test.ts",
+    "backend/src/builder/store.ts",
+    "backend/src/builder/swarmBridge.ts",
+    "backend/src/builder/types.ts",
+    "backend/src/index.ts",
+    "backend/src/routes/builder.test.ts",
+    "backend/src/routes/builder.ts",
+    "backend/src/routes/swarm.ts",
+    "docs/infra/batch-2/PHASE-1-STATUS.md",
+    "docs/xroga/missions/batch2-phase1-product-builder-20261026.json",
+    "docs/xroga/security/current-migration-additions.json",
+    "frontend/src/components/terminal/BuilderProjectPanel.tsx",
+    "frontend/src/components/terminal/DevWorkspacePanel.tsx",
+    "frontend/src/context/TerminalChatContext.tsx",
+    "frontend/src/lib/api.ts",
+    "frontend/src/lib/builderApi.ts",
+    "frontend/src/lib/builderChat.ts",
+    "frontend/src/store/useBuilderProjectStore.ts",
+    "frontend/src/store/useProjectWorkspaceStore.ts",
+    "scripts/security/schema-catalog.mjs",
+    "scripts/security/schema-catalog.test.mjs",
+    "supabase/migrations/20261026000000_builder_projects.sql",
+    "tests/ci/known-skips.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Canonical ExecutionScheduler, tryUniversalBuild and SoftwareAgent/Cline path",
+      "Existing ProjectRuntimeManager, live-preview coordinator, signed preview gateway and workspace panel",
+      "Existing scaffolds as the first approved starters",
+      "Batch 1.5 and Codex migration work untouched"
+    ],
+    "extend": [
+      "runBuildPipeline accepts a server-supplied builder binding (existing files and commit hook); the universal path never falls through to the legacy generator for a builder project",
+      "/api/swarm/execute accepts builderProjectId after server-side ownership verification",
+      "Workspace panel gains a Project tab behind NEXT_PUBLIC_XROGA_BUILDER"
+    ],
+    "replace": [],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": true,
+    "migrations": [
+      "supabase/migrations/20261026000000_builder_projects.sql"
+    ],
+    "rollout": "Additive migration (two tables and one function). Not applied by this change; apply through the verified migration workflow after review.",
+    "rollback": "DROP FUNCTION public.append_builder_revision and DROP TABLE public.builder_revisions, public.builder_projects. No other table references them."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "New /api/builder routes require the issued tenant context. builderProjectId on /api/swarm/execute is honoured only after the verified owner matches durable storage; unknown or foreign ids return 404."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "New owner-scoped tables with RLS, owner SELECT only for the browser role, and an owner-checked service-only append function. Every store method filters by the verified owner."
+    },
+    "approval": {
+      "changed": false,
+      "description": "No external mutation. GitHub, Supabase and Vercel actions are Phase 2 and 3."
+    },
+    "credentials": {
+      "changed": true,
+      "description": "Snapshots reject credential files and credential-like content before they become durable. No credential is stored in project rows."
+    },
+    "egress": {
+      "changed": false,
+      "description": "No new egress. Readiness probes run inside the existing isolated runtime with the existing preview network policy."
+    },
+    "cost": {
+      "changed": false,
+      "description": "Builds run through the existing budget reservation and scheduler. No new paid resource."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No payment or subscription path changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/builder/builder.test.ts",
+      "scope": "Spec, starter selection, snapshot safety, idempotent creation, tenant denial, replay and conflict, build outcomes.",
+      "negative": true,
+      "reference": "backend/src/builder/builder.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/builder/runtime.integration.test.ts",
+      "scope": "Strict readiness against a real HTTP server: 404 route, framework error page, empty body, closed port all fail.",
+      "negative": true,
+      "reference": "backend/src/builder/runtime.integration.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/routes/builder.test.ts",
+      "scope": "HTTP layer: identity required, body identity ignored, cross-tenant 404.",
+      "negative": true,
+      "reference": "backend/src/routes/builder.test.ts"
+    },
+    {
+      "command": "builder-phase1 workflow (disposable PostgreSQL)",
+      "scope": "The migration SQL: uniqueness, gapless numbering, replay, conflict, concurrency, foreign owner, browser grants.",
+      "negative": true,
+      "reference": "backend/src/builder/store.integration.test.ts"
+    },
+    {
+      "command": "node scripts/xroga/inventory.mjs --check",
+      "scope": "Generated source inventory consistency.",
+      "negative": false,
+      "reference": "docs/xroga/current-state.json"
+    },
+    {
+      "command": "node scripts/xroga/check-runtime-config.mjs",
+      "scope": "Runtime inventory consistency.",
+      "negative": false,
+      "reference": "docs/xroga/dependency-inventory.json"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Adds durable project identity and revisions around the existing canonical path. No scheduler, runtime, preview or agent framework is added.",
+    "rfc": null
+  },
+  "rollout": "Merge only after review. Then apply the migration, enable the canonical engine for builder projects, deploy to the Google runtime and set NEXT_PUBLIC_XROGA_BUILDER=1, each as a separate approved step.",
+  "rollback": "Disable NEXT_PUBLIC_XROGA_BUILDER. The routes are inert without a builderProjectId. Remove the schema with the rollback statements above.",
+  "knownGaps": [
+    "No live end-to-end run: the canonical engine is off by default and no Google runtime provider is deployed",
+    "The SQL is exercised only in the builder-phase1 workflow, not on the development machine",
+    "QA, repair, restore, export and GitHub are Phase 2; Supabase and Vercel are Phase 3"
+  ],
+  "placeholderClaimsRemaining": [
+    "Live preview of a generated application on the Google runtime is unverified"
+  ],
+  "evidenceRefs": [
+    "docs/infra/batch-2/PHASE-1-STATUS.md",
+    "backend/src/builder/builder.test.ts"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Migration not applied and canonical engine not enabled",
+      "No Google runtime provider deployed (PR #856) for a live preview",
+      "Authenticated end-to-end and staged security proof not run for this change"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

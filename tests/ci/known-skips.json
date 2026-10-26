@@ -331,6 +331,16 @@
       "reason": "POSIX process groups only; Windows cannot run it.",
       "issue_or_command": "Batch 1.5 storage-phase1 workflow (manual dispatch) and the phase3 browser host scripts",
       "review_date": "2026-12-15"
+    },
+    {
+      "id": "28dc1490566773beaea9dcdd1f59d6d67fa6bdffe5afec15c8980ef14bc442d1",
+      "path": "backend/src/builder/store.integration.test.ts",
+      "title": "builder projects against real PostgreSQL",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Needs a disposable PostgreSQL (STORAGE_TEST_DATABASE_URL); skipped without it and run by the builder-phase1 workflow, which provides one.",
+      "issue_or_command": "Batch 2 Phase 1 builder-phase1 workflow (branch push or manual dispatch)",
+      "review_date": "2026-12-15"
     }
   ]
 }
