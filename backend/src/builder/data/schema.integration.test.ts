@@ -77,9 +77,11 @@ describe('generated customer schemas against real PostgreSQL', { skip }, () => {
 
   it('applies cleanly and twice, and leaves no table without RLS and nothing readable by signed-out visitors', async () => {
     for (const id of ['tasks', 'booking', 'items'] as const) await apply(id);
-    const noRls = await pool.query("select c.relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind='r' and not c.relrowsecurity");
+    // The stub also holds Xroga's own platform tables; only the generated customer tables are in scope.
+    const generated = (['tasks', 'booking', 'items'] as const).flatMap((id) => [...generateSchema(id).tables]);
+    const noRls = await pool.query("select c.relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind='r' and not c.relrowsecurity and c.relname = any($1)", [generated]);
     assert.deepEqual(noRls.rows, []);
-    const anonGrants = await pool.query("select table_name, privilege_type from information_schema.role_table_grants where table_schema='public' and grantee in ('anon','PUBLIC')");
+    const anonGrants = await pool.query("select table_name, privilege_type from information_schema.role_table_grants where table_schema='public' and grantee in ('anon','PUBLIC') and table_name = any($1)", [generated]);
     assert.deepEqual(anonGrants.rows, []);
     for (const table of ['tasks', 'items', 'profiles', 'services', 'slots', 'bookings']) {
       await assert.rejects(as(null, 'anon', (c) => c.query(`select * from public.${table}`)), code(DENIED), table);
