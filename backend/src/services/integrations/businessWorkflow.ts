@@ -14,11 +14,11 @@ export const MAX_BUSINESS_WORKFLOW_STEPS = 6;
 const READ_VERBS = /^(?:please\s+)?(?:find|search|list|show|check|look up|lookup|fetch|retrieve|read|summarize|inspect|review|get)\b/i;
 const ACTION_VERBS = /^(?:please\s+)?(?:send|email|message|create|draft|schedule|book|update|edit|delete|remove|cancel|publish|post|upload|invite|add|put|save|move|copy|attach|submit|set|archive|reply|refund|transfer|pay|share)\b/i;
 const NEXT_TASK = /(?:please\s+)?(?:find|search|list|show|check|look up|lookup|fetch|retrieve|read|summarize|inspect|review|get|send|email|message|create|draft|schedule|book|update|edit|delete|remove|cancel|publish|post|upload|invite|add|put|save|move|copy|attach|submit|set|archive|reply|refund|transfer|pay|share)\b/i;
-const DEPENDENT_REFERENCE = /\b(?:them|those|these|it|that|their|each|every|all|found|matching|top\s+\d+|first\s+\d+|(?:the|those|these|a)\s+(?:results?|summary|options|findings|report|information|data|details)|the (?:people|clients|leads|items|records|files|events|messages) (?:you|we) (?:found|created|listed)|from (?:that|the previous) (?:step|search)|(?:based on|using|from)\s+(?:the|those|this|that))\b/i;
+const DEPENDENT_REFERENCE = /\b(?:them|those|these|it|that|their|each|every|all|found|matching|qualified\s+ones|top\s+\d+|first\s+\d+|(?:the|those|these|a)\s+(?:results?|summary|options|findings|report|information|data|details)|the (?:people|clients|leads|items|records|files|events|messages) (?:you|we) (?:found|created|listed)|from (?:that|the previous) (?:step|search)|(?:based on|using|from)\s+(?:the|those|this|that))\b/i;
 const WEB_REQUEST = /^(?:please\s+)?(?:search|research|look up|find|check)\s+(?:the\s+)?(?:web|internet|online)\b/i;
 const NEGATED_ACTION = /^(?:please\s+)?(?:do\s+not|don't|never|avoid)\b/i;
 const NEGATED_PREFIX = /\b(?:do\s+not|don't|never|avoid|without)\s+$/i;
-const UNACCOUNTED_TASK = /(?:^|[.;]\s*|\b(?:and|then|also)\s+)(?:please\s+)?(?:find|search|list|show|check|read|send|email|message|create|draft|schedule|book|update|edit|delete|remove|cancel|publish|post|upload|add|put|save|share)\b/i;
+const UNACCOUNTED_TASK = /(?:^|[.;]\s*|,\s*(?:and\s+)?|\b(?:and|then|also)\s+)(?:please\s+)?(?:find|search|list|show|check|read|send|email|message|create|draft|schedule|book|update|edit|delete|remove|cancel|publish|post|upload|add|put|save|share)\b/i;
 
 /** Model-proposed steps are only accepted when each is an exact, ordered user-authored clause. */
 export function validateSourceBoundBusinessWorkflow(
@@ -58,7 +58,7 @@ export function splitExplicitBusinessWorkflow(message: string): BusinessWorkflow
     return null;
   }
 
-  const separator = new RegExp(`\\s*(?:;|\\n+)\\s*|\\s+(?:and then|then|and|also)\\s+(?=${NEXT_TASK.source})`, 'gi');
+  const separator = new RegExp(`\\s*(?:;|\\n+|,\\s*(?:and\\s+)?(?=${NEXT_TASK.source}))\\s*|\\s+(?:and then|then|and|also)\\s+(?=${NEXT_TASK.source})`, 'gi');
   const clauses = text.split(separator).map((item) => item.trim().replace(/^[,.;\s]+|[,.;\s]+$/g, ''));
   if (clauses.length < 2 || clauses.length > MAX_BUSINESS_WORKFLOW_STEPS || clauses.some((item) => item.length < 5 || item.length > 500)) return null;
 

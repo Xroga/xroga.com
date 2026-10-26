@@ -30,10 +30,24 @@ test('keeps three explicitly separated app tasks as three steps', () => {
   assert.equal(steps?.[2]?.request, 'create a task for Friday');
 });
 
+test('keeps comma-separated read, spreadsheet write, and email as three dependent steps', () => {
+  const message = 'Find prospective clients, add qualified ones to a spreadsheet, and email me the results.';
+  assert.deepEqual(splitExplicitBusinessWorkflow(message), [
+    { kind: 'read', request: 'Find prospective clients', dependsOnPrevious: false },
+    { kind: 'action', request: 'add qualified ones to a spreadsheet', dependsOnPrevious: true },
+    { kind: 'action', request: 'email me the results', dependsOnPrevious: true },
+  ]);
+  assert.equal(validateSourceBoundBusinessWorkflow(message, [
+    { kind: 'read', request: 'Find prospective clients' },
+    { kind: 'action', request: 'email me the results' },
+  ], new Set(['read', 'action'])), null);
+});
+
 test('does not turn a public search, ordinary sentence, or ambiguous clause into an app workflow', () => {
   assert.equal(splitExplicitBusinessWorkflow('Search the web for flights and send me options'), null);
   assert.equal(splitExplicitBusinessWorkflow('Explain Gmail and calendar integrations'), null);
   assert.equal(splitExplicitBusinessWorkflow('Send the email and be concise'), null);
+  assert.equal(splitExplicitBusinessWorkflow('Send an email to Jane, John, and Alex'), null);
 });
 
 test('segments six app tasks without knowing or hard-coding the app names', () => {
