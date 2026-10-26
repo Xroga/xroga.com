@@ -8,16 +8,16 @@
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 183,
-    "persistenceCandidates": 780,
+    "persistenceCandidates": 781,
     "ownerPredicateCandidates": 191,
-    "reviewRequired": 98,
+    "reviewRequired": 99,
     "reviewedCandidates": 682,
-    "unresolvedSafetyCandidates": 123,
+    "unresolvedSafetyCandidates": 124,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 18
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 98,
+    "REVIEW_REQUIRED": 99,
     "SCOPED_BOUNDARY": 453,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 164,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 111,
-    "unresolvedCandidateBoundaries": 669,
+    "unresolvedCandidateBoundaries": 670,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3864,6 +3864,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "a1874ed76cb34dfdc5eb"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "63e27e1f6b29fe5d4d0b"
       },
       {
@@ -4405,6 +4409,10 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "eb7d65790579121f23f5"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "a1874ed76cb34dfdc5eb"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -6717,10 +6725,10 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 780,
+    "currentCallers": 781,
     "structuredVerified": 111,
-    "structuredUnproven": 669,
-    "manualUnresolved": 123,
+    "structuredUnproven": 670,
+    "manualUnresolved": 124,
     "manualUnsupported": 546,
     "agreedVerified": 111,
     "proofAwaitingManualReconciliation": 0
@@ -22279,6 +22287,17 @@
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
       "sourceSha256": "c02b326f507a85c521fc20ae2b0e49318b1d9c6eb121f3cba8d28f3d2227bfa2"
+    },
+    {
+      "id": "a1874ed76cb34dfdc5eb",
+      "path": "backend/src/workers/browserRunDispatch.ts",
+      "line": 88,
+      "enclosing": "dispatch",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "5debe366cc9ecf816456bbfd64b6e45189c0e7a6c532121c303b736be833aaa6"
     },
     {
       "id": "63e27e1f6b29fe5d4d0b",

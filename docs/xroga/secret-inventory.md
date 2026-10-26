@@ -1,6 +1,6 @@
 # Environment/secret NAME inventory
 
-Source SHA: `f11e7dc518e8b0e5e21e50c993ce5947a5a43546`. Values are prohibited, including public credential values. 257 named readers/aliases/derived keys; 21 explicitly reviewed bindings.
+Source SHA: `1b93f2b900b5e83d9dcc0661c27057f070ad4387`. Values are prohibited, including public credential values. 264 named readers/aliases/derived keys; 21 explicitly reviewed bindings.
 
 | Name | Class | Requiredness | Consuming source | Validation status |
 | --- | --- | --- | --- | --- |
@@ -205,7 +205,14 @@ Source SHA: `f11e7dc518e8b0e5e21e50c993ce5947a5a43546`. Values are prohibited, i
 | XROGA_AUTOMATION_SCHEDULER_SERVICE_ACCOUNT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/routes/businessAutomationScheduler.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_BROWSER_AI_MODEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/routes/browserRuns.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_BROWSER_COORDINATOR_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/routes/browserRuns.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| XROGA_BROWSER_DISPATCH | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/workers/browserRunDispatch.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| XROGA_BROWSER_EXECUTE_AUDIENCE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/workers/browserRunDispatch.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| XROGA_BROWSER_EXECUTE_SERVICE_ACCOUNT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/workers/browserRunDispatch.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| XROGA_BROWSER_EXECUTE_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/workers/browserRunDispatch.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_BROWSER_PLANNER_MODEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/routes/browserRuns.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| XROGA_BROWSER_TASKS_LOCATION | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/workers/browserRunDispatch.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| XROGA_BROWSER_TASKS_PROJECT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/workers/browserRunDispatch.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| XROGA_BROWSER_TASKS_QUEUE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/workers/browserRunDispatch.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_BROWSER_WORKER_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/routes/browserRuns.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_CIRCUIT_FAILURE_THRESHOLD | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/ai/providerRuntime.ts, backend/src/ai/routerConfig.ts, backend/src/lib/resilience/circuitBreaker.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_CREDENTIAL_KMS_PROVIDER | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/runtime/readiness.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |

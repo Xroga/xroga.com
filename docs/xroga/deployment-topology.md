@@ -1,6 +1,6 @@
 # Deployment topology — read-only truth
 
-Source SHA: `f11e7dc518e8b0e5e21e50c993ce5947a5a43546`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
+Source SHA: `1b93f2b900b5e83d9dcc0661c27057f070ad4387`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -63,6 +63,7 @@ Source SHA: `f11e7dc518e8b0e5e21e50c993ce5947a5a43546`; source/config hashes are
 | endpoint-chrome-google-com | Source-defined endpoint chrome.google.com | CONFIGURED_BUT_UNVERIFIED | chrome.google.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-chromewebstore-googleapis-com | Source-defined endpoint chromewebstore.googleapis.com | CONFIGURED_BUT_UNVERIFIED | chromewebstore.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-cloudkms-googleapis-com | Source-defined endpoint cloudkms.googleapis.com | CONFIGURED_BUT_UNVERIFIED | cloudkms.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-cloudtasks-googleapis-com | Source-defined endpoint cloudtasks.googleapis.com | CONFIGURED_BUT_UNVERIFIED | cloudtasks.googleapis.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-coordinator | Source-defined endpoint coordinator | CONFIGURED_BUT_UNVERIFIED | coordinator | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-design-intuit-com | Source-defined endpoint design.intuit.com | CONFIGURED_BUT_UNVERIFIED | design.intuit.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-dev-whop-com | Source-defined endpoint dev.whop.com | CONFIGURED_BUT_UNVERIFIED | dev.whop.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -118,6 +119,7 @@ Source SHA: `f11e7dc518e8b0e5e21e50c993ce5947a5a43546`; source/config hashes are
 | endpoint-mailchimp-com | Source-defined endpoint mailchimp.com | CONFIGURED_BUT_UNVERIFIED | mailchimp.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-mcp-example-com | Source-defined endpoint mcp.example.com | CONFIGURED_BUT_UNVERIFIED | mcp.example.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-memory-invalid | Source-defined endpoint memory.invalid | CONFIGURED_BUT_UNVERIFIED | memory.invalid | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-metadata-google-internal | Source-defined endpoint metadata.google.internal | CONFIGURED_BUT_UNVERIFIED | metadata.google.internal | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-mixpanel-com | Source-defined endpoint mixpanel.com | CONFIGURED_BUT_UNVERIFIED | mixpanel.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-neon-com | Source-defined endpoint neon.com | CONFIGURED_BUT_UNVERIFIED | neon.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-nextjs-org | Source-defined endpoint nextjs.org | CONFIGURED_BUT_UNVERIFIED | nextjs.org | NOT_INDEPENDENTLY_VERIFIED |

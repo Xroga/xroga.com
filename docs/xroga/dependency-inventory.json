@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "f11e7dc518e8b0e5e21e50c993ce5947a5a43546",
+  "source_sha": "1b93f2b900b5e83d9dcc0661c27057f070ad4387",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -2528,6 +2528,48 @@
       "evidence_ids": []
     },
     {
+      "dependency_id": "endpoint-cloudtasks-googleapis-com",
+      "provider": "Source-defined endpoint cloudtasks.googleapis.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/workers/browserRunDispatch.ts"
+      ],
+      "hostnames": [
+        "cloudtasks.googleapis.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [
+        "XROGA_BROWSER_DISPATCH",
+        "XROGA_BROWSER_EXECUTE_AUDIENCE",
+        "XROGA_BROWSER_EXECUTE_SERVICE_ACCOUNT",
+        "XROGA_BROWSER_EXECUTE_URL",
+        "XROGA_BROWSER_TASKS_LOCATION",
+        "XROGA_BROWSER_TASKS_PROJECT",
+        "XROGA_BROWSER_TASKS_QUEUE"
+      ],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/workers/browserRunDispatch.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
       "dependency_id": "endpoint-coordinator",
       "provider": "Source-defined endpoint coordinator",
       "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
@@ -4570,6 +4612,48 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/storage/memoryObjectStore.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-metadata-google-internal",
+      "provider": "Source-defined endpoint metadata.google.internal",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/workers/browserRunDispatch.ts"
+      ],
+      "hostnames": [
+        "metadata.google.internal"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [
+        "XROGA_BROWSER_DISPATCH",
+        "XROGA_BROWSER_EXECUTE_AUDIENCE",
+        "XROGA_BROWSER_EXECUTE_SERVICE_ACCOUNT",
+        "XROGA_BROWSER_EXECUTE_URL",
+        "XROGA_BROWSER_TASKS_LOCATION",
+        "XROGA_BROWSER_TASKS_PROJECT",
+        "XROGA_BROWSER_TASKS_QUEUE"
+      ],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/workers/browserRunDispatch.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -12275,6 +12359,86 @@
       ]
     },
     {
+      "name": "XROGA_BROWSER_DISPATCH",
+      "consuming_sources": [
+        "backend/src/workers/browserRunDispatch.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-cloudtasks-googleapis-com",
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
+      "name": "XROGA_BROWSER_EXECUTE_AUDIENCE",
+      "consuming_sources": [
+        "backend/src/workers/browserRunDispatch.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "DESTRUCTURED_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-cloudtasks-googleapis-com",
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
+      "name": "XROGA_BROWSER_EXECUTE_SERVICE_ACCOUNT",
+      "consuming_sources": [
+        "backend/src/workers/browserRunDispatch.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "DESTRUCTURED_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-cloudtasks-googleapis-com",
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
+      "name": "XROGA_BROWSER_EXECUTE_URL",
+      "consuming_sources": [
+        "backend/src/workers/browserRunDispatch.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "DESTRUCTURED_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-cloudtasks-googleapis-com",
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
       "name": "XROGA_BROWSER_PLANNER_MODEL",
       "consuming_sources": [
         "backend/src/routes/browserRuns.ts"
@@ -12291,6 +12455,66 @@
       ],
       "dependency_ids": [
         "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_BROWSER_TASKS_LOCATION",
+      "consuming_sources": [
+        "backend/src/workers/browserRunDispatch.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "DESTRUCTURED_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-cloudtasks-googleapis-com",
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
+      "name": "XROGA_BROWSER_TASKS_PROJECT",
+      "consuming_sources": [
+        "backend/src/workers/browserRunDispatch.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "DESTRUCTURED_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-cloudtasks-googleapis-com",
+        "endpoint-metadata-google-internal"
+      ]
+    },
+    {
+      "name": "XROGA_BROWSER_TASKS_QUEUE",
+      "consuming_sources": [
+        "backend/src/workers/browserRunDispatch.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "DESTRUCTURED_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-cloudtasks-googleapis-com",
+        "endpoint-metadata-google-internal"
       ]
     },
     {
@@ -13572,7 +13796,7 @@
     },
     {
       "path": ".github/workflows/storage-phase1.yml",
-      "sha256": "f8a0406be90aa5b49d4e1920a4989526cb1e227532aae7f5989928df916631d2"
+      "sha256": "bbada3590978455b0745800f2d64f3d0624e5ad8d33b5686b8de82f9a3ef4533"
     },
     {
       "path": ".github/workflows/supabase-migrate.yml",
@@ -14348,7 +14572,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "b7e5717aac2dccf5fe1631692d433660630337e1631a18041fa74faa83d2261e"
+      "sha256": "e20475124548b76a8760d78392551720b6289a4def6e69a0317f82de3edb6bb5"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -14771,8 +14995,12 @@
       "sha256": "a7ab9896df1a729f603a742a1951fd81357562d86ed289bcce64deca45a75f15"
     },
     {
+      "path": "backend/src/routes/browserRunInternal.ts",
+      "sha256": "57042021416e917aa7256dadf11fa9d2c68c0520db0b0bc0255be9af35ba5ea1"
+    },
+    {
       "path": "backend/src/routes/browserRuns.ts",
-      "sha256": "a3a524695a9e87a93e4f42ec70a7816729d05e2bed3d3b7bc0bf91320aa805fb"
+      "sha256": "080dbf8200bcea311afbc0ea33079dd6d291efee959b18ce62e2ac6b06ab7a75"
     },
     {
       "path": "backend/src/routes/businessAutomationScheduler.ts",
@@ -16016,7 +16244,7 @@
     },
     {
       "path": "backend/src/workers/browserCapability.ts",
-      "sha256": "f932953aa5acb43d66eff567571b5518ddda212d25fed42c6100cf9fe5ccf7da"
+      "sha256": "37b817ea46ff36812f1e953d68975e33cd8fa613e2a59d959b872e033201f10e"
     },
     {
       "path": "backend/src/workers/browserCoordinator.ts",
@@ -16037,6 +16265,14 @@
     {
       "path": "backend/src/workers/browserPlanner.ts",
       "sha256": "d708dcef9048fd1e5332461b672ff7a20ef6647f80f91dcd614c65f5c6100446"
+    },
+    {
+      "path": "backend/src/workers/browserRunDispatch.ts",
+      "sha256": "5debe366cc9ecf816456bbfd64b6e45189c0e7a6c532121c303b736be833aaa6"
+    },
+    {
+      "path": "backend/src/workers/browserRunStore.ts",
+      "sha256": "59976a8c9023dbf82995c97721fbb60959ff6e764770c310bd9a4a44868693f4"
     },
     {
       "path": "backend/src/workers/browserTaskHandler.ts",
@@ -20925,42 +21161,42 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 106,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 107,
       "credentialsInUrl": false
     },
     {
-      "hostname": "www.xroga.com",
+      "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 108,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xrogaaicom.vercel.app",
+      "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 109,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "xrogaaicom.vercel.app",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 110,
       "credentialsInUrl": false
     },
     {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 111,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 201,
+      "line": 203,
       "credentialsInUrl": false
     },
     {
@@ -23040,6 +23276,20 @@
       "protocol": "http:",
       "path": "backend/src/workers/browserCoordinator.ts",
       "line": 82,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "metadata.google.internal",
+      "protocol": "http:",
+      "path": "backend/src/workers/browserRunDispatch.ts",
+      "line": 52,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "cloudtasks.googleapis.com",
+      "protocol": "https:",
+      "path": "backend/src/workers/browserRunDispatch.ts",
+      "line": 79,
       "credentialsInUrl": false
     },
     {
@@ -28617,13 +28867,6 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
-      "path": "backend/src/routes/browserRuns.ts",
-      "line": 61,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
       "path": "backend/src/routes/capabilities.ts",
       "line": 46,
       "scope": "MODULE_LIFETIME",
@@ -30643,6 +30886,13 @@
       "path": "backend/src/workers/browserPlan.ts",
       "line": 261,
       "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/browserRunStore.ts",
+      "line": 74,
+      "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
