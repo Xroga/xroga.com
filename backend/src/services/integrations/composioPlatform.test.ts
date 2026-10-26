@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 
-import { resetProviderBudgetMemoryForTests, reserveFixedCostBudget, settleFixedCostBudget, finishFailedProviderReservation } from '../../ai/providerBudget.js';
+import { releaseFixedCostBudget, reserveFixedCostBudget, resetFixedCostMemoryForTests, settleFixedCostBudget } from '../../ai/fixedCostBudget.js';
 import { preparedActionDigest, canonicalAuthorityValue } from '../../security/authority/digest.js';
 import { executeAuthorizedAction } from '../../security/authority/enforce.js';
 import { createTenantContext } from '../../security/tenantContext.js';
@@ -343,7 +343,7 @@ describe('Instant: paid execution is capped by Xroga, not by Composio', () => {
         assertSession: async () => { events.push('assert'); return { session_id: 'trs_instant' }; },
         reserve: async (input: Parameters<typeof reserveFixedCostBudget>[0]) => { events.push(`reserve:${input.reservationMicroUsd}`); return reserveFixedCostBudget(input); },
         settle: async (input: Parameters<typeof settleFixedCostBudget>[0]) => { events.push(`settle:${input.actualMicroUsd}`); return settleFixedCostBudget(input); },
-        release: async (input: Parameters<typeof finishFailedProviderReservation>[0]) => { events.push(`release:${(input.error as { message: string }).message}`); return finishFailedProviderReservation(input); },
+        release: async (input: Parameters<typeof releaseFixedCostBudget>[0]) => { events.push(`${input.pendingReconciliation ? 'hold' : 'free'}:${input.category}`); return releaseFixedCostBudget(input); },
       },
     };
   };
@@ -352,7 +352,7 @@ describe('Instant: paid execution is capped by Xroga, not by Composio', () => {
   });
 
   beforeEach(() => {
-    resetProviderBudgetMemoryForTests();
+    resetFixedCostMemoryForTests();
     resetInstantBreakerForTests();
   });
 
@@ -424,7 +424,7 @@ describe('Instant: paid execution is capped by Xroga, not by Composio', () => {
         request: (async () => ({ result_type: 'completed', data: {}, instant_charge: { amount: '2.50', currency: 'USD' } })) as never,
       }), { code: 'COMPOSIO_INSTANT_CHARGE_EXCEEDED_CEILING' });
     });
-    assert.deepEqual(t.events, ['session', 'assert', 'reserve:1000000', 'release:timeout'], 'held for reconciliation, never settled below what was spent');
+    assert.deepEqual(t.events, ['session', 'assert', 'reserve:1000000', 'hold:charge_anomaly'], 'held for reconciliation, never settled below what was spent');
     assert.equal(instantBreakerOpen(), true);
     await withPermit(async (permit, planDigest) => {
       await assert.rejects(executeComposioInstantTool(USER, call(permit, planDigest, { idempotencyKey: 'instant-call-0002-abcdef' }), t.deps), { code: 'COMPOSIO_INSTANT_BREAKER_OPEN' });
@@ -448,7 +448,7 @@ describe('Instant: paid execution is capped by Xroga, not by Composio', () => {
         request: (async () => { throw new ComposioClientError('Xroga Connect timed out.', { status: 504, code: 'COMPOSIO_TIMEOUT' }); }) as never,
       }), { code: 'COMPOSIO_TIMEOUT' });
     });
-    assert.deepEqual(t.events, ['session', 'assert', 'reserve:1000000', 'release:timeout']);
+    assert.deepEqual(t.events, ['session', 'assert', 'reserve:1000000', 'hold:unknown_outcome']);
     // The held reservation still counts against the user's entitlement: the next call cannot be reserved.
     const next = trace();
     let requested = false;
@@ -477,7 +477,7 @@ describe('Instant: paid execution is capped by Xroga, not by Composio', () => {
         request: (async () => { throw new ComposioClientError('balance', { status: 402, code: 'COMPOSIO_INSTANT_BALANCE_EXHAUSTED' }); }) as never,
       }), { code: 'COMPOSIO_INSTANT_BALANCE_EXHAUSTED' });
     });
-    assert.deepEqual(t.events, ['session', 'assert', 'reserve:1000000', 'release:invalid request']);
+    assert.deepEqual(t.events, ['session', 'assert', 'reserve:1000000', 'free:definitive_refusal']);
     // Released, so the entitlement is free again and the breaker stays closed.
     assert.equal(instantBreakerOpen(), false);
     assert.ok(await reserveFixedCostBudget({ userId: USER, route: INSTANT_LEDGER_ROUTE, reservationMicroUsd: 1_000_000 }));

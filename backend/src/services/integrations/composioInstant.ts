@@ -1,11 +1,7 @@
 import { createHash } from 'node:crypto';
 
-import {
-  finishFailedProviderReservation,
-  reserveFixedCostBudget,
-  settleFixedCostBudget,
-  type ProviderReservation,
-} from '../../ai/providerBudget.js';
+import { releaseFixedCostBudget, reserveFixedCostBudget, settleFixedCostBudget } from '../../ai/fixedCostBudget.js';
+import type { ProviderReservation } from '../../ai/providerBudget.js';
 import { canonicalAuthorityValue, preparedActionDigest } from '../../security/authority/digest.js';
 import { assertAuthorityPermit, consumeAuthorityPermit } from '../../security/authority/enforce.js';
 import type { AuthorityDispatchBinding, AuthorityPermit } from '../../security/authority/types.js';
@@ -92,10 +88,6 @@ export function instantBreakerOpen(): boolean {
   return breakerOpen;
 }
 
-/** The ledger releases a reservation only for an error it classifies as definitive (a 4xx). Anything unknown is held. */
-const definitiveRefusal = (): Error => Object.assign(new Error('invalid request'), { status: 400 });
-/** An error the ledger classifies as a timeout: the provider may have billed, so the hold is kept for reconciliation. */
-const ambiguousOutcome = (): Error => new Error('timeout');
 
 interface InstantCharge {
   readonly amount: string;
@@ -112,7 +104,7 @@ function readCharge(raw: unknown): InstantCharge | null {
 export interface InstantDeps {
   readonly reserve: typeof reserveFixedCostBudget;
   readonly settle: typeof settleFixedCostBudget;
-  readonly release: typeof finishFailedProviderReservation;
+  readonly release: typeof releaseFixedCostBudget;
   readonly createSession: typeof createInstantComposioSession;
   readonly assertSession: typeof assertComposioSession;
   readonly request: typeof composioRequest;
@@ -122,7 +114,7 @@ export interface InstantDeps {
 const defaults: InstantDeps = {
   reserve: reserveFixedCostBudget,
   settle: settleFixedCostBudget,
-  release: finishFailedProviderReservation,
+  release: releaseFixedCostBudget,
   createSession: createInstantComposioSession,
   assertSession: assertComposioSession,
   request: composioRequest,
@@ -204,7 +196,7 @@ export async function executeComposioInstantTool(
     if (chargeMicro === null || chargeMicro > reservation.reservedMicroUsd) {
       // Unreported, wrong currency, or above the ceiling: hold the whole reservation and stop further Instant calls.
       breakerOpen = true;
-      await d.release({ userId, reservation, error: ambiguousOutcome() }).catch(() => undefined);
+      await d.release({ userId, reservation, pendingReconciliation: true, category: 'charge_anomaly' }).catch(() => undefined);
       throw new ComposioClientError(
         chargeMicro === null ? 'Instant did not report a charge. The reservation is held for reconciliation and Instant is paused.' : 'An Instant charge exceeded its ceiling. The reservation is held for reconciliation and Instant is paused.',
         { status: 502, code: chargeMicro === null ? 'COMPOSIO_INSTANT_CHARGE_UNREPORTED' : 'COMPOSIO_INSTANT_CHARGE_EXCEEDED_CEILING' },
@@ -219,14 +211,14 @@ export async function executeComposioInstantTool(
     if (error instanceof ComposioClientError && error.code.startsWith('COMPOSIO_INSTANT_CHARGE_')) throw error;
     if (!sent) {
       // Nothing left Xroga: release the reservation.
-      await d.release({ userId, reservation, error: definitiveRefusal() }).catch(() => undefined);
+      await d.release({ userId, reservation, pendingReconciliation: false, category: 'definitive_refusal' }).catch(() => undefined);
     } else if (error instanceof ComposioClientError && ['COMPOSIO_INSTANT_BALANCE_EXHAUSTED'].includes(error.code)) {
       // Composio refused to fund the call (HTTP 402): nothing was billed.
-      await d.release({ userId, reservation, error: definitiveRefusal() }).catch(() => undefined);
+      await d.release({ userId, reservation, pendingReconciliation: false, category: 'definitive_refusal' }).catch(() => undefined);
     } else {
       // The request left and the outcome is unknown or the call was blocked after running. The provider may have billed.
       // Hold the reservation for reconciliation; never release it on a guess.
-      await d.release({ userId, reservation, error: ambiguousOutcome() }).catch(() => undefined);
+      await d.release({ userId, reservation, pendingReconciliation: true, category: 'unknown_outcome' }).catch(() => undefined);
     }
     throw error;
   }
