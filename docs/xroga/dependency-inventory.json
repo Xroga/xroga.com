@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "dbcd23c20bd728191f902432ae28ba00884b4a3e",
+  "source_sha": "242a52310606b0b88a86353c782641f407b17f84",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -7345,6 +7345,8 @@
         "backend/src/ai/softwareAgent/softwareAgentFeatureFlags.ts",
         "backend/src/ai/universal/semanticRequestPlanner.ts",
         "backend/src/builder/phase2Bridge.ts",
+        "backend/src/builder/qa/qaHostMain.ts",
+        "backend/src/builder/qa/remoteQa.ts",
         "backend/src/config/envSecrets.ts",
         "backend/src/config/universalAgentFlags.ts",
         "backend/src/growth/growthService.ts",
@@ -7479,6 +7481,8 @@
         "XROGA_BROWSER_PLANNER_MODEL",
         "XROGA_BROWSER_WORKER_URL",
         "XROGA_BUILDER_INPROCESS_QA",
+        "XROGA_BUILDER_QA_HOST_SECRET",
+        "XROGA_BUILDER_QA_HOST_URL",
         "XROGA_CIRCUIT_FAILURE_THRESHOLD",
         "XROGA_CREDENTIAL_KMS_PROVIDER",
         "XROGA_DEV_CREDENTIAL_KEK",
@@ -7507,6 +7511,9 @@
         "XROGA_PROXY_PASSWORD",
         "XROGA_PROXY_PORT",
         "XROGA_PROXY_USERNAME",
+        "XROGA_QA_HOST_ALLOWED_SUFFIXES",
+        "XROGA_QA_HOST_MAX_CONCURRENT",
+        "XROGA_QA_HOST_SECRET",
         "XROGA_REQUIRE_HIGH_RISK_REVIEW",
         "XROGA_REQUIRE_MANAGED_CUSTODY",
         "XROGA_ROUTING_MODE",
@@ -7535,6 +7542,8 @@
         "backend/src/ai/softwareAgent/softwareAgentFeatureFlags.ts",
         "backend/src/ai/universal/semanticRequestPlanner.ts",
         "backend/src/builder/phase2Bridge.ts",
+        "backend/src/builder/qa/qaHostMain.ts",
+        "backend/src/builder/qa/remoteQa.ts",
         "backend/src/config/envSecrets.ts",
         "backend/src/config/universalAgentFlags.ts",
         "backend/src/growth/growthService.ts",
@@ -10328,6 +10337,7 @@
     {
       "name": "PORT",
       "consuming_sources": [
+        "backend/src/builder/qa/qaHostMain.ts",
         "backend/src/index.ts"
       ],
       "environments": [
@@ -12351,6 +12361,44 @@
       ]
     },
     {
+      "name": "XROGA_BUILDER_QA_HOST_SECRET",
+      "consuming_sources": [
+        "backend/src/builder/qa/remoteQa.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_BUILDER_QA_HOST_URL",
+      "consuming_sources": [
+        "backend/src/builder/qa/remoteQa.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_CIRCUIT_FAILURE_THRESHOLD",
       "consuming_sources": [
         "backend/src/ai/providerRuntime.ts",
@@ -13005,6 +13053,63 @@
       "secret_class": "RUNTIME_CONFIGURATION",
       "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
       "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_QA_HOST_ALLOWED_SUFFIXES",
+      "consuming_sources": [
+        "backend/src/builder/qa/qaHostMain.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_QA_HOST_MAX_CONCURRENT",
+      "consuming_sources": [
+        "backend/src/builder/qa/qaHostMain.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_QA_HOST_SECRET",
+      "consuming_sources": [
+        "backend/src/builder/qa/qaHostMain.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
       "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
       "mechanisms": [
         "STATIC_ENV_READER"
@@ -14276,7 +14381,7 @@
     },
     {
       "path": "backend/src/builder/phase2Bridge.ts",
-      "sha256": "be3f29ff5706c1db6e5279bb6b175ee3c70c865abc8739b3be00284bf01be47b"
+      "sha256": "0cf3dc15be4104e51ca8628f4c47a56b5480efcf424bcd199bb83d4ebbc05a57"
     },
     {
       "path": "backend/src/builder/phase2Store.ts",
@@ -14299,8 +14404,16 @@
       "sha256": "88891b6242b0c817182552fbdad182bfccb7119a5323ea3cd2f0ee021fef3137"
     },
     {
+      "path": "backend/src/builder/qa/qaHostMain.ts",
+      "sha256": "0925ce8ba36212a6a5d2b78c95e4879dabf7869a868b144e2d373a3a7f453ac6"
+    },
+    {
       "path": "backend/src/builder/qa/qaService.ts",
-      "sha256": "f94210ac5d2b62a7da7e852d521404cbd5f85f2e2a25fda12f632599cf1150d4"
+      "sha256": "94c05f42795933f465399f29d7e8223aae193923db0984ea89d7f0f2ab2d3169"
+    },
+    {
+      "path": "backend/src/builder/qa/remoteQa.ts",
+      "sha256": "c7617f5d458eada623e67d997c2673d9b715ffb9d8813da2612e7f92d50162c0"
     },
     {
       "path": "backend/src/builder/qa/repair.ts",
@@ -14308,7 +14421,7 @@
     },
     {
       "path": "backend/src/builder/qa/runner.ts",
-      "sha256": "591361deea519856c24c80fc239240fc29dbe253275f6125b681ee141d56eb9b"
+      "sha256": "7b99e9c1f752a499466a1e777234ada68a89296e13a31836075296a8d2c9f316"
     },
     {
       "path": "backend/src/builder/qa/types.ts",
@@ -14320,11 +14433,11 @@
     },
     {
       "path": "backend/src/builder/service.ts",
-      "sha256": "2cedab622fc7569d7e847bb20cbe90e84988f9615731f6028f0cacb26dd34152"
+      "sha256": "d015f04de6912fd8a0aa6f2ccbff892522d8284ab2540a0ce35ea7e31aea2cdd"
     },
     {
       "path": "backend/src/builder/servicesFixture.testsupport.ts",
-      "sha256": "fe96ae77ce12ba3236e04ff41dca94508ff8f2e0d39ce0f831e05d3c67b7ac54"
+      "sha256": "9ca15512e040a0eecdc144de6251a06aaaff48b04fbd9972df8a7b7a2799342d"
     },
     {
       "path": "backend/src/builder/snapshot.ts",
@@ -14340,11 +14453,11 @@
     },
     {
       "path": "backend/src/builder/store.ts",
-      "sha256": "a03b6e6bb8f403642ad9edb7cd7478fdeb55170421f4eea2873379dc3bce9951"
+      "sha256": "2cf94c498ecf7ac56c08a07f449bc900db5829663cb5d2b61356cdaab8988066"
     },
     {
       "path": "backend/src/builder/swarmBridge.ts",
-      "sha256": "5323b1f398b5a719a02f686025b2e1fb4ee79f0062a139df77be991d837f0c21"
+      "sha256": "8bc674b86b3d241d3292e7469174910a2012296658ca031c0f04653623ebe314"
     },
     {
       "path": "backend/src/builder/types.ts",
@@ -14968,7 +15081,7 @@
     },
     {
       "path": "backend/src/routes/builder.ts",
-      "sha256": "921f9650c6f5d7797f3576cd1734f637150de019e7dcfe412a57f620698977b6"
+      "sha256": "8959da0527739e5615b640746191bc1ed043c835c02fede592d68980410f8108"
     },
     {
       "path": "backend/src/routes/builderPhase2.ts",
@@ -18624,7 +18737,7 @@
     },
     {
       "path": "frontend/src/components/terminal/BuilderProjectPanel.tsx",
-      "sha256": "93b5e0ae80a1734a2c16cb6ba8c4cc5c48295300e71a0c4a0e952b945ce34c90"
+      "sha256": "e6969fd4481e4d91eeb8b02f66f4ef95f00a1e04e984a05bf356975fb81f9ae1"
     },
     {
       "path": "frontend/src/components/terminal/CapacityUnavailableCard.tsx",
@@ -18676,7 +18789,7 @@
     },
     {
       "path": "frontend/src/components/terminal/DevWorkspacePanel.tsx",
-      "sha256": "e69a5ccef8fd7f50f362bcfd7d4cc7050ba30cf148fa4037b0ac37139095c930"
+      "sha256": "643800b20271521de980bd4c52bee1a0c2921d78422eceb127013bb1671e0762"
     },
     {
       "path": "frontend/src/components/terminal/EngineeringArtifactView.tsx",
@@ -19136,7 +19249,7 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "sha256": "c78e2850907cb39f30cb3f3bd642c8d1265455ba0aee020cfb0e53f8c5abc4d9"
+      "sha256": "705b47eea65bbd3618e6f578549d240e5a36dbaadb3ea73ead4de971a097e771"
     },
     {
       "path": "frontend/src/context/TerminalScrollContext.tsx",
@@ -19232,7 +19345,7 @@
     },
     {
       "path": "frontend/src/lib/builderApi.ts",
-      "sha256": "ecaa2f6a92710aee508fcfe6a66aada6c43d27949dccf1e334f78fe0b679a6b1"
+      "sha256": "b7a72da5b4716ffbf6fbaa1c4f727c51623c4b8aee5cba728b2c7028cadf7b6c"
     },
     {
       "path": "frontend/src/lib/builderApiPhase2.ts",
@@ -19244,7 +19357,7 @@
     },
     {
       "path": "frontend/src/lib/builderChat.ts",
-      "sha256": "a43028b120b43f4d7a2dd32357268d9dc51e31b2cd75ff714919b87e2b68aac9"
+      "sha256": "1f2d4306df17476b7e21134d13999cf30e14835679fd8046869cb0d3aa714fba"
     },
     {
       "path": "frontend/src/lib/capabilityPageArt.ts",
@@ -20072,7 +20185,7 @@
     },
     {
       "path": "frontend/src/store/useBuilderProjectStore.ts",
-      "sha256": "b30a782c188f6f88c9899f636e2b317ab08aac6f07b00698ef866923558c73d3"
+      "sha256": "030709cab9d77bc1cc80489a94092dd7cbb6284de7c6ed91bc8b63caec074d83"
     },
     {
       "path": "frontend/src/store/useCompanionStore.ts",
@@ -25121,7 +25234,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 3949,
+      "line": 3954,
       "credentialsInUrl": false
     },
     {
@@ -28145,8 +28258,36 @@
     },
     {
       "path": "backend/src/builder/qa/qaService.ts",
-      "line": 62,
+      "line": 68,
       "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/qa/remoteQa.ts",
+      "line": 105,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/qa/remoteQa.ts",
+      "line": 161,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/qa/remoteQa.ts",
+      "line": 240,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/builder/qa/remoteQa.ts",
+      "line": 240,
+      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
@@ -28236,14 +28377,14 @@
     },
     {
       "path": "backend/src/builder/store.ts",
-      "line": 85,
+      "line": 96,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/builder/store.ts",
-      "line": 86,
+      "line": 97,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32051,14 +32192,14 @@
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 1994,
+      "line": 1998,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "frontend/src/context/TerminalChatContext.tsx",
-      "line": 2027,
+      "line": 2031,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

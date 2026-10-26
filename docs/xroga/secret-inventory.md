@@ -1,6 +1,6 @@
 # Environment/secret NAME inventory
 
-Source SHA: `dbcd23c20bd728191f902432ae28ba00884b4a3e`. Values are prohibited, including public credential values. 256 named readers/aliases/derived keys; 21 explicitly reviewed bindings.
+Source SHA: `242a52310606b0b88a86353c782641f407b17f84`. Values are prohibited, including public credential values. 261 named readers/aliases/derived keys; 21 explicitly reviewed bindings.
 
 | Name | Class | Requiredness | Consuming source | Validation status |
 | --- | --- | --- | --- | --- |
@@ -128,7 +128,7 @@ Source SHA: `dbcd23c20bd728191f902432ae28ba00884b4a3e`. Values are prohibited, i
 | PIAPI_API_KEY | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/config/envSecrets.ts, backend/src/lib/platformReady.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | PLAYWRIGHT_BROWSERS_PATH | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/synthesis/playwrightDriver.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | PLAYWRIGHT_CHROMIUM_EXECUTABLE | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/synthesis/playwrightDriver.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
-| PORT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/index.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| PORT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/builder/qa/qaHostMain.ts, backend/src/index.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | PROMO_FULL_ACCESS_END | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/lib/promoAccess.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | PROMPT_CACHE_MAX | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/lib/promptResponseCache.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | PROMPT_CACHE_TTL_MS | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/lib/promptResponseCache.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
@@ -207,6 +207,8 @@ Source SHA: `dbcd23c20bd728191f902432ae28ba00884b4a3e`. Values are prohibited, i
 | XROGA_BROWSER_PLANNER_MODEL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/routes/browserRuns.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_BROWSER_WORKER_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/routes/browserRuns.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_BUILDER_INPROCESS_QA | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/builder/phase2Bridge.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| XROGA_BUILDER_QA_HOST_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/builder/qa/remoteQa.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| XROGA_BUILDER_QA_HOST_URL | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/builder/qa/remoteQa.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_CIRCUIT_FAILURE_THRESHOLD | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/ai/providerRuntime.ts, backend/src/ai/routerConfig.ts, backend/src/lib/resilience/circuitBreaker.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_CREDENTIAL_KMS_PROVIDER | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/runtime/readiness.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_DEPLOYMENT_ENVIRONMENT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/runtime/startupPolicy.ts, frontend/src/lib/supabase/authBuildRealm.mjs | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
@@ -241,6 +243,9 @@ Source SHA: `dbcd23c20bd728191f902432ae28ba00884b4a3e`. Values are prohibited, i
 | XROGA_PROXY_PASSWORD | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/workers/proxySidecar.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_PROXY_PORT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/workers/proxySidecar.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_PROXY_USERNAME | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/workers/proxySidecar.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| XROGA_QA_HOST_ALLOWED_SUFFIXES | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/builder/qa/qaHostMain.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| XROGA_QA_HOST_MAX_CONCURRENT | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/builder/qa/qaHostMain.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
+| XROGA_QA_HOST_SECRET | SERVER_CREDENTIAL | CONDITIONAL_ON_CAPABILITY | backend/src/builder/qa/qaHostMain.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_RELEASE_SHA | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/lib/safeHealth.ts, frontend/src/app/api/release/route.ts, frontend/src/lib/supabase/authBuildRealm.mjs | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_REQUIRE_HIGH_RISK_REVIEW | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/ai/routerConfig.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
 | XROGA_REQUIRE_MANAGED_CUSTODY | RUNTIME_CONFIGURATION | OPTIONAL_OR_DEFAULTED | backend/src/runtime/readiness.ts | Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed |
