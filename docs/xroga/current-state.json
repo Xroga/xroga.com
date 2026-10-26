@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-openrouter-only",
-    "sha": "fa8621596956e24bc6538d544787ed55fee40f51",
-    "sourceTimestampUtc": "2026-10-26T21:04:56+05:00",
-    "auditStartedUtc": "2026-10-26T16:19:04.107Z",
+    "sha": "89ac512a84ce61a2ff86d10107cf521c38e54e71",
+    "sourceTimestampUtc": "2026-10-26T21:20:32+05:00",
+    "auditStartedUtc": "2026-10-26T16:28:17.552Z",
     "initialWorkingTreeState": "Generation-base identity plus tracked file hashes describe this snapshot. Phase1 entry changes are preserved in PHASE-1-BASELINE.json; exact clean verification identity is recorded by immutable CI artifacts.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -62792,7 +62792,7 @@
       "id": "surface:a947b2341f92bb70ef0b",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "sha256": "bc6fbd1bbd15e214e94bcdad507ab1a05863c6200b43606db8280924750137f9",
+      "sha256": "ad57d88aa22acba8b0bd746bc1f4ceeb5a0e0e64d0db1ec8dc57a829dc26dcdc",
       "symbols": [
         "CapabilityGroup",
         "NativeSnapshot",
@@ -62842,7 +62842,6 @@
         "page",
         "pages",
         "permissionToolkit",
-        "popup",
         "prefix",
         "prompt",
         "resolveCatalogToolkit",
@@ -111854,9 +111853,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:dfcf5ee9258676c3400e",
+      "id": "finding:4b3512a9296cf30fc8ec",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 1007,
+      "line": 990,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -111864,9 +111863,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:77ae00c1e28f91a52f15",
+      "id": "finding:a54ccab7baed679f8a5c",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 1008,
+      "line": 991,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -111874,9 +111873,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:391ecc5a657b70368720",
+      "id": "finding:792af0c3c907733ccf4a",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 1158,
+      "line": 1141,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -115158,23 +115157,23 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:42271821a93ee56a6c2c",
+      "id": "frontend-call:8fc31c58b9d3447c1cbb",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 788,
+      "line": 771,
       "callee": "api.github.disconnect",
       "reachable": true
     },
     {
-      "id": "frontend-call:5d48a86f3ccd1e76a816",
+      "id": "frontend-call:dfb4356771faed396535",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 789,
+      "line": 772,
       "callee": "api.vercel.disconnect",
       "reachable": true
     },
     {
-      "id": "frontend-call:a7c7f306425efb4c4eff",
+      "id": "frontend-call:f446fcb25bca5d1a5b60",
       "sourcePath": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 790,
+      "line": 773,
       "callee": "api.supabase.disconnect",
       "reachable": true
     },
@@ -121539,7 +121538,7 @@
     {
       "id": "test-suite:1526bb13731f13be2e98",
       "sourcePath": "frontend/src/lib/pluginStep2.test.ts",
-      "declaredTests": 6,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },

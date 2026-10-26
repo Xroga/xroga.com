@@ -725,30 +725,13 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
 
     clearOAuthResult();
 
-    const popup = window.open(
-      '',
-      'xroga-connect-oauth',
-      'width=600,height=760,resizable=yes,scrollbars=yes',
-    );
+    const result = await xrogaConnect.link(activeSession, toolkitSlug);
+    if (!result.redirectUrl) throw new Error('Authorization link was not returned.');
 
-    try {
-      const result = await xrogaConnect.link(activeSession, toolkitSlug);
-      if (!result.redirectUrl) throw new Error('Authorization link was not returned.');
-
-      if (popup) {
-        popup.location.href = result.redirectUrl;
-        popup.focus();
-      } else {
-        window.location.href = result.redirectUrl;
-      }
-    } catch (error) {
-      try {
-        popup?.close();
-      } catch {
-        // Browser may have already closed the popup.
-      }
-      throw error;
-    }
+    // Popup handles can exist even when the browser never displays the window.
+    // The callback supports returning without an opener, so use a visible
+    // same-tab authorization flow instead of leaving Connect spinning forever.
+    window.location.assign(result.redirectUrl);
   }
 
   async function handleConnect() {

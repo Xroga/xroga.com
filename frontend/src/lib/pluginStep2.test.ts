@@ -82,6 +82,15 @@ test('Step 2 detail routing is explicit and Connect remains a separate action', 
   assert.match(route, /PluginDetail pluginId=/);
 });
 
+test('plugin OAuth opens visibly in the same tab and callback supports no opener', () => {
+  const detail = source('frontend/src/components/integrations/PluginDetail.tsx');
+  const callback = source('frontend/src/app/(shell)/dashboard/integrations/connect/callback/page.tsx');
+  assert.match(detail, /window\.location\.assign\(result\.redirectUrl\)/);
+  assert.doesNotMatch(detail, /window\.open\([\s\S]*xroga-connect-oauth/);
+  assert.match(callback, /!window\.opener/);
+  assert.match(callback, /\/dashboard\/integrations\?plugin=connected/);
+});
+
 test('Step 2 keeps connection removal conservative while Custom MCP now uses real lifecycle APIs', () => {
   const marketplace = source('frontend/src/components/integrations/PluginMarketplace.tsx');
   const detail = source('frontend/src/components/integrations/PluginDetail.tsx');

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "fa8621596956e24bc6538d544787ed55fee40f51",
+  "source_sha": "89ac512a84ce61a2ff86d10107cf521c38e54e71",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -17876,7 +17876,7 @@
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
-      "sha256": "bc6fbd1bbd15e214e94bcdad507ab1a05863c6200b43606db8280924750137f9"
+      "sha256": "ad57d88aa22acba8b0bd746bc1f4ceeb5a0e0e64d0db1ec8dc57a829dc26dcdc"
     },
     {
       "path": "frontend/src/components/integrations/PluginMarketplace.tsx",
@@ -30921,7 +30921,7 @@
     },
     {
       "path": "frontend/src/components/integrations/PluginDetail.tsx",
-      "line": 868,
+      "line": 851,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
