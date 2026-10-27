@@ -1,5 +1,5 @@
 {
-  "atUtc": "2026-10-27T18:30:28.408935+00:00",
+  "atUtc": "2026-10-27T18:43:45.052341+00:00",
   "scope": "ONLY_BATCH1_PHASE4_COMMAND010",
   "phase3": "ACCEPTED_PRESERVED_NOT_REOPENED",
   "formalAcceptedCriteria": 0,
@@ -92,9 +92,9 @@
     }
   ],
   "strictAudit": {
-    "total": 136,
-    "reviewed": 108,
-    "pending": 28,
+    "total": 134,
+    "reviewed": 109,
+    "pending": 25,
     "unresolvedHighRiskBypasses": 16
   },
   "ci": "FINAL_CURRENT_SOURCE_REQUIRED_NOT_RUN_WHILE_CALLER_COVERAGE_INCOMPLETE",
@@ -107,8 +107,8 @@
     "Full browser consequential-action approval and side-effect admission, including unmarked page effects. Public supplied/planner write grants now fail closed"
   ],
   "publishingObligations": "Fixed provider transports have individual source-bound review. Higher exact tenant/project/credential/confirmation/data-egress and cancellation callers remain unpromoted.",
-  "backendTypes": "PASS_5f2cdd61",
+  "backendTypes": "PASS_3787ca7f",
   "frontendTypes": "PASS_072ee6b6",
-  "currentCheckpoint": "docs/xroga/evidence/command-010/provider-frontend-20261027/checkpoint.json",
+  "currentCheckpoint": "docs/xroga/evidence/command-010/github-routes-20261027/checkpoint.json",
   "xResearchAccountingAvailability": "EXPLICIT_ACCOUNTING_UNAVAILABLE_BEFORE_CREDENTIAL_OR_DISPATCH_NOT_POSITIVELY_ACCEPTED"
 }

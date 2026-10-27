@@ -696,11 +696,11 @@
     },
     {
       "path": "backend/src/routes/github.ts",
-      "sourceSha256": "4f66aa9ec6eb85136b14b369a6d878ada6e9768e954e0a81e387eac19d576091",
+      "sourceSha256": "9a85892651e39902f36605ab21d7d5fe5311ffcd33e1a90e3c4d5266e80c2372",
       "callIds": [
-        "8a4f5a61a698f969e941",
-        "7ea068acaab899c1c99e",
-        "b4f7c7e759ffc010fe2f"
+        "fa85a7affe57fe8615c1",
+        "0b8393ef789df9e76d18",
+        "9ccaf29d98b973526d7b"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The auth-mounted status handler uses req.userId for canonical token selection, exact github_integrations metadata, private Storage metadata and exact user_integrations github provider metadata. An absent or revoked canonical credential returns connected:false before private metadata projection. Only connected state, username, fixed repository strategy and default repository are returned, never token material. Provider account identity comes from that owner canonical GitHub grant and matching private mirror, not the forged query actor or another account default.",
@@ -751,7 +751,67 @@
         "originalReviewReason": "Zero-row success and raw settings errors corrected with focused negative tests. Real foreign-owner and disconnect-concurrency tests pending final-source CI. Metadata versus reconnect/target races and full repository external-write authority remain uncertified.",
         "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
         "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
-      }
+      },
+      "githubRoutePriorSourceReview": {
+        "path": "backend/src/routes/github.ts",
+        "sourceSha256": "4f66aa9ec6eb85136b14b369a6d878ada6e9768e954e0a81e387eac19d576091",
+        "callIds": [
+          "8a4f5a61a698f969e941",
+          "7ea068acaab899c1c99e",
+          "b4f7c7e759ffc010fe2f"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "The auth-mounted status handler uses req.userId for canonical token selection, exact github_integrations metadata, private Storage metadata and exact user_integrations github provider metadata. An absent or revoked canonical credential returns connected:false before private metadata projection. Only connected state, username, fixed repository strategy and default repository are returned, never token material. Provider account identity comes from that owner canonical GitHub grant and matching private mirror, not the forged query actor or another account default.",
+        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Three original status read/factory sites only. Actual private Storage fixture returns owner connected status despite the opposite actor query, does not expose its canary token and returns disconnected for the other real Auth actor despite a forged owner query. Actual disconnect and delayed mirror proof leaves subsequent status disconnected. Browser download/signing and public-object access are denied. Remaining deployment consumer revalidation is an independent obligation, not inherited from this status projection. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+        "evidence": [
+          {
+            "path": "backend/src/routes/github.ts",
+            "marker": "repo_strategy"
+          }
+        ],
+        "historicalReview": {
+          "path": "backend/src/routes/github.ts",
+          "sourceSha256": "4f66aa9ec6eb85136b14b369a6d878ada6e9768e954e0a81e387eac19d576091",
+          "callIds": [
+            "8a4f5a61a698f969e941",
+            "7ea068acaab899c1c99e",
+            "b4f7c7e759ffc010fe2f"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "Authenticated status/settings use req.userId. Settings now delegates to metadata-only saveGitHubSettings, requires a single exact active-owner receipt, returns409 for missing/revoked rows and safe503 for persistence errors. Status resolves the canonical token then legacy metadata.",
+          "reason": "Zero-row success and raw settings errors corrected with focused negative tests. Real foreign-owner and disconnect-concurrency tests pending final-source CI. Metadata versus reconnect/target races and full repository external-write authority remain uncertified.",
+          "evidence": [
+            {
+              "path": "backend/src/routes/github.ts",
+              "marker": "repo_strategy"
+            }
+          ]
+        },
+        "command007Proof": {
+          "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+          "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+          "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+          "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+          "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+          "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+          "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+          "obligationIds": [
+            "OB-fba3a9a069050e3f:observed-owner-github-status"
+          ],
+          "passedTests": [
+            "real private OAuth storage cannot be downloaded or signed by browser roles or another tenant",
+            "real GitHub disconnect persists owner-bound revocation despite a delayed legacy mirror"
+          ],
+          "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+        },
+        "separateUncertifiedScope": {
+          "state": "PRESERVED_NOT_CERTIFIED",
+          "originalReviewReason": "Zero-row success and raw settings errors corrected with focused negative tests. Real foreign-owner and disconnect-concurrency tests pending final-source CI. Metadata versus reconnect/target races and full repository external-write authority remain uncertified.",
+          "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+          "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+        }
+      },
+      "githubRouteSourceReviewProof": "docs/xroga/evidence/command-010/GITHUB-ROUTES-PERSISTENCE-REBINDING.json"
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
@@ -19813,6 +19873,28 @@
         ]
       },
       "parallelRedirectSourceReviewProof": "docs/xroga/evidence/command-010/PARALLEL-REDIRECT-PERSISTENCE-REBINDING.json"
+    },
+    {
+      "path": "backend/src/routes/github.ts",
+      "sourceSha256": "9a85892651e39902f36605ab21d7d5fe5311ffcd33e1a90e3c4d5266e80c2372",
+      "callIds": [
+        "105bf445742d0d40d7cc",
+        "126af63b441c91019028"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "Original issued actor and exact owner before tenant-scoped canonical github row read. Current sealed credential/revision/metadata revalidated around bounded official account reads. No write or new grant.",
+      "reason": "Focused Phase4 account-route security proof only. Does not certify other source hydration, deployment, credential exports or whole007/010 acceptance. Existing historical status projection remains independently preserved.",
+      "evidence": [
+        {
+          "path": "backend/src/routes/github.ts",
+          "marker": "getTenantSupabaseAdmin(context).from('user_integrations')"
+        },
+        {
+          "path": "backend/src/routes/githubTransport.security.test.ts",
+          "marker": "GitHub account read rejects cloned actor before credential lookup"
+        }
+      ],
+      "documentationTrace": "docs/xroga/evidence/command-010/github-routes-20261027/current-credential-read.json"
     }
   ]
 }

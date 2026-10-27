@@ -120,6 +120,8 @@
     "backend/src/routes/drive.test.ts",
     "backend/src/routes/drive.ts",
     "backend/src/routes/driveRegistration.test.ts",
+    "backend/src/routes/github.ts",
+    "backend/src/routes/githubTransport.security.test.ts",
     "backend/src/routes/guestChat.egress.test.ts",
     "backend/src/routes/guestChat.ts",
     "backend/src/routes/integrations.ts",
@@ -747,6 +749,7 @@
     "docs/xroga/evidence/command-010/DORMANT-CONSEQUENTIAL-TRACE-20261027.json",
     "docs/xroga/evidence/command-010/FALLBACK-DENIAL-CONTINUATION.md",
     "docs/xroga/evidence/command-010/GENERIC-SDK-CONTINUATION.md",
+    "docs/xroga/evidence/command-010/GITHUB-ROUTES-PERSISTENCE-REBINDING.json",
     "docs/xroga/evidence/command-010/GOOGLE-FIXED-PROBE-EQUIVALENCE.json",
     "docs/xroga/evidence/command-010/GOOGLE-INTEGRATION-PROVENANCE.json",
     "docs/xroga/evidence/command-010/GOOGLE-NATIVE-CONVERSION-REVIEWS.json",
@@ -804,6 +807,13 @@
     "docs/xroga/evidence/command-010/expo-identity-20261027/green.log",
     "docs/xroga/evidence/command-010/expo-identity-20261027/red.log",
     "docs/xroga/evidence/command-010/expo-identity-20261027/trace.json",
+    "docs/xroga/evidence/command-010/github-routes-20261027/checkpoint.json",
+    "docs/xroga/evidence/command-010/github-routes-20261027/current-credential-read.json",
+    "docs/xroga/evidence/command-010/github-routes-20261027/green.log",
+    "docs/xroga/evidence/command-010/github-routes-20261027/red.log",
+    "docs/xroga/evidence/command-010/github-routes-20261027/strictIncomplete.log",
+    "docs/xroga/evidence/command-010/github-routes-20261027/tenantInventoryIntegrity.log",
+    "docs/xroga/evidence/command-010/github-routes-20261027/trace.json",
     "docs/xroga/evidence/command-010/image-client-20261027/checkpoint.json",
     "docs/xroga/evidence/command-010/image-client-20261027/green.log",
     "docs/xroga/evidence/command-010/image-client-20261027/red.log",
@@ -849,6 +859,7 @@
     "docs/xroga/evidence/command-010/local-candidates-20261027/trace.json",
     "docs/xroga/evidence/command-010/manifest.json",
     "docs/xroga/evidence/command-010/provider-frontend-20261027/checkpoint.json",
+    "docs/xroga/evidence/command-010/provider-frontend-20261027/finalStrictIncomplete.log",
     "docs/xroga/evidence/command-010/provider-frontend-20261027/strictIncomplete.log",
     "docs/xroga/evidence/command-010/provider-frontend-20261027/tenantInventoryIntegrity.log",
     "docs/xroga/evidence/command-010/publishing-transport-20261027/cancellationRed.log",
@@ -1296,7 +1307,7 @@
     },
     "egress": {
       "changed": true,
-      "description": "Preview isolation, fixed-provider no-redirect transport, bounded responses and canonical research egress.28unreviewed callers and16high-risk obligations remain."
+      "description": "Preview isolation, fixed-provider no-redirect transport, bounded responses and canonical research egress.25unreviewed callers and16high-risk obligations remain."
     },
     "cost": {
       "changed": true,
@@ -1335,7 +1346,7 @@
   "rollout": "Complete only Batch1 Phase4 Command010. Close reachable caller obligations, unchanged strict audit, exact-source disposable/Auth/security integration CI and all12original criteria, then reviewed Phase4 merge and compatible Google release with recovery. Claude exclusively owns all Batch1.5/2 integration, activation and verification.",
   "rollback": "Keep this source unreleased while incomplete. For an authorized later rollout use verified compatible native Google recovery and protected restore path. Do not restore known SSRF/exfiltration behavior, blindly re-enable Fly or deploy a legacy-only v3-incompatible image.",
   "knownGaps": [
-    "28remaining source traces including16high-risk candidates, not all are demonstrated vulnerabilities",
+    "25remaining source traces including16high-risk candidates, not all are demonstrated vulnerabilities",
     "Browser SDK admission/accounting and lifetime corrections pass focused tests. Browser process/network and upstream tool/content trust require their own trace.",
     "Parallel upstream provenance and provider-internal URL redirect/DNS guarantees, separate xAI path",
     "Private R2 dependency and current capability revocation checks have focused proof. Publishing, external uploads and remaining shared reachable callers still require individual verification.",
@@ -1360,6 +1371,9 @@
     "docs/xroga/evidence/command-010/api-clients-20261027/checkpoint.json",
     "docs/xroga/evidence/command-010/browser-20261027/checkpoint.json",
     "docs/xroga/evidence/command-010/expo-identity-20261027/trace.json",
+    "docs/xroga/evidence/command-010/github-routes-20261027/checkpoint.json",
+    "docs/xroga/evidence/command-010/github-routes-20261027/current-credential-read.json",
+    "docs/xroga/evidence/command-010/github-routes-20261027/trace.json",
     "docs/xroga/evidence/command-010/image-client-20261027/checkpoint.json",
     "docs/xroga/evidence/command-010/local-20261027/checkpoint.json",
     "docs/xroga/evidence/command-010/local-candidates-20261027/trace.json",
@@ -1379,7 +1393,7 @@
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Original strict caller audit incomplete:28pending and16high-risk candidates",
+      "Original strict caller audit incomplete:25pending and16high-risk candidates",
       "All12original criteria and exact-final-source authenticated/disposable/CI acceptance are not yet verified"
     ],
     "authenticatedE2e": "BLOCKED",

@@ -1,0 +1,38 @@
+{
+  "scope": "ONE_UNCHANGED_STATUS_RECORD_NO_WHOLE_CALLER_ACCEPTANCE_PROMOTION",
+  "proofs": [
+    {
+      "path": "backend/src/routes/github.ts",
+      "disposition": "SCOPED_BOUNDARY",
+      "previousSourceSha256": "4f66aa9ec6eb85136b14b369a6d878ada6e9768e954e0a81e387eac19d576091",
+      "currentSourceSha256": "9a85892651e39902f36605ab21d7d5fe5311ffcd33e1a90e3c4d5266e80c2372",
+      "semanticReview": "Original3status persistence expressions and owner predicates are unchanged. New issued-context/current-credential reads and finite provider transport guard strengthen status and list authorization without changing the historical scoped007projection disposition. Newly introduced owned credential row read remains separately bound.",
+      "mapping": [
+        {
+          "previousId": "8a4f5a61a698f969e941",
+          "currentId": "fa85a7affe57fe8615c1",
+          "enclosing": "<module>",
+          "kind": "PRIVILEGED_FACTORY",
+          "target": "getSupabaseAdmin",
+          "unchangedExpressionSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+        },
+        {
+          "previousId": "7ea068acaab899c1c99e",
+          "currentId": "0b8393ef789df9e76d18",
+          "enclosing": "<module>",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "github_integrations",
+          "unchangedExpressionSha256": "be25557126fc983286dc8fea6bc17200d3d663219eb4c597fb54cb062e43ec41"
+        },
+        {
+          "previousId": "b4f7c7e759ffc010fe2f",
+          "currentId": "9ccaf29d98b973526d7b",
+          "enclosing": "<module>",
+          "kind": "TABLE_OR_BUCKET_CANDIDATE",
+          "target": "user_integrations",
+          "unchangedExpressionSha256": "bd34b46d1a68831fadf8b26155e6cae1bbed7bdd97cd8647e2e467d2b07b0bab"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "scope": "GITHUB_OAUTH_IDENTITY_AND_ACCOUNT_LIST_ROUTES_ONLY_NOT_SOURCE_OR_PUBLISH_AUTHORITY",
+  "originalCandidates": [
+    {
+      "id": "62b34a66b572747e7265",
+      "file": "backend/src/routes/github.ts",
+      "line": 71,
+      "entryPoint": "ghApi",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "4d89c65c4ff7b9df7adb35d4415ae8331acba0d5214d1dfc187f04e81519cc99",
+      "destination": "https://api.github.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "8cfcdcc583571e83a617",
+      "file": "backend/src/routes/github.ts",
+      "line": 170,
+      "entryPoint": "<module-or-callback>",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "315e5e09e4614a70028b1d81081f327cd53ade7f356159ea670225e40c53887f",
+      "destination": "https://github.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "eb84fe6311c5e8af520e",
+      "file": "backend/src/routes/github.ts",
+      "line": 192,
+      "entryPoint": "<module-or-callback>",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "2e51cf39eed090df866aa44f50376b5a2575e858909302d3f68ab06951de2eb6",
+      "destination": "https://api.github.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    }
+  ],
+  "currentFixedTransport": {
+    "id": "35923d1b52d197c378e1",
+    "file": "backend/src/routes/github.ts",
+    "line": 105,
+    "entryPoint": "githubIdentityRequest",
+    "transport": "fetch",
+    "callee": "fetch",
+    "callSha256": "779bfe6876ecb8be86573c05dc446c92055d795563fdb81c0b4dbb061f7550ba",
+    "destination": "DYNAMIC_OR_SDK_INTERNAL",
+    "trust": "UNREVIEWED_SERVER_CALLER",
+    "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+    "currentProtection": "NOT_CERTIFIED",
+    "risk": "HIGH_RISK_PENDING_REVIEW",
+    "disposition": "PENDING_SOURCE_TRACE",
+    "evidence": null
+  },
+  "defects": [
+    "Actual token exchange, identity lookup, repository list and branch list each followed a real307to a second endpoint",
+    "Account reads accepted a cloned actor before credential lookup",
+    "Selected account reads had no credential-revision lifetime around provider responses; provider errors could be returned verbatim"
+  ],
+  "corrections": [
+    "Finite issuer/account/branch paths and methods only, canonicalURL equality,64KiB request/2MiB actual receipt,15s deadline, manual redirect refusal and terminal401/403",
+    "Original issued actor and matching owner before tenant-scoped canonical credential row or vault lookup",
+    "Snapshot sealed credential/revision/metadata, compare current row immediately before wire, after receipt and after parsing, and invalidate original read lease on change",
+    "OAuth consumed revision and conditional save preserved. Account status cannot turn a security denial into successful default identity. Static error bodies contain no provider echo."
+  ],
+  "verification": {
+    "passed": 10,
+    "skipped": 0,
+    "negative": "Actual route callbacks with genuine issued contexts and controlled vault/database ports, real local HTTP redirects.0redirectedrequests and0saves after denial. Cloned actor0credentiallookups. In-flight revocation/rotation, oversized receipts and unsafe repo path0dispatch or no result.401cannot produce connected success.",
+    "positive": "Actual consumed/replayed/lost OAuth revision tests and setting-revocation tests pass. Valid exchange, status, repo/branch read and normal503safe recovery retain contracts."
+  },
+  "receipts": [
+    {
+      "name": "red",
+      "jobId": "b3a4c6d1-253b-4151-b467-eb3bf72f3b33",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/github-routes-20261027/red.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 12871
+      }
+    },
+    {
+      "name": "green",
+      "jobId": "529cf9b6-a568-4ddc-a540-4f403d7c10c6",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/github-routes-20261027/green.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 171041
+      }
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/routes/github.ts",
+      "sha256": "9a85892651e39902f36605ab21d7d5fe5311ffcd33e1a90e3c4d5266e80c2372"
+    },
+    {
+      "path": "backend/src/routes/githubTransport.security.test.ts",
+      "sha256": "629b4beea68b679f35529a2e7666735f3bf363ebca851da97db34f681fb84f6e"
+    },
+    {
+      "path": "backend/src/routes/github.oauth.test.ts",
+      "sha256": "079170516ce922b0c3a81574d308383590176e9bb15d0555863807356a32ca44"
+    },
+    {
+      "path": "backend/src/routes/github.settings.test.ts",
+      "sha256": "c3dc3e41746ab031947bbc17a81600710d351c435c73a1fad2eef9e8be339729"
+    }
+  ],
+  "limitations": [
+    "No GitHub source hydration, repository mutation, release upload, secret export, deployment or action confirmation promoted. Those original candidates remain pending.",
+    "Canonical vault, PKCE issuer and conditional save SQL are unchanged. New owned read uses existing tenant-scoped admin and exact original owner/provider."
+  ],
+  "productionChanged": false,
+  "liveProviderCalls": 0,
+  "spending": 0
+}

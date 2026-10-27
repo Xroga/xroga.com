@@ -2955,6 +2955,26 @@
           "sha256": "2f83ba1d772ae5a5e689f07d23f80acd4f6152cd4db0f0a05df3590c5171da69"
         }
       ]
+    },
+    {
+      "id": "35923d1b52d197c378e1",
+      "callSha256": "779bfe6876ecb8be86573c05dc446c92055d795563fdb81c0b4dbb061f7550ba",
+      "sourceFileSha256": "9a85892651e39902f36605ab21d7d5fe5311ffcd33e1a90e3c4d5266e80c2372",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FINITE_OFFICIAL_GITHUB_OAUTH_AND_READ_ONLY_ACCOUNT_OPERATIONS_NO_SOURCE_PUBLISH_OR_REPOSITORY_MUTATION_AUTHORITY",
+      "tenantAuthority": "ORIGINAL_ISSUED_ACTOR_OWNER_BEFORE_CANONICAL_ROW_AND_VAULT_LOOKUP_CURRENT_SEALED_REVISION_RECHECKED_BEFORE_WIRE_AND_AFTER_RESPONSE_OAUTH_CONSUMED_REVISION_PRESERVED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/github-routes-20261027/trace.json",
+          "marker": "35923d1b52d197c378e1",
+          "sha256": "4af58c0928f79225135c18dff48ed6b90832a8559ebd992f7ee9c655d7771528"
+        },
+        {
+          "path": "backend/src/routes/githubTransport.security.test.ts",
+          "marker": "actual GitHub OAuth token, identity and account-read routes reject real redirects before save or successful listing",
+          "sha256": "629b4beea68b679f35529a2e7666735f3bf363ebca851da97db34f681fb84f6e"
+        }
+      ]
     }
   ]
 }
