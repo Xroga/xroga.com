@@ -1603,6 +1603,19 @@
       "notes": "Git-canonical LF text bytes ingested; historical completion claims are not current verification"
     },
     {
+      "source_id": "SRC-4d2c539fd5ffee02",
+      "filename": "POST-MIGRATION-ACTIVATION-CHECKLIST.md",
+      "path_or_url": "docs/infra/POST-MIGRATION-ACTIVATION-CHECKLIST.md",
+      "sha256": "375d4f68cb8e9b16c8d980c0cbb44e3dbc7e8b841444f5ca1d686e14295dbdf0",
+      "byte_size": 9657,
+      "modified_timestamp": "2026-10-27T10:01:17.962Z",
+      "parse_status": "TEXT_READ",
+      "category": "REPOSITORY_DOCUMENT",
+      "authority": "ADVISORY",
+      "analyzed": true,
+      "notes": "Git-canonical LF text bytes ingested; historical completion claims are not current verification"
+    },
+    {
       "source_id": "SRC-1f466cd4301a1aac",
       "filename": "DEPLOYMENT-HOLD.md",
       "path_or_url": "docs/infra/batch-1.5/DEPLOYMENT-HOLD.md",
