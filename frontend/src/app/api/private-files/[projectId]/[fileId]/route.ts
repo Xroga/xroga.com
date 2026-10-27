@@ -14,7 +14,7 @@ export async function GET(request:Request,{params}:{params:Promise<{projectId:st
     // Session supplies transport only AFTER server-validated identity; not an authorization check.
     const {data:{session}}=await supabase.auth.getSession();
     if(!session?.access_token)return NextResponse.json({error:'Sign in again and retry.'},{status:401,headers:privateHeaders});
-    const base=new URL(process.env.NEXT_PUBLIC_API_URL??'https://xroga-api.fly.dev');
+    const base=new URL(process.env.NEXT_PUBLIC_API_URL??'https://api.xroga.com');
     if(base.username||base.password||base.search||base.hash||base.pathname!=='/'||!(base.protocol==='https:'||(base.protocol==='http:'&&['127.0.0.1','localhost'].includes(base.hostname))))throw new Error('invalid API origin');
     const target=new URL(`/api/projects/${projectId}/files/${fileId}/download`,base);
     const links=new URL(request.url).searchParams.getAll('link');

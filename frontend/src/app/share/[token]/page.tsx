@@ -19,7 +19,7 @@ type PublicShare = {
 function apiOrigin(): string {
   const configured = process.env.NEXT_PUBLIC_API_URL?.trim();
   if (configured) return configured.replace(/\/$/, '');
-  return process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : 'https://xroga-api.fly.dev';
+  return process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : 'https://api.xroga.com';
 }
 
 type ShareResult =

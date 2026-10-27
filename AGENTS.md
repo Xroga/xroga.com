@@ -48,10 +48,10 @@ Dependencies for both workspaces are installed from the root with `npm ci`. Cano
 ### Env files (not committed; recreate if missing)
 The dev servers need local env files that are gitignored:
 - `backend/.env` — copy from `backend/.env.example` (`cp backend/.env.example backend/.env`). The backend boots fine with the placeholder values; it only logs warnings for missing AI/image keys.
-- `frontend/.env.local` — must set `NEXT_PUBLIC_API_URL=http://localhost:8080` so the frontend talks to the local backend. Copy from `frontend/.env.local.example` and override that value (the example points at the production Fly URL).
+- `frontend/.env.local` — must set `NEXT_PUBLIC_API_URL=http://localhost:8080` so the frontend talks to the local backend. Copy from `frontend/.env.local.example` and override its production Google API URL.
 
 ### Supabase user OAuth (production)
-For “Authorize Supabase” (no paste), create an OAuth App under the Xroga Supabase org and set on Fly:
+For “Authorize Supabase” (no paste), create an OAuth App under the Xroga Supabase org and set these names in the protected Google production configuration, following `docs/operations/google-production-migration.md`:
 - `SUPABASE_OAUTH_CLIENT_ID`
 - `SUPABASE_OAUTH_CLIENT_SECRET`
 - `SUPABASE_OAUTH_CALLBACK_URL=https://xroga.com/dashboard/integrations/supabase/callback`

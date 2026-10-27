@@ -1,6 +1,6 @@
 # Deployment topology — read-only truth
 
-Source SHA: `80cdf1f6f225717ae0bba9ae76805c126af7d95e`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
+Source SHA: `faf56ff8e0d6b9de61cbeb412c2e86c75b17dac3`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -48,6 +48,7 @@ Source SHA: `80cdf1f6f225717ae0bba9ae76805c126af7d95e`; source/config hashes are
 | endpoint-api-vercel-com | Source-defined endpoint api.vercel.com | CONFIGURED_BUT_UNVERIFIED | api.vercel.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-whop-com | Source-defined endpoint api.whop.com | CONFIGURED_BUT_UNVERIFIED | api.whop.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-x-ai | Source-defined endpoint api.x.ai | CONFIGURED_BUT_UNVERIFIED | api.x.ai | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-api-xroga-com | Source-defined endpoint api.xroga.com | CONFIGURED_BUT_UNVERIFIED | api.xroga.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-appstoreconnect-apple-com | Source-defined endpoint appstoreconnect.apple.com | CONFIGURED_BUT_UNVERIFIED | appstoreconnect.apple.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-aptos-dev | Source-defined endpoint aptos.dev | CONFIGURED_BUT_UNVERIFIED | aptos.dev | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-asana-com | Source-defined endpoint asana.com | CONFIGURED_BUT_UNVERIFIED | asana.com | NOT_INDEPENDENTLY_VERIFIED |

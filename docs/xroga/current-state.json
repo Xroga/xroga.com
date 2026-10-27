@@ -2292,8 +2292,7 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/buildOutcomeMemory.test.ts:19",
@@ -2930,8 +2929,7 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/compileCommand.test.ts:8",
@@ -3223,8 +3221,7 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/artifactDurability.test.ts:4",
@@ -3491,8 +3488,7 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/blackBoxExecution.test.ts:6",
@@ -3998,8 +3994,7 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/buildImprovementMemory.ts:9",
@@ -4437,8 +4432,7 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/benchmarkRunner.ts:36",
@@ -4739,8 +4733,7 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/p0Regressions.test.ts:50",
@@ -4947,8 +4940,7 @@
         "backend/src/ai/patchSafety.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/buildOutputValidation.ts:1",
@@ -7042,8 +7034,7 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/router.ts:47",
@@ -7277,8 +7268,7 @@
         "backend/src/workers/googleDeliveryStore.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/artifactDurability.test.ts:5",
@@ -8632,8 +8622,7 @@
         "backend/src/config/supabase.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/SoftwareAgentService.ts:43",
@@ -12098,7 +12087,6 @@
       "runtimeImports": [],
       "entryPoints": [
         "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts",
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
@@ -14978,8 +14966,7 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/black-hole/webIntelligence.ts:5",
@@ -16052,8 +16039,7 @@
         "backend/src/security/authority/digest.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/runStore.ts:16",
@@ -21476,8 +21462,7 @@
         "backend/src/sandbox/sandboxTypes.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/sandbox/flyMachineSandbox.test.ts:42",
@@ -21557,8 +21542,7 @@
         "backend/src/synthesis/inSandboxBrowser.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/sandbox/google/executionBinding.test.ts:8",
@@ -21655,8 +21639,7 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/middleware/runtimePreviewGateway.ts:32",
@@ -21772,8 +21755,7 @@
         "backend/src/sandbox/google/gceMachineControl.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/sandbox/google/gceSshTransport.test.ts:7",
@@ -21871,8 +21853,7 @@
         "backend/src/synthesis/projectRuntime/store.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/sandbox/google/googleSandbox.test.ts:3",
@@ -21946,8 +21927,7 @@
         "backend/src/sandbox/sandboxTypes.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/sandbox/remoteSandbox.test.ts:14",
@@ -21993,8 +21973,7 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/compileValidate.ts:20",
@@ -22095,8 +22074,7 @@
         "backend/src/synthesis/projectRuntime/googleFactory.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/p0Regressions.test.ts:31",
@@ -22170,8 +22148,7 @@
         "backend/src/synthesis/projectRuntime/googleFactory.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/compileValidate.ts:21",
@@ -22230,8 +22207,7 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/compileValidate.ts:22",
@@ -22394,11 +22370,9 @@
         "backend/src/synthesis/browserVerificationAdapter.ts",
         "backend/src/synthesis/webVerificationGate.ts"
       ],
-      "entryPoints": [
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
-      ],
+      "entryPoints": [],
       "callers": [],
-      "reachable": true,
+      "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [],
       "authBoundary": [],
@@ -22412,11 +22386,11 @@
         "backend/src/scripts/verifyFlySandboxBrowser.ts#verify"
       ],
       "testCoverage": [],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -22506,7 +22480,6 @@
       "runtimeImports": [],
       "entryPoints": [
         "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts",
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
@@ -22839,8 +22812,7 @@
         "backend/src/security/tenantErrors.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/buildOutcomeMemory.test.ts:13",
@@ -22965,8 +22937,7 @@
         "backend/src/security/tenantErrors.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:3",
@@ -23069,7 +23040,6 @@
       ],
       "entryPoints": [
         "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts",
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
@@ -23158,7 +23128,6 @@
       ],
       "entryPoints": [
         "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts",
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
@@ -23424,7 +23393,6 @@
       "runtimeImports": [],
       "entryPoints": [
         "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts",
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
@@ -24880,7 +24848,6 @@
       "runtimeImports": [],
       "entryPoints": [
         "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts",
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
@@ -25009,7 +24976,6 @@
       ],
       "entryPoints": [
         "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts",
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
@@ -25246,7 +25212,6 @@
       "runtimeImports": [],
       "entryPoints": [
         "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts",
         "scripts/security/verify-oci-federation.ts"
       ],
       "callers": [
@@ -32261,8 +32226,7 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/synthesis/browserVerification.test.ts:4",
@@ -32349,8 +32313,7 @@
         "backend/src/synthesis/webVerificationGate.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts:28",
@@ -33601,8 +33564,7 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/sandbox/google/executionBinding.ts:6",
@@ -35770,8 +35732,7 @@
         "backend/src/synthesis/projectRuntime/store.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/synthesis/projectRuntime/googleAuthority.test.ts:4",
@@ -35835,8 +35796,7 @@
         "backend/src/synthesis/projectRuntime/googleProvider.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/compileValidate.ts:24",
@@ -35956,8 +35916,7 @@
         "backend/src/synthesis/projectRuntime/types.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/sandbox/google/googleSandbox.ts:4",
@@ -36394,8 +36353,7 @@
         "backend/src/services/integrations/credentialVault.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:142",
@@ -36528,8 +36486,7 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/synthesis/projectRuntime/googleProvider.ts:9",
@@ -37038,8 +36995,7 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/synthesis/repositoryIndex.ts:29",
@@ -37281,8 +37237,7 @@
         "backend/src/synthesis/runtime/adapterContract.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/synthesis/runtime/adapters.test.ts:21",
@@ -37346,8 +37301,7 @@
         "backend/src/synthesis/runtime/adapterContract.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/synthesis/runtime/adapters.test.ts:22",
@@ -37435,8 +37389,7 @@
         "backend/src/synthesis/runtime/staticWebAdapter.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts:42",
@@ -37696,8 +37649,7 @@
         "backend/src/synthesis/runtime/adapterContract.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/synthesis/runtime/adapters.test.ts:23",
@@ -37746,8 +37698,7 @@
         "backend/src/synthesis/runtime/adapterContract.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/synthesis/runtime/registry.ts:30"
@@ -39061,8 +39012,7 @@
         "backend/src/synthesis/runtime/registry.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/scripts/verifyFlySandboxBrowser.ts:31",
@@ -40360,8 +40310,7 @@
         "backend/src/workers/googleDispatch.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/runStore.queuedAdmission.test.ts:5",
@@ -40439,8 +40388,7 @@
         "backend/src/synthesis/projectRuntime/googleFactory.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/index.ts:12",
@@ -40989,7 +40937,7 @@
       "id": "surface:00069db1d185a39243c5",
       "subsystem": "frontend",
       "sourcePath": "frontend/next.config.mjs",
-      "sha256": "f1ec95a33726511f8f8c0a3155746f34a6682d77ccd3d01d0934be802e2ea811",
+      "sha256": "9714db285f158d809a1e6d1bbd5e908987924903d1e53e6c4ad8e1944749c689",
       "symbols": [
         "BROWSER_EMPLOYEES_DEMO_SOURCE",
         "CLARITY_DEMO_SOURCE",
@@ -41037,10 +40985,10 @@
         "declared-host:analytics.ahrefs.com",
         "declared-host:api.github.com",
         "declared-host:api.vercel.com",
+        "declared-host:api.xroga.com",
         "declared-host:c.bing.com",
         "declared-host:www.clarity.ms",
         "declared-host:www.googletagmanager.com",
-        "declared-host:xroga-api.fly.dev",
         "node:fs"
       ],
       "authBoundary": [
@@ -43655,7 +43603,7 @@
       "id": "surface:6902470de33da099aaf3",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
-      "sha256": "764c589afab93e65b09b86e7c70d7be4188df75efc63250e7c552fc9125664b0",
+      "sha256": "65f33f8ffaf2af3666cbd8a022e19c52389f7e691c4f9a84870cbf02d6861b76",
       "symbols": [
         "GET",
         "base",
@@ -43686,7 +43634,7 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
-        "declared-host:xroga-api.fly.dev",
+        "declared-host:api.xroga.com",
         "next/server"
       ],
       "authBoundary": [],
@@ -45739,7 +45687,7 @@
       "id": "surface:f3bfc5eb8ab49540cf25",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/layout.tsx",
-      "sha256": "f3ff169368a8b1f0a6efc4758d41c42f5c93960c27769eb5408151082bc10266",
+      "sha256": "838122fee2c402ecf1feebbed26753371ee942607077c927f919e33758ccab44",
       "symbols": [
         "RootLayout",
         "metadata",
@@ -45787,7 +45735,7 @@
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "declared-host:analytics.ahrefs.com",
-        "declared-host:xroga-api.fly.dev",
+        "declared-host:api.xroga.com",
         "declared-host:xroga.com",
         "next"
       ],
@@ -46957,7 +46905,7 @@
       "id": "surface:9f51ed5a722f2b32376d",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/share/[token]/page.tsx",
-      "sha256": "8efbd510a15a1cb5b4f5546422598e13b6a628948cee0c234144e9796ce60124",
+      "sha256": "8a6108961f076a5fc0b6250aed2c9ee28cf64687a6d9126f8d18bc630ac9ac27",
       "symbols": [
         "MessageSharePage",
         "PublicShare",
@@ -46994,8 +46942,8 @@
       "reachable": true,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
+        "declared-host:api.xroga.com",
         "declared-host:localhost",
-        "declared-host:xroga-api.fly.dev",
         "next",
         "next/image",
         "next/link",
@@ -81873,7 +81821,7 @@
       "id": "surface:fc0647beab64e4906eb6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/api.ts",
-      "sha256": "01f9c3e1d62a2c3f13bd3fc900aeb3d0123692b89f529c88ddad9133409cd686",
+      "sha256": "1cdb6a8a3ac4550100f1eef141dc078b4aae75e1533cf7473204e418f5eb31bd",
       "symbols": [
         "API_URL",
         "ActivityLog",
@@ -82170,8 +82118,8 @@
       "externalProviderDependencies": [
         "@supabase/supabase-js",
         "clsx",
+        "declared-host:api.xroga.com",
         "declared-host:localhost",
-        "declared-host:xroga-api.fly.dev",
         "declared-host:xroga.com",
         "tailwind-merge"
       ],
@@ -82362,7 +82310,7 @@
       "id": "surface:70954167ebcdcbcba418",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/brand.ts",
-      "sha256": "0c64b8fd742e8b38e0c06e38c16bc5d12ac3c635377e30193f08f5422f7d4aa9",
+      "sha256": "89c9910b49525c23848afd1d4bcb64c53dd1e2dd21839de945ac47a73522b25e",
       "symbols": [
         "XROGA_AI_GENIUS",
         "XROGA_API_BASE",
@@ -82390,7 +82338,7 @@
       "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
-        "declared-host:xroga-api.fly.dev"
+        "declared-host:api.xroga.com"
       ],
       "authBoundary": [],
       "tenantBoundary": [],
@@ -84374,7 +84322,7 @@
       "id": "surface:869b5e5485aeb0667a06",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/features.ts",
-      "sha256": "2aa753cd4151b013b8f9296717b34d5c4f716b87c6efdb9baaecb5dc3e080894",
+      "sha256": "ef4b4da497bc6b62582a3b8c66e0bc9fa312526552051cb229e67b4963c95719",
       "symbols": [
         "FEATURE_COUNT",
         "XROGA_FEATURES"
@@ -100561,7 +100509,7 @@
       "id": "surface:3ddf3abd0829b82c5ef5",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/verify-agent-v2-production.mjs",
-      "sha256": "9bfddeee3dfb5f96f98e6c382e60af546d50ca4c12bc85f93976e0dfa7a90518",
+      "sha256": "a79d9dfcf2756fc18bce149659bb002fa37a870360a49183a00603fb186f7c68",
       "symbols": [
         "API_URL",
         "GITHUB_BRANCH",
@@ -100615,7 +100563,7 @@
       "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
-        "declared-host:xroga-api.fly.dev",
+        "declared-host:api.xroga.com",
         "node:crypto"
       ],
       "authBoundary": [],
@@ -111885,7 +111833,7 @@
     {
       "id": "workflow:8f9ce8b8490a8edd7248",
       "sourcePath": ".github/workflows/backend-health-verification.yml",
-      "sha256": "6b192da03d3ad1d56d56f378e759cf38d3561ef34a7915972612f3a2fd85f270",
+      "sha256": "ed8633d37c156b35e4748fa83865b8579f1c6ab8ac2331de49f95847623ef49c",
       "sourceEntrypoints": [
         "scripts/security/verify-oci-wrong-workflow.ts"
       ],
@@ -111939,17 +111887,15 @@
     {
       "id": "workflow:e98bb23501189d64a1ce",
       "sourcePath": ".github/workflows/fly-deploy.yml",
-      "sha256": "881906774f4500edfe772507c5f88fc7373e400381931fe9f884f7b102665376",
+      "sha256": "5a97323fd3bf4a66acb2b23f3f07662e1d49677e241fca5fc44084356691b5ff",
       "sourceEntrypoints": [],
       "hasSchedule": false
     },
     {
       "id": "workflow:5c7b527e67952c0c1c13",
       "sourcePath": ".github/workflows/fly-sandbox-browser-verification.yml",
-      "sha256": "f67bf1d79f246e8d934123a3aae529a0f7187606334a04fca1bc4a621843f253",
-      "sourceEntrypoints": [
-        "backend/src/scripts/verifyFlySandboxBrowser.ts"
-      ],
+      "sha256": "436347571e6bd7badfc10f86ca4ebc8139c087ef13e19dcac04ec5f38bde4f1c",
+      "sourceEntrypoints": [],
       "hasSchedule": false
     },
     {
@@ -111962,7 +111908,7 @@
     {
       "id": "workflow:76cb9481af951139a7a3",
       "sourcePath": ".github/workflows/launch-production-verification.yml",
-      "sha256": "b1499b49d9d560bb79e26ccf5425f51b7a073aed1ab02c5715f571d2b7bddf5d",
+      "sha256": "44e978f2500c87ab21c61834e0b8b27de4fe22300ee2563a78dac781f973cda6",
       "sourceEntrypoints": [],
       "hasSchedule": false
     },
@@ -115691,7 +115637,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:56f2945856adc86e01e8",
+      "id": "finding:4d856b4384a49c00874e",
       "sourcePath": "scripts/verify-agent-v2-production.mjs",
       "line": 79,
       "kind": "TODO",
@@ -116103,7 +116049,7 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:3a0cc60304844f0aa99e",
+      "id": "frontend-call:f1bef6980e019a9d30c2",
       "sourcePath": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
       "line": 24,
       "callee": "fetch",
@@ -116131,7 +116077,7 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:f23c55396a5bb22635dc",
+      "id": "frontend-call:2a6dcf446ff46c252a70",
       "sourcePath": "frontend/src/app/share/[token]/page.tsx",
       "line": 42,
       "callee": "fetch",
@@ -118357,21 +118303,21 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:d40568c655f67e88d065",
+      "id": "frontend-call:e674c38fe5421ebebd68",
       "sourcePath": "frontend/src/lib/api.ts",
       "line": 427,
       "callee": "fetch",
       "reachable": true
     },
     {
-      "id": "frontend-call:76f2e294777e5c3c5a01",
+      "id": "frontend-call:647a05f45901a71d95f7",
       "sourcePath": "frontend/src/lib/api.ts",
       "line": 729,
       "callee": "fetch",
       "reachable": true
     },
     {
-      "id": "frontend-call:66b6a9c922b7aeaee715",
+      "id": "frontend-call:9038336e151147ac1ce5",
       "sourcePath": "frontend/src/lib/api.ts",
       "line": 1644,
       "callee": "fetch",

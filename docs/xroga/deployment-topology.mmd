@@ -44,6 +44,7 @@ flowchart LR
   endpoint_api_vercel_com["Source-defined endpoint api.vercel.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_whop_com["Source-defined endpoint api.whop.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_x_ai["Source-defined endpoint api.x.ai — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_api_xroga_com["Source-defined endpoint api.xroga.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_appstoreconnect_apple_com["Source-defined endpoint appstoreconnect.apple.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_aptos_dev["Source-defined endpoint aptos.dev — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_asana_com["Source-defined endpoint asana.com — CONFIGURED_BUT_UNVERIFIED"]
@@ -231,6 +232,7 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_api_vercel_com
   api -. "source host/reference; unverified" .-> endpoint_api_whop_com
   api -. "source host/reference; unverified" .-> endpoint_api_x_ai
+  frontend -. "source host/reference; unverified" .-> endpoint_api_xroga_com
   api -. "source host/reference; unverified" .-> endpoint_appstoreconnect_apple_com
   frontend -. "source host/reference; unverified" .-> endpoint_aptos_dev
   frontend -. "source host/reference; unverified" .-> endpoint_asana_com

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "80cdf1f6f225717ae0bba9ae76805c126af7d95e",
+  "source_sha": "faf56ff8e0d6b9de61cbeb412c2e86c75b17dac3",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -1979,6 +1979,53 @@
       "observability_source": [
         "backend/src/ai/black-hole/webIntelligence.ts",
         "backend/src/ai/research.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-api-xroga-com",
+      "provider": "Source-defined endpoint api.xroga.com",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
+        "frontend/src/app/layout.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
+        "frontend/src/lib/api.ts",
+        "frontend/src/lib/brand.ts"
+      ],
+      "hostnames": [
+        "api.xroga.com"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [
+        "NEXT_PUBLIC_API_URL",
+        "NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION",
+        "NEXT_PUBLIC_SITE_URL",
+        "NODE_ENV"
+      ],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
+        "frontend/src/app/layout.tsx",
+        "frontend/src/app/share/[token]/page.tsx",
+        "frontend/src/lib/api.ts",
+        "frontend/src/lib/brand.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -10259,6 +10306,7 @@
       "dependency_ids": [
         "frontend",
         "endpoint-127-0-0-1",
+        "endpoint-api-xroga-com",
         "endpoint-localhost"
       ]
     },
@@ -10279,7 +10327,8 @@
       ],
       "dependency_ids": [
         "frontend",
-        "endpoint-analytics-ahrefs-com"
+        "endpoint-analytics-ahrefs-com",
+        "endpoint-api-xroga-com"
       ]
     },
     {
@@ -10320,6 +10369,7 @@
       ],
       "dependency_ids": [
         "frontend",
+        "endpoint-api-xroga-com",
         "endpoint-localhost",
         "endpoint-twitter-com",
         "endpoint-wa-me",
@@ -10507,6 +10557,7 @@
         "endpoint-accounts-google-com",
         "endpoint-api-github-com",
         "endpoint-api-vercel-com",
+        "endpoint-api-xroga-com",
         "endpoint-chrome-google-com",
         "endpoint-chromewebstore-googleapis-com",
         "endpoint-cloudkms-googleapis-com",
@@ -14476,7 +14527,7 @@
     },
     {
       "path": ".github/workflows/backend-health-verification.yml",
-      "sha256": "6b192da03d3ad1d56d56f378e759cf38d3561ef34a7915972612f3a2fd85f270"
+      "sha256": "ed8633d37c156b35e4748fa83865b8579f1c6ab8ac2331de49f95847623ef49c"
     },
     {
       "path": ".github/workflows/chat-turn-rail-browser.yml",
@@ -14500,11 +14551,11 @@
     },
     {
       "path": ".github/workflows/fly-deploy.yml",
-      "sha256": "881906774f4500edfe772507c5f88fc7373e400381931fe9f884f7b102665376"
+      "sha256": "5a97323fd3bf4a66acb2b23f3f07662e1d49677e241fca5fc44084356691b5ff"
     },
     {
       "path": ".github/workflows/fly-sandbox-browser-verification.yml",
-      "sha256": "f67bf1d79f246e8d934123a3aae529a0f7187606334a04fca1bc4a621843f253"
+      "sha256": "436347571e6bd7badfc10f86ca4ebc8139c087ef13e19dcac04ec5f38bde4f1c"
     },
     {
       "path": ".github/workflows/growth-technical-publishing.yml",
@@ -14512,7 +14563,7 @@
     },
     {
       "path": ".github/workflows/launch-production-verification.yml",
-      "sha256": "b1499b49d9d560bb79e26ccf5425f51b7a073aed1ab02c5715f571d2b7bddf5d"
+      "sha256": "44e978f2500c87ab21c61834e0b8b27de4fe22300ee2563a78dac781f973cda6"
     },
     {
       "path": ".github/workflows/seo-audit.yml",
@@ -17340,7 +17391,7 @@
     },
     {
       "path": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
-      "sha256": "764c589afab93e65b09b86e7c70d7be4188df75efc63250e7c552fc9125664b0"
+      "sha256": "65f33f8ffaf2af3666cbd8a022e19c52389f7e691c4f9a84870cbf02d6861b76"
     },
     {
       "path": "frontend/src/app/api/release/route.ts",
@@ -17524,7 +17575,7 @@
     },
     {
       "path": "frontend/src/app/layout.tsx",
-      "sha256": "f3ff169368a8b1f0a6efc4758d41c42f5c93960c27769eb5408151082bc10266"
+      "sha256": "838122fee2c402ecf1feebbed26753371ee942607077c927f919e33758ccab44"
     },
     {
       "path": "frontend/src/app/learn/page.tsx",
@@ -17644,7 +17695,7 @@
     },
     {
       "path": "frontend/src/app/share/[token]/page.tsx",
-      "sha256": "8efbd510a15a1cb5b4f5546422598e13b6a628948cee0c234144e9796ce60124"
+      "sha256": "8a6108961f076a5fc0b6250aed2c9ee28cf64687a6d9126f8d18bc630ac9ac27"
     },
     {
       "path": "frontend/src/app/showcase/[slug]/page.tsx",
@@ -19980,7 +20031,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "01f9c3e1d62a2c3f13bd3fc900aeb3d0123692b89f529c88ddad9133409cd686"
+      "sha256": "1cdb6a8a3ac4550100f1eef141dc078b4aae75e1533cf7473204e418f5eb31bd"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -20000,7 +20051,7 @@
     },
     {
       "path": "frontend/src/lib/brand.ts",
-      "sha256": "0c64b8fd742e8b38e0c06e38c16bc5d12ac3c635377e30193f08f5422f7d4aa9"
+      "sha256": "89c9910b49525c23848afd1d4bcb64c53dd1e2dd21839de945ac47a73522b25e"
     },
     {
       "path": "frontend/src/lib/browserSafety.ts",
@@ -20148,7 +20199,7 @@
     },
     {
       "path": "frontend/src/lib/features.ts",
-      "sha256": "2aa753cd4151b013b8f9296717b34d5c4f716b87c6efdb9baaecb5dc3e080894"
+      "sha256": "ef4b4da497bc6b62582a3b8c66e0bc9fa312526552051cb229e67b4963c95719"
     },
     {
       "path": "frontend/src/lib/feedbackStorage.ts",
@@ -24226,7 +24277,7 @@
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "api.xroga.com",
       "protocol": "https:",
       "path": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
       "line": 17,
@@ -24485,14 +24536,14 @@
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "api.xroga.com",
       "protocol": "https:",
       "path": "frontend/src/app/layout.tsx",
       "line": 69,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "api.xroga.com",
       "protocol": "https:",
       "path": "frontend/src/app/layout.tsx",
       "line": 70,
@@ -24513,7 +24564,7 @@
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "api.xroga.com",
       "protocol": "https:",
       "path": "frontend/src/app/share/[token]/page.tsx",
       "line": 22,
@@ -26039,7 +26090,7 @@
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "api.xroga.com",
       "protocol": "https:",
       "path": "frontend/src/lib/api.ts",
       "line": 65,
@@ -26081,7 +26132,7 @@
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "api.xroga.com",
       "protocol": "https:",
       "path": "frontend/src/lib/brand.ts",
       "line": 22,
