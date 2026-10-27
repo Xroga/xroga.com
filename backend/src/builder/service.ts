@@ -76,7 +76,15 @@ export interface BuilderDeps {
   readonly store: BuilderStore;
   readonly runBuild: BuildRunner;
   readonly preview?: PreviewPort;
+  /**
+   * Durably asks the canonical engine to stop the run (the same persisted cancellation the chat Stop uses, which every API instance
+   * polls). Throws when the request could not be saved, so the caller reports it instead of claiming the build stopped.
+   */
+  readonly cancelEngineRun?: (userId: string, runId: string) => Promise<void>;
 }
+
+/** Thrown inside a run that no longer holds the project's run slot (it was cancelled or replaced); never reaches a caller. */
+class RunSuperseded extends Error {}
 
 export interface BuilderState {
   readonly project: BuilderProject;
@@ -172,6 +180,9 @@ export class BuilderService {
     const holder: { saved: Extract<AppendRevisionResult, { kind: 'created' | 'replayed' }> | null; noChange: boolean } = { saved: null, noChange: false };
     const commit: CommitFn = async ({ files: committedFiles }) => {
       input.guard?.(committedFiles, files);
+      // A cancelled (or replaced) run must not add a revision after the user stopped it.
+      const holder_ = await this.deps.store.getProject(userId, projectId);
+      if (!holder_ || holder_.activeRunId !== runId) throw new BuilderError('conflict', 'The build was cancelled or replaced. Nothing was saved.');
       if (head && hashSnapshot(committedFiles) === head.contentSha256) {
         // Identical to the current source: nothing changed, so no revision is created.
         holder.noChange = true;
@@ -215,8 +226,27 @@ export class BuilderService {
     canonical: CanonicalVerdict | null,
     launchPreview: (revision: BuilderRevision) => Promise<PreviewLaunchResult>,
   ): Promise<BuilderState> {
+    try {
+      return await this.finishRun(userId, run, canonical, launchPreview);
+    } catch (error) {
+      // The user cancelled (or a newer build replaced this one) while it was finishing: the recorded state is theirs, not ours.
+      if (error instanceof RunSuperseded) return this.getState(userId, run.projectId);
+      throw error;
+    }
+  }
+
+  private async finishRun(
+    userId: string,
+    run: BuilderRunBinding,
+    canonical: CanonicalVerdict | null,
+    launchPreview: (revision: BuilderRevision) => Promise<PreviewLaunchResult>,
+  ): Promise<BuilderState> {
     const { projectId, runId } = run;
-    const set = (state: BuilderProjectState, reason: string, active: string | null) => this.deps.store.setState(userId, projectId, state, reason, active);
+    const set = async (state: BuilderProjectState, reason: string, active: string | null) => {
+      const updated = await this.deps.store.setStateForRun(userId, projectId, runId, state, reason, active);
+      if (!updated) throw new RunSuperseded();
+      return updated;
+    };
     if (canonical === null) {
       await set('blocked', 'The canonical engineering engine is not enabled in this environment, so nothing was built.', null);
       return this.getState(userId, projectId);
@@ -254,7 +284,8 @@ export class BuilderService {
       await set(blocked ? 'blocked' : 'partial', canonical.reason || 'Source was saved but not verified.', null);
       return this.getState(userId, projectId);
     }
-    await this.deps.store.setRevisionVerification(userId, projectId, saved.id, 'verified');
+    // Canonical validation accepted the source, but no browser test has run against it yet: it is PARTIAL until one passes.
+    await this.deps.store.setRevisionVerification(userId, projectId, saved.id, 'partial');
     await set('verifying', 'Checking the running application.', runId);
     let launch: PreviewLaunchResult;
     try {
@@ -262,12 +293,35 @@ export class BuilderService {
     } catch {
       launch = { started: false, strictReady: null, reason: 'The isolated runtime could not be started.' };
     }
+    // Record what was observed, against the revision it was observed for. The preview state is derived from this, not from the project's overall state.
+    if (launch.started && launch.strictReady !== null) await this.deps.store.markPreviewReadiness(userId, projectId, { revisionId: saved.id, ready: launch.strictReady }).catch(() => undefined);
     if (launch.started && launch.strictReady === true) {
-      await set('verified', launch.reason, null);
+      // Verified only after browser QA passes on this revision (recorded by the QA service). Until then it is honestly partial.
+      await set('partial', `The application is running and every page responds. Browser tests have not passed on this version yet. ${launch.reason}`, null);
     } else {
       await set('partial', `Source saved and validated, but the live preview is not verified: ${launch.reason}`, null);
     }
     return this.getState(userId, projectId);
+  }
+
+  /**
+   * Cancels the build that holds the project's run slot. The engine is asked first, durably (a failure to save that request is
+   * reported and nothing changes, so Stop can be retried), then the project's own state moves to `cancelled` in one compare-and-set
+   * that also releases the slot. Nothing the run does afterwards can overwrite that state or add a revision. Idempotent: with no
+   * active build it changes nothing and says so.
+   */
+  async cancelBuild(userId: string, projectId: string): Promise<{ cancelled: boolean; state: BuilderState }> {
+    const project = await this.requireProject(userId, projectId);
+    const active = (project.state === 'generating' || project.state === 'verifying') ? project.activeRunId : null;
+    if (active === null) return { cancelled: false, state: await this.getState(userId, projectId) };
+    if (this.deps.cancelEngineRun) {
+      try { await this.deps.cancelEngineRun(userId, active); } catch {
+        throw new BuilderError('storage_failed', 'Stopping the build could not be saved. Try again.');
+      }
+    }
+    const result = await this.deps.store.cancelRun(userId, projectId, 'You stopped the build. Work saved before you stopped is kept.');
+    if (!result) throw new BuilderError('not_found', 'Project not found.');
+    return { cancelled: result.kind === 'cancelled', state: await this.getState(userId, projectId) };
   }
 
   /** Direct (non-chat) build: runs the canonical path itself, then closes the run. */
@@ -283,7 +337,7 @@ export class BuilderService {
       outcome = await this.deps.runBuild({ userId, runId: run.runId, projectId, prompt, existingFiles: run.files, commit: run.commit, onEvent: input.onEvent, signal: input.signal });
     } catch (error) {
       const reason = error instanceof BuilderError ? error.message : 'The build stopped before completing.';
-      await this.deps.store.setState(userId, projectId, input.signal?.aborted ? 'cancelled' : 'failed', reason, null);
+      await this.deps.store.setStateForRun(userId, projectId, run.runId, input.signal?.aborted ? 'cancelled' : 'failed', reason, null);
       return this.getState(userId, projectId);
     }
     const preview = this.deps.preview;
@@ -314,10 +368,10 @@ export class BuilderService {
       const saved = run.saved();
       if (!saved && !run.noChange()) throw new BuilderError('storage_failed', 'The restored source could not be saved.');
       if (saved) {
-        await this.deps.store.setState(userId, projectId, 'partial', `Restored revision ${target.revisionNumber} as revision ${saved.revisionNumber}. Run the browser tests to verify it.`, null);
+        await this.deps.store.setStateForRun(userId, projectId, run.runId, 'partial', `Restored revision ${target.revisionNumber} as revision ${saved.revisionNumber}. Run the browser tests to verify it.`, null);
       } else {
         // Already the current source: put the project back exactly as it was.
-        await this.deps.store.setState(userId, projectId, before.state, before.stateReason, null);
+        await this.deps.store.setStateForRun(userId, projectId, run.runId, before.state, before.stateReason, null);
       }
       return {
         restoredFrom: target.revisionNumber,
@@ -327,7 +381,7 @@ export class BuilderService {
         state: await this.getState(userId, projectId),
       };
     } catch (error) {
-      await this.deps.store.setState(userId, projectId, before.state, before.stateReason, null).catch(() => undefined);
+      await this.deps.store.setStateForRun(userId, projectId, run.runId, before.state, before.stateReason, null).catch(() => undefined);
       throw error;
     }
   }
@@ -349,8 +403,8 @@ export class BuilderService {
       facts
         ? {
             ...facts,
-            // Only a recorded strict check can say the pages respond; liveness facts cannot.
-            strictReady: project.state === 'verified' ? true : project.state === 'partial' && facts.requested ? false : facts.strictReady,
+            // Only a recorded strict check can say the pages respond; liveness facts cannot. The record names the revision it tested.
+            strictReady: head && project.previewReadiness === `${head.id}:ready` ? true : head && project.previewReadiness === `${head.id}:failed` ? false : facts.strictReady,
             stale: Boolean(head && facts.workspaceSha256 && facts.workspaceSha256 !== head.contentSha256),
           }
         : { requested: false, coordinatorStatus: null, runtimeRunning: false, processRunning: false, strictReady: null, grantExpiresAt: null, grantRevokedAt: null, stale: false },
@@ -364,6 +418,16 @@ export class BuilderService {
     } catch {
       return null;
     }
+  }
+
+  /**
+   * The project a chat conversation is building, so reopening that chat continues the same project instead of starting another.
+   * Owner scoped like every read: another user's conversation id finds nothing.
+   */
+  async projectForConversation(userId: string, conversationId: string): Promise<BuilderProject | null> {
+    if (!/^[A-Za-z0-9_.:-]{1,128}$/.test(conversationId)) throw new BuilderError('invalid_input', 'Invalid conversation id.');
+    const projects = await this.deps.store.listProjects(userId, MAX_PROJECTS_PER_OWNER);
+    return projects.find((project) => project.conversationId === conversationId) ?? null;
   }
 
   async listProjects(userId: string) {

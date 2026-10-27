@@ -1,5 +1,7 @@
 # Batch 2, Phase 1: AI Product Builder foundation
 
+> **Updated by the final audit** (`FINAL-AUDIT.md`): a project is now VERIFIED only after a browser test passes on its head revision (a build with a ready preview is PARTIAL), and the preview state is derived from the recorded readiness of the head revision. Where this document says otherwise, the final audit is current.
+
 Starting source: `main` at `bc669f8acb1838a4476d19a3f7193a0b4b71ce69` (merge of Batch 1.5, PR #852). Branch `claude/batch2-phase1-product-builder`.
 Scope: Milestones A, B and C of the Batch 2 specification. Nothing here is deployed, applied to a database, or enabled.
 

@@ -128,7 +128,18 @@ export function BuilderDelivery({ projectId, title, onChanged }: { projectId: st
         {!targets ? (
           <Loader2 className="h-3.5 w-3.5 animate-spin" aria-label="Loading GitHub" />
         ) : !targets.connected ? (
-          <p className="text-[11px] text-[var(--muted)]">{targets.notes[0] ?? 'GitHub is not connected.'} Connect GitHub from Integrations, then return here. Nothing is created until you approve it.</p>
+          <>
+            <p className="text-[11px] text-[var(--muted)]">{targets.notes[0] ?? 'GitHub is not connected.'} Connect GitHub from Integrations, then return here. {github?.binding ? 'Your existing repository is shown below.' : 'Nothing is created until you approve it.'}</p>
+            {github?.binding ? (
+              <div className="rounded-lg border border-[var(--card-border)] p-2 text-[11px]">
+                <p className="font-medium">Saved to GitHub earlier</p>
+                <a href={github.binding.repository.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 underline">
+                  {github.binding.repository.owner}/{github.binding.repository.name} <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                </a>
+                <p className="text-[var(--muted)]">Version {github.binding.lastRevisionNumber} · commit {github.binding.lastCommitSha.slice(0, 7)}</p>
+              </div>
+            ) : null}
+          </>
         ) : (
           <>
             <p className="text-[11px] text-[var(--muted)]">Connected as <strong>{targets.viewer?.login}</strong>. The repository is created in the account you choose and is yours.</p>

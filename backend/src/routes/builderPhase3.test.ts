@@ -145,3 +145,21 @@ describe('Phase 3 API: the whole customer-owned delivery over HTTP', () => {
     assert.ok(!JSON.stringify([bind.executed.body, migration.executed.body, preview.executed.body, published.body, delivery.body]).match(/sb-tok|vc-tok|gh-tok|service_role|sb_secret/), 'no credential appears in any response');
   });
 });
+
+describe('Preview restart from the latest saved version', () => {
+  it('needs an identity, is invisible to another tenant, and never claims a preview that did not start', async () => {
+    const projectId = await newProject();
+    assert.equal((await call(`/projects/${projectId}/preview/restart`, null, { method: 'POST', body: {} })).status, 401);
+    assert.equal((await call(`/projects/${projectId}/preview/restart`, USER_B, { method: 'POST', body: {} })).status, 404);
+    fixture.runtime.available = false;
+    const none = await call(`/projects/${projectId}/preview/restart`, USER_A, { method: 'POST', body: {} });
+    assert.equal(none.status, 200);
+    assert.equal(none.body.started, false);
+    assert.equal(none.body.ready, false);
+    fixture.runtime.available = true;
+    const ok = await call(`/projects/${projectId}/preview/restart`, USER_A, { method: 'POST', body: {} });
+    assert.equal(ok.body.ready, true);
+    assert.ok(ok.body.revisionNumber >= 1);
+    fixture.runtime.available = false;
+  });
+});

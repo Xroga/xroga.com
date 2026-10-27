@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { AlertTriangle, CheckCircle2, CircleDashed, FlaskConical, Loader2, Wrench, XCircle } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, CircleDashed, FlaskConical, Loader2, Play, Wrench, XCircle } from 'lucide-react';
 
 import { BuilderApiError } from '@/lib/builderApi';
 import { builderPhase2Api, QA_STATUS_LABEL, type QaReport, type QaSummary, type RepairResult } from '@/lib/builderApiPhase2';
@@ -32,7 +32,8 @@ function Icon({ status }: { status: 'passed' | 'failed' | 'pending' }) {
 export function BuilderTests({ projectId, onChanged }: { projectId: string; onChanged: () => void }) {
   const [summary, setSummary] = useState<QaSummary | null>(null);
   const [report, setReport] = useState<QaReport | null>(null);
-  const [busy, setBusy] = useState<'test' | 'repair' | null>(null);
+  const [busy, setBusy] = useState<'test' | 'repair' | 'preview' | null>(null);
+  const [previewNote, setPreviewNote] = useState<string | null>(null);
   const [repair, setRepair] = useState<RepairResult | null>(null);
   const [confirmRepair, setConfirmRepair] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -68,6 +69,21 @@ export function BuilderTests({ projectId, onChanged }: { projectId: string; onCh
     }
   };
 
+  const restartPreview = async () => {
+    setBusy('preview');
+    setError(null);
+    setPreviewNote(null);
+    try {
+      const result = await builderPhase2Api.restartPreview(projectId);
+      setPreviewNote(result.ready ? `Preview started from version ${result.revisionNumber}. ${result.reason}` : result.reason);
+      onChanged();
+    } catch (caught) {
+      setError(caught instanceof BuilderApiError ? caught.message : 'The preview could not be started.');
+    } finally {
+      setBusy(null);
+    }
+  };
+
   const fix = async () => {
     setBusy('repair');
     setError(null);
@@ -97,6 +113,9 @@ export function BuilderTests({ projectId, onChanged }: { projectId: string; onCh
         <button type="button" disabled={busy !== null} onClick={() => void run()} className="flex items-center gap-1 rounded border border-[var(--card-border)] px-2 py-1 text-[11px] disabled:opacity-50">
           {busy === 'test' ? <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" /> : <FlaskConical className="h-3 w-3" aria-hidden="true" />} Run tests
         </button>
+        <button type="button" disabled={busy !== null} onClick={() => void restartPreview()} className="flex items-center gap-1 rounded border border-[var(--card-border)] px-2 py-1 text-[11px] disabled:opacity-50">
+          {busy === 'preview' ? <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" /> : <Play className="h-3 w-3" aria-hidden="true" />} Start preview from latest version
+        </button>
         {failed.length > 0 && !confirmRepair ? (
           <button type="button" disabled={busy !== null} onClick={() => setConfirmRepair(true)} className="flex items-center gap-1 rounded border border-[var(--accent)] px-2 py-1 text-[11px] text-[var(--accent)] disabled:opacity-50">
             <Wrench className="h-3 w-3" aria-hidden="true" /> Test and fix automatically
@@ -113,6 +132,7 @@ export function BuilderTests({ projectId, onChanged }: { projectId: string; onCh
         </div>
       ) : null}
       {busy === 'repair' ? <p className="flex items-center gap-1 text-[11px] text-[var(--muted)]"><Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" /> Testing and fixing. This can take a few minutes.</p> : null}
+      {previewNote ? <p className="text-[11px] text-[var(--muted)]" role="status">{previewNote}</p> : null}
       {error ? <p className="text-[11px] text-amber-400" role="alert">{error}</p> : null}
 
       {repair ? (

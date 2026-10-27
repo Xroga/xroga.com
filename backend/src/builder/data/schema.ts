@@ -104,6 +104,8 @@ create table if not exists public.profiles (
   role text not null default 'customer' check (role in ('customer', 'admin')),
   created_at timestamptz not null default now()
 );
+-- The exported project may also carry the starter's own profiles table (without a role): add the column so this schema still applies.
+alter table public.profiles add column if not exists role text not null default 'customer';
 
 -- Role checks run as the table owner with an empty search path, so a user cannot read or forge them.
 create or replace function public.xroga_is_admin() returns boolean
@@ -207,4 +209,32 @@ export function generateSchema(archetype: SchemaArchetypeId): GeneratedSchema {
 export function schemaFor(spec: BuildSpec): GeneratedSchema | null {
   const id = chooseSchemaArchetype(spec);
   return id ? generateSchema(id) : null;
+}
+
+/**
+ * The files that make a database-backed project complete when it leaves Xroga (ZIP and GitHub): the exact reviewed
+ * migration, version-controlled with the source, and a safe `.env.example` that names only the PUBLIC variables.
+ * Anything the project already contains at those paths is left alone. Nothing here holds a value or a secret.
+ */
+export function databaseArtifacts(spec: BuildSpec, existing: ReadonlyArray<{ readonly path: string }>): Array<{ path: string; content: string }> {
+  const schema = schemaFor(spec);
+  if (!schema) return [];
+  const have = new Set(existing.map((file) => file.path));
+  const out: Array<{ path: string; content: string }> = [];
+  const migration = `supabase/migrations/${schema.fileName}`;
+  if (!have.has(migration)) out.push({ path: migration, content: schema.sql });
+  if (!have.has('.env.example')) {
+    out.push({
+      path: '.env.example',
+      content: [
+        '# Public values only. Find both in your Supabase project under Project Settings, then API.',
+        'NEXT_PUBLIC_SUPABASE_URL=',
+        'NEXT_PUBLIC_SUPABASE_ANON_KEY=',
+        '',
+        '# Never put a service-role or secret key in this file, in source code, or in a NEXT_PUBLIC_ variable.',
+        '',
+      ].join('\n'),
+    });
+  }
+  return out;
 }

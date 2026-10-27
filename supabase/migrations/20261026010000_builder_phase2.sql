@@ -1,5 +1,5 @@
 -- Batch 2 Phase 2: QA/repair evidence and customer-owned external operations.
--- Additive only. Depends on 20261026000000_builder_projects.sql. Not applied by this change;
+-- Additive only. Depends on 20261026000100_builder_projects.sql. Not applied by this change;
 -- apply through the verified migration workflow after review.
 -- Rollback: DROP TABLE public.builder_external_operations, public.builder_verifications
 -- (nothing else references them).

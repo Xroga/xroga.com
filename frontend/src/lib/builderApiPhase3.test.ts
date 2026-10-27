@@ -20,7 +20,7 @@ describe('Phase 3 client and API stay in step', () => {
   });
 
   it('production is a separate card that stays disabled until the exact phrase is typed', () => {
-    assert.match(hosting, /disabled=\{busy !== null \|\| !confirmationMatches\(typed, production\.plan\.confirmationPhrase\)\}/);
+    assert.match(hosting, /disabled=\{busy !== null \|\| !connected \|\| !confirmationMatches\(typed, production\.plan\.confirmationPhrase\)\}/);
     assert.match(hosting, /Blocked until the remote tests on the preview have passed/);
     assert.ok(!/executeProduction[^;]*executePreview|executePreview[^;]*executeProduction/.test(hosting), 'approving a preview never publishes');
   });

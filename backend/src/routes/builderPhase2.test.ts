@@ -46,7 +46,8 @@ const qa = new QaService({
   budgetAllows: async () => true,
 });
 const githubService = new GitHubExportService({ phase2, builder, github, tokenFor: async (userId) => tokens.get(userId) ?? null });
-const services: Phase2Services = { builder, qa, github: githubService, exporter: new ExportService({ builder, phase2 }), data: fixture.services.data, hosting: fixture.services.hosting, provenance: fixture.services.provenance };
+const preview = { restart: async () => ({ started: false, ready: false, reason: 'not exercised here', revisionNumber: 1 }) };
+const services: Phase2Services = { builder, preview, qa, github: githubService, exporter: new ExportService({ builder, phase2 }), data: fixture.services.data, hosting: fixture.services.hosting, provenance: fixture.services.provenance };
 
 const app = express();
 app.use(express.json());

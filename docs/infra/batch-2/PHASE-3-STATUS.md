@@ -1,5 +1,7 @@
 # Batch 2, Phase 3: customer-owned Supabase and Vercel, remote verification, provenance and acceptance
 
+> **Updated by the final audit** (`FINAL-AUDIT.md`): a project is now VERIFIED only after a browser test passes on its head revision (a build with a ready preview is PARTIAL), and the preview state is derived from the recorded readiness of the head revision. Where this document says otherwise, the final audit is current.
+
 Builds on Phase 2 (PR #858, head `ed43af3f`). Branch `claude/batch2-phase3-delivery`.
 Scope: Milestones G and H of the Batch 2 specification, the ten golden test groups and the twelve acceptance targets.
 Nothing here is deployed, applied to a production database, enabled in production, or merged. No Supabase project, Vercel project or GitHub repository was created, and no external account was touched.

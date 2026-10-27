@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 
 import type { ProjectFile } from '../../ai/patches.js';
 import { buildSourceArchive, EXPORT_MANIFEST_PATH, readZip } from '../export/archive.js';
+import { databaseArtifacts } from '../data/schema.js';
 import { recoverInterrupted } from '../operations.js';
 import type { Phase2Store } from '../phase2Store.js';
 import type { BuilderService } from '../service.js';
@@ -117,7 +118,7 @@ export class GitHubExportService {
 
   /** The files that go to GitHub: exactly the verified export, minus the Xroga manifest. */
   filesFor(project: BuilderProject, revision: BuilderRevision): ProjectFile[] {
-    const archive = buildSourceArchive({ projectId: project.id, title: project.title, revision, starter: project.starter });
+    const archive = buildSourceArchive({ projectId: project.id, title: project.title, revision, starter: project.starter, extraFiles: databaseArtifacts(project.spec, revision.files) });
     const files = readZip(archive.buffer).filter((entry) => entry.path !== EXPORT_MANIFEST_PATH).map((entry) => ({ path: entry.path, content: entry.data.toString('utf8') }));
     if (!files.some((file) => file.path === '.gitignore') && files.some((file) => file.path === 'package.json')) {
       files.push({ path: '.gitignore', content: 'node_modules/\n.next/\ndist/\nbuild/\n.env\n.env.*\n!.env.example\n*.log\n.DS_Store\n' });
@@ -135,6 +136,9 @@ export class GitHubExportService {
     const files = this.filesFor(project, revision); // also proves the source is exportable and secret-free
     const connection = await this.connection(userId);
     if (!connection) throw new BuilderError('conflict', 'GitHub is not connected. Connect your GitHub account first.');
+    // One repository per project: later versions are pushed to it as new commits. A second repository would be silently ignored.
+    const existingBinding = await this.binding(userId, projectId);
+    if (existingBinding) throw new BuilderError('conflict', `This project already has a GitHub repository (${existingBinding.repository.owner}/${existingBinding.repository.name}). Sync the new version to it instead of creating another.`);
     // The owner must be an account the connected user can act for, as GitHub reports it, not as the client claims.
     const owners = await this.deps.github.listOwners(connection.token, connection.viewer);
     const owner = owners.find((candidate) => candidate.login.toLowerCase() === input.owner.toLowerCase());
@@ -178,7 +182,7 @@ export class GitHubExportService {
 
   /** The user's explicit approval. Must quote the digest of the plan they were shown. */
   async approve(userId: string, projectId: string, operationId: string, input: { digest: string }): Promise<ExternalOperation> {
-    const operation = await this.requireOperation(userId, projectId, operationId);
+    const operation = await this.requireGitHubOperation(userId, projectId, operationId);
     if (input.digest !== operation.planDigest || planDigest(operation.plan) !== operation.planDigest) throw new BuilderError('conflict', 'The approval does not match the plan that was prepared. Review the plan and approve it again.');
     const expires = new Date(this.now().getTime() + APPROVAL_TTL_MS).toISOString();
     const moved = await this.deps.phase2.transitionOperation(userId, projectId, operationId, ['prepared', 'failed', 'ambiguous'], 'approved', { approvedAt: this.now().toISOString(), approvalExpiresAt: expires, failure: null });
@@ -191,6 +195,7 @@ export class GitHubExportService {
   }
 
   async cancel(userId: string, projectId: string, operationId: string): Promise<ExternalOperation> {
+    await this.requireGitHubOperation(userId, projectId, operationId);
     const moved = await this.deps.phase2.transitionOperation(userId, projectId, operationId, ['prepared', 'approved', 'failed', 'ambiguous'], 'cancelled', { failure: 'Cancelled by the user.' });
     if (!moved) throw new BuilderError('conflict', 'This operation can no longer be cancelled.');
     return moved;
@@ -203,10 +208,17 @@ export class GitHubExportService {
     return operation;
   }
 
+  /** Only this service's own operations: another provider's operation is "not found" here, never approved, cancelled or executed. */
+  private async requireGitHubOperation(userId: string, projectId: string, id: string): Promise<ExternalOperation> {
+    const operation = await this.requireOperation(userId, projectId, id);
+    if (operation.provider !== 'github') throw new BuilderError('not_found', 'Operation not found.');
+    return operation;
+  }
+
   async operations(userId: string, projectId: string): Promise<ExternalOperation[]> {
     await this.deps.builder.requireProject(userId, projectId);
     await recoverInterrupted(this.deps.phase2, userId, projectId, this.now());
-    return this.deps.phase2.listOperations(userId, projectId);
+    return (await this.deps.phase2.listOperations(userId, projectId)).filter((operation) => operation.provider === 'github');
   }
 
   /** The repository this project is bound to and which revision each commit holds. */
@@ -223,7 +235,7 @@ export class GitHubExportService {
   /** Performs an approved operation. Idempotent: a finished operation returns its receipt without any provider call. */
   async execute(userId: string, projectId: string, operationId: string): Promise<ExternalOperation> {
     await recoverInterrupted(this.deps.phase2, userId, projectId, this.now());
-    const operation = await this.requireOperation(userId, projectId, operationId);
+    const operation = await this.requireGitHubOperation(userId, projectId, operationId);
     if (operation.status === 'succeeded') return operation;
     if (operation.status === 'executing') throw new BuilderError('conflict', 'This operation is already running.');
     if (operation.status !== 'approved') throw new BuilderError('conflict', `This operation is ${operation.status}. It needs your explicit approval before it can run.`);

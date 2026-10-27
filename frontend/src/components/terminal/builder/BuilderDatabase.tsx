@@ -98,7 +98,15 @@ export function BuilderDatabase({ projectId, onChanged }: { projectId: string; o
       {!targets || !state ? (
         <Loader2 className="h-3.5 w-3.5 animate-spin" aria-label="Loading database" />
       ) : !targets.connected ? (
-        <p className="text-[11px] text-[var(--muted)]">{targets.notes[0] ?? 'Supabase is not connected.'} Nothing is created in your account until you approve it.</p>
+        <>
+          <p className="text-[11px] text-[var(--muted)]">{targets.notes[0] ?? 'Supabase is not connected.'} {state.binding ? 'What was already set up is shown below; new changes need the connection.' : 'Nothing is created in your account until you approve it.'}</p>
+          {state.binding ? (
+            <div className="rounded-lg border border-[var(--card-border)] p-2 text-[11px]">
+              <p className="font-medium">Was using {state.binding.projectName}</p>
+              <p className="text-[var(--muted)]">{state.operations.some((operation) => operation.status === 'succeeded' && operation.action === 'apply_migration') ? 'The schema was applied and verified earlier.' : 'No schema has been applied.'}</p>
+            </div>
+          ) : null}
+        </>
       ) : (
         <>
           {state.binding ? (
