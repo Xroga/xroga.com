@@ -2784,6 +2784,7 @@
       ],
       "callers": [
         "backend/src/ai/capabilityRouting.test.ts:26",
+        "backend/src/existingSource/change/production.ts:34",
         "backend/src/synthesis/universalEntrypoint.ts:57"
       ],
       "reachable": true,
@@ -3111,6 +3112,8 @@
         "backend/src/ai/contextPreparation.test.ts:3",
         "backend/src/ai/pipeline.ts:237",
         "backend/src/ai/repositoryTools.ts:23",
+        "backend/src/existingSource/change/testRunner.ts:12",
+        "backend/src/existingSource/change/toolHost.ts:11",
         "backend/src/synthesis/coherentImplementation.ts:12"
       ],
       "reachable": true,
@@ -7482,6 +7485,7 @@
         "backend/src/ai/benchmarkExecutor.ts:29",
         "backend/src/ai/pipeline.ts:197",
         "backend/src/ai/securityScan.test.ts:3",
+        "backend/src/existingSource/change/delivery.ts:15",
         "backend/src/synthesis/coherentImplementation.ts:13"
       ],
       "reachable": true,
@@ -7810,7 +7814,8 @@
         "backend/src/ai/softwareAgent/SoftwareAgentService.ts:30",
         "backend/src/ai/softwareAgent/index.ts:14",
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.attempt.test.ts:10",
-        "backend/src/ai/softwareAgent/softwareAgentCheckpoint.recovery.test.ts:8"
+        "backend/src/ai/softwareAgent/softwareAgentCheckpoint.recovery.test.ts:8",
+        "backend/src/existingSource/change/production.ts:27"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -7840,7 +7845,9 @@
       ],
       "testCoverage": [
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.attempt.test.ts",
-        "backend/src/ai/softwareAgent/softwareAgentCheckpoint.recovery.test.ts"
+        "backend/src/ai/softwareAgent/softwareAgentCheckpoint.recovery.test.ts",
+        "backend/src/existingSource/change/change.test.ts",
+        "backend/src/routes/existingSourceChanges.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -8097,7 +8104,8 @@
       "callers": [
         "backend/src/ai/softwareAgent/SoftwareAgentWorkspace.checkpoint.test.ts:8",
         "backend/src/ai/softwareAgent/index.ts:16",
-        "backend/src/ai/softwareAgent/productionOperations.ts:21"
+        "backend/src/ai/softwareAgent/productionOperations.ts:21",
+        "backend/src/existingSource/change/workspace.ts:10"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -8276,7 +8284,8 @@
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.attempt.test.ts",
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.recovery.test.ts",
         "backend/src/ai/softwareAgent/softwareAgentCheckpoint.test.ts",
-        "backend/src/ai/softwareAgent/verificationContinuationPolicy.test.ts"
+        "backend/src/ai/softwareAgent/verificationContinuationPolicy.test.ts",
+        "backend/src/existingSource/change/change.test.ts"
       ],
       "state": "DEAD_OR_UNREACHABLE",
       "confidence": "LOW",
@@ -9263,7 +9272,8 @@
         "backend/src/ai/softwareAgent/ProductionSoftwareAgentToolHost.ts:7",
         "backend/src/ai/softwareAgent/index.ts:2",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:9",
-        "backend/src/ai/softwareAgent/xrogaTools.ts:20"
+        "backend/src/ai/softwareAgent/xrogaTools.ts:20",
+        "backend/src/existingSource/change/workspace.ts:11"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -9381,6 +9391,7 @@
       "callers": [
         "backend/src/ai/softwareAgent/index.ts:25",
         "backend/src/ai/softwareAgent/xrogaAgentModelTelemetry.test.ts:7",
+        "backend/src/existingSource/change/production.ts:34",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:37"
       ],
       "reachable": true,
@@ -12441,6 +12452,14 @@
       ],
       "callers": [
         "backend/src/existingSource/archive/importer.ts:8",
+        "backend/src/existingSource/change/change.test.ts:19",
+        "backend/src/existingSource/change/delivery.test.ts:8",
+        "backend/src/existingSource/change/delivery.ts:23",
+        "backend/src/existingSource/change/gitFake.testsupport.ts:11",
+        "backend/src/existingSource/change/snapshot.ts:13",
+        "backend/src/existingSource/change/workspace.ts:13",
+        "backend/src/existingSource/fakeGitHub.testsupport.ts:7",
+        "backend/src/existingSource/intelligence/service.test.ts:13",
         "backend/src/existingSource/service.ts:15"
       ],
       "reachable": true,
@@ -12455,7 +12474,11 @@
       ],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/existingSource/change/change.test.ts",
+        "backend/src/existingSource/change/delivery.test.ts",
+        "backend/src/existingSource/intelligence/service.test.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -12499,7 +12522,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/routes/existingSource.ts:21",
+        "backend/src/routes/existingSource.ts:28",
         "backend/src/routes/existingSourceArchive.test.ts:7"
       ],
       "reachable": true,
@@ -12714,7 +12737,10 @@
       ],
       "callers": [
         "backend/src/existingSource/archive/importer.ts:9",
-        "backend/src/existingSource/archive/zipReader.test.ts:6"
+        "backend/src/existingSource/archive/zipReader.test.ts:6",
+        "backend/src/existingSource/archive/zipWriter.ts:3",
+        "backend/src/existingSource/change/delivery.test.ts:9",
+        "backend/src/routes/existingSourceChanges.test.ts:13"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -12727,7 +12753,1012 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/existingSource/archive/zipReader.test.ts"
+        "backend/src/existingSource/archive/zipReader.test.ts",
+        "backend/src/existingSource/change/delivery.test.ts",
+        "backend/src/routes/existingSourceChanges.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:b4f2f4868fed25fe100b",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/archive/zipWriter.ts",
+      "sha256": "43137374d904a31719b385f7facc0cb97cf4138dc229cac764e447323e0f694a",
+      "symbols": [
+        "DOS_DATE",
+        "body",
+        "c",
+        "cd",
+        "cen",
+        "central",
+        "crc",
+        "crc32",
+        "crcTable",
+        "deflated",
+        "eocd",
+        "f",
+        "k",
+        "local",
+        "method",
+        "n",
+        "name",
+        "offset",
+        "parts",
+        "path",
+        "raw",
+        "t",
+        "useDeflate",
+        "writeZip",
+        "x"
+      ],
+      "imports": [
+        "./zipReader.js",
+        "node:zlib"
+      ],
+      "runtimeImports": [
+        "backend/src/existingSource/archive/zipReader.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/existingSource/change/delivery.ts:20"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:zlib"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:aed2206854e9c8ec1c96",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/change/delivery.ts",
+      "sha256": "5a12cbcae82f6910da9a22fe0574088f00714ba319cb2c51352e1dd264d40d99",
+      "symbols": [
+        "ChangeDelivery",
+        "DeliveryApi",
+        "DeliveryConflict",
+        "DeliveryDeps",
+        "DeliveryOutcome",
+        "adopted",
+        "adoptedPr",
+        "adoptedWarning",
+        "api",
+        "b",
+        "base",
+        "binding",
+        "branch",
+        "conflicts",
+        "deleted",
+        "diff",
+        "digest",
+        "error",
+        "existing",
+        "files",
+        "h",
+        "have",
+        "head",
+        "header",
+        "kind",
+        "last",
+        "lines",
+        "matches",
+        "mutationsOf",
+        "out",
+        "r",
+        "rebased",
+        "receipt",
+        "record",
+        "ref",
+        "remote",
+        "reviewBranchName",
+        "revision",
+        "saved",
+        "scan",
+        "sha8",
+        "task",
+        "tested",
+        "tree",
+        "verified"
+      ],
+      "imports": [
+        "../../ai/securityScan.js",
+        "../../services/integrations/githubAtomicWrite.js",
+        "../../services/integrations/githubBranchAuthorization.js",
+        "../../services/integrations/githubMutationPlan.js",
+        "../../services/integrations/githubTreeSnapshot.js",
+        "../archive/archivePort.js",
+        "../archive/zipWriter.js",
+        "../service.js",
+        "../types.js",
+        "./store.js",
+        "./types.js",
+        "./unifiedDiff.js"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/securityScan.ts",
+        "backend/src/existingSource/archive/archivePort.ts",
+        "backend/src/existingSource/archive/zipWriter.ts",
+        "backend/src/existingSource/change/unifiedDiff.ts",
+        "backend/src/existingSource/types.ts",
+        "backend/src/services/integrations/githubAtomicWrite.ts",
+        "backend/src/services/integrations/githubTreeSnapshot.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/existingSource/change/delivery.test.ts:14",
+        "backend/src/routes/existingSource.ts:23",
+        "backend/src/routes/existingSourceChanges.test.ts:7"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "backend/src/existingSource/change/delivery.ts#digest"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/existingSource/change/delivery.ts#DeliveryReceipt",
+        "backend/src/existingSource/change/delivery.ts#receipt",
+        "backend/src/existingSource/change/delivery.ts#verified"
+      ],
+      "testCoverage": [
+        "backend/src/existingSource/change/delivery.test.ts",
+        "backend/src/routes/existingSourceChanges.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:cc107b1fed84a3dde4c8",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/change/gitFake.testsupport.ts",
+      "sha256": "4a11a19d3c21bfaada4eb261d3914c238b04802ef0601d706f46194226991d53",
+      "symbols": [
+        "Commit",
+        "GitFake",
+        "current",
+        "e",
+        "head",
+        "number",
+        "sha",
+        "sha1",
+        "t",
+        "tree"
+      ],
+      "imports": [
+        "../../services/integrations/githubAtomicWrite.js",
+        "../../services/integrations/githubBranchAuthorization.js",
+        "../../services/integrations/githubMutationPlan.js",
+        "../../services/integrations/githubTreeSnapshot.js",
+        "../archive/archivePort.js",
+        "node:crypto"
+      ],
+      "runtimeImports": [
+        "backend/src/existingSource/archive/archivePort.ts"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/existingSource/change/delivery.test.ts:15",
+        "backend/src/routes/existingSourceChanges.test.ts:8"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/existingSource/change/delivery.test.ts",
+        "backend/src/routes/existingSourceChanges.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:08ba5f7fe8d2030a195b",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/change/localProcessPort.testsupport.ts",
+      "sha256": "51c33ff14a0dcacc298d28ac1aec2d247a846d8fe853b85a1ed1241dea3a500c",
+      "symbols": [
+        "LocalProcessPort",
+        "Spawned",
+        "child",
+        "dir",
+        "f",
+        "full",
+        "last",
+        "onAbort",
+        "r",
+        "records",
+        "run",
+        "s",
+        "stages",
+        "started",
+        "stderr",
+        "stdout",
+        "timedOut",
+        "timer"
+      ],
+      "imports": [
+        "../../sandbox/sandboxTypes.js",
+        "./testRunner.js",
+        "node:child_process",
+        "node:fs/promises",
+        "node:os",
+        "node:path"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/existingSource/change/change.test.ts:11",
+        "backend/src/routes/existingSourceChanges.test.ts:9"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:child_process",
+        "node:fs/promises",
+        "node:os",
+        "node:path"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/existingSource/change/change.test.ts",
+        "backend/src/routes/existingSourceChanges.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:34b837f047f14dbaf678",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/change/production.ts",
+      "sha256": "96c35bb34fa670b654ac827a176cc7b9c6b7fd6f67b6786602ceff45b99ca416",
+      "symbols": [
+        "githubDeliveryApi",
+        "productionAgentRunner",
+        "productionExecutionPort",
+        "route",
+        "selectCodingModelRoute",
+        "token"
+      ],
+      "imports": [
+        "../../ai/capabilityRouter.js",
+        "../../ai/softwareAgent/AgentSoftwareExecutor.js",
+        "../../ai/softwareAgent/xrogaAgentModel.js",
+        "../../sandbox/sandboxRuntime.js",
+        "../../services/integrations/githubAtomicTransport.js",
+        "../../services/integrations/githubAuth.js",
+        "../../services/integrations/githubDeploy.js",
+        "../../synthesis/projectRuntime/googleFactory.js",
+        "../../synthesis/universalEntrypoint.js",
+        "../types.js",
+        "./delivery.js",
+        "./service.js",
+        "./testRunner.js"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/capabilityRouter.ts",
+        "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts",
+        "backend/src/ai/softwareAgent/xrogaAgentModel.ts",
+        "backend/src/existingSource/types.ts",
+        "backend/src/sandbox/sandboxRuntime.ts",
+        "backend/src/services/integrations/githubAtomicTransport.ts",
+        "backend/src/services/integrations/githubAuth.ts",
+        "backend/src/services/integrations/githubDeploy.ts",
+        "backend/src/synthesis/projectRuntime/googleFactory.ts",
+        "backend/src/synthesis/universalEntrypoint.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/routes/existingSource.ts:24"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:2070bbfff315c07e9311",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/change/service.ts",
+      "sha256": "8197e5826daf5737f4a0d7accbb4d7727238f1276d94d15882ae5f78483597f0",
+      "symbols": [
+        "AgentRunner",
+        "AgentRunnerResult",
+        "BUG_WORDS",
+        "CancelledError",
+        "ChangeDeps",
+        "ChangeService",
+        "DENIED_PATHS",
+        "agentResult",
+        "at",
+        "attempt",
+        "baseWithTests",
+        "binding",
+        "bug",
+        "bytes",
+        "c",
+        "changedPaths",
+        "changes",
+        "consumers",
+        "content",
+        "contract",
+        "controller",
+        "criteria",
+        "dirOf",
+        "dirs",
+        "error",
+        "events",
+        "evidence",
+        "failing",
+        "fileOf",
+        "files",
+        "host",
+        "incomplete",
+        "last",
+        "limit",
+        "limits",
+        "list",
+        "located",
+        "map",
+        "mapStatus",
+        "message",
+        "narrow",
+        "next",
+        "note",
+        "out",
+        "outcome",
+        "p",
+        "r",
+        "reproduction",
+        "result",
+        "revision",
+        "rows",
+        "running",
+        "runningByOwner",
+        "save",
+        "scope",
+        "set",
+        "sink",
+        "snapshot",
+        "targets",
+        "task",
+        "tests",
+        "text",
+        "verified",
+        "workspace"
+      ],
+      "imports": [
+        "../../ai/softwareAgent/AgentSoftwareExecutor.js",
+        "../../ai/softwareAgent/contracts.js",
+        "../../ai/softwareAgent/runEvents.js",
+        "../intelligence/languageAdapters.js",
+        "../intelligence/service.js",
+        "../service.js",
+        "../types.js",
+        "./snapshot.js",
+        "./store.js",
+        "./testRunner.js",
+        "./toolHost.js",
+        "./types.js",
+        "./workspace.js",
+        "node:crypto"
+      ],
+      "runtimeImports": [
+        "backend/src/existingSource/change/snapshot.ts",
+        "backend/src/existingSource/change/testRunner.ts",
+        "backend/src/existingSource/change/toolHost.ts",
+        "backend/src/existingSource/change/types.ts",
+        "backend/src/existingSource/change/workspace.ts",
+        "backend/src/existingSource/intelligence/languageAdapters.ts",
+        "backend/src/existingSource/types.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/existingSource/change/change.test.ts:12",
+        "backend/src/routes/existingSource.ts:25",
+        "backend/src/routes/existingSourceChanges.test.ts:10"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/existingSource/change/service.ts#MAX_EVENTS",
+        "backend/src/existingSource/change/service.ts#SoftwareRunEvent",
+        "backend/src/existingSource/change/service.ts#SoftwareRunEventSink",
+        "backend/src/existingSource/change/service.ts#events",
+        "backend/src/existingSource/change/service.ts#evidence",
+        "backend/src/existingSource/change/service.ts#verified"
+      ],
+      "testCoverage": [
+        "backend/src/existingSource/change/change.test.ts",
+        "backend/src/routes/existingSourceChanges.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:7d8c3b265569a7271656",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/change/snapshot.ts",
+      "sha256": "f3a29b15d2637773d5ba43094b32f8a71c5aa88de071eb30804d580aba4899b1",
+      "symbols": [
+        "BlobCache",
+        "DEFAULT_SNAPSHOT_LIMITS",
+        "SnapshotLimits",
+        "bytes",
+        "cursor",
+        "e",
+        "f",
+        "fetched",
+        "files",
+        "i",
+        "incompleteReason",
+        "item",
+        "loadBaseSnapshot",
+        "omitted",
+        "open",
+        "overBudget",
+        "path",
+        "reason",
+        "sharedBlobs",
+        "text",
+        "v",
+        "verified",
+        "wanted",
+        "worker"
+      ],
+      "imports": [
+        "../archive/archivePort.js",
+        "../intelligence/exclusions.js",
+        "../sensitivePaths.js",
+        "../service.js",
+        "./workspace.js"
+      ],
+      "runtimeImports": [
+        "backend/src/existingSource/archive/archivePort.ts",
+        "backend/src/existingSource/intelligence/exclusions.ts",
+        "backend/src/existingSource/sensitivePaths.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/existingSource/change/service.ts:22"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [
+        "backend/src/existingSource/change/snapshot.ts#overBudget"
+      ],
+      "evidenceBoundary": [
+        "backend/src/existingSource/change/snapshot.ts#verified"
+      ],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:b731adfeaa2382df46ef",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/change/store.ts",
+      "sha256": "bdb44b349ed268d756a85c2b702cc21ba19106adbdfeef53f010ff8f3bde015e",
+      "symbols": [
+        "COLUMNS",
+        "ChangeStore",
+        "InMemoryChangeStore",
+        "Payload",
+        "Row",
+        "SupabaseChangeStore",
+        "UUID",
+        "body",
+        "existing",
+        "failed",
+        "owner",
+        "r",
+        "toTask"
+      ],
+      "imports": [
+        "../../security/serviceRoleGuard.js",
+        "../../security/tenantContext.js",
+        "../types.js",
+        "./types.js"
+      ],
+      "runtimeImports": [
+        "backend/src/existingSource/types.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/existingSource/change/change.test.ts:13",
+        "backend/src/existingSource/change/delivery.test.ts:16",
+        "backend/src/routes/existingSource.ts:26",
+        "backend/src/routes/existingSourceChanges.test.ts:11"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "existing_source_changes"
+      ],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/existingSource/change/change.test.ts",
+        "backend/src/existingSource/change/delivery.test.ts",
+        "backend/src/routes/existingSourceChanges.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:c16291d87a091474ff12",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/change/testRunner.ts",
+      "sha256": "33947e12f277141d413bca7e1985744e1f464e8bf12bf724745bf8305244722d",
+      "symbols": [
+        "ChangeRuntime",
+        "ExecutionPort",
+        "MAX_EVIDENCE",
+        "RunTestsInput",
+        "SAFE_ENV",
+        "StageOutcome",
+        "TestPlan",
+        "TestRunResult",
+        "TestRunStatus",
+        "TestStage",
+        "byId",
+        "clip",
+        "dir",
+        "durationMs",
+        "error",
+        "evidence",
+        "failed",
+        "files",
+        "goStages",
+        "has",
+        "hasDeps",
+        "inDir",
+        "key",
+        "kind",
+        "locked",
+        "manifestRoot",
+        "n",
+        "nearestRoot",
+        "nodeStages",
+        "outputOf",
+        "path",
+        "pkg",
+        "plan",
+        "planTests",
+        "planned",
+        "pythonStages",
+        "r",
+        "ranTests",
+        "req",
+        "result",
+        "root",
+        "roots",
+        "runTests",
+        "runtime",
+        "s",
+        "stages",
+        "started",
+        "test",
+        "text",
+        "total",
+        "unsupported",
+        "usesPytest"
+      ],
+      "imports": [
+        "../../ai/contextPreparation.js",
+        "../../sandbox/sandboxTypes.js",
+        "../types.js"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/contextPreparation.ts",
+        "backend/src/existingSource/types.ts",
+        "backend/src/sandbox/sandboxTypes.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/existingSource/change/service.ts:24",
+        "backend/src/existingSource/change/testRunner.test.ts:6",
+        "backend/src/existingSource/change/toolHost.ts:14"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/existingSource/change/testRunner.ts#MAX_EVIDENCE",
+        "backend/src/existingSource/change/testRunner.ts#evidence"
+      ],
+      "testCoverage": [
+        "backend/src/existingSource/change/change.test.ts",
+        "backend/src/existingSource/change/testRunner.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:fef4ab59435c864f5975",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/change/toolHost.ts",
+      "sha256": "0d84159a7c3cf11ef18b83378e8908d400a056a9922c9598761aa3b54d3ff48d",
+      "symbols": [
+        "ExistingSourceToolHost",
+        "HostOptions",
+        "SAFE_ARG",
+        "SCRIPT",
+        "SHELL_SYNTAX",
+        "changed",
+        "checkCommand",
+        "checked",
+        "checks",
+        "error",
+        "file",
+        "first",
+        "out",
+        "r",
+        "result",
+        "set",
+        "started",
+        "text",
+        "unavailable"
+      ],
+      "imports": [
+        "../../ai/contextPreparation.js",
+        "../../ai/softwareAgent/contracts.js",
+        "../../ai/softwareAgent/toolHost.js",
+        "../sensitivePaths.js",
+        "../types.js",
+        "./testRunner.js",
+        "./workspace.js"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/contextPreparation.ts",
+        "backend/src/existingSource/change/testRunner.ts",
+        "backend/src/existingSource/change/workspace.ts",
+        "backend/src/existingSource/sensitivePaths.ts",
+        "backend/src/existingSource/types.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/existingSource/change/change.test.ts:15",
+        "backend/src/existingSource/change/service.ts:25"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/existingSource/change/toolHost.ts#SoftwarePreviewEvidence"
+      ],
+      "testCoverage": [
+        "backend/src/existingSource/change/change.test.ts",
+        "backend/src/routes/existingSourceChanges.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:ca4dcefda54f6049e3d0",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/change/types.ts",
+      "sha256": "0fb9b5f9bea487961bbfaf07bb6ce66d77069e637f1c863e0b84d4c41bbafbf7",
+      "symbols": [
+        "ChangeEvent",
+        "ChangeRevision",
+        "ChangeScope",
+        "ChangeStatus",
+        "ChangeTask",
+        "DeliveryReceipt",
+        "MAX_EVENTS",
+        "MAX_RESULT_BYTES",
+        "MAX_REVISIONS",
+        "MAX_STORED_DIFF",
+        "ResultFile",
+        "TERMINAL",
+        "TestEvidence"
+      ],
+      "imports": [
+        "./workspace.js"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/existingSource/change/service.ts:26"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "backend/src/existingSource/change/types.ts#ChangeEvent",
+        "backend/src/existingSource/change/types.ts#DeliveryReceipt",
+        "backend/src/existingSource/change/types.ts#MAX_EVENTS",
+        "backend/src/existingSource/change/types.ts#TestEvidence"
+      ],
+      "testCoverage": [
+        "backend/src/existingSource/change/delivery.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:118bf0b7b50e33d211f5",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/change/unifiedDiff.ts",
+      "sha256": "2738906aafd959b20513ec104aa18e70b236bc78e5f9d4af554c592b56cd3511",
+      "symbols": [
+        "DiffStats",
+        "EditError",
+        "EditFailure",
+        "Op",
+        "a",
+        "applySearchReplace",
+        "b",
+        "changed",
+        "crlf",
+        "diffLines",
+        "diffStats",
+        "endA",
+        "endB",
+        "endsWithNewline",
+        "first",
+        "header",
+        "hi",
+        "hunks",
+        "i",
+        "idx",
+        "j",
+        "k",
+        "last",
+        "line",
+        "lines",
+        "lo",
+        "m",
+        "midA",
+        "midB",
+        "n",
+        "needle",
+        "newCount",
+        "newStart",
+        "next",
+        "norm",
+        "o",
+        "oldCount",
+        "oldStart",
+        "ops",
+        "out",
+        "slice",
+        "splitLines",
+        "start",
+        "table",
+        "unifiedDiff"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/existingSource/change/change.test.ts:17",
+        "backend/src/existingSource/change/delivery.test.ts:18",
+        "backend/src/existingSource/change/delivery.ts:26",
+        "backend/src/existingSource/change/workspace.ts:16"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/existingSource/change/change.test.ts",
+        "backend/src/existingSource/change/delivery.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:ff8c1e257350a37cd5e3",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/change/workspace.ts",
+      "sha256": "640e2c4ace6f3ff76a63b1a338a5d3ce54f115bc4b2f6a2b14031c4128179ff0",
+      "symbols": [
+        "BaseFile",
+        "BaseSnapshot",
+        "ChangePolicy",
+        "ChangeSet",
+        "ChangeWorkspace",
+        "ChangedFile",
+        "DEFAULT_MAX_CHANGED_BYTES",
+        "DEFAULT_MAX_CHANGED_FILES",
+        "WorkspaceRefusal",
+        "additions",
+        "after",
+        "all",
+        "baseFiles",
+        "before",
+        "bytes",
+        "c",
+        "decision",
+        "deletions",
+        "diffs",
+        "digest",
+        "f",
+        "files",
+        "lineCount",
+        "out",
+        "paths",
+        "read",
+        "s",
+        "sha256",
+        "size",
+        "stats",
+        "warnings"
+      ],
+      "imports": [
+        "../../ai/softwareAgent/SoftwareAgentWorkspace.js",
+        "../../ai/softwareAgent/contracts.js",
+        "../../ai/softwareAgent/writePolicy.js",
+        "../archive/archivePort.js",
+        "../sensitivePaths.js",
+        "../types.js",
+        "./unifiedDiff.js",
+        "node:crypto"
+      ],
+      "runtimeImports": [
+        "backend/src/ai/softwareAgent/SoftwareAgentWorkspace.ts",
+        "backend/src/ai/softwareAgent/writePolicy.ts",
+        "backend/src/existingSource/archive/archivePort.ts",
+        "backend/src/existingSource/change/unifiedDiff.ts",
+        "backend/src/existingSource/sensitivePaths.ts",
+        "backend/src/existingSource/types.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/existingSource/change/change.test.ts:18",
+        "backend/src/existingSource/change/service.ts:27",
+        "backend/src/existingSource/change/toolHost.ts:16"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "backend/src/existingSource/change/workspace.ts#digest"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/existingSource/change/change.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -12740,7 +13771,7 @@
       "id": "surface:2b430d59a7c953abd66f",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/fakeGitHub.testsupport.ts",
-      "sha256": "403a6a7be03d65efb286621fea14d8e58c93ece563433848664f3011b10e23e5",
+      "sha256": "5bd5de69d61f80f22e0266032bfa3590c4ecda85a8c6eaafd2d524da008ab5ef",
       "symbols": [
         "FakeFile",
         "FakeGitHub",
@@ -12781,20 +13812,25 @@
         "walk"
       ],
       "imports": [
+        "./archive/archivePort.js",
         "./provider.js",
         "./types.js",
         "node:crypto"
       ],
       "runtimeImports": [
+        "backend/src/existingSource/archive/archivePort.ts",
         "backend/src/existingSource/types.ts"
       ],
       "entryPoints": [],
       "callers": [
+        "backend/src/existingSource/change/change.test.ts:5",
+        "backend/src/existingSource/change/delivery.test.ts:10",
         "backend/src/existingSource/intelligence/polyglot.test.ts:4",
         "backend/src/existingSource/intelligence/service.test.ts:5",
         "backend/src/existingSource/service.test.ts:4",
         "backend/src/routes/existingSource.test.ts:6",
         "backend/src/routes/existingSourceArchive.test.ts:8",
+        "backend/src/routes/existingSourceChanges.test.ts:14",
         "backend/src/routes/existingSourceIntelligence.test.ts:6"
       ],
       "reachable": false,
@@ -12808,11 +13844,14 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/existingSource/change/change.test.ts",
+        "backend/src/existingSource/change/delivery.test.ts",
         "backend/src/existingSource/intelligence/polyglot.test.ts",
         "backend/src/existingSource/intelligence/service.test.ts",
         "backend/src/existingSource/service.test.ts",
         "backend/src/routes/existingSource.test.ts",
         "backend/src/routes/existingSourceArchive.test.ts",
+        "backend/src/routes/existingSourceChanges.test.ts",
         "backend/src/routes/existingSourceIntelligence.test.ts"
       ],
       "state": "DEAD_OR_UNREACHABLE",
@@ -12976,10 +14015,12 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/change/change.test.ts:6",
         "backend/src/existingSource/intelligence/polyglot.test.ts:7",
         "backend/src/existingSource/intelligence/service.test.ts:9",
-        "backend/src/routes/existingSource.ts:22",
+        "backend/src/routes/existingSource.ts:29",
         "backend/src/routes/existingSourceArchive.test.ts:9",
+        "backend/src/routes/existingSourceChanges.test.ts:15",
         "backend/src/routes/existingSourceIntelligence.test.ts:7"
       ],
       "reachable": true,
@@ -12993,9 +14034,11 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/intelligence/polyglot.test.ts",
         "backend/src/existingSource/intelligence/service.test.ts",
         "backend/src/routes/existingSourceArchive.test.ts",
+        "backend/src/routes/existingSourceChanges.test.ts",
         "backend/src/routes/existingSourceIntelligence.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -13038,6 +14081,7 @@
       ],
       "callers": [
         "backend/src/existingSource/archive/importer.ts:5",
+        "backend/src/existingSource/change/snapshot.ts:9",
         "backend/src/existingSource/intelligence/codeIndex.ts:12"
       ],
       "reachable": true,
@@ -13307,6 +14351,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/change/service.ts:18",
         "backend/src/existingSource/intelligence/codeIndex.ts:13",
         "backend/src/existingSource/intelligence/exclusions.ts:6",
         "backend/src/existingSource/intelligence/languageAdapters.test.ts:4"
@@ -13591,10 +14636,12 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/change/change.test.ts:7",
         "backend/src/existingSource/intelligence/polyglot.test.ts:8",
         "backend/src/existingSource/intelligence/service.test.ts:10",
-        "backend/src/routes/existingSource.ts:23",
+        "backend/src/routes/existingSource.ts:30",
         "backend/src/routes/existingSourceArchive.test.ts:10",
+        "backend/src/routes/existingSourceChanges.test.ts:16",
         "backend/src/routes/existingSourceIntelligence.test.ts:9"
       ],
       "reachable": true,
@@ -13608,9 +14655,11 @@
         "backend/src/existingSource/intelligence/service.ts#verified"
       ],
       "testCoverage": [
+        "backend/src/existingSource/change/change.test.ts",
         "backend/src/existingSource/intelligence/polyglot.test.ts",
         "backend/src/existingSource/intelligence/service.test.ts",
         "backend/src/routes/existingSourceArchive.test.ts",
+        "backend/src/routes/existingSourceChanges.test.ts",
         "backend/src/routes/existingSourceIntelligence.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -13719,7 +14768,7 @@
       "callers": [
         "backend/src/existingSource/provider.test.ts:4",
         "backend/src/existingSource/service.ts:18",
-        "backend/src/routes/existingSource.ts:25"
+        "backend/src/routes/existingSource.ts:32"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -13761,6 +14810,9 @@
       ],
       "callers": [
         "backend/src/existingSource/archive/importer.ts:6",
+        "backend/src/existingSource/change/snapshot.ts:10",
+        "backend/src/existingSource/change/toolHost.ts:12",
+        "backend/src/existingSource/change/workspace.ts:14",
         "backend/src/existingSource/intelligence/exclusions.ts:5",
         "backend/src/existingSource/provider.test.ts:5",
         "backend/src/existingSource/service.ts:19"
@@ -13874,12 +14926,15 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/change/change.test.ts:8",
+        "backend/src/existingSource/change/delivery.test.ts:11",
         "backend/src/existingSource/intelligence/polyglot.test.ts:5",
         "backend/src/existingSource/intelligence/service.test.ts:6",
         "backend/src/existingSource/service.test.ts:5",
         "backend/src/routes/existingSource.test.ts:7",
-        "backend/src/routes/existingSource.ts:24",
+        "backend/src/routes/existingSource.ts:31",
         "backend/src/routes/existingSourceArchive.test.ts:11",
+        "backend/src/routes/existingSourceChanges.test.ts:17",
         "backend/src/routes/existingSourceIntelligence.test.ts:10"
       ],
       "reachable": true,
@@ -13896,11 +14951,14 @@
         "backend/src/existingSource/service.ts#verified"
       ],
       "testCoverage": [
+        "backend/src/existingSource/change/change.test.ts",
+        "backend/src/existingSource/change/delivery.test.ts",
         "backend/src/existingSource/intelligence/polyglot.test.ts",
         "backend/src/existingSource/intelligence/service.test.ts",
         "backend/src/existingSource/service.test.ts",
         "backend/src/routes/existingSource.test.ts",
         "backend/src/routes/existingSourceArchive.test.ts",
+        "backend/src/routes/existingSourceChanges.test.ts",
         "backend/src/routes/existingSourceIntelligence.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -13954,12 +15012,15 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/change/change.test.ts:9",
+        "backend/src/existingSource/change/delivery.test.ts:12",
         "backend/src/existingSource/intelligence/polyglot.test.ts:6",
         "backend/src/existingSource/intelligence/service.test.ts:7",
         "backend/src/existingSource/service.test.ts:6",
         "backend/src/routes/existingSource.test.ts:8",
-        "backend/src/routes/existingSource.ts:26",
+        "backend/src/routes/existingSource.ts:33",
         "backend/src/routes/existingSourceArchive.test.ts:12",
+        "backend/src/routes/existingSourceChanges.test.ts:18",
         "backend/src/routes/existingSourceIntelligence.test.ts:11"
       ],
       "reachable": true,
@@ -13979,11 +15040,14 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/existingSource/change/change.test.ts",
+        "backend/src/existingSource/change/delivery.test.ts",
         "backend/src/existingSource/intelligence/polyglot.test.ts",
         "backend/src/existingSource/intelligence/service.test.ts",
         "backend/src/existingSource/service.test.ts",
         "backend/src/routes/existingSource.test.ts",
         "backend/src/routes/existingSourceArchive.test.ts",
+        "backend/src/routes/existingSourceChanges.test.ts",
         "backend/src/routes/existingSourceIntelligence.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -14048,7 +15112,7 @@
       "id": "surface:c235026a5fc7ef494506",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/types.ts",
-      "sha256": "47be50fb97230abbd2deccab0ee88de6f1be45e73bb019679e8b25f9f1b01709",
+      "sha256": "9c53407f58f14103bf06d112f42902e057b94491e019a27432e07d6a03eb66ea",
       "symbols": [
         "BindingState",
         "ExistingSourceError",
@@ -14071,7 +15135,16 @@
         "backend/src/existingSource/archive/importer.ts:7",
         "backend/src/existingSource/archive/zipReader.test.ts:4",
         "backend/src/existingSource/archive/zipReader.ts:11",
-        "backend/src/existingSource/fakeGitHub.testsupport.ts:7",
+        "backend/src/existingSource/change/change.test.ts:10",
+        "backend/src/existingSource/change/delivery.test.ts:13",
+        "backend/src/existingSource/change/delivery.ts:22",
+        "backend/src/existingSource/change/production.ts:7",
+        "backend/src/existingSource/change/service.ts:21",
+        "backend/src/existingSource/change/store.ts:4",
+        "backend/src/existingSource/change/testRunner.ts:14",
+        "backend/src/existingSource/change/toolHost.ts:13",
+        "backend/src/existingSource/change/workspace.ts:15",
+        "backend/src/existingSource/fakeGitHub.testsupport.ts:8",
         "backend/src/existingSource/intelligence/codeIndexStore.ts:8",
         "backend/src/existingSource/intelligence/service.test.ts:8",
         "backend/src/existingSource/intelligence/service.ts:14",
@@ -14080,7 +15153,7 @@
         "backend/src/existingSource/service.test.ts:7",
         "backend/src/existingSource/service.ts:22",
         "backend/src/existingSource/store.ts:9",
-        "backend/src/routes/existingSource.ts:27"
+        "backend/src/routes/existingSource.ts:34"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -14096,6 +15169,8 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/existingSource/archive/zipReader.test.ts",
+        "backend/src/existingSource/change/change.test.ts",
+        "backend/src/existingSource/change/delivery.test.ts",
         "backend/src/existingSource/intelligence/service.test.ts",
         "backend/src/existingSource/provider.test.ts",
         "backend/src/existingSource/service.test.ts"
@@ -20797,25 +21872,33 @@
       "id": "surface:9de73948fcfe2a99b724",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "sha256": "1b127c3f0c83daad624b3af701c990b65b76e7a49f4f0be423bde24ee8d00f02",
+      "sha256": "b25ea8c3ce0f8b42efc822d2cdcf9540082bdc50b7bfdcb878d9637edc0680c4",
       "symbols": [
         "ARCHIVE_UPLOAD_LIMIT",
+        "ExistingSourceChanges",
+        "ExistingSourceChangesFactory",
         "ExistingSourceIntelligenceFactory",
         "ExistingSourceServiceFactory",
         "archiveQuery",
         "archives",
         "b",
         "body",
+        "changeBody",
+        "changeId",
+        "changeStore",
         "codeIndexes",
         "context",
         "createExistingSourceRouter",
         "db",
+        "defaultExistingSourceChanges",
         "defaultExistingSourceIntelligence",
         "defaultExistingSourceService",
+        "deliverBody",
         "directory",
         "e",
         "existing",
         "existingSourceEnabled",
+        "exportQuery",
         "fail",
         "file",
         "handle",
@@ -20824,19 +21907,31 @@
         "link",
         "locateBody",
         "neighborhoodQuery",
+        "outcome",
+        "p",
         "page",
         "project",
         "projectFor",
+        "publicChange",
         "q",
         "result",
         "router",
         "saved",
         "searchQuery",
+        "store",
+        "task",
         "tenant",
-        "withIntelligence"
+        "withChanges",
+        "withIntelligence",
+        "z"
       ],
       "imports": [
         "../existingSource/archive/archiveStore.js",
+        "../existingSource/change/delivery.js",
+        "../existingSource/change/production.js",
+        "../existingSource/change/service.js",
+        "../existingSource/change/store.js",
+        "../existingSource/change/types.js",
         "../existingSource/intelligence/codeIndexStore.js",
         "../existingSource/intelligence/service.js",
         "../existingSource/provider.js",
@@ -20853,6 +21948,10 @@
       ],
       "runtimeImports": [
         "backend/src/existingSource/archive/archiveStore.ts",
+        "backend/src/existingSource/change/delivery.ts",
+        "backend/src/existingSource/change/production.ts",
+        "backend/src/existingSource/change/service.ts",
+        "backend/src/existingSource/change/store.ts",
         "backend/src/existingSource/intelligence/codeIndexStore.ts",
         "backend/src/existingSource/intelligence/service.ts",
         "backend/src/existingSource/provider.ts",
@@ -20871,6 +21970,7 @@
         "backend/src/index.ts:23",
         "backend/src/routes/existingSource.test.ts:10",
         "backend/src/routes/existingSourceArchive.test.ts:14",
+        "backend/src/routes/existingSourceChanges.test.ts:20",
         "backend/src/routes/existingSourceIntelligence.test.ts:13",
         "backend/src/routes/github.ts:7"
       ],
@@ -20886,7 +21986,7 @@
         "backend/src/routes/existingSource.ts#AuthRequest"
       ],
       "tenantBoundary": [
-        "backend/src/routes/existingSource.ts:40 (user_id)"
+        "backend/src/routes/existingSource.ts:47 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -20894,6 +21994,7 @@
       "testCoverage": [
         "backend/src/routes/existingSource.test.ts",
         "backend/src/routes/existingSourceArchive.test.ts",
+        "backend/src/routes/existingSourceChanges.test.ts",
         "backend/src/routes/existingSourceIntelligence.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -23987,6 +25088,7 @@
         "backend/src/ai/compileValidate.ts:21",
         "backend/src/ai/p0Regressions.test.ts:32",
         "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts:20",
+        "backend/src/existingSource/change/production.ts:21",
         "backend/src/index.ts:69",
         "backend/src/sandbox/googleSelection.test.ts:4",
         "backend/src/sandbox/sandboxIsolation.test.ts:5",
@@ -24049,6 +25151,8 @@
         "backend/src/ai/p0Regressions.test.ts:33",
         "backend/src/ai/softwareAgent/sandboxAdmission.test.ts:7",
         "backend/src/ai/softwareAgent/xrogaTools.ts:4",
+        "backend/src/existingSource/change/testRunner.test.ts:5",
+        "backend/src/existingSource/change/testRunner.ts:13",
         "backend/src/sandbox/flyMachineSandbox.test.ts:56",
         "backend/src/sandbox/flyMachineSandbox.ts:88",
         "backend/src/sandbox/google/executionBinding.test.ts:9",
@@ -24080,6 +25184,7 @@
         "backend/src/ai/executionRuntime.sandboxAdmission.test.ts",
         "backend/src/ai/p0Regressions.test.ts",
         "backend/src/ai/softwareAgent/sandboxAdmission.test.ts",
+        "backend/src/existingSource/change/testRunner.test.ts",
         "backend/src/sandbox/flyMachineSandbox.test.ts",
         "backend/src/sandbox/google/executionBinding.test.ts",
         "backend/src/sandbox/google/googleSandbox.test.ts",
@@ -24884,13 +25989,14 @@
         "backend/src/ai/runReconciler.ts:1",
         "backend/src/ai/usageAccounting.ts:1",
         "backend/src/existingSource/archive/archiveStore.ts:5",
+        "backend/src/existingSource/change/store.ts:2",
         "backend/src/existingSource/intelligence/codeIndexStore.ts:6",
         "backend/src/existingSource/store.ts:6",
         "backend/src/index.ts:68",
         "backend/src/middleware/admin.ts:2",
         "backend/src/routes/admin.ts:2",
         "backend/src/routes/billingWebhook.ts:4",
-        "backend/src/routes/existingSource.ts:29",
+        "backend/src/routes/existingSource.ts:36",
         "backend/src/routes/messageShares.ts:4",
         "backend/src/routes/notifications.ts:2",
         "backend/src/routes/operations.ts:4",
@@ -24985,6 +26091,7 @@
         "backend/src/ai/usageAccounting.test.ts:4",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:10",
         "backend/src/existingSource/archive/archiveStore.ts:6",
+        "backend/src/existingSource/change/store.ts:3",
         "backend/src/existingSource/intelligence/codeIndexStore.ts:7",
         "backend/src/existingSource/store.ts:7",
         "backend/src/middleware/admin.test.ts:7",
@@ -24997,8 +26104,9 @@
         "backend/src/routes/browserRuns.ts:16",
         "backend/src/routes/drive.test.ts:2",
         "backend/src/routes/existingSource.test.ts:9",
-        "backend/src/routes/existingSource.ts:31",
+        "backend/src/routes/existingSource.ts:38",
         "backend/src/routes/existingSourceArchive.test.ts:13",
+        "backend/src/routes/existingSourceChanges.test.ts:19",
         "backend/src/routes/existingSourceIntelligence.test.ts:12",
         "backend/src/routes/github.oauth.test.ts:6",
         "backend/src/routes/github.ts:5",
@@ -25149,6 +26257,7 @@
         "backend/src/routes/drive.test.ts",
         "backend/src/routes/existingSource.test.ts",
         "backend/src/routes/existingSourceArchive.test.ts",
+        "backend/src/routes/existingSourceChanges.test.ts",
         "backend/src/routes/existingSourceIntelligence.test.ts",
         "backend/src/routes/github.oauth.test.ts",
         "backend/src/routes/profile.deletionIdentity.test.ts",
@@ -25246,7 +26355,7 @@
         "backend/src/ai/runStore.ts:13",
         "backend/src/routes/browserRuns.ts:15",
         "backend/src/routes/drive.ts:8",
-        "backend/src/routes/existingSource.ts:30",
+        "backend/src/routes/existingSource.ts:37",
         "backend/src/routes/projectRuntime.ts:9",
         "backend/src/routes/swarm.ts:5",
         "backend/src/routes/terminalSessions.ts:18",
@@ -27173,7 +28282,7 @@
       "id": "surface:29892ce182cf6cd487bd",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/githubAtomicTransport.ts",
-      "sha256": "92f28e3f1ed5f557590a17d61ccf13a98a849b6c08f6a7cba1d5f7ea48dabfb0",
+      "sha256": "8b4337f5a98c4c3ca9ad5fdb8c929a4d163fe6b3f98264de999e47669303d7c6",
       "symbols": [
         "AtomicTransportOptions",
         "Fetcher",
@@ -27206,6 +28315,7 @@
       ],
       "callers": [
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:26",
+        "backend/src/existingSource/change/production.ts:44",
         "backend/src/services/integrations/githubAtomicTransport.test.ts:3",
         "backend/src/services/integrations/githubDeploy.ts:41",
         "backend/src/synthesis/universalCommit.ts:30"
@@ -27234,7 +28344,7 @@
       "id": "surface:0ed559b72f6fd1c22ca3",
       "subsystem": "integrations_actions_credentials",
       "sourcePath": "backend/src/services/integrations/githubAtomicWrite.ts",
-      "sha256": "fffdc5277c4afa703de1757236d150066d7b0f88f975449659cfc650de109935",
+      "sha256": "a4f16957b11155cece97032cde5120624bfd58eacab2cac0a0618c091e2c3d94",
       "symbols": [
         "AtomicWriteApi",
         "AtomicWriteError",
@@ -27297,6 +28407,7 @@
       ],
       "callers": [
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:22",
+        "backend/src/existingSource/change/delivery.ts:16",
         "backend/src/services/integrations/githubAtomicWrite.test.ts:3",
         "backend/src/services/integrations/githubDeploy.ts:35",
         "backend/src/synthesis/universalCommit.ts:34"
@@ -27369,7 +28480,8 @@
         "backend/src/ai/pipeline.ts:160",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:13",
         "backend/src/ai/universal/semanticRequestPlanner.ts:58",
-        "backend/src/routes/existingSource.ts:28",
+        "backend/src/existingSource/change/production.ts:44",
+        "backend/src/routes/existingSource.ts:35",
         "backend/src/routes/github.settings.test.ts:17",
         "backend/src/routes/github.ts:9",
         "backend/src/security/tenantIsolation.local.integration.ts:40",
@@ -27811,6 +28923,7 @@
         "backend/src/ai/pipeline.ts:105",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:17",
         "backend/src/ai/softwareAgent/xrogaProductionAdapters.ts:1",
+        "backend/src/existingSource/change/production.ts:44",
         "backend/src/routes/github.ts:373",
         "backend/src/routes/github.ts:420",
         "backend/src/routes/github.ts:443",
@@ -28203,6 +29316,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/change/delivery.ts:19",
         "backend/src/services/integrations/githubAtomicWrite.ts:51",
         "backend/src/services/integrations/githubDeploy.ts:47",
         "backend/src/services/integrations/githubTreeSnapshot.test.ts:3"
@@ -37649,6 +38763,7 @@
       ],
       "callers": [
         "backend/src/ai/compileValidate.ts:24",
+        "backend/src/existingSource/change/production.ts:15",
         "backend/src/middleware/runtimePreviewGateway.ts:31",
         "backend/src/sandbox/google/googleSandbox.ts:3",
         "backend/src/sandbox/sandboxProviders.ts:27",
@@ -40171,6 +41286,7 @@
       "callers": [
         "backend/src/ai/pipeline.ts:133",
         "backend/src/ai/providerPolicy.test.ts:19",
+        "backend/src/existingSource/change/production.ts:34",
         "backend/src/synthesis/universalEntrypoint.test.ts:14"
       ],
       "reachable": true,
@@ -83783,7 +84899,7 @@
       "id": "surface:fc0647beab64e4906eb6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/api.ts",
-      "sha256": "1cdb6a8a3ac4550100f1eef141dc078b4aae75e1533cf7473204e418f5eb31bd",
+      "sha256": "d87037801fdf7126f65539814f275cac086912e4fc52366afd1cbc6125eeec03",
       "symbols": [
         "API_URL",
         "ActivityLog",
@@ -83825,6 +84941,7 @@
         "addition",
         "alreadyKnown",
         "api",
+        "apiDownload",
         "apiFetch",
         "authCacheListenerStarted",
         "buffer",
@@ -86202,12 +87319,17 @@
       "id": "surface:0581b211a5fccaf8c38e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/existingSourceApi.ts",
-      "sha256": "2105cf83f4d8d04d302d5c0139f2d0d48830892285b05c905065746fceb38bfd",
+      "sha256": "165cb2ff9c9f6af0395699c28e9d050853a3fd213692a3a14ede76da39bf8652",
       "symbols": [
         "ArchiveImport",
         "BindingState",
+        "ChangeRevision",
+        "ChangeStatus",
+        "ChangeView",
         "CodeMapBuild",
         "CodeMapStatus",
+        "DeliveryConflict",
+        "DeliveryReceipt",
         "DirectoryEntry",
         "DirectoryListing",
         "EXISTING_SOURCE_ENABLED",
@@ -86222,6 +87344,7 @@
         "VerifiedBinding",
         "base",
         "code",
+        "downloadChange",
         "existingSourceApi",
         "existingSourceErrorMessage",
         "query"
@@ -86247,6 +87370,7 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [
+        "frontend/src/lib/existingSourceApi.ts#DeliveryReceipt",
         "frontend/src/lib/existingSourceApi.ts#VerifiedBinding"
       ],
       "testCoverage": [],
@@ -101440,7 +102564,7 @@
       "id": "surface:a741178549139c6d7626",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/schema-catalog.mjs",
-      "sha256": "7dfb3b1f3dd01f36c39761cd933f2c5f1135d37bd1dac91d333ab5da06f50abf",
+      "sha256": "ed0df4d19dba2216b732af5dbdd17122dfab82c191952c1013ed451f70fdb175",
       "symbols": [
         "assertDisposableSource",
         "collectSchemaCatalog",
@@ -106247,9 +107371,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:f084b90c1a5e7a590fbe",
+      "id": "registration:5fd9b1e6b4d933cb06b5",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 91,
+      "line": 121,
       "receiver": "router",
       "method": "use",
       "path": null,
@@ -106259,9 +107383,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:17410559a0cdb3eb0f63",
+      "id": "registration:6286d601867ae97c53c9",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 92,
+      "line": 122,
       "receiver": "router",
       "method": "use",
       "path": null,
@@ -106271,9 +107395,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:c32e19d35f8877e90521",
+      "id": "registration:a634b86236e81b4532fb",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 111,
+      "line": 141,
       "receiver": "router",
       "method": "get",
       "path": "/repositories",
@@ -106285,9 +107409,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:d7ef0cdd33b81e184c1b",
+      "id": "registration:78a261d06a0a85dfd3b6",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 112,
+      "line": 142,
       "receiver": "router",
       "method": "post",
       "path": "/links",
@@ -106299,9 +107423,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:2769402d771fb8c8ca3a",
+      "id": "registration:c79c08fdb819521bcde0",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 117,
+      "line": 147,
       "receiver": "router",
       "method": "get",
       "path": "/links",
@@ -106313,9 +107437,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:492fd3e6d1ba7fe4705a",
+      "id": "registration:1b4566e5480ded21e3ba",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 118,
+      "line": 148,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id",
@@ -106327,9 +107451,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:ffa81c090145f82935c5",
+      "id": "registration:c7befb2f3906810241fc",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 119,
+      "line": 149,
       "receiver": "router",
       "method": "post",
       "path": "/links/:id/refresh",
@@ -106341,9 +107465,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:b119ce8d36640a674e84",
+      "id": "registration:287684b27547baa04ddc",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 120,
+      "line": 150,
       "receiver": "router",
       "method": "delete",
       "path": "/links/:id",
@@ -106355,9 +107479,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:2945a950b3ad1530d9d2",
+      "id": "registration:9d605e0849d94b4aeb9f",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 121,
+      "line": 151,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/directory",
@@ -106369,9 +107493,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:e3b02caced82c1078a7c",
+      "id": "registration:69d997d3cf1a909348c5",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 124,
+      "line": 154,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/index",
@@ -106383,9 +107507,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:a9fb892913f7f0de4f60",
+      "id": "registration:186c5f8c2e59e0f2f8d4",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 125,
+      "line": 155,
       "receiver": "router",
       "method": "post",
       "path": "/links/:id/index",
@@ -106397,9 +107521,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:e025fac84e3fdbf7c3d7",
+      "id": "registration:7674aa2e0bcb28540f11",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 130,
+      "line": 160,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/search",
@@ -106411,9 +107535,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:4e9bf7837d47e00f2558",
+      "id": "registration:957947be82e1e637c346",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 131,
+      "line": 161,
       "receiver": "router",
       "method": "post",
       "path": "/links/:id/locate",
@@ -106425,9 +107549,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:6935638a749c3d7b20a4",
+      "id": "registration:e5462d51f1d22faa7bfa",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 132,
+      "line": 162,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/neighborhood",
@@ -106439,9 +107563,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:102f39234e6e4e0283e0",
+      "id": "registration:08d5d813cdf2f686e436",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 133,
+      "line": 163,
       "receiver": "router",
       "method": "post",
       "path": "/archives",
@@ -106454,9 +107578,107 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:adecfada63a9c38f8cf7",
+      "id": "registration:bc9810a0de6461bcfced",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 140,
+      "line": 172,
+      "receiver": "router",
+      "method": "post",
+      "path": "/links/:id/changes",
+      "handlers": [
+        "withChanges()"
+      ],
+      "scope": "function",
+      "functionName": "createExistingSourceRouter",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:9409225a21e0904e13ed",
+      "sourcePath": "backend/src/routes/existingSource.ts",
+      "line": 178,
+      "receiver": "router",
+      "method": "get",
+      "path": "/links/:id/changes",
+      "handlers": [
+        "withChanges()"
+      ],
+      "scope": "function",
+      "functionName": "createExistingSourceRouter",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:1a76535a9cc12e689822",
+      "sourcePath": "backend/src/routes/existingSource.ts",
+      "line": 179,
+      "receiver": "router",
+      "method": "get",
+      "path": "/changes/:changeId",
+      "handlers": [
+        "withChanges()"
+      ],
+      "scope": "function",
+      "functionName": "createExistingSourceRouter",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:53d20e1ee10512b3acb2",
+      "sourcePath": "backend/src/routes/existingSource.ts",
+      "line": 180,
+      "receiver": "router",
+      "method": "post",
+      "path": "/changes/:changeId/cancel",
+      "handlers": [
+        "withChanges()"
+      ],
+      "scope": "function",
+      "functionName": "createExistingSourceRouter",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:e3927fb843b7a728a9d7",
+      "sourcePath": "backend/src/routes/existingSource.ts",
+      "line": 181,
+      "receiver": "router",
+      "method": "post",
+      "path": "/changes/:changeId/resume",
+      "handlers": [
+        "withChanges()"
+      ],
+      "scope": "function",
+      "functionName": "createExistingSourceRouter",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:7b5151b3db3e08300347",
+      "sourcePath": "backend/src/routes/existingSource.ts",
+      "line": 187,
+      "receiver": "router",
+      "method": "post",
+      "path": "/changes/:changeId/deliver",
+      "handlers": [
+        "withChanges()"
+      ],
+      "scope": "function",
+      "functionName": "createExistingSourceRouter",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:63d883deb09a508c6ba2",
+      "sourcePath": "backend/src/routes/existingSource.ts",
+      "line": 193,
+      "receiver": "router",
+      "method": "get",
+      "path": "/changes/:changeId/export",
+      "handlers": [
+        "withChanges()"
+      ],
+      "scope": "function",
+      "functionName": "createExistingSourceRouter",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:eb62abb39e8f577e06d2",
+      "sourcePath": "backend/src/routes/existingSource.ts",
+      "line": 200,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/file",
@@ -106468,9 +107690,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:0be2c3a8880e36059ef1",
+      "id": "registration:b9eeb12c9a89a3c151d5",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 141,
+      "line": 201,
       "receiver": "router",
       "method": "use",
       "path": null,
@@ -111429,10 +112651,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:e0edfc2b7220d1de700b",
-      "registrationId": "registration:c32e19d35f8877e90521",
+      "id": "route:6df316b9bcbd95253dba",
+      "registrationId": "registration:a634b86236e81b4532fb",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 111,
+      "line": 141,
       "method": "GET",
       "path": "/api/existing-source/repositories",
       "mountChain": [
@@ -111446,10 +112668,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:e8088478197c48feb7d0",
-      "registrationId": "registration:d7ef0cdd33b81e184c1b",
+      "id": "route:2c6514bfe8c05976d2bf",
+      "registrationId": "registration:78a261d06a0a85dfd3b6",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 112,
+      "line": 142,
       "method": "POST",
       "path": "/api/existing-source/links",
       "mountChain": [
@@ -111463,10 +112685,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:7d74eb2061238d8976c5",
-      "registrationId": "registration:2769402d771fb8c8ca3a",
+      "id": "route:31e1d43046eab5e332a5",
+      "registrationId": "registration:c79c08fdb819521bcde0",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 117,
+      "line": 147,
       "method": "GET",
       "path": "/api/existing-source/links",
       "mountChain": [
@@ -111480,10 +112702,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:f4dbc14b5b770cd831d5",
-      "registrationId": "registration:492fd3e6d1ba7fe4705a",
+      "id": "route:3e8d7487719249c81032",
+      "registrationId": "registration:1b4566e5480ded21e3ba",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 118,
+      "line": 148,
       "method": "GET",
       "path": "/api/existing-source/links/:id",
       "mountChain": [
@@ -111497,10 +112719,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:1e4926ba55f44898cdcf",
-      "registrationId": "registration:ffa81c090145f82935c5",
+      "id": "route:42469f45d5e2b33003d3",
+      "registrationId": "registration:c7befb2f3906810241fc",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 119,
+      "line": 149,
       "method": "POST",
       "path": "/api/existing-source/links/:id/refresh",
       "mountChain": [
@@ -111514,10 +112736,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:fb842a9468ebf5db5e25",
-      "registrationId": "registration:b119ce8d36640a674e84",
+      "id": "route:ef4e599b15f742fa7683",
+      "registrationId": "registration:287684b27547baa04ddc",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 120,
+      "line": 150,
       "method": "DELETE",
       "path": "/api/existing-source/links/:id",
       "mountChain": [
@@ -111531,10 +112753,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:8c58bc807a6034f0bacc",
-      "registrationId": "registration:2945a950b3ad1530d9d2",
+      "id": "route:55945b656ec246b3623a",
+      "registrationId": "registration:9d605e0849d94b4aeb9f",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 121,
+      "line": 151,
       "method": "GET",
       "path": "/api/existing-source/links/:id/directory",
       "mountChain": [
@@ -111548,10 +112770,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:0cb6879bea52a08a6cba",
-      "registrationId": "registration:e3b02caced82c1078a7c",
+      "id": "route:6a9dea9d79c5ad74a556",
+      "registrationId": "registration:69d997d3cf1a909348c5",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 124,
+      "line": 154,
       "method": "GET",
       "path": "/api/existing-source/links/:id/index",
       "mountChain": [
@@ -111565,10 +112787,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:187f477004392ef144fe",
-      "registrationId": "registration:a9fb892913f7f0de4f60",
+      "id": "route:2eedb8b7eda45370a8f9",
+      "registrationId": "registration:186c5f8c2e59e0f2f8d4",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 125,
+      "line": 155,
       "method": "POST",
       "path": "/api/existing-source/links/:id/index",
       "mountChain": [
@@ -111582,10 +112804,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:887655ee2f05405ccf07",
-      "registrationId": "registration:e025fac84e3fdbf7c3d7",
+      "id": "route:05ce70891576e35b07c8",
+      "registrationId": "registration:7674aa2e0bcb28540f11",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 130,
+      "line": 160,
       "method": "GET",
       "path": "/api/existing-source/links/:id/search",
       "mountChain": [
@@ -111599,10 +112821,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:401aae90e1da4e67b3eb",
-      "registrationId": "registration:4e9bf7837d47e00f2558",
+      "id": "route:df5c774eaa75d6adad07",
+      "registrationId": "registration:957947be82e1e637c346",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 131,
+      "line": 161,
       "method": "POST",
       "path": "/api/existing-source/links/:id/locate",
       "mountChain": [
@@ -111616,10 +112838,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:40ce49817ccfaa660b38",
-      "registrationId": "registration:6935638a749c3d7b20a4",
+      "id": "route:3b74f4ab3cfe0d914763",
+      "registrationId": "registration:e5462d51f1d22faa7bfa",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 132,
+      "line": 162,
       "method": "GET",
       "path": "/api/existing-source/links/:id/neighborhood",
       "mountChain": [
@@ -111633,10 +112855,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:e33c8fd88cbe0fb43d2e",
-      "registrationId": "registration:102f39234e6e4e0283e0",
+      "id": "route:7580de1efcfd97affaa8",
+      "registrationId": "registration:08d5d813cdf2f686e436",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 133,
+      "line": 163,
       "method": "POST",
       "path": "/api/existing-source/archives",
       "mountChain": [
@@ -111650,10 +112872,129 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:523a5dbea3ac4b561bc1",
-      "registrationId": "registration:adecfada63a9c38f8cf7",
+      "id": "route:bed9460e9b7dbafd4e37",
+      "registrationId": "registration:bc9810a0de6461bcfced",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 140,
+      "line": 172,
+      "method": "POST",
+      "path": "/api/existing-source/links/:id/changes",
+      "mountChain": [
+        "backend/src/index.ts:258"
+      ],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": false,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "reason": "Registration is conditional or inside a function; execution must be verified."
+    },
+    {
+      "id": "route:5f3935030841b68469f4",
+      "registrationId": "registration:9409225a21e0904e13ed",
+      "sourcePath": "backend/src/routes/existingSource.ts",
+      "line": 178,
+      "method": "GET",
+      "path": "/api/existing-source/links/:id/changes",
+      "mountChain": [
+        "backend/src/index.ts:258"
+      ],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": false,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "reason": "Registration is conditional or inside a function; execution must be verified."
+    },
+    {
+      "id": "route:4c62528d9156565c10a5",
+      "registrationId": "registration:1a76535a9cc12e689822",
+      "sourcePath": "backend/src/routes/existingSource.ts",
+      "line": 179,
+      "method": "GET",
+      "path": "/api/existing-source/changes/:changeId",
+      "mountChain": [
+        "backend/src/index.ts:258"
+      ],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": false,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "reason": "Registration is conditional or inside a function; execution must be verified."
+    },
+    {
+      "id": "route:da202eb0e80ec3fbf63e",
+      "registrationId": "registration:53d20e1ee10512b3acb2",
+      "sourcePath": "backend/src/routes/existingSource.ts",
+      "line": 180,
+      "method": "POST",
+      "path": "/api/existing-source/changes/:changeId/cancel",
+      "mountChain": [
+        "backend/src/index.ts:258"
+      ],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": false,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "reason": "Registration is conditional or inside a function; execution must be verified."
+    },
+    {
+      "id": "route:44971b376e3af7544799",
+      "registrationId": "registration:e3927fb843b7a728a9d7",
+      "sourcePath": "backend/src/routes/existingSource.ts",
+      "line": 181,
+      "method": "POST",
+      "path": "/api/existing-source/changes/:changeId/resume",
+      "mountChain": [
+        "backend/src/index.ts:258"
+      ],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": false,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "reason": "Registration is conditional or inside a function; execution must be verified."
+    },
+    {
+      "id": "route:cadf21ff5ed1c11babc2",
+      "registrationId": "registration:7b5151b3db3e08300347",
+      "sourcePath": "backend/src/routes/existingSource.ts",
+      "line": 187,
+      "method": "POST",
+      "path": "/api/existing-source/changes/:changeId/deliver",
+      "mountChain": [
+        "backend/src/index.ts:258"
+      ],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": false,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "reason": "Registration is conditional or inside a function; execution must be verified."
+    },
+    {
+      "id": "route:437da52fb93ca178bfb9",
+      "registrationId": "registration:63d883deb09a508c6ba2",
+      "sourcePath": "backend/src/routes/existingSource.ts",
+      "line": 193,
+      "method": "GET",
+      "path": "/api/existing-source/changes/:changeId/export",
+      "mountChain": [
+        "backend/src/index.ts:258"
+      ],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": false,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "reason": "Registration is conditional or inside a function; execution must be verified."
+    },
+    {
+      "id": "route:5ec42a66954164c0137f",
+      "registrationId": "registration:eb62abb39e8f577e06d2",
+      "sourcePath": "backend/src/routes/existingSource.ts",
+      "line": 200,
       "method": "GET",
       "path": "/api/existing-source/links/:id/file",
       "mountChain": [
@@ -114349,6 +115690,13 @@
       "version": "20261027020000",
       "order": 151,
       "sha256": "d84a8e2fd4ce32117f3c88a429c7c3a6183cedccce8ff8e799950f50c2901c99"
+    },
+    {
+      "id": "migration:c516c929586d3f8f3787",
+      "sourcePath": "supabase/migrations/20261027030000_existing_source_changes.sql",
+      "version": "20261027030000",
+      "order": 152,
+      "sha256": "c681372afd51b874bce89b06083915a8953ef8327675285ed4608101eb1a5d63"
     }
   ],
   "workflows": [
@@ -120894,6 +122242,13 @@
       "reachable": true
     },
     {
+      "id": "frontend-call:5bd2ade603612cc42821",
+      "sourcePath": "frontend/src/lib/api.ts",
+      "line": 6624,
+      "callee": "fetch",
+      "reachable": true
+    },
+    {
       "id": "frontend-call:7c6d8cf46133dccac488",
       "sourcePath": "frontend/src/lib/cloudTerminalSessions.ts",
       "line": 131,
@@ -122317,6 +123672,27 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:b0a17c19a50086bf9d9a",
+      "sourcePath": "backend/src/existingSource/change/change.test.ts",
+      "declaredTests": 25,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:d0b57541db66d2690507",
+      "sourcePath": "backend/src/existingSource/change/delivery.test.ts",
+      "declaredTests": 14,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:cebdaf182e023ff72c40",
+      "sourcePath": "backend/src/existingSource/change/testRunner.test.ts",
+      "declaredTests": 10,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:67789138b8724af9e26e",
       "sourcePath": "backend/src/existingSource/intelligence/languageAdapters.test.ts",
       "declaredTests": 17,
@@ -122994,6 +124370,13 @@
       "id": "test-suite:6750bf36cb976a4f18d5",
       "sourcePath": "backend/src/routes/existingSourceArchive.test.ts",
       "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:c93d59dcc7ca4d1fd32c",
+      "sourcePath": "backend/src/routes/existingSourceChanges.test.ts",
+      "declaredTests": 5,
       "skipLocations": [],
       "focusLocations": []
     },

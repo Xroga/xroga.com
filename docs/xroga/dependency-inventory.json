@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "914c32f013219006867a7d71865eacd57c9f84ce",
+  "source_sha": "0f80a1642c1da917781b8fda5150a6c1fadbb89c",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -4097,6 +4097,7 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "backend/src/ai/pipeline.ts",
+        "backend/src/existingSource/change/gitFake.testsupport.ts",
         "backend/src/existingSource/service.ts",
         "backend/src/routes/github.ts",
         "backend/src/services/integrations/githubAtomicTransport.ts",
@@ -4156,6 +4157,7 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/ai/pipeline.ts",
+        "backend/src/existingSource/change/gitFake.testsupport.ts",
         "backend/src/existingSource/service.ts",
         "backend/src/routes/github.ts",
         "backend/src/services/integrations/githubAtomicTransport.ts",
@@ -7576,6 +7578,7 @@
         "backend/src/config/envSecrets.ts",
         "backend/src/config/platformEnvironment.ts",
         "backend/src/config/universalAgentFlags.ts",
+        "backend/src/existingSource/change/localProcessPort.testsupport.ts",
         "backend/src/growth/growthService.ts",
         "backend/src/lib/comfyui.ts",
         "backend/src/lib/platformReady.ts",
@@ -7702,6 +7705,7 @@
         "STORAGE_TEST_DATABASE_URL",
         "STORAGE_WRITE_MODE",
         "STRIPE_SECRET_KEY",
+        "SystemRoot",
         "TERM",
         "TMPDIR",
         "TZ",
@@ -7787,6 +7791,7 @@
         "backend/src/config/envSecrets.ts",
         "backend/src/config/platformEnvironment.ts",
         "backend/src/config/universalAgentFlags.ts",
+        "backend/src/existingSource/change/localProcessPort.testsupport.ts",
         "backend/src/growth/growthService.ts",
         "backend/src/lib/comfyui.ts",
         "backend/src/lib/platformReady.ts",
@@ -10697,6 +10702,7 @@
     {
       "name": "PATH",
       "consuming_sources": [
+        "backend/src/existingSource/change/localProcessPort.testsupport.ts",
         "backend/src/sandbox/sandboxEnvironment.ts"
       ],
       "environments": [
@@ -10707,7 +10713,8 @@
       "requiredness": "OPTIONAL_OR_DEFAULTED",
       "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
       "mechanisms": [
-        "REVIEWED_DYNAMIC_BINDING"
+        "REVIEWED_DYNAMIC_BINDING",
+        "STATIC_ENV_READER"
       ],
       "dependency_ids": [
         "runtime-controls-and-conditional-aliases"
@@ -11803,6 +11810,25 @@
         "endpoint-public-example-invalid",
         "endpoint-whop-com",
         "endpoint-xrogaaicom-vercel-app"
+      ]
+    },
+    {
+      "name": "SystemRoot",
+      "consuming_sources": [
+        "backend/src/existingSource/change/localProcessPort.testsupport.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
       ]
     },
     {
@@ -15368,8 +15394,60 @@
       "sha256": "70a844ce654c1ad5980e7940492976ddf31aabe154f69c63db06f355cfda7d7f"
     },
     {
+      "path": "backend/src/existingSource/archive/zipWriter.ts",
+      "sha256": "43137374d904a31719b385f7facc0cb97cf4138dc229cac764e447323e0f694a"
+    },
+    {
+      "path": "backend/src/existingSource/change/delivery.ts",
+      "sha256": "5a12cbcae82f6910da9a22fe0574088f00714ba319cb2c51352e1dd264d40d99"
+    },
+    {
+      "path": "backend/src/existingSource/change/gitFake.testsupport.ts",
+      "sha256": "4a11a19d3c21bfaada4eb261d3914c238b04802ef0601d706f46194226991d53"
+    },
+    {
+      "path": "backend/src/existingSource/change/localProcessPort.testsupport.ts",
+      "sha256": "51c33ff14a0dcacc298d28ac1aec2d247a846d8fe853b85a1ed1241dea3a500c"
+    },
+    {
+      "path": "backend/src/existingSource/change/production.ts",
+      "sha256": "96c35bb34fa670b654ac827a176cc7b9c6b7fd6f67b6786602ceff45b99ca416"
+    },
+    {
+      "path": "backend/src/existingSource/change/service.ts",
+      "sha256": "8197e5826daf5737f4a0d7accbb4d7727238f1276d94d15882ae5f78483597f0"
+    },
+    {
+      "path": "backend/src/existingSource/change/snapshot.ts",
+      "sha256": "f3a29b15d2637773d5ba43094b32f8a71c5aa88de071eb30804d580aba4899b1"
+    },
+    {
+      "path": "backend/src/existingSource/change/store.ts",
+      "sha256": "bdb44b349ed268d756a85c2b702cc21ba19106adbdfeef53f010ff8f3bde015e"
+    },
+    {
+      "path": "backend/src/existingSource/change/testRunner.ts",
+      "sha256": "33947e12f277141d413bca7e1985744e1f464e8bf12bf724745bf8305244722d"
+    },
+    {
+      "path": "backend/src/existingSource/change/toolHost.ts",
+      "sha256": "0d84159a7c3cf11ef18b83378e8908d400a056a9922c9598761aa3b54d3ff48d"
+    },
+    {
+      "path": "backend/src/existingSource/change/types.ts",
+      "sha256": "0fb9b5f9bea487961bbfaf07bb6ce66d77069e637f1c863e0b84d4c41bbafbf7"
+    },
+    {
+      "path": "backend/src/existingSource/change/unifiedDiff.ts",
+      "sha256": "2738906aafd959b20513ec104aa18e70b236bc78e5f9d4af554c592b56cd3511"
+    },
+    {
+      "path": "backend/src/existingSource/change/workspace.ts",
+      "sha256": "640e2c4ace6f3ff76a63b1a338a5d3ce54f115bc4b2f6a2b14031c4128179ff0"
+    },
+    {
       "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
-      "sha256": "403a6a7be03d65efb286621fea14d8e58c93ece563433848664f3011b10e23e5"
+      "sha256": "5bd5de69d61f80f22e0266032bfa3590c4ecda85a8c6eaafd2d524da008ab5ef"
     },
     {
       "path": "backend/src/existingSource/intelligence/codeIndex.ts",
@@ -15429,7 +15507,7 @@
     },
     {
       "path": "backend/src/existingSource/types.ts",
-      "sha256": "47be50fb97230abbd2deccab0ee88de6f1be45e73bb019679e8b25f9f1b01709"
+      "sha256": "9c53407f58f14103bf06d112f42902e057b94491e019a27432e07d6a03eb66ea"
     },
     {
       "path": "backend/src/growth/activationDefinition.local.integration.ts",
@@ -15957,7 +16035,7 @@
     },
     {
       "path": "backend/src/routes/existingSource.ts",
-      "sha256": "1b127c3f0c83daad624b3af701c990b65b76e7a49f4f0be423bde24ee8d00f02"
+      "sha256": "b25ea8c3ce0f8b42efc822d2cdcf9540082bdc50b7bfdcb878d9637edc0680c4"
     },
     {
       "path": "backend/src/routes/github.ts",
@@ -16497,11 +16575,11 @@
     },
     {
       "path": "backend/src/services/integrations/githubAtomicTransport.ts",
-      "sha256": "92f28e3f1ed5f557590a17d61ccf13a98a849b6c08f6a7cba1d5f7ea48dabfb0"
+      "sha256": "8b4337f5a98c4c3ca9ad5fdb8c929a4d163fe6b3f98264de999e47669303d7c6"
     },
     {
       "path": "backend/src/services/integrations/githubAtomicWrite.ts",
-      "sha256": "fffdc5277c4afa703de1757236d150066d7b0f88f975449659cfc650de109935"
+      "sha256": "a4f16957b11155cece97032cde5120624bfd58eacab2cac0a0618c091e2c3d94"
     },
     {
       "path": "backend/src/services/integrations/githubAuth.ts",
@@ -20173,7 +20251,7 @@
     },
     {
       "path": "frontend/src/lib/api.ts",
-      "sha256": "1cdb6a8a3ac4550100f1eef141dc078b4aae75e1533cf7473204e418f5eb31bd"
+      "sha256": "d87037801fdf7126f65539814f275cac086912e4fc52366afd1cbc6125eeec03"
     },
     {
       "path": "frontend/src/lib/assistantCopy.ts",
@@ -20333,7 +20411,7 @@
     },
     {
       "path": "frontend/src/lib/existingSourceApi.ts",
-      "sha256": "2105cf83f4d8d04d302d5c0139f2d0d48830892285b05c905065746fceb38bfd"
+      "sha256": "165cb2ff9c9f6af0395699c28e9d050853a3fd213692a3a14ede76da39bf8652"
     },
     {
       "path": "frontend/src/lib/exportUserData.ts",
@@ -22148,6 +22226,13 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "backend/src/existingSource/change/gitFake.testsupport.ts",
+      "line": 92,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/existingSource/provider.ts",
@@ -23726,7 +23811,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubAtomicTransport.ts",
-      "line": 237,
+      "line": 238,
       "credentialsInUrl": false
     },
     {
@@ -29136,9 +29221,198 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
-      "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
+      "path": "backend/src/existingSource/change/delivery.ts",
+      "line": 151,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/delivery.ts",
+      "line": 151,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/delivery.ts",
+      "line": 166,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/gitFake.testsupport.ts",
+      "line": 17,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/gitFake.testsupport.ts",
+      "line": 18,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/gitFake.testsupport.ts",
+      "line": 19,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/gitFake.testsupport.ts",
+      "line": 20,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/gitFake.testsupport.ts",
       "line": 23,
       "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/gitFake.testsupport.ts",
+      "line": 31,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/gitFake.testsupport.ts",
+      "line": 40,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/gitFake.testsupport.ts",
+      "line": 49,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/gitFake.testsupport.ts",
+      "line": 66,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/localProcessPort.testsupport.ts",
+      "line": 34,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/localProcessPort.testsupport.ts",
+      "line": 37,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/localProcessPort.testsupport.ts",
+      "line": 37,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/service.ts",
+      "line": 48,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/service.ts",
+      "line": 49,
+      "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/service.ts",
+      "line": 196,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/service.ts",
+      "line": 223,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/service.ts",
+      "line": 260,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/snapshot.ts",
+      "line": 20,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/store.ts",
+      "line": 19,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/testRunner.ts",
+      "line": 95,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/testRunner.ts",
+      "line": 143,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/toolHost.ts",
+      "line": 83,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/workspace.ts",
+      "line": 70,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/workspace.ts",
+      "line": 75,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/change/workspace.ts",
+      "line": 90,
+      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
@@ -29158,28 +29432,14 @@
     },
     {
       "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
-      "line": 39,
-      "scope": "FUNCTION_LOCAL",
+      "line": 26,
+      "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
-      "line": 39,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
-      "line": 39,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
-      "line": 39,
+      "line": 40,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -29193,21 +29453,42 @@
     },
     {
       "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
-      "line": 58,
+      "line": 40,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
-      "line": 60,
+      "line": 40,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
-      "line": 62,
+      "line": 41,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
+      "line": 59,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
+      "line": 61,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
+      "line": 63,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30999,7 +31280,7 @@
     },
     {
       "path": "backend/src/services/integrations/githubAtomicWrite.ts",
-      "line": 257,
+      "line": 259,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
