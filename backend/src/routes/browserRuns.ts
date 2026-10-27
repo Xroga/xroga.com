@@ -9,6 +9,7 @@
  * run without durable evidence. Identity comes only from the issued TenantContext.
  */
 import { Router, type Response } from 'express';
+import {randomUUID} from 'node:crypto';
 import { z } from 'zod';
 import type { AuthRequest } from '../middleware/auth.js';
 import { SupabaseExecutionStateStore, type ExecutionStateStore } from '../ai/executionRuntime.js';
@@ -45,7 +46,7 @@ function productionDeps(): BrowserCapabilityDeps | null {
     leases: new PostgresLeaseStore(createPool()), drive, storeFor: (userId) => new SupabaseExecutionStateStore(userId),
     // Drive's own owner check: listing a project the actor does not own throws
     authoriseProject: async (actor, projectId) => drive.listObjects(actor, { projectId, limit: 1 }).then(() => true, () => false),
-    workerId: `api-${process.env.K_REVISION ?? 'local'}-${process.pid}`,
+    workerId: `api-${randomUUID()}`,
     admission: new AdmissionController({ maxConcurrent: 4, maxPerTenant: 2, maxQueuedPerTenant: 4, maxQueuedTotal: 32 }),
     ...(process.env.XROGA_BROWSER_PLANNER_MODEL ? { planner: async (goal: string, job: Parameters<typeof planBrowserTask>[1], allowAi: boolean, model: Parameters<NonNullable<BrowserCapabilityDeps['planner']>>[3]) => (await planBrowserTask(goal, job, { modelId: process.env.XROGA_BROWSER_PLANNER_MODEL as ModelId }, { allowAi,...model })).plan } : {}),
   };

@@ -25,7 +25,7 @@ test('actual semantic planner carries issued actor, platform reservation and exa
       effects++;
       assert.equal(reservations, settlements + 1);
       assert.equal(new Headers(init?.headers).get('authorization'), 'Bearer ' + env.OPENROUTER_API_KEY);
-      assert.equal(init?.redirect, 'error');
+      assert.equal(init?.redirect, 'manual');
       assert.ok(body.messages.some((message: { content: string }) => message.content.includes('Explain a safe local parser')));
       assert.doesNotMatch(JSON.stringify(body), /synthetic-platform-credential/);
       return Response.json({ id: 'synthetic-planner-result', choices: [{ message: { content: JSON.stringify({

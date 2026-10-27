@@ -3,7 +3,7 @@ import {getSecret} from '../config/envSecrets.js';
 import {requireTenantContext,requireResourceOwner} from '../security/tenantContext.js';
 import {getTenantSupabaseAdmin} from '../security/serviceRoleGuard.js';
 import {preparedActionDigest} from '../security/authority/digest.js';
-import {enforceEgress} from '../security/egress/egressPolicy.js';
+import {enforceEgress,EgressDenied} from '../security/egress/egressPolicy.js';
 import {persistSecurityDecision} from '../security/egress/securityDecision.js';
 import {publicHttpsUrl} from '../security/egress/urlPolicy.js';
 import {containsCredentialSecretText} from '../security/egress/dataClassification.js';
@@ -88,8 +88,9 @@ export async function executeParallelRequest(input:{scope:TenantModelScope|undef
   try{
     const key=getSecret('PARALLEL_API_KEY');if(!key)throw denied();
     await check();
-    const response=await fetch(destination,{method:'POST',redirect:'error',headers:{'Content-Type':'application/json',...(operation==='responses'?{Authorization:`Bearer ${key}`}:{'x-api-key':key})},
+    const response=await fetch(destination,{method:'POST',redirect:'manual',headers:{'Content-Type':'application/json',...(operation==='responses'?{Authorization:`Bearer ${key}`}:{'x-api-key':key})},
       body:JSON.stringify(body),signal:AbortSignal.any([AbortSignal.timeout(operation==='responses'?45000:25000),...(signal?[signal]:[])])});
+    if(response.redirected||response.status>=300&&response.status<400){await response.body?.cancel().catch(()=>undefined);throw new EgressDenied('UNSAFE_DESTINATION');}
     if(!response.ok){void response.body?.cancel().catch(()=>undefined);throw Object.assign(new Error(`Parallel provider request failed (${response.status}).`),{status:response.status});}
     completed=true;
     const reader=response.body?.getReader();let size=0;const chunks:Uint8Array[]=[];

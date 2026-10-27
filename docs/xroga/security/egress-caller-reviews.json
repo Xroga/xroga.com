@@ -105,8 +105,8 @@
     },
     {
       "id": "038ced12b0f74e8d5e0f",
-      "callSha256": "2246d32bbb9462be893f84093c1be641b5ade15f2b11515899e2594063873708",
-      "sourceFileSha256": "3e5456bd309138f609f9cf2fc9077918714108fc7e0fe0d5cfdb3f186226d8e1",
+      "callSha256": "6703c4fb0f56a0c5ba51d850aeaae62ede1f65a40002556b6ee201b6618facc7",
+      "sourceFileSha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "FIXED_PROVIDER_ENDPOINT_AND_NO_REDIRECT_ONLY_NOT_DNS_OR_FULL_EGRESS_CERTIFICATION",
       "tenantAuthority": "THREE_UPSTREAM_SDK_TENANT_ACCOUNT_AUTHORITY_AND_DATA_OBLIGATIONS_REMAIN_PENDING",
@@ -119,7 +119,17 @@
         {
           "path": "backend/src/ai/openaiCompat.egress.test.ts",
           "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
-          "sha256": "649092d8bd97b3fed5a12305399a7d577b2c1b4a35ac3e952149cf6a5f834e0a"
+          "sha256": "ac510fdfcecca4dabd9bd5642117499f95d5155cb85a3499abf4e54072b0359c"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
+          "marker": "038ced12b0f74e8d5e0f",
+          "sha256": "3fbd46331cf7c47c880e005eeab5f221ff4d5d5ccd50e5ecab4da5568118e08f"
+        },
+        {
+          "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
+          "marker": "real SDK redirects cannot become retries or another provider fallback",
+          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
         }
       ],
       "previousGenericSdkReview": {
@@ -138,6 +148,43 @@
           }
         ],
         "scope": "HISTORICAL_REVIEW_SOURCE_NOT_CURRENT_EXECUTION_PROOF"
+      },
+      "beforeRealRedirectFix": {
+        "id": "038ced12b0f74e8d5e0f",
+        "callSha256": "2246d32bbb9462be893f84093c1be641b5ade15f2b11515899e2594063873708",
+        "sourceFileSha256": "3e5456bd309138f609f9cf2fc9077918714108fc7e0fe0d5cfdb3f186226d8e1",
+        "disposition": "REVIEWED_FIXED_DEPENDENCY",
+        "trust": "FIXED_PROVIDER_ENDPOINT_AND_NO_REDIRECT_ONLY_NOT_DNS_OR_FULL_EGRESS_CERTIFICATION",
+        "tenantAuthority": "THREE_UPSTREAM_SDK_TENANT_ACCOUNT_AUTHORITY_AND_DATA_OBLIGATIONS_REMAIN_PENDING",
+        "evidence": [
+          {
+            "path": "backend/src/ai/providerPolicy.ts",
+            "marker": "assertModelProviderDestination",
+            "sha256": "c496870604060d04ede920af1a8b06e67ad0749c8330788568f96f4a0d6dea9f"
+          },
+          {
+            "path": "backend/src/ai/openaiCompat.egress.test.ts",
+            "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
+            "sha256": "649092d8bd97b3fed5a12305399a7d577b2c1b4a35ac3e952149cf6a5f834e0a"
+          }
+        ],
+        "previousGenericSdkReview": {
+          "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+          "sourceFileSha256": "a558327133bf32c58403390f5bac2ab9411c26db42cd7fc99055bf2a3c91ac0a",
+          "evidence": [
+            {
+              "path": "backend/src/ai/providerPolicy.ts",
+              "marker": "assertModelProviderDestination",
+              "sha256": "c496870604060d04ede920af1a8b06e67ad0749c8330788568f96f4a0d6dea9f"
+            },
+            {
+              "path": "backend/src/ai/openaiCompat.egress.test.ts",
+              "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
+              "sha256": "8c94de6b687e9f709217f09a58ccc5f148094a3125e2b74af85e73c42dc1b859"
+            }
+          ],
+          "scope": "HISTORICAL_REVIEW_SOURCE_NOT_CURRENT_EXECUTION_PROOF"
+        }
       }
     },
     {
@@ -336,12 +383,22 @@
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "SDK retry rechecks revocation",
-          "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
+          "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
         },
         {
           "path": "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
           "marker": "Each completed turn must have one verified atomic receipt",
           "sha256": "d14d602244ac9ceac7c31c2aa6c9f359eac10ff6a8aac0229d625aa8bc1cf348"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
+          "marker": "4c899876b9e3850af11b",
+          "sha256": "3fbd46331cf7c47c880e005eeab5f221ff4d5d5ccd50e5ecab4da5568118e08f"
+        },
+        {
+          "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
+          "marker": "real SDK redirects cannot become retries or another provider fallback",
+          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
         }
       ],
       "previousGenericSdkReview": {
@@ -365,12 +422,59 @@
           }
         ],
         "scope": "HISTORICAL_REVIEW_SOURCE_NOT_CURRENT_EXECUTION_PROOF"
+      },
+      "beforeRealRedirectFix": {
+        "id": "4c899876b9e3850af11b",
+        "callSha256": "1ba7ccd42498525ef3a4c149f12d7db2bddb245ea2c228dd11ec75a14011d9a6",
+        "sourceFileSha256": "19228038780105d23a8365a5551c5c5715e1fb71839443ed483cd93ef34bf93c",
+        "disposition": "VERIFIED_GUARD",
+        "trust": "ACTUAL_SOFTWARE_AGENT_SDK_ISSUED_SCOPE_WIRE_AND_ATOMIC_RECEIPT_NOT_OTHER_SDK_OR_TOOL_EFFECT_CERTIFICATION",
+        "tenantAuthority": "SOLE_TRACKED_PRODUCTION_IMPORTER_REQUIRES_ORIGINAL_ISSUED_OWNER_CONTEXT_CANONICAL_PROJECT_RUN_ACCOUNT_REVISION_AND_RESERVATION_RECHECK_BEFORE_EACH_WIRE_COMPLETION_EVENTS_REQUIRE_VERIFIED_ATOMIC_RECEIPT",
+        "evidence": [
+          {
+            "path": "backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts",
+            "marker": "tracked production SoftwareAgent SDK caller carries original identity through both universal branches",
+            "sha256": "29f6423cf26a0c1e3672cc7cf8861f6c978efef1773c6d39e39fff17604858c7"
+          },
+          {
+            "path": "backend/src/ai/tenantModelDispatch.test.ts",
+            "marker": "SDK retry rechecks revocation",
+            "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
+          },
+          {
+            "path": "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
+            "marker": "Each completed turn must have one verified atomic receipt",
+            "sha256": "d14d602244ac9ceac7c31c2aa6c9f359eac10ff6a8aac0229d625aa8bc1cf348"
+          }
+        ],
+        "previousGenericSdkReview": {
+          "sourceSha": "2dc69b2b3df123f30e7e6b493266b10b7e2acad8",
+          "sourceFileSha256": "19228038780105d23a8365a5551c5c5715e1fb71839443ed483cd93ef34bf93c",
+          "evidence": [
+            {
+              "path": "backend/src/ai/softwareAgent/softwareAgentSdkBoundary.test.ts",
+              "marker": "tracked production SoftwareAgent SDK caller carries original identity through both universal branches",
+              "sha256": "29f6423cf26a0c1e3672cc7cf8861f6c978efef1773c6d39e39fff17604858c7"
+            },
+            {
+              "path": "backend/src/ai/tenantModelDispatch.test.ts",
+              "marker": "SDK retry rechecks revocation",
+              "sha256": "c3b3f0c500752064df2fcd5b921198adf36d5398077830c408d11725adecf651"
+            },
+            {
+              "path": "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
+              "marker": "Each completed turn must have one verified atomic receipt",
+              "sha256": "d14d602244ac9ceac7c31c2aa6c9f359eac10ff6a8aac0229d625aa8bc1cf348"
+            }
+          ],
+          "scope": "HISTORICAL_REVIEW_SOURCE_NOT_CURRENT_EXECUTION_PROOF"
+        }
       }
     },
     {
       "id": "31380a8d5b9454a98a98",
       "callSha256": "fedd059e41f3487339705716fdb7a912b28962fccd7daa038b5fa87580cc0eca",
-      "sourceFileSha256": "3e5456bd309138f609f9cf2fc9077918714108fc7e0fe0d5cfdb3f186226d8e1",
+      "sourceFileSha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_JSON_SDK_DISPATCH_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_OR_EXISTING_BOUNDED_ANONYMOUS_GUEST_LEASE_EACH_WIRE_RECHECKS_CURRENT_BINDING_COMPLETION_REQUIRES_SETTLEMENT_AND_ATOMIC_RECEIPT_OR_VERIFIED_CONSERVATIVE_GUEST_BUDGET_NO_RAW_ID_OR_CALLBACK_AUTHORITY",
@@ -383,19 +487,54 @@
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "Exactly one canonical atomic receipt per completion",
-          "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
+          "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
         },
         {
           "path": "backend/src/ai/operationsSdkAdmission.test.ts",
           "marker": "No unauthorized retry, fallback or unaccounted publication",
           "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
+          "marker": "31380a8d5b9454a98a98",
+          "sha256": "3fbd46331cf7c47c880e005eeab5f221ff4d5d5ccd50e5ecab4da5568118e08f"
+        },
+        {
+          "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
+          "marker": "real SDK redirects cannot become retries or another provider fallback",
+          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
         }
-      ]
+      ],
+      "beforeRealRedirectFix": {
+        "id": "31380a8d5b9454a98a98",
+        "callSha256": "fedd059e41f3487339705716fdb7a912b28962fccd7daa038b5fa87580cc0eca",
+        "sourceFileSha256": "3e5456bd309138f609f9cf2fc9077918714108fc7e0fe0d5cfdb3f186226d8e1",
+        "disposition": "VERIFIED_GUARD",
+        "trust": "SHARED_JSON_SDK_DISPATCH_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
+        "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_OR_EXISTING_BOUNDED_ANONYMOUS_GUEST_LEASE_EACH_WIRE_RECHECKS_CURRENT_BINDING_COMPLETION_REQUIRES_SETTLEMENT_AND_ATOMIC_RECEIPT_OR_VERIFIED_CONSERVATIVE_GUEST_BUDGET_NO_RAW_ID_OR_CALLBACK_AUTHORITY",
+        "evidence": [
+          {
+            "path": "backend/src/ai/genericSdkAdmission.test.ts",
+            "marker": "31380a8d5b9454a98a98",
+            "sha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
+          },
+          {
+            "path": "backend/src/ai/tenantModelDispatch.test.ts",
+            "marker": "Exactly one canonical atomic receipt per completion",
+            "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
+          },
+          {
+            "path": "backend/src/ai/operationsSdkAdmission.test.ts",
+            "marker": "No unauthorized retry, fallback or unaccounted publication",
+            "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
+          }
+        ]
+      }
     },
     {
       "id": "9c345e07b723c086440e",
       "callSha256": "947695aec368f03b9176f97c4a6f418234ba9b7a641099d4efcad35b0b4d5c30",
-      "sourceFileSha256": "3e5456bd309138f609f9cf2fc9077918714108fc7e0fe0d5cfdb3f186226d8e1",
+      "sourceFileSha256": "23232ec16c61124e6d8a8366c7076b02336a6c6cd845a5aeba88fb6dd3a2602b",
       "disposition": "VERIFIED_GUARD",
       "trust": "SHARED_SSE_SDK_DISPATCH_AND_DEFERRED_ACCOUNTED_PUBLICATION_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
       "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_EACH_WIRE_RECHECKS_CURRENT_OWNER_PROJECT_RUN_CREDENTIAL_AUTHORITY_BINDING_NO_PUBLIC_DELTAS_UNTIL_SETTLEMENT_AND_EXACT_ATOMIC_RECEIPT_CANCELLATION_REVOCATION_AND_PUBLICATION_FAILURE_CANNOT_RETRY_MODEL",
@@ -408,14 +547,49 @@
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "No successful stream publication without settlement and a valid atomic receipt",
-          "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
+          "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
         },
         {
           "path": "backend/src/ai/operationsSdkAdmission.test.ts",
           "marker": "No unauthorized retry, fallback or unaccounted publication",
           "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
+          "marker": "9c345e07b723c086440e",
+          "sha256": "3fbd46331cf7c47c880e005eeab5f221ff4d5d5ccd50e5ecab4da5568118e08f"
+        },
+        {
+          "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
+          "marker": "real SDK redirects cannot become retries or another provider fallback",
+          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
         }
-      ]
+      ],
+      "beforeRealRedirectFix": {
+        "id": "9c345e07b723c086440e",
+        "callSha256": "947695aec368f03b9176f97c4a6f418234ba9b7a641099d4efcad35b0b4d5c30",
+        "sourceFileSha256": "3e5456bd309138f609f9cf2fc9077918714108fc7e0fe0d5cfdb3f186226d8e1",
+        "disposition": "VERIFIED_GUARD",
+        "trust": "SHARED_SSE_SDK_DISPATCH_AND_DEFERRED_ACCOUNTED_PUBLICATION_ONLY_NOT_UPSTREAM_PROVENANCE_OR_TOOL_CERTIFICATION",
+        "tenantAuthority": "PRIVATE_REQUEST_ADMISSION_FROM_CANONICAL_TENANT_OR_OPERATIONS_RESERVATION_EACH_WIRE_RECHECKS_CURRENT_OWNER_PROJECT_RUN_CREDENTIAL_AUTHORITY_BINDING_NO_PUBLIC_DELTAS_UNTIL_SETTLEMENT_AND_EXACT_ATOMIC_RECEIPT_CANCELLATION_REVOCATION_AND_PUBLICATION_FAILURE_CANNOT_RETRY_MODEL",
+        "evidence": [
+          {
+            "path": "backend/src/ai/genericSdkAdmission.test.ts",
+            "marker": "9c345e07b723c086440e",
+            "sha256": "3a3096915aaee0b27d14c17afce3c9a90960d18e9941883a5773c07431d1a6b0"
+          },
+          {
+            "path": "backend/src/ai/tenantModelDispatch.test.ts",
+            "marker": "No successful stream publication without settlement and a valid atomic receipt",
+            "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
+          },
+          {
+            "path": "backend/src/ai/operationsSdkAdmission.test.ts",
+            "marker": "No unauthorized retry, fallback or unaccounted publication",
+            "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
+          }
+        ]
+      }
     },
     {
       "id": "7359a41f4a615f5b0a81",
@@ -1299,8 +1473,43 @@
           "path": "backend/src/workers/browserModelLifetime.security.test.ts",
           "marker": "overlapping model requests cannot reuse an unspent allowance",
           "sha256": "c27950f6e42183aa56633d9b33685e31d2540283bcb6144b847dd6717a746aab"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
+          "marker": "9ea21a6fc8b8700460c0",
+          "sha256": "3fbd46331cf7c47c880e005eeab5f221ff4d5d5ccd50e5ecab4da5568118e08f"
+        },
+        {
+          "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
+          "marker": "real SDK redirects cannot become retries or another provider fallback",
+          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
         }
-      ]
+      ],
+      "beforeRealRedirectFix": {
+        "id": "9ea21a6fc8b8700460c0",
+        "callSha256": "b2e9ffe461f16a59e267de26c733199d141ee06611ad2048eb6db2b7ea56e74f",
+        "sourceFileSha256": "a72f9b301cdb0d9cb2d259d53c2df835ac97a74a5b0fc4ce75c8e8f673ee830d",
+        "disposition": "VERIFIED_GUARD",
+        "trust": "SHARED_BROWSER_SDK_ADMISSION_AND_ACCOUNTING_ONLY_NOT_UPSTREAM_TOOL_CONTENT_PROVENANCE",
+        "tenantAuthority": "ORIGINAL_API_ISSUED_CONTEXT_CURRENT_PROJECT_OWNER_CANONICAL_CREDENTIAL_REVISION_AND_DURABLE_RESERVATION_PER_WIRE_LEASE_CANCELLATION_AND_SETTLEMENT_PLUS_ATOMIC_USAGE_BEFORE_OUTPUT_NO_RAW_JOB_ID_OR_FABRICATED_CALLBACK_AUTHORITY",
+        "evidence": [
+          {
+            "path": "docs/xroga/evidence/command-010/BROWSER-SDK-LIFETIME-TRACE.json",
+            "marker": "9ea21a6fc8b8700460c0",
+            "sha256": "749f36775d4ffb487f74c2fbd8e1003fc3eebd8e9cf16f279c77462a5ced151d"
+          },
+          {
+            "path": "backend/src/workers/browserSdkBoundary.security.test.ts",
+            "marker": "actual SDK checks actor, current ownership, secret egress, reservation, cancellation and settlement",
+            "sha256": "b740b0523df44d8e8401d9910baa466cab7812b9e0eeff21d02bf470b849fd7f"
+          },
+          {
+            "path": "backend/src/workers/browserModelLifetime.security.test.ts",
+            "marker": "overlapping model requests cannot reuse an unspent allowance",
+            "sha256": "c27950f6e42183aa56633d9b33685e31d2540283bcb6144b847dd6717a746aab"
+          }
+        ]
+      }
     },
     {
       "id": "ff5705ad221b1e6169e6",
@@ -1699,6 +1908,31 @@
           "path": "backend/src/security/egress/unusedProcessTree.test.ts",
           "marker": "legacy processTree helpers have no current production runtime or operator importer",
           "sha256": "fdf4c7a2e294a4283d92f84c475aa9cab6fa1c8dc475a3f788be3670cf83ecd2"
+        }
+      ]
+    },
+    {
+      "id": "c92d966d391d0a57a8ae",
+      "callSha256": "5d65e8a8c1da9286e8909c63faf3aa821d42dc41e43b30aa02db50ddfe776a7c",
+      "sourceFileSha256": "793827694e13d577535f97e9349fdfa33ceb252d7421c1c2c2417d18d33ce20e",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FINITE_OFFICIAL_VERCEL_CREDENTIAL_ISSUER_AND_ACCOUNT_READ_TRANSPORT_ONLY_NOT_DEPLOY_OR_EXTERNAL_EXPORT_AUTHORITY",
+      "tenantAuthority": "EXISTING_ORIGINAL_CONTEXT_PKCE_CONSUME_AND_CANONICAL_VAULT_REVISION_REFRESH_LEASE_REMAIN_AT_ACTUAL_CALLERS_NO_RAW_REQUEST_BODY_CAN_SELECT_AN_ACTOR_ENDPOINT_OR_DEPLOY_PERMISSION",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
+          "marker": "c92d966d391d0a57a8ae",
+          "sha256": "3fbd46331cf7c47c880e005eeab5f221ff4d5d5ccd50e5ecab4da5568118e08f"
+        },
+        {
+          "path": "backend/src/services/integrations/vercelAuthTransport.security.test.ts",
+          "marker": "real HTTP redirects remain terminal instead of becoming ordinary provider unavailability",
+          "sha256": "a553fa0c587ea0805f99ac2516e0a86b1651d50a95facd289a2d4345d2986c68"
+        },
+        {
+          "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+          "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed",
+          "sha256": "cf99e05b69f3f0d6a0e01fc908ef64a9daec91a9a0853b79642158aa5a0378b9"
         }
       ]
     }

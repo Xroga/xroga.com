@@ -7,6 +7,7 @@ import { createHash, randomBytes, randomUUID } from 'crypto';
 import { requireTenantContext, type TenantContext } from '../../security/tenantContext.js';
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { getTenantSupabaseAdmin } from '../../security/serviceRoleGuard.js';
+import { publicHttpsUrl } from '../../security/egress/urlPolicy.js';
 import {
   clearPkceSession,
   consumePkceSession,
@@ -15,6 +16,46 @@ import {
   saveDirectOAuthConnection,
   loadProviderToken,
 } from './oauthPkceStore.js';
+
+class VercelAuthTransportDenied extends Error {
+  readonly code='VERCEL_AUTH_TRANSPORT_DENIED';
+  readonly retryable=false;
+  constructor(){super('Vercel authentication transport was denied by security policy.');}
+}
+const vercelAuthDestinations=new Map([
+  ['https://api.vercel.com/login/oauth/token','POST'],
+  ['https://api.vercel.com/v9/projects?limit=1','GET'],
+  ['https://api.vercel.com/v9/projects?limit=20','GET'],
+  ['https://api.vercel.com/v6/deployments?limit=1','GET'],
+  ['https://api.vercel.com/login/oauth/userinfo','POST'],
+  ['https://api.vercel.com/v2/user','GET'],
+]);
+/** Fixed credential-issuer transport only. This never grants deployment,
+ * tenant, account or data-export authority. Existing PKCE/vault/revision checks
+ * remain at their actual callers. Arbitrary URL callers cannot use this route.
+ */
+async function vercelAuthRequest(destination:string,init:RequestInit={}):Promise<Response>{
+  if(vercelAuthDestinations.get(destination)!==(init.method??'GET').toUpperCase())throw new VercelAuthTransportDenied();
+  publicHttpsUrl(destination);
+  if(init.body&&(!(typeof init.body==='string'||init.body instanceof URLSearchParams)||Buffer.byteLength(String(init.body))>65536))throw new VercelAuthTransportDenied();
+  let response:Response;
+  // Inspect the actual 3xx response. redirect:error hides it inside a generic
+  // fetch failure, which must not authorize an identity/provider fallback.
+  try{response=await fetch(destination,{...init,redirect:'manual',signal:AbortSignal.any([AbortSignal.timeout(15000),...(init.signal?[init.signal]:[])])});}
+  catch{throw new Error('Vercel provider request is unavailable.');}
+  if(response.redirected||response.status>=300&&response.status<400){await response.body?.cancel().catch(()=>undefined);throw new VercelAuthTransportDenied();}
+  // Provider failure payloads can echo credentials and are never evidence or
+  // user-facing failure descriptions. Preserve status-based capability logic.
+  if(!response.ok){await response.body?.cancel().catch(()=>undefined);return Response.json({error:'VERCEL_PROVIDER_REQUEST_FAILED'},{status:response.status});}
+  const reader=response.body?.getReader(),chunks:Uint8Array[]=[];let bytes=0;
+  try{
+    if(reader)for(;;){const next=await reader.read();if(next.done)break;bytes+=next.value.length;if(bytes>2*1024*1024)throw new VercelAuthTransportDenied();chunks.push(next.value);}
+  }catch(error){if(error instanceof VercelAuthTransportDenied)throw error;throw new Error('Vercel provider response is unavailable.');}
+  finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
+  const body=Buffer.concat(chunks);
+  if(body.length)try{JSON.parse(body.toString('utf8'));}catch{throw new VercelAuthTransportDenied();}
+  return new Response(body.length?body:null,{status:response.status,headers:{'content-type':'application/json'}});
+}
 
 const PKCE_PROVIDER = 'vercel_oauth_pkce';
 const CALLBACK_PATH = '/dashboard/integrations/vercel/callback';
@@ -249,7 +290,7 @@ export async function exchangeVercelOAuthCode(opts: {
     code_verifier: pkce.verifier,
   });
 
-  const tokenRes = await fetch('https://api.vercel.com/login/oauth/token', {
+  const tokenRes = await vercelAuthRequest('https://api.vercel.com/login/oauth/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body,
@@ -331,6 +372,7 @@ export async function getVercelToken(userId: string): Promise<string | null> {
       );
       return refreshed;
     } catch (err) {
+      if(err instanceof VercelAuthTransportDenied)throw err;
       console.warn('[vercelAuth] refresh failed');
 
       // Another Fly machine may have won a simultaneous refresh and rotated
@@ -517,7 +559,7 @@ export async function refreshVercelOAuthToken(
     client_secret: clientSecret(),
     refresh_token: refreshToken,
   });
-  const tokenRes = await fetch('https://api.vercel.com/login/oauth/token', {
+  const tokenRes = await vercelAuthRequest('https://api.vercel.com/login/oauth/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body,
@@ -554,10 +596,11 @@ export async function probeVercelApiCapabilities(token: string): Promise<{
 }> {
   const headers = { Authorization: `Bearer ${token}` };
   const [projects, deployments] = await Promise.allSettled([
-    fetch('https://api.vercel.com/v9/projects?limit=1', { headers }),
-    fetch('https://api.vercel.com/v6/deployments?limit=1', { headers }),
+    vercelAuthRequest('https://api.vercel.com/v9/projects?limit=1', { headers }),
+    vercelAuthRequest('https://api.vercel.com/v6/deployments?limit=1', { headers }),
   ]);
 
+  for(const result of [projects,deployments])if(result.status==='rejected'&&result.reason instanceof VercelAuthTransportDenied)throw result.reason;
   return {
     canListProjects: projects.status === 'fulfilled' && projects.value.ok,
     canReadDeployments: deployments.status === 'fulfilled' && deployments.value.ok,
@@ -602,7 +645,8 @@ export async function verifyVercelTokenLive(userId: string): Promise<{
   try {
     const capability = await probeVercelApiCapabilities(token);
     canDeploy = vercelCredentialCanDeploy(authKind, capability);
-  } catch {
+  } catch(error) {
+    if(error instanceof VercelAuthTransportDenied)throw error;
     canDeploy = false;
   }
 
@@ -610,7 +654,7 @@ export async function verifyVercelTokenLive(userId: string): Promise<{
   let identityOk = false;
 
   try {
-    const infoRes = await fetch('https://api.vercel.com/login/oauth/userinfo', {
+    const infoRes = await vercelAuthRequest('https://api.vercel.com/login/oauth/userinfo', {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -623,13 +667,14 @@ export async function verifyVercelTokenLive(userId: string): Promise<{
       username = info.preferred_username || info.name || undefined;
       identityOk = true;
     }
-  } catch {
+  } catch(error) {
+    if(error instanceof VercelAuthTransportDenied)throw error;
     /* try REST next */
   }
 
   if (!identityOk) {
     try {
-      const res = await fetch('https://api.vercel.com/v2/user', {
+      const res = await vercelAuthRequest('https://api.vercel.com/v2/user', {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
@@ -638,7 +683,8 @@ export async function verifyVercelTokenLive(userId: string): Promise<{
         identityOk = true;
       }
     } catch (err) {
-      return { ok: false, error: (err as Error).message };
+      if(err instanceof VercelAuthTransportDenied)throw err;
+      return { ok: false, error: 'vercel_identity_unavailable' };
     }
   }
 
@@ -737,7 +783,7 @@ export async function resolveVercelProjectForEnvSync(
   const token = await getVercelToken(userId);
   if (!token) return null;
   try {
-    const res = await fetch('https://api.vercel.com/v9/projects?limit=20', {
+    const res = await vercelAuthRequest('https://api.vercel.com/v9/projects?limit=20', {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) return null;
@@ -750,7 +796,8 @@ export async function resolveVercelProjectForEnvSync(
     const pool = (xroga.length ? xroga : projects).slice();
     pool.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
     return pool[0]?.name?.trim() || null;
-  } catch {
+  } catch(error) {
+    if(error instanceof VercelAuthTransportDenied)throw error;
     return null;
   }
 }

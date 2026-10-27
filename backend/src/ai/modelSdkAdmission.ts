@@ -1,6 +1,10 @@
 import type {ModelId} from './models.js';
 import type {ProviderUsageResult} from './providerBudget.js';
 
+/** SDK-preserved error type: a redirect denial follows actual provider bytes,
+ * so its existing reservation needs reconciliation even though retries stop. */
+export const MODEL_REDIRECT_AFTER_DISPATCH='xroga_model_redirect_denied_after_dispatch';
+
 export type ModelWireGuard=(wireBody:string)=>Promise<void>;
 export interface SdkCompletion extends ProviderUsageResult {modelId:ModelId}
 interface Admission {

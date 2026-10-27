@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "15a936fb8beef20fb653d4dcd96a006a4476f59902f59aa14a987e0fa7636100",
+  "sourceTreeDigest": "7cb9253c25672859b14853d7a250eb7ceea1f2bfe9cb96543b57b05601b89d6b",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -54,11 +54,11 @@
     {
       "id": "038ced12b0f74e8d5e0f",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 214,
+      "line": 218,
       "entryPoint": "createModelProviderClient",
       "transport": "fetch",
       "callee": "globalThis.fetch",
-      "callSha256": "2246d32bbb9462be893f84093c1be641b5ade15f2b11515899e2594063873708",
+      "callSha256": "6703c4fb0f56a0c5ba51d850aeaae62ede1f65a40002556b6ee201b6618facc7",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "FIXED_PROVIDER_ENDPOINT_AND_NO_REDIRECT_ONLY_NOT_DNS_OR_FULL_EGRESS_CERTIFICATION",
       "tenantAuthority": "THREE_UPSTREAM_SDK_TENANT_ACCOUNT_AUTHORITY_AND_DATA_OBLIGATIONS_REMAIN_PENDING",
@@ -74,14 +74,24 @@
         {
           "path": "backend/src/ai/openaiCompat.egress.test.ts",
           "marker": "real SDK completion and streaming use only the approved endpoint and refuse redirects",
-          "sha256": "649092d8bd97b3fed5a12305399a7d577b2c1b4a35ac3e952149cf6a5f834e0a"
+          "sha256": "ac510fdfcecca4dabd9bd5642117499f95d5155cb85a3499abf4e54072b0359c"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
+          "marker": "038ced12b0f74e8d5e0f",
+          "sha256": "3fbd46331cf7c47c880e005eeab5f221ff4d5d5ccd50e5ecab4da5568118e08f"
+        },
+        {
+          "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
+          "marker": "real SDK redirects cannot become retries or another provider fallback",
+          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
         }
       ]
     },
     {
       "id": "31380a8d5b9454a98a98",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 289,
+      "line": 296,
       "entryPoint": "chatCompletion",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -101,19 +111,29 @@
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "Exactly one canonical atomic receipt per completion",
-          "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
+          "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
         },
         {
           "path": "backend/src/ai/operationsSdkAdmission.test.ts",
           "marker": "No unauthorized retry, fallback or unaccounted publication",
           "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
+          "marker": "31380a8d5b9454a98a98",
+          "sha256": "3fbd46331cf7c47c880e005eeab5f221ff4d5d5ccd50e5ecab4da5568118e08f"
+        },
+        {
+          "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
+          "marker": "real SDK redirects cannot become retries or another provider fallback",
+          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
         }
       ]
     },
     {
       "id": "9c345e07b723c086440e",
       "file": "backend/src/ai/openaiCompat.ts",
-      "line": 395,
+      "line": 402,
       "entryPoint": "chatCompletionStream",
       "transport": "provider-sdk",
       "callee": "client.chat.completions.create",
@@ -133,12 +153,22 @@
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "No successful stream publication without settlement and a valid atomic receipt",
-          "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
+          "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
         },
         {
           "path": "backend/src/ai/operationsSdkAdmission.test.ts",
           "marker": "No unauthorized retry, fallback or unaccounted publication",
           "sha256": "bc560e49f2defd60bcad74d99011bc2915c0f9980af8573974913624b5d92f87"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
+          "marker": "9c345e07b723c086440e",
+          "sha256": "3fbd46331cf7c47c880e005eeab5f221ff4d5d5ccd50e5ecab4da5568118e08f"
+        },
+        {
+          "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
+          "marker": "real SDK redirects cannot become retries or another provider fallback",
+          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
         }
       ]
     },
@@ -149,7 +179,7 @@
       "entryPoint": "executeParallelRequest",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "a733ea4f27b17ded1300ceca9c4021dfcf6dc8c8c1f28925153da7a7d5569ad3",
+      "callSha256": "793923fe98668d0c7eeb9550a804cfa488c74bf951bc9ef3f98b923387067246",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "UNREVIEWED_SERVER_CALLER",
       "tenantAuthority": "REQUIRES_SOURCE_TRACE",
@@ -181,12 +211,22 @@
         {
           "path": "backend/src/ai/tenantModelDispatch.test.ts",
           "marker": "SDK retry rechecks revocation",
-          "sha256": "1ee79ced2c9d808a83452aa1bf922045b309ef030928af81de3f7004ef9fd897"
+          "sha256": "e06c723425fbc538baf84a6110a41c04ab87c6af80d0fe3708a3c4f62780fbfc"
         },
         {
           "path": "backend/src/ai/softwareAgent/xrogaAgentModelEgress.test.ts",
           "marker": "Each completed turn must have one verified atomic receipt",
           "sha256": "d14d602244ac9ceac7c31c2aa6c9f359eac10ff6a8aac0229d625aa8bc1cf348"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
+          "marker": "4c899876b9e3850af11b",
+          "sha256": "3fbd46331cf7c47c880e005eeab5f221ff4d5d5ccd50e5ecab4da5568118e08f"
+        },
+        {
+          "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
+          "marker": "real SDK redirects cannot become retries or another provider fallback",
+          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
         }
       ]
     },
@@ -1896,7 +1936,7 @@
       "entryPoint": "composioRequest",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "96efe8d059040c8afd22b243005cef629c5dd8f61e5757abefa6ceae3e041fdd",
+      "callSha256": "1f06964e3595fc899b121df8315d0b3f5046c94882584add4563084a4a970881",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
       "trust": "UNREVIEWED_SERVER_CALLER",
       "tenantAuthority": "REQUIRES_SOURCE_TRACE",
@@ -2088,116 +2128,36 @@
       "evidence": null
     },
     {
-      "id": "b77b116764a1ac673686",
+      "id": "c92d966d391d0a57a8ae",
       "file": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 252,
-      "entryPoint": "exchangeVercelOAuthCode",
+      "line": 44,
+      "entryPoint": "vercelAuthRequest",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "42345af9f7422621b08a7e006d33b251c2324e020c9a9697fa0a0ad8f500ded6",
-      "destination": "https://api.vercel.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "callSha256": "5d65e8a8c1da9286e8909c63faf3aa821d42dc41e43b30aa02db50ddfe776a7c",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "FINITE_OFFICIAL_VERCEL_CREDENTIAL_ISSUER_AND_ACCOUNT_READ_TRANSPORT_ONLY_NOT_DEPLOY_OR_EXTERNAL_EXPORT_AUTHORITY",
+      "tenantAuthority": "EXISTING_ORIGINAL_CONTEXT_PKCE_CONSUME_AND_CANONICAL_VAULT_REVISION_REFRESH_LEASE_REMAIN_AT_ACTUAL_CALLERS_NO_RAW_REQUEST_BODY_CAN_SELECT_AN_ACTOR_ENDPOINT_OR_DEPLOY_PERMISSION",
       "currentProtection": "NOT_CERTIFIED",
-      "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
-      "id": "11ed0a20cc0b90f42ccf",
-      "file": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 520,
-      "entryPoint": "refreshVercelOAuthToken",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "42345af9f7422621b08a7e006d33b251c2324e020c9a9697fa0a0ad8f500ded6",
-      "destination": "https://api.vercel.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
-      "id": "7916cadb1c3f78be9d4d",
-      "file": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 557,
-      "entryPoint": "probeVercelApiCapabilities",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "bc1e7361617bc387dd39122cc8d16470b6470438c75cd425f92a822f64909fe6",
-      "destination": "https://api.vercel.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
-      "id": "852b30dae0b41bb55c6c",
-      "file": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 558,
-      "entryPoint": "probeVercelApiCapabilities",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "80559dc9c7be11bccbcfb0bc96b25a3cb807e01fc71ceddf4db2a11375bc579b",
-      "destination": "https://api.vercel.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
-      "id": "430d045edc63ccb7aad9",
-      "file": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 613,
-      "entryPoint": "verifyVercelTokenLive",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "9d17211995e5228f8856c474d06b7f295ceaf1c76914c64648cf8e112b56bff8",
-      "destination": "https://api.vercel.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
-      "id": "428611b47ef88816fea8",
-      "file": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 632,
-      "entryPoint": "verifyVercelTokenLive",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "51ed1c289ddca98b08265355601c1a6d9d84c827ff0ca16b4f447fa8b88de64c",
-      "destination": "https://api.vercel.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
-      "id": "567c0d364c059cb94cea",
-      "file": "backend/src/services/integrations/vercelAuth.ts",
-      "line": 740,
-      "entryPoint": "resolveVercelProjectForEnvSync",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "27173354d102c5e5ace8f93df36634ba1b520f94fb322305bbc3588521181ccd",
-      "destination": "https://api.vercel.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
+          "marker": "c92d966d391d0a57a8ae",
+          "sha256": "3fbd46331cf7c47c880e005eeab5f221ff4d5d5ccd50e5ecab4da5568118e08f"
+        },
+        {
+          "path": "backend/src/services/integrations/vercelAuthTransport.security.test.ts",
+          "marker": "real HTTP redirects remain terminal instead of becoming ordinary provider unavailability",
+          "sha256": "a553fa0c587ea0805f99ac2516e0a86b1651d50a95facd289a2d4345d2986c68"
+        },
+        {
+          "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+          "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed",
+          "sha256": "cf99e05b69f3f0d6a0e01fc908ef64a9daec91a9a0853b79642158aa5a0378b9"
+        }
+      ]
     },
     {
       "id": "d9708e60456bb2d7e538",
@@ -2993,6 +2953,16 @@
           "path": "backend/src/workers/browserModelLifetime.security.test.ts",
           "marker": "overlapping model requests cannot reuse an unspent allowance",
           "sha256": "c27950f6e42183aa56633d9b33685e31d2540283bcb6144b847dd6717a746aab"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
+          "marker": "9ea21a6fc8b8700460c0",
+          "sha256": "3fbd46331cf7c47c880e005eeab5f221ff4d5d5ccd50e5ecab4da5568118e08f"
+        },
+        {
+          "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
+          "marker": "real SDK redirects cannot become retries or another provider fallback",
+          "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
         }
       ]
     },
@@ -3746,13 +3716,7 @@
         "9f962d39a30e2e289376",
         "b401421d17d621333330",
         "15dcdf4bce3cfa3abf94",
-        "b77b116764a1ac673686",
-        "11ed0a20cc0b90f42ccf",
-        "7916cadb1c3f78be9d4d",
-        "852b30dae0b41bb55c6c",
-        "430d045edc63ccb7aad9",
-        "428611b47ef88816fea8",
-        "567c0d364c059cb94cea",
+        "c92d966d391d0a57a8ae",
         "d9708e60456bb2d7e538",
         "42cc7885da84d7295699",
         "602637659fcacb16c1ef",
@@ -3910,9 +3874,9 @@
     }
   ],
   "counts": {
-    "total": 162,
-    "reviewed": 64,
-    "pending": 98,
+    "total": 156,
+    "reviewed": 65,
+    "pending": 91,
     "unresolvedHighRiskBypasses": 52
   }
 }

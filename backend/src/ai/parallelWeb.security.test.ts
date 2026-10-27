@@ -31,9 +31,10 @@ test('actual Parallel entries enforce issued context, current owner, egress, can
   t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
     const url=new URL(String(input)),body=init?.body?JSON.parse(String(init.body)):{};
     if(url.origin==='https://api.parallel.ai'){
-      effects++;events.push('provider');assert.equal(init?.redirect,'error');assert.ok(init?.signal);assert.doesNotMatch(JSON.stringify(body),/SYNTHETIC_CREDENTIAL|substituted/);
+      effects++;events.push('provider');assert.equal(init?.redirect,'manual');assert.ok(init?.signal);assert.doesNotMatch(JSON.stringify(body),/SYNTHETIC_CREDENTIAL|substituted/);
       assert.equal(new Headers(init?.headers).get(url.pathname.endsWith('/responses')?'authorization':'x-api-key'),url.pathname.endsWith('/responses')?'Bearer synthetic-platform-key':'synthetic-platform-key');
       if(mode==='provider503')return Response.json({error:'synthetic outage'},{status:503});
+      if(mode==='providerRedirect')return new Response(null,{status:307,headers:{location:'http://169.254.169.254/computeMetadata/v1/'}});
       if(mode==='lateCancel')controller?.abort();
       if(mode==='missingProviderId')return Response.json({results:[]});
       if(mode==='credentialProviderId')return Response.json({search_id:'SYNTHETIC_CREDENTIAL_PROVIDER_RECEIPT',results:[]});
@@ -99,6 +100,8 @@ test('actual Parallel entries enforce issued context, current owner, egress, can
       await assert.rejects(search(),e=>{assert.equal((e as {code?:string}).code,'POST_COMPLETION_ACCOUNTING_UNCERTAIN');assert.equal(isTerminalModelFailure(e),true);return true;});
       assert.equal(effects,before+1);assert.equal(releases.at(-1)?.p_pending_reconciliation,true);
     }
+    mode='providerRedirect';await assert.rejects(search(),error=>{assert.equal(isTerminalModelFailure(error),true,'Provider redirects cannot become ordinary availability failures');return true;});
+    assert.equal(releases.at(-1)?.p_pending_reconciliation,true);
     mode='provider503';await assert.rejects(search(),/503/);mode='ok';assert.ok((await search()).requestId,'ordinary authorized recovery remains available');
     const mutable={userId:owner,dispatchScope:scope,objective:'public original',queries:['public original']};mutate=()=>{mutable.objective='substituted';mutable.queries[0]='substituted';};
     await parallelSearch(mutable);mutate=undefined;

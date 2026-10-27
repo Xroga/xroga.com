@@ -29,7 +29,7 @@ function fixture(t: TestContext) {
     const url=new URL(String(input instanceof Request?input.url:input)),body=init?.body?JSON.parse(String(init.body)):{};
     if(['https://openrouter.ai','https://open.bigmodel.cn'].includes(url.origin)){
       state.effects++;assert.ok(state.reservations>state.settlements);
-      assert.equal(init?.redirect,'error');assert.ok(body.messages.some((m:{content:string})=>m.content.includes('selected synthetic message')));
+      assert.equal(init?.redirect,'manual');assert.ok(body.messages.some((m:{content:string})=>m.content.includes('selected synthetic message')));
       if(state.mode==='outage'&&url.origin==='https://openrouter.ai')return Response.json({error:{message:'Synthetic provider outage'}},{status:503});
       assert.doesNotMatch(JSON.stringify(body),/synthetic-business-platform-credential|synthetic-business-glm-credential/);
       return Response.json({id:'synthetic-model-result',choices:[{message:{content:JSON.stringify({toolSlug:slug(),arguments:{},summary:'Delete the selected synthetic message'})},finish_reason:'stop'}],usage:{prompt_tokens:2,completion_tokens:2}});

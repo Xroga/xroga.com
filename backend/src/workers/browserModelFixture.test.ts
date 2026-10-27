@@ -22,7 +22,7 @@ export function browserModelFixture(t:TestContext){
   t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
     const url=new URL(String(input));const body=init?.body?JSON.parse(String(init.body)):{};
     if(['https://openrouter.ai','https://open.bigmodel.cn'].includes(url.origin)){
-      assert.equal(init?.redirect,'error');bodies.push(body);
+      assert.equal(init?.redirect,'manual');bodies.push(body);
       assert.equal(new Headers(init?.headers).get('authorization'),'Bearer synthetic-platform-model-key');
       const value=await fixture.reply(body);return value instanceof Response?value:Response.json(value);
     }

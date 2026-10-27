@@ -6,7 +6,7 @@ import { MODELS, requirePricing, resolveModelSpec, type ModelId } from './models
 import { normalizeProviderError } from './providerRuntime.js';
 import { capacityUnavailableError } from './capacityUnavailable.js';
 import { PostCompletionAccountingError, recordCompletedProviderUsage } from './postCompletionAccounting.js';
-import { registerModelSdkAdmission, modelAdmissionDenied } from './modelSdkAdmission.js';
+import { registerModelSdkAdmission, modelAdmissionDenied, MODEL_REDIRECT_AFTER_DISPATCH } from './modelSdkAdmission.js';
 import type { BoundModelDispatch, ModelPayload } from './tenantModelDispatch.js';
 
 export const SHARED_PROVIDER_ENTITLEMENT_MICRO_USD = 20_000_000;
@@ -570,7 +570,8 @@ export async function finishFailedProviderReservation(input: {
   error: unknown;
 }): Promise<void> {
   const failure = normalizeProviderError(input.error);
-  const pending = ['timeout', 'cancelled', 'transient', 'unknown'].includes(failure.kind);
+  const pending = ['timeout', 'cancelled', 'transient', 'unknown'].includes(failure.kind)
+    || (input.error as {type?:unknown})?.type===MODEL_REDIRECT_AFTER_DISPATCH;
   if (hasDurableStore()) {
     const { error } = await getSupabaseAdmin().rpc('release_xroga_provider_budget', {
       p_user_id: input.userId,

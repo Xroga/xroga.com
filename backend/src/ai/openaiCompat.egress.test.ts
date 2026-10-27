@@ -85,7 +85,7 @@ test('real SDK completion and streaming use only the approved endpoint and refus
   t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:Parameters<typeof fetch>[1])=>{
     const url=String(input);sent.push(url);
     assert.equal(url,'https://open.bigmodel.cn/api/paas/v4/chat/completions');
-    assert.equal(init?.redirect,'error');assert.equal(init?.method,'POST');
+    assert.equal(init?.redirect,'manual');assert.equal(init?.method,'POST');
     if(redirect)return new Response('',{status:307,headers:{location:'https://unapproved.example/collect'}});
     const body=JSON.parse(String(init?.body));
     if(body.stream)return new Response('data: '+JSON.stringify({id:'synthetic-stream',choices:[{delta:{content:'safe stream'},finish_reason:'stop'}]})+'\n\ndata: [DONE]\n\n',{headers:{'content-type':'text/event-stream'}});

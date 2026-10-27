@@ -47,7 +47,7 @@ test('actual pipeline, completion and SoftwareAgent calls bind tenant, account r
       effects++;const body=JSON.parse(String(init?.body));assert.doesNotMatch(JSON.stringify(body),/foreign source|cached-key|SYNTHETIC_CREDENTIAL/);
       abortDuringResponse?.abort();
       assert.equal(new Headers(init?.headers).get('authorization'),'Bearer '+(url.origin==='https://openrouter.ai'&&mode!=='platform503'?'synthetic-user-current':'synthetic-platform-key'));
-      assert.equal(init?.redirect,'error');
+      assert.equal(init?.redirect,'manual');
       if(mode==='platform503'&&url.origin==='https://openrouter.ai')return Response.json({error:{message:'Synthetic provider outage'}},{status:503});
       if(mode==='revokeDuringRetry'&&url.origin==='https://openrouter.ai'){
         row.metadata={...row.metadata,revoked:true} as typeof row.metadata;

@@ -1356,7 +1356,7 @@ async function composioRequest<T>(
     options.signal?.throwIfAborted();
     const response = await fetch(`${COMPOSIO_API_BASE}${path}`, {
       method: options.method ?? 'GET',
-      redirect:'error',
+      redirect:'manual',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -1368,6 +1368,11 @@ async function composioRequest<T>(
           : JSON.stringify(options.body),
       signal: AbortSignal.any([controller.signal,...(options.signal?[options.signal]:[])]),
     });
+
+    if(response.redirected||response.status>=300&&response.status<400){
+      await response.body?.cancel().catch(()=>undefined);
+      throw new EgressDenied('UNSAFE_DESTINATION');
+    }
 
     const declaredLength = Number(
       response.headers.get('content-length') ?? 0,
@@ -1443,7 +1448,7 @@ async function composioRequest<T>(
   } catch (error) {
     // Caller cancellation is terminal, not a provider timeout or retry signal.
     options.signal?.throwIfAborted();
-    if (error instanceof ComposioClientError) {
+    if (error instanceof ComposioClientError || error instanceof EgressDenied) {
       throw error;
     }
 

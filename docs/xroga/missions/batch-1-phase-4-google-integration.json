@@ -21,8 +21,11 @@
     "backend/src/ai/black-hole/webIntelligence.ts",
     "backend/src/ai/builderAttempt.ts",
     "backend/src/ai/converter.ts",
+    "backend/src/ai/executionRuntime.test.ts",
+    "backend/src/ai/executionRuntime.ts",
     "backend/src/ai/genericSdkAdmission.test.ts",
     "backend/src/ai/modelContext.security.test.ts",
+    "backend/src/ai/modelRedirectFallback.security.test.ts",
     "backend/src/ai/modelSdkAdmission.ts",
     "backend/src/ai/openaiCompat.egress.test.ts",
     "backend/src/ai/openaiCompat.ts",
@@ -59,6 +62,8 @@
     "backend/src/operations/providerAdapters.test.ts",
     "backend/src/operations/providerAdapters.ts",
     "backend/src/organicIntelligence/content/engine.test.ts",
+    "backend/src/routes/browserRuns.ts",
+    "backend/src/routes/browserRunsIdentity.security.test.ts",
     "backend/src/routes/guestChat.egress.test.ts",
     "backend/src/routes/guestChat.ts",
     "backend/src/routes/integrations.ts",
@@ -115,6 +120,8 @@
     "backend/src/services/integrations/legacyGitHubUploadReachability.test.ts",
     "backend/src/services/integrations/managedVercelDeployment.test.ts",
     "backend/src/services/integrations/userProviderKeys.ts",
+    "backend/src/services/integrations/vercelAuth.ts",
+    "backend/src/services/integrations/vercelAuthTransport.security.test.ts",
     "backend/src/services/storage/privateFileDelivery.revocation.test.ts",
     "backend/src/services/storage/privateFileDelivery.ts",
     "backend/src/storage/r2BucketBoundary.security.test.ts",
@@ -307,7 +314,7 @@
   "rollout": "Complete only Batch1 Phase4 Command010. Close reachable caller obligations, unchanged strict audit, exact-source disposable/Auth/security integration CI and all12original criteria, then reviewed Phase4 merge and compatible Google release with recovery. Claude exclusively owns all Batch1.5/2 integration, activation and verification.",
   "rollback": "Keep this source unreleased while incomplete. For an authorized later rollout use verified compatible native Google recovery and protected restore path. Do not restore known SSRF/exfiltration behavior, blindly re-enable Fly or deploy a legacy-only v3-incompatible image.",
   "knownGaps": [
-    "98remaining source traces including52high-risk candidates, not all are demonstrated vulnerabilities",
+    "91remaining source traces including52high-risk candidates, not all are demonstrated vulnerabilities",
     "Browser SDK admission/accounting and lifetime corrections pass focused tests. Browser process/network and upstream tool/content trust require their own trace.",
     "Parallel upstream provenance and provider-internal URL redirect/DNS guarantees, separate xAI path",
     "Private R2 dependency and current capability revocation checks have focused proof. Publishing, external uploads and remaining shared reachable callers still require individual verification.",
@@ -326,14 +333,17 @@
     "docs/xroga/batch-1/phases/phase-4/PHASE-4-FROZEN-WORKLIST.json",
     "docs/xroga/evidence/command-010/browser-20261027/checkpoint.json",
     "docs/xroga/evidence/command-010/storage-20261027/checkpoint.json",
-    "docs/xroga/evidence/command-010/PRIVATE-R2-SDK-CALLER-TRACE.json"
+    "docs/xroga/evidence/command-010/PRIVATE-R2-SDK-CALLER-TRACE.json",
+    "docs/xroga/evidence/command-010/redirect-20261027/checkpoint.json",
+    "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
+    "docs/xroga/evidence/command-010/CURRENT-PHASE4-ACCEPTANCE.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Original strict caller audit incomplete:98pending and52high-risk candidates",
+      "Original strict caller audit incomplete:91pending and52high-risk candidates",
       "All12original criteria and exact-final-source authenticated/disposable/CI acceptance are not yet verified"
     ],
     "authenticatedE2e": "BLOCKED",

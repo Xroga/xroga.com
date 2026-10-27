@@ -12,7 +12,7 @@ import { ProviderPolicyError, requiredCodingTransport, assertModelProviderDestin
 import { withTemperatureFallback } from './temperatureCompat.js';
 import {containsCredentialSecretText} from '../security/egress/dataClassification.js';
 import {publicHttpsUrl} from '../security/egress/urlPolicy.js';
-import {requireModelSdkAdmission,modelAdmissionDenied} from './modelSdkAdmission.js';
+import {requireModelSdkAdmission,modelAdmissionDenied,MODEL_REDIRECT_AFTER_DISPATCH} from './modelSdkAdmission.js';
 import {DEFAULT_BUILDER_BUDGET} from './builderAttempt.js';
 
 export type ContentPart =
@@ -195,6 +195,11 @@ export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): 
 export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispatch?:(wireBody:string)=>Promise<void>): OpenAI {
   publicHttpsUrl(endpoint.baseUrl);
   assertModelProviderDestination(endpoint.provider,endpoint.baseUrl);
+  // The SDK wraps thrown fetch errors as retryable connection failures. Return
+  // its normal nonretryable error protocol for a local transport denial.
+  const deniedResponse=(code:'MODEL_DESTINATION_DENIED'|'MODEL_DISPATCH_BINDING_DENIED',dispatched=false)=>Response.json(
+    {error:{message:'Local model transport denied before provider continuation.',code,...(dispatched?{type:MODEL_REDIRECT_AFTER_DISPATCH}:{})}},
+    {status:400,headers:{'x-should-retry':'false'}}) as unknown as Awaited<ReturnType<NonNullable<ClientOptions['fetch']>>>;
   return new OpenAI({
     apiKey: endpoint.apiKey,
     baseURL: endpoint.baseUrl,
@@ -203,17 +208,19 @@ export function createModelProviderClient(endpoint: ResolvedEndpoint,beforeDispa
     defaultHeaders: endpoint.defaultHeaders,
     fetch:async (input,init)=>{
       const url=new URL(typeof input==='string'?input:'url' in input?input.url:input.href);
-      if(url.href!==endpoint.baseUrl+'/chat/completions'||init?.method?.toUpperCase()!=='POST'||typeof init.body!=='string')throw Object.assign(Error('Model SDK destination denied.'),{code:'MODEL_DESTINATION_DENIED',status:400});
+      if(url.href!==endpoint.baseUrl+'/chat/completions'||init?.method?.toUpperCase()!=='POST'||typeof init.body!=='string')return deniedResponse('MODEL_DESTINATION_DENIED');
       try { await beforeDispatch?.(init.body); }
       catch {
         // Let the SDK preserve the local policy code, rather than wrapping a
         // thrown fetch error as a retryable/uncertain provider connection error.
-        return Response.json({error:{message:'Local model dispatch denied before provider request.',code:'MODEL_DISPATCH_BINDING_DENIED'}},
-          {status:400,headers:{'x-should-retry':'false'}}) as unknown as Awaited<ReturnType<NonNullable<ClientOptions['fetch']>>>;
+        return deniedResponse('MODEL_DISPATCH_BINDING_DENIED');
       }
       const response=await globalThis.fetch(url,{method:'POST',body:init.body,
-        headers:init.headers as NonNullable<Parameters<typeof fetch>[1]>['headers'],signal:init.signal as AbortSignal|undefined,redirect:'error'});
-      if(response.redirected||(response.status>=300&&response.status<400))throw Object.assign(Error('Model SDK redirect denied.'),{code:'MODEL_DESTINATION_DENIED',status:400});
+        headers:init.headers as NonNullable<Parameters<typeof fetch>[1]>['headers'],signal:init.signal as AbortSignal|undefined,redirect:'manual'});
+      if(response.redirected||(response.status>=300&&response.status<400)){
+        await response.body?.cancel().catch(()=>undefined);
+        return deniedResponse('MODEL_DESTINATION_DENIED',true);
+      }
       // SDK v4's Node typings require node-fetch-only convenience methods, but
       // its chat JSON/SSE parser consumes the standard Response surface. Keep
       // this Node22 interoperability cast at the transport boundary and test
