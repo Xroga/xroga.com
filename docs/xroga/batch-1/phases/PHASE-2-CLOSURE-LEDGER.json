@@ -681,7 +681,7 @@
       "id": "B1-P2-fba3a9a069050e3f",
       "family": "other-source-bound-boundaries",
       "sourcePath": "backend/src/routes/github.ts",
-      "sourceSha256": "4f66aa9ec6eb85136b14b369a6d878ada6e9768e954e0a81e387eac19d576091",
+      "sourceSha256": "b7d02d9d9b8a87153738694d6c3d20e2164313a3cf5eb97905228317821b33c3",
       "baselineCallerIds": [
         "8a4f5a61a698f969e941",
         "7ea068acaab899c1c99e",
@@ -736,7 +736,7 @@
         {
           "path": "backend/src/routes/github.ts",
           "marker": "repo_strategy",
-          "sourceSha256": "4f66aa9ec6eb85136b14b369a6d878ada6e9768e954e0a81e387eac19d576091",
+          "sourceSha256": "b7d02d9d9b8a87153738694d6c3d20e2164313a3cf5eb97905228317821b33c3",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }

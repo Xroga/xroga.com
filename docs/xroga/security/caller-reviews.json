@@ -685,11 +685,11 @@
     },
     {
       "path": "backend/src/routes/github.ts",
-      "sourceSha256": "4f66aa9ec6eb85136b14b369a6d878ada6e9768e954e0a81e387eac19d576091",
+      "sourceSha256": "b7d02d9d9b8a87153738694d6c3d20e2164313a3cf5eb97905228317821b33c3",
       "callIds": [
-        "8a4f5a61a698f969e941",
-        "7ea068acaab899c1c99e",
-        "b4f7c7e759ffc010fe2f"
+        "10950d7a07cba457e8ff",
+        "65ef0eb70c2be60fc272",
+        "653637cacc0fa0222a0e"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The auth-mounted status handler uses req.userId for canonical token selection, exact github_integrations metadata, private Storage metadata and exact user_integrations github provider metadata. An absent or revoked canonical credential returns connected:false before private metadata projection. Only connected state, username, fixed repository strategy and default repository are returned, never token material. Provider account identity comes from that owner canonical GitHub grant and matching private mirror, not the forged query actor or another account default.",
@@ -15851,6 +15851,48 @@
         {
           "path": "backend/src/services/integrations/ociWorkloadFederation.ts",
           "marker": "export function createOciWorkloadFederation"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/existingSource/store.ts",
+      "sourceSha256": "482a1a0757663a887c0e23c7affaeb9e7671ead144a3631702c42a5da202b9a7",
+      "callIds": [
+        "6bdf279a99f5db57b5b1",
+        "557dba4cd9a192c4ef9a",
+        "47fe54c0a9f29894d88e",
+        "b3fb5f6c257d06654516",
+        "4e9ad4607a5fa9585281",
+        "81763bb263b8c72c0f81",
+        "1b95a8316c7ecc3a46eb",
+        "6aabb0af480bb116fac2",
+        "504f578d2e2cf0b1f1ab"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "SupabaseSourceBindingStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as not found. Every query on existing_source_projects carries an explicit .eq(owner_user_id, owner) predicate.",
+      "reason": "The table is service-role only with RLS enabled and no public grants; reads, upserts, updates and the bulk access-lost update are all filtered by the verified owner, and a binding id from another owner reads as absent.",
+      "evidence": [
+        {
+          "path": "backend/src/existingSource/store.ts",
+          "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new ExistingSourceError('BINDING_NOT_FOUND'"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/routes/existingSource.ts",
+      "sourceSha256": "3b01d5c3d0e262affb4cf55282e2a69735022384600eeb41b54cfc273f0d04ad",
+      "callIds": [
+        "47de1238a683ce3dab82",
+        "abc79cffdaf1bc0f6374",
+        "99ae37ea479806027a06"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "projectFor runs inside a handler that first obtained requireTenantContext(req.tenantContext); it selects and creates projects only for input.ownerId, which the service passes from that verified context, and accepts a created project only when its user_id equals that owner.",
+      "reason": "The project lookup is filtered by user_id and github_repo_name, ambiguity returns null instead of guessing, and creation goes through the existing atomic owner-scoped RPC save_owned_project_atomic.",
+      "evidence": [
+        {
+          "path": "backend/src/routes/existingSource.ts",
+          "marker": "eq('user_id', input.ownerId)"
         }
       ]
     }

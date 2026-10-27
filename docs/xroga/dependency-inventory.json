@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "698369729ebfde1dcff0d4687d272f4b0a54422e",
+  "source_sha": "382b61af96565fe27e48c450744c4c949863200f",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -34,6 +34,7 @@
         "NEXT_PUBLIC_XROGA_AUTH_BASE_URL",
         "NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF",
         "NEXT_PUBLIC_XROGA_BROWSER_RUNS",
+        "NEXT_PUBLIC_XROGA_EXISTING_SOURCE",
         "VERCEL_ENV",
         "VERCEL_GIT_COMMIT_SHA"
       ],
@@ -1365,6 +1366,7 @@
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
+        "backend/src/existingSource/provider.ts",
         "backend/src/routes/github.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/services/integrations/githubDeploy.ts",
@@ -1406,6 +1408,7 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
+        "backend/src/existingSource/provider.ts",
         "backend/src/routes/github.ts",
         "backend/src/security/githubConsumer.local.integration.ts",
         "backend/src/services/integrations/githubDeploy.ts",
@@ -4094,6 +4097,7 @@
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "backend/src/ai/pipeline.ts",
+        "backend/src/existingSource/service.ts",
         "backend/src/routes/github.ts",
         "backend/src/services/integrations/githubAtomicTransport.ts",
         "backend/src/services/integrations/githubDeploy.ts",
@@ -4152,6 +4156,7 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/ai/pipeline.ts",
+        "backend/src/existingSource/service.ts",
         "backend/src/routes/github.ts",
         "backend/src/services/integrations/githubAtomicTransport.ts",
         "backend/src/services/integrations/githubDeploy.ts",
@@ -7581,6 +7586,7 @@
         "backend/src/routes/browserRuns.ts",
         "backend/src/routes/businessAutomationScheduler.ts",
         "backend/src/routes/businessAutomationWebhook.ts",
+        "backend/src/routes/existingSource.ts",
         "backend/src/runtime/readiness.ts",
         "backend/src/scripts/runCanonicalWorker.ts",
         "backend/src/services/integrations/businessAutomations.ts",
@@ -7722,6 +7728,7 @@
         "XROGA_DRIVE_R2_ACCOUNT_ID",
         "XROGA_DRIVE_R2_BUCKET",
         "XROGA_DRIVE_R2_SECRET_ACCESS_KEY",
+        "XROGA_EXISTING_SOURCE",
         "XROGA_FLY_OIDC_IMAGE_DIGESTS",
         "XROGA_FLY_OIDC_ISSUER",
         "XROGA_FLY_OIDC_ORGANIZATION_ID",
@@ -7790,6 +7797,7 @@
         "backend/src/routes/browserRuns.ts",
         "backend/src/routes/businessAutomationScheduler.ts",
         "backend/src/routes/businessAutomationWebhook.ts",
+        "backend/src/routes/existingSource.ts",
         "backend/src/runtime/readiness.ts",
         "backend/src/scripts/runCanonicalWorker.ts",
         "backend/src/services/integrations/businessAutomations.ts",
@@ -10518,6 +10526,25 @@
       ]
     },
     {
+      "name": "NEXT_PUBLIC_XROGA_EXISTING_SOURCE",
+      "consuming_sources": [
+        "frontend/src/lib/existingSourceApi.ts"
+      ],
+      "environments": [
+        "frontend build/browser/SSR"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "frontend"
+      ]
+    },
+    {
       "name": "NODE_ENV",
       "consuming_sources": [
         "backend/src/ai/providerBudget.ts",
@@ -12971,6 +12998,25 @@
       ]
     },
     {
+      "name": "XROGA_EXISTING_SOURCE",
+      "consuming_sources": [
+        "backend/src/routes/existingSource.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
       "name": "XROGA_FLY_OIDC_IMAGE_DIGESTS",
       "consuming_sources": [
         "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts"
@@ -15302,6 +15348,34 @@
       "sha256": "231179f594ca9866269c572e7b47579e2616a38f49140c8219c4a931106396a2"
     },
     {
+      "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
+      "sha256": "403a6a7be03d65efb286621fea14d8e58c93ece563433848664f3011b10e23e5"
+    },
+    {
+      "path": "backend/src/existingSource/provider.ts",
+      "sha256": "177d8139a06d097788ddabfacdc18ec0e9f4ae083a17614a36d5bd4c5fa3964a"
+    },
+    {
+      "path": "backend/src/existingSource/sensitivePaths.ts",
+      "sha256": "812938986c8e65b131fd0cb4cbf633a445ca0205e7fde54a7c0478acf1c25db8"
+    },
+    {
+      "path": "backend/src/existingSource/service.ts",
+      "sha256": "94e0983ea4b51feb2d6ccb4bfa88fa354d9d69a2076de649150c57083d3d101d"
+    },
+    {
+      "path": "backend/src/existingSource/store.ts",
+      "sha256": "482a1a0757663a887c0e23c7affaeb9e7671ead144a3631702c42a5da202b9a7"
+    },
+    {
+      "path": "backend/src/existingSource/treeReader.ts",
+      "sha256": "5ffaa5ca6c7a67e28e0d06d240e6739d399a3ce444418286581497ce3dfb2e58"
+    },
+    {
+      "path": "backend/src/existingSource/types.ts",
+      "sha256": "90f41e4df1bc92cbd478ffc12d8804a8faee03f055801b5c0d87e4a6123a3a51"
+    },
+    {
       "path": "backend/src/growth/activationDefinition.local.integration.ts",
       "sha256": "152922d475b60c54c2d716440d67011ebc92ad5c81c4c03ea05e2637e8dea4ea"
     },
@@ -15351,7 +15425,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "78639a14bca3873d1143bcb3e03bd92ae58a2553e256d9f89f825b8d6fc57719"
+      "sha256": "caa50a50b2968a5fdfe9b5230c6d043d7f31aa6748a45a315fca4b5135b64444"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -15826,8 +15900,12 @@
       "sha256": "82e83b1911f78196329573dcd7086312ce047d9e3ccff349f661598313475cfd"
     },
     {
+      "path": "backend/src/routes/existingSource.ts",
+      "sha256": "3b01d5c3d0e262affb4cf55282e2a69735022384600eeb41b54cfc273f0d04ad"
+    },
+    {
       "path": "backend/src/routes/github.ts",
-      "sha256": "4f66aa9ec6eb85136b14b369a6d878ada6e9768e954e0a81e387eac19d576091"
+      "sha256": "b7d02d9d9b8a87153738694d6c3d20e2164313a3cf5eb97905228317821b33c3"
     },
     {
       "path": "backend/src/routes/growth.ts",
@@ -17214,6 +17292,10 @@
       "sha256": "5304c8021bfa29ee7fe96930091a123fc5d9731253471988336a1c889bd22b9c"
     },
     {
+      "path": "frontend/src/app/(shell)/dashboard/existing-source/page.tsx",
+      "sha256": "b2e4dd8e1bedb78a4d6426677e9ea8ed21a20b78dae961016e6d17a6191bcaa9"
+    },
+    {
       "path": "frontend/src/app/(shell)/dashboard/growth/GrowthCentreClient.tsx",
       "sha256": "d50df8168f9749048cd9ffd358e3e9a6e1067cc10f6c7e986ac54e33be970c89"
     },
@@ -18116,6 +18198,10 @@
     {
       "path": "frontend/src/components/errors/XrogaErrorPage.tsx",
       "sha256": "68c434299cd081ea502607e55916f05fbb90854a0e052349e505a0ba2adfb590"
+    },
+    {
+      "path": "frontend/src/components/existing-source/ExistingSourcePanel.tsx",
+      "sha256": "28699c9e0d4bf02274b2e76128cf0f1034d48368f712f6192b0460bc3b57be07"
     },
     {
       "path": "frontend/src/components/feedback/FeedbackModal.tsx",
@@ -20190,6 +20276,10 @@
       "sha256": "fbd6152b09b29fd487ddc952da3bd76c9adb0101d8f1b9ad18e9343b4fe55a92"
     },
     {
+      "path": "frontend/src/lib/existingSourceApi.ts",
+      "sha256": "a9a372f6a518b51e58769e149c6ca3f5e4e5f84e7556075b0c43926a4fc9df35"
+    },
+    {
       "path": "frontend/src/lib/exportUserData.ts",
       "sha256": "840051367eb8a652f7aa8d5d6e7598f8eaccbf9f8c2d624cd89b1f520f8befb3"
     },
@@ -22002,6 +22092,20 @@
       "credentialsInUrl": false
     },
     {
+      "hostname": "api.github.com",
+      "protocol": "https:",
+      "path": "backend/src/existingSource/provider.ts",
+      "line": 69,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "github.com",
+      "protocol": "https:",
+      "path": "backend/src/existingSource/service.ts",
+      "line": 129,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/growth/activationDefinition.local.integration.ts",
@@ -22089,42 +22193,42 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 109,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 110,
       "credentialsInUrl": false
     },
     {
-      "hostname": "www.xroga.com",
+      "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 111,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xrogaaicom.vercel.app",
+      "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 112,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "xrogaaicom.vercel.app",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 113,
       "credentialsInUrl": false
     },
     {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 114,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 206,
+      "line": 207,
       "credentialsInUrl": false
     },
     {
@@ -22544,70 +22648,70 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 22,
+      "line": 23,
       "credentialsInUrl": false
     },
     {
       "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 23,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "localhost",
-      "protocol": "http:",
-      "path": "backend/src/routes/github.ts",
       "line": 24,
       "credentialsInUrl": false
     },
     {
-      "hostname": "127.0.0.1",
+      "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/routes/github.ts",
       "line": 25,
       "credentialsInUrl": false
     },
     {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/routes/github.ts",
+      "line": 26,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 33,
+      "line": 34,
       "credentialsInUrl": false
     },
     {
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/routes/github.ts",
-      "line": 48,
+      "line": 49,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 71,
+      "line": 72,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 94,
+      "line": 95,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 170,
+      "line": 171,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/routes/github.ts",
-      "line": 192,
+      "line": 193,
       "credentialsInUrl": false
     },
     {
@@ -28923,6 +29027,111 @@
       "path": "backend/src/config/plans.ts",
       "line": 112,
       "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
+      "line": 23,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
+      "line": 24,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
+      "line": 25,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
+      "line": 39,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
+      "line": 39,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
+      "line": 39,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
+      "line": 39,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
+      "line": 40,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
+      "line": 58,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
+      "line": 60,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
+      "line": 62,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/service.ts",
+      "line": 82,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/service.ts",
+      "line": 269,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/store.ts",
+      "line": 43,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/treeReader.ts",
+      "line": 47,
+      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
