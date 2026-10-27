@@ -1,5 +1,61 @@
 # Google production migration, current release procedure
 
+## Current accepted production state, 2026-10-27
+
+`XROGA_ZERO_FLY_MIGRATION_ACCEPTED`. This section supersedes the historical
+in-progress release notes below. The source-bound final receipt is
+[`FINAL-PRODUCTION-ACCEPTANCE-20261027.json`](../xroga/evidence/zero-fly/FINAL-PRODUCTION-ACCEPTANCE-20261027.json).
+
+- Merged implementation: PR856 `3c3bc0f5`, PR864
+  `5ada5db7526efb1e0a4e426dbf4feab3d538597f`. Tested integration tree:
+  `1562214154b7f58c51d8d4bbd188d5d7540e4a31`.
+- Baked runtime source: `b11841ead316913cb46316fa7c16e76c6519b392`.
+- Immutable forward and independent Google recovery digest:
+  `sha256:3374633058c62d7a205f4fe95d28a4b312de1eab21068555fde7c0f73ea9dc43`.
+- Service `xroga-api`, `us-east4`, forward
+  `xroga-api-google-b11841ea-r1` at 100%, recovery
+  `xroga-api-google-b11841ea-recovery-r1`. Both were promoted and passed readiness.
+- Native `xroga-api-runtime` identity, existing production KMS key, platform
+  secret version 2 and direct Whop secret version 1. Preserve these bindings.
+- Canonical queue is RUNNING. Completed/cancelled fixture deliveries returned
+  204 on the corrected revision. The exact canonical Job template is restored.
+- Production worker allocation, saved ownership, execution, Preview HTTP and
+  WebSocket, revocation, cancellation, durable results and cleanup passed using
+  bounded model-free fixtures. Accepted process-loss recovery evidence is reused.
+- Both Fly API machines are stopped with autostart false and restart `no`.
+  The Fly federation pool and old KMS service identity are disabled. Native
+  Google health and normal signed-in owner data still work. No active Fly runtime
+  dependency remains. Cold Fly assets are retained for final owner deletion approval.
+- Vercel production stays at `3c3bc0f5`, with API `https://api.xroga.com`.
+  Whop's active callback uses the Google API. Supabase and private R2 stay preserved.
+
+### Recovery without Fly
+
+Pause new canonical admissions before a recovery switch. Preserve claimed work,
+fences and terminal records. Use the already verified native recovery revision:
+
+```sh
+gcloud tasks queues pause xroga-canonical-production --location=us-east4 --project=project-c40d4821-e647-4fa2-92d
+gcloud run services update-traffic xroga-api --region=us-east4 --project=project-c40d4821-e647-4fa2-92d --to-revisions=xroga-api-google-b11841ea-recovery-r1=100
+```
+
+Verify `/health` and `/ready` through `https://api.xroga.com`, native custody,
+authenticated functionality and the matching Job image/configuration before
+resuming the queue. Forward and recovery use the same verified compatible digest
+under independent registry names. Keep the encrypted backup at
+`gs://xroga-p3-prod-recovery-574998934848/google-migration-20261026/20261027T073106Z/`.
+The actual isolated restore passed. No destructive schema rollback is required
+for the applied expand-only delivery migration. Restore data only under the
+applicable incident authorization. Never select a legacy-only credential writer,
+erase delivery history, or re-enable retired Fly workflows.
+
+Required CI already passed on the exact integrated tree. Do not rebuild or rerun
+those suites for this evidence-only closure. Known model failures remain separate.
+Optional timed private-file links lack a signing key in both preserved bundles
+and aren't claimed verified. Owner private-file storage passed.
+
+## Historical execution notes, superseded by the accepted state above
+
 > Live update, 2026-10-27: PR856 is merged at `3c3bc0f54b9e1f38e67641284de4b16073016fdb`. Vercel production `13C195qgr3vsaYs3GPB52tGnjJP4` is Ready at that source and uses the Google API. Native API/recovery revisions now end in `r4`/`recovery-r4`, with platform secret version `2`. The founder explicitly approved private R2 configuration and its documented account-wide read capability. The original 107 settings are preserved and only five approved R2 settings were added. The unchanged native API preflight passes. The production queue remains paused during final acceptance. Fly stays intact.
 >
 > The actual production worker fixture exposed a cold allocation that took 108 seconds, beyond the earlier 120-poll budget. It stopped before saving its native allocation receipt. Exact native diagnostic `xroga-canonical-production-9mnm9` confirmed permissions/session persistence and removed that synthetic VM/disk. The correction records native operation targets early, uses a bounded three-minute creation wait and refuses to declare cleanup while creation remains pending. Focused tests pass. Its replacement image and final production acceptance are still pending, so this is not zero-Fly completion. Optional timed file links have no signing key in either preserved configuration, and no signed-link success is claimed. Existing owner-authorized private upload/read integrity passes.
