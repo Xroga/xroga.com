@@ -2,9 +2,10 @@
 
 The replacement API and canonical Job use application source
 `faf56ff8e0d6b9de61cbeb412c2e86c75b17dac3`. Frontend URL, workflow-retirement
-and evidence-only follow-ups don't change the Docker API inputs. Verify that
-equivalence with `git diff faf56ff8 -- Dockerfile.api backend .dockerignore`
-before reusing the immutable image. Never override its baked release SHA.
+and evidence follow-ups don't change production runtime code. The sole backend
+difference is `legacyRetirement.test.ts`, updated to require the retired Fly
+workflow to refuse deployment. It isn't imported by the production entrypoint.
+Check the exact backend diff before reusing the image. Never override its baked SHA.
 
 Production acceptance and frontend cutover remain in progress. This document
 doesn't declare zero-Fly completion. Dated Command 004 inventory observations
@@ -15,15 +16,16 @@ procedures, without rewriting the original security or acceptance rules.
 
 - Project `project-c40d4821-e647-4fa2-92d`, number `574998934848`.
 - Cloud Run service `xroga-api`, region `us-east4`.
-- Forward revision `xroga-api-google-faf56ff8-r1`.
-- Compatible recovery revision `xroga-api-google-faf56ff8-recovery`.
+- Forward revision `xroga-api-google-faf56ff8-r2`.
+- Compatible recovery revision `xroga-api-google-faf56ff8-recovery-r2`.
 - Runtime identity `xroga-api-runtime`, native metadata identity, no Fly WIF.
 - Protected secret `xroga-platform-production`, pinned version `1`.
 - Existing production credential key `xroga-production-credentials` in
   `us-central1`, key ring `xroga-p3-verify-20261023`. Preserve every required key
   version, ciphertext revision, ownership field and tombstone.
-- Queue and Job `xroga-canonical-production`, `us-east4`. Queue starts paused
-  until production admission checks pass. One canonical scheduler remains.
+- Queue and Job `xroga-canonical-production`, `us-east4`. Queue is running after
+  native admission checks. One canonical scheduler remains. Its configured mode
+  is `cloud`, matching the existing authenticated scheduler route.
 - Two bounded `xroga-exec-` slots in `us-central1-a`, immutable base
   `xroga-exec-base-20261026`, numeric image ID `5308884476316794212`.
 - Private SSH and Preview port 3000 from control subnet `10.91.0.0/26` only.
@@ -35,6 +37,13 @@ Independent recovery reference uses repository `xroga-google-migration-recovery`
 at the same digest. Both references were actually started with native production
 configuration, and `/health` and `/ready` passed at the baked source SHA. Readiness
 performs managed KMS wrap/unwrap and database connectivity checks.
+
+The unchanged native API preflight passes on actual r2 readbacks. Production
+Cloud Tasks OIDC dispatch and the existing authenticated Scheduler both returned
+204. Native Job `xroga-canonical-production-l7cqt` succeeded after denying an absent
+delivery claim. This verifies real startup and claim denial, not successful model
+generation. Accepted isolated worker lifecycle, Preview and recovery tests remain
+separately source-bound evidence. Final authenticated frontend cutover is pending.
 
 ## Protected recovery and schema
 
