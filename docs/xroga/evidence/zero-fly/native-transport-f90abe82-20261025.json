@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "scope": "SYNTHETIC_NATIVE_GCE_TRANSPORT_ONLY",
+  "testedSource": "f90abe82248bdef83fcc058e208dae3df6fe0347",
+  "testedImage": "sha256:f5442805565737306eb0c4980f1581e11a1aed7cd27d9d2b2b9d423852489f15",
+  "result": "PARTIAL_PROOF_EXECUTION_BLOCKED_NOT_ACCEPTED",
+  "originalRuntimeReceipt": {
+    "at": "2026-10-25T14:48:44.922Z",
+    "attachedPrincipal": "xroga-api-runtime@project-c40d4821-e647-4fa2-92d.iam.gserviceaccount.com",
+    "cleanup": "VERIFIED_DELETE_OPERATION_DONE",
+    "customerData": false,
+    "execution": "xroga-gce-transport-verify-20261025-swgcc",
+    "foreignBindingDeniedBeforeSsh": true,
+    "instance": {
+      "hardLifetimeSeconds": 600,
+      "id": "4410503894974834885",
+      "name": "xroga-exec-d7cae80eb7a7441591304b5f7eee70f3",
+      "zone": "us-central1-a"
+    },
+    "job": "xroga-gce-transport-verify-20261025",
+    "platformCredentials": false,
+    "productionTrafficChanged": false,
+    "reason": "NATIVE_SSH_EXECUTION_DENIED_OR_INTERRUPTED",
+    "scope": "SYNTHETIC_NATIVE_GCE_TRANSPORT_ONLY",
+    "sourceSha": "f90abe82248bdef83fcc058e208dae3df6fe0347",
+    "status": "BLOCKED_NATIVE_GCE_TRANSPORT",
+    "workerSourceVerified": true
+  },
+  "independentExecutionStatus": {
+    "name": "xroga-gce-transport-verify-20261025-swgcc",
+    "completionTime": "2026-10-25T14:48:48.380208Z",
+    "failedCount": 1,
+    "remainingInstances": 0
+  },
+  "cleanupVerified": [
+    {
+      "step": "CLEANUP_VERIFIED",
+      "at": "2026-10-25T14:54:47.923925+00:00",
+      "resource": "verificationJob"
+    },
+    {
+      "step": "CLEANUP_VERIFIED",
+      "at": "2026-10-25T14:54:50.955992+00:00",
+      "resource": "executionVmAndBootDisk"
+    },
+    {
+      "step": "CLEANUP_VERIFIED",
+      "at": "2026-10-25T14:54:58.412883+00:00",
+      "resource": "binding:subnet"
+    },
+    {
+      "step": "CLEANUP_VERIFIED",
+      "at": "2026-10-25T14:55:04.051553+00:00",
+      "resource": "binding:image"
+    },
+    {
+      "step": "CLEANUP_VERIFIED",
+      "at": "2026-10-25T14:55:11.636034+00:00",
+      "resource": "binding:projectOperator"
+    },
+    {
+      "step": "CLEANUP_VERIFIED",
+      "at": "2026-10-25T14:55:16.638937+00:00",
+      "resource": "binding:projectProvisioner"
+    },
+    {
+      "step": "CLEANUP_VERIFIED",
+      "at": "2026-10-25T14:55:22.203642+00:00",
+      "resource": "verificationFirewall"
+    },
+    {
+      "step": "CLEANUP_VERIFIED",
+      "at": "2026-10-25T14:55:40.895579+00:00",
+      "resource": "recreatedExecutionSubnet"
+    }
+  ],
+  "cleanupPending": [
+    {
+      "resource": "xroga-api-private",
+      "cause": "Google-managed internal SERVERLESS IP reservation serverless-ipv4-cloudrun-1792939555541134225"
+    },
+    {
+      "resource": "xroga-verify-net",
+      "cause": "Contains the pending control subnet"
+    }
+  ],
+  "providerRetentionDocumentation": "https://docs.cloud.google.com/run/docs/configuring/vpc-direct-vpc",
+  "diagnosticFinding": {
+    "iamDeniedAuditEntries": 0,
+    "osLoginCheckPolicyGrantedEntries": 6,
+    "guestApplicationLogAvailable": false,
+    "underlyingSshCause": "UNKNOWN_ORIGINAL_STDERR_NOT_RETAINED",
+    "correction": "Bounded allowlisted error category and numeric exit code, no raw stderr or failed-command stdout exposure, no retry or authorization changes",
+    "focusedTransportTestsPassed": 9,
+    "liveCorrectionVerified": false
+  },
+  "productionTrafficChanged": false,
+  "customerCredentialsAccessed": false,
+  "flyResourcesChanged": false,
+  "phase3AcceptanceChanged": false,
+  "phase4Started": false,
+  "batch15Integration": {
+    "pr": 852,
+    "mergedCommit": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+    "flyWorkflow302401484": "disabled_manually",
+    "flyWorkflow338025246": "disabled_manually"
+  }
+}

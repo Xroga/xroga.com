@@ -1,0 +1,55 @@
+{
+  "atUtc": "2026-10-27T08:44:57.772370+00:00",
+  "billingAccount": "01D20E-3C6059-8BB147",
+  "exitCode": 0,
+  "budgets": [
+    {
+      "name": "Xroga Phase3 personal cash allocation",
+      "amount": {
+        "specifiedAmount": {
+          "currencyCode": "USD",
+          "units": "30"
+        }
+      },
+      "thresholdRules": [
+        {
+          "spendBasis": "CURRENT_SPEND",
+          "thresholdPercent": 0.5
+        },
+        {
+          "spendBasis": "CURRENT_SPEND",
+          "thresholdPercent": 0.8
+        },
+        {
+          "spendBasis": "CURRENT_SPEND",
+          "thresholdPercent": 1
+        }
+      ],
+      "allUpdatesRulePresent": false
+    },
+    {
+      "name": "Xroga Phase3 monthly gross early warning",
+      "amount": {
+        "specifiedAmount": {
+          "currencyCode": "USD",
+          "units": "5"
+        }
+      },
+      "thresholdRules": [
+        {
+          "spendBasis": "CURRENT_SPEND",
+          "thresholdPercent": 0.5
+        },
+        {
+          "spendBasis": "CURRENT_SPEND",
+          "thresholdPercent": 0.8
+        },
+        {
+          "spendBasis": "CURRENT_SPEND",
+          "thresholdPercent": 1
+        }
+      ],
+      "allUpdatesRulePresent": false
+    }
+  ]
+}

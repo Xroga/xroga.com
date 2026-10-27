@@ -1,0 +1,105 @@
+{
+  "comparisons": [
+    {
+      "name": "SUPABASE_SERVICE_ROLE_KEY",
+      "same": true,
+      "priorVersion": "1"
+    },
+    {
+      "name": "COMPOSIO_API_KEY",
+      "same": true,
+      "priorVersion": "1"
+    },
+    {
+      "name": "OPENROUTER_API_KEY",
+      "same": true,
+      "priorVersion": "1"
+    },
+    {
+      "name": "PARALLEL_API_KEY",
+      "same": true,
+      "priorVersion": "1"
+    },
+    {
+      "name": "XAI_API_KEY",
+      "same": true,
+      "priorVersion": "1"
+    },
+    {
+      "name": "GEMINI_API_KEY",
+      "same": true,
+      "priorVersion": "1"
+    },
+    {
+      "name": "GITHUB_CLIENT_ID",
+      "same": true,
+      "priorVersion": "1"
+    },
+    {
+      "name": "GITHUB_CLIENT_SECRET",
+      "same": true,
+      "priorVersion": "1"
+    },
+    {
+      "name": "SUPABASE_OAUTH_CLIENT_ID",
+      "same": true,
+      "priorVersion": "1"
+    },
+    {
+      "name": "SUPABASE_OAUTH_CLIENT_SECRET",
+      "same": true,
+      "priorVersion": "1"
+    },
+    {
+      "name": "VERCEL_API_KEY",
+      "same": true,
+      "priorVersion": "2"
+    },
+    {
+      "name": "VERCEL_CLIENT_ID",
+      "same": true,
+      "priorVersion": "1"
+    },
+    {
+      "name": "VERCEL_CLIENT_SECRET",
+      "same": true,
+      "priorVersion": "1"
+    },
+    {
+      "name": "VERCEL_TEAM_ID",
+      "same": true,
+      "priorVersion": "1"
+    },
+    {
+      "name": "VERCEL_MANAGED_PROJECT_NAME",
+      "same": true,
+      "priorVersion": "1"
+    },
+    {
+      "name": "VERCEL_OAUTH_CALLBACK_URL",
+      "same": true,
+      "priorVersion": "1"
+    },
+    {
+      "name": "WHOP_API_KEY",
+      "same": true,
+      "priorVersion": "1"
+    },
+    {
+      "name": "WHOP_COMPANY_ID",
+      "same": true,
+      "priorVersion": "1"
+    },
+    {
+      "name": "WHOP_PLAN_ID",
+      "same": true,
+      "priorVersion": "1"
+    }
+  ],
+  "missing": [
+    {
+      "name": "WHOP_WEBHOOK_SECRET",
+      "source": "secret"
+    }
+  ]
+}

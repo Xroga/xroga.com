@@ -19,7 +19,7 @@ export const XROGA_INFINITY_TOOLTIP =
 export const XROGA_INFINITY_TOOLTIP_SHORT =
   'Version 1. Version 100. Version Forever. We don\'t increment. We absorb.';
 
-export const XROGA_API_BASE = 'https://xroga-api.fly.dev/v1';
+export const XROGA_API_BASE = 'https://api.xroga.com/v1';
 
 /** Event Horizon update label — bump date when shipping major features */
 export const XROGA_MODEL_UPDATE = 'Event Horizon Update · July 2026';

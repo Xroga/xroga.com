@@ -109,10 +109,10 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "callIds": [
-        "08fa3351d8cb19a04571",
-        "dd16f90263b54684c181"
+        "6ed50f9fc731b3a94f89",
+        "d6a2d0f1eafe32f09954"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Both production consumers are authMiddleware-mounted swarm history and dashboard ship-analytics handlers passing server req.userId. The sole privileged query filters that exact owner. Returned rows and hot cache entries must match owner, persisted IDs are checked and malformed statuses are excluded. Hydration never replaces an admitted local worker object. No write or external effect occurs at these two sites.",
@@ -126,18 +126,34 @@
           "path": "backend/src/ai/runStore.historyAdmission.test.ts",
           "marker": "history hydration cannot replace an admitted worker"
         }
-      ]
+      ],
+      "preGooglePositionBinding": {
+        "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+        "callIds": [
+          "08fa3351d8cb19a04571",
+          "dd16f90263b54684c181"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "structuredOrigin": null,
+        "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+        "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+      },
+      "terminalProgressReview": {
+        "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
+        "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
+        "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
+      }
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "callIds": [
-        "1dec69321380b532d6ad",
-        "aaa2bb0b83359368e76c"
+        "bc1c802d7afea2658481",
+        "69147b3a0b1c10adba2a"
       ],
-      "disposition": "SCOPED_BOUNDARY",
+      "disposition": "REVIEWED_GAP",
       "authority": "Sole production polling consumer runs inside the authenticated swarm execution's asynchronous attempt scope, captures original server actor/run, checks admission before polling and aborts on missing or stale authority. Query filters exact owner/run, validates returned identities and known status, matches admitted generation/worker and rechecks the local object after await. It reads status only and never grants a new worker lease or credential.",
-      "reason": "Verified at5c7e8dcf disposable39110916568 real cancellation fixture checks original running/cancelled and foreign-owner denial. Focused cancellationRead, cancellationRace and authority tests prove substituted receipts, malformed state, outage and held response arriving after local resume fail closed. Closure is the fixed polling read/factory only, not guaranteed cancellation of already-started provider operations, remote revocation timing or whole-worker certification.",
+      "reason": "Verified at5c7e8dcf disposable39110916568 real cancellation fixture checks original running/cancelled and foreign-owner denial. Focused cancellationRead, cancellationRace and authority tests prove substituted receipts, malformed state, outage and held response arriving after local resume fail closed. Closure is the fixed polling read/factory only, not guaranteed cancellation of already-started provider operations, remote revocation timing or whole-worker certification. Google migration adds requireRunning to reject terminal authority at dispatch. Owner and generation predicates remain, but changed cancellation function requires exact-source integration proof. Historical scoped disposition is retained only in preGooglePositionBinding.",
       "evidence": [
         {
           "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
@@ -147,7 +163,23 @@
           "path": "backend/src/ai/runStore.cancellationRace.test.ts",
           "marker": "a delayed cancellation read cannot admit an old callback"
         }
-      ]
+      ],
+      "preGooglePositionBinding": {
+        "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+        "callIds": [
+          "1dec69321380b532d6ad",
+          "aaa2bb0b83359368e76c"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "structuredOrigin": null,
+        "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+        "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+      },
+      "terminalProgressReview": {
+        "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
+        "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
+        "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
+      }
     },
     {
       "path": "backend/src/ai/usageAccounting.ts",
@@ -2272,10 +2304,10 @@
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "sourceSha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d",
+      "sourceSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2",
       "callIds": [
-        "6cb302dec6a7d693df42",
-        "09b6dc142ebd7f16df10"
+        "b0890e13b2718629037e",
+        "1b90517b37251b8ee7c7"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "This record covers only canonical checkpoint load. SupabaseExecutionStateStore builds issued tenant context from constructor userId, filters owner/run and validates stored owner/run/project against embedded state. Writes have a separate issued-attempt row-lock disposition.",
@@ -2285,7 +2317,18 @@
           "path": "backend/src/ai/executionRuntime.ts",
           "marker": "restoreOwnerBoundExecutionState"
         }
-      ]
+      ],
+      "preGooglePositionBinding": {
+        "sourceSha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d",
+        "callIds": [
+          "6cb302dec6a7d693df42",
+          "09b6dc142ebd7f16df10"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "structuredOrigin": null,
+        "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+        "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+      }
     },
     {
       "path": "backend/src/services/memory/buildProjectStore.ts",
@@ -2549,7 +2592,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "callIds": [
         "72439f834416b3fd90eb",
         "fd09b17779296225433f"
@@ -2564,7 +2607,7 @@
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.ts",
-          "marker": "const target = authorizedPreviewTarget(grant, session);"
+          "marker": "}else target=authorizedPreviewTarget(grant,session);"
         },
         {
           "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
@@ -2580,7 +2623,7 @@
         "actorTrace": "Actual authenticated runtime routes and admitted coordinator pass original owner/project/session. Signed global grant lookup is consumed only by the actual HTTP/WebSocket resolver, which checks signature, current revocation/expiry and the exact current owner/project/session/declared port before selecting an internal target. Revocation is owner-filtered before its first await.",
         "completionCondition": "Actual default-consumer same-owner result, foreign namespace denial, unavailable authority rejection and unchanged exact persistence, plus authenticated source-bound regression. No disposition promotion before proof.",
         "fixture": "backend/src/security/previewConsumer.local.integration.ts",
-        "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+        "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
         "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
       },
       "historicalReview": {
@@ -2771,6 +2814,14 @@
           "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
           "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
         }
+      },
+      "googleGatewayEvidenceNote": "Current Google gateway independently checks the signed grant and current project/session, resolves only the owned Google worker, and rechecks admission before connecting. Legacy target resolution remains only in the non-Google branch. These existing store operations are not proof of the new Google gateway live acceptance.",
+      "googleGrantAdmissionReview": {
+        "scope": "Existing owner/session grant factory only. No caller or disposition promotion.",
+        "change": "Google capability admission checks the exact loaded owned, active, declared-port session. Legacy providers retain the existing target check. Service-only locked SQL and all returned-capability checks are unchanged. Native Google identity/immutable handle/private target checks remain mandatory in the gateway before connection.",
+        "evidence": "Native Google regression first reproduced RESOURCE_NOT_FOUND at store.ts:131. Focused suite 33/33 passes after repair, including foreign owner/project/session, stopped/expired session, undeclared port, forged private target, native identity denial and revocation.",
+        "liveStatus": "PENDING_CORRECTED_IMMUTABLE_IMAGE_AND_REQUIRED_SOURCE_GATES",
+        "historicalEvidence": "Original nested proofs, inputs, dispositions, lineage and uncertified later-phase scope remain unchanged."
       }
     },
     {
@@ -3448,9 +3499,9 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+      "sourceSha256": "1d9a3270328aba5440b285a095b385de62466488dc76b6921cbc5a9d163876d1",
       "callIds": [
-        "01d5efe9b761bc670212"
+        "9ab485ef74dd2e3e9650"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3476,13 +3527,20 @@
             "marker": "      nextFiles = Array.from(byPath.values());\n    }\n  } catch (err) {"
           }
         ]
+      },
+      "beforeGoogleMigrationBinding": {
+        "sourceSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+        "callIds": [
+          "01d5efe9b761bc670212"
+        ],
+        "reason": "Current source and exact evidence markers re-inspected after Google transport integration. Only these native Array.from and Buffer.from local conversions are rebound. Adjacent dispatch, KMS authentication, authorization, HTTP/WebSocket admission, durable handoff and accounting receive no inherited certification."
       }
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sourceSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+      "sourceSha256": "1d9a3270328aba5440b285a095b385de62466488dc76b6921cbc5a9d163876d1",
       "callIds": [
-        "944a58bb15dca85b3ddd"
+        "d205ee73c1aaa2673d9c"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3508,6 +3566,13 @@
             "marker": "      filesToPush = Array.from(byPath.values());\n    }\n  }"
           }
         ]
+      },
+      "beforeGoogleMigrationBinding": {
+        "sourceSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477",
+        "callIds": [
+          "944a58bb15dca85b3ddd"
+        ],
+        "reason": "Current source and exact evidence markers re-inspected after Google transport integration. Only these native Array.from and Buffer.from local conversions are rebound. Adjacent dispatch, KMS authentication, authorization, HTTP/WebSocket admission, durable handoff and accounting receive no inherited certification."
       }
     },
     {
@@ -3688,9 +3753,9 @@
     },
     {
       "path": "backend/src/middleware/runtimePreviewGateway.ts",
-      "sourceSha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106",
+      "sourceSha256": "bb7a949de090035d6ea96ef6b82f623a524b4241bde302f09669123e71002404",
       "callIds": [
-        "b9d29af2f2ef47d2dbd8"
+        "88f3ef8774a954206aca"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in attachRuntimePreviewWebSocketGateway. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3707,6 +3772,13 @@
           "37aeba5e7ba598d930da"
         ],
         "reason": "An export modifier exposes the unchanged actual resolver to the disposable test. This shifted only the position of an unchanged Buffer.from expression, which remains a non-persistence conversion. No security-sensitive caller is exempted."
+      },
+      "beforeGoogleMigrationBinding": {
+        "sourceSha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106",
+        "callIds": [
+          "b9d29af2f2ef47d2dbd8"
+        ],
+        "reason": "Current source and exact evidence markers re-inspected after Google transport integration. Only these native Array.from and Buffer.from local conversions are rebound. Adjacent dispatch, KMS authentication, authorization, HTTP/WebSocket admission, durable handoff and accounting receive no inherited certification."
       }
     },
     {
@@ -3967,9 +4039,9 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/signing.ts",
-      "sourceSha256": "1e0568e6ae8c0b2e11f61ca12921d0d18f1ece6558848f6e342af6fcdd414999",
+      "sourceSha256": "e14be684b9fc5bb00945b878b1c983a756e379c292bd2e9332aba8da2983a85c",
       "callIds": [
-        "fe7f31cd086bdc19c02d"
+        "bb71c8f1e400499a5efa"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in verifyLivePreviewSignature. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3979,13 +4051,20 @@
           "path": "backend/src/synthesis/livePreview/signing.ts",
           "marker": "    Buffer.from(\n      expected,\n      'utf8',"
         }
-      ]
+      ],
+      "beforeGoogleMigrationBinding": {
+        "sourceSha256": "1e0568e6ae8c0b2e11f61ca12921d0d18f1ece6558848f6e342af6fcdd414999",
+        "callIds": [
+          "fe7f31cd086bdc19c02d"
+        ],
+        "reason": "Current source and exact evidence markers re-inspected after Google transport integration. Only these native Array.from and Buffer.from local conversions are rebound. Adjacent dispatch, KMS authentication, authorization, HTTP/WebSocket admission, durable handoff and accounting receive no inherited certification."
+      }
     },
     {
       "path": "backend/src/synthesis/livePreview/signing.ts",
-      "sourceSha256": "1e0568e6ae8c0b2e11f61ca12921d0d18f1ece6558848f6e342af6fcdd414999",
+      "sourceSha256": "e14be684b9fc5bb00945b878b1c983a756e379c292bd2e9332aba8da2983a85c",
       "callIds": [
-        "de255983f758d3faeee7"
+        "bee2cf1db23c710add27"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in verifyLivePreviewSignature. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -3995,7 +4074,14 @@
           "path": "backend/src/synthesis/livePreview/signing.ts",
           "marker": "    Buffer.from(\n      signature,\n      'utf8',"
         }
-      ]
+      ],
+      "beforeGoogleMigrationBinding": {
+        "sourceSha256": "1e0568e6ae8c0b2e11f61ca12921d0d18f1ece6558848f6e342af6fcdd414999",
+        "callIds": [
+          "de255983f758d3faeee7"
+        ],
+        "reason": "Current source and exact evidence markers re-inspected after Google transport integration. Only these native Array.from and Buffer.from local conversions are rebound. Adjacent dispatch, KMS authentication, authorization, HTTP/WebSocket admission, durable handoff and accounting receive no inherited certification."
+      }
     },
     {
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
@@ -6249,7 +6335,7 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
       "callIds": [
         "d84df34ff692e4fb31c1"
       ],
@@ -6430,10 +6516,10 @@
         }
       },
       "structuredOrigin": {
-        "id": "OB-efb3ff72a0bb848e",
+        "id": "OB-d2ad32e6402233db",
         "callIds": [
           "d84df34ff692e4fb31c1",
-          "5c97508c3ec30ba78c4e"
+          "cfcd9a8afee3dabccf13"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -6633,14 +6719,31 @@
           "OB-efb3ff72a0bb848e:verified-construction-getTenantSupabaseAdmin"
         ],
         "scope": "EXACT_ORIGINAL007_ROUTING_CONSTRUCTION_AND_ENDPOINTS_NEW_SOURCE_ACCEPTANCE_REQUIRED"
+      },
+      "preGooglePositionBinding": {
+        "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+        "callIds": [
+          "d84df34ff692e4fb31c1"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "structuredOrigin": {
+          "id": "OB-efb3ff72a0bb848e",
+          "callIds": [
+            "d84df34ff692e4fb31c1",
+            "5c97508c3ec30ba78c4e"
+          ],
+          "disposition": "REVIEWED_GAP"
+        },
+        "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+        "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
       }
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
       "callIds": [
-        "fae128d168b634c4b083",
-        "8e4b6e7d9718371f3e6b"
+        "7fa0b75d1947b7252b32",
+        "475ce22bc32e3c36e043"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
@@ -6793,6 +6896,17 @@
             "scope": "Fixed registered operation metadata/default factory only. Every original caller retained. No manual promotion or security certificate. Actual changed-source allow/denial proof required."
           }
         }
+      },
+      "preGooglePositionBinding": {
+        "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+        "callIds": [
+          "fae128d168b634c4b083",
+          "8e4b6e7d9718371f3e6b"
+        ],
+        "disposition": "NARROW_EXCEPTION",
+        "structuredOrigin": null,
+        "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+        "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
       }
     },
     {
@@ -7044,16 +7158,16 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "callIds": [
-        "cb05c4e7cb4f3b73155f",
-        "eeb2bd25e4456d58a465",
-        "8796931131b8f3173ef9",
-        "24e9a07a40a70d9bd103",
-        "e81906b392bf21ef067d",
-        "3e4ef8e15d7b836d3557",
-        "b47a9af1f31012f1a675",
-        "9a5ebc5d27638e21a19f"
+        "f280dbf81344931da30f",
+        "06708d2c84b319622b11",
+        "ac5a1c58a85da7a69076",
+        "1df986c6dad802e3813b",
+        "ae9a98ddd675f4a5288c",
+        "109b247634f32645ac05",
+        "0f4cd46668bdefa4e8e9",
+        "63358e8789c46a7bbb09"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
@@ -7075,14 +7189,36 @@
           "path": "backend/src/security/tenantIsolation.local.integration.ts",
           "marker": "actual run store uses fresh authority and competing resumes retain the admitted winner"
         }
-      ]
+      ],
+      "preGooglePositionBinding": {
+        "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+        "callIds": [
+          "cb05c4e7cb4f3b73155f",
+          "eeb2bd25e4456d58a465",
+          "8796931131b8f3173ef9",
+          "24e9a07a40a70d9bd103",
+          "e81906b392bf21ef067d",
+          "3e4ef8e15d7b836d3557",
+          "b47a9af1f31012f1a675",
+          "9a5ebc5d27638e21a19f"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "structuredOrigin": null,
+        "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+        "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+      },
+      "terminalProgressReview": {
+        "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
+        "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
+        "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
+      }
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "callIds": [
-        "305655721877fdc8af8d",
-        "19cd1b0c28a37907906a"
+        "613a8526c208ac2754f6",
+        "c026c348ff7a940e10e9"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Sole production caller routes/swarm.ts cancel handler is mounted behind authMiddleware in index.ts. It passes verified req.userId, never body owner, and checks owner-bound run admission. This exact service-only cancel_swarm_run_owned RPC atomically updates only the supplied owner/run in running state, clears worker generation and returns database-clock receipt. The wrapper validates exact owner/run/status/output/iteration before success. Scope is this fixed database transition, not arbitrary service-role callers.",
@@ -7092,7 +7228,23 @@
           "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
           "marker": "real concurrent cancellation claims produce one receipt"
         }
-      ]
+      ],
+      "preGooglePositionBinding": {
+        "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+        "callIds": [
+          "305655721877fdc8af8d",
+          "19cd1b0c28a37907906a"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "structuredOrigin": null,
+        "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+        "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+      },
+      "terminalProgressReview": {
+        "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
+        "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
+        "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
+      }
     },
     {
       "path": "backend/src/ai/quota.ts",
@@ -7130,10 +7282,10 @@
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "sourceSha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d",
+      "sourceSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2",
       "callIds": [
-        "77dae5d737d7faa0bdd1",
-        "840a0babdc3449f56be3"
+        "1bb8bd89204f01a7253f",
+        "024ec43cb6e858b32b18"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Canonical checkpoint writes require an immutable issued descriptor captured from the current AsyncLocalStorage admitted worker. Service-only RPC locks existing swarm_runs and matches exact owner/run/worker/generation and running status, then preserves owner and project/repository/branch/database lineage. Required writes propagate errors without direct-table fallback.",
@@ -7143,7 +7295,18 @@
           "path": "backend/src/security/executionCheckpointAttempt.local.integration.ts",
           "marker": "real checkpoint fence rejects wrong owner epoch lineage"
         }
-      ]
+      ],
+      "preGooglePositionBinding": {
+        "sourceSha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d",
+        "callIds": [
+          "77dae5d737d7faa0bdd1",
+          "840a0babdc3449f56be3"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "structuredOrigin": null,
+        "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+        "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+      }
     },
     {
       "path": "backend/src/ai/softwareAgent/softwareAgentCheckpoint.ts",
@@ -7841,12 +8004,12 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "callIds": [
         "a6d30f02806fc550256d"
       ],
       "disposition": "SCOPED_BOUNDARY",
-      "authority": "Internal coordinator supplies copied server owner/project/session/grant intent. Existing owner-bound session loader and authorizedPreviewTarget validate the private target. Service-only transaction locks exact current owner/session, compares full expected session JSON and identity/status/provider columns, requires running interactive session with the declared HTTP port, then checks database expiry after locking before inserting. Exact single returned capability receipt is required. Gateway independently revalidates signature, revocation and current session on resolution.",
+      "authority": "Internal coordinator supplies copied server owner/project/session/grant intent. Existing owner-bound session loader validates the exact running interactive session and declared HTTP port. Google grant creation uses provider-independent session admission, while other providers retain their existing target validation. The service-only SQL transaction locks the current owner/session, compares full session JSON and identity/status/provider columns, samples expiry after locking and requires the exact returned capability. Native Google identity, immutable owned handle and private endpoint remain independently mandatory at gateway resolution.",
       "reason": "Exact current-session grant insertion boundary VERIFIED at696322f0813a4e08b9d324e2bb653dfb2e2d657e, disposable39124146660:110 fresh/upgrade migrations,145 security tests and3 browser tests pass with zero failures/skips. Actual observed grant-write waits reject session state/status/port changes and expiry before insertion, foreign/browser denial and injected rollback pass. Runtime invocation, SQL and fixture unchanged. Only parent-bound admission/insertion closes. Complete coordinator/run provenance, canonical project lifecycle, revoke/create and in-flight socket semantics and signing-key custody remain unresolved. No live provider or whole-preview certification.",
       "evidence": [
         {
@@ -7857,7 +8020,14 @@
           "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
           "marker": "preview grant input and returned capability stay bound"
         }
-      ]
+      ],
+      "googleGrantAdmissionReview": {
+        "scope": "Existing owner/session grant factory only. No caller or disposition promotion.",
+        "change": "Google capability admission checks the exact loaded owned, active, declared-port session. Legacy providers retain the existing target check. Service-only locked SQL and all returned-capability checks are unchanged. Native Google identity/immutable handle/private target checks remain mandatory in the gateway before connection.",
+        "evidence": "Native Google regression first reproduced RESOURCE_NOT_FOUND at store.ts:131. Focused suite 33/33 passes after repair, including foreign owner/project/session, stopped/expired session, undeclared port, forged private target, native identity denial and revocation.",
+        "liveStatus": "PENDING_CORRECTED_IMMUTABLE_IMAGE_AND_REQUIRED_SOURCE_GATES",
+        "historicalEvidence": "Original nested proofs, inputs, dispositions, lineage and uncertified later-phase scope remain unchanged."
+      }
     },
     {
       "path": "backend/src/security/ownedRunPersistence.ts",
@@ -7921,9 +8091,9 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "callIds": [
-        "300193e2a9a49a1a57e2"
+        "e772b4943b42c4a2d452"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Private heartbeat timer runs only for locally owned run IDs and captured original generation. Only production creation/resume consumers are the existing pipeline's durable calls, using server actor and owner-checked resume. History hydration never claims local worker identity. This factory passes only issued owner context, server process worker ID and original generation to the dedicated heartbeat helper, with no caller-selected table or mutation payload.",
@@ -7941,7 +8111,22 @@
           "path": "backend/src/ai/pipeline.ts",
           "marker": "await createRunDurable("
         }
-      ]
+      ],
+      "preGooglePositionBinding": {
+        "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+        "callIds": [
+          "300193e2a9a49a1a57e2"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "structuredOrigin": null,
+        "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+        "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
+      },
+      "terminalProgressReview": {
+        "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
+        "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
+        "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
+      }
     },
     {
       "path": "backend/src/growth/growthService.ts",
@@ -8643,7 +8828,7 @@
     },
     {
       "path": "backend/src/synthesis/livePreview/store.ts",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "callIds": [
         "260f546643a88434ec35",
         "62f2c45d96306d0c651c",
@@ -8661,7 +8846,7 @@
         },
         {
           "path": "backend/src/middleware/runtimePreviewGateway.ts",
-          "marker": "const target = authorizedPreviewTarget(grant, session);"
+          "marker": "}else target=authorizedPreviewTarget(grant,session);"
         },
         {
           "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
@@ -8677,7 +8862,7 @@
         "actorTrace": "Actual authenticated runtime routes and admitted coordinator pass original owner/project/session. Signed global grant lookup is consumed only by the actual HTTP/WebSocket resolver, which checks signature, current revocation/expiry and the exact current owner/project/session/declared port before selecting an internal target. Revocation is owner-filtered before its first await.",
         "completionCondition": "Actual default-consumer same-owner result, foreign namespace denial, unavailable authority rejection and unchanged exact persistence, plus authenticated source-bound regression. No disposition promotion before proof.",
         "fixture": "backend/src/security/previewConsumer.local.integration.ts",
-        "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+        "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
         "laterPhaseScope": "Existing frozen008/009/010 obligations remain independently open."
       },
       "historicalReview": {
@@ -8868,6 +9053,14 @@
           "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
           "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No provider proof is inferred from intercepted synthetic responses."
         }
+      },
+      "googleGatewayEvidenceNote": "Current Google gateway independently checks the signed grant and current project/session, resolves only the owned Google worker, and rechecks admission before connecting. Legacy target resolution remains only in the non-Google branch. These existing store operations are not proof of the new Google gateway live acceptance.",
+      "googleGrantAdmissionReview": {
+        "scope": "Existing owner/session grant factory only. No caller or disposition promotion.",
+        "change": "Google capability admission checks the exact loaded owned, active, declared-port session. Legacy providers retain the existing target check. Service-only locked SQL and all returned-capability checks are unchanged. Native Google identity/immutable handle/private target checks remain mandatory in the gateway before connection.",
+        "evidence": "Native Google regression first reproduced RESOURCE_NOT_FOUND at store.ts:131. Focused suite 33/33 passes after repair, including foreign owner/project/session, stopped/expired session, undeclared port, forged private target, native identity denial and revocation.",
+        "liveStatus": "PENDING_CORRECTED_IMMUTABLE_IMAGE_AND_REQUIRED_SOURCE_GATES",
+        "historicalEvidence": "Original nested proofs, inputs, dispositions, lineage and uncertified later-phase scope remain unchanged."
       }
     },
     {
@@ -8985,9 +9178,9 @@
     },
     {
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
       "callIds": [
-        "5c97508c3ec30ba78c4e"
+        "cfcd9a8afee3dabccf13"
       ],
       "disposition": "NARROW_EXCEPTION",
       "authority": "This internal constructor requires an exact own key of the immutable17-entry global operation registry and has no public administrative endpoint. Every named recipient independently proves its fixed operation, limited data projection, current staff/signature/capability authority where needed and actual positive/negative behavior. All other633 receiving inventory sites are already verified before this constructor is considered. Actual unknown, prototype and missing names fail before SDK construction, valid private routing/readiness uses execute, and revoked readiness SELECT denies without leaking identities. Returned SDK is privileged, not an enforced query sandbox. This exemption covers only named actual internal recipients, never arbitrary future queries or a user-selectable admin handle.",
@@ -9166,10 +9359,10 @@
         }
       },
       "structuredOrigin": {
-        "id": "OB-efb3ff72a0bb848e",
+        "id": "OB-d2ad32e6402233db",
         "callIds": [
           "d84df34ff692e4fb31c1",
-          "5c97508c3ec30ba78c4e"
+          "cfcd9a8afee3dabccf13"
         ],
         "disposition": "REVIEWED_GAP"
       },
@@ -9369,6 +9562,23 @@
           "OB-efb3ff72a0bb848e:verified-construction-getGlobalSupabaseAdmin"
         ],
         "scope": "EXACT_ORIGINAL007_ROUTING_CONSTRUCTION_AND_ENDPOINTS_NEW_SOURCE_ACCEPTANCE_REQUIRED"
+      },
+      "preGooglePositionBinding": {
+        "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+        "callIds": [
+          "5c97508c3ec30ba78c4e"
+        ],
+        "disposition": "NARROW_EXCEPTION",
+        "structuredOrigin": {
+          "id": "OB-efb3ff72a0bb848e",
+          "callIds": [
+            "d84df34ff692e4fb31c1",
+            "5c97508c3ec30ba78c4e"
+          ],
+          "disposition": "REVIEWED_GAP"
+        },
+        "source": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+        "scope": "Complete enclosing functions compared. Source-position mapping grants no new caller certificate."
       }
     },
     {
@@ -15569,12 +15779,12 @@
     },
     {
       "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-      "sourceSha256": "22d7137f89e80fbd6fe606697a5b6a4d0e0645301723531715e72bfe653d08c4",
+      "sourceSha256": "eea7cedde9139157e2a7efe4dda176a0efaab39f2812423f4c142ab40d29ce50",
       "callIds": [
-        "40e92e9644eb0296fe11",
-        "ae4afbcbef62e88edc30",
-        "d8a806b779eb8d10543c",
-        "3936c61b550b6e7554dd"
+        "740ab1780025cfef90bd",
+        "fd200ed8ed9f0e1a4228",
+        "27b7f2af1ab4fd07f909",
+        "653d1975581c4f1d514b"
       ],
       "previousSourceBinding": {
         "source": "2bb72563b2a940bcf906d2a7346cf408cbbd5440",
@@ -15595,7 +15805,17 @@
           "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
           "marker": "export class GoogleCloudKmsCryptoProvider"
         }
-      ]
+      ],
+      "beforeGoogleMigrationBinding": {
+        "sourceSha256": "22d7137f89e80fbd6fe606697a5b6a4d0e0645301723531715e72bfe653d08c4",
+        "callIds": [
+          "40e92e9644eb0296fe11",
+          "ae4afbcbef62e88edc30",
+          "d8a806b779eb8d10543c",
+          "3936c61b550b6e7554dd"
+        ],
+        "reason": "Current source and exact evidence markers re-inspected after Google transport integration. Only these native Array.from and Buffer.from local conversions are rebound. Adjacent dispatch, KMS authentication, authorization, HTTP/WebSocket admission, durable handoff and accounting receive no inherited certification."
+      }
     },
     {
       "path": "backend/src/services/integrations/ociKmsCryptoProvider.ts",

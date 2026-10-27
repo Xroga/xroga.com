@@ -184,6 +184,18 @@
     },
     {
       "schema": "public",
+      "table_name": "google_canonical_deliveries",
+      "migration": "20261026000000_google_canonical_deliveries.sql",
+      "migrationSha256": "8038463a25c4f3bde741fc768ddd781595685267e582af915a5edef4b1070d9b",
+      "authorizationMigration": "20261026000000_google_canonical_deliveries.sql",
+      "authorizationSha256": "8038463a25c4f3bde741fc768ddd781595685267e582af915a5edef4b1070d9b",
+      "boundary": "RLS enabled. PUBLIC, anon and authenticated have no table rights or function execution. Existing service role alone enqueues owner/project-bound requests, reserves bounded launch leases, claims exact source/worker generation and records fenced outcomes. No browser request payload endpoint.",
+      "tests": "scripts/infrastructure/test-google-delivery-postgres.py",
+      "evidence": "Ten real isolated PostgreSQL17 assertions pass, including anon/authenticated denial, row-preserving reapply, owner denial, duplicate claims, launch ceiling, original cancellation and original terminal writer/result fencing. Full hosted staging and live Google caller proof remain required.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
       "table_name": "browser_runs",
       "migration": "20261026100000_browser_runs_durable.sql",
       "migrationSha256": "4d83bc79c35a7a0d701e575478bea64ae1dbabe4ce98e80582119679109dfb1b",

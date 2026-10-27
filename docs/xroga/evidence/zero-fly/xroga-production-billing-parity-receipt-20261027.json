@@ -1,0 +1,46 @@
+{
+  "atUtc": "2026-10-27T08:36:16.656243+00:00",
+  "reason": "Retain existing native production billing signing secret omitted by Fly bundle",
+  "secretBinding": {
+    "name": "WHOP_WEBHOOK_SECRET",
+    "valueFrom": {
+      "secretKeyRef": {
+        "key": "1",
+        "name": "WHOP_WEBHOOK_SECRET"
+      }
+    }
+  },
+  "newIam": false,
+  "newCredential": false,
+  "checks": [
+    {
+      "revision": "xroga-api-google-faf56ff8-recovery-r3",
+      "path": "/health",
+      "status": 200
+    },
+    {
+      "revision": "xroga-api-google-faf56ff8-recovery-r3",
+      "path": "/ready",
+      "status": 200
+    },
+    {
+      "revision": "xroga-api-google-faf56ff8-recovery-r3",
+      "unsignedBillingEvent": 401
+    },
+    {
+      "revision": "xroga-api-google-faf56ff8-r3",
+      "path": "/health",
+      "status": 200
+    },
+    {
+      "revision": "xroga-api-google-faf56ff8-r3",
+      "path": "/ready",
+      "status": 200
+    },
+    {
+      "revision": "xroga-api-google-faf56ff8-r3",
+      "unsignedBillingEvent": 401
+    }
+  ],
+  "status": "PASS_RETAINED_BILLING_BINDING_AND_UNSIGNED_DENIAL"
+}

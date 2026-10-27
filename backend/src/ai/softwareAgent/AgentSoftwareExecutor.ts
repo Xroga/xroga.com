@@ -425,6 +425,7 @@ export class AgentSoftwareExecutor {
       completionTool,
     } =
       createXrogaSoftwareTools({
+        onSandboxAdmissionDenied:error=>{checkpointAuthorityFailure=error;abortForCheckpointFailure?.();},
         contract,
         host,
 

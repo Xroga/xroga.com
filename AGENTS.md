@@ -1,5 +1,36 @@
 # AGENTS.md
 
+## Permanent local storage cleanup rule
+
+Every implementation, build, test, Docker operation and migration must account
+for its temporary resources. Follow `docs/xroga/LOCAL_STORAGE_CLEANUP.md`.
+Check disk space before and after storage-heavy work and report changes of
+512 MiB or more. Preserve required evidence before removing disposable inputs,
+screenshots, downloads, logs, caches and intermediate outputs.
+
+On Windows, run bounded local commands through `npm run local:run -- --cwd <repo>
+--preserve <required-relative-evidence> -- <absolute-executable.exe> <args>`.
+The repository-owned runner cleans on success, failure and handled interruption,
+and the next invocation recovers abandoned jobs after checking ownership and
+active processes. Always declare needed evidence and use `--retain` when its
+importance is uncertain. Use `npm run local:cleanup` for dry-run inspection.
+For Linux/cloud/CI scripts, use a task-owned temporary directory and a `finally`
+or EXIT/INT/TERM trap, preserve evidence, then remove only those exact resources.
+Do not claim forced process termination runs a finally block. Verify deferred
+cleanup at the next checkpoint.
+
+Docker test resources need the three ownership labels documented in the policy.
+Only explicitly disposable task images may be removed, never release/recovery
+images or shared layers. Prefer source-pinned remote builds for this migration.
+Never use global Docker pruning or automatically delete persistent volumes.
+An isolated build cache requires a task-owned cleanup plan before creation.
+
+Never automatically delete source, Git repositories/worktrees or uncommitted
+work, credentials, production evidence, required recovery assets, Theta files,
+personal files or WSL virtual disks. Existing leftovers require exact-path,
+content, Git and active-use verification. Preserve ambiguous files for review.
+This is local development hygiene, not a product scheduler or runtime dependency.
+
 ## Cursor Cloud specific instructions
 
 Xroga is an npm-workspaces monorepo ("AI Swarm OS"):
@@ -17,10 +48,10 @@ Dependencies for both workspaces are installed from the root with `npm ci`. Cano
 ### Env files (not committed; recreate if missing)
 The dev servers need local env files that are gitignored:
 - `backend/.env` — copy from `backend/.env.example` (`cp backend/.env.example backend/.env`). The backend boots fine with the placeholder values; it only logs warnings for missing AI/image keys.
-- `frontend/.env.local` — must set `NEXT_PUBLIC_API_URL=http://localhost:8080` so the frontend talks to the local backend. Copy from `frontend/.env.local.example` and override that value (the example points at the production Fly URL).
+- `frontend/.env.local` — must set `NEXT_PUBLIC_API_URL=http://localhost:8080` so the frontend talks to the local backend. Copy from `frontend/.env.local.example` and override its production Google API URL.
 
 ### Supabase user OAuth (production)
-For “Authorize Supabase” (no paste), create an OAuth App under the Xroga Supabase org and set on Fly:
+For “Authorize Supabase” (no paste), create an OAuth App under the Xroga Supabase org and set these names in the protected Google production configuration, following `docs/operations/google-production-migration.md`:
 - `SUPABASE_OAUTH_CLIENT_ID`
 - `SUPABASE_OAUTH_CLIENT_SECRET`
 - `SUPABASE_OAUTH_CALLBACK_URL=https://xroga.com/dashboard/integrations/supabase/callback`

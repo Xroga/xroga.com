@@ -2,6 +2,8 @@ import {
   randomUUID,
 } from 'node:crypto';
 import { redactSecrets } from '../../lib/truthfulExecution.js';
+import {googleProjectRuntimeFromEnvironment, googleProjectRuntimeSelected} from './googleFactory.js';
+import {runtimeAuthorityIdentity, type ProjectRuntimeAuthority} from './googleAuthority.js';
 
 import type {
   ProjectFile,
@@ -60,6 +62,9 @@ export class ProjectRuntimeUnavailableError
 
 function defaultProviders():
   ProjectRuntimeProvider[] {
+  // Google requires an issued caller and owner-bound store. The factory below
+  // supplies both. Direct construction must never silently select Fly in this mode.
+  if(googleProjectRuntimeSelected())throw new ProjectRuntimeUnavailableError('Issued Google runtime authority is required.');
   const fly =
     flyProjectRuntimeProviderFromEnvironment();
 
@@ -621,6 +626,15 @@ export class ProjectRuntimeManager {
     return updated;
   }
 
+  async probeProcess(sessionId: string, processId: string): Promise<boolean | null> {
+    const session = await this.session(sessionId);
+    const provider = this.provider(session.providerId);
+    if (!provider.probeProcess) return null;
+    const process = session.processes.find(item => item.processId === processId);
+    if (!process || process.status !== 'running') throw new Error('Runtime process is unavailable.');
+    return provider.probeProcess(session, process);
+  }
+
   async exec(
     sessionId:
       string,
@@ -1128,7 +1142,15 @@ export class ProjectRuntimeManager {
 export function createProjectRuntimeManager(
   userId:
     string,
+  authority?: ProjectRuntimeAuthority,
 ): ProjectRuntimeManager {
+  if(googleProjectRuntimeSelected()) {
+    if(!authority)throw new ProjectRuntimeUnavailableError('Issued Google runtime authority is required.');
+    const identity=runtimeAuthorityIdentity(authority);
+    if(identity.userId!==userId)throw new ProjectRuntimeUnavailableError('Runtime owner does not match issued authority.');
+    const store=new SupabaseProjectRuntimeStore(identity.attempt);
+    return new ProjectRuntimeManager(userId,store,[googleProjectRuntimeFromEnvironment(authority,store)]);
+  }
   return new ProjectRuntimeManager(
     userId,
 

@@ -18,9 +18,11 @@ import { tmpdir } from 'os';
 import { join, dirname } from 'path';
 import type { ProjectFile } from './patches.js';
 import { buildSandboxEnvironment } from '../sandbox/sandboxEnvironment.js';
-import { executeSandboxed, probeSandbox } from '../sandbox/sandboxRuntime.js';
-import { SandboxUnavailableError, type SandboxNetworkPolicy } from '../sandbox/sandboxTypes.js';
-import { buildCompileCommand, parseCompileResult } from './compileCommand.js';
+import { executeCanonicalSandboxed, probeSandbox } from '../sandbox/sandboxRuntime.js';
+import { SandboxAdmissionError,SandboxUnavailableError, type SandboxNetworkPolicy } from '../sandbox/sandboxTypes.js';
+import { buildCompileCommand, parseCompileResult,buildIsolatedCompileStages,compileStageReceipt,compileDefaultConfigFile } from './compileCommand.js';
+import {googleProjectRuntimeSelected} from '../synthesis/projectRuntime/googleFactory.js';
+import type {SandboxExecutionStage} from '../sandbox/sandboxTypes.js';
 
 export interface CompileValidateResult {
   ok: boolean;
@@ -141,9 +143,13 @@ async function runCmd(
   files: ProjectFile[],
   networkPolicy: SandboxNetworkPolicy,
   extraEnvironment?: Record<string, string>,
+  stages?:readonly SandboxExecutionStage[],
+  signal?:AbortSignal,
+  sourceFiles?:readonly ProjectFile[],
 ): Promise<{ code: number | null; stdout: string; stderr: string; timedOut: boolean }> {
-  const result = await executeSandboxed({
+  const result = await executeCanonicalSandboxed('compile-validator',{
     files,
+    sourceFiles,stages,signal,
     command: cmd,
     args,
     timeoutMs,
@@ -153,7 +159,7 @@ async function runCmd(
   });
   return {
     code: result.exitCode,
-    stdout: result.stdout,
+    stdout: result.stdout+(stages?compileStageReceipt(result.stages):''),
     stderr: result.stderr,
     timedOut: result.timedOut,
   };
@@ -293,20 +299,31 @@ export async function compileValidateProject(
       typecheck: true,
       buildScript: requiredBuild ? 'build' : null,
     });
+    const native=googleProjectRuntimeSelected();
+    const defaultConfig=native&&hasTs&&!hasTsconfig?compileDefaultConfigFile():null;
     const combined = await runCmd(
       compileCmd,
       compileArgs,
       dir,
       INSTALL_MS + TSC_MS + BUILD_MS,
-      limited,
+      defaultConfig?[...limited,defaultConfig]:limited,
       // The registry is needed by install. Everything after it drops the network from inside
       // the sandbox, so the typecheck and build keep the denial they had as separate stages.
       'registry-only',
       requiredBuild ? { XROGA_COMPILE_BUILD_SCRIPT: 'build' } : undefined,
+      native?buildIsolatedCompileStages({installArgs:INSTALL_ARGS,typecheck:true,buildScript:requiredBuild?'build':null,
+        tsconfigPath:defaultConfig?.path}):undefined,
+      opts?.signal,
+      defaultConfig?limited:undefined,
     );
     log += `compile (install + typecheck + build):\n${combined.stdout}\n${combined.stderr}\n`;
 
     const payload = parseCompileResult(combined.stdout);
+
+    if(native&&payload&&!payload.networkDeniedAfterInstall){
+      return {ok:false,skipped:false,harnessUnavailable:true,reason:'Native compile network denial was not verified.',issues:[],
+        logTail:log.slice(-6000),durationMs:Date.now()-started};
+    }
 
     if (combined.timedOut) {
       issues.push('compile timed out');
@@ -393,6 +410,7 @@ export async function compileValidateProject(
       reason: ok ? 'compile passed' : 'compile failed',
     };
   } catch (err) {
+    if(err instanceof SandboxAdmissionError)throw err;
     // A runtime that disappears mid-validation is still an infrastructure outcome, not
     // evidence about the generated code.
     if (err instanceof SandboxUnavailableError) {

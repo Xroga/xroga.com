@@ -1,0 +1,49 @@
+{
+  "atUtc": "2026-10-27T08:49:27.566422+00:00",
+  "retirementAuthorizedOnlyAfterGoogleAcceptance": true,
+  "mutationsPerformed": false,
+  "apps": {
+    "xroga-api": {
+      "machines": [
+        {
+          "id": "e820730b296098",
+          "state": "started",
+          "region": "sin",
+          "image": "registry.fly.io/xroga-api@sha256:38fdca33fae4c0a9785fe6b859d4d986fc68408b324c85f15e57a6fbc5a54d24"
+        },
+        {
+          "id": "7845746ce20008",
+          "state": "started",
+          "region": "sin",
+          "image": "registry.fly.io/xroga-api@sha256:38fdca33fae4c0a9785fe6b859d4d986fc68408b324c85f15e57a6fbc5a54d24"
+        }
+      ],
+      "volumes": [],
+      "ips": [
+        {
+          "ID": "",
+          "Address": "2a09:8280:1::135:79a2:0",
+          "Type": "v6",
+          "Region": "global",
+          "CreatedAt": "2026-06-25T21:04:50.578Z",
+          "ServiceName": "",
+          "Network": null
+        },
+        {
+          "ID": "",
+          "Address": "66.241.124.19",
+          "Type": "shared_v4",
+          "Region": "",
+          "CreatedAt": "0001-01-01T00:00:00Z",
+          "ServiceName": "",
+          "Network": null
+        }
+      ]
+    },
+    "xroga-sandbox": {
+      "machines": [],
+      "volumes": [],
+      "ips": []
+    }
+  }
+}

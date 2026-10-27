@@ -1,0 +1,13 @@
+{
+  "status": "PASS_UNCHANGED_PRODUCTION_RUNTIME_SOURCE",
+  "apiSourceSha": "faf56ff8e0d6b9de61cbeb412c2e86c75b17dac3",
+  "scope": [
+    "backend",
+    "Dockerfile.api",
+    ".dockerignore"
+  ],
+  "followupScope": "frontend production URLs, retired Fly workflows, operational scripts, evidence and one test-only legacy retirement assertion",
+  "backendSourceDifference": "backend/src/synthesis/reliability/legacyRetirement.test.ts only. This node:test module is not imported by the production entrypoint. The baked image source remains faf56ff8, not the later test/documentation commit.",
+  "checkedAtUtc": "2026-10-27T08:03:23.189768+00:00",
+  "imageRebuildNeeded": false
+}

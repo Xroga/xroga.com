@@ -6,6 +6,7 @@ import {
   randomUUID,
 } from 'node:crypto';
 import { AsyncLocalStorage } from 'node:async_hooks';
+import {requireCanonicalDeliveryClaim,type CanonicalDeliveryClaim} from '../workers/googleDeliveryStore.js';
 
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { createTenantContext } from '../security/tenantContext.js';
@@ -85,6 +86,30 @@ export function captureAdmittedRunAttempt(runId: string, userId: string): Admitt
   const attempt = Object.freeze({ runId, userId, workerId: RUN_WORKER_ID, generation });
   issuedRunAttempts.add(attempt);
   return attempt;
+}
+
+/** Internal adapter entry point. Identity comes only from this canonical
+ * asynchronous worker scope, never from request files or a supplied user ID. */
+export function captureCurrentRunAttempt():AdmittedRunAttempt {
+  const record=attemptScope.getStore()?.record;
+  if(!record)throw Object.assign(new Error('Execution attempt authority is missing.'),{code:'RUN_STATE_CONFLICT'});
+  return captureAdmittedRunAttempt(record.id,record.userId);
+}
+
+/** A captured capability is identity, not a permanent grant to dispatch work. */
+export async function assertCurrentRunAttempt(attempt: AdmittedRunAttempt): Promise<void> {
+  const original = requireAdmittedRunAttempt(attempt);
+  const sameGeneration = () => {
+    const current = captureAdmittedRunAttempt(original.runId, original.userId);
+    if (current.workerId !== original.workerId || current.generation !== original.generation) {
+      throw Object.assign(new Error('Execution attempt authority changed.'), {code:'RUN_STATE_CONFLICT'});
+    }
+  };
+  sameGeneration();
+  if (await isRunCancellationRequested(original.runId, original.userId,{requireRunning:true})) {
+    throw Object.assign(new Error('Execution attempt was cancelled.'), {code:'RUN_STATE_CONFLICT'});
+  }
+  sameGeneration();
 }
 
 function mutableAttempt(runId: string): SwarmRunRecord | undefined {
@@ -359,6 +384,31 @@ export function createRun(
   void persistToSupabase(rec, true).catch(() => {});
 
   return rec;
+}
+
+/** Persist the recovery record before an expensive provider call begins. */
+export async function adoptQueuedRunDurable(claim:CanonicalDeliveryClaim):Promise<SwarmRunRecord>{
+  const issued=requireCanonicalDeliveryClaim(claim);
+  if(issued.claim.workerId!==RUN_WORKER_ID||!attemptScope.getStore()||runs.has(claim.runId)){
+    throw Object.assign(new Error('Queued execution authority is unavailable.'),{code:'RUN_STATE_CONFLICT'});
+  }
+  const record=await getRunAsync(claim.runId,claim.userId,true);
+  if(!record||record.status!=='running'||observedGenerations.get(record)!==claim.generation){
+    throw Object.assign(new Error('Queued execution authority changed.'),{code:'RUN_STATE_CONFLICT'});
+  }
+  // getRunAsync carries an observed generation, never worker authority. Only
+  // this branded native Job receipt can adopt it as the current local attempt.
+  attemptGenerations.set(record,claim.generation);runs.set(claim.runId,record);
+  attemptScope.getStore()!.record=record;touchUser(claim.userId,claim.runId);claimLocalRun(claim.runId);
+  try{await assertCurrentRunAttempt(captureAdmittedRunAttempt(claim.runId,claim.userId));}
+  catch(error){
+    releaseLocalRun(claim.runId);
+    if(runs.get(claim.runId)===record)runs.delete(claim.runId);
+    if(attemptScope.getStore()?.record===record)attemptScope.getStore()!.record=undefined;
+    userIndex.set(claim.userId,(userIndex.get(claim.userId)??[]).filter(id=>id!==claim.runId));
+    throw error;
+  }
+  return record;
 }
 
 /** Persist the recovery record before an expensive provider call begins. */
@@ -821,7 +871,7 @@ export function appendRunEvent(
   type: SwarmRunEvent['type'],
   data: Record<string, unknown>,
 ): SwarmRunEvent | null {
-  const rec = mutableAttempt(runId);
+  const rec = runningAttempt(runId);
 
   if (!rec) return null;
 
@@ -863,6 +913,15 @@ export function getRun(
     runs.get(runId) ??
     null
   );
+}
+
+/** Terminal persistence must succeed before notifications or a worker exit. */
+export async function persistTerminalRunAuthority(runId:string,userId:string):Promise<'complete'|'error'|'cancelled'>{
+  const record=getRun(runId);
+  if(!record||record.userId!==userId||record.status==='running')throw new Error('Terminal run authority is unavailable.');
+  const status=record.status;await persistRunState(runId);
+  if(getRun(runId)!==record||record.status!==status)throw new Error('Terminal run authority changed.');
+  return status;
 }
 
 // Preserve schema-supported legacy evidence without inventing successful completion.
@@ -1157,6 +1216,7 @@ export async function requestRunCancellation(
 export async function isRunCancellationRequested(
   runId: string,
   userId: string,
+  options: {requireRunning?:boolean} = {},
 ): Promise<boolean> {
   const hot =
     runs.get(runId);
@@ -1197,6 +1257,7 @@ export async function isRunCancellationRequested(
 
     if (error || !data || data.id !== runId || data.user_id !== userId ||
         !['running', 'complete', 'completed', 'error', 'cancelled'].includes(data.status) ||
+        (options.requireRunning && !['running','cancelled'].includes(data.status)) ||
         (scope && (scope.record !== runs.get(runId) || scope.record !== hot))) {
       throw new Error('Run authority is unavailable.');
     }
@@ -1597,4 +1658,12 @@ async function persistToSupabase(
     const { id, user_id, project_id, messages, created_at, worker_id, heartbeat_at, ...state } = { worker_id: null as string | null, heartbeat_at: null as string | null, ...row };
     await persistOwnedRunAttempt(supabase, context, id, RUN_WORKER_ID, generation, state);
   }
+}
+
+/** Terminal snapshots are immutable. Late progress must not change the exact
+ * state already acknowledged by the database worker-generation fence. Explicit
+ * failure enrichment and cancellation keep their existing separate contracts. */
+function runningAttempt(runId: string): SwarmRunRecord | undefined {
+  const record = mutableAttempt(runId);
+  return record?.status === 'running' ? record : undefined;
 }

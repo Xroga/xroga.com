@@ -1,0 +1,436 @@
+{
+  "version": "1.0",
+  "missionId": "XROGA-ZERO-FLY-20261025",
+  "baseSha": "c14c3e1186e758c013a6b6207abf99c502201a2b",
+  "requirementIds": [
+    "XB01-C009"
+  ],
+  "state": "IN_PROGRESS",
+  "risk": "high",
+  "scope": "Complete founder-authorized infrastructure migration from Fly to Google Cloud. Preserve canonical orchestration, accepted Phase3, Supabase, R2 and separate Batch1.5. No unrelated Phase4 work.",
+  "changedFiles": [
+    ".dockerignore",
+    ".github/pull_request_template.md",
+    ".github/workflows/api-build-check.yml",
+    ".github/workflows/backend-health-verification.yml",
+    ".github/workflows/fly-deploy.yml",
+    ".github/workflows/fly-sandbox-browser-verification.yml",
+    ".github/workflows/launch-production-verification.yml",
+    ".github/workflows/xroga-tenant-security.yml",
+    ".gitignore",
+    "AGENTS.md",
+    "Dockerfile.api",
+    "backend/src/ai/compileCommand.ts",
+    "backend/src/ai/compileStages.test.ts",
+    "backend/src/ai/compileValidate.ts",
+    "backend/src/ai/executionRuntime.sandboxAdmission.test.ts",
+    "backend/src/ai/executionRuntime.ts",
+    "backend/src/ai/pipeline.ts",
+    "backend/src/ai/runStore.dispatchAdmission.test.ts",
+    "backend/src/ai/runStore.queuedAdmission.test.ts",
+    "backend/src/ai/runStore.ts",
+    "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts",
+    "backend/src/ai/softwareAgent/sandboxAdmission.test.ts",
+    "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts",
+    "backend/src/ai/softwareAgent/xrogaTools.ts",
+    "backend/src/config/platformEnvironment.test.ts",
+    "backend/src/config/platformEnvironment.ts",
+    "backend/src/index.ts",
+    "backend/src/lib/googleServiceToken.ts",
+    "backend/src/loadPlatformEnvironment.ts",
+    "backend/src/middleware/runtimePreviewGateway.integration.test.ts",
+    "backend/src/middleware/runtimePreviewGateway.ts",
+    "backend/src/routes/businessAutomationScheduler.ts",
+    "backend/src/routes/projectRuntime.ts",
+    "backend/src/routes/swarm.ts",
+    "backend/src/runtime/bootGuard.test.ts",
+    "backend/src/runtime/safeLogging.test.ts",
+    "backend/src/sandbox/google/executionBinding.test.ts",
+    "backend/src/sandbox/google/executionBinding.ts",
+    "backend/src/sandbox/google/gceAllocationRace.test.ts",
+    "backend/src/sandbox/google/gceMachineControl.test.ts",
+    "backend/src/sandbox/google/gceMachineControl.ts",
+    "backend/src/sandbox/google/gceSshTransport.test.ts",
+    "backend/src/sandbox/google/gceSshTransport.ts",
+    "backend/src/sandbox/google/googleSandbox.test.ts",
+    "backend/src/sandbox/google/googleSandbox.ts",
+    "backend/src/sandbox/google/runtime_control.py",
+    "backend/src/sandbox/google/runtime_control_test.py",
+    "backend/src/sandbox/google/runtime_workspace_test.py",
+    "backend/src/sandbox/googleSelection.test.ts",
+    "backend/src/sandbox/sandboxProviders.ts",
+    "backend/src/sandbox/sandboxRuntime.ts",
+    "backend/src/sandbox/sandboxTypes.ts",
+    "backend/src/scripts/runCanonicalWorker.ts",
+    "backend/src/scripts/verifyGceExecution.ts",
+    "backend/src/security/previewConsumer.local.integration.ts",
+    "backend/src/security/serviceRoleGuard.ts",
+    "backend/src/services/integrations/credentialVaultStartup.test.ts",
+    "backend/src/services/integrations/credentialVaultStartup.ts",
+    "backend/src/services/integrations/googleCloudKmsCryptoProvider.test.ts",
+    "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
+    "backend/src/synthesis/browserVerificationAdapter.ts",
+    "backend/src/synthesis/googleBrowserImage.test.ts",
+    "backend/src/synthesis/inSandboxBrowser.ts",
+    "backend/src/synthesis/livePreview/access.ts",
+    "backend/src/synthesis/livePreview/admissionWatch.test.ts",
+    "backend/src/synthesis/livePreview/admissionWatch.ts",
+    "backend/src/synthesis/livePreview/agentBridge.ts",
+    "backend/src/synthesis/livePreview/coordinator.ts",
+    "backend/src/synthesis/livePreview/googleTarget.test.ts",
+    "backend/src/synthesis/livePreview/googleTarget.ts",
+    "backend/src/synthesis/livePreview/plan.ts",
+    "backend/src/synthesis/livePreview/signing.ts",
+    "backend/src/synthesis/livePreview/signingDns.test.ts",
+    "backend/src/synthesis/productionAdapters.ts",
+    "backend/src/synthesis/projectRuntime/googleAuthority.test.ts",
+    "backend/src/synthesis/projectRuntime/googleAuthority.ts",
+    "backend/src/synthesis/projectRuntime/googleFactory.test.ts",
+    "backend/src/synthesis/projectRuntime/googleFactory.ts",
+    "backend/src/synthesis/projectRuntime/googleProvider.test.ts",
+    "backend/src/synthesis/projectRuntime/googleProvider.ts",
+    "backend/src/synthesis/projectRuntime/manager.ts",
+    "backend/src/synthesis/projectRuntime/types.ts",
+    "backend/src/synthesis/runtime/registry.ts",
+    "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
+    "backend/src/workers/googleDeliveryMaintenance.ts",
+    "backend/src/workers/googleDeliveryStore.test.ts",
+    "backend/src/workers/googleDeliveryStore.ts",
+    "backend/src/workers/googleDispatch.test.ts",
+    "backend/src/workers/googleDispatch.ts",
+    "backend/src/workers/googleDispatchHandler.test.ts",
+    "backend/src/workers/googleDispatchHandler.ts",
+    "backend/src/workers/googleSwarmQueue.test.ts",
+    "backend/src/workers/googleSwarmQueue.ts",
+    "docs/operations/google-production-migration.md",
+    "docs/xroga/LOCAL_STORAGE_CLEANUP.md",
+    "docs/xroga/batch-1/phases/PHASE-2-CLOSURE-LEDGER.json",
+    "docs/xroga/batch-1/phases/PHASE-2-REVIEW-DECISIONS.json",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/deployment-topology.mmd",
+    "docs/xroga/evidence/zero-fly/BILLING-CURRENT-20261027.json",
+    "docs/xroga/evidence/zero-fly/G-NATIVE-RECOVERY-SUMMARY.json",
+    "docs/xroga/evidence/zero-fly/PRODUCTION-SCHEMA-EXPANSION-20261027.json",
+    "docs/xroga/evidence/zero-fly/allocation-slots-source-20261026.json",
+    "docs/xroga/evidence/zero-fly/api-image-equivalence-20261027.json",
+    "docs/xroga/evidence/zero-fly/background-source-checkpoint-20261026.json",
+    "docs/xroga/evidence/zero-fly/canonical-sandbox-source-20261026.json",
+    "docs/xroga/evidence/zero-fly/google-delivery-sql-final-20261026.json",
+    "docs/xroga/evidence/zero-fly/google-delivery-sql-negative-20261026.json",
+    "docs/xroga/evidence/zero-fly/google-delivery-sql-reapply-20261026.json",
+    "docs/xroga/evidence/zero-fly/hosted-delivery-schema-20261026.json",
+    "docs/xroga/evidence/zero-fly/integration-caller-rebinding-20261026.json",
+    "docs/xroga/evidence/zero-fly/live-preview-readiness-20261026.json",
+    "docs/xroga/evidence/zero-fly/local-cleanup-and-main-integration-20261025.json",
+    "docs/xroga/evidence/zero-fly/native-transport-f90abe82-20261025.json",
+    "docs/xroga/evidence/zero-fly/native-transport-recheck-78e28fab-20261026.json",
+    "docs/xroga/evidence/zero-fly/preview-routing-source-20261026.json",
+    "docs/xroga/evidence/zero-fly/production-continuation-20261027.json",
+    "docs/xroga/evidence/zero-fly/project-runtime-source-checkpoint-20261026.json",
+    "docs/xroga/evidence/zero-fly/retained-browser-image-20261025.json",
+    "docs/xroga/evidence/zero-fly/workspace-linux-unit-20261026.json",
+    "docs/xroga/evidence/zero-fly/xroga-google-migration-backup-receipt-20261027-v4.json",
+    "docs/xroga/evidence/zero-fly/xroga-google-migration-restore-cleanup-complete-20261027v4.json",
+    "docs/xroga/evidence/zero-fly/xroga-google-migration-restore-receipt-20261027-v4.json",
+    "docs/xroga/evidence/zero-fly/xroga-production-r1-readiness-20261027.json",
+    "docs/xroga/evidence/zero-fly/xroga-production-recovery-readiness-20261027.json",
+    "docs/xroga/infrastructure/native-execution-verification-approval.md",
+    "docs/xroga/infrastructure/zero-fly-migration-20261025.md",
+    "docs/xroga/missions/zero-fly-migration-20261025.json",
+    "docs/xroga/requirements-ledger.json",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/research/source-reconciliation.md",
+    "docs/xroga/runtime-contract.md",
+    "docs/xroga/secret-inventory.md",
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/current-migration-additions.json",
+    "docs/xroga/security/privileged-callers.json",
+    "docs/xroga/security/rls-audit.md",
+    "frontend/.env.local.example",
+    "frontend/next.config.mjs",
+    "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
+    "frontend/src/app/layout.tsx",
+    "frontend/src/app/share/[token]/page.tsx",
+    "frontend/src/lib/api.ts",
+    "frontend/src/lib/brand.ts",
+    "frontend/src/lib/features.ts",
+    "infra/google/cloudbuild.api.yaml",
+    "infra/google/execution-verification-scope.json",
+    "package.json",
+    "scripts/infrastructure/cloud-run-release-gate.mjs",
+    "scripts/infrastructure/cloud-run-release-gate.test.mjs",
+    "scripts/infrastructure/gce-isolation-probe.sh",
+    "scripts/infrastructure/inventory-fly.mjs",
+    "scripts/infrastructure/inventory-fly.test.mjs",
+    "scripts/infrastructure/test-google-delivery-postgres.py",
+    "scripts/local/cleanup-policy.json",
+    "scripts/local/local_maintenance.py",
+    "scripts/local/run-task.mjs",
+    "scripts/local/run-task.test.mjs",
+    "scripts/local/test_policy.py",
+    "scripts/local/win_job.py",
+    "scripts/security/full-supabase-history.mjs",
+    "scripts/security/schema-catalog.mjs",
+    "scripts/security/schema-catalog.test.mjs",
+    "scripts/verify-agent-v2-production.mjs",
+    "scripts/xroga/runtime-config.test.mjs",
+    "scripts/xroga/runtime-inventory.mjs",
+    "supabase/migrations/20261026000000_google_canonical_deliveries.sql"
+  ],
+  "decisions": {
+    "keep": [
+      "Canonical scheduler, ownership, reservation/settlement, confirmations, Supabase and R2",
+      "Accepted Phase3 ciphertext, revisions, tombstones, key versions and recovery evidence",
+      "Frontend features and independent Batch1.5 branches"
+    ],
+    "extend": [
+      "Existing provider seams with native Google identity and verified Google execution",
+      "Repository-owned local development cleanup, bounded temporary storage and evidence-preserving failure recovery, independent of production orchestration"
+    ],
+    "replace": [
+      "Active Fly infrastructure and deployment dependencies with verified Google equivalents"
+    ],
+    "deprecate": [
+      "Fly operational resources only after replacement verification and founder retirement decision"
+    ]
+  },
+  "schemaImpact": {
+    "changed": true,
+    "migrations": [
+      "supabase/migrations/20261026000000_google_canonical_deliveries.sql"
+    ],
+    "rollout": "Expand-only service-owned delivery table and fixed RPCs. Validate the current target upgrade and authenticated caller flow before production application. Do not replay historical migrations. PostgreSQL17 synthetic transport proof is not full Supabase or live Google acceptance.",
+    "rollback": "Drain admission and queued/running workers before changing the paired API/Job source. Retain delivery rows, original canonical checkpoints and ciphertext. No table drop, legacy custody fallback or customer credential rewrite."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "Infrastructure migration preserves existing security semantics. Native identity, isolated execution, bounded costs and callback parity require explicit negative and live verification before traffic changes."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "Infrastructure migration preserves existing security semantics. Native identity, isolated execution, bounded costs and callback parity require explicit negative and live verification before traffic changes."
+    },
+    "approval": {
+      "changed": true,
+      "description": "Infrastructure migration preserves existing security semantics. Native identity, isolated execution, bounded costs and callback parity require explicit negative and live verification before traffic changes."
+    },
+    "credentials": {
+      "changed": true,
+      "description": "Infrastructure migration preserves existing security semantics. Native identity, isolated execution, bounded costs and callback parity require explicit negative and live verification before traffic changes."
+    },
+    "egress": {
+      "changed": true,
+      "description": "Infrastructure migration preserves existing security semantics. Native identity, isolated execution, bounded costs and callback parity require explicit negative and live verification before traffic changes."
+    },
+    "cost": {
+      "changed": true,
+      "description": "Infrastructure migration preserves existing security semantics. Native identity, isolated execution, bounded costs and callback parity require explicit negative and live verification before traffic changes."
+    },
+    "billing": {
+      "changed": true,
+      "description": "Infrastructure migration preserves existing security semantics. Native identity, isolated execution, bounded costs and callback parity require explicit negative and live verification before traffic changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "node --import tsx --test backend/src/services/integrations/credentialVaultStartup.test.ts",
+      "scope": "Reject operator credentials and mixed identity in native Google runtime before provider construction. Retain existing fail-closed custody tests.",
+      "negative": true,
+      "reference": "backend/src/services/integrations/credentialVaultStartup.test.ts"
+    },
+    {
+      "command": "node --test scripts/infrastructure/inventory-fly.test.mjs",
+      "scope": "Detect tracked Fly references without disclosing values, preserve evidence visibility and exclude unrelated Scrapfly integration",
+      "negative": true,
+      "reference": "scripts/infrastructure/inventory-fly.test.mjs"
+    },
+    {
+      "command": "node --import tsx --test backend/src/services/integrations/googleCloudKmsCryptoProvider.test.ts backend/src/services/integrations/flyGoogleWorkloadIdentity.test.ts",
+      "scope": "Verify native metadata-only client selection, exact key/AAD failure behavior and unchanged Fly federation during transition",
+      "negative": true,
+      "reference": "backend/src/services/integrations/googleCloudKmsCryptoProvider.test.ts"
+    },
+    {
+      "command": "node --test scripts/infrastructure/cloud-run-release-gate.test.mjs",
+      "scope": "Deny mutable or foreign images, static/mixed identity, mutable secrets, CPU throttling, unbounded scale, stale source, failed readiness and missing Google recovery. Preflight is never live cutover acceptance.",
+      "negative": true,
+      "reference": "scripts/infrastructure/cloud-run-release-gate.test.mjs"
+    },
+    {
+      "command": "Run scripts/infrastructure/gce-isolation-probe.sh on one disposable e2-medium VM in existing xroga-verify-net with no SA or ingress and native 1800-second DELETE deadline",
+      "scope": "Real synthetic Chromium and container network/metadata, non-root, read-only, memory and process isolation proof. Estimated charge below 0.10 USD from available promotional credits. No customer data, IAM or firewall mutation. Does not prove provider integration or Preview.",
+      "negative": true,
+      "reference": "scripts/infrastructure/gce-isolation-probe.sh"
+    },
+    {
+      "command": "python backend/src/sandbox/google/runtime_control_test.py",
+      "scope": "Reject cross-runtime/owner/project bindings, expiry, mutable images, hostile environment names, resource escalation and missing network guard before Docker dispatch. Credential-free tests do not claim live provider integration.",
+      "negative": true,
+      "reference": "backend/src/sandbox/google/runtime_control_test.py"
+    },
+    {
+      "command": "node --import tsx --test backend/src/sandbox/google/gceMachineControl.test.ts",
+      "scope": "Negative immutable image, source identity, owner binding, TTL, resource, native identity and deletion tests before any real execution-controller permission grant.",
+      "negative": true,
+      "reference": "backend/src/sandbox/google/gceMachineControl.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/sandbox/google/gceSshTransport.test.ts",
+      "scope": "Deny ownership, OS Login, malformed and interrupted operations without retries. Assert credentials use encrypted SSH stdin, strict verified host keys, short-lived key cleanup and explicit failed-revocation reporting. Fixtures are not live SSH evidence.",
+      "negative": true,
+      "reference": "backend/src/sandbox/google/gceSshTransport.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/config/platformEnvironment.test.ts",
+      "scope": "Validate protected Google platform bundle atomically before provider imports. Reject mixed sources, foreign/static identity, runtime injection, wrong mount and malformed configuration with redacted errors.",
+      "negative": true,
+      "reference": "backend/src/config/platformEnvironment.test.ts"
+    },
+    {
+      "command": "node dist/scripts/verifyGceExecution.js in the explicitly named private synthetic Cloud Run verification Job",
+      "scope": "The separately approved single recheck tvhzv passed real native service identity, authenticated worker source, foreign physical-owner denial and seven isolated Node checks at exact source78e28fab/image4190b347. Job, worker, disk, firewall, execution subnet and four temporary bindings are removed. Control subnet/VPC cleanup completed at 2026-10-25T20:17:00Z and was independently read back absent. Historical transport evidence remains unchanged. This is infrastructure transport proof, not whole-caller integration, production cutover or zero-Fly acceptance.",
+      "negative": true,
+      "reference": "backend/src/scripts/verifyGceExecution.ts"
+    },
+    {
+      "command": "python -B scripts/local/test_policy.py",
+      "scope": "17 native Windows checks for ownership, active leases, retention, protected data, path escapes, long paths, process-tree crash cleanup, bounded logs, image references and transient local receipt-file sharing. Docker operations are fixtures while the engine is offline.",
+      "negative": true,
+      "reference": "scripts/local/test_policy.py"
+    },
+    {
+      "command": "node --test scripts/local/run-task.test.mjs scripts/ci/baseline.test.mjs",
+      "scope": "Six cleanup-dispatch tests plus thirteen unchanged baseline negative fixtures. Preserve Windows automatic wrapping, CI command order, frontend test collection, failure exits and trailing argument propagation.",
+      "negative": true,
+      "reference": "scripts/local/run-task.test.mjs"
+    },
+    {
+      "command": "node --import tsx --test backend/src/synthesis/projectRuntime/googleProvider.test.ts",
+      "scope": "Synthetic native project provider allocation, persisted binding, workspace receipts, ownership denial, cleanup and no dispatch after revocation. Not live caller proof.",
+      "negative": true,
+      "reference": "backend/src/synthesis/projectRuntime/googleProvider.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/synthesis/projectRuntime/googleAuthority.test.ts",
+      "scope": "Opaque issued identity, owner/project/run/source provenance, canonical patch/deletion checks and durable session revocation.",
+      "negative": true,
+      "reference": "backend/src/synthesis/projectRuntime/googleAuthority.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/synthesis/projectRuntime/googleFactory.test.ts",
+      "scope": "Explicit native selection, no raw-user or cloned-context fallback, attached identity response and immutable toolchain catalog.",
+      "negative": true,
+      "reference": "backend/src/synthesis/projectRuntime/googleFactory.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/synthesis/livePreview/googleTarget.test.ts",
+      "scope": "Signed-grant routing seam resolves only authenticated private Compute addresses and exact owned active ports. Not live browser E2E.",
+      "negative": true,
+      "reference": "backend/src/synthesis/livePreview/googleTarget.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/synthesis/livePreview/admissionWatch.test.ts",
+      "scope": "Serialized connection admission checks, expiry, denied/failed/stalled authority reads and cleanup without reconnection.",
+      "negative": true,
+      "reference": "backend/src/synthesis/livePreview/admissionWatch.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/ai/runStore.dispatchAdmission.test.ts",
+      "scope": "Reproduced terminal durable run accepted as active before repair. Fresh dispatch now requires running owner/worker/generation and rejects cancellation or store failure.",
+      "negative": true,
+      "reference": "backend/src/ai/runStore.dispatchAdmission.test.ts"
+    },
+    {
+      "command": "python3 -B -m unittest runtime_control_test runtime_workspace_test",
+      "scope": "Linux real filesystem tests for path traversal, symlink/special-file escape, bounded data, atomic replacement, expiry and temporary-file cleanup. No cloud resource or Docker operation.",
+      "negative": true,
+      "reference": "backend/src/sandbox/google/runtime_workspace_test.py"
+    },
+    {
+      "command": "node --import tsx --test backend/src/sandbox/google/gceAllocationRace.test.ts",
+      "scope": "Two real Node processes against a synthetic HTTP Compute API with deliberately stale empty inventories. One bounded slot wins, the other is denied, and only the winning instance is deleted. Not live GCP proof.",
+      "negative": true,
+      "reference": "backend/src/sandbox/google/gceAllocationRace.test.ts"
+    },
+    {
+      "command": "node --import tsx --test backend/src/workers/googleDispatch.test.ts backend/src/workers/googleDeliveryStore.test.ts backend/src/workers/googleDispatchHandler.test.ts backend/src/workers/googleSwarmQueue.test.ts backend/src/ai/runStore.queuedAdmission.test.ts",
+      "scope": "Opaque native claim, owner/generation and quota denial, source-pinned dispatch, observer disconnect and accurate completion. Focused fixtures do not replace live Google/Supabase tests.",
+      "negative": true,
+      "reference": "backend/src/workers/googleDeliveryStore.test.ts"
+    },
+    {
+      "command": "python3 scripts/infrastructure/test-google-delivery-postgres.py with pinned PostgreSQL17 image",
+      "scope": "Ten isolated real PostgreSQL checks including row-preserving migration reapplication. Fixes actual PR856 full-history reapply failure. No hosted schema or live Google proof.",
+      "negative": true,
+      "reference": "docs/xroga/evidence/zero-fly/google-delivery-sql-reapply-20261026.json"
+    },
+    {
+      "command": "Existing isolated Supabase staging apply_migration and rolled-back synthetic service-only RPC proof",
+      "scope": "Actual hosted upgrade on existing empty staging project, enqueue/owner/duplicate/cancellation denial and browser privileges. Auth/users/profiles/runs/deliveries/integrations/storage remain empty after rollback. Not authenticated HTTP or live Google proof.",
+      "negative": true,
+      "reference": "docs/xroga/evidence/zero-fly/hosted-delivery-schema-20261026.json"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Replace infrastructure adapters while retaining the canonical scheduler and execution graph. No second orchestrator.",
+    "rfc": null
+  },
+  "rollout": "Follow dependency-ordered Google migration record. Keep Fly live until Google parity and recovery pass. Review exact IAM and bounded cost before consequential changes. No unrelated merge.",
+  "rollback": "Keep verified Fly forward and managed-compatible recovery available until Google-hosted immutable recovery is tested. Preserve production ciphertext, revisions, tombstones and all required KMS versions. No legacy-only rollback.",
+  "knownGaps": [
+    "final frontend URL release and merge gates",
+    "authenticated production and deterministic workload acceptance",
+    "Fly retirement only after Google acceptance and verified rollback"
+  ],
+  "placeholderClaimsRemaining": [
+    "No zero-Fly completion or new production deployment claim"
+  ],
+  "evidenceRefs": [
+    "docs/xroga/evidence/zero-fly/BILLING-CURRENT-20261027.json",
+    "docs/xroga/evidence/zero-fly/G-NATIVE-RECOVERY-SUMMARY.json",
+    "docs/xroga/evidence/zero-fly/PRODUCTION-SCHEMA-EXPANSION-20261027.json",
+    "docs/xroga/evidence/zero-fly/allocation-slots-source-20261026.json",
+    "docs/xroga/evidence/zero-fly/api-image-equivalence-20261027.json",
+    "docs/xroga/evidence/zero-fly/background-source-checkpoint-20261026.json",
+    "docs/xroga/evidence/zero-fly/canonical-sandbox-source-20261026.json",
+    "docs/xroga/evidence/zero-fly/google-delivery-sql-final-20261026.json",
+    "docs/xroga/evidence/zero-fly/google-delivery-sql-negative-20261026.json",
+    "docs/xroga/evidence/zero-fly/google-delivery-sql-reapply-20261026.json",
+    "docs/xroga/evidence/zero-fly/hosted-delivery-schema-20261026.json",
+    "docs/xroga/evidence/zero-fly/integration-caller-rebinding-20261026.json",
+    "docs/xroga/evidence/zero-fly/live-preview-readiness-20261026.json",
+    "docs/xroga/evidence/zero-fly/local-cleanup-and-main-integration-20261025.json",
+    "docs/xroga/evidence/zero-fly/native-transport-f90abe82-20261025.json",
+    "docs/xroga/evidence/zero-fly/native-transport-recheck-78e28fab-20261026.json",
+    "docs/xroga/evidence/zero-fly/preview-routing-source-20261026.json",
+    "docs/xroga/evidence/zero-fly/production-continuation-20261027.json",
+    "docs/xroga/evidence/zero-fly/project-runtime-source-checkpoint-20261026.json",
+    "docs/xroga/evidence/zero-fly/retained-browser-image-20261025.json",
+    "docs/xroga/evidence/zero-fly/workspace-linux-unit-20261026.json",
+    "docs/xroga/evidence/zero-fly/xroga-google-migration-backup-receipt-20261027-v4.json",
+    "docs/xroga/evidence/zero-fly/xroga-google-migration-restore-cleanup-complete-20261027v4.json",
+    "docs/xroga/evidence/zero-fly/xroga-google-migration-restore-receipt-20261027-v4.json",
+    "docs/xroga/evidence/zero-fly/xroga-production-r1-readiness-20261027.json",
+    "docs/xroga/evidence/zero-fly/xroga-production-recovery-readiness-20261027.json",
+    "docs/xroga/infrastructure/zero-fly-migration-20261025.md"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "final frontend URL release and merge gates",
+      "authenticated production and deterministic workload acceptance",
+      "Fly retirement only after Google acceptance and verified rollback"
+    ],
+    "authenticatedE2e": "PASS",
+    "stagedSecurity": "PASS",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

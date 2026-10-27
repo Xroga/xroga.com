@@ -160,7 +160,7 @@ export function livePreviewUrl(
     `${protocol}://` +
     `${uuidLabel(
       grant.previewId,
-    )}.` +
+    )}${env.XROGA_PROJECT_RUNTIME_PROVIDER==='google-gce'?'-':'.'}` +
     `${signatureFor(
       grant,
       env,
@@ -222,10 +222,16 @@ export function parseLivePreviewHost(
         '.',
       );
 
-  if (
-    labels.length !==
-    2
-  ) {
+  // A wildcard certificate covers one label. The native Google URL puts the
+  // UUID and existing signature in one 57-character label. Keep parsing old
+  // two-label grants while the previous infrastructure remains a recovery path.
+  if(labels.length===1){
+    const match=/^([a-f0-9]{32})-([a-f0-9]{24})$/.exec(labels[0]!);
+    if(!match)return null;
+    const previewId=uuidFromLabel(match[1]!);
+    return previewId?{previewId,signature:match[2]!}:null;
+  }
+  if (labels.length !== 2) {
     return null;
   }
 

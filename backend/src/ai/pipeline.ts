@@ -83,6 +83,7 @@ import { reviewBuildOutput } from './qa.js';
 import {
   completeRun,
   createRunDurable,
+  adoptQueuedRunDurable,
   captureAdmittedRunAttempt,
   failRun,
   resumeRunDurable,
@@ -1137,6 +1138,7 @@ export async function runChatPipeline(opts: {
  * Converter → Builder (+ QA + GitHub/Vercel) with real streaming and surgical updates.
  */
 export async function runBuildPipeline(opts: {
+  deliveryClaim?:import('../workers/googleDeliveryStore.js').CanonicalDeliveryClaim;
   runId?: string;
   userId: string;
   tenantContext: TenantContext;
@@ -1217,7 +1219,10 @@ export async function runBuildPipeline(opts: {
   // Carry the verified UUID to the decisive database worker admission boundary.
   const admittedDatabaseProjectId=opts.projectId&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(opts.projectId)?opts.projectId:undefined;
 
-if (
+if(opts.deliveryClaim){
+  if(opts.deliveryClaim.runId!==runId||opts.deliveryClaim.userId!==opts.userId)throw new Error('Queued execution authority mismatch.');
+  await adoptQueuedRunDurable(opts.deliveryClaim);
+}else if (
   meta?.resumeRun
 ) {
   await resumeRunDurable(
@@ -1925,8 +1930,13 @@ publicationReason:
     if (
       softwareProject
     ) {
+      const priorPreview=await new SupabaseProjectRuntimeStore(captureAdmittedRunAttempt(runId,opts.userId))
+        .loadLatestRevision(opts.userId,softwareProject.projectId);
+      softwareProject={...softwareProject,runtime:priorPreview?.project.runtime??null};
+      await persistWorkerSoftwareProjectRevision(opts.userId,softwareProject);
       const livePreview =
         await startOrRefreshLivePreview({
+          authority:captureAdmittedRunAttempt(runId,opts.userId),
           userId:
             opts.userId,
 
@@ -3460,6 +3470,8 @@ publicationReason:
     swarmActivity: 'Sandbox production build',
     swarmTodos: todos('compile'),
   });
+  executionState.currentWorkingSnapshot=nextFiles.map(file=>({...file}));
+  await executionStore.save(executionState);
   let compile = await compileValidateProject(nextFiles, { signal: opts.signal });
   if (!compile.skipped && !compile.ok) {
     qa = {
@@ -3642,6 +3654,8 @@ publicationReason:
         );
       }
       // Re-compile after fix pass
+      executionState.currentWorkingSnapshot=nextFiles.map(file=>({...file}));
+      await executionStore.save(executionState);
       compile = await compileValidateProject(nextFiles, { signal: opts.signal });
       if (!compile.skipped && !compile.ok) {
         qa = {
