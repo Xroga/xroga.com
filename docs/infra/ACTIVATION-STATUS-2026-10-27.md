@@ -89,3 +89,28 @@ No `gcloud` and no image-build or registry credentials; the Google console and S
 | Ledger quirk | production's migration ledger mixes legacy names and versions; applying through the connector would record a new version row, so use the reviewed operator path or reconcile the ledger deliberately |
 | Cloud Tasks | one queue exists, `xroga-canonical-production` (us-east4, push), for the canonical job; no Browser Worker queue yet. Scheduler not checked |
 | Supabase plan quota | project is serving requests; the "grace period over" banner applies to the organization's Free-plan quota and is not currently blocking requests; no upgrade is authorized or needed for these migrations |
+
+### 6.2 Staging migration rehearsal (2026-10-27) and permission findings
+
+**Staging `xroga-p3-staging-20261024` (`dqxnatoessviphudbhei`): all seven migrations applied and verified, in order.** Applied through the Supabase dashboard SQL editor in the signed-in browser (the Supabase connector's `apply_migration` returned `declined`). **Difference from the reviewed files: SQL comments were removed from the applied text** (statements otherwise identical to the files at `11fdf064`; the SHA-256 prefixes in 6.1 therefore describe the files, not the exact applied bytes). Migrations 5, 6 and 7 were applied in one run. Migration 4 first appeared to succeed but had not run (a confirm dialog was pending); it was caught by a catalog check and re-run; migration 5 failed once on the missing parent table and rolled back, leaving nothing half-applied.
+
+| Check after apply | Result |
+|---|---|
+| Drive | 6 `storage_*` tables, all with forced RLS; 8 functions; `project_files.storage_object_id` present |
+| Browser/Builder | RLS on `worker_task_leases`, `browser_runs`, 4 `builder_*` tables (6 total) |
+| `preview_readiness` column | present; provider check widened to `github`, `supabase`, `vercel` |
+| anon/authenticated non-SELECT grants on the new tables | 0 |
+
+**Production migrations: NOT applied.** The permission classifier denied the browser navigation to the production SQL editor ("Modify Shared Resources"). Not bypassed. Production pre-state re-checked: 119 public tables, 74 profiles, 0 `project_files`, none of the new tables.
+
+| Permission finding | Evidence | Needed |
+|---|---|---|
+| Supabase connector | status `connected` (authenticated, read works); `apply_migration` returns `declined` twice, no reason given | this is a tool-approval/policy decision, not an authentication fault |
+| Google Cloud Run deploy | classifier denied the click that opens the deploy form | approval of that browser action in the app |
+| Cloudflare | connector `connected`; account has "Account API Tokens Write" permission group available; a user-token verify call fails with 401 (OAuth scopes), account-level token listing works | token creation itself is possible to attempt, but storing a token's secret into Secret Manager is entering a credential into a field, which the agent must not do |
+| Cloudflare R2 tokens | account lists 4 active tokens: `R2 Account Token`, **`xroga-b15-r2-test` (the temporary Phase-1 test token: still ACTIVE, not revoked)**, `xroga-production-private-files`, `xroga-production-r2-metadata-read` (the last two pre-date this session and are not used here) | owner revokes `xroga-b15-r2-test`; owner creates the bucket-scoped production token for `xroga-drive-prod` and stores it in Secret Manager |
+| Cloud Scheduler | page opens, "Create job" available, one existing job `xroga-business-automation-tick` (us-east4) | no missing access; creation still needs a browser write the classifier may gate |
+| Cloud Tasks | page opens; one queue `xroga-canonical-production` | no missing access |
+| GitHub MCP connector | failed (malformed authorization header); not needed, the signed-in `gh` CLI is used | none |
+
+Temporary local file server on `127.0.0.1:8765` (serving the seven SQL files): stopped.
