@@ -1,0 +1,11 @@
+{
+  "scope": "REAL_LINUX_NATIVE_CONTROL_AND_FILESYSTEM_TESTS_NOT_CLOUD_ACCEPTANCE",
+  "runtimeControlLfSha256": "5f8020167761861d7d2a269f74174115dc44a9ceff1a1980bd5f3d947327c030",
+  "host": "Existing authenticated Google Cloud Shell",
+  "runtime_control_test.py": {"tests": 7, "exitCode": 0},
+  "runtime_workspace_test.py": {"tests": 10, "exitCode": 0},
+  "temporarySourcesRemoved": true,
+  "cloudResourcesCreated": false,
+  "productionChanged": false,
+  "windowsWorkspaceAttempt": "UNSUPPORTED_POSIX_DESCRIPTOR_AND_SYMLINK_SEMANTICS_NOT_COUNTED_AS_PASS"
+}

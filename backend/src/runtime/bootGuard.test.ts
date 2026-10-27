@@ -27,10 +27,12 @@ describe('boot duties follow main\'s contract', () => {
 });
 
 describe('credential-safe logging is installed before anything can log', () => {
-  it('the safe-logging module is the first import after environment loading', () => {
+  it('safe logging precedes protected configuration, dotenv and provider imports', () => {
     const imports = [...source.matchAll(/^import\s+(?:[^;]*?from\s+)?'([^']+)';/gm)].map((m) => m[1]);
-    assert.equal(imports[0], 'dotenv/config');
-    assert.equal(imports[1], './runtime/installSafeLogging.js');
+    assert.deepEqual(imports.slice(0, 3), ['./runtime/installSafeLogging.js', './loadPlatformEnvironment.js', 'dotenv/config']);
+    const worker = readFileSync(new URL('../scripts/runCanonicalWorker.ts', import.meta.url), 'utf8');
+    const workerImports = [...worker.matchAll(/^import\s+(?:[^;]*?from\s+)?'([^']+)';/gm)].map((m) => m[1]);
+    assert.deepEqual(workerImports.slice(0, 2), ['../runtime/installSafeLogging.js', '../loadPlatformEnvironment.js']);
   });
 
   it('HTTP request logging records the path without its query string', () => {

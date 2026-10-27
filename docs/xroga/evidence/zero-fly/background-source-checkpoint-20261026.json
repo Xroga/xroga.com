@@ -1,0 +1,147 @@
+{
+  "scope": "SOURCE_LOCAL_HTTP_AND_REAL_SYNTHETIC_POSTGRES_NOT_GOOGLE_JOB_OR_PRODUCTION_ACCEPTANCE",
+  "parentSha": "9daf5aa2b785b1805b867213460c40d1f327bd79",
+  "atUtc": "2026-10-26T00:59:01.377089+00:00",
+  "sourceLfSha256": {
+    ".github/workflows/xroga-tenant-security.yml": "6b3c3ce6dbb416b0bc3bca57c422ea970d34f83ef52a90c22e9a873c91060224",
+    "backend/src/ai/pipeline.ts": "1d9a3270328aba5440b285a095b385de62466488dc76b6921cbc5a9d163876d1",
+    "backend/src/ai/runStore.ts": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28",
+    "backend/src/config/platformEnvironment.test.ts": "010d01e814e4d9f7c1d0ec9b7a230b18e95770ed4bb6b9404ddceb999ea920bd",
+    "backend/src/config/platformEnvironment.ts": "918b907a312d82416df6584ab2ae9f495761c2f7e41e2add750c50d5749ac638",
+    "backend/src/index.ts": "0aa1af84d280845c0b3ccd3351d22260d1fda03423482e7915858d8f70d324c8",
+    "backend/src/routes/businessAutomationScheduler.ts": "9e6413bf04e21f5cfb466c19c48834c6ca3d43d62526b527bd9cd7b1176ec5ac",
+    "backend/src/routes/swarm.ts": "38b1350f04641b110436d4d202a93c5645b0bacb6b7844f9e9cf7df65227943a",
+    "backend/src/security/serviceRoleGuard.ts": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
+    "backend/src/ai/runStore.queuedAdmission.test.ts": "9ab46c50e42dbf437b23b20b5ea677aa12fd2982994f029b8ae297f4e4c46ddf",
+    "backend/src/lib/googleServiceToken.ts": "6dd98e24e7b2516527a47732c49defe6052bce19147c47d78b0f66ef64481b4a",
+    "backend/src/scripts/runCanonicalWorker.ts": "b1df763560fe294de80ec2fa8682e417fc0d2e86a0aaa4bc4d76a001827fb26c",
+    "backend/src/workers/googleDeliveryMaintenance.ts": "dd3bf3c4f9ebb36ee0aad88c030cd6d021111c54a9d0f73f1af8582414fc9871",
+    "backend/src/workers/googleDeliveryStore.test.ts": "c45bc04d5fbe700a5e5f1ab6e487f2dc3bb9ec6b329adc4ff5fffa3a4b705378",
+    "backend/src/workers/googleDeliveryStore.ts": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d",
+    "backend/src/workers/googleDispatch.test.ts": "a202a00970d4abe5cb7544336d76b5cec0b1850f8cdb56c9b23b86741f1c17ac",
+    "backend/src/workers/googleDispatch.ts": "ec0684dc7b71d8573c3a086eec68c0f54e313727144d1b1aaeab280ceb5a0268",
+    "backend/src/workers/googleDispatchHandler.test.ts": "cec7e9ff5c42d4b1801638e95f44d296d151736c44737e15b58a13601f3ce62d",
+    "backend/src/workers/googleDispatchHandler.ts": "44c844f06c5b0e4bbce214b2d127a101ffb8dd019fc2d79f3a5c3e619da4e57d",
+    "backend/src/workers/googleSwarmQueue.test.ts": "546f10c0b123ab4649deb2eba9f10f8252bab781b70e15efd586322543cbe0a8",
+    "backend/src/workers/googleSwarmQueue.ts": "b86b0f51575cc3be197c3fa1a7c9f7f8d4f3eaf25847c4c1ea5f52679af9cd3a",
+    "scripts/infrastructure/test-google-delivery-postgres.py": "d96c16aa56423e0501e674915ddc9f3399edd1801eda4522f18852a16d1555dc",
+    "supabase/migrations/20261026000000_google_canonical_deliveries.sql": "da889ff811920d6f98aa206cdd5fdadfa94897d4c8d0f39a195631dc3ec828c6"
+  },
+  "jobs": [
+    {
+      "id": "f25de6c4-09ea-4eb3-961f-187c29b99e68",
+      "status": "passed",
+      "exitCode": 0,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "90c1deb74423b2db9e876f97ef0f8ffd9e34f4626b9437b92c3ddabd123c18c9"
+        }
+      ]
+    },
+    {
+      "id": "992ea54b-cb44-4207-b6b1-3d81eb7940c5",
+      "status": "failed",
+      "exitCode": 1,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "8c877e7555c870ec32b84a7cba020f5510cd49e26d64516dda5bf2f714345b35"
+        }
+      ]
+    },
+    {
+      "id": "9b95c281-e17e-4db4-9c54-247b16f28ff8",
+      "status": "passed",
+      "exitCode": 0,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "fd7b042ead46f4f745758b70f60ccf11026d2ffa68fbd18d46a619b8258cf2e6"
+        }
+      ]
+    },
+    {
+      "id": "bd8770a1-9e60-4c62-a9f4-9d857a8b6c77",
+      "status": "failed",
+      "exitCode": 1,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "e7524ee62fb2e494dc7c4bf346ab15191d8875120f668d528bedbff5294f8234"
+        }
+      ]
+    },
+    {
+      "id": "adce15a1-dd44-4b54-a808-d41e96ef9932",
+      "status": "passed",
+      "exitCode": 0,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "90b21c71de316434950bed243dab6b572dd7908610153b5e76eb920c41a78a08"
+        }
+      ]
+    },
+    {
+      "id": "b8ecfac6-727b-45f8-aaaf-3346bae11471",
+      "status": "passed",
+      "exitCode": 0,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "22d95359e6c9a2259fb459eea18d2489657d64d442e3a4538a473f3f1ff4c0a0"
+        }
+      ]
+    },
+    {
+      "id": "b3ca6bca-f427-4415-80ff-a367ba78ad96",
+      "status": "passed",
+      "exitCode": 0,
+      "logs": []
+    },
+    {
+      "id": "9fb6ed50-7e1b-43ca-861e-964be74c67b9",
+      "status": "passed",
+      "exitCode": 0,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "13c906dfd2c5f5f26dae5f21cc4f9963ee23c4731d969727a506670f7eb7d8dd"
+        }
+      ]
+    }
+  ],
+  "frozenTypeScriptInputs": {
+    "sha256": "f90b2df834869a2bec9f1f3d6216b177cc3de1ad73d901e5b8df67c9f3a8543c",
+    "files": 1128,
+    "beforeAfterEqual": true,
+    "job": "b3ca6bca-f427-4415-80ff-a367ba78ad96"
+  },
+  "sqlProof": "docs/xroga/evidence/zero-fly/google-delivery-sql-final-20261026.json",
+  "sqlNegative": "docs/xroga/evidence/zero-fly/google-delivery-sql-negative-20261026.json",
+  "fixedDefects": [
+    "Rejected worker adoption retained a local lease",
+    "A superseded queued request regained launch eligibility after explicit resume",
+    "Never-admitted retries requested a nonexistent canonical checkpoint"
+  ],
+  "verified": [
+    "Issued native Job claim, original owner and generation fencing, clone/fabricated authority denial",
+    "Deterministic Cloud Tasks ID with delivery ID only, fixed audience, no automatic launch POST retry",
+    "Pinned one-task/no-retry Job image, source consistency, native custody and no release SHA environment override",
+    "Fresh owner-bound HTTP observer, no Job cancellation on disconnect, fenced false completion remains false",
+    "Original cancellation and attempt writer tested on PostgreSQL17",
+    "Two real psql clients claim one worker, three dispatchers reserve two slots",
+    "Superseded deliveries cannot replay input; fresh retry requires proof no worker was ever admitted"
+  ],
+  "productionSqlApplied": false,
+  "productionDeployed": false,
+  "newGoogleResources": false,
+  "fullCiRepeated": false,
+  "remaining": [
+    "Full target Supabase upgrade and authenticated caller verification",
+    "Real Google Cloud Tasks/Jobs lifecycle and termination recovery",
+    "Real Google Preview and persistent browser-worker/toolchain parity",
+    "Configuration/callback parity, immutable forward/recovery release, controlled cutover and zero-Fly acceptance"
+  ]
+}

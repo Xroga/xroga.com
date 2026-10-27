@@ -6,7 +6,7 @@ import { getTenantSupabaseAdmin, getGlobalSupabaseAdmin } from '../../security/s
 import { createTenantContext } from '../../security/tenantContext.js';
 import { TenantAccessError } from '../../security/tenantErrors.js';
 import { SupabaseProjectRuntimeStore } from '../projectRuntime/store.js';
-import { authorizedPreviewTarget } from './access.js';
+import { authorizedPreviewPermit } from './access.js';
 
 import type {
   LivePreviewGrant,
@@ -128,7 +128,7 @@ export async function createLivePreviewGrant(
   const candidate: LivePreviewGrant = { ...input, previewId, createdAt: now, revokedAt: null };
   const loaded = await new SupabaseProjectRuntimeStore().loadSession(context.userId, input.sessionId);
   const session = loaded ? JSON.parse(JSON.stringify(loaded)) : null;
-  if (!authorizedPreviewTarget(candidate, session)) throw new TenantAccessError(404, 'RESOURCE_NOT_FOUND');
+  if (!authorizedPreviewPermit(candidate, session)) throw new TenantAccessError(404, 'RESOURCE_NOT_FOUND');
 
   const {
     data,

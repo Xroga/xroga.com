@@ -1,0 +1,38 @@
+{
+  "status": "BLOCKED_PENDING_EXACT_PRIVATE_STORAGE_CONFIGURATION_APPROVAL",
+  "source": "Preserved Fly environment and Google pre-release service, current backend/src/lib/r2.ts, authenticated Cloudflare R2 account inventory",
+  "requiredPrivateNamesPresent": [],
+  "legacyReadOnlyHeadBucketStatus": 401,
+  "legacyBucket": "xroga-assets",
+  "legacyCredentialNamesUsedByCurrentPrivateStorage": false,
+  "existingBuckets": {
+    "xroga-assets": {
+      "objects": 0,
+      "bytes": 0
+    },
+    "xroga-chat-archive": {
+      "objects": 0,
+      "bytes": 0
+    },
+    "xroga-db-backups": {
+      "objects": 0,
+      "bytes": 0
+    },
+    "xroga-drive-test": {
+      "objects": 0,
+      "bytes": 0
+    },
+    "xroga-images": {
+      "objects": 0,
+      "bytes": 0
+    },
+    "xroga-websites": {
+      "objects": 0,
+      "bytes": 0
+    }
+  },
+  "newBucketOrCredentialCreated": false,
+  "customerObjectsRead": false,
+  "claudeTestBucketUntouched": true,
+  "approvalPackage": "PRODUCTION-PRIVATE-STORAGE-CONFIGURATION-ADDITION.md, operator workspace only, pending"
+}

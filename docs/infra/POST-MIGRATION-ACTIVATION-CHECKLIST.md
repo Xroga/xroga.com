@@ -32,7 +32,7 @@ Before applying anything, run `scripts/security/compare-production-migrations.mj
 |---|---|---|
 | 1 | `20261022000000_storage_drive_foundation.sql` | `docs/infra/batch-1.5/rollback/20261022000000_storage_drive_foundation.down.sql` |
 | 2 | `20261024000000_worker_task_leases.sql` | `.../20261024000000_worker_task_leases.down.sql` |
-| 3 | `20261026000000_builder_projects.sql` | drop `builder_revisions`, `builder_projects` (nothing else references them) |
+| 3 | `20261026000100_builder_projects.sql` | drop `builder_revisions`, `builder_projects` (nothing else references them) |
 | 4 | `20261026010000_builder_phase2.sql` | drop `builder_external_operations`, `builder_verifications` |
 | 5 | `20261026020000_builder_phase3.sql` | delete rows whose provider is not `github`, restore the narrower checks |
 | 6 | `20261026030000_builder_preview_readiness.sql` | `ALTER TABLE public.builder_projects DROP COLUMN IF EXISTS preview_readiness` |

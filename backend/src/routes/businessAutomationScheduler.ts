@@ -1,30 +1,11 @@
-import { OAuth2Client } from 'google-auth-library';
+import {verifyGoogleServiceToken} from '../lib/googleServiceToken.js';
 import { Router, type Request, type Response } from 'express';
 import { processDueBusinessAutomations } from '../services/integrations/businessAutomations.js';
+import {googleBackgroundSelected} from '../workers/googleSwarmQueue.js';
+import {maintainGoogleDeliveries} from '../workers/googleDeliveryMaintenance.js';
 
 const router = Router();
-const verifier = new OAuth2Client();
-
-export async function verifyBusinessAutomationSchedulerToken(
-  authorization: string | undefined,
-  config: { audience: string; serviceAccountEmail: string },
-  verify: (idToken: string, audience: string) => Promise<{ email?: string; email_verified?: boolean; iss?: string }> = async (idToken, audience) => {
-    const ticket = await verifier.verifyIdToken({ idToken, audience });
-    return ticket.getPayload() ?? {};
-  },
-): Promise<boolean> {
-  if (!config.audience || !config.serviceAccountEmail) return false;
-  const match = /^Bearer ([A-Za-z0-9_\-.]+)$/.exec(authorization ?? '');
-  if (!match) return false;
-  try {
-    const payload = await verify(match[1], config.audience);
-    return payload.email_verified === true
-      && payload.email === config.serviceAccountEmail
-      && (payload.iss === 'https://accounts.google.com' || payload.iss === 'accounts.google.com');
-  } catch {
-    return false;
-  }
-}
+export const verifyBusinessAutomationSchedulerToken=verifyGoogleServiceToken;
 
 router.post('/tick', async (req: Request, res: Response) => {
   if (process.env.XROGA_AUTOMATION_SCHEDULER_MODE !== 'cloud') {
@@ -36,6 +17,7 @@ router.post('/tick', async (req: Request, res: Response) => {
   });
   if (!authorized) return res.status(401).json({ error: 'Unauthorized.' });
   try {
+    if(googleBackgroundSelected())await maintainGoogleDeliveries();
     await processDueBusinessAutomations();
     return res.status(204).end();
   } catch (error) {

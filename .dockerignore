@@ -1,6 +1,8 @@
-# Shrink Fly.io build context — only backend is needed (Dockerfile.api)
+# Portable API build context, only the backend is needed.
 frontend/
 node_modules/
+.local-task-storage/
+scripts/local/
 **/node_modules/
 .git/
 .github/
@@ -19,6 +21,8 @@ frontend/.next/
 **/coverage/
 **/__tests__/
 **/*.test.ts
+**/*_test.py
+**/__pycache__/
 **/*.spec.ts
 agent-tools/
 opt/

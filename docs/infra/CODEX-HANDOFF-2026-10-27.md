@@ -44,12 +44,12 @@ Dependencies: #857 to #858 to #859 to #862 is a stack (merge in that order, reta
 | 1 | `20261022000000_storage_drive_foundation.sql` (on `main` already) | `batch-1.5/rollback/...foundation.down.sql` |
 | 2 | `20261024000000_worker_task_leases.sql` (on `main` already) | `batch-1.5/rollback/...leases.down.sql` |
 | 3 | `20261026100000_browser_runs_durable.sql` (#861) | `batch-1.5/rollback/20261026100000_browser_runs_durable.down.sql` |
-| 4 | `20261026000000_builder_projects.sql` (#857) | drop `builder_revisions`, `builder_projects` |
+| 4 | `20261026000100_builder_projects.sql` (#857) | drop `builder_revisions`, `builder_projects` |
 | 5 | `20261026010000_builder_phase2.sql` (#858) | drop `builder_external_operations`, `builder_verifications` |
 | 6 | `20261026020000_builder_phase3.sql` (#859) | delete non-GitHub operation rows, restore narrower checks |
 | 7 | `20261026030000_builder_preview_readiness.sql` (#862) | `ALTER TABLE public.builder_projects DROP COLUMN IF EXISTS preview_readiness` |
 
-Note the timestamp collision risk: Codex's `20261026000000_google_canonical_deliveries.sql` and the Builder's `20261026000000_builder_projects.sql` share a version prefix. Confirm the migration runner treats them as distinct (the full-history test applies files in name order) and rename the Builder file if your tooling keys on the timestamp alone. Before applying anything, run `scripts/security/compare-production-migrations.mjs` against the target; the hosted state was never inspected by this author.
+Note the timestamp collision risk: Codex's `20261026000000_google_canonical_deliveries.sql` and the Builder's `20261026000100_builder_projects.sql` share a version prefix. Confirm the migration runner treats them as distinct (the full-history test applies files in name order) and rename the Builder file if your tooling keys on the timestamp alone. Before applying anything, run `scripts/security/compare-production-migrations.mjs` against the target; the hosted state was never inspected by this author.
 
 ## 5. Environment and flags (every switch defaults to off; details in the runbook)
 

@@ -551,6 +551,8 @@ export interface ProjectRuntimeProvider {
   ):
     Promise<string>;
 
+  probeProcess?(session: ProjectRuntimeSession, process: ProjectRuntimeProcessRecord): Promise<boolean>;
+
   snapshot(
     session:
       ProjectRuntimeSession,

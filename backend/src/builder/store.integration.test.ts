@@ -9,7 +9,7 @@ import pg from 'pg';
 import { PG_TEST_URL } from '../storage/testing/pgFixture.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const MIGRATIONS = ['20261026000000_builder_projects.sql', '20261026030000_builder_preview_readiness.sql'].map((name) => path.resolve(here, '../../../supabase/migrations', name));
+const MIGRATIONS = ['20261026000100_builder_projects.sql', '20261026030000_builder_preview_readiness.sql'].map((name) => path.resolve(here, '../../../supabase/migrations', name));
 const STUB = path.resolve(here, '../storage/testing/supabaseStub.sql');
 const skip = PG_TEST_URL ? false : 'STORAGE_TEST_DATABASE_URL not set: the builder SQL is only exercised against a real PostgreSQL';
 

@@ -1,35 +1,35 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "b82264be09a71f153ab39712d48e1950c488a553061a77d3449bf355b332bd62",
+  "reviewRegistrySha256": "6acb34a7b6dd7cde77682629b7e3f928e171115ba51bec53087504cde5d2fb00",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 185,
-    "persistenceCandidates": 816,
-    "ownerPredicateCandidates": 211,
-    "reviewRequired": 102,
+    "privilegedFactorySites": 189,
+    "persistenceCandidates": 834,
+    "ownerPredicateCandidates": 215,
+    "reviewRequired": 120,
     "reviewedCandidates": 714,
-    "unresolvedSafetyCandidates": 127,
+    "unresolvedSafetyCandidates": 147,
     "certifiedScopedPrivilegedCallers": 0,
-    "registeredNarrowGlobalExceptions": 18
+    "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 102,
-    "SCOPED_BOUNDARY": 479,
+    "REVIEW_REQUIRED": 120,
+    "SCOPED_BOUNDARY": 477,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 170,
-    "REVIEWED_GAP": 25
+    "REVIEWED_GAP": 27
   },
   "acceptance": {
     "version": 1,
     "result": "BLOCKED",
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
-    "verifiedCandidateBoundaries": 109,
-    "unresolvedCandidateBoundaries": 707,
+    "verifiedCandidateBoundaries": 106,
+    "unresolvedCandidateBoundaries": 728,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -155,8 +155,40 @@
         "id": "source"
       },
       {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-7c95badc853d71b1"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-7c95badc853d71b1"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-7c95badc853d71b1"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-7c95badc853d71b1"
+      },
+      {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-7c95badc853d71b1"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-737e828cf7d0829a"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-737e828cf7d0829a"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-737e828cf7d0829a"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-737e828cf7d0829a"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -407,6 +439,22 @@
         "id": "OB-5f7aa13240647b98"
       },
       {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-b8b2050b4efeeb5b"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-b8b2050b4efeeb5b"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-b8b2050b4efeeb5b"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-b8b2050b4efeeb5b"
+      },
+      {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-b8b2050b4efeeb5b"
       },
@@ -549,6 +597,62 @@
       {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-dac017403f18a5d5"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-11526c9c3e6a8aa3"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-11526c9c3e6a8aa3"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -804,6 +908,18 @@
       },
       {
         "code": "STALE_CALLER_BINDING",
+        "id": "OB-a0d5c143aa290324"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-a0d5c143aa290324"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-a0d5c143aa290324"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
         "id": "OB-89f15381179382bc"
       },
       {
@@ -861,6 +977,30 @@
       {
         "code": "STALE_NON_PERSISTENCE_REVIEW",
         "id": "OB-ef318e8bf2e5db98"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-d15a539f14b1a32a"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-d15a539f14b1a32a"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-d15a539f14b1a32a"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-50719dd6a728e457"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-50719dd6a728e457"
+      },
+      {
+        "code": "STALE_NON_PERSISTENCE_REVIEW",
+        "id": "OB-50719dd6a728e457"
       },
       {
         "code": "STALE_CALLER_BINDING",
@@ -1811,8 +1951,40 @@
         "id": "OB-b3e23549f0673c59"
       },
       {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-efb3ff72a0bb848e"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-efb3ff72a0bb848e"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-efb3ff72a0bb848e"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-efb3ff72a0bb848e"
+      },
+      {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-efb3ff72a0bb848e"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-32bc08c286507c08"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-32bc08c286507c08"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-32bc08c286507c08"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-32bc08c286507c08"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -1877,6 +2049,70 @@
       {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-cd65173763d747dd"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-aa02de94453fc643"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-aa02de94453fc643"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-aa02de94453fc643"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-aa02de94453fc643"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-aa02de94453fc643"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-aa02de94453fc643"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-aa02de94453fc643"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-aa02de94453fc643"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-aa02de94453fc643"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-aa02de94453fc643"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-aa02de94453fc643"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-aa02de94453fc643"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-aa02de94453fc643"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-aa02de94453fc643"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-aa02de94453fc643"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-aa02de94453fc643"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -2119,6 +2355,22 @@
         "id": "OB-44f48289b4f20191"
       },
       {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-6c2ea785fd1a1cc3"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-6c2ea785fd1a1cc3"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-6c2ea785fd1a1cc3"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-6c2ea785fd1a1cc3"
+      },
+      {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-6c2ea785fd1a1cc3"
       },
@@ -2145,6 +2397,22 @@
       {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-1aeee435b7276e9b"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-21e0074ae4821625"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-21e0074ae4821625"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-21e0074ae4821625"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-21e0074ae4821625"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -2595,6 +2863,14 @@
         "id": "OB-b4ad6b4325082a05"
       },
       {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-480ade112b06c3e5"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-480ade112b06c3e5"
+      },
+      {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-480ade112b06c3e5"
       },
@@ -2609,6 +2885,14 @@
       {
         "code": "OPEN_EVIDENCE_GAP",
         "id": "OB-299f2695dd55797d"
+      },
+      {
+        "code": "STALE_CALLER_BINDING",
+        "id": "OB-b38a27f29dbb6b8f"
+      },
+      {
+        "code": "CHANGED_CALLER_SOURCE",
+        "id": "OB-b38a27f29dbb6b8f"
       },
       {
         "code": "OPEN_EVIDENCE_GAP",
@@ -2628,11 +2912,27 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "7e0d1998e01481a5ccb3"
+        "id": "b0890e13b2718629037e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "0160b6609a2e9ebd19fc"
+        "id": "1b90517b37251b8ee7c7"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "1bb8bd89204f01a7253f"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "024ec43cb6e858b32b18"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "e43c0c026554038ec87c"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "b816c75c093ae03d4826"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -2713,6 +3013,66 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "60a088c3f2c03ec9402c"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "e772b4943b42c4a2d452"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "f280dbf81344931da30f"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "06708d2c84b319622b11"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "ac5a1c58a85da7a69076"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "1df986c6dad802e3813b"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "ae9a98ddd675f4a5288c"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "109b247634f32645ac05"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "613a8526c208ac2754f6"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "c026c348ff7a940e10e9"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "bc1c802d7afea2658481"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "69147b3a0b1c10adba2a"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "6ed50f9fc731b3a94f89"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "d6a2d0f1eafe32f09954"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "0f4cd46668bdefa4e8e9"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "63358e8789c46a7bbb09"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -2857,6 +3217,10 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "fd54c15c376787e27b0e"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "88f3ef8774a954206aca"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3120,6 +3484,22 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "40d26174ab7687d9847a"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "a1ad5d2a62e31a9a4bb8"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "02de3c9ccbe0ff9ae8c4"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "725ab11dc4a109e702b5"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "001a7a58713675bbbba0"
       },
       {
@@ -3129,6 +3509,18 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "20a3c823cda2eea8179c"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "cfcd9a8afee3dabccf13"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "7fa0b75d1947b7252b32"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "475ce22bc32e3c36e043"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3492,19 +3884,19 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "40e92e9644eb0296fe11"
+        "id": "740ab1780025cfef90bd"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ae4afbcbef62e88edc30"
+        "id": "fd200ed8ed9f0e1a4228"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d8a806b779eb8d10543c"
+        "id": "27b7f2af1ab4fd07f909"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "3936c61b550b6e7554dd"
+        "id": "653d1975581c4f1d514b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3944,6 +4336,14 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "bb71c8f1e400499a5efa"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "bee2cf1db23c710add27"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "8831772e1415698008d8"
       },
       {
@@ -4040,6 +4440,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "a1874ed76cb34dfdc5eb"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "63e27e1f6b29fe5d4d0b"
       },
       {
@@ -4057,6 +4461,50 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "7170f645d8883b5fcc3e"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "ea9002a455a6e4220eb4"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "1f38f47308a5cb80e197"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "d8550ebbd5bdb27af6a2"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "da383110b05de629f959"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "47d3e561e8e017e71b8f"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "30d234e24cf832c73d30"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "dc84149eab01b6edbb36"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "97edab68c2db4fbab9eb"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "afb2254ecf7195fd62b2"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "5c0fce9bf2111565a8d5"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "886265e1adfa87aa93e7"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4137,6 +4585,14 @@
       {
         "code": "MISSING_CALLER_REVIEW",
         "id": "8f3c7995974f0b7357a6"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "895c29e4087fcd99bdbe"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "6b6da5f598661dafa90b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4232,6 +4688,14 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "bc1c802d7afea2658481"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "69147b3a0b1c10adba2a"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "c2602b6c87e5ec2ca863"
       },
       {
@@ -4249,6 +4713,22 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "3a0a65d6d673a33eaf05"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "40d26174ab7687d9847a"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "a1ad5d2a62e31a9a4bb8"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "02de3c9ccbe0ff9ae8c4"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "725ab11dc4a109e702b5"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -4600,6 +5080,10 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "a1874ed76cb34dfdc5eb"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "63e27e1f6b29fe5d4d0b"
       },
       {
@@ -4617,6 +5101,50 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "7170f645d8883b5fcc3e"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "ea9002a455a6e4220eb4"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "1f38f47308a5cb80e197"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "d8550ebbd5bdb27af6a2"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "da383110b05de629f959"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "47d3e561e8e017e71b8f"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "30d234e24cf832c73d30"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "dc84149eab01b6edbb36"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "97edab68c2db4fbab9eb"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "afb2254ecf7195fd62b2"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "5c0fce9bf2111565a8d5"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "886265e1adfa87aa93e7"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -4653,6 +5181,14 @@
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "6a5f707e725aad757a40"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "895c29e4087fcd99bdbe"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "6b6da5f598661dafa90b"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -4764,19 +5300,19 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "6cb302dec6a7d693df42"
+        "id": "b0890e13b2718629037e"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "09b6dc142ebd7f16df10"
+        "id": "1b90517b37251b8ee7c7"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "77dae5d737d7faa0bdd1"
+        "id": "1bb8bd89204f01a7253f"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "840a0babdc3449f56be3"
+        "id": "024ec43cb6e858b32b18"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -4788,11 +5324,11 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "7e0d1998e01481a5ccb3"
+        "id": "e43c0c026554038ec87c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "0160b6609a2e9ebd19fc"
+        "id": "b816c75c093ae03d4826"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -4964,63 +5500,55 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "300193e2a9a49a1a57e2"
+        "id": "e772b4943b42c4a2d452"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "cb05c4e7cb4f3b73155f"
+        "id": "f280dbf81344931da30f"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "eeb2bd25e4456d58a465"
+        "id": "06708d2c84b319622b11"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "8796931131b8f3173ef9"
+        "id": "ac5a1c58a85da7a69076"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "24e9a07a40a70d9bd103"
+        "id": "1df986c6dad802e3813b"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "e81906b392bf21ef067d"
+        "id": "ae9a98ddd675f4a5288c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "3e4ef8e15d7b836d3557"
+        "id": "109b247634f32645ac05"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "305655721877fdc8af8d"
+        "id": "613a8526c208ac2754f6"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "19cd1b0c28a37907906a"
+        "id": "c026c348ff7a940e10e9"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "1dec69321380b532d6ad"
+        "id": "6ed50f9fc731b3a94f89"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "aaa2bb0b83359368e76c"
+        "id": "d6a2d0f1eafe32f09954"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "08fa3351d8cb19a04571"
+        "id": "0f4cd46668bdefa4e8e9"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "dd16f90263b54684c181"
-      },
-      {
-        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "b47a9af1f31012f1a675"
-      },
-      {
-        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "9a5ebc5d27638e21a19f"
+        "id": "63358e8789c46a7bbb09"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -5461,6 +5989,10 @@
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "70e1bf1fe7857088ca36"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "88f3ef8774a954206aca"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -6036,15 +6568,15 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "5c97508c3ec30ba78c4e"
+        "id": "cfcd9a8afee3dabccf13"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "fae128d168b634c4b083"
+        "id": "7fa0b75d1947b7252b32"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "8e4b6e7d9718371f3e6b"
+        "id": "475ce22bc32e3c36e043"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -6336,19 +6868,19 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "40e92e9644eb0296fe11"
+        "id": "740ab1780025cfef90bd"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "ae4afbcbef62e88edc30"
+        "id": "fd200ed8ed9f0e1a4228"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "d8a806b779eb8d10543c"
+        "id": "27b7f2af1ab4fd07f909"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "3936c61b550b6e7554dd"
+        "id": "653d1975581c4f1d514b"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -6796,6 +7328,14 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "bb71c8f1e400499a5efa"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "bee2cf1db23c710add27"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "a6d30f02806fc550256d"
       },
       {
@@ -7045,12 +7585,12 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 816,
-    "structuredVerified": 109,
-    "structuredUnproven": 707,
-    "manualUnresolved": 127,
-    "manualUnsupported": 580,
-    "agreedVerified": 109,
+    "currentCallers": 834,
+    "structuredVerified": 106,
+    "structuredUnproven": 728,
+    "manualUnresolved": 147,
+    "manualUnsupported": 581,
+    "agreedVerified": 106,
     "proofAwaitingManualReconciliation": 0
   },
   "callers": [
@@ -7370,15 +7910,15 @@
       }
     },
     {
-      "id": "6cb302dec6a7d693df42",
+      "id": "b0890e13b2718629037e",
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 177,
+      "line": 178,
       "enclosing": "load",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "execution_runs",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d",
+      "sourceSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2",
       "semanticReview": {
         "authority": "This record covers only canonical checkpoint load. SupabaseExecutionStateStore builds issued tenant context from constructor userId, filters owner/run and validates stored owner/run/project against embedded state. Writes have a separate issued-attempt row-lock disposition.",
         "reason": "Reconciled unchanged source atd9b13e09 disposable39171571259. Both production constructors are runBuildPipeline, which requires original issued context and matching user. Resume reads only that user's exact run, validates embedded row/project/repository/branch lineage and rechecks current database project before durable worker admission. After admission the constructor receives the captured original run/user attempt. Actual canonical execution-store case proves permitted own load, foreign canary denial, corrupt run/project rejection and preserved concurrent owner receipt. Separate current-parent admission and checkpoint epoch tests pass. These two loader/factory calls are scoped, not whole runtime/provider lifecycle or a permission to read a foreign run.",
@@ -7391,15 +7931,15 @@
       }
     },
     {
-      "id": "09b6dc142ebd7f16df10",
+      "id": "1b90517b37251b8ee7c7",
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 177,
+      "line": 178,
       "enclosing": "load",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d",
+      "sourceSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2",
       "semanticReview": {
         "authority": "This record covers only canonical checkpoint load. SupabaseExecutionStateStore builds issued tenant context from constructor userId, filters owner/run and validates stored owner/run/project against embedded state. Writes have a separate issued-attempt row-lock disposition.",
         "reason": "Reconciled unchanged source atd9b13e09 disposable39171571259. Both production constructors are runBuildPipeline, which requires original issued context and matching user. Resume reads only that user's exact run, validates embedded row/project/repository/branch lineage and rechecks current database project before durable worker admission. After admission the constructor receives the captured original run/user attempt. Actual canonical execution-store case proves permitted own load, foreign canary denial, corrupt run/project rejection and preserved concurrent owner receipt. Separate current-parent admission and checkpoint epoch tests pass. These two loader/factory calls are scoped, not whole runtime/provider lifecycle or a permission to read a foreign run.",
@@ -7412,15 +7952,15 @@
       }
     },
     {
-      "id": "77dae5d737d7faa0bdd1",
+      "id": "1bb8bd89204f01a7253f",
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 203,
+      "line": 204,
       "enclosing": "saveSnapshot",
       "kind": "RPC_CANDIDATE",
       "target": "persist_execution_checkpoint_attempt",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d",
+      "sourceSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2",
       "semanticReview": {
         "authority": "Canonical checkpoint writes require an immutable issued descriptor captured from the current AsyncLocalStorage admitted worker. Service-only RPC locks existing swarm_runs and matches exact owner/run/worker/generation and running status, then preserves owner and project/repository/branch/database lineage. Required writes propagate errors without direct-table fallback.",
         "reason": "Exact canonical-state write boundary VERIFIED at01bd07160817927799a043bbfb46d2c433ab85a8 disposable38822065088. Real current-owner issued attempt persists, wrong owner/worker/generation/lineage and browser-role attempts fail, observed two-session parent-lock races deny stale writes after resume and cancellation. Forged/cloned descriptors, immutable snapshots and failed queues have focused proof. Separate software checkpoints, runtime revisions, external effects and full run lifecycle remain independent open obligations, not covered by this disposition.",
@@ -7433,15 +7973,15 @@
       }
     },
     {
-      "id": "840a0babdc3449f56be3",
+      "id": "024ec43cb6e858b32b18",
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 203,
+      "line": 204,
       "enclosing": "saveSnapshot",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d",
+      "sourceSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2",
       "semanticReview": {
         "authority": "Canonical checkpoint writes require an immutable issued descriptor captured from the current AsyncLocalStorage admitted worker. Service-only RPC locks existing swarm_runs and matches exact owner/run/worker/generation and running status, then preserves owner and project/repository/branch/database lineage. Required writes propagate errors without direct-table fallback.",
         "reason": "Exact canonical-state write boundary VERIFIED at01bd07160817927799a043bbfb46d2c433ab85a8 disposable38822065088. Real current-owner issued attempt persists, wrong owner/worker/generation/lineage and browser-role attempts fail, observed two-session parent-lock races deny stale writes after resume and cancellation. Forged/cloned descriptors, immutable snapshots and failed queues have focused proof. Separate software checkpoints, runtime revisions, external effects and full run lifecycle remain independent open obligations, not covered by this disposition.",
@@ -7517,15 +8057,15 @@
       }
     },
     {
-      "id": "7e0d1998e01481a5ccb3",
+      "id": "e43c0c026554038ec87c",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3798,
+      "line": 3812,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "82f7738b595257e701be5b860f4c63c0f547b9606d9cbd04beb4d1bac489388e",
+      "sourceSha256": "b28084a97721f62c135e84f9dc070a378ca1bd6b1233d19d0cc66509475510f0",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -7538,15 +8078,15 @@
       }
     },
     {
-      "id": "0160b6609a2e9ebd19fc",
+      "id": "b816c75c093ae03d4826",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3978,
+      "line": 3992,
       "enclosing": "runBuildPipeline",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "82f7738b595257e701be5b860f4c63c0f547b9606d9cbd04beb4d1bac489388e",
+      "sourceSha256": "b28084a97721f62c135e84f9dc070a378ca1bd6b1233d19d0cc66509475510f0",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in runBuildPipeline. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -8754,15 +9294,15 @@
       }
     },
     {
-      "id": "300193e2a9a49a1a57e2",
+      "id": "e772b4943b42c4a2d452",
       "path": "backend/src/ai/runStore.ts",
-      "line": 136,
+      "line": 161,
       "enclosing": "persistRunHeartbeat",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Private heartbeat timer runs only for locally owned run IDs and captured original generation. Only production creation/resume consumers are the existing pipeline's durable calls, using server actor and owner-checked resume. History hydration never claims local worker identity. This factory passes only issued owner context, server process worker ID and original generation to the dedicated heartbeat helper, with no caller-selected table or mutation payload.",
         "reason": "Source tracing plus actual helper boundary verified at696322f0 disposable39124146660. Focused original-timer test observes the persisted worker/generation, one exact heartbeat call, and safe handling of empty/outage/thrown storage with no provider retry or private diagnostics. Actual DB current-generation/foreign/cancelled and row-lock clock tests pass. Only fixed heartbeat client use is closed. All other run-store writes and external worker/liveness/cancellation semantics retain independent reviews and gaps.",
@@ -8783,15 +9323,15 @@
       }
     },
     {
-      "id": "cb05c4e7cb4f3b73155f",
+      "id": "f280dbf81344931da30f",
       "path": "backend/src/ai/runStore.ts",
-      "line": 469,
+      "line": 519,
       "enclosing": "resumeRunDurable",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "The changed current-project binding now passes actual disposable39171571259 atd9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce:121 migration histories,164 security tests,3 browser, zero failures/skips. New worker case verifies create/resume/cold restore, checkpoints/revision, foreign/browser denial, canonical safe cancellation after transfer, five observed project-lock waits, exact retained receipts and rollback. The e22 cancellation compatibility failure is preserved and corrected narrowly. These eight fixed calls are scoped, not the whole worker/scheduler/provider criterion. Existing issued actor, owner, generation and lease proof remains required and preserved.",
@@ -8816,15 +9356,15 @@
       }
     },
     {
-      "id": "eeb2bd25e4456d58a465",
+      "id": "06708d2c84b319622b11",
       "path": "backend/src/ai/runStore.ts",
-      "line": 470,
+      "line": 520,
       "enclosing": "resumeRunDurable",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "The changed current-project binding now passes actual disposable39171571259 atd9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce:121 migration histories,164 security tests,3 browser, zero failures/skips. New worker case verifies create/resume/cold restore, checkpoints/revision, foreign/browser denial, canonical safe cancellation after transfer, five observed project-lock waits, exact retained receipts and rollback. The e22 cancellation compatibility failure is preserved and corrected narrowly. These eight fixed calls are scoped, not the whole worker/scheduler/provider criterion. Existing issued actor, owner, generation and lease proof remains required and preserved.",
@@ -8849,15 +9389,15 @@
       }
     },
     {
-      "id": "8796931131b8f3173ef9",
+      "id": "ac5a1c58a85da7a69076",
       "path": "backend/src/ai/runStore.ts",
-      "line": 783,
+      "line": 833,
       "enclosing": "persistConversationOnly",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "The changed current-project binding now passes actual disposable39171571259 atd9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce:121 migration histories,164 security tests,3 browser, zero failures/skips. New worker case verifies create/resume/cold restore, checkpoints/revision, foreign/browser denial, canonical safe cancellation after transfer, five observed project-lock waits, exact retained receipts and rollback. The e22 cancellation compatibility failure is preserved and corrected narrowly. These eight fixed calls are scoped, not the whole worker/scheduler/provider criterion. Existing issued actor, owner, generation and lease proof remains required and preserved.",
@@ -8882,15 +9422,15 @@
       }
     },
     {
-      "id": "24e9a07a40a70d9bd103",
+      "id": "1df986c6dad802e3813b",
       "path": "backend/src/ai/runStore.ts",
-      "line": 789,
+      "line": 839,
       "enclosing": "persistConversationOnly",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "The changed current-project binding now passes actual disposable39171571259 atd9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce:121 migration histories,164 security tests,3 browser, zero failures/skips. New worker case verifies create/resume/cold restore, checkpoints/revision, foreign/browser denial, canonical safe cancellation after transfer, five observed project-lock waits, exact retained receipts and rollback. The e22 cancellation compatibility failure is preserved and corrected narrowly. These eight fixed calls are scoped, not the whole worker/scheduler/provider criterion. Existing issued actor, owner, generation and lease proof remains required and preserved.",
@@ -8915,15 +9455,15 @@
       }
     },
     {
-      "id": "e81906b392bf21ef067d",
+      "id": "ae9a98ddd675f4a5288c",
       "path": "backend/src/ai/runStore.ts",
-      "line": 901,
+      "line": 960,
       "enclosing": "getRunAsync",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "The changed current-project binding now passes actual disposable39171571259 atd9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce:121 migration histories,164 security tests,3 browser, zero failures/skips. New worker case verifies create/resume/cold restore, checkpoints/revision, foreign/browser denial, canonical safe cancellation after transfer, five observed project-lock waits, exact retained receipts and rollback. The e22 cancellation compatibility failure is preserved and corrected narrowly. These eight fixed calls are scoped, not the whole worker/scheduler/provider criterion. Existing issued actor, owner, generation and lease proof remains required and preserved.",
@@ -8948,15 +9488,15 @@
       }
     },
     {
-      "id": "3e4ef8e15d7b836d3557",
+      "id": "109b247634f32645ac05",
       "path": "backend/src/ai/runStore.ts",
-      "line": 903,
+      "line": 962,
       "enclosing": "getRunAsync",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "The changed current-project binding now passes actual disposable39171571259 atd9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce:121 migration histories,164 security tests,3 browser, zero failures/skips. New worker case verifies create/resume/cold restore, checkpoints/revision, foreign/browser denial, canonical safe cancellation after transfer, five observed project-lock waits, exact retained receipts and rollback. The e22 cancellation compatibility failure is preserved and corrected narrowly. These eight fixed calls are scoped, not the whole worker/scheduler/provider criterion. Existing issued actor, owner, generation and lease proof remains required and preserved.",
@@ -8981,15 +9521,15 @@
       }
     },
     {
-      "id": "305655721877fdc8af8d",
+      "id": "613a8526c208ac2754f6",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1073,
+      "line": 1132,
       "enclosing": "requestRunCancellation",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Sole production caller routes/swarm.ts cancel handler is mounted behind authMiddleware in index.ts. It passes verified req.userId, never body owner, and checks owner-bound run admission. This exact service-only cancel_swarm_run_owned RPC atomically updates only the supplied owner/run in running state, clears worker generation and returns database-clock receipt. The wrapper validates exact owner/run/status/output/iteration before success. Scope is this fixed database transition, not arbitrary service-role callers.",
         "reason": "SCOPED_BOUNDARY evidence at aca4b684759a5922d063625b8af2949d00b336f8, disposable39108753363: real tests9/10/12 pass owner spoofing, stale receipt, anonymous/authenticated RPC denial, two independent concurrent claims with one transition and learning blocked on a resumed parent epoch. The route, RPC, wrapper and tests are unchanged at05e20e6d. Loopback receipt corruption/outage tests also pass. Narrow cancellation-transition acceptance only. Physical provider cancellation, full worker lifecycle, immediate JWT revocation and best-effort learning availability remain separate unresolved obligations.",
@@ -9002,15 +9542,15 @@
       }
     },
     {
-      "id": "19cd1b0c28a37907906a",
+      "id": "c026c348ff7a940e10e9",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1079,
+      "line": 1138,
       "enclosing": "requestRunCancellation",
       "kind": "RPC_CANDIDATE",
       "target": "cancel_swarm_run_owned",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Sole production caller routes/swarm.ts cancel handler is mounted behind authMiddleware in index.ts. It passes verified req.userId, never body owner, and checks owner-bound run admission. This exact service-only cancel_swarm_run_owned RPC atomically updates only the supplied owner/run in running state, clears worker generation and returns database-clock receipt. The wrapper validates exact owner/run/status/output/iteration before success. Scope is this fixed database transition, not arbitrary service-role callers.",
         "reason": "SCOPED_BOUNDARY evidence at aca4b684759a5922d063625b8af2949d00b336f8, disposable39108753363: real tests9/10/12 pass owner spoofing, stale receipt, anonymous/authenticated RPC denial, two independent concurrent claims with one transition and learning blocked on a resumed parent epoch. The route, RPC, wrapper and tests are unchanged at05e20e6d. Loopback receipt corruption/outage tests also pass. Narrow cancellation-transition acceptance only. Physical provider cancellation, full worker lifecycle, immediate JWT revocation and best-effort learning availability remain separate unresolved obligations.",
@@ -9023,18 +9563,18 @@
       }
     },
     {
-      "id": "1dec69321380b532d6ad",
+      "id": "bc1c802d7afea2658481",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1182,
+      "line": 1242,
       "enclosing": "isRunCancellationRequested",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
-      "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Sole production polling consumer runs inside the authenticated swarm execution's asynchronous attempt scope, captures original server actor/run, checks admission before polling and aborts on missing or stale authority. Query filters exact owner/run, validates returned identities and known status, matches admitted generation/worker and rechecks the local object after await. It reads status only and never grants a new worker lease or credential.",
-        "reason": "Verified at5c7e8dcf disposable39110916568 real cancellation fixture checks original running/cancelled and foreign-owner denial. Focused cancellationRead, cancellationRace and authority tests prove substituted receipts, malformed state, outage and held response arriving after local resume fail closed. Closure is the fixed polling read/factory only, not guaranteed cancellation of already-started provider operations, remote revocation timing or whole-worker certification.",
+        "reason": "Verified at5c7e8dcf disposable39110916568 real cancellation fixture checks original running/cancelled and foreign-owner denial. Focused cancellationRead, cancellationRace and authority tests prove substituted receipts, malformed state, outage and held response arriving after local resume fail closed. Closure is the fixed polling read/factory only, not guaranteed cancellation of already-started provider operations, remote revocation timing or whole-worker certification. Google migration adds requireRunning to reject terminal authority at dispatch. Owner and generation predicates remain, but changed cancellation function requires exact-source integration proof. Historical scoped disposition is retained only in preGooglePositionBinding.",
         "evidence": [
           {
             "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
@@ -9048,18 +9588,18 @@
       }
     },
     {
-      "id": "aaa2bb0b83359368e76c",
+      "id": "69147b3a0b1c10adba2a",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1188,
+      "line": 1248,
       "enclosing": "isRunCancellationRequested",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
-      "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "review": "REVIEWED_GAP",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Sole production polling consumer runs inside the authenticated swarm execution's asynchronous attempt scope, captures original server actor/run, checks admission before polling and aborts on missing or stale authority. Query filters exact owner/run, validates returned identities and known status, matches admitted generation/worker and rechecks the local object after await. It reads status only and never grants a new worker lease or credential.",
-        "reason": "Verified at5c7e8dcf disposable39110916568 real cancellation fixture checks original running/cancelled and foreign-owner denial. Focused cancellationRead, cancellationRace and authority tests prove substituted receipts, malformed state, outage and held response arriving after local resume fail closed. Closure is the fixed polling read/factory only, not guaranteed cancellation of already-started provider operations, remote revocation timing or whole-worker certification.",
+        "reason": "Verified at5c7e8dcf disposable39110916568 real cancellation fixture checks original running/cancelled and foreign-owner denial. Focused cancellationRead, cancellationRace and authority tests prove substituted receipts, malformed state, outage and held response arriving after local resume fail closed. Closure is the fixed polling read/factory only, not guaranteed cancellation of already-started provider operations, remote revocation timing or whole-worker certification. Google migration adds requireRunning to reject terminal authority at dispatch. Owner and generation predicates remain, but changed cancellation function requires exact-source integration proof. Historical scoped disposition is retained only in preGooglePositionBinding.",
         "evidence": [
           {
             "path": "backend/src/security/buildOutcomeAttempt.local.integration.ts",
@@ -9073,15 +9613,15 @@
       }
     },
     {
-      "id": "08fa3351d8cb19a04571",
+      "id": "6ed50f9fc731b3a94f89",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1331,
+      "line": 1392,
       "enclosing": "listRunsForUserAsync",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Both production consumers are authMiddleware-mounted swarm history and dashboard ship-analytics handlers passing server req.userId. The sole privileged query filters that exact owner. Returned rows and hot cache entries must match owner, persisted IDs are checked and malformed statuses are excluded. Hydration never replaces an admitted local worker object. No write or external effect occurs at these two sites.",
         "reason": "Verified at5c7e8dcf1413e3e4cfa698f6926fea5b993d6e34 disposable39110916568, real historical-state test93 checks normalized legacy states, foreign cold reads and foreign history canary denial. Focused historyAdmission and persistedStatus tests cover substituted owner/invalid state and delayed read versus admitted local object. Only fixed read/factory boundaries closed. Cache freshness, account-deletion retention, immediate JWT revocation and entire worker lifecycle remain separate open obligations.",
@@ -9098,15 +9638,15 @@
       }
     },
     {
-      "id": "dd16f90263b54684c181",
+      "id": "d6a2d0f1eafe32f09954",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1337,
+      "line": 1398,
       "enclosing": "listRunsForUserAsync",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Both production consumers are authMiddleware-mounted swarm history and dashboard ship-analytics handlers passing server req.userId. The sole privileged query filters that exact owner. Returned rows and hot cache entries must match owner, persisted IDs are checked and malformed statuses are excluded. Hydration never replaces an admitted local worker object. No write or external effect occurs at these two sites.",
         "reason": "Verified at5c7e8dcf1413e3e4cfa698f6926fea5b993d6e34 disposable39110916568, real historical-state test93 checks normalized legacy states, foreign cold reads and foreign history canary denial. Focused historyAdmission and persistedStatus tests cover substituted owner/invalid state and delayed read versus admitted local object. Only fixed read/factory boundaries closed. Cache freshness, account-deletion retention, immediate JWT revocation and entire worker lifecycle remain separate open obligations.",
@@ -9123,15 +9663,15 @@
       }
     },
     {
-      "id": "b47a9af1f31012f1a675",
+      "id": "0f4cd46668bdefa4e8e9",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1516,
+      "line": 1577,
       "enclosing": "persistToSupabase",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "The changed current-project binding now passes actual disposable39171571259 atd9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce:121 migration histories,164 security tests,3 browser, zero failures/skips. New worker case verifies create/resume/cold restore, checkpoints/revision, foreign/browser denial, canonical safe cancellation after transfer, five observed project-lock waits, exact retained receipts and rollback. The e22 cancellation compatibility failure is preserved and corrected narrowly. These eight fixed calls are scoped, not the whole worker/scheduler/provider criterion. Existing issued actor, owner, generation and lease proof remains required and preserved.",
@@ -9156,15 +9696,15 @@
       }
     },
     {
-      "id": "9a5ebc5d27638e21a19f",
+      "id": "63358e8789c46a7bbb09",
       "path": "backend/src/ai/runStore.ts",
-      "line": 1590,
+      "line": 1651,
       "enclosing": "persistToSupabase",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "swarm_runs",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "semanticReview": {
         "authority": "Authenticated swarm route wraps both execution modes in an asynchronous attempt scope. Insert-only creation and fresh owner-scoped resume assign a random attempt fence. Worker RPC binds issued owner context, process worker and generation. Heartbeat and cancellation polling are owner/fence-bound. Conversation writes update only messages; missing persistence denies success.",
         "reason": "The changed current-project binding now passes actual disposable39171571259 atd9b13e093bfebdcd99c2b913ca348e5fe4f7c6ce:121 migration histories,164 security tests,3 browser, zero failures/skips. New worker case verifies create/resume/cold restore, checkpoints/revision, foreign/browser denial, canonical safe cancellation after transfer, five observed project-lock waits, exact retained receipts and rollback. The e22 cancellation compatibility failure is preserved and corrected narrowly. These eight fixed calls are scoped, not the whole worker/scheduler/provider criterion. Existing issued actor, owner, generation and lease proof remains required and preserved.",
@@ -12192,15 +12732,15 @@
       }
     },
     {
-      "id": "b9d29af2f2ef47d2dbd8",
+      "id": "88f3ef8774a954206aca",
       "path": "backend/src/middleware/runtimePreviewGateway.ts",
-      "line": 588,
+      "line": 646,
       "enclosing": "attachRuntimePreviewWebSocketGateway",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "ec9f3f56abcd9ac039eebd030d56f4819673f73ba8c772fc4e166a8f93880106",
+      "sourceSha256": "bb7a949de090035d6ea96ef6b82f623a524b4241bde302f09669123e71002404",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in attachRuntimePreviewWebSocketGateway. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -15514,6 +16054,50 @@
       }
     },
     {
+      "id": "40d26174ab7687d9847a",
+      "path": "backend/src/sandbox/google/executionBinding.ts",
+      "line": 58,
+      "enclosing": "currentState",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "projects",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d1c4b9bf871c64b1be55c93099c2319fb5b3475ddc1a43d77f01e1de7d170b25"
+    },
+    {
+      "id": "a1ad5d2a62e31a9a4bb8",
+      "path": "backend/src/sandbox/google/executionBinding.ts",
+      "line": 58,
+      "enclosing": "currentState",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "d1c4b9bf871c64b1be55c93099c2319fb5b3475ddc1a43d77f01e1de7d170b25"
+    },
+    {
+      "id": "02de3c9ccbe0ff9ae8c4",
+      "path": "backend/src/sandbox/google/gceMachineControl.ts",
+      "line": 96,
+      "enclosing": "gceBootstrap",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c5f14d10ea481b849ac90329e567818bcd25a6572fc2bd9d6f378f16a88bca2a"
+    },
+    {
+      "id": "725ab11dc4a109e702b5",
+      "path": "backend/src/sandbox/google/gceMachineControl.ts",
+      "line": 97,
+      "enclosing": "gceBootstrap",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "c5f14d10ea481b849ac90329e567818bcd25a6572fc2bd9d6f378f16a88bca2a"
+    },
+    {
       "id": "001a7a58713675bbbba0",
       "path": "backend/src/security/authority/digest.ts",
       "line": 14,
@@ -15869,7 +16453,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
       "semanticReview": {
         "authority": "The internal tenant constructor requires the original WeakSet-issued context before returning the SDK. Primitive/cloned contexts fail, including direct real-fixture calls. Existing actual receiving routes/services bind exact owner/resource/parent predicates and validate their receipts independently. All other633 receiving inventory sites already verify, so their guards are not inferred from construction. Actual owned profile use and separate own/foreign high-risk route matrices exercise legitimate receivers. The SDK remains privileged and no RLS sandbox or permission for an arbitrary future query is claimed.",
         "reason": "Exact original007 scope verified at 0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0. Authenticated disposable source, all ten structured criteria and all636 receiving/caller boundaries pass with four full21-stage branch/integrated baselines. Routing uses original issued context and exact persistence receipt; private global history is a fixed500-row17th named exception with owner/run terminal filtering. Three constructor proofs require every other633 boundary independently verified and do not claim SDK RLS. Endpoint proof reconciles222 registrations/29 unchanged modules with actual API/database high-risk matrices. Manual kind matches the actual structured scope: SCOPED_BOUNDARY. No new provider, Phase3 grant/custody or Phase4 egress acceptance is inferred.",
@@ -15898,15 +16482,15 @@
       }
     },
     {
-      "id": "5c97508c3ec30ba78c4e",
+      "id": "cfcd9a8afee3dabccf13",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 36,
+      "line": 37,
       "enclosing": "getGlobalSupabaseAdmin",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
       "semanticReview": {
         "authority": "This internal constructor requires an exact own key of the immutable17-entry global operation registry and has no public administrative endpoint. Every named recipient independently proves its fixed operation, limited data projection, current staff/signature/capability authority where needed and actual positive/negative behavior. All other633 receiving inventory sites are already verified before this constructor is considered. Actual unknown, prototype and missing names fail before SDK construction, valid private routing/readiness uses execute, and revoked readiness SELECT denies without leaking identities. Returned SDK is privileged, not an enforced query sandbox. This exemption covers only named actual internal recipients, never arbitrary future queries or a user-selectable admin handle.",
         "reason": "Exact original007 scope verified at 0aa0c7008f4e3a4ca932d8c3f5f423eea9a555c0. Authenticated disposable source, all ten structured criteria and all636 receiving/caller boundaries pass with four full21-stage branch/integrated baselines. Routing uses original issued context and exact persistence receipt; private global history is a fixed500-row17th named exception with owner/run terminal filtering. Three constructor proofs require every other633 boundary independently verified and do not claim SDK RLS. Endpoint proof reconciles222 registrations/29 unchanged modules with actual API/database high-risk matrices. Manual kind matches the actual structured scope: NARROW_EXCEPTION. No new provider, Phase3 grant/custody or Phase4 egress acceptance is inferred.",
@@ -15935,15 +16519,15 @@
       }
     },
     {
-      "id": "fae128d168b634c4b083",
+      "id": "7fa0b75d1947b7252b32",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 40,
+      "line": 41,
       "enclosing": "probeDatabaseReadiness",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "profiles",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
       "semanticReview": {
         "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
         "reason": "Only error presence is used to report infrastructure readiness; selected identities are not returned, persisted or logged. This is a read-only platform readiness exception and grants neither user access nor founder privileges. Other registered global operations require their own recipient review.",
@@ -15956,15 +16540,15 @@
       }
     },
     {
-      "id": "8e4b6e7d9718371f3e6b",
+      "id": "475ce22bc32e3c36e043",
       "path": "backend/src/security/serviceRoleGuard.ts",
-      "line": 40,
+      "line": 41,
       "enclosing": "probeDatabaseReadiness",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
       "semanticReview": {
         "authority": "Internal probeDatabaseReadiness selects only id from profiles with limit one under the fixed readiness_profile_probe operation; no request supplies a table, target user or operation.",
         "reason": "Only error presence is used to report infrastructure readiness; selected identities are not returned, persisted or logged. This is a read-only platform readiness exception and grants neither user access nor founder privileges. Other registered global operations require their own recipient review.",
@@ -18336,7 +18920,7 @@
       }
     },
     {
-      "id": "40e92e9644eb0296fe11",
+      "id": "740ab1780025cfef90bd",
       "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
       "line": 10,
       "enclosing": "strictBase64",
@@ -18344,7 +18928,7 @@
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "22d7137f89e80fbd6fe606697a5b6a4d0e0645301723531715e72bfe653d08c4",
+      "sourceSha256": "eea7cedde9139157e2a7efe4dda176a0efaab39f2812423f4c142ab40d29ce50",
       "semanticReview": {
         "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
         "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
@@ -18357,15 +18941,15 @@
       }
     },
     {
-      "id": "ae4afbcbef62e88edc30",
+      "id": "fd200ed8ed9f0e1a4228",
       "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-      "line": 54,
+      "line": 72,
       "enclosing": "wrapDataKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "22d7137f89e80fbd6fe606697a5b6a4d0e0645301723531715e72bfe653d08c4",
+      "sourceSha256": "eea7cedde9139157e2a7efe4dda176a0efaab39f2812423f4c142ab40d29ce50",
       "semanticReview": {
         "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
         "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
@@ -18378,15 +18962,15 @@
       }
     },
     {
-      "id": "d8a806b779eb8d10543c",
+      "id": "27b7f2af1ab4fd07f909",
       "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-      "line": 56,
+      "line": 74,
       "enclosing": "wrapDataKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "22d7137f89e80fbd6fe606697a5b6a4d0e0645301723531715e72bfe653d08c4",
+      "sourceSha256": "eea7cedde9139157e2a7efe4dda176a0efaab39f2812423f4c142ab40d29ce50",
       "semanticReview": {
         "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
         "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
@@ -18399,15 +18983,15 @@
       }
     },
     {
-      "id": "3936c61b550b6e7554dd",
+      "id": "653d1975581c4f1d514b",
       "path": "backend/src/services/integrations/googleCloudKmsCryptoProvider.ts",
-      "line": 68,
+      "line": 86,
       "enclosing": "unwrapDataKey",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "22d7137f89e80fbd6fe606697a5b6a4d0e0645301723531715e72bfe653d08c4",
+      "sourceSha256": "eea7cedde9139157e2a7efe4dda176a0efaab39f2812423f4c142ab40d29ce50",
       "semanticReview": {
         "authority": "Inspected each exact receiver in this module. Buffer.from, Array.from and strictBase64 perform only local UTF8/base64 encoding, authenticated crypto buffer construction, response validation, JSON envelope encoding or dense local array construction. No classified receiver is a database client, bucket or provider transport. The Google Cloud KMS transport itself remains an explicit Command009 custody boundary and is not excluded by this disposition.",
         "reason": "Only these built-in local conversions are excluded from persistence. This does not certify key custody, credential writer cutover, an external effect, rotation persistence, any database lifecycle or a complete Command008/009 criterion.",
@@ -22199,15 +22783,15 @@
       }
     },
     {
-      "id": "fe7f31cd086bdc19c02d",
+      "id": "bb71c8f1e400499a5efa",
       "path": "backend/src/synthesis/livePreview/signing.ts",
-      "line": 273,
+      "line": 279,
       "enclosing": "verifyLivePreviewSignature",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "1e0568e6ae8c0b2e11f61ca12921d0d18f1ece6558848f6e342af6fcdd414999",
+      "sourceSha256": "e14be684b9fc5bb00945b878b1c983a756e379c292bd2e9332aba8da2983a85c",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in verifyLivePreviewSignature. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -22220,15 +22804,15 @@
       }
     },
     {
-      "id": "de255983f758d3faeee7",
+      "id": "bee2cf1db23c710add27",
       "path": "backend/src/synthesis/livePreview/signing.ts",
-      "line": 279,
+      "line": 285,
       "enclosing": "verifyLivePreviewSignature",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "NOT_PERSISTENCE",
-      "sourceSha256": "1e0568e6ae8c0b2e11f61ca12921d0d18f1ece6558848f6e342af6fcdd414999",
+      "sourceSha256": "e14be684b9fc5bb00945b878b1c983a756e379c292bd2e9332aba8da2983a85c",
       "semanticReview": {
         "authority": "Inspected the receiver and surrounding expression in verifyLivePreviewSignature. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
         "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
@@ -22249,9 +22833,9 @@
       "target": "create_project_preview_grant",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "semanticReview": {
-        "authority": "Internal coordinator supplies copied server owner/project/session/grant intent. Existing owner-bound session loader and authorizedPreviewTarget validate the private target. Service-only transaction locks exact current owner/session, compares full expected session JSON and identity/status/provider columns, requires running interactive session with the declared HTTP port, then checks database expiry after locking before inserting. Exact single returned capability receipt is required. Gateway independently revalidates signature, revocation and current session on resolution.",
+        "authority": "Internal coordinator supplies copied server owner/project/session/grant intent. Existing owner-bound session loader validates the exact running interactive session and declared HTTP port. Google grant creation uses provider-independent session admission, while other providers retain their existing target validation. The service-only SQL transaction locks the current owner/session, compares full session JSON and identity/status/provider columns, samples expiry after locking and requires the exact returned capability. Native Google identity, immutable owned handle and private endpoint remain independently mandatory at gateway resolution.",
         "reason": "Exact current-session grant insertion boundary VERIFIED at696322f0813a4e08b9d324e2bb653dfb2e2d657e, disposable39124146660:110 fresh/upgrade migrations,145 security tests and3 browser tests pass with zero failures/skips. Actual observed grant-write waits reject session state/status/port changes and expiry before insertion, foreign/browser denial and injected rollback pass. Runtime invocation, SQL and fixture unchanged. Only parent-bound admission/insertion closes. Complete coordinator/run provenance, canonical project lifecycle, revoke/create and in-flight socket semantics and signing-key custody remain unresolved. No live provider or whole-preview certification.",
         "evidence": [
           {
@@ -22274,7 +22858,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "semanticReview": {
         "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
         "reason": "Five exact owner-scoped preview factory/latest/revoke boundaries retain their already authenticated positive/negative831f proof. They are SCOPED_BOUNDARY, not global exceptions. The previous combined seven-site NARROW_EXCEPTION classification was rejected by the strict per-caller agreement gate. Correcting this manual kind does not certify a new source or remove any unresolved obligation. Original scope and history remain preserved.",
@@ -22285,7 +22869,7 @@
           },
           {
             "path": "backend/src/middleware/runtimePreviewGateway.ts",
-            "marker": "const target = authorizedPreviewTarget(grant, session);"
+            "marker": "}else target=authorizedPreviewTarget(grant,session);"
           },
           {
             "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
@@ -22303,7 +22887,7 @@
       "target": "project_preview_grants",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "semanticReview": {
         "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
         "reason": "Only the two exact signed runtime grant-resolution sites use the existing registered signed_runtime_preview_resolution exception and already authenticated831f proof. Five owner-scoped sites are now separately classified under the same original structured container. No new exception, gate relaxation, source certification or caller removal.",
@@ -22314,7 +22898,7 @@
           },
           {
             "path": "backend/src/middleware/runtimePreviewGateway.ts",
-            "marker": "const target = authorizedPreviewTarget(grant, session);"
+            "marker": "}else target=authorizedPreviewTarget(grant,session);"
           },
           {
             "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
@@ -22332,7 +22916,7 @@
       "target": "getGlobalSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "NARROW_EXCEPTION",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "semanticReview": {
         "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
         "reason": "Only the two exact signed runtime grant-resolution sites use the existing registered signed_runtime_preview_resolution exception and already authenticated831f proof. Five owner-scoped sites are now separately classified under the same original structured container. No new exception, gate relaxation, source certification or caller removal.",
@@ -22343,7 +22927,7 @@
           },
           {
             "path": "backend/src/middleware/runtimePreviewGateway.ts",
-            "marker": "const target = authorizedPreviewTarget(grant, session);"
+            "marker": "}else target=authorizedPreviewTarget(grant,session);"
           },
           {
             "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
@@ -22361,7 +22945,7 @@
       "target": "project_preview_grants",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "semanticReview": {
         "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
         "reason": "Five exact owner-scoped preview factory/latest/revoke boundaries retain their already authenticated positive/negative831f proof. They are SCOPED_BOUNDARY, not global exceptions. The previous combined seven-site NARROW_EXCEPTION classification was rejected by the strict per-caller agreement gate. Correcting this manual kind does not certify a new source or remove any unresolved obligation. Original scope and history remain preserved.",
@@ -22372,7 +22956,7 @@
           },
           {
             "path": "backend/src/middleware/runtimePreviewGateway.ts",
-            "marker": "const target = authorizedPreviewTarget(grant, session);"
+            "marker": "}else target=authorizedPreviewTarget(grant,session);"
           },
           {
             "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
@@ -22390,7 +22974,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "semanticReview": {
         "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
         "reason": "Five exact owner-scoped preview factory/latest/revoke boundaries retain their already authenticated positive/negative831f proof. They are SCOPED_BOUNDARY, not global exceptions. The previous combined seven-site NARROW_EXCEPTION classification was rejected by the strict per-caller agreement gate. Correcting this manual kind does not certify a new source or remove any unresolved obligation. Original scope and history remain preserved.",
@@ -22401,7 +22985,7 @@
           },
           {
             "path": "backend/src/middleware/runtimePreviewGateway.ts",
-            "marker": "const target = authorizedPreviewTarget(grant, session);"
+            "marker": "}else target=authorizedPreviewTarget(grant,session);"
           },
           {
             "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
@@ -22419,7 +23003,7 @@
       "target": "project_preview_grants",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "semanticReview": {
         "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
         "reason": "Five exact owner-scoped preview factory/latest/revoke boundaries retain their already authenticated positive/negative831f proof. They are SCOPED_BOUNDARY, not global exceptions. The previous combined seven-site NARROW_EXCEPTION classification was rejected by the strict per-caller agreement gate. Correcting this manual kind does not certify a new source or remove any unresolved obligation. Original scope and history remain preserved.",
@@ -22430,7 +23014,7 @@
           },
           {
             "path": "backend/src/middleware/runtimePreviewGateway.ts",
-            "marker": "const target = authorizedPreviewTarget(grant, session);"
+            "marker": "}else target=authorizedPreviewTarget(grant,session);"
           },
           {
             "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
@@ -22448,7 +23032,7 @@
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "semanticReview": {
         "authority": "Only the actual HTTP/WebSocket gateway calls the exact-UUID grant resolver. The internal raw grant is never a visitor response. Before selecting an upstream target the same resolver verifies current grant signature/revocation/expiry and loads its exact owner/session, requiring current project, running interactive class, declared port and constrained internal machine address. A grant lookup grants no database browsing or mutation.\nRuntime routes derive the server subject via verified requireUser and load an exact owned project revision/current session before using these helpers. Coordinator receives the admitted pipeline owner/project/run and its current session. Creation factory reaches only the already proven locked create_project_preview_grant RPC with exact returned scope. Latest lookup carries owner/project/session and revalidates every returned field, finite expiry and revocation. Revocation builds exact owner/project/optional-session filters before its first await and can only revoke those already-owned grants. It cannot issue a new capability or change another owner.",
         "reason": "Five exact owner-scoped preview factory/latest/revoke boundaries retain their already authenticated positive/negative831f proof. They are SCOPED_BOUNDARY, not global exceptions. The previous combined seven-site NARROW_EXCEPTION classification was rejected by the strict per-caller agreement gate. Correcting this manual kind does not certify a new source or remove any unresolved obligation. Original scope and history remain preserved.",
@@ -22459,7 +23043,7 @@
           },
           {
             "path": "backend/src/middleware/runtimePreviewGateway.ts",
-            "marker": "const target = authorizedPreviewTarget(grant, session);"
+            "marker": "}else target=authorizedPreviewTarget(grant,session);"
           },
           {
             "path": "backend/src/synthesis/livePreview/store.receipt.test.ts",
@@ -23429,6 +24013,17 @@
       "sourceSha256": "c02b326f507a85c521fc20ae2b0e49318b1d9c6eb121f3cba8d28f3d2227bfa2"
     },
     {
+      "id": "a1874ed76cb34dfdc5eb",
+      "path": "backend/src/workers/browserRunDispatch.ts",
+      "line": 88,
+      "enclosing": "dispatch",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "5debe366cc9ecf816456bbfd64b6e45189c0e7a6c532121c303b736be833aaa6"
+    },
+    {
       "id": "63e27e1f6b29fe5d4d0b",
       "path": "backend/src/workers/browserTaskHandler.ts",
       "line": 197,
@@ -23482,6 +24077,127 @@
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
       "sourceSha256": "29e977db658433c30d19e3fe3f9268056997be1bbcc1cd9b4a7bf5a3d813d02c"
+    },
+    {
+      "id": "ea9002a455a6e4220eb4",
+      "path": "backend/src/workers/googleDeliveryStore.ts",
+      "line": 32,
+      "enclosing": "<module>",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getGlobalSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+    },
+    {
+      "id": "1f38f47308a5cb80e197",
+      "path": "backend/src/workers/googleDeliveryStore.ts",
+      "line": 35,
+      "enclosing": "enqueue",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+    },
+    {
+      "id": "d8550ebbd5bdb27af6a2",
+      "path": "backend/src/workers/googleDeliveryStore.ts",
+      "line": 41,
+      "enclosing": "enqueue",
+      "kind": "RPC_CANDIDATE",
+      "target": "enqueue_google_canonical_run",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+    },
+    {
+      "id": "da383110b05de629f959",
+      "path": "backend/src/workers/googleDeliveryStore.ts",
+      "line": 48,
+      "enclosing": "reserve",
+      "kind": "RPC_CANDIDATE",
+      "target": "reserve_google_canonical_launch",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+    },
+    {
+      "id": "47d3e561e8e017e71b8f",
+      "path": "backend/src/workers/googleDeliveryStore.ts",
+      "line": 56,
+      "enclosing": "recordLaunch",
+      "kind": "RPC_CANDIDATE",
+      "target": "record_google_canonical_launch",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+    },
+    {
+      "id": "30d234e24cf832c73d30",
+      "path": "backend/src/workers/googleDeliveryStore.ts",
+      "line": 60,
+      "enclosing": "pendingDeliveryIds",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "google_canonical_deliveries",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+    },
+    {
+      "id": "dc84149eab01b6edbb36",
+      "path": "backend/src/workers/googleDeliveryStore.ts",
+      "line": 71,
+      "enclosing": "claim",
+      "kind": "RPC_CANDIDATE",
+      "target": "claim_google_canonical_run",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+    },
+    {
+      "id": "97edab68c2db4fbab9eb",
+      "path": "backend/src/workers/googleDeliveryStore.ts",
+      "line": 84,
+      "enclosing": "recordResult",
+      "kind": "RPC_CANDIDATE",
+      "target": "record_google_canonical_result",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+    },
+    {
+      "id": "afb2254ecf7195fd62b2",
+      "path": "backend/src/workers/googleDeliveryStore.ts",
+      "line": 90,
+      "enclosing": "loadResult",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "google_canonical_deliveries",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+    },
+    {
+      "id": "5c0fce9bf2111565a8d5",
+      "path": "backend/src/workers/googleDeliveryStore.ts",
+      "line": 90,
+      "enclosing": "loadResult",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "57a4e9fbed8201e1632c65cca42757ebd5f5f1d92062e47760e761f67c02d89d"
+    },
+    {
+      "id": "886265e1adfa87aa93e7",
+      "path": "backend/src/workers/googleDispatch.ts",
+      "line": 63,
+      "enclosing": "enqueue",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "ec0684dc7b71d8573c3a086eec68c0f54e313727144d1b1aaeab280ceb5a0268"
     },
     {
       "id": "b605ee8256acf51c3655",
@@ -24797,6 +25513,28 @@
           }
         ]
       }
+    },
+    {
+      "id": "895c29e4087fcd99bdbe",
+      "path": "frontend/src/lib/driveUpload.ts",
+      "line": 104,
+      "enclosing": "uploadFile",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "4f6ab06b0811d9ff99edba989134caec7e937bf5854354668839ff1d6ab2e91e"
+    },
+    {
+      "id": "6b6da5f598661dafa90b",
+      "path": "frontend/src/lib/driveUpload.ts",
+      "line": 113,
+      "enclosing": "uploadFile",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "4f6ab06b0811d9ff99edba989134caec7e937bf5854354668839ff1d6ab2e91e"
     },
     {
       "id": "a428381cd3d08363ea1c",

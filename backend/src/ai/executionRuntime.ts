@@ -5,6 +5,7 @@ import { applyDeletes, applyPatches, buildFileTrail } from './patches.js';
 import type { ModelId } from './models.js';
 import { createTenantContext } from '../security/tenantContext.js';
 import { getTenantSupabaseAdmin } from '../security/serviceRoleGuard.js';
+import {SandboxAdmissionError} from '../sandbox/sandboxTypes.js';
 import { requireAdmittedRunAttempt, type AdmittedRunAttempt } from './runStore.js';
 import type { IntelligentRoutePlan } from './intelligentRouter.js';
 import { MODELS } from './models.js';
@@ -539,6 +540,10 @@ export class ExecutionScheduler {
             : `${task.operationType} produced evidence but did not pass its validation rule`;
       }
     } catch (error) {
+      if(error instanceof SandboxAdmissionError){
+        task.status='blocked';task.blocker=error.message;
+        throw error;
+      }
       const failure = persistedTaskFailure(error);
       // Preserve a typed, already-sanitized failure across the scheduler boundary. Without
       // this, a coherent implementation failure becomes a generic CanonicalTaskFailure and

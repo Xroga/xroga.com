@@ -143,10 +143,23 @@ function cleanExpired(now: number) {
   }
 }
 
-function guestClientAddress(req: Request): string {
-  const flyClientIp = req.header('fly-client-ip')?.trim();
-  if (flyClientIp) return flyClientIp.slice(0, 96);
-  return (req.ip || req.socket.remoteAddress || 'unknown').slice(0, 96);
+/**
+ * The client address used to rate-limit guests. A header is trusted only where the platform in front of the process is known to set it:
+ * Fly sets fly-client-ip (and strips a client-supplied one); Cloud Run appends the real client as the LAST X-Forwarded-For entry,
+ * so earlier entries are client-controlled and ignored (XROGA_TRUSTED_PROXY_HOPS counts further trusted proxies from the right).
+ * Anywhere else the socket address is used. A client can never choose its own key.
+ */
+export function guestClientAddress(req: Pick<Request, 'header' | 'ip' | 'socket'>, env: NodeJS.ProcessEnv = process.env): string {
+  if (env.FLY_APP_NAME) {
+    const flyClientIp = req.header('fly-client-ip')?.trim();
+    if (flyClientIp) return flyClientIp.slice(0, 96);
+  } else if (env.K_SERVICE) {
+    const hops = Math.max(1, Math.min(5, Number(env.XROGA_TRUSTED_PROXY_HOPS ?? 1) || 1));
+    const entries = (req.header('x-forwarded-for') ?? '').split(',').map((entry) => entry.trim()).filter(Boolean);
+    const trusted = entries[entries.length - hops];
+    if (trusted && /^[0-9a-fA-F:.]{3,45}$/.test(trusted)) return trusted;
+  }
+  return (req.socket.remoteAddress || req.ip || 'unknown').slice(0, 96);
 }
 
 function stableAddressKey(address: string) {

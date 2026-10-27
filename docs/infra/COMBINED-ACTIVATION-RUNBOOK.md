@@ -57,7 +57,7 @@ All three are additive and idempotent (`create ... if not exists`, `create or re
 
 | Order | File | Adds |
 |---|---|---|
-| 1 | `20261026000000_builder_projects.sql` | `builder_projects`, `builder_revisions`, `append_builder_revision` |
+| 1 | `20261026000100_builder_projects.sql` | `builder_projects`, `builder_revisions`, `append_builder_revision` |
 | 2 | `20261026010000_builder_phase2.sql` | `builder_verifications`, `builder_external_operations` |
 | 3 | `20261026020000_builder_phase3.sql` | widens operation provider and action checks (Supabase, Vercel) |
 | 4 | `20261026030000_builder_preview_readiness.sql` | nullable `builder_projects.preview_readiness` |
