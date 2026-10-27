@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
 import {
   appendRunEvent,
+  completeRun,
   createRun,
   getRun,
   isRunCancellationRequested,
@@ -27,6 +28,14 @@ function runRecord(id: string, createdAt: string, prompt: string): SwarmRunRecor
 }
 
 describe('swarm run event replay', () => {
+  it('late progress cannot alter an acknowledged terminal snapshot or its replay sequence', () => {
+    const id=randomUUID();createRun(randomUUID(),'synthetic task',id);
+    appendRunEvent(id,'progress',{message:'Result verified'});
+    completeRun(id,{output:{type:'chat',content:'synthetic result'},success:true});
+    const terminal=structuredClone(getRun(id));
+    assert.equal(appendRunEvent(id,'progress',{message:'Late completion callback'}),null);
+    assert.deepEqual(getRun(id),terminal);
+  });
   it('merges a partial hot cache with durable history and prefers live state', () => {
     const older = runRecord('older', '2026-08-20T10:00:00.000Z', 'older build');
     const persistedNewest = runRecord('newest', '2026-08-22T10:00:00.000Z', 'persisted');

@@ -474,8 +474,14 @@ class AgentLivePreviewBridge {
       !this.started;
     const pendingEvents: SoftwareRunEvent[] = [];
 
+    // Bind the exact source to the existing issued worker generation before any
+    // remote workspace transfer. A failed durable write prevents dispatch.
+    await store.saveRevision(this.input.userId,project);
+    if(this.authorityLost)return;
+
     const result =
       await startOrRefreshLivePreview({
+        authority:this.attempt,
         userId:
           this.input
             .userId,

@@ -5,7 +5,7 @@ import {
 const API_URL =
   (
     process.env.XROGA_E2E_API_URL ??
-    'https://xroga-api.fly.dev'
+    'https://api.xroga.com'
   ).replace(
     /\/+$/,
     '',

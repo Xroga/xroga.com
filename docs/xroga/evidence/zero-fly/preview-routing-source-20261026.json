@@ -1,0 +1,58 @@
+{
+  "scope": "LOCAL_HTTP_WEBSOCKET_FIXTURE_NOT_GOOGLE_HOSTED_PREVIEW",
+  "parentSha": "b7c56d22b62988046bde885d26dc10109743b244",
+  "atUtc": "2026-10-25T23:31:10.541492+00:00",
+  "sourceLfSha256": {
+    "backend/src/middleware/runtimePreviewGateway.ts": "bb7a949de090035d6ea96ef6b82f623a524b4241bde302f09669123e71002404",
+    "backend/src/middleware/runtimePreviewGateway.integration.test.ts": "0e215ee5ae959ae5b1b81cc2d523b7630506d729327b7d5f86156bc368ab136a",
+    "backend/src/synthesis/livePreview/signing.ts": "e14be684b9fc5bb00945b878b1c983a756e379c292bd2e9332aba8da2983a85c",
+    "backend/src/synthesis/livePreview/signingDns.test.ts": "6663252841cf4fecc2033e954e11e8f3b43b53a25a29ec13105b625be60cc6af"
+  },
+  "negativeDefects": [
+    "Google signed URL used two DNS labels outside a normal wildcard certificate",
+    "Worker absolute redirect retained its private port"
+  ],
+  "passing": [
+    "HTTP path and public forwarded origin",
+    "Safe public redirect",
+    "WebSocket echo and authorized reconnect",
+    "Expiry closes live channels and denies reconnect",
+    "Expired admission and database failure cause zero upstream requests",
+    "Native single-label signed URL and legacy parsing"
+  ],
+  "jobs": [
+    {
+      "id": "6d5e1749-e24e-4177-9156-f44ca3e653ca",
+      "status": "failed",
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "2d5f14a5058928e7e8217f2c43f23e38f4d58f7db1628874e791655bc6bc7f50"
+        }
+      ]
+    },
+    {
+      "id": "5f0418e0-3ee2-404d-86b6-b6f50c79747a",
+      "status": "failed",
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "7f7b51a2d00f5397c4f6c522051be7e2fe85e440ee5b49f5362ec8a1b3e7a9bc"
+        }
+      ]
+    },
+    {
+      "id": "5cc1ddbe-1c3f-402b-83fd-38f8be75001e",
+      "status": "passed",
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "a444814880e3ade48b0888f7d6f9e5a66b97182d46eba11629c500ab70bcb5b2"
+        }
+      ]
+    }
+  ],
+  "typecheckJob": "389437c3-df78-45aa-ba74-78b554e927c3",
+  "reference": "https://docs.cloud.google.com/certificate-manager/docs/domain-authorization",
+  "productionChanged": false
+}

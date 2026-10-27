@@ -14,7 +14,7 @@ on:
       - 'backend/src/routes/builder*'
       - 'backend/src/routes/swarm.ts'
       - 'backend/src/ai/pipeline.ts'
-      - 'supabase/migrations/20261026000000_builder_projects.sql'
+      - 'supabase/migrations/20261026000100_builder_projects.sql'
       - '.github/workflows/builder-phase1.yml'
   workflow_dispatch:
 

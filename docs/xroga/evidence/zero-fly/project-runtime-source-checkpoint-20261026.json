@@ -1,0 +1,288 @@
+{
+  "scope": "LOCAL_SOURCE_AND_LINUX_FILESYSTEM_ONLY_NOT_LIVE_MIGRATION_ACCEPTANCE",
+  "atUtc": "2026-10-25T22:14:55.921874+00:00",
+  "parentSha": "09f53b8800fb17c3af3b649dd72ca28e0a7e765b",
+  "baselineMain": "bc669f8acb1838a4476d19a3f7193a0b4b71ce69",
+  "sourceFiles": {
+    ".github/workflows/api-build-check.yml": "3229fd454a29fe412824c07596276c2599ee7be186a42bd5bd4c98848268a569",
+    "backend/src/ai/pipeline.ts": "1040a7352e3aa77253247d6fb188c9e554df96c64d730cb84458f75c6a3a923f",
+    "backend/src/ai/runStore.dispatchAdmission.test.ts": "1cbda7741664940619362009e6420cb9a6947fa1e2a553047a25bc35ec2647fe",
+    "backend/src/ai/runStore.ts": "e81e90c36b2dfc1414600de4416893d3dcdb35c19811659749dd2ad7467cd498",
+    "backend/src/config/platformEnvironment.test.ts": "3174b3aa75c8228f696acd3f1c27f05b9a1f8a4a8fa3e1a0b9c7c3d997cbdc21",
+    "backend/src/config/platformEnvironment.ts": "087bfedd3e54541b0a0695be01107abfa7bddb65bcaf2daf9d871b86a210b3d9",
+    "backend/src/middleware/runtimePreviewGateway.ts": "025ca9d019d5a2940082b222daa755b2675172a47d671a7e10049e81e58dd41f",
+    "backend/src/routes/projectRuntime.ts": "a0c429904793205a233e7453ecebefd6aa82b40e01bb2b3747f0268fd98be570",
+    "backend/src/sandbox/google/gceMachineControl.test.ts": "98ad837335f92038b2d5574f955429874dea8a54d051a536a072995058a72cfc",
+    "backend/src/sandbox/google/gceMachineControl.ts": "e9d32905df92977bb124f13f6b769ea00085a80d337dcdcf3b06afe1ab4a4e90",
+    "backend/src/sandbox/google/gceSshTransport.test.ts": "5ad7de03429ca1b329c2d24d9aa61b1f3bac7907ec239d2ac8f23ce542e50f30",
+    "backend/src/sandbox/google/gceSshTransport.ts": "dceba5dfb4905ceedf0aca62c163e4bcaa104a4ae37d89a0cadb7be62df671a9",
+    "backend/src/sandbox/google/runtime_control.py": "c7062d5351e837b527ce584bbbaa15084e06cc6c2ae48979f7ef3bd6998aa838",
+    "backend/src/sandbox/google/runtime_workspace_test.py": "058fc6139d56f89f27e3cfaae2584a21c6cf0aa719ed690ce548af55d3c86be5",
+    "backend/src/synthesis/livePreview/access.ts": "8b1c71e3773cde25a51e53fddad1742ee4bc65f17292fc6cb111bae6d192dcaa",
+    "backend/src/synthesis/livePreview/admissionWatch.test.ts": "617a37f8fc3be39d648cc2bb83d0867def5d4dceaaff72c35289df42d608a8d7",
+    "backend/src/synthesis/livePreview/admissionWatch.ts": "a393ccbbc60bc6b7b5c0a8a6289c29f61a3d54510717978735ce9f2b248c4f79",
+    "backend/src/synthesis/livePreview/agentBridge.ts": "bbf105152b7942f9ac6f00fafa381f5f14279bf7c609886bf259cafed8dd1ea8",
+    "backend/src/synthesis/livePreview/coordinator.ts": "67cb9a5bc95d23dff8e273eff8c131e21ac15aad16f7889801d3506d273d81fa",
+    "backend/src/synthesis/livePreview/googleTarget.test.ts": "5d6c25e4e25f45949424846376ff97859927d9b17b1bf907ab55eefe086eb02d",
+    "backend/src/synthesis/livePreview/googleTarget.ts": "177fb5ddf353f601a2c1bf52a16a94a99d278f27af9fcac0bf8bcc0b945626f6",
+    "backend/src/synthesis/livePreview/plan.ts": "7994ba6713aa7310ec35804ce84eb2ce88bfc1e95fdb35f34e3fa4a4b50fadbe",
+    "backend/src/synthesis/projectRuntime/googleAuthority.test.ts": "ff0b10f86342e5fd32d9623d04f9f3ab9cef0e64142c1f3f35ca8c6e330e44a7",
+    "backend/src/synthesis/projectRuntime/googleAuthority.ts": "c51445833477a3115e4a5e2eb2e2a1590a1e1090209a7c8b46006defbce25e76",
+    "backend/src/synthesis/projectRuntime/googleFactory.test.ts": "999c65c7a82604a890ea42103e4735c6363eafb3ea8217c194fa93fd590d0d2c",
+    "backend/src/synthesis/projectRuntime/googleFactory.ts": "6d033c0e330807ef6b5959e27134f6a5b898410c8658dac5889e7dfe914da729",
+    "backend/src/synthesis/projectRuntime/googleProvider.test.ts": "776423d4fd2ca368f7f6d1574dd2c3d20731a241778dae2d1abedaab8d78e33c",
+    "backend/src/synthesis/projectRuntime/googleProvider.ts": "bc7b6ee25f90aacba57e0766477e4f24a2bac8f58d3fcc3bb4d011ea84aa995f",
+    "backend/src/synthesis/projectRuntime/manager.ts": "43daa74c036b440fe05bd42d6a79a0f373337f18446092668affb10962371302"
+  },
+  "localJobs": [
+    {
+      "jobId": "5574a0d0-76ea-4da2-aae6-47995b5335ce",
+      "status": "passed",
+      "reason": null,
+      "temporaryFilesRemoved": true,
+      "logs": [
+        {
+          "sha256": "44f10cf9216c3ba4da8a5dab61162c81715b40b93c8d8fcf1013838a71e62e3b",
+          "bytes": 1573,
+          "name": "output-0.log"
+        }
+      ]
+    },
+    {
+      "jobId": "f9bbbeed-6225-45d0-a2f7-6ee2ce34d78a",
+      "status": "passed",
+      "reason": null,
+      "temporaryFilesRemoved": true,
+      "logs": [
+        {
+          "sha256": "9851a2fbbde6bcad4a9cb293bcbf7bbb2f6b9047fa4c937d5535a6f5b81f962a",
+          "bytes": 3591,
+          "name": "output-0.log"
+        }
+      ]
+    },
+    {
+      "jobId": "b5adf085-4cc4-4d59-88ac-b178b72809a1",
+      "status": "failed",
+      "reason": null,
+      "temporaryFilesRemoved": true,
+      "logs": [
+        {
+          "sha256": "e808af450db5ba56ba7ccd6c57da546d0394a941c915a59133caf78afb9bf4e3",
+          "bytes": 13729,
+          "name": "output-0.log"
+        }
+      ]
+    },
+    {
+      "jobId": "1460dbdb-deb0-403d-915e-db0bf61cbfb5",
+      "status": "passed",
+      "reason": null,
+      "temporaryFilesRemoved": true,
+      "logs": [
+        {
+          "sha256": "ab54c4637c9ba022889e2493d05426fe8889a29aea03604f3a4e1a9094a9c207",
+          "bytes": 2953,
+          "name": "output-0.log"
+        }
+      ]
+    },
+    {
+      "jobId": "35cbf397-2c37-4e76-bbc2-46fe6636d9af",
+      "status": "passed",
+      "reason": null,
+      "temporaryFilesRemoved": true,
+      "logs": [
+        {
+          "sha256": "38dcb8c2249237f5bb6a73dcfd7184793b2497c1a924a9320167a2c8c342adbc",
+          "bytes": 6649,
+          "name": "output-0.log"
+        }
+      ]
+    },
+    {
+      "jobId": "77689c21-c6d5-40bc-8203-eb2a38fba272",
+      "status": "passed",
+      "reason": null,
+      "temporaryFilesRemoved": true,
+      "logs": [
+        {
+          "sha256": "bd56becafa34c673f56164c6708c4f9ebcdbb2594b214b257c405b80f70ba7cd",
+          "bytes": 1885,
+          "name": "output-0.log"
+        }
+      ]
+    },
+    {
+      "jobId": "ebba9100-1b76-4a83-a5a7-f0d9a5742186",
+      "status": "failed",
+      "reason": null,
+      "temporaryFilesRemoved": true,
+      "logs": [
+        {
+          "sha256": "86ea77c978c7205851b08d37e1eb472ff37946c7b57428b4d68d62cac04544c2",
+          "bytes": 1107,
+          "name": "output-0.log"
+        }
+      ]
+    },
+    {
+      "jobId": "9cf62738-4705-495c-8d35-ec113914fcaf",
+      "status": "passed",
+      "reason": null,
+      "temporaryFilesRemoved": true,
+      "logs": [
+        {
+          "sha256": "019c1a32494814f6d171cbdbc9a0fb72426aa29de1befd7cc434117ff9d1ae0d",
+          "bytes": 801,
+          "name": "output-0.log"
+        }
+      ]
+    },
+    {
+      "jobId": "996c6a83-1162-4d36-aa2f-a892be532227",
+      "status": "passed",
+      "reason": null,
+      "temporaryFilesRemoved": true,
+      "logs": []
+    },
+    {
+      "jobId": "6cc7d1e7-4c3d-43b2-b858-3d91dd6773f1",
+      "status": "passed",
+      "temporaryFilesRemoved": true,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "bytes": 1383,
+          "sha256": "f99758677930bf52d34069c529d600c68025e6d4a5eafd24f294e9442a237573"
+        }
+      ]
+    },
+    {
+      "jobId": "3e8c978c-eb74-4653-96c1-0185afd30fee",
+      "status": "passed",
+      "temporaryFilesRemoved": true,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "bytes": 2086,
+          "sha256": "c6b4f2dae336dbe4fda11e6cd87d2363fb92d10b509659394ea0745b9b40156b"
+        }
+      ]
+    },
+    {
+      "jobId": "a8cc152c-6e47-41eb-ae06-982d4d46ad2f",
+      "status": "failed",
+      "temporaryFilesRemoved": true,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "bytes": 3106,
+          "sha256": "8135e4882c8bd168d724199e1058e6a4fc478697c5aff2084b2ee4c11c6f44b2"
+        }
+      ]
+    },
+    {
+      "jobId": "93394788-7791-432b-8803-98c622205813",
+      "status": "passed",
+      "temporaryFilesRemoved": true,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "bytes": 3897,
+          "sha256": "0791ff60a13c0ddd5942cf389510e154a035f1f13d44f0fa0a94b0a27e67a762"
+        }
+      ]
+    },
+    {
+      "jobId": "31524e3a-e47d-45d1-8869-6a29a894bce9",
+      "status": "passed",
+      "temporaryFilesRemoved": true,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "bytes": 2687,
+          "sha256": "1b6a743979d117e8991577f284a406aaa95ad5edbb0ded1096117eec111af904"
+        }
+      ]
+    },
+    {
+      "jobId": "5eedb6da-2251-4b55-a584-d7997439490b",
+      "status": "passed",
+      "temporaryFilesRemoved": true,
+      "logs": []
+    },
+    {
+      "jobId": "cde2a2ae-ef6a-4165-966d-4b438d77d678",
+      "status": "passed",
+      "temporaryFilesRemoved": true,
+      "logs": []
+    }
+  ],
+  "negativeReproduction": {
+    "jobId": "ebba9100-1b76-4a83-a5a7-f0d9a5742186",
+    "observed": "Missing expected rejection: error",
+    "repairJob": "9cf62738-4705-495c-8d35-ec113914fcaf"
+  },
+  "testSetupFailure": {
+    "jobId": "b5adf085-4cc4-4d59-88ac-b178b72809a1",
+    "observed": "NODE_ENV was not forwarded by the cleanup runner. Production KMS correctly refused.",
+    "correctedJob": "1460dbdb-deb0-403d-915e-db0bf61cbfb5",
+    "correction": "Explicit --pass-env NODE_ENV with test-only mode. No production vault rule modified."
+  },
+  "liveResourcesCreated": false,
+  "productionChanged": false,
+  "mainMerged": false,
+  "phase4Started": false,
+  "remaining": [
+    "Native project provider and Preview address/connection admission are implemented but real caller staging, frontend HTTP/WebSocket/reconnect/start/stop and deployment networking remain unverified.",
+    "One-shot sandbox callers and persistent browser worker hosting still need Google integration. Python/Rust images must be explicitly admitted and preloaded before claiming toolchain parity.",
+    "Cloud Run background dispatch must persist requests and integrate with canonical run leases/checkpoints. Current in-process route behavior is not restart-safe transport.",
+    "Configuration/callback parity, current costs, final integration, immutable forward/recovery verification and production traffic cutover remain required.",
+    "Earlier two native temporary access windows are consumed and fully cleaned. New security-sensitive access needs a concrete action-time confirmation, not reuse of prior windows.",
+    "Global allocation admission across multiple Cloud Run processes and uncertain creation outcomes require explicit reconciliation before enabling production workers."
+  ],
+  "finalTypecheck": {
+    "jobId": "cde2a2ae-ef6a-4165-966d-4b438d77d678",
+    "status": "PASS",
+    "command": "tsc --noEmit"
+  },
+  "allocationCleanupReproduction": {
+    "jobId": "a8cc152c-6e47-41eb-ae06-982d4d46ad2f",
+    "observed": "Expected one DELETE after boot denial, observed zero.",
+    "repairJobId": "93394788-7791-432b-8803-98c622205813",
+    "persistenceCleanupJobId": "31524e3a-e47d-45d1-8869-6a29a894bce9"
+  },
+  "indexNormalizedSourceFiles": {
+    ".github/workflows/api-build-check.yml": "08b90f683bf7ba7f91952801a29434b9b118469417df0ce6fe66ccd2d66d2af6",
+    "backend/src/ai/pipeline.ts": "2e3bf529321f1f2adc854bc9feb6472faaf096cb7b6fc63361606605be3350bf",
+    "backend/src/ai/runStore.dispatchAdmission.test.ts": "1cbda7741664940619362009e6420cb9a6947fa1e2a553047a25bc35ec2647fe",
+    "backend/src/ai/runStore.ts": "d8cb672bcedc0313fcc8df882b3590c722882d8625232de5bef9a386ea9a2ae4",
+    "backend/src/config/platformEnvironment.test.ts": "3174b3aa75c8228f696acd3f1c27f05b9a1f8a4a8fa3e1a0b9c7c3d997cbdc21",
+    "backend/src/config/platformEnvironment.ts": "087bfedd3e54541b0a0695be01107abfa7bddb65bcaf2daf9d871b86a210b3d9",
+    "backend/src/middleware/runtimePreviewGateway.ts": "56a2e0189e882df4007779de1b0b5156e92912fdef36a816e219bc97b060f68f",
+    "backend/src/routes/projectRuntime.ts": "7fc1c300afabfee450890527579f2adf19679825424d897bac326115d5e08abe",
+    "backend/src/sandbox/google/gceMachineControl.test.ts": "98ad837335f92038b2d5574f955429874dea8a54d051a536a072995058a72cfc",
+    "backend/src/sandbox/google/gceMachineControl.ts": "e9d32905df92977bb124f13f6b769ea00085a80d337dcdcf3b06afe1ab4a4e90",
+    "backend/src/sandbox/google/gceSshTransport.test.ts": "742ef4ed091d767980512bcf5d51f176ec5d29327849103949f709dc4715585a",
+    "backend/src/sandbox/google/gceSshTransport.ts": "dceba5dfb4905ceedf0aca62c163e4bcaa104a4ae37d89a0cadb7be62df671a9",
+    "backend/src/sandbox/google/runtime_control.py": "c7062d5351e837b527ce584bbbaa15084e06cc6c2ae48979f7ef3bd6998aa838",
+    "backend/src/sandbox/google/runtime_workspace_test.py": "058fc6139d56f89f27e3cfaae2584a21c6cf0aa719ed690ce548af55d3c86be5",
+    "backend/src/synthesis/livePreview/access.ts": "ea6d98a6a976c705e48a848529ffed999bb66e2c241817dffb83fd6470c38cad",
+    "backend/src/synthesis/livePreview/admissionWatch.test.ts": "617a37f8fc3be39d648cc2bb83d0867def5d4dceaaff72c35289df42d608a8d7",
+    "backend/src/synthesis/livePreview/admissionWatch.ts": "a393ccbbc60bc6b7b5c0a8a6289c29f61a3d54510717978735ce9f2b248c4f79",
+    "backend/src/synthesis/livePreview/agentBridge.ts": "23ac19d169f97845546c9ed520cad1412701ae6e0419ce82a57b0e71f06f781f",
+    "backend/src/synthesis/livePreview/coordinator.ts": "ee53e189404d87293ac5d6de275e588442ad3e84d97ccd8ab68bc43d96c4958a",
+    "backend/src/synthesis/livePreview/googleTarget.test.ts": "5d6c25e4e25f45949424846376ff97859927d9b17b1bf907ab55eefe086eb02d",
+    "backend/src/synthesis/livePreview/googleTarget.ts": "177fb5ddf353f601a2c1bf52a16a94a99d278f27af9fcac0bf8bcc0b945626f6",
+    "backend/src/synthesis/livePreview/plan.ts": "b1a9b244cbb392149e65fd593f8217f9514cbab69190f7ce1f4afe940c1c8d59",
+    "backend/src/synthesis/projectRuntime/googleAuthority.test.ts": "ff0b10f86342e5fd32d9623d04f9f3ab9cef0e64142c1f3f35ca8c6e330e44a7",
+    "backend/src/synthesis/projectRuntime/googleAuthority.ts": "c51445833477a3115e4a5e2eb2e2a1590a1e1090209a7c8b46006defbce25e76",
+    "backend/src/synthesis/projectRuntime/googleFactory.test.ts": "999c65c7a82604a890ea42103e4735c6363eafb3ea8217c194fa93fd590d0d2c",
+    "backend/src/synthesis/projectRuntime/googleFactory.ts": "6d033c0e330807ef6b5959e27134f6a5b898410c8658dac5889e7dfe914da729",
+    "backend/src/synthesis/projectRuntime/googleProvider.test.ts": "776423d4fd2ca368f7f6d1574dd2c3d20731a241778dae2d1abedaab8d78e33c",
+    "backend/src/synthesis/projectRuntime/googleProvider.ts": "bc7b6ee25f90aacba57e0766477e4f24a2bac8f58d3fcc3bb4d011ea84aa995f",
+    "backend/src/synthesis/projectRuntime/manager.ts": "809383af9e8a1f0a987658c84d1795d0557c58faf40aa1cd39db31bafced9bb8"
+  },
+  "hashConvention": "sourceFiles hashes exact tested working-tree bytes. indexNormalizedSourceFiles hashes the staged Git bytes after normal line-ending conversion."
+}

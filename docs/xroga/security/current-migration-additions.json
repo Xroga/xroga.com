@@ -185,9 +185,9 @@
     {
       "schema": "public",
       "table_name": "builder_projects",
-      "migration": "20261026000000_builder_projects.sql",
+      "migration": "20261026000100_builder_projects.sql",
       "migrationSha256": "cc64fa986eb87d9a8b2e9adcb7ccdc3230dcd8926a5d7255209d03770cffd744",
-      "authorizationMigration": "20261026000000_builder_projects.sql",
+      "authorizationMigration": "20261026000100_builder_projects.sql",
       "authorizationSha256": "cc64fa986eb87d9a8b2e9adcb7ccdc3230dcd8926a5d7255209d03770cffd744",
       "boundary": "RLS enabled. Authenticated SELECT only, restricted to user_id = auth.uid(). No browser INSERT, UPDATE or DELETE and no anon access. All writes go through the server with an explicit owner predicate. Unique (user_id, request_key) makes creation idempotent.",
       "tests": "backend/src/builder/store.integration.test.ts",
@@ -197,13 +197,37 @@
     {
       "schema": "public",
       "table_name": "builder_revisions",
-      "migration": "20261026000000_builder_projects.sql",
+      "migration": "20261026000100_builder_projects.sql",
       "migrationSha256": "cc64fa986eb87d9a8b2e9adcb7ccdc3230dcd8926a5d7255209d03770cffd744",
-      "authorizationMigration": "20261026000000_builder_projects.sql",
+      "authorizationMigration": "20261026000100_builder_projects.sql",
       "authorizationSha256": "cc64fa986eb87d9a8b2e9adcb7ccdc3230dcd8926a5d7255209d03770cffd744",
       "boundary": "RLS enabled. Authenticated SELECT only, restricted to user_id = auth.uid(). No browser writes and no anon access. Revisions are appended only by append_builder_revision (service_role execute only): owner-checked, row-locked, gapless, idempotent per (run, content hash), stale parents return a conflict.",
       "tests": "backend/src/builder/store.integration.test.ts",
       "evidence": "Batch 2 Phase 1 migration, not applied to production. Real-PostgreSQL tests run in the builder-phase1 workflow on a disposable database (uniqueness, gapless numbering, replay, conflict, 12-way concurrency, foreign owner, browser-role grants). Not production schema parity or certification by inventory.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "google_canonical_deliveries",
+      "migration": "20261026000000_google_canonical_deliveries.sql",
+      "migrationSha256": "8038463a25c4f3bde741fc768ddd781595685267e582af915a5edef4b1070d9b",
+      "authorizationMigration": "20261026000000_google_canonical_deliveries.sql",
+      "authorizationSha256": "8038463a25c4f3bde741fc768ddd781595685267e582af915a5edef4b1070d9b",
+      "boundary": "RLS enabled. PUBLIC, anon and authenticated have no table rights or function execution. Existing service role alone enqueues owner/project-bound requests, reserves bounded launch leases, claims exact source/worker generation and records fenced outcomes. No browser request payload endpoint.",
+      "tests": "scripts/infrastructure/test-google-delivery-postgres.py",
+      "evidence": "Ten real isolated PostgreSQL17 assertions pass, including anon/authenticated denial, row-preserving reapply, owner denial, duplicate claims, launch ceiling, original cancellation and original terminal writer/result fencing. Full hosted staging and live Google caller proof remain required.",
+      "productionChanges": false
+    },
+    {
+      "schema": "public",
+      "table_name": "browser_runs",
+      "migration": "20261026100000_browser_runs_durable.sql",
+      "migrationSha256": "4d83bc79c35a7a0d701e575478bea64ae1dbabe4ce98e80582119679109dfb1b",
+      "authorizationMigration": "20261026100000_browser_runs_durable.sql",
+      "authorizationSha256": "4d83bc79c35a7a0d701e575478bea64ae1dbabe4ce98e80582119679109dfb1b",
+      "boundary": "RLS enabled. No grant to anon, authenticated or PUBLIC; service_role only (the API). Durable browser run record: validated spec, canonical state and cancel flag. Every API read and write is owner scoped by user_id; the signed internal endpoints load a run by id and then act only as the owner it names.",
+      "tests": "backend/src/workers/browserRunStore.integration.test.ts",
+      "evidence": "Batch 1.5 audit migration (PR #861), not applied to production. The real-PostgreSQL integration test runs the migration and asserts RLS and the absence of public grants on a disposable database; the disposable full-history run verifies it installs. Not production schema parity or certification by inventory.",
       "productionChanges": false
     }
   ]

@@ -29,17 +29,21 @@ export interface ResolvedEnvironment {
 export function resolveDeploymentEnvironment(env: NodeJS.ProcessEnv = process.env): ResolvedEnvironment {
   const raw = env.XROGA_DEPLOYMENT_ENVIRONMENT?.trim().toLowerCase();
   const fly = env.FLY_APP_NAME?.trim();
+  const cloudRun = env.K_SERVICE?.trim();
   if (raw) {
     if (!(NAMED as readonly string[]).includes(raw)) return { environment: 'unclassified', source: 'unknown', problem: 'XROGA_DEPLOYMENT_ENVIRONMENT is not one of production|staging|preview|development|test' };
     const claimed = raw as DeploymentEnvironment;
     // A claim must agree with what the platform says about where this is running.
     if (fly === PRODUCTION_FLY_APP && claimed !== 'production') return { environment: 'unclassified', source: 'unknown', problem: `running as the production Fly app but declared "${claimed}"` };
     if (fly && fly !== PRODUCTION_FLY_APP && claimed === 'production') return { environment: 'unclassified', source: 'unknown', problem: `declared production but running as Fly app "${fly.slice(0, 40)}"` };
+    // Cloud Run: a service whose own name says it is not production cannot claim to be.
+    if (cloudRun && claimed === 'production' && /(staging|preview|sandbox|dev|test)/i.test(cloudRun)) return { environment: 'unclassified', source: 'unknown', problem: `declared production but running as Cloud Run service "${cloudRun.slice(0, 40)}"` };
     return { environment: claimed, source: 'explicit' };
   }
   if (fly === PRODUCTION_FLY_APP) return { environment: 'production', source: 'inferred' };
   if (env.NODE_ENV === 'test') return { environment: 'test', source: 'inferred' };
   if (env.NODE_ENV === 'development') return { environment: 'development', source: 'inferred' };
+  if (cloudRun) return { environment: 'unclassified', source: 'unknown', problem: 'this is a Cloud Run service: set XROGA_DEPLOYMENT_ENVIRONMENT explicitly (production is never inferred from a Cloud Run service name)' };
   return { environment: 'unclassified', source: 'unknown', problem: 'XROGA_DEPLOYMENT_ENVIRONMENT is not set and this is not the production Fly app' };
 }
 

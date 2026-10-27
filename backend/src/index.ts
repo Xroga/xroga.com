@@ -1,5 +1,6 @@
-import 'dotenv/config';
 import './runtime/installSafeLogging.js';
+import './loadPlatformEnvironment.js';
+import 'dotenv/config';
 import { createServer } from 'http';
 import express from 'express';
 import cors from 'cors';
@@ -7,6 +8,9 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { authMiddleware } from './middleware/auth.js';
 import swarmRouter from './routes/swarm.js';
+import {googleBackgroundSelected} from './workers/googleSwarmQueue.js';
+import {googleDispatchConfiguration} from './workers/googleDispatch.js';
+import {canonicalDispatchHandler} from './workers/googleDispatchHandler.js';
 import chatRouter from './routes/chat.js';
 import projectsRouter from './routes/projects.js';
 import terminalSessionsRouter from './routes/terminalSessions.js';
@@ -31,6 +35,8 @@ import phase1BusinessPreflightRouter from './routes/phase1BusinessPreflight.js';
 import businessAutomationsRouter from './routes/businessAutomations.js';
 import businessAutomationWebhookRouter from './routes/businessAutomationWebhook.js';
 import businessAutomationSchedulerRouter from './routes/businessAutomationScheduler.js';
+import storageReconcileRouter from './routes/storageReconcileScheduler.js';
+import browserRunInternalRouter from './routes/browserRunInternal.js';
 import { startBusinessAutomationScheduler } from './services/integrations/businessAutomations.js';
 import dashboardRouter from './routes/dashboard.js';
 import tasksRouter from './routes/tasks.js';
@@ -138,12 +144,17 @@ app.use(cors(corsOptions));
 app.use('/api/billing/webhook', billingWebhookRouter);
 app.use('/api/integrations/composio/webhook', businessAutomationWebhookRouter);
 app.use('/internal/business-automations', businessAutomationSchedulerRouter);
+app.use('/internal/storage', storageReconcileRouter);
+app.use('/internal/browser', express.json({ limit: '4kb' }), browserRunInternalRouter);
 
 // Guest preview is deliberately much smaller than authenticated upload/build
 // requests. Parse it first with a strict body ceiling so an anonymous caller never
 // reaches the general 10 MB JSON allowance.
 app.use('/api/guest', express.json({ limit: '32kb' }), guestChatRouter);
 
+if(googleBackgroundSelected()){
+  app.post('/internal/canonical-dispatch',express.json({limit:'1kb'}),canonicalDispatchHandler(googleDispatchConfiguration()));
+}
 app.use(express.json({ limit: '10mb' }));
 
 app.get('/', (_req, res) => {

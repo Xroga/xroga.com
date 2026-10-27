@@ -110,6 +110,10 @@ export const IMAGE_BROWSERS_PATH = '/ms-playwright';
  */
 export function playwrightVersionFromImage(image: string | undefined | null): string | null {
   if (!image) return null;
+  // The retained GCE base contains this exact digest, verified with the 1.62.0
+  // driver. Unknown digests remain unknown. This does not infer a floating tag.
+  // See docs/xroga/evidence/zero-fly/retained-browser-image-20261025.json.
+  if(image==='mcr.microsoft.com/playwright@sha256:baed2032d533817f3dbe6425de795788430ba345e819a1201337009ba17c9d07')return '1.62.0';
   const match = image.match(/:v?(\d+\.\d+\.\d+)/);
   return match?.[1] ?? null;
 }
@@ -409,7 +413,7 @@ export function buildSandboxCommand(request: InSandboxBrowserRequest): { command
   // gap in evidence. Aborting here would turn a missing driver into "the application did not
   // start", blaming generated code for our own missing dependency.
   const driverStep = request.playwrightVersion
-    ? `npm install --no-save --no-audit --no-fund --prefix ${PLAYWRIGHT_PREFIX} playwright-core@${request.playwrightVersion} >/tmp/xroga_pw_$$.log 2>&1 || { echo "playwright-core install failed"; tail -c 2000 /tmp/xroga_pw_$$.log; }\n`
+    ? `npm install --ignore-scripts --no-save --no-audit --no-fund --prefix ${PLAYWRIGHT_PREFIX} playwright-core@${request.playwrightVersion} >/tmp/xroga_pw_$$.log 2>&1 || { echo "playwright-core install failed"; tail -c 2000 /tmp/xroga_pw_$$.log; }\n`
     : '';
 
   const launchStep = request.staticRoot

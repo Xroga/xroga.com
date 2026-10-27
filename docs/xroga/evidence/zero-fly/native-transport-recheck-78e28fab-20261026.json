@@ -1,0 +1,69 @@
+{
+  "status": "PASS_SYNTHETIC_NATIVE_IDENTITY_OS_LOGIN_AND_ISOLATED_EXECUTION",
+  "scope": "ONE_APPROVED_NATIVE_TRANSPORT_RECHECK_NOT_WHOLE_CALLER_OR_ZERO_FLY_ACCEPTANCE",
+  "testedSource": "78e28fab94b77746d742e5cc33481804afb41cdc",
+  "immutableImage": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-migration@sha256:4190b3474dcc2ff113a0defd87eae30acf88a4a408808a06266d58b568e637b5",
+  "executionName": "xroga-gce-transport-verify-20261025-tvhzv",
+  "executionCompletionTime": "2026-10-25T19:08:42.112959Z",
+  "nativePrincipal": "xroga-api-runtime@project-c40d4821-e647-4fa2-92d.iam.gserviceaccount.com",
+  "workerSourceVerified": true,
+  "foreignPhysicalOwnerDeniedBeforeSsh": true,
+  "realNodeChecks": {
+    "externalNetworkDenied": true,
+    "memoryLimit": true,
+    "metadataDenied": true,
+    "noPlatformCredentials": true,
+    "nonRoot": true,
+    "processLimit": true,
+    "readOnly": true
+  },
+  "worker": {
+    "hardLifetimeSeconds": 600,
+    "id": "4417482250463210999",
+    "name": "xroga-exec-0cb1834ee387446f9779b14a15fb8ed8",
+    "zone": "us-central1-a"
+  },
+  "workerDeletionVerified": "VERIFIED_DELETE_OPERATION_DONE",
+  "temporaryBindingsRemoved": [
+    "projectProvisioner",
+    "projectOperator",
+    "image",
+    "subnet"
+  ],
+  "removedResources": [
+    "Job",
+    "VM",
+    "boot disk",
+    "verification firewall",
+    "execution subnet"
+  ],
+  "providerHeldResources": [
+    {
+      "name": "xroga-api-private",
+      "id": "4594549406886522110"
+    },
+    {
+      "name": "xroga-verify-net",
+      "id": "8264173866930401105"
+    }
+  ],
+  "cleanupWatcher": {
+    "pid": 3285,
+    "sourceSha256": "eca1fa06afed64fd782dfa02b9b15d0531b035695d9dc3e087db68c46fb5f6c3",
+    "status": "WAITING_FOR_GOOGLE_INTERNAL_ADDRESS_RELEASE",
+    "deadlineUtc": "2026-10-25T21:01:17Z",
+    "newAccess": false,
+    "newResources": false
+  },
+  "productionChanged": false,
+  "actualBillingCharge": "NOT_YET_POSTED_OR_VERIFIED",
+  "approvedIncrementalCostCeilingUsd": 0.25,
+  "wholeMigration": "IN_PROGRESS_NOT_ACCEPTED",
+  "priorFailureCause": "Original discarded SSH stderr prevents a definitive historical cause attribution. The revised source now passes the actual path.",
+  "observedAtUtc": "2026-10-25T19:47:38.434528+00:00",
+  "cleanupFollowup": {
+    "automationId": "verify-xroga-native-recheck-cleanup",
+    "schedule": "Two hourly checks, removed after verified cleanup",
+    "scope": "Existing approved two-resource cleanup only; no new test or IAM"
+  }
+}

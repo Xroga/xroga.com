@@ -1,6 +1,6 @@
 # Source reconciliation
 
-2015 ingested/derived sources; 1 inaccessible source; two hash-verified private transcripts still need complete semantic review. Code ingestion is AST metadata, not behavioral verification of every module.
+2049 ingested/derived sources; 1 inaccessible source; two hash-verified private transcripts still need complete semantic review. Code ingestion is AST metadata, not behavioral verification of every module.
 
 Original feature coverage: **119/119 supplied and mapped**. Original missions: **72/72 supplied and mapped** from BOTH the Markdown and manifest, checked for exact title/prompt correspondence during private import. All 119 original rows are UNVERIFIED/NOT_RUN with empty evidence/owner/mission/acceptance columns. Derived owners are explicitly assessor-selected planning annotations. Missions 01–10 alias the existing Batch One specifications; 11–72 are not executed in Batch One. Row reconciliation never proves implementation.
 

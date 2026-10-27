@@ -1,0 +1,41 @@
+{
+  "startedAt": "2026-10-27T07:40:39.443758+00:00",
+  "backupPrefix": "gs://xroga-p3-prod-recovery-574998934848/google-migration-20261026/20261027T073106Z/",
+  "container": "xroga-google-migration-restore-20261027v4",
+  "database": "xroga_migration_restore",
+  "productionSqlApplied": false,
+  "stages": [
+    "EXACT_IMAGE_NETWORK_NONE_NO_PORTS_TMPFS_ADMIN_READY",
+    "SOURCE_ROLE_ATTRIBUTES_AND_MEMBERSHIPS_RESTORED",
+    "ACTUAL_PRODUCTION_DATABASE_RESTORED_OWNERS_AND_ACLS",
+    "LEGACY_KEY_ESCROW_AND_REAL_HISTORICAL_CREDENTIAL_DECRYPTABILITY_VERIFIED",
+    "RESTORED_DATA_BASELINE_FINGERPRINTS_CAPTURED"
+  ],
+  "roles": {
+    "existingRoleCreatesSkipped": 14,
+    "otherSourceRoleStatementsApplied": true
+  },
+  "eventTriggers": {
+    "count": 7,
+    "originalOwnersAndEnabledStateVerified": true,
+    "deferredTocEntries": 7,
+    "omittedEntries": 0
+  },
+  "dump": {
+    "authenticatedCustomDumpBytes": 12575408,
+    "exitCode": 0,
+    "eventRestoreExitCode": 0
+  },
+  "credentialRecovery": {
+    "databaseV1Records": 0,
+    "objectV1Records": 0,
+    "objectsIntegrityVerified": 40
+  },
+  "tableFingerprints": {
+    "tables": 158,
+    "file": "xroga-google-migration-restored-baseline-fingerprints-20261027-v4.json",
+    "sha256": "8e2ecdcd00c47dfe635432c12e8382f05a148572cdc2da379f971a9edd6f64da"
+  },
+  "status": "PASS_ACTUAL_ISOLATED_RESTORE_AND_LEGACY_RECOVERY",
+  "completedAt": "2026-10-27T07:41:13.382012+00:00"
+}

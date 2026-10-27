@@ -43,7 +43,7 @@
     "frontend/src/store/useProjectWorkspaceStore.ts",
     "scripts/security/schema-catalog.mjs",
     "scripts/security/schema-catalog.test.mjs",
-    "supabase/migrations/20261026000000_builder_projects.sql",
+    "supabase/migrations/20261026000100_builder_projects.sql",
     "tests/ci/known-skips.json"
   ],
   "decisions": {
@@ -64,7 +64,7 @@
   "schemaImpact": {
     "changed": true,
     "migrations": [
-      "supabase/migrations/20261026000000_builder_projects.sql"
+      "supabase/migrations/20261026000100_builder_projects.sql"
     ],
     "rollout": "Additive migration (two tables and one function). Not applied by this change; apply through the verified migration workflow after review.",
     "rollback": "DROP FUNCTION public.append_builder_revision and DROP TABLE public.builder_revisions, public.builder_projects. No other table references them."
