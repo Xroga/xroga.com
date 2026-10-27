@@ -76,8 +76,11 @@ const steps = [
   { id: '03d-phase2-seccomp-derivation', cmd: ['node', 'deploy/browser-worker/derive-seccomp.mjs', '--check'], cwd: '.', required: true, kind: 'exit' },
   { id: '04-s3-wire-emulator-SYNTHETIC', cmd: ['npx', 'tsx', '--test', ...wireTests], cwd: 'backend', required: true, fixture: 's3Emulator' },
   { id: '05-r2-provider-REAL', cmd: ['npx', 'tsx', '--test', ...providerTests], cwd: 'backend', required: false, fixture: 'r2Provider', needs: 'AUTHORISED' },
-  // The whole backend suite needs more than the 15 minute default on a hosted runner (the `unit` workflow takes about 27 minutes); it fails on pristine main for that reason alone.
-  { id: '06-full-backend-suite', cmd: ['npm', 'test'], cwd: 'backend', required: true, kind: 'full', timeoutMs: 38 * 60_000 },
+  // The whole backend suite (about 3 minutes in the `unit` workflow, which has no fixtures) is run WITHOUT the disposable PostgreSQL and S3 emulator
+  // variables. Those fixtures are exercised by the dedicated steps above (03, 03b, 03c, 04); leaving them set made every fixture-aware test file in the
+  // 300-file suite connect to the one shared database and emulator at once, and the step never finished (it also hangs on pristine main, run 40373053674,
+  // with the same fixtures). An empty value is falsy for every `skip = value ? false : reason` guard. A step that still hangs is a FAIL with its log.
+  { id: '06-full-backend-suite', cmd: ['npm', 'test'], cwd: 'backend', required: true, kind: 'full', timeoutMs: 20 * 60_000, env: { STORAGE_TEST_DATABASE_URL: '', STORAGE_TEST_S3_ENDPOINT: '', REQUIRE_PHASE1_FIXTURES: '' } },
 ];
 
 const baseline = JSON.parse(readFileSync(path.join(here, 'baseline-failures.json'), 'utf8')).tests;
