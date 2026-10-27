@@ -65,7 +65,7 @@ jobs:
         run: |
           set -o pipefail
           code=$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 30 \
-            https://xroga-api.fly.dev/health)
+            https://api.xroga.com/health)
           echo "status=$code"
           echo "--- body (first 2000 bytes) ---"
           head -c 2000 /tmp/health.json || true
@@ -76,7 +76,7 @@ jobs:
         run: |
           set -o pipefail
           code=$(curl -sS -o /tmp/ready.json -w '%{http_code}' --max-time 30 \
-            https://xroga-api.fly.dev/ready)
+            https://api.xroga.com/ready)
           echo "status=$code"
           echo "--- body (first 2000 bytes) ---"
           head -c 2000 /tmp/ready.json || true

@@ -2078,6 +2078,10 @@
       "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
       "current_paths": [
         "backend/src/sandbox/flyMachineSandbox.ts",
+        "backend/src/sandbox/google/executionBinding.ts",
+        "backend/src/sandbox/google/gceMachineControl.ts",
+        "backend/src/sandbox/google/gceSshTransport.ts",
+        "backend/src/sandbox/google/googleSandbox.ts",
         "backend/src/sandbox/remoteSandbox.ts",
         "backend/src/sandbox/sandboxEnvironment.ts",
         "backend/src/sandbox/sandboxProviders.ts",

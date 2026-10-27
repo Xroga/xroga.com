@@ -28,6 +28,7 @@ import { NodeRuntimeAdapter } from './nodeAdapter.js';
 import { PythonRuntimeAdapter } from './pythonAdapter.js';
 import { RustRuntimeAdapter } from './rustAdapter.js';
 import { StaticWebRuntimeAdapter } from './staticWebAdapter.js';
+import {googleProjectRuntimeSelected,googleRuntimeImageFor} from '../projectRuntime/googleFactory.js';
 
 /** One detected component: a root, the adapter that owns it, and the evidence. */
 export interface DetectedComponent {
@@ -255,6 +256,7 @@ export function commandsFor(
  * missing-toolchain refusal, which is honest but builds nothing.
  */
 export function sandboxImageFor(component: DetectedComponent): string | null {
+  if(googleProjectRuntimeSelected())return googleRuntimeImageFor(component.adapterId);
   return adapterById(component.adapterId)?.sandboxImage ?? null;
 }
 

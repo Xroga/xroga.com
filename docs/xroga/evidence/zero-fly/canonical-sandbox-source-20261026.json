@@ -1,0 +1,195 @@
+{
+  "scope": "SOURCE_AND_SYNTHETIC_FIXTURES_NOT_LIVE_CALLER_VERIFICATION",
+  "parentSha": "e825e05a189a19af5c66463945fa1ee4da1ceea2",
+  "atUtc": "2026-10-25T23:24:57.038033+00:00",
+  "sourceLfSha256": {
+    "backend/src/ai/compileCommand.ts": "c7c6d53574c4defbeac4c3e5bf1193c5b3ec4d1ca088b0d4dad71ab600b77e3b",
+    "backend/src/ai/compileValidate.ts": "fba32cb6703084fd6de14661d92f08baaccaecb1c987e666b72d80ed327032e8",
+    "backend/src/ai/executionRuntime.ts": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2",
+    "backend/src/ai/pipeline.ts": "bbd84ee396f257470cc687da74839699808e95776c59ec586407e6277d6ad1c9",
+    "backend/src/ai/runStore.ts": "86ecfa2aa9abeca591d904f93d8adaacdc2f7da8b5619aa16886416ce29fc318",
+    "backend/src/ai/softwareAgent/AgentSoftwareExecutor.ts": "c99fc2ca9f656441ec206e2a26b43996c1bca4b16b70073ee07118b942600a0e",
+    "backend/src/ai/softwareAgent/softwareAgentProductionInfrastructure.ts": "e7afc2df2a662d5a05c13dcae698361578bb700dc289a24f1ee47c461fac33f5",
+    "backend/src/ai/softwareAgent/xrogaTools.ts": "315e5759a03ff8b4777ab8d9592e854c416a3632846c8eb97f8976aa69c2848d",
+    "backend/src/sandbox/sandboxProviders.ts": "6cd05e7d462b454eb60543ccdd7fe0c289acf880d3dbebbc2b3d035249bd131f",
+    "backend/src/sandbox/sandboxRuntime.ts": "b4934e095cc4797259cccfd160583b20879d20c608eda4423f63d33a30a940be",
+    "backend/src/sandbox/sandboxTypes.ts": "85bde00f4d9e89c07dba613cbd22ab5d0283dbcccd625ec7a0c9106c01818648",
+    "backend/src/synthesis/browserVerificationAdapter.ts": "8bac14a995dc5225f2da713b56f520091872c54b3d6cb4efbfe512566de65e21",
+    "backend/src/synthesis/inSandboxBrowser.ts": "694f003f59f393730f0308e701b5e37f187400d1f424308fa1adb24d97d61447",
+    "backend/src/synthesis/livePreview/plan.ts": "472074fb978ec43a120a40227d6560b80ef592e0b90476a9b104f86c7e235b14",
+    "backend/src/synthesis/productionAdapters.ts": "6245e643eebbdb03bbd4fd1e3d51bd1d3017f0071833ad7c4331daffaafe9f11",
+    "backend/src/synthesis/projectRuntime/googleProvider.test.ts": "b116a67e371d2308220b370d52b67b3d7b46ea449670ff7a41f11aeadd7e461c",
+    "backend/src/synthesis/projectRuntime/googleProvider.ts": "429d49818a2781c7b95510c2133629fc631b2e6d3f57f4ed0c585313edd4db53",
+    "backend/src/synthesis/runtime/registry.ts": "887d7c8931682b4c147a06a53ad055c73fd2c10faef7f5c948e2bb4754544e6d",
+    "backend/src/synthesis/softwareAgentImplementationAdapter.ts": "5c174d481c1bcf8af40a45740ac2ecbac7669ace0817a8d365cc9a1feec6575f",
+    "backend/src/ai/compileStages.test.ts": "60118d3ad1dada34ea1a694012ad5098196384225e4238c2118fe9822b7ff49a",
+    "backend/src/ai/executionRuntime.sandboxAdmission.test.ts": "0f1c91834ddcaa8a68bb899f239614c59032eef5f68aeffbb78fcaca36c78e4d",
+    "backend/src/ai/softwareAgent/sandboxAdmission.test.ts": "6e5ec74d9daaf2a76cb153212617fc84391060d8ae4d63f15fc089a108e3c076",
+    "backend/src/sandbox/google/executionBinding.test.ts": "7f0bb63541e4c810eb059614d4e4c27a286f122f59b52d44d0bd8444050848fd",
+    "backend/src/sandbox/google/executionBinding.ts": "d1c4b9bf871c64b1be55c93099c2319fb5b3475ddc1a43d77f01e1de7d170b25",
+    "backend/src/sandbox/google/googleSandbox.test.ts": "9141e27ee1b090aeeb6e5f25f893a29185a3ae5c55c7b1208fb3e1406dbc801a",
+    "backend/src/sandbox/google/googleSandbox.ts": "d5b72b4e7d5bb17a189a623d24f2523a3dda238a914b7597e6f6f287aefbc821",
+    "backend/src/sandbox/googleSelection.test.ts": "aad45094db0d08128861d1ee14ac9867b987d33ca88c6535935afd9bb4f6f797",
+    "backend/src/synthesis/googleBrowserImage.test.ts": "27f3f5f9ed898cb897e0a3a82991995230026af8fe2b28f041ce0ad7aa058df3"
+  },
+  "jobs": [
+    {
+      "id": "bb836201-5db5-48b2-8099-de2fc77f2d9c",
+      "status": "failed",
+      "exitCode": 1,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "90d4b56625bd346c5245e86b04ca2f22168b427fa2604078f635e1172ee11d8e",
+          "bytes": 2663
+        }
+      ]
+    },
+    {
+      "id": "228d4348-48bc-4d13-ad92-c6505d0c7edd",
+      "status": "passed",
+      "exitCode": 0,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "4e4461e548b186ce651c2e55414a4148bb0eece971c3124f9a8ac33d20e3d3a7",
+          "bytes": 2412
+        }
+      ]
+    },
+    {
+      "id": "2b87977d-fdc9-4614-afb7-93da8d3e2ae5",
+      "status": "passed",
+      "exitCode": 0,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "d9ddfa93ee8446053349b67dca6450309ce7e6aec81f8ed50b83de586e547728",
+          "bytes": 3427
+        }
+      ]
+    },
+    {
+      "id": "b8c117b4-fa65-4a86-8e74-eedc60f17f9f",
+      "status": "failed",
+      "exitCode": 1,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "385c33de4ea0b64f6065503d72c4d95e20ccb84ece44934481e19825f0df4c80",
+          "bytes": 14346
+        }
+      ]
+    },
+    {
+      "id": "c711390a-d9a4-4a08-a21d-971a02bdb5ec",
+      "status": "passed",
+      "exitCode": 0,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "636f89cb9c71378766a195e3f9cb2f5aaf31711c4b6c3582eb229d30d93bb5ab",
+          "bytes": 370
+        }
+      ]
+    },
+    {
+      "id": "1f3dbb4d-84b7-4bc9-9ba1-fa9d5ae7da43",
+      "status": "passed",
+      "exitCode": 0,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "bde625934d6105000f6570952b341c9daa46d5b9a172fea2c9e0333f374963b1",
+          "bytes": 2731
+        }
+      ]
+    },
+    {
+      "id": "46a4c373-5765-47cc-8d14-833b508a33ca",
+      "status": "passed",
+      "exitCode": 0,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "a42a883eaaa73fc09976a73015bf435e2ee52f8c283b1d68bf0d2416501490e9",
+          "bytes": 3222
+        }
+      ]
+    },
+    {
+      "id": "a302a84b-b708-4a3f-847d-b4f56ec42e3c",
+      "status": "passed",
+      "exitCode": 0,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "2b558ccb51045eef3066ca1e6f87c7465e5f49b073692b1e7f0e6e6814af4fee",
+          "bytes": 1895
+        }
+      ]
+    },
+    {
+      "id": "6f20b3fd-c13a-4253-bac2-e7891f283959",
+      "status": "failed",
+      "exitCode": 1,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "ef0d080a00c1cb091e15617eabaa3050b2b5e328720cc621ec0bf7feca10a305",
+          "bytes": 1134
+        }
+      ]
+    },
+    {
+      "id": "f3ff7064-7e1a-4e48-8181-f9762763e829",
+      "status": "passed",
+      "exitCode": 0,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "7b237d18fa1f67ac7647ea5bee13deea433af6b56196b58226a4584312e58297",
+          "bytes": 360
+        }
+      ]
+    },
+    {
+      "id": "e0145ddf-1900-4ff7-a906-2e833347f752",
+      "status": "passed",
+      "exitCode": 0,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "sha256": "9b22bfc01a3cc0bed7ad1438567a11dc44e7d03fde59663ce2a16ed29daa6923",
+          "bytes": 2132
+        }
+      ]
+    }
+  ],
+  "defectsReproduced": [
+    "SDK swallowed fatal sandbox admission denial in three execution tools",
+    "Immutable browser digest lost its required Playwright driver version"
+  ],
+  "fixtureCorrection": "Scheduler test initially inspected its input object instead of the cloned canonical task. The other 57 tests in that run passed.",
+  "verifiedSemantics": [
+    "Issued current run authority and owner-bound source provenance before provider probing",
+    "No alternate provider in explicit Google mode",
+    "Sequential same-workspace setup and network-denied verification stages",
+    "Revocation, cancellation and stalled authority prevent later dispatch and successful completion",
+    "Missing durable allocation/stage receipts cannot return verified success",
+    "Owned physical cleanup on success and failure, cleanup uncertainty remains explicit"
+  ],
+  "productionChanged": false,
+  "cloudResourcesCreated": false,
+  "fullCiRepeated": false,
+  "remaining": [
+    "Real caller, Preview HTTP/WebSocket and restore verification",
+    "Durable Google background transport integration",
+    "Production configuration, release, cutover and zero-Fly acceptance"
+  ],
+  "typecheck": {
+    "jobId": "3b3481f7-d6e0-4ddb-a889-3e1337fa6d0f",
+    "status": "passed",
+    "exitCode": 0
+  }
+}

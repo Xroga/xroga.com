@@ -42,7 +42,7 @@ Run from the repository root with `node node_modules/tsx/dist/cli.mjs --test <fi
 
 1. **Google runtime provider (PR #856, Codex).** `ProjectRuntimeProvider` implementations for Google (`googleProvider`, `googleFactory`, `livePreview/googleTarget`) exist only on that branch. Until they are merged and deployed, the only persistent runtime provider on `main` is the Fly one, which is being retired. The builder names no provider; it works with whatever `ProjectRuntimeManager` is configured with.
 2. **Canonical engine activation.** `UNIVERSAL_AGENT_ENABLED` and a project allowlist or default mode. Off in production today.
-3. **Migration.** `20261026000000_builder_projects.sql` must be applied through the verified migration workflow after review. Not applied.
+3. **Migration.** `20261026000100_builder_projects.sql` must be applied through the verified migration workflow after review. Not applied.
 4. **Frontend flag.** `NEXT_PUBLIC_XROGA_BUILDER=1` after the above.
 
 ## Verification state

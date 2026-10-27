@@ -27,7 +27,9 @@ export function managedCredentialConfiguration(env: Environment): ManagedConfigu
     // Constructor validates the exact resource without making an API request.
     let federation:FlyGoogleWorkloadConfiguration|undefined;
     try {federation = flyGoogleWorkloadConfiguration(env,env.XROGA_GOOGLE_CLOUD_KMS_KEY_NAME);} catch {return invalid();}
-    new GoogleCloudKmsCryptoProvider(env.XROGA_GOOGLE_CLOUD_KMS_KEY_NAME,new ApplicationDefaultGoogleKmsTransport(federation));
+    try {
+      new GoogleCloudKmsCryptoProvider(env.XROGA_GOOGLE_CLOUD_KMS_KEY_NAME,new ApplicationDefaultGoogleKmsTransport(federation, env));
+    } catch { return invalid(); }
     return { provider, keyName: env.XROGA_GOOGLE_CLOUD_KMS_KEY_NAME, federation };
   }
   if (provider !== 'oci' || env.XROGA_GOOGLE_CLOUD_KMS_KEY_NAME || oci.some(value => !value)

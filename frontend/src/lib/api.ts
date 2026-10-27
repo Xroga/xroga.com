@@ -62,7 +62,7 @@ function resolveApiUrl(): string {
     return 'http://localhost:8080';
   }
 
-  return 'https://xroga-api.fly.dev';
+  return 'https://api.xroga.com';
 }
 
 export function siteUrl(): string {

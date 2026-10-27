@@ -1,3 +1,4 @@
+import { guestClientAddress } from './guestChat.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
@@ -106,4 +107,23 @@ test('guest session permits only one in-flight reply and releases it safely', ()
     now + GUEST_CHAT_CONCURRENCY_TTL_MS + 1,
   );
   assert.ok(afterTtl);
+});
+
+const fakeRequest = (headers: Record<string, string>, remote = '10.0.0.9') => ({
+  header: (name: string) => headers[name.toLowerCase()],
+  ip: remote,
+  socket: { remoteAddress: remote },
+}) as unknown as Parameters<typeof guestClientAddress>[0];
+
+test('on Cloud Run only the last X-Forwarded-For entry (the one Google appended) counts, and fly-client-ip is ignored', () => {
+    const env = { K_SERVICE: 'xroga-api' } as NodeJS.ProcessEnv;
+    assert.equal(guestClientAddress(fakeRequest({ 'x-forwarded-for': '1.1.1.1, 2.2.2.2, 203.0.113.7', 'fly-client-ip': '9.9.9.9' }), env), '203.0.113.7');
+    assert.equal(guestClientAddress(fakeRequest({ 'x-forwarded-for': 'spoofed, not an ip!' }), env), '10.0.0.9', 'garbage falls back to the socket address');
+    assert.equal(guestClientAddress(fakeRequest({ 'fly-client-ip': '9.9.9.9' }), env), '10.0.0.9');
+    assert.equal(guestClientAddress(fakeRequest({ 'x-forwarded-for': '1.1.1.1, 5.5.5.5, 203.0.113.7' }), { ...env, XROGA_TRUSTED_PROXY_HOPS: '2' } as NodeJS.ProcessEnv), '5.5.5.5');
+});
+
+test('on Fly the platform header is trusted; anywhere else a header is never trusted', () => {
+    assert.equal(guestClientAddress(fakeRequest({ 'fly-client-ip': '198.51.100.4' }), { FLY_APP_NAME: 'xroga-api' } as NodeJS.ProcessEnv), '198.51.100.4');
+    assert.equal(guestClientAddress(fakeRequest({ 'fly-client-ip': '198.51.100.4', 'x-forwarded-for': '203.0.113.7' }), {} as NodeJS.ProcessEnv), '10.0.0.9');
 });

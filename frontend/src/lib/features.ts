@@ -35,7 +35,7 @@ export const XROGA_FEATURES = [
   'Profile & settings',
   'Mobile responsive Workspace',
   'SEO sitemap & OpenGraph',
-  'Fly.io API backend',
+  'Google Cloud API backend',
   'Supabase auth & profiles',
 ];
 

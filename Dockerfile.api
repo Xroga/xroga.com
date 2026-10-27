@@ -1,10 +1,8 @@
-# Fly.io API image — build context is monorepo root.
-# Deploy: fly deploy . --config fly.api.toml -a xroga-api
+# Portable API image. Build context is the monorepo root.
+# Supply the exact source commit through XROGA_RELEASE_SHA.
 
 ARG NODE_VERSION=22.21.1
 FROM node:${NODE_VERSION}-slim AS base
-
-LABEL fly_launch_runtime="Node.js"
 
 WORKDIR /app
 
@@ -34,11 +32,13 @@ RUN npm prune --omit=dev
 FROM base
 
 ARG XROGA_RELEASE_SHA=unknown
+RUN printf '%s' "$XROGA_RELEASE_SHA" | grep -Eq '^[a-f0-9]{40}$'
 ENV XROGA_RELEASE_SHA=$XROGA_RELEASE_SHA
+LABEL org.opencontainers.image.revision=$XROGA_RELEASE_SHA
 
 # Legacy AI/video stack removed — no ffmpeg/playwright runtime deps needed.
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y ca-certificates && \
+    apt-get install --no-install-recommends -y ca-certificates openssh-client && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /app /app

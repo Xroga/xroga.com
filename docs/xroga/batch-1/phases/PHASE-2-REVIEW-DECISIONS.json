@@ -1467,7 +1467,7 @@
     },
     {
       "packetId": "B1-P2-b8b2050b4efeeb5b",
-      "sourceSha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d",
+      "sourceSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2",
       "executionStatus": "IN_PROGRESS",
       "finding": "UNCHANGED_EXECUTION_RECOVERY_OWNER_AND_PRODUCER_PROOF_RECONCILED",
       "actorTrace": "Only production constructors occur inside runBuildPipeline after original issued actor and user match. Resume loads exact server owner/run, validates stored and embedded lineage and current database project before durable worker admission. New writes additionally require captured original attempt. No body owner can choose another checkpoint.",
@@ -1505,6 +1505,21 @@
         "remaining": [
           "Bind final-source receipts, preserve separate checkpoint writes and other worker callers",
           "Do not infer whole worker or provider-effect completion from checkpoint reads"
+        ]
+      },
+      "preGoogleMigrationSourceBinding": {
+        "path": "backend/src/ai/executionRuntime.ts",
+        "sha256": "bb6759b9e588af364fd86278d30df7c9b609f0c4737e5ab0bf805ec102adb26d"
+      },
+      "googleMigrationReview": {
+        "changedSources": [
+          "backend/src/ai/executionRuntime.ts"
+        ],
+        "scope": "CURRENT_SOURCE_REVIEW_NOT_INHERITED_CALLER_CERTIFICATION",
+        "finding": "Canonical execution preserves original issued actor and attempt. Queued transport adopts only the private database claim, checks current owner/project and rolls back failed admission. Sandbox authority denial now propagates rather than becoming a recoverable task failure. Original historical proof remains bound to its recorded SHA. Newly added handoff and transport require independent exact-source integrated database and live Google proof.",
+        "evidence": [
+          "docs/xroga/evidence/zero-fly/background-source-checkpoint-20261026.json",
+          "docs/xroga/evidence/zero-fly/canonical-sandbox-source-20261026.json"
         ]
       }
     },
@@ -2305,7 +2320,7 @@
     },
     {
       "packetId": "B1-P2-24934749677f47d8",
-      "sourceSha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46",
+      "sourceSha256": "f29a5c75349cf919ce72147b036f92d5c22e414624cd35eeea13b894c708b815",
       "executionStatus": "IN_PROGRESS",
       "finding": "DEMONSTRATED_WORKER_PROJECT_WAIT_ADMISSION_FIXED_REAL_DATABASE_PROOF_AT_D9B13E09",
       "actualVerification": {
@@ -2321,11 +2336,13 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "82f7738b595257e701be5b860f4c63c0f547b9606d9cbd04beb4d1bac489388e"
+          "sha256": "b28084a97721f62c135e84f9dc070a378ca1bd6b1233d19d0cc66509475510f0",
+          "preGoogleMigrationSha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
         },
         {
           "path": "backend/src/routes/swarm.ts",
-          "sha256": "28eb717f8690a357e355ac7eab65c35a36112017caecb10fbb1510b1da2abea0"
+          "sha256": "63795687816e87356bd0b45009f2386610efacafef0a98861d39aaf0439e5b32",
+          "preGoogleMigrationSha256": "7ae4bf0e05640eefccbaf8868183fc5b4301788e58a022a3b1dd42955fd59478"
         },
         {
           "path": "supabase/migrations/20261019000300_worker_database_project_admission.sql",
@@ -2397,6 +2414,28 @@
           "Reconcile authenticated producer through current-parent and existing scheduler/attempt writers before whole007.5 acceptance",
           "Other worker writers and provider-account consumers remain independent, no authority or vault implementation"
         ]
+      },
+      "preGoogleMigrationSourceBinding": {
+        "path": "backend/src/ai/runStore.ts",
+        "sha256": "c5c41abad8c894358bbfb7ce56020ca6f4fad86affec55f4912eefdb6ebb0f46"
+      },
+      "googleMigrationReview": {
+        "changedSources": [
+          "backend/src/ai/runStore.ts",
+          "backend/src/ai/pipeline.ts",
+          "backend/src/routes/swarm.ts"
+        ],
+        "scope": "CURRENT_SOURCE_REVIEW_NOT_INHERITED_CALLER_CERTIFICATION",
+        "finding": "Canonical execution preserves original issued actor and attempt. Queued transport adopts only the private database claim, checks current owner/project and rolls back failed admission. Sandbox authority denial now propagates rather than becoming a recoverable task failure. Original historical proof remains bound to its recorded SHA. Newly added handoff and transport require independent exact-source integrated database and live Google proof.",
+        "evidence": [
+          "docs/xroga/evidence/zero-fly/background-source-checkpoint-20261026.json",
+          "docs/xroga/evidence/zero-fly/canonical-sandbox-source-20261026.json"
+        ]
+      },
+      "terminalProgressReview": {
+        "change": "User progress is appended only while the exact current attempt is running. Late terminal progress cannot mutate the snapshot already accepted by the existing database generation fence. Explicit failure enrichment, cancellation, authority, reservation and provider behavior are unchanged.",
+        "proof": "Live Google document task produced its correct accounted result but final Job handoff could not repeat the mutated terminal snapshot. Focused regression reproduced the mutation before repair. Twelve run event, durable terminal learning, resume, cancellation and queued-admission tests pass on canonical Node22.",
+        "acceptance": "SOURCE_CORRECTION_ONLY_LIVE_DURABLE_HANDOFF_RECHECK_PENDING"
       }
     },
     {
@@ -2808,7 +2847,7 @@
     },
     {
       "packetId": "B1-P2-11526c9c3e6a8aa3",
-      "sourceSha256": "6151c87b1e323e4962b7281dd39f3cab528ca45bbbdb5279a824bae62ddb3dc4",
+      "sourceSha256": "592d45f3b8839a75b6e81d01d92f4c487e938ac40758b153ddd4d2f16d37f57b",
       "executionStatus": "IN_PROGRESS",
       "finding": "EXISTING_OWNERSHIP_PATH_TRACED_TARGETED_CONSUMER_PROOF_PREPARED",
       "actorTrace": "Actual authenticated runtime routes and admitted coordinator pass original owner/project/session. Signed global grant lookup is consumed only by the actual HTTP/WebSocket resolver, which checks signature, current revocation/expiry and the exact current owner/project/session/declared port before selecting an internal target. Revocation is owner-filtered before its first await.",
@@ -2823,7 +2862,8 @@
       "remaining": [
         "Execute the exact new disposable case and authenticate its complete successful source-bound run",
         "Reconcile exact proven callers in both existing record systems, retaining all other and later-phase scope"
-      ]
+      ],
+      "googleMigrationReview": "Google grant admission now validates the exact loaded owned active interactive session and declared port without requiring Fly address fields. Locked SQL and exact grant receipt checks remain unchanged. Native identity, immutable handle and private endpoint are still validated independently by the Google gateway. All eight persistence caller IDs are preserved. Focused regression passes 33/33. Live Google grant/HTTP/WebSocket acceptance remains pending. No disposition or acceptance promotion."
     },
     {
       "packetId": "B1-P2-f1384a65c2d70a16",
@@ -3154,7 +3194,7 @@
     },
     {
       "packetId": "B1-P2-f8cb123dcb4c4a53",
-      "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88",
       "executionStatus": "IN_PROGRESS",
       "finding": "UNAVAILABLE_REVIEW_ONLY_CONSTRUCTOR_POLICY_AND_INDEPENDENT_RECIPIENT_PROOF_PENDING",
       "originalCriteria": [
@@ -3162,7 +3202,7 @@
         4,
         10
       ],
-      "actorTrace": "Tenant construction still requires original issued context. Named global construction still accepts only the same17 actual data-operation keys. A separate explicit review-only constructor exception now documents its real receiving-path proof obligations, while its key is excluded from the accepted type and rejected at runtime before SDK construction. It grants no query or additional runtime capability. All actual receivers require independent proof, and neither SDK handle is an RLS sandbox.",
+      "actorTrace": "Tenant construction still requires the original issued context and global construction an exact registered operation. Google canonical delivery adds a fixed private dispatcher and native Job handoff registration. Its SQL source/owner/generation locks, launch limits, OIDC and native Job checks remain independent receiving-path obligations. The authenticated scheduler may sweep ten pending IDs and reconcile stale runs. These changes do not certify this shared constructor or arbitrary recipients. The review-only key is still denied before SDK construction. Both SDK handles remain privileged rather than RLS sandboxes.",
       "invariant": "No foreign subject or telemetry association may replace the admitted owner. Bounded internal bootstrap never exposes private identities through an endpoint or another owner terminal evidence. Factory construction never substitutes for receiver-level authorization.",
       "evidence": [
         {
@@ -3210,6 +3250,10 @@
           "Prove every actual shared-constructor recipient before factory closure",
           "Preserve later authority, credential custody and egress obligations"
         ]
+      },
+      "beforeGoogleDeliveryBinding": {
+        "sourceSha256": "77424e64b9331b83e961b4169d2bca8fb62c2a413cfc912c28d0ce0c1dcaefe0",
+        "actorTrace": "Tenant construction still requires original issued context. Named global construction still accepts only the same17 actual data-operation keys. A separate explicit review-only constructor exception now documents its real receiving-path proof obligations, while its key is excluded from the accepted type and rejected at runtime before SDK construction. It grants no query or additional runtime capability. All actual receivers require independent proof, and neither SDK handle is an RLS sandbox."
       }
     },
     {
@@ -3233,11 +3277,6 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "type": "ONE_LINE_ROUTING_CONTEXT_ADDITION_ONLY_OTHER_ADMISSION_AND_UNIVERSAL_PRODUCER_BYTES_UNCHANGED",
-          "result": "SOURCE_TRACED"
-        },
-        {
-          "path": "backend/src/ai/pipeline.ts",
-          "type": "BATCH2_PHASE1_ADDITIVE_BUILDER_BINDING_OPTION_ADMISSION_OWNERSHIP_ATTEMPT_AND_LEASE_CODE_UNCHANGED_BINDING_SUPPLIED_ONLY_BY_SWARM_ROUTE_AFTER_OWNER_VERIFICATION",
           "result": "SOURCE_TRACED"
         }
       ],

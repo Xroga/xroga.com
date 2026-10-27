@@ -1,0 +1,20 @@
+{
+  "status": "SOURCE_FIX_VERIFIED_LIVE_RECHECK_REQUIRED",
+  "testedBaseline": "a5d1a618a488833db2214611692682c15240e9ef",
+  "liveDefect": "Google Preview process was running, but readiness used a separate container loopback. Real request returned failed after 24 probes.",
+  "correction": "Provider-specific readiness uses authenticated owner-bound Compute address and fixed TCP 3000, checks current authority before and after HTTP, rejects redirects and non-worker addresses. Existing providers retain command probing.",
+  "focusedTests": {
+    "job": "e1d49b1b-27f5-4824-bd10-c0181fdbbe39",
+    "passed": 37,
+    "failed": 0
+  },
+  "typecheck": {
+    "status": "PASS",
+    "job": "368a3cb8-b305-4bf5-b0b5-fb28def4befa"
+  },
+  "initialNegative": "New readiness regression failed before implementation. Original real staging failure preserved separately.",
+  "liveRecheck": "NOT_EXECUTED_FOR_CORRECTED_SOURCE",
+  "production": "UNCHANGED_ON_FLY",
+  "background": "Real Tasks dispatch and pinned Job start verified. Math-only prompt reached build endpoint and failed prose-only builder output, so successful completion and accounting remain unverified.",
+  "cleanup": "Owned VM/disk, stage Job/queue, stage identities, stage key/config, HTTPS front door and temporary stage DNS removed or disabled. Direct VPC subnet release is delayed by Google-managed serverless IP reservation, verify residual cleanup separately."
+}

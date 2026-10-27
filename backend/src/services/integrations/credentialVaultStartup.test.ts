@@ -13,6 +13,29 @@ const env = { NODE_ENV: 'production', XROGA_CREDENTIAL_KMS_PROVIDER: 'oci',
   XROGA_OCI_KMS_KEY_VERSION: 'ocid1.keyversion.oc1.me-dubai-1.fixture.aaaaaaaa',
   XROGA_OCI_KMS_AUTH_MODE: 'resource_principal', XROGA_OCI_KMS_PRINCIPAL_ID: 'ocid1.fnfunc.oc1.me-dubai-1.fixture.aaaaaaaa' };
 
+test('native Google runtime refuses operator credentials and mixed platform identity before provider construction', async () => {
+  const native = { NODE_ENV:'production', K_SERVICE:'xroga-api', K_REVISION:'xroga-api-fixture',
+    XROGA_CREDENTIAL_KMS_PROVIDER:'google_cloud', XROGA_GOOGLE_CLOUD_AUTH_MODE:'metadata_adc',
+    XROGA_GOOGLE_CLOUD_KMS_KEY_NAME:'projects/synthetic/locations/us-central1/keyRings/test/cryptoKeys/test' };
+  assert.equal(managedCredentialConfiguration(native)?.provider, 'google_cloud');
+  for (const override of [
+    {GOOGLE_APPLICATION_CREDENTIALS:'/operator/adc.json'},
+    {GOOGLE_CREDENTIALS:'PRIVATE_STATIC_CREDENTIAL_CANARY'},
+    {CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE:'/operator/profile.json'},
+    {GCE_METADATA_HOST:'attacker.invalid'},
+    {GCE_METADATA_IP:'192.0.2.9'},
+    {FLY_APP_NAME:'xroga-api'},
+    {XROGA_GOOGLE_WIF_AUDIENCE:'//iam.googleapis.com/stale-federation'},
+  ]) {
+    let calls = 0;
+    await assert.rejects(initializeCredentialVaultForServer({...native,...override}, {
+      create:async () => { calls++; return fixture().provider; },
+      install:() => { throw new Error('must not install'); },
+    }), /configuration is invalid/);
+    assert.equal(calls, 0);
+  }
+});
+
 test('Fly production cannot inherit metadata ADC or interactive credentials without exact workload federation', () => {
   const fly = {NODE_ENV:'production', FLY_APP_NAME:'xroga-api', FLY_MACHINE_ID:'e820730b296098',
     XROGA_CREDENTIAL_KMS_PROVIDER:'google_cloud',

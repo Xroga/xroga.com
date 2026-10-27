@@ -1,0 +1,249 @@
+{
+  "atUtc": "2026-10-27T10:10:44.607694+00:00",
+  "origin": "https://xroga.com",
+  "chunkCount": 40,
+  "googleApiChunks": 1,
+  "flyApiChunks": 0,
+  "chunks": [
+    {
+      "path": "/_next/static/chunks/c7879cf7-fabe25011515220e.js",
+      "bytes": 173024,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/3131-6b8d1d9a92528951.js",
+      "bytes": 174392,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/main-app-6cd8e53e002432e3.js",
+      "bytes": 529,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/44530001-a382142a137bd181.js",
+      "bytes": 62513,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/8197-e2fcb43f38a2b4a7.js",
+      "bytes": 8562,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/3615-6b34d77bf2610783.js",
+      "bytes": 22662,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/1644-870eb77295bfc143.js",
+      "bytes": 163238,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/4234-55638ef2721a09ef.js",
+      "bytes": 13662,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/7079-6c157fd26b943e93.js",
+      "bytes": 27391,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/6733-af9a9336051a064c.js",
+      "bytes": 4323,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/1638-70cdb17826f44066.js",
+      "bytes": 85951,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/1253-c30d2a91c66b2dde.js",
+      "bytes": 1846,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/4577-9de6add32ebb31dc.js",
+      "bytes": 14511,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/7888-8d8212693ab417e5.js",
+      "bytes": 14513,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/8680-8fea9e16b09555fc.js",
+      "bytes": 31383,
+      "googleApi": true,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/2263-6033c022c5c3e04b.js",
+      "bytes": 11733,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/app/layout-4f394ab2130a3f0c.js",
+      "bytes": 87199,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/app/global-error-584b9d5a169cac17.js",
+      "bytes": 12762,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/app/not-found-92fb77348ac15915.js",
+      "bytes": 254,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/74cba0eb-a15aca77c382bfa2.js",
+      "bytes": 11412,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/8954-26ed832be5e14147.js",
+      "bytes": 94156,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/4144-1dbfe68b1d5ecd60.js",
+      "bytes": 153601,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/3318-8ef95438566bd885.js",
+      "bytes": 8415,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/2609-504aa172892e7e78.js",
+      "bytes": 7245,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/4811-7862154e23aa6ee9.js",
+      "bytes": 19276,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/6542-cde31eef5059ec3f.js",
+      "bytes": 12983,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/5791-f46d73e10132973a.js",
+      "bytes": 182893,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/4909-7478b69ee437f348.js",
+      "bytes": 53962,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/app/(workspace)/workspace/page-12b02ed90b8a5505.js",
+      "bytes": 222626,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/8961-fe011754fe623c1e.js",
+      "bytes": 47084,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/8467-d3f148e468bc26ac.js",
+      "bytes": 7298,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/835-5bba8b0440bbd7ae.js",
+      "bytes": 10686,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/887-c02d684395362c4b.js",
+      "bytes": 14336,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/5251-253bf92515af591f.js",
+      "bytes": 4244,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/2293-f58475df7d7c90ac.js",
+      "bytes": 33514,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/8636-c19ea9ee1cc352be.js",
+      "bytes": 31707,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/8216-23384869accaa9c6.js",
+      "bytes": 288006,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/app/(workspace)/layout-7a93085125978e8e.js",
+      "bytes": 258,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/polyfills-42372ed130431b0a.js",
+      "bytes": 112594,
+      "googleApi": false,
+      "flyApi": false
+    },
+    {
+      "path": "/_next/static/chunks/webpack-8b767205afe9cee0.js",
+      "bytes": 7156,
+      "googleApi": false,
+      "flyApi": false
+    }
+  ]
+}

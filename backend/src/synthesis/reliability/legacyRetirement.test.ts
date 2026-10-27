@@ -190,7 +190,7 @@ describe(
     );
 
     it(
-      'ships Fly in retirement mode rather than default or percentage rollout mode',
+      'preserves the historical retirement settings and refuses new Fly deployments',
       () => {
         const fly =
           source(
@@ -217,15 +217,14 @@ describe(
           /UNIVERSAL_AGENT_ENABLED\s*=\s*['"]default['"]/,
         );
 
-        assert.match(
-          workflow,
-          /universalMode:\s*['"]retirement['"]/,
-        );
-
-        assert.doesNotMatch(
-          workflow,
-          /universalMode:\s*['"]default['"]/,
-        );
+        // The old rollout workflow is retired. Its replacement must remain a
+        // manual refusal, with no deploy command, credential or push trigger.
+        assert.match(workflow, /name: Retired Fly deployment/);
+        assert.match(workflow, /workflow_dispatch:/);
+        assert.match(workflow, /exit 1/);
+        assert.match(workflow, /docs\/operations\/google-production-migration\.md/);
+        assert.doesNotMatch(workflow, /\b(?:push|pull_request):/);
+        assert.doesNotMatch(workflow, /flyctl|fly\s+deploy|FLY_API_TOKEN|secrets\./);
       },
     );
   },
