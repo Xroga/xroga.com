@@ -1,0 +1,62 @@
+TAP version 13
+# Subtest: container worker output is bounded before accepting an untrusted result
+ok 1 - container worker output is bounded before accepting an untrusted result
+  ---
+  duration_ms: 20.337
+  type: 'test'
+  ...
+# Subtest: malformed container records cannot be skipped to accept a later result
+ok 2 - malformed container records cannot be skipped to accept a later result
+  ---
+  duration_ms: 1.6463
+  type: 'test'
+  ...
+# Subtest: cancellation before cannot start browser or proxy containers
+not ok 3 - cancellation before cannot start browser or proxy containers
+  ---
+  duration_ms: 4.5908
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\workers\\containerWorkerProtocol.security.test.ts:1:2271'
+  failureType: 'testCodeFailure'
+  error: |-
+    The validation function is expected to return "true". Received false
+    
+    Caught error:
+    
+    BrowserTaskError: the egress proxy did not start
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\workers\containerWorkerProtocol.security.test.ts:38:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: cancellation during-network cannot start browser or proxy containers
+not ok 4 - cancellation during-network cannot start browser or proxy containers
+  ---
+  duration_ms: 3.7478
+  type: 'test'
+  location: 'C:\\Users\\hp\\Documents\\Codex\\2026-10-15\\hi\\work\\xroga-phase4-prep\\backend\\src\\workers\\containerWorkerProtocol.security.test.ts:1:2271'
+  failureType: 'testCodeFailure'
+  error: |-
+    The validation function is expected to return "true". Received false
+    
+    Caught error:
+    
+    BrowserTaskError: the egress proxy did not start
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    async TestContext.<anonymous> (C:\Users\hp\Documents\Codex\2026-10-15\hi\work\xroga-phase4-prep\backend\src\workers\containerWorkerProtocol.security.test.ts:38:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 2
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 750.2569

@@ -110,7 +110,11 @@ export async function runBrowserTask(context: TenantContext, request: BrowserRun
       signal.throwIfAborted();
     }}}); } catch { throw new BrowserRunError(400, 'RUN_INVALID', 'the browser plan could not be safely authorized, completed and accounted for'); }
   }
-  const trustedPlan = plan!;
+  const trustedPlan = parseBrowserPlan(plan!,job!);
+  // This public route has no durable canonical approval adapter. A grant ID in
+  // a request or planner result is data, never issued authority. Existing
+  // business/Operations confirmation and permit execution remain unchanged.
+  if(trustedPlan.writeGrant)throw new BrowserRunError(400,'RUN_INVALID','Consequential browser execution requires canonical approval and cannot use a supplied write grant.');
 
   const handler = createBrowserTaskHandler({
     actor, tenantContext:context, drive: deps.drive, leases: deps.leases, worker: deps.worker, workerId: deps.workerId, admission: deps.admission,

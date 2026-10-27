@@ -172,6 +172,9 @@ export function createBrowserTaskHandler(deps: BrowserHandlerDeps): TaskHandler 
     try {
       let result: BrowserWorkerResult;
       try {
+        await guard();
+        if(!(await deps.authorise(deps.actor,job.projectId)))throw new BrowserTaskError('PERMISSION_REVOKED','the user no longer has access to this project');
+        await guard();
         result = await deps.worker.run(job, { signal: controller.signal, lease, ...(plan ? { plan } : {}),
           ...(deps.tenantContext?{modelAuthority:{context:deps.tenantContext,revalidate:async()=>{
             await guard();

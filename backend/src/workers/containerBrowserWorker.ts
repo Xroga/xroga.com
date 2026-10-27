@@ -85,6 +85,9 @@ export class ContainerBrowserWorker implements BrowserWorkerPort {
 
   /** As `run`, with the model route given per job (the coordinator relays model requests back to the API's own gateway). */
   async runWithGateway(job: BrowserJob, ctx: { signal: AbortSignal; lease: Lease; plan?: BrowserPlan }, gateway: BrowserModelGateway | undefined): Promise<BrowserWorkerResult> {
+    const assertActive=()=>{if(ctx.signal.aborted)throw new BrowserTaskError('CANCELLED','the job was stopped');};
+    assertActive();
+    const runDocker=(args:string[])=>{assertActive();return this.docker(args);};
     const plan: BrowserPlan = ctx.plan ?? { steps: [{ op: 'screenshot', name: 'page.png' }], expect: [] };
     const ai = plan.steps.some((s) => s.op.startsWith('ai'));
     if (ai && job.limits.maxModelCostMicros <= 0) throw new BrowserTaskError('WORKER_FAILED', 'AI steps need a model budget');
@@ -102,22 +105,23 @@ export class ContainerBrowserWorker implements BrowserWorkerPort {
     };
 
     try {
-      if ((await this.docker(['network', 'create', '--internal', '--label', 'xroga.browser-job=1', net])).status !== 0) throw new BrowserTaskError('WORKER_FAILED', 'could not create the job network');
-      const proxy = await this.docker(['run', '-d', '--name', proxyName, '--label', 'xroga.browser-job=1', '--network', 'bridge', '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges:true',
+      if ((await runDocker(['network', 'create', '--internal', '--label', 'xroga.browser-job=1', net])).status !== 0) throw new BrowserTaskError('WORKER_FAILED', 'could not create the job network');
+      const proxy = await runDocker(['run', '-d', '--name', proxyName, '--label', 'xroga.browser-job=1', '--network', 'bridge', '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges:true',
         '--memory', '256m', '--pids-limit', '128',
         '-e', `XROGA_PROXY_JOB=${JSON.stringify(job)}`, '-e', `XROGA_PROXY_USERNAME=${username}`, '-e', `XROGA_PROXY_PASSWORD=${password}`, '-e', `XROGA_PROXY_PORT=${PROXY_PORT}`, this.opts.proxyImage]);
       if (proxy.status !== 0) throw new BrowserTaskError('WORKER_FAILED', 'could not start the egress proxy');
-      if ((await this.docker(['network', 'connect', '--alias', PROXY_HOST, net, proxyName])).status !== 0) throw new BrowserTaskError('WORKER_FAILED', 'could not attach the egress proxy');
-      if (!(await this.waitFor(async () => (await this.docker(['logs', proxyName])).stdout.includes('"listening"'), ctx.signal))) throw new BrowserTaskError('WORKER_FAILED', 'the egress proxy did not start');
+      if ((await runDocker(['network', 'connect', '--alias', PROXY_HOST, net, proxyName])).status !== 0) throw new BrowserTaskError('WORKER_FAILED', 'could not attach the egress proxy');
+      if (!(await this.waitFor(async () => (await runDocker(['logs', proxyName])).stdout.includes('"listening"'), ctx.signal))) {assertActive();throw new BrowserTaskError('WORKER_FAILED', 'the egress proxy did not start');}
       // Joining the internal network switches the proxy to Docker's embedded resolver; the first lookups right after can fail transiently.
       // Wait until the proxy itself resolves the start host, instead of letting the job's first navigation race it.
       const host = new URL(job.startUrl).hostname;
       const probe = `require('dns').promises.lookup(${JSON.stringify(host)}).then(()=>process.exit(0),()=>process.exit(1))`;
-      if (!(await this.waitFor(async () => (await this.docker(['exec', proxyName, 'node', '-e', probe])).status === 0, ctx.signal))) throw new BrowserTaskError('WORKER_FAILED', 'the egress proxy cannot resolve the start host');
+      if (!(await this.waitFor(async () => (await runDocker(['exec', proxyName, 'node', '-e', probe])).status === 0, ctx.signal))) {assertActive();throw new BrowserTaskError('WORKER_FAILED', 'the egress proxy cannot resolve the start host');}
 
       const launch = buildChromiumLaunch(job, { profileRoot: '/run/xroga/profiles', proxy: { host: PROXY_HOST, port: PROXY_PORT, username, password }, baseEnv: { HOME: '/tmp', PATH: '/usr/local/bin:/usr/bin:/bin' } }, ai ? { aiDevtools: true } : undefined);
       const flags = dockerRunArgs(this.spec, { repoRoot: this.opts.repoRoot, name: browserName });
       flags[flags.indexOf('--network') + 1] = net;
+      assertActive();
       const child = this.spawnDocker(['run', '-i', '--label', 'xroga.browser-job=1', ...flags, ...(this.opts.onDiagnostic ? ['--env', 'XROGA_WORKER_DEBUG=1'] : []), '--entrypoint', 'node', '--workdir', '/opt/xroga-browser-worker', this.spec.image, '/opt/xroga-browser-worker/runJob.mjs']);
       return await this.converse(child, job, plan, { ...launch, ...(ai && this.opts.aiChannel ? { channel: this.opts.aiChannel } : {}) }, usage, ctx.signal, gateway);
     } finally {
@@ -156,11 +160,28 @@ export class ContainerBrowserWorker implements BrowserWorkerPort {
       signal.addEventListener('abort', onAbort, { once: true });
 
       if (this.opts.onDiagnostic) createInterface({ input: child.stderr! }).on('line', (l) => this.opts.onDiagnostic!(`stderr: ${l.slice(0, 500)}`));
+      // Bound bytes before readline buffers or JSON parses untrusted worker
+      // output. Artifact bytes retain the job's existing ceiling plus base64
+      // expansion. Control records and total stream traffic are bounded too.
+      const maxRecordBytes=Math.ceil(job.limits.maxArtifactBytes*4/3)+2*1024*1024;
+      let wireBytes=0,recordBytes=0;
+      child.stdout!.on('data',(chunk:Buffer)=>{
+        if(settled)return;
+        wireBytes+=chunk.byteLength;
+        const deny=()=>{finish(()=>rejectRun(new BrowserTaskError('RESULT_OVER_LIMIT','the browser worker record or stream exceeded its limit')));child.stdout!.destroy();child.kill('SIGKILL');};
+        if(wireBytes>maxRecordBytes+16*1024*1024){deny();return;}
+        let start=0;
+        for(;;){const end=chunk.indexOf(10,start);recordBytes+=(end<0?chunk.length:end)-start;
+          if(recordBytes>maxRecordBytes){deny();return;}
+          if(end<0)break;recordBytes=0;start=end+1;
+        }
+      });
       const rl = createInterface({ input: child.stdout! });
       rl.on('line', (raw) => {
         if(settled)return;
         let m: Record<string, any>;
-        try { m = JSON.parse(raw); } catch { return; }
+        try { m = JSON.parse(raw);if(!m||typeof m!=='object'||Array.isArray(m))throw new Error(); }
+        catch {finish(()=>rejectRun(new BrowserTaskError('WORKER_FAILED','the browser worker record was invalid',false)));return;}
         if (m.type === 'llm') {
           try{
             models.request(m.id,m.params).then(r=>{

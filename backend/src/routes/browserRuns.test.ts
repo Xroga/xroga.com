@@ -72,6 +72,10 @@ const finished = async (user: string, runId: string) => {
 };
 
 describe('/api/browser/runs', () => {
+  it('a request cannot fabricate a consequential browser write grant',async()=>{
+    const start=await call(h.alice.userId,'POST','',request({plan:{writeGrant:{grantId:'fabricated-grant',actions:['upload']},steps:[{op:'upload',selector:'#file',fileName:'data.txt',mediaType:'text/plain',content:'unapproved external content'}],expect:[]}}));
+    assert.equal(start.status,400,'A syntactically valid caller-supplied ID is not canonical authority');
+  });
   it('runs on the canonical scheduler, verifies the outcome, stores private evidence, and shows it only to its owner', async () => {
     behaviour = 'ok';
     const start = await call(h.alice.userId, 'POST', '', request({ projectId: h.aliceProject }));

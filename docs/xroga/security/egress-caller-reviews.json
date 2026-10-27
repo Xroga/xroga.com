@@ -1960,6 +1960,256 @@
           "sha256": "51467588b07c73bb6b06bd1434fe2d126388635b053cecc681587a3c11588be1"
         }
       ]
+    },
+    {
+      "id": "029dd2519ec9f725ab50",
+      "callSha256": "53ad4f44fec25d2cd18b30ca1f1f780d7d470e2badcc67ec0373325fe6c346bc",
+      "sourceFileSha256": "5cdf8b804acd65ec883a857b754729b18e75cf9be818683d8874cb7ba5487ee3",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_WORKER_IPC_OR_SHELL_FREE_TASK_OWNED_DOCKER_COMMAND_NO_ARBITRARY_PROVIDER_DESTINATION",
+      "tenantAuthority": "ORIGINAL_API_CONTEXT_CANONICAL_OWNER_AND_FENCED_LEASE_PRESERVED_HOST_IS_NOT_AUTHORITY_ISSUER_HIGHER_BROWSER_ACTION_AND_PROVENANCE_GAPS_NOT_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/worker-protocol-20261027/trace.json",
+          "marker": "029dd2519ec9f725ab50",
+          "sha256": "2a3517784cc8dc47c448b7f6fc9d695e85282f71c39462011f27590df67189e9"
+        },
+        {
+          "path": "backend/src/workers/browserCoordinatorProtocol.security.test.ts",
+          "marker": "untrusted coordinator job IDs cannot select signed follow-up paths",
+          "sha256": "9f858d09fd183bae189446ce1177880eb5034a1ed98cdf894dfe495474a562e9"
+        },
+        {
+          "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
+          "marker": "actual container adapter keeps commands shell-free",
+          "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        }
+      ]
+    },
+    {
+      "id": "ca7da3b05f176d7343a1",
+      "callSha256": "578dde1b1ba179793df564db7c0d684323474feedcae590d393f59074e400228",
+      "sourceFileSha256": "5cdf8b804acd65ec883a857b754729b18e75cf9be818683d8874cb7ba5487ee3",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_WORKER_IPC_OR_SHELL_FREE_TASK_OWNED_DOCKER_COMMAND_NO_ARBITRARY_PROVIDER_DESTINATION",
+      "tenantAuthority": "ORIGINAL_API_CONTEXT_CANONICAL_OWNER_AND_FENCED_LEASE_PRESERVED_HOST_IS_NOT_AUTHORITY_ISSUER_HIGHER_BROWSER_ACTION_AND_PROVENANCE_GAPS_NOT_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/worker-protocol-20261027/trace.json",
+          "marker": "ca7da3b05f176d7343a1",
+          "sha256": "2a3517784cc8dc47c448b7f6fc9d695e85282f71c39462011f27590df67189e9"
+        },
+        {
+          "path": "backend/src/workers/browserCoordinatorProtocol.security.test.ts",
+          "marker": "untrusted coordinator job IDs cannot select signed follow-up paths",
+          "sha256": "9f858d09fd183bae189446ce1177880eb5034a1ed98cdf894dfe495474a562e9"
+        },
+        {
+          "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
+          "marker": "actual container adapter keeps commands shell-free",
+          "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        }
+      ]
+    },
+    {
+      "id": "54a477bc6105cf4a0615",
+      "callSha256": "8784120aef6382e1029e61bef7e64257f4e84ba75f679270609786b9f6511075",
+      "sourceFileSha256": "5cdf8b804acd65ec883a857b754729b18e75cf9be818683d8874cb7ba5487ee3",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_WORKER_IPC_OR_SHELL_FREE_TASK_OWNED_DOCKER_COMMAND_NO_ARBITRARY_PROVIDER_DESTINATION",
+      "tenantAuthority": "ORIGINAL_API_CONTEXT_CANONICAL_OWNER_AND_FENCED_LEASE_PRESERVED_HOST_IS_NOT_AUTHORITY_ISSUER_HIGHER_BROWSER_ACTION_AND_PROVENANCE_GAPS_NOT_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/worker-protocol-20261027/trace.json",
+          "marker": "54a477bc6105cf4a0615",
+          "sha256": "2a3517784cc8dc47c448b7f6fc9d695e85282f71c39462011f27590df67189e9"
+        },
+        {
+          "path": "backend/src/workers/browserCoordinatorProtocol.security.test.ts",
+          "marker": "untrusted coordinator job IDs cannot select signed follow-up paths",
+          "sha256": "9f858d09fd183bae189446ce1177880eb5034a1ed98cdf894dfe495474a562e9"
+        },
+        {
+          "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
+          "marker": "actual container adapter keeps commands shell-free",
+          "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        }
+      ]
+    },
+    {
+      "id": "0549e3d62328bdeee9fc",
+      "callSha256": "02064d417f0641113bfe242ebdc2ae913a05713168e6e87fb701277ada9814db",
+      "sourceFileSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_WORKER_IPC_OR_SHELL_FREE_TASK_OWNED_DOCKER_COMMAND_NO_ARBITRARY_PROVIDER_DESTINATION",
+      "tenantAuthority": "ORIGINAL_API_CONTEXT_CANONICAL_OWNER_AND_FENCED_LEASE_PRESERVED_HOST_IS_NOT_AUTHORITY_ISSUER_HIGHER_BROWSER_ACTION_AND_PROVENANCE_GAPS_NOT_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/worker-protocol-20261027/trace.json",
+          "marker": "0549e3d62328bdeee9fc",
+          "sha256": "2a3517784cc8dc47c448b7f6fc9d695e85282f71c39462011f27590df67189e9"
+        },
+        {
+          "path": "backend/src/workers/browserCoordinatorProtocol.security.test.ts",
+          "marker": "untrusted coordinator job IDs cannot select signed follow-up paths",
+          "sha256": "9f858d09fd183bae189446ce1177880eb5034a1ed98cdf894dfe495474a562e9"
+        },
+        {
+          "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
+          "marker": "actual container adapter keeps commands shell-free",
+          "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        }
+      ]
+    },
+    {
+      "id": "610040b13d22a92ecb61",
+      "callSha256": "e9f4619c4f7b8214dd087181ac71dd79ea90498f7f2ebef5bbc6bb2dc1c3cb37",
+      "sourceFileSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_WORKER_IPC_OR_SHELL_FREE_TASK_OWNED_DOCKER_COMMAND_NO_ARBITRARY_PROVIDER_DESTINATION",
+      "tenantAuthority": "ORIGINAL_API_CONTEXT_CANONICAL_OWNER_AND_FENCED_LEASE_PRESERVED_HOST_IS_NOT_AUTHORITY_ISSUER_HIGHER_BROWSER_ACTION_AND_PROVENANCE_GAPS_NOT_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/worker-protocol-20261027/trace.json",
+          "marker": "610040b13d22a92ecb61",
+          "sha256": "2a3517784cc8dc47c448b7f6fc9d695e85282f71c39462011f27590df67189e9"
+        },
+        {
+          "path": "backend/src/workers/browserCoordinatorProtocol.security.test.ts",
+          "marker": "untrusted coordinator job IDs cannot select signed follow-up paths",
+          "sha256": "9f858d09fd183bae189446ce1177880eb5034a1ed98cdf894dfe495474a562e9"
+        },
+        {
+          "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
+          "marker": "actual container adapter keeps commands shell-free",
+          "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        }
+      ]
+    },
+    {
+      "id": "3d480934beb958cf18f6",
+      "callSha256": "bdfc6e51f6f660ca09a60b53a3b8604bc44bf27744aeca9d839b122cd7efa63d",
+      "sourceFileSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_WORKER_IPC_OR_SHELL_FREE_TASK_OWNED_DOCKER_COMMAND_NO_ARBITRARY_PROVIDER_DESTINATION",
+      "tenantAuthority": "ORIGINAL_API_CONTEXT_CANONICAL_OWNER_AND_FENCED_LEASE_PRESERVED_HOST_IS_NOT_AUTHORITY_ISSUER_HIGHER_BROWSER_ACTION_AND_PROVENANCE_GAPS_NOT_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/worker-protocol-20261027/trace.json",
+          "marker": "3d480934beb958cf18f6",
+          "sha256": "2a3517784cc8dc47c448b7f6fc9d695e85282f71c39462011f27590df67189e9"
+        },
+        {
+          "path": "backend/src/workers/browserCoordinatorProtocol.security.test.ts",
+          "marker": "untrusted coordinator job IDs cannot select signed follow-up paths",
+          "sha256": "9f858d09fd183bae189446ce1177880eb5034a1ed98cdf894dfe495474a562e9"
+        },
+        {
+          "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
+          "marker": "actual container adapter keeps commands shell-free",
+          "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        }
+      ]
+    },
+    {
+      "id": "11b26537e94dfd007bdc",
+      "callSha256": "2ed6c5b20fe01f68e539bd64470d7e665ff4ae51ebbc2916603bd48904336103",
+      "sourceFileSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_WORKER_IPC_OR_SHELL_FREE_TASK_OWNED_DOCKER_COMMAND_NO_ARBITRARY_PROVIDER_DESTINATION",
+      "tenantAuthority": "ORIGINAL_API_CONTEXT_CANONICAL_OWNER_AND_FENCED_LEASE_PRESERVED_HOST_IS_NOT_AUTHORITY_ISSUER_HIGHER_BROWSER_ACTION_AND_PROVENANCE_GAPS_NOT_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/worker-protocol-20261027/trace.json",
+          "marker": "11b26537e94dfd007bdc",
+          "sha256": "2a3517784cc8dc47c448b7f6fc9d695e85282f71c39462011f27590df67189e9"
+        },
+        {
+          "path": "backend/src/workers/browserCoordinatorProtocol.security.test.ts",
+          "marker": "untrusted coordinator job IDs cannot select signed follow-up paths",
+          "sha256": "9f858d09fd183bae189446ce1177880eb5034a1ed98cdf894dfe495474a562e9"
+        },
+        {
+          "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
+          "marker": "actual container adapter keeps commands shell-free",
+          "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        }
+      ]
+    },
+    {
+      "id": "944a5617b246ddcc7a6f",
+      "callSha256": "61e970f8253d57008c32694d6570162c131a320f20199f01bdabe7477fcd3462",
+      "sourceFileSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_WORKER_IPC_OR_SHELL_FREE_TASK_OWNED_DOCKER_COMMAND_NO_ARBITRARY_PROVIDER_DESTINATION",
+      "tenantAuthority": "ORIGINAL_API_CONTEXT_CANONICAL_OWNER_AND_FENCED_LEASE_PRESERVED_HOST_IS_NOT_AUTHORITY_ISSUER_HIGHER_BROWSER_ACTION_AND_PROVENANCE_GAPS_NOT_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/worker-protocol-20261027/trace.json",
+          "marker": "944a5617b246ddcc7a6f",
+          "sha256": "2a3517784cc8dc47c448b7f6fc9d695e85282f71c39462011f27590df67189e9"
+        },
+        {
+          "path": "backend/src/workers/browserCoordinatorProtocol.security.test.ts",
+          "marker": "untrusted coordinator job IDs cannot select signed follow-up paths",
+          "sha256": "9f858d09fd183bae189446ce1177880eb5034a1ed98cdf894dfe495474a562e9"
+        },
+        {
+          "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
+          "marker": "actual container adapter keeps commands shell-free",
+          "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        }
+      ]
+    },
+    {
+      "id": "33adb167ae3aa360df14",
+      "callSha256": "79e974dbb58b924c0d7656b7e647ce3fdf9f3ae74a368405f613f7c27dddaf35",
+      "sourceFileSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_WORKER_IPC_OR_SHELL_FREE_TASK_OWNED_DOCKER_COMMAND_NO_ARBITRARY_PROVIDER_DESTINATION",
+      "tenantAuthority": "ORIGINAL_API_CONTEXT_CANONICAL_OWNER_AND_FENCED_LEASE_PRESERVED_HOST_IS_NOT_AUTHORITY_ISSUER_HIGHER_BROWSER_ACTION_AND_PROVENANCE_GAPS_NOT_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/worker-protocol-20261027/trace.json",
+          "marker": "33adb167ae3aa360df14",
+          "sha256": "2a3517784cc8dc47c448b7f6fc9d695e85282f71c39462011f27590df67189e9"
+        },
+        {
+          "path": "backend/src/workers/browserCoordinatorProtocol.security.test.ts",
+          "marker": "untrusted coordinator job IDs cannot select signed follow-up paths",
+          "sha256": "9f858d09fd183bae189446ce1177880eb5034a1ed98cdf894dfe495474a562e9"
+        },
+        {
+          "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
+          "marker": "actual container adapter keeps commands shell-free",
+          "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        }
+      ]
+    },
+    {
+      "id": "f48e5f4e537c7e879b0a",
+      "callSha256": "4bbb240c0032088909f164b92692692f46e6e3120fb3983fd67df489f12ad73b",
+      "sourceFileSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "CONFIGURED_FIRST_PARTY_WORKER_IPC_OR_SHELL_FREE_TASK_OWNED_DOCKER_COMMAND_NO_ARBITRARY_PROVIDER_DESTINATION",
+      "tenantAuthority": "ORIGINAL_API_CONTEXT_CANONICAL_OWNER_AND_FENCED_LEASE_PRESERVED_HOST_IS_NOT_AUTHORITY_ISSUER_HIGHER_BROWSER_ACTION_AND_PROVENANCE_GAPS_NOT_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/worker-protocol-20261027/trace.json",
+          "marker": "f48e5f4e537c7e879b0a",
+          "sha256": "2a3517784cc8dc47c448b7f6fc9d695e85282f71c39462011f27590df67189e9"
+        },
+        {
+          "path": "backend/src/workers/browserCoordinatorProtocol.security.test.ts",
+          "marker": "untrusted coordinator job IDs cannot select signed follow-up paths",
+          "sha256": "9f858d09fd183bae189446ce1177880eb5034a1ed98cdf894dfe495474a562e9"
+        },
+        {
+          "path": "backend/src/workers/containerWorkerProtocol.security.test.ts",
+          "marker": "actual container adapter keeps commands shell-free",
+          "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
+        }
+      ]
     }
   ]
 }
