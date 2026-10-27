@@ -1914,7 +1914,7 @@
     {
       "id": "c92d966d391d0a57a8ae",
       "callSha256": "5d65e8a8c1da9286e8909c63faf3aa821d42dc41e43b30aa02db50ddfe776a7c",
-      "sourceFileSha256": "793827694e13d577535f97e9349fdfa33ceb252d7421c1c2c2417d18d33ce20e",
+      "sourceFileSha256": "365690794f088617b11783305a3b70879067302e48048686a697affc2aa07182",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "FINITE_OFFICIAL_VERCEL_CREDENTIAL_ISSUER_AND_ACCOUNT_READ_TRANSPORT_ONLY_NOT_DEPLOY_OR_EXTERNAL_EXPORT_AUTHORITY",
       "tenantAuthority": "EXISTING_ORIGINAL_CONTEXT_PKCE_CONSUME_AND_CANONICAL_VAULT_REVISION_REFRESH_LEASE_REMAIN_AT_ACTUAL_CALLERS_NO_RAW_REQUEST_BODY_CAN_SELECT_AN_ACTOR_ENDPOINT_OR_DEPLOY_PERMISSION",
@@ -1933,8 +1933,43 @@
           "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
           "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed",
           "sha256": "cf99e05b69f3f0d6a0e01fc908ef64a9daec91a9a0853b79642158aa5a0378b9"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/vercel-routes-20261027/trace.json",
+          "marker": "c92d966d391d0a57a8ae",
+          "sha256": "9bef96c3ffa9220e5b910981dc5ca925e4059802acb7b71a204992c316a5d5d7"
+        },
+        {
+          "path": "backend/src/routes/vercelTransport.security.test.ts",
+          "marker": "actual Vercel route callbacks cannot follow identity or account-list redirects",
+          "sha256": "57b2b85c79f8c42d02d3415603a8ad85b14a4971f3e4c9e12ad60b65039a9698"
         }
-      ]
+      ],
+      "beforeRouteIntegration": {
+        "id": "c92d966d391d0a57a8ae",
+        "callSha256": "5d65e8a8c1da9286e8909c63faf3aa821d42dc41e43b30aa02db50ddfe776a7c",
+        "sourceFileSha256": "793827694e13d577535f97e9349fdfa33ceb252d7421c1c2c2417d18d33ce20e",
+        "disposition": "REVIEWED_FIXED_DEPENDENCY",
+        "trust": "FINITE_OFFICIAL_VERCEL_CREDENTIAL_ISSUER_AND_ACCOUNT_READ_TRANSPORT_ONLY_NOT_DEPLOY_OR_EXTERNAL_EXPORT_AUTHORITY",
+        "tenantAuthority": "EXISTING_ORIGINAL_CONTEXT_PKCE_CONSUME_AND_CANONICAL_VAULT_REVISION_REFRESH_LEASE_REMAIN_AT_ACTUAL_CALLERS_NO_RAW_REQUEST_BODY_CAN_SELECT_AN_ACTOR_ENDPOINT_OR_DEPLOY_PERMISSION",
+        "evidence": [
+          {
+            "path": "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
+            "marker": "c92d966d391d0a57a8ae",
+            "sha256": "3fbd46331cf7c47c880e005eeab5f221ff4d5d5ccd50e5ecab4da5568118e08f"
+          },
+          {
+            "path": "backend/src/services/integrations/vercelAuthTransport.security.test.ts",
+            "marker": "real HTTP redirects remain terminal instead of becoming ordinary provider unavailability",
+            "sha256": "a553fa0c587ea0805f99ac2516e0a86b1651d50a95facd289a2d4345d2986c68"
+          },
+          {
+            "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+            "marker": "Vercel authority outages, revocation, public buckets and lost refresh leases fail closed",
+            "sha256": "cf99e05b69f3f0d6a0e01fc908ef64a9daec91a9a0853b79642158aa5a0378b9"
+          }
+        ]
+      }
     },
     {
       "id": "3b970c32a8efb294a7fd",
@@ -2568,6 +2603,206 @@
           "path": "frontend/e2e/phase4-api-clients.security.mjs",
           "marker": "actual Chromium opaque redirects are terminal before any outside request",
           "sha256": "e244b59132edabfd89f1f7bd338d8aaddf7a7c14b632b3ea72cb653b273e12e5"
+        }
+      ]
+    },
+    {
+      "id": "e166bef56274bbddc0ad",
+      "callSha256": "7ab82f57d2c9bbf547aa6833b7daf32bc6b48b128edc869bb99be8a69c6a46bb",
+      "sourceFileSha256": "374af2ebc3e2bb1ffb7b24cdc9ad8454028644750a4b9e6318f4d45440ac7eaa",
+      "disposition": "DISABLED_WITH_PROOF",
+      "trust": "OPERATOR_ONLY_SYNTHETIC_VERIFICATION_GATE_CLOSED_IN_NORMAL_PRODUCTION",
+      "tenantAuthority": "LOCAL_OR_SCOPED_FIXED_DEPENDENCY_ONLY_NO_NEW_ACTOR_PROVIDER_OR_CONSEQUENTIAL_ACTION_GRANT_HIGHER_CALLERS_UNPROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/local-candidates-20261027/trace.json",
+          "marker": "e166bef56274bbddc0ad",
+          "sha256": "42798d86ac16081bce2f79a1e679bd9e32d357d3c3ad4d05abb7ed8f7ea6293a"
+        },
+        {
+          "path": "backend/src/security/localEgressCandidates.security.test.ts",
+          "marker": "native GCE verification metadata caller is gated off before transport in normal production",
+          "sha256": "5e8dcf9623c27a19ca678b6dc743a113c4af464b51a530160308e05b77d1851f"
+        },
+        {
+          "path": "frontend/src/lib/avatarPersistence.test.ts",
+          "marker": "avatar upload derives owner path",
+          "sha256": "4395d9a9d0dd4a138a50cc4d64f1676ff22f75139930b8ab3864fd9f5839d936"
+        }
+      ]
+    },
+    {
+      "id": "4d6615378bab39e757f0",
+      "callSha256": "ede7bd2306f8403f60e6d5a10f1d0c423903806b3771789a74fc1f859284aac4",
+      "sourceFileSha256": "9db277444cd7ccdd60d51016b227194bd1e2baf8601b4100fa79a5e23f2de3bd",
+      "disposition": "DISABLED_WITH_PROOF",
+      "trust": "DEVELOPMENT_ONLY_FIXED_API_HEALTH_READ_NO_PRODUCTION_EFFECT",
+      "tenantAuthority": "LOCAL_OR_SCOPED_FIXED_DEPENDENCY_ONLY_NO_NEW_ACTOR_PROVIDER_OR_CONSEQUENTIAL_ACTION_GRANT_HIGHER_CALLERS_UNPROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/local-candidates-20261027/trace.json",
+          "marker": "4d6615378bab39e757f0",
+          "sha256": "42798d86ac16081bce2f79a1e679bd9e32d357d3c3ad4d05abb7ed8f7ea6293a"
+        },
+        {
+          "path": "backend/src/security/localEgressCandidates.security.test.ts",
+          "marker": "native GCE verification metadata caller is gated off before transport in normal production",
+          "sha256": "5e8dcf9623c27a19ca678b6dc743a113c4af464b51a530160308e05b77d1851f"
+        },
+        {
+          "path": "frontend/src/lib/avatarPersistence.test.ts",
+          "marker": "avatar upload derives owner path",
+          "sha256": "4395d9a9d0dd4a138a50cc4d64f1676ff22f75139930b8ab3864fd9f5839d936"
+        }
+      ]
+    },
+    {
+      "id": "f9cea4897b39781b679b",
+      "callSha256": "e2973dede9c21c43064e02f4a325ac5b339511d64e433826eed10da492d4566c",
+      "sourceFileSha256": "a23268b21ee451dcbab111d271b0213b2cf6d8473f00f98fd98779ff4f28bdf5",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "LOCAL_REACT_REDUCER_SEND_CALLBACK_NOT_NETWORK_TRANSPORT",
+      "tenantAuthority": "LOCAL_OR_SCOPED_FIXED_DEPENDENCY_ONLY_NO_NEW_ACTOR_PROVIDER_OR_CONSEQUENTIAL_ACTION_GRANT_HIGHER_CALLERS_UNPROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/local-candidates-20261027/trace.json",
+          "marker": "f9cea4897b39781b679b",
+          "sha256": "42798d86ac16081bce2f79a1e679bd9e32d357d3c3ad4d05abb7ed8f7ea6293a"
+        },
+        {
+          "path": "backend/src/security/localEgressCandidates.security.test.ts",
+          "marker": "native GCE verification metadata caller is gated off before transport in normal production",
+          "sha256": "5e8dcf9623c27a19ca678b6dc743a113c4af464b51a530160308e05b77d1851f"
+        },
+        {
+          "path": "frontend/src/lib/avatarPersistence.test.ts",
+          "marker": "avatar upload derives owner path",
+          "sha256": "4395d9a9d0dd4a138a50cc4d64f1676ff22f75139930b8ab3864fd9f5839d936"
+        }
+      ]
+    },
+    {
+      "id": "e8a0d676ee1d532a3be6",
+      "callSha256": "35d621560f562ee95e77be3cd98718e419d07100ddfc9dcaef565476ddcf3607",
+      "sourceFileSha256": "a23268b21ee451dcbab111d271b0213b2cf6d8473f00f98fd98779ff4f28bdf5",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "LOCAL_REACT_REDUCER_SEND_CALLBACK_NOT_NETWORK_TRANSPORT",
+      "tenantAuthority": "LOCAL_OR_SCOPED_FIXED_DEPENDENCY_ONLY_NO_NEW_ACTOR_PROVIDER_OR_CONSEQUENTIAL_ACTION_GRANT_HIGHER_CALLERS_UNPROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/local-candidates-20261027/trace.json",
+          "marker": "e8a0d676ee1d532a3be6",
+          "sha256": "42798d86ac16081bce2f79a1e679bd9e32d357d3c3ad4d05abb7ed8f7ea6293a"
+        },
+        {
+          "path": "backend/src/security/localEgressCandidates.security.test.ts",
+          "marker": "native GCE verification metadata caller is gated off before transport in normal production",
+          "sha256": "5e8dcf9623c27a19ca678b6dc743a113c4af464b51a530160308e05b77d1851f"
+        },
+        {
+          "path": "frontend/src/lib/avatarPersistence.test.ts",
+          "marker": "avatar upload derives owner path",
+          "sha256": "4395d9a9d0dd4a138a50cc4d64f1676ff22f75139930b8ab3864fd9f5839d936"
+        }
+      ]
+    },
+    {
+      "id": "d836bcd400bd13ddac6c",
+      "callSha256": "02080ee9df2029343f4a9ce242af5ea993a030cc7d8e206f90eb5ab207dd5d52",
+      "sourceFileSha256": "bf6d49d5e3ad98a44486de0d443dffb22773056adf389447527c57b1ac6ea695",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "LOCAL_FILE_OBJECT_URL_TO_EXPLICIT_USER_CLIPBOARD_ONLY",
+      "tenantAuthority": "LOCAL_OR_SCOPED_FIXED_DEPENDENCY_ONLY_NO_NEW_ACTOR_PROVIDER_OR_CONSEQUENTIAL_ACTION_GRANT_HIGHER_CALLERS_UNPROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/local-candidates-20261027/trace.json",
+          "marker": "d836bcd400bd13ddac6c",
+          "sha256": "42798d86ac16081bce2f79a1e679bd9e32d357d3c3ad4d05abb7ed8f7ea6293a"
+        },
+        {
+          "path": "backend/src/security/localEgressCandidates.security.test.ts",
+          "marker": "native GCE verification metadata caller is gated off before transport in normal production",
+          "sha256": "5e8dcf9623c27a19ca678b6dc743a113c4af464b51a530160308e05b77d1851f"
+        },
+        {
+          "path": "frontend/src/lib/avatarPersistence.test.ts",
+          "marker": "avatar upload derives owner path",
+          "sha256": "4395d9a9d0dd4a138a50cc4d64f1676ff22f75139930b8ab3864fd9f5839d936"
+        }
+      ]
+    },
+    {
+      "id": "333b8a4c447a6b53b794",
+      "callSha256": "d08ef83e96316166767d550d425bf198e8d63477d9bb1d5a8b99e7582a0a06a6",
+      "sourceFileSha256": "b26780997843838a902d06a7dd928454cff64e5d93ce9140984587ab25c0d934",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FIRST_PARTY_EXPLICIT_PUBLIC_PROFILE_PHOTO_UPLOAD_NOT_PRIVATE_FILE_OR_ARBITRARY_EXPORT",
+      "tenantAuthority": "LOCAL_OR_SCOPED_FIXED_DEPENDENCY_ONLY_NO_NEW_ACTOR_PROVIDER_OR_CONSEQUENTIAL_ACTION_GRANT_HIGHER_CALLERS_UNPROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/local-candidates-20261027/trace.json",
+          "marker": "333b8a4c447a6b53b794",
+          "sha256": "42798d86ac16081bce2f79a1e679bd9e32d357d3c3ad4d05abb7ed8f7ea6293a"
+        },
+        {
+          "path": "backend/src/security/localEgressCandidates.security.test.ts",
+          "marker": "native GCE verification metadata caller is gated off before transport in normal production",
+          "sha256": "5e8dcf9623c27a19ca678b6dc743a113c4af464b51a530160308e05b77d1851f"
+        },
+        {
+          "path": "frontend/src/lib/avatarPersistence.test.ts",
+          "marker": "avatar upload derives owner path",
+          "sha256": "4395d9a9d0dd4a138a50cc4d64f1676ff22f75139930b8ab3864fd9f5839d936"
+        }
+      ]
+    },
+    {
+      "id": "20618341b2f95ca0ba5e",
+      "callSha256": "296029767dcc6797ade3972c2fe750ee84a277e0092f77b1fa04e65329f37787",
+      "sourceFileSha256": "5815d4ace7692c8b88a10810ca72cbfe4ed6e23c8c3574cda6c4dd138fc42d45",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "LOCAL_DATA_IMAGE_DECODING_ONLY_NO_HTTP_FETCH_AT_THIS_CANDIDATE",
+      "tenantAuthority": "LOCAL_OR_SCOPED_FIXED_DEPENDENCY_ONLY_NO_NEW_ACTOR_PROVIDER_OR_CONSEQUENTIAL_ACTION_GRANT_HIGHER_CALLERS_UNPROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/local-candidates-20261027/trace.json",
+          "marker": "20618341b2f95ca0ba5e",
+          "sha256": "42798d86ac16081bce2f79a1e679bd9e32d357d3c3ad4d05abb7ed8f7ea6293a"
+        },
+        {
+          "path": "backend/src/security/localEgressCandidates.security.test.ts",
+          "marker": "native GCE verification metadata caller is gated off before transport in normal production",
+          "sha256": "5e8dcf9623c27a19ca678b6dc743a113c4af464b51a530160308e05b77d1851f"
+        },
+        {
+          "path": "frontend/src/lib/avatarPersistence.test.ts",
+          "marker": "avatar upload derives owner path",
+          "sha256": "4395d9a9d0dd4a138a50cc4d64f1676ff22f75139930b8ab3864fd9f5839d936"
+        }
+      ]
+    },
+    {
+      "id": "e1ddea7115498d92341b",
+      "callSha256": "baf3d03d54eb4a0d39f0cda517a86d667efd0bbb2822f9b41f7f0c6e5cfa686d",
+      "sourceFileSha256": "88deb7c3d2a04b2bca92dfdbd92e2bd95d8c9c75ed9399a200af5d6529370559",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FIXED_SAME_ORIGIN_PUBLIC_COUNTRY_JSON_FOR_LOCAL_DISPLAY_ONLY",
+      "tenantAuthority": "LOCAL_OR_SCOPED_FIXED_DEPENDENCY_ONLY_NO_NEW_ACTOR_PROVIDER_OR_CONSEQUENTIAL_ACTION_GRANT_HIGHER_CALLERS_UNPROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/local-candidates-20261027/trace.json",
+          "marker": "e1ddea7115498d92341b",
+          "sha256": "42798d86ac16081bce2f79a1e679bd9e32d357d3c3ad4d05abb7ed8f7ea6293a"
+        },
+        {
+          "path": "backend/src/security/localEgressCandidates.security.test.ts",
+          "marker": "native GCE verification metadata caller is gated off before transport in normal production",
+          "sha256": "5e8dcf9623c27a19ca678b6dc743a113c4af464b51a530160308e05b77d1851f"
+        },
+        {
+          "path": "frontend/src/lib/avatarPersistence.test.ts",
+          "marker": "avatar upload derives owner path",
+          "sha256": "4395d9a9d0dd4a138a50cc4d64f1676ff22f75139930b8ab3864fd9f5839d936"
         }
       ]
     }

@@ -22,10 +22,13 @@ class VercelAuthTransportDenied extends Error {
   readonly retryable=false;
   constructor(){super('Vercel authentication transport was denied by security policy.');}
 }
+export function isVercelAuthTransportDenied(value:unknown):boolean{return value instanceof VercelAuthTransportDenied;}
 const vercelAuthDestinations=new Map([
   ['https://api.vercel.com/login/oauth/token','POST'],
   ['https://api.vercel.com/v9/projects?limit=1','GET'],
   ['https://api.vercel.com/v9/projects?limit=20','GET'],
+  ['https://api.vercel.com/v9/projects?limit=50','GET'],
+  ['https://api.vercel.com/v2/teams?limit=20','GET'],
   ['https://api.vercel.com/v6/deployments?limit=1','GET'],
   ['https://api.vercel.com/login/oauth/userinfo','POST'],
   ['https://api.vercel.com/v2/user','GET'],
@@ -34,8 +37,9 @@ const vercelAuthDestinations=new Map([
  * tenant, account or data-export authority. Existing PKCE/vault/revision checks
  * remain at their actual callers. Arbitrary URL callers cannot use this route.
  */
-async function vercelAuthRequest(destination:string,init:RequestInit={}):Promise<Response>{
-  if(vercelAuthDestinations.get(destination)!==(init.method??'GET').toUpperCase())throw new VercelAuthTransportDenied();
+export async function vercelAuthRequest(destination:string,init:RequestInit={}):Promise<Response>{
+  const method=(init.method??'GET').toUpperCase();
+  if(vercelAuthDestinations.get(destination)!==method&&!(method==='GET'&&/^https:\/\/api\.vercel\.com\/v9\/projects\?limit=50&teamId=team_[A-Za-z0-9]+$/.test(destination)))throw new VercelAuthTransportDenied();
   publicHttpsUrl(destination);
   if(init.body&&(!(typeof init.body==='string'||init.body instanceof URLSearchParams)||Buffer.byteLength(String(init.body))>65536))throw new VercelAuthTransportDenied();
   let response:Response;

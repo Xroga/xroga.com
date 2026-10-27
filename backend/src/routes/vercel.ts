@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import type { AuthRequest } from '../middleware/auth.js';
 import { requireTenantContext, requireResourceOwner } from '../security/tenantContext.js';
+import {TenantAccessError} from '../security/tenantErrors.js';
 import {
   buildVercelAuthorizeUrl,
   clearVercelConnection,
@@ -16,6 +17,8 @@ import {
   probeVercelApiCapabilities,
   vercelCredentialCanDeploy,
   verifyVercelTokenLive,
+  vercelAuthRequest,
+  isVercelAuthTransportDenied,
 } from '../services/integrations/vercelAuth.js';
 import { normalizeBuildFiles } from '../lib/normalizeBuildSource.js';
 import { buildFullProjectFiles } from '../services/projectScaffold.js';
@@ -89,7 +92,7 @@ router.post('/connect', async (req: AuthRequest, res) => {
     let username = 'vercel-user';
     let providerUserId: string | undefined;
     try {
-      const userRes = await fetch('https://api.vercel.com/login/oauth/userinfo', {
+      const userRes = await vercelAuthRequest('https://api.vercel.com/login/oauth/userinfo', {
         method: 'POST',
         headers: { Authorization: `Bearer ${tokens.access_token}` },
       });
@@ -102,7 +105,7 @@ router.post('/connect', async (req: AuthRequest, res) => {
         username = user.preferred_username || user.name || username;
         providerUserId = user.sub;
       } else {
-        const legacy = await fetch('https://api.vercel.com/v2/user', {
+        const legacy = await vercelAuthRequest('https://api.vercel.com/v2/user', {
           headers: { Authorization: `Bearer ${tokens.access_token}` },
         });
         if (legacy.ok) {
@@ -111,7 +114,8 @@ router.post('/connect', async (req: AuthRequest, res) => {
           providerUserId = u.user?.id;
         }
       }
-    } catch {
+    } catch(error) {
+      if(isVercelAuthTransportDenied(error))throw error;
       /* keep default */
     }
 
@@ -181,12 +185,13 @@ router.delete('/disconnect', async (req: AuthRequest, res) => {
 
 /** List Vercel projects for Change project UI (personal + team accounts). */
 router.get('/projects', async (req: AuthRequest, res) => {
-  const token = await getVercelToken(req.userId!);
-  if (!token) {
-    res.status(403).json({ error: 'Authorize Vercel first', projects: [] });
-    return;
-  }
   try {
+    const context=requireTenantContext(req.tenantContext);requireResourceOwner(context,req.userId);
+    const token = await getVercelToken(context.userId);
+    if (!token) {
+      res.status(403).json({ error: 'Authorize Vercel first', projects: [] });
+      return;
+    }
     type VercelProject = {
       id: string;
       name: string;
@@ -200,7 +205,7 @@ router.get('/projects', async (req: AuthRequest, res) => {
       const url = teamId
         ? `https://api.vercel.com/v9/projects?limit=50&teamId=${encodeURIComponent(teamId)}`
         : 'https://api.vercel.com/v9/projects?limit=50';
-      const r = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+      const r = await vercelAuthRequest(url, { headers: { Authorization: `Bearer ${token}` } });
       if (!r.ok) return;
       const data = (await r.json()) as {
         projects?: Array<{ id: string; name: string; framework?: string | null }>;
@@ -220,7 +225,7 @@ router.get('/projects', async (req: AuthRequest, res) => {
 
     // Also list team projects — many Vercel accounts only have team-scoped apps
     try {
-      const teamsRes = await fetch('https://api.vercel.com/v2/teams?limit=20', {
+      const teamsRes = await vercelAuthRequest('https://api.vercel.com/v2/teams?limit=20', {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (teamsRes.ok) {
@@ -240,13 +245,14 @@ router.get('/projects', async (req: AuthRequest, res) => {
           }
         }
       }
-    } catch {
+    } catch(error) {
+      if(isVercelAuthTransportDenied(error))throw error;
       /* personal list still returned */
     }
 
     res.json({ projects: [...byId.values()] });
   } catch (err) {
-    res.status(400).json({ error: (err as Error).message, projects: [] });
+    res.status(err instanceof TenantAccessError?err.status:400).json({ error: (err as Error).message, projects: [] });
   }
 });
 

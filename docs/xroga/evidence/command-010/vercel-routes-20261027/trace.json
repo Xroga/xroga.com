@@ -1,0 +1,167 @@
+{
+  "scope": "FOUR_REACHABLE_VERCEL_IDENTITY_AND_ACCOUNT_LIST_TRANSPORTS_NOT_DEPLOYMENT_OR_GENERAL_PUBLISH_AUTHORITY",
+  "parent": "e4b314d3468c4f64fc3c61eb3f8134dfaf4f6871",
+  "originalCandidates": [
+    {
+      "id": "a44111062d8e6f009a5e",
+      "file": "backend/src/routes/vercel.ts",
+      "line": 92,
+      "entryPoint": "<module-or-callback>",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "eaaf2a4514fab6930f831134091c75c4d374bbe91bd6bf752770307840f0f94f",
+      "destination": "https://api.vercel.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "ad9de0e5a10d320ae449",
+      "file": "backend/src/routes/vercel.ts",
+      "line": 105,
+      "entryPoint": "<module-or-callback>",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "d630ec9deef79199bb46688705286033ad5d85360569faea4f559c44d46d963c",
+      "destination": "https://api.vercel.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "036393b9554a97e5e610",
+      "file": "backend/src/routes/vercel.ts",
+      "line": 203,
+      "entryPoint": "fetchProjects",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "6f4092f62878fa1fe7db19d3d10dd61ee2b07e3b0547c443e775e2c9d0bba202",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    },
+    {
+      "id": "a53fd89d24831308ac58",
+      "file": "backend/src/routes/vercel.ts",
+      "line": 223,
+      "entryPoint": "<module-or-callback>",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "970e3116ec39c18a703c325bb1c9676edaad343564e86043b6a729f41dcedd53",
+      "destination": "https://api.vercel.com",
+      "trust": "UNREVIEWED_SERVER_CALLER",
+      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "FIXED_ORIGIN_REVIEW",
+      "disposition": "PENDING_SOURCE_TRACE",
+      "evidence": null
+    }
+  ],
+  "reusedFixedCredentialTransport": {
+    "id": "c92d966d391d0a57a8ae",
+    "file": "backend/src/services/integrations/vercelAuth.ts",
+    "line": 48,
+    "entryPoint": "vercelAuthRequest",
+    "transport": "fetch",
+    "callee": "fetch",
+    "callSha256": "5d65e8a8c1da9286e8909c63faf3aa821d42dc41e43b30aa02db50ddfe776a7c",
+    "destination": "DYNAMIC_OR_SDK_INTERNAL",
+    "trust": "UNREVIEWED_SERVER_CALLER",
+    "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+    "currentProtection": "NOT_CERTIFIED",
+    "risk": "HIGH_RISK_PENDING_REVIEW",
+    "disposition": "PENDING_SOURCE_TRACE",
+    "evidence": null
+  },
+  "defects": [
+    "Each actual connect/account-list callback followed a real local HTTP307,1redirected request per identity/legacy/projects/teams case",
+    "Identity redirect rejection could be swallowed and a default identity saved",
+    "Teams security denial could be swallowed and a successful personal-only list returned",
+    "Account-list callback accepted a cloned actor context before credential lookup when isolated from middleware"
+  ],
+  "corrections": [
+    "All4callbacks use the existing finite Vercel auth request guard, preserving bounded bodies, timeouts, safe error bodies and terminal redirect behavior",
+    "Finite allowlist adds only project limit50, team limit20 and exact team_ID query on the official API",
+    "Connect and team-list catches rethrow the guard denial before saving identity or returning partial success",
+    "Account listing requires original issued TenantContext and owner equality before canonical token load"
+  ],
+  "verification": {
+    "passed": 30,
+    "skipped": 0,
+    "negative": "Actual transpiled Express route callbacks with real canonical issuer/owner functions, synthetic vault ports and real local HTTP redirect/sink.0redirected requests, no identity save after denial, cloned context does not reach credential lookup. Malformed provider team ID cannot select another request.",
+    "positive": "Original-context personal/team account lists and normal401identity fallback succeed. Existing OAuth PKCE, refresh lease/revocation and account receipt tests pass. No real provider call or production write."
+  },
+  "receipts": [
+    {
+      "name": "red",
+      "jobId": "62ec787a-7bcb-4d4b-93b1-8a1d75742797",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/vercel-routes-20261027/red.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 143839
+      }
+    },
+    {
+      "name": "green",
+      "jobId": "37a73a04-7f48-4e60-943f-62269d3df8f9",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/vercel-routes-20261027/green.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 176687
+      }
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/routes/vercel.ts",
+      "sha256": "3baee447f7d35afc7f71fde623baf3f4527345e4d468708fd67c6f600c2f9069"
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuth.ts",
+      "sha256": "365690794f088617b11783305a3b70879067302e48048686a697affc2aa07182"
+    },
+    {
+      "path": "backend/src/routes/vercelTransport.security.test.ts",
+      "sha256": "57b2b85c79f8c42d02d3415603a8ad85b14a4971f3e4c9e12ad60b65039a9698"
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuthTransport.security.test.ts",
+      "sha256": "a553fa0c587ea0805f99ac2516e0a86b1651d50a95facd289a2d4345d2986c68"
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuth.scope.test.ts",
+      "sha256": "8a44f51b853d66addaf55f993da0f11df29aa7e51600f351444ca29f0bd79015"
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuth.revocation.test.ts",
+      "sha256": "cf99e05b69f3f0d6a0e01fc908ef64a9daec91a9a0853b79642158aa5a0378b9"
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAuth.refresh.test.ts",
+      "sha256": "52ccfe7e7243e08f63891a85bfd84fcb350730e19b174178bfb5dd1190fd1fb0"
+    },
+    {
+      "path": "backend/src/services/integrations/vercelAccountReceipt.test.ts",
+      "sha256": "92e0359751c0ea766d533a51ee0d488e9e268d629a9ffe386ef7336450ea6581"
+    }
+  ],
+  "limitations": [
+    "No lower-level credential/vault/refresh SQL or issuer replaced. Existing persistence outcomes retain separate exact AST binding proof",
+    "No deploy, arbitrary upload, domain mutation, secret sync, higher consequential action or model caller promoted",
+    "Original12criteria, remaining caller gaps, final exact-source CI and compatible Phase4 release remain mandatory"
+  ]
+}
