@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "9f416f5cebc175439567860badb48ab8c9905bb56a6779e2f574ce93b51eee89",
+  "sourceTreeDigest": "faeb713d388628cb761c1c71d0b3d4b01bd3226d86d24a4fd0aabc3cc4c687e6",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -1894,7 +1894,7 @@
     {
       "id": "f0eab43244d6d3c88de8",
       "file": "backend/src/sandbox/sandboxProviders.ts",
-      "line": 112,
+      "line": 118,
       "entryPoint": "canRun",
       "transport": "subprocess-or-dynamic-execution",
       "callee": "spawn",
@@ -1921,7 +1921,7 @@
     {
       "id": "151aa103d929fb10c020",
       "file": "backend/src/sandbox/sandboxProviders.ts",
-      "line": 189,
+      "line": 210,
       "entryPoint": "runIsolated",
       "transport": "subprocess-or-dynamic-execution",
       "callee": "spawn",
@@ -2109,7 +2109,7 @@
     {
       "id": "90eeada0337da120131f",
       "file": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 282,
+      "line": 286,
       "entryPoint": "ghFetch",
       "transport": "fetch",
       "callee": "fetch",
@@ -2125,18 +2125,29 @@
     {
       "id": "07a46a7b451eaf4dc307",
       "file": "backend/src/services/integrations/githubSourceRead.ts",
-      "line": 34,
+      "line": 61,
       "entryPoint": "request",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "7ca8ed394aa64e606952ccefa811a12b96760cfa04124030b9bac07a941e746a",
-      "destination": "https://api.github.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "callSha256": "6a8c3588e7c4f884944eb8eb5186e353cfb34f356723d8efb96bf62214bb0c57",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "FIXED_GITHUB_ISSUER_READ_ONLY_CANONICAL_AND_DECODED_REPOSITORY_SCOPE",
+      "tenantAuthority": "ORIGINAL_ISSUED_OWNER_AND_CURRENT_CANONICAL_CREDENTIAL_REVISION_BEFORE_AND_AFTER_READ_NO_RAW_ID_AUTHORIZATION_FALLBACK",
       "currentProtection": "NOT_CERTIFIED",
-      "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/GITHUB-SOURCE-ACTOR-BOUNDARY-20261028.json",
+          "marker": "07a46a7b451eaf4dc307",
+          "sha256": "34307c85da353b0a4793058f5cbe90acdad91bab36db1b4b869c999bc2aed81a"
+        },
+        {
+          "path": "backend/src/services/integrations/githubSourceRead.transport.security.test.ts",
+          "marker": "only original owner context may read credentials",
+          "sha256": "ae063174023054ee6ea85204eb73919b6d01da172881538c41f5787f67750672"
+        }
+      ]
     },
     {
       "id": "46ad38b463b0beb61ba5",
@@ -3216,7 +3227,7 @@
     {
       "id": "0549e3d62328bdeee9fc",
       "file": "backend/src/workers/containerBrowserWorker.ts",
-      "line": 57,
+      "line": 59,
       "entryPoint": "defaultDocker",
       "transport": "subprocess-or-dynamic-execution",
       "callee": "spawn",
@@ -3248,23 +3259,34 @@
     {
       "id": "1d79a3dee4b57945a6d6",
       "file": "backend/src/workers/containerBrowserWorker.ts",
-      "line": 66,
+      "line": 68,
       "entryPoint": "dockerSync",
       "transport": "subprocess-or-dynamic-execution",
       "callee": "spawnSync",
-      "callSha256": "a09e82c573a156680f303b47d4756a0d4ad421fb056a4befdf60055b0fe3041b",
+      "callSha256": "85dfc5726e1cc6f9c081fdb5b159dc228337379138382bd0fa55cec392a8a352",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FIXED_HOST_DOCKER_CLI_ONLY_NO_SHELL_OR_PUBLIC_CONTROL_SURFACE",
+      "tenantAuthority": "NO_TENANT_GRANT_CLEAN_ONLY_IDENTIFIED_STOPPED_DISPOSABLE_RESOURCES_ACTIVE_JOBS_AND_VOLUMES_PRESERVED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "VERIFIED_GUARD",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/ORPHAN-CLEANUP-BOUNDARY-20261028.json",
+          "marker": "1d79a3dee4b57945a6d6",
+          "sha256": "04f3a4f650edaedb44b85e726cd8236f960684ab666362700207a6e8635cbb30"
+        },
+        {
+          "path": "backend/src/workers/containerOrphanCleanup.security.test.ts",
+          "marker": "orphan cleanup never force-removes another live job",
+          "sha256": "c0ce13690fdab872fa9851d342cc7fb8697b691db2b72142dd52553790dc4ab1"
+        }
+      ]
     },
     {
       "id": "610040b13d22a92ecb61",
       "file": "backend/src/workers/containerBrowserWorker.ts",
-      "line": 79,
+      "line": 81,
       "entryPoint": "<module-or-callback>",
       "transport": "subprocess-or-dynamic-execution",
       "callee": "spawn",
@@ -3296,7 +3318,7 @@
     {
       "id": "3d480934beb958cf18f6",
       "file": "backend/src/workers/containerBrowserWorker.ts",
-      "line": 158,
+      "line": 195,
       "entryPoint": "onAbort",
       "transport": "send",
       "callee": "send",
@@ -3328,7 +3350,7 @@
     {
       "id": "11b26537e94dfd007bdc",
       "file": "backend/src/workers/containerBrowserWorker.ts",
-      "line": 188,
+      "line": 225,
       "entryPoint": "converse",
       "transport": "send",
       "callee": "send",
@@ -3360,7 +3382,7 @@
     {
       "id": "944a5617b246ddcc7a6f",
       "file": "backend/src/workers/containerBrowserWorker.ts",
-      "line": 189,
+      "line": 226,
       "entryPoint": "converse",
       "transport": "send",
       "callee": "send",
@@ -3392,7 +3414,7 @@
     {
       "id": "33adb167ae3aa360df14",
       "file": "backend/src/workers/containerBrowserWorker.ts",
-      "line": 200,
+      "line": 237,
       "entryPoint": "converse",
       "transport": "send",
       "callee": "send",
@@ -3424,7 +3446,7 @@
     {
       "id": "f48e5f4e537c7e879b0a",
       "file": "backend/src/workers/containerBrowserWorker.ts",
-      "line": 209,
+      "line": 246,
       "entryPoint": "converse",
       "transport": "send",
       "callee": "send",
@@ -4171,8 +4193,8 @@
   ],
   "counts": {
     "total": 135,
-    "reviewed": 113,
-    "pending": 22,
-    "unresolvedHighRiskBypasses": 13
+    "reviewed": 115,
+    "pending": 20,
+    "unresolvedHighRiskBypasses": 12
   }
 }

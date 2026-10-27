@@ -45,7 +45,7 @@
     {
       "id": "f0eab43244d6d3c88de8",
       "callSha256": "8a2096fa7242a30e44a83faf4b81e3998b2107f080574f87fe9905f4658a425f",
-      "sourceFileSha256": "a6741cdee7fbc16220cdb2073d98e87e5cac971ad204ebab5fba8be895ee0f49",
+      "sourceFileSha256": "248e7e65e0c6122171a33976b5d6d355d4937d0882064cf616eca33690b07b8a",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "FIXED_LOCAL_CONTAINER_CLI_VERSION_HEALTH_PROBE_ONLY_NOT_SANDBOX_EXECUTION_OR_NETWORK_CERTIFICATION",
       "tenantAuthority": "ONLY_CONTAINER_RUNTIME_PROBE_CALLS_FIXED_VERSION_ARGUMENT_WITH_SCRUBBED_ENVIRONMENT_NO_TENANT_PAYLOAD_OR_CREDENTIALS",
@@ -81,6 +81,10 @@
             "sha256": "a268cb1f2c51cca22a4c56f129ec50f12a134d4ff313ad66682fedc57126515d"
           }
         ]
+      },
+      "actorContinuationSourceReview": {
+        "priorSourceSha256": "a6741cdee7fbc16220cdb2073d98e87e5cac971ad204ebab5fba8be895ee0f49",
+        "proof": "docs/xroga/evidence/command-010/UNCHANGED-EGRESS-SOURCE-CONTINUATION-20261028.json"
       }
     },
     {
@@ -2074,7 +2078,7 @@
     {
       "id": "0549e3d62328bdeee9fc",
       "callSha256": "02064d417f0641113bfe242ebdc2ae913a05713168e6e87fb701277ada9814db",
-      "sourceFileSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "sourceFileSha256": "e86221b870dd1f6443b7aca3333fea6c80b6434a3fb8f22ad2354c03d559eb6e",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "CONFIGURED_FIRST_PARTY_WORKER_IPC_OR_SHELL_FREE_TASK_OWNED_DOCKER_COMMAND_NO_ARBITRARY_PROVIDER_DESTINATION",
       "tenantAuthority": "ORIGINAL_API_CONTEXT_CANONICAL_OWNER_AND_FENCED_LEASE_PRESERVED_HOST_IS_NOT_AUTHORITY_ISSUER_HIGHER_BROWSER_ACTION_AND_PROVENANCE_GAPS_NOT_PROMOTED",
@@ -2094,12 +2098,13 @@
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
         }
-      ]
+      ],
+      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda"
     },
     {
       "id": "610040b13d22a92ecb61",
       "callSha256": "e9f4619c4f7b8214dd087181ac71dd79ea90498f7f2ebef5bbc6bb2dc1c3cb37",
-      "sourceFileSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "sourceFileSha256": "e86221b870dd1f6443b7aca3333fea6c80b6434a3fb8f22ad2354c03d559eb6e",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "CONFIGURED_FIRST_PARTY_WORKER_IPC_OR_SHELL_FREE_TASK_OWNED_DOCKER_COMMAND_NO_ARBITRARY_PROVIDER_DESTINATION",
       "tenantAuthority": "ORIGINAL_API_CONTEXT_CANONICAL_OWNER_AND_FENCED_LEASE_PRESERVED_HOST_IS_NOT_AUTHORITY_ISSUER_HIGHER_BROWSER_ACTION_AND_PROVENANCE_GAPS_NOT_PROMOTED",
@@ -2119,12 +2124,13 @@
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
         }
-      ]
+      ],
+      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda"
     },
     {
       "id": "3d480934beb958cf18f6",
       "callSha256": "bdfc6e51f6f660ca09a60b53a3b8604bc44bf27744aeca9d839b122cd7efa63d",
-      "sourceFileSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "sourceFileSha256": "e86221b870dd1f6443b7aca3333fea6c80b6434a3fb8f22ad2354c03d559eb6e",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "CONFIGURED_FIRST_PARTY_WORKER_IPC_OR_SHELL_FREE_TASK_OWNED_DOCKER_COMMAND_NO_ARBITRARY_PROVIDER_DESTINATION",
       "tenantAuthority": "ORIGINAL_API_CONTEXT_CANONICAL_OWNER_AND_FENCED_LEASE_PRESERVED_HOST_IS_NOT_AUTHORITY_ISSUER_HIGHER_BROWSER_ACTION_AND_PROVENANCE_GAPS_NOT_PROMOTED",
@@ -2144,12 +2150,13 @@
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
         }
-      ]
+      ],
+      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda"
     },
     {
       "id": "11b26537e94dfd007bdc",
       "callSha256": "2ed6c5b20fe01f68e539bd64470d7e665ff4ae51ebbc2916603bd48904336103",
-      "sourceFileSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "sourceFileSha256": "e86221b870dd1f6443b7aca3333fea6c80b6434a3fb8f22ad2354c03d559eb6e",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "CONFIGURED_FIRST_PARTY_WORKER_IPC_OR_SHELL_FREE_TASK_OWNED_DOCKER_COMMAND_NO_ARBITRARY_PROVIDER_DESTINATION",
       "tenantAuthority": "ORIGINAL_API_CONTEXT_CANONICAL_OWNER_AND_FENCED_LEASE_PRESERVED_HOST_IS_NOT_AUTHORITY_ISSUER_HIGHER_BROWSER_ACTION_AND_PROVENANCE_GAPS_NOT_PROMOTED",
@@ -2169,12 +2176,13 @@
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
         }
-      ]
+      ],
+      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda"
     },
     {
       "id": "944a5617b246ddcc7a6f",
       "callSha256": "61e970f8253d57008c32694d6570162c131a320f20199f01bdabe7477fcd3462",
-      "sourceFileSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "sourceFileSha256": "e86221b870dd1f6443b7aca3333fea6c80b6434a3fb8f22ad2354c03d559eb6e",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "CONFIGURED_FIRST_PARTY_WORKER_IPC_OR_SHELL_FREE_TASK_OWNED_DOCKER_COMMAND_NO_ARBITRARY_PROVIDER_DESTINATION",
       "tenantAuthority": "ORIGINAL_API_CONTEXT_CANONICAL_OWNER_AND_FENCED_LEASE_PRESERVED_HOST_IS_NOT_AUTHORITY_ISSUER_HIGHER_BROWSER_ACTION_AND_PROVENANCE_GAPS_NOT_PROMOTED",
@@ -2194,12 +2202,13 @@
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
         }
-      ]
+      ],
+      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda"
     },
     {
       "id": "33adb167ae3aa360df14",
       "callSha256": "79e974dbb58b924c0d7656b7e647ce3fdf9f3ae74a368405f613f7c27dddaf35",
-      "sourceFileSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "sourceFileSha256": "e86221b870dd1f6443b7aca3333fea6c80b6434a3fb8f22ad2354c03d559eb6e",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "CONFIGURED_FIRST_PARTY_WORKER_IPC_OR_SHELL_FREE_TASK_OWNED_DOCKER_COMMAND_NO_ARBITRARY_PROVIDER_DESTINATION",
       "tenantAuthority": "ORIGINAL_API_CONTEXT_CANONICAL_OWNER_AND_FENCED_LEASE_PRESERVED_HOST_IS_NOT_AUTHORITY_ISSUER_HIGHER_BROWSER_ACTION_AND_PROVENANCE_GAPS_NOT_PROMOTED",
@@ -2219,12 +2228,13 @@
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
         }
-      ]
+      ],
+      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda"
     },
     {
       "id": "f48e5f4e537c7e879b0a",
       "callSha256": "4bbb240c0032088909f164b92692692f46e6e3120fb3983fd67df489f12ad73b",
-      "sourceFileSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda",
+      "sourceFileSha256": "e86221b870dd1f6443b7aca3333fea6c80b6434a3fb8f22ad2354c03d559eb6e",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "CONFIGURED_FIRST_PARTY_WORKER_IPC_OR_SHELL_FREE_TASK_OWNED_DOCKER_COMMAND_NO_ARBITRARY_PROVIDER_DESTINATION",
       "tenantAuthority": "ORIGINAL_API_CONTEXT_CANONICAL_OWNER_AND_FENCED_LEASE_PRESERVED_HOST_IS_NOT_AUTHORITY_ISSUER_HIGHER_BROWSER_ACTION_AND_PROVENANCE_GAPS_NOT_PROMOTED",
@@ -2244,7 +2254,8 @@
           "marker": "actual container adapter keeps commands shell-free",
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
         }
-      ]
+      ],
+      "orphanCleanupPriorSourceSha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda"
     },
     {
       "id": "591d7b98b10cd9a63e53",
@@ -2959,7 +2970,7 @@
     {
       "id": "35923d1b52d197c378e1",
       "callSha256": "779bfe6876ecb8be86573c05dc446c92055d795563fdb81c0b4dbb061f7550ba",
-      "sourceFileSha256": "9a85892651e39902f36605ab21d7d5fe5311ffcd33e1a90e3c4d5266e80c2372",
+      "sourceFileSha256": "6df22e2d680bc45de01930d2644f262c22de988a888d0a277c758306e9c9b0b4",
       "disposition": "REVIEWED_FIXED_DEPENDENCY",
       "trust": "FINITE_OFFICIAL_GITHUB_OAUTH_AND_READ_ONLY_ACCOUNT_OPERATIONS_NO_SOURCE_PUBLISH_OR_REPOSITORY_MUTATION_AUTHORITY",
       "tenantAuthority": "ORIGINAL_ISSUED_ACTOR_OWNER_BEFORE_CANONICAL_ROW_AND_VAULT_LOOKUP_CURRENT_SEALED_REVISION_RECHECKED_BEFORE_WIRE_AND_AFTER_RESPONSE_OAUTH_CONSUMED_REVISION_PRESERVED",
@@ -2974,7 +2985,11 @@
           "marker": "actual GitHub OAuth token, identity and account-read routes reject real redirects before save or successful listing",
           "sha256": "629b4beea68b679f35529a2e7666735f3bf363ebca851da97db34f681fb84f6e"
         }
-      ]
+      ],
+      "actorContinuationSourceReview": {
+        "priorSourceSha256": "9a85892651e39902f36605ab21d7d5fe5311ffcd33e1a90e3c4d5266e80c2372",
+        "proof": "docs/xroga/evidence/command-010/UNCHANGED-EGRESS-SOURCE-CONTINUATION-20261028.json"
+      }
     },
     {
       "id": "512f0f91c11bbb5fe617",
@@ -3063,6 +3078,46 @@
           "path": "backend/src/services/BillingService.planTransport.security.test.ts",
           "marker": "fixed plan read refuses actual redirect",
           "sha256": "321f9511e97b2de142344915df7b815e31ae8fb0be84bc1c18a24def27fc04b7"
+        }
+      ]
+    },
+    {
+      "id": "1d79a3dee4b57945a6d6",
+      "callSha256": "85dfc5726e1cc6f9c081fdb5b159dc228337379138382bd0fa55cec392a8a352",
+      "sourceFileSha256": "e86221b870dd1f6443b7aca3333fea6c80b6434a3fb8f22ad2354c03d559eb6e",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "FIXED_HOST_DOCKER_CLI_ONLY_NO_SHELL_OR_PUBLIC_CONTROL_SURFACE",
+      "tenantAuthority": "NO_TENANT_GRANT_CLEAN_ONLY_IDENTIFIED_STOPPED_DISPOSABLE_RESOURCES_ACTIVE_JOBS_AND_VOLUMES_PRESERVED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/ORPHAN-CLEANUP-BOUNDARY-20261028.json",
+          "marker": "1d79a3dee4b57945a6d6",
+          "sha256": "04f3a4f650edaedb44b85e726cd8236f960684ab666362700207a6e8635cbb30"
+        },
+        {
+          "path": "backend/src/workers/containerOrphanCleanup.security.test.ts",
+          "marker": "orphan cleanup never force-removes another live job",
+          "sha256": "c0ce13690fdab872fa9851d342cc7fb8697b691db2b72142dd52553790dc4ab1"
+        }
+      ]
+    },
+    {
+      "id": "07a46a7b451eaf4dc307",
+      "callSha256": "6a8c3588e7c4f884944eb8eb5186e353cfb34f356723d8efb96bf62214bb0c57",
+      "sourceFileSha256": "6bead719a5d950b805272ee2f6469daf082fab2c7691517f2a7d7a2fce40a946",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "FIXED_GITHUB_ISSUER_READ_ONLY_CANONICAL_AND_DECODED_REPOSITORY_SCOPE",
+      "tenantAuthority": "ORIGINAL_ISSUED_OWNER_AND_CURRENT_CANONICAL_CREDENTIAL_REVISION_BEFORE_AND_AFTER_READ_NO_RAW_ID_AUTHORIZATION_FALLBACK",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/GITHUB-SOURCE-ACTOR-BOUNDARY-20261028.json",
+          "marker": "07a46a7b451eaf4dc307",
+          "sha256": "a221e2ac5f3b0970d0efe8e84ab1ae72d382205c39fec9a0f01b9c7c9e84b004"
+        },
+        {
+          "path": "backend/src/services/integrations/githubSourceRead.transport.security.test.ts",
+          "marker": "only original owner context may read credentials",
+          "sha256": "ae063174023054ee6ea85204eb73919b6d01da172881538c41f5787f67750672"
         }
       ]
     }

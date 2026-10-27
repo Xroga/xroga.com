@@ -555,6 +555,7 @@ export async function runUniversalSoftwareImplementation(
 
   const bindings =
     createXrogaSoftwareAgentBindings({
+      tenantContext:context,
       userId:
         input.userId,
 

@@ -42,6 +42,8 @@ export interface ContainerWorkerOptions {
   /** runs docker asynchronously (never blocks the event loop of the host serving other jobs); injectable for tests */
   docker?: (args: string[]) => Promise<DockerResult>;
   spawnDocker?: (args: string[]) => ChildProcess;
+  /** Host-only cleanup command port, never accepted from a signed job or API body. */
+  reapDocker?: (args: string[]) => DockerResult;
   /** for AI jobs only: the full Chromium channel (extensions need it); deterministic jobs keep the default headless shell */
   aiChannel?: string;
   /** operator diagnostics (worker error reasons, container stderr). Never attached in production: it can carry page-derived text. */
@@ -63,7 +65,7 @@ const defaultDocker = (args: string[]): Promise<DockerResult> => new Promise((re
   child.on('close', (status) => { clearTimeout(timer); resolveRun({ status, stdout, stderr }); });
 });
 /** Synchronous docker, for host start only (orphan reaping before anything is served). */
-const dockerSync = (args: string[]): DockerResult => { const r = spawnSync('docker', args, { encoding: 'utf8', timeout: 120_000 }); return { status: r.status, stdout: r.stdout ?? '', stderr: r.stderr ?? '' }; };
+const dockerSync = (args: string[]): DockerResult => { const r = spawnSync('docker', args, { encoding: 'utf8', timeout: 5_000, maxBuffer: 1024 * 1024 }); return { status: r.status, stdout: r.stdout ?? '', stderr: r.stderr ?? '' }; };
 
 export class ContainerBrowserWorker implements BrowserWorkerPort {
   private readonly spec: ContainerSpec;
@@ -129,17 +131,52 @@ export class ContainerBrowserWorker implements BrowserWorkerPort {
     }
   }
 
-  /**
-   * Removes every browser-job container and network on this host. Call ONLY at host start (coordinator boot): one host process owns all
-   * jobs on its Docker host, so anything labelled then is an orphan of a process that died before its own cleanup ran.
+  /** Reclaim only stopped, labelled disposable jobs and unused internal job
+   * networks. Other coordinator processes may own running jobs on this daemon.
+   * No force/volume removal is permitted, including after an inspect/remove race.
+   * Running leftovers need separate lease-aware operator review.
    */
   reapOrphans(): { containers: number; networks: number } {
-    const ids = (args: string[]) => dockerSync(args).stdout.trim().split('\n').filter(Boolean);
-    const containers = ids(['ps', '-aq', '--filter', 'label=xroga.browser-job=1']);
-    for (const id of containers) dockerSync(['rm', '-f', id]);
-    const networks = ids(['network', 'ls', '-q', '--filter', 'label=xroga.browser-job=1']);
-    for (const id of networks) dockerSync(['network', 'rm', id]);
-    return { containers: containers.length, networks: networks.length };
+    const command = this.opts.reapDocker ?? dockerSync;
+    const deadline = Date.now() + 10_000;
+    const run = (args: string[]): DockerResult => {
+      if (Date.now() >= deadline) return {status: null, stdout: '', stderr: ''};
+      try { return command(args); } catch { return {status: null, stdout: '', stderr: ''}; }
+    };
+    const ids = (args: string[]): string[] => {
+      const result = run(args);
+      if (result.status !== 0 || result.stdout.length > 1024 * 1024) return [];
+      return [...new Set(result.stdout.trim().split(/\r?\n/).filter(id => /^[a-f0-9]{64}$/.test(id)))].slice(0, 32);
+    };
+    const inspect = (args: string[], id: string): Record<string, any> | null => {
+      const result = run(args);
+      if (result.status !== 0 || result.stdout.length > 1024 * 1024) return null;
+      try {
+        const rows: unknown = JSON.parse(result.stdout);
+        if (!Array.isArray(rows) || rows.length !== 1 || !rows[0] || typeof rows[0] !== 'object' || rows[0].Id !== id) return null;
+        return rows[0];
+      } catch { return null; }
+    };
+    let containers = 0, networks = 0;
+    for (const id of ids(['ps', '-aq', '--no-trunc', '--filter', 'label=xroga.browser-job=1'])) {
+      const row = inspect(['inspect', '--type', 'container', id], id);
+      if (!row || row.Config?.Labels?.['xroga.browser-job'] !== '1'
+        || !/^\/xroga-bj-(?:browser|proxy)-[a-f0-9]{16}$/.test(row.Name)
+        || row.State?.Running !== false || row.State?.Paused !== false || row.State?.Restarting !== false
+        || !['exited', 'dead'].includes(row.State?.Status)
+        || !['', 'no'].includes(row.HostConfig?.RestartPolicy?.Name)) continue;
+      // A container that restarts after inspection is refused by Docker itself.
+      if (run(['rm', id]).status === 0) containers++;
+    }
+    for (const id of ids(['network', 'ls', '-q', '--no-trunc', '--filter', 'label=xroga.browser-job=1'])) {
+      const row = inspect(['network', 'inspect', id], id);
+      if (!row || row.Labels?.['xroga.browser-job'] !== '1' || !/^xroga-bj-[a-f0-9]{16}$/.test(row.Name)
+        || row.Internal !== true || !row.Containers || typeof row.Containers !== 'object'
+        || Array.isArray(row.Containers) || Object.keys(row.Containers).length) continue;
+      // Docker refuses removal if a container attaches after this inspection.
+      if (run(['network', 'rm', id]).status === 0) networks++;
+    }
+    return { containers, networks };
   }
 
   private async waitFor(cond: () => Promise<boolean>, signal: AbortSignal): Promise<boolean> {

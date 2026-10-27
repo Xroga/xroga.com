@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "183d93adfb06492d3f26161b0778a152b9f6edbf",
+  "source_sha": "d156218d5f2b10ff76a0ac93a98620c1f9c18ac1",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -14807,7 +14807,7 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "sha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b"
+      "sha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9"
     },
     {
       "path": "backend/src/ai/postCompletionAccounting.ts",
@@ -14947,7 +14947,7 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/createXrogaSoftwareAgentBindings.ts",
-      "sha256": "d2b73145b9f42d947377ea235712643a781f266fa0c60770d4be3b29c05b56e8"
+      "sha256": "5554bf08ada81c507171de4050cc26f99f8a39f142e4fe3ed3f6bbd658d3cfeb"
     },
     {
       "path": "backend/src/ai/softwareAgent/index.ts",
@@ -15015,7 +15015,7 @@
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaProductionAdapters.ts",
-      "sha256": "1f15975ad48dbf5907d474531813d8a17d778c3c422749c9122072753126ef77"
+      "sha256": "2513ec0be0cbe2896e815762ced3cddd337abfb6cda715750bfe5cbcf2151d4c"
     },
     {
       "path": "backend/src/ai/softwareAgent/xrogaTools.ts",
@@ -15791,7 +15791,7 @@
     },
     {
       "path": "backend/src/routes/github.ts",
-      "sha256": "9a85892651e39902f36605ab21d7d5fe5311ffcd33e1a90e3c4d5266e80c2372"
+      "sha256": "6df22e2d680bc45de01930d2644f262c22de988a888d0a277c758306e9c9b0b4"
     },
     {
       "path": "backend/src/routes/growth.ts",
@@ -15831,7 +15831,7 @@
     },
     {
       "path": "backend/src/routes/phase1.ts",
-      "sha256": "c39b7e3b3c17442c56c575628bbcf6fdcb56e11453a67190f449da09c5e2e3be"
+      "sha256": "c49d15049bb86e8a599a43d431075834f3d4ae96609e9324b3897a372f3f5dc5"
     },
     {
       "path": "backend/src/routes/phase1BusinessPreflight.ts",
@@ -15951,7 +15951,7 @@
     },
     {
       "path": "backend/src/sandbox/sandboxProviders.ts",
-      "sha256": "a6741cdee7fbc16220cdb2073d98e87e5cac971ad204ebab5fba8be895ee0f49"
+      "sha256": "248e7e65e0c6122171a33976b5d6d355d4937d0882064cf616eca33690b07b8a"
     },
     {
       "path": "backend/src/sandbox/sandboxRuntime.ts",
@@ -16387,7 +16387,7 @@
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "sha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb"
+      "sha256": "44768f8fb1880bca950c7214d31c5e55a968aa741d27e43f06d7c11cc1ac72f1"
     },
     {
       "path": "backend/src/services/integrations/githubMutationPlan.ts",
@@ -16403,7 +16403,7 @@
     },
     {
       "path": "backend/src/services/integrations/githubSourceRead.ts",
-      "sha256": "ee3ae54b30581b8f230c4c15fab27c298ca8f674a307b28b5c8a95f86786520c"
+      "sha256": "6bead719a5d950b805272ee2f6469daf082fab2c7691517f2a7d7a2fce40a946"
     },
     {
       "path": "backend/src/services/integrations/githubTokenStore.ts",
@@ -17015,7 +17015,7 @@
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "sha256": "e900ffe12f205d19c1d654010292c4f00e13026b3000caf50570abb1ec4cd3b1"
+      "sha256": "86676b5242737f9accc1412b6990e47b7c74c6f893e80bb5b15801ec0a2b1d8f"
     },
     {
       "path": "backend/src/synthesis/softwareProject.ts",
@@ -17119,7 +17119,7 @@
     },
     {
       "path": "backend/src/workers/containerBrowserWorker.ts",
-      "sha256": "401a46a6b909b2dc0ed0258172169e1928e4e4c964ad29dc2cbaf351b88ebdda"
+      "sha256": "e86221b870dd1f6443b7aca3333fea6c80b6434a3fb8f22ad2354c03d559eb6e"
     },
     {
       "path": "backend/src/workers/containerSpec.ts",
@@ -21960,7 +21960,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4011,
+      "line": 4012,
       "credentialsInUrl": false
     },
     {
@@ -22688,7 +22688,7 @@
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/routes/phase1.ts",
-      "line": 175,
+      "line": 176,
       "credentialsInUrl": false
     },
     {
@@ -23682,42 +23682,42 @@
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 282,
+      "line": 286,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 661,
+      "line": 665,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 713,
+      "line": 717,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 839,
+      "line": 843,
       "credentialsInUrl": false
     },
     {
       "hostname": "api.vercel.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 872,
+      "line": 876,
       "credentialsInUrl": false
     },
     {
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1728,
+      "line": 1742,
       "credentialsInUrl": false
     },
     {
@@ -23731,7 +23731,14 @@
       "hostname": "api.github.com",
       "protocol": "https:",
       "path": "backend/src/services/integrations/githubSourceRead.ts",
-      "line": 34,
+      "line": 46,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "api.github.com",
+      "protocol": "https:",
+      "path": "backend/src/services/integrations/githubSourceRead.ts",
+      "line": 53,
       "credentialsInUrl": false
     },
     {
@@ -28358,42 +28365,42 @@
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1112,
+      "line": 1113,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 1482,
+      "line": 1483,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 2225,
+      "line": 2226,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3781,
+      "line": 3782,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 3961,
+      "line": 3962,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/pipeline.ts",
-      "line": 4925,
+      "line": 4926,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30472,28 +30479,28 @@
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1448,
+      "line": 1458,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1482,
+      "line": 1492,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1488,
+      "line": 1498,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 1562,
+      "line": 1573,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -30550,6 +30557,13 @@
     {
       "path": "backend/src/services/integrations/githubMutationPlan.ts",
       "line": 582,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/services/integrations/githubSourceRead.ts",
+      "line": 50,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -31914,21 +31928,21 @@
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "line": 567,
+      "line": 568,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "line": 572,
+      "line": 573,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
-      "line": 580,
+      "line": 581,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -32187,8 +32201,15 @@
     },
     {
       "path": "backend/src/workers/containerBrowserWorker.ts",
-      "line": 53,
+      "line": 55,
       "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/workers/containerBrowserWorker.ts",
+      "line": 149,
+      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },

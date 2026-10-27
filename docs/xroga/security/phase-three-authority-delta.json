@@ -5,7 +5,7 @@
   "remappings": [
     {
       "previousCallerId": "74229d60e093f2e44542",
-      "currentCallerId": "29043e1b2d0f9c86568b"
+      "currentCallerId": "fb2bffffc91cc072976a"
     },
     {
       "previousCallerId": "c37a93be0605e64b3156",
@@ -1185,5 +1185,6 @@
   ],
   "completion": "ACTUAL_DISPOSABLE_AND_SOURCE_BOUND_REGRESSION_PENDING",
   "productionEffects": false,
-  "currentPositionContinuation": "docs/xroga/evidence/command-010/CURRENT-SEMANTIC-POSITIONS-20261028.json"
+  "currentPositionContinuation": "docs/xroga/evidence/command-010/GITHUB-ACTOR-SEMANTIC-POSITIONS-20261028.json",
+  "previousPositionContinuation": "docs/xroga/evidence/command-010/CURRENT-SEMANTIC-POSITIONS-20261028.json"
 }

@@ -614,7 +614,7 @@ export async function hydratePriorFiles(
   const mem = await getProjectMemoryAsync(userId, memoryRepo, branch);
   if (repo?.includes('/')) {
     try {
-      const remote = await inspectConnectedRepositoryState(userId, repo, branch);
+      const remote = await inspectConnectedRepositoryState(userId, repo, branch, scope.context);
       if (remote.status === 'empty') {
         return { files: [], fromMemory: false, source: 'github-empty' };
       }
@@ -634,7 +634,7 @@ export async function hydratePriorFiles(
           source: 'github-cache',
         };
       }
-      const files = await fetchRepositoryTextFilesFromGitHub(userId, repo, branch);
+      const files = await fetchRepositoryTextFilesFromGitHub(userId, repo, branch, scope.context);
       setProjectMemory({
         userId,
         repo:memoryRepo,
@@ -653,6 +653,7 @@ export async function hydratePriorFiles(
         source: 'github-api',
       };
     } catch (err) {
+      if(isTerminalModelFailure(err))throw err;
       const safe = describeRepositoryReadFailure(err);
       throw new Error(`Could not read the selected GitHub repository: ${safe}`);
     }
@@ -3868,11 +3869,11 @@ publicationReason:
           opts.userId,
           meta.githubTargetRepo,
           githubBranch,
-        ).catch((error) => ({
-          status: 'unavailable' as const,
-          branch: githubBranch,
-          reason: redactSecrets((error as Error).message || 'GitHub inspection failed').slice(0, 160),
-        }))
+          tenantContext,
+        ).catch((error) => {
+          if(isTerminalModelFailure(error))throw error;
+          return {status:'unavailable' as const,branch:githubBranch,reason:redactSecrets((error as Error).message || 'GitHub inspection failed').slice(0,160)};
+        })
       : undefined;
   const supabaseStatus = await getUserSupabaseStatus(opts.userId).catch(() => ({
     connected: false,

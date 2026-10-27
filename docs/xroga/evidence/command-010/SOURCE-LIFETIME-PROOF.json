@@ -36,11 +36,11 @@
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
       "beforeSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
-      "currentSha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb",
+      "currentSha256": "44768f8fb1880bca950c7214d31c5e55a968aa741d27e43f06d7c11cc1ac72f1",
       "matches": [
         {
           "beforeId": "b4b2b91f3280a140691a",
-          "afterId": "660909aa15c676228c90",
+          "afterId": "16e9bd43351094b6a7fb",
           "enclosing": "getIntegration",
           "kind": "PRIVILEGED_FACTORY",
           "target": "getSupabaseAdmin",
@@ -48,7 +48,7 @@
         },
         {
           "beforeId": "48c115e3fcc79a824240",
-          "afterId": "148d27d99764607b2339",
+          "afterId": "51b0a88f73c6d7dbf811",
           "enclosing": "getIntegration",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "github_integrations",
@@ -56,7 +56,7 @@
         },
         {
           "beforeId": "a6b38f59fd65dcf93b63",
-          "afterId": "355f4dbeae8a416a7e42",
+          "afterId": "30bbc8593d36230fdfe9",
           "enclosing": "fetchRepoTextFile",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "<dynamic>",
@@ -64,7 +64,7 @@
         },
         {
           "beforeId": "ff18538f080dddb2c506",
-          "afterId": "45aec3a8752cfb119062",
+          "afterId": "d86fc4994d93219933ff",
           "enclosing": "decodeRepositoryTextBlob",
           "kind": "TABLE_OR_BUCKET_CANDIDATE",
           "target": "<dynamic>",
@@ -109,6 +109,84 @@
             "callSha256": "03e2f13b64c9110e138f0e88137417c98bc518068e330a779d0565853d3bcfb2"
           }
         ]
+      },
+      "beforeGithubActorContinuation": {
+        "path": "backend/src/services/integrations/githubDeploy.ts",
+        "beforeSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
+        "currentSha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb",
+        "matches": [
+          {
+            "beforeId": "b4b2b91f3280a140691a",
+            "afterId": "660909aa15c676228c90",
+            "enclosing": "getIntegration",
+            "kind": "PRIVILEGED_FACTORY",
+            "target": "getSupabaseAdmin",
+            "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+          },
+          {
+            "beforeId": "48c115e3fcc79a824240",
+            "afterId": "148d27d99764607b2339",
+            "enclosing": "getIntegration",
+            "kind": "TABLE_OR_BUCKET_CANDIDATE",
+            "target": "github_integrations",
+            "callSha256": "be25557126fc983286dc8fea6bc17200d3d663219eb4c597fb54cb062e43ec41"
+          },
+          {
+            "beforeId": "a6b38f59fd65dcf93b63",
+            "afterId": "355f4dbeae8a416a7e42",
+            "enclosing": "fetchRepoTextFile",
+            "kind": "TABLE_OR_BUCKET_CANDIDATE",
+            "target": "<dynamic>",
+            "callSha256": "39d5ea50bfe6db5fc200cc05068afa62d5a9c8fbf948916928e9aead785debc4"
+          },
+          {
+            "beforeId": "ff18538f080dddb2c506",
+            "afterId": "45aec3a8752cfb119062",
+            "enclosing": "decodeRepositoryTextBlob",
+            "kind": "TABLE_OR_BUCKET_CANDIDATE",
+            "target": "<dynamic>",
+            "callSha256": "03e2f13b64c9110e138f0e88137417c98bc518068e330a779d0565853d3bcfb2"
+          }
+        ],
+        "beforeCurrentMetadataReconciliation": {
+          "path": "backend/src/services/integrations/githubDeploy.ts",
+          "beforeSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
+          "currentSha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
+          "matches": [
+            {
+              "beforeId": "b4b2b91f3280a140691a",
+              "afterId": "55ac9b0f3f9ba972ca8c",
+              "enclosing": "getIntegration",
+              "kind": "PRIVILEGED_FACTORY",
+              "target": "getSupabaseAdmin",
+              "callSha256": "03a0b4633fc01ef58c75b4fa1adcd7c7aebd7da635c37dee150f4c221eb192c1"
+            },
+            {
+              "beforeId": "48c115e3fcc79a824240",
+              "afterId": "2360912af68a9536c836",
+              "enclosing": "getIntegration",
+              "kind": "TABLE_OR_BUCKET_CANDIDATE",
+              "target": "github_integrations",
+              "callSha256": "be25557126fc983286dc8fea6bc17200d3d663219eb4c597fb54cb062e43ec41"
+            },
+            {
+              "beforeId": "a6b38f59fd65dcf93b63",
+              "afterId": "d1009c426dd9153743b7",
+              "enclosing": "fetchRepoTextFile",
+              "kind": "TABLE_OR_BUCKET_CANDIDATE",
+              "target": "<dynamic>",
+              "callSha256": "39d5ea50bfe6db5fc200cc05068afa62d5a9c8fbf948916928e9aead785debc4"
+            },
+            {
+              "beforeId": "ff18538f080dddb2c506",
+              "afterId": "ad1b1dafdbd324ceed15",
+              "enclosing": "decodeRepositoryTextBlob",
+              "kind": "TABLE_OR_BUCKET_CANDIDATE",
+              "target": "<dynamic>",
+              "callSha256": "03e2f13b64c9110e138f0e88137417c98bc518068e330a779d0565853d3bcfb2"
+            }
+          ]
+        }
       }
     },
     {

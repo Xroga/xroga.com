@@ -1,3 +1,4 @@
+import {isTerminalModelFailure} from '../ai/providerRuntime.js';
 import { requireTenantContext } from '../security/tenantContext.js';
 import {
   Buffer,
@@ -1415,11 +1416,13 @@ router.post(
               context.branch,
 
               {
+                tenantContext:req.tenantContext,
                 strictBranch:
                   true,
               },
             );
         } catch (error) {
+          if(isTerminalModelFailure(error))throw error;
           const disconnected =
             error instanceof
               Error &&
@@ -1463,11 +1466,13 @@ router.post(
                 context.repo,
 
                 context.branch,
+                req.tenantContext,
               ),
 
               message,
             );
         } catch (error) {
+          if(isTerminalModelFailure(error))throw error;
           console.warn(
             '[phase1/chat] bounded repository source snapshot unavailable',
 

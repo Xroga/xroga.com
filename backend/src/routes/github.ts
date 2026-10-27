@@ -418,7 +418,7 @@ router.get('/analyze', async (req: AuthRequest, res) => {
 
   try {
     const { analyzeGitHubRepo } = await import('../services/integrations/githubDeploy.js');
-    const analysis = await analyzeGitHubRepo(req.userId!, repoName, branch, { lite });
+    const analysis = await analyzeGitHubRepo(req.userId!, repoName, branch, { lite, tenantContext:req.tenantContext });
     if (lite) {
       res.json({
         repoName: analysis.repoName,
@@ -471,6 +471,7 @@ router.get('/repo-state', async (req: AuthRequest, res) => {
       req.userId!,
       repoName,
       branch,
+      req.tenantContext,
     );
     res.json(state);
   } catch (e) {
@@ -488,7 +489,7 @@ router.get('/build-files', async (req: AuthRequest, res) => {
 
   try {
     const { fetchBuildFilesFromGitHub } = await import('../services/integrations/githubDeploy.js');
-    const files = await fetchBuildFilesFromGitHub(req.userId!, repoName);
+    const files = await fetchBuildFilesFromGitHub(req.userId!, repoName, undefined, req.tenantContext);
     const html = files.find((f: { path: string; content: string }) => f.path === 'index.html')?.content ?? '';
     const css = files.find((f: { path: string; content: string }) => f.path === 'styles.css')?.content ?? '';
     const js = files.find((f: { path: string; content: string }) => f.path === 'script.js')?.content ?? '';
@@ -560,6 +561,7 @@ router.post('/redeploy-preview', async (req: AuthRequest, res) => {
       req.userId!,
       parsed.data.repoName,
       parsed.data.branch ?? 'main',
+      req.tenantContext,
     );
     res.json({
       deployUrl: result.deployUrl,
@@ -687,6 +689,7 @@ router.post('/rollback', async (req: AuthRequest, res) => {
         req.userId!,
         parsed.data.repoName,
         parsed.data.branch ?? 'main',
+        req.tenantContext,
       );
       const slug =
         parsed.data.repoName.split('/').pop()?.replace(/^xroga-/, '') ?? 'xroga-build';

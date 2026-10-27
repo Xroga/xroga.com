@@ -1,5 +1,5 @@
 {
-  "atUtc": "2026-10-27T19:36:49.378902+00:00",
+  "atUtc": "2026-10-27T20:08:45.059384+00:00",
   "scope": "ONLY_BATCH1_PHASE4_COMMAND010",
   "phase3": "ACCEPTED_PRESERVED_NOT_REOPENED",
   "formalAcceptedCriteria": 0,
@@ -93,22 +93,22 @@
   ],
   "strictAudit": {
     "total": 135,
-    "reviewed": 113,
-    "pending": 22,
-    "unresolvedHighRiskBypasses": 13
+    "reviewed": 115,
+    "pending": 20,
+    "unresolvedHighRiskBypasses": 12
   },
-  "ci": "FINAL_CURRENT_SOURCE_REQUIRED_NOT_RUN_WHILE_CALLER_COVERAGE_INCOMPLETE",
+  "ci": "D156218D_RUN40571007962_FAIL_TWO_IDENTIFIED_GATES_CORRECTED_LOCALLY_FINAL_EXACT_SOURCE_CI_REQUIRED",
   "production": "UNCHANGED_GOOGLE_ACCEPTANCE_PRESERVED_NO_PHASE4_DEPLOY",
   "batch1": "NOT_CLOSED",
   "batch15And2": "CLAUDE_OWNS_NOT_CODEX_SCOPE",
   "externalBlocker": "NONE_IDENTIFIED_CURRENT_REMAINING_WORK_IS_SECURITY_ENGINEERING",
   "remainingBrowserObligations": [
-    "Orphan reaper single-host ownership proof",
     "Full browser consequential-action approval and side-effect admission, including unmarked page effects. Public supplied/planner write grants now fail closed"
   ],
   "publishingObligations": "Fixed provider transports have individual source-bound review. Higher exact tenant/project/credential/confirmation/data-egress and cancellation callers remain unpromoted.",
   "backendTypes": "PASS_CURRENT_SOURCE",
   "frontendTypes": "PASS_034d642b",
-  "currentCheckpoint": "docs/xroga/evidence/command-010/security-checkpoint-20261028/checkpoint.json",
-  "xResearchAccountingAvailability": "EXPLICIT_ACCOUNTING_UNAVAILABLE_BEFORE_CREDENTIAL_OR_DISPATCH_NOT_POSITIVELY_ACCEPTED"
+  "currentCheckpoint": "docs/xroga/evidence/command-010/github-actor-checkpoint-20261028/checkpoint.json",
+  "xResearchAccountingAvailability": "EXPLICIT_ACCOUNTING_UNAVAILABLE_BEFORE_CREDENTIAL_OR_DISPATCH_NOT_POSITIVELY_ACCEPTED",
+  "orphanCleanupStatus": "Bounded stopped-only cleanup verified locally. Running leftovers retained for lease-aware operator review. No global force cleanup or live host mutation."
 }

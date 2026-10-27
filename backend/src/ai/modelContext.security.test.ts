@@ -74,7 +74,7 @@ test('actual hydration and history isolate database projects, selected repositor
   mode='githubDenied';await assert.rejects(hydratePriorFiles(owner,meta,scope(github)),/not found or is not authorized/);
   for(const scenario of ['githubRevoked','githubRotated']){
     mode=scenario;accessInvalidated=false;const before=remoteReads;
-    await assert.rejects(hydratePriorFiles(owner,meta,scope(github)),{name:'Error',message:'Could not read the selected GitHub repository: unknown provider failure'});
+    await assert.rejects(hydratePriorFiles(owner,meta,scope(github)),{code:'CAPABILITY_AUTH_REQUIRED',retryable:false});
     assert.equal(remoteReads,before+1,'Invalid in-flight access cannot continue or fall back to owned cache or browser source');
   }
 });

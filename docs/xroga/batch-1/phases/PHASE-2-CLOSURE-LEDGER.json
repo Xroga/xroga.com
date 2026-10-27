@@ -681,7 +681,7 @@
       "id": "B1-P2-fba3a9a069050e3f",
       "family": "other-source-bound-boundaries",
       "sourcePath": "backend/src/routes/github.ts",
-      "sourceSha256": "9a85892651e39902f36605ab21d7d5fe5311ffcd33e1a90e3c4d5266e80c2372",
+      "sourceSha256": "6df22e2d680bc45de01930d2644f262c22de988a888d0a277c758306e9c9b0b4",
       "baselineCallerIds": [
         "8a4f5a61a698f969e941",
         "7ea068acaab899c1c99e",
@@ -736,7 +736,7 @@
         {
           "path": "backend/src/routes/github.ts",
           "marker": "repo_strategy",
-          "sourceSha256": "9a85892651e39902f36605ab21d7d5fe5311ffcd33e1a90e3c4d5266e80c2372",
+          "sourceSha256": "6df22e2d680bc45de01930d2644f262c22de988a888d0a277c758306e9c9b0b4",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -756,27 +756,27 @@
       "id": "B1-P2-812abbd1d9e8178e",
       "family": "credentials-oauth",
       "sourcePath": "backend/src/services/integrations/githubDeploy.ts",
-      "sourceSha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb",
+      "sourceSha256": "44768f8fb1880bca950c7214d31c5e55a968aa741d27e43f06d7c11cc1ac72f1",
       "baselineCallerIds": [
         "b4b2b91f3280a140691a",
         "48c115e3fcc79a824240"
       ],
       "currentCallerIds": [
-        "660909aa15c676228c90",
-        "148d27d99764607b2339"
+        "16e9bd43351094b6a7fb",
+        "51b0a88f73c6d7dbf811"
       ],
       "mapping": [
         {
           "baselineCallerId": "b4b2b91f3280a140691a",
           "currentCallerIds": [
-            "660909aa15c676228c90"
+            "16e9bd43351094b6a7fb"
           ],
           "change": "RETAINED"
         },
         {
           "baselineCallerId": "48c115e3fcc79a824240",
           "currentCallerIds": [
-            "148d27d99764607b2339"
+            "51b0a88f73c6d7dbf811"
           ],
           "change": "RETAINED"
         }
@@ -801,7 +801,7 @@
         {
           "path": "backend/src/services/integrations/githubDeploy.ts",
           "marker": "async function getIntegration",
-          "sourceSha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb",
+          "sourceSha256": "44768f8fb1880bca950c7214d31c5e55a968aa741d27e43f06d7c11cc1ac72f1",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         }
@@ -6685,7 +6685,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "loadSessionHistory(opts.userId",
-          "sourceSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+          "sourceSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -6812,7 +6812,7 @@
         {
           "path": "backend/src/ai/pipeline.ts",
           "marker": "const saved = await setProjectMemoryDurable({",
-          "sourceSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+          "sourceSha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
           "polarity": "NOT_INFERRED_FROM_MARKER",
           "conclusion": "NOT_CERTIFIED"
         },
@@ -8341,7 +8341,7 @@
         "relatedSourceBindings": [
           {
             "path": "backend/src/ai/pipeline.ts",
-            "sha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+            "sha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
             "historicalBinding": {
               "reference": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
               "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
@@ -8349,7 +8349,9 @@
             "currentSourceDelta": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
             "previousGenericSdkSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
             "preGoogleIntegrationSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
-            "googleIntegrationSourceReview": "docs/xroga/evidence/command-010/GOOGLE-PHASE2-SOURCE-RECONCILIATION.json"
+            "googleIntegrationSourceReview": "docs/xroga/evidence/command-010/GOOGLE-PHASE2-SOURCE-RECONCILIATION.json",
+            "githubActorPriorSourceSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+            "githubActorSourceReview": "docs/xroga/evidence/command-010/GITHUB-SOURCE-ACTOR-BOUNDARY-20261028.json"
           },
           {
             "path": "backend/src/routes/swarm.ts",

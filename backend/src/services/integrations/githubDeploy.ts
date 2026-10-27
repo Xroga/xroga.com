@@ -1,3 +1,4 @@
+import {requireTenantContext,requireResourceOwner,type TenantContext} from '../../security/tenantContext.js';
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import {
   deployStaticSite,
@@ -202,7 +203,9 @@ export async function inspectConnectedRepositoryState(
   userId: string,
   repoFullName: string,
   branch = 'main',
+  tenantContext?: TenantContext,
 ): Promise<ConnectedRepositoryState> {
+  requireResourceOwner(requireTenantContext(tenantContext),userId);
   const integration = await getIntegration(userId);
   if (!integration?.access_token) {
     return { status: 'unavailable', branch, reason: 'GitHub is not connected' };
@@ -213,7 +216,7 @@ export async function inspectConnectedRepositoryState(
     return { status: 'unavailable', branch, reason: 'Invalid GitHub repository target' };
   }
 
-  const source = await createGitHubSourceReader(userId, integration.access_token, `${owner}/${repo}`);
+  const source = await createGitHubSourceReader(userId, integration.access_token, `${owner}/${repo}`, tenantContext);
   const repoResponse = await source.request(integration.access_token, `/repos/${owner}/${repo}`);
   if (!repoResponse.ok) {
     const reason =
@@ -263,6 +266,7 @@ export async function inspectConnectedRepositoryState(
       .map((entry) => entry.path)
       .sort();
   } catch (error) {
+    if(isTerminalModelFailure(error))throw error;
     const reason =
       error instanceof TreeSnapshotError
         ? describeTreeSnapshotFailure(error.reason)
@@ -1329,14 +1333,16 @@ const UPDATE_HYDRATE_PATHS = [
 export async function fetchBuildFilesFromGitHub(
   userId: string,
   repoName: string,
-  branch?: string
+  branch?: string,
+  tenantContext?: TenantContext,
 ): Promise<ProjectFile[]> {
+  requireResourceOwner(requireTenantContext(tenantContext),userId);
   const integration = await getIntegration(userId);
   if (!integration?.access_token) throw new Error('GitHub not connected');
 
   const { owner, repo } = parseRepoName(repoName);
   const token = integration.access_token;
-  const source = await createGitHubSourceReader(userId, token, `${owner}/${repo}`);
+  const source = await createGitHubSourceReader(userId, token, `${owner}/${repo}`, tenantContext);
 
   const out: ProjectFile[] = [];
   for (const path of UPDATE_HYDRATE_PATHS) {
@@ -1378,12 +1384,14 @@ export async function fetchRepositoryTextFilesFromGitHub(
   userId: string,
   repoName: string,
   branch: string,
+  tenantContext?: TenantContext,
 ): Promise<ProjectFile[]> {
+  requireResourceOwner(requireTenantContext(tenantContext),userId);
   const integration = await getIntegration(userId);
   if (!integration?.access_token) throw new Error('GitHub not connected');
   const { owner, repo } = parseRepoName(repoName);
   const token = integration.access_token;
-  const source = await createGitHubSourceReader(userId, token, `${owner}/${repo}`);
+  const source = await createGitHubSourceReader(userId, token, `${owner}/${repo}`, tenantContext);
 
   const branchRes = await source.request(token, `/repos/${owner}/${repo}/branches/${encodeURIComponent(branch)}`);
   if (!branchRes.ok) throw new Error(`GitHub branch lookup failed: ${branchRes.status}`);
@@ -1437,14 +1445,16 @@ export async function fetchGitHubFilesByPaths(
   userId: string,
   repoName: string,
   paths: string[],
-  branch?: string
+  branch?: string,
+  tenantContext?: TenantContext,
 ): Promise<ProjectFile[]> {
+  requireResourceOwner(requireTenantContext(tenantContext),userId);
   const integration = await getIntegration(userId);
   if (!integration?.access_token) throw new Error('GitHub not connected');
 
   const { owner, repo } = parseRepoName(repoName);
   const token = integration.access_token;
-  const source = await createGitHubSourceReader(userId, token, `${owner}/${repo}`);
+  const source = await createGitHubSourceReader(userId, token, `${owner}/${repo}`, tenantContext);
   const unique = [...new Set(paths.map((p) => p.replace(/^\//, '')))].slice(0, 40);
 
   const out: ProjectFile[] = [];
@@ -1455,7 +1465,7 @@ export async function fetchGitHubFilesByPaths(
 
   if (!out.length) {
     await source.assertCurrent();
-    return fetchBuildFilesFromGitHub(userId, repoName, branch);
+    return fetchBuildFilesFromGitHub(userId, repoName, branch, tenantContext);
   }
   await source.assertCurrent();
   return out;
@@ -1510,8 +1520,9 @@ export async function analyzeGitHubRepo(
   userId: string,
   repoName: string,
   preferredBranch?: string,
-  opts?: { lite?: boolean; strictBranch?: boolean }
+  opts?: { lite?: boolean; strictBranch?: boolean; tenantContext?: TenantContext }
 ): Promise<GitHubRepoAnalysis> {
+  requireResourceOwner(requireTenantContext(opts?.tenantContext),userId);
   const lite = Boolean(opts?.lite);
   const integration = await getIntegration(userId);
   if (!integration?.access_token) throw new Error('GitHub not connected');
@@ -1569,7 +1580,7 @@ export async function analyzeGitHubRepo(
   let buildEvidencePaths: string[] = [];
   if (!lite) {
     try {
-      const files = await fetchBuildFilesFromGitHub(userId, repoName, scanBranch);
+      const files = await fetchBuildFilesFromGitHub(userId, repoName, scanBranch, opts?.tenantContext);
       buildEvidencePaths = repositoryBuildEvidencePaths(files.map((file) => file.path));
       hasBuildFiles = buildEvidencePaths.length > 0;
       buildFiles = {
@@ -1577,7 +1588,8 @@ export async function analyzeGitHubRepo(
         css: files.find((f) => f.path === 'styles.css')?.content ?? '',
         js: files.find((f) => f.path === 'script.js')?.content ?? '',
       };
-    } catch {
+    } catch(error) {
+      if(isTerminalModelFailure(error))throw error;
       /* repo may not have static build files yet */
     }
   } else {
@@ -1648,6 +1660,7 @@ export async function redeployPreviewFromGitHub(
   userId: string,
   repoName: string,
   branch = 'main',
+  tenantContext?: TenantContext,
 ): Promise<{
   deployUrl: string;
   deployPlatform: 'vercel' | 'netlify' | 'none';
@@ -1656,7 +1669,8 @@ export async function redeployPreviewFromGitHub(
   netlifyDeployId?: string;
   files: ProjectFile[];
 }> {
-  const files = await fetchBuildFilesFromGitHub(userId, repoName, branch);
+  requireResourceOwner(requireTenantContext(tenantContext),userId);
+  const files = await fetchBuildFilesFromGitHub(userId, repoName, branch, tenantContext);
   const slug = repoName.split('/').pop()?.replace(/^xroga-/, '') ?? 'xroga-build';
   const preview = await deployToAllPlatforms(slug, files, userId);
   return {

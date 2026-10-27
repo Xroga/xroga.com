@@ -89,13 +89,19 @@ export class ContainerSandboxRuntime implements SandboxRuntime {
   }
 
   async execute(request: SandboxExecutionRequest): Promise<SandboxExecutionResult> {
-    requireEnforcedSandboxNetworkPolicy(request.networkPolicy, this.name);
+    // Capture mutable caller data before the asynchronous runtime probe.
+    request = {...request, files: request.files.map(file => ({...file})), args: [...request.args],
+      environment: {...request.environment}, limits: {...request.limits}};
+    const image = request.image === undefined ? this.image : request.image.trim();
+    buildContainerArgs(image, request);
+    request.signal?.throwIfAborted();
     const availability = await this.probe();
+    request.signal?.throwIfAborted();
     if (!availability.available) throw new SandboxUnavailableError(availability);
     // A per-request image overrides the provider default. Every isolation flag in
     // `buildContainerArgs` is unchanged by it — the image says what is inside the box, not how
     // tightly the box is closed.
-    return runIsolated(this.binary, request.image?.trim() || this.image, request);
+    return runIsolated(this.binary, image, request);
   }
 }
 
@@ -145,11 +151,26 @@ export function buildContainerArgs(
   request: SandboxExecutionRequest,
 ): string[] {
   requireEnforcedSandboxNetworkPolicy(request.networkPolicy, 'container');
+  if (request.networkPolicy !== 'none') throw new SandboxUnavailableError({
+    available: false, runtime: 'container', reason: 'policy_disabled',
+    detail: 'This container adapter has no verified restricted-network enforcement. Use an admitted Google worker for networked execution.',
+  });
+  if (typeof image !== 'string' || image.length > 512 || !/^[A-Za-z0-9][A-Za-z0-9._:/-]*(?:@sha256:[a-fA-F0-9]{64})?$/.test(image)) {
+    throw new Error('Invalid isolated container image reference.');
+  }
+  request.signal?.throwIfAborted();
+  if (Object.entries(request.environment).some(([name,value]) => !/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)
+    || typeof value !== 'string' || value.includes('\0'))
+    || Buffer.byteLength(JSON.stringify(request.environment)) > 65_536) throw new Error('Invalid isolated container environment.');
+  // Reuse the existing secret-name and held-value guard without adding host
+  // variables or changing the caller's exact safe child environment.
+  buildSandboxEnvironment(request.environment);
+
   // Registry-only was refused above, never translated to an unrestricted bridge.
   // A typecheck or a
   // production build has no legitimate reason to reach the network, and denying it
   // removes exfiltration as an option even if the environment allowlist were weakened.
-  const network = request.networkPolicy === 'none' ? 'none' : 'bridge';
+  const network = 'none';
 
   const args = [
     'run',

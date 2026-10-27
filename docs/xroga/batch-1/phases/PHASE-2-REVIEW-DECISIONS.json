@@ -2380,7 +2380,7 @@
       "relatedSourceBindings": [
         {
           "path": "backend/src/ai/pipeline.ts",
-          "sha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+          "sha256": "b3bc191ea1274502c699c88cb1df832ed86ff3b83136383edd4419f791a89ac9",
           "historicalBinding": {
             "reference": "2a797dc1b9a932350d4882bffc2fea5aa6f8282b",
             "sha256": "cd1ad9e6411d48c6b209bbfebf1cc9af56651f96b55132801a7d500b2c1a3477"
@@ -2388,7 +2388,9 @@
           "currentSourceDelta": "docs/xroga/evidence/command-010/MODEL-DISPATCH-PROOF.json",
           "previousGenericSdkSha256": "2d10ab54d808d260e209ad391c4d9ae83f2e9f386acbac6111815152b463e1bc",
           "preGoogleIntegrationSha256": "fe2eb4cda7748acb748dfc79cc6034c66529c4557a8c414391c31f5366c99ec0",
-          "googleIntegrationSourceReview": "docs/xroga/evidence/command-010/GOOGLE-PHASE2-SOURCE-RECONCILIATION.json"
+          "googleIntegrationSourceReview": "docs/xroga/evidence/command-010/GOOGLE-PHASE2-SOURCE-RECONCILIATION.json",
+          "githubActorPriorSourceSha256": "72add9631fb0dcbdd82b793769f60eea4dfbcbff3c34d34ff3670a9efcd9692b",
+          "githubActorSourceReview": "docs/xroga/evidence/command-010/GITHUB-SOURCE-ACTOR-BOUNDARY-20261028.json"
         },
         {
           "path": "backend/src/routes/swarm.ts",
@@ -3428,5 +3430,6 @@
     "activeSvgPositiveControl": "A separate empty-cookie browser page proves the raw synthetic SVG executes its script. The same SVG through the actual image route must not execute. Real Auth CI is still pending."
   },
   "phase3RetiredCallerRemappings": [],
-  "currentPositionContinuation": "docs/xroga/evidence/command-010/CURRENT-SEMANTIC-POSITIONS-20261028.json"
+  "currentPositionContinuation": "docs/xroga/evidence/command-010/GITHUB-ACTOR-SEMANTIC-POSITIONS-20261028.json",
+  "previousPositionContinuation": "docs/xroga/evidence/command-010/CURRENT-SEMANTIC-POSITIONS-20261028.json"
 }
