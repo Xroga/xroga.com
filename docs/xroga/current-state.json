@@ -12398,6 +12398,345 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:07ad87c9d865b5755f59",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/archive/archivePort.ts",
+      "sha256": "cc065addef0a456dc199d54aa77041f30679a6c7bad2c93748f76e5f1da19ee5",
+      "symbols": [
+        "ARCHIVE_BRANCH",
+        "ArchiveFile",
+        "ArchivePort",
+        "ArchiveRecord",
+        "add",
+        "archiveCommitSha",
+        "archiveDigest",
+        "body",
+        "d",
+        "dir",
+        "dirs",
+        "e",
+        "f",
+        "full",
+        "gitBlobSha",
+        "h",
+        "i",
+        "out",
+        "parts",
+        "sha",
+        "sha1",
+        "text",
+        "treeShaOf",
+        "walk"
+      ],
+      "imports": [
+        "../provider.js",
+        "../types.js",
+        "node:crypto"
+      ],
+      "runtimeImports": [
+        "backend/src/existingSource/types.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/existingSource/archive/importer.ts:8",
+        "backend/src/existingSource/service.ts:15"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "backend/src/existingSource/archive/archivePort.ts#archiveDigest"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:06ca8e5d9ca3ca6ab17b",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/archive/archiveStore.ts",
+      "sha256": "325eb9dae565739801c9f650b976dcef74fc1fef3d4dcda699ed5d1968548c65",
+      "symbols": [
+        "ArchiveStore",
+        "COLUMNS",
+        "InMemoryArchiveStore",
+        "Row",
+        "SupabaseArchiveStore",
+        "existing",
+        "failed",
+        "inserted",
+        "keptBytes",
+        "owner",
+        "r",
+        "raced",
+        "record",
+        "toRecord"
+      ],
+      "imports": [
+        "../../security/serviceRoleGuard.js",
+        "../../security/tenantContext.js",
+        "../types.js",
+        "./archivePort.js"
+      ],
+      "runtimeImports": [
+        "backend/src/existingSource/types.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/routes/existingSource.ts:21",
+        "backend/src/routes/existingSourceArchive.test.ts:7"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "existing_source_archives"
+      ],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/routes/existingSourceArchive.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:72c6e053689f9992175a",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/archive/importer.ts",
+      "sha256": "06de25c3402ad305fb056ccafd7d1d321242da7a47c4b8e2ca28c908d4f8c556",
+      "symbols": [
+        "ImportedArchive",
+        "MAX_KEPT_BYTES",
+        "MAX_KEPT_FILE_BYTES",
+        "decodeText",
+        "f",
+        "files",
+        "importArchive",
+        "keep",
+        "kept",
+        "keptBytes",
+        "listedOnly",
+        "name",
+        "path",
+        "refused",
+        "s",
+        "strip",
+        "text",
+        "tops"
+      ],
+      "imports": [
+        "../intelligence/exclusions.js",
+        "../sensitivePaths.js",
+        "../types.js",
+        "./archivePort.js",
+        "./zipReader.js"
+      ],
+      "runtimeImports": [
+        "backend/src/existingSource/archive/archivePort.ts",
+        "backend/src/existingSource/archive/zipReader.ts",
+        "backend/src/existingSource/intelligence/exclusions.ts",
+        "backend/src/existingSource/sensitivePaths.ts",
+        "backend/src/existingSource/types.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/existingSource/archive/zipReader.test.ts:5",
+        "backend/src/existingSource/service.ts:17"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [
+        "backend/src/existingSource/archive/importer.ts#archiveDigest"
+      ],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/existingSource/archive/zipReader.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:e37d12e7a08074adb204",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/archive/zipBuilder.testsupport.ts",
+      "sha256": "02ab75aa40f69b66a0806b975b2e252995904c3ac977bcf5471578a2b474b252",
+      "symbols": [
+        "BuildEntry",
+        "body",
+        "buildZip",
+        "c",
+        "cd",
+        "cen",
+        "central",
+        "comment",
+        "crc32",
+        "crcTable",
+        "e",
+        "eocd",
+        "flags",
+        "isDir",
+        "k",
+        "local",
+        "method",
+        "n",
+        "name",
+        "offset",
+        "parts",
+        "raw",
+        "size",
+        "t",
+        "x"
+      ],
+      "imports": [
+        "node:zlib"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "backend/src/existingSource/archive/zipReader.test.ts:7",
+        "backend/src/routes/existingSourceArchive.test.ts:6"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:zlib"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/existingSource/archive/zipReader.test.ts",
+        "backend/src/routes/existingSourceArchive.test.ts"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:59c4dcfd85481303fcab",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/existingSource/archive/zipReader.ts",
+      "sha256": "70a844ce654c1ad5980e7940492976ddf31aabe154f69c63db06f355cfda7d7f",
+      "symbols": [
+        "CEN",
+        "DEFAULT_ZIP_LIMITS",
+        "EOCD",
+        "LOC",
+        "ZipContents",
+        "ZipFile",
+        "ZipLimits",
+        "ZipSkip",
+        "bad",
+        "cdDisk",
+        "cdOffset",
+        "cdSize",
+        "commentLen",
+        "compressed",
+        "data",
+        "dataStart",
+        "directories",
+        "disk",
+        "entriesHere",
+        "eocd",
+        "expanded",
+        "externalAttrs",
+        "extraLen",
+        "files",
+        "flags",
+        "i",
+        "localOffset",
+        "method",
+        "n",
+        "nameLen",
+        "parts",
+        "path",
+        "pos",
+        "raw",
+        "rawName",
+        "readZip",
+        "safeEntryPath",
+        "seen",
+        "size",
+        "skipped",
+        "total",
+        "type",
+        "unixMode",
+        "utf8",
+        "versionMadeBy"
+      ],
+      "imports": [
+        "../types.js",
+        "node:zlib"
+      ],
+      "runtimeImports": [
+        "backend/src/existingSource/types.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/existingSource/archive/importer.ts:9",
+        "backend/src/existingSource/archive/zipReader.test.ts:6"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:zlib"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/existingSource/archive/zipReader.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:2b430d59a7c953abd66f",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/fakeGitHub.testsupport.ts",
@@ -12455,6 +12794,7 @@
         "backend/src/existingSource/intelligence/service.test.ts:5",
         "backend/src/existingSource/service.test.ts:4",
         "backend/src/routes/existingSource.test.ts:6",
+        "backend/src/routes/existingSourceArchive.test.ts:8",
         "backend/src/routes/existingSourceIntelligence.test.ts:6"
       ],
       "reachable": false,
@@ -12472,6 +12812,7 @@
         "backend/src/existingSource/intelligence/service.test.ts",
         "backend/src/existingSource/service.test.ts",
         "backend/src/routes/existingSource.test.ts",
+        "backend/src/routes/existingSourceArchive.test.ts",
         "backend/src/routes/existingSourceIntelligence.test.ts"
       ],
       "state": "DEAD_OR_UNREACHABLE",
@@ -12637,7 +12978,8 @@
       "callers": [
         "backend/src/existingSource/intelligence/polyglot.test.ts:7",
         "backend/src/existingSource/intelligence/service.test.ts:9",
-        "backend/src/routes/existingSource.ts:20",
+        "backend/src/routes/existingSource.ts:22",
+        "backend/src/routes/existingSourceArchive.test.ts:9",
         "backend/src/routes/existingSourceIntelligence.test.ts:7"
       ],
       "reachable": true,
@@ -12653,6 +12995,7 @@
       "testCoverage": [
         "backend/src/existingSource/intelligence/polyglot.test.ts",
         "backend/src/existingSource/intelligence/service.test.ts",
+        "backend/src/routes/existingSourceArchive.test.ts",
         "backend/src/routes/existingSourceIntelligence.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -12694,6 +13037,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/archive/importer.ts:5",
         "backend/src/existingSource/intelligence/codeIndex.ts:12"
       ],
       "reachable": true,
@@ -13249,7 +13593,8 @@
       "callers": [
         "backend/src/existingSource/intelligence/polyglot.test.ts:8",
         "backend/src/existingSource/intelligence/service.test.ts:10",
-        "backend/src/routes/existingSource.ts:21",
+        "backend/src/routes/existingSource.ts:23",
+        "backend/src/routes/existingSourceArchive.test.ts:10",
         "backend/src/routes/existingSourceIntelligence.test.ts:9"
       ],
       "reachable": true,
@@ -13265,6 +13610,7 @@
       "testCoverage": [
         "backend/src/existingSource/intelligence/polyglot.test.ts",
         "backend/src/existingSource/intelligence/service.test.ts",
+        "backend/src/routes/existingSourceArchive.test.ts",
         "backend/src/routes/existingSourceIntelligence.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -13372,8 +13718,8 @@
       ],
       "callers": [
         "backend/src/existingSource/provider.test.ts:4",
-        "backend/src/existingSource/service.ts:15",
-        "backend/src/routes/existingSource.ts:23"
+        "backend/src/existingSource/service.ts:18",
+        "backend/src/routes/existingSource.ts:25"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -13414,9 +13760,10 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/archive/importer.ts:6",
         "backend/src/existingSource/intelligence/exclusions.ts:5",
         "backend/src/existingSource/provider.test.ts:5",
-        "backend/src/existingSource/service.ts:16"
+        "backend/src/existingSource/service.ts:19"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -13440,7 +13787,7 @@
       "id": "surface:1140f2c7a3e0040f938e",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/service.ts",
-      "sha256": "b6fd1f0a369a060583f7538cd076b95e930287276237a7692430fc7db2d39264",
+      "sha256": "12fbc9852cc0f58c5543c2cf618c8f487230ed2f72fb57613450bff18c78f225",
       "symbols": [
         "BRANCH",
         "BranchHeadView",
@@ -13454,6 +13801,7 @@
         "VerifiedBinding",
         "active",
         "age",
+        "archives",
         "b",
         "binding",
         "branch",
@@ -13469,6 +13817,7 @@
         "h",
         "head",
         "hit",
+        "imported",
         "key",
         "level",
         "maxAge",
@@ -13481,6 +13830,7 @@
         "projectId",
         "providerToError",
         "ranged",
+        "record",
         "repo",
         "rest",
         "result",
@@ -13502,6 +13852,9 @@
       "imports": [
         "../ai/repositoryTools.js",
         "../services/integrations/githubTreeSnapshot.js",
+        "./archive/archivePort.js",
+        "./archive/archiveStore.js",
+        "./archive/importer.js",
         "./provider.js",
         "./sensitivePaths.js",
         "./store.js",
@@ -13510,6 +13863,8 @@
       ],
       "runtimeImports": [
         "backend/src/ai/repositoryTools.ts",
+        "backend/src/existingSource/archive/archivePort.ts",
+        "backend/src/existingSource/archive/importer.ts",
         "backend/src/existingSource/provider.ts",
         "backend/src/existingSource/sensitivePaths.ts",
         "backend/src/existingSource/treeReader.ts",
@@ -13523,7 +13878,8 @@
         "backend/src/existingSource/intelligence/service.test.ts:6",
         "backend/src/existingSource/service.test.ts:5",
         "backend/src/routes/existingSource.test.ts:7",
-        "backend/src/routes/existingSource.ts:22",
+        "backend/src/routes/existingSource.ts:24",
+        "backend/src/routes/existingSourceArchive.test.ts:11",
         "backend/src/routes/existingSourceIntelligence.test.ts:10"
       ],
       "reachable": true,
@@ -13544,6 +13900,7 @@
         "backend/src/existingSource/intelligence/service.test.ts",
         "backend/src/existingSource/service.test.ts",
         "backend/src/routes/existingSource.test.ts",
+        "backend/src/routes/existingSourceArchive.test.ts",
         "backend/src/routes/existingSourceIntelligence.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -13557,7 +13914,7 @@
       "id": "surface:ecc2b993473552e53563",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/store.ts",
-      "sha256": "482a1a0757663a887c0e23c7affaeb9e7671ead144a3631702c42a5da202b9a7",
+      "sha256": "c991402af3690290d446bc87e03d0e1d41b976f5c74a5b0b7f4efbfa35c5616d",
       "symbols": [
         "BindingPatch",
         "COLUMNS",
@@ -13601,7 +13958,8 @@
         "backend/src/existingSource/intelligence/service.test.ts:7",
         "backend/src/existingSource/service.test.ts:6",
         "backend/src/routes/existingSource.test.ts:8",
-        "backend/src/routes/existingSource.ts:24",
+        "backend/src/routes/existingSource.ts:26",
+        "backend/src/routes/existingSourceArchive.test.ts:12",
         "backend/src/routes/existingSourceIntelligence.test.ts:11"
       ],
       "reachable": true,
@@ -13625,6 +13983,7 @@
         "backend/src/existingSource/intelligence/service.test.ts",
         "backend/src/existingSource/service.test.ts",
         "backend/src/routes/existingSource.test.ts",
+        "backend/src/routes/existingSourceArchive.test.ts",
         "backend/src/routes/existingSourceIntelligence.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -13665,7 +14024,7 @@
       ],
       "callers": [
         "backend/src/existingSource/provider.test.ts:6",
-        "backend/src/existingSource/service.ts:18"
+        "backend/src/existingSource/service.ts:21"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -13689,7 +14048,7 @@
       "id": "surface:c235026a5fc7ef494506",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/existingSource/types.ts",
-      "sha256": "ff493e3b8699ddba0766c380c7c46922038ba4d0f6645813045960fbbad89844",
+      "sha256": "47be50fb97230abbd2deccab0ee88de6f1be45e73bb019679e8b25f9f1b01709",
       "symbols": [
         "BindingState",
         "ExistingSourceError",
@@ -13707,6 +14066,11 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/existingSource/archive/archivePort.ts:7",
+        "backend/src/existingSource/archive/archiveStore.ts:7",
+        "backend/src/existingSource/archive/importer.ts:7",
+        "backend/src/existingSource/archive/zipReader.test.ts:4",
+        "backend/src/existingSource/archive/zipReader.ts:11",
         "backend/src/existingSource/fakeGitHub.testsupport.ts:7",
         "backend/src/existingSource/intelligence/codeIndexStore.ts:8",
         "backend/src/existingSource/intelligence/service.test.ts:8",
@@ -13714,9 +14078,9 @@
         "backend/src/existingSource/provider.test.ts:7",
         "backend/src/existingSource/provider.ts:8",
         "backend/src/existingSource/service.test.ts:7",
-        "backend/src/existingSource/service.ts:19",
+        "backend/src/existingSource/service.ts:22",
         "backend/src/existingSource/store.ts:9",
-        "backend/src/routes/existingSource.ts:25"
+        "backend/src/routes/existingSource.ts:27"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -13731,6 +14095,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/existingSource/archive/zipReader.test.ts",
         "backend/src/existingSource/intelligence/service.test.ts",
         "backend/src/existingSource/provider.test.ts",
         "backend/src/existingSource/service.test.ts"
@@ -20432,10 +20797,13 @@
       "id": "surface:9de73948fcfe2a99b724",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "sha256": "7307723e342095966515d16644e6cc39cbbed34f9a8cdab9807565763a34232b",
+      "sha256": "1b127c3f0c83daad624b3af701c990b65b76e7a49f4f0be423bde24ee8d00f02",
       "symbols": [
+        "ARCHIVE_UPLOAD_LIMIT",
         "ExistingSourceIntelligenceFactory",
         "ExistingSourceServiceFactory",
+        "archiveQuery",
+        "archives",
         "b",
         "body",
         "codeIndexes",
@@ -20468,6 +20836,7 @@
         "withIntelligence"
       ],
       "imports": [
+        "../existingSource/archive/archiveStore.js",
         "../existingSource/intelligence/codeIndexStore.js",
         "../existingSource/intelligence/service.js",
         "../existingSource/provider.js",
@@ -20483,6 +20852,7 @@
         "zod"
       ],
       "runtimeImports": [
+        "backend/src/existingSource/archive/archiveStore.ts",
         "backend/src/existingSource/intelligence/codeIndexStore.ts",
         "backend/src/existingSource/intelligence/service.ts",
         "backend/src/existingSource/provider.ts",
@@ -20500,6 +20870,7 @@
       "callers": [
         "backend/src/index.ts:23",
         "backend/src/routes/existingSource.test.ts:10",
+        "backend/src/routes/existingSourceArchive.test.ts:14",
         "backend/src/routes/existingSourceIntelligence.test.ts:13",
         "backend/src/routes/github.ts:7"
       ],
@@ -20515,13 +20886,14 @@
         "backend/src/routes/existingSource.ts#AuthRequest"
       ],
       "tenantBoundary": [
-        "backend/src/routes/existingSource.ts:38 (user_id)"
+        "backend/src/routes/existingSource.ts:40 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/routes/existingSource.test.ts",
+        "backend/src/routes/existingSourceArchive.test.ts",
         "backend/src/routes/existingSourceIntelligence.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -24511,13 +24883,14 @@
         "backend/src/ai/routingOutcomes.ts:2",
         "backend/src/ai/runReconciler.ts:1",
         "backend/src/ai/usageAccounting.ts:1",
+        "backend/src/existingSource/archive/archiveStore.ts:5",
         "backend/src/existingSource/intelligence/codeIndexStore.ts:6",
         "backend/src/existingSource/store.ts:6",
         "backend/src/index.ts:68",
         "backend/src/middleware/admin.ts:2",
         "backend/src/routes/admin.ts:2",
         "backend/src/routes/billingWebhook.ts:4",
-        "backend/src/routes/existingSource.ts:27",
+        "backend/src/routes/existingSource.ts:29",
         "backend/src/routes/messageShares.ts:4",
         "backend/src/routes/notifications.ts:2",
         "backend/src/routes/operations.ts:4",
@@ -24611,6 +24984,7 @@
         "backend/src/ai/universal/resumeProjectContext.test.ts:6",
         "backend/src/ai/usageAccounting.test.ts:4",
         "backend/src/e2e/xrogaGoldenJourneys.test.ts:10",
+        "backend/src/existingSource/archive/archiveStore.ts:6",
         "backend/src/existingSource/intelligence/codeIndexStore.ts:7",
         "backend/src/existingSource/store.ts:7",
         "backend/src/middleware/admin.test.ts:7",
@@ -24623,7 +24997,8 @@
         "backend/src/routes/browserRuns.ts:16",
         "backend/src/routes/drive.test.ts:2",
         "backend/src/routes/existingSource.test.ts:9",
-        "backend/src/routes/existingSource.ts:29",
+        "backend/src/routes/existingSource.ts:31",
+        "backend/src/routes/existingSourceArchive.test.ts:13",
         "backend/src/routes/existingSourceIntelligence.test.ts:12",
         "backend/src/routes/github.oauth.test.ts:6",
         "backend/src/routes/github.ts:5",
@@ -24773,6 +25148,7 @@
         "backend/src/routes/browserRuns.test.ts",
         "backend/src/routes/drive.test.ts",
         "backend/src/routes/existingSource.test.ts",
+        "backend/src/routes/existingSourceArchive.test.ts",
         "backend/src/routes/existingSourceIntelligence.test.ts",
         "backend/src/routes/github.oauth.test.ts",
         "backend/src/routes/profile.deletionIdentity.test.ts",
@@ -24870,7 +25246,7 @@
         "backend/src/ai/runStore.ts:13",
         "backend/src/routes/browserRuns.ts:15",
         "backend/src/routes/drive.ts:8",
-        "backend/src/routes/existingSource.ts:28",
+        "backend/src/routes/existingSource.ts:30",
         "backend/src/routes/projectRuntime.ts:9",
         "backend/src/routes/swarm.ts:5",
         "backend/src/routes/terminalSessions.ts:18",
@@ -26993,7 +27369,7 @@
         "backend/src/ai/pipeline.ts:160",
         "backend/src/ai/softwareAgent/softwareAgentGitHubPersistence.ts:13",
         "backend/src/ai/universal/semanticRequestPlanner.ts:58",
-        "backend/src/routes/existingSource.ts:26",
+        "backend/src/routes/existingSource.ts:28",
         "backend/src/routes/github.settings.test.ts:17",
         "backend/src/routes/github.ts:9",
         "backend/src/security/tenantIsolation.local.integration.ts:40",
@@ -53849,7 +54225,7 @@
       "id": "surface:1c7652dac59ae17c2174",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/existing-source/ExistingSourcePanel.tsx",
-      "sha256": "15db940b7f874a23bdf503a415561b9e791748537a7bcf0ac6c72a71fdda8df9",
+      "sha256": "44299b0edd447d495213fa868a126e832cfebd0468527415c93199c4a1d36c9c",
       "symbols": [
         "ExistingSourcePanel",
         "STATE_LABEL",
@@ -53861,6 +54237,7 @@
         "crumbs",
         "current",
         "id",
+        "importZip",
         "link",
         "loadChoices",
         "loadLinks",
@@ -53871,6 +54248,7 @@
         "refresh",
         "runMap",
         "short",
+        "skipped",
         "unlink",
         "verified",
         "visibleChoices"
@@ -85824,8 +86202,9 @@
       "id": "surface:0581b211a5fccaf8c38e",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/existingSourceApi.ts",
-      "sha256": "623c7a1146ad82d3dfc391fa69e888a17feeeb8e088501219b1a03da5b40e008",
+      "sha256": "2105cf83f4d8d04d302d5c0139f2d0d48830892285b05c905065746fceb38bfd",
       "symbols": [
+        "ArchiveImport",
         "BindingState",
         "CodeMapBuild",
         "CodeMapStatus",
@@ -101061,7 +101440,7 @@
       "id": "surface:a741178549139c6d7626",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/schema-catalog.mjs",
-      "sha256": "29cbaa7173add62e97bb737dcd081280a7ae0b7fd8ea87f77784e33f38964aa1",
+      "sha256": "7dfb3b1f3dd01f36c39761cd933f2c5f1135d37bd1dac91d333ab5da06f50abf",
       "symbols": [
         "assertDisposableSource",
         "collectSchemaCatalog",
@@ -105868,9 +106247,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:aec4ef2cd873579c768f",
+      "id": "registration:f084b90c1a5e7a590fbe",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 85,
+      "line": 91,
       "receiver": "router",
       "method": "use",
       "path": null,
@@ -105880,9 +106259,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:5fa82e00c1877a749cb4",
+      "id": "registration:17410559a0cdb3eb0f63",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 86,
+      "line": 92,
       "receiver": "router",
       "method": "use",
       "path": null,
@@ -105892,9 +106271,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:3a79e9789167c39d445e",
+      "id": "registration:c32e19d35f8877e90521",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 105,
+      "line": 111,
       "receiver": "router",
       "method": "get",
       "path": "/repositories",
@@ -105906,9 +106285,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:1c0dcf90127c99768374",
+      "id": "registration:d7ef0cdd33b81e184c1b",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 106,
+      "line": 112,
       "receiver": "router",
       "method": "post",
       "path": "/links",
@@ -105920,9 +106299,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:50cd3d0cb4a1eb856c40",
+      "id": "registration:2769402d771fb8c8ca3a",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 111,
+      "line": 117,
       "receiver": "router",
       "method": "get",
       "path": "/links",
@@ -105934,9 +106313,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:2fa6485edab04921ef6a",
+      "id": "registration:492fd3e6d1ba7fe4705a",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 112,
+      "line": 118,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id",
@@ -105948,9 +106327,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:6b60d390396d774acdb7",
+      "id": "registration:ffa81c090145f82935c5",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 113,
+      "line": 119,
       "receiver": "router",
       "method": "post",
       "path": "/links/:id/refresh",
@@ -105962,9 +106341,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:1880ffeba93423130b8c",
+      "id": "registration:b119ce8d36640a674e84",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 114,
+      "line": 120,
       "receiver": "router",
       "method": "delete",
       "path": "/links/:id",
@@ -105976,9 +106355,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:2051bb5cc7f62849e935",
+      "id": "registration:2945a950b3ad1530d9d2",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 115,
+      "line": 121,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/directory",
@@ -105990,9 +106369,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:73b4e2144cbe936bbb7c",
+      "id": "registration:e3b02caced82c1078a7c",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 118,
+      "line": 124,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/index",
@@ -106004,9 +106383,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:a9df50dff39f13a4501f",
+      "id": "registration:a9fb892913f7f0de4f60",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 119,
+      "line": 125,
       "receiver": "router",
       "method": "post",
       "path": "/links/:id/index",
@@ -106018,9 +106397,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:74e8d67cdeddc2cc951d",
+      "id": "registration:e025fac84e3fdbf7c3d7",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 124,
+      "line": 130,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/search",
@@ -106032,9 +106411,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:763e323cab6186859432",
+      "id": "registration:4e9bf7837d47e00f2558",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 125,
+      "line": 131,
       "receiver": "router",
       "method": "post",
       "path": "/links/:id/locate",
@@ -106046,9 +106425,9 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:359bd13b3737f6ab76cf",
+      "id": "registration:6935638a749c3d7b20a4",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 126,
+      "line": 132,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/neighborhood",
@@ -106060,9 +106439,24 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:362a344107f5ed350d2c",
+      "id": "registration:102f39234e6e4e0283e0",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 127,
+      "line": 133,
+      "receiver": "router",
+      "method": "post",
+      "path": "/archives",
+      "handlers": [
+        "express.raw()",
+        "handle()"
+      ],
+      "scope": "function",
+      "functionName": "createExistingSourceRouter",
+      "inlineResponse": false
+    },
+    {
+      "id": "registration:adecfada63a9c38f8cf7",
+      "sourcePath": "backend/src/routes/existingSource.ts",
+      "line": 140,
       "receiver": "router",
       "method": "get",
       "path": "/links/:id/file",
@@ -106072,6 +106466,18 @@
       "scope": "function",
       "functionName": "createExistingSourceRouter",
       "inlineResponse": false
+    },
+    {
+      "id": "registration:0be2c3a8880e36059ef1",
+      "sourcePath": "backend/src/routes/existingSource.ts",
+      "line": 141,
+      "receiver": "router",
+      "method": "use",
+      "path": null,
+      "handlers": [],
+      "scope": "function",
+      "functionName": "createExistingSourceRouter",
+      "inlineResponse": true
     },
     {
       "id": "registration:1d2e11c6b27ece6f348c",
@@ -111023,10 +111429,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:224011b7b1400f90fb0e",
-      "registrationId": "registration:3a79e9789167c39d445e",
+      "id": "route:e0edfc2b7220d1de700b",
+      "registrationId": "registration:c32e19d35f8877e90521",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 105,
+      "line": 111,
       "method": "GET",
       "path": "/api/existing-source/repositories",
       "mountChain": [
@@ -111040,10 +111446,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:0fe41c3e0009cc13278c",
-      "registrationId": "registration:1c0dcf90127c99768374",
+      "id": "route:e8088478197c48feb7d0",
+      "registrationId": "registration:d7ef0cdd33b81e184c1b",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 106,
+      "line": 112,
       "method": "POST",
       "path": "/api/existing-source/links",
       "mountChain": [
@@ -111057,10 +111463,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:c3bbdb09aceb0168c433",
-      "registrationId": "registration:50cd3d0cb4a1eb856c40",
+      "id": "route:7d74eb2061238d8976c5",
+      "registrationId": "registration:2769402d771fb8c8ca3a",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 111,
+      "line": 117,
       "method": "GET",
       "path": "/api/existing-source/links",
       "mountChain": [
@@ -111074,10 +111480,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:21af3699be8eb21efb03",
-      "registrationId": "registration:2fa6485edab04921ef6a",
+      "id": "route:f4dbc14b5b770cd831d5",
+      "registrationId": "registration:492fd3e6d1ba7fe4705a",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 112,
+      "line": 118,
       "method": "GET",
       "path": "/api/existing-source/links/:id",
       "mountChain": [
@@ -111091,10 +111497,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:3a8742f61384da1520cd",
-      "registrationId": "registration:6b60d390396d774acdb7",
+      "id": "route:1e4926ba55f44898cdcf",
+      "registrationId": "registration:ffa81c090145f82935c5",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 113,
+      "line": 119,
       "method": "POST",
       "path": "/api/existing-source/links/:id/refresh",
       "mountChain": [
@@ -111108,10 +111514,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:a3458c0e6afb037d88a3",
-      "registrationId": "registration:1880ffeba93423130b8c",
+      "id": "route:fb842a9468ebf5db5e25",
+      "registrationId": "registration:b119ce8d36640a674e84",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 114,
+      "line": 120,
       "method": "DELETE",
       "path": "/api/existing-source/links/:id",
       "mountChain": [
@@ -111125,10 +111531,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:87e15187325c4b7ffb8d",
-      "registrationId": "registration:2051bb5cc7f62849e935",
+      "id": "route:8c58bc807a6034f0bacc",
+      "registrationId": "registration:2945a950b3ad1530d9d2",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 115,
+      "line": 121,
       "method": "GET",
       "path": "/api/existing-source/links/:id/directory",
       "mountChain": [
@@ -111142,10 +111548,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:363f34d34655f53071a3",
-      "registrationId": "registration:73b4e2144cbe936bbb7c",
+      "id": "route:0cb6879bea52a08a6cba",
+      "registrationId": "registration:e3b02caced82c1078a7c",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 118,
+      "line": 124,
       "method": "GET",
       "path": "/api/existing-source/links/:id/index",
       "mountChain": [
@@ -111159,10 +111565,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:549b998ea0087fcad4b4",
-      "registrationId": "registration:a9df50dff39f13a4501f",
+      "id": "route:187f477004392ef144fe",
+      "registrationId": "registration:a9fb892913f7f0de4f60",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 119,
+      "line": 125,
       "method": "POST",
       "path": "/api/existing-source/links/:id/index",
       "mountChain": [
@@ -111176,10 +111582,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:5dedb28f6a5109955b92",
-      "registrationId": "registration:74e8d67cdeddc2cc951d",
+      "id": "route:887655ee2f05405ccf07",
+      "registrationId": "registration:e025fac84e3fdbf7c3d7",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 124,
+      "line": 130,
       "method": "GET",
       "path": "/api/existing-source/links/:id/search",
       "mountChain": [
@@ -111193,10 +111599,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:2c1198a39d44b0886da0",
-      "registrationId": "registration:763e323cab6186859432",
+      "id": "route:401aae90e1da4e67b3eb",
+      "registrationId": "registration:4e9bf7837d47e00f2558",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 125,
+      "line": 131,
       "method": "POST",
       "path": "/api/existing-source/links/:id/locate",
       "mountChain": [
@@ -111210,10 +111616,10 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:c38439c2613c035bf3d1",
-      "registrationId": "registration:359bd13b3737f6ab76cf",
+      "id": "route:40ce49817ccfaa660b38",
+      "registrationId": "registration:6935638a749c3d7b20a4",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 126,
+      "line": 132,
       "method": "GET",
       "path": "/api/existing-source/links/:id/neighborhood",
       "mountChain": [
@@ -111227,10 +111633,27 @@
       "reason": "Registration is conditional or inside a function; execution must be verified."
     },
     {
-      "id": "route:220053bbcdc7af85a5b0",
-      "registrationId": "registration:362a344107f5ed350d2c",
+      "id": "route:e33c8fd88cbe0fb43d2e",
+      "registrationId": "registration:102f39234e6e4e0283e0",
       "sourcePath": "backend/src/routes/existingSource.ts",
-      "line": 127,
+      "line": 133,
+      "method": "POST",
+      "path": "/api/existing-source/archives",
+      "mountChain": [
+        "backend/src/index.ts:258"
+      ],
+      "authBoundary": [
+        "authMiddleware"
+      ],
+      "reachable": false,
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "reason": "Registration is conditional or inside a function; execution must be verified."
+    },
+    {
+      "id": "route:523a5dbea3ac4b561bc1",
+      "registrationId": "registration:adecfada63a9c38f8cf7",
+      "sourcePath": "backend/src/routes/existingSource.ts",
+      "line": 140,
       "method": "GET",
       "path": "/api/existing-source/links/:id/file",
       "mountChain": [
@@ -113919,6 +114342,13 @@
       "version": "20261027010000",
       "order": 150,
       "sha256": "82b9a979b067640eb277b1115c39a3021d55fb6f83daf780a76bb920bbafdc69"
+    },
+    {
+      "id": "migration:1d5e58072ccc40600bd4",
+      "sourcePath": "supabase/migrations/20261027020000_existing_source_archives.sql",
+      "version": "20261027020000",
+      "order": 151,
+      "sha256": "d84a8e2fd4ce32117f3c88a429c7c3a6183cedccce8ff8e799950f50c2901c99"
     }
   ],
   "workflows": [
@@ -115327,9 +115757,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:2bbf91ae4c1898563383",
+      "id": "finding:33106266ca15937f7554",
       "sourcePath": "frontend/src/components/existing-source/ExistingSourcePanel.tsx",
-      "line": 178,
+      "line": 192,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -115337,9 +115767,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:039b6827afeb5c098dd7",
+      "id": "finding:4071287aeca2bda2b9b1",
       "sourcePath": "frontend/src/components/existing-source/ExistingSourcePanel.tsx",
-      "line": 195,
+      "line": 209,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -115347,9 +115777,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:72b7b3b2dea3b080f051",
+      "id": "finding:45974773cbfc62c5c629",
       "sourcePath": "frontend/src/components/existing-source/ExistingSourcePanel.tsx",
-      "line": 312,
+      "line": 335,
       "kind": "PLACEHOLDER",
       "reachable": true,
       "state": "PARTIAL",
@@ -121880,6 +122310,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:12544fd75cd3bbfd6698",
+      "sourcePath": "backend/src/existingSource/archive/zipReader.test.ts",
+      "declaredTests": 11,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:67789138b8724af9e26e",
       "sourcePath": "backend/src/existingSource/intelligence/languageAdapters.test.ts",
       "declaredTests": 17,
@@ -122549,6 +122986,13 @@
     {
       "id": "test-suite:0190ed87d2fef98725fe",
       "sourcePath": "backend/src/routes/existingSource.test.ts",
+      "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:6750bf36cb976a4f18d5",
+      "sourcePath": "backend/src/routes/existingSourceArchive.test.ts",
       "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []

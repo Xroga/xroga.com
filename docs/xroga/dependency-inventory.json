@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "8a623dbc9e7bbb9b439e04422eeeca2ab6e3cd3c",
+  "source_sha": "914c32f013219006867a7d71865eacd57c9f84ce",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -15348,6 +15348,26 @@
       "sha256": "231179f594ca9866269c572e7b47579e2616a38f49140c8219c4a931106396a2"
     },
     {
+      "path": "backend/src/existingSource/archive/archivePort.ts",
+      "sha256": "cc065addef0a456dc199d54aa77041f30679a6c7bad2c93748f76e5f1da19ee5"
+    },
+    {
+      "path": "backend/src/existingSource/archive/archiveStore.ts",
+      "sha256": "325eb9dae565739801c9f650b976dcef74fc1fef3d4dcda699ed5d1968548c65"
+    },
+    {
+      "path": "backend/src/existingSource/archive/importer.ts",
+      "sha256": "06de25c3402ad305fb056ccafd7d1d321242da7a47c4b8e2ca28c908d4f8c556"
+    },
+    {
+      "path": "backend/src/existingSource/archive/zipBuilder.testsupport.ts",
+      "sha256": "02ab75aa40f69b66a0806b975b2e252995904c3ac977bcf5471578a2b474b252"
+    },
+    {
+      "path": "backend/src/existingSource/archive/zipReader.ts",
+      "sha256": "70a844ce654c1ad5980e7940492976ddf31aabe154f69c63db06f355cfda7d7f"
+    },
+    {
       "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
       "sha256": "403a6a7be03d65efb286621fea14d8e58c93ece563433848664f3011b10e23e5"
     },
@@ -15397,11 +15417,11 @@
     },
     {
       "path": "backend/src/existingSource/service.ts",
-      "sha256": "b6fd1f0a369a060583f7538cd076b95e930287276237a7692430fc7db2d39264"
+      "sha256": "12fbc9852cc0f58c5543c2cf618c8f487230ed2f72fb57613450bff18c78f225"
     },
     {
       "path": "backend/src/existingSource/store.ts",
-      "sha256": "482a1a0757663a887c0e23c7affaeb9e7671ead144a3631702c42a5da202b9a7"
+      "sha256": "c991402af3690290d446bc87e03d0e1d41b976f5c74a5b0b7f4efbfa35c5616d"
     },
     {
       "path": "backend/src/existingSource/treeReader.ts",
@@ -15409,7 +15429,7 @@
     },
     {
       "path": "backend/src/existingSource/types.ts",
-      "sha256": "ff493e3b8699ddba0766c380c7c46922038ba4d0f6645813045960fbbad89844"
+      "sha256": "47be50fb97230abbd2deccab0ee88de6f1be45e73bb019679e8b25f9f1b01709"
     },
     {
       "path": "backend/src/growth/activationDefinition.local.integration.ts",
@@ -15937,7 +15957,7 @@
     },
     {
       "path": "backend/src/routes/existingSource.ts",
-      "sha256": "7307723e342095966515d16644e6cc39cbbed34f9a8cdab9807565763a34232b"
+      "sha256": "1b127c3f0c83daad624b3af701c990b65b76e7a49f4f0be423bde24ee8d00f02"
     },
     {
       "path": "backend/src/routes/github.ts",
@@ -18237,7 +18257,7 @@
     },
     {
       "path": "frontend/src/components/existing-source/ExistingSourcePanel.tsx",
-      "sha256": "15db940b7f874a23bdf503a415561b9e791748537a7bcf0ac6c72a71fdda8df9"
+      "sha256": "44299b0edd447d495213fa868a126e832cfebd0468527415c93199c4a1d36c9c"
     },
     {
       "path": "frontend/src/components/feedback/FeedbackModal.tsx",
@@ -20313,7 +20333,7 @@
     },
     {
       "path": "frontend/src/lib/existingSourceApi.ts",
-      "sha256": "623c7a1146ad82d3dfc391fa69e888a17feeeb8e088501219b1a03da5b40e008"
+      "sha256": "2105cf83f4d8d04d302d5c0139f2d0d48830892285b05c905065746fceb38bfd"
     },
     {
       "path": "frontend/src/lib/exportUserData.ts",
@@ -22138,7 +22158,7 @@
       "hostname": "github.com",
       "protocol": "https:",
       "path": "backend/src/existingSource/service.ts",
-      "line": 137,
+      "line": 150,
       "credentialsInUrl": false
     },
     {
@@ -29067,6 +29087,55 @@
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
+      "path": "backend/src/existingSource/archive/archivePort.ts",
+      "line": 35,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/archive/archivePort.ts",
+      "line": 36,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/archive/archivePort.ts",
+      "line": 38,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/archive/archivePort.ts",
+      "line": 43,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/archive/archiveStore.ts",
+      "line": 22,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/archive/importer.ts",
+      "line": 30,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/existingSource/archive/zipReader.ts",
+      "line": 58,
+      "scope": "FUNCTION_LOCAL",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
       "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
       "line": 23,
       "scope": "INSTANCE_LIFETIME",
@@ -29551,21 +29620,21 @@
     },
     {
       "path": "backend/src/existingSource/service.ts",
-      "line": 67,
+      "line": 72,
       "scope": "MODULE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/service.ts",
-      "line": 320,
+      "line": 366,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/existingSource/store.ts",
-      "line": 43,
+      "line": 45,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

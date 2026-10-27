@@ -1,24 +1,24 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "dfc254b0c25f3e8cb5828ffe5d8e6900e98b6f842fc8536979f313facb3643be",
+  "reviewRegistrySha256": "0d17fe79b3093d3988aa19ab278e7dbee618fa43a833827321ff6bc26be560c0",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 190,
-    "persistenceCandidates": 817,
+    "privilegedFactorySites": 191,
+    "persistenceCandidates": 831,
     "ownerPredicateCandidates": 196,
-    "reviewRequired": 116,
-    "reviewedCandidates": 701,
-    "unresolvedSafetyCandidates": 143,
+    "reviewRequired": 123,
+    "reviewedCandidates": 708,
+    "unresolvedSafetyCandidates": 150,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 116,
-    "SCOPED_BOUNDARY": 470,
+    "REVIEW_REQUIRED": 123,
+    "SCOPED_BOUNDARY": 477,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 164,
     "REVIEWED_GAP": 27
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 106,
-    "unresolvedCandidateBoundaries": 711,
+    "unresolvedCandidateBoundaries": 725,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3100,6 +3100,62 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "16dc0ea6fd21d40ad8e9"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "b2a375a84d2fd9d9c200"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "44b0577040f9bc45c8fd"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "1462cce2400ff1ff74dd"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "36a4be46204b54c66052"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "215eb20e9ecb7c167a0a"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "7460fa5f6564720b37e8"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "52bddd74b74f0cfceb7a"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "b5ddf5a580c106dd4d58"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "d87ad832b03170e23597"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "9922ade4ab9f1ee2c2c8"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "97611635bb18f393ecb5"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "f72efa09e6ebb87888d5"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "1100469fbb879e4a52ae"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "755cb4e0c8609b7f3263"
       },
       {
@@ -3136,43 +3192,43 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "d6724bf9c6b7bf16bd20"
+        "id": "936bc3ebf11071ceb84e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6bdf279a99f5db57b5b1"
+        "id": "fa44f4bca75657242c59"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "557dba4cd9a192c4ef9a"
+        "id": "57c0b7d337dd9779cc38"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "47fe54c0a9f29894d88e"
+        "id": "d49c4193d7a90899201b"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "b3fb5f6c257d06654516"
+        "id": "74706921d3ae371b08ba"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "4e9ad4607a5fa9585281"
+        "id": "b5be431c1c64ba30c0e0"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "81763bb263b8c72c0f81"
+        "id": "feb636ac7aa3a766447d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "1b95a8316c7ecc3a46eb"
+        "id": "134cba0a6cfa1e5d3a17"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6aabb0af480bb116fac2"
+        "id": "447d489f76fad7216f19"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "504f578d2e2cf0b1f1ab"
+        "id": "cbd22555cfde192d343d"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -3436,15 +3492,15 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "ce3faeca57669ab800a1"
+        "id": "b0c36d1f7f5b256a0a2a"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "f772fb6d8d34bb63ea22"
+        "id": "672b64d503852941df0c"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "2c90cbd312221c19cb27"
+        "id": "a17e998b82a209ec45dd"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4664,6 +4720,34 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "16dc0ea6fd21d40ad8e9"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "b2a375a84d2fd9d9c200"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "44b0577040f9bc45c8fd"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "9922ade4ab9f1ee2c2c8"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "97611635bb18f393ecb5"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "f72efa09e6ebb87888d5"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "1100469fbb879e4a52ae"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "755cb4e0c8609b7f3263"
       },
       {
@@ -4672,7 +4756,7 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
-        "id": "d6724bf9c6b7bf16bd20"
+        "id": "936bc3ebf11071ceb84e"
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
@@ -5628,6 +5712,34 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "1462cce2400ff1ff74dd"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "36a4be46204b54c66052"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "215eb20e9ecb7c167a0a"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "7460fa5f6564720b37e8"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "52bddd74b74f0cfceb7a"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "b5ddf5a580c106dd4d58"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
+        "id": "d87ad832b03170e23597"
+      },
+      {
+        "code": "UNSUPPORTED_MANUAL_DISPOSITION",
         "id": "7a2986f39f4586a2f168"
       },
       {
@@ -5656,39 +5768,39 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "6bdf279a99f5db57b5b1"
+        "id": "fa44f4bca75657242c59"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "557dba4cd9a192c4ef9a"
+        "id": "57c0b7d337dd9779cc38"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "47fe54c0a9f29894d88e"
+        "id": "d49c4193d7a90899201b"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "b3fb5f6c257d06654516"
+        "id": "74706921d3ae371b08ba"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "4e9ad4607a5fa9585281"
+        "id": "b5be431c1c64ba30c0e0"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "81763bb263b8c72c0f81"
+        "id": "feb636ac7aa3a766447d"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "1b95a8316c7ecc3a46eb"
+        "id": "134cba0a6cfa1e5d3a17"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "6aabb0af480bb116fac2"
+        "id": "447d489f76fad7216f19"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "504f578d2e2cf0b1f1ab"
+        "id": "cbd22555cfde192d343d"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -6184,15 +6296,15 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "ce3faeca57669ab800a1"
+        "id": "b0c36d1f7f5b256a0a2a"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "f772fb6d8d34bb63ea22"
+        "id": "672b64d503852941df0c"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "2c90cbd312221c19cb27"
+        "id": "a17e998b82a209ec45dd"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -7485,11 +7597,11 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 817,
+    "currentCallers": 831,
     "structuredVerified": 106,
-    "structuredUnproven": 711,
-    "manualUnresolved": 143,
-    "manualUnsupported": 568,
+    "structuredUnproven": 725,
+    "manualUnresolved": 150,
+    "manualUnsupported": 575,
     "agreedVerified": 106,
     "proofAwaitingManualReconciliation": 0
   },
@@ -10467,6 +10579,230 @@
       }
     },
     {
+      "id": "16dc0ea6fd21d40ad8e9",
+      "path": "backend/src/existingSource/archive/archivePort.ts",
+      "line": 23,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "cc065addef0a456dc199d54aa77041f30679a6c7bad2c93748f76e5f1da19ee5"
+    },
+    {
+      "id": "b2a375a84d2fd9d9c200",
+      "path": "backend/src/existingSource/archive/archivePort.ts",
+      "line": 23,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "cc065addef0a456dc199d54aa77041f30679a6c7bad2c93748f76e5f1da19ee5"
+    },
+    {
+      "id": "44b0577040f9bc45c8fd",
+      "path": "backend/src/existingSource/archive/archivePort.ts",
+      "line": 84,
+      "enclosing": "getBlob",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "cc065addef0a456dc199d54aa77041f30679a6c7bad2c93748f76e5f1da19ee5"
+    },
+    {
+      "id": "1462cce2400ff1ff74dd",
+      "path": "backend/src/existingSource/archive/archiveStore.ts",
+      "line": 41,
+      "enclosing": "db",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "325eb9dae565739801c9f650b976dcef74fc1fef3d4dcda699ed5d1968548c65",
+      "semanticReview": {
+        "authority": "SupabaseArchiveStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as a missing binding.",
+        "reason": "The table is service-role only with RLS enabled and no public grants; every read, upsert, prune and delete is filtered by the verified owner and the binding id, and the archive text is removed with its binding on unlink.",
+        "evidence": [
+          {
+            "path": "backend/src/existingSource/archive/archiveStore.ts",
+            "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new ExistingSourceError('BINDING_NOT_FOUND'"
+          }
+        ]
+      }
+    },
+    {
+      "id": "36a4be46204b54c66052",
+      "path": "backend/src/existingSource/archive/archiveStore.ts",
+      "line": 49,
+      "enclosing": "save",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "existing_source_archives",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "325eb9dae565739801c9f650b976dcef74fc1fef3d4dcda699ed5d1968548c65",
+      "semanticReview": {
+        "authority": "SupabaseArchiveStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as a missing binding.",
+        "reason": "The table is service-role only with RLS enabled and no public grants; every read, upsert, prune and delete is filtered by the verified owner and the binding id, and the archive text is removed with its binding on unlink.",
+        "evidence": [
+          {
+            "path": "backend/src/existingSource/archive/archiveStore.ts",
+            "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new ExistingSourceError('BINDING_NOT_FOUND'"
+          }
+        ]
+      }
+    },
+    {
+      "id": "215eb20e9ecb7c167a0a",
+      "path": "backend/src/existingSource/archive/archiveStore.ts",
+      "line": 53,
+      "enclosing": "save",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "existing_source_archives",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "325eb9dae565739801c9f650b976dcef74fc1fef3d4dcda699ed5d1968548c65",
+      "semanticReview": {
+        "authority": "SupabaseArchiveStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as a missing binding.",
+        "reason": "The table is service-role only with RLS enabled and no public grants; every read, upsert, prune and delete is filtered by the verified owner and the binding id, and the archive text is removed with its binding on unlink.",
+        "evidence": [
+          {
+            "path": "backend/src/existingSource/archive/archiveStore.ts",
+            "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new ExistingSourceError('BINDING_NOT_FOUND'"
+          }
+        ]
+      }
+    },
+    {
+      "id": "7460fa5f6564720b37e8",
+      "path": "backend/src/existingSource/archive/archiveStore.ts",
+      "line": 55,
+      "enclosing": "save",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "existing_source_archives",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "325eb9dae565739801c9f650b976dcef74fc1fef3d4dcda699ed5d1968548c65",
+      "semanticReview": {
+        "authority": "SupabaseArchiveStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as a missing binding.",
+        "reason": "The table is service-role only with RLS enabled and no public grants; every read, upsert, prune and delete is filtered by the verified owner and the binding id, and the archive text is removed with its binding on unlink.",
+        "evidence": [
+          {
+            "path": "backend/src/existingSource/archive/archiveStore.ts",
+            "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new ExistingSourceError('BINDING_NOT_FOUND'"
+          }
+        ]
+      }
+    },
+    {
+      "id": "52bddd74b74f0cfceb7a",
+      "path": "backend/src/existingSource/archive/archiveStore.ts",
+      "line": 65,
+      "enclosing": "load",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "existing_source_archives",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "325eb9dae565739801c9f650b976dcef74fc1fef3d4dcda699ed5d1968548c65",
+      "semanticReview": {
+        "authority": "SupabaseArchiveStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as a missing binding.",
+        "reason": "The table is service-role only with RLS enabled and no public grants; every read, upsert, prune and delete is filtered by the verified owner and the binding id, and the archive text is removed with its binding on unlink.",
+        "evidence": [
+          {
+            "path": "backend/src/existingSource/archive/archiveStore.ts",
+            "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new ExistingSourceError('BINDING_NOT_FOUND'"
+          }
+        ]
+      }
+    },
+    {
+      "id": "b5ddf5a580c106dd4d58",
+      "path": "backend/src/existingSource/archive/archiveStore.ts",
+      "line": 72,
+      "enclosing": "attach",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "existing_source_archives",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "325eb9dae565739801c9f650b976dcef74fc1fef3d4dcda699ed5d1968548c65",
+      "semanticReview": {
+        "authority": "SupabaseArchiveStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as a missing binding.",
+        "reason": "The table is service-role only with RLS enabled and no public grants; every read, upsert, prune and delete is filtered by the verified owner and the binding id, and the archive text is removed with its binding on unlink.",
+        "evidence": [
+          {
+            "path": "backend/src/existingSource/archive/archiveStore.ts",
+            "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new ExistingSourceError('BINDING_NOT_FOUND'"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d87ad832b03170e23597",
+      "path": "backend/src/existingSource/archive/archiveStore.ts",
+      "line": 78,
+      "enclosing": "deleteForBinding",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "existing_source_archives",
+      "ownerPredicateCandidate": false,
+      "review": "SCOPED_BOUNDARY",
+      "sourceSha256": "325eb9dae565739801c9f650b976dcef74fc1fef3d4dcda699ed5d1968548c65",
+      "semanticReview": {
+        "authority": "SupabaseArchiveStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as a missing binding.",
+        "reason": "The table is service-role only with RLS enabled and no public grants; every read, upsert, prune and delete is filtered by the verified owner and the binding id, and the archive text is removed with its binding on unlink.",
+        "evidence": [
+          {
+            "path": "backend/src/existingSource/archive/archiveStore.ts",
+            "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new ExistingSourceError('BINDING_NOT_FOUND'"
+          }
+        ]
+      }
+    },
+    {
+      "id": "9922ade4ab9f1ee2c2c8",
+      "path": "backend/src/existingSource/archive/zipBuilder.testsupport.ts",
+      "line": 22,
+      "enclosing": "buildZip",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "02ab75aa40f69b66a0806b975b2e252995904c3ac977bcf5471578a2b474b252"
+    },
+    {
+      "id": "97611635bb18f393ecb5",
+      "path": "backend/src/existingSource/archive/zipBuilder.testsupport.ts",
+      "line": 24,
+      "enclosing": "buildZip",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "02ab75aa40f69b66a0806b975b2e252995904c3ac977bcf5471578a2b474b252"
+    },
+    {
+      "id": "f72efa09e6ebb87888d5",
+      "path": "backend/src/existingSource/archive/zipBuilder.testsupport.ts",
+      "line": 39,
+      "enclosing": "buildZip",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "02ab75aa40f69b66a0806b975b2e252995904c3ac977bcf5471578a2b474b252"
+    },
+    {
+      "id": "1100469fbb879e4a52ae",
+      "path": "backend/src/existingSource/archive/zipReader.ts",
+      "line": 97,
+      "enclosing": "readZip",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "70a844ce654c1ad5980e7940492976ddf31aabe154f69c63db06f355cfda7d7f"
+    },
+    {
       "id": "755cb4e0c8609b7f3263",
       "path": "backend/src/existingSource/fakeGitHub.testsupport.ts",
       "line": 149,
@@ -10636,26 +10972,26 @@
       }
     },
     {
-      "id": "d6724bf9c6b7bf16bd20",
+      "id": "936bc3ebf11071ceb84e",
       "path": "backend/src/existingSource/service.ts",
-      "line": 304,
+      "line": 350,
       "enclosing": "openForIndex",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "b6fd1f0a369a060583f7538cd076b95e930287276237a7692430fc7db2d39264"
+      "sourceSha256": "12fbc9852cc0f58c5543c2cf618c8f487230ed2f72fb57613450bff18c78f225"
     },
     {
-      "id": "6bdf279a99f5db57b5b1",
+      "id": "fa44f4bca75657242c59",
       "path": "backend/src/existingSource/store.ts",
-      "line": 119,
+      "line": 121,
       "enclosing": "db",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "482a1a0757663a887c0e23c7affaeb9e7671ead144a3631702c42a5da202b9a7",
+      "sourceSha256": "c991402af3690290d446bc87e03d0e1d41b976f5c74a5b0b7f4efbfa35c5616d",
       "semanticReview": {
         "authority": "SupabaseSourceBindingStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as not found. Every query on existing_source_projects carries an explicit .eq(owner_user_id, owner) predicate.",
         "reason": "The table is service-role only with RLS enabled and no public grants; reads, upserts, updates and the bulk access-lost update are all filtered by the verified owner, and a binding id from another owner reads as absent.",
@@ -10668,15 +11004,15 @@
       }
     },
     {
-      "id": "557dba4cd9a192c4ef9a",
+      "id": "57c0b7d337dd9779cc38",
       "path": "backend/src/existingSource/store.ts",
-      "line": 130,
+      "line": 132,
       "enclosing": "upsert",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "existing_source_projects",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "482a1a0757663a887c0e23c7affaeb9e7671ead144a3631702c42a5da202b9a7",
+      "sourceSha256": "c991402af3690290d446bc87e03d0e1d41b976f5c74a5b0b7f4efbfa35c5616d",
       "semanticReview": {
         "authority": "SupabaseSourceBindingStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as not found. Every query on existing_source_projects carries an explicit .eq(owner_user_id, owner) predicate.",
         "reason": "The table is service-role only with RLS enabled and no public grants; reads, upserts, updates and the bulk access-lost update are all filtered by the verified owner, and a binding id from another owner reads as absent.",
@@ -10689,15 +11025,15 @@
       }
     },
     {
-      "id": "47fe54c0a9f29894d88e",
+      "id": "d49c4193d7a90899201b",
       "path": "backend/src/existingSource/store.ts",
-      "line": 139,
+      "line": 141,
       "enclosing": "upsert",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "existing_source_projects",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "482a1a0757663a887c0e23c7affaeb9e7671ead144a3631702c42a5da202b9a7",
+      "sourceSha256": "c991402af3690290d446bc87e03d0e1d41b976f5c74a5b0b7f4efbfa35c5616d",
       "semanticReview": {
         "authority": "SupabaseSourceBindingStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as not found. Every query on existing_source_projects carries an explicit .eq(owner_user_id, owner) predicate.",
         "reason": "The table is service-role only with RLS enabled and no public grants; reads, upserts, updates and the bulk access-lost update are all filtered by the verified owner, and a binding id from another owner reads as absent.",
@@ -10710,15 +11046,15 @@
       }
     },
     {
-      "id": "b3fb5f6c257d06654516",
+      "id": "74706921d3ae371b08ba",
       "path": "backend/src/existingSource/store.ts",
-      "line": 143,
+      "line": 145,
       "enclosing": "upsert",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "existing_source_projects",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "482a1a0757663a887c0e23c7affaeb9e7671ead144a3631702c42a5da202b9a7",
+      "sourceSha256": "c991402af3690290d446bc87e03d0e1d41b976f5c74a5b0b7f4efbfa35c5616d",
       "semanticReview": {
         "authority": "SupabaseSourceBindingStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as not found. Every query on existing_source_projects carries an explicit .eq(owner_user_id, owner) predicate.",
         "reason": "The table is service-role only with RLS enabled and no public grants; reads, upserts, updates and the bulk access-lost update are all filtered by the verified owner, and a binding id from another owner reads as absent.",
@@ -10731,15 +11067,15 @@
       }
     },
     {
-      "id": "4e9ad4607a5fa9585281",
+      "id": "b5be431c1c64ba30c0e0",
       "path": "backend/src/existingSource/store.ts",
-      "line": 146,
+      "line": 148,
       "enclosing": "upsert",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "existing_source_projects",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "482a1a0757663a887c0e23c7affaeb9e7671ead144a3631702c42a5da202b9a7",
+      "sourceSha256": "c991402af3690290d446bc87e03d0e1d41b976f5c74a5b0b7f4efbfa35c5616d",
       "semanticReview": {
         "authority": "SupabaseSourceBindingStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as not found. Every query on existing_source_projects carries an explicit .eq(owner_user_id, owner) predicate.",
         "reason": "The table is service-role only with RLS enabled and no public grants; reads, upserts, updates and the bulk access-lost update are all filtered by the verified owner, and a binding id from another owner reads as absent.",
@@ -10752,15 +11088,15 @@
       }
     },
     {
-      "id": "81763bb263b8c72c0f81",
+      "id": "feb636ac7aa3a766447d",
       "path": "backend/src/existingSource/store.ts",
-      "line": 155,
+      "line": 157,
       "enclosing": "get",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "existing_source_projects",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "482a1a0757663a887c0e23c7affaeb9e7671ead144a3631702c42a5da202b9a7",
+      "sourceSha256": "c991402af3690290d446bc87e03d0e1d41b976f5c74a5b0b7f4efbfa35c5616d",
       "semanticReview": {
         "authority": "SupabaseSourceBindingStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as not found. Every query on existing_source_projects carries an explicit .eq(owner_user_id, owner) predicate.",
         "reason": "The table is service-role only with RLS enabled and no public grants; reads, upserts, updates and the bulk access-lost update are all filtered by the verified owner, and a binding id from another owner reads as absent.",
@@ -10773,15 +11109,15 @@
       }
     },
     {
-      "id": "1b95a8316c7ecc3a46eb",
+      "id": "134cba0a6cfa1e5d3a17",
       "path": "backend/src/existingSource/store.ts",
-      "line": 162,
+      "line": 164,
       "enclosing": "list",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "existing_source_projects",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "482a1a0757663a887c0e23c7affaeb9e7671ead144a3631702c42a5da202b9a7",
+      "sourceSha256": "c991402af3690290d446bc87e03d0e1d41b976f5c74a5b0b7f4efbfa35c5616d",
       "semanticReview": {
         "authority": "SupabaseSourceBindingStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as not found. Every query on existing_source_projects carries an explicit .eq(owner_user_id, owner) predicate.",
         "reason": "The table is service-role only with RLS enabled and no public grants; reads, upserts, updates and the bulk access-lost update are all filtered by the verified owner, and a binding id from another owner reads as absent.",
@@ -10794,15 +11130,15 @@
       }
     },
     {
-      "id": "6aabb0af480bb116fac2",
+      "id": "447d489f76fad7216f19",
       "path": "backend/src/existingSource/store.ts",
-      "line": 185,
+      "line": 187,
       "enclosing": "update",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "existing_source_projects",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "482a1a0757663a887c0e23c7affaeb9e7671ead144a3631702c42a5da202b9a7",
+      "sourceSha256": "c991402af3690290d446bc87e03d0e1d41b976f5c74a5b0b7f4efbfa35c5616d",
       "semanticReview": {
         "authority": "SupabaseSourceBindingStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as not found. Every query on existing_source_projects carries an explicit .eq(owner_user_id, owner) predicate.",
         "reason": "The table is service-role only with RLS enabled and no public grants; reads, upserts, updates and the bulk access-lost update are all filtered by the verified owner, and a binding id from another owner reads as absent.",
@@ -10815,15 +11151,15 @@
       }
     },
     {
-      "id": "504f578d2e2cf0b1f1ab",
+      "id": "cbd22555cfde192d343d",
       "path": "backend/src/existingSource/store.ts",
-      "line": 192,
+      "line": 194,
       "enclosing": "markAllAccessLost",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "existing_source_projects",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "482a1a0757663a887c0e23c7affaeb9e7671ead144a3631702c42a5da202b9a7",
+      "sourceSha256": "c991402af3690290d446bc87e03d0e1d41b976f5c74a5b0b7f4efbfa35c5616d",
       "semanticReview": {
         "authority": "SupabaseSourceBindingStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as not found. Every query on existing_source_projects carries an explicit .eq(owner_user_id, owner) predicate.",
         "reason": "The table is service-role only with RLS enabled and no public grants; reads, upserts, updates and the bulk access-lost update are all filtered by the verified owner, and a binding id from another owner reads as absent.",
@@ -14276,15 +14612,15 @@
       }
     },
     {
-      "id": "ce3faeca57669ab800a1",
+      "id": "b0c36d1f7f5b256a0a2a",
       "path": "backend/src/routes/existingSource.ts",
-      "line": 37,
+      "line": 39,
       "enclosing": "projectFor",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "7307723e342095966515d16644e6cc39cbbed34f9a8cdab9807565763a34232b",
+      "sourceSha256": "1b127c3f0c83daad624b3af701c990b65b76e7a49f4f0be423bde24ee8d00f02",
       "semanticReview": {
         "authority": "projectFor runs inside a handler that first obtained requireTenantContext(req.tenantContext); it selects and creates projects only for input.ownerId, which the service passes from that verified context, and accepts a created project only when its user_id equals that owner.",
         "reason": "The project lookup is filtered by user_id and github_repo_name, ambiguity returns null instead of guessing, and creation goes through the existing atomic owner-scoped RPC save_owned_project_atomic.",
@@ -14297,15 +14633,15 @@
       }
     },
     {
-      "id": "f772fb6d8d34bb63ea22",
+      "id": "672b64d503852941df0c",
       "path": "backend/src/routes/existingSource.ts",
-      "line": 38,
+      "line": 40,
       "enclosing": "projectFor",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "7307723e342095966515d16644e6cc39cbbed34f9a8cdab9807565763a34232b",
+      "sourceSha256": "1b127c3f0c83daad624b3af701c990b65b76e7a49f4f0be423bde24ee8d00f02",
       "semanticReview": {
         "authority": "projectFor runs inside a handler that first obtained requireTenantContext(req.tenantContext); it selects and creates projects only for input.ownerId, which the service passes from that verified context, and accepts a created project only when its user_id equals that owner.",
         "reason": "The project lookup is filtered by user_id and github_repo_name, ambiguity returns null instead of guessing, and creation goes through the existing atomic owner-scoped RPC save_owned_project_atomic.",
@@ -14318,15 +14654,15 @@
       }
     },
     {
-      "id": "2c90cbd312221c19cb27",
+      "id": "a17e998b82a209ec45dd",
       "path": "backend/src/routes/existingSource.ts",
-      "line": 42,
+      "line": 44,
       "enclosing": "projectFor",
       "kind": "RPC_CANDIDATE",
       "target": "save_owned_project_atomic",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "7307723e342095966515d16644e6cc39cbbed34f9a8cdab9807565763a34232b",
+      "sourceSha256": "1b127c3f0c83daad624b3af701c990b65b76e7a49f4f0be423bde24ee8d00f02",
       "semanticReview": {
         "authority": "projectFor runs inside a handler that first obtained requireTenantContext(req.tenantContext); it selects and creates projects only for input.ownerId, which the service passes from that verified context, and accepts a created project only when its user_id equals that owner.",
         "reason": "The project lookup is filtered by user_id and github_repo_name, ambiguity returns null instead of guessing, and creation goes through the existing atomic owner-scoped RPC save_owned_project_atomic.",
