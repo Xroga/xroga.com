@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "fc9343f9edfcb830a5b9ffaa7413c06da2af01e106ab634c39b2b3511dc98438",
+  "sourceTreeDigest": "97b25cb0953e67d21c41b49ecc0ae53772eb62f0f8a119e9365512e120f9583c",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -692,82 +692,164 @@
     {
       "id": "4fcaba4cec2a4aedc966",
       "file": "backend/src/lib/netlify.ts",
-      "line": 40,
+      "line": 43,
       "entryPoint": "deployToNetlify",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "c8dd9f06839f461383354106b67d736346dbff23d183abab1f216249de1be03d",
       "destination": "https://api.netlify.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "4fcaba4cec2a4aedc966",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
     },
     {
       "id": "33548b252c1dbad869cc",
       "file": "backend/src/lib/netlify.ts",
-      "line": 60,
+      "line": 64,
       "entryPoint": "deployToNetlify",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "b60b3701b25ed6ea27c7dff4d36ac0a5ff3af228677e774af7ddf622c06f0454",
       "destination": "https://api.netlify.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "33548b252c1dbad869cc",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
     },
     {
       "id": "82eff89a4fd63eebbe78",
       "file": "backend/src/lib/netlify.ts",
-      "line": 81,
+      "line": 85,
       "entryPoint": "deployToNetlify",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "b1cae3eb17eeaaab1e0af636d6dd78cd152dfce269b355f045a98b51033fd8ad",
       "destination": "https://api.netlify.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "82eff89a4fd63eebbe78",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
     },
     {
       "id": "0d8500d82282dd3f4a53",
       "file": "backend/src/lib/netlify.ts",
-      "line": 101,
+      "line": 105,
       "entryPoint": "deployToNetlify",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "76eae79b3809cba71f1d9d091aeac96dd270b86c3c6a08952e7e2655309addca",
       "destination": "https://api.netlify.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "0d8500d82282dd3f4a53",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
     },
     {
       "id": "3aff4bdd4c202b77c1ba",
       "file": "backend/src/lib/netlify.ts",
-      "line": 137,
+      "line": 141,
       "entryPoint": "pollNetlifyDeploy",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "30e89528a7dc3b7478ed1309021a7bb7b84a43f252bfbf517190e2dff4109be2",
       "destination": "https://api.netlify.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "3aff4bdd4c202b77c1ba",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
+    },
+    {
+      "id": "865f5d1bdd0d2a7e2abf",
+      "file": "backend/src/lib/publishingProviderRequest.ts",
+      "line": 56,
+      "entryPoint": "publishingProviderRequest",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "52fce854d05cf81e3a2153a39a353c0c25263c025bf2dcafc70f882e1a867e64",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "865f5d1bdd0d2a7e2abf",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
     },
     {
       "id": "4c398e61442e0e188cef",
@@ -991,178 +1073,299 @@
     {
       "id": "591d7b98b10cd9a63e53",
       "file": "backend/src/lib/vercel.ts",
-      "line": 37,
+      "line": 38,
       "entryPoint": "ensureManagedVercelProjectPublic",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "5eaf273c8db6fba84a196d1c8b2715e817778052b257ce74d28cf0d3f65721ef",
       "destination": "https://api.vercel.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "591d7b98b10cd9a63e53",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
     },
     {
       "id": "e79a9f948bce169ec83a",
       "file": "backend/src/lib/vercel.ts",
-      "line": 67,
+      "line": 68,
       "entryPoint": "resolveTeamId",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "ee6683279ab1924a4912532ce9d79975cdeb8320236c871e1a805488ea264832",
       "destination": "https://api.vercel.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "e79a9f948bce169ec83a",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
     },
     {
       "id": "7c3e6bcb3300ea4ab6a6",
       "file": "backend/src/lib/vercel.ts",
-      "line": 132,
+      "line": 134,
       "entryPoint": "deployStaticSiteWithToken",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "8c3ad09d7dc86f37fa3a0277dc2ab3734e09dc65613b0fae8f8166786f634578",
       "destination": "https://api.vercel.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "7c3e6bcb3300ea4ab6a6",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
     },
     {
       "id": "ad134883eaba8c4c7be1",
       "file": "backend/src/lib/vercel.ts",
-      "line": 146,
+      "line": 148,
       "entryPoint": "deployStaticSiteWithToken",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "a6cd0fdb9cbcb9197d771816e0d27516875c24bf1db7813a6ed9698630f8526b",
       "destination": "https://api.vercel.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "ad134883eaba8c4c7be1",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
     },
     {
       "id": "a6f65c7f0c198a6ab9aa",
       "file": "backend/src/lib/vercel.ts",
-      "line": 202,
+      "line": 204,
       "entryPoint": "pollDeploymentReady",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "e31353b1abc0ef0d27f1a049a43e9150ed06ead3f109420199395999f6c064ff",
       "destination": "https://api.vercel.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "a6f65c7f0c198a6ab9aa",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
     },
     {
       "id": "dede8f3022025df5f24c",
       "file": "backend/src/lib/vercelDomains.ts",
-      "line": 29,
+      "line": 30,
       "entryPoint": "vercelJson",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "db3c3a929062bafff8cec098baa2ba702e45ef60584281d0f529d0ad350af8de",
       "destination": "https://api.vercel.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "dede8f3022025df5f24c",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
     },
     {
       "id": "079f0855d96c9a73d7df",
       "file": "backend/src/lib/vercelEnv.ts",
-      "line": 52,
+      "line": 54,
       "entryPoint": "ensureProject",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "beabf63d425fdd7c529ad92943621ed6fe216dbacc1ade2b5f4c58c021de5c60",
       "destination": "https://api.vercel.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "079f0855d96c9a73d7df",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
     },
     {
       "id": "fef60d164163d324a7db",
       "file": "backend/src/lib/vercelEnv.ts",
-      "line": 61,
+      "line": 63,
       "entryPoint": "ensureProject",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "d131e1ebe84ce1b8733a625e73941fe36a6fe65a7483cd4f9bc3c11ef479b18d",
       "destination": "https://api.vercel.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "fef60d164163d324a7db",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
     },
     {
       "id": "2a84b7de8d20c21b5df3",
       "file": "backend/src/lib/vercelEnv.ts",
-      "line": 81,
+      "line": 83,
       "entryPoint": "listEnv",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "b80c5d4b1d53fb1c51264e4cea903fc3d4c27e085b84c076eaff65b966865b2d",
       "destination": "https://api.vercel.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "2a84b7de8d20c21b5df3",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
     },
     {
       "id": "fed574c91a57418df745",
       "file": "backend/src/lib/vercelEnv.ts",
-      "line": 107,
+      "line": 109,
       "entryPoint": "upsertEnvVar",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "fd99591d5ebafa7601a8285264c4eec3caa0faca6c2248dba0383ce3b4c408be",
       "destination": "https://api.vercel.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "fed574c91a57418df745",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
     },
     {
       "id": "8f1dd7f3b8ac27f83181",
       "file": "backend/src/lib/vercelEnv.ts",
-      "line": 121,
+      "line": 123,
       "entryPoint": "upsertEnvVar",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "d98b4b98c2af3896cd3036d0996b283f8e91b5c33c2b2f2cc2150327f49b3f71",
       "destination": "https://api.vercel.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "8f1dd7f3b8ac27f83181",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
     },
     {
       "id": "263e1a0fbf52023499b0",
@@ -1948,44 +2151,12 @@
     {
       "id": "90eeada0337da120131f",
       "file": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 280,
+      "line": 282,
       "entryPoint": "ghFetch",
       "transport": "fetch",
       "callee": "fetch",
       "callSha256": "4499c4027b46cf411dd2987a514a48ad293359b6355985f111ad8afa88c1ed8a",
       "destination": "https://api.github.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
-      "id": "75cf57fdf79541363007",
-      "file": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 836,
-      "entryPoint": "ensureVercelGitProject",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "3e815997c470b14ba2fc33320e637fe49dcc09bae52c396a9605e42d06a0e3b4",
-      "destination": "https://api.vercel.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
-      "id": "b7dadd6888e72320edc7",
-      "file": "backend/src/services/integrations/githubDeploy.ts",
-      "line": 870,
-      "entryPoint": "ensureVercelGitProject",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "549ecbb62dd927d5dccce78d48e1a6870f8734cdcf47a65e7c05fd581ef79221",
-      "destination": "https://api.vercel.com",
       "trust": "UNREVIEWED_SERVER_CALLER",
       "tenantAuthority": "REQUIRES_SOURCE_TRACE",
       "currentProtection": "NOT_CERTIFIED",
@@ -3825,6 +3996,7 @@
         "82eff89a4fd63eebbe78",
         "0d8500d82282dd3f4a53",
         "3aff4bdd4c202b77c1ba",
+        "865f5d1bdd0d2a7e2abf",
         "070d93e290588232cf16",
         "258abf65c43a04c704a9",
         "591d7b98b10cd9a63e53",
@@ -3854,8 +4026,6 @@
         "fcad57247cfb79779f95",
         "7b6e1f490ce974fc3971",
         "90eeada0337da120131f",
-        "75cf57fdf79541363007",
-        "b7dadd6888e72320edc7",
         "07a46a7b451eaf4dc307",
         "9f962d39a30e2e289376",
         "b401421d17d621333330",
@@ -4016,9 +4186,9 @@
     }
   ],
   "counts": {
-    "total": 154,
-    "reviewed": 76,
-    "pending": 78,
+    "total": 153,
+    "reviewed": 93,
+    "pending": 60,
     "unresolvedHighRiskBypasses": 39
   }
 }

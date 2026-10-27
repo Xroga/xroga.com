@@ -1,3 +1,4 @@
+import {publishingProviderRequest as fetch} from './publishingProviderRequest.js';
 /**
  * Attach / verify custom domains on the user's Vercel project.
  * Uses the user's OAuth/PAT token — never platform VERCEL_API_KEY for their domains.

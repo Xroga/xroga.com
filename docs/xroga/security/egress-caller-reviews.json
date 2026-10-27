@@ -2210,6 +2210,346 @@
           "sha256": "8fed93569633e2293dc2fc79a36bfaed4704039940c04518fe0b2fe9e94cff7a"
         }
       ]
+    },
+    {
+      "id": "591d7b98b10cd9a63e53",
+      "callSha256": "5eaf273c8db6fba84a196d1c8b2715e817778052b257ce74d28cf0d3f65721ef",
+      "sourceFileSha256": "c6e6cf3b86e7f8910fcdc4210bc1eb360e947111f6e4452e54925873d03e5826",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "591d7b98b10cd9a63e53",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
+    },
+    {
+      "id": "e79a9f948bce169ec83a",
+      "callSha256": "ee6683279ab1924a4912532ce9d79975cdeb8320236c871e1a805488ea264832",
+      "sourceFileSha256": "c6e6cf3b86e7f8910fcdc4210bc1eb360e947111f6e4452e54925873d03e5826",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "e79a9f948bce169ec83a",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
+    },
+    {
+      "id": "7c3e6bcb3300ea4ab6a6",
+      "callSha256": "8c3ad09d7dc86f37fa3a0277dc2ab3734e09dc65613b0fae8f8166786f634578",
+      "sourceFileSha256": "c6e6cf3b86e7f8910fcdc4210bc1eb360e947111f6e4452e54925873d03e5826",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "7c3e6bcb3300ea4ab6a6",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
+    },
+    {
+      "id": "ad134883eaba8c4c7be1",
+      "callSha256": "a6cd0fdb9cbcb9197d771816e0d27516875c24bf1db7813a6ed9698630f8526b",
+      "sourceFileSha256": "c6e6cf3b86e7f8910fcdc4210bc1eb360e947111f6e4452e54925873d03e5826",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "ad134883eaba8c4c7be1",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
+    },
+    {
+      "id": "a6f65c7f0c198a6ab9aa",
+      "callSha256": "e31353b1abc0ef0d27f1a049a43e9150ed06ead3f109420199395999f6c064ff",
+      "sourceFileSha256": "c6e6cf3b86e7f8910fcdc4210bc1eb360e947111f6e4452e54925873d03e5826",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "a6f65c7f0c198a6ab9aa",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
+    },
+    {
+      "id": "4fcaba4cec2a4aedc966",
+      "callSha256": "c8dd9f06839f461383354106b67d736346dbff23d183abab1f216249de1be03d",
+      "sourceFileSha256": "50b302166e3dae1a05802735ea0ebbb0055b70ea8d533d364ccb5c2bddb28557",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "4fcaba4cec2a4aedc966",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
+    },
+    {
+      "id": "33548b252c1dbad869cc",
+      "callSha256": "b60b3701b25ed6ea27c7dff4d36ac0a5ff3af228677e774af7ddf622c06f0454",
+      "sourceFileSha256": "50b302166e3dae1a05802735ea0ebbb0055b70ea8d533d364ccb5c2bddb28557",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "33548b252c1dbad869cc",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
+    },
+    {
+      "id": "82eff89a4fd63eebbe78",
+      "callSha256": "b1cae3eb17eeaaab1e0af636d6dd78cd152dfce269b355f045a98b51033fd8ad",
+      "sourceFileSha256": "50b302166e3dae1a05802735ea0ebbb0055b70ea8d533d364ccb5c2bddb28557",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "82eff89a4fd63eebbe78",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
+    },
+    {
+      "id": "0d8500d82282dd3f4a53",
+      "callSha256": "76eae79b3809cba71f1d9d091aeac96dd270b86c3c6a08952e7e2655309addca",
+      "sourceFileSha256": "50b302166e3dae1a05802735ea0ebbb0055b70ea8d533d364ccb5c2bddb28557",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "0d8500d82282dd3f4a53",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
+    },
+    {
+      "id": "3aff4bdd4c202b77c1ba",
+      "callSha256": "30e89528a7dc3b7478ed1309021a7bb7b84a43f252bfbf517190e2dff4109be2",
+      "sourceFileSha256": "50b302166e3dae1a05802735ea0ebbb0055b70ea8d533d364ccb5c2bddb28557",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "3aff4bdd4c202b77c1ba",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
+    },
+    {
+      "id": "079f0855d96c9a73d7df",
+      "callSha256": "beabf63d425fdd7c529ad92943621ed6fe216dbacc1ade2b5f4c58c021de5c60",
+      "sourceFileSha256": "937a7ca91c47775103300bbd5f84d34b4c9871fe383049733b136a029280fa7f",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "079f0855d96c9a73d7df",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
+    },
+    {
+      "id": "fef60d164163d324a7db",
+      "callSha256": "d131e1ebe84ce1b8733a625e73941fe36a6fe65a7483cd4f9bc3c11ef479b18d",
+      "sourceFileSha256": "937a7ca91c47775103300bbd5f84d34b4c9871fe383049733b136a029280fa7f",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "fef60d164163d324a7db",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
+    },
+    {
+      "id": "2a84b7de8d20c21b5df3",
+      "callSha256": "b80c5d4b1d53fb1c51264e4cea903fc3d4c27e085b84c076eaff65b966865b2d",
+      "sourceFileSha256": "937a7ca91c47775103300bbd5f84d34b4c9871fe383049733b136a029280fa7f",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "2a84b7de8d20c21b5df3",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
+    },
+    {
+      "id": "fed574c91a57418df745",
+      "callSha256": "fd99591d5ebafa7601a8285264c4eec3caa0faca6c2248dba0383ce3b4c408be",
+      "sourceFileSha256": "937a7ca91c47775103300bbd5f84d34b4c9871fe383049733b136a029280fa7f",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "fed574c91a57418df745",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
+    },
+    {
+      "id": "8f1dd7f3b8ac27f83181",
+      "callSha256": "d98b4b98c2af3896cd3036d0996b283f8e91b5c33c2b2f2cc2150327f49b3f71",
+      "sourceFileSha256": "937a7ca91c47775103300bbd5f84d34b4c9871fe383049733b136a029280fa7f",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "8f1dd7f3b8ac27f83181",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
+    },
+    {
+      "id": "dede8f3022025df5f24c",
+      "callSha256": "db3c3a929062bafff8cec098baa2ba702e45ef60584281d0f529d0ad350af8de",
+      "sourceFileSha256": "827c50307484a48cd7ff5ce967902429baeb1e4541bc1705195ef36a40fee5ff",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "dede8f3022025df5f24c",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
+    },
+    {
+      "id": "865f5d1bdd0d2a7e2abf",
+      "callSha256": "52fce854d05cf81e3a2153a39a353c0c25263c025bf2dcafc70f882e1a867e64",
+      "sourceFileSha256": "18fb58bea614192b6dc67661afbbf3cf8d14e8dc308e737059a8beb723b32c1d",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FINITE_OFFICIAL_PUBLISHING_PROVIDER_TRANSPORT_NO_REDIRECT_OR_UNBOUNDED_RESPONSE_NOT_AN_EXPORT_GRANT",
+      "tenantAuthority": "HIGHER_PUBLISHING_TENANT_TARGET_CREDENTIAL_REVISION_CONFIRMATION_AND_DATA_PROVENANCE_OBLIGATIONS_REMAIN_SEPARATE_NOT_AUTOMATICALLY_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/publishing-transport-20261027/trace.json",
+          "marker": "865f5d1bdd0d2a7e2abf",
+          "sha256": "331dab8894a08134b4934b0ddcc3fc8ff286c739ff86c443aa2310f9e6196346"
+        },
+        {
+          "path": "backend/src/lib/publishingTransport.security.test.ts",
+          "marker": "real publishing transports cannot follow a provider redirect",
+          "sha256": "df82006c961288e2fb2f0cab0d0475fb0013ab88467c6e65c9d66f8277f2773d"
+        }
+      ]
     }
   ]
 }

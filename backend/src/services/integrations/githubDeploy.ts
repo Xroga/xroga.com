@@ -63,6 +63,8 @@ import {
 } from '../../lib/repoAnalysisCache.js';
 import { HACKATHON_REPO_TREE_SAMPLE } from '../../config/modelRegistry.js';
 import { createGitHubSourceReader } from './githubSourceRead.js';
+import {isTerminalModelFailure} from '../../ai/providerRuntime.js';
+import {publishingProviderRequest} from '../../lib/publishingProviderRequest.js';
 
 export interface ProjectFile {
   path: string;
@@ -833,7 +835,7 @@ export async function ensureVercelGitProject(opts: {
     'Content-Type': 'application/json',
   };
 
-  const existing = await fetch(
+  const existing = await publishingProviderRequest(
     `https://api.vercel.com/v9/projects/${encodeURIComponent(projectName)}${query}`,
     { headers },
   );
@@ -867,7 +869,7 @@ export async function ensureVercelGitProject(opts: {
     };
   }
 
-  const created = await fetch(`https://api.vercel.com/v11/projects${query}`, {
+  const created = await publishingProviderRequest(`https://api.vercel.com/v11/projects${query}`, {
     method: 'POST',
     headers,
     body: JSON.stringify({
@@ -962,6 +964,7 @@ export async function deployManagedVercelPreview(
       ...(!verified ? { error: 'Vercel URL failed verification' } : {}),
     };
   } catch (error) {
+    if(isTerminalModelFailure(error))throw error;
     const message = (error as Error).message || 'Managed Vercel deployment failed';
     return {
       deployUrl: '',
@@ -1026,6 +1029,7 @@ async function deployToVercelWithUserToken(
       console.log(`[vercel] synced ${envSync.upserted.length} env var(s) to project ${projectSlug}`);
     }
   } catch (err) {
+    if(isTerminalModelFailure(err))throw err;
     const msg = (err as Error).message;
     console.warn('[vercel] env sync skipped:', msg);
     envSync = {
@@ -1100,6 +1104,7 @@ export async function deployStaticPreview(
       }
       console.warn(`[githubDeploy] ${attempt.name} URL failed verification: ${result.deployUrl}`);
     } catch (err) {
+      if(isTerminalModelFailure(err))throw err;
       console.warn(`[githubDeploy] ${attempt.name}:`, (err as Error).message);
     }
   }
@@ -1156,6 +1161,7 @@ export async function deployToAllPlatforms(
       };
       if (!verified) errors.push('Vercel URL failed verification');
     } catch (err) {
+      if(isTerminalModelFailure(err))throw err;
       const msg = (err as Error).message;
       errors.push(`Vercel: ${msg.slice(0, 120)}`);
       vercel = {
@@ -1218,6 +1224,7 @@ export async function deployPreviewToPlatform(
       netlifyDeployId: result.netlifyDeployId,
     };
   } catch (err) {
+    if(isTerminalModelFailure(err))throw err;
     const msg = (err as Error).message;
     console.warn(`[githubDeploy] ${platform} deploy:`, msg);
     return { deployUrl: '', deployVerified: false, error: msg.slice(0, 240) };

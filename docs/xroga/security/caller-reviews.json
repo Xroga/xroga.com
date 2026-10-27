@@ -755,10 +755,10 @@
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "sourceSha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
+      "sourceSha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb",
       "callIds": [
-        "55ac9b0f3f9ba972ca8c",
-        "2360912af68a9536c836"
+        "660909aa15c676228c90",
+        "148d27d99764607b2339"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "The private integration reader is used only by the existing authenticated GitHub routes and admitted pipeline consumer. Original server actor is retained for canonical token and owner-filtered metadata, then canonical token is re-read after metadata. Missing, disconnected, replaced or unavailable authority returns no integration, before ghFetch. The actual repo-state router uses authenticated req.userId regardless of query actor and passes this exact selected token to its existing repository reader. Fixed owner metadata cannot replace the credential. The provider stub refuses every GET without forwarding any network call.",
@@ -807,7 +807,64 @@
         "originalReviewReason": "Loopback negative tests prove revocation/reconnect during metadata lookup and unavailable metadata deny admission. Remaining gaps include revocation after the final check, caller/target provenance, legacy metadata authority and external publishing approvals. This is not full credential lifecycle certification.",
         "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
         "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
-      }
+      },
+      "publishingTransportPriorSourceReview": {
+        "path": "backend/src/services/integrations/githubDeploy.ts",
+        "sourceSha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
+        "callIds": [
+          "55ac9b0f3f9ba972ca8c",
+          "2360912af68a9536c836"
+        ],
+        "disposition": "SCOPED_BOUNDARY",
+        "authority": "The private integration reader is used only by the existing authenticated GitHub routes and admitted pipeline consumer. Original server actor is retained for canonical token and owner-filtered metadata, then canonical token is re-read after metadata. Missing, disconnected, replaced or unavailable authority returns no integration, before ghFetch. The actual repo-state router uses authenticated req.userId regardless of query actor and passes this exact selected token to its existing repository reader. Fixed owner metadata cannot replace the credential. The provider stub refuses every GET without forwarding any network call.",
+        "reason": "Exact original007 caller scope verified at a4bfaddfbc9f4824b8c310087eb1cb892e465c74, successful disposable39278200438/job118147489723 and repeated branch/integrated39278200442. Two exact private consumer read/factory sites, supplementing rather than inheriting the OAuth helper proof. The real Auth/HTTP/database fixture seeds distinct real owners, sees the exact respective synthetic bearer at the actual refusing consumer, rejects anonymous access, and ignores forged opposite-user query parameters. Real database disconnect or replacement during the delivered metadata response and a database outage prevent any provider call. Exact other-owner rows remain unchanged and a current legitimate owner reconnect works. This establishes account selection at the consumer, not live provider success, custody or post-dispatch cancellation guarantees. Earlier review is retained in historicalReview. Independent authority, custody, provider-success, egress, lifecycle and reliability scope remains preserved, not silently certified. This disposition does not authorize live provider actions or blanket recipient factory access.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubDeploy.ts",
+            "marker": "async function getIntegration"
+          }
+        ],
+        "historicalReview": {
+          "path": "backend/src/services/integrations/githubDeploy.ts",
+          "sourceSha256": "79f9f075440d2165e320bdf3d3aced9d5d09cdbded5216d0b1b2f54a5caf777d",
+          "callIds": [
+            "b4b2b91f3280a140691a",
+            "48c115e3fcc79a824240"
+          ],
+          "disposition": "REVIEWED_GAP",
+          "authority": "getIntegration obtains the canonical user-bound GitHub token, reads owner-scoped settings without selecting a token, denies metadata errors, then rechecks the canonical credential before repository inspection/deploy helpers consume it.",
+          "reason": "Loopback negative tests prove revocation/reconnect during metadata lookup and unavailable metadata deny admission. Remaining gaps include revocation after the final check, caller/target provenance, legacy metadata authority and external publishing approvals. This is not full credential lifecycle certification.",
+          "evidence": [
+            {
+              "path": "backend/src/services/integrations/githubDeploy.ts",
+              "marker": "async function getIntegration"
+            }
+          ]
+        },
+        "command007Proof": {
+          "sourceSha": "a4bfaddfbc9f4824b8c310087eb1cb892e465c74",
+          "inputArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/input.json",
+          "inputSha256": "5cbb8e85ab2078b561cd19dad7a5fc8738da25e453da6c6c7bb9edfcc665de62",
+          "observationsArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/observations.json",
+          "observationsSha256": "e7e0ed673433402293c96c1b290540a06016058728ae06fca8c9d3e17733174e",
+          "resultArtifact": "artifacts/phase-2-proof/a4bfaddfbc9f4824b8c310087eb1cb892e465c74/result.json",
+          "resultSha256": "a2984ca28e4d0ff3de867fe8650e49b4ba143b57591402c5bbd1385a90450a10",
+          "obligationIds": [
+            "OB-812abbd1d9e8178e:observed-actual-github-repository-consumer"
+          ],
+          "passedTests": [
+            "real GitHub repository consumer selects only authenticated owner credentials and rejects metadata-time disconnect replacement and outage"
+          ],
+          "scope": "EXACT_ORIGINAL_007_CALLERS_ONLY"
+        },
+        "separateUncertifiedScope": {
+          "state": "PRESERVED_NOT_CERTIFIED",
+          "originalReviewReason": "Loopback negative tests prove revocation/reconnect during metadata lookup and unavailable metadata deny admission. Remaining gaps include revocation after the final check, caller/target provenance, legacy metadata authority and external publishing approvals. This is not full credential lifecycle certification.",
+          "originalFrozenWorklist": "docs/xroga/batch-1/phases/PHASE-2-FROZEN-WORKLIST.json",
+          "note": "Original008/009/010 and every genuinely unproven007 obligation remain independent. No roadmap or scope weakening."
+        }
+      },
+      "publishingTransportSourceReviewProof": "docs/xroga/evidence/command-010/PUBLISHING-TRANSPORT-PERSISTENCE-REBINDING.json"
     },
     {
       "path": "backend/src/synthesis/delivery/projectDeliveryService.ts",
@@ -4200,9 +4257,9 @@
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "sourceSha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
+      "sourceSha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb",
       "callIds": [
-        "d1009c426dd9153743b7"
+        "355f4dbeae8a416a7e42"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in fetchRepoTextFile. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -4212,13 +4269,30 @@
           "path": "backend/src/services/integrations/githubDeploy.ts",
           "marker": "  return Buffer.from(data.content, 'base64').toString('utf8');\n}\n"
         }
-      ]
+      ],
+      "publishingTransportPriorSourceReview": {
+        "path": "backend/src/services/integrations/githubDeploy.ts",
+        "sourceSha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
+        "callIds": [
+          "d1009c426dd9153743b7"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Inspected the receiver and surrounding expression in fetchRepoTextFile. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubDeploy.ts",
+            "marker": "  return Buffer.from(data.content, 'base64').toString('utf8');\n}\n"
+          }
+        ]
+      },
+      "publishingTransportSourceReviewProof": "docs/xroga/evidence/command-010/PUBLISHING-TRANSPORT-PERSISTENCE-REBINDING.json"
     },
     {
       "path": "backend/src/services/integrations/githubDeploy.ts",
-      "sourceSha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
+      "sourceSha256": "5840b5938e5bc2814583178f1c2cb24c2b5e47799cf46e79447ce46b74c03beb",
       "callIds": [
-        "ad1b1dafdbd324ceed15"
+        "45aec3a8752cfb119062"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "Inspected the receiver and surrounding expression in decodeRepositoryTextBlob. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
@@ -4228,7 +4302,24 @@
           "path": "backend/src/services/integrations/githubDeploy.ts",
           "marker": "  const bytes = Buffer.from(content, 'base64');\n  if (bytes.includes(0)) return null;\n  const text = bytes.toString('utf8');"
         }
-      ]
+      ],
+      "publishingTransportPriorSourceReview": {
+        "path": "backend/src/services/integrations/githubDeploy.ts",
+        "sourceSha256": "d9d0ce7b7cc135cc925421677ef444ea9345cabfc1222306f598185595699706",
+        "callIds": [
+          "ad1b1dafdbd324ceed15"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "Inspected the receiver and surrounding expression in decodeRepositoryTextBlob. This specific call uses the built-in Array or Buffer conversion, not the adjacent database, object storage or provider transport.",
+        "reason": "Exclude only this in-memory conversion from the privileged persistence register. Attachment fetches, uploads, encoding of credentials, cryptography, resource authority and downstream external actions retain their separate security obligations.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/githubDeploy.ts",
+            "marker": "  const bytes = Buffer.from(content, 'base64');\n  if (bytes.includes(0)) return null;\n  const text = bytes.toString('utf8');"
+          }
+        ]
+      },
+      "publishingTransportSourceReviewProof": "docs/xroga/evidence/command-010/PUBLISHING-TRANSPORT-PERSISTENCE-REBINDING.json"
     },
     {
       "path": "backend/src/services/publish/electronSecrets.ts",
