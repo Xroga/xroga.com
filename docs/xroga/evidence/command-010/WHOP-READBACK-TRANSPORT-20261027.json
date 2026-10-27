@@ -1,0 +1,72 @@
+{
+  "scope": "FIXED_WHOP_CHECKOUT_OWNER_READ_ONLY_NOT_CHECKOUT_CREATION_OR_FINANCIAL_AUTHORITY",
+  "candidate": {
+    "id": "9982cf8a2b469fc90070",
+    "file": "backend/src/services/whopCheckoutOwnership.ts",
+    "line": 29,
+    "entryPoint": "readWhopCheckoutOwner",
+    "transport": "fetch",
+    "callee": "fetch",
+    "callSha256": "e23aa135cf3f3388831c04f5c291dcdc32248441739edffdda2efe78999fbce9",
+    "destination": "https://api.whop.com",
+    "trust": "UNREVIEWED_SERVER_CALLER",
+    "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+    "currentProtection": "NOT_CERTIFIED",
+    "risk": "FIXED_ORIGIN_REVIEW",
+    "disposition": "PENDING_SOURCE_TRACE",
+    "evidence": null
+  },
+  "defect": "Otherwise-valid owner receipt accepted an unbounded provider body. Negative test reproduced before repair.",
+  "correction": "Actual receipt limited to64KiB with bounded reader disposal and static failure. Existing literal issuer path, strict checkout identifier,10s timeout and redirect:error remain unchanged.",
+  "verification": {
+    "passed": 3,
+    "skipped": 0,
+    "negative": "Oversized valid receipt rejected. Real307follow-up sends0requests. Existing wrong checkout/account/company/plan/mode/source/tier/user/nonce and malformed/provider failure cases deny.",
+    "positive": "Exact checkout, account, plan and canonical server metadata return only their bound owner."
+  },
+  "receipts": [
+    {
+      "name": "red",
+      "jobId": "f86b2f36-e91b-4ad0-9cfb-160cf3ea1a26",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/whop-readback-red-20261027.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 7096
+      }
+    },
+    {
+      "name": "green",
+      "jobId": "9900ff2c-a37f-4f35-877a-cb92754bf5bd",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/whop-readback-green-20261027.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 12171
+      }
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/services/whopCheckoutOwnership.ts",
+      "sha256": "599c4816881fba840f10cdce5a299cf62d5f495f9ea7ad75bfd67f7a22d60372"
+    },
+    {
+      "path": "backend/src/services/whopCheckoutTransport.security.test.ts",
+      "sha256": "2f83ba1d772ae5a5e689f07d23f80acd4f6152cd4db0f0a05df3590c5171da69"
+    },
+    {
+      "path": "backend/src/services/whopCheckoutOwnership.test.ts",
+      "sha256": "6361083a794ef5a91e4016a7df95c39497fc9bb05497fa59f06d0b1ae97b3890"
+    }
+  ],
+  "limitations": [
+    "No checkout creation, plan change, charge, billing entitlement or webhook grant certified. BillingService candidates remain pending.",
+    "No arbitrary URL, user message, file or model-selected destination is sent. The sole payload is the fixed resource ID and platform credential to its issuer."
+  ],
+  "productionChanged": false,
+  "liveProviderCalls": 0,
+  "spending": 0
+}

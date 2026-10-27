@@ -6030,11 +6030,11 @@
     },
     {
       "path": "backend/src/services/integrations/supabaseAuth.ts",
-      "sourceSha256": "74f34f3da6268ede980df076b2334ae3ccd3baf5153b40911059b586fd41c463",
+      "sourceSha256": "d3dd3f561bca3c4a22ab5c4487bf541ac5c705bc99013516b6b862f4ca577522",
       "callIds": [
         "006a26709183308572df",
         "57d09be4488bfd059654",
-        "d8dd91081d38b5474a4f"
+        "29cc88320204856d031f"
       ],
       "disposition": "NOT_PERSISTENCE",
       "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
@@ -6048,7 +6048,75 @@
           "path": "backend/src/routes/supabaseOAuth.ts",
           "marker": "stateInfo.userId !== req.userId"
         }
-      ]
+      ],
+      "supabaseTokenPriorSourceReview": {
+        "path": "backend/src/services/integrations/supabaseAuth.ts",
+        "sourceSha256": "74f34f3da6268ede980df076b2334ae3ccd3baf5153b40911059b586fd41c463",
+        "callIds": [
+          "006a26709183308572df",
+          "57d09be4488bfd059654",
+          "d8dd91081d38b5474a4f"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
+        "reason": "Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/supabaseAuth.ts",
+            "marker": "function basicAuthHeader(): string"
+          },
+          {
+            "path": "backend/src/routes/supabaseOAuth.ts",
+            "marker": "stateInfo.userId !== req.userId"
+          }
+        ]
+      },
+      "supabaseTokenSourceReviewProof": "docs/xroga/evidence/command-010/SUPABASE-AUTHORIZATION-DENIAL-PERSISTENCE-REBINDING.json",
+      "supabaseAuthorizationDenialPriorSourceReview": {
+        "path": "backend/src/services/integrations/supabaseAuth.ts",
+        "sourceSha256": "82ab56fef7542703cabf958a32f5e0d986a94757f4eb19148319687938047e58",
+        "callIds": [
+          "006a26709183308572df",
+          "57d09be4488bfd059654",
+          "360f29f00ffd2b48f433"
+        ],
+        "disposition": "NOT_PERSISTENCE",
+        "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
+        "reason": "Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
+        "evidence": [
+          {
+            "path": "backend/src/services/integrations/supabaseAuth.ts",
+            "marker": "function basicAuthHeader(): string"
+          },
+          {
+            "path": "backend/src/routes/supabaseOAuth.ts",
+            "marker": "stateInfo.userId !== req.userId"
+          }
+        ],
+        "supabaseTokenPriorSourceReview": {
+          "path": "backend/src/services/integrations/supabaseAuth.ts",
+          "sourceSha256": "74f34f3da6268ede980df076b2334ae3ccd3baf5153b40911059b586fd41c463",
+          "callIds": [
+            "006a26709183308572df",
+            "57d09be4488bfd059654",
+            "d8dd91081d38b5474a4f"
+          ],
+          "disposition": "NOT_PERSISTENCE",
+          "authority": "All three discovered .from expressions are Node Buffer.from for Basic credential encoding, OAuth state encoding and state decoding. They do not query a database or grant resource access.",
+          "reason": "Read the complete helper and its authenticated route consumer. These scanner candidates are not privileged persistence calls; this does not certify the separate token store, refresh lifecycle, raw provider error handling, one-use state or external-project authorization.",
+          "evidence": [
+            {
+              "path": "backend/src/services/integrations/supabaseAuth.ts",
+              "marker": "function basicAuthHeader(): string"
+            },
+            {
+              "path": "backend/src/routes/supabaseOAuth.ts",
+              "marker": "stateInfo.userId !== req.userId"
+            }
+          ]
+        },
+        "supabaseTokenSourceReviewProof": "docs/xroga/evidence/command-010/SUPABASE-TOKEN-PERSISTENCE-REBINDING.json"
+      }
     },
     {
       "path": "backend/src/services/integrations/supabaseProvision.ts",

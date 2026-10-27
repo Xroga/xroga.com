@@ -29,8 +29,11 @@ export async function readWhopCheckoutOwner(input:CheckoutScope&{apiKey:string;a
     const response=await fetch(`https://api.whop.com/api/v1/checkout_configurations/${encodeURIComponent(checkoutId)}`,{
       method:'GET',redirect:'error',signal:AbortSignal.timeout(10_000),headers:{Authorization:`Bearer ${apiKey}`,Accept:'application/json','Api-Version-Date':apiVersion},
     });
-    if(!response.ok)throw unavailable();
-    value=await response.json();
+    if(!response.ok){await response.body?.cancel().catch(()=>undefined);throw unavailable();}
+    const reader=response.body?.getReader(),chunks:Uint8Array[]=[];let bytes=0;
+    try{if(reader)for(;;){const next=await reader.read();if(next.done)break;bytes+=next.value.length;if(bytes>65536)throw unavailable();chunks.push(next.value);}}
+    finally{await reader?.cancel().catch(()=>undefined);reader?.releaseLock();}
+    value=JSON.parse(Buffer.concat(chunks).toString('utf8'));
   }catch{throw unavailable();}
   return whopCheckoutOwnerFromResponse(value,{checkoutId,accountId,planId});
 }

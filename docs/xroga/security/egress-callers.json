@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "2f15e0cef4a340bfc22d8311684cb337a07d04b59a9a6fd7c9a184e8f45f42bb",
+  "sourceTreeDigest": "74849e0ba27b117dc50a64cc7c236cf1b5e064cb8c058e32bd5b9c72347792df",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -34,22 +34,6 @@
           "sha256": "945933c02daaaf293114bfafa41ba14065838fa6fe5bf8d5a0b03d04ff6d18ae"
         }
       ]
-    },
-    {
-      "id": "c0bca58cc5345c0837e1",
-      "file": "backend/src/ai/black-hole/webIntelligence.ts",
-      "line": 438,
-      "entryPoint": "grokXSearch",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "b3f5866a7e4f009eca57c7016de406180fee72067a22f707258ae179c531a83c",
-      "destination": "https://api.x.ai",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
     },
     {
       "id": "038ced12b0f74e8d5e0f",
@@ -2187,36 +2171,36 @@
       ]
     },
     {
-      "id": "9f962d39a30e2e289376",
+      "id": "beac062acc9e64531d14",
       "file": "backend/src/services/integrations/supabaseAuth.ts",
-      "line": 139,
-      "entryPoint": "exchangeSupabaseOAuthCode",
+      "line": 123,
+      "entryPoint": "supabaseTokenRequest",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "0ab595e818072eeb2f28d28339c029ba248cd784b7656309104e43482a542bf0",
+      "callSha256": "987374ed698294669fcc1b81662e8f673f5a4536a9e04207050958cdf420fc5f",
       "destination": "https://api.supabase.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FIXED_OFFICIAL_SUPABASE_OAUTH_TOKEN_ISSUER_ONLY_NOT_SQL_PROVISION_OR_CONSEQUENTIAL_EGRESS",
+      "tenantAuthority": "ORIGINAL_PKCE_ISSUED_ACTOR_AND_CONSUMED_REVISION_FOR_EXCHANGE_CANONICAL_CURRENT_REFRESH_TOKEN_AND_REVISION_FOR_REFRESH_NO_AUTHORITY_CREATED_BY_TRANSPORT",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
-      "id": "b401421d17d621333330",
-      "file": "backend/src/services/integrations/supabaseAuth.ts",
-      "line": 214,
-      "entryPoint": "refreshSupabaseOAuthToken",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "0ab595e818072eeb2f28d28339c029ba248cd784b7656309104e43482a542bf0",
-      "destination": "https://api.supabase.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/research-oauth-20261027/trace.json",
+          "marker": "beac062acc9e64531d14",
+          "sha256": "6480387812c44bb619e0c6106e4f96e2a27db292b8b32fdefd7c71746fde75c4"
+        },
+        {
+          "path": "backend/src/services/integrations/supabaseTransport.security.test.ts",
+          "marker": "actual Supabase token exchange and refresh reject real HTTP redirects before token storage",
+          "sha256": "a03bd5c9f64a8fe7216b51bdfb921ac2a9791e9323521a59df6aa02fc3657969"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/research-oauth-20261027/authorization-denial-addendum.json",
+          "marker": "401/403",
+          "sha256": "dfed0241c9e22395580aa0b587a82288db924cabfb9ca0611b309625ff65e3bd"
+        }
+      ]
     },
     {
       "id": "15dcdf4bce3cfa3abf94",
@@ -2423,18 +2407,29 @@
     {
       "id": "af32a0c4970ae3e8f71e",
       "file": "backend/src/services/publish/userOwnedPublish.ts",
-      "line": 75,
+      "line": 76,
       "entryPoint": "verifyExpoToken",
       "transport": "fetch",
       "callee": "fetch",
-      "callSha256": "0a4d2b8398b281c3349e4036a3574f54f232576678f1f3aaa169c3916782646f",
+      "callSha256": "745dc2600e4759cbecd0af57785eeaae416129d99fecfd7db898c6d6b339ae37",
       "destination": "https://exp.host",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FIXED_OFFICIAL_EXPO_READ_ONLY_IDENTITY_LOOKUP_NOT_MOBILE_PUBLISH_OR_EXTERNAL_EXPORT",
+      "tenantAuthority": "SELECTED_EXPLICIT_USER_TOKEN_OR_CANONICAL_CURRENT_VAULT_TOKEN_SENT_ONLY_TO_ITS_FIXED_ISSUER_NO_TENANT_PAYLOAD_OR_ACTION_AUTHORITY_CREATED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/expo-identity-20261027/trace.json",
+          "marker": "af32a0c4970ae3e8f71e",
+          "sha256": "0ff8561a4a7c7bdcd06b355a49b4d827e66e565677bdf0069f17794342dc50a8"
+        },
+        {
+          "path": "backend/src/services/publish/expoIdentityTransport.security.test.ts",
+          "marker": "Expo credential identity probe cannot follow a real redirected endpoint",
+          "sha256": "5d4819e281eb7f0ab0d996cce8aed2978271a8a022552bebecb981475cf1994e"
+        }
+      ]
     },
     {
       "id": "9982cf8a2b469fc90070",
@@ -2445,12 +2440,23 @@
       "callee": "fetch",
       "callSha256": "e23aa135cf3f3388831c04f5c291dcdc32248441739edffdda2efe78999fbce9",
       "destination": "https://api.whop.com",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FIXED_OFFICIAL_WHOP_CHECKOUT_OWNER_READ_ONLY_NO_FINANCIAL_OR_MUTATION_AUTHORITY",
+      "tenantAuthority": "EXACT_RESOURCE_ACCOUNT_PLAN_AND_CANONICAL_SERVER_OWNER_METADATA_VALIDATED_BEFORE_RETURN_NO_ENTITLEMENT_OR_ACTION_GRANT_CREATED",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "FIXED_ORIGIN_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/WHOP-READBACK-TRANSPORT-20261027.json",
+          "marker": "9982cf8a2b469fc90070",
+          "sha256": "f995393251f958dd86b86bf4390d5c7474d58edb5ad36a7caec5680505447cf2"
+        },
+        {
+          "path": "backend/src/services/whopCheckoutTransport.security.test.ts",
+          "marker": "Whop ownership lookup refuses real redirects without a second request",
+          "sha256": "2f83ba1d772ae5a5e689f07d23f80acd4f6152cd4db0f0a05df3590c5171da69"
+        }
+      ]
     },
     {
       "id": "ff5705ad221b1e6169e6",
@@ -2959,12 +2965,23 @@
       "callee": "port.upload",
       "callSha256": "30d5b6c0667a89d33db7a124cf4c89bb7d31881d6d1905fec0f19d5ce53cc944",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "NO_CURRENT_PRODUCTION_IMPORTER_OR_REFERENCE_OF_EXACT_DORMANT_OUTBOUND_EXPORT",
+      "tenantAuthority": "REACHABILITY_CLASSIFICATION_ONLY_NO_AUTHORIZATION_EGRESS_OR_LATER_BATCH_ACTIVATION_CERTIFICATION",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "DISABLED_WITH_PROOF",
+      "evidence": [
+        {
+          "path": "backend/src/security/egress/dormantConsequentialAdapters.test.ts",
+          "marker": "the two dormant content-upload and communication adapters have no current production importer or exported-call reference",
+          "sha256": "3c8a908f6f53c5c3fe3e577ccf59e186660a0b09c1b6086734b41cdeb06d3d67"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/DORMANT-CONSEQUENTIAL-TRACE-20261027.json",
+          "marker": "2ca37ae73a723e2b988c",
+          "sha256": "dd30aab9f9772860cda879aee6791e792af095c1771446089b01ff282bb98c55"
+        }
+      ]
     },
     {
       "id": "09c93cfa5ff3fbb6deb9",
@@ -2975,12 +2992,23 @@
       "callee": "input.provider.send",
       "callSha256": "76292d3a64157e9c06a2ff47914166733b28d6cfa1480ecc66a613c341cba64f",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "NO_CURRENT_PRODUCTION_IMPORTER_OR_REFERENCE_OF_EXACT_DORMANT_OUTBOUND_EXPORT",
+      "tenantAuthority": "REACHABILITY_CLASSIFICATION_ONLY_NO_AUTHORIZATION_EGRESS_OR_LATER_BATCH_ACTIVATION_CERTIFICATION",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "DISABLED_WITH_PROOF",
+      "evidence": [
+        {
+          "path": "backend/src/security/egress/dormantConsequentialAdapters.test.ts",
+          "marker": "the two dormant content-upload and communication adapters have no current production importer or exported-call reference",
+          "sha256": "3c8a908f6f53c5c3fe3e577ccf59e186660a0b09c1b6086734b41cdeb06d3d67"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/DORMANT-CONSEQUENTIAL-TRACE-20261027.json",
+          "marker": "09c93cfa5ff3fbb6deb9",
+          "sha256": "dd30aab9f9772860cda879aee6791e792af095c1771446089b01ff282bb98c55"
+        }
+      ]
     },
     {
       "id": "b43397505cfcf3799292",
@@ -3442,38 +3470,6 @@
       ]
     },
     {
-      "id": "fea472b3a4bb6eb5babd",
-      "file": "frontend/src/app/(shell)/admin/AdminPageClient.tsx",
-      "line": 45,
-      "entryPoint": "AdminPageClient",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "1e8c9c24cd3c9e68f144c93a83d24e4f5ccbaac148812f8c57dcfb8ac923b2e7",
-      "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
-      "id": "d486083aa57ff293af6f",
-      "file": "frontend/src/app/(shell)/admin/AdminPageClient.tsx",
-      "line": 46,
-      "entryPoint": "AdminPageClient",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "7095c0ff5a347b3e664b1f6cdee485939975df1d590b6aae6348aac9c45051f4",
-      "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
       "id": "be1e785f2ee1037bb1c0",
       "file": "frontend/src/app/api/browser-view/route.ts",
       "line": 47,
@@ -3536,28 +3532,23 @@
       "callee": "fetch",
       "callSha256": "d854fa7c0a76e83d07d74248b526a946c5e9628a5fc44bfcb7f703b72393dd4c",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FIXED_CONFIGURED_FIRST_PARTY_API_FILE_DOWNLOAD_ONLY_NO_ARBITRARY_ORIGIN_OR_PROVIDER_UPLOAD",
+      "tenantAuthority": "REMOTE_VERIFIED_USER_BEFORE_SESSION_FORWARDING_BACKEND_REMAINS_CANONICAL_FILE_OWNER_LINK_EXPIRY_AND_REVOCATION_AUTHORITY_NO_NEW_GRANT",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
-    },
-    {
-      "id": "5dbf407454e7bfcc241a",
-      "file": "frontend/src/app/share/[token]/page.tsx",
-      "line": 42,
-      "entryPoint": "<module-or-callback>",
-      "transport": "fetch",
-      "callee": "fetch",
-      "callSha256": "a56cf739067e05366389be53391ed215229547a9dc32332bc624c1f2b3e62a1e",
-      "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_FRONTEND_OR_SHARED_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
-      "currentProtection": "NOT_CERTIFIED",
-      "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/admin-share-20261027/trace.json",
+          "marker": "9187c5480b950d1fad4d",
+          "sha256": "8ff4e33b2cd2742d55650800c74e25b3288c8a3bcb50948fd296eb5dbacdaaa5"
+        },
+        {
+          "path": "frontend/e2e/phase4-admin-share.security.mjs",
+          "marker": "authorized admin, bounded shares and private range delivery keep their contracts and denial results stay private",
+          "sha256": "9768cffa49a8b13925506e35b9a5e52e7468129590fb2178396691caec5b2d23"
+        }
+      ]
     },
     {
       "id": "4d6615378bab39e757f0",
@@ -3743,6 +3734,11 @@
           "path": "frontend/e2e/phase4-api-clients.security.mjs",
           "marker": "actual Chromium opaque redirects are terminal before any outside request",
           "sha256": "e244b59132edabfd89f1f7bd338d8aaddf7a7c14b632b3ea72cb653b273e12e5"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/admin-share-20261027/trace.json",
+          "marker": "c09bb8607fa4d00f23b7",
+          "sha256": "8ff4e33b2cd2742d55650800c74e25b3288c8a3bcb50948fd296eb5dbacdaaa5"
         }
       ]
     },
@@ -3929,7 +3925,6 @@
       "consequenceCandidate": "HTTP_TRANSPORT",
       "scope": "GROUPING_NOT_SEMANTIC_CERTIFICATION",
       "callerIds": [
-        "c0bca58cc5345c0837e1",
         "038ced12b0f74e8d5e0f",
         "5baa649b7c2c9b6b6f30",
         "176750c88ee667a2d5f8",
@@ -3980,8 +3975,7 @@
         "7b6e1f490ce974fc3971",
         "90eeada0337da120131f",
         "07a46a7b451eaf4dc307",
-        "9f962d39a30e2e289376",
-        "b401421d17d621333330",
+        "beac062acc9e64531d14",
         "15dcdf4bce3cfa3abf94",
         "c92d966d391d0a57a8ae",
         "d9708e60456bb2d7e538",
@@ -3994,10 +3988,7 @@
         "07ca232e98dcc1720801",
         "af32a0c4970ae3e8f71e",
         "9982cf8a2b469fc90070",
-        "fea472b3a4bb6eb5babd",
-        "d486083aa57ff293af6f",
         "9187c5480b950d1fad4d",
-        "5dbf407454e7bfcc241a",
         "4d6615378bab39e757f0",
         "fe9ce5d32d8c52cdd3c3",
         "52851686fc818e0e4c5f",
@@ -4131,9 +4122,9 @@
     }
   ],
   "counts": {
-    "total": 141,
-    "reviewed": 102,
-    "pending": 39,
-    "unresolvedHighRiskBypasses": 22
+    "total": 136,
+    "reviewed": 108,
+    "pending": 28,
+    "unresolvedHighRiskBypasses": 16
   }
 }

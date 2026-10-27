@@ -2603,6 +2603,11 @@
           "path": "frontend/e2e/phase4-api-clients.security.mjs",
           "marker": "actual Chromium opaque redirects are terminal before any outside request",
           "sha256": "e244b59132edabfd89f1f7bd338d8aaddf7a7c14b632b3ea72cb653b273e12e5"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/admin-share-20261027/trace.json",
+          "marker": "c09bb8607fa4d00f23b7",
+          "sha256": "8ff4e33b2cd2742d55650800c74e25b3288c8a3bcb50948fd296eb5dbacdaaa5"
         }
       ]
     },
@@ -2803,6 +2808,151 @@
           "path": "frontend/src/lib/avatarPersistence.test.ts",
           "marker": "avatar upload derives owner path",
           "sha256": "4395d9a9d0dd4a138a50cc4d64f1676ff22f75139930b8ab3864fd9f5839d936"
+        }
+      ]
+    },
+    {
+      "id": "beac062acc9e64531d14",
+      "callSha256": "987374ed698294669fcc1b81662e8f673f5a4536a9e04207050958cdf420fc5f",
+      "sourceFileSha256": "d3dd3f561bca3c4a22ab5c4487bf541ac5c705bc99013516b6b862f4ca577522",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FIXED_OFFICIAL_SUPABASE_OAUTH_TOKEN_ISSUER_ONLY_NOT_SQL_PROVISION_OR_CONSEQUENTIAL_EGRESS",
+      "tenantAuthority": "ORIGINAL_PKCE_ISSUED_ACTOR_AND_CONSUMED_REVISION_FOR_EXCHANGE_CANONICAL_CURRENT_REFRESH_TOKEN_AND_REVISION_FOR_REFRESH_NO_AUTHORITY_CREATED_BY_TRANSPORT",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/research-oauth-20261027/trace.json",
+          "marker": "beac062acc9e64531d14",
+          "sha256": "6480387812c44bb619e0c6106e4f96e2a27db292b8b32fdefd7c71746fde75c4"
+        },
+        {
+          "path": "backend/src/services/integrations/supabaseTransport.security.test.ts",
+          "marker": "actual Supabase token exchange and refresh reject real HTTP redirects before token storage",
+          "sha256": "a03bd5c9f64a8fe7216b51bdfb921ac2a9791e9323521a59df6aa02fc3657969"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/research-oauth-20261027/authorization-denial-addendum.json",
+          "marker": "401/403",
+          "sha256": "dfed0241c9e22395580aa0b587a82288db924cabfb9ca0611b309625ff65e3bd"
+        }
+      ],
+      "beforeAuthorizationDenialCorrection": {
+        "id": "beac062acc9e64531d14",
+        "callSha256": "987374ed698294669fcc1b81662e8f673f5a4536a9e04207050958cdf420fc5f",
+        "sourceFileSha256": "82ab56fef7542703cabf958a32f5e0d986a94757f4eb19148319687938047e58",
+        "disposition": "REVIEWED_FIXED_DEPENDENCY",
+        "trust": "FIXED_OFFICIAL_SUPABASE_OAUTH_TOKEN_ISSUER_ONLY_NOT_SQL_PROVISION_OR_CONSEQUENTIAL_EGRESS",
+        "tenantAuthority": "ORIGINAL_PKCE_ISSUED_ACTOR_AND_CONSUMED_REVISION_FOR_EXCHANGE_CANONICAL_CURRENT_REFRESH_TOKEN_AND_REVISION_FOR_REFRESH_NO_AUTHORITY_CREATED_BY_TRANSPORT",
+        "evidence": [
+          {
+            "path": "docs/xroga/evidence/command-010/research-oauth-20261027/trace.json",
+            "marker": "beac062acc9e64531d14",
+            "sha256": "6480387812c44bb619e0c6106e4f96e2a27db292b8b32fdefd7c71746fde75c4"
+          },
+          {
+            "path": "backend/src/services/integrations/supabaseTransport.security.test.ts",
+            "marker": "actual Supabase token exchange and refresh reject real HTTP redirects before token storage",
+            "sha256": "f38f87ee4a568f3bb02f4db88ae59c76d65280fba7920444d4557b5ceb13005c"
+          }
+        ]
+      }
+    },
+    {
+      "id": "af32a0c4970ae3e8f71e",
+      "callSha256": "745dc2600e4759cbecd0af57785eeaae416129d99fecfd7db898c6d6b339ae37",
+      "sourceFileSha256": "5dd9bf3f4db350462eb197321f9c73c343e3ba4a33247157c47502ce6737b3e7",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FIXED_OFFICIAL_EXPO_READ_ONLY_IDENTITY_LOOKUP_NOT_MOBILE_PUBLISH_OR_EXTERNAL_EXPORT",
+      "tenantAuthority": "SELECTED_EXPLICIT_USER_TOKEN_OR_CANONICAL_CURRENT_VAULT_TOKEN_SENT_ONLY_TO_ITS_FIXED_ISSUER_NO_TENANT_PAYLOAD_OR_ACTION_AUTHORITY_CREATED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/expo-identity-20261027/trace.json",
+          "marker": "af32a0c4970ae3e8f71e",
+          "sha256": "0ff8561a4a7c7bdcd06b355a49b4d827e66e565677bdf0069f17794342dc50a8"
+        },
+        {
+          "path": "backend/src/services/publish/expoIdentityTransport.security.test.ts",
+          "marker": "Expo credential identity probe cannot follow a real redirected endpoint",
+          "sha256": "5d4819e281eb7f0ab0d996cce8aed2978271a8a022552bebecb981475cf1994e"
+        }
+      ]
+    },
+    {
+      "id": "9187c5480b950d1fad4d",
+      "callSha256": "d854fa7c0a76e83d07d74248b526a946c5e9628a5fc44bfcb7f703b72393dd4c",
+      "sourceFileSha256": "65f33f8ffaf2af3666cbd8a022e19c52389f7e691c4f9a84870cbf02d6861b76",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FIXED_CONFIGURED_FIRST_PARTY_API_FILE_DOWNLOAD_ONLY_NO_ARBITRARY_ORIGIN_OR_PROVIDER_UPLOAD",
+      "tenantAuthority": "REMOTE_VERIFIED_USER_BEFORE_SESSION_FORWARDING_BACKEND_REMAINS_CANONICAL_FILE_OWNER_LINK_EXPIRY_AND_REVOCATION_AUTHORITY_NO_NEW_GRANT",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/admin-share-20261027/trace.json",
+          "marker": "9187c5480b950d1fad4d",
+          "sha256": "8ff4e33b2cd2742d55650800c74e25b3288c8a3bcb50948fd296eb5dbacdaaa5"
+        },
+        {
+          "path": "frontend/e2e/phase4-admin-share.security.mjs",
+          "marker": "authorized admin, bounded shares and private range delivery keep their contracts and denial results stay private",
+          "sha256": "9768cffa49a8b13925506e35b9a5e52e7468129590fb2178396691caec5b2d23"
+        }
+      ]
+    },
+    {
+      "id": "2ca37ae73a723e2b988c",
+      "callSha256": "30d5b6c0667a89d33db7a124cf4c89bb7d31881d6d1905fec0f19d5ce53cc944",
+      "sourceFileSha256": "d188a38214d7827bda99f738a7f2146cb123f29ce363158fc0c0e043365bb6ad",
+      "disposition": "DISABLED_WITH_PROOF",
+      "trust": "NO_CURRENT_PRODUCTION_IMPORTER_OR_REFERENCE_OF_EXACT_DORMANT_OUTBOUND_EXPORT",
+      "tenantAuthority": "REACHABILITY_CLASSIFICATION_ONLY_NO_AUTHORIZATION_EGRESS_OR_LATER_BATCH_ACTIVATION_CERTIFICATION",
+      "evidence": [
+        {
+          "path": "backend/src/security/egress/dormantConsequentialAdapters.test.ts",
+          "marker": "the two dormant content-upload and communication adapters have no current production importer or exported-call reference",
+          "sha256": "3c8a908f6f53c5c3fe3e577ccf59e186660a0b09c1b6086734b41cdeb06d3d67"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/DORMANT-CONSEQUENTIAL-TRACE-20261027.json",
+          "marker": "2ca37ae73a723e2b988c",
+          "sha256": "dd30aab9f9772860cda879aee6791e792af095c1771446089b01ff282bb98c55"
+        }
+      ]
+    },
+    {
+      "id": "09c93cfa5ff3fbb6deb9",
+      "callSha256": "76292d3a64157e9c06a2ff47914166733b28d6cfa1480ecc66a613c341cba64f",
+      "sourceFileSha256": "00ced58a0e80e1a065f01e55b2c3876ffae4ee9ee0dec435ba01417c192090fc",
+      "disposition": "DISABLED_WITH_PROOF",
+      "trust": "NO_CURRENT_PRODUCTION_IMPORTER_OR_REFERENCE_OF_EXACT_DORMANT_OUTBOUND_EXPORT",
+      "tenantAuthority": "REACHABILITY_CLASSIFICATION_ONLY_NO_AUTHORIZATION_EGRESS_OR_LATER_BATCH_ACTIVATION_CERTIFICATION",
+      "evidence": [
+        {
+          "path": "backend/src/security/egress/dormantConsequentialAdapters.test.ts",
+          "marker": "the two dormant content-upload and communication adapters have no current production importer or exported-call reference",
+          "sha256": "3c8a908f6f53c5c3fe3e577ccf59e186660a0b09c1b6086734b41cdeb06d3d67"
+        },
+        {
+          "path": "docs/xroga/evidence/command-010/DORMANT-CONSEQUENTIAL-TRACE-20261027.json",
+          "marker": "09c93cfa5ff3fbb6deb9",
+          "sha256": "dd30aab9f9772860cda879aee6791e792af095c1771446089b01ff282bb98c55"
+        }
+      ]
+    },
+    {
+      "id": "9982cf8a2b469fc90070",
+      "callSha256": "e23aa135cf3f3388831c04f5c291dcdc32248441739edffdda2efe78999fbce9",
+      "sourceFileSha256": "599c4816881fba840f10cdce5a299cf62d5f495f9ea7ad75bfd67f7a22d60372",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FIXED_OFFICIAL_WHOP_CHECKOUT_OWNER_READ_ONLY_NO_FINANCIAL_OR_MUTATION_AUTHORITY",
+      "tenantAuthority": "EXACT_RESOURCE_ACCOUNT_PLAN_AND_CANONICAL_SERVER_OWNER_METADATA_VALIDATED_BEFORE_RETURN_NO_ENTITLEMENT_OR_ACTION_GRANT_CREATED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/WHOP-READBACK-TRANSPORT-20261027.json",
+          "marker": "9982cf8a2b469fc90070",
+          "sha256": "f995393251f958dd86b86bf4390d5c7474d58edb5ad36a7caec5680505447cf2"
+        },
+        {
+          "path": "backend/src/services/whopCheckoutTransport.security.test.ts",
+          "marker": "Whop ownership lookup refuses real redirects without a second request",
+          "sha256": "2f83ba1d772ae5a5e689f07d23f80acd4f6152cd4db0f0a05df3590c5171da69"
         }
       ]
     }

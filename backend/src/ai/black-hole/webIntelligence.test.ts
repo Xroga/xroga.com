@@ -57,7 +57,7 @@ test('official-only evidence excludes secondary sources before synthesis and UI'
   assert.equal(unavailable.unavailable, true);
 });
 
-test('production web intelligence uses Parallel for public URLs and x_search-only Grok for X', async () => {
+test('production web intelligence retains admitted Parallel reads and explicitly denies unaccounted X research', async () => {
   const priorFetch = globalThis.fetch;
   const priorParallel = process.env.PARALLEL_API_KEY;
   const priorXai = process.env.XAI_API_KEY;
@@ -121,15 +121,12 @@ test('production web intelligence uses Parallel for public URLs and x_search-onl
       userId: owner,dispatchScope,
       prompt: 'Read https://docs.example.com/current',
     });
-    const x = await runWebIntelligence({
-      userId: owner,dispatchScope,
-      prompt: 'Read https://x.com/example/status/1',
-    });
-
-    assert.equal(web.bundle?.provider, 'parallel');
-    assert.equal(x.bundle?.provider, 'grok_x');
-    assert.deepEqual(bodies[1]?.tools, [{ type: 'x_search' }]);
-    assert.equal(bodies[1]?.max_output_tokens, 500);
+    await assert.rejects(runWebIntelligence({
+      userId:owner,dispatchScope,prompt:'Read https://x.com/example/status/1',
+    }),{code:'PROVIDER_RESERVATION_DENIED',reason:'X_SEARCH_ACCOUNTING_UNAVAILABLE'});
+    assert.equal(web.bundle?.provider,'parallel');
+    assert.equal(urls.length,1);
+    assert.equal(urls[0],'https://api.parallel.ai/v1/extract');
     assert.equal(urls.some((url) => /tavily|searx/i.test(url)), false);
   } finally {
     globalThis.fetch = priorFetch;
