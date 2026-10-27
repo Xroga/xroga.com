@@ -200,6 +200,9 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: ms-playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - name: Verify image client proxy admission
+        if: ${{ inputs.browser_scope != 'proxy-origin-only' }}
+        run: node --test frontend/e2e/phase4-image-client.browser.mjs
       - name: Start isolated application
         id: start-application
         shell: bash

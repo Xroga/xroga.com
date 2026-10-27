@@ -1935,6 +1935,31 @@
           "sha256": "cf99e05b69f3f0d6a0e01fc908ef64a9daec91a9a0853b79642158aa5a0378b9"
         }
       ]
+    },
+    {
+      "id": "3b970c32a8efb294a7fd",
+      "callSha256": "41f7d3340a897e2f2b5880451a0426e924282874510c1c46b7bf398dd785e39c",
+      "sourceFileSha256": "0b84a79c7fc9f30b9c35e18b8c3e2b556bde0152abb3c751f47205a8bbd6a38b",
+      "disposition": "VERIFIED_GUARD",
+      "trust": "REMOTE_IMAGE_BYTES_ONLY_THROUGH_EXISTING_CANONICAL_PINNED_PROXY_NO_DENIAL_FALLBACK",
+      "tenantAuthority": "PUBLIC_IMAGE_CONVERSION_NO_CREDENTIAL_OR_CUSTOMER_DATA_EXPORT_AUTHORITY_LOCAL_CAPABILITIES_REMAIN_SAME_ORIGIN_UPSTREAM_SHARING_AND_UPLOAD_NOT_PROMOTED",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/image-client-20261027/trace.json",
+          "marker": "3b970c32a8efb294a7fd",
+          "sha256": "208d386cca5d60608f356ab56e88edb45c0ffb6ddfa19034a3d5cef573f3cfb4"
+        },
+        {
+          "path": "frontend/e2e/phase4-image-client.browser.mjs",
+          "marker": "a denied image proxy cannot fall through to",
+          "sha256": "9aa9d3f21ad1c3908f6d60b8ff4c9e7dffedcd4e2fb7fbb7ff51ba1095116450"
+        },
+        {
+          "path": "frontend/src/app/api/image-fetch/route.ts",
+          "marker": "boundedPublicGet",
+          "sha256": "51467588b07c73bb6b06bd1434fe2d126388635b053cecc681587a3c11588be1"
+        }
+      ]
     }
   ]
 }

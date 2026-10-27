@@ -314,7 +314,7 @@
   "rollout": "Complete only Batch1 Phase4 Command010. Close reachable caller obligations, unchanged strict audit, exact-source disposable/Auth/security integration CI and all12original criteria, then reviewed Phase4 merge and compatible Google release with recovery. Claude exclusively owns all Batch1.5/2 integration, activation and verification.",
   "rollback": "Keep this source unreleased while incomplete. For an authorized later rollout use verified compatible native Google recovery and protected restore path. Do not restore known SSRF/exfiltration behavior, blindly re-enable Fly or deploy a legacy-only v3-incompatible image.",
   "knownGaps": [
-    "91remaining source traces including52high-risk candidates, not all are demonstrated vulnerabilities",
+    "88remaining source traces including49high-risk candidates, not all are demonstrated vulnerabilities",
     "Browser SDK admission/accounting and lifetime corrections pass focused tests. Browser process/network and upstream tool/content trust require their own trace.",
     "Parallel upstream provenance and provider-internal URL redirect/DNS guarantees, separate xAI path",
     "Private R2 dependency and current capability revocation checks have focused proof. Publishing, external uploads and remaining shared reachable callers still require individual verification.",
@@ -336,14 +336,15 @@
     "docs/xroga/evidence/command-010/PRIVATE-R2-SDK-CALLER-TRACE.json",
     "docs/xroga/evidence/command-010/redirect-20261027/checkpoint.json",
     "docs/xroga/evidence/command-010/REAL-REDIRECT-TRANSPORT-PROOF.json",
-    "docs/xroga/evidence/command-010/CURRENT-PHASE4-ACCEPTANCE.json"
+    "docs/xroga/evidence/command-010/CURRENT-PHASE4-ACCEPTANCE.json",
+    "docs/xroga/evidence/command-010/image-client-20261027/checkpoint.json"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,
   "release": {
     "state": "BLOCKED",
     "blockers": [
-      "Original strict caller audit incomplete:91pending and52high-risk candidates",
+      "Original strict caller audit incomplete:88pending and49high-risk candidates",
       "All12original criteria and exact-final-source authenticated/disposable/CI acceptance are not yet verified"
     ],
     "authenticatedE2e": "BLOCKED",

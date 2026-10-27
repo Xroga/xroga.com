@@ -1,5 +1,5 @@
 {
-  "atUtc": "2026-10-27T16:19:23.497596+00:00",
+  "atUtc": "2026-10-27T16:37:37.936320+00:00",
   "scope": "ONLY_BATCH1_PHASE4_COMMAND010",
   "phase3": "ACCEPTED_PRESERVED_NOT_REOPENED",
   "formalAcceptedCriteria": 0,
@@ -92,10 +92,10 @@
     }
   ],
   "strictAudit": {
-    "total": 156,
-    "reviewed": 65,
-    "pending": 91,
-    "unresolvedHighRiskBypasses": 52
+    "total": 154,
+    "reviewed": 66,
+    "pending": 88,
+    "unresolvedHighRiskBypasses": 49
   },
   "ci": "FINAL_CURRENT_SOURCE_REQUIRED_NOT_RUN_WHILE_CALLER_COVERAGE_INCOMPLETE",
   "production": "UNCHANGED_GOOGLE_ACCEPTANCE_PRESERVED_NO_PHASE4_DEPLOY",
