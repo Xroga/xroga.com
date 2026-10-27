@@ -16,6 +16,12 @@ const configuredApiOrigin = (() => {
   }
 })();
 
+// Xroga Drive uploads go straight from the browser to the private R2 bucket through short-lived signed URLs. Allow exactly that bucket's
+// origin (never a wildcard) and only when the Drive screen is switched on; the bucket's own CORS rules still limit methods and origins.
+const driveStorageOrigin = process.env.NEXT_PUBLIC_XROGA_DRIVE === '1'
+  ? 'https://xroga-drive-prod.f14d36fd540c59ad410272122edc1a7e.r2.cloudflarestorage.com'
+  : null;
+
 const connectSources = (authBuildConfiguration.projectRef==='self-hosted-staging' ? [
   "'self'", configuredApiOrigin, authBuildConfiguration.url,
   authBuildConfiguration.url.replace(/^https:/,'wss:'),
@@ -34,6 +40,7 @@ const connectSources = (authBuildConfiguration.projectRef==='self-hosted-staging
   'https://c.bing.com',
   'https://analytics.ahrefs.com',
   configuredApiOrigin,
+  driveStorageOrigin,
   ...(authBuildConfiguration.projectRef === 'local-disposable' ? ['http://127.0.0.1:54321', 'ws://127.0.0.1:54321'] : []),
 ]).filter(Boolean).join(' ');
 
