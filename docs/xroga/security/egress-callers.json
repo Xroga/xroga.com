@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scope": "AST_CANDIDATES_NOT_BLANKET_SECURITY_CERTIFICATION",
-  "sourceTreeDigest": "6b97210752458b4f23c14031561568d46b12dec050b96db7de70ba5510ab473d",
+  "sourceTreeDigest": "87908b3707e43aa9520e481940b91612a1fae8c37bf6102be2aa2be8c676b02c",
   "limitations": [
     "SDK internals, generated/deployed code and reflection require semantic review",
     "Static inclusion is not proof of route reachability",
@@ -211,6 +211,38 @@
           "path": "backend/src/ai/modelRedirectFallback.security.test.ts",
           "marker": "real SDK redirects cannot become retries or another provider fallback",
           "sha256": "36172e6c457b960779d04020748d18cd13cee96dd131aceb07a7d2a6e729ff11"
+        }
+      ]
+    },
+    {
+      "id": "512f0f91c11bbb5fe617",
+      "file": "backend/src/config/supabase.ts",
+      "line": 21,
+      "entryPoint": "supabaseFetchFor",
+      "transport": "fetch",
+      "callee": "fetch",
+      "callSha256": "b58590432a31d0492880a03e383b79cfb9322aa42fca51c2e27be9c5842e0073",
+      "destination": "DYNAMIC_OR_SDK_INTERNAL",
+      "trust": "PINNED_CONFIGURED_SUPABASE_PROJECT_ONLY_NO_REDIRECT_OR_SDK_SECURITY_RETRY",
+      "tenantAuthority": "SDK_TRANSPORT_ONLY_EXISTING_CALLERS_MUST_PROVIDE_CANONICAL_ROW_TENANT_AND_OPERATION_AUTHORITY",
+      "currentProtection": "NOT_CERTIFIED",
+      "risk": "HIGH_RISK_PENDING_REVIEW",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/supabase-sdk-20261027/trace.json",
+          "marker": "512f0f91c11bbb5fe617",
+          "sha256": "f9b2034c8c7971022f4c148b68b00835c8e31fc83531282044801057f25d17fa"
+        },
+        {
+          "path": "backend/src/config/supabaseTransport.security.test.ts",
+          "marker": "real canonical credential mirror SDK cannot forward sealed credentials or service apikey through an HTTP redirect",
+          "sha256": "b7658f5d0f03c0fdd40f4e96c7bc9192500f0e1028c61c29392a5a8945c1ddef"
+        },
+        {
+          "path": "backend/src/config/supabaseClientTransport.security.test.ts",
+          "marker": "actual Supabase SDK admin and user clients stop terminal redirects without retry and retain authorized ordinary requests",
+          "sha256": "942923606325f756a623ec55ecff086964d4d8d6e6836b464c01634782276dda"
         }
       ]
     },
@@ -2206,12 +2238,28 @@
       "callee": "supabase.storage.from(KEY_BUCKET).upload",
       "callSha256": "89ee36190deb9acd207e31b721521ab1ee9173c7baab3e9621d74b8472dfe8a2",
       "destination": "DYNAMIC_OR_SDK_INTERNAL",
-      "trust": "UNREVIEWED_SERVER_CALLER",
-      "tenantAuthority": "REQUIRES_SOURCE_TRACE",
+      "trust": "FIXED_PRIVATE_CONFIGURED_SUPABASE_CIPHERTEXT_MIRROR_ONLY_NOT_ARBITRARY_EXTERNAL_UPLOAD",
+      "tenantAuthority": "CANONICAL_SEALED_OWNER_PROVIDER_ROW_AND_EXACT_CURRENT_REVISION_METADATA_BEFORE_PRIVATE_UPLOAD_POSTCHECK_NO_PLAINTEXT_OR_REVOCATION_FALLBACK",
       "currentProtection": "NOT_CERTIFIED",
       "risk": "HIGH_RISK_PENDING_REVIEW",
-      "disposition": "PENDING_SOURCE_TRACE",
-      "evidence": null
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/supabase-sdk-20261027/trace.json",
+          "marker": "c7711580844b520345cf",
+          "sha256": "f9b2034c8c7971022f4c148b68b00835c8e31fc83531282044801057f25d17fa"
+        },
+        {
+          "path": "backend/src/config/supabaseTransport.security.test.ts",
+          "marker": "real canonical credential mirror SDK cannot forward sealed credentials or service apikey through an HTTP redirect",
+          "sha256": "b7658f5d0f03c0fdd40f4e96c7bc9192500f0e1028c61c29392a5a8945c1ddef"
+        },
+        {
+          "path": "backend/src/config/supabaseClientTransport.security.test.ts",
+          "marker": "actual Supabase SDK admin and user clients stop terminal redirects without retry and retain authorized ordinary requests",
+          "sha256": "942923606325f756a623ec55ecff086964d4d8d6e6836b464c01634782276dda"
+        }
+      ]
     },
     {
       "id": "c92d966d391d0a57a8ae",
@@ -3906,6 +3954,7 @@
       "callerIds": [
         "038ced12b0f74e8d5e0f",
         "5baa649b7c2c9b6b6f30",
+        "512f0f91c11bbb5fe617",
         "176750c88ee667a2d5f8",
         "80fae4b604b9d9b5fa55",
         "3e5ba31676d5e5da80fb",
@@ -4099,9 +4148,9 @@
     }
   ],
   "counts": {
-    "total": 134,
-    "reviewed": 109,
-    "pending": 25,
-    "unresolvedHighRiskBypasses": 16
+    "total": 135,
+    "reviewed": 111,
+    "pending": 24,
+    "unresolvedHighRiskBypasses": 15
   }
 }

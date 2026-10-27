@@ -2975,6 +2975,56 @@
           "sha256": "629b4beea68b679f35529a2e7666735f3bf363ebca851da97db34f681fb84f6e"
         }
       ]
+    },
+    {
+      "id": "512f0f91c11bbb5fe617",
+      "callSha256": "b58590432a31d0492880a03e383b79cfb9322aa42fca51c2e27be9c5842e0073",
+      "sourceFileSha256": "3366dd3460e19bc66af8743005d0bf91a288c8173c3126dec1749bf5a44ecf0f",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "PINNED_CONFIGURED_SUPABASE_PROJECT_ONLY_NO_REDIRECT_OR_SDK_SECURITY_RETRY",
+      "tenantAuthority": "SDK_TRANSPORT_ONLY_EXISTING_CALLERS_MUST_PROVIDE_CANONICAL_ROW_TENANT_AND_OPERATION_AUTHORITY",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/supabase-sdk-20261027/trace.json",
+          "marker": "512f0f91c11bbb5fe617",
+          "sha256": "f9b2034c8c7971022f4c148b68b00835c8e31fc83531282044801057f25d17fa"
+        },
+        {
+          "path": "backend/src/config/supabaseTransport.security.test.ts",
+          "marker": "real canonical credential mirror SDK cannot forward sealed credentials or service apikey through an HTTP redirect",
+          "sha256": "b7658f5d0f03c0fdd40f4e96c7bc9192500f0e1028c61c29392a5a8945c1ddef"
+        },
+        {
+          "path": "backend/src/config/supabaseClientTransport.security.test.ts",
+          "marker": "actual Supabase SDK admin and user clients stop terminal redirects without retry and retain authorized ordinary requests",
+          "sha256": "942923606325f756a623ec55ecff086964d4d8d6e6836b464c01634782276dda"
+        }
+      ]
+    },
+    {
+      "id": "c7711580844b520345cf",
+      "callSha256": "89ee36190deb9acd207e31b721521ab1ee9173c7baab3e9621d74b8472dfe8a2",
+      "sourceFileSha256": "114aa11361a4f5bb238191c17e6591139aaf2bdc22deb04029a8a69864a09f69",
+      "disposition": "REVIEWED_FIXED_DEPENDENCY",
+      "trust": "FIXED_PRIVATE_CONFIGURED_SUPABASE_CIPHERTEXT_MIRROR_ONLY_NOT_ARBITRARY_EXTERNAL_UPLOAD",
+      "tenantAuthority": "CANONICAL_SEALED_OWNER_PROVIDER_ROW_AND_EXACT_CURRENT_REVISION_METADATA_BEFORE_PRIVATE_UPLOAD_POSTCHECK_NO_PLAINTEXT_OR_REVOCATION_FALLBACK",
+      "evidence": [
+        {
+          "path": "docs/xroga/evidence/command-010/supabase-sdk-20261027/trace.json",
+          "marker": "c7711580844b520345cf",
+          "sha256": "f9b2034c8c7971022f4c148b68b00835c8e31fc83531282044801057f25d17fa"
+        },
+        {
+          "path": "backend/src/config/supabaseTransport.security.test.ts",
+          "marker": "real canonical credential mirror SDK cannot forward sealed credentials or service apikey through an HTTP redirect",
+          "sha256": "b7658f5d0f03c0fdd40f4e96c7bc9192500f0e1028c61c29392a5a8945c1ddef"
+        },
+        {
+          "path": "backend/src/config/supabaseClientTransport.security.test.ts",
+          "marker": "actual Supabase SDK admin and user clients stop terminal redirects without retry and retain authorized ordinary requests",
+          "sha256": "942923606325f756a623ec55ecff086964d4d8d6e6836b464c01634782276dda"
+        }
+      ]
     }
   ]
 }
