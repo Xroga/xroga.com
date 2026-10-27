@@ -146,7 +146,7 @@ export interface DeliveryReceipt {
 }
 
 export interface ChangeView {
-  id: string; bindingId: string; instruction: string; status: ChangeStatus; statusReason: string; baseCommitSha: string;
+  id: string; bindingId: string; instruction: string; parentChangeId: string | null; status: ChangeStatus; statusReason: string; baseCommitSha: string;
   scope: { confidence: 'high' | 'medium' | 'low'; targets: string[]; consumers: string[]; tests: string[]; mapStatus: string } | null;
   acceptanceCriteria: string[]; attempts: number; maxAttempts: number; revisions: ChangeRevision[]; events: { at: string; type: string; message: string }[];
   files: { path: string; kind: 'created' | 'modified' | 'deleted' }[]; reproduction: 'reproduced' | 'not_reproduced' | 'not_applicable' | 'unavailable'; regressionTestAdded: boolean;
@@ -170,7 +170,7 @@ export const existingSourceApi = {
     return apiFetch<DirectoryListing>(`${base}/links/${id}/directory${query}`);
   },
   file: (id: string, path: string) => apiFetch<FileContent>(`${base}/links/${id}/file?path=${encodeURIComponent(path)}`),
-  createChange: (bindingId: string, instruction: string) => apiFetch<{ change: ChangeView }>(`${base}/links/${bindingId}/changes`, { method: 'POST', body: JSON.stringify({ instruction }) }),
+  createChange: (bindingId: string, instruction: string, continueFrom?: string) => apiFetch<{ change: ChangeView }>(`${base}/links/${bindingId}/changes`, { method: 'POST', body: JSON.stringify({ instruction, ...(continueFrom ? { continueFrom } : {}) }) }),
   changes: (bindingId: string) => apiFetch<{ changes: ChangeView[] }>(`${base}/links/${bindingId}/changes`),
   change: (changeId: string) => apiFetch<{ change: ChangeView }>(`${base}/changes/${changeId}`),
   cancelChange: (changeId: string) => apiFetch<{ change: ChangeView }>(`${base}/changes/${changeId}/cancel`, { method: 'POST', body: '{}' }),

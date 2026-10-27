@@ -89,13 +89,13 @@ export const defaultExistingSourceChanges: ExistingSourceChangesFactory = (tenan
 };
 
 const id = z.string().uuid();
-const changeBody = z.object({ instruction: z.string().min(3).max(8_000), maxAttempts: z.number().int().min(1).max(5).optional() }).strict();
+const changeBody = z.object({ instruction: z.string().min(3).max(8_000), maxAttempts: z.number().int().min(1).max(5).optional(), continueFrom: z.string().uuid().optional() }).strict();
 const deliverBody = z.object({ mode: z.enum(['pull_request', 'branch']).optional(), allowUnverified: z.boolean().optional(), title: z.string().min(3).max(200).optional() }).strict();
 const exportQuery = z.object({ format: z.enum(['patch', 'zip']) });
 
 /** A change as a client sees it: statuses, evidence and diffs, but not the full content of every changed file. */
 const publicChange = (t: ChangeTask) => ({
-  id: t.id, bindingId: t.bindingId, instruction: t.instruction, status: t.status, statusReason: t.statusReason, baseCommitSha: t.baseCommitSha, scope: t.scope, acceptanceCriteria: t.acceptanceCriteria,
+  id: t.id, bindingId: t.bindingId, instruction: t.instruction, parentChangeId: t.parentChangeId ?? null, status: t.status, statusReason: t.statusReason, baseCommitSha: t.baseCommitSha, scope: t.scope, acceptanceCriteria: t.acceptanceCriteria,
   attempts: t.attempts, maxAttempts: t.maxAttempts, revisions: t.revisions, events: t.events, files: t.result.map((r) => ({ path: r.path, kind: r.kind })), reproduction: t.reproduction,
   regressionTestAdded: t.regressionTestAdded, deliveries: t.deliveries, createdAt: t.createdAt, updatedAt: t.updatedAt,
 });
@@ -171,7 +171,7 @@ export function createExistingSourceRouter(
   const withChanges = (fn: (t: TenantContext, c: ExistingSourceChanges, req: AuthRequest, res: Response) => Promise<unknown>) => handle((t, s, req, res) => fn(t, changesFor(t, s, intelligenceFor(t, s)), req, res));
   router.post('/links/:id/changes', withChanges(async (t, c, req, res) => {
     const body = changeBody.parse(req.body);
-    const task = await c.changes.create(t.userId, id.parse(req.params.id), body.instruction, { maxAttempts: body.maxAttempts });
+    const task = await c.changes.create(t.userId, id.parse(req.params.id), body.instruction, { maxAttempts: body.maxAttempts, continueFrom: body.continueFrom });
     c.changes.start(t.userId, task.id);
     res.status(202).json({ change: publicChange(task) });
   }));

@@ -12,6 +12,7 @@
  *  - delivery is idempotent: the same change content never creates a second branch or PR, and a branch left by a lost response is
  *    adopted only when its files hash to exactly this change.
  */
+import { redactModelContext } from '../../ai/contextPreparation.js';
 import { scanProjectFiles } from '../../ai/securityScan.js';
 import { writeAtomically, AtomicWriteError, type AtomicWriteApi, type AtomicWriteRecord } from '../../services/integrations/githubAtomicWrite.js';
 import type { BranchProtectionApi } from '../../services/integrations/githubBranchAuthorization.js';
@@ -75,6 +76,14 @@ export class ChangeDelivery {
 
   /** Draft pull request (or just the branch) for a verified change. Returns a conflict report instead of writing when the remote diverged on the same files. */
   async deliver(userId: string, changeId: string, options: { mode?: 'pull_request' | 'branch'; allowUnverified?: boolean; title?: string } = {}): Promise<DeliveryOutcome> {
+    try { return await this.deliverInner(userId, changeId, options); } catch (error) {
+      if (error instanceof ExistingSourceError) throw error;
+      // a provider timeout, reset or outage: never reported as delivered, and the retry path (adopting a branch that did land) stays open
+      throw new ExistingSourceError('PROVIDER_UNAVAILABLE', 'GitHub could not be reached or did not answer. If a branch was created it will be adopted when you retry.');
+    }
+  }
+
+  private async deliverInner(userId: string, changeId: string, options: { mode?: 'pull_request' | 'branch'; allowUnverified?: boolean; title?: string }): Promise<DeliveryOutcome> {
     const task = await this.load(userId, changeId);
     this.assertDeliverable(task, options.allowUnverified === true);
     const revision = task.revisions[task.revisions.length - 1];
@@ -169,12 +178,12 @@ export class ChangeDelivery {
     return { commitSha: ref.sha };
   }
 
-  private titleOf(task: ChangeTask): string { return `Xroga: ${task.instruction.replace(/\s+/g, ' ').trim().slice(0, 60)}`; }
+  private titleOf(task: ChangeTask): string { return `Xroga: ${redactModelContext(task.instruction).value.replace(/\s+/g, ' ').trim().slice(0, 60)}`; }
 
   private bodyOf(task: ChangeTask, rebased: boolean, headSha: string): string {
     const last = task.revisions[task.revisions.length - 1];
     const lines = [
-      '## What changed', task.instruction.slice(0, 1_000), '',
+      '## What changed', redactModelContext(task.instruction).value.slice(0, 1_000), '',
       '## Files', ...task.result.map((r) => `- ${r.kind} \`${r.path}\``), '',
       '## Verification',
       last?.tests ? `- ${last.tests.status === 'passed' ? 'PASSED' : last.tests.status.toUpperCase()}: ${last.tests.summary}` : '- Not run',

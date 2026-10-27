@@ -156,6 +156,10 @@ export async function runTests(input: RunTestsInput): Promise<TestRunResult> {
   }
   const failed = stages.find((s) => s.timedOut || (s.exitCode !== 0));
   const durationMs = Date.now() - started;
+  // a toolchain the runtime does not provide is not a failing test: it is "not run", and it must never read as either a pass or a failure of the code
+  const missing = failed && !failed.timedOut && (failed.exitCode === 127 || failed.exitCode === 126) && /(not found|ENOENT|is not recognized|no such file or directory|executable file)/i.test(failed.output)
+    ? plan.stages.find((s) => s.id === failed.id)?.command : undefined;
+  if (failed && missing) return { status: 'unavailable', plan, stages, summary: `The isolated runtime does not provide ${missing}, so the tests were not run. This is not a pass.`, evidence: '', durationMs };
   if (!failed) {
     const ranTests = stages.filter((s) => s.kind === 'test').length;
     if (ranTests < plan.stages.filter((s) => s.kind === 'test').length) return { status: 'error', plan, stages, summary: 'Not every selected test stage reported a result, so this is not a pass.', evidence: '', durationMs };

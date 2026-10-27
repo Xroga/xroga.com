@@ -49,6 +49,8 @@ const running = new Map<string, AbortController>();
 const runningByOwner = new Map<string, number>();
 const BUG_WORDS = /\b(bug|fix|broken|breaks?|error|crash(?:es)?|fail(?:s|ing|ed)?|wrong|incorrect|regression|off by|500|exception)\b/i;
 const DENIED_PATHS = ['.github/workflows/**', '.git/**', '.gitmodules'];
+/** Where a legitimate change also needs to write regardless of the located code: manifests, tests, and source-controlled migrations (never applied by Xroga). */
+const ALWAYS_ALLOWED = ['package.json', 'pyproject.toml', 'go.mod', 'go.sum', 'requirements.txt', 'test/**', 'tests/**', 'spec/**', '__tests__/**', 'migrations/**', 'db/migrate/**', 'supabase/migrations/**', 'prisma/migrations/**'];
 const dirOf = (p: string) => (p.includes('/') ? p.slice(0, p.lastIndexOf('/')) : '');
 
 const fileOf = (path: string, content: string | null, kind: ResultFile['kind']): ResultFile => ({ path, kind, content });
@@ -60,13 +62,21 @@ export class ChangeService {
 
   // ---- lifecycle -----------------------------------------------------------------------------------------------------------
 
-  async create(userId: string, bindingId: string, instruction: string, options: { maxAttempts?: number } = {}): Promise<ChangeTask> {
+  async create(userId: string, bindingId: string, instruction: string, options: { maxAttempts?: number; continueFrom?: string } = {}): Promise<ChangeTask> {
     const text = String(instruction ?? '').trim();
     if (text.length < 3 || text.length > 8_000) throw new ExistingSourceError('INVALID_REQUEST', 'Describe the change in between 3 and 8000 characters.');
     const { binding } = await this.deps.source.activeBinding(userId, bindingId);
+    let parentChangeId: string | null = null;
+    if (options.continueFrom) {
+      const parent = await this.deps.store.get(userId, options.continueFrom);
+      if (!parent || parent.bindingId !== binding.id) throw new ExistingSourceError('CHANGE_NOT_FOUND', 'Change not found.');
+      if (!(['verified', 'unverified', 'delivered'] as ChangeStatus[]).includes(parent.status) || parent.result.length === 0) throw new ExistingSourceError('CHANGE_CONFLICT', 'Only a finished change with edits can be built on.');
+      if (parent.baseCommitSha !== binding.baseCommitSha) throw new ExistingSourceError('CHANGE_CONFLICT', 'The linked commit moved since that change was made. Start a new change from the new commit.');
+      parentChangeId = parent.id;
+    }
     const at = this.iso();
     const task: ChangeTask = {
-      id: this.deps.newId?.() ?? randomUUID(), ownerUserId: userId, bindingId: binding.id, instruction: text, status: 'queued', statusReason: 'Waiting to start.', baseCommitSha: binding.baseCommitSha,
+      id: this.deps.newId?.() ?? randomUUID(), ownerUserId: userId, bindingId: binding.id, instruction: text, parentChangeId, status: 'queued', statusReason: 'Waiting to start.', baseCommitSha: binding.baseCommitSha,
       scope: null, acceptanceCriteria: [], attempts: 0, maxAttempts: Math.min(5, Math.max(1, options.maxAttempts ?? this.deps.maxAttempts ?? 3)), revisions: [], events: [{ at, type: 'change.created', message: 'Change requested.' }],
       result: [], reproduction: 'not_applicable', regressionTestAdded: false, deliveries: [], createdAt: at, updatedAt: at,
     };
@@ -78,7 +88,9 @@ export class ChangeService {
   async get(userId: string, changeId: string): Promise<ChangeTask> {
     const task = await this.deps.store.get(userId, changeId);
     if (!task) throw new ExistingSourceError('CHANGE_NOT_FOUND', 'Change not found.');
-    if (!TERMINAL.includes(task.status) && task.status !== 'interrupted' && !running.has(task.id)) {
+    // a change that was just created and has not been picked up yet is waiting, not interrupted; only a long-stale queued one is
+    const staleQueued = task.status === 'queued' && this.now() - Date.parse(task.updatedAt) > 60_000;
+    if (!TERMINAL.includes(task.status) && task.status !== 'interrupted' && (task.status !== 'queued' || staleQueued) && !running.has(task.id)) {
       const next = this.touch(task, { status: 'interrupted', statusReason: 'The run stopped before it finished. Resume it to continue from the saved work.' }, { type: 'change.interrupted', message: 'The run was interrupted.' });
       await this.deps.store.save(userId, next);
       return next;
@@ -118,7 +130,16 @@ export class ChangeService {
     if ((runningByOwner.get(userId) ?? 0) >= limit) throw new ExistingSourceError('CHANGE_BUSY', 'Finish or cancel a running change before starting another.');
     const controller = new AbortController();
     running.set(task.id, controller); runningByOwner.set(userId, (runningByOwner.get(userId) ?? 0) + 1);
-    const save = async (patch: Partial<ChangeTask>, event?: { type: string; message: string; data?: ChangeEvent['data'] }) => { task = this.touch(task, patch, event); await this.deps.store.save(userId, task); return task; };
+    // writes are applied in the order they were made, so a slow earlier write can never overwrite a later snapshot
+    let writing: Promise<void> = Promise.resolve();
+    const save = async (patch: Partial<ChangeTask>, event?: { type: string; message: string; data?: ChangeEvent['data'] }) => {
+      task = this.touch(task, patch, event);
+      const snapshot = task;
+      const write = writing.catch(() => undefined).then(() => this.deps.store.save(userId, snapshot));
+      writing = write;
+      await write;
+      return task;
+    };
     try {
       task = await save({ status: 'planning', statusReason: 'Preparing an isolated copy of the project.' }, { type: 'change.planning', message: 'Preparing the working copy at the linked commit.' });
       const verified = await this.deps.source.activeBinding(userId, task.bindingId);
@@ -130,7 +151,10 @@ export class ChangeService {
       const bug = BUG_WORDS.test(task.instruction);
       const criteria = this.criteria(task.instruction, bug, snapshot);
       task = await save({ scope, acceptanceCriteria: criteria }, { type: 'scope.resolved', message: `Likely files: ${scope.targets.slice(0, 5).join(', ') || 'none identified'}.`, data: { confidence: scope.confidence, files: snapshot.files.length, omitted: snapshot.omitted.length } });
-      const workspace = new ChangeWorkspace(snapshot, this.policy(scope), task.result.length ? this.restoredFiles(snapshot, task.result) : undefined);
+      const parent = task.parentChangeId ? await this.deps.store.get(userId, task.parentChangeId) : null;
+      if (task.parentChangeId && (!parent || parent.baseCommitSha !== task.baseCommitSha)) throw new ExistingSourceError('CHANGE_CONFLICT', 'The change this one builds on is no longer available at the same commit.');
+      const startFrom = task.result.length ? task.result : parent?.result ?? [];
+      const workspace = new ChangeWorkspace(snapshot, this.policy(scope), startFrom.length ? this.restoredFiles(snapshot, startFrom) : undefined);
 
       let last: TestRunResult | null = null; let note = '';
       for (let attempt = task.attempts + 1; attempt <= task.maxAttempts; attempt++) {
@@ -207,7 +231,7 @@ export class ChangeService {
     const limits = this.deps.changeLimits ?? { maxChangedFiles: DEFAULT_MAX_CHANGED_FILES, maxChangedBytes: DEFAULT_MAX_CHANGED_BYTES };
     const narrow = scope.allowedDirs.length === 0;
     return {
-      write: { allowedPaths: scope.allowedDirs.length ? [...scope.allowedDirs.map((d) => `${d}/**`), 'package.json', 'pyproject.toml', 'go.mod', 'go.sum', 'requirements.txt'] : [], deniedPaths: DENIED_PATHS, allowCreate: true, allowDelete: true, allowRename: true },
+      write: { allowedPaths: scope.allowedDirs.length ? [...scope.allowedDirs.map((d) => `${d}/**`), ...ALWAYS_ALLOWED] : [], deniedPaths: DENIED_PATHS, allowCreate: true, allowDelete: true, allowRename: true },
       maxChangedFiles: narrow ? Math.min(10, limits.maxChangedFiles) : limits.maxChangedFiles, maxChangedBytes: limits.maxChangedBytes,
     };
   }
@@ -279,6 +303,7 @@ export class ChangeService {
       acceptanceCriteria: criteria.map((description, i) => ({ id: `ac-${i + 1}`, description, required: true })),
       constraints: [
         'Preserve every file the request does not need; do not reformat or reorder unrelated code.',
+        ...(task.parentChangeId ? ['This continues an earlier change to this project. Its edits are already in the working copy; keep them unless the request says otherwise.'] : []),
         'Follow the project\'s existing structure, framework, authentication and dependencies; do not add dependencies unless the request needs them.',
         ...(bug ? ['Reproduce the bug with a regression test that fails before the fix, then fix the cause, not the symptom.'] : []),
         'Never read, print or change credentials, tokens or .env files.',
@@ -286,7 +311,7 @@ export class ChangeService {
         ...(scope.targets.length ? [`Start from: ${scope.targets.slice(0, 6).join(', ')}.`] : []),
       ],
     };
-    const host = new ExistingSourceToolHost({ workspace, execution: this.deps.execution, signal });
+    const host = new ExistingSourceToolHost({ workspace, execution: this.deps.execution, signal, onDenied: (what) => { void input.emit({ type: 'tool.denied', message: what }); } });
     const sink: SoftwareRunEventSink = { emit: async (e: SoftwareRunEvent) => { if (e.type.startsWith('file.') || e.type === 'check.completed' || e.type === 'command.completed') await input.emit({ type: e.type, message: `${e.title}${e.evidence?.filePath ? `: ${e.evidence.filePath}` : ''}` }); } };
     const failing: SoftwareCheckResult[] = evidence && evidence.status === 'failed' ? [{ id: 'tests', name: 'Project tests', status: 'failed', summary: evidence.evidence }] : [];
     return this.deps.runAgent({

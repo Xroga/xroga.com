@@ -118,6 +118,7 @@ export class ChangeWorkspace {
         const size = Math.max(lineCount(before), 1);
         if (size > 20 && stats.additions + stats.deletions > size * 1.2) warnings.push('most of the file was rewritten');
       }
+      if (/(^|\/)(migrations?|db\/migrate|prisma\/migrations|supabase\/migrations)\/.*\.(sql|ts|js|py|rb)$/i.test(c.path) && c.kind !== 'deleted') warnings.push('database migration: Xroga never applies it; review it and run it yourself against a disposable database first');
       additions += stats.additions; deletions += stats.deletions;
       files.push({ path: c.path, kind: c.kind, baseBlobSha: c.kind === 'created' ? null : this.base.get(c.path)?.blobSha ?? null, resultBlobSha: after === null ? null : gitBlobSha(after), additions: stats.additions, deletions: stats.deletions, warnings });
       diffs.push(unifiedDiff(c.path, before, after));

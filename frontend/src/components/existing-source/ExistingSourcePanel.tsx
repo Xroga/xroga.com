@@ -17,6 +17,7 @@ import {
   type VerifiedBinding,
 } from '@/lib/existingSourceApi';
 import { cn } from '@/lib/utils';
+import { ChangeWorkbench } from './ChangeWorkbench';
 
 const STATE_LABEL: Record<SourceBinding['state'], string> = {
   linked: 'Linked',
@@ -152,6 +153,8 @@ export function ExistingSourcePanel() {
     let cancelled = false;
     existingSourceApi.indexStatus(current.id).then((s) => { if (!cancelled) setMap(s); }).catch(() => { /* the status stays unknown */ });
     return () => { cancelled = true; };
+    // reset and re-check only when the link, its commit or its state changes, not on every refresh of the other fields of the binding
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active?.binding.id, active?.binding.baseCommitSha, active?.binding.state]);
 
   const refresh = async () => {
@@ -176,7 +179,7 @@ export function ExistingSourcePanel() {
     <div className="mx-auto w-full max-w-5xl space-y-5 p-4 text-sm" data-testid="existing-source-panel">
       <header>
         <h1 className="text-lg font-semibold">Existing repositories</h1>
-        <p className="mt-1 text-xs text-[var(--muted)]">Link a repository you already have on GitHub. Xroga reads it at an exact commit, never replaces it, and never writes to it from this screen.</p>
+        <p className="mt-1 text-xs text-[var(--muted)]">Link a repository you already have on GitHub. Xroga reads it at an exact commit and never replaces it. Changes are made on an isolated copy and delivered as a draft pull request or a patch you review.</p>
       </header>
 
       {error ? <p role="alert" className="text-xs text-amber-400">{error}</p> : null}
@@ -348,6 +351,8 @@ export function ExistingSourcePanel() {
               ) : null}
             </div>
           ) : null}
+
+          {active.binding.state === 'linked' ? <ChangeWorkbench binding={active.binding} /> : null}
         </section>
       ) : null}
     </div>

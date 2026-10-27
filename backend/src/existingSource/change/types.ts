@@ -70,6 +70,8 @@ export interface ChangeTask {
   readonly ownerUserId: string;
   readonly bindingId: string;
   readonly instruction: string;
+  /** The earlier change this one builds on (its edits are the starting point), if any. */
+  readonly parentChangeId?: string | null;
   readonly status: ChangeStatus;
   readonly statusReason: string;
   readonly baseCommitSha: string;

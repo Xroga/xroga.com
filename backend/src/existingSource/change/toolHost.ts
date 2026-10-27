@@ -23,6 +23,8 @@ export interface HostOptions {
   /** Present only when review-branch delivery was authorised for this change. */
   readonly createReviewBranch?: (contract: SoftwareExecutionContract) => Promise<ReviewBranchResult>;
   readonly onCheck?: (checks: SoftwareCheckResult[]) => void;
+  /** A refused action, as one line without any content: it becomes a denied receipt in the change's durable events. */
+  readonly onDenied?: (what: string) => void;
 }
 
 const SHELL_SYNTAX = /[;&|<>$`\\(){}*?~!#"'\n\r]/;
@@ -60,6 +62,10 @@ export function checkCommand(line: string): { program: string; args: string[]; n
 export class ExistingSourceToolHost implements SoftwareAgentToolHost {
   constructor(private readonly options: HostOptions) {}
   private get ws() { return this.options.workspace; }
+  private deny(what: string): void { try { this.options.onDenied?.(what.slice(0, 200)); } catch { /* a receipt failure must not change the refusal */ } }
+  private guarded<T>(action: string, path: string, fn: () => T): T {
+    try { return fn(); } catch (error) { if (error instanceof WorkspaceRefusal) this.deny(`Refused to ${action} ${path.slice(0, 120)}: ${error.reason}`); throw error; }
+  }
   private abortCheck(): void { if (this.options.signal?.aborted) throw new ExistingSourceError('CHANGE_CONFLICT', 'The change was cancelled.'); }
 
   async listFiles(): Promise<ProjectFileSummary[]> { return this.ws.workspace.listFiles().filter((f) => !isSensitivePath(f.path)); }
@@ -67,8 +73,9 @@ export class ExistingSourceToolHost implements SoftwareAgentToolHost {
   async readFiles(_contract: SoftwareExecutionContract, paths: string[]): Promise<ProjectFileContent[]> {
     this.abortCheck();
     return paths.slice(0, 40).map((p) => {
-      if (isSensitivePath(p)) throw new WorkspaceRefusal('Credential files are never read.', 'sensitive');
-      const file = this.ws.workspace.readFile(p);
+      if (isSensitivePath(p)) { this.deny(`Refused to read ${p.slice(0, 120)}: credentials`); throw new WorkspaceRefusal('Credential files are never read.', 'sensitive'); }
+      let file;
+      try { file = this.ws.workspace.readFile(p); } catch (error) { this.deny(`Refused to read ${p.slice(0, 120)}: not in the working copy`); throw error; }
       return { path: file.path, content: redactModelContext(file.content).value };
     });
   }
@@ -79,25 +86,26 @@ export class ExistingSourceToolHost implements SoftwareAgentToolHost {
 
   async writeFile(_contract: SoftwareExecutionContract, path: string, content: string, intent: FileWriteIntent): Promise<FileMutationResult> {
     this.abortCheck();
-    this.ws.guardWrite(path, intent === 'create' ? 'create' : 'modify', content);
+    this.guarded('write', path, () => this.ws.guardWrite(path, intent === 'create' ? 'create' : 'modify', content));
     return this.ws.workspace.writeFile(path, content, intent);
   }
 
   async deleteFile(_contract: SoftwareExecutionContract, path: string) {
     this.abortCheck();
-    this.ws.guardWrite(path, 'delete');
+    this.guarded('delete', path, () => this.ws.guardWrite(path, 'delete'));
     return this.ws.workspace.deleteFile(path);
   }
 
   async renameFile(_contract: SoftwareExecutionContract, fromPath: string, toPath: string): Promise<FileRenameResult> {
     this.abortCheck();
-    this.ws.guardWrite(fromPath, 'rename'); this.ws.guardWrite(toPath, 'rename');
+    this.guarded('rename', fromPath, () => this.ws.guardWrite(fromPath, 'rename')); this.guarded('rename', toPath, () => this.ws.guardWrite(toPath, 'rename'));
     return this.ws.workspace.renameFile(fromPath, toPath);
   }
 
   async runCommand(_contract: SoftwareExecutionContract, command: string): Promise<CommandExecutionResult> {
     this.abortCheck();
     const checked = checkCommand(command);
+    if (typeof checked === 'string') this.deny(`Refused a command: ${checked}`);
     if (typeof checked === 'string') return { commandId: 'refused', command, exitCode: 126, stdout: '', stderr: checked, durationMs: 0 };
     const started = Date.now();
     try {
