@@ -1,0 +1,103 @@
+{
+  "scope": "PHASE4_ONLY_REAL_SOFTWARE_TOOL_INPUT_ADMISSION_NOT_FULL_PROVENANCE_OR_PHASE_ACCEPTANCE",
+  "parent": "47492ae3c539af6a07439c60d7d4c88221406eb5",
+  "atUtc": "2026-10-27T17:18:36.146Z",
+  "defect": "Actual installed SDK0.0.82 createTool execute accepted invented file-write intent and invoked the production host mutation once despite allowCreate:false. Runtime TypeScript casts and the published JSON schema did not enforce the callback. Wrong-method delete/rename intents could also bypass file-write create/modify checks. Non-string file bodies reached mutation.",
+  "solution": "Canonical write policy denies unknown operation values. The actual SDK file-write callback and production host both require create/modify and string content before workspace mutation. Existing path restrictions, allowed edits, delete/rename tools, scheduler, provider router, canonical approval and source/recovery behavior are preserved.",
+  "verified": {
+    "passed": 27,
+    "skipped": 0,
+    "negative": [
+      "Invented and wrong-method intent at actual installed SDK callback and production host,0effects",
+      "Non-string file bodies,0effects",
+      "Instructions and fabricated contract/tenant fields cannot widen original path scope"
+    ],
+    "positive": [
+      "Ordinary permitted source modification",
+      "Existing checkpoint/base/workspace recovery, original issuer/model accounting and sandbox admission regressions"
+    ]
+  },
+  "receipts": [
+    {
+      "name": "policyAndHostRed",
+      "jobId": "b55b9902-a6ba-4dd4-af4a-7536176fdb98",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/software-tool-20261027/policyAndHostRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 69961
+      }
+    },
+    {
+      "name": "actualSdkEffectRed",
+      "jobId": "7d0dd298-114e-4b73-b0c1-b7c05689b307",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/software-tool-20261027/actualSdkEffectRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 70325
+      }
+    },
+    {
+      "name": "nonStringBodyRed",
+      "jobId": "a5d1fce0-95cb-4932-8a36-5a7af26a7a16",
+      "status": "failed",
+      "exitCode": 1,
+      "log": "docs/xroga/evidence/command-010/software-tool-20261027/nonStringBodyRed.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 71693
+      }
+    },
+    {
+      "name": "green",
+      "jobId": "62e7714d-5a0f-4100-b6aa-455759873ecd",
+      "status": "passed",
+      "exitCode": 0,
+      "log": "docs/xroga/evidence/command-010/software-tool-20261027/green.log",
+      "temporaryCleanup": {
+        "status": "COMPLETE",
+        "logicalBytesRemoved": 1811077
+      }
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "backend/src/ai/softwareAgent/writePolicy.ts",
+      "sha256": "24113cfc686e8b53ee493d80640da5c73b6fbb7d2644b9bd213fce3bea4508ab"
+    },
+    {
+      "path": "backend/src/ai/softwareAgent/xrogaTools.ts",
+      "sha256": "bd3635e6217411d6593aee234ecac3565e49b60fc3c56009b5590ca433b2e0a4"
+    },
+    {
+      "path": "backend/src/ai/softwareAgent/ProductionSoftwareAgentToolHost.ts",
+      "sha256": "d280fb6932a566614e01ac731c0a0f9103542b7d7a83c1fe042d4f7906647879"
+    },
+    {
+      "path": "backend/src/ai/softwareAgent/softwareToolAdmission.security.test.ts",
+      "sha256": "7bed3aa6e403273ca5129f488e46fa4514874c26887e4c24ea94da502d4e92c3"
+    },
+    {
+      "path": "backend/src/security/genericSdk.local.integration.ts",
+      "sha256": "76948a8c6aa5bba81662f2007637014780f860e75e4ade943f1335383076ec62"
+    },
+    {
+      "path": "backend/src/security/softwareAgentSdk.local.integration.ts",
+      "sha256": "f22010214e9064cf03834f3063bb43f592a95f8260fcfab9e5be4bdaf3241ebd"
+    }
+  ],
+  "disposableIntegrationAdjustment": "Only stale redirect:error assertions are updated to the actual manual-inspection contract introduced by the preserved real-HTTP SDK redirect correction. No evaluator, SQL, account, quota, receipt or original negative condition changed. Full disposable integration remains pending exact-source CI.",
+  "remaining": [
+    "SoftwareAgent full upstream file/content provenance and all consequential tools need their own reachable-caller trace",
+    "No higher caller or original criterion automatically promoted by this focused tool-input correction",
+    "Current strict caller coverage, full exact-source integration/CI, all12criterion acceptance and compatible release remain required"
+  ],
+  "phase4": "NOT_VERIFIED",
+  "batch1": "NOT_CLOSED",
+  "batch15And2": "CLAUDE_OWNS_NOT_CODEX_SCOPE",
+  "productionChanged": false,
+  "spending": 0
+}

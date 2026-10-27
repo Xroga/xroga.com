@@ -450,6 +450,9 @@ export function createXrogaSoftwareTools(
                 FileWriteIntent;
             };
 
+          if(toolInput?.intent!=='create'&&toolInput?.intent!=='modify')return{ok:false,code:'INVALID_OPERATION',message:'File writes require create or modify intent.'};
+          if(typeof toolInput.content!=='string')return{ok:false,code:'INVALID_FILE_CONTENT',message:'File content must be text.'};
+
           const decision =
             evaluateWritePolicy(
               contract.writePolicy,

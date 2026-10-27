@@ -28,7 +28,7 @@ export function registerGenericSdkTests(admin:SupabaseClient):void{
     t.mock.method(globalThis,'fetch',async(input:Parameters<typeof fetch>[0],init?:RequestInit)=>{
       const url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);
       if(url.origin==='https://open.bigmodel.cn'){
-        assert.equal(url.href,'https://open.bigmodel.cn/api/paas/v4/chat/completions');assert.equal(init?.redirect,'error');
+        assert.equal(url.href,'https://open.bigmodel.cn/api/paas/v4/chat/completions');assert.equal(init?.redirect,'manual');
         assert.equal(new Headers(init?.headers).get('authorization'),'Bearer synthetic-generic-sdk-key');
         const body=JSON.parse(String(init?.body));assert.equal(body.model,'glm-5.3-flash');
         assert.doesNotMatch(String(init?.body),/synthetic-generic-sdk-key|SYNTHETIC_CREDENTIAL/);sends++;
