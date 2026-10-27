@@ -11,7 +11,11 @@
   "changedFiles": [
     "frontend/next.config.mjs",
     "frontend/src/lib/driveCsp.test.ts",
-    "docs/xroga/missions/drive-csp-r2-upload-20261028.json"
+    "docs/xroga/missions/drive-csp-r2-upload-20261028.json",
+    "docs/xroga/blockers.md",
+    "docs/xroga/current-state-schema.json",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md"
   ],
   "decisions": {
     "keep": [

@@ -44889,7 +44889,7 @@
       "id": "surface:00069db1d185a39243c5",
       "subsystem": "frontend",
       "sourcePath": "frontend/next.config.mjs",
-      "sha256": "9714db285f158d809a1e6d1bbd5e908987924903d1e53e6c4ad8e1944749c689",
+      "sha256": "c0c2c342f78f58210bc7bb171bace726c352dc7c3b346f4ed78b831962b9a90a",
       "symbols": [
         "BROWSER_EMPLOYEES_DEMO_SOURCE",
         "CLARITY_DEMO_SOURCE",
@@ -44901,6 +44901,7 @@
         "configuredApiOrigin",
         "connectSources",
         "csp",
+        "driveStorageOrigin",
         "framableSecurityHeaders",
         "freshMarketingHeaders",
         "isSafe",
@@ -44941,6 +44942,7 @@
         "declared-host:c.bing.com",
         "declared-host:www.clarity.ms",
         "declared-host:www.googletagmanager.com",
+        "declared-host:xroga-drive-prod.f14d36fd540c59ad410272122edc1a7e.r2.cloudflarestorage.com",
         "node:fs"
       ],
       "authBoundary": [
@@ -129788,6 +129790,13 @@
       "id": "test-suite:923db200928945d81e84",
       "sourcePath": "frontend/src/lib/driveApiContract.test.ts",
       "declaredTests": 6,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:2c4e2fb75b5247377675",
+      "sourcePath": "frontend/src/lib/driveCsp.test.ts",
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },
