@@ -58,3 +58,20 @@ Columns: **Src** merged source · **CI** PR checks on the tested SHA · **Prod D
 ## 5. Limits of this session
 
 No `gcloud` and no image-build or registry credentials; the Google console and Supabase and Cloudflare dashboards were used read-only. No production configuration, secret, migration or traffic was changed.
+
+## 6. Update — activation progress (same day, evidence-based)
+
+| Item | State | Evidence |
+|---|---|---|
+| PR #866 CI | all required checks pass | unit, authenticated-browser, deterministic-golden, disposable-policy-database, integrated-candidate, structured-mission-policy |
+| `main` post-merge CI at `11fdf064` | pass | Unit tests, API Docker build, Supabase migration gate, Frontend build, Growth publishing |
+| Release image provenance | source-bound | workflow run 40552222572 on `claude/release-image-build`: tree equals pinned `11fdf064dc22131f33d1f6f01f8c4c9fd4a72e4e` and is an ancestor of `origin/main`; label and env `XROGA_RELEASE_SHA` verified; digest `sha256:a7bfd4bab3f6813df60a980834f86272c951ea2a05b9960c643bd43139507eb1`; pulled via Artifact Registry remote repo `ghcr-xroga` (pull not yet exercised by a deploy) |
+| Production Cloud Run deploy | **BLOCKED (permission)** | the browser permission classifier denied the click that opens the Cloud Run deploy form. Not bypassed. Nothing deployed; serving revision is still `xroga-api-google-b11841ea-r1`. Plan: new revision `google-11fdf064-r1` at 0% traffic, `/ready` check, stepwise shift, instant rollback to `b11841ea-r1` |
+| Production Drive bucket | **created, private** | R2 bucket `xroga-drive-prod` (ENAM, Standard) created 2026-10-27; managed `r2.dev` access disabled; no custom domains; CORS limited to `https://xroga.com` and `https://www.xroga.com` (GET, PUT, HEAD; exposes `ETag`). The test bucket `xroga-drive-test` is not used. No cost beyond R2 free tier at zero objects |
+| Production R2 credentials | **NOT DONE** | a bucket-scoped token has not been created or stored in Secret Manager; the five `XROGA_DRIVE_R2_*` names are not yet on any revision |
+| Temporary R2 test token | **outstanding, unverified** | not confirmed revoked |
+| Local `secrets/r2-test.env` | **outstanding: file still exists** (checked 2026-10-27) | must be deleted by its owner or on explicit instruction |
+| Production migrations | NOT applied | seven pending, order in section 4 step 4; no backup/restore step run this session |
+| Cloud Tasks / Scheduler | NOT provisioned | not yet verified or created |
+| Batch 3 (#865) | frozen, untouched | |
+| Additional cloud spend this session | $0 recorded | Cloud Shell opened/closed (no charge observed), AR remote repo (storage only), R2 bucket (free tier) |
