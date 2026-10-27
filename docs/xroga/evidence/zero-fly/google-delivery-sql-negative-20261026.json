@@ -1,0 +1,21 @@
+{
+  "scope": "ISOLATED_POSTGRES_TRANSPORT_SCHEMA_NOT_FULL_SUPABASE_UPGRADE_OR_LIVE_CALLER",
+  "task": "9b96b3d0-7b82-4d70-b784-7289d663080d",
+  "productionChanged": false,
+  "cloudResourcesCreated": false,
+  "checks": [],
+  "freeBeforeBytes": 4243132416,
+  "imageDigests": [
+    "postgres@sha256:f3bd19c606e442c3d7bdfa8002e03fe260a1023351e0ea4598032022b68dd6e3"
+  ],
+  "sourceLfSha256": {
+    "delivery.sql": "a81f9fff822902e43675d0db00a6585d79a7e1e8f42f86557c2085745f9da4a4",
+    "attempt.sql": "1dc3e170a9f437fd8066ebf08c4f7a055fa0555d258c0f346bba461f9167e98d",
+    "cancel.sql": "46bcdee21a1fc1a4fe2052779dcf19ae691a8da95caf3181dd092cb19433169f"
+  },
+  "status": "FAIL",
+  "error": "An old queued delivery regained dispatch authority after explicit resume",
+  "containerRemoved": true,
+  "newTaskImageRemoved": true,
+  "freeAfterBytes": 4243132416
+}

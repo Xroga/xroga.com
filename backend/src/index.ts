@@ -1,5 +1,6 @@
-import 'dotenv/config';
 import './runtime/installSafeLogging.js';
+import './loadPlatformEnvironment.js';
+import 'dotenv/config';
 import { createServer } from 'http';
 import express from 'express';
 import cors from 'cors';
@@ -7,6 +8,9 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { authMiddleware } from './middleware/auth.js';
 import swarmRouter from './routes/swarm.js';
+import {googleBackgroundSelected} from './workers/googleSwarmQueue.js';
+import {googleDispatchConfiguration} from './workers/googleDispatch.js';
+import {canonicalDispatchHandler} from './workers/googleDispatchHandler.js';
 import chatRouter from './routes/chat.js';
 import projectsRouter from './routes/projects.js';
 import terminalSessionsRouter from './routes/terminalSessions.js';
@@ -143,6 +147,9 @@ app.use('/internal/business-automations', businessAutomationSchedulerRouter);
 // reaches the general 10 MB JSON allowance.
 app.use('/api/guest', express.json({ limit: '32kb' }), guestChatRouter);
 
+if(googleBackgroundSelected()){
+  app.post('/internal/canonical-dispatch',express.json({limit:'1kb'}),canonicalDispatchHandler(googleDispatchConfiguration()));
+}
 app.use(express.json({ limit: '10mb' }));
 
 app.get('/', (_req, res) => {

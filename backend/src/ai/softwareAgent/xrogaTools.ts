@@ -1,6 +1,7 @@
 import {
   createTool,
 } from '@cline/sdk';
+import {SandboxAdmissionError} from '../../sandbox/sandboxTypes.js';
 
 import {
   redactSecrets,
@@ -30,6 +31,7 @@ import type {
 } from './toolHost.js';
 
 interface CreateXrogaSoftwareToolsInput {
+  onSandboxAdmissionDenied?:(error:SandboxAdmissionError)=>void;
   contract: SoftwareExecutionContract;
   host: SoftwareAgentToolHost;
   events: SoftwareRunEventSink;
@@ -1030,7 +1032,8 @@ export function createXrogaSoftwareTools(
 
               ...result,
             };
-          } catch {
+          } catch (error) {
+            if(error instanceof SandboxAdmissionError){input.onSandboxAdmissionDenied?.(error);throw error;}
             return {
               ok:
                 false,
@@ -1156,7 +1159,8 @@ export function createXrogaSoftwareTools(
 
               checks,
             };
-          } catch {
+          } catch (error) {
+            if(error instanceof SandboxAdmissionError){input.onSandboxAdmissionDenied?.(error);throw error;}
             return {
               ok:
                 false,
@@ -1367,7 +1371,8 @@ export function createXrogaSoftwareTools(
                     }
               ),
             };
-          } catch {
+          } catch (error) {
+            if(error instanceof SandboxAdmissionError){input.onSandboxAdmissionDenied?.(error);throw error;}
             await emit({
               type:
                 'preview.failed',

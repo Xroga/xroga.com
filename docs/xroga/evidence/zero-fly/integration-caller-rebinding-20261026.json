@@ -1,0 +1,212 @@
+{
+  "scope": "CURRENT_SOURCE_POSITION_MAPPING_NOT_NEW_SECURITY_ACCEPTANCE",
+  "proof": [
+    {
+      "path": "backend/src/ai/runStore.ts",
+      "oldId": "08fa3351d8cb19a04571",
+      "newId": "6ed50f9fc731b3a94f89",
+      "enclosing": "listRunsForUserAsync",
+      "unchanged": true,
+      "enclosingSha256": "eb83507ce5cd2ea74738fe42f4275cbcb10e24027fa35e1a32a8002de6c03e03",
+      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28"
+    },
+    {
+      "path": "backend/src/ai/runStore.ts",
+      "oldId": "dd16f90263b54684c181",
+      "newId": "d6a2d0f1eafe32f09954",
+      "enclosing": "listRunsForUserAsync",
+      "unchanged": true,
+      "enclosingSha256": "eb83507ce5cd2ea74738fe42f4275cbcb10e24027fa35e1a32a8002de6c03e03",
+      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28"
+    },
+    {
+      "path": "backend/src/ai/runStore.ts",
+      "oldId": "1dec69321380b532d6ad",
+      "newId": "bc1c802d7afea2658481",
+      "enclosing": "isRunCancellationRequested",
+      "unchanged": false,
+      "enclosingSha256": "96d168c7afb8ab904be78a07c21a2bbc60c93debeffaba8c4f2c8314af1125da",
+      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28"
+    },
+    {
+      "path": "backend/src/ai/runStore.ts",
+      "oldId": "aaa2bb0b83359368e76c",
+      "newId": "69147b3a0b1c10adba2a",
+      "enclosing": "isRunCancellationRequested",
+      "unchanged": false,
+      "enclosingSha256": "96d168c7afb8ab904be78a07c21a2bbc60c93debeffaba8c4f2c8314af1125da",
+      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28"
+    },
+    {
+      "path": "backend/src/ai/runStore.ts",
+      "oldId": "cb05c4e7cb4f3b73155f",
+      "newId": "f280dbf81344931da30f",
+      "enclosing": "resumeRunDurable",
+      "unchanged": true,
+      "enclosingSha256": "3f26ac6eed131eb4c4a495ba683820dcafb85f8113c1e70059480f18bbbfa18c",
+      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28"
+    },
+    {
+      "path": "backend/src/ai/runStore.ts",
+      "oldId": "eeb2bd25e4456d58a465",
+      "newId": "06708d2c84b319622b11",
+      "enclosing": "resumeRunDurable",
+      "unchanged": true,
+      "enclosingSha256": "3f26ac6eed131eb4c4a495ba683820dcafb85f8113c1e70059480f18bbbfa18c",
+      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28"
+    },
+    {
+      "path": "backend/src/ai/runStore.ts",
+      "oldId": "8796931131b8f3173ef9",
+      "newId": "ac5a1c58a85da7a69076",
+      "enclosing": "persistConversationOnly",
+      "unchanged": true,
+      "enclosingSha256": "fed46c5ecfd51ce53014cf70e07d4c649c9c3e9cfdf7248f3635395b966c790a",
+      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28"
+    },
+    {
+      "path": "backend/src/ai/runStore.ts",
+      "oldId": "24e9a07a40a70d9bd103",
+      "newId": "1df986c6dad802e3813b",
+      "enclosing": "persistConversationOnly",
+      "unchanged": true,
+      "enclosingSha256": "fed46c5ecfd51ce53014cf70e07d4c649c9c3e9cfdf7248f3635395b966c790a",
+      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28"
+    },
+    {
+      "path": "backend/src/ai/runStore.ts",
+      "oldId": "e81906b392bf21ef067d",
+      "newId": "ae9a98ddd675f4a5288c",
+      "enclosing": "getRunAsync",
+      "unchanged": true,
+      "enclosingSha256": "c4757c130b377d98f6f73e0ae2af03047a2e9e297f43536225354699ce15145e",
+      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28"
+    },
+    {
+      "path": "backend/src/ai/runStore.ts",
+      "oldId": "3e4ef8e15d7b836d3557",
+      "newId": "109b247634f32645ac05",
+      "enclosing": "getRunAsync",
+      "unchanged": true,
+      "enclosingSha256": "c4757c130b377d98f6f73e0ae2af03047a2e9e297f43536225354699ce15145e",
+      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28"
+    },
+    {
+      "path": "backend/src/ai/runStore.ts",
+      "oldId": "b47a9af1f31012f1a675",
+      "newId": "0f4cd46668bdefa4e8e9",
+      "enclosing": "persistToSupabase",
+      "unchanged": true,
+      "enclosingSha256": "a67253e076277bca95b980c526460459088108377439a1bf3abf69dd1ff7574a",
+      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28"
+    },
+    {
+      "path": "backend/src/ai/runStore.ts",
+      "oldId": "9a5ebc5d27638e21a19f",
+      "newId": "63358e8789c46a7bbb09",
+      "enclosing": "persistToSupabase",
+      "unchanged": true,
+      "enclosingSha256": "a67253e076277bca95b980c526460459088108377439a1bf3abf69dd1ff7574a",
+      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28"
+    },
+    {
+      "path": "backend/src/ai/runStore.ts",
+      "oldId": "305655721877fdc8af8d",
+      "newId": "613a8526c208ac2754f6",
+      "enclosing": "requestRunCancellation",
+      "unchanged": true,
+      "enclosingSha256": "e51ec70f73b7178579c68cc81d3a7ed4ef5e6e2ad4020e00e22ca79abbbc601b",
+      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28"
+    },
+    {
+      "path": "backend/src/ai/runStore.ts",
+      "oldId": "19cd1b0c28a37907906a",
+      "newId": "c026c348ff7a940e10e9",
+      "enclosing": "requestRunCancellation",
+      "unchanged": true,
+      "enclosingSha256": "e51ec70f73b7178579c68cc81d3a7ed4ef5e6e2ad4020e00e22ca79abbbc601b",
+      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28"
+    },
+    {
+      "path": "backend/src/ai/runStore.ts",
+      "oldId": "300193e2a9a49a1a57e2",
+      "newId": "e772b4943b42c4a2d452",
+      "enclosing": "persistRunHeartbeat",
+      "unchanged": true,
+      "enclosingSha256": "ea080b6db2fa577f9c0d85a6a45f46e13bcc136a2db245519b677520781d3d5d",
+      "sourceSha256": "f114626653921aebd1517dddc42d38eac55959b0e2ee25c5b2125c3f37a29e28"
+    },
+    {
+      "path": "backend/src/ai/executionRuntime.ts",
+      "oldId": "6cb302dec6a7d693df42",
+      "newId": "b0890e13b2718629037e",
+      "enclosing": "load",
+      "unchanged": true,
+      "enclosingSha256": "667d65a2b7285099084a18e5cb18475149b26b79cddcb3e54b3c6f006f33a610",
+      "sourceSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2"
+    },
+    {
+      "path": "backend/src/ai/executionRuntime.ts",
+      "oldId": "09b6dc142ebd7f16df10",
+      "newId": "1b90517b37251b8ee7c7",
+      "enclosing": "load",
+      "unchanged": true,
+      "enclosingSha256": "667d65a2b7285099084a18e5cb18475149b26b79cddcb3e54b3c6f006f33a610",
+      "sourceSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2"
+    },
+    {
+      "path": "backend/src/ai/executionRuntime.ts",
+      "oldId": "77dae5d737d7faa0bdd1",
+      "newId": "1bb8bd89204f01a7253f",
+      "enclosing": "saveSnapshot",
+      "unchanged": true,
+      "enclosingSha256": "c441a7a7f941bcdc7cac93247b0cec012ef476cf6643f00d0c370334568fab91",
+      "sourceSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2"
+    },
+    {
+      "path": "backend/src/ai/executionRuntime.ts",
+      "oldId": "840a0babdc3449f56be3",
+      "newId": "024ec43cb6e858b32b18",
+      "enclosing": "saveSnapshot",
+      "unchanged": true,
+      "enclosingSha256": "c441a7a7f941bcdc7cac93247b0cec012ef476cf6643f00d0c370334568fab91",
+      "sourceSha256": "5eba68eea8d09206de5ccb2d9eba8bfe34e0f27a2eea916db6841281aac1e2c2"
+    },
+    {
+      "path": "backend/src/security/serviceRoleGuard.ts",
+      "oldId": "d84df34ff692e4fb31c1",
+      "newId": "d84df34ff692e4fb31c1",
+      "enclosing": "getTenantSupabaseAdmin",
+      "unchanged": true,
+      "enclosingSha256": "29bd553487aa37c8e9a4210b397309272771e5183f180254e41c83c43b29dfe9",
+      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88"
+    },
+    {
+      "path": "backend/src/security/serviceRoleGuard.ts",
+      "oldId": "fae128d168b634c4b083",
+      "newId": "7fa0b75d1947b7252b32",
+      "enclosing": "probeDatabaseReadiness",
+      "unchanged": true,
+      "enclosingSha256": "f0a9da38ac04042a4c9166c691eccc7c333e9c0aa162b0f9ecd1e7f3d961802b",
+      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88"
+    },
+    {
+      "path": "backend/src/security/serviceRoleGuard.ts",
+      "oldId": "8e4b6e7d9718371f3e6b",
+      "newId": "475ce22bc32e3c36e043",
+      "enclosing": "probeDatabaseReadiness",
+      "unchanged": true,
+      "enclosingSha256": "f0a9da38ac04042a4c9166c691eccc7c333e9c0aa162b0f9ecd1e7f3d961802b",
+      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88"
+    },
+    {
+      "path": "backend/src/security/serviceRoleGuard.ts",
+      "oldId": "5c97508c3ec30ba78c4e",
+      "newId": "cfcd9a8afee3dabccf13",
+      "enclosing": "getGlobalSupabaseAdmin",
+      "unchanged": true,
+      "enclosingSha256": "9a6ad604b59a55326509e9b9c1bd049f1ed4195b9cbea1a4f93573c8b29ed688",
+      "sourceSha256": "eb9fa4ddfef0a4098c061f6375f50c746820bdf070d1da7bd1d50548d56afb88"
+    }
+  ]
+}

@@ -53,6 +53,19 @@ export function resolveDynamicBindings(discovery) {
       names = sandboxKeys; sources = [binding.path]; policy = 'Finite inherited-variable allowlist. All other held secret values are compared only to refuse leakage, not forwarded.'; status = 'RESOLVED_FINITE_CATALOG';
     } else if (binding.path.endsWith('/operations/productionOperations.ts')) {
       sources = [binding.path]; policy = 'Caller-supplied names are used solely for boolean configuration status, never returned values. No finite deployment namespace is fabricated; new callers require authorization review.'; status = 'RESOLVED_CALLER_POLICY';
+    } else if (binding.path === 'backend/src/config/platformEnvironment.ts') {
+      sources = [binding.path, 'backend/src/loadPlatformEnvironment.ts'];
+      policy = 'Server-owned versioned Secret Manager bundle only. Bounded UTF8 JSON, exact target/schema, validated names and values, denied native identity/release/control variables, and no existing environment overwrite. Dynamic assignment occurs only after complete validation. No client body, project file, developer session or finite credential namespace is inferred.';
+      status = 'RESOLVED_CALLER_POLICY';
+    } else if (binding.path === 'backend/src/sandbox/google/gceMachineControl.ts'
+      || binding.path === 'backend/src/services/integrations/googleCloudKmsCryptoProvider.ts') {
+      names = declaredKeys(binding.path, [], ['forbidden']); sources = [binding.path];
+      policy = 'Negative native-identity admission only. Reads fixed forbidden credential/metadata/Fly names and rejects foreign configuration. GCE also scans existing names solely to reject Fly/WIF prefixes. Values are not returned, copied to workers or used as an alternate identity.';
+      status = 'RESOLVED_CALLER_POLICY';
+    } else if (binding.path === 'backend/src/synthesis/projectRuntime/googleFactory.ts') {
+      names = ['XROGA_GCE_NODE_IMAGE','XROGA_GCE_PYTHON_IMAGE','XROGA_GCE_RUST_IMAGE']; sources = [binding.path];
+      policy = 'Exact NODE/PYTHON/RUST suffix selected from the fixed adapter mapping. The configured immutable digest must independently belong to the admitted image catalog. Unknown adapters cannot choose environment names or a Fly fallback.';
+      status = 'RESOLVED_FINITE_CATALOG';
     }
     const reviewedExpressions = {
       'backend/src/ai/modelCapabilityRegistry.ts': ['def.secretKey'],
@@ -62,6 +75,10 @@ export function resolveDynamicBindings(discovery) {
       'backend/src/lib/capabilityRegistry.ts': ['name'], 'backend/src/lib/platformReady.ts': ['key'],
       'backend/src/operations/benchmarkAdapter.ts': ['definition.secretKey'],
       'backend/src/operations/productionOperations.ts': ['key'], 'backend/src/sandbox/sandboxEnvironment.ts': ['name'],
+      'backend/src/config/platformEnvironment.ts': ['name'],
+      'backend/src/sandbox/google/gceMachineControl.ts': ['name'],
+      'backend/src/services/integrations/googleCloudKmsCryptoProvider.ts': ['name'],
+      'backend/src/synthesis/projectRuntime/googleFactory.ts': ["'XROGA_GCE_'+key+'_IMAGE'"],
     };
     if (!reviewedExpressions[binding.path]?.includes(binding.expression)) {status = 'REQUIRES_BINDING_REVIEW'; policy = 'New expression requires a source/caller audit';}
     return { ...binding, status, names, evidence_sources: sources, policy };

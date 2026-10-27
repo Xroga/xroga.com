@@ -1,0 +1,20 @@
+{
+  "atUtc": "2026-10-27T08:19:06.786076+00:00",
+  "secretVersion": 1,
+  "namesCount": 107,
+  "flyRuntimeNames": [],
+  "flyEndpointValueNames": [],
+  "configuredCallbackNames": [
+    "GITHUB_OAUTH_CALLBACK_URL",
+    "SUPABASE_OAUTH_CALLBACK_URL",
+    "VERCEL_OAUTH_CALLBACK_URL",
+    "WHOP_REDIRECT_URL"
+  ],
+  "storageNames": [
+    "CLOUDFLARE_R2_ACCESS_KEY_ID",
+    "CLOUDFLARE_R2_BUCKET_NAME",
+    "CLOUDFLARE_R2_ENDPOINT",
+    "CLOUDFLARE_R2_SECRET_ACCESS_KEY"
+  ],
+  "supabaseProduction": true
+}

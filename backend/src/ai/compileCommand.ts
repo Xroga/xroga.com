@@ -51,6 +51,35 @@
 /** Delimiters the host parses. Chosen to be things npm and tsc do not print. */
 export const COMPILE_RESULT_BEGIN = '<<<XROGA_COMPILE_RESULT';
 export const COMPILE_RESULT_END = 'XROGA_COMPILE_RESULT>>>';
+import type {SandboxExecutionStage,SandboxExecutionResult} from '../sandbox/sandboxTypes.js';
+import type {ProjectFile} from './patches.js';
+
+export function compileDefaultConfigFile():ProjectFile {
+  return {path:'.xroga-verify/compile-tsconfig.json',content:JSON.stringify({compilerOptions:{target:'ES2017',module:'esnext',
+    moduleResolution:'bundler',jsx:'preserve',strict:false,skipLibCheck:true,noEmit:true,esModuleInterop:true,allowJs:true,
+    paths:{'@/*':['../*']}},include:['../**/*.ts','../**/*.tsx'],exclude:['../node_modules']})};
+}
+
+/** Native setup and denied-network phases share one disposable VM workspace.
+ * Network isolation is applied by the supervisor, without guest privileges. */
+export function buildIsolatedCompileStages(request:CompileCommandRequest&{tsconfigPath?:string}):SandboxExecutionStage[]{
+  return [{id:'install',command:'npm',args:[...request.installArgs],networkPolicy:'registry-only',timeoutMs:180000},
+    ...(request.typecheck?[{id:'typecheck',command:'/bin/sh',args:['-c',
+      'if [ -x node_modules/.bin/tsc ]; then exec node_modules/.bin/tsc --noEmit --pretty false "$@"; else echo XROGA_LOCAL_TSC_MISSING; exit 127; fi',
+      'xroga-typecheck',...(request.tsconfigPath?['-p',request.tsconfigPath]:[])],networkPolicy:'none' as const,timeoutMs:60000}]:[]),
+    ...(request.buildScript?[{id:'build',command:'npm',args:['run',request.buildScript],networkPolicy:'none' as const,timeoutMs:180000}]:[])];
+}
+
+/** Host-derived verdict from the actual immutable stage receipts. Generated
+ * process stdout cannot forge the final structured compile result. */
+export function compileStageReceipt(stages:SandboxExecutionResult['stages']):string {
+  if(!stages?.length||stages[0].id!=='install'||stages.some(stage=>stage.killedForLimit||stage.timedOut||stage.exitCode===null))return '';
+  const install=stages[0],tsc=stages.find(stage=>stage.id==='typecheck'),build=stages.find(stage=>stage.id==='build');
+  const tscRan=!!tsc&&!(tsc.exitCode===127&&tsc.stdout.includes('XROGA_LOCAL_TSC_MISSING'));
+  const payload:CompileCommandPayload={installCode:install.exitCode,tscCode:tscRan?tsc!.exitCode:null,tscRan,
+    buildCode:build?.exitCode??null,buildRan:!!build,networkDeniedAfterInstall:stages.slice(1).every(stage=>stage.networkPolicy==='none')};
+  return '\n'+COMPILE_RESULT_BEGIN+JSON.stringify(payload)+COMPILE_RESULT_END+'\n';
+}
 
 export interface CompileCommandRequest {
   /** Arguments for `npm`, e.g. `['install', '--ignore-scripts', …]`. */

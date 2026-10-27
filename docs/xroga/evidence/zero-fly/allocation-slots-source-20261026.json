@@ -1,0 +1,72 @@
+{
+  "scope": "SOURCE_AND_SEPARATE_PROCESS_HTTP_FIXTURE_NOT_LIVE_GCP",
+  "parentSha": "f57a355cff89cac1f1c445722bdcfac12ee205cf",
+  "atUtc": "2026-10-25T22:28:37.543407+00:00",
+  "physicalSlots": [
+    "xroga-exec-slot-1",
+    "xroga-exec-slot-2"
+  ],
+  "configuredMaximum": 1,
+  "maximumSupported": 2,
+  "sourceFiles": {
+    "backend/src/sandbox/google/gceMachineControl.ts": "49922d76343461e65930d147af10a15f444880d82caf58297b5536b2a9e2ec35",
+    "backend/src/sandbox/google/gceMachineControl.test.ts": "728d4c811f2f8cd71a9511b376207c65e822157a35531bcc8222aa63c2db786f",
+    "backend/src/sandbox/google/gceAllocationRace.test.ts": "4a64ce316429b6378f6b74c45baeb6eb7b23655244da5c54c331f148ba5a3f1f"
+  },
+  "reference": "https://docs.cloud.google.com/compute/docs/naming-resources",
+  "reasoning": "Google requires unique VM names within the configured project/location. Contenders use the same bounded names and never choose a random replacement after conflict. This is not a project-wide billing cap.",
+  "jobs": [
+    {
+      "id": "e370cfec-8b9c-440d-9b5f-63cd483d42e6",
+      "status": "failed",
+      "temporaryFilesRemoved": true,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "bytes": 3775,
+          "sha256": "0396b050b7ce4b1e9d5a7a3b73d9d3e3c96c43c17c783688192ed937d3228409"
+        }
+      ]
+    },
+    {
+      "id": "bafa25ca-05b0-4967-b106-e1cae1809b2e",
+      "status": "passed",
+      "temporaryFilesRemoved": true,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "bytes": 7750,
+          "sha256": "c21dd8d87f643db7b15b6a0e11bec5d58d04a852fa39784e862ee969188c92c9"
+        }
+      ]
+    },
+    {
+      "id": "aea64ebd-ff06-4615-a3df-6b10471aaadf",
+      "status": "passed",
+      "temporaryFilesRemoved": true,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "bytes": 3390,
+          "sha256": "30c5c92c86689c077b982159b3feff6e2ada151da86fd8a16c94896b9a92ced6"
+        }
+      ]
+    },
+    {
+      "id": "7af3eb7e-7d87-4984-a190-8e6fb13d941e",
+      "status": "passed",
+      "temporaryFilesRemoved": true,
+      "logs": [
+        {
+          "name": "output-0.log",
+          "bytes": 363,
+          "sha256": "667d8cab9bc85dcaecc5af6505923fab15c43d113ce78ba7d0ce4bfb09c7947e"
+        }
+      ]
+    }
+  ],
+  "newCloudResources": false,
+  "productionChanged": false,
+  "nativeLiveProofRepeated": false,
+  "remaining": "Verify the changed adapter through real caller staging. Preserve hard deletion deadlines and reconcile uncertain creation outcomes. No production worker activation is claimed."
+}

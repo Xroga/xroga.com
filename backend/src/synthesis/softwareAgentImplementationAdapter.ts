@@ -7,6 +7,9 @@ import type {
 } from '../ai/models.js';
 
 import { captureAdmittedRunAttempt } from '../ai/runStore.js';
+import {SupabaseExecutionStateStore} from '../ai/executionRuntime.js';
+import {googleProjectRuntimeSelected} from './projectRuntime/googleFactory.js';
+import {SandboxAdmissionError} from '../sandbox/sandboxTypes.js';
 import {
   assertCodingModel,
 } from '../ai/providerPolicy.js';
@@ -688,6 +691,12 @@ export async function runUniversalSoftwareImplementation(
     ),
   ];
 
+  if(googleProjectRuntimeSelected()&&agentInitialFiles!==input.existingFiles){
+    const store=new SupabaseExecutionStateStore(input.userId,captureAdmittedRunAttempt(input.runId,input.userId));
+    const state=await store.load(input.runId);
+    if(!state||state.currentWorkingSnapshot.length||input.existingFiles.length)throw new SandboxAdmissionError();
+    state.currentWorkingSnapshot=agentInitialFiles.map(file=>({...file}));await store.save(state);
+  }
   const checkpointStore = bindSoftwareCheckpointRecovery(checkpointStoreFor(input), {
     runId: input.runId, projectId: input.projectId ?? null, repository: repository ?? null, baseFiles: agentInitialFiles,
   });

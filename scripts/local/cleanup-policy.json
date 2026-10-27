@@ -1,0 +1,13 @@
+{
+  "marker": "XROGA_LOCAL_DISPOSABLE_JOB_V1",
+  "managedRoot": ".local-task-storage",
+  "failedJobRetentionDays": 0,
+  "abandonedJobGraceSeconds": 0,
+  "logRetentionDays": 14,
+  "logFileMiB": 10,
+  "logFileCount": 3,
+  "minimumFreeGiB": 20,
+  "maxProcesses": 128,
+  "jobTempMaxGiB": 4,
+  "reportStorageChangeMiB": 512
+}

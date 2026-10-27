@@ -1,0 +1,34 @@
+{
+  "atUtc": "2026-10-27T07:50:16.194722+00:00",
+  "sourceSha": "faf56ff8e0d6b9de61cbeb412c2e86c75b17dac3",
+  "image": "us-east4-docker.pkg.dev/project-c40d4821-e647-4fa2-92d/cloud-run-source-deploy/xroga-api-migration@sha256:6eb0f38749d62d5cc6e0d61a5de77d42bc8428a4b34580b6c4a8cff86e3f89d6",
+  "revision": "xroga-api-google-faf56ff8-r1",
+  "checks": [
+    {
+      "path": "/health",
+      "payload": {
+        "status": "ok",
+        "service": "xroga-api",
+        "version": "3.0.0-ai-swarm",
+        "release": "faf56ff8e0d6b9de61cbeb412c2e86c75b17dac3",
+        "capabilities": [
+          "chat",
+          "build",
+          "github",
+          "deployment"
+        ],
+        "timestamp": "2026-10-27T07:50:14.239Z"
+      }
+    },
+    {
+      "path": "/ready",
+      "payload": {
+        "status": "ready",
+        "service": "xroga-api",
+        "release": "faf56ff8e0d6b9de61cbeb412c2e86c75b17dac3",
+        "timestamp": "2026-10-27T07:50:16.090Z"
+      }
+    }
+  ],
+  "productionTrafficChanged": false
+}

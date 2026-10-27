@@ -2,6 +2,8 @@ import {
   randomUUID,
 } from 'node:crypto';
 import { loadProjectRuntimeSession } from '../../security/runtimeProjectBinding.js';
+import type {ProjectRuntimeAuthority} from '../projectRuntime/googleAuthority.js';
+import {googleProjectRuntimeSelected} from '../projectRuntime/googleFactory.js';
 
 import type {
   SoftwareRunEvent,
@@ -200,6 +202,8 @@ async function waitForProcess(
     sessionId:
       string;
 
+    processId: string;
+
     plan:
       LivePreviewLaunchPlan;
   },
@@ -225,6 +229,12 @@ async function waitForProcess(
     attempt +=
       1
   ) {
+    const providerReady=await input.runtime.probeProcess(input.sessionId,input.processId);
+    if(providerReady!==null){
+      if(providerReady)return true;
+      await new Promise<void>(resolve=>setTimeout(resolve,500));
+      continue;
+    }
     const result =
       await input.runtime
         .exec(
@@ -407,6 +417,7 @@ async function emitPlanningEvents(
 
 export async function startOrRefreshLivePreview(
   input: {
+    authority?: ProjectRuntimeAuthority;
     userId:
       string;
 
@@ -533,6 +544,7 @@ export async function startOrRefreshLivePreview(
   const runtime =
     createProjectRuntimeManager(
       input.userId,
+      input.authority,
     );
 
   const runtimeStore =
@@ -572,6 +584,12 @@ export async function startOrRefreshLivePreview(
       // provider. Missing expired sessions may still use the existing new-runtime path.
       const bound = await loadProjectRuntimeSession(runtimeStore,input.userId,input.project.projectId,previousBinding.sessionId);
       if (bound) {
+      if(googleProjectRuntimeSelected() && (input.forceRestart || (bound.expiresAt!==null
+        && Number.isFinite(Date.parse(bound.expiresAt)) && Date.parse(bound.expiresAt)<=Date.now()))) {
+        // Explicit restart or known TTL expiry: retire the verified owned handle
+        // first. Creation below performs fresh admission. No denial is caught.
+        await runtime.destroy(bound.sessionId);
+      }else{
       try {
         session =
           await runtime
@@ -593,9 +611,13 @@ export async function startOrRefreshLivePreview(
           session =
             null;
         }
-      } catch {
+      } catch (error) {
+        // A native restore denial must never allocate a replacement VM. An
+        // explicit restart can retire a verified owned session before creation.
+        if(googleProjectRuntimeSelected())throw error;
         session =
           null;
+      }
       }
       }
     }
@@ -1151,6 +1173,8 @@ if (
       const ready =
         await waitForProcess({
           runtime,
+
+          processId: previewProcess.processId,
 
           sessionId:
             session

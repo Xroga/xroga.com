@@ -66,8 +66,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" href="/icon.png" type="image/png" sizes="512x512" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="512x512" />
         <link rel="shortcut icon" href="/favicon-32.png" />
-        {productionTelemetry&&<link rel="preconnect" href="https://xroga-api.fly.dev" crossOrigin="anonymous" />}
-        {productionTelemetry&&<link rel="dns-prefetch" href="https://xroga-api.fly.dev" />}
+        {productionTelemetry&&<link rel="preconnect" href="https://api.xroga.com" crossOrigin="anonymous" />}
+        {productionTelemetry&&<link rel="dns-prefetch" href="https://api.xroga.com" />}
       </head>
       <body suppressHydrationWarning className={`theme-black ${rootFontVariables} font-sans antialiased`}>
         <SiteJsonLd />
