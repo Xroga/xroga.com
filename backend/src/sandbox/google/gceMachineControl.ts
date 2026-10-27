@@ -20,6 +20,9 @@ export interface GceExecutionHandle {
   ownerBinding: string;
   projectBinding: string;
   expiresAtEpoch: number;
+  /** Native insert operation, retained so pending creation cannot be mistaken
+   * for successful cleanup when its instance is not visible yet. */
+  creationOperationName?: string;
 }
 
 export interface GceApi {
@@ -146,7 +149,8 @@ export class GceMachineControl {
   readonly configuration: Readonly<GceExecutionConfiguration>;
   private readonly api: GceApi;
   constructor(configuration: GceExecutionConfiguration, api?: GceApi,
-    private readonly workerSource = readFileSync(new URL('../../../src/sandbox/google/runtime_control.py', import.meta.url), 'utf8')) {
+    private readonly workerSource = readFileSync(new URL('../../../src/sandbox/google/runtime_control.py', import.meta.url), 'utf8'),
+    private readonly wait: (milliseconds:number)=>Promise<void> = milliseconds=>new Promise(resolve=>setTimeout(resolve,milliseconds))) {
     validateGceConfiguration(configuration);
     this.configuration = Object.freeze({...configuration, admittedImages:Object.freeze([...configuration.admittedImages])});
     this.api = api ?? attachedGceIdentity();
@@ -213,7 +217,8 @@ export class GceMachineControl {
       privateIp:null};
     const source = gceBootstrap(binding, this.workerSource);
     if (Buffer.byteLength(source) > 240_000) fail('GCE_BOOTSTRAP_TOO_LARGE');
-    const operation = await this.call<{name?: string}>('POST', `/zones/${this.configuration.zone}/instances?requestId=${randomUUID()}`, {
+    type CreationOperation = {name?:string;status?:string;error?:unknown;targetId?:string;targetLink?:string};
+    const operation = await this.call<CreationOperation>('POST', `/zones/${this.configuration.zone}/instances?requestId=${randomUUID()}`, {
       name, machineType:`zones/${this.configuration.zone}/machineTypes/${input.memoryMb <= 2048 ? 'e2-medium' : 'e2-standard-2'}`,
       labels:{'xroga-runtime':scope.runtimeId, 'xroga-owner':scope.ownerBinding, 'xroga-project':scope.projectBinding},
       tags:{items:['xroga-exec']}, serviceAccounts:[],
@@ -226,34 +231,53 @@ export class GceMachineControl {
         {key:'xroga-control-sha256',value:digest(this.workerSource)},{key:'startup-script',value:source}]},
     });
     if (!operation.name || !/^[a-zA-Z0-9_-]+$/.test(operation.name)) fail('INVALID_GCE_CREATION_RECEIPT');
-    for (let attempt=0; attempt<120; attempt++) {
-      const status = await this.call<{status?: string; error?: unknown}>('GET', `/zones/${this.configuration.zone}/operations/${operation.name}`);
+    let allocated:GceExecutionHandle|undefined;
+    const captureAllocation=async (receipt:CreationOperation)=>{
+      if(receipt.targetLink && !receipt.targetLink.endsWith(`/projects/${this.configuration.project}/zones/${this.configuration.zone}/instances/${name}`))
+        fail('GCE_CREATION_OPERATION_IDENTITY_MISMATCH');
+      if(receipt.targetId===undefined)return;
+      if(!id(receipt.targetId) || (allocated && allocated.instanceId!==receipt.targetId))fail('GCE_CREATION_OPERATION_IDENTITY_MISMATCH');
+      if(allocated)return;
+      allocated={name,instanceId:receipt.targetId,...scope,expiresAtEpoch,creationOperationName:operation.name};
+      await onAllocated(structuredClone(allocated));
+    };
+    // Compute has taken over 100s on a real cold allocation. Record its native
+    // target as soon as available and allow a bounded three-minute poll budget.
+    // One POST still owns the physical slot. No timeout provisions a replacement.
+    await captureAllocation(operation);
+    const creationDeadline=Date.now()+180000;
+    for (let attempt=0; attempt<360 && Date.now()<creationDeadline; attempt++) {
+      const status = await this.call<CreationOperation>('GET', `/zones/${this.configuration.zone}/operations/${operation.name}`);
+      await captureAllocation(status);
       if (status.error) fail('GCE_CREATION_OPERATION_FAILED');
       if (status.status === 'DONE') {
         const machine = await this.call<Instance>('GET', this.path(name));
         if (!id(machine.id)) return fail('INVALID_GCE_INSTANCE_IDENTITY');
-        const handle = {name, instanceId:machine.id, ...scope, expiresAtEpoch};
-        await onAllocated(handle);
+        await captureAllocation({targetId:machine.id});
+        const handle=allocated!;
         for (let boot=0; boot<180; boot++) {
           try { await this.resolve(handle); return handle; }
           catch (error) {
             if (!(error instanceof GceControlError) || !['GCE_SSH_HOST_IDENTITY_NOT_READY',
               'GCE_CONTROL_NOT_FOUND', 'GCE_RUNTIME_BOOTING'].includes(error.code)) throw error;
           }
-          await new Promise(resolve => setTimeout(resolve, 500));
+          await this.wait(500);
         }
         return fail('GCE_BOOTSTRAP_TIMED_OUT_NO_REPROVISION');
       }
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await this.wait(500);
     }
     return fail('GCE_CREATION_TIMED_OUT_NO_REPROVISION');
   }
-  private async inspect(handle: GceExecutionHandle, cleanup = false): Promise<{privateIp: string}> {
+  private validateReference(handle:GceExecutionHandle,cleanup:boolean):void {
     this.path(handle.name);
     if (!id(handle.instanceId) || !/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/.test(handle.runtimeId)
       || !/^[a-f0-9]{40}$/.test(handle.ownerBinding) || !/^[a-f0-9]{40}$/.test(handle.projectBinding)
       || (handle.name !== 'xroga-exec-'+handle.runtimeId.replaceAll('-','') && !/^xroga-exec-slot-[12]$/.test(handle.name))
       || !Number.isInteger(handle.expiresAtEpoch) || (!cleanup && handle.expiresAtEpoch <= Date.now()/1000)) fail('GCE_RUNTIME_EXPIRED_OR_INVALID');
+  }
+  private async inspect(handle: GceExecutionHandle, cleanup = false): Promise<{privateIp: string}> {
+    this.validateReference(handle,cleanup);
     const machine = await this.call<Instance>('GET', this.path(handle.name));
     const metadata = Object.fromEntries((machine.metadata?.items ?? []).map(item => [item.key,item.value]));
     if (machine.id !== handle.instanceId || machine.name!==handle.name || machine.serviceAccounts?.length
@@ -279,6 +303,21 @@ export class GceMachineControl {
     return {privateIp, sshHostKey:keys[0].value.trim().split(/\s+/).slice(0,2).join(' ')};
   }
   async destroy(handle: GceExecutionHandle): Promise<void> {
+    this.validateReference(handle,true);
+    if(handle.creationOperationName!==undefined){
+      if(!/^[a-zA-Z0-9_-]+$/.test(handle.creationOperationName))fail('INVALID_GCE_CREATION_RECEIPT');
+      let terminal=false;
+      const cleanupDeadline=Date.now()+180000;
+      for(let attempt=0;attempt<360 && Date.now()<cleanupDeadline;attempt++){
+        const operation=await this.call<{status?:string;targetId?:string;targetLink?:string}>('GET',`/zones/${this.configuration.zone}/operations/${handle.creationOperationName}`);
+        if((operation.targetId!==undefined && operation.targetId!==handle.instanceId)
+          || (operation.targetLink!==undefined && !operation.targetLink.endsWith(`/projects/${this.configuration.project}/zones/${this.configuration.zone}/instances/${handle.name}`)))
+          fail('GCE_CREATION_OPERATION_IDENTITY_MISMATCH');
+        if(operation.status==='DONE'){terminal=true;break;}
+        await this.wait(500);
+      }
+      if(!terminal)fail('GCE_CREATION_PENDING_CLEANUP_UNCONFIRMED');
+    }
     try { await this.call<Instance>('GET', this.path(handle.name)); }
     catch (error) {
       if (error instanceof GceControlError && error.code === 'GCE_CONTROL_NOT_FOUND') return;
@@ -291,7 +330,7 @@ export class GceMachineControl {
       const status = await this.call<{status?: string; error?: unknown}>('GET', `/zones/${this.configuration.zone}/operations/${operation.name}`);
       if (status.error) fail('GCE_DELETION_FAILED');
       if (status.status === 'DONE') return;
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await this.wait(500);
     }
     fail('GCE_DELETION_PENDING_NO_FALSE_COMPLETION');
   }

@@ -1,5 +1,11 @@
 # Google production migration, current release procedure
 
+> Live update, 2026-10-27: PR856 is merged at `3c3bc0f54b9e1f38e67641284de4b16073016fdb`. Vercel production `13C195qgr3vsaYs3GPB52tGnjJP4` is Ready at that source and uses the Google API. Native API/recovery revisions now end in `r4`/`recovery-r4`, with platform secret version `2`. The founder explicitly approved private R2 configuration and its documented account-wide read capability. The original 107 settings are preserved and only five approved R2 settings were added. The unchanged native API preflight passes. The production queue remains paused during final acceptance. Fly stays intact.
+>
+> The actual production worker fixture exposed a cold allocation that took 108 seconds, beyond the earlier 120-poll budget. It stopped before saving its native allocation receipt. Exact native diagnostic `xroga-canonical-production-9mnm9` confirmed permissions/session persistence and removed that synthetic VM/disk. The correction records native operation targets early, uses a bounded three-minute creation wait and refuses to declare cleanup while creation remains pending. Focused tests pass. Its replacement image and final production acceptance are still pending, so this is not zero-Fly completion. Optional timed file links have no signing key in either preserved configuration, and no signed-link success is claimed. Existing owner-authorized private upload/read integrity passes.
+>
+> Dated records below remain historical. Use the latest source-bound operator state and receipts before resuming. Never rerun the old r3/r4 release operators over existing immutable revisions.
+
 The replacement API and canonical Job use application source
 `faf56ff8e0d6b9de61cbeb412c2e86c75b17dac3`. Frontend URL, workflow-retirement
 and evidence follow-ups don't change production runtime code. The sole backend

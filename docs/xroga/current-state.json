@@ -21730,9 +21730,10 @@
       "id": "surface:897d95ac00321c6dbe84",
       "subsystem": "browser_sandbox",
       "sourcePath": "backend/src/sandbox/google/gceMachineControl.ts",
-      "sha256": "49922d76343461e65930d147af10a15f444880d82caf58297b5536b2a9e2ec35",
+      "sha256": "c5f14d10ea481b849ac90329e567818bcd25a6572fc2bd9d6f378f16a88bca2a",
       "symbols": [
         "CreateGceExecution",
+        "CreationOperation",
         "GceAllocationCleanupPendingError",
         "GceApi",
         "GceControlError",
@@ -21746,7 +21747,10 @@
         "attributes",
         "binding",
         "boot",
+        "captureAllocation",
+        "cleanupDeadline",
         "configuration",
+        "creationDeadline",
         "digest",
         "disk",
         "error",
@@ -21778,6 +21782,7 @@
         "scope",
         "source",
         "status",
+        "terminal",
         "validateGceConfiguration",
         "worker"
       ],
@@ -35857,7 +35862,7 @@
       "id": "surface:b03654d75cef3938fd25",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/googleAuthority.ts",
-      "sha256": "c51445833477a3115e4a5e2eb2e2a1590a1e1090209a7c8b46006defbce25e76",
+      "sha256": "abe1e92bab05aeafa0d646169d279cb53ca8c66927c5bdde9fafa06f4adca50d",
       "symbols": [
         "AdmitGoogleRuntime",
         "GoogleRuntimeAction",
@@ -121295,7 +121300,7 @@
     {
       "id": "test-suite:262a969eddef6990ecf1",
       "sourcePath": "backend/src/sandbox/google/gceMachineControl.test.ts",
-      "declaredTests": 14,
+      "declaredTests": 17,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -122891,7 +122896,7 @@
     {
       "id": "test-suite:fea8fb0518d61ce6ac10",
       "sourcePath": "backend/src/synthesis/projectRuntime/googleAuthority.test.ts",
-      "declaredTests": 5,
+      "declaredTests": 6,
       "skipLocations": [],
       "focusLocations": []
     },

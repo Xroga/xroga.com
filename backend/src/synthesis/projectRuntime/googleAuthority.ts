@@ -60,7 +60,7 @@ export function googleRuntimeAdmission(authority: ProjectRuntimeAuthority,
     if(scope.session) {
       const expected=scope.session;
       const current=await store.loadSession(identity.userId,expected.sessionId);
-      const fields=['name','instanceId','runtimeId','ownerBinding','projectBinding','expiresAtEpoch'] as const;
+      const fields=['name','instanceId','runtimeId','ownerBinding','projectBinding','expiresAtEpoch','creationOperationName'] as const;
       const saved=current?.providerState?.gce as Record<string,unknown>|undefined;
       const supplied=expected.providerState?.gce as Record<string,unknown>|undefined;
       if(!current || current.userId!==identity.userId || current.projectId!==scope.projectId

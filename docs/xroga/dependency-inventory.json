@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "4b2384332cc9aadf2eea2274e2ae90f8c8a05075",
+  "source_sha": "7f0f57787460d962246ae4befdcb7e831d933f42",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -16199,7 +16199,7 @@
     },
     {
       "path": "backend/src/sandbox/google/gceMachineControl.ts",
-      "sha256": "49922d76343461e65930d147af10a15f444880d82caf58297b5536b2a9e2ec35"
+      "sha256": "c5f14d10ea481b849ac90329e567818bcd25a6572fc2bd9d6f378f16a88bca2a"
     },
     {
       "path": "backend/src/sandbox/google/gceSshTransport.ts",
@@ -17131,7 +17131,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/googleAuthority.ts",
-      "sha256": "c51445833477a3115e4a5e2eb2e2a1590a1e1090209a7c8b46006defbce25e76"
+      "sha256": "abe1e92bab05aeafa0d646169d279cb53ca8c66927c5bdde9fafa06f4adca50d"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/googleFactory.ts",
@@ -22041,7 +22041,7 @@
     },
     {
       "path": "backend/src/sandbox/google/gceMachineControl.ts",
-      "line": 58,
+      "line": 61,
       "expression": "name",
       "status": "RESOLVED_CALLER_POLICY",
       "names": [
@@ -22060,7 +22060,7 @@
     },
     {
       "path": "backend/src/sandbox/google/gceMachineControl.ts",
-      "line": 59,
+      "line": 62,
       "expression": "name",
       "status": "RESOLVED_CALLER_POLICY",
       "names": [
@@ -22947,14 +22947,14 @@
       "hostname": "www.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/sandbox/google/gceMachineControl.ts",
-      "line": 61,
+      "line": 64,
       "credentialsInUrl": false
     },
     {
       "hostname": "compute.googleapis.com",
       "protocol": "https:",
       "path": "backend/src/sandbox/google/gceMachineControl.ts",
-      "line": 154,
+      "line": 158,
       "credentialsInUrl": false
     },
     {
@@ -30234,7 +30234,7 @@
     },
     {
       "path": "backend/src/sandbox/google/gceMachineControl.ts",
-      "line": 196,
+      "line": 200,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
