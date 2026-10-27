@@ -15856,17 +15856,17 @@
     },
     {
       "path": "backend/src/existingSource/store.ts",
-      "sourceSha256": "482a1a0757663a887c0e23c7affaeb9e7671ead144a3631702c42a5da202b9a7",
+      "sourceSha256": "c991402af3690290d446bc87e03d0e1d41b976f5c74a5b0b7f4efbfa35c5616d",
       "callIds": [
-        "6bdf279a99f5db57b5b1",
-        "557dba4cd9a192c4ef9a",
-        "47fe54c0a9f29894d88e",
-        "b3fb5f6c257d06654516",
-        "4e9ad4607a5fa9585281",
-        "81763bb263b8c72c0f81",
-        "1b95a8316c7ecc3a46eb",
-        "6aabb0af480bb116fac2",
-        "504f578d2e2cf0b1f1ab"
+        "fa44f4bca75657242c59",
+        "57c0b7d337dd9779cc38",
+        "d49c4193d7a90899201b",
+        "74706921d3ae371b08ba",
+        "b5be431c1c64ba30c0e0",
+        "feb636ac7aa3a766447d",
+        "134cba0a6cfa1e5d3a17",
+        "447d489f76fad7216f19",
+        "cbd22555cfde192d343d"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "SupabaseSourceBindingStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as not found. Every query on existing_source_projects carries an explicit .eq(owner_user_id, owner) predicate.",
@@ -15880,11 +15880,11 @@
     },
     {
       "path": "backend/src/routes/existingSource.ts",
-      "sourceSha256": "7307723e342095966515d16644e6cc39cbbed34f9a8cdab9807565763a34232b",
+      "sourceSha256": "1b127c3f0c83daad624b3af701c990b65b76e7a49f4f0be423bde24ee8d00f02",
       "callIds": [
-        "ce3faeca57669ab800a1",
-        "f772fb6d8d34bb63ea22",
-        "2c90cbd312221c19cb27"
+        "b0c36d1f7f5b256a0a2a",
+        "672b64d503852941df0c",
+        "a17e998b82a209ec45dd"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "projectFor runs inside a handler that first obtained requireTenantContext(req.tenantContext); it selects and creates projects only for input.ownerId, which the service passes from that verified context, and accepts a created project only when its user_id equals that owner.",
@@ -15914,6 +15914,28 @@
       "evidence": [
         {
           "path": "backend/src/existingSource/intelligence/codeIndexStore.ts",
+          "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new ExistingSourceError('BINDING_NOT_FOUND'"
+        }
+      ]
+    },
+    {
+      "path": "backend/src/existingSource/archive/archiveStore.ts",
+      "sourceSha256": "325eb9dae565739801c9f650b976dcef74fc1fef3d4dcda699ed5d1968548c65",
+      "callIds": [
+        "1462cce2400ff1ff74dd",
+        "36a4be46204b54c66052",
+        "215eb20e9ecb7c167a0a",
+        "7460fa5f6564720b37e8",
+        "52bddd74b74f0cfceb7a",
+        "b5ddf5a580c106dd4d58",
+        "d87ad832b03170e23597"
+      ],
+      "disposition": "SCOPED_BOUNDARY",
+      "authority": "SupabaseArchiveStore is constructed only with an issued, frozen TenantContext (requireTenantContext) and every method first compares the caller-supplied owner with that context, treating a mismatch as a missing binding.",
+      "reason": "The table is service-role only with RLS enabled and no public grants; every read, upsert, prune and delete is filtered by the verified owner and the binding id, and the archive text is removed with its binding on unlink.",
+      "evidence": [
+        {
+          "path": "backend/src/existingSource/archive/archiveStore.ts",
           "marker": "if (userId !== requireTenantContext(this.tenant).userId) throw new ExistingSourceError('BINDING_NOT_FOUND'"
         }
       ]

@@ -26,6 +26,7 @@ export interface RepositoryChoice {
 
 export interface SourceBinding {
   id: string;
+  originKind: 'github' | 'archive';
   projectId: string | null;
   providerRepositoryId: string;
   accountLogin: string;
@@ -46,6 +47,12 @@ export interface VerifiedBinding {
   binding: SourceBinding;
   head: { commitSha: string; moved: boolean; protected: boolean } | null;
   writable: boolean;
+}
+
+export interface ArchiveImport {
+  binding: SourceBinding;
+  created: boolean;
+  report: { entries: number; kept: number; keptBytes: number; listedOnly: number; refused: Record<string, number> };
 }
 
 export interface DirectoryEntry {
@@ -130,6 +137,7 @@ const base = '/api/existing-source';
 export const existingSourceApi = {
   repositories: (page = 1) => apiFetch<{ account: { login: string }; repositories: RepositoryChoice[]; hasMore: boolean }>(`${base}/repositories?page=${page}`),
   link: (input: { repositoryId: string; branch?: string }) => apiFetch<{ binding: SourceBinding; created: boolean }>(`${base}/links`, { method: 'POST', body: JSON.stringify(input) }),
+  importZip: (file: Blob, name: string) => apiFetch<ArchiveImport>(`${base}/archives?name=${encodeURIComponent(name)}`, { method: 'POST', headers: { 'Content-Type': 'application/zip' }, body: file }),
   list: () => apiFetch<{ links: SourceBinding[] }>(`${base}/links`),
   verify: (id: string) => apiFetch<VerifiedBinding>(`${base}/links/${id}`),
   refresh: (id: string) => apiFetch<{ binding: SourceBinding; previousCommitSha: string; changed: boolean }>(`${base}/links/${id}/refresh`, { method: 'POST', body: '{}' }),
@@ -160,6 +168,8 @@ export function existingSourceErrorMessage(error: unknown): string {
     case 'BRANCH_NOT_FOUND': return 'That branch was not found in the repository.';
     case 'INDEX_UNAVAILABLE': return 'The code map is not current for the linked commit. Build it first.';
     case 'INDEX_BUSY': return 'Xroga is already building code maps for you. Try again in a moment.';
+    case 'INVALID_ARCHIVE': return error instanceof ApiError && error.message ? error.message : 'That ZIP could not be imported.';
+    case 'ARCHIVE_UNAVAILABLE': return 'The imported archive is no longer available. Import it again.';
     case 'SENSITIVE_PATH': return 'This file can hold credentials, so its content is never shown.';
     case 'SOURCE_UNREADABLE': return error instanceof ApiError && error.message ? error.message : 'That file could not be read at the linked commit.';
     case 'PROVIDER_RATE_LIMITED': return 'GitHub is limiting requests. Try again shortly.';

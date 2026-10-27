@@ -4,11 +4,13 @@ Maps every requirement of `Xroga_OS_Batch_3_Merged_Complete_Claude_Code_Command.
 
 Status: VERIFIED (at the stated granularity) / PARTIAL / BLOCKED (needs permission or infrastructure) / NOT STARTED.
 
+> **Phase numbering.** The founder consolidated Batch 3 into three phases. Phase columns below still use the earlier numbering: earlier 1 and 2 = **Phase 1** (Work Packages A, B, C), earlier 3 and 4 = **Phase 2** (D, E), earlier 5 and 6 = **Phase 3** (F, G and certification).
+
 ## The ten customer capabilities
 
 | # | Capability | Phase | Status | Evidence |
 |---|---|---|---|---|
-| 1 | Connect existing GitHub projects | 1 | VERIFIED (contract); live GitHub BLOCKED | `existingSource/service.test.ts`, `routes/existingSource.test.ts`; `PHASE-1-STATUS.md` |
+| 1 | Connect existing GitHub projects (and permitted ZIP import) | 1 | VERIFIED (contract); live GitHub BLOCKED | `existingSource/service.test.ts`, `routes/existingSource.test.ts`, `archive/zipReader.test.ts`, `routes/existingSourceArchive.test.ts`; `PHASE-1-STATUS.md`, `PHASE-1-COMPLETE.md` |
 | 2 | Understand a codebase intelligently | 2 | VERIFIED (generated monorepo, 4 tasks); no real third-party repo | `intelligence/service.test.ts`, `polyglot.test.ts`; `PHASE-2-STATUS.md`, `PHASE-2-BENCHMARK.md` |
 | 3 | Keep understanding incremental | 2 | VERIFIED (measured: 0 reads same commit, 3 reads after a one-file commit) | `PHASE-2-BENCHMARK.md`, `intelligence/service.test.ts` |
 | 4 | Diagnose and fix bugs | 3 | NOT STARTED | |
@@ -38,6 +40,7 @@ Status: VERIFIED (at the stated granularity) / PARTIAL / BLOCKED (needs permissi
 | Connect/select an authorised EXISTING GitHub repository | VERIFIED (contract) |
 | Stable provider repo/account/installation/branch/base SHA bound to the project | VERIFIED (contract); installation id recorded null (OAuth user token, no App installation) |
 | Reads exact-commit, bounded, tenant-authorised, tolerant of pagination and truncation | VERIFIED (contract) |
+| Safe ZIP import (traversal, symlink, encrypted, bomb, ZIP64, duplicate, oversize, credentials never kept, tenant-isolated, deleted on unlink) | VERIFIED (contract); the stored archive is text-only and capped at 8 MB |
 | Existing source never silently overwritten by a scaffold | VERIFIED for Phase 1 (read-only; no write path exists) |
 | Code intelligence, index reuse, large-repo measurements | VERIFIED on a generated 638-file monorepo; real-repository measurement not done |
 | Project architecture/auth/dependencies preserved; real repro; isolated workspace; patch validation; test selection; previews; repair | NOT STARTED |
@@ -79,4 +82,4 @@ Status: VERIFIED (at the stated granularity) / PARTIAL / BLOCKED (needs permissi
 | Malicious repository instruction asks to leak secrets | VERIFIED (contract) for reads (returned as inert text); agent behaviour in Phase 3 | |
 | npm postinstall network/metadata access | NOT STARTED (Phase 3 sandbox) | |
 | Patch applies to changed version of file | NOT STARTED (Phase 3) | |
-| Concurrent pushes, lost PR response, missing PR permission, force-push, cancellation, crashes, failing tests, provider timeout, unapproved migration/deploy, public-PR leak, evidence-store failure, budget exhaustion, parser crash (map: malformed files and hostile input VERIFIED in Phase 2; force-push of the base VERIFIED for the map), protected branch, ZIP traversal/bomb, model outage | NOT STARTED (Phases 2 to 6) | |
+| Concurrent pushes, lost PR response, missing PR permission, force-push, cancellation, crashes, failing tests, provider timeout, unapproved migration/deploy, public-PR leak, evidence-store failure, budget exhaustion, parser crash (map: malformed files and hostile input VERIFIED in Phase 2; force-push of the base VERIFIED for the map), protected branch, ZIP traversal/bomb (VERIFIED, `zipReader.test.ts`), model outage | NOT STARTED (Phases 2 to 6) | |

@@ -9,7 +9,7 @@
   ],
   "state": "IN_PROGRESS",
   "risk": "high",
-  "scope": "Batch 3 (AI Product Editor and Maintainer), development only. Phases 1 and 2 of 6: authorised connection of an EXISTING GitHub repository with exact-commit read-only inspection (Phase 1), and an incremental, commit-keyed code map with search, relevance and a model passport (Phase 2). Extends the existing RepositoryToolSession, repository index and file selection; adds no scheduler, agent loop or runtime.",
+  "scope": "Batch 3 (AI Product Editor and Maintainer), development only. Phase 1 of 3 (Work Packages A, B, C): authorised connection of an EXISTING GitHub repository with exact-commit read-only inspection (including permitted ZIP import), and an incremental, commit-keyed code map with search, relevance and a model passport . Extends the existing RepositoryToolSession, repository index and file selection; adds no scheduler, agent loop or runtime.",
   "changedFiles": [
     "backend/scripts/benchmarkCodeMap.ts",
     "backend/src/existingSource/fakeGitHub.testsupport.ts",
@@ -73,10 +73,11 @@
     "changed": true,
     "migrations": [
       "supabase/migrations/20261027000000_existing_source_projects.sql",
-      "supabase/migrations/20261027010000_existing_source_indexes.sql"
+      "supabase/migrations/20261027010000_existing_source_indexes.sql",
+      "supabase/migrations/20261027020000_existing_source_archives.sql"
     ],
     "rollout": "Additive service-role-only table with RLS and no public grants. Not applied by this change; apply through the verified migration workflow after authorisation.",
-    "rollback": "DROP TABLE public.existing_source_indexes; DROP TABLE public.existing_source_projects; (nothing else references them; the map is derived and rebuildable)."
+    "rollback": "DROP TABLE public.existing_source_archives; DROP TABLE public.existing_source_indexes; DROP TABLE public.existing_source_projects; (the archive migration also relaxes the origin_kind check; nothing else references these tables)."
   },
   "securityImpact": {
     "auth": {
@@ -97,7 +98,7 @@
     },
     "egress": {
       "changed": false,
-      "description": "Calls only api.github.com with the connected account's own token, addressed by repository id; blob fetches for the map skip sensitive, vendored, generated, binary and oversize files. No repository content reaches a model in these phases; the passport carries signatures and paths, not bodies."
+      "description": "Calls only api.github.com with the connected account's own token, addressed by repository id; blob fetches for the map skip sensitive, vendored, generated, binary and oversize files. No repository content reaches a model in these phases; the passport carries signatures and paths, not bodies. A ZIP import is read only from the owner's own upload; entries are validated (no traversal, symlink, encrypted, bomb), and credentials and binaries are never stored."
     },
     "cost": {
       "changed": false,
@@ -132,6 +133,12 @@
       "scope": "Migration registration and tenant audit register",
       "negative": true,
       "reference": "scripts/security/schema-catalog.test.mjs"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/existingSource/archive/zipReader.test.ts backend/src/routes/existingSourceArchive.test.ts",
+      "scope": "Hostile ZIP handling, import, link, read, map, tenant isolation, unlink cleanup",
+      "negative": true,
+      "reference": "backend/src/existingSource/archive/zipReader.test.ts"
     }
   ],
   "architecture": {
@@ -145,7 +152,7 @@
     "No live GitHub verification (needs an authorised disposable account)",
     "Measured only on a generated monorepo; no real third-party repository; timings exclude network latency",
     "Python and Go analysis is structural, not type-checked",
-    "No edit, test execution or PR delivery yet (Phases 3 to 5)",
+    "No edit, test execution or PR delivery yet (Phases 2 and 3)",
     "Supabase stores have no real-database test",
     "Installation (GitHub App) binding is recorded as null: the existing connection is an OAuth user token"
   ],
@@ -155,7 +162,8 @@
   "evidenceRefs": [
     "docs/infra/batch-3/PHASE-1-STATUS.md",
     "docs/infra/batch-3/PHASE-2-STATUS.md",
-    "docs/infra/batch-3/PHASE-2-BENCHMARK.md"
+    "docs/infra/batch-3/PHASE-2-BENCHMARK.md",
+    "docs/infra/batch-3/PHASE-1-COMPLETE.md"
   ],
   "claimsFullProductCompletion": false,
   "claimsAllBatchCommandsComplete": false,

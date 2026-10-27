@@ -9,6 +9,8 @@ import type { BindingState, IndexStatus, RepositoryPermissions, SourceBinding } 
 import { ExistingSourceError } from './types.js';
 
 export interface UpsertBindingInput {
+  /** Where the source comes from; omitted means a GitHub repository. */
+  originKind?: 'github' | 'archive';
   providerRepositoryId: string;
   accountBindingId: string;
   accountLogin: string;
@@ -47,14 +49,14 @@ export class InMemorySourceBindingStore implements SourceBindingStore {
   async upsert(userId: string, input: UpsertBindingInput) {
     const now = this.stamp();
     for (const row of this.rows.values()) {
-      if (row.ownerUserId === userId && row.providerRepositoryId === input.providerRepositoryId) {
+      if (row.ownerUserId === userId && row.originKind === (input.originKind ?? 'github') && row.providerRepositoryId === input.providerRepositoryId) {
         const next: SourceBinding = { ...row, ...input, projectId: input.projectId ?? row.projectId, state: 'linked', stateReason: '', lastVerifiedAt: now, updatedAt: now };
         this.rows.set(row.id, next);
         return { binding: clone(next), created: false };
       }
     }
     const binding: SourceBinding = {
-      id: randomUUID(), ownerUserId: userId, originKind: 'github', ...input, state: 'linked', stateReason: '', indexStatus: 'not_indexed',
+      id: randomUUID(), ownerUserId: userId, ...input, originKind: input.originKind ?? 'github', state: 'linked', stateReason: '', indexStatus: 'not_indexed',
       linkedAt: now, lastVerifiedAt: now, updatedAt: now,
     };
     this.rows.set(binding.id, binding);
@@ -83,7 +85,7 @@ export class InMemorySourceBindingStore implements SourceBindingStore {
   async markAllAccessLost(userId: string, reason: string) {
     let n = 0;
     for (const row of this.rows.values()) {
-      if (row.ownerUserId === userId && row.state === 'linked') {
+      if (row.ownerUserId === userId && row.originKind === 'github' && row.state === 'linked') {
         this.rows.set(row.id, { ...row, state: 'access_lost', stateReason: reason.slice(0, 500), updatedAt: this.stamp() });
         n += 1;
       }
@@ -93,7 +95,7 @@ export class InMemorySourceBindingStore implements SourceBindingStore {
 }
 
 interface Row {
-  id: string; owner_user_id: string; project_id: string | null; origin_kind: 'github'; provider_repository_id: string; account_binding_id: string;
+  id: string; owner_user_id: string; project_id: string | null; origin_kind: 'github' | 'archive'; provider_repository_id: string; account_binding_id: string;
   account_login: string; installation_id: string | null; owner_account_id: string; repository_full_name: string; repository_private: boolean;
   repository_archived: boolean; base_branch: string; base_commit_sha: string; permissions: RepositoryPermissions; state: BindingState;
   state_reason: string; index_status: IndexStatus; linked_at: string; last_verified_at: string; updated_at: string;
@@ -127,7 +129,7 @@ export class SupabaseSourceBindingStore implements SourceBindingStore {
   async upsert(userId: string, input: UpsertBindingInput) {
     const owner = this.owner(userId);
     const now = new Date().toISOString();
-    const existing = await this.db().from('existing_source_projects').select(COLUMNS).eq('owner_user_id', owner).eq('origin_kind', 'github').eq('provider_repository_id', input.providerRepositoryId).maybeSingle();
+    const existing = await this.db().from('existing_source_projects').select(COLUMNS).eq('owner_user_id', owner).eq('origin_kind', input.originKind ?? 'github').eq('provider_repository_id', input.providerRepositoryId).maybeSingle();
     if (existing.error) failed('read the linked repository');
     const fields = {
       account_binding_id: input.accountBindingId, account_login: input.accountLogin, installation_id: input.installationId, owner_account_id: input.ownerAccountId,
@@ -140,10 +142,10 @@ export class SupabaseSourceBindingStore implements SourceBindingStore {
       if (updated.error) failed('update the linked repository');
       return { binding: toBinding(updated.data as Row), created: false };
     }
-    const inserted = await this.db().from('existing_source_projects').insert({ owner_user_id: owner, origin_kind: 'github', provider_repository_id: input.providerRepositoryId, ...fields }).select(COLUMNS).single();
+    const inserted = await this.db().from('existing_source_projects').insert({ owner_user_id: owner, origin_kind: input.originKind ?? 'github', provider_repository_id: input.providerRepositoryId, ...fields }).select(COLUMNS).single();
     if (inserted.error) {
       // A concurrent identical link can win the unique (owner, kind, repository) race: resolve to it.
-      const raced = await this.db().from('existing_source_projects').select(COLUMNS).eq('owner_user_id', owner).eq('origin_kind', 'github').eq('provider_repository_id', input.providerRepositoryId).maybeSingle();
+      const raced = await this.db().from('existing_source_projects').select(COLUMNS).eq('owner_user_id', owner).eq('origin_kind', input.originKind ?? 'github').eq('provider_repository_id', input.providerRepositoryId).maybeSingle();
       if (!raced.error && raced.data) return { binding: toBinding(raced.data as Row), created: false };
       failed('link the repository');
     }
@@ -191,7 +193,7 @@ export class SupabaseSourceBindingStore implements SourceBindingStore {
     const owner = this.owner(userId);
     const { data, error } = await this.db().from('existing_source_projects')
       .update({ state: 'access_lost', state_reason: reason.slice(0, 500), updated_at: new Date().toISOString() })
-      .eq('owner_user_id', owner).eq('state', 'linked').select('id');
+      .eq('owner_user_id', owner).eq('origin_kind', 'github').eq('state', 'linked').select('id');
     if (error) failed('record the lost connection');
     return (data ?? []).length;
   }

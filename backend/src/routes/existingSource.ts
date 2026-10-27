@@ -9,14 +9,16 @@
  *   POST   /links/:id/refresh        move the base commit to the branch's current head, on purpose and recorded
  *   DELETE /links/:id                unlink (the repository itself is untouched)
  *   GET    /links/:id/directory      one directory level at the base commit (?path=)
+ *   POST   /archives                 import a ZIP of an existing project (raw body, ?name=); linked like a repository, never written back
  *   GET    /links/:id/file           one file at the base commit (?path=, optional ?startLine=&endLine=), redacted and bounded
  *
  * Identity comes only from the issued TenantContext. A repository is named by GitHub's immutable id and judged with the caller's own
  * connected-account token; the response never contains a token.
  */
-import { Router, type Response } from 'express';
+import express, { Router, type Response } from 'express';
 import { z } from 'zod';
 import type { AuthRequest } from '../middleware/auth.js';
+import { SupabaseArchiveStore } from '../existingSource/archive/archiveStore.js';
 import { SupabaseCodeIndexStore } from '../existingSource/intelligence/codeIndexStore.js';
 import { ExistingSourceIntelligence } from '../existingSource/intelligence/service.js';
 import { ExistingSourceService } from '../existingSource/service.js';
@@ -50,13 +52,15 @@ async function projectFor(tenant: TenantContext, input: { ownerId: string; repos
 export const defaultExistingSourceService: ExistingSourceServiceFactory = (tenant) => {
   const context = requireTenantContext(tenant);
   const codeIndexes = new SupabaseCodeIndexStore(context);
+  const archives = new SupabaseArchiveStore(context);
   return new ExistingSourceService({
     store: new SupabaseSourceBindingStore(context),
     tokenFor: (userId) => getGitHubToken(userId),
     portFor: (token) => createRestSourcePort(token),
+    archives,
     projectFor: (input) => projectFor(context, input),
     // an unlinked repository, a removed connection or a lost access takes its derived code map with it
-    onBindingClosed: (userId, bindingId) => codeIndexes.deleteForBinding(userId, bindingId),
+    onBindingClosed: async (userId, bindingId) => { await codeIndexes.deleteForBinding(userId, bindingId); await archives.deleteForBinding(userId, bindingId); },
   });
 };
 
@@ -66,6 +70,8 @@ export const defaultExistingSourceIntelligence: ExistingSourceIntelligenceFactor
   new ExistingSourceIntelligence({ source: service, store: new SupabaseCodeIndexStore(requireTenantContext(tenant)) });
 
 const id = z.string().uuid();
+const archiveQuery = z.object({ name: z.string().min(1).max(120).optional() });
+export const ARCHIVE_UPLOAD_LIMIT = '10mb';
 const link = z.object({ repositoryId: z.string().regex(/^[0-9]{1,20}$/), branch: z.string().min(1).max(200).optional() }).strict();
 const page = z.coerce.number().int().min(1).max(50).default(1);
 const directory = z.object({ path: z.string().max(1_000).optional() });
@@ -124,7 +130,18 @@ export function createExistingSourceRouter(
   router.get('/links/:id/search', withIntelligence(async (t, i, req, res) => { const q = searchQuery.parse(req.query); res.json(await i.search(t.userId, id.parse(req.params.id), { query: q.q, kind: q.kind, limit: q.limit })); }));
   router.post('/links/:id/locate', withIntelligence(async (t, i, req, res) => { const b = locateBody.parse(req.body); res.json(await i.locate(t.userId, id.parse(req.params.id), { instruction: b.instruction, budgetTokens: b.budgetTokens })); }));
   router.get('/links/:id/neighborhood', withIntelligence(async (t, i, req, res) => { res.json(await i.neighborhood(t.userId, id.parse(req.params.id), { path: neighborhoodQuery.parse(req.query).path })); }));
+  router.post('/archives', express.raw({ type: ['application/zip', 'application/x-zip-compressed', 'application/octet-stream'], limit: ARCHIVE_UPLOAD_LIMIT }), handle(async (t, s, req, res) => {
+    const q = archiveQuery.parse(req.query);
+    const body = req.body as unknown;
+    if (!Buffer.isBuffer(body) || body.length === 0) throw new ExistingSourceError('INVALID_ARCHIVE', 'Send the ZIP file as the request body (Content-Type: application/zip).');
+    const result = await s.importZip(t.userId, body, q.name ?? 'project');
+    res.status(result.created ? 201 : 200).json(result);
+  }));
   router.get('/links/:id/file', handle(async (t, s, req, res) => { res.json(await s.readFile(t.userId, id.parse(req.params.id), file.parse(req.query))); }));
+  router.use((error: unknown, _req: unknown, res: Response, next: (e?: unknown) => void) => {
+    if ((error as { type?: string } | null)?.type === 'entity.too.large') { res.status(413).json({ error: 'The archive is too large to import', code: 'INVALID_ARCHIVE' }); return; }
+    next(error);
+  });
   return router;
 }
 

@@ -12,6 +12,9 @@
  */
 import { LIMITS, RepositoryToolError, RepositoryToolSession, validateRepositoryPath, type RepositoryToolTransport } from '../ai/repositoryTools.js';
 import type { RawTreeResponse } from '../services/integrations/githubTreeSnapshot.js';
+import { ArchivePort, archiveCommitSha, ARCHIVE_BRANCH } from './archive/archivePort.js';
+import type { ArchiveStore } from './archive/archiveStore.js';
+import { importArchive } from './archive/importer.js';
 import { assertRepositoryId, type GitHubSourcePort, type RawGitTreeEntry, type RepositorySummary } from './provider.js';
 import { isSensitivePath } from './sensitivePaths.js';
 import type { BindingPatch, SourceBindingStore } from './store.js';
@@ -23,6 +26,8 @@ export interface ExistingSourceDeps {
   /** The connected account's token, or null when there is none or it was revoked. Never returned to a caller. */
   readonly tokenFor: (userId: string) => Promise<string | null>;
   readonly portFor: (token: string) => GitHubSourcePort;
+  /** Where imported ZIP archives live. Without it, archive bindings cannot be opened (and answer as unavailable). */
+  readonly archives?: ArchiveStore;
   /** Creates (or finds) the Xroga project a binding shows up as. Failure never blocks the link. */
   readonly projectFor?: (input: { ownerId: string; repositoryFullName: string; repositoryUrl: string; branch: string }) => Promise<string | null>;
   readonly now?: () => number;
@@ -99,6 +104,14 @@ export class ExistingSourceService {
     return this.deps.portFor(token);
   }
 
+  /** The source for one binding: the archive store for an imported ZIP, the connected account's GitHub otherwise. */
+  private async portForBinding(userId: string, binding: SourceBinding): Promise<GitHubSourcePort> {
+    if (binding.originKind !== 'archive') return this.portFor(userId);
+    const record = await this.deps.archives?.load(userId, binding.providerRepositoryId);
+    if (!record || archiveCommitSha(record) !== binding.baseCommitSha) throw new ExistingSourceError('ARCHIVE_UNAVAILABLE', 'The imported archive is no longer available. Import it again.');
+    return new ArchivePort(record, userId);
+  }
+
   private toChoice(r: RepositorySummary): RepositoryChoice {
     return { id: r.id, fullName: r.fullName, ownerType: r.ownerType, private: r.private, archived: r.archived, defaultBranch: r.defaultBranch,
       canRead: r.permissions.pull, canWrite: r.permissions.push && !r.archived, updatedAt: r.updatedAt };
@@ -144,6 +157,25 @@ export class ExistingSourceService {
     } catch (error) { return providerToError(error); }
   }
 
+  /**
+   * Imports a ZIP of an existing project and links it like a repository: same reads, same code map, never written back. The archive is
+   * validated and bounded (see zipReader), credentials and binaries are listed but their content is never kept, and importing the same
+   * bytes again returns the same link.
+   */
+  async importZip(userId: string, zip: Buffer, name: string): Promise<{ binding: SourceBinding; created: boolean; report: ReturnType<typeof importArchive>['report'] }> {
+    const archives = this.deps.archives;
+    if (!archives) throw new ExistingSourceError('ARCHIVE_UNAVAILABLE', 'Importing an archive is not available on this deployment.');
+    const imported = importArchive(zip, name);
+    const { record } = await archives.save(userId, { name: imported.name, digest: imported.digest, files: imported.files });
+    const result = await this.deps.store.upsert(userId, {
+      originKind: 'archive', providerRepositoryId: record.number, accountBindingId: userId, accountLogin: 'zip-import', installationId: null, ownerAccountId: userId,
+      repositoryFullName: `zip/${record.name}`, repositoryPrivate: true, repositoryArchived: false, baseBranch: ARCHIVE_BRANCH, baseCommitSha: archiveCommitSha(record),
+      permissions: { pull: true, push: false, admin: false }, projectId: null,
+    });
+    await archives.attach(userId, record.number, result.binding.id);
+    return { ...result, report: imported.report };
+  }
+
   async list(userId: string): Promise<SourceBinding[]> { return this.deps.store.list(userId); }
 
   private async require(userId: string, bindingId: string): Promise<SourceBinding> {
@@ -174,6 +206,19 @@ export class ExistingSourceService {
     if (fresh) return { binding, head: null, writable: binding.permissions.push && !binding.repositoryArchived };
 
     if (binding.state !== 'linked') return { binding, head: null, writable: false };
+
+    if (binding.originKind === 'archive') {
+      // an imported archive is immutable and owned by the importer: nothing at a provider can move, only the stored copy can vanish
+      try { await this.portForBinding(userId, binding); } catch (error) {
+        if (error instanceof ExistingSourceError && error.code === 'ARCHIVE_UNAVAILABLE') {
+          binding = await this.mark(userId, binding, { state: 'access_lost', stateReason: error.message });
+          return { binding, head: null, writable: false };
+        }
+        throw error;
+      }
+      binding = await this.mark(userId, binding, { stateReason: '', verifiedAt: new Date(this.now()).toISOString() });
+      return { binding, head: null, writable: false };
+    }
 
     const token = await this.deps.tokenFor(userId);
     if (!token) {
@@ -233,6 +278,7 @@ export class ExistingSourceService {
   async refreshBase(userId: string, bindingId: string): Promise<{ binding: SourceBinding; previousCommitSha: string; changed: boolean }> {
     const verified = await this.verify(userId, bindingId, { maxAgeMs: 0 });
     this.assertActive(verified.binding);
+    if (verified.binding.originKind === 'archive') throw new ExistingSourceError('INVALID_REQUEST', 'An imported archive never moves. Import the new version instead.');
     const port = await this.portFor(userId);
     try {
       const head = await port.getBranchHead(verified.binding.providerRepositoryId, verified.binding.baseBranch);
@@ -254,7 +300,7 @@ export class ExistingSourceService {
     const active = await this.deps.store.list(userId);
     const n = await this.deps.store.markAllAccessLost(userId, 'The GitHub connection was removed.');
     for (const key of [...this.trees.keys()]) this.trees.delete(key);
-    for (const b of active) await this.deps.onBindingClosed?.(userId, b.id).catch(() => undefined);
+    for (const b of active.filter((x) => x.originKind === 'github')) await this.deps.onBindingClosed?.(userId, b.id).catch(() => undefined);
     return n;
   }
 
@@ -292,7 +338,7 @@ export class ExistingSourceService {
     const verified = await this.verify(userId, bindingId);
     this.assertActive(verified.binding);
     const binding = verified.binding;
-    const port = await this.portFor(userId);
+    const port = await this.portForBinding(userId, binding);
     try {
       const { tree, treeSha } = await this.completeTree(binding, port);
       return {
@@ -314,7 +360,7 @@ export class ExistingSourceService {
     const { binding } = await this.verify(userId, bindingId);
     this.assertActive(binding);
     const dir = options.path ? this.safePath(options.path) : '';
-    const port = await this.portFor(userId);
+    const port = await this.portForBinding(userId, binding);
     try {
       const { tree } = await this.completeTree(binding, port);
       const children = new Map<string, DirectoryEntry>();
@@ -362,7 +408,7 @@ export class ExistingSourceService {
     const path = this.safePath(options.path);
     // Refused before any provider call: the content of a credential file is never fetched.
     if (isSensitivePath(path)) throw new ExistingSourceError('SENSITIVE_PATH', 'This file can hold credentials, so its content is never read or shown.');
-    const port = await this.portFor(userId);
+    const port = await this.portForBinding(userId, binding);
     try {
       const { tree, treeSha } = await this.completeTree(binding, port);
       const transport: RepositoryToolTransport = {

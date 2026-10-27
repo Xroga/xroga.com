@@ -56,6 +56,7 @@ export function ExistingSourcePanel() {
   const [listing, setListing] = useState<DirectoryListing | null>(null);
   const [file, setFile] = useState<FileContent | null>(null);
   const [browseError, setBrowseError] = useState<string | null>(null);
+  const [importNote, setImportNote] = useState<string | null>(null);
   const [map, setMap] = useState<CodeMapStatus | null>(null);
   const [mapNote, setMapNote] = useState<string | null>(null);
   const [mapError, setMapError] = useState<string | null>(null);
@@ -84,6 +85,19 @@ export function ExistingSourcePanel() {
     try {
       const { binding } = await existingSourceApi.link({ repositoryId: selected.id, ...(branch.trim() ? { branch: branch.trim() } : {}) });
       setSelected(null); setBranch(''); setChoices(null);
+      await loadLinks();
+      await open(binding);
+    } catch (caught) { setError(existingSourceErrorMessage(caught)); } finally { setBusy(null); }
+  };
+
+  const importZip = async (file: File | undefined) => {
+    if (!file) return;
+    setBusy('zip'); setImportNote(null);
+    try {
+      const { binding, report } = await existingSourceApi.importZip(file, file.name);
+      const skipped = Object.values(report.refused).reduce((n, c) => n + c, 0);
+      setImportNote(`Imported ${report.entries} files; ${report.listedOnly} are listed but not kept (credentials, binaries, dependencies, generated files)${skipped ? `; ${skipped} unsafe or unsupported entries were refused` : ''}.`);
+      setError(null);
       await loadLinks();
       await open(binding);
     } catch (caught) { setError(existingSourceErrorMessage(caught)); } finally { setBusy(null); }
@@ -201,6 +215,15 @@ export function ExistingSourcePanel() {
         )}
       </section>
 
+      <section aria-label="Import a ZIP" className="space-y-1 rounded-lg border border-[var(--card-border)]/60 p-3">
+        <label className="flex flex-wrap items-center gap-2 text-xs">
+          <span className="font-medium">Or import a ZIP of an existing project</span>
+          <input type="file" accept=".zip,application/zip" disabled={busy === 'zip'} onChange={(e) => { void importZip(e.target.files?.[0]); e.target.value = ''; }} className="text-[11px]" aria-label="ZIP file" />
+        </label>
+        <p className="text-[11px] text-[var(--muted)]">Up to 10 MB. Xroga reads it, never writes back to it, and never keeps credentials or binaries from it.</p>
+        {importNote ? <p className="text-[11px] text-[var(--muted)]" data-testid="existing-source-import-note">{importNote}</p> : null}
+      </section>
+
       <section aria-label="Linked repositories">
         <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">Linked</h2>
         {loading ? <div className="flex items-center gap-2 text-xs text-[var(--muted)]"><Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> Loading</div>
@@ -210,7 +233,7 @@ export function ExistingSourcePanel() {
                 <li key={l.id} className="flex flex-wrap items-center gap-2 p-2.5">
                   <button type="button" onClick={() => void open(l)} className="min-w-0 flex-1 text-left">
                     <span className="block truncate font-medium">{l.repositoryFullName}</span>
-                    <span className="block text-[11px] text-[var(--muted)]">{l.baseBranch} at <code>{short(l.baseCommitSha)}</code> · account {l.accountLogin}</span>
+                    <span className="block text-[11px] text-[var(--muted)]">{l.originKind === 'archive' ? <>ZIP import <code>{short(l.baseCommitSha)}</code></> : <>{l.baseBranch} at <code>{short(l.baseCommitSha)}</code> · account {l.accountLogin}</>}</span>
                   </button>
                   <span className={cn('shrink-0 rounded-full border px-2 py-0.5 text-[11px]', STATE_TONE[l.state])}>{STATE_LABEL[l.state]}</span>
                   <button type="button" onClick={() => void unlink(l)} disabled={busy === l.id} className="rounded p-1.5 text-[var(--muted)] hover:text-red-400 disabled:opacity-50" aria-label={`Unlink ${l.repositoryFullName}`}><Unlink className="h-4 w-4" aria-hidden="true" /></button>

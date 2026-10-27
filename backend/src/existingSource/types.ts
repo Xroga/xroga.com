@@ -15,7 +15,7 @@ export interface SourceBinding {
   readonly ownerUserId: string;
   /** The Xroga project this binding shows up as, when one was created. */
   readonly projectId: string | null;
-  readonly originKind: 'github';
+  readonly originKind: 'github' | 'archive';
   /** GitHub's immutable numeric repository id, as a string. */
   readonly providerRepositoryId: string;
   /** The connected GitHub account (user id) that authorised the link. */
@@ -56,6 +56,8 @@ export type ExistingSourceErrorCode =
   | 'PROVIDER_RATE_LIMITED'
   | 'INDEX_BUSY'
   | 'INDEX_UNAVAILABLE'
+  | 'INVALID_ARCHIVE'
+  | 'ARCHIVE_UNAVAILABLE'
   | 'PROVIDER_UNAVAILABLE'
   | 'STORAGE_FAILED';
 
@@ -77,6 +79,8 @@ const STATUS: Record<ExistingSourceErrorCode, number> = {
   PROVIDER_RATE_LIMITED: 429,
   INDEX_BUSY: 429,
   INDEX_UNAVAILABLE: 409,
+  INVALID_ARCHIVE: 400,
+  ARCHIVE_UNAVAILABLE: 409,
   PROVIDER_UNAVAILABLE: 503,
   STORAGE_FAILED: 503,
 };
