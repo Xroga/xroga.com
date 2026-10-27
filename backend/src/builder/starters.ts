@@ -1,5 +1,7 @@
 import type { ProjectFile } from '../ai/patches.js';
-import { buildScaffoldForPrompt } from '../services/projectScaffold.js';
+import { buildFullProjectFiles } from '../services/projectScaffold.js';
+import { buildDeterministicSite } from '../services/scaffolds/deterministicSite.js';
+import { buildNextjsScaffold } from '../services/scaffolds/nextjsScaffold.js';
 import { BuilderError, type BuildSpec, type StarterProvenance } from './types.js';
 import { hashSnapshot } from './snapshot.js';
 
@@ -35,10 +37,11 @@ export const STARTER_REGISTRY: readonly StarterEntry[] = [
     framework: 'static-web',
     supports: { backend: false, authentication: false, database: false },
     notes: ['Deterministic themed site from the existing scaffold; no database or auth dependency.'],
+    // The starter is chosen from the structured spec, so it is built directly. Re-detecting the kind from the
+    // prompt text would let two classifiers disagree and fail project creation.
     materialize: ({ prompt, title }) => {
-      const scaffold = buildScaffoldForPrompt({ prompt, projectName: title });
-      if (scaffold.kind !== 'static') throw new BuilderError('unsupported', 'Static starter produced a non-static scaffold.');
-      return scaffold.files;
+      const site = buildDeterministicSite({ prompt, projectName: title });
+      return buildFullProjectFiles({ html: site.html, css: site.css, js: site.js, projectName: title, userPrompt: prompt });
     },
   },
   {
@@ -54,11 +57,7 @@ export const STARTER_REGISTRY: readonly StarterEntry[] = [
       'Existing tested Next.js scaffold. Data and auth target the customer-owned Supabase project, never the Xroga platform database.',
       'Development uses disposable local persistence until a customer project is connected (Phase 3).',
     ],
-    materialize: ({ prompt, title }) => {
-      const scaffold = buildScaffoldForPrompt({ prompt, projectName: title });
-      if (scaffold.kind !== 'nextjs') throw new BuilderError('unsupported', 'Next.js starter produced a non-Next.js scaffold.');
-      return scaffold.files;
-    },
+    materialize: ({ prompt, title }) => buildNextjsScaffold({ projectName: title, userPrompt: prompt }),
   },
   {
     id: 'nextjs-with-supabase-official',

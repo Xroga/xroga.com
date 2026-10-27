@@ -15957,16 +15957,16 @@
     },
     {
       "path": "backend/src/builder/phase2Store.ts",
-      "sourceSha256": "4e07d9b95cc6ca561b12ebd5fc8386f8bfc9a08c43f4a34d95b98315eca0e6a3",
+      "sourceSha256": "846d8157881a584b8addffcb4e368a631b107ccabd59afc9dfb03c3073c2fc2a",
       "callIds": [
-        "61d98f1ac872902ed86b",
-        "7c22f92ad19d4ec859f8",
-        "e88a623b104c465798f9",
-        "f999a78d64edbfb626fd",
-        "191043851ebd294fcdd0",
-        "6ac45895b0904f8698a5",
-        "9bd82d91c4843130cf50",
-        "537b7e8c92d50cfd879d"
+        "47a80885cadbc8eb73df",
+        "62ae0ad523bc2b3d801e",
+        "7917926f203517ccc8fc",
+        "7f01308a4776ea150af4",
+        "276ab13ee820bf2c0cad",
+        "09c1e0c459559808e3e0",
+        "c7c2cb204aee3e186486",
+        "bc362ed7b536f537f6c3"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "SupabasePhase2Store is constructed only with an issued, frozen TenantContext and every method first compares the caller-supplied owner with it. The privileged client is obtained through getTenantSupabaseAdmin(context).",
@@ -15984,10 +15984,10 @@
     },
     {
       "path": "backend/src/builder/phase2Store.ts",
-      "sourceSha256": "4e07d9b95cc6ca561b12ebd5fc8386f8bfc9a08c43f4a34d95b98315eca0e6a3",
+      "sourceSha256": "846d8157881a584b8addffcb4e368a631b107ccabd59afc9dfb03c3073c2fc2a",
       "callIds": [
-        "daed95748190fd08018c",
-        "b555483a911513e9e6c7"
+        "e02581ae3b4d3d55d864",
+        "b05193246501b4c58f7a"
       ],
       "disposition": "SCOPED_BOUNDARY",
       "authority": "Inserts set user_id from the verified issued tenant owner only after the project and revision have been confirmed to belong to that owner through the owner-scoped builder store.",

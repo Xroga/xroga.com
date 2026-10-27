@@ -15,19 +15,19 @@ import type { QaDriver, QaPage } from '../builder/qa/types.js';
 import { BuilderService } from '../builder/service.js';
 import { InMemoryBuilderStore } from '../builder/store.js';
 import { createTenantContext, type TenantContext } from '../security/tenantContext.js';
+import { makeServices } from '../builder/servicesFixture.testsupport.js';
 import { createBuilderRouter } from './builder.js';
 
 const USER_A = '11111111-1111-4111-8111-111111111111';
 const USER_B = '22222222-2222-4222-8222-222222222222';
 const SITE = 'Build a premium modern website for a home renovation company with Home, Services, About, Projects and Contact pages.';
 
-const store = new InMemoryBuilderStore();
-const phase2 = new InMemoryPhase2Store(store);
-const builder = new BuilderService({ store, runBuild: async () => null });
-const github = new FakeGitHub();
-github.addUser('tok-a', { id: 501, login: 'alice', scopes: ['repo'], orgs: [] });
-github.addUser('tok-b', { id: 502, login: 'bob', scopes: ['repo'], orgs: [] });
-const tokens = new Map([[USER_A, 'tok-a'], [USER_B, 'tok-b']]);
+const fixture = makeServices([
+  { id: USER_A, github: { token: 'tok-a', login: 'alice', id: 501 } },
+  { id: USER_B, github: { token: 'tok-b', login: 'bob', id: 502 } },
+]);
+const { store, phase2, builder, github } = fixture;
+const tokens = fixture.tokens.github;
 
 /** A page that satisfies every plan step. Runtime availability is toggled per test. */
 const okPage = (): QaPage => ({
@@ -46,7 +46,7 @@ const qa = new QaService({
   budgetAllows: async () => true,
 });
 const githubService = new GitHubExportService({ phase2, builder, github, tokenFor: async (userId) => tokens.get(userId) ?? null });
-const services: Phase2Services = { builder, qa, github: githubService, exporter: new ExportService({ builder, phase2 }) };
+const services: Phase2Services = { builder, qa, github: githubService, exporter: new ExportService({ builder, phase2 }), data: fixture.services.data, hosting: fixture.services.hosting, provenance: fixture.services.provenance };
 
 const app = express();
 app.use(express.json());

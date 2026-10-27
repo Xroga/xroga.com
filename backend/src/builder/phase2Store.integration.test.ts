@@ -9,7 +9,7 @@ import pg from 'pg';
 import { PG_TEST_URL } from '../storage/testing/pgFixture.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const MIGRATIONS = ['20261026000000_builder_projects.sql', '20261026010000_builder_phase2.sql'].map((name) => path.resolve(here, '../../../supabase/migrations', name));
+const MIGRATIONS = ['20261026000000_builder_projects.sql', '20261026010000_builder_phase2.sql', '20261026020000_builder_phase3.sql'].map((name) => path.resolve(here, '../../../supabase/migrations', name));
 const STUB = path.resolve(here, '../storage/testing/supabaseStub.sql');
 const skip = PG_TEST_URL ? false : 'STORAGE_TEST_DATABASE_URL not set: the Phase 2 builder SQL is only exercised against a real PostgreSQL';
 
@@ -89,6 +89,38 @@ describe('builder Phase 2 tables against real PostgreSQL', { skip }, () => {
       await assert.rejects(operation(f, { key: `needs-approval-${status}`, status }), (e: { code?: string }) => e.code === '23514', status);
     }
     await operation(f, { key: 'approved-ok-00001', status: 'approved', approvedAt: new Date().toISOString() });
+  });
+
+  it('Phase 3: accepts Supabase and Vercel operations, keeps the in-flight slot per provider, and releases a stranded one', async () => {
+    const f = await fixture();
+    const when = new Date().toISOString();
+    const supabase = (await operation(f, { provider: 'supabase', action: 'apply_migration', key: 'p3-supabase-0001', status: 'approved', approvedAt: when })).rows[0].id as string;
+    const supabase2 = (await operation(f, { provider: 'supabase', action: 'bind_supabase_project', key: 'p3-supabase-0002', status: 'approved', approvedAt: when })).rows[0].id as string;
+    const vercel = (await operation(f, { provider: 'vercel', action: 'deploy_preview', key: 'p3-vercel-00001', status: 'approved', approvedAt: when })).rows[0].id as string;
+    await operation(f, { provider: 'vercel', action: 'promote_production', key: 'p3-vercel-00002' });
+    await operation(f, { provider: 'vercel', action: 'prepare_preview', key: 'p3-vercel-00003' });
+    const claim = (id: string) => pool.query("update public.builder_external_operations set status='executing' where id=$1 and status in ('approved')", [id]);
+    await claim(supabase);
+    await claim(vercel); // a different provider may run at the same time
+    await assert.rejects(claim(supabase2), (e: { code?: string }) => e.code === '23505', 'a second Supabase operation cannot start while one is in flight');
+    // A crash left it executing: moving it to ambiguous (compare-and-set) frees the slot, and nothing is lost.
+    const recovered = await pool.query("update public.builder_external_operations set status='ambiguous', failure='interrupted' where id=$1 and status='executing'", [supabase]);
+    assert.equal(recovered.rowCount, 1);
+    assert.equal((await claim(supabase2)).rowCount, 1);
+    await assert.rejects(operation(f, { provider: 'netlify', action: 'deploy_preview', key: 'p3-bad-provider1' }), (e: { code?: string }) => e.code === '23514');
+    await assert.rejects(operation(f, { provider: 'vercel', action: 'delete_project', key: 'p3-bad-action-001' }), (e: { code?: string }) => e.code === '23514');
+  });
+
+  it('Phase 3 migration is idempotent and its documented rollback is possible once new rows are removed', async () => {
+    await pool.query(readFileSync(MIGRATIONS[2], 'utf8'));
+    const f = await fixture();
+    await operation(f, { provider: 'vercel', action: 'deploy_preview', key: 'p3-rollback-0001' });
+    await pool.query("delete from public.builder_external_operations where provider <> 'github'");
+    await pool.query(`alter table public.builder_external_operations drop constraint builder_external_operations_provider_check,
+      add constraint builder_external_operations_provider_check check (provider in ('github'))`);
+    await assert.rejects(operation(f, { provider: 'supabase', action: 'apply_migration', key: 'p3-rollback-0002' }), (e: { code?: string }) => e.code === '23514');
+    await pool.query(readFileSync(MIGRATIONS[2], 'utf8'));
+    await operation(f, { provider: 'supabase', action: 'apply_migration', key: 'p3-rollback-0003' });
   });
 
   it('allows at most one executing operation per project and provider, and the status predicate arbitrates a race', async () => {

@@ -135,6 +135,27 @@ describe('browser QA against a real application', { skip }, () => {
     assert.ok(diagnostics.failedRequests.some((line) => line.includes('blocked request outside the application origin')), diagnostics.failedRequests.join('|'));
   });
 
+  it('sends extra headers (such as a protection bypass) to the application only', async () => {
+    const seen: Array<string | undefined> = [];
+    const server = createServer((request, response) => {
+      seen.push(request.headers['x-test-bypass'] as string | undefined);
+      response.writeHead(200, { 'content-type': 'text/html' });
+      response.end('<!doctype html><html><head><meta name="viewport" content="width=device-width"></head><body><h1>Hi</h1><img src="http://203.0.113.9/x.png" alt=""></body></html>');
+    });
+    servers.push(server);
+    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+    const baseUrl = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+    const driver = await openPlaywrightQaDriver({ baseUrl, extraHeaders: { 'x-test-bypass': 'secret-value' } });
+    const page = await driver.open('desktop');
+    await page.goto('/');
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    const diagnostics = page.drainDiagnostics();
+    await page.close();
+    await driver.close();
+    assert.ok(seen.length > 0 && seen.every((value) => value === 'secret-value'));
+    assert.ok(diagnostics.failedRequests.some((line) => line.includes('blocked request outside the application origin')), 'the header never leaves the application origin because other hosts are blocked');
+  });
+
   it('refuses navigation to another host through a path', async () => {
     const baseUrl = await serve(GOOD);
     const driver = await openPlaywrightQaDriver({ baseUrl });

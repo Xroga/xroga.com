@@ -7,6 +7,7 @@ import { BuilderError } from '../builder/types.js';
 import { TenantAccessError } from '../security/tenantErrors.js';
 import { requireTenantContext, type TenantContext } from '../security/tenantContext.js';
 import { createBuilderPhase2Router, type Phase2ServicesFactory } from './builderPhase2.js';
+import { createBuilderPhase3Router } from './builderPhase3.js';
 
 /**
  * AI Product Builder project API. Ownership comes only from the verified, issued tenant context;
@@ -42,6 +43,7 @@ function id(value: unknown): string {
 export function createBuilderRouter(serviceFor: BuilderServiceFactory = builderServiceFor, phase2For?: Phase2ServicesFactory): Router {
   const router = Router();
   router.use(createBuilderPhase2Router(phase2For));
+  router.use(createBuilderPhase3Router(phase2For));
 
   router.post('/projects', async (req: AuthRequest, res) => {
     try {

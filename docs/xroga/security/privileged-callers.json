@@ -1,23 +1,23 @@
 {
   "version": "1.1",
   "schemaObservationSha256": "646aa80f4ea883d9534cc5298b007c81e5a7bdc88975a30cd391ec31ad298b17",
-  "reviewRegistrySha256": "bca9b1ab26c3abf7418809a672c4d183edd29f6083855f799de3be1e006a37d9",
+  "reviewRegistrySha256": "b54021089418d14cb2e8955ff8b01338f75fc2a85fdce10850fbae9c6805812c",
   "scope": "STATIC_CANDIDATES_AND_MANUAL_BOUNDARY_REVIEW_NOT_SECURITY_CERTIFICATION",
   "releaseGate": "BLOCKED_CRITERION_EVIDENCE",
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 189,
-    "persistenceCandidates": 826,
+    "persistenceCandidates": 829,
     "ownerPredicateCandidates": 211,
-    "reviewRequired": 116,
+    "reviewRequired": 119,
     "reviewedCandidates": 710,
-    "unresolvedSafetyCandidates": 143,
+    "unresolvedSafetyCandidates": 146,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 19
   },
   "outcomes": {
-    "REVIEW_REQUIRED": 116,
+    "REVIEW_REQUIRED": 119,
     "SCOPED_BOUNDARY": 473,
     "NARROW_EXCEPTION": 40,
     "NOT_PERSISTENCE": 170,
@@ -29,7 +29,7 @@
     "scope": "COMMAND_007_CRITERION_EVIDENCE_NOT_BATCH_OR_PRODUCTION_ACCEPTANCE",
     "certifiedScopedPrivilegedCallers": 0,
     "verifiedCandidateBoundaries": 106,
-    "unresolvedCandidateBoundaries": 720,
+    "unresolvedCandidateBoundaries": 723,
     "criteria": [
       {
         "id": "XB01-C007-AC01",
@@ -3076,6 +3076,10 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
+        "id": "c2602b6c87e5ec2ca863"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
         "id": "001b4016dbbe7ce74c52"
       },
       {
@@ -3100,43 +3104,51 @@
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "61d98f1ac872902ed86b"
+        "id": "37cce46a46504bea7d89"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "daed95748190fd08018c"
+        "id": "47a80885cadbc8eb73df"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "7c22f92ad19d4ec859f8"
+        "id": "e02581ae3b4d3d55d864"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "e88a623b104c465798f9"
+        "id": "62ae0ad523bc2b3d801e"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "f999a78d64edbfb626fd"
+        "id": "7917926f203517ccc8fc"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "191043851ebd294fcdd0"
+        "id": "7f01308a4776ea150af4"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "b555483a911513e9e6c7"
+        "id": "276ab13ee820bf2c0cad"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "6ac45895b0904f8698a5"
+        "id": "b05193246501b4c58f7a"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "9bd82d91c4843130cf50"
+        "id": "09c1e0c459559808e3e0"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
-        "id": "537b7e8c92d50cfd879d"
+        "id": "c7c2cb204aee3e186486"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "bc362ed7b536f537f6c3"
+      },
+      {
+        "code": "MISSING_CALLER_REVIEW",
+        "id": "6213fb35d8a52385dae7"
       },
       {
         "code": "MISSING_CALLER_REVIEW",
@@ -4664,6 +4676,18 @@
       },
       {
         "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "c2602b6c87e5ec2ca863"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "37cce46a46504bea7d89"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
+        "id": "6213fb35d8a52385dae7"
+      },
+      {
+        "code": "UNRESOLVED_MANUAL_TENANT_REVIEW",
         "id": "3a0a65d6d673a33eaf05"
       },
       {
@@ -5596,43 +5620,43 @@
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "61d98f1ac872902ed86b"
+        "id": "47a80885cadbc8eb73df"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "daed95748190fd08018c"
+        "id": "e02581ae3b4d3d55d864"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "7c22f92ad19d4ec859f8"
+        "id": "62ae0ad523bc2b3d801e"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "e88a623b104c465798f9"
+        "id": "7917926f203517ccc8fc"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "f999a78d64edbfb626fd"
+        "id": "7f01308a4776ea150af4"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "191043851ebd294fcdd0"
+        "id": "276ab13ee820bf2c0cad"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "b555483a911513e9e6c7"
+        "id": "b05193246501b4c58f7a"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "6ac45895b0904f8698a5"
+        "id": "09c1e0c459559808e3e0"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "9bd82d91c4843130cf50"
+        "id": "c7c2cb204aee3e186486"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
-        "id": "537b7e8c92d50cfd879d"
+        "id": "bc362ed7b536f537f6c3"
       },
       {
         "code": "UNSUPPORTED_MANUAL_DISPOSITION",
@@ -7521,10 +7545,10 @@
     ]
   },
   "reviewAgreement": {
-    "currentCallers": 826,
+    "currentCallers": 829,
     "structuredVerified": 106,
-    "structuredUnproven": 720,
-    "manualUnresolved": 143,
+    "structuredUnproven": 723,
+    "manualUnresolved": 146,
     "manualUnsupported": 577,
     "agreedVerified": 106,
     "proofAwaitingManualReconciliation": 0
@@ -10139,6 +10163,17 @@
       }
     },
     {
+      "id": "c2602b6c87e5ec2ca863",
+      "path": "backend/src/builder/data/env.ts",
+      "line": 21,
+      "enclosing": "jwtRole",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "0f9da9d09bdef8f461361c1079122b215c5279c6be72c73eae70617f31385f45"
+    },
+    {
       "id": "001b4016dbbe7ce74c52",
       "path": "backend/src/builder/diff.ts",
       "line": 43,
@@ -10265,15 +10300,26 @@
       }
     },
     {
-      "id": "61d98f1ac872902ed86b",
+      "id": "37cce46a46504bea7d89",
+      "path": "backend/src/builder/hosting/restPort.ts",
+      "line": 109,
+      "enclosing": "createPreviewDeployment",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "e64e6cc2b0c4c822fdbcada1c0f9217686e3f10f7571a8010ae67f866838cd3e"
+    },
+    {
+      "id": "47a80885cadbc8eb73df",
       "path": "backend/src/builder/phase2Store.ts",
-      "line": 182,
+      "line": 184,
       "enclosing": "db",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "4e07d9b95cc6ca561b12ebd5fc8386f8bfc9a08c43f4a34d95b98315eca0e6a3",
+      "sourceSha256": "846d8157881a584b8addffcb4e368a631b107ccabd59afc9dfb03c3073c2fc2a",
       "semanticReview": {
         "authority": "SupabasePhase2Store is constructed only with an issued, frozen TenantContext and every method first compares the caller-supplied owner with it. The privileged client is obtained through getTenantSupabaseAdmin(context).",
         "reason": "Every read, list and compare-and-set update on builder_verifications and builder_external_operations carries an explicit .eq(user_id, owner) predicate with the verified issued owner, never a request value. A foreign project, verification or operation id returns no row.",
@@ -10290,15 +10336,15 @@
       }
     },
     {
-      "id": "daed95748190fd08018c",
+      "id": "e02581ae3b4d3d55d864",
       "path": "backend/src/builder/phase2Store.ts",
-      "line": 199,
+      "line": 201,
       "enclosing": "saveVerification",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_verifications",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "4e07d9b95cc6ca561b12ebd5fc8386f8bfc9a08c43f4a34d95b98315eca0e6a3",
+      "sourceSha256": "846d8157881a584b8addffcb4e368a631b107ccabd59afc9dfb03c3073c2fc2a",
       "semanticReview": {
         "authority": "Inserts set user_id from the verified issued tenant owner only after the project and revision have been confirmed to belong to that owner through the owner-scoped builder store.",
         "reason": "These inserts have no read predicate because they create rows owned by the verified identity, and each is preceded by an ownership check of the project and revision. Unique constraints make retries resolve to the stored row.",
@@ -10315,15 +10361,15 @@
       }
     },
     {
-      "id": "7c22f92ad19d4ec859f8",
+      "id": "62ae0ad523bc2b3d801e",
       "path": "backend/src/builder/phase2Store.ts",
-      "line": 205,
+      "line": 207,
       "enclosing": "saveVerification",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_verifications",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "4e07d9b95cc6ca561b12ebd5fc8386f8bfc9a08c43f4a34d95b98315eca0e6a3",
+      "sourceSha256": "846d8157881a584b8addffcb4e368a631b107ccabd59afc9dfb03c3073c2fc2a",
       "semanticReview": {
         "authority": "SupabasePhase2Store is constructed only with an issued, frozen TenantContext and every method first compares the caller-supplied owner with it. The privileged client is obtained through getTenantSupabaseAdmin(context).",
         "reason": "Every read, list and compare-and-set update on builder_verifications and builder_external_operations carries an explicit .eq(user_id, owner) predicate with the verified issued owner, never a request value. A foreign project, verification or operation id returns no row.",
@@ -10340,15 +10386,15 @@
       }
     },
     {
-      "id": "e88a623b104c465798f9",
+      "id": "7917926f203517ccc8fc",
       "path": "backend/src/builder/phase2Store.ts",
-      "line": 212,
+      "line": 214,
       "enclosing": "listVerifications",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_verifications",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "4e07d9b95cc6ca561b12ebd5fc8386f8bfc9a08c43f4a34d95b98315eca0e6a3",
+      "sourceSha256": "846d8157881a584b8addffcb4e368a631b107ccabd59afc9dfb03c3073c2fc2a",
       "semanticReview": {
         "authority": "SupabasePhase2Store is constructed only with an issued, frozen TenantContext and every method first compares the caller-supplied owner with it. The privileged client is obtained through getTenantSupabaseAdmin(context).",
         "reason": "Every read, list and compare-and-set update on builder_verifications and builder_external_operations carries an explicit .eq(user_id, owner) predicate with the verified issued owner, never a request value. A foreign project, verification or operation id returns no row.",
@@ -10365,15 +10411,15 @@
       }
     },
     {
-      "id": "f999a78d64edbfb626fd",
+      "id": "7f01308a4776ea150af4",
       "path": "backend/src/builder/phase2Store.ts",
-      "line": 221,
+      "line": 223,
       "enclosing": "getVerification",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_verifications",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "4e07d9b95cc6ca561b12ebd5fc8386f8bfc9a08c43f4a34d95b98315eca0e6a3",
+      "sourceSha256": "846d8157881a584b8addffcb4e368a631b107ccabd59afc9dfb03c3073c2fc2a",
       "semanticReview": {
         "authority": "SupabasePhase2Store is constructed only with an issued, frozen TenantContext and every method first compares the caller-supplied owner with it. The privileged client is obtained through getTenantSupabaseAdmin(context).",
         "reason": "Every read, list and compare-and-set update on builder_verifications and builder_external_operations carries an explicit .eq(user_id, owner) predicate with the verified issued owner, never a request value. A foreign project, verification or operation id returns no row.",
@@ -10390,15 +10436,15 @@
       }
     },
     {
-      "id": "191043851ebd294fcdd0",
+      "id": "276ab13ee820bf2c0cad",
       "path": "backend/src/builder/phase2Store.ts",
-      "line": 229,
+      "line": 231,
       "enclosing": "createOperation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_external_operations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "4e07d9b95cc6ca561b12ebd5fc8386f8bfc9a08c43f4a34d95b98315eca0e6a3",
+      "sourceSha256": "846d8157881a584b8addffcb4e368a631b107ccabd59afc9dfb03c3073c2fc2a",
       "semanticReview": {
         "authority": "SupabasePhase2Store is constructed only with an issued, frozen TenantContext and every method first compares the caller-supplied owner with it. The privileged client is obtained through getTenantSupabaseAdmin(context).",
         "reason": "Every read, list and compare-and-set update on builder_verifications and builder_external_operations carries an explicit .eq(user_id, owner) predicate with the verified issued owner, never a request value. A foreign project, verification or operation id returns no row.",
@@ -10415,15 +10461,15 @@
       }
     },
     {
-      "id": "b555483a911513e9e6c7",
+      "id": "b05193246501b4c58f7a",
       "path": "backend/src/builder/phase2Store.ts",
-      "line": 237,
+      "line": 239,
       "enclosing": "createOperation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_external_operations",
       "ownerPredicateCandidate": false,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "4e07d9b95cc6ca561b12ebd5fc8386f8bfc9a08c43f4a34d95b98315eca0e6a3",
+      "sourceSha256": "846d8157881a584b8addffcb4e368a631b107ccabd59afc9dfb03c3073c2fc2a",
       "semanticReview": {
         "authority": "Inserts set user_id from the verified issued tenant owner only after the project and revision have been confirmed to belong to that owner through the owner-scoped builder store.",
         "reason": "These inserts have no read predicate because they create rows owned by the verified identity, and each is preceded by an ownership check of the project and revision. Unique constraints make retries resolve to the stored row.",
@@ -10440,15 +10486,15 @@
       }
     },
     {
-      "id": "6ac45895b0904f8698a5",
+      "id": "09c1e0c459559808e3e0",
       "path": "backend/src/builder/phase2Store.ts",
-      "line": 249,
+      "line": 251,
       "enclosing": "getOperation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_external_operations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "4e07d9b95cc6ca561b12ebd5fc8386f8bfc9a08c43f4a34d95b98315eca0e6a3",
+      "sourceSha256": "846d8157881a584b8addffcb4e368a631b107ccabd59afc9dfb03c3073c2fc2a",
       "semanticReview": {
         "authority": "SupabasePhase2Store is constructed only with an issued, frozen TenantContext and every method first compares the caller-supplied owner with it. The privileged client is obtained through getTenantSupabaseAdmin(context).",
         "reason": "Every read, list and compare-and-set update on builder_verifications and builder_external_operations carries an explicit .eq(user_id, owner) predicate with the verified issued owner, never a request value. A foreign project, verification or operation id returns no row.",
@@ -10465,15 +10511,15 @@
       }
     },
     {
-      "id": "9bd82d91c4843130cf50",
+      "id": "c7c2cb204aee3e186486",
       "path": "backend/src/builder/phase2Store.ts",
-      "line": 256,
+      "line": 258,
       "enclosing": "listOperations",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_external_operations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "4e07d9b95cc6ca561b12ebd5fc8386f8bfc9a08c43f4a34d95b98315eca0e6a3",
+      "sourceSha256": "846d8157881a584b8addffcb4e368a631b107ccabd59afc9dfb03c3073c2fc2a",
       "semanticReview": {
         "authority": "SupabasePhase2Store is constructed only with an issued, frozen TenantContext and every method first compares the caller-supplied owner with it. The privileged client is obtained through getTenantSupabaseAdmin(context).",
         "reason": "Every read, list and compare-and-set update on builder_verifications and builder_external_operations carries an explicit .eq(user_id, owner) predicate with the verified issued owner, never a request value. A foreign project, verification or operation id returns no row.",
@@ -10490,15 +10536,15 @@
       }
     },
     {
-      "id": "537b7e8c92d50cfd879d",
+      "id": "bc362ed7b536f537f6c3",
       "path": "backend/src/builder/phase2Store.ts",
-      "line": 269,
+      "line": 271,
       "enclosing": "transitionOperation",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "builder_external_operations",
       "ownerPredicateCandidate": true,
       "review": "SCOPED_BOUNDARY",
-      "sourceSha256": "4e07d9b95cc6ca561b12ebd5fc8386f8bfc9a08c43f4a34d95b98315eca0e6a3",
+      "sourceSha256": "846d8157881a584b8addffcb4e368a631b107ccabd59afc9dfb03c3073c2fc2a",
       "semanticReview": {
         "authority": "SupabasePhase2Store is constructed only with an issued, frozen TenantContext and every method first compares the caller-supplied owner with it. The privileged client is obtained through getTenantSupabaseAdmin(context).",
         "reason": "Every read, list and compare-and-set update on builder_verifications and builder_external_operations carries an explicit .eq(user_id, owner) predicate with the verified issued owner, never a request value. A foreign project, verification or operation id returns no row.",
@@ -10513,6 +10559,17 @@
           }
         ]
       }
+    },
+    {
+      "id": "6213fb35d8a52385dae7",
+      "path": "backend/src/builder/servicesFixture.testsupport.ts",
+      "line": 33,
+      "enclosing": "<module>",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "x",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "645c6b833fa779bf4571c97373f36256685258c8b96476c5548f3dd40b752d37"
     },
     {
       "id": "1ed4c93d1d2252799103",

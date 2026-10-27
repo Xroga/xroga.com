@@ -1,0 +1,201 @@
+{
+  "version": "1.0",
+  "missionId": "BATCH2-PHASE3-DELIVERY-20261026",
+  "baseSha": "ed43af3fc4070b72072916e3509cd025ec0208f0",
+  "requirementIds": [
+    "XR-MISSION-036",
+    "XR-HIST-b9676b930b0fa4b6"
+  ],
+  "state": "CODE_COMPLETE",
+  "risk": "high",
+  "scope": "Batch 2 Phase 3 (Milestones G and H): customer-owned Supabase (project selection, reviewed schema with RLS, approved migration), customer-owned Vercel (unlinked preview, read-only remote QA, separately approved production), revision provenance, stranded-operation recovery, golden acceptance tests A to J and the twelve-target matrix. Disabled by default; nothing is applied, deployed or enabled and no external account was touched.",
+  "changedFiles": [
+    ".github/workflows/builder-phase1.yml",
+    "backend/src/builder/data/data.test.ts",
+    "backend/src/builder/data/env.ts",
+    "backend/src/builder/data/fakeSupabase.testsupport.ts",
+    "backend/src/builder/data/port.ts",
+    "backend/src/builder/data/restPort.test.ts",
+    "backend/src/builder/data/restPort.ts",
+    "backend/src/builder/data/review.ts",
+    "backend/src/builder/data/schema.integration.test.ts",
+    "backend/src/builder/data/schema.test.ts",
+    "backend/src/builder/data/schema.ts",
+    "backend/src/builder/data/service.ts",
+    "backend/src/builder/delivery.ts",
+    "backend/src/builder/github/service.ts",
+    "backend/src/builder/golden.browser.integration.test.ts",
+    "backend/src/builder/golden.test.ts",
+    "backend/src/builder/hosting/fakeVercel.testsupport.ts",
+    "backend/src/builder/hosting/hosting.test.ts",
+    "backend/src/builder/hosting/port.ts",
+    "backend/src/builder/hosting/restPort.test.ts",
+    "backend/src/builder/hosting/restPort.ts",
+    "backend/src/builder/hosting/service.ts",
+    "backend/src/builder/operations.ts",
+    "backend/src/builder/phase2Bridge.ts",
+    "backend/src/builder/phase2Store.integration.test.ts",
+    "backend/src/builder/phase2Store.ts",
+    "backend/src/builder/qa/plan.ts",
+    "backend/src/builder/qa/playwrightQaDriver.ts",
+    "backend/src/builder/qa/qa.browser.integration.test.ts",
+    "backend/src/builder/qa/qa.test.ts",
+    "backend/src/builder/qa/qaService.ts",
+    "backend/src/builder/servicesFixture.testsupport.ts",
+    "backend/src/builder/starters.ts",
+    "backend/src/builder/types.ts",
+    "backend/src/routes/builder.ts",
+    "backend/src/routes/builderPhase2.test.ts",
+    "backend/src/routes/builderPhase3.test.ts",
+    "backend/src/routes/builderPhase3.ts",
+    "docs/infra/batch-2/PHASE-3-STATUS.md",
+    "docs/xroga/current-state.json",
+    "docs/xroga/current-state.md",
+    "docs/xroga/dependency-inventory.json",
+    "docs/xroga/deployment-topology.md",
+    "docs/xroga/missions/batch2-phase3-delivery-20261026.json",
+    "docs/xroga/research/source-manifest.json",
+    "docs/xroga/research/source-reconciliation.md",
+    "docs/xroga/runtime-contract.md",
+    "docs/xroga/secret-inventory.md",
+    "docs/xroga/security/caller-reviews.json",
+    "docs/xroga/security/privileged-callers.json",
+    "docs/xroga/security/rls-audit.md",
+    "frontend/src/components/terminal/BuilderProjectPanel.tsx",
+    "frontend/src/components/terminal/builder/BuilderDatabase.tsx",
+    "frontend/src/components/terminal/builder/BuilderHosting.tsx",
+    "frontend/src/components/terminal/builder/BuilderProvenance.tsx",
+    "frontend/src/lib/builderApiPhase3.test.ts",
+    "frontend/src/lib/builderApiPhase3.ts",
+    "supabase/migrations/20261026020000_builder_phase3.sql",
+    "tests/ci/known-skips.json"
+  ],
+  "decisions": {
+    "keep": [
+      "Canonical scheduler, tryUniversalBuild, SoftwareAgent/Cline, live-preview coordinator and project runtime",
+      "Existing vault-held Supabase and Vercel tokens and the Phase 2 approval lifecycle",
+      "Phase 1 and Phase 2 durable projects, revisions, QA and GitHub export",
+      "Codex Google migration work untouched"
+    ],
+    "extend": [
+      "builder_external_operations widened to Supabase and Vercel operations through the shared OperationRunner",
+      "QA plan gains a read-only mode and the QA driver gains extra request headers for remote verification"
+    ],
+    "replace": [
+      "Starter materialization no longer re-detects the scaffold kind from prompt text"
+    ],
+    "deprecate": []
+  },
+  "schemaImpact": {
+    "changed": true,
+    "migrations": [
+      "supabase/migrations/20261026020000_builder_phase3.sql"
+    ],
+    "rollout": "Additive: widens two CHECK constraints on builder_external_operations. Depends on the Phase 2 migration. Not applied by this change; apply through the verified migration workflow after review.",
+    "rollback": "Delete rows whose provider is not github, then restore the narrower provider and action CHECK constraints (documented in the migration and exercised on real PostgreSQL in CI)."
+  },
+  "securityImpact": {
+    "auth": {
+      "changed": true,
+      "description": "New Phase 3 routes require the issued tenant context; every project and operation id is resolved against the verified owner and a foreign id returns 404."
+    },
+    "tenant": {
+      "changed": true,
+      "description": "No new tables. Operations reuse the owner-scoped Phase 2 table; the new routes and services filter by the verified owner."
+    },
+    "approval": {
+      "changed": true,
+      "description": "Every Supabase and Vercel change goes prepare, approve (quoting the plan digest, expiring) and execute with a database-arbitrated single in-flight operation per provider. Production additionally needs a succeeded preview with passed remote tests, a separate plan and a typed confirmation."
+    },
+    "credentials": {
+      "changed": true,
+      "description": "Provider tokens are read only from the existing vault at execution time and never stored in plans, receipts, logs or responses. The Supabase service-role key is never requested; apps receive only the public URL and publishable key; privileged environment values are refused by name and by value."
+    },
+    "egress": {
+      "changed": true,
+      "description": "Remote QA is read-only and restricted to the deployed application origin; protection headers are sent only to that origin."
+    },
+    "cost": {
+      "changed": true,
+      "description": "No billable resource is created without an approved plan that states the cost responsibility. Vercel deployments run in the customer account."
+    },
+    "billing": {
+      "changed": false,
+      "description": "No payment or subscription path changes."
+    }
+  },
+  "tests": [
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/builder/data/schema.test.ts backend/src/builder/data/data.test.ts backend/src/builder/data/restPort.test.ts",
+      "scope": "Schema derivation and review, project selection, approval, migration, reconciliation, environment guard, adapter contract.",
+      "negative": true,
+      "reference": "backend/src/builder/data/data.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/builder/hosting/hosting.test.ts backend/src/builder/hosting/restPort.test.ts",
+      "scope": "Vercel preview, remote verification, production gating, wrong team, revoked connection, lost responses, adapter contract.",
+      "negative": true,
+      "reference": "backend/src/builder/hosting/hosting.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/builder/golden.test.ts backend/src/builder/golden.browser.integration.test.ts",
+      "scope": "Golden groups A to J against the production services.",
+      "negative": true,
+      "reference": "backend/src/builder/golden.test.ts"
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --test backend/src/routes/builderPhase3.test.ts",
+      "scope": "HTTP layer: identity required, cross-tenant 404, full delivery flow, no credentials in responses.",
+      "negative": true,
+      "reference": "backend/src/routes/builderPhase3.test.ts"
+    },
+    {
+      "command": "builder-phase1 workflow (disposable PostgreSQL, real Chromium)",
+      "scope": "Generated schemas against real PostgreSQL (RLS, isolation, double-booking), Phase 3 migration and rollback, stranded-operation slot release.",
+      "negative": true,
+      "reference": "backend/src/builder/data/schema.integration.test.ts"
+    },
+    {
+      "command": "node scripts/xroga/inventory.mjs --check",
+      "scope": "Generated source inventory consistency.",
+      "negative": false,
+      "reference": "docs/xroga/current-state.json"
+    }
+  ],
+  "architecture": {
+    "change": "extends_canonical",
+    "reason": "Adds customer-owned Supabase and Vercel operations around the existing builder projects through the same approval lifecycle. No scheduler, runtime, browser stack, agent framework or authentication system is added.",
+    "rfc": null
+  },
+  "rollout": "Merge only after review and your authorization. Then apply the builder migrations, enable the canonical engine for builder projects, deploy to the Google runtime and set NEXT_PUBLIC_XROGA_BUILDER=1, each as a separate approved step. Provider live tests need approved disposable accounts.",
+  "rollback": "Disable NEXT_PUBLIC_XROGA_BUILDER; routes are inert without a project. Restore the narrower constraints with the statements above.",
+  "knownGaps": [
+    "No live Supabase project, Vercel deployment or GitHub repository test: they need approved disposable accounts",
+    "No generated application has been run on the Google runtime: it needs PR #856 and the enabled canonical engine",
+    "Remote QA of a deployment-protected preview needs a protection-bypass secret Xroga does not yet store",
+    "Vercel does not document disabling Git deployments, so Git-linked projects are refused and only unlinked projects are used"
+  ],
+  "placeholderClaimsRemaining": [
+    "Live provider behaviour (Supabase, Vercel, GitHub) is unverified",
+    "Deployed full-stack behaviour (application plus database in the published environment) is unverified"
+  ],
+  "evidenceRefs": [
+    "docs/infra/batch-2/PHASE-3-STATUS.md",
+    "backend/src/builder/golden.test.ts"
+  ],
+  "claimsFullProductCompletion": false,
+  "claimsAllBatchCommandsComplete": false,
+  "release": {
+    "state": "BLOCKED",
+    "blockers": [
+      "Migrations not applied and canonical engine not enabled",
+      "No Google runtime provider deployed (PR #856)",
+      "No approved Supabase, Vercel or GitHub test accounts for live provider verification",
+      "Authenticated end-to-end and staged security proof not run for this change"
+    ],
+    "authenticatedE2e": "BLOCKED",
+    "stagedSecurity": "BLOCKED",
+    "liveUrl": null,
+    "deployedSha": null
+  }
+}

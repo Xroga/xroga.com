@@ -36,6 +36,18 @@ describe('QA plan derivation', () => {
     assert.ok(plan.checks.every((check) => check.derivedFrom.length > 0), 'every check traces to its source');
   });
 
+  it('a read-only plan for a live deployment contains nothing that can write data', () => {
+    const { spec } = deriveBuildSpec(SAAS);
+    const full = deriveQaPlan(spec, [...nextFiles, { path: 'app/contact/page.tsx', content: '<form><input name="email" type="email" required><button>Send</button></form>' }]);
+    const readOnly = deriveQaPlan(spec, [...nextFiles, { path: 'app/contact/page.tsx', content: '<form><input name="email" type="email" required><button>Send</button></form>' }], { readOnly: true });
+    assert.ok(full.checks.some((check) => check.category === 'forms' || check.category === 'persistence'));
+    assert.ok(readOnly.checks.length > 0 && readOnly.checks.length < full.checks.length);
+    assert.ok(readOnly.checks.every((check) => !['forms', 'persistence', 'criterion'].includes(check.category)));
+    assert.ok(readOnly.checks.every((check) => check.steps.every((step) => !['fill', 'expectFormRejectsEmpty', 'expectFeedbackAfter'].includes(step.op))));
+    assert.ok(readOnly.notChecked.some((entry) => /Form submissions/.test(entry.criterion)));
+    assert.ok(readOnly.checks.some((check) => check.category === 'auth'), 'anonymous access checks are kept');
+  });
+
   it('plans an empty-submit validation check when the request asks for validation, even if the markup has no required fields', () => {
     const { spec } = deriveBuildSpec(`${SITE} Add a contact form with validation.`);
     const plan = deriveQaPlan(spec, [{ path: 'index.html', content: '<html><body><h1>x</h1><form><input name="email" type="email"><button>Go</button></form></body></html>' }]);

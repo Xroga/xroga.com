@@ -1,4 +1,4 @@
-# Batch 2 (AI Product Builder) verification, Phases 1 and 2. SAFE BY CONSTRUCTION:
+# Batch 2 (AI Product Builder) verification, Phases 1, 2 and 3. SAFE BY CONSTRUCTION:
 #   - runs only on pushes to the Batch 2 development branches, or when dispatched by hand; it is NOT triggered by pull_request or by main
 #   - uses no repository/environment secrets and no GitHub Environment (nothing can reach Supabase, Google Cloud, Vercel, GitHub accounts or production)
 #   - read-only token; the database is a disposable service container; the QA browser runs against local fixture servers only
@@ -8,7 +8,7 @@ name: builder-phase1
 
 on:
   push:
-    branches: ['claude/batch2-phase1-product-builder', 'claude/batch2-phase2-qa-iteration-export']
+    branches: ['claude/batch2-phase1-product-builder', 'claude/batch2-phase2-qa-iteration-export', 'claude/batch2-phase3-delivery']
     paths:
       - 'backend/src/builder/**'
       - 'backend/src/routes/builder*'
@@ -17,6 +17,7 @@ on:
       - 'backend/src/synthesis/playwrightDriver.ts'
       - 'supabase/migrations/20261026000100_builder_projects.sql'
       - 'supabase/migrations/20261026010000_builder_phase2.sql'
+      - 'supabase/migrations/20261026020000_builder_phase3.sql'
       - '.github/workflows/builder-phase1.yml'
   workflow_dispatch:
 
@@ -62,4 +63,4 @@ jobs:
           # The runner is throw-away; Chromium's sandbox needs unprivileged user namespaces.
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
       - name: Builder unit, integration, browser and API tests (real PostgreSQL for the SQL, real Chromium for QA)
-        run: node node_modules/tsx/dist/cli.mjs --test $(find backend/src/builder -name '*.test.ts') backend/src/routes/builder.test.ts backend/src/routes/builderPhase2.test.ts
+        run: node node_modules/tsx/dist/cli.mjs --test $(find backend/src/builder -name '*.test.ts') backend/src/routes/builder.test.ts backend/src/routes/builderPhase2.test.ts backend/src/routes/builderPhase3.test.ts
