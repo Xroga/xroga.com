@@ -1,0 +1,66 @@
+# Batch 2 (AI Product Builder) verification, Phases 1, 2 and 3. SAFE BY CONSTRUCTION:
+#   - runs only on pushes to the Batch 2 development branches, or when dispatched by hand; it is NOT triggered by pull_request or by main
+#   - uses no repository/environment secrets and no GitHub Environment (nothing can reach Supabase, Google Cloud, Vercel, GitHub accounts or production)
+#   - read-only token; the database is a disposable service container; the QA browser runs against local fixture servers only
+#   - no deploy, no migration of any real database, no paid resource, no external account mutation
+# It does NOT replace the repository's own required checks.
+name: builder-phase1
+
+on:
+  push:
+    branches: ['claude/batch2-phase1-product-builder', 'claude/batch2-phase2-qa-iteration-export', 'claude/batch2-phase3-delivery']
+    paths:
+      - 'backend/src/builder/**'
+      - 'backend/src/routes/builder*'
+      - 'backend/src/routes/swarm.ts'
+      - 'backend/src/ai/pipeline.ts'
+      - 'backend/src/synthesis/playwrightDriver.ts'
+      - 'supabase/migrations/20261026000100_builder_projects.sql'
+      - 'supabase/migrations/20261026010000_builder_phase2.sql'
+      - 'supabase/migrations/20261026020000_builder_phase3.sql'
+      - '.github/workflows/builder-phase1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: builder-phase1-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: ci-disposable
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      STORAGE_TEST_DATABASE_URL: postgresql://postgres:ci-disposable@127.0.0.1:5432/postgres
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Backend typecheck
+        run: npx tsc --noEmit -p backend
+      - name: Real Chromium for the browser QA tests (disposable runner)
+        run: |
+          export PLAYWRIGHT_BROWSERS_PATH="$RUNNER_TEMP/builder-browsers"
+          npx playwright-core install --with-deps chromium
+          echo "PLAYWRIGHT_BROWSERS_PATH=$PLAYWRIGHT_BROWSERS_PATH" >> "$GITHUB_ENV"
+          # The runner is throw-away; Chromium's sandbox needs unprivileged user namespaces.
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+      - name: Builder unit, integration, browser and API tests (real PostgreSQL for the SQL, real Chromium for QA)
+        run: node node_modules/tsx/dist/cli.mjs --test $(find backend/src/builder -name '*.test.ts') backend/src/routes/builder.test.ts backend/src/routes/builderPhase2.test.ts backend/src/routes/builderPhase3.test.ts

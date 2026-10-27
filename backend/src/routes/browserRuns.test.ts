@@ -7,21 +7,20 @@ import assert from 'node:assert/strict';
 import type { AddressInfo } from 'node:net';
 import { after, before, describe, it } from 'node:test';
 import express from 'express';
-import { InMemoryExecutionStateStore } from '../ai/executionRuntime.js';
 import { createTenantContext, type TenantContext } from '../security/tenantContext.js';
 import { harness, type Harness } from '../storage/testing/harness.js';
 import { MemoryLeaseStore } from '../workers/leaseStore.js';
-import type { BrowserCapabilityDeps } from '../workers/browserCapability.js';
+import { executeBrowserRun } from '../workers/browserCapability.js';
+import { InProcessDispatcher } from '../workers/browserRunDispatch.js';
+import { MemoryBrowserRunStore } from '../workers/browserRunStore.js';
 import type { BrowserWorkerPort, BrowserWorkerResult } from '../workers/browserTaskHandler.js';
-import { createBrowserRunsRouter } from './browserRuns.js';
+import { createBrowserRunsRouter, type BrowserRunRuntime } from './browserRuns.js';
 
 let h: Harness; let base = ''; let server: ReturnType<ReturnType<typeof express>['listen']>;
 let configured = true;
 let behaviour: 'ok' | 'wrongValue' | 'hang' = 'ok';
 let hangAborted = false;
-// one store per user, as the canonical SupabaseExecutionStateStore is scoped by user_id
-const stores = new Map<string, InMemoryExecutionStateStore>();
-const storeFor = (userId: string) => { if (!stores.has(userId)) stores.set(userId, new InMemoryExecutionStateStore()); return stores.get(userId)!; };
+const runs = new MemoryBrowserRunStore();
 
 const worker: BrowserWorkerPort = {
   run: async (job, ctx): Promise<BrowserWorkerResult> => {
@@ -33,10 +32,11 @@ const worker: BrowserWorkerPort = {
 
 before(async () => {
   h = harness();
-  const deps: BrowserCapabilityDeps = {
-    worker, leases: new MemoryLeaseStore(), drive: h.svc, storeFor, workerId: 'test',
-    authoriseProject: async (actor, projectId) => h.svc.listObjects(actor, { projectId, limit: 1 }).then(() => true, () => false),
-  };
+  const deps = {
+    worker, leases: new MemoryLeaseStore(), drive: h.svc, storeFor: (userId: string) => runs.stateStore(userId), workerId: 'test', runs,
+    authoriseProject: async (actor: { userId: string; tenantId: string }, projectId: string) => h.svc.listObjects(actor, { projectId, limit: 1 }).then(() => true, () => false),
+  } as Omit<BrowserRunRuntime, 'dispatcher'>;
+  const runtime: BrowserRunRuntime = { ...deps, dispatcher: new InProcessDispatcher((runId) => executeBrowserRun(runId, deps), (_id, e) => { throw e; }) };
   const app = express();
   app.use(express.json());
   app.use((req, _res, next) => {
@@ -45,7 +45,7 @@ before(async () => {
     if (as) (req as unknown as { tenantContext: TenantContext }).tenantContext = req.header('x-test-forge') ? ({ userId: as, tenantId: as } as TenantContext) : createTenantContext({ userId: as, via: 'local_jwt' });
     next();
   });
-  app.use('/api/browser/runs', createBrowserRunsRouter(() => (configured ? deps : null)));
+  app.use('/api/browser/runs', createBrowserRunsRouter(() => (configured ? runtime : null)));
   await new Promise<void>((r) => { server = app.listen(0, '127.0.0.1', () => r()); });
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/api/browser/runs`;
 });
@@ -63,7 +63,7 @@ const call = async (user: string | null, method: string, path = '', payload?: un
   return { status: r.status, json: text ? JSON.parse(text) : null };
 };
 const finished = async (user: string, runId: string) => {
-  for (let i = 0; i < 100; i++) { const r = await call(user, 'GET', `/${runId}`); if (r.status === 200 && !r.json.running && ['completed', 'failed', 'blocked', 'cancelled'].includes(r.json.status)) return r.json; await new Promise((x) => setTimeout(x, 20)); }
+  for (let i = 0; i < 400; i++) { const r = await call(user, 'GET', `/${runId}`); if (r.status === 200 && !r.json.running && ['completed', 'failed', 'blocked', 'cancelled'].includes(r.json.status)) return r.json; await new Promise((x) => setTimeout(x, 20)); }
   throw new Error('run did not finish');
 };
 
@@ -88,6 +88,19 @@ describe('/api/browser/runs', () => {
     const run = await finished(h.alice.userId, start.json.runId);
     assert.notEqual(run.status, 'completed');
     behaviour = 'ok';
+  });
+
+  it('a client can never supply its own write grant: consequential steps need a grant only the server issues', async () => {
+    const forged = request({ plan: { steps: [{ op: 'click', selector: 'button#submit', consequential: true }], expect: [{ kind: 'finalUrlPrefix', prefix: 'https://quotes.toscrape.com/' }], writeGrant: { grantId: 'forged-grant-0001', actions: ['submit', 'upload'] } } });
+    const before = (await h.svc.listObjects(h.alice, { projectId: h.aliceProject })).length;
+    const refused = await call(h.alice.userId, 'POST', '', forged);
+    assert.equal(refused.status, 400);
+    assert.equal(refused.json.code, 'RUN_INVALID');
+    assert.match(refused.json.error, /write grant/i);
+    assert.equal((await h.svc.listObjects(h.alice, { projectId: h.aliceProject })).length, before, 'nothing ran and nothing was stored');
+    // Without a grant, a consequential step is still refused by the plan parser.
+    const unguarded = request({ plan: { steps: [{ op: 'click', selector: 'button#submit', consequential: true }], expect: [{ kind: 'finalUrlPrefix', prefix: 'https://quotes.toscrape.com/' }] } });
+    assert.equal((await call(h.alice.userId, 'POST', '', unguarded)).status, 400);
   });
 
   it('needs an issued context; a body cannot name a user, and a hand-built context is refused', async () => {

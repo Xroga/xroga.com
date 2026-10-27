@@ -99,11 +99,11 @@ function clip(text: string, max = MAX_TEXT): string {
  */
 const CHROMIUM_MODULES = ['playwright', '@playwright/test'] as const;
 
-type ChromiumLauncher = {
+export type ChromiumLauncher = {
   launch: (options: Record<string, unknown>) => Promise<PlaywrightBrowser>;
 };
 
-async function loadChromium(): Promise<ChromiumLauncher | null> {
+export async function loadChromium(): Promise<ChromiumLauncher | null> {
   for (const specifier of CHROMIUM_MODULES) {
     try {
       const mod = (await import(specifier as string)) as {
@@ -159,7 +159,7 @@ export class BrowserUnavailableError extends Error {
  * `PLAYWRIGHT_CHROMIUM_EXECUTABLE` still wins, because an operator naming a specific binary
  * should not be overridden by a guess.
  */
-function discoverChromiumExecutable(): string | null {
+export function discoverChromiumExecutable(): string | null {
   const explicit = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE?.trim();
   if (explicit) return explicit;
 

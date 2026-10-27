@@ -331,6 +331,76 @@
       "reason": "POSIX process groups only; Windows cannot run it.",
       "issue_or_command": "Batch 1.5 storage-phase1 workflow (manual dispatch) and the phase3 browser host scripts",
       "review_date": "2026-12-15"
+    },
+    {
+      "id": "28dc1490566773beaea9dcdd1f59d6d67fa6bdffe5afec15c8980ef14bc442d1",
+      "path": "backend/src/builder/store.integration.test.ts",
+      "title": "builder projects against real PostgreSQL",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Needs a disposable PostgreSQL (STORAGE_TEST_DATABASE_URL); skipped without it and run by the builder-phase1 workflow, which provides one.",
+      "issue_or_command": "Batch 2 Phase 1 builder-phase1 workflow (branch push or manual dispatch)",
+      "review_date": "2026-12-15"
+    },
+    {
+      "id": "64f4f4ceb9f6015e9aa7835907aec038fd578103b3fa5be88b4c1cb1cc460b96",
+      "path": "backend/src/builder/phase2Store.integration.test.ts",
+      "title": "builder Phase 2 tables against real PostgreSQL",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Needs a disposable PostgreSQL (STORAGE_TEST_DATABASE_URL); skipped without it and run by the builder-phase1 workflow, which provides one.",
+      "issue_or_command": "Batch 2 builder-phase1 workflow (branch push or manual dispatch)",
+      "review_date": "2026-12-15"
+    },
+    {
+      "id": "c68f5d6a8b0aadced797dffcdf9fa8354f6eaa93980c0656c3a1baa6ed04854d",
+      "path": "backend/src/builder/qa/qa.browser.integration.test.ts",
+      "title": "browser QA against a real application",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Needs a launchable Chromium; skipped where none exists and run by the builder-phase1 workflow, which installs a pinned Playwright Chromium.",
+      "issue_or_command": "Batch 2 builder-phase1 workflow (branch push or manual dispatch)",
+      "review_date": "2026-12-15"
+    },
+    {
+      "id": "ea9eede84766022954f54185cac5eb0f88a4879098d65b2531476749a0af6952",
+      "path": "backend/src/builder/qa/repair.integration.test.ts",
+      "title": "QA-driven repair lifecycle (real browser)",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Needs a launchable Chromium; skipped where none exists and run by the builder-phase1 workflow, which installs a pinned Playwright Chromium.",
+      "issue_or_command": "Batch 2 builder-phase1 workflow (branch push or manual dispatch)",
+      "review_date": "2026-12-15"
+    },
+    {
+      "id": "bebed0ce1215c8ac2b61571e2e311fcc77f6b1091c28e9e6bb7c3c751d27492e",
+      "path": "backend/src/builder/data/schema.integration.test.ts",
+      "title": "generated customer schemas against real PostgreSQL",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Needs a disposable PostgreSQL (STORAGE_TEST_DATABASE_URL); skipped without it and run by the builder-phase1 workflow, which provides one.",
+      "issue_or_command": "Batch 2 builder-phase1 workflow (branch push or manual dispatch)",
+      "review_date": "2026-12-15"
+    },
+    {
+      "id": "6620254db2d11441f322da8764bbf7439e615775e2009408b6489a14e696cde2",
+      "path": "backend/src/builder/golden.browser.integration.test.ts",
+      "title": "Golden A: business website from a plain-language request",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Needs a launchable Chromium; skipped where none exists and run by the builder-phase1 workflow, which installs a pinned Playwright Chromium.",
+      "issue_or_command": "Batch 2 builder-phase1 workflow (branch push or manual dispatch)",
+      "review_date": "2026-12-15"
+    },
+    {
+      "id": "0cb49b665f69e7f970ab3b616fe8dc04537b0c2e7ad9dde51d2c350bef78f4cf",
+      "path": "backend/src/workers/browserRunStore.integration.test.ts",
+      "title": "durable browser runs against real PostgreSQL",
+      "condition": "skip",
+      "owner": "Xroga engineering",
+      "reason": "Needs a disposable PostgreSQL (STORAGE_TEST_DATABASE_URL); skipped without it and run with REQUIRE_PHASE1_FIXTURES=1 by the storage-phase1 workflow.",
+      "issue_or_command": "Batch 1.5 storage-phase1 workflow (manual dispatch) and the phase3 browser host scripts",
+      "review_date": "2026-12-15"
     }
   ]
 }

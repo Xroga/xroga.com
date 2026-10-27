@@ -17,6 +17,7 @@ import { terminalRunReducer } from '@/lib/terminal/terminalRunReducer';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { streamSwarmExecute, ApiError, type ChatAttachment, api } from '@/lib/api';
+import { resolveBuilderProject } from '@/lib/builderChat';
 import { capacityUnavailableLine } from '@/lib/capacityMessage';
 import { buildCompletedChatHistory } from '@/lib/chatHistory';
 import { isMathQueryPrompt } from '@/lib/mathDetect';
@@ -2982,9 +2983,17 @@ if (
             ),
           );
         };
+        const builderProjectId = await resolveBuilderProject({
+          prompt: displayPrompt,
+          isNewProduct: freshProductIntent || (!isBuildUpdate && isWebsiteBuildPrompt(displayPrompt)),
+          hasRepositoryTarget: Boolean(stickyTargetRepo?.includes('/')),
+          messageKey: userMessageId,
+        });
         await streamSwarmExecute(apiPrompt, {
   runId:
     resumeRunId,
+
+  builderProjectId,
 
   projectId:
     projectIdForRequest(
